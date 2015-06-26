@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <KnownNodes>    
+    <Node type="BrainSimulator.Nodes.MyNodeGroup" CanBeAdded="true" BigIcon="res\group_big.png" SmallIcon="res\group.png"/>
+    <Node type="BrainSimulator.Nodes.MyConditionalGroup" CanBeAdded="true" BigIcon="res\group_signal_big.png" SmallIcon="res\group_signal.png"/>
+    <Node type="BrainSimulator.Nodes.MyUserInput" CanBeAdded="true" BigIcon="res\keypad_big.png" SmallIcon="res\keypad.png"/>
+            
+    <Node type="BrainSimulator.Transforms.MyAbsoluteValue" CanBeAdded="true" BigIcon="res\abs_big.png" SmallIcon="res\abs.png"/>
+    <Node type="BrainSimulator.Transforms.MyReduction" CanBeAdded="true" BigIcon="res\reduce_big.png" SmallIcon="res\reduce.png"/>
+    <Node type="BrainSimulator.Transforms.MyGoniometricFunction" CanBeAdded="true" BigIcon="res\sine_big.png" SmallIcon="res\sine.png"/>
+    <Node type="BrainSimulator.Transforms.MyPolynomialFunction" CanBeAdded="true" BigIcon="res\linear_big.png" SmallIcon="res\linear.png"/>
+    <Node type="BrainSimulator.Transforms.MyLowHighFilter" CanBeAdded="true" BigIcon="res\ceil_floor_big.png" SmallIcon="res\ceil_floor.png"/>
+    <Node type="BrainSimulator.Transforms.MyThreshold" CanBeAdded="true" BigIcon="res\threshold_big.png" SmallIcon="res\threshold.png"/>    
+    <Node type="BrainSimulator.Transforms.MyFilter2D" CanBeAdded="true" BigIcon="res\transform_big.png" SmallIcon="res\transform.png"/>
+    <Node type="BrainSimulator.Transforms.MyAnalyze2D" CanBeAdded="true" BigIcon="res\transform_big.png" SmallIcon="res\transform.png"/>
+    <Node type="BrainSimulator.Transforms.MyResize2D" CanBeAdded="true" BigIcon="res\imagescale_big.png" SmallIcon="res\imagescale.png"/>
+    <Node type="BrainSimulator.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="res\delayedcopy_big.png" SmallIcon="res\delayedcopy.png"/>
+    <Node type="BrainSimulator.Transforms.MyHash" CanBeAdded="true" BigIcon="res\hash_big.png" SmallIcon="res\hash.png"/>    
+    
+    <Node type="BrainSimulator.Nodes.MyJoin" CanBeAdded="true" BigIcon="res\join_big.png" SmallIcon="res\join.png"/>
+    <Node type="BrainSimulator.Nodes.MyFork" CanBeAdded="true" BigIcon="res\fork_big.png" SmallIcon="res\fork.png"/>
+    <Node type="BrainSimulator.Nodes.MyGateInput" CanBeAdded="true" BigIcon="res\gate_big.png" SmallIcon="res\gate.png"/>
+    <Node type="BrainSimulator.Nodes.MyDataGate" CanBeAdded="true" BigIcon="res\gate_big.png" SmallIcon="res\gate.png"/>
+
+    <Node type="BrainSimulator.Nodes.MyParentInput" CanBeAdded="false" BigIcon="res\input_big.png" SmallIcon="res\input.png"/>
+    <Node type="BrainSimulator.Nodes.MyOutput" CanBeAdded="false" BigIcon="res\output_big.png" SmallIcon="res\output.png"/>      
+  </KnownNodes>
+  <KnownWorlds>
+    <World type="BrainSimulator.Testing.MyTestingWorld"/>    
+  </KnownWorlds>
+</Configuration>

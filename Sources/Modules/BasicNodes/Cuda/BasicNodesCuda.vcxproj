@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="CLA\CLAKernel.cu" />
+    <CudaCompile Include="CLA\CLATPKernel.cu" />
+    <CudaCompile Include="CLA\VectorDirectionKernel.cu" />
+    <CudaCompile Include="Clustering\KMeansKernel.cu" />
+    <CudaCompile Include="Common\CombineVectorsKernel.cu" />
+    <CudaCompile Include="Common\ConvolutionSingle.cu" />
+    <CudaCompile Include="Common\CopyRectangleKernel.cu" />
+    <CudaCompile Include="Common\Reduction\Reduction.cu" />
+    <CudaCompile Include="Common\SetAllButOneKernel.cu" />
+    <CudaCompile Include="Common\SetKernel.cu" />
+    <CudaCompile Include="Common\Statistics.cu" />
+    <CudaCompile Include="Drawing\CustomPong.cu" />
+    <CudaCompile Include="Drawing\GridWorld.cu" />
+    <CudaCompile Include="GrowingNeuralGas\ClearCanvasKernel.cu" />
+    <CudaCompile Include="GrowingNeuralGas\Draw2DConnectionKernel.cu" />
+    <CudaCompile Include="GrowingNeuralGas\Draw2DGasKernel.cu" />
+    <CudaCompile Include="GrowingNeuralGas\FBAObserverKernel.cu" />
+    <CudaCompile Include="GrowingNeuralGas\GrowingNeuralGasKernel.cu" />
+    <CudaCompile Include="Harm\MatrixQLearningKernel.cu" />
+    <CudaCompile Include="LSTM\LSTMDeltaKernel.cu" />
+    <CudaCompile Include="LSTM\LSTMFeedForwardKernel.cu" />
+    <CudaCompile Include="LSTM\LSTMPartialDerivativesKernel.cu" />
+    <CudaCompile Include="LSTM\LSTMUpdateWeightsKernel.cu" />
+    <CudaCompile Include="Motor\ChangeWeightsKernel.cu" />
+    <CudaCompile Include="Motor\CompareVectorsKernel.cu" />
+    <CudaCompile Include="Motor\FeedforwardKernel.cu" />
+    <CudaCompile Include="Motor\OutputDeltaKernel.cu" />
+    <CudaCompile Include="Motor\PIDControllerKernel.cu" />
+    <CudaCompile Include="Motor\RTRLDerivativeKernel.cu" />
+    <CudaCompile Include="NeuralNetwork\Convolution\ConvolutionKernel.cu" />
+    <CudaCompile Include="NeuralNetwork\Convolution\PoolingKernel.cu" />
+    <CudaCompile Include="NeuralNetwork\Layer\DeltaKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\Layer\FeedForwardKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\Layer\RegularizationTermKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\Layer\UpdateWeightsKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\LossFunctions\SquaredLossKernel.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\AdjustMemoryKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\EstimateLearningRateKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\FDCurvatureKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\GradientsKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\ShiftKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\UpdateMovingAveragesKernels.cu" />
+    <CudaCompile Include="NeuralNetwork\vSGD\UpdateParametersKernels.cu" />
+    <CudaCompile Include="Observers\ColorHelpers.cu" />
+    <CudaCompile Include="Observers\ColorScaleObserverDouble.cu" />
+    <CudaCompile Include="Observers\ColorScaleObserverInt32.cu" />
+    <CudaCompile Include="Observers\ColorScaleObserverSingle.cu" />
+    <CudaCompile Include="Observers\ComputeHistogramKernel.cu" />
+    <CudaCompile Include="Observers\DrawDigitsKernel.cu" />
+    <CudaCompile Include="Observers\DrawMatrixKernel.cu" />
+    <CudaCompile Include="Observers\FocuserInputObserver.cu" />
+    <CudaCompile Include="Observers\PlotObserverCycleKernel.cu" />
+    <CudaCompile Include="Observers\PlotObserverScaleDownScaleKernel.cu" />
+    <CudaCompile Include="Observers\PlotObserverScaleKernel.cu" />
+    <CudaCompile Include="Observers\PlotObserverScrollKernel.cu" />
+    <CudaCompile Include="Observers\PlotObserverScrollShiftKernel.cu" />
+    <CudaCompile Include="Observers\SpikeRasterObserverKernel.cu" />
+    <CudaCompile Include="Observers\VerticalLineKernel.cu" />
+    <CudaCompile Include="Observers\VisualizeHistogramKernel.cu" />
+    <CudaCompile Include="Predictions\ResetLayerKernel.cu" />
+    <CudaCompile Include="RBM\RBMKernels.cu" />
+    <CudaCompile Include="Retina\FindBrightSpotKernel.cu" />
+    <CudaCompile Include="Transforms\EdgeDetectionKernel.cu" />
+    <CudaCompile Include="Transforms\IntervalToBinaryVector.cu" />
+    <CudaCompile Include="Transforms\InvertValuesKernel.cu" />
+    <CudaCompile Include="Transforms\OpticalFlow.cu" />
+    <CudaCompile Include="Transforms\Transform2DKernels.cu" />
+    <CudaCompile Include="Transforms\TransformKernels.cu" />
+    <CudaCompile Include="Transforms\Variance3x3Kernel.cu" />
+    <CudaCompile Include="Vision\JoinPatches.cu" />
+    <CudaCompile Include="Vision\JoinPatchesObs.cu" />
+    <CudaCompile Include="Vision\KMeansWM.cu" />
+    <CudaCompile Include="Vision\Matrix.cu" />
+    <CudaCompile Include="Vision\Saccade.cu" />
+    <CudaCompile Include="Vision\SaccadeObs.cu" />
+    <CudaCompile Include="Vision\Segment.cu" />
+    <CudaCompile Include="Vision\SegmentObs.cu" />
+    <CudaCompile Include="Vision\VisionMath.cu" />
+    <CudaCompile Include="Vision\VisionObsFce.cu" />
+    <CudaCompile Include="VSA\RandomMapper.cu" />
+    <CudaCompile Include="VSA\SpatialCoder.cu" />
+    <CudaCompile Include="VSA\SymbolicGrid.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\helper_math.h" />
+    <ClInclude Include="Common\Reduction\f_Cosine_f.cuh" />
+    <ClInclude Include="Common\Reduction\f_Dot_f.cuh" />
+    <ClInclude Include="Common\Reduction\f_MaxIdx_ff.cuh" />
+    <ClInclude Include="Common\Reduction\f_MaxIdx_fi.cuh" />
+    <ClInclude Include="Common\Reduction\f_MinIdxMaxIdx_fifi.cuh" />
+    <ClInclude Include="Common\Reduction\f_MinIdx_ff.cuh" />
+    <ClInclude Include="Common\Reduction\f_MinIdx_fi.cuh" />
+    <ClInclude Include="Common\Reduction\f_MinMax_2f.cuh" />
+    <ClInclude Include="Common\Reduction\f_Sum_f.cuh" />
+    <ClInclude Include="Common\Reduction\i_Dot_i.cuh" />
+    <ClInclude Include="Common\Reduction\i_MaxIdx_2i.cuh" />
+    <ClInclude Include="Common\Reduction\i_MinIdxMaxIdx_4i.cuh" />
+    <ClInclude Include="Common\Reduction\i_MinIdx_2i.cuh" />
+    <ClInclude Include="Common\Reduction\i_Sum_i.cuh" />
+    <ClInclude Include="Common\Reduction\SharedMemory.cuh" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}</ProjectGuid>
+    <RootNamespace>BasicNodesCuda</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 7.0.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
+    <IntDir>bin\$(Configuration)\</IntDir>
+    <TargetExt />
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CudaToolkitDir)\include;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CompileOut>$(OutDir)%(RelativeDir)%(Filename).ptx</CompileOut>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
+      <NvccCompilation>ptx</NvccCompilation>
+      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 7.0.targets" />
+  </ImportGroup>
+</Project>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration RootNamespace="BrainSimulator">  
+  <KnownNodes>
+
+    <Node type="BrainSimulator.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png" />
+
+    <Node type="BrainSimulator.Testing.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png" />
+    
+    <Node type="BrainSimulator.Retina.MyPupilControl" CanBeAdded="true" BigIcon="observer_big.png" SmallIcon="observer.png">
+      <Observer type="BrainSimulator.Observers.MyPupilControlObserver" />
+    </Node>
+    
+    <Node type="BrainSimulator.CLA.MyNupicNode" CanBeAdded="true" />
+    <Node type="BrainSimulator.SparseCoding.MyScalarToSDRNode" CanBeAdded="true" />
+
+    <Node type="BrainSimulator.Common.MyCsvFileWriterNode" CanBeAdded="true" />
+    
+    <Node type="BrainSimulator.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="matrixNode_big.png" SmallIcon="matrixNode.png" />
+    
+    <Node type="BrainSimulator.Vision.MySegment" CanBeAdded="true" BigIcon="Seg_big.png" SmallIcon="Seg.png">
+      <Observer type="BrainSimulator.Observers.MySegmentObserver" />
+    </Node>
+    <Node type="BrainSimulator.Vision.MyJoinPatches" CanBeAdded="true" BigIcon="ProcImPatchBasic_big.png" SmallIcon="ProcImPatchBasic.png">
+      <Observer type="BrainSimulator.Observers.MyJoinPatchesObserver" />
+    </Node>
+    <Node type="BrainSimulator.Vision.MySaccade" CanBeAdded="true" BigIcon="Saccad_big.png" SmallIcon="Saccad.png">
+      <Observer type="BrainSimulator.Observers.MySaccadeObserver" />
+    </Node>
+    <Node type="BrainSimulator.Vision.MyKMeansWM" CanBeAdded="true" BigIcon="VWM_big.png" SmallIcon="VWM.png">
+      <Observer type="BrainSimulator.Observers.MyKMeansWMObserver" />
+    </Node>
+
+    <Node type="BrainSimulator.Common.MyGenerateInput" CanBeAdded="true" BigIcon="numGenerator_big.png" SmallIcon="numGenerator.png" />
+
+    <Node type="BrainSimulator.Retina.MyFocuser" CanBeAdded="true" BigIcon="observer_big.png" SmallIcon="observer.png">
+      <Observer type="BrainSimulator.Observers.MyFocuserInputObserver" />
+      <Observer type="BrainSimulator.Observers.MyFocuserObjectsObserver" />
+    </Node>
+
+    <Node type="BrainSimulator.NeuralGas.MyGrowingNeuralGasNode" CanBeAdded="true">
+      <Observer type="BrainSimulator.NeuralGas.My2DGasObserver" />
+      <Observer type="BrainSimulator.NeuralGas.MyFBAObserver" />
+    </Node>
+
+    <Node type="BrainSimulator.Motor.MyMusclesNode" CanBeAdded="true" />
+    <Node type="BrainSimulator.Motor.MyRecurrentNetwork" CanBeAdded="true" />
+    <Node type="BrainSimulator.Motor.MyColumnToVectorNode" CanBeAdded="true" />
+    <Node type="BrainSimulator.Motor.MyControllerNode" CanBeAdded="true" />
+    <Node type="BrainSimulator.Motor.MySequenceRecorderNode" CanBeAdded="true" />
+    <Node type="BrainSimulator.Motor.MyJacobianTransposeControl" CanBeAdded="true" />
+    
+    <Node type="BrainSimulator.VSA.MyBindingNode" CanBeAdded="true" BigIcon="link_big.png" SmallIcon="link.png" />
+    <Node type="BrainSimulator.VSA.MyCodeBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png" />
+    <Node type="BrainSimulator.VSA.MyCombinationBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png" />
+    <Node type="BrainSimulator.VSA.MyRandomMapper" CanBeAdded="true" BigIcon="norm_big.png" SmallIcon="norm.png" />
+    <Node type="BrainSimulator.VSA.MySymbolicGrid" CanBeAdded="true" />
+    <Node type="BrainSimulator.VSA.MySpatialCoder" CanBeAdded="true" BigIcon="spatial_coder_big.png" SmallIcon="spatial_coder.png" />
+
+    <Node type="BrainSimulator.VSA.Hashes.MyHashMapper" CanBeAdded="true"/>
+    <Node type="BrainSimulator.VSA.Hashes.MyHashingMemory" CanBeAdded="true"/>
+    <Node type="BrainSimulator.VSA.MyTransformLearningNode" CanBeAdded="true"/>
+    
+    <Node type="BrainSimulator.Harm.MyDiscreteQLearningNode" CanBeAdded="true" BigIcon="qagent_big.png" SmallIcon="qagent.png">
+      <Observer type="BrainSimulator.Observers.MyQLearningObserver"/>
+    </Node>
+    
+    <Node type="BrainSimulator.Harm.MyDiscreteHarmNode" CanBeAdded="true" BigIcon="harm_big.png" SmallIcon="harm.png"> 
+      <Observer type="BrainSimulator.Observers.MySRPObserver"/>
+    </Node>
+
+    <Node type="BrainSimulator.Harm.MyActionSelectionNode" CanBeAdded="true" BigIcon="asm_big.png" SmallIcon="asm.png" />
+    <Node type="BrainSimulator.Harm.MyDetectChangesNode" CanBeAdded="true" BigIcon="reward_big.png" SmallIcon="reward.png" />
+    
+    <Node type="BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup" CanBeAdded="true"/>
+    <Node type="BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer" CanBeAdded="true"/>
+    <Node type="BrainSimulator.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true"/>
+
+    <Node type="BrainSimulator.RBM.MyRBMGroup" CanBeAdded="true"/>
+    <Node type="BrainSimulator.RBM.MyRBMInputLayer" CanBeAdded="true"/>
+    <Node type="BrainSimulator.RBM.MyRBMLayer" CanBeAdded="true">
+      <Observer type="BrainSimulator.Observers.MyRBMFilterObserver" />
+    </Node>
+
+    <Node type="BrainSimulator.NeuralNetwork.Layers.MyPoolingLayer" CanBeAdded="true"/>
+    <Node type="BrainSimulator.NeuralNetwork.Layers.MyConvolutionLayer" CanBeAdded="true"/>
+
+  	<Node type="BrainSimulator.LSTM.MyLSTMLayer" CanBeAdded="true"/>
+
+  </KnownNodes>
+  <KnownWorlds>
+    <World type="BrainSimulator.Motor.MyArmWorld" />  
+    
+    <World type="BrainSimulator.Motor.My3DManipulatorWorld" CanBeAdded="true">
+      <Observer type="BrainSimulator.Motor.My3DWorldObserver" />
+    </World>
+    <World type="BrainSimulator.Motor.My3DPendulumWorld" CanBeAdded="true">
+      <Observer type="BrainSimulator.Motor.My3DWorldObserver" />
+    </World>
+    <World type="BrainSimulator.Motor.My3DBipedalRobotWorld" CanBeAdded="true">
+      <Observer type="BrainSimulator.Motor.My3DWorldObserver" />
+    </World>
+
+    <World type="BrainSimulator.GameBoy.MyCustomPongWorld" />
+    <World type="BrainSimulator.GridWorld.MyGridWorld" />
+    <World type="BrainSimulator.TicTacToe.MyTicTacToeWorld" />
+    <World type="BrainSimulator.GameBoy.My2DAgentWorld" />
+  </KnownWorlds>
+</Configuration>

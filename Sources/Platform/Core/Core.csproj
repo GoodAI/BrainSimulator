@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GoodAI.Platform.Core</RootNamespace>
+    <AssemblyName>GoodAI.Platform.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CudaRand">
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaRand.dll</HintPath>
+    </Reference>
+    <Reference Include="ManagedCuda">
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\ManagedCuda.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="YAXLib">
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\MyBaseConversion.cs" />
+    <Compile Include="Configuration\MyModuleConfig.cs" />
+    <Compile Include="Configuration\MyNodeConfig.cs" />
+    <Compile Include="Execution\MyExecutionBlock.cs" />
+    <Compile Include="Execution\MySimulation.cs" />
+    <Compile Include="Execution\MySimulationHandler.cs" />
+    <Compile Include="Execution\MyExecutionPlanner.cs" />
+    <Compile Include="Execution\MyPartitionStrategy.cs" />
+    <Compile Include="Execution\MyTaskExecutor.cs" />
+    <Compile Include="Memory\MemoryBlockSerializer.cs" />
+    <Compile Include="Nodes\MyConditionalGroup.cs" />
+    <Compile Include="Nodes\MyDataGate.cs" />
+    <Compile Include="Nodes\MyGateInput.cs" />
+    <Compile Include="Nodes\MyJoin.cs" />
+    <Compile Include="Nodes\MyNodeInfo.cs" />
+    <Compile Include="Nodes\MyUserInput.cs" />
+    <Compile Include="Observers\MyMemoryBlockEditor.cs" />
+    <Compile Include="Observers\MyHistogramObserver.cs" />
+    <Compile Include="Observers\MyShape.cs" />
+    <Compile Include="Observers\MySpikeRasterObserver.cs" />
+    <Compile Include="Transforms\MyReduction.cs" />
+    <Compile Include="Utils\BidirHashtable.cs" />
+    <Compile Include="Utils\MyGeneralSignals.cs" />
+    <Compile Include="Utils\MyHierarchicalOrdering.cs" />
+    <Compile Include="Utils\MyPathSerializer.cs" />
+    <Compile Include="Utils\MySignal.cs" />
+    <Compile Include="Observers\MyAbstractMemoryBlockObserver.cs" />
+    <Compile Include="Observers\MyMatrixObserver.cs" />
+    <Compile Include="Observers\MyTimePlotObserver.cs" />
+    <Compile Include="Observers\MyTextDrawingOps.cs" />
+    <Compile Include="Memory\MyMemoryBlock.cs" />
+    <Compile Include="Memory\MyMemoryManager.cs" />
+    <Compile Include="MyKernelFactory.cs" />
+    <Compile Include="Nodes\MyConnection.cs" />
+    <Compile Include="Nodes\MyFork.cs" />
+    <Compile Include="Nodes\MyParentInput.cs" />
+    <Compile Include="Nodes\MyNetwork.cs" />
+    <Compile Include="Nodes\MyNode.cs" />
+    <Compile Include="Nodes\MyNodeGroup.cs" />
+    <Compile Include="Nodes\MyOutput.cs" />
+    <Compile Include="Nodes\MyWorkingNode.cs" />
+    <Compile Include="Nodes\MyWorld.cs" />
+    <Compile Include="Observers\MyMemoryBlockObserver.cs" />
+    <Compile Include="Observers\MyObserver.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Task\IMyExecutable.cs" />
+    <Compile Include="Task\MyTask.cs" />
+    <Compile Include="Transforms\MyAnalyze2D.cs" />
+    <Compile Include="Transforms\MyHash.cs" />
+    <Compile Include="Transforms\MyResize2D.cs" />
+    <Compile Include="Transforms\MyAccumulator.cs" />
+    <Compile Include="Transforms\MyTransform.cs" />
+    <Compile Include="Transforms\MyFilter2D.cs" />
+    <Compile Include="Utils\MyAttributeExtension.cs" />
+    <Compile Include="Utils\MyAttributes.cs" />
+    <Compile Include="Utils\Log.cs" />
+    <Compile Include="Configuration\MyConfiguration.cs" />
+    <Compile Include="Utils\MyLocation.cs" />
+    <Compile Include="Utils\MyProject.cs" />
+    <Compile Include="Utils\MyDictionarySerializer.cs" />
+    <Compile Include="Utils\MyUsedModuleInfo.cs" />
+    <Compile Include="Utils\MyValidationMessage.cs" />
+    <Compile Include="Utils\MyValidator.cs" />
+    <Compile Include="Utils\MyFlatOrdering.cs" />
+    <Compile Include="Utils\Options.cs" />
+    <Compile Include="Utils\MyResources.cs" />
+    <Compile Include="Versioning\MyConversion.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="conf\nodes.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\plot_char.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\plain.png" />
+    <EmbeddedResource Include="res\plain_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\abs.png" />
+    <EmbeddedResource Include="res\abs_big.png" />
+    <EmbeddedResource Include="res\ceil_floor.png" />
+    <EmbeddedResource Include="res\ceil_floor_big.png" />
+    <EmbeddedResource Include="res\delayedcopy.png" />
+    <EmbeddedResource Include="res\delayedcopy_big.png" />
+    <EmbeddedResource Include="res\fork.png" />
+    <EmbeddedResource Include="res\fork_big.png" />
+    <EmbeddedResource Include="res\gate.png" />
+    <EmbeddedResource Include="res\gate_big.png" />
+    <EmbeddedResource Include="res\group.png" />
+    <EmbeddedResource Include="res\group_big.png" />
+    <EmbeddedResource Include="res\group_signal.png" />
+    <EmbeddedResource Include="res\group_signal_big.png" />
+    <EmbeddedResource Include="res\hash.png" />
+    <EmbeddedResource Include="res\hash_big.png" />
+    <EmbeddedResource Include="res\imagescale.png" />
+    <EmbeddedResource Include="res\imagescale_big.png" />
+    <EmbeddedResource Include="res\input_big.png" />
+    <EmbeddedResource Include="res\input.png" />
+    <EmbeddedResource Include="res\join.png" />
+    <EmbeddedResource Include="res\join_big.png" />
+    <EmbeddedResource Include="res\keypad.png" />
+    <EmbeddedResource Include="res\keypad_big.png" />
+    <EmbeddedResource Include="res\linear.png" />
+    <EmbeddedResource Include="res\linear_big.png" />
+    <EmbeddedResource Include="res\reduce.png" />
+    <EmbeddedResource Include="res\reduce_big.png" />
+    <EmbeddedResource Include="res\sine.png" />
+    <EmbeddedResource Include="res\sine_big.png" />
+    <EmbeddedResource Include="res\threshold.png" />
+    <EmbeddedResource Include="res\threshold_big.png" />
+    <EmbeddedResource Include="res\transform.png" />
+    <EmbeddedResource Include="res\transform_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\output.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\output_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="conf\doc.xml" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="res\world.png" />
+    <EmbeddedResource Include="res\world_big.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.Platform.Core</name>
+    </assembly>
+    <members>
+        <member name="T:BrainSimulator.Execution.MyExecutionBlock">
+            Container for multiple IMyExecutable objects
+        </member>
+        <member name="M:BrainSimulator.Execution.MyExecutionBlock.#ctor(BrainSimulator.Task.IMyExecutable[])">
+            <summary>
+            Creates MyExecutionBlock from given IMyExecutable elements
+            </summary>
+            <param name="children">List of elements</param>
+        </member>
+        <member name="M:BrainSimulator.Execution.MyExecutionBlock.ExecuteStep">
+            Executes current IMyExecutable children and moves to next one
+        </member>
+        <member name="M:BrainSimulator.Execution.MyExecutionBlock.Reset">
+            Go back to first element of MyExecutionBlock
+        </member>
+        <member name="M:BrainSimulator.Execution.MyExecutionBlock.Execute">
+            Executes all children elements
+        </member>
+        <member name="M:BrainSimulator.Execution.MyExecutionBlock.Iterate(System.Boolean,BrainSimulator.Execution.MyExecutionBlock.IteratorAction)">
+            <summary>
+            Iterates over all children and performs action on all of them
+            </summary>
+            <param name="recursive">Iterate recursively if set to true</param>
+            <param name="action">Action to perform on iterated elements</param>
+        </member>
+        <member name="P:BrainSimulator.Execution.MyExecutionBlock.CurrentChild">
+            Element which is to be run next
+        </member>
+        <member name="P:BrainSimulator.Execution.MyExecutionBlock.Children">
+            All children elements
+        </member>
+        <member name="T:BrainSimulator.Execution.MyIfBlock">
+            <summary>
+            Execution block with IF condition. Block is run, only when condition is met
+            </summary>
+        </member>
+        <member name="M:BrainSimulator.Execution.MyIfBlock.#ctor(System.Func{System.Boolean},BrainSimulator.Task.IMyExecutable[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="condition">Condition to be met</param>
+            <param name="children">Children of MyExecutionBlock</param>
+        </member>
+        <member name="T:BrainSimulator.Execution.MyLoopBlock">
+            <summary>
+            Execution block which can be run multiple times
+            </summary>
+        </member>
+        <member name="M:BrainSimulator.Execution.MyLoopBlock.#ctor(System.Func{System.Int32,System.Boolean},BrainSimulator.Task.IMyExecutable[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="condition">Function controlling the run</param>
+            <param name="children">Children of MyExecutionBlock</param>
+        </member>
+        <member name="M:BrainSimulator.Execution.MyLocalSimulation.Init">
+            <summary>
+            Creates execution plan for project
+            </summary>
+        </member>
+        <member name="M:BrainSimulator.Execution.MyLocalSimulation.PerformStep(System.Boolean)">
+            <summary>
+            Performs one step of simulation
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.Execution.MySimulationHandler">
+            Managers MySimulation run
+        </member>
+        <member name="M:BrainSimulator.Execution.MySimulationHandler.#ctor(System.ComponentModel.BackgroundWorker)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="backgroundWorker">Worker, which will manage the simulation run</param>
+        </member>
+        <member name="M:BrainSimulator.Execution.MySimulationHandler.StartSimulation(System.Boolean)">
+            <summary>
+            Starts simulation
+            </summary>
+            <param name="oneStepOnly">Only one step of simulation is performed when true</param>
+        </member>
+        <member name="E:BrainSimulator.Execution.MySimulationHandler.StateChanged">
+            <summary>
+            Emmited when simulation changes its SimulationState
+            </summary>
+        </member>
+        <member name="E:BrainSimulator.Execution.MySimulationHandler.ProgressChanged">
+            <summary>
+            Emmited each ReportInterval, or when only one step of simulation is ran
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.Execution.MyExecutionPlan">
+            Plan for executing the tasks on GPUs
+        </member>
+        <member name="T:BrainSimulator.Execution.MyAllInOneGPUPartitioning">
+            Puts all tasks on one GPU
+        </member>
+        <member name="M:BrainSimulator.Execution.MyAllInOneGPUPartitioning.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="numGPUs">Number of available GPUs</param>
+            <param name="selected">ID of GPU where tasks will run</param>
+        </member>
+        <member name="M:BrainSimulator.Execution.MyAllInOneGPUPartitioning.Divide(BrainSimulator.Execution.MyExecutionPlan)">
+            <summary>
+            Performs partitioning
+            </summary>
+            <param name="executionPlan">Generic execution plan</param>
+            <returns>Execution plans for all GPUs</returns>
+        </member>
+        <member name="T:BrainSimulator.Execution.MyThreadPool">
+            Run the tasks
+        </member>
+        <member name="T:BrainSimulator.Execution.ThreadExecInfo">
+            Stores information about thread
+        </member>
+        <member name="T:BrainSimulator.Nodes.MyConditionalGroup">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Groups several nodes to one entity. Inside of a group is executed only on specific incoming signal.</summary>
+            <description>Enables nodes to be put inside a group, which makes model more structured. 
+            Nodes inside are executed only when appropriate signal is present.</description>
+        </member>
+        <member name="T:BrainSimulator.Nodes.MyNodeGroup">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Groups several nodes to one entity.</summary>
+            <description>Enables nodes to be put inside a group, which makes model more structured.</description>
+        </member>
+        <member name="F:BrainSimulator.Nodes.MyJoin.MyJoinOperation.Addition">
+            DON'T CHANGE ORDERING OF THESE!!!!
+        </member>
+        <member name="F:BrainSimulator.Nodes.MyJoin.MyJoinOperation.AddToIdcs">
+            DON'T CHANGE ORDERING OF THESE!!!!
+        </member>
+        <member name="F:BrainSimulator.Nodes.MyJoin.MyJoinOperation.StackInputs">
+            Matrix mutliplication
+        </member>
+        <member name="M:BrainSimulator.MyKernelFactory.ContextsCreate">
+            Creates all CUDA contexts
+        </member>
+        <member name="M:BrainSimulator.MyKernelFactory.ContextsDispose">
+            Destroys all CUDA contexts
+        </member>
+        <member name="T:BrainSimulator.Nodes.MyFork">
+            <author>GoodAI</author>
+            <meta>df,mb</meta>
+            <status>Working</status>
+            <summary>Splits input to several outputs</summary>
+            <description>Use Branches property to specify splitting.
+            Sizes are specified as comma separated list. You can use '*', in places which should be
+            calculated automatically. </description>
+        </member>
+        <member name="T:BrainSimulator.Nodes.MyFork.MyForkTask">
+            <summary>
+            The input is split and copied to outputs according the given output sizes.
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.Transforms.MyThreshold">
+            <author>GoodAI</author>
+            <meta>mb</meta>
+            <status>Working</status>
+            <summary> </summary>
+            <description>
+            </description>
+        </member>
+        <member name="T:BrainSimulator.Transforms.MyPolynomialFunction">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Applies polynomial function on each member of input array.</summary>
+            <description>f(x) = a<sub>3</sub>x<sup>3</sup> + a<sub>2</sub>x<sup>2</sup> + a<sub>1</sub>x + a<sub>0</sub></description>
+        </member>
+        <member name="T:BrainSimulator.Transforms.MyPolynomialFunction.MyPolynomialFunctionTask">
+            <summary>Applies polynomial function with given coeffitients (up to third degree) on all input values.</summary>
+        </member>
+        <member name="M:BrainSimulator.Utils.MyProject.ShortenNodeTypeName(System.Type)">
+            <summary>Strips "My" prefix (only when it is followed by a capital letter)</summary>
+        </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert2To3(System.String)">
+            <summary>
+            Pascal's refactoring of MultiLayer Network Node (new namespace and location of tasks).
+            </summary>  
+        </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert3To4(System.String)">
+            <summary>
+            Permutation class' member name changes
+            Author: Martin Milota
+            </summary>  
+        </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert4To5(System.String)">
+            <summary>
+            Moving gameboy to a standalone module
+            </summary>  
+        </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert5To6(System.String)">
+            <summary>
+            MyHiddenlayer and MyOutputLayer rename
+            </summary>        
+        </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert6To7(System.String)">
+            <summary>
+            convert BrainSimulator.FeedForward namespace to XmlFeedForwardNet
+            </summary>        
+        </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert7To8(System.String)">
+            <summary>
+            convert QMatrix observer name
+            </summary>        
+        </member>
+    </members>
+</doc>

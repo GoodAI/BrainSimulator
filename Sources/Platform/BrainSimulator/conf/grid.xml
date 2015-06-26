@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GridNodes>
+  <GridNode Name="MARTIN" IP="192.168.2.48"/>
+  <GridNode Name="HONZA" IP="192.168.2.20"/>
+  <!--
+  <GridNode Name="JOSEF" IP="192.168.2.22"/>
+  <GridNode Name="RADO" IP="192.168.2.35"/>  
+  <GridNode Name="i7" IP="192.168.1.2"/>
+  <GridNode Name="ASUS" IP="192.168.1.120"/>
+  -->
+</GridNodes>

@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h2>Overview</h2>    
+    The Brain Simulator project is a framework/library/application for effective development/testing of our neural models. It will allow you to: 
+    <ul>
+        <li>Incorporate your model as a unified part of our system</li>
+        <li>Simulate its behavior against various environments (worlds)</li>
+        <li>Combine it with other existing models</li>
+        <li>Tune your algorithm parameters effectively</li>        
+        <li>Visualize your data (inner memory, outputs etc.) with various rendering options</li>
+        <li>Write your own visualizers if needed</li>
+    </ul>
+    <h3>Project Structure</h3>
+    The solution consists of four major projects:
+    <ul>
+        <li><strong>BrainSimulator</strong> - Core project, you need not to modify it at all</li>
+        <li><strong>BrainSimulatorGUI</strong> - Simulation frontend, you will alter only configuration of here (hopefully, we can get rid this in future as well)</li>
+        <li><strong>MyCudaKernels</strong> - A place to store your CUDA kernels which are needed for your model execution</li>
+        <li><strong>CustomModels</strong> - A place where you put your C# code and implement a wrapper class for your model</li>
+    </ul>
+    Surely, there will be a situation where existing API won't be enough for your brand new model and the core project needs to be modified. 
+    Please inform me if such situation arise and we will implement it together.
+    <h3>Framework Basics</h3>
+
+    <p>
+        From your model point of view, you are representing a node in a kind of graph superstructure. 
+        The outer system does not need to know how exactly is your model structured if you don't need to expose it.
+        On the other hand, you will be separated from the outer system almost completely. On the next figure, there is structure of a model you are going to follow:
+    </p>
+    <p>
+        <img src="https://vss.keenswh.com:8443/svn/KeenSWH/AI/Blog/Images/brain_sim/node.png"/>
+    </p>
+        Basically, you will organize your kernels into a set of <strong>tasks</strong>. Every task should aggregate a sub-step of your model (i.e. init stage, reward stage, etc.).
+        Additionally, you can define a set of <strong>parameters</strong> both for task and for the node itself. 
+        Finally, your model will need a place to store data, so you can define a number of <strong>memory blocks</strong> and set size of these according to defined parameters.
+        During execution, every memory block is allocated on host and on one or more devices (depends on how many GPUs you have). You are able to access the host memory from CPU code and pass device meory to kernels.
+        Also, you have some limited control of memory transfers, as you can instruct the system to sync the content of the memory block in the task specific CPU code.
+    <p>
+        For every node, there will two memory blocks by default, <strong>input</strong> and <strong>output</strong>. 
+        The input memory block will be served to you from an input connection and you have no rights to store any data there. 
+        Also, you cannot set its size but you can tell if it's correct for your model (see validation below).   
+        The output memory block is your own. You can set its size and fill it with your output data.
+    </p>
+    
+    <h2>Custom Model Implementation</h2>
+    <p>
+        To add your model to the project, you have to implement a wrapper class (or classes) for it. Generally, you will derive the <code>BrainSimulator.Node.MyWorkingNode</code> class.
+        See the following snippet for details:
+    </p>    
+
+<div style="border: #000080 1px solid; color: #000; font-family: 'Courier New', Courier, Monospace; font-size: 10pt">
+<div style="background-color: #f6f6f6; overflow: auto; padding: 2px 5px;"><span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">YAXSerializeAs</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Neurons&quot;</span><span style="background:#f6f6f6;color:#000000">)]</span><br>
+<span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">class</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyTestingNode</span><span style="background:#f6f6f6;color:#000000"> : </span><span style="background:#f6f6f6;color:#006684">MyWorkingNode</span><br>
+<span style="background:#f6f6f6;color:#000000">{</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Node properties</span><br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">MyBrowsable</span><span style="background:#f6f6f6;color:#000000">, </span><span style="background:#f6f6f6;color:#006684">Category</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Structure&quot;</span><span style="background:#f6f6f6;color:#000000">)] </span><span style="background:#f6f6f6;color:#008000">//these are for the property grid</span><br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">YAXSerializableField</span><span style="background:#f6f6f6;color:#000000">(DefaultValue = 2), </span><span style="background:#f6f6f6;color:#006684">YAXElementFor</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Structure&quot;</span><span style="background:#f6f6f6;color:#000000">)] </span><span style="background:#f6f6f6;color:#008000">//these are for XML serializer</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">int</span><span style="background:#f6f6f6;color:#000000"> InputsPerNeuron { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">MyBrowsable</span><span style="background:#f6f6f6;color:#000000">, </span><span style="background:#f6f6f6;color:#006684">Category</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Structure&quot;</span><span style="background:#f6f6f6;color:#000000">)]</span><br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">YAXSerializableField</span><span style="background:#f6f6f6;color:#000000">(DefaultValue = 100), </span><span style="background:#f6f6f6;color:#006684">YAXElementFor</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Structure&quot;</span><span style="background:#f6f6f6;color:#000000">)]</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">int</span><span style="background:#f6f6f6;color:#000000"> NeuronsCount { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">MyBrowsable</span><span style="background:#f6f6f6;color:#000000">, </span><span style="background:#f6f6f6;color:#006684">Category</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Structure&quot;</span><span style="background:#f6f6f6;color:#000000">), </span><span style="background:#f6f6f6;color:#006684">ReadOnly</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">)]</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">int</span><span style="background:#f6f6f6;color:#000000"> SynapseCount { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; } </span><span style="background:#f6f6f6;color:#008000">//not editable in UI, not serialized</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Memory Blocks</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyMemoryBlock</span><span style="background:#f6f6f6;color:#000000">&lt;</span><span style="background:#f6f6f6;color:#0000ff">float</span><span style="background:#f6f6f6;color:#000000">&gt; Threshold { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyMemoryBlock</span><span style="background:#f6f6f6;color:#000000">&lt;</span><span style="background:#f6f6f6;color:#0000ff">float</span><span style="background:#f6f6f6;color:#000000">&gt; ActionPotential { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyMemoryBlock</span><span style="background:#f6f6f6;color:#000000">&lt;</span><span style="background:#f6f6f6;color:#0000ff">float</span><span style="background:#f6f6f6;color:#000000">&gt; Weight { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }        </span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyMemoryBlock</span><span style="background:#f6f6f6;color:#000000">&lt;</span><span style="background:#f6f6f6;color:#0000ff">int</span><span style="background:#f6f6f6;color:#000000">&gt; SynapseTo { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; } </span><span style="background:#f6f6f6;color:#008000">//any struct may be used for a memory block type</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Tasks</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyCUDAInitTask</span><span style="background:#f6f6f6;color:#000000"> InitNeurons { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyCUDANeuronTask</span><span style="background:#f6f6f6;color:#000000"> EvaluateNeurons { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyCUDASynapseTask</span><span style="background:#f6f6f6;color:#000000"> EvaluateSynapses { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }  </span><span style="background:#f6f6f6;color:#008000">//these are your classes</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> MyTestingNode() { }  </span><span style="background:#f6f6f6;color:#008000">//parameterless constructor</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Memory blocks size rules</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">void</span><span style="background:#f6f6f6;color:#000000"> UpdateMemoryBlocks()</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000">Threshold.Count = NeuronsCount;</span><br>
+        <span style="background:#f6f6f6;color:#000000">ActionPotential.Count = NeuronsCount;</span><br>
+        <span style="background:#f6f6f6;color:#000000">SynapseCount = NeuronsCount * InputsPerNeuron;</span><br>
+        <span style="background:#f6f6f6;color:#000000">Weight.Count = SynapseCount;</span><br>
+        <span style="background:#f6f6f6;color:#000000">SynapseTo.Count = SynapseCount;</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Validation rules</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">void</span><span style="background:#f6f6f6;color:#000000"> Validate(</span><span style="background:#f6f6f6;color:#006684">MyValidator</span><span style="background:#f6f6f6;color:#000000"> validator)</span><br>
+    <span style="background:#f6f6f6;color:#000000">{            </span><br>
+        <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">base</span><span style="background:#f6f6f6;color:#000000">.Validate(validator);</span><br>
+        <span style="background:#f6f6f6;color:#000000">validator.AssertWarning(NeuronsCount == OutputSize, </span><span style="background:#f6f6f6;color:#0000ff">this</span><span style="background:#f6f6f6;color:#000000">, </span><span style="background:#f6f6f6;color:#800080">&quot;Number of neurons should be equal to output size&quot;</span><span style="background:#f6f6f6;color:#000000">);                         </span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<span style="background:#f6f6f6;color:#000000">}</span></div>
+</div>
+    <p>
+        As you can see, the implementation relies heavily on annotations. You will use them on many places to inform the system how to handle your data/classes etc.. 
+    </p>
+    <p>Please notice several details in the implementation:</p>        
+    <ul>
+        <li>Properties:<ul>
+            <li>You can specify whatever <em>Category</em> you want as it is here just for well-structured UI property grid. Same applies for the <em>YAXElementFor</em> annotation.</li>
+            <li>The <em>DefaultValue</em> annotation is used both for deserialization (if not found in stored XML) and for newly added nodes.</li>
+        </ul></li>    
+        <li>Memory blocks:<ul>
+            <li>Your memory blocks must be declared as shown. Do not use arrays or lists of them. It's not supported (maybe in future, if needed)</li>
+            <li>The size of the memory block is defined as: <code>sizeof(item) * itemsCount</code>. There is a <code>MemoryBlock.Count</code> property for this.</li>
+            <li>Sizes of your memory blocks are usually dependent on parameters defined above. Put these rules into the <code>MyNode.UpdateMemoryBlocks()</code> method.</li>            
+            <li>Remember that you have <code>MyNode.Input</code> and <code>MyWorkingNode.Output</code> memory block available by default.</li>
+            <li>If some other conditions must be fulfilled for the correct execution, put them in the <code>MyNode.Validate()</code> method.</li>
+        </ul></li>
+        <li>Tasks:<ul>
+            <li>You must implement your own class for every task you need (see below).</li>
+            <li>Order of tasks in the source file will be preserved during the execution of your node.</li>
+        </ul></li>
+    </ul>
+
+    As a rule of thumb: <strong>do not implement constructor with parameters and do not instantiate any memory block or task!</strong> 
+    Your class will be analyzed for you and all necessary instantiations and allocations will be done automatically at the right time .
+
+    <h3>Task Implementation</h3>
+
+    <p>
+        For every custom task of your node, you have to implement the following class derived from the <code>BrainSimulator.Tasks.MyTask</code> class.
+        See the following code for details:
+    </p>
+
+
+<div style="border: #000080 1px solid; color: #000; font-family: 'Courier New', Courier, Monospace; font-size: 10pt">
+<div style="background-color: #f6f6f6; overflow: auto; padding: 2px 5px;"><span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">Description</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Initialize neurons&quot;</span><span style="background:#f6f6f6;color:#000000">), </span><span style="background:#f6f6f6;color:#006684">MyTaskInfo</span><span style="background:#f6f6f6;color:#000000">(OneShot = </span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">)] </span><span style="background:#f6f6f6;color:#008000">//you may specify if the task is executed only once per simulation (at the begining)</span><br>
+<span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">class</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyCUDAInitTask</span><span style="background:#f6f6f6;color:#000000"> : </span><span style="background:#f6f6f6;color:#006684">MyTask</span><span style="background:#f6f6f6;color:#000000">&lt;</span><span style="background:#f6f6f6;color:#006684">MyTestingNode</span><span style="background:#f6f6f6;color:#000000">&gt;</span><br>
+<span style="background:#f6f6f6;color:#000000">{</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Task specific parameters</span><br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">MyBrowsable</span><span style="background:#f6f6f6;color:#000000">, </span><span style="background:#f6f6f6;color:#006684">Category</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Params&quot;</span><span style="background:#f6f6f6;color:#000000">)]</span><br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">YAXSerializableField</span><span style="background:#f6f6f6;color:#000000">(DefaultValue = 1.5f)]</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">float</span><span style="background:#f6f6f6;color:#000000"> TH_INIT { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">MyBrowsable</span><span style="background:#f6f6f6;color:#000000">, </span><span style="background:#f6f6f6;color:#006684">Category</span><span style="background:#f6f6f6;color:#000000">(</span><span style="background:#f6f6f6;color:#800080">&quot;Params&quot;</span><span style="background:#f6f6f6;color:#000000">)]</span><br>
+    <span style="background:#f6f6f6;color:#000000">[</span><span style="background:#f6f6f6;color:#006684">YAXSerializableField</span><span style="background:#f6f6f6;color:#000000">(DefaultValue = 0.2f)]</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">float</span><span style="background:#f6f6f6;color:#000000"> AP_INIT { </span><span style="background:#f6f6f6;color:#0000ff">get</span><span style="background:#f6f6f6;color:#000000">; </span><span style="background:#f6f6f6;color:#0000ff">set</span><span style="background:#f6f6f6;color:#000000">; }</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> MyCUDAInitTask() { } </span><span style="background:#f6f6f6;color:#008000">//parameterless constructor</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">private</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyCudaKernel</span><span style="background:#f6f6f6;color:#000000"> m_additionalKernel; </span><span style="background:#f6f6f6;color:#008000">//put additional kernel as fields (or list of them)</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Kernel initialization</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">void</span><span style="background:#f6f6f6;color:#000000"> Init(</span><span style="background:#f6f6f6;color:#0000ff">int</span><span style="background:#f6f6f6;color:#000000"> nGPU)</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel = </span><span style="background:#f6f6f6;color:#006684">MyKernelFactory</span><span style="background:#f6f6f6;color:#000000">.Instance.KernelFactory.Kernel(nGPU, </span><span style="background:#f6f6f6;color:#800080">&quot;InitNeuronsKernel&quot;</span><span style="background:#f6f6f6;color:#000000">); </span><span style="background:#f6f6f6;color:#008000">//There is m_kernel field by default</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_additionalKernel = </span><span style="background:#f6f6f6;color:#006684">MyKernelFactory</span><span style="background:#f6f6f6;color:#000000">.Instance.KernelFactory.Kernel(nGPU, </span><span style="background:#f6f6f6;color:#800080">&quot;AdditionalKernel&quot;</span><span style="background:#f6f6f6;color:#000000">);</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Task execution</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">void</span><span style="background:#f6f6f6;color:#000000"> Execute()</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000">SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_TH_INIT&quot;</span><span style="background:#f6f6f6;color:#000000">, TH_INIT); </span><span style="background:#f6f6f6;color:#008000">//pass constants to your kernel in this way </span><br>
+        <span style="background:#f6f6f6;color:#000000">SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_AP_INIT&quot;</span><span style="background:#f6f6f6;color:#000000">, AP_INIT);</span><br>
+        <span style="background:#f6f6f6;color:#000000">SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_INPUT_S_PER_N&quot;</span><span style="background:#f6f6f6;color:#000000">, Owner.InputsPerNeuron); </span><span style="background:#f6f6f6;color:#008000">//you can pass node parameters as well</span><br>
+<br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetupExecution(Owner.NeuronsCount); </span><span style="background:#f6f6f6;color:#008000">//this will setup thread dimensions (or you can set it on the kernel itself)</span><br>
+<br>
+        <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Kernel execution</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.Run(</span><br>
+            <span style="background:#f6f6f6;color:#000000">Owner.Threshold,</span><br>
+            <span style="background:#f6f6f6;color:#000000">Owner.ActionPotential,</span><br>
+            <span style="background:#f6f6f6;color:#000000">Owner.NeuronsCount </span><span style="background:#f6f6f6;color:#008000">//you can fill in any parameter including your memory blocks which will be translated into proper pointers</span><br>
+        <span style="background:#f6f6f6;color:#000000">); </span><br>
+        <span style="background:#f6f6f6;color:#000000"></span><br>
+        <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//For additional kernels, use these methods</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_additionalKernel.SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_INPUT_S_PER_N&quot;</span><span style="background:#f6f6f6;color:#000000">, Owner.InputsPerNeuron);        </span><br>
+<span style="background:#f6f6f6;color:#000000"></span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetupExecution(m_additionalKernel, Owner.NeuronsCount);</span><br>
+<br>
+        <span style="background:#f6f6f6;color:#000000">m_additionalKernel.Run(</span><br>
+            <span style="background:#f6f6f6;color:#000000">Owner.Threshold, </span><br>
+            <span style="background:#f6f6f6;color:#000000">Owner.NeuronsCount);</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">void</span><span style="background:#f6f6f6;color:#000000"> ExecuteCPU()</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#008000">//Put the CPU version of task here (not mandatory)</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<span style="background:#f6f6f6;color:#000000">}</span></div>
+</div>
+
+    <p>Notice this:</p>        
+    <ul>
+        <li>There is the same option for task parameters, as for the parent node. Please consider the place where you are putting them. 
+            The node params should reflect the structure of the node. The task params should affects the task execution.</li>
+        <li>You can have as many kernels defined as you wish.</li>
+        <li>Kernel initialization must be placed inside the <code>MyTask.Init()</code> method to assure that they will be created on the proper GPU. <i>(This might get changed in the future and only the name of the kernel will be needed here)</i></li>
+        <li>The <code>MyTask.Execute()</code> method can contain any CPU code as well. For now, it's ok but consider that in future, we are going to use the remote execution on the cluster. 
+            All CPU code here will be a problem as there won't be any C# interpreter on the cluster <i>(there might be some scripting possibilities then, it's still an open problem)</i>.
+        </li>
+        <li>
+            For testing purposes, you can put a CPU version of your algorithms to the <code>MyTask.ExecuteCPU()</code> method. Remember that in this method, you can access only the host part of memory block.
+            <i>(The global CPU execution is not finished yet, use the original Execute method for now)</i>
+        </li>
+    </ul>
+
+    <h2>UI Registration</h2>
+    <p>
+        The last step of the custom model integration is the UI registration process. You have to modify the XML configuration file inside the <b>BrainSimulatorGUI</b> project.
+    </p>
+        The file is located here:     
+        <a href="https://vss.keenswh.com:8443/svn/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/conf/custom_nodes.xml">BrainSimulator/BrainSimulatorGUI/conf/custom_nodes.xml</a>
+        <i>(...we are thinking of moving the configuration file to the CustomModels project, so you will not need to modify the GUI project anymore)</i></p>
+    <p>
+        Simply, you need to add a line of code to the the <b>KnowNodes</b> element:
+    </p>
+
+    
+<div style="border: #000080 1px solid; color: #000; font-family: 'Courier New', Courier, Monospace; font-size: 10pt">
+<div style="background-color: #f6f6f6; overflow: auto; padding: 2px 5px;"><span style="background:#f6f6f6;color:#0000ff">&lt;?</span><span style="background:#f6f6f6;color:#a31515">xml</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">version</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">1.0</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">encoding</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">utf-8</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> ?&gt;</span><br>
+<span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Configuration</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+  <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">KnownNodes</span><span style="background:#f6f6f6;color:#0000ff">&gt;    </span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Node</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.Voting.MyVotingNode</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">CanBeAdded</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">InputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">OutputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">BigIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;filter_big.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">SmallIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;filter.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">/&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Node</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.Prediction.MyPredictionNode</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">CanBeAdded</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">InputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">OutputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">BigIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;prediction_big.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">SmallIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;prediction.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">/&gt;</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;!--</span><span style="background:#f6f6f6;color:#008000"> Add line like this</span><span style="background:#f6f6f6;color:#0000ff">--&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Node</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.Testing.MyTestingNode</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">CanBeAdded</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">InputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">OutputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">BigIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;network_big.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">SmallIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;network.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">/&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff"></span><br>
+  <span style="background:#f6f6f6;color:#0000ff">&lt;/</span><span style="background:#f6f6f6;color:#a31515">KnownNodes</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+  <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">KnownWorlds</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">World</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.Testing.MyTestingWorld</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">/&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">World</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.GameBoy.MyGameBoyWorld</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">/&gt;</span><br>
+  <span style="background:#f6f6f6;color:#0000ff">&lt;/</span><span style="background:#f6f6f6;color:#a31515">KnownWorlds</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+<span style="background:#f6f6f6;color:#0000ff">&lt;/</span><span style="background:#f6f6f6;color:#a31515">Configuration</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span></div>
+</div>
+
+    <p>
+        Icon attributes are not mandatory, as you will get default icons without them and I will create them later.
+        As you can see, there is an element named <b>KnownWorlds</b> where special world nodes are registered. 
+        These nodes are prepared in the exactly same manner but they are derived from the <code>BrainSimulator.Nodes.MyWorld</code> class. 
+        Later, they can be connected to the whole superstructure and realizes the main cycle of the simulation (World -> Network-> World for every step).        
+        And that's all. After a successful build and run of the GUI project, your model should appear in the UI model toolbar (see below) and you are ready to experiment with it.
+    </p>
+
+    <h2>UI Guide</h2>
+
+    We tried to keep the UI as simple as possible but it gets more complex in every iteration. If you find some behavior to complicated or you are missing some feature, just tell me.
+    Let's go through the common scenario of using the new model inside the simulator (there is an annotated screenshot below): 
+
+    <ul>
+        <li>Open, Save, or Create your project (1). You'll get the network node as default.</li>
+        <li>Drag nodes from the toolstrip (5) to the destop area. (node types will be explained below)</li>
+        <li>Connect nodes together as you need (7). Notice that nodes without input connection are considered as an error.</li>
+        <li>Inspect or modify parameters of created nodes (13). It should reflect your wrapped class.</li>
+        <li>Inspect tasks of your node (3) and their parameters (4).</li>
+        <li>Inspect memory blocks (16).</li>
+        <li>Add an observer window (11) to any memory block by double clicking on it or hitting the "add observer" button (15).</li>
+        <li>After selecting observer window (11), you can change your observer rendering method and other properties (13).</li>
+        <li>Select suitable world from the menu (6) and modify its parameters by selecting it (17).</li>
+        <li>Start, Pause, Step forward into the simulation (2) or correct possible errors shown in the validation window (18). Also, set your simulation between-step delay here.</li>  
+    </ul>
+    <p>
+        <img width="1252" height="846" src="https://vss.keenswh.com:8443/svn/KeenSWH/AI/Blog/Images/brain_sim/screen1.png"/>
+    </p>
+
+    <h3>Custom Observer Implementation</h3>
+    <p>
+        If a specific observer is needed for your node, you can implement one. The process is very similar to the task implementation except you will be deriving from the <code>MyNodeObserver<></code> class.
+    </p>
+    
+<div style="border: #000080 1px solid; color: #000; font-family: 'Courier New', Courier, Monospace; font-size: 10pt">
+<div style="background-color: #f6f6f6; overflow: auto; padding: 2px 5px;"><span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">class</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#006684">MyTestObserver</span><span style="background:#f6f6f6;color:#000000"> : </span><span style="background:#f6f6f6;color:#006684">MyNodeObserver</span><span style="background:#f6f6f6;color:#000000">&lt;</span><span style="background:#f6f6f6;color:#006684">MyTestingNode</span><span style="background:#f6f6f6;color:#000000">&gt;</span><br>
+<span style="background:#f6f6f6;color:#000000">{</span><br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">public</span><span style="background:#f6f6f6;color:#000000"> MyTestObserver(</span><span style="background:#f6f6f6;color:#006684">MyTestingNode</span><span style="background:#f6f6f6;color:#000000"> target) : </span><span style="background:#f6f6f6;color:#0000ff">base</span><span style="background:#f6f6f6;color:#000000">(target) </span><span style="background:#f6f6f6;color:#008000">//constructor with node parameter</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel = </span><span style="background:#f6f6f6;color:#006684">MyKernelFactory</span><span style="background:#f6f6f6;color:#000000">.Instance.KernelFactory.Kernel(</span><span style="background:#f6f6f6;color:#800080">&quot;VisualizationKernel&quot;</span><span style="background:#f6f6f6;color:#000000">);</span><br>
+<br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_COLOR_FIRE&quot;</span><span style="background:#f6f6f6;color:#000000">, 0xFFFFFC00);</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_COLOR_DEAD&quot;</span><span style="background:#f6f6f6;color:#000000">, 0xFFFFDDEE);</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_COLOR_UNDEF&quot;</span><span style="background:#f6f6f6;color:#000000">, 0xFF426639);</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetConstantVariable(</span><span style="background:#f6f6f6;color:#800080">&quot;D_N_AP_RESET&quot;</span><span style="background:#f6f6f6;color:#000000">, 0xFF426639); </span><span style="background:#f6f6f6;color:#008000">//some global constants</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">protected</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">int</span><span style="background:#f6f6f6;color:#000000"> GetTextureSize() </span><span style="background:#f6f6f6;color:#008000">//specify how many pixels you are going to render</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">return</span><span style="background:#f6f6f6;color:#000000"> Target.NeuronsCount;</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<br>
+    <span style="background:#f6f6f6;color:#000000"></span><span style="background:#f6f6f6;color:#0000ff">protected</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">override</span><span style="background:#f6f6f6;color:#000000"> </span><span style="background:#f6f6f6;color:#0000ff">void</span><span style="background:#f6f6f6;color:#000000"> RunKernel()</span><br>
+    <span style="background:#f6f6f6;color:#000000">{</span><br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.SetupExecution(Target.NeuronsCount);</span><br>
+<br>
+        <span style="background:#f6f6f6;color:#000000">m_kernel.Run(</span><br>
+            <span style="background:#f6f6f6;color:#000000">Target.Threshold,</span><br>
+            <span style="background:#f6f6f6;color:#000000">Target.ActionPotential,</span><br>
+            <span style="background:#f6f6f6;color:#000000">Target.NeuronLifePotential,</span><br>
+            <span style="background:#f6f6f6;color:#000000">Target.NeuronLastFired,</span><br>
+            <span style="background:#f6f6f6;color:#000000">VBODevicePointer,           </span><span style="background:#f6f6f6;color:#008000">//pixel memory you are going to write in</span><br>
+            <span style="background:#f6f6f6;color:#000000">Target.NeuronsCount</span><br>
+        <span style="background:#f6f6f6;color:#000000">);</span><br>
+    <span style="background:#f6f6f6;color:#000000">}</span><br>
+<span style="background:#f6f6f6;color:#000000">}    </span></div>
+</div>
+
+    <p>
+       Practically, you will be implementing a kernel which transforms your node specific data into a set of pixels. Also notice this:
+       <ul>
+           <li>Pass <b>VBODevicePointer</b> to the kernel and write your pixel data into it.</li>
+           <li>If the texture width and height is important (and known) to you, you can override the <code>UpdateTextureDimension()</code> method.</li> 
+           <li>An OpenGL context associated with each observer is always located on the last installed GPU, and consequently, memory transfer may be needed every step. For this reason, try to limit data sent to the rendering kernel.</li>
+       </ul>
+       Finally, you need to register the observer to your node. Put one additional line into the <i>custom_nodes.xml</i> file:
+    </p>
+    
+<div style="border: #000080 1px solid; color: #000; font-family: 'Courier New', Courier, Monospace; font-size: 10pt">
+<div style="background-color: #f6f6f6; overflow: auto; padding: 2px 5px;"><span style="background:#f6f6f6;color:#0000ff">&lt;?</span><span style="background:#f6f6f6;color:#a31515">xml</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">version</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">1.0</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">encoding</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">utf-8</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> ?&gt;</span><br>
+<span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Configuration</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+  <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">KnownNodes</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Node</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.Testing.MyNeuronsNode</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">CanBeAdded</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">InputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">OutputEnabled</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">true</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">BigIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;network_big.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">SmallIcon</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">res&#92;network.png</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+      <span style="background:#f6f6f6;color:#0000ff">&lt;!--</span><span style="background:#f6f6f6;color:#008000"> Add line like this </span><span style="background:#f6f6f6;color:#0000ff">--&gt;</span><br>
+      <span style="background:#f6f6f6;color:#0000ff">&lt;</span><span style="background:#f6f6f6;color:#a31515">Observer</span><span style="background:#f6f6f6;color:#0000ff"> </span><span style="background:#f6f6f6;color:#ff0000">type</span><span style="background:#f6f6f6;color:#0000ff">=</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">BrainSimulator.Testing.MyTestObserver</span><span style="background:#f6f6f6;color:#000000">&quot;</span><span style="background:#f6f6f6;color:#0000ff">/&gt;</span><br>
+    <span style="background:#f6f6f6;color:#0000ff">&lt;/</span><span style="background:#f6f6f6;color:#a31515">Node</span><span style="background:#f6f6f6;color:#0000ff">&gt;    </span><br>
+    <span style="background:#f6f6f6;color:#000000">...</span><br>
+  <span style="background:#f6f6f6;color:#0000ff">&lt;/</span><span style="background:#f6f6f6;color:#a31515">KnownNodes</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span><br>
+  <span style="background:#f6f6f6;color:#000000">...</span><br>
+<span style="background:#f6f6f6;color:#0000ff">&lt;/</span><span style="background:#f6f6f6;color:#a31515">Configuration</span><span style="background:#f6f6f6;color:#0000ff">&gt;</span></div>
+</div>
+    <p>
+        After successful build, you should be able to add your observer through a menu located in the Node Property panel (see UI screen, 14).
+    </p>
+</body>
+</html>
