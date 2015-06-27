@@ -2,6 +2,12 @@
 <Configuration RootNamespace="BrainSimulator">  
   <KnownNodes>
 
+    <Node type="BrainSimulator.Transforms.MyFilter2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png"/>
+    <Node type="BrainSimulator.Transforms.MyAnalyze2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png"/>
+    <Node type="BrainSimulator.Transforms.MyResize2D" CanBeAdded="true" BigIcon="imagescale_big.png" SmallIcon="imagescale.png"/>
+    <Node type="BrainSimulator.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="delayedcopy_big.png" SmallIcon="delayedcopy.png"/>
+    <Node type="BrainSimulator.Transforms.MyHash" CanBeAdded="true" BigIcon="hash_big.png" SmallIcon="hash.png"/>
+
     <Node type="BrainSimulator.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png" />
 
     <Node type="BrainSimulator.Testing.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png" />

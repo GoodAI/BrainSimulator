@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.MNIST</name>
+    </assembly>
+    <members>
+        <member name="M:MNIST.MyMNISTManager.ReverseBytes(System.Int32)">
+            <summary>
+            Converts between little-endian and big-endian
+            </summary>
+            <param name="value">Value to convert</param>
+            <returns></returns>
+        </member>
+        <member name="M:MNIST.MyMNISTManager.#ctor(System.String,System.Int32,System.Boolean,MNIST.MNISTLastImageMethod)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="baseFolder">Base folder with MNIST dataset files</param>
+            <param name="imagesCnt">How many images to load</param>
+            <param name="exact">If TRUE, you will get exactly imagesCnt images. If FALSE, you will get AT MOST imagesCnt images. It's here for performance reason and BC</param>
+            <param name="afterLastImage">What to do, after the last values has been sent</param>
+        </member>
+        <member name="M:MNIST.MyMNISTManager.GetNextImage(System.Int32[])">
+            <summary>
+            Gets the next values
+            </summary>
+            <param name="validNumbers">Array of integers, you want the selection restrict to.</param>
+            <returns>Array of arrays of floats, in which the values is encoded.</returns>
+        </member>
+        <member name="T:MNIST.MyMNISTWorld">
+            <author>Michal Vlasak</author>
+            <status>Working</status>
+            <summary>Provides MNIST dataset images</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.Retina.MyMovingObjectsWorld">
+            <author>Dusan Fedorcak</author>
+            <status>Working</status>
+            <summary>MNIST numbers moving accross the screen.
+            Number of objects, sizes, durations and velocities can be adjusted.</summary>
+            <description></description>
+        </member>
+    </members>
+</doc>

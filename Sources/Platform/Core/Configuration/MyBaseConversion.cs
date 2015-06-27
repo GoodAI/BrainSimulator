@@ -65,6 +65,21 @@ namespace BrainSimulator.Configuration
         //TODO: not safe enough
         public static Regex FILE_VERSION_PATTERN = new Regex("<Project Name=\\\".+\\\" FileVersion=\\\"\\d+\\\"");
 
+        public static string ConvertOldModuleNames(string xml)
+        {
+
+            string result = xml.Replace("BrainSimulator.dll", MyConfiguration.CORE_MODULE_NAME);
+            result = result.Replace("CustomModels.dll", MyConfiguration.BASIC_NODES_MODULE_NAME);
+            result = result.Replace("MNIST.dll", "GoodAI.MNIST.dll");
+
+            if (!xml.Equals(result))
+            {
+                MyLog.INFO.WriteLine("Old module names found and converted. Save is needed.");
+            }
+
+            return result;
+        }
+
         public static string ConvertOldFileVersioning(string xml)
         {
             Match m = FILE_VERSION_PATTERN.Match(xml);
@@ -81,7 +96,7 @@ namespace BrainSimulator.Configuration
                 doc.Root.Add(XElement.Parse(
                     "<UsedModules>" +
                         "<Module Name=\"" + MyConfiguration.CORE_MODULE_NAME + "\" Version=\"" + fileVersion + "\"></Module>" +
-                        "<Module Name=\"" + MyConfiguration.CUSTOM_MODULES_NAME + "\" Version=\"1\"></Module>" +
+                        "<Module Name=\"" + MyConfiguration.BASIC_NODES_MODULE_NAME + "\" Version=\"1\"></Module>" +
                     "</UsedModules>"));
 
                 return doc.ToString();

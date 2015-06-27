@@ -136,12 +136,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task\IMyExecutable.cs" />
     <Compile Include="Task\MyTask.cs" />
-    <Compile Include="Transforms\MyAnalyze2D.cs" />
-    <Compile Include="Transforms\MyHash.cs" />
-    <Compile Include="Transforms\MyResize2D.cs" />
-    <Compile Include="Transforms\MyAccumulator.cs" />
     <Compile Include="Transforms\MyTransform.cs" />
-    <Compile Include="Transforms\MyFilter2D.cs" />
     <Compile Include="Utils\MyAttributeExtension.cs" />
     <Compile Include="Utils\MyAttributes.cs" />
     <Compile Include="Utils\Log.cs" />
@@ -178,8 +173,6 @@
     <EmbeddedResource Include="res\abs_big.png" />
     <EmbeddedResource Include="res\ceil_floor.png" />
     <EmbeddedResource Include="res\ceil_floor_big.png" />
-    <EmbeddedResource Include="res\delayedcopy.png" />
-    <EmbeddedResource Include="res\delayedcopy_big.png" />
     <EmbeddedResource Include="res\fork.png" />
     <EmbeddedResource Include="res\fork_big.png" />
     <EmbeddedResource Include="res\gate.png" />
@@ -188,10 +181,6 @@
     <EmbeddedResource Include="res\group_big.png" />
     <EmbeddedResource Include="res\group_signal.png" />
     <EmbeddedResource Include="res\group_signal_big.png" />
-    <EmbeddedResource Include="res\hash.png" />
-    <EmbeddedResource Include="res\hash_big.png" />
-    <EmbeddedResource Include="res\imagescale.png" />
-    <EmbeddedResource Include="res\imagescale_big.png" />
     <EmbeddedResource Include="res\input_big.png" />
     <EmbeddedResource Include="res\input.png" />
     <EmbeddedResource Include="res\join.png" />
@@ -206,8 +195,6 @@
     <EmbeddedResource Include="res\sine_big.png" />
     <EmbeddedResource Include="res\threshold.png" />
     <EmbeddedResource Include="res\threshold_big.png" />
-    <EmbeddedResource Include="res\transform.png" />
-    <EmbeddedResource Include="res\transform_big.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\output.png" />

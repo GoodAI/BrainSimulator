@@ -291,6 +291,8 @@ namespace BrainSimulator.Utils
         public static MyProject Deserialize(string xml, string projectPath)
         {            
             xml = MyBaseConversion.ConvertOldFileVersioning(xml);
+            xml = MyBaseConversion.ConvertOldModuleNames(xml);
+
             xml = CheckUsedModulesAndConvert(xml);
             
             YAXSerializer serializer = MyProject.GetSerializer();

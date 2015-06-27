@@ -10,12 +10,7 @@
     <Node type="BrainSimulator.Transforms.MyGoniometricFunction" CanBeAdded="true" BigIcon="sine_big.png" SmallIcon="sine.png"/>
     <Node type="BrainSimulator.Transforms.MyPolynomialFunction" CanBeAdded="true" BigIcon="linear_big.png" SmallIcon="linear.png"/>
     <Node type="BrainSimulator.Transforms.MyLowHighFilter" CanBeAdded="true" BigIcon="ceil_floor_big.png" SmallIcon="ceil_floor.png"/>
-    <Node type="BrainSimulator.Transforms.MyThreshold" CanBeAdded="true" BigIcon="threshold_big.png" SmallIcon="threshold.png"/>    
-    <Node type="BrainSimulator.Transforms.MyFilter2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png"/>
-    <Node type="BrainSimulator.Transforms.MyAnalyze2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png"/>
-    <Node type="BrainSimulator.Transforms.MyResize2D" CanBeAdded="true" BigIcon="imagescale_big.png" SmallIcon="imagescale.png"/>
-    <Node type="BrainSimulator.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="delayedcopy_big.png" SmallIcon="delayedcopy.png"/>
-    <Node type="BrainSimulator.Transforms.MyHash" CanBeAdded="true" BigIcon="hash_big.png" SmallIcon="hash.png"/>    
+    <Node type="BrainSimulator.Transforms.MyThreshold" CanBeAdded="true" BigIcon="threshold_big.png" SmallIcon="threshold.png"/>        
     
     <Node type="BrainSimulator.Nodes.MyJoin" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
     <Node type="BrainSimulator.Nodes.MyFork" CanBeAdded="true" BigIcon="fork_big.png" SmallIcon="fork.png"/>

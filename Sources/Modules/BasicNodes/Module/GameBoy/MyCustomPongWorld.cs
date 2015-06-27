@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -156,7 +157,7 @@ namespace BrainSimulator.GameBoy
             {
                 try
                 {
-                    Bitmap bitmap = (Bitmap)Image.FromFile(path, true);
+                    Bitmap bitmap = (Bitmap)Image.FromFile(MyResources.GetMyAssemblyPath() + "\\" + path, true);
                     m_bitmapTable[path] = bitmap;
                     return bitmap.Width * bitmap.Height;
                 }

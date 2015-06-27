@@ -7,6 +7,12 @@ namespace BrainSimulator.Utils
 {
     public static class MyResources
     {
+        public static string GetMyAssemblyPath()
+        {
+            string location = Assembly.GetCallingAssembly().Location;
+            return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
+        }
+
         public static string PathToResourceName(string path)
         {
             return String.Join(".", path.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries));

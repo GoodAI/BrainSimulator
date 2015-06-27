@@ -13,7 +13,8 @@ namespace BrainSimulator.Configuration
     public class MyConfiguration
     {
         public const string CORE_MODULE_NAME = "GoodAI.Platform.Core.dll";
-        public const string CUSTOM_MODULES_NAME = "GoodAI.BasicNodes.dll";
+        public const string BASIC_NODES_MODULE_NAME = "GoodAI.BasicNodes.dll";
+        public const string MODULES_PATH = @"modules";
 
         public static Dictionary<Type, MyNodeConfig> KnownNodes { get; private set; }
         public static Dictionary<Type, MyWorldConfig> KnownWorlds { get; private set; }
@@ -24,11 +25,11 @@ namespace BrainSimulator.Configuration
         public static List<string> ModulesSearchPath { get; private set; }
         public static string OpenOnStartupProjectName { get; private set; }
 
-        public static string GlobalPTXFolder { get; private set; }
+        public static string GlobalPTXFolder { get; private set; }        
 
         static MyConfiguration()
         {
-            GlobalPTXFolder = @".\ptx\";
+            GlobalPTXFolder = @"modules\GoodAI.BasicNodes\ptx\";
             KnownNodes = new Dictionary<Type, MyNodeConfig>();
             KnownWorlds = new Dictionary<Type, MyWorldConfig>();
             Modules = new List<MyModuleConfig>();
@@ -41,9 +42,12 @@ namespace BrainSimulator.Configuration
         {
             //SearchPath.Add(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)); //add bs folder name
 
-            foreach (string modulePath in Directory.GetDirectories(@"modules"))
+            if (Directory.Exists(MODULES_PATH))
             {
-                ModulesSearchPath.Add(modulePath);
+                foreach (string modulePath in Directory.GetDirectories(MODULES_PATH))
+                {
+                    ModulesSearchPath.Add(modulePath);
+                }
             }
         }
 
@@ -76,8 +80,7 @@ namespace BrainSimulator.Configuration
         {
             MyLog.INFO.WriteLine("Loading system modules...");
 
-            AddModuleFromAssembly(new FileInfo(CORE_MODULE_NAME), true);
-            AddModuleFromAssembly(new FileInfo(CUSTOM_MODULES_NAME) );
+            AddModuleFromAssembly(new FileInfo(CORE_MODULE_NAME), true);            
 
             MyLog.INFO.WriteLine("Loading custom modules...");
 
@@ -114,23 +117,31 @@ namespace BrainSimulator.Configuration
                 {
                     foreach (MyNodeConfig nc in moduleConfig.NodeConfigList)
                     {
-                            nc.IsBasicNode = basicNode;
+                        nc.IsBasicNode = basicNode;
+
+                        if (nc.NodeType != null)
+                        {
                             KnownNodes[nc.NodeType] = nc;
                         }
-                        }
+                    }
+                }
 
                 if (moduleConfig.WorldConfigList != null)
                 {
                     foreach (MyWorldConfig wc in moduleConfig.WorldConfigList)
-                    {                       
-                            wc.IsBasicNode = basicNode;
+                    {
+                        wc.IsBasicNode = basicNode;
+
+                        if (wc.NodeType != null)
+                        {
                             KnownWorlds[wc.NodeType] = wc;
                         }
-                        }
+                    }
+                }
 
                 MyLog.INFO.WriteLine("Module loaded: " + file.Name 
                     + (moduleConfig.Conversion != null ? " (version=" + moduleConfig.GetXmlVersion() + ")" : " (no versioning)"));                
-                    }
+            }
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Module loading failed: " + e.Message);

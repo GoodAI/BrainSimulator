@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <KnownWorlds>
+    <World type="MNIST.MyMNISTWorld" />
+    <World type="BrainSimulator.Retina.MyMovingObjectsWorld" />
+  </KnownWorlds>
+</Configuration>
