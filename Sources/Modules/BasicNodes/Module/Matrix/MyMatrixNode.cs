@@ -82,11 +82,11 @@ namespace BrainSimulator.Matrix
             Output = MyMatrixOps.SetupResultSize(Operation, A, B, Output);
         }
 
-        
-        
+
+
         public override void Validate(MyValidator validator)
         {
-               validator.AssertError(MyMatrixOps.Validate(Operation, A, B, Output), this, "Wrong matrix dimensions for the specific operation");
+            validator.AssertError(MyMatrixOps.Validate(Operation, A, B, Output), this, "Wrong matrix dimensions for the specific operation");
         }
 
         public override string Description
@@ -97,7 +97,7 @@ namespace BrainSimulator.Matrix
             }
         }
 
-   
+
 
         public MyExecuteTask Execute { get; private set; }
         /// <summary>
@@ -112,7 +112,7 @@ namespace BrainSimulator.Matrix
             public float DataInput0 { get; set; }
             [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = float.NaN)]
             public float DataInput1 { get; set; }
-            
+
 
             public override void Init(int nGPU)
             {

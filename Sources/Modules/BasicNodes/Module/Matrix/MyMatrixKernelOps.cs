@@ -30,7 +30,7 @@ namespace BrainSimulator.Matrix
     {
         private Dictionary<MatOperation, MyCudaKernel> OpersKerlsDictionary;
 
-        public MyMatrixKernelOps(MyWorkingNode callee, MatOperation operations, MyMemoryBlock<float> A, MyMemoryBlock<float> B=null)
+        public MyMatrixKernelOps(MyWorkingNode callee, MatOperation operations, MyMemoryBlock<float> A, MyMemoryBlock<float> B = null)
         {
             OpersKerlsDictionary = new Dictionary<MatOperation, MyCudaKernel>();
             this.callee = callee;
@@ -75,6 +75,10 @@ namespace BrainSimulator.Matrix
             {
                 OpersKerlsDictionary.Add(MatOperation.Addition, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_Addition_naive"));
             }
+            if ((operations & MatOperation.Substraction) > 0)
+            {
+                OpersKerlsDictionary.Add(MatOperation.Substraction, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_Substraction_naive"));
+            }
             if (operations > 0 && OpersKerlsDictionary.Count == 0)
             {
                 MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to init kernel MatrixOps for undefined MatOperation");
@@ -109,17 +113,17 @@ namespace BrainSimulator.Matrix
                     OpersKerlsDictionary[operation].SetupExecution(A.Count / A.ColumnHint);
                     OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint, B.Host[0]);
                 }
-                else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition)
+                else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition | operation == MatOperation.Substraction)
                 {
                     if (A.Count >= B.Count)
                     {
                         OpersKerlsDictionary[operation].SetupExecution(A.Count);
-                        OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, B, B.Count, B.ColumnHint, Result, Result.Count, Result.ColumnHint);
+                        OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, B, B.Count, B.ColumnHint, Result, Result.Count, Result.ColumnHint, float.NaN);
                     }
                     else
                     {
                         OpersKerlsDictionary[operation].SetupExecution(B.Count);
-                        OpersKerlsDictionary[operation].Run(B, B.Count, B.ColumnHint, A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint);
+                        OpersKerlsDictionary[operation].Run(B, B.Count, B.ColumnHint, A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint, float.NaN);
                     }
                 }
                 else
@@ -167,7 +171,7 @@ namespace BrainSimulator.Matrix
                 else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition)
                 {
                     OpersKerlsDictionary[operation].SetupExecution(A.Count);
-                    OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, A, 0, (int)value, Result, Result.Count, Result.ColumnHint);
+                    OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, A, 0, 0, Result, Result.Count, Result.ColumnHint, value);
                 }
                 else
                 {
@@ -183,9 +187,9 @@ namespace BrainSimulator.Matrix
 
 
 
-        public static  MatOperation AvailableOperations()
+        public static MatOperation AvailableOperations()
         {
-            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition;
+            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction;
         }
 
 

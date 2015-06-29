@@ -1,4 +1,3 @@
-
 /*
 *
 *   To work with matrixes.
@@ -137,10 +136,10 @@ extern "C"
             return A*B;
         return -1;
     }
-    __device__ void Matrix_performOperation_naive(char op, int id,  const float * A , int Acount, int Acols, const float * B , int Bcount, int BcolsOrVal, float * out0 , int out0count, int out0cols)
+    __device__ void Matrix_performOperation_naive(char op, int id,  const float * A , int Acount, int Acols, const float * B , int Bcount, int Bcols, float * out0 , int out0count, int out0cols, float value)
 	{
         if (Bcount == 0){
-            out0[id] = Perform_operation(op,A[id],BcolsOrVal);
+            out0[id] = Perform_operation(op,A[id],value);
         }
         else if (Bcount == 1){
             out0[id] = Perform_operation(op,A[id],B[0]);
@@ -149,7 +148,7 @@ extern "C"
         {
             out0[id] = Perform_operation(op,A[id],B[id]);
         }
-        else if (BcolsOrVal == 1) // matrix .* row vector
+        else if (Bcols == 1) // matrix .* row vector
         {
             int id_row = id/Acols;
             out0[id] = Perform_operation(op,A[id],B[id_row]);
@@ -160,36 +159,36 @@ extern "C"
            out0[id] = Perform_operation(op,A[id],B[id_col]);
         }
 	}
-__global__ void Matrix_Addition_naive(const float * A , int Acount, int Acols, const float * B , int Bcount, int BcolsOrVal, float * out0 , int out0count, int out0cols)
+__global__ void Matrix_Addition_naive(const float * A , int Acount, int Acols, const float * B , int Bcount, int Bcols, float * out0 , int out0count, int out0cols, float value)
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (id<Acount)
 		{
-            Matrix_performOperation_naive('+',id,A ,Acount, Acols, B , Bcount, BcolsOrVal, out0 , out0count, out0cols);
+            Matrix_performOperation_naive('+',id,A ,Acount, Acols, B , Bcount, Bcols, out0 , out0count, out0cols, value);
 		}
 	}
-__global__ void Matrix_MultiplElementWise_naive(const float * A , int Acount, int Acols, const float * B , int Bcount, int BcolsOrVal, float * out0 , int out0count, int out0cols)
+__global__ void Matrix_MultiplElementWise_naive(const float * A , int Acount, int Acols, const float * B , int Bcount, int Bcols, float * out0 , int out0count, int out0cols, float value)
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (id<Acount)
 		{
-            Matrix_performOperation_naive('*',id,A ,Acount, Acols, B , Bcount, BcolsOrVal, out0 , out0count, out0cols);
+            Matrix_performOperation_naive('*',id,A ,Acount, Acols, B , Bcount, Bcols, out0 , out0count, out0cols, value);
 		}
 	}
-/*__global__ void Matrix_Substraction_naive(const float * A , int Acount, int Acols, const float * B , int Bcount, int BcolsOrVal, float * out0 , int out0count, int out0cols)
+__global__ void Matrix_Substraction_naive(const float * A , int Acount, int Acols, const float * B , int Bcount, int Bcols, float * out0 , int out0count, int out0cols, float value)
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (id<Acount)
 		{
-            Matrix_performOperation_naive('-',id,A ,Acount, Acols, B , Bcount, Bcols, out0 , out0count, out0cols);
+            Matrix_performOperation_naive('-',id,A ,Acount, Acols, B , Bcount, Bcols, out0 , out0count, out0cols,value);
 		}
-	}*/
+	}
 
 
 
 
 
-	__global__ void AbsKernel(const float * A , int Acount, int Acols, float * out0 , int out0count)
+	__global__ void AbsKernel_naive(const float * A , int Acount, int Acols, float * out0 , int out0count)
 	{		
 		int id = blockDim.x * blockIdx.y * gridDim.x	+ blockDim.x * blockIdx.x	+ threadIdx.x;
 		if(id < out0count)

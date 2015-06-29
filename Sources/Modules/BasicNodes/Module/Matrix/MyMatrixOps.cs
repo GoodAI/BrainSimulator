@@ -26,35 +26,35 @@ namespace BrainSimulator.Matrix
         Addition = 1,
         Multiplication = 1 << 2,
 
-        DotProd = 1 << 6,
-        MultiplElemntWise = 1 << 7,
-        Substraction = 1 << 8,
+        DotProd = 1 << 3,
+        MultiplElemntWise = 1 << 4,
+        Substraction = 1 << 5,
 
-        MinIndex = 1 << 10,
-        MaxIndex = 1 << 11,
+        MinIndex = 1 << 6,
+        MaxIndex = 1 << 7,
 
-        GetCol = 1 << 14,
-        GetRow = 1 << 15,
+        GetCol = 1 << 8,
+        GetRow = 1 << 9,
 
-        Minus = 1 << 18,
-
-
-        Normalize = 1 << 21,
-        Norm2 = 1 << 22,
+        Minus = 1 << 10,
 
 
-        EuclidDist = 1 << 25,
-        CosDist = 1 << 26,
+        Normalize = 1 << 11,
+        Norm2 = 1 << 12,
 
-        Exp = 1 << 29,
-        Log = 1 << 30,
 
-        Abs = 1 << 41,
-        Floor = 1 << 42,
-        Round = 1 << 43,
-        Ceil = 1 << 44,
+        EuclidDist = 1 << 13,
+        CosDist = 1 << 14,
 
-        Copy = 1 << 33
+        Exp = 1 << 15,
+        Log = 1 << 16,
+
+        Abs = 1 << 17,
+        Floor = 1 << 18,
+        Round = 1 << 19,
+        Ceil = 1 << 20,
+
+        Copy = 1 << 21
     }
 
 
@@ -68,13 +68,14 @@ namespace BrainSimulator.Matrix
         protected MyWorkingNode callee;
 
 
-        public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> B, MyMemoryBlock<float> Result); 
-        public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result); 
+        public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> B, MyMemoryBlock<float> Result);
+        public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result);
         public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, float value, MyMemoryBlock<float> Result);
         public abstract void Run(MatOperation operation, MyMemoryBlock<float> A); // change A
 
 
-        public static MatOperation AvailableOperations(){
+        public static MatOperation AvailableOperations()
+        {
             return (MatOperation)0;
         }
 
@@ -126,7 +127,7 @@ namespace BrainSimulator.Matrix
                     Result.Count = A.ColumnHint;
                     Result.ColumnHint = Result.Count;
                 }
-                else if (B!=null && (operation == MatOperation.MultiplElemntWise || operation == MatOperation.Addition))
+                else if (B != null && (operation == MatOperation.MultiplElemntWise || operation == MatOperation.Addition))
                 {
                     Result.ColumnHint = Math.Max(A.ColumnHint, B.ColumnHint);
                     Result.Count = Math.Max(A.Count, B.Count);
@@ -173,7 +174,7 @@ namespace BrainSimulator.Matrix
                 }
             }
             return is_it_correct;
-        
+
         }
 
 
