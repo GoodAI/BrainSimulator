@@ -1,3 +1,6 @@
 [submodule "BinaryLibs/GoodAiPlatformLibs"]
 	path = BinaryLibs/GoodAiPlatformLibs
 	url = https://github.com/KeenSoftwareHouse/GoodAiPlatformLibs
+[submodule "Sources/Modules/InternalNodes"]
+	path = Sources/Modules/InternalNodes
+	url = https://github.com/KeenSoftwareHouse/InternalNodes
