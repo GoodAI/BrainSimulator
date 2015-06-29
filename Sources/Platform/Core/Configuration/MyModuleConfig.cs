@@ -39,6 +39,11 @@ namespace BrainSimulator.Configuration
             Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
             string xml = MyResources.GetTextFromAssembly(assembly, MODULE_CONFIG_FILE);
 
+            if (string.IsNullOrEmpty(xml))
+            {
+                throw new FileNotFoundException("Module config not found (resource \"nodes.xml\" missing for module " + assemblyFile.Name + ").");
+            }
+
             YAXSerializer serializer = new YAXSerializer(typeof(MyModuleConfig),
                    YAXExceptionHandlingPolicies.ThrowErrorsOnly, YAXExceptionTypes.Warning);            
 

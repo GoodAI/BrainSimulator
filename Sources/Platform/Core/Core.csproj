@@ -160,7 +160,6 @@
   <ItemGroup>
     <EmbeddedResource Include="conf\nodes.xml">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="res\plot_char.png" />
   </ItemGroup>
