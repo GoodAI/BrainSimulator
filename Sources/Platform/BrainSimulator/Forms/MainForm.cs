@@ -303,7 +303,7 @@ namespace BrainSimulatorGUI.Forms
         {
             if ((String.IsNullOrEmpty(saveFileDialog.FileName)) || !IsProjectSaved(saveFileDialog.FileName))
             {
-                var dialogResult = MessageBox.Show("Save project changes? (Or Cancel to keep it open.)",
+                var dialogResult = MessageBox.Show("Save project changes?",
                     "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
