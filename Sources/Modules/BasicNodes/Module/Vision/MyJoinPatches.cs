@@ -27,7 +27,7 @@ using OpenTK.Input; /// Because of the keyboard...
 namespace BrainSimulator.Vision
 {
     /// <author>Honza Knopp</author>
-    /// <status> Working / Unoptimized as propagation part is in C# instead of cuda!</status>
+    /// <status> Working</status>
     /// <summary>
     ///   Concatenate patches/segments into objects.
     /// </summary>
@@ -62,46 +62,57 @@ namespace BrainSimulator.Vision
         //------------------------------------------------------------------------------------------------------
         // MEMORY BLOCKS
         [MyInputBlock(0)]
-        public MyMemoryBlock<float> Patches {
+        public MyMemoryBlock<float> Patches
+        {
             get { return GetInput(0); }
         }
 
         [MyInputBlock(1)]
-        public MyMemoryBlock<float> Desc {
+        public MyMemoryBlock<float> Desc
+        {
             get { return GetInput(1); }
         }
 
         [MyInputBlock(2)]
-        public MyMemoryBlock<float> Mask {
+        public MyMemoryBlock<float> Mask
+        {
             get { return GetInput(2); }
         }
 
 
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> OutPatches {
-            get { return GetOutput(0); } set { SetOutput(0, value); }
+        public MyMemoryBlock<float> OutPatches
+        {
+            get { return GetOutput(0); }
+            set { SetOutput(0, value); }
         }
 
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> OutDesc {
-            get { return GetOutput(1); } set { SetOutput(1, value); }
+        public MyMemoryBlock<float> OutDesc
+        {
+            get { return GetOutput(1); }
+            set { SetOutput(1, value); }
         }
 
         [MyOutputBlock(2)]
-        public MyMemoryBlock<float> OutMask {
-            get { return GetOutput(2); } set { SetOutput(2, value); }
+        public MyMemoryBlock<float> OutMask
+        {
+            get { return GetOutput(2); }
+            set { SetOutput(2, value); }
         }
 
         [MyOutputBlock(3)]
-        public MyMemoryBlock<float> Patches2Obj {
-            get { return GetOutput(3); } set { SetOutput(3, value); }
+        public MyMemoryBlock<float> Patches2Obj
+        {
+            get { return GetOutput(3); }
+            set { SetOutput(3, value); }
         }
-        
 
 
 
-        public int MaskCols  { get; set; }//{ get { return Mask != null ? Mask.ColumnHint : 0; } }
-        public int MaskRows  { get; set; }//{ get { return Mask != null ? Mask.Count / Mask.ColumnHint : 0; } }
+
+        public int MaskCols { get; set; }//{ get { return Mask != null ? Mask.ColumnHint : 0; } }
+        public int MaskRows { get; set; }//{ get { return Mask != null ? Mask.Count / Mask.ColumnHint : 0; } }
         public int MaskCount { get; set; }//{ get { return Mask != null ? Mask.Count : 0; } }
 
         public int PatchesNum { get; set; }//{ get { return Patches != null ? Patches.Count / Patches.ColumnHint : 0; } }
@@ -115,8 +126,8 @@ namespace BrainSimulator.Vision
 
 
 
-        
-      
+
+
 
 
         //------------------------------------------------------------------------------------------------------
@@ -135,8 +146,8 @@ namespace BrainSimulator.Vision
         public override void UpdateMemoryBlocks()
         {
             MaskCount = Mask != null ? Mask.Count : 1;
-            MaskCols  = Mask != null ? Mask.ColumnHint : 1;
-            MaskRows  = Mask != null  ? MaskCount / MaskCols : 1;
+            MaskCols = Mask != null ? Mask.ColumnHint : 1;
+            MaskRows = Mask != null ? MaskCount / MaskCols : 1;
             PatchesDim = Patches != null ? Patches.ColumnHint : 1;
             PatchesNum = Patches != null ? Patches.Count / PatchesDim : 1;
 
@@ -145,20 +156,20 @@ namespace BrainSimulator.Vision
 
             CentersSum.ColumnHint = 3;
             CentersSum.Count = PatchesNum * CentersSum.ColumnHint;
-            
+
 
             DescDim = Desc != null ? Desc.ColumnHint : 1;
 
-            OutPatches.Count      = PatchesNum * PatchesDim; // I want to return patches again, but some of them will shave same id :D
+            OutPatches.Count = PatchesNum * PatchesDim; // I want to return patches again, they will be with changed ID :D
             OutPatches.ColumnHint = PatchesDim;
-            Patches2Obj.Count      = PatchesNum; // I want to return patches again, but some of them will shave same id :D
+            Patches2Obj.Count = PatchesNum; // I want to return patches again, but some of them will shave same id :D
             Patches2Obj.ColumnHint = 1;
-            OutMask.Count      = MaskCount;
+            OutMask.Count = MaskCount;
             OutMask.ColumnHint = MaskCols;
-            AdjMatrix.Count      = PatchesNum * PatchesNum;
+            AdjMatrix.Count = PatchesNum * PatchesNum;
             AdjMatrix.ColumnHint = PatchesNum;
             OutDesc.ColumnHint = DescDim;    // center + size + number of points inisde + # of patches insinde
-            OutDesc.Count      = PatchesNum * OutDesc.ColumnHint;  
+            OutDesc.Count = PatchesNum * OutDesc.ColumnHint;
         }
 
         public override void Validate(MyValidator validator)
@@ -172,9 +183,9 @@ namespace BrainSimulator.Vision
 
 
         public MyProcessImPatchBasTask Execute { get; private set; }
-         /// <summary>
-         /// Execute joining patches into groups of objects.
-         /// </summary>
+        /// <summary>
+        /// Execute joining patches into groups of objects.
+        /// </summary>
         [Description("Execute")]
         public class MyProcessImPatchBasTask : MyTask<MyJoinPatches>
         {
@@ -186,14 +197,13 @@ namespace BrainSimulator.Vision
             private MyCudaKernel m_kernel_cumulatePosOfNewpatches;
 
             //----  dynamic stuff for C#
-            private int[]               maskIds_new;
-            private List<int>           ListToGo;    // which nodes Im CURRENTLY going to visit
-            private List<int>           ListUnmet;   // whcih nodes were already viseted so I will never meet htme again... THIS SHOULD BE TREE for large # of nodes!!!!
-            private Dictionary<int,int> DictUnmet;   // whcih nodes were already viseted so I will never meet htme again... THIS SHOULD BE TREE for large # of nodes!!!!
+            private int[] maskIds_new;
+            private List<int> ListToGo;    // which nodes Im CURRENTLY going to visit
+            private Dictionary<int, int> DictUnmet;   // whcih nodes were already viseted so I will never meet them again.
 
-            private int[]    nPatchesInObj; // = new int[Owner.PatchesNum];
+            private int[] nPatchesInObj; // = new int[Owner.PatchesNum];
             private float2[] centers;       // = new float2[Owner.PatchesNum];
-            private int[]    nPointsInObj;  //= new int[Owner.PatchesNum];
+            private int[] nPointsInObj;  //= new int[Owner.PatchesNum];
 
 
             public override void Init(int nGPU)
@@ -209,12 +219,12 @@ namespace BrainSimulator.Vision
 
                 //---- init C# stuff
                 maskIds_new = new int[Owner.PatchesNum];
-                ListToGo    = new List<int>();              /// which nodes Im CURRENTLY going to visit
-                DictUnmet   = new Dictionary<int,int>();    /// which nodes were already visited so I wont meet it again... THIS SHOULD BE TREE for large # of nodes!!!!
+                ListToGo = new List<int>();              /// which nodes Im CURRENTLY going to visit
+                DictUnmet = new Dictionary<int, int>();    /// which nodes were already visited so I wont meet it again... THIS SHOULD BE TREE for large # of nodes!!!!
 
                 nPatchesInObj = new int[Owner.PatchesNum];
-                centers       = new float2[Owner.PatchesNum];
-                nPointsInObj  = new int[Owner.PatchesNum];
+                centers = new float2[Owner.PatchesNum];
+                nPointsInObj = new int[Owner.PatchesNum];
             }
 
 
@@ -244,16 +254,17 @@ namespace BrainSimulator.Vision
                 Owner.Patches2Obj.SafeCopyToHost();
                 Owner.OutMask.SafeCopyToHost();
                 Owner.OutDesc.SafeCopyToHost();
- 
+
                 //--- find connected compenents -------------------
                 //--- init  lists
                 ListToGo.Clear();
                 DictUnmet.Clear();
-                for (int i = 0; i < Owner.PatchesNum; i++){
+                for (int i = 0; i < Owner.PatchesNum; i++)
+                {
                     DictUnmet.Add(i, i);
-                    centers[i].x     = .0f; /// init data  that were before new...
-                    centers[i].y     = .0f;
-                    nPointsInObj[i]  = 0;
+                    centers[i].x = .0f; /// init data  that were before new...
+                    centers[i].y = .0f;
+                    nPointsInObj[i] = 0;
                     nPatchesInObj[i] = 0;
                 }
                 //--- DO PROPAGATION -----------------------------
@@ -285,7 +296,7 @@ namespace BrainSimulator.Vision
                     }
                 }
                 nNew_patches++; /// it was oindex to the last object, not their count :)
-                                /// 
+                /// 
                 //--- update masks...
                 Owner.Mask_new.SafeCopyToDevice();
                 m_kernel_cumulatePosOfNewpatches.Run(Owner.Mask, Owner.Mask_new, Owner.OutMask, Owner.Mask.Count, Owner.Mask.ColumnHint, Owner.CentersSum, Owner.CentersSum.Count, Owner.CentersSum.ColumnHint);
@@ -305,7 +316,7 @@ namespace BrainSimulator.Vision
                         { /// there will be average over all super-pixels (!pathces no points)
                             Owner.OutDesc.Host[out_idDesc + i] /= nPatchesInObj[ip];
                         }
-                         
+
                     }
                     else
                     {
@@ -325,12 +336,13 @@ namespace BrainSimulator.Vision
 
 
             //------------------------------------------------------------------------------------------------------
-            // Fucntions that I need to run inside this Tasks...
+            // Functions that I need to run inside this Tasks...
             //------------------------------------------------------------------------------------------------------
             public float SqrDist_between_vecs(float[] v1, int v1_start, float[] v2, int v2_start, int dim)
             {
                 float dist = 0;
-                for (int i = 0; i < dim; i++){
+                for (int i = 0; i < dim; i++)
+                {
                     float t = v1[v1_start + i] - v2[v2_start + i];
                     dist += t * t;
                 }
@@ -346,9 +358,9 @@ namespace BrainSimulator.Vision
 
                 while (ListToGo.Count > 0)
                 {
-                    int id_patch = ListToGo[0];                
+                    int id_patch = ListToGo[0];
                     Owner.Mask_new.Host[id_patch] = maskId;
-                    
+
                     //MyMemoryBlock<float> m = Owner.AdjMatrix;
                     ListToGo.RemoveAt(0);           // erase the current one; 
                     for (int id_ngh = 0; id_ngh < AdjMatCols; id_ngh++)
@@ -418,7 +430,7 @@ namespace BrainSimulator.Observers
 
         protected override void Execute()
         {
-            m_kernel_drawEdges.GridDimensions  = new dim3(Target.PatchesNum);
+            m_kernel_drawEdges.GridDimensions = new dim3(Target.PatchesNum);
             m_kernel_drawEdges.BlockDimensions = new dim3(Target.PatchesNum);
             m_kernel_fillImWhite.SetupExecution(Target.MaskCount);
             m_kernel_fillImFromIm.SetupExecution(Target.MaskCount);
@@ -439,7 +451,7 @@ namespace BrainSimulator.Observers
             else if (state[Key.Number8])
             { //. print ids to objects
                 Target.OutPatches.SafeCopyToHost();
-                for (int i = 0; i < Math.Min(Target.PatchesNum,10); i++)
+                for (int i = 0; i < Math.Min(Target.PatchesNum, 10); i++)
                 {
                     int x = (int)Target.OutPatches.Host[i * Target.PatchesDim];
                     int y = (int)Target.OutPatches.Host[i * Target.PatchesDim + 1];
@@ -447,14 +459,14 @@ namespace BrainSimulator.Observers
                 }
             }
 
-            
+
         }
 
 
 
         protected override void Reset()
         {
-            TextureWidth  = Target.Mask.ColumnHint;
+            TextureWidth = Target.Mask.ColumnHint;
             TextureHeight = Target.MaskCount / TextureWidth;
         }
 
