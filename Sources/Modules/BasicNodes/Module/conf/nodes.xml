@@ -48,9 +48,7 @@
       <Observer type="BrainSimulator.NeuralGas.MyFBAObserver" />
     </Node>
 
-    <Node type="BrainSimulator.Motor.MyMusclesNode" CanBeAdded="true" />
     <Node type="BrainSimulator.Motor.MyRecurrentNetwork" CanBeAdded="true" />
-    <Node type="BrainSimulator.Motor.MyColumnToVectorNode" CanBeAdded="true" />
     <Node type="BrainSimulator.Motor.MyPIDController" CanBeAdded="true" />
     <Node type="BrainSimulator.Motor.MySequenceRecorderNode" CanBeAdded="true" />
     <Node type="BrainSimulator.Motor.MyJacobianTransposeControl" CanBeAdded="true" />

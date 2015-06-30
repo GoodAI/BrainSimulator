@@ -231,8 +231,6 @@
     <Compile Include="Motor\My3DWorld.cs" />
     <Compile Include="Motor\My3DWorldObserver.cs" />
     <Compile Include="Motor\MyArmWorld.cs" />
-    <Compile Include="Motor\MyColumnToVectorNode.cs" />
-    <Compile Include="Motor\MyMusclesNode.cs" />
     <Compile Include="Motor\MyRecurrentNetwork.cs" />
     <Compile Include="Motor\MySequenceRecorderNode.cs" />
     <Compile Include="NeuralGas\MyFBAObserver.cs" />
