@@ -76,7 +76,8 @@
 
     <Node type="BrainSimulator.Harm.MyActionSelectionNode" CanBeAdded="true" BigIcon="asm_big.png" SmallIcon="asm.png" />
     <Node type="BrainSimulator.Harm.MyDetectChangesNode" CanBeAdded="true" BigIcon="reward_big.png" SmallIcon="reward.png" />
-    
+    <Node type="BrainSimulator.TicTacToe.MyTicTacToePlayerNode" CanBeAdded="true" BigIcon="asm_big.png" SmallIcon="asm_big.png" />
+
     <Node type="BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup" CanBeAdded="true"/>
     <Node type="BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer" CanBeAdded="true"/>
     <Node type="BrainSimulator.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true"/>
