@@ -54,8 +54,8 @@ namespace XmlFeedForwardNet.Layers
         public override void Initialize(Int32 nGPU)
         {
             // Create the kernels
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorPoolLayerKernel", "ForwardKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorPoolLayerKernel", "BackwardKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorPoolLayerKernel", "ForwardKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorPoolLayerKernel", "BackwardKernel");
 
             base.Initialize(nGPU);
 
