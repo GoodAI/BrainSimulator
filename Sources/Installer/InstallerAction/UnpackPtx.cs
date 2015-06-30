@@ -27,22 +27,12 @@ namespace InstallerAction
 
             try
             {
-                ExtractPtxZip(this.GetTargetDir(), failOnError: true);
+                VisitMouduleSubdirs(ExtractPtxZip);
             }
             catch (InstallException e)
             {
                 throw e;  // forward exception with more specific description
             }
-            catch (Exception e)
-            {
-                throw new InstallException("Unable to unpack CUDA kernels.", e);
-            }
-
-            try
-            {
-                VisitMouduleSubdirs(ExtractPtxZip);
-            }
-            catch { }  // notable errors are reported
         }
 
         [SecurityPermission(SecurityAction.Demand)]
@@ -69,8 +59,6 @@ namespace InstallerAction
         {
             try
             {
-                DeleteDir(Path.Combine(this.GetTargetDir(), @"ptx"), showError);
-
                 VisitMouduleSubdirs(DeletePtxSubdir);
             }
             catch (Exception e)
@@ -90,7 +78,7 @@ namespace InstallerAction
 
         private void ExtractPtxZip(string dir)
         {
-            ExtractPtxZip(dir, failOnError: false);
+            ExtractPtxZip(dir, failOnError: dir.EndsWith(@"\GoodAI.BasicNodes"));  // only fail on BasicNodes
         }
 
         private void ExtractPtxZip(string dir, bool failOnError)
