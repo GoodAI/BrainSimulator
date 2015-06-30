@@ -28,13 +28,14 @@ namespace BrainSimulator.Vision
 {
 
 
-    /// <author>Honza Knopp</author>
-    /// <status>Working, while restriceted to square images and specific nSegments values</status>
+    /// <author>Jan Knopp</author>
+    /// <status>Working</status>
     /// <summary>
-    ///   Segment image into a set of superpixels.
+    ///   Segment image into a set of superpixels. The code is restriceted to square images and specific nSegments values.
     /// </summary>
     /// <description>
-    ///   Takes image (RGB or just Black and White if G/B input channels are left free) as an input and runs SLIC algorithm to find segments.
+    ///   Takes image (RGB or just Black and White if G/B input channels are left free) as an input and runs SLIC algorithm [1] to find segments. The code is calling the GPU version [2] of the 
+    ///   SLIC method [1].
     ///   
     ///   <h4> Input</h4>
     ///     Image. When it is gray, use only the first branch.
@@ -57,18 +58,24 @@ namespace BrainSimulator.Vision
     ///   <ul>
     ///     <li> The width of the image has to correspond to its height.</li>
     ///     <li> If n is number of segments, there has to exist integer k such that k*k=n.</li>
-    ///     <li> It is better to keep number of segments per rows/columns nicely divided in the context of number of pixels per row/column.</li>
+    ///     <li> It is better to keep the number of segments per rows/columns nicely exactly divided by the number of pixels per row/column.</li>
     ///   </ul>
     ///   
     ///   <h4>Observer</h4>
-    ///    When observer is visualizing the result, you can press a key to change what is shows:
+    ///    When observer is visualizing the result, you can change Operation/ObserverMode to change what is shows:
     ///   <ul>
-    ///     <li> default: borders of segments</li>
-    ///     <li> 1: XYZ space of colors</li>
-    ///     <li> 2: id of segments </li>
-    ///     <li> 3: id os segments normalized for beter view </li>
-    ///     <li> 4: center of each segment</li>
+    ///     <li> Image with borders of segments</li>
+    ///     <li> only borders of segmetns</li>
+    ///     <li> XYZ space of colors</li>
+    ///     <li> id of segments </li>
+    ///     <li> id os segments normalized for beter view </li>
+    ///     <li> center of each segment</li>
     ///  </ul>
+    ///  
+    /// <h4>References</h4>
+    /// [1] Radhakrishna Achanta, Appu Shaji, Kevin Smith, Aurelien Lucchi, Pascal Fua, and Sabine Süsstrunk, SLIC Superpixels Compared to State-of-the-art Superpixel Methods, PAMI vol. 34, num. 11, p. 2274 - 2282, May 2012.<br></br>
+    /// [2] <a href="https://github.com/painnick/gSLIC"> gSLIC is an GPU implementation of Simple Iterative Linear Clustering (SLIC) superpixel segmentation algorithm. </a>. Online avelaible June, 2015
+    /// 
     /// </description>
     public class MySegment : MyWorkingNode
     {
@@ -360,6 +367,19 @@ namespace BrainSimulator.Observers
         MyCudaKernel m_kernel_draw;
         MyCudaKernel k_test;
 
+        public enum MySegObsMode
+        {
+            ImSegBorders,
+            SegBorders,
+            XYZColors,
+            SegmentId,
+            SegmentIdNorm,
+            SegmentCetners,
+        }
+
+        [MyBrowsable, Category("Operation"), YAXSerializableField(DefaultValue = MySegObsMode.ImSegBorders)]
+        public MySegObsMode ObserverMode { get; set; }
+
         public MySegmentObserver()
         {
             m_kernel_draw = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\SegmentObs", "Draw");
@@ -371,28 +391,35 @@ namespace BrainSimulator.Observers
 
         protected override void Execute()
         {
-            var state = Keyboard.GetState();
+            //var state = Keyboard.GetState();
             m_kernel_draw.SetupExecution(Target.InputSize);
-            if (state[Key.Number1])
-                m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 0);
-            else if (state[Key.Number2])
-                m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 1);
-            else if (state[Key.Number3])
-                m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 2);
-            else if (state[Key.Number4])
-                m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 3);
-            else if (state[Key.Number5])
+
+            switch (ObserverMode)
             {
-                m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 3);
-                k_test.Run(VBODevicePointer, TextureWidth, Target.SP_xy, Target.SP_xy.ColumnHint, Target.nSegs);
+                case MySegObsMode.ImSegBorders:
+                    MyCudaKernel m_ker = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\VisionObsFce", "FillVBOFromInputImage");
+                    m_ker.SetupExecution(Target.InputSize);
+                    m_ker.Run(Target.InputR_BW, TextureWidth * TextureHeight, VBODevicePointer);
+                    m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 4);
+                    break;
+                case MySegObsMode.SegBorders:
+                    m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 0);
+                    break;
+                case MySegObsMode.XYZColors:
+                    m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 1);
+                    break;
+                case MySegObsMode.SegmentId:
+                    m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 2);
+                    break;
+                case MySegObsMode.SegmentIdNorm:
+                    m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 3);
+                    break;
+                case MySegObsMode.SegmentCetners:
+                    m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 3);
+                    k_test.Run(VBODevicePointer, TextureWidth, Target.SP_xy, Target.SP_xy.ColumnHint, Target.nSegs);
+                    break;
             }
-            else 
-            {
-                MyCudaKernel m_ker = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\VisionObsFce", "FillVBOFromInputImage");
-                m_ker.SetupExecution(Target.InputSize);
-                m_ker.Run(Target.InputR_BW, TextureWidth * TextureHeight, VBODevicePointer);
-                m_kernel_draw.Run(VBODevicePointer, Target.SLICClusterCenters.GetDevice(Target).DevicePointer, Target.maskBuffer, TextureWidth, TextureHeight, Target.nSegs, 4);
-            }
+
         }
 
 

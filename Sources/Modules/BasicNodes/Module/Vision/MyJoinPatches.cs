@@ -420,6 +420,17 @@ namespace BrainSimulator.Observers
         MyCudaKernel m_kernel_fillImWhite;
         MyCudaKernel m_kernel_fillImFromIm;
 
+        public enum MyJoinPatObsMode
+        {
+            Mask,
+            Graph,
+            GraphWeights,
+            MaskId
+        }
+
+        [MyBrowsable, Category("Operation"), YAXSerializableField(DefaultValue = MyJoinPatObsMode.Mask)]
+        public MyJoinPatObsMode ObserverMode { get; set; }
+
         public MyJoinPatchesObserver()
         {
             m_kernel_fillImWhite = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\JoinPatchesObs", "FillImWhite");
@@ -439,24 +450,28 @@ namespace BrainSimulator.Observers
 
             var state = Keyboard.GetState();
 
-            if (state[Key.Number6])
-            { //. print edges
-                m_kernel_drawEdges.Run(VBODevicePointer, TextureWidth, Target.AdjMatrix, Target.Patches, Target.PatchesNum, Target.PatchesDim, Target.Desc, Target.Desc.ColumnHint, 0);
-            }
-            else if (state[Key.Number7])
-            { //. print weight of graph's edges
-                m_kernel_fillImWhite.Run(VBODevicePointer, TextureWidth, TextureHeight);
-                m_kernel_drawEdges.Run(VBODevicePointer, TextureWidth, Target.AdjMatrix, Target.Patches, Target.PatchesNum, Target.PatchesDim, Target.Desc, Target.Desc.ColumnHint, 1);
-            }
-            else if (state[Key.Number8])
-            { //. print ids to objects
-                Target.OutPatches.SafeCopyToHost();
-                for (int i = 0; i < Math.Min(Target.PatchesNum, 10); i++)
-                {
-                    int x = (int)Target.OutPatches.Host[i * Target.PatchesDim];
-                    int y = (int)Target.OutPatches.Host[i * Target.PatchesDim + 1];
-                    BrainSimulator.Observers.Helper.MyDrawStringHelper.DrawString(i.ToString(), x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight);
-                }
+
+            switch (ObserverMode)
+            {
+                case MyJoinPatObsMode.Graph:
+                    //. print edges
+                    m_kernel_drawEdges.Run(VBODevicePointer, TextureWidth, Target.AdjMatrix, Target.Patches, Target.PatchesNum, Target.PatchesDim, Target.Desc, Target.Desc.ColumnHint, 0);
+                    break;
+                case MyJoinPatObsMode.GraphWeights:
+                    //. print weight of graph's edges
+                    m_kernel_fillImWhite.Run(VBODevicePointer, TextureWidth, TextureHeight);
+                    m_kernel_drawEdges.Run(VBODevicePointer, TextureWidth, Target.AdjMatrix, Target.Patches, Target.PatchesNum, Target.PatchesDim, Target.Desc, Target.Desc.ColumnHint, 1);
+                    break;
+                case MyJoinPatObsMode.MaskId:
+                    //. print ids to objects
+                    Target.OutPatches.SafeCopyToHost();
+                    for (int i = 0; i < Math.Min(Target.PatchesNum, 10); i++)
+                    {
+                        int x = (int)Target.OutPatches.Host[i * Target.PatchesDim];
+                        int y = (int)Target.OutPatches.Host[i * Target.PatchesDim + 1];
+                        BrainSimulator.Observers.Helper.MyDrawStringHelper.DrawString(i.ToString(), x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight);
+                    }
+                    break;
             }
 
 
