@@ -614,7 +614,7 @@
             "SourcePath" = "8:..\\InstallerAction\\bin\\ptx.zip"
             "TargetName" = "8:ptx.zip"
             "Tag" = "8:"
-            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Folder" = "8:_9E36422E878F45A98D5BBE5F5EABD88F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1059,7 +1059,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -1185,11 +1185,22 @@
                         {
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_05A3A27F1A9444128E2F15E9DAEBD5D4"
                             {
-                            "Name" = "8:MNIST"
+                            "Name" = "8:GoodAI.MNIST"
                             "AlwaysCreate" = "11:FALSE"
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
                             "Property" = "8:_B0E46C2A584949BAB28AF350F90A8E1D"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_9E36422E878F45A98D5BBE5F5EABD88F"
+                            {
+                            "Name" = "8:GoodAI.BasicNodes"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_176CED98E41342229D6CDCDD1B43FC6B"
                                 "Folders"
                                 {
                                 }
@@ -1237,7 +1248,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Brain Simulator"
         "ProductCode" = "8:{B82BD457-3F98-4DAE-A20B-11AB288B8F80}"
-        "PackageCode" = "8:{6DB69823-C982-4EA5-BBCD-0BA73CD7669F}"
+        "PackageCode" = "8:{038AB845-C839-495D-AD54-C8C55DABAF21}"
         "UpgradeCode" = "8:{9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1873,7 +1884,7 @@
             "SourcePath" = "8:..\\..\\Modules\\BasicNodes\\Module\\obj\\Debug\\GoodAI.BasicNodes.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Folder" = "8:_9E36422E878F45A98D5BBE5F5EABD88F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
