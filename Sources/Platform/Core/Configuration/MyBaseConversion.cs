@@ -70,7 +70,7 @@ namespace BrainSimulator.Configuration
 
             string result = xml.Replace("BrainSimulator.dll", MyConfiguration.CORE_MODULE_NAME);
             result = result.Replace("CustomModels.dll", MyConfiguration.BASIC_NODES_MODULE_NAME);
-            result = result.Replace("MNIST.dll", "GoodAI.MNIST.dll");
+            result = result.Replace("\"MNIST.dll", "\"GoodAI.MNIST.dll");
 
             if (!xml.Equals(result))
             {
