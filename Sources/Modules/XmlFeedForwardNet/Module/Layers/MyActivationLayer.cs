@@ -60,8 +60,8 @@ namespace XmlFeedForwardNet.Layers
         {
             // Create the kernels
             m_setKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\SetKernel");
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\ActivationLayerKernel", "ForwardKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\ActivationLayerKernel", "BackwardKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\ActivationLayerKernel", "ForwardKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\ActivationLayerKernel", "BackwardKernel");
 
             base.Initialize(nGPU);
         }

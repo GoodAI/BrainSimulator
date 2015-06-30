@@ -24,7 +24,7 @@ namespace XmlFeedForwardNet.Tasks.BackPropAgent
         public MyGradientBackPropAgent(MyAbstractFeedForwardNode network, int nGPU, MyMemoryBlock<float> labelInput)
             : base(network)
         {
-            m_updateWeightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\UpdateWeightKernel");
+            m_updateWeightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\UpdateWeightKernel");
             DeltaProvider = new MyLabelDeltaProvider(m_network, nGPU);
             DeltaProvider.LabelInput = labelInput;
         }

@@ -146,9 +146,9 @@ namespace XmlFeedForwardNet.Layers
         {
             // Create the kernels
             m_setKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\SetKernel");
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\ConvolutionLayerKernel", "ForwardKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\ConvolutionLayerKernel", "BackwardKernel");
-            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\ConvolutionLayerKernel", "WeightKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\ConvolutionLayerKernel", "ForwardKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\ConvolutionLayerKernel", "BackwardKernel");
+            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\ConvolutionLayerKernel", "WeightKernel");
 
             base.Initialize(nGPU);
 

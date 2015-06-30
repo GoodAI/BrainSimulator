@@ -47,8 +47,8 @@ namespace XmlFeedForwardNet.Layers
         public override void Initialize(Int32 nGPU)
         {
             // Create the kernels
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\SoftmaxLayerKernel", "ForwardKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\SoftmaxLayerKernel", "BackwardKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\SoftmaxLayerKernel", "ForwardKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\SoftmaxLayerKernel", "BackwardKernel");
 
             base.Initialize(nGPU);
         }
