@@ -7,4 +7,5 @@ obj
 Debug
 Release
 *.user
+doc.xml
 /Sources/Modules/InternalNodes
