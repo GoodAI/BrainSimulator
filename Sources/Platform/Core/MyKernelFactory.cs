@@ -198,6 +198,8 @@ namespace BrainSimulator
             return kernel;
         }
 
+        //TODO: rewrite this! repetitive code
+
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, string kernelName, bool forceNewInstance = false)
         {
             FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly()].File;
@@ -207,13 +209,17 @@ namespace BrainSimulator
 
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false)
         {
-            return Kernel(nGPU, ptxFileName, ptxFileName.Substring(ptxFileName.LastIndexOf('\\') + 1), forceNewInstance);
+            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly()].File;
+
+            return Kernel(nGPU, assemblyFile.DirectoryName + @"\ptx\", ptxFileName, ptxFileName.Substring(ptxFileName.LastIndexOf('\\') + 1), forceNewInstance);            
         }
 
         // !!! Warning: This is for testing purposes only.
         public MyCudaKernel Kernel(string name, bool forceNewInstance = false)
         {
-            return Kernel(DevCount - 1, name, forceNewInstance);
+            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly()].File;
+
+            return Kernel(DevCount - 1, assemblyFile.DirectoryName + @"\ptx\", name, name.Substring(name.LastIndexOf('\\') + 1), forceNewInstance);                        
         }
 
         public int DevCount
