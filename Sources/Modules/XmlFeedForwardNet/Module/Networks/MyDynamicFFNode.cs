@@ -14,6 +14,14 @@ using YAXLib;
 
 namespace  XmlFeedForwardNet.Networks
 {
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
+    /// <status>Working</status>
+    /// <summary>Feedforward network with different inputs for classification and learning</summary>
+    /// <description>
+    /// This is a special case of a feed forward network. It has two inputs.
+    /// One for classification and one for learning phase. Both these phases
+    /// can be turned on and off by external signal</description>
     public class MyDynamicFFNode : MyXMLNetNode
     {
         /****************************

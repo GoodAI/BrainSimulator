@@ -13,6 +13,10 @@ using YAXLib;
 
 namespace  XmlFeedForwardNet.Tasks
 {
+    /// <summary>
+    /// This task performs the standard forward and backward passes of the autoencoder network.
+    /// Feature encoding and decoding mode can be turned on.
+    /// </summary>
     public class MyAutoencoderTask : MyTask<MyAutoencoderNode>
     {
         [YAXSerializableField(DefaultValue = MyAutoencoderMode.TRAINING)]

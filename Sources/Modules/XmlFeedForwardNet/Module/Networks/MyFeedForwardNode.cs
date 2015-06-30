@@ -21,6 +21,13 @@ namespace  XmlFeedForwardNet.Networks
         FORWARD_PASS
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
+    /// <status>Working</status>
+    /// <summary>Classic feedforward network with xml-defined topology</summary>
+    /// <description>
+    /// This is the classic feed forward network. You can define its topology
+    /// in an external xml file.</description>
     public class MyFeedForwardNode : MyXMLNetNode
     {
         /****************************

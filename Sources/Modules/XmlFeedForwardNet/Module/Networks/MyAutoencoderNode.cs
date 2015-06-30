@@ -20,7 +20,13 @@ namespace  XmlFeedForwardNet.Networks
         FEATURE_ENCODING,
         FEATURE_DECODING
     }
-
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
+    /// <status>Working</status>
+    /// <summary>Autoencoder based on a feedforward network</summary>
+    /// <description>
+    /// This is a special case of feed forward network. Its purpose is to learn how to reproduce the input.
+    /// It can be also used for feature extraction (decoding and encoding)</description>
     public class MyAutoencoderNode : MyXMLNetNode
     {
         /****************************

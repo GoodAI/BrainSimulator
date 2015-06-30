@@ -18,6 +18,9 @@ using  XmlFeedForwardNet.Tasks.BackPropAgent;
 
 namespace  XmlFeedForwardNet.Tasks.RBM
 {
+    /// <summary>
+    /// This task performs the RBM unsupervised initialization of the weights.
+    /// </summary>
     [Description("RBM initialization"), MyTaskInfo(Order = 100)]
     public class MyRBMTask : MyTask<MyFeedForwardNode>
     {

@@ -102,7 +102,7 @@ namespace XmlFeedForwardNet.Networks
         public MyAbstractFeedForwardNode()
             : base()
         {
-            EnergySamplesCount = 100;
+            EnergySamplesCount = 1;
             ParamsChanged = true;
             m_currentSamplePosition = 0;
         }

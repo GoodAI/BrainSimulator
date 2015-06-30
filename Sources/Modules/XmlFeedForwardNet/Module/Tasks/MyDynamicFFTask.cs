@@ -18,6 +18,10 @@ using YAXLib;
 
 namespace  XmlFeedForwardNet.Tasks
 {
+    /// <summary>
+    /// This task performs the standard forward and backward passes of the feedforward network on the training data,
+    /// and forward pass on the normal data input. All these passes can be conditioned on external signal.
+    /// </summary>
     [Description("Forward/Backward Propagation"), MyTaskInfo(Order = 150)]
     public class MyDynamicFFTask : MyTask<MyDynamicFFNode>
     {

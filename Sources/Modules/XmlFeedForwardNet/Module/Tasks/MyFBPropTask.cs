@@ -18,6 +18,9 @@ using  XmlFeedForwardNet.Networks;
 
 namespace  XmlFeedForwardNet.Tasks
 {
+    /// <summary>
+    /// This task performs the forward and backward passes of the feedforward network.
+    /// </summary>
     [Description("Forward/Backward Propagation"), MyTaskInfo(Order = 150)]
     public class MyFBPropTask : MyTask<MyFeedForwardNode>
     {

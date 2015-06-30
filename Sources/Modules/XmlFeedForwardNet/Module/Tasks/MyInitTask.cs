@@ -11,6 +11,9 @@ using BrainSimulator;
 
 namespace  XmlFeedForwardNet.Tasks
 {
+    /// <summary>
+    /// This task initializes the network according to the parameters in the xml definition file.
+    /// </summary>
     [Description("Initialization"), MyTaskInfo(Order = 0, OneShot = true)]
     public class MyInitTask : MyTask<MyXMLNetNode>
     {
@@ -24,13 +27,6 @@ namespace  XmlFeedForwardNet.Tasks
 
         public override void Execute()
         {
-            /*
-             * Je nutne kopirovat v initu z GPU na CPU? myhack
-            Owner.DataDimsMemoryBlock.SafeCopyToHost();
-            Owner.ExtraMemoryBlock.SafeCopyToHost();
-             */
-
-
             Owner.InputLayer.Initialize(nGPU);
             foreach (MyAbstractFLayer layer in Owner.Layers)
             {
