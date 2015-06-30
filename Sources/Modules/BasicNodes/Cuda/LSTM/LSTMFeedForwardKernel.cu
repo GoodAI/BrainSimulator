@@ -19,7 +19,7 @@ extern "C"
 		int memoryBlockId,
 		int cellsPerBlock,
 		float* weights,
-		int weightsFromId,
+		int weightsOffset,
 		float *input,
 		int inputCount,
 		float *previousOutput,
@@ -29,7 +29,7 @@ extern "C"
 		bool bias
 		)
 	{
-		int weightId = weightsFromId;
+		int weightId = weightsOffset;
 		float netInput = 0;
 
 		// signal from external input

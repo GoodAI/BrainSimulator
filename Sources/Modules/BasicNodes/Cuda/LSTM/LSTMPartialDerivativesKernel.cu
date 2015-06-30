@@ -43,7 +43,7 @@ extern "C"
 
 			// signal to the cell comes from external input, previous output and bias unit. No if-statements to avoid branch diverging
 			int isFromInputUnit = fromId >= 0 && fromId < inputCount;
-			int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < previousOutputCount);
+			int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < inputCount + previousOutputCount);
 			int isFromBiasUnit = fromId == (inputCount + previousOutputCount);
 
 			float inputFromWeight = isFromInputUnit * input[isFromInputUnit * fromId]

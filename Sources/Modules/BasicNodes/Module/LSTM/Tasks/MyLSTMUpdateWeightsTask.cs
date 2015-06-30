@@ -15,7 +15,8 @@ using BrainSimulator.NeuralNetwork.Layers;
 
 namespace BrainSimulator.LSTM.Tasks
 {
-    [Description("Update Weights"), MyTaskInfo(OneShot = false)]
+    /// <summary>Updates all network weights according to gradient.</summary>
+    [Description("Update weights"), MyTaskInfo(OneShot = false)]
     public class MyLSTMUpdateWeightsTask : MyTask<MyLSTMLayer>
     {
         private MyCudaKernel m_updateGateWeightsKernel;
@@ -32,6 +33,8 @@ namespace BrainSimulator.LSTM.Tasks
 
         public override void Execute()
         {
+            if (SimulationStep == 0) return;
+
             m_updateGateWeightsKernel.Run(
                 Owner.Input,
 		        Owner.PreviousOutput,
@@ -39,12 +42,17 @@ namespace BrainSimulator.LSTM.Tasks
 		        Owner.CellStateErrors,
 		        Owner.OutputGateDeltas,
 		        Owner.InputGateWeights,
+                Owner.InputGateWeightDeltas,
 		        Owner.ForgetGateWeights,
+                Owner.ForgetGateWeightDeltas,
 		        Owner.OutputGateWeights,
+                Owner.OutputGateWeightDeltas,
 		        Owner.InputGateWeightsRTRLPartials,
 		        Owner.ForgetGateWeightsRTRLPartials,
 
-                Owner.LearningRate,
+                Owner.ParentNetwork.SGD.TrainingRate,
+                Owner.ParentNetwork.SGD.Momentum,
+
 		        Owner.Input.Count,
 		        Owner.PreviousOutput.Count,
 		        Owner.CellsPerBlock
@@ -55,9 +63,12 @@ namespace BrainSimulator.LSTM.Tasks
 		        Owner.PreviousOutput,
 		        Owner.CellStateErrors,
 		        Owner.CellInputWeights,
+                Owner.CellInputWeightDeltas,
 		        Owner.CellWeightsRTRLPartials,
 
-		        Owner.LearningRate,
+                Owner.ParentNetwork.SGD.TrainingRate,
+                Owner.ParentNetwork.SGD.Momentum,
+
                 Owner.Input.Count,
                 Owner.PreviousOutput.Count,
                 Owner.CellsPerBlock

@@ -27,15 +27,27 @@ namespace BrainSimulator.Motor
 {
     /// <author>Karol Kuna</author>
     /// <status>WIP</status>
-    /// <summary>3D World based on BEPUphysics engine.
-    /// It can simulate various constraint systems defined via XML.</summary>
-    /// <description></description>
+    /// <summary>Inverted pendulum in 3D World based on BEPUphysics engine.</summary>
+    /// <description>Inverted pendulum with one or two controlled joints with one or three degrees of freedom. <br />
+    /// Parameters:
+    ///              <ul>
+    ///                 <li>MOTOR_MODE: Behaviour of joint motor control, VelocityMotor sets target velocity of rotation, ServoMotor sets target rotation</li>
+    ///                 <li>ELBOW_FIXED: If true, the second joint (elbow) becomes fixed in its position and uncontrollable</li>
+    ///                 <li>POLE_DOF: Degrees of freedom of the uncontrolled joint on the bottom of pole</li>
+    ///                 <li>GRAVITY: Gravity strength</li>
+    ///              </ul>
+    /// I/O:
+    ///              <ul>
+    ///                 <li>Controls: Control signals for the joints</li>
+    ///                 <li>SpherePush: Optional, adds the 3D vector to sphere's velocity</li>
+    ///                 <li>Joints: Rotation of the joints, may not be accurate</li>
+    ///                 <li>PoleRotation: 1 or 3 dimensional rotation of pole depending on POLE_DOF setting</li>
+    ///                 <li>ControlsCopy: Copy of previous control signals</li>
+    ///                 <li>SpherePosition: 3D position of the sphere</li>
+    ///              </ul>
+    /// </description>
     public class My3DPendulumWorld : My3DWorld
     {
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = false)]
-        public bool POLE_MOTOR_ACTIVE { get; set; }
-
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = MotorMode.VelocityMotor)]
         public MotorMode MOTOR_MODE { get; set; }
@@ -46,7 +58,7 @@ namespace BrainSimulator.Motor
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 1)]
-        public int POLE_FREE_DIMENSIONS { get; set; }
+        public int POLE_DOF { get; set; }
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 9.81f)]
@@ -66,14 +78,14 @@ namespace BrainSimulator.Motor
         }
 
         [MyOutputBlock(2)]
-        public MyMemoryBlock<float> Commands
+        public MyMemoryBlock<float> ControlsCopy
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
         [MyOutputBlock(3)]
-        public MyMemoryBlock<float> BallPosition
+        public MyMemoryBlock<float> SpherePosition
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
@@ -86,9 +98,7 @@ namespace BrainSimulator.Motor
 
             if (Controls != null)
             {
-                if (POLE_MOTOR_ACTIVE)
-                    validator.AssertError(Controls.Count >= 3, this, "Not enough controls (3 required)");
-                else if (ELBOW_FIXED)
+                if (ELBOW_FIXED)
                     validator.AssertError(Controls.Count >= 1, this, "Not enough controls (1 required)");
                 else
                     validator.AssertError(Controls.Count >= 2, this, "Not enough controls (2 required)");
@@ -97,24 +107,26 @@ namespace BrainSimulator.Motor
 
         public override void UpdateMemoryBlocks()
         {
-            if (POLE_FREE_DIMENSIONS == 1)
+            if (POLE_DOF == 1)
             {
                 Joints.Count = 3;
                 PoleRotation.Count = 1;
-                Commands.Count = 1;
+                ControlsCopy.Count = 1;
             }
             else
             {
                 Joints.Count = 5;
                 PoleRotation.Count = 3;
-                Commands.Count = 2;
+                ControlsCopy.Count = 2;
             }
 
-            BallPosition.Count = 3;
+            SpherePosition.Count = 3;
         }
 
         public My3DWorldTask WorldTask { get; set; }
-
+        
+        /// <summary>Simulates the 3D world</summary>
+        [Description("Simulate 3D world")]
         public class My3DWorldTask : MyTask<My3DPendulumWorld>
         {
             private RevoluteJoint shoulder;
@@ -170,11 +182,11 @@ namespace BrainSimulator.Motor
                 elbow.Limit.MaximumAngle = MathHelper.Pi / 3.0f;
                 Owner.Space.Add(elbow);
 
-                if (Owner.POLE_FREE_DIMENSIONS == 1)
+                if (Owner.POLE_DOF == 1)
                 {
                     //Upper arm to pole joint
                     wrist = new RevoluteJoint(upperArm, pole, upperArm.Position + new Vector3(0, upperArm.Height / 2, 0), Vector3.Forward);
-                    wrist.Motor.IsActive = true;
+                    wrist.Motor.IsActive = false;
                     wrist.Motor.Settings.Mode = Owner.MOTOR_MODE;
                     wrist.Motor.Settings.MaximumForce = 2500;
                     wrist.Limit.IsActive = true;
@@ -245,34 +257,6 @@ namespace BrainSimulator.Motor
                         elbow.Motor.Settings.VelocityMotor.GoalVelocity = Owner.Controls.Host[1];
                 }
 
-                if (Owner.POLE_FREE_DIMENSIONS == 1)
-                {
-                    wrist.Motor.IsActive = Owner.POLE_MOTOR_ACTIVE;
-                    if (Owner.POLE_MOTOR_ACTIVE)
-                    {
-                        //wrist
-                        if (Owner.MOTOR_MODE == MotorMode.Servomechanism)
-                        {
-                            if (Owner.Controls.Host[2] < -deadZone)
-                            {
-                                wrist.Motor.Settings.Servo.Goal = MathHelper.Min(wrist.Motor.Settings.Servo.Goal - Owner.Controls.Host[2] * 0.5f * dt, wrist.Limit.MaximumAngle);
-                            }
-                            else if (Owner.Controls.Host[2] > deadZone)
-                            {
-                                wrist.Motor.Settings.Servo.Goal = MathHelper.Max(wrist.Motor.Settings.Servo.Goal - Owner.Controls.Host[2] * 0.5f * dt, wrist.Limit.MinimumAngle);
-                            }
-                        }
-                        else if (Owner.MOTOR_MODE == MotorMode.VelocityMotor)
-                        {
-                            wrist.Motor.Settings.VelocityMotor.GoalVelocity = Owner.Controls.Host[2];
-                        }
-                    }
-                }
-                else
-                {
-                    //BallSocketJoint has no motor
-                }
-
                 //Pushing the sphere with outside force
                 if (Owner.SpherePush != null && Owner.SpherePush.Count >= 3)
                 {
@@ -302,7 +286,7 @@ namespace BrainSimulator.Motor
                 Owner.Joints.Host[0] = shoulder.Motor.ConnectionB.OrientationMatrix.Up.X;
                 Owner.Joints.Host[1] = elbow.Motor.ConnectionB.OrientationMatrix.Up.X;
 
-                if (Owner.POLE_FREE_DIMENSIONS == 1)
+                if (Owner.POLE_DOF == 1)
                 {
                     Owner.Joints.Host[2] = wrist.Motor.ConnectionB.OrientationMatrix.Up.X;
 
@@ -319,14 +303,14 @@ namespace BrainSimulator.Motor
                     Owner.PoleRotation.Host[2] = pole.Orientation.X;
                 }
 
-                Owner.BallPosition.Host[0] = sphere.Position.X;
-                Owner.BallPosition.Host[1] = sphere.Position.Y;
-                Owner.BallPosition.Host[2] = sphere.Position.Z;
+                Owner.SpherePosition.Host[0] = sphere.Position.X;
+                Owner.SpherePosition.Host[1] = sphere.Position.Y;
+                Owner.SpherePosition.Host[2] = sphere.Position.Z;
 
-                Owner.Controls.CopyToMemoryBlock(Owner.Commands, 0, 0, Math.Min(Owner.Controls.Count, Owner.Commands.Count));
+                Owner.Controls.CopyToMemoryBlock(Owner.ControlsCopy, 0, 0, Math.Min(Owner.Controls.Count, Owner.ControlsCopy.Count));
                 Owner.Joints.SafeCopyToDevice();
                 Owner.PoleRotation.SafeCopyToDevice();
-                Owner.BallPosition.SafeCopyToDevice();
+                Owner.SpherePosition.SafeCopyToDevice();
             }
         }
     }

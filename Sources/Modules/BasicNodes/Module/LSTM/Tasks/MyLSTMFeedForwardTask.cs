@@ -11,14 +11,18 @@ using BrainSimulator.Task;
 using BrainSimulator.Utils;
 using BrainSimulator.NeuralNetwork.Group;
 using BrainSimulator.NeuralNetwork.Layers;
+using BrainSimulator.NeuralNetwork.Tasks;
 
 
 namespace BrainSimulator.LSTM.Tasks
 {
+    /// <summary>Performs forward pass in the layer.</summary>
     [Description("Feed forward"), MyTaskInfo(OneShot = false)]
-    public class MyLSTMFeedForwardTask : MyTask<MyLSTMLayer>
+    public class MyLSTMFeedForwardTask : MyAbstractForwardTask<MyLSTMLayer>
     {
         private MyCudaKernel m_feedForwardKernel;
+
+        public MyLSTMFeedForwardTask() { }
 
         public override void Init(int nGPU)
         {

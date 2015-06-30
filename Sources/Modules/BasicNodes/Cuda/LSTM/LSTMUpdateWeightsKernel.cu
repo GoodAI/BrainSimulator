@@ -22,12 +22,17 @@ extern "C"
 		float *cellStateErrors,
 		float *outputGateDeltas,
 		float *inputGateWeights,
+		float *inputGateWeightDeltas,
 		float *forgetGateWeights,
+		float *forgetGateWeightDeltas,
 		float *outputGateWeights,
+		float *outputGateWeightDeltas,
 		float *inputGateWeightsRTRLPartials,
 		float *forgetGateWeightsRTRLPartials,
 
-		float learningRate,
+		float trainingRate,
+		float momentum,
+
 		int inputCount,
 		int previousOutputCount,
 		int cellsPerBlock
@@ -54,8 +59,11 @@ extern "C"
 									+ isFromPreviousOutputUnit * previousOutput[isFromPreviousOutputUnit * (fromId - inputCount)]
 									+ isPeephole * cellStates[isPeephole * (toId * cellsPerBlock + (fromId - inputCount - previousOutputCount))]
 									+ isFromBiasUnit * 1;
-	
-			outputGateWeights[weightId] += learningRate * outputGateDeltas[toId] * inputFromWeight;
+			
+			float outputGateWeightDelta = momentum * outputGateWeightDeltas[weightId];
+			outputGateWeightDelta += trainingRate * outputGateDeltas[toId] * inputFromWeight;
+			outputGateWeightDeltas[weightId] = outputGateWeightDelta;
+			outputGateWeights[weightId] += outputGateWeightDelta;
 
 			//update input and forget gate weights
 			float inputGateWeightDelta = 0;
@@ -67,6 +75,15 @@ extern "C"
 				forgetGateWeightDelta += cellStateErrors[cellId] * forgetGateWeightsRTRLPartials[cellId * weightsPerGate + fromId];
 			}
 
+			inputGateWeightDelta *= trainingRate;
+			forgetGateWeightDelta *= trainingRate;
+
+			inputGateWeightDelta += momentum * inputGateWeightDeltas[weightId];
+			forgetGateWeightDelta += momentum * forgetGateWeightDeltas[weightId];
+
+			inputGateWeightDeltas[weightId] = inputGateWeightDelta;
+			forgetGateWeightDeltas[weightId] = forgetGateWeightDelta;
+
 			inputGateWeights[weightId] += inputGateWeightDelta;
 			forgetGateWeights[weightId] += forgetGateWeightDelta;
 		}
@@ -77,9 +94,12 @@ extern "C"
 		float *previousOutput,
 		float *cellStateErrors,
 		float *cellInputWeights,
+		float *cellInputWeightDeltas,
 		float *cellWeightsRTRLPartials,
 
-		float learningRate,
+		float trainingRate,
+		float momentum,
+
 		int inputCount,
 		int previousOutputCount,
 		int cellsPerBlock
@@ -94,8 +114,11 @@ extern "C"
 		if (weightId < weightsPerCell * previousOutputCount)
 		{
 			int cellId = weightId / weightsPerCell;
+			float weightDelta = momentum * cellInputWeightDeltas[weightId];
 
-			cellInputWeights[weightId] += learningRate * cellStateErrors[cellId] * cellWeightsRTRLPartials[weightId];
+			weightDelta += trainingRate * cellStateErrors[cellId] * cellWeightsRTRLPartials[weightId];
+			cellInputWeightDeltas[weightId] = weightDelta;
+			cellInputWeights[weightId] += weightDelta;
 		}
 	}
 }

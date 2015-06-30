@@ -11,10 +11,24 @@ using BrainSimulator.Task;
 using BrainSimulator.Utils;
 using BrainSimulator.NeuralNetwork.Group;
 using BrainSimulator.NeuralNetwork.Layers;
+using BrainSimulator.NeuralNetwork.Tasks;
 
 
 namespace BrainSimulator.LSTM.Tasks
 {
+    /// <summary>Dummy task, in truncated RTRL deltas are not propagated backwards from LSTM layer to input layer.</summary>
+    [Description("Delta backprop"), MyTaskInfo(OneShot = false)]
+    public class MyLSTMDummyDeltaTask : MyAbstractBackDeltaTask<MyAbstractLayer>
+    {
+        public MyLSTMDummyDeltaTask() { }
+        public override void Init(int nGPU) { }
+        public override void Execute()
+        {
+            // error is not propagated backwards from LSTM layer
+        }
+    }
+
+    /// <summary>Computes deltas of output gates and cell state errors.</summary>
     [Description("Calculate deltas"), MyTaskInfo(OneShot = false)]
     public class MyLSTMDeltaTask : MyTask<MyLSTMLayer>
     {
@@ -28,7 +42,7 @@ namespace BrainSimulator.LSTM.Tasks
 
         public override void Execute()
         {
-            MyHiddenLayer nextLayer = Owner.NextLayer as MyHiddenLayer; // TODO: nextLayer was based on the deprecated MyLayer. It was changed to MyHiddenLayer (PLZ CHECK FOR CORRECTNESS!)
+            if (SimulationStep == 0) return;
 
             m_deltaKernel.Run(
                 Owner.CellStateErrors,
@@ -36,10 +50,8 @@ namespace BrainSimulator.LSTM.Tasks
 		        Owner.CellStates,
 		        Owner.OutputGateActivations,
 		        Owner.OutputGateActivationDerivatives,
-		        nextLayer.Delta,
-		        nextLayer.Weights,
+		        Owner.Delta,
 
-		        nextLayer.Neurons,
 		        Owner.CellStates.Count,
 		        Owner.CellsPerBlock
                 );

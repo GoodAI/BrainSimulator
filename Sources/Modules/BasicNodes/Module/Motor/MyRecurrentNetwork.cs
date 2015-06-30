@@ -20,8 +20,31 @@ namespace BrainSimulator.Motor
 {
     /// <author>Karol Kuna</author>
     /// <status>Working</status>
-    /// <summary>Recurrent network with Elman architecture and Real-Time Recurrent Learning</summary>
-    /// <description></description>
+    /// <summary>Recurrent network trained by Real-Time Recurrent Learning</summary>
+    /// <description>Simple recurrent network with fully recurrent hidden layer trained by Real-Time Recurrent Learning (RTRL) algorithm. <br />
+    ///              Parameters:
+    ///              <ul>
+    ///                 <li>INPUT_UNITS: Read-only number of units in input layer</li>
+    ///                 <li>HIDDEN_UNITS: Number of units in hidden layer</li>
+    ///                 <li>OUTPUT_UNITS: Read-only number of units in output layer</li>
+    ///                 <li>UNITS: Read-only total number of units</li>
+    ///                 <li>HIDDEN_UNIT_WEIGHTS: Read-only number of connection weights to hidden layer units</li>
+    ///                 <li>OUTPUT_UNIT_WEIGHTS: Read-only number of connection weights to output layer units</li>
+    ///                 <li>WEIGHTS: Read-only total number of connection weights</li>
+    ///              </ul>
+    ///              
+    ///              I/O:
+    ///              <ul>
+    ///                 <li>Input: Input vector copied to activation of input layer units and propagated through the network</li>
+    ///                 <li>Target: Desired activation of output layer units </li>
+    ///                 <li>Output: Activation of output layer units </li>
+    ///              </ul>
+    ///              
+    ///              Signals:
+    ///              <ul>
+    ///                 <li>Reset: Resets activation of all network units to zero</li>
+    ///              </ul>
+    /// </description>
     [YAXSerializeAs("RecurrentNetwork")]
     public class MyRecurrentNetwork : MyWorkingNode
     {
@@ -39,7 +62,7 @@ namespace BrainSimulator.Motor
         }
 
         [YAXSerializableField(DefaultValue = ActivationFunctionType.SIGMOID)]
-        [MyBrowsable, Category("\tLayer")]
+        [MyBrowsable, Category("Structure")]
         public ActivationFunctionType ACTIVATION_FUNCTION { get; set; }
 
         [MyBrowsable, Category("Structure")]
@@ -83,7 +106,6 @@ namespace BrainSimulator.Motor
         public MyMemoryBlock<float> ActivationDerivatives { get; protected set; }
 
         public MyMemoryBlock<float> OutputDeltas { get; protected set; }
-        public MyMemoryBlock<float> Anomaly { get; protected set; }
 
         //TASKS
         public MyInitNetworkTask InitNetwork { get; protected set; }
@@ -94,6 +116,7 @@ namespace BrainSimulator.Motor
         public MyResetSignal ResetSignal { get; private set; }
         public class MyResetSignal : MySignal { }
 
+        /// <summary>Initializes network with random weights.</summary>
         [Description("Init Network"), MyTaskInfo(OneShot = true)]
         public class MyInitNetworkTask : MyTask<MyRecurrentNetwork>
         {
@@ -125,6 +148,7 @@ namespace BrainSimulator.Motor
             }
         }
 
+        /// <summary>Performs forward pass in te network.</summary>
         [Description("Feedforward"), MyTaskInfo(OneShot = false)]
         public class MyFeedforwardTask : MyTask<MyRecurrentNetwork>
         {
@@ -167,7 +191,8 @@ namespace BrainSimulator.Motor
                 Owner.Activations.CopyToMemoryBlock(Owner.Output, 1 + Owner.INPUT_UNITS + Owner.HIDDEN_UNITS, 0, Owner.OUTPUT_UNITS);
             }
         }
-        
+
+        /// <summary>Computes RTRL partial derivatives and updates network weights.</summary>
         [Description("Real-time recurrent learning"), MyTaskInfo(OneShot = false)]
         public class MyRTRLTask : MyTask<MyRecurrentNetwork>
         {
@@ -262,7 +287,6 @@ namespace BrainSimulator.Motor
                 PreviousRTRLDerivatives.Count = RTRLDerivatives.Count;
 
                 OutputDeltas.Count = OUTPUT_UNITS;
-                Anomaly.Count = 1;
 
                 // make an even number of weights for the cuda random initialisation
                 if (Weights.Count % 2 != 0)

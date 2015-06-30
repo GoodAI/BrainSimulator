@@ -14,6 +14,7 @@ using BrainSimulator.NeuralNetwork.Layers;
 
 namespace BrainSimulator.LSTM.Tasks
 {
+    /// <summary>Initialises layer with random weights.</summary>
     [Description("Init LSTM layer"), MyTaskInfo(OneShot = true)]
     public class MyLSTMInitLayerTask : MyTask<MyLSTMLayer>
     {
@@ -38,6 +39,11 @@ namespace BrainSimulator.LSTM.Tasks
             Owner.CellWeightsRTRLPartials.Fill(0);
             Owner.InputGateWeightsRTRLPartials.Fill(0);
             Owner.ForgetGateWeightsRTRLPartials.Fill(0);
+
+            Owner.CellInputWeightDeltas.Fill(0);
+            Owner.InputGateWeightDeltas.Fill(0);
+            Owner.ForgetGateWeightDeltas.Fill(0);
+            Owner.OutputGateWeightDeltas.Fill(0);
         }
     }
 }

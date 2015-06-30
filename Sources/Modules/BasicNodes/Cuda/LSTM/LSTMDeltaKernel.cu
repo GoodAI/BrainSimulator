@@ -21,10 +21,8 @@ extern "C"
 		float *cellStates,
 		float *outputGateActivations,
 		float *outputGateActivationDerivatives,
-		float *nextLayerDeltas,
-		float *nextLayerWeights,
+		float *deltas,
 
-		int nextLayerSize,
 		int cellCount,
 		int cellsPerBlock
 		)
@@ -39,14 +37,9 @@ extern "C"
 
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				float sum = 0.0;
-				int index = memoryBlockId * nextLayerSize;
-				for (int j = 0; j < nextLayerSize; j++)
-				{
-					sum += nextLayerWeights[index + j] * nextLayerDeltas[j];
-				}
-				cellStateErrors[cellId] = outputGateActivations[memoryBlockId] * sum;
-				outputGateDeltaSum += cellStates[cellId] * sum;
+				float delta = -deltas[cellId];
+				cellStateErrors[cellId] = outputGateActivations[memoryBlockId] * delta;
+				outputGateDeltaSum += cellStates[cellId] * delta;
 			}
 
 			outputGateDeltas[memoryBlockId] = outputGateActivationDerivatives[memoryBlockId] * outputGateDeltaSum;

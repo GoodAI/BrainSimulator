@@ -16,9 +16,18 @@ using BrainSimulator.Matrix;
 namespace BrainSimulator.Motor
 {
     /// <author>Karol Kuna</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Computes set of torques that emulate effect of a virtual force applied to a point on body</summary>
-    /// <description></description>
+    /// <description>Inverse kinematics method that uses transpose of Jacobian matrix to calculate joint torques that emulate effect of a virtual force applied to a point of a body in 3D coordinates<br />
+    /// I/O:
+    ///              <ul>
+    ///                 <li>Anchors: Positions of joint anchors in a 3xN matrix, where each row contains X, Y, and Z coordinates for corresponding joint</li>
+    ///                 <li>RotationAxes: 3xN matrix where each row is a 3D unit vector pointing along the direction of current axis of rotation for corresponding joint</li>
+    ///                 <li>Point: X, Y, and Z coordintes of end effector where the force is to be applied</li>
+    ///                 <li>Force: Virtual force 3D vector</li>
+    ///                 <li>Output: Joint torques</li>
+    ///              </ul>
+    /// </description>
     [YAXSerializeAs("JacobianTransposeControl")]
     public class MyJacobianTransposeControl : MyWorkingNode
     {
@@ -41,11 +50,12 @@ namespace BrainSimulator.Motor
             set { SetOutput(0, value); }
         }
 
-        public MyMemoryBlock<float> Jacobian { get; private set; }
+        public MyMemoryBlock<float> JacobianTranspose { get; private set; }
 
         public int COLUMNS;
         public int ROWS;
 
+        /// <summary>Jacobian transpose method</summary>
         [Description("Transpose method"), MyTaskInfo(OneShot = false)]
         public class MyJacobianTransposeTask : MyTask<MyJacobianTransposeControl>
         {
@@ -79,22 +89,22 @@ namespace BrainSimulator.Motor
                     
                     m_rateOfChange = Vector3D.CrossProduct(m_axis, m_point - m_anchor);
                     
-                    Owner.Jacobian.Host[3 * i] = (float) m_rateOfChange.X;
-                    Owner.Jacobian.Host[3 * i + 1] = (float) m_rateOfChange.Y;
-                    Owner.Jacobian.Host[3 * i + 2] = (float) m_rateOfChange.Z;
+                    Owner.JacobianTranspose.Host[3 * i] = (float) m_rateOfChange.X;
+                    Owner.JacobianTranspose.Host[3 * i + 1] = (float) m_rateOfChange.Y;
+                    Owner.JacobianTranspose.Host[3 * i + 2] = (float) m_rateOfChange.Z;
                 }
 
-                for (int i = 0; i < Owner.Jacobian.Count; i++)
+                for (int i = 0; i < Owner.JacobianTranspose.Count; i++)
                 {
-                    if (float.IsNaN(Owner.Jacobian.Host[i]))
+                    if (float.IsNaN(Owner.JacobianTranspose.Host[i]))
                     {
-                        Owner.Jacobian.Host[i] = 0;
+                        Owner.JacobianTranspose.Host[i] = 0;
                     }
                 }
 
-                Owner.Jacobian.SafeCopyToDevice();
+                Owner.JacobianTranspose.SafeCopyToDevice();
 
-                m_matrixOps.Run(Matrix.MatOperation.Multiplication, Owner.Jacobian, Owner.Force, Owner.Output);
+                m_matrixOps.Run(Matrix.MatOperation.Multiplication, Owner.JacobianTranspose, Owner.Force, Owner.Output);
             }
         }
 
@@ -107,8 +117,8 @@ namespace BrainSimulator.Motor
                 COLUMNS = 3; //works only in 3 dimensions
                 ROWS = Anchors.Count / COLUMNS;
 
-                Jacobian.Count = COLUMNS * ROWS;
-                Jacobian.ColumnHint = COLUMNS;
+                JacobianTranspose.Count = COLUMNS * ROWS;
+                JacobianTranspose.ColumnHint = COLUMNS;
 
                 Output.Count = ROWS;
             }
@@ -117,8 +127,8 @@ namespace BrainSimulator.Motor
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-            validator.AssertError(Anchors != null && Anchors.ColumnHint == 3, this, "Anchors must be a 3xn matrix");
-            validator.AssertError(RotationAxes != null && RotationAxes.ColumnHint == 3, this, "RotationAxes must be a 3xn matrix");
+            validator.AssertError(Anchors != null && Anchors.ColumnHint == 3, this, "Anchors must be a 3xN matrix");
+            validator.AssertError(RotationAxes != null && RotationAxes.ColumnHint == 3, this, "RotationAxes must be a 3xN matrix");
             validator.AssertError(Anchors != null && RotationAxes != null && Anchors.Count == RotationAxes.Count, this, "Number of anchors and rotation axes must be the same");
             validator.AssertError(Point != null && Point.Count == 3, this, "Point must be a 3 dimensional vector");
             validator.AssertError(Force != null && Force.Count == 3, this, "Force must be a 3 dimensional vector");

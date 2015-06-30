@@ -19,14 +19,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace BrainSimulator.Motor
 {
     /// <author>Dusan Fedorcak</author>
-    /// <status>WIP</status>
-    /// <summary>3D World based on BEPUphysics engine.
-    /// It can simulate various constraint systems defined via XML.</summary>
-    /// <description></description>
+    /// <status>Working</status>
+    /// <summary>Manipulator in 3D World based on BEPUphysics engine</summary>
+    /// <description>Manipulator from BEPUphysics demo "Robotic Arm Thingamajig" with 5 rotational joints. <br />
+    /// I/O:
+    ///              <ul>
+    ///                 <li>Controls: Control signals for the joints</li>
+    ///                 <li>Joints: Rotation of the joints, may not be accurate</li>
+    ///              </ul>
+    /// </description>
     public class My3DManipulatorWorld : My3DWorld
     {
 
@@ -36,7 +42,7 @@ namespace BrainSimulator.Motor
 
             if (Controls != null)
             {
-                validator.AssertError(Controls.Count >= 5, this, "Not enough controls");
+                validator.AssertError(Controls.Count >= 5, this, "Not enough controls, 5 needed!");
             }
         }
 
@@ -47,6 +53,8 @@ namespace BrainSimulator.Motor
 
         public My3DWorldTask WorldTask { get; set; }
 
+        /// <summary>Simulates the 3D world</summary>
+        [Description("Simulate 3D world")]
         public class My3DWorldTask : MyTask<My3DWorld>
         {
             private RevoluteJoint groundToBaseJoint;

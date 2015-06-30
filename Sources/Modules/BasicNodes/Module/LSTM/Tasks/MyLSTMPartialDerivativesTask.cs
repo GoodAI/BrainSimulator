@@ -15,6 +15,7 @@ using BrainSimulator.NeuralNetwork.Layers;
 
 namespace BrainSimulator.LSTM.Tasks
 {
+    /// <summary>Computes truncated RTRL partial derivatives.</summary>
     [Description("RTRL Partial Derivatives"), MyTaskInfo(OneShot = false)]
     public class MyLSTMPartialDerivativesTask : MyTask<MyLSTMLayer>
     {
@@ -32,6 +33,8 @@ namespace BrainSimulator.LSTM.Tasks
 
         public override void Execute()
         {
+            if (SimulationStep == 0) return;
+
             m_cellWeightsRTRLPartialsKernel.Run(
                 Owner.Input,
 		        Owner.PreviousOutput,

@@ -23,7 +23,25 @@ namespace BrainSimulator.Motor
     /// <author>Karol Kuna</author>
     /// <status>Working</status>
     /// <summary>World simulating robotic arm</summary>
-    /// <description></description>
+    /// <description> Simulation of a robotic arm in 2D environment. <br />
+    /// Parameters:
+    ///              <ul>
+    ///                 <li>JOINTS: Number of arm's joints, length of arm parts is automatically determined by golden ratio</li>
+    ///                 <li>WORLD_WIDTH: Width of the visualised world</li>
+    ///                 <li>WORLD_HEIGHT: Height of the visualised world</li>
+    ///              </ul>
+    /// I/O:
+    ///              <ul>
+    ///                 <li>MusclesInput: Torque to be applied by muscles on each joint, positive values rotate clockwise</li>
+    ///                 <li>ResetInput: Optional, values other than zero reset arm to starting configuration</li>
+    ///                 <li>VirtualMusclesLengthInput: Optional, visualises passed muscles lengths in VirtualOutput without affectng the "real" arm</li>
+    ///                 <li>VisualOutput: Visualisation of the arm in 2D world</li>
+    ///                 <li>MusclesLengthOutput: Length of muscles pulling clockwise, from minimum of 0 to maximum of 1</li>
+    ///                 <li>JointsPositionOutput: 2D position of all joints</li>
+    ///                 <li>EndPosition: 2D position of end effector</li>
+    ///                 <li>VirtualOutput: Visualisation of virtual arm</li>
+    ///              </ul>
+    /// </description>
     class MyArmWorld : MyWorld
     {
         [MyBrowsable, Category("Params")]
@@ -84,45 +102,24 @@ namespace BrainSimulator.Motor
         }
 
         [MyOutputBlock]
-        public MyMemoryBlock<float> MusclesLengthChangeOutput
+        public MyMemoryBlock<float> JointsPositionOutput
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
         [MyOutputBlock]
-        public MyMemoryBlock<float> MusclesForceOutput
+        public MyMemoryBlock<float> EndPosition
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
         [MyOutputBlock]
-        public MyMemoryBlock<float> FinalPosition
+        public MyMemoryBlock<float> VirtualOutput
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
-        }
-
-        [MyOutputBlock]
-        public MyMemoryBlock<float> VirtualOutput
-        {
-            get { return GetOutput(5); }
-            set { SetOutput(5, value); }
-        }
-
-        [MyOutputBlock]
-        public MyMemoryBlock<float> LastPartRotation
-        {
-            get { return GetOutput(6); }
-            set { SetOutput(6, value); }
-        }
-
-        [MyOutputBlock]
-        public MyMemoryBlock<float> JointsPositionOutput
-        {
-            get { return GetOutput(7); }
-            set { SetOutput(7, value); }
         }
 
         public MyArmWorld() {}
@@ -153,7 +150,7 @@ namespace BrainSimulator.Motor
                 BoneLength[i] = (int)(Math.Pow(1.61804, JOINTS - 1 - i) * unitLength);
             }
 
-            JointPosition[0].X = WORLD_WIDTH - 64;
+            JointPosition[0].X = 2 * WORLD_WIDTH / 3;
             JointPosition[0].Y = WORLD_HEIGHT / 2;
             JointRotation[0] = 90;
             JointMomentum[0] = 0;
@@ -167,6 +164,18 @@ namespace BrainSimulator.Motor
             }
         }
 
+        /// <summary>Simulates the arm<br />
+        /// Parameters:
+        ///              <ul>
+        ///                 <li>DRAW: If set to true, end effector draws in the environment</li>
+        ///                 <li>UPDATE_VISUAL_OUTPUT: If set to false, visual output is not updated</li>
+        ///                 <li>GRAVITY_FORCE: Gravity force</li>
+        ///                 <li>MUSCLE_FORCE: Maximum muscle force</li>
+        ///                 <li>FRICTION: Friction</li>
+        ///                 <li>HIGHLIGHT_X: X coordinate of a point highlighted in environment</li>
+        ///                 <li>HIGHLIGHT_Y: Y coordinate of a point highlighted in environment</li>
+        ///              </ul>
+        /// </summary>
         [Description("Perform arm step")]
         public class MyArmTask : MyTask<MyArmWorld>
         {
@@ -224,7 +233,6 @@ namespace BrainSimulator.Motor
                     float momentumChange = momentumRemainder;
                     momentumChange += GRAVITY_FORCE * (float)Math.Cos(rotation * (Math.PI / 180)); //apply gravity force
                     momentumChange -= FRICTION * Owner.JointMomentum[i]; //apply friction
-                    Owner.MusclesForceOutput.Host[i-1] = momentumChange;
                     momentumChange += MUSCLE_FORCE * Owner.MusclesInput.Host[(i - 1)]; //apply muscle force
 
                     Owner.JointMomentum[i] += momentumChange;
@@ -250,7 +258,6 @@ namespace BrainSimulator.Motor
                         //update muscle length
                         float oldLength = Owner.MusclesLengthOutput.Host[i - 1];
                         Owner.MusclesLengthOutput.Host[i-1] = (Owner.JointMaxRotation[i] - Owner.JointRotation[i]) / (Owner.JointMaxRotation[i] - Owner.JointMinRotation[i]);
-                        Owner.MusclesLengthChangeOutput.Host[i - 1] = SimulationStep > 0 ? Owner.MusclesLengthOutput.Host[i - 1] - oldLength : 0;
                     }
                     else //two intervals
                     {
@@ -276,7 +283,6 @@ namespace BrainSimulator.Motor
                         {
                             float oldLength = Owner.MusclesLengthOutput.Host[i - 1];
                             Owner.MusclesLengthOutput.Host[i - 1] = 1 - (Owner.JointRotation[i] - Owner.JointMinRotation[i]) / (360 - Owner.JointMinRotation[i] + Owner.JointMaxRotation[i]);
-                            Owner.MusclesLengthChangeOutput.Host[i - 1] = SimulationStep > 0 ? Owner.MusclesLengthOutput.Host[i - 1] - oldLength : 0;
                         }
                     }
 
@@ -284,9 +290,6 @@ namespace BrainSimulator.Motor
                     Owner.JointPosition[i].X = Owner.JointPosition[i - 1].X + (int)(Math.Cos(rotation * (Math.PI / 180)) * Owner.BoneLength[i - 1]);
                     Owner.JointPosition[i].Y = Owner.JointPosition[i - 1].Y + (int)(Math.Sin(rotation * (Math.PI / 180)) * Owner.BoneLength[i - 1]);
                 }
-
-                Owner.LastPartRotation.Host[0] = (float) (rotation % 360) / 360;
-                Owner.LastPartRotation.SafeCopyToDevice();
 
                 if (DRAW)
                 {
@@ -328,9 +331,9 @@ namespace BrainSimulator.Motor
                     }
                 }
 
-                Owner.FinalPosition.Host[0] = Owner.JointPosition[Owner.JOINTS].X;
-                Owner.FinalPosition.Host[1] = Owner.JointPosition[Owner.JOINTS].Y;
-                Owner.FinalPosition.SafeCopyToDevice();
+                Owner.EndPosition.Host[0] = Owner.JointPosition[Owner.JOINTS].X;
+                Owner.EndPosition.Host[1] = Owner.JointPosition[Owner.JOINTS].Y;
+                Owner.EndPosition.SafeCopyToDevice();
 
                 for (int i = 0; i < Owner.JOINTS; i++)
                 {
@@ -341,8 +344,6 @@ namespace BrainSimulator.Motor
 
                 Owner.VisualOutput.SafeCopyToDevice();
                 Owner.MusclesLengthOutput.SafeCopyToDevice();
-                Owner.MusclesLengthChangeOutput.SafeCopyToDevice();
-                Owner.MusclesForceOutput.SafeCopyToDevice();
 
                 //draw virtual arm
                 if (UPDATE_VISUAL_OUTPUT && Owner.VirtualMusclesLengthInput != null && Owner.VirtualMusclesLengthInput.Count == Owner.JOINTS)
@@ -445,16 +446,12 @@ namespace BrainSimulator.Motor
             VisualOutput.Count = WORLD_WIDTH * WORLD_HEIGHT;
             VisualOutput.ColumnHint = WORLD_WIDTH;
             Reach.Count = WORLD_WIDTH * WORLD_HEIGHT;
-            FinalPosition.Count = 2;
+            EndPosition.Count = 2;
 
             MusclesLengthOutput.Count = JOINTS;
-            MusclesLengthChangeOutput.Count = JOINTS;
-            MusclesForceOutput.Count = JOINTS;
 
             VirtualOutput.Count = WORLD_WIDTH * WORLD_HEIGHT;
             VirtualOutput.ColumnHint = WORLD_WIDTH;
-
-            LastPartRotation.Count = 1;
 
             JointsPositionOutput.Count = JOINTS * 2;
             JointsPositionOutput.ColumnHint = 2;
@@ -462,7 +459,8 @@ namespace BrainSimulator.Motor
 
         public override void Validate(MyValidator validator)
         {
-            validator.AssertError(MusclesInput != null && MusclesInput.Count == JOINTS, this, "Muscles input size must be equal to number of joints");
+            validator.AssertError(JOINTS <= 8, this, "Maximum number of joints is 8!");
+            validator.AssertError(MusclesInput != null && MusclesInput.Count == JOINTS, this, "Muscles input size must be equal to number of joints!");
         }
         
     }

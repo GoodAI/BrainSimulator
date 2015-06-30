@@ -16,16 +16,30 @@ using BrainSimulator.LSTM.Tasks;
 namespace BrainSimulator.LSTM
 {
     /// <author>Karol Kuna</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Long Short Term Memory layer</summary>
-    /// <description></description>
-    public class MyLSTMLayer : MyAbstractLayer
+    /// <description>Fully recurrent Long Short Term Memory (LSTM) hidden layer with forget gates and peephole connections trained by truncated Real-Time Recurrent Learning (RTRL) algorithm.<br />
+    ///              Parameters:
+    ///              <ul>
+    ///                 <li>ActivationFunction: Activation function applied to cell input. All gates use sigmoid activation function</li>
+    ///                 <li>CellsPerBlock: Number of cells in each LSTM memory block</li>
+    ///                 <li>MemoryBlocks: Number of LSTM memory blocks in the layer</li>
+    ///                 <li>Neurons: Read-only number of cells in the layer calculated as MemoryBlocks * CellsPerBlock</li>
+    ///              </ul>
+    ///              Training hyperparameters are set by neural network group and can be configured there.
+    /// </description>
+    public class MyLSTMLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
         // Properties
         public override int Neurons
         {
             get { return MemoryBlocks * CellsPerBlock; }
             set {}
+        }
+
+        public override ConnectionType Connection
+        {
+            get { return ConnectionType.FULLY_CONNECTED; }
         }
 
         [YAXSerializableField(DefaultValue = 8)]
@@ -36,17 +50,8 @@ namespace BrainSimulator.LSTM
         [MyBrowsable, Category("\tLayer")]
         public int CellsPerBlock { get; set; }
 
-        [YAXSerializableField(DefaultValue = 0.1f)]
-        [MyBrowsable, Category("\tLayer")]
-        public float LearningRate { get; set; }
-
-        [YAXSerializableField(DefaultValue = ActivationFunctionType.SIGMOID)]
-        [MyBrowsable, Category("\tLayer")]
-        public ActivationFunctionType ActivationFunction { get; set; }
-
         //Tasks
         MyLSTMInitLayerTask initLayerTask { get; set; }
-        MyLSTMFeedForwardTask feedForwardTask { get; set; }
         MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
         MyLSTMDeltaTask deltaTask { get; set; }
         MyLSTMUpdateWeightsTask updateWeightsTask { get; set; }
@@ -67,12 +72,16 @@ namespace BrainSimulator.LSTM
 
         [MyPersistable]
         public MyMemoryBlock<float> CellInputWeights { get; set; }
+        public MyMemoryBlock<float> CellInputWeightDeltas { get; set; }
         [MyPersistable]
         public MyMemoryBlock<float> InputGateWeights { get; set; }
+        public MyMemoryBlock<float> InputGateWeightDeltas { get; set; }
         [MyPersistable]
         public MyMemoryBlock<float> ForgetGateWeights { get; set; }
+        public MyMemoryBlock<float> ForgetGateWeightDeltas { get; set; }
         [MyPersistable]
         public MyMemoryBlock<float> OutputGateWeights { get; set; }
+        public MyMemoryBlock<float> OutputGateWeightDeltas { get; set; }
 
         public MyMemoryBlock<float> CellWeightsRTRLPartials { get; set; }
         public MyMemoryBlock<float> InputGateWeightsRTRLPartials { get; set; }
@@ -114,12 +123,19 @@ namespace BrainSimulator.LSTM
             ForgetGateWeights.Count = gateInputSize * ForgetGateActivations.Count;
             OutputGateWeights.Count = gateInputSize * OutputGateActivations.Count;
 
+            CellInputWeightDeltas.Count = CellInputWeights.Count;
+            InputGateWeightDeltas.Count = InputGateWeights.Count;
+            ForgetGateWeightDeltas.Count = ForgetGateWeights.Count;
+            OutputGateWeightDeltas.Count = OutputGateWeights.Count;
+
             CellWeightsRTRLPartials.Count = CellInputWeights.Count;
             InputGateWeightsRTRLPartials.Count = InputGateWeights.Count * CellsPerBlock;
             ForgetGateWeightsRTRLPartials.Count = ForgetGateWeights.Count * CellsPerBlock;
             
             CellStateErrors.Count = CellStates.Count;
             OutputGateDeltas.Count = MemoryBlocks;
+
+            Delta.Count = CellStates.Count; // computed by previous layer
 
             // make an even number of weights for the cuda random initialisation
             if (CellInputWeights.Count % 2 != 0)
@@ -132,9 +148,20 @@ namespace BrainSimulator.LSTM
                 OutputGateWeights.Count++;
         }
 
+        public void CreateTasks()
+        {
+            ForwardTask = new MyLSTMFeedForwardTask();
+            DeltaBackTask = new MyLSTMDummyDeltaTask(); // error is not propagated backwards from LSTM layer!
+        }
+
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
+
+            if (PreviousLayer != null)
+            {
+                MyLog.WARNING.WriteLine("Deltas are not propagated backwards from LSTM layer!");
+            }
         }
 
         public override string Description

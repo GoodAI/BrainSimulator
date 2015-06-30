@@ -26,9 +26,36 @@ using YAXLib;
 namespace BrainSimulator.Motor
 {
     /// <author>Karol Kuna</author>
-    /// <status>WIP</status>
-    /// <summary>3D bipedal robot world based on BEPUphysics engine.</summary>
-    /// <description></description>
+    /// <status>Working</status>
+    /// <summary>Bipedal robot in 3D world based on BEPUphysics engine.</summary>
+    /// <description>Bipedal robot with 9 controlled joints. <br />
+    /// Parameters:
+    ///              <ul>
+    ///                 <li>MOTOR_MODE: Behaviour of joint motor control: VELOCITY_MOTOR sets target velocity of rotation; SERVO sets target rotation; MUSCLE_PAIR requires two controls per joint, for flexor and extensor force</li>
+    ///                 <li>MOTOR_MAX_FORCE: Maximu force  motor can produce, doesn't apply for MUSCLE_PAIR motor mode</li>
+    ///                 <li>JOINT_STIFFNESS: Stiffnes coefficient of spring in the joint</li>
+    ///                 <li>GROUND: Toggle ground for robot to stand on</li>
+    ///                 <li>GRAVITY: Gravity strength</li>
+    ///                 <li>*_WEIGHT: Weight of the respective body part</li>
+    ///                 <li>*_WIDTH or *_HEIGHT: Dimension of the respective body part</li>
+    ///                 <li>FORCE_MULTIPLIER: Applies only to MUSCLE_PAIR motor mode, coefficient for flexor/extensor strength</li>
+    ///                 <li>VELOCITY_MULTIPLIER: Applies only to MUSCLE_PAIR motor mode, coefficient for flexor/extensor target velocities</li>
+    ///              </ul>
+    /// I/O:
+    ///              <ul>
+    ///                 <li>Controls: Control signals for the joints</li>
+    ///                 <li>Push: Optional, adds the 3D vector to torso's velocity</li>
+    ///                 <li>Joints: Rotation of the joints, may not be accurate</li>
+    ///                 <li>TorsoRotation: Rotation of torso in 3D coordinates</li>
+    ///                 <li>FeetPressure: Approximate pressure applied to rear part of left foot, front part of left foot, rear part of right foot, front part of right foot in that order</li>
+    ///                 <li>ControlsCopy: Copy of previous control signals</li>
+    ///                 <li>CenterOfMass: Position of center of mass in 3D coordinates</li>
+    ///                 <li>ContactPoint: Position of center of pressure in 3D coordinates</li>
+    ///                 <li>JointPosition: 3xN matrix of positions of all joints, each row containing a 3D position of respective joint</li>
+    ///                 <li>JointAxis: 3xN matrix of axis of joint rotation, each row containing a 3D axis of respective joint</li>
+    ///                 <li>TorsoPosition: Position of torso in 3D coordinates</li>
+    ///              </ul>
+    /// </description>
     public class My3DBipedalRobotWorld : My3DWorld
     {
         public enum MyMotorMode
@@ -73,7 +100,7 @@ namespace BrainSimulator.Motor
         }
 
         [MyOutputBlock(3)]
-        public MyMemoryBlock<float> Commands
+        public MyMemoryBlock<float> ControlsCopy
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
@@ -87,38 +114,31 @@ namespace BrainSimulator.Motor
         }
 
         [MyOutputBlock(5)]
-        public MyMemoryBlock<float> ContactPoint
+        public MyMemoryBlock<float> CenterOfPressure
         {
             get { return GetOutput(5); }
             set { SetOutput(5, value); }
         }
 
         [MyOutputBlock(6)]
-        public MyMemoryBlock<float> FeetPosition
+        public MyMemoryBlock<float>JointPosition
         {
             get { return GetOutput(6); }
             set { SetOutput(6, value); }
         }
 
         [MyOutputBlock(7)]
-        public MyMemoryBlock<float>JointPosition
+        public MyMemoryBlock<float> JointAxis
         {
             get { return GetOutput(7); }
             set { SetOutput(7, value); }
         }
 
         [MyOutputBlock(8)]
-        public MyMemoryBlock<float> JointAxis
+        public MyMemoryBlock<float> TorsoPosition
         {
             get { return GetOutput(8); }
             set { SetOutput(8, value); }
-        }
-
-        [MyOutputBlock(9)]
-        public MyMemoryBlock<float> TorsoPosition
-        {
-            get { return GetOutput(9); }
-            set { SetOutput(9, value); }
         }
 
         public override void Validate(MyValidator validator)
@@ -131,10 +151,9 @@ namespace BrainSimulator.Motor
             Joints.Count = JOINTS;
             TorsoRotation.Count = 3;
             FeetPressure.Count = 4;
-            Commands.Count = (MOTOR_MODE == MyMotorMode.MUSCLE_PAIR ? 2 * JOINTS : JOINTS);
+            ControlsCopy.Count = (MOTOR_MODE == MyMotorMode.MUSCLE_PAIR ? 2 * JOINTS : JOINTS);
             CenterOfMass.Count = 3;
-            ContactPoint.Count = 3;
-            FeetPosition.Count = 6;
+            CenterOfPressure.Count = 3;
             JointPosition.Count = JOINTS * 3;
             JointPosition.ColumnHint = 3;
             JointAxis.Count = JOINTS * 3;
@@ -144,6 +163,8 @@ namespace BrainSimulator.Motor
 
         public My3DWorldTask WorldTask { get; set; }
 
+        /// <summary>Simulates the 3D world</summary>
+        [Description("Simulate 3D world")]
         public class My3DWorldTask : MyTask<My3DBipedalRobotWorld>
         {
             [MyBrowsable, Category("Params")]
@@ -458,17 +479,9 @@ namespace BrainSimulator.Motor
 
                 //Find contact point
                 Vector3 contact = GetContactPoint();
-                Owner.ContactPoint.Host[0] = contact.X;
-                Owner.ContactPoint.Host[1] = contact.Y;
-                Owner.ContactPoint.Host[2] = contact.Z;
-
-                //Feet position
-                Owner.FeetPosition.Host[0] = pelvis.Position.X - leftFoot.Position.X;
-                Owner.FeetPosition.Host[1] = pelvis.Position.Y - leftFoot.Position.Y;
-                Owner.FeetPosition.Host[2] = pelvis.Position.Z - leftFoot.Position.Z;
-                Owner.FeetPosition.Host[3] = pelvis.Position.X - rightFoot.Position.X;
-                Owner.FeetPosition.Host[4] = pelvis.Position.Y - rightFoot.Position.Y;
-                Owner.FeetPosition.Host[5] = pelvis.Position.Z - rightFoot.Position.Z;
+                Owner.CenterOfPressure.Host[0] = contact.X;
+                Owner.CenterOfPressure.Host[1] = contact.Y;
+                Owner.CenterOfPressure.Host[2] = contact.Z;
 
                 //Joint position and axis
                 for (int i = 0; i < Owner.JOINTS; i++)
@@ -477,11 +490,6 @@ namespace BrainSimulator.Motor
                     Owner.JointPosition.Host[3 * i] = anchorPosition.X;
                     Owner.JointPosition.Host[3 * i + 1] = anchorPosition.Y;
                     Owner.JointPosition.Host[3 * i + 2] = anchorPosition.Z;
-
-                    //var axis = Vector3.Normalize(Vector3.Cross(joints[i].BallSocketJoint.OffsetA, joints[i].BallSocketJoint.OffsetB));
-                    //Owner.JointAxis.Host[3 * i] = axis.X;
-                    //Owner.JointAxis.Host[3 * i + 1] = axis.Y;
-                    //Owner.JointAxis.Host[3 * i + 2] = axis.Z;
 
                     Owner.JointAxis.Host[3 * i] = joints[i].AngularJoint.WorldFreeAxisB.X;
                     Owner.JointAxis.Host[3 * i + 1] = joints[i].AngularJoint.WorldFreeAxisB.Y;
@@ -496,13 +504,12 @@ namespace BrainSimulator.Motor
                 Owner.TorsoRotation.SafeCopyToDevice();
                 Owner.FeetPressure.SafeCopyToDevice();
                 Owner.CenterOfMass.SafeCopyToDevice();
-                Owner.ContactPoint.SafeCopyToDevice();
-                Owner.FeetPosition.SafeCopyToDevice();
+                Owner.CenterOfPressure.SafeCopyToDevice();
                 Owner.JointPosition.SafeCopyToDevice();
                 Owner.JointAxis.SafeCopyToDevice();
                 Owner.TorsoPosition.SafeCopyToDevice();
 
-                Owner.Controls.CopyToMemoryBlock(Owner.Commands, 0, 0, Owner.Commands.Count);
+                Owner.Controls.CopyToMemoryBlock(Owner.ControlsCopy, 0, 0, Owner.ControlsCopy.Count);
             }
 
             private float GetJointRotation(RevoluteJoint joint)
