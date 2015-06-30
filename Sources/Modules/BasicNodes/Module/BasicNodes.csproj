@@ -144,6 +144,7 @@
     <Compile Include="LSTM\Tasks\MyLSTMFeedForwardTask.cs" />
     <Compile Include="LSTM\Tasks\MyLSTMInitLayerTask.cs" />
     <Compile Include="LSTM\Tasks\MyLSTMPartialDerivativesTask.cs" />
+    <Compile Include="Motor\MyPIDController.cs" />
     <Compile Include="NeuralNetwork\Group\MyNeuralNetworkGroup.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -231,7 +232,6 @@
     <Compile Include="Motor\My3DWorldObserver.cs" />
     <Compile Include="Motor\MyArmWorld.cs" />
     <Compile Include="Motor\MyColumnToVectorNode.cs" />
-    <Compile Include="Motor\MyControllerNode.cs" />
     <Compile Include="Motor\MyMusclesNode.cs" />
     <Compile Include="Motor\MyRecurrentNetwork.cs" />
     <Compile Include="Motor\MySequenceRecorderNode.cs" />

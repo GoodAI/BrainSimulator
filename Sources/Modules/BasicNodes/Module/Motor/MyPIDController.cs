@@ -18,9 +18,19 @@ namespace BrainSimulator.Motor
     /// <author>Karol Kuna</author>
     /// <status>Working</status>
     /// <summary>PID Controller</summary>
-    /// <description></description>
+    /// <description>Proportional-Integral-Derivative (PID) controller.
+    /// Minimises error between measured process variable (Input) and its setpoint (Goal) by adjusting manipulated variable (Output).
+    /// PID controls single process variable by single manipulated variable. When trying to control more variables, PID controllers for each variable are independent.<br />
+    ///     I/O:
+    ///         <ul>
+    ///             <li>Input: Measured process variable</li>
+    ///             <li>Goal: Desired setpoint of process variable</li>
+    ///             <li>Output: Controller output of manipulated variable</li>
+    ///         </ul>
+    /// 
+    /// </description>
     [YAXSerializeAs("Controller")]
-    public class MyControllerNode : MyWorkingNode
+    public class MyPIDController : MyWorkingNode
     {
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Input { get { return GetInput(0); } }
@@ -41,8 +51,9 @@ namespace BrainSimulator.Motor
         public MyInitTask InitTask { get; protected set; }
         public MyControlTask ControlTask { get; protected set; }
 
+        /// <summary>Initialises node.</summary>
         [Description("Init"), MyTaskInfo(OneShot = true, Order = 0)]
-        public class MyInitTask : MyTask<MyControllerNode>
+        public class MyInitTask : MyTask<MyPIDController>
         {
             public override void Init(int nGPU) {}
 
@@ -55,9 +66,20 @@ namespace BrainSimulator.Motor
                 Owner.Integral.SafeCopyToHost();
             }
         }
-
+        /// <summary>PID control to minimise error (Input - Goal) calculted as weighted sum of proportional, integral, and derivative terms.<br />
+        ///          Parameters:
+        ///              <ul>
+        ///                 <li>PROPORTIONAL_GAIN: Weight of gain proportional to current error</li>
+        ///                 <li>INTEGRAL_GAIN: Weight of gain from sum of all past errors</li>
+        ///                 <li>DERIVATIVE_GAIN: Weight of gain from derivative of current error</li>
+        ///                 <li>INTEGRAL_DECAY: Error integral multiplier (Integral[t] = CurrentError[t] + INTEGRAL_DECAY * Integral[t - 1])</li>
+        ///                 <li>OFFSET: Offset to be added to controller output</li>
+        ///                 <li>MIN_OUTPUT: Lower bound of controller output</li>
+        ///                 <li>MAX_OUTPUT: Upper bound of controller output</li>
+        ///             </ul>
+        /// </summary>
         [Description("Control"), MyTaskInfo(OneShot = false, Order = 0)]
-        public class MyControlTask : MyTask<MyControllerNode>
+        public class MyControlTask : MyTask<MyPIDController>
         {
             private MyCudaKernel m_kernel;
         
@@ -75,7 +97,7 @@ namespace BrainSimulator.Motor
 
 
             [MyBrowsable, Category("Params")]
-            [YAXSerializableField(DefaultValue = 0.9f)]
+            [YAXSerializableField(DefaultValue = 1.0f)]
             public float INTEGRAL_DECAY { get; set; }
 
             [MyBrowsable, Category("Params")]

@@ -14,7 +14,7 @@ namespace BrainSimulator.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 8; }
+            get { return 9; }
         }
 
         public static string Convert1To2(string xml)
@@ -156,6 +156,18 @@ namespace BrainSimulator.Versioning
             string result = xml;
 
             result = result.Replace(".MyQMatrixObserver", ".MySRPObserver");
+
+            return result;
+        }
+
+        /// <summary>
+        /// ControllerNode renamed to PIDController
+        /// </summary>        
+        public static string Convert8To9(string xml)
+        {
+            string result = xml;
+
+            result = result.Replace(".MyControllerNode", ".MyPIDController");
 
             return result;
         }
