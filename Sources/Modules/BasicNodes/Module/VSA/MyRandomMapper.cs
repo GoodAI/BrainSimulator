@@ -208,8 +208,13 @@ namespace BrainSimulator.VSA
         [Description("Map to another dimension")]
         public class MyRandomMapperTask : MyTask<MyRandomMapper>
         {
+            private MyMatrixCublasOps ops;
+
+
             public override void Init(int nGPU)
-            { }
+            {
+                ops = new MyMatrixCublasOps(Owner, MatOperation.Multiplication);
+            }
 
             public override void Execute()
             {
@@ -217,9 +222,19 @@ namespace BrainSimulator.VSA
                 var A = MyMemoryManager.Instance.GetGlobalVariable(Owner.GlobalVariableName, Owner.GPU, () => new float[0]); // The initializer should never be called here
                 var y = Owner.Output.GetDevice(Owner);
 
+
+                int xDim = Owner.InputSize;
+                int yDim = Owner.OutputSize;
+
                 // Transform the input to have OutputSize dimensions
                 // If this is query, the matrix was created by the non-query node, it is thus transposed
-                MyMatrixCublasOps.MatrixVectorMult(A, x, y, Owner.InputSize, Owner.OutputSize, Owner.DoDecoding);
+                // Transposition is needed because of legacy reasons
+                if (!Owner.DoDecoding)
+                    // Non-query -- transposed multiplication
+                    ops.Run(MatOperation.Multiplication, x, yDim, yDim, A, xDim * yDim, xDim, y, xDim, xDim, 0);
+                else
+                    // Query mode -- non-transposed multiplication
+                    ops.Run(MatOperation.Multiplication, A, xDim * yDim, xDim, x, xDim, 1, y, yDim, 1, 0);
             }
         }
     }

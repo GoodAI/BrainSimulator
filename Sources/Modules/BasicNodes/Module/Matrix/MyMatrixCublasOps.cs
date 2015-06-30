@@ -50,7 +50,7 @@ namespace BrainSimulator.Matrix
 
         public MyMatrixCublasOps(MyWorkingNode callee, MatOperation operation = 0, MyMemoryBlock<float> A = null, MyMemoryBlock<float> tmp = null)
         {
-          //  cublas = new CudaBlas();
+            //  cublas = new CudaBlas();
             this.callee = callee;
         }
 
@@ -58,10 +58,10 @@ namespace BrainSimulator.Matrix
 
 
 
-        public void Run(MatOperation operation, CudaDeviceVariable<float> A, int ACount, int AColumnHint, CudaDeviceVariable<float> B, int BCount, int BColumnHint, CudaDeviceVariable<float> Result, int ResultCount, int ResultColumnHint)
+        public void Run(MatOperation operation, CudaDeviceVariable<float> A, int ACount, int AColumnHint, CudaDeviceVariable<float> B, int BCount, int BColumnHint, CudaDeviceVariable<float> Result, int ResultCount, int ResultColumnHint, float beta = 1.0f)
         {
             Result.Memset(BitConverter.ToUInt32(BitConverter.GetBytes(0.0f), 0));
-                
+
             switch (operation)
             {
                 case MatOperation.Multiplication:  // vectors/matrices have to be always in the correct dimesions!
@@ -71,7 +71,7 @@ namespace BrainSimulator.Matrix
                             AColumnHint, ACount / AColumnHint, 1.0f,
                             A, AColumnHint,
                             B, 1,
-                            1.0f, Result, 1);
+                            beta, Result, 1);
                     }
                     else if (ACount > 1 && BCount > 1 && ACount / AColumnHint == 1 && BColumnHint > 1 && BCount / BColumnHint == AColumnHint)  // vecA*B
                     {
@@ -79,19 +79,19 @@ namespace BrainSimulator.Matrix
                             BColumnHint, BCount / BColumnHint, 1.0f,
                             B, BColumnHint,
                             A, 1,
-                            1.0f, Result, 1);
+                            beta, Result, 1);
                     }
                     else if (ACount / AColumnHint == 1 && BColumnHint == 1 && ACount > 1 && BCount > 1) //. trans(vecA) * vecB
                     {
-                        Run(MatOperation.DotProd, A, ACount, AColumnHint, B, BCount, BColumnHint, Result, ResultCount, ResultColumnHint);
+                        Run(MatOperation.DotProd, A, ACount, AColumnHint, B, BCount, BColumnHint, Result, ResultCount, ResultColumnHint, beta);
                     }
-                    else if(ACount != 1 || BCount != 1)// A*B   matrix multiplication
+                    else if (ACount != 1 || BCount != 1)// A*B   matrix multiplication
                     {
                         MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.NonTranspose,
                             ACount / AColumnHint, BColumnHint, AColumnHint, 1.0f,
                             A, ACount / AColumnHint,
                             B, BCount / BColumnHint,
-                            1.0f, Result, ResultColumnHint);
+                            beta, Result, ResultColumnHint);
                     }
                     break;
                 case MatOperation.DotProd:
@@ -99,7 +99,7 @@ namespace BrainSimulator.Matrix
                        ACount, 1, 1.0f,
                        A, ACount,
                        B, 1,
-                       1.0f, Result, 1);
+                       beta, Result, 1);
                     break;
                 default:
                     MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to run cublas for undefined MatOperation");
@@ -110,27 +110,28 @@ namespace BrainSimulator.Matrix
 
         public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> B, MyMemoryBlock<float> Result)
         {
-            Result.Fill(.0f);
             switch (operation)
             {
                 case MatOperation.Multiplication:  // vectors/matrices have to be always in the correct dimesions!
                     if (A.Count == 1) // valueA * B
                     {
+                        Result.Fill(.0f);
                         A.SafeCopyToHost();
                         MyCublasFactory.Instance.Axpy(A.Host[0], B.GetDevice(callee), 1, Result.GetDevice(callee), 1);
                     }
                     else if (B.Count == 1) // A * valueB
                     {
+                        Result.Fill(.0f);
                         B.SafeCopyToHost();
                         MyCublasFactory.Instance.Axpy(B.Host[0], A.GetDevice(callee), 1, Result.GetDevice(callee), 1);
                     }
                     else /// another executions...
                     {
-                        Run(operation, A.GetDevice(callee), A.Count, A.ColumnHint, B.GetDevice(callee), B.Count, B.ColumnHint, Result.GetDevice(callee), Result.Count, Result.ColumnHint);
+                        Run(operation, A.GetDevice(callee), A.Count, A.ColumnHint, B.GetDevice(callee), B.Count, B.ColumnHint, Result.GetDevice(callee), Result.Count, Result.ColumnHint, 0);
                     }
                     break;
                 case MatOperation.DotProd:
-                    Run(operation, A.GetDevice(callee), A.Count, A.ColumnHint, B.GetDevice(callee), B.Count, B.ColumnHint, Result.GetDevice(callee), Result.Count, Result.ColumnHint);
+                    Run(operation, A.GetDevice(callee), A.Count, A.ColumnHint, B.GetDevice(callee), B.Count, B.ColumnHint, Result.GetDevice(callee), Result.Count, Result.ColumnHint, 0);
                     break;
                 default:
                     MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to run cublas for undefined MatOperation");
@@ -208,40 +209,6 @@ namespace BrainSimulator.Matrix
         public static MatOperation AvailableOperations()
         {
             return MatOperation.Multiplication | MatOperation.MinIndex | MatOperation.MaxIndex | MatOperation.DotProd | MatOperation.Norm2 | MatOperation.Normalize | MatOperation.Minus | MatOperation.Copy;
-        }
-
-
-
-
-
-
-        /// <summary>
-        ///   HONZA:   THIS IS FIXED, TRY RUN WITH CUDA CudaDeviceVariable AND IF IT WORKS, REPLACE THIS FUCNTION BY NEW ONE :D
-        /// Computes y = Ax or y = A'x if <paramref name="transposeA"/> is true.
-        ///     ???? ADD IT INOT THE CODE !!!!!  ????
-        /// </summary>
-        public static void MatrixVectorMult(CudaDeviceVariable<float> A, CudaDeviceVariable<float> x, CudaDeviceVariable<float> y,
-            int xDim, int yDim,
-            bool transposeA = false)
-        {
-            if (!transposeA)
-            {
-                // Compute y = Ax
-                MyCublasFactory.Instance.Gemv(Operation.NonTranspose,
-                    yDim, xDim, 1.0f,
-                    A, yDim,
-                    x, 1,
-                    0f, y, 1);
-            }
-            else
-            {
-                // Compute y = A'x
-                MyCublasFactory.Instance.Gemv(Operation.Transpose,
-                    xDim, yDim, 1.0f,
-                    A, xDim,
-                    x, 1,
-                    0f, y, 1);
-            }
         }
     }
 }
