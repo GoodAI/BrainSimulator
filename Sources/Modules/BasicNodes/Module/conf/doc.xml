@@ -1131,6 +1131,13 @@
             
             </summary>
         </member>
+        <member name="M:BrainSimulator.Matrix.MyMatrixCublasOps.MatrixVectorMult(ManagedCuda.CudaDeviceVariable{System.Single},ManagedCuda.CudaDeviceVariable{System.Single},ManagedCuda.CudaDeviceVariable{System.Single},System.Int32,System.Int32,System.Boolean)">
+            <summary>
+              HONZA:   THIS IS FIXED, TRY RUN WITH CUDA CudaDeviceVariable AND IF IT WORKS, REPLACE THIS FUCNTION BY NEW ONE :D
+            Computes y = Ax or y = A'x if <paramref name="transposeA"/> is true.
+                ???? ADD IT INOT THE CODE !!!!!  ????
+            </summary>
+        </member>
         <member name="T:BrainSimulator.Matrix.MyMatrixKernelOps">
             <summary>
                Perform operations that are defined by kernel
@@ -1584,43 +1591,38 @@
             Otherwise, the range of the output indices will be [0, internalBinCount)</param>
         </member>
         <member name="T:BrainSimulator.Vision.MyJoinPatches">
-            <author>Jan Knopp</author>
+            <author>Honza Knopp</author>
             <status> Working</status>
             <summary>
               Concatenate patches/segments into objects.
             </summary>
             <description>
-            The node requires a set of patches/superpixels (each defined with its location x,y) as input and joins them into a groups.
-            Within the every group, there have to exists a path from one input segment (S1) to the another one (S2) such that
+            Takes as input set of patches/superpixels (each defined with its location x,y) and joins them into a groups,
+            in each group there has to exists a path from one input segment (S1) to the another one (S2) such that
             distance between each ngh. nodes on one way between S1 and S2 is smaller then the treshold.
             
               <h4> Inputs:</h4>
                <ul>
-                <li>Patches: [nx3]   matrix of x,y,scale of n patches/superpixels/objects.</li>
+                <li>Patches: [nx3]   matrix of x,y,scale of N patches/superpixels/objects.</li>
                 <li>Desc:    [nxdim] descriptor of each path/superpixel/objects.</li>
-                <li>Mask:    [axb]   image where each pixels value corresponds to the segment id of the pixel.</li>
+                <li>Mask:    [axb]   image where each pixels value corresponds to the segmetn id of the pixel.</li>
                </ul>
                
               <h4> Outputs:</h4>
-               Same like input, but segmetns are concatenated. As the size of the output's Patches and Desc is smaller, undefined elements are with -1.
+               Same like input, but conncatenated. In Patches and Desc, there is -1 where it is empty.
                
-            
-            
-              <h4> Parameters </h4>
-              <ul>
-                <li> ThresholdDescSim:  Required similarity between vicinity descriptors within a group.</li>
-              </ul>
-            
               <h4>Observer:</h4>
-               When the observer is used to visualize the result, you can change Operation/ObserverMode to change what is shows:
+               When observer is visualizing the result, you can press a key to change what is shows:
               <ul>
-               <li> Mask. </li>
-               <li> Mask overlay with the graph.</li>
-               <li> Graph with highlighted weights. </li>
-               <li> Mask with ids. </li>
+               <li> default: new mask </li>
+               <li> 6:       graph of neigh. segmetns</li>
+               <li> 7:       graph with weights that is used for propagation that results in connected compenents </li>
               </ul>
              
             </description>
+        </member>
+        <member name="P:BrainSimulator.Vision.MyJoinPatches.AdjMatrix">
+            dimension of NEW Optical flow descriptor
         </member>
         <member name="T:BrainSimulator.Vision.MyJoinPatches.MyProcessImPatchBasTask">
             <summary>
@@ -1628,65 +1630,31 @@
             </summary>
         </member>
         <member name="T:BrainSimulator.Vision.MyKMeansWM">
-             <author> Honza and Michal</author>
-             <status> Working</status>
-             <summary>
-                On-the-fly clustering of incoming data. The node expects descriptor of the patch and its position. Then, it assigned cluster id to the input and change the clusters.
-             </summary>
-             <description>
-                Clustering based on the position and desc of the element.
-                
-               <h4> Inputs:</h4>
-                <ul>
-                 <li>ObjectDesc:  [1xdim]   Descriptor.</li>
-                 <li>ObjectXY:    [1x3]     XYS.</li>
-                 <li>WorldEvent:  [1]       Information such game over is used in that input.</li>
-                 <li>Image:       [N]       Image, used only for the visualization.</li>
-                </ul>
-                
-               <h4> Outputs:</h4>
-                 <ul>
-                 <li>NOfObjects:     [1]                 number of objects/clusters in the dbse.</li>
-                 <li>ClusCenters:    [MaxClusters x dim] descriptors of each cluster.</li>
-                 <li>ClusCentersXY:  [MaxClusters x 3]   XYS positions of each cluster.</li>
-                </ul>
-                
-             
-             <h4>Paramters</h4>
-              <ul> 
-                <li> MaxClusters: Maximum number of elements in the memory. </li>
-                <li> ThresholdDescSim: Inverse distance that is necessary to assign input data into the existing memory element.</li>
-                <li> UpdateClusterCentersOrdering: Will I update database?</li>
-                <li> WeightXY: how to prefer XY similarity vs. descriptor similarity.</li>
-               </ul>
-               
-            
-               <h4> Observer:</h4>
-                 It shows positions of clusters in the XY plane. If the the Image input is used, it overlays it on the image.
-                
-             </description>
-        </member>
-        <member name="T:BrainSimulator.Vision.MyKMeansWM.MyKMeansWMInitTask">
+            <author> Honza and Michal</author>
+            <status> Working</status>
             <summary>
-            
+               On-the-fly clustering of incoming data. The node expects descriptor of the patch and its position. Then. it assignes cluster id to the input and change the clusters.
             </summary>
+            <description>
+               Sometimes it sets NearestCC_id to -1. Check it!
+            <h3>Paramters</h3>
+             <ul> 
+               <li> MaxClusters: Maximum number of elements in the memory. </li>
+               <li> ThresholdDescSim: Inverse distance that is necasaty to assign input data into the existing memory element.</li>
+               <li> UpdateClusterCentersOrdering: Will I upodate database?</li>
+               <li> WeightXY: how to prefer XY similarity vs. descritpro similarity.</li>
+              </ul>
+            </description>
         </member>
         <member name="T:BrainSimulator.Vision.MyKMeansWM.MyKMeansWMExecuteTask">
             <summary>
              Process input data
             </summary>
         </member>
-        <member name="M:BrainSimulator.Vision.MyKMeansWM.MyKMeansWMExecuteTask.NormalizeVector(BrainSimulator.Memory.MyMemoryBlock{System.Single},System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="Vec">input vector</param>
-            <param name="dim">dimetiosn of the vec</param>
-            <param name="id_start">vec start dispalcement</param>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:BrainSimulator.Vision.MyKMeansWM.MyKMeansWMExecuteTask.NormalizeVector(BrainSimulator.Memory.MyMemoryBlock{System.Single},System.Int32,System.Int32)" -->
         <member name="T:BrainSimulator.Vision.MyKMeansWM.MyKMeansWMReSortOutputTask">
             <summary>
-            In each iteration step, resort databse as FILO. So, the element that just arrived will be always first, the element that arrived before will be second, etc.
+            In each iteration step, resort databse that most occuring elements will be at the top of the memory block.
             </summary>
         </member>
         <member name="M:BrainSimulator.Vision.MyKMeansWM.MyKMeansWMReSortOutputTask.Reshuffle_Mat(BrainSimulator.Memory.MyMemoryBlock{System.Single},BrainSimulator.Memory.MyMemoryBlock{System.Single},BrainSimulator.Memory.MyMemoryBlock{System.Single})">
@@ -1695,33 +1663,22 @@
             </summary>
         </member>
         <member name="T:BrainSimulator.Vision.MySaccade">
-             <author>Jan Knopp</author>
-             <status>Working </status>
-             <summary>
-               Select input patch/segment/object for Saccadic movement...
-             </summary>
-             <description>
-               The node process set of hypothezied objects. Score each of them how likely it can be selected and selects the one.
-               <h4> Input </h4>
-               <ul>
-                 <li>Patches:   [nx3]   matrix of x,y,scale of N patches/superpixels/objects. (-1 are ignored)</li>
-                 <li>Desc:      [nxdim] descriptor of each path/superpixel/objects.</li>
-                 <li>Mask:      [axb]   image where each pixels value corresponds to the segmetn id of the pixel.</li>
-                 <li>ForcedXYS: [3x1]   force the output.</li>
-               </ul> 
-               
-               <h4> Output </h4>
-                 Postion and size of the selected object/patch.
-            
-              <h4> Parameters </h4>
-               <ul>
-                 <li> Time Term / IncreaseOnFocus: How much to skip the object that the node selected last time.</li>
-                 <li> Time Term / DecreaseInTime: How long it will take to again look on the patch the node selected before.</li>
-                 <li> Terms Weighting / RationSupportMovement: How much favor moving elements.</li>
-               </ul>
-                 
-             
-             </description>
+            <author>Honza Knopp</author>
+            <status>Working </status>
+            <summary>
+              Select patch/segment/object for Saccadic movement...
+            </summary>
+            <description>
+              <h4> Input </h4>
+              <ul>
+                <li>Patches: [nx3]   matrix of x,y,scale of N patches/superpixels/objects. (-1 are ignored)</li>
+                <li>Desc:    [nxdim] descriptor of each path/superpixel/objects.</li>
+                <li>Mask:    [axb]   image where each pixels value corresponds to the segmetn id of the pixel.</li>
+              </ul> 
+            </description>
+        </member>
+        <member name="P:BrainSimulator.Vision.MySaccade.DescNum">
+            real number of ppatches as there can be some zeros... :)
         </member>
         <member name="T:BrainSimulator.Vision.MySaccade.MySaccadeInitTask">
             <summary>
@@ -1736,6 +1693,7 @@
                 <li> IncreaseOnFocus:       Term increase when focuser selects it. Lower will stay on the object longer</li>
                 <li> DecreaseInTime:        Ration for decresing time term in time. Higher will try to go back on the seen patch sooner.</li>
                 <li> RationSupportMovement: How much to prefer movement against time.</li>
+                <li> RationSupportBrainFavour: how to favour brains need where to focus.</li>
             </ul>
             </summary>
         </member>
@@ -1747,7 +1705,7 @@
         </member>
         <member name="T:BrainSimulator.Vision.MySaccade.MySaccadeConvertOutId2XYTask">
             <summary>
-            Convert id into a xy+scale and set it as the output
+            Convert id into a xy+scale and set it as output :)
             </summary>
         </member>
         <member name="T:BrainSimulator.Vision.MySegment">
@@ -1785,7 +1743,7 @@
               </ul>
               
               <h4>Observer</h4>
-               When the observer is used to visualize the result, you can change Operation/ObserverMode to change what is shows:
+               When observer is visualizing the result, you can change Operation/ObserverMode to change what is shows:
               <ul>
                 <li> Image with borders of segments</li>
                 <li> only borders of segmetns</li>
@@ -1801,10 +1759,34 @@
             
             </description>
         </member>
+        <member name="P:BrainSimulator.Vision.MySegment.floatBuffer">
+            # of segemtns
+        </member>
+        <member name="F:BrainSimulator.Vision.MySegment.MySLICClusterCenterObject.dummy">
+            Why the hell does he use/define these paramters?
+        </member>
         <member name="T:BrainSimulator.Vision.MySegment.MySLICTask">
             <summary>
             Run SLIC algorithm that calculates segments.
             </summary>
+        </member>
+        <member name="F:BrainSimulator.Vision.MySegment.MySLICTask.m_kernel_init">
+            # of iterations
+        </member>
+        <member name="F:BrainSimulator.Vision.MySegment.MySLICTask.nWidth">
+            this needs to correpond to the same var in the kernel!
+        </member>
+        <member name="F:BrainSimulator.Vision.MySegment.MySLICTask.nHeight">
+            this needs to correpond to the same var in the kernel!
+        </member>
+        <member name="F:BrainSimulator.Vision.MySegment.MySLICTask.nClustersPerRow">
+            this needs to correpond to the same var in the kernel!
+        </member>
+        <member name="F:BrainSimulator.Vision.MySegment.MySLICTask.nClustersPerCol">
+            this needs to correpond to the same var in the kernel!
+        </member>
+        <member name="P:BrainSimulator.Vision.MySegment.MySLICTask.nIters">
+            How to prefer grid result
         </member>
         <member name="T:BrainSimulator.Vision.MySegment.MyCalcDescTask">
             <summary>
