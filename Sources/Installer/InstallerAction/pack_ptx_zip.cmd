@@ -10,11 +10,26 @@ rem garbage over time and everything present in the source 'ptx' subdirectory wi
 
 rem Change current dir to the parent of ptx dir to get the right directory structure inside the zip file
 
-echo %1
-echo %2
+echo Param 1 (ProjectDir): %1
+echo Param 2 (ConfigName): %2
+
+rem *** BasicNodes ***
 
 cd %1..\..\Modules\BasicNodes\Module\bin\%2
+set TARGETDIR=%1bin\modules\GoodAI.BasicNodes
 
-set ZIPFILE=%1bin\ptx.zip
+if not exist %TARGETDIR% mkdir %TARGETDIR%
+set ZIPFILE=%TARGETDIR%\ptx.zip
+if exist %ZIPFILE% del %ZIPFILE%
+call %1Tools\zip.exe -r %ZIPFILE% ptx
+
+
+rem *** XmlFeedForwardNet ***
+
+cd %1..\..\Modules\XmlFeedForwardNet\Module\bin\%2
+set TARGETDIR=%1bin\modules\GoodAI.XmlFeedForwardNet
+
+if not exist %TARGETDIR% mkdir %TARGETDIR%
+set ZIPFILE=%TARGETDIR%\ptx.zip
 if exist %ZIPFILE% del %ZIPFILE%
 call %1Tools\zip.exe -r %ZIPFILE% ptx
