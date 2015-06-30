@@ -50,29 +50,29 @@ namespace BrainSimulator.NeuralNetwork.Layers
                     MeanSquareWeight.Count = Weights.Count;
                     MeanSquareBias.Count = Bias.Count;
 
-                    // vSGD-fd allocations
-                    OriginalWeights.Count = Weights.Count;
-                    OriginalBias.Count = Bias.Count;
-                    OriginalDelta.Count = Delta.Count;
-                    WeightsGrad.Count = Weights.Count;
-                    OriginalWeightsGrad.Count = Weights.Count;
-                    WeightGradCurve.Count = Weights.Count;
-                    AvgWeightGrad.Count = Weights.Count;
-                    AvgWeightGradVar.Count = Weights.Count;
-                    AvgWeightGradCurve.Count = Weights.Count;
-                    AvgWeightGradCurveVar.Count = Weights.Count;
-                    WeightLearningRate.Count = Weights.Count;
-                    WeightMemorySize.Count = Weights.Count;
+                    //// vSGD-fd allocations
+                    //OriginalWeights.Count = Weights.Count;
+                    //OriginalBias.Count = Bias.Count;
+                    //OriginalDelta.Count = Delta.Count;
+                    //WeightsGrad.Count = Weights.Count;
+                    //OriginalWeightsGrad.Count = Weights.Count;
+                    //WeightGradCurve.Count = Weights.Count;
+                    //AvgWeightGrad.Count = Weights.Count;
+                    //AvgWeightGradVar.Count = Weights.Count;
+                    //AvgWeightGradCurve.Count = Weights.Count;
+                    //AvgWeightGradCurveVar.Count = Weights.Count;
+                    //WeightLearningRate.Count = Weights.Count;
+                    //WeightMemorySize.Count = Weights.Count;
 
-                    BiasGrad.Count = Bias.Count;
-                    OriginalBiasGrad.Count = Bias.Count;
-                    BiasGradCurve.Count = Bias.Count;
-                    AvgBiasGrad.Count = Bias.Count;
-                    AvgBiasGradVar.Count = Bias.Count;
-                    AvgBiasGradCurve.Count = Bias.Count;
-                    AvgBiasGradCurveVar.Count = Bias.Count;
-                    BiasLearningRate.Count = Bias.Count;
-                    BiasMemorySize.Count = Bias.Count;
+                    //BiasGrad.Count = Bias.Count;
+                    //OriginalBiasGrad.Count = Bias.Count;
+                    //BiasGradCurve.Count = Bias.Count;
+                    //AvgBiasGrad.Count = Bias.Count;
+                    //AvgBiasGradVar.Count = Bias.Count;
+                    //AvgBiasGradCurve.Count = Bias.Count;
+                    //AvgBiasGradCurveVar.Count = Bias.Count;
+                    //BiasLearningRate.Count = Bias.Count;
+                    //BiasMemorySize.Count = Bias.Count;
                 }
             }
         }
@@ -84,9 +84,9 @@ namespace BrainSimulator.NeuralNetwork.Layers
             ForwardTask = new MyFCForwardTask();
             DeltaBackTask = new MyFCBackDeltaTask();
         }
-        
+
         // Parameterless constructor
-        public MyHiddenLayer() {}
+        public MyHiddenLayer() { }
 
         // description
         public override string Description

@@ -42,29 +42,29 @@ namespace BrainSimulator.NeuralNetwork.Layers
         public MyMemoryBlock<float> MeanSquareWeight { get; protected set; }
         public MyMemoryBlock<float> MeanSquareBias { get; protected set; }
 
-        // vSGD-fd memory
-        public MyMemoryBlock<float> OriginalWeights { get; protected set; }
-        public MyMemoryBlock<float> OriginalBias { get; protected set; }
-        public MyMemoryBlock<float> OriginalDelta { get; protected set; }
-        public MyMemoryBlock<float> WeightsGrad { get; protected set; }
-        public MyMemoryBlock<float> OriginalWeightsGrad { get; protected set; }
-        public MyMemoryBlock<float> WeightGradCurve { get; protected set; }
-        public MyMemoryBlock<float> AvgWeightGrad { get; protected set; }
-        public MyMemoryBlock<float> AvgWeightGradVar { get; protected set; }
-        public MyMemoryBlock<float> AvgWeightGradCurve { get; protected set; }
-        public MyMemoryBlock<float> AvgWeightGradCurveVar { get; protected set; }
-        public MyMemoryBlock<float> WeightLearningRate { get; protected set; }
-        public MyMemoryBlock<float> WeightMemorySize { get; protected set; }
+        //// vSGD-fd memory
+        //public MyMemoryBlock<float> OriginalWeights { get; protected set; }
+        //public MyMemoryBlock<float> OriginalBias { get; protected set; }
+        //public MyMemoryBlock<float> OriginalDelta { get; protected set; }
+        //public MyMemoryBlock<float> WeightsGrad { get; protected set; }
+        //public MyMemoryBlock<float> OriginalWeightsGrad { get; protected set; }
+        //public MyMemoryBlock<float> WeightGradCurve { get; protected set; }
+        //public MyMemoryBlock<float> AvgWeightGrad { get; protected set; }
+        //public MyMemoryBlock<float> AvgWeightGradVar { get; protected set; }
+        //public MyMemoryBlock<float> AvgWeightGradCurve { get; protected set; }
+        //public MyMemoryBlock<float> AvgWeightGradCurveVar { get; protected set; }
+        //public MyMemoryBlock<float> WeightLearningRate { get; protected set; }
+        //public MyMemoryBlock<float> WeightMemorySize { get; protected set; }
 
-        public MyMemoryBlock<float> BiasGrad { get; protected set; }
-        public MyMemoryBlock<float> OriginalBiasGrad { get; protected set; }
-        public MyMemoryBlock<float> BiasGradCurve { get; protected set; }
-        public MyMemoryBlock<float> AvgBiasGrad { get; protected set; }
-        public MyMemoryBlock<float> AvgBiasGradVar { get; protected set; }
-        public MyMemoryBlock<float> AvgBiasGradCurve { get; protected set; }
-        public MyMemoryBlock<float> AvgBiasGradCurveVar { get; protected set; }
-        public MyMemoryBlock<float> BiasLearningRate { get; protected set; }
-        public MyMemoryBlock<float> BiasMemorySize { get; protected set; }
+        //public MyMemoryBlock<float> BiasGrad { get; protected set; }
+        //public MyMemoryBlock<float> OriginalBiasGrad { get; protected set; }
+        //public MyMemoryBlock<float> BiasGradCurve { get; protected set; }
+        //public MyMemoryBlock<float> AvgBiasGrad { get; protected set; }
+        //public MyMemoryBlock<float> AvgBiasGradVar { get; protected set; }
+        //public MyMemoryBlock<float> AvgBiasGradCurve { get; protected set; }
+        //public MyMemoryBlock<float> AvgBiasGradCurveVar { get; protected set; }
+        //public MyMemoryBlock<float> BiasLearningRate { get; protected set; }
+        //public MyMemoryBlock<float> BiasMemorySize { get; protected set; }
 
         #endregion
 

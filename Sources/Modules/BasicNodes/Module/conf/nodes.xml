@@ -80,6 +80,7 @@
     <Node type="BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup" CanBeAdded="true"/>
     <Node type="BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer" CanBeAdded="true"/>
     <Node type="BrainSimulator.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true"/>
+    <Node type="BrainSimulator.NeuralNetwork.Layers.MyQLearningLayer" CanBeAdded="true"/>
 
     <Node type="BrainSimulator.RBM.MyRBMGroup" CanBeAdded="true"/>
     <Node type="BrainSimulator.RBM.MyRBMInputLayer" CanBeAdded="true"/>

@@ -12,8 +12,14 @@ using System.Threading.Tasks;
 
 namespace BrainSimulator.NeuralNetwork.Tasks
 {
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>
+    /// Measures the distance from the target with the commonly used squared loss function.
+    /// </summary>
+    /// <description></description>
     [Description("SquaredLoss"), MyTaskInfo(OneShot = false)]
-    public class MySquaredLossTask : MyAbstractLossTask<MyOutputLayer>
+    public class MySquaredLossTask : MyAbstractLossTask<MyAbstractOutputLayer>
     {
         public MySquaredLossTask() { } //parameterless constructor
 
@@ -47,7 +53,7 @@ namespace BrainSimulator.NeuralNetwork.Tasks
     }
 
     [Description("CrossEntropy"), MyTaskInfo(OneShot = false)]
-    public class MyCrossEntropyDeltaTask : MyAbstractLossTask<MyOutputLayer>
+    public class MyCrossEntropyDeltaTask : MyAbstractLossTask<MyAbstractOutputLayer>
     {
         public MyCrossEntropyDeltaTask() { } //parameterless constructor
 

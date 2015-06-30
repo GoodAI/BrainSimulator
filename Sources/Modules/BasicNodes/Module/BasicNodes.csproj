@@ -150,15 +150,10 @@
     <Compile Include="NeuralNetwork\Group\MyNeuralNetworkTasks.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NeuralNetwork\Group\MyQLearningGroup.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="NeuralNetwork\Group\MyQLearningTasks.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="NeuralNetwork\Layers\MyAbstractLayer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NeuralNetwork\Layers\MyAbstractOutputLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyAbstractWeightLayer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -171,15 +166,13 @@
     <Compile Include="NeuralNetwork\Layers\MyHiddenLayer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NeuralNetwork\Layers\MyLayer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="NeuralNetwork\Layers\MyOutputLayer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="NeuralNetwork\Layers\MyPoolingLayer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NeuralNetwork\Layers\MyQLearningLayer.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyBaseTasks.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -189,15 +182,13 @@
     <Compile Include="NeuralNetwork\Tasks\MyFullyConnectedTasks.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NeuralNetwork\Tasks\MyLayerTasks.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="NeuralNetwork\Tasks\MyOneToOneTasks.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="NeuralNetwork\Tasks\MyOutputTasks.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NeuralNetwork\Tasks\MyQLearningTasks.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyWeightLayerTasks.cs">
       <SubType>Code</SubType>
     </Compile>

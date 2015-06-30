@@ -14,6 +14,12 @@ using System.Threading.Tasks;
 
 namespace BrainSimulator.NeuralNetwork.Tasks
 {
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>
+    /// Feed forward task for a fully connected layer.
+    /// </summary>
+    /// <description></description>
     [Description("FeedForward"), MyTaskInfo(OneShot = false)]
     public class MyFCForwardTask : MyAbstractForwardTask<MyAbstractWeightLayer>
     {
@@ -75,6 +81,12 @@ namespace BrainSimulator.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>
+    /// Backpropagate the deltas to a fully connected previous layer.
+    /// </summary>
+    /// <description></description>
     [Description("DeltaBack"), MyTaskInfo(OneShot = false)]
     public class MyFCBackDeltaTask : MyAbstractBackDeltaTask<MyAbstractWeightLayer>
     {
@@ -118,12 +130,16 @@ namespace BrainSimulator.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>
+    /// Updates weights, that are fully connected to the previous layer.
+    /// </summary>
+    /// <description></description>
     [Description("UpdateWeights"), MyTaskInfo(OneShot = false)]
     public class MyFCUpdateWeightsTask : MyAbstractUpdateWeightsTask<MyAbstractWeightLayer>
     {
         public MyFCUpdateWeightsTask() { } //parameterless constructor
-
-
 
         public override void Init(int nGPU) { }
 

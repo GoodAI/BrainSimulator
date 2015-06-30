@@ -88,7 +88,7 @@ namespace BrainSimulator.NeuralNetwork.Tasks
         // example usage: define
         // public MyBackwardActivationTask BackwardTask { get; protected set; }
         // in convolution layer node
-        
+
     }
 
 }

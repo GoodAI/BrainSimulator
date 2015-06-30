@@ -482,18 +482,50 @@
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup">
             <author>Philip Hilm</author>
-            <status>WIP</status>
+            <status>Working</status>
             <summary>Network node group.</summary>
+            <description>This group is needed to control the work flow between neural layers.<br></br>
+            It takes care of the forward and backward flows needed during feed-forward and backpropagation.</description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MyInitNNGroupTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Initialises Neural Network Group and sets internally used properties.</summary>
             <description></description>
         </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Group.MyQLearningGroup">
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MySGDTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Stochastic gradient descent is an online training algorithm, that updates each parameter in the direction of the gradient for the current training example.<br></br>
+            The gradient used is the partial derivative of each parameter (weight or bias) with respect to the loss function.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MyRMSTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>RMSProp is the online adaptation of the Resilient Backpropagation algorithm based on the mean squares of the parameters.<br></br>
+            It solves the problem of saturated neurons, which often occurs with SGD propagation.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MyGradientCheckTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Gradient checking mainly for developers to make sure the calculated gradients are correct.
+            <br></br>
+            This should generally be disabled during training, since it will negatively affect performance</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyAbstractOutputLayer">
             <author>Philip Hilm</author>
             <status>WIP</status>
-            <summary>QLearning group.</summary>
-            <description>
-                Group with the functionality and execution planning needed for QLearning.
-                Derived from NeuralNetworkGroup
-            </description>
+            <summary>Output layer node.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer">
+            <author>Philip Hilm</author>
+            <status>WIP</status>
+            <summary>Hidden layer node.</summary>
+            <description></description>
         </member>
         <member name="T:CustomModels.NeuralNetwork.Layers.MyActivationLayer">
             <author>Mikulas Zelinka</author>
@@ -507,21 +539,6 @@
             <summary>Convolutional layer.</summary>
             <description></description>
         </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer">
-            <author>Philip Hilm</author>
-            <status>WIP</status>
-            <summary>Hidden layer node.</summary>
-            <description></description>
-        </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyLayer">
-            <author>Philip Hilm</author>
-            <status>OBSOLETE</status>
-            <summary>Neural layer node.</summary>
-            <description></description>
-            
-            
-            WARNING: THIS LAYER IS NOW OBSOLETE. USE MYHIDDENLAYER / MYOUTPUTLAYER
-        </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyOutputLayer">
             <author>Philip Hilm</author>
             <status>WIP</status>
@@ -532,6 +549,80 @@
             <author>Mikulas Zelinka</author>
             <status>WIP</status>
             <summary>Pooling layer.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyQLearningLayer">
+            <author>Philip Hilm</author>
+            <status>WIP</status>
+            <summary>QLearning output layer node.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCForwardTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Feed forward task for a fully connected layer.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCBackDeltaTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Backpropagate the deltas to a fully connected previous layer.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCUpdateWeightsTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Updates weights, that are fully connected to the previous layer.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MySquaredLossTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Measures the distance from the target with the commonly used squared loss function.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyQLearningTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Uses the current and the previous timestep to update the target according to:
+            <br></br>
+            <a href="https://en.wikipedia.org/wiki/Q-learning"> https://en.wikipedia.org/wiki/Q-learning </a>
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyRestoreValuesTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>The QLearning task sets and updates the values from the previous timestep.
+            <br></br>
+            This restores the values to the current timestep.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyInitWeightsTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Initialises the layer parameters randomly with mean 0 and stdDev: 1 / (sqrt(Input.Count + 1))
+            <br></br>
+            This gives a high certainty, that the neurons don't start out saturated.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyCreateDropoutMaskTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Creates a dropout mask for the layer according to the Dropout property of the Neural Network Group
+            </summary>
             <description></description>
         </member>
         <member name="T:BrainSimulator.RBM.MyRBMGroup">
@@ -1411,7 +1502,7 @@
         </member>
         <member name="T:BrainSimulator.Vision.MyJoinPatches">
             <author>Honza Knopp</author>
-            <status> Working / Unoptimized as propagation part is in C# instead of cuda!</status>
+            <status> Working</status>
             <summary>
               Concatenate patches/segments into objects.
             </summary>
