@@ -12,6 +12,22 @@ using YAXLib;
 
 namespace BrainSimulator.RBM
 {
+
+    /// <summary>
+    ///     Learning of the whole RBM group.
+    /// <p>
+    /// Specify the layer to be learned with CurrentLayerIndex parameter.
+    /// Layers are indexed from 0 (zero).
+    /// </p>
+    /// <p>
+    /// Current layer 0 means we are learning weights between the 0th and 1st layers (i. e. the first two layers).
+    /// Typically, you want to learn the RBM layer-wise starting from 0.
+    /// Start with layer index of 0, after first weights (between 0 and 1 are learned), increase it to 1, etc., until you reach (last but one)th layer.
+    /// </p>
+    /// <p>
+    /// Use RBMFilterObserver (upper right by default) to see weights.
+    /// </p>
+    /// </summary>
     [Description("RBM Learning"), MyTaskInfo(OneShot = false)]
     public class MyRBMLearningTask : MyTask<MyNeuralNetworkGroup>
     {

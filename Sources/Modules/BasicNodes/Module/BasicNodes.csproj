@@ -165,6 +165,7 @@
     <Compile Include="NeuralNetwork\Layers\MyActivationLayer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NeuralNetwork\Layers\MyConvolutionLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyHiddenLayer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -174,9 +175,11 @@
     <Compile Include="NeuralNetwork\Layers\MyOutputLayer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NeuralNetwork\Layers\MyPoolingLayer.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyBaseTasks.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NeuralNetwork\Tasks\MyConvolutionTasks.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyFullyConnectedTasks.cs">
       <SubType>Code</SubType>
     </Compile>

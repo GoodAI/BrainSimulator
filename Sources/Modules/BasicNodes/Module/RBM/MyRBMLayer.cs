@@ -16,8 +16,19 @@ namespace BrainSimulator.RBM
     /// <status>Working</status>
     /// <summary>
     ///     One layer of Restricted Boltzmann Machine network.
-    ///     Can act as both visible and hidden.
+    ///     Inherited from classic neural hidden layer.
+    ///     Can act as both visible and hidden layer.
     /// </summary>
+    /// <description>
+    /// Specify the layer to be learned with CurrentLayerIndex parameter.
+    /// Layers are indexed from 0 (zero).
+    /// 
+    /// Current layer 0 means we are learning weights between the 0th and 1st layers (i. e. the first two layers).
+    /// Typically, you want to learn the RBM layer-wise starting from 0.
+    /// Start with layer index of 0, after first weights (between 0 and 1 are learned), increase it to 1, etc., until you reach (last but one)th layer.
+    /// 
+    /// Use RBMFilterObserver (upper right by default) to see weights.
+    /// </description>
     public class MyRBMLayer : MyHiddenLayer
     {
 

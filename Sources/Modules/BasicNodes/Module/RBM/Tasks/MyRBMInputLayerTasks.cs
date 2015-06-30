@@ -13,7 +13,10 @@ using ManagedCuda.BasicTypes;
 
 namespace CustomModels.RBM.Tasks
 {
-
+    /// <summary>
+    /// Empty task that hides unused neural layer tasks.
+    /// Doesn't do anything and can be safely ignored.
+    /// </summary>
     [Description("EmptyTask"), MyTaskInfo(OneShot = true)]
     public class MyEmptyTask : MyAbstractBackDeltaTask<MyAbstractLayer>
     {

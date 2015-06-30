@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace BrainSimulator.RBM.Tasks
 {
+    /// <summary>
+    /// Initializes RBM Layer memory/parameters with zeroes where needed.
+    /// </summary>
     [Description("RBMInitLayer"), MyTaskInfo(OneShot = true)]
     public class MyRBMInitLayerTask : MyTask<MyAbstractLayer>
     {

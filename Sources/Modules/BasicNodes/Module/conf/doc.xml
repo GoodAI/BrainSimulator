@@ -501,6 +501,12 @@
             <summary>Activation layer.</summary>
             <description>Activation layer of the NN group.</description>
         </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyConvolutionLayer">
+            <author>Mikulas Zelinka</author>
+            <status>WIP</status>
+            <summary>Convolutional layer.</summary>
+            <description></description>
+        </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer">
             <author>Philip Hilm</author>
             <status>WIP</status>
@@ -522,16 +528,22 @@
             <summary>Output layer node.</summary>
             <description></description>
         </member>
-        <member name="T:BrainSimulator.RBM.MyRBMGroup">
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyPoolingLayer">
             <author>Mikulas Zelinka</author>
+            <status>WIP</status>
+            <summary>Pooling layer.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.RBM.MyRBMGroup">
+            <author>Mikuláš Zelinka</author>
             <status>Working</status>
             <summary>
-                Node group used for Restricted Boltzmann Machines and deep learning.
-                Derived from Neural Network group whose functionality it inherits.
+                Restricted Boltzmann Machine node group.
             </summary>
             <description>
                 Node group used for Restricted Boltzmann Machines and deep learning.
                 Derived from Neural Network group whose functionality it inherits.
+                Can be used for initialization of weights prior to using SGD.
             </description>
         </member>
         <member name="T:BrainSimulator.RBM.MyRBMInputLayer">
@@ -552,12 +564,72 @@
             <status>Working</status>
             <summary>
                 One layer of Restricted Boltzmann Machine network.
-                Can act as both visible and hidden.
+                Inherited from classic neural hidden layer.
+                Can act as both visible and hidden layer.
             </summary>
+            <description>
+            Specify the layer to be learned with CurrentLayerIndex parameter.
+            Layers are indexed from 0 (zero).
+            
+            Current layer 0 means we are learning weights between the 0th and 1st layers (i. e. the first two layers).
+            Typically, you want to learn the RBM layer-wise starting from 0.
+            Start with layer index of 0, after first weights (between 0 and 1 are learned), increase it to 1, etc., until you reach (last but one)th layer.
+            
+            Use RBMFilterObserver (upper right by default) to see weights.
+            </description>
         </member>
         <member name="M:BrainSimulator.RBM.MyRBMLayer.RBMRandomActivation">
             <summary>
             Randomly activates the output neurons.
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.RBM.Tasks.MyRBMInitLayerTask">
+            <summary>
+            Initializes RBM Layer memory/parameters with zeroes where needed.
+            </summary>
+        </member>
+        <member name="T:CustomModels.RBM.Tasks.MyEmptyTask">
+            <summary>
+            Empty task that hides unused neural layer tasks.
+            Doesn't do anything and can be safely ignored.
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.RBM.Tasks.MyRBMRandomWeightsTask">
+            <summary>
+            Randomly initalizes the weights of the RBM network using normal distribution and specified standard deviation.
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.RBM.MyRBMLearningTask">
+            <summary>
+                Learning of the whole RBM group.
+            <p>
+            Specify the layer to be learned with CurrentLayerIndex parameter.
+            Layers are indexed from 0 (zero).
+            </p>
+            <p>
+            Current layer 0 means we are learning weights between the 0th and 1st layers (i. e. the first two layers).
+            Typically, you want to learn the RBM layer-wise starting from 0.
+            Start with layer index of 0, after first weights (between 0 and 1 are learned), increase it to 1, etc., until you reach (last but one)th layer.
+            </p>
+            <p>
+            Use RBMFilterObserver (upper right by default) to see weights.
+            </p>
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.RBM.MyRBMReconstructionTask">
+            <summary>
+            <p>
+            Reconstruction task for RBM.
+            </p>
+            <p>
+            Layers are indexed from 0 (zero).
+            </p>
+            
+            Can reconstruct from
+            <ul>
+                <li> input up to the layer specified by CurrentLayerIndex.</li>
+                <li> layer specified by CurrentLayerIndex back towards the first (input) (0th) layer.</li>
+            </ul>
             </summary>
         </member>
         <member name="T:BrainSimulator.SparseCoding.MyScalarToSDRNode">
