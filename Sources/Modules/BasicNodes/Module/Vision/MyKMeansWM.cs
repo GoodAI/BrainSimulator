@@ -20,7 +20,7 @@ using ManagedCuda.VectorTypes;
 
 //---- observers
 using BrainSimulator.Vision;
-using OpenTK.Input; /// Because of the keyboard...
+using OpenTK.Input; // Because of the keyboard...
 
 namespace BrainSimulator.Vision
 {
@@ -195,7 +195,6 @@ namespace BrainSimulator.Vision
         [MyTaskInfo(OneShot = true), Description("Init")]
         public class MyKMeansWMInitTask : MyTask<MyKMeansWM>       
         {
-            private MyCudaKernel m_kernel_randomPosOfCenters;
 
             public override void Init(int nGPU) {}
 
@@ -317,14 +316,18 @@ namespace BrainSimulator.Vision
                 m_kernel_UpdateCC_XY.Run(Owner.ClusCentersXY, NearestCC_id, Owner.ObjectXY, Owner.ObjectXY.Count);
 
                 //--- update when I saw it last time
-                Update_ClusCentersLastSeen(); /// keep what was sen last time etc...
+                Update_ClusCentersLastSeen(); // keep what was sen last time etc...
                                               
                 //--- set actual # of objects into the output
                 Owner.NOfObjects.SafeCopyToDevice();
             }
             //--------------------------------------------------------------------
             /// <summary>
-            /// Vector normalization from Transforms...
+            /// 
+            /// </summary>
+            /// <param name="Vec">input vector</param>
+            /// <param name="dim">dimetiosn of the vec</param>
+            /// <param name="id_start">vec start dispalcement</param>
             private void NormalizeVector(MyMemoryBlock<float> Vec, int dim ,int id_start=0){
                 CUdeviceptr VecDevPtr = Vec.GetDevicePtr(0,id_start * dim);
 
@@ -528,7 +531,7 @@ namespace BrainSimulator.Observers
                 m_kernel_downInTime.Run(VBODevicePointer, TextureWidth * TextureHeight);
 
                 m_kernel_fillImActSate.GridDimensions = new ManagedCuda.VectorTypes.dim3((int)Target.NOfObjects.Host[0]); // numbe rof clusters to print
-                m_kernel_fillImActSate.BlockDimensions = new ManagedCuda.VectorTypes.dim3(16, 16); /// size of square
+                m_kernel_fillImActSate.BlockDimensions = new ManagedCuda.VectorTypes.dim3(16, 16); // size of square
                 //   m_kernel_fillImActSate.Run(VBODevicePointer, TextureWidth, TextureWidth * TextureHeight, Target.ClusCentersXY, Target.ClusCentersXY.ColumnHint, Target.MaxClusters, 1, Target.ClusCentersSize, GetMaxFreqOfClusters());
                 m_kernel_fillImActSate.Run(VBODevicePointer, TextureWidth, TextureWidth * TextureHeight, Target.ClusCentersXY, Target.ClusCentersXY.ColumnHint, Target.MaxClusters, 1, Target.ClusCentersLastSeen, 2.0f, IsXYInputInOneNorm());
             }
@@ -565,7 +568,7 @@ namespace BrainSimulator.Observers
             return 1;
         }
 
-        private float GetMaxFreqOfClusters(){   /// return how oftewn was seen most often seen cluster
+        private float GetMaxFreqOfClusters(){   // return how oftewn was seen most often seen cluster
             Target.ClusCentersSize.SafeCopyToHost();
             Target.NOfObjects.SafeCopyToHost();
             float maxFreq = -1111;
