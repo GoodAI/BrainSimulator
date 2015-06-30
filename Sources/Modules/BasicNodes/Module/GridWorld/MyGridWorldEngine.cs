@@ -157,7 +157,7 @@ namespace BrainSimulator.GridWorld
         protected bool ResolveCustomActions(MyMovingObject agent, Tale[,] tales, AGENT_ACTIONS action)
         {
             bool result = false;
-            Tale t; 
+            Tale t;
             if (action == AGENT_ACTIONS.BASIC)
             {
                 t = tales[agent.GetPosition().x, agent.GetPosition().y];
@@ -418,7 +418,7 @@ namespace BrainSimulator.GridWorld
                 }
                 else if (so[i] is DoorControl)
                 {
-                    names.Add("DC" + doorControl); 
+                    names.Add("DC" + doorControl);
                     names.Add("DC" + doorControl + "X");
                     names.Add("DC" + doorControl + "Y");
                     doorControl++;

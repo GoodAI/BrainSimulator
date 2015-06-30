@@ -208,7 +208,7 @@ namespace BrainSimulator.GridWorld
         private int m_movementCooldown;
         public AGENT_ACTIONS LastAction { get; private set; }
 
-        private float AGENT_WEIGHT  = 0.5f;
+        private float AGENT_WEIGHT = 0.5f;
 
         public class MyNewStateSignal : MySignal { }
 
@@ -678,12 +678,12 @@ namespace BrainSimulator.GridWorld
         public class MyUpdateTask : MyTask<MyGridWorld>
         {
 
-            [MyBrowsable, Category("Force State Door"), 
+            [MyBrowsable, Category("Force State Door"),
             Description("Forces the state of door switches in a selected position / agent cannot change it")]
             [YAXSerializableField(DefaultValue = false)]
             public bool ForceDoorSwitches { get; set; }
 
-            [MyBrowsable, Category("Force State Door"), 
+            [MyBrowsable, Category("Force State Door"),
             Description("Defines state of all door switches in the game, if ForceDoorSwitches is enabled")]
             [YAXSerializableField(DefaultValue = false)]
             public bool ForceDoorSwitchesState { get; set; }
@@ -706,7 +706,7 @@ namespace BrainSimulator.GridWorld
             [YAXSerializableField(DefaultValue = false)]
             private bool m_contMove;
 
-            [MyBrowsable, Category("Mode"), 
+            [MyBrowsable, Category("Mode"),
             Description("If enabled , the agent is always able to go through the door")]
             public bool DoorsAlwaysPassable
             {

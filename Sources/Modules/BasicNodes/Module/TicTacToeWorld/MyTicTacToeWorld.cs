@@ -18,39 +18,45 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Collections;
 using BrainSimulator.Signals;
-using CustomModels.TicTacToeWorld;
 
 namespace BrainSimulator.TicTacToe
 {
     /// <author>Jaroslav Vitku</author>
-    /// <status>Under Development</status>
+    /// <status>Working</status>
     /// <summary>Simulator of Tic Tac Toe game.</summary>
     /// <description>
     /// 
-    /// Player (the brain) has X and computer (world) has O. 
-    /// Games are repeated. If the player wins, reward is received. If the computer wins, punishment is received.
+    /// World for playing the TicTacToe game. The world has common output defining state of the game. 
+    /// For each player there is a separate output with events (reward=won, punishment=lost, incorrect_move=place already taken) and input for actions (max value is taken).  
     /// 
     /// <h3>Outputs:</h3>
     /// <ul>
-    ///     <li> <b>Global:</b>Vectort of all state variables of the world  = [State, Reward, Punishment]</li>
-    ///     <li> <b>State:</b>Vector of length 9 with values {0,1,2} = {empty, player, computer}.</li>
-    ///     <li> <b>RewardEvent:</b> Reward is received if the player wins the game.</li>
-    ///     <li> <b>PunishmentEvent:</b> Punishment is received if the player wins the game.</li>
-    ///     <li> <b>Visual:</b> bitmap representing the current world state.</li>
+    ///     <li> <b>State:</b> Vector of length 9 with values {0,1,2} = {EMPTY, PLAYER_O, PLAYER_X}.</li>
+    ///     <li> <b>EventO:</b> Vector of events for the PLAYER_O formatted as follows {REWARD, PUNISHMENT, INCORRECT_MOVE}.</li>
+    ///     <li> <b>EventX:</b> Vector of events for the PLAYER_X formatted as follows {REWARD, PUNISHMENT, INCORRECT_MOVE}.</li>
+    ///     <li> <b>Visual:</b> Bitmap representing the current game state.</li>
     /// </ul>
     /// 
     /// <h3>Inputs</h3>
     /// <ul>
-    ///     <li> <b>Action:</b> Vector of size 9 which chosen action. Action = place, where to put the X. If X is already taken, the step is missed and the player has another attempt.</li>
+    ///     <li> <b>PlayerXAction:</b> Vector of size 9 which chosen action. Action = place, where to put the X (maximum value is taken as an action). If X is already taken, the step is missed and the player has another attempt.</li>
+    ///     <li> <b>PlayerYAction:</b> Vector of size 9 which chosen action. Input is processed only if the corresponding signal is Raised.</li>
     /// </ul>
     /// 
+    /// The world sends two signals which are supposed trigger players in conditional groups.
     /// </description>
     public class MyTicTacToeWorld : MyWorld
     {
         [MyInputBlock]
-        public MyMemoryBlock<float> ActionInput
+        public MyMemoryBlock<float> PlayerXActionInput
         {
             get { return GetInput(0); }
+        }
+
+        [MyInputBlock]
+        public MyMemoryBlock<float> PlayerOActionInput
+        {
+            get { return GetInput(1); }
         }
 
         [MyOutputBlock(0)]
@@ -59,7 +65,7 @@ namespace BrainSimulator.TicTacToe
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
-        
+
         [MyOutputBlock(1)]
         public MyMemoryBlock<float> StateOutput
         {
@@ -68,10 +74,17 @@ namespace BrainSimulator.TicTacToe
         }
 
         [MyOutputBlock(2)]
-        public MyMemoryBlock<float> EventOutput
+        public MyMemoryBlock<float> EventOOutput
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
+        }
+
+        [MyOutputBlock(3)]
+        public MyMemoryBlock<float> EventXOutput
+        {
+            get { return GetOutput(3); }
+            set { SetOutput(3, value); }
         }
 
         [MyBrowsable, Category("Constants")]
@@ -86,10 +99,32 @@ namespace BrainSimulator.TicTacToe
         [YAXSerializableField(DefaultValue = 160)]
         public int VISIBLE_WIDTH { get; private set; }
 
+
+        public static readonly int NO_POSITIONS = 9;
+        public enum PLAYERS
+        {
+            PLAYER_O = 1,
+            PLAYER_X = 2
+        };
+
+        public enum TALES
+        {
+            EMPTY = 0,
+            PLAYER_O = 1,
+            PLAYER_X = 2
+        }
+
         public readonly int SX = 3;
         public readonly int SY = 3;
-        public readonly int REWARD = 0;
-        public readonly int PUNISHMENT = 1;
+        public readonly int REWARD_POS = 0;
+        public readonly int PUNISHMENT_POS = 1;
+        public readonly int INCORRECT_MOVE_POS = 2;
+
+        public class MyPlayerXSignal : MySignal { } // plays in single player mode
+        public class MyPlayerOSignal : MySignal { }
+
+        public MyPlayerXSignal AgentXPlays { get; private set; }
+        public MyPlayerOSignal AgentOPlays { get; private set; }
 
         private Dictionary<string, Bitmap> m_bitmapTable = new Dictionary<string, Bitmap>();
         public MyMemoryBlock<float> Bitmaps { get; private set; }
@@ -97,7 +132,7 @@ namespace BrainSimulator.TicTacToe
 
         private MyGraphicsPrototype m_tale_o, m_tale_empty, m_tale_x;
         protected MyGraphicsPrototype[] m_allGraphicsPrototypes;
-        
+
         public class MyGraphicsPrototype
         {
             public int2 PixelSize;
@@ -107,16 +142,20 @@ namespace BrainSimulator.TicTacToe
         // definition of the map for GPU rendering, tales can be: empty/obstacle (empty ones may contain other objects)
         public MyMemoryBlock<int> MapTales { get; private set; }
 
+        public MyInitTask InitGameTask { get; private set; }
+        public MyMultiPlayerTask MultiPlayer { get; private set; }
+        public MyRenderTask RenderGameTask { get; private set; }
+
         private string TEXTURE_SET = @"res\tictactoeworld\";
         protected int[] INIT_STATE;
         protected int[] m_currentState;
 
+        private MyTicTacToeGame game;
+        private Random r;
+
         public override void UpdateMemoryBlocks()
         {
-            INIT_STATE= new int[SX * SY];
-                
             Bitmaps.Count = 0;
-
             Bitmaps.Count += LoadAndGetBitmapSize(TEXTURE_SET + "taleEmpty.png");
             Bitmaps.Count += LoadAndGetBitmapSize(TEXTURE_SET + "taleO.png");
             Bitmaps.Count += LoadAndGetBitmapSize(TEXTURE_SET + "taleX.png");
@@ -124,7 +163,8 @@ namespace BrainSimulator.TicTacToe
             MapTales.Count = SX * SY;
             MapTales.ColumnHint = SX;
 
-            EventOutput.Count = 2;
+            EventOOutput.Count = 3;
+            EventXOutput.Count = 3;
             StateOutput.Count = SX * SY;
 
             VISIBLE_HEIGHT = SY * RES;
@@ -132,7 +172,14 @@ namespace BrainSimulator.TicTacToe
 
             Visual.Count = SX * SY * RES * RES;
             Visual.ColumnHint = SX * RES;
+
+            INIT_STATE = new int[SX * SY];
+            m_currentState = (int[])INIT_STATE.Clone();
+            game = new MyTicTacToeGame(m_currentState);
+            r = new Random();
         }
+
+        #region BitmapProcessing
 
         // @see MyCustomPongWorld
         private int LoadAndGetBitmapSize(string path)
@@ -182,9 +229,6 @@ namespace BrainSimulator.TicTacToe
         {
         }
 
-        public MyInitTask InitGameTask { get; private set; }
-        public MyUpdateTask UpdateTask { get; private set; }
-        public MyRenderTask RenderGameTask { get; private set; }
 
         /// <summary>
         /// Initialize the world (load graphics etc.).
@@ -260,6 +304,9 @@ namespace BrainSimulator.TicTacToe
             }
         }
 
+        #endregion
+
+        #region Drawing
         /// <summary>
         /// Renders the visible area, not needed for simulation.
         /// </summary>
@@ -315,158 +362,204 @@ namespace BrainSimulator.TicTacToe
                 }
             }
         }
+        #endregion
 
 
         /// <summary>
-        /// Read action, if valid check for win, choose the computer action, check for win, 
-        /// reset and publish reward/punishment if the game ends, publish new state.
+        /// Read action of a given player. If the aciton is incorrect, sets the event and the same player has another attempt.
+        /// 
+        /// If the action is valid, signal for another player is raised.
+        /// 
+        /// If some of players won, the corresponding events are set and game ends (after both players have seen the event).
         /// 
         /// <description>
         /// <h3>Parameters</h3>
         /// <ul>
-        ///     <li><b>Difficulty: </b>How well the computer plays</li>
+        ///     <li><b>Player O Starts: </b>Whether the Player_O should start.</li>
+        ///     <li><b>Randomize who starts: </b>Randomize who has the first move?</li>
         /// </ul>
         /// </description>
         /// </summary>
-        public class MyUpdateTask : MyTask<MyTicTacToeWorld>
+        public class MyMultiPlayerTask : MyTask<MyTicTacToeWorld>
         {
             [MyBrowsable, Category("Configuration"),
-            Description("How well the computer plays")]
-            [YAXSerializableField(DefaultValue = 0.5f)]
-            public float Difficulty { get; set; }
+            Description("Player O Starts")]
+            [YAXSerializableField(DefaultValue = false)]
+            public bool PlayerXStarts { get; set; }
 
             [MyBrowsable, Category("Configuration"),
-            Description("Computer Startd")]
-            [YAXSerializableField(DefaultValue = false)]
-            public bool ComputerStarts{ get; set; }
+            Description("Randomize who starts")]
+            [YAXSerializableField(DefaultValue = true)]
+            public bool RandomizeStartingPlayer { get; set; }
 
-
-            private MyTicTacToeGame game;
-            private ITicTacToeEngine er;
+            private PLAYERS m_justPlayed, m_justNotPlayed;
+            private int m_stepsToEnd = -1;
 
             public override void Init(int nGPU)
             {
-                Owner.m_currentState = (int[])Owner.INIT_STATE.Clone();
-
-                game = new MyTicTacToeGame(Owner.m_currentState);
-                //er = new MyEngineRandom();
-                er = new MyEngineA(Difficulty, game);
-
+                m_stepsToEnd = -1;
                 ResetGame();
-            }
-
-            private bool ge = false;
-
-            public override void Execute()
-            {
-                PreSimulationStep();
-                /*
-                if (ge)
-                {
-                    ge = false;
-                    ResetGame();
-                    PostSimulationStep();
-                    return;
-                }*/
-
-                int action = DecodeAction();
-
-                if (!game.ApplyAction(action, MyTicTacToeGame.PLAYER, Owner.m_currentState))
-                {
-                    MyLog.DEBUG.WriteLine("Action already taken "+action);
-                    PostSimulationStep();
-                    return;
-                }
-
-                if (game.CheckWinner(MyTicTacToeGame.PLAYER, Owner.m_currentState))
-                {
-                    MyLog.INFO.WriteLine("PLAYER won");
-                    ResetGame();
-                    ge = true;
-                    Owner.EventOutput.Host[Owner.REWARD] = 1;
-                    PostSimulationStep();
-                    return;
-                }
-
-                if (game.Ended(Owner.m_currentState))
-                {
-                    ge = true;
-                    ResetGame();
-                    PostSimulationStep();
-                    return;
-                }
-
-                int ac = er.GenerateAction(Owner.m_currentState);
-                while (!game.ApplyAction(ac, MyTicTacToeGame.COMPUTER, Owner.m_currentState))
-                {
-                    ac = er.GenerateAction(Owner.m_currentState);
-                }
-
-                if (game.CheckWinner(MyTicTacToeGame.COMPUTER, Owner.m_currentState))
-                {
-                    MyLog.INFO.WriteLine("COMPUTER won");
-                    ge = true;
-                    ResetGame();
-                    Owner.EventOutput.Host[Owner.PUNISHMENT] = 1;
-                    PostSimulationStep();
-                    return;
-                }
-
-                if (game.Ended(Owner.m_currentState))
-                {
-                    ge = true;
-                    ResetGame();
-                    PostSimulationStep();
-                    return;
-                }
-                PostSimulationStep();
             }
 
             private void PreSimulationStep()
             {
-                ((MyEngineA)er).UpdateDifficulty(Difficulty);
-                Owner.EventOutput.SafeCopyToHost();
-                Owner.EventOutput.Host[Owner.REWARD] = 0;
-                Owner.EventOutput.Host[Owner.PUNISHMENT] = 0;
-                Owner.StateOutput.SafeCopyToHost();
+                Owner.EventOOutput.SafeCopyToHost();
+                Owner.EventXOutput.SafeCopyToHost();
+                Owner.EventOOutput.Host[Owner.INCORRECT_MOVE_POS] = 0;
+                Owner.EventXOutput.Host[Owner.INCORRECT_MOVE_POS] = 0;
             }
 
-            private void PostSimulationStep()
+            private void PostSimulationStep(bool shouldSwitchPlayers)
             {
-                Owner.EventOutput.SafeCopyToDevice();
+                // publish new state
+                Owner.StateOutput.SafeCopyToHost();
                 Array.Copy(Owner.m_currentState, Owner.StateOutput.Host, Owner.m_currentState.Length);
                 Owner.StateOutput.SafeCopyToDevice();
+
+                if (shouldSwitchPlayers)
+                    SwitchPlayers();
+
+                Owner.EventOOutput.SafeCopyToDevice();
+                Owner.EventXOutput.SafeCopyToDevice();
             }
 
-            private void ResetGame()
+            public override void Execute()
             {
-                Owner.m_currentState = (int[]) Owner.INIT_STATE.Clone();
-                if (ComputerStarts)
+                PreSimulationStep();
+
+                // signal that the game ended, just to publish signals to both players
+                if (m_stepsToEnd >= 0)
                 {
-                    int a = er.GenerateAction(Owner.m_currentState);
-                    game.ApplyAction(a, MyTicTacToeGame.COMPUTER, Owner.m_currentState);
+                    // all signals sent, new game
+                    if (m_stepsToEnd == 0)
+                    {
+                        ResetGame();
+                        PostSimulationStep(true);
+                        return;
+                    }
+                    m_stepsToEnd--;
+                    PostSimulationStep(true);
+                    return;
+                }
+
+                int action = DecodeAction();
+
+                if (!Owner.game.ApplyAction(action, m_justPlayed, Owner.m_currentState))
+                {
+                    Owner.GetOutput((int)m_justPlayed + 1).Host[Owner.INCORRECT_MOVE_POS] = 1;
+                    PostSimulationStep(false);
+                    return;
+                }
+                if (Owner.game.CheckWinner(m_justPlayed, Owner.m_currentState))
+                {
+                    m_stepsToEnd = 1;
+                    Owner.GetOutput((int)m_justPlayed + 1).Host[Owner.REWARD_POS] = 1;
+                    Owner.GetOutput((int)m_justNotPlayed + 1).Host[Owner.PUNISHMENT_POS] = 1;
+                    PostSimulationStep(true);
+                    return;
+                }
+
+                if (MyTicTacToeGame.NoFreePlace(Owner.m_currentState))
+                {
+                    m_stepsToEnd = 0;
+                }
+
+                PostSimulationStep(true);
+            }
+
+            private void RememberJustPlayed(PLAYERS played)
+            {
+                if (played == PLAYERS.PLAYER_X)
+                {
+                    m_justPlayed = PLAYERS.PLAYER_X;
+                    m_justNotPlayed = PLAYERS.PLAYER_O;
+                }
+                else
+                {
+                    m_justPlayed = PLAYERS.PLAYER_O;
+                    m_justNotPlayed = PLAYERS.PLAYER_X;
                 }
             }
 
-            // get action with the max (utility) value
-            internal int DecodeAction()
+            private int DecodeAction()
             {
-                if (Owner.ActionInput == null)
+                int inputNo;
+                if (m_justPlayed == PLAYERS.PLAYER_X)
+                {
+                    inputNo = 0;
+                }
+                else
+                {
+                    inputNo = 1;
+                }
+
+                if (Owner.GetInput(inputNo) == null)
                 {
                     return 0;
                 }
-                Owner.ActionInput.SafeCopyToHost();
+                Owner.GetInput(inputNo).SafeCopyToHost();
 
                 int result = 0;
 
-                for (int i = 0; i < Owner.ActionInput.Host.Length; i++)
+                for (int i = 0; i < Owner.GetInput(inputNo).Host.Length; i++)
                 {
-                    if (Owner.ActionInput.Host[result] < Owner.ActionInput.Host[i])
+                    if (Owner.GetInput(inputNo).Host[result] < Owner.GetInput(inputNo).Host[i])
                     {
                         result = i;
                     }
                 }
                 return result;
+            }
+
+            private void ResetGame()
+            {
+                Owner.m_currentState = (int[])Owner.INIT_STATE.Clone();
+
+                m_stepsToEnd = -1;
+                CleanEvents();
+
+                bool playerXStarts = PlayerXStarts;
+                if (RandomizeStartingPlayer)
+                {
+                    playerXStarts = Owner.r.NextDouble() >= 0.5;
+                }
+                SetXPlays(playerXStarts);
+            }
+
+            private void CleanEvents()
+            {
+                Owner.EventOOutput.SafeCopyToHost();
+                Owner.EventXOutput.SafeCopyToHost();
+
+                for (int i = 0; i < Owner.EventOOutput.Count; i++)
+                {
+                    Owner.EventOOutput.Host[i] = 0;
+                    Owner.EventXOutput.Host[i] = 0;
+                }
+                Owner.EventOOutput.SafeCopyToDevice();
+                Owner.EventXOutput.SafeCopyToDevice();
+            }
+
+            private void SwitchPlayers()
+            {
+                SetXPlays(!Owner.AgentXPlays.IsRised());
+            }
+
+
+            private void SetXPlays(bool playerX)
+            {
+                if (playerX)
+                {
+                    RememberJustPlayed(PLAYERS.PLAYER_X);
+                    Owner.AgentXPlays.Raise();
+                    Owner.AgentOPlays.Drop();
+                }
+                else
+                {
+                    RememberJustPlayed(PLAYERS.PLAYER_O);
+                    Owner.AgentXPlays.Drop();
+                    Owner.AgentOPlays.Raise();
+                }
             }
         }
     }
