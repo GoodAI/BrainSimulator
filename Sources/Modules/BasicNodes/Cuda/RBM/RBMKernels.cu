@@ -162,8 +162,7 @@ extern "C"
 
 				// only used for reconstruction forward calls
 				if (useDropout && !useDropoutMask && dropoutRate < 1)
-					//result *= dropoutRate;
-					result /= (1 - dropoutRate);
+					result /= dropoutRate;
 
 
 				// set output value

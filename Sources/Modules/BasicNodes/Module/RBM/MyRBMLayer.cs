@@ -285,7 +285,7 @@ namespace BrainSimulator.RBM
             Output.SafeCopyToDevice();
         }
 
-        public void CreateDropoutMask()
+        public new void CreateDropoutMask()
         {
             MyLog.DEBUG.WriteLine("RBM dropout mask creation of " + Name);
 
