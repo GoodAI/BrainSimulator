@@ -14,9 +14,12 @@ using YAXLib;
 namespace BrainSimulator.NeuralNetwork.Layers
 {
     /// <author>Philip Hilm</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Output layer node.</summary>
-    /// <description></description>
+    /// <description>
+    /// The output layer takes a target as input, and automatically scales it's neurons to fit the target.<br></br>
+    /// The cost can be observed or manipulated as an output
+    /// </description>
     public class MyOutputLayer : MyAbstractOutputLayer
     {
         // Memory blocks

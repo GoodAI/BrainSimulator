@@ -14,9 +14,17 @@ using YAXLib;
 namespace BrainSimulator.NeuralNetwork.Layers
 {
     /// <author>Philip Hilm</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>QLearning output layer node.</summary>
-    /// <description></description>
+    /// <description>
+    /// This node implements QLearning as described on Wikipedia: <a href="https://en.wikipedia.org/wiki/Q-learning"> https://en.wikipedia.org/wiki/Q-learning </a><br></br>
+    ///  Number of actions should be set as a parameter<br></br>
+    /// As inputs it takes:<br></br>
+    ///  - The current state fed through one or more hidden layers<br></br>
+    ///  - Reward for the current state<br></br>
+    ///  - The action chosen for the current state as a vector of actions eg. [0, 0, 1] is the last of 3 actions<br></br>
+    ///  The output is the estimated value of each action
+    /// </description>
     public class MyQLearningLayer : MyAbstractOutputLayer
     {
         // Properties

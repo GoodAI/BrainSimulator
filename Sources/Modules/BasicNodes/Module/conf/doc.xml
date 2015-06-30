@@ -480,13 +480,7 @@
             <summary>Long Short Term Memory layer</summary>
             <description></description>
         </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup">
-            <author>Philip Hilm</author>
-            <status>Working</status>
-            <summary>Network node group.</summary>
-            <description>This group is needed to control the work flow between neural layers.<br></br>
-            It takes care of the forward and backward flows needed during feed-forward and backpropagation.</description>
-        </member>
+        <!-- Badly formed XML comment ignored for member "T:BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup" -->
         <member name="T:BrainSimulator.NeuralNetwork.Group.MyInitNNGroupTask">
             <author>Philip Hilm</author>
             <status>Working</status>
@@ -504,7 +498,8 @@
             <author>Philip Hilm</author>
             <status>Working</status>
             <summary>RMSProp is the online adaptation of the Resilient Backpropagation algorithm based on the mean squares of the parameters.<br></br>
-            It solves the problem of saturated neurons, which often occurs with SGD propagation.</summary>
+            It solves the problem of saturated neurons and vanishing gradients, which can occur with other backpropagation methods.<br></br>
+            The mean squares are moving averages based on the smoothing factor, so as to emulate batch learning.</summary>
             <description></description>
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Group.MyGradientCheckTask">
@@ -525,7 +520,11 @@
             <author>Philip Hilm</author>
             <status>Working</status>
             <summary>Hidden layer node.</summary>
-            <description></description>
+            <description>
+            This is one of the most commonly used layers within Neural Networks./<br></br>
+            It takes an input and feeds another layer, which can be either an output layer or another hidden layer.<br></br>
+            The capacity of the network can be scaled by the number of neurons in each layer or by placing multiple layers in succession (deep networks).
+            </description>
         </member>
         <member name="T:CustomModels.NeuralNetwork.Layers.MyActivationLayer">
             <author>Mikulas Zelinka</author>
@@ -541,9 +540,12 @@
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyOutputLayer">
             <author>Philip Hilm</author>
-            <status>WIP</status>
+            <status>Working</status>
             <summary>Output layer node.</summary>
-            <description></description>
+            <description>
+            The output layer takes a target as input, and automatically scales it's neurons to fit the target.<br></br>
+            The cost can be observed or manipulated as an output
+            </description>
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyPoolingLayer">
             <author>Mikulas Zelinka</author>
@@ -553,9 +555,17 @@
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyQLearningLayer">
             <author>Philip Hilm</author>
-            <status>WIP</status>
+            <status>Working</status>
             <summary>QLearning output layer node.</summary>
-            <description></description>
+            <description>
+            This node implements QLearning as described on Wikipedia: <a href="https://en.wikipedia.org/wiki/Q-learning"> https://en.wikipedia.org/wiki/Q-learning </a><br></br>
+             Number of actions should be set as a parameter<br></br>
+            As inputs it takes:<br></br>
+             - The current state fed through one or more hidden layers<br></br>
+             - Reward for the current state<br></br>
+             - The action chosen for the current state as a vector of actions eg. [0, 0, 1] is the last of 3 actions<br></br>
+             The output is the estimated value of each action
+            </description>
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCForwardTask">
             <author>Philip Hilm</author>
@@ -592,9 +602,7 @@
         <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyQLearningTask">
             <author>Philip Hilm</author>
             <status>Working</status>
-            <summary>Uses the current and the previous timestep to update the target according to:
-            <br></br>
-            <a href="https://en.wikipedia.org/wiki/Q-learning"> https://en.wikipedia.org/wiki/Q-learning </a>
+            <summary>This is the main QLearning algorithm, that uses the current timestep as 't+1' and the previous timestep as 't'
             </summary>
             <description></description>
         </member>

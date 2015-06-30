@@ -159,7 +159,8 @@ namespace BrainSimulator.NeuralNetwork.Group
     /// <author>Philip Hilm</author>
     /// <status>Working</status>
     /// <summary>RMSProp is the online adaptation of the Resilient Backpropagation algorithm based on the mean squares of the parameters.<br></br>
-    /// It solves the problem of saturated neurons, which often occurs with SGD propagation.</summary>
+    /// It solves the problem of saturated neurons and vanishing gradients, which can occur with other backpropagation methods.<br></br>
+    /// The mean squares are moving averages based on the smoothing factor, so as to emulate batch learning.</summary>
     /// <description></description>
     [Description("RMSProp"), MyTaskInfo(OneShot = false)]
     public class MyRMSTask : MyAbstractBackpropTask

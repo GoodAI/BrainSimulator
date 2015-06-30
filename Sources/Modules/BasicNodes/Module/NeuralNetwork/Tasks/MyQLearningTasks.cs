@@ -17,9 +17,7 @@ namespace BrainSimulator.NeuralNetwork.Tasks
 {
     /// <author>Philip Hilm</author>
     /// <status>Working</status>
-    /// <summary>Uses the current and the previous timestep to update the target according to:
-    /// <br></br>
-    /// <a href="https://en.wikipedia.org/wiki/Q-learning"> https://en.wikipedia.org/wiki/Q-learning </a>
+    /// <summary>This is the main QLearning algorithm, that uses the current timestep as 't+1' and the previous timestep as 't'
     /// </summary>
     /// <description></description>
     [Description("QLearning"), MyTaskInfo(OneShot = false)]
