@@ -121,7 +121,7 @@
     <ClInclude Include="Common\Reduction\SharedMemory.cuh" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{72423431-4A15-4E8D-B987-8E684BD730FE}</ProjectGuid>
+    <ProjectGuid>{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}</ProjectGuid>
     <RootNamespace>BasicNodesCuda</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

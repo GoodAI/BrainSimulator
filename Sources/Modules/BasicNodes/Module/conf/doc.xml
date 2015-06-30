@@ -501,12 +501,6 @@
             <summary>Activation layer.</summary>
             <description>Activation layer of the NN group.</description>
         </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyConvolutionLayer">
-            <author>Mikulas Zelinka</author>
-            <status>WIP</status>
-            <summary>Convolutional layer.</summary>
-            <description></description>
-        </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer">
             <author>Philip Hilm</author>
             <status>WIP</status>
@@ -526,12 +520,6 @@
             <author>Philip Hilm</author>
             <status>WIP</status>
             <summary>Output layer node.</summary>
-            <description></description>
-        </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyPoolingLayer">
-            <author>Mikulas Zelinka</author>
-            <status>WIP</status>
-            <summary>Pooling layer.</summary>
             <description></description>
         </member>
         <member name="T:BrainSimulator.RBM.MyRBMGroup">
@@ -1411,7 +1399,7 @@
         </member>
         <member name="T:BrainSimulator.Vision.MyJoinPatches">
             <author>Honza Knopp</author>
-            <status> Working / Unoptimized as propagation part is in C# instead of cuda!</status>
+            <status> Working</status>
             <summary>
               Concatenate patches/segments into objects.
             </summary>
