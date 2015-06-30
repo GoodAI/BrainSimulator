@@ -108,7 +108,7 @@ namespace BrainSimulator.NeuralNetwork.Group
         [MyBrowsable, Category("\tHyperParameters")]
         public float TrainingRate { get; set; }
 
-        [YAXSerializableField(DefaultValue = 0.15f)]
+        [YAXSerializableField(DefaultValue = 0.0f)]
         [MyBrowsable, Category("\tHyperParameters")]
         public float Momentum { get; set; }
 
@@ -169,7 +169,7 @@ namespace BrainSimulator.NeuralNetwork.Group
         [MyBrowsable, Category("\tHyperParameters")]
         public float TrainingRate { get; set; }
 
-        [YAXSerializableField(DefaultValue = 0.15f)]
+        [YAXSerializableField(DefaultValue = 0.0f)]
         [MyBrowsable, Category("\tHyperParameters")]
         public float Momentum { get; set; }
 
