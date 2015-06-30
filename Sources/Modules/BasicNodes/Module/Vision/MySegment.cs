@@ -20,7 +20,7 @@ using ManagedCuda.VectorTypes;           // manual kernel sizes are needed
 
 //---- observers
 using BrainSimulator.Vision;
-using OpenTK.Input; /// Because of the keyboard...
+//using OpenTK.Input; // Because of the keyboard...
 
 
 
@@ -62,7 +62,7 @@ namespace BrainSimulator.Vision
     ///   </ul>
     ///   
     ///   <h4>Observer</h4>
-    ///    When observer is visualizing the result, you can change Operation/ObserverMode to change what is shows:
+    ///    When the observer is used to visualize the result, you can change Operation/ObserverMode to change what is shows:
     ///   <ul>
     ///     <li> Image with borders of segments</li>
     ///     <li> only borders of segmetns</li>
@@ -122,13 +122,13 @@ namespace BrainSimulator.Vision
         }
 
         public int InputSize { get; set; }//{ get { return InputR_BW != null ? InputR_BW.Count : 0; } }
-        public int InputDimX { get; set; }//{ get { return InputR_BW != null ? InputR_BW.ColumnHint : 0; } } /// height for SLIC
-        public int InputDimY { get; set; }//{ get { return InputR_BW != null ? InputR_BW.Count / InputR_BW.ColumnHint : 0; } } /// width for SLIC
+        public int InputDimX { get; set; }//{ get { return InputR_BW != null ? InputR_BW.ColumnHint : 0; } } // height for SLIC
+        public int InputDimY { get; set; }//{ get { return InputR_BW != null ? InputR_BW.Count / InputR_BW.ColumnHint : 0; } } // width for SLIC
 
         public bool Is_input_RGB = true;
 
         [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 256)]
-        public int nSegs { get; set; }     /// # of segemtns
+        public int nSegs { get; set; }     // # of segemtns
                                                                                                                               
      
         
@@ -145,7 +145,7 @@ namespace BrainSimulator.Vision
             public float4 lab;
             public float2 xy;
             public int nPoints;
-            public int x1, y1, x2, y2; /// Why the hell does he use/define these paramters?
+            public int x1, y1, x2, y2; // Why the hell does he use/define these paramters?
             public int dummy; // needed for alignment to 16 bytes, 48 bytes total
         }
 
@@ -160,18 +160,18 @@ namespace BrainSimulator.Vision
         public override void UpdateMemoryBlocks()
         {
             InputSize = InputR_BW != null ? InputR_BW.Count : 1;
-            InputDimX = InputR_BW != null ? InputR_BW.ColumnHint : 1;   /// height for SLIC
-            InputDimY = InputR_BW != null ? InputSize / InputDimX : 1;  /// width for SLIC
+            InputDimX = InputR_BW != null ? InputR_BW.ColumnHint : 1;   // height for SLIC
+            InputDimY = InputR_BW != null ? InputSize / InputDimX : 1;  // width for SLIC
             
             floatBuffer.Count = InputSize;
             maskBuffer.Count  = InputSize;
 
             SLICClusterCenters.Count = nSegs; 
 
-            SP_xy.ColumnHint = 3;     /// x,y,size
+            SP_xy.ColumnHint = 3;     // x,y,size
             SP_xy.Count = nSegs * SP_xy.ColumnHint;
 
-            SP_desc.ColumnHint = 4; /// color in XYZ space + movement
+            SP_desc.ColumnHint = 4; // color in XYZ space + movement
             SP_desc.Count = nSegs * SP_desc.ColumnHint;
             
             features_tmp_edges.Count = InputSize;
@@ -184,7 +184,7 @@ namespace BrainSimulator.Vision
 
         public override void Validate(MyValidator validator)
         {
-           // base.Validate(validator); /// base checking 
+           // base.Validate(validator); // base checking 
             //System.Console.WriteLine("-I- Seg:: use SLIC: Input image; Output1-xyNpoints; Output-desc; Output3-mask with ids");
             validator.AssertError(InputR_BW != null, this, "At leaast the Red - channel must be connected, then it will be Balck white image!");
             validator.AssertError(nSegs > 0, this, "The numbner of segments (nSegs) has to be >0!");
@@ -194,7 +194,7 @@ namespace BrainSimulator.Vision
             
             //--- check if I can nicely devide image into blocks -> than I can have the exact number of segmetns!!!
             int nClusterSize = (int)Math.Sqrt((float)iDivUp(InputDimX * InputDimY, nSegs));
-            int nClustersPerCol = (int)iDivUp(InputDimX, nClusterSize); /// original for arbitrary sizes
+            int nClustersPerCol = (int)iDivUp(InputDimX, nClusterSize); // original for arbitrary sizes
             int nClustersPerRow = (int)iDivUp(InputDimY, nClusterSize);
             validator.AssertWarning(  (nClustersPerCol * nClustersPerCol) == nSegs , this, "Be sure that sqrt(nSegs)/ImageWidth is integer. This can be a reason for later errors!");
         }
@@ -220,10 +220,10 @@ namespace BrainSimulator.Vision
             
 
             [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 0.3f)]
-            public float Weight { get; set; }  /// How to prefer grid result
+            public float Weight { get; set; }  // How to prefer grid result
 
             [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 2)]
-            public float nIters { get; set; }  /// # of iterations
+            public float nIters { get; set; }  // # of iterations
             
 
 
@@ -237,7 +237,7 @@ namespace BrainSimulator.Vision
             private MyCudaKernel m_kernel_copy2OutputMat;
 
             
-            int MAX_BLOCK_SIZE = 512; /// this needs to correpond to the same var in the kernel!
+            int MAX_BLOCK_SIZE = 512; // this needs to correpond to the same var in the kernel!
 
             int nWidth, nHeight, nClustersPerRow, nClustersPerCol;
             int nSeg;
@@ -249,17 +249,17 @@ namespace BrainSimulator.Vision
                 //System.Console.WriteLine(" --- ::MySegNode:: Is RGB input = " + Owner.Is_input_RGB.ToString());
 
                 //--- init pars for buffer init :)
-                nWidth  = Owner.InputDimX;   /// ?what does it do?
+                nWidth  = Owner.InputDimX;   // ?what does it do?
                 nHeight = Owner.InputDimY;
 
                 int nClusterSize        = (int)Math.Sqrt((float)Owner.iDivUp(nWidth * nHeight, Owner.nSegs));
 
-                nClustersPerCol = (int)Owner.iDivUp(nHeight, nClusterSize); /// original for arbitrary sizes
+                nClustersPerCol = (int)Owner.iDivUp(nHeight, nClusterSize); // original for arbitrary sizes
                 nClustersPerRow = (int)Owner.iDivUp(nWidth, nClusterSize);
                 int nBlocksPerCluster   = Owner.iDivUp(nClusterSize * nClusterSize, MAX_BLOCK_SIZE);
 
-                nSeg =  nClustersPerCol* nClustersPerRow; /// This has to be equal to Owner.nSegs, diff. dimension otherwise!
-                                                          /// 
+                nSeg =  nClustersPerCol* nClustersPerRow; // This has to be equal to Owner.nSegs, diff. dimension otherwise!
+                                                          // 
                // System.Console.WriteLine(nSeg + " " + nClustersPerCol + " " + nClustersPerRow + " " + nClustersPerRow * nClustersPerCol + ", " + nWidth + " "+ nHeight);
 
                 int nBlockWidth  = nClusterSize;
@@ -334,9 +334,9 @@ namespace BrainSimulator.Vision
 
             public override void Execute()
             {
-                CudaDeviceVariable<MySLICClusterCenterObject> devSLICCCenter = Owner.SLICClusterCenters.GetDevice(Owner); /// get pointer
+                CudaDeviceVariable<MySLICClusterCenterObject> devSLICCCenter = Owner.SLICClusterCenters.GetDevice(Owner); // get pointer
 
-                m_kernel_desc.Run(devSLICCCenter.DevicePointer, Owner.SP_xy, Owner.SP_desc, Owner.nSegs, Owner.SP_xy.ColumnHint, Owner.SP_desc.ColumnHint, Owner.InputDimX, Owner.InputDimY); /// fill descriptor
+                m_kernel_desc.Run(devSLICCCenter.DevicePointer, Owner.SP_xy, Owner.SP_desc, Owner.nSegs, Owner.SP_xy.ColumnHint, Owner.SP_desc.ColumnHint, Owner.InputDimX, Owner.InputDimY); // fill descriptor
             }
         }
     }

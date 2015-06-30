@@ -88,7 +88,7 @@ extern "C"
 			return sqrt(dist);
 	}
 	__global__ void Dist_between_two_vec_naive(float * v0 , float *v1 , int size , float * dst){
-		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
+//		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 	//	if (id<1){
 			float dist = 0;
 			for (int i=0 ; i<size ; i++)

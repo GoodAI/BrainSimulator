@@ -127,7 +127,7 @@ namespace BrainSimulator.Matrix
                     }
                 }
                 else
-                { /// other executions are performed by ,,standartezied'' kernel-call
+                { // other executions are performed by ,,standartezied'' kernel-call
                     OpersKerlsDictionary[operation].SetupExecution(A.Count);
                     OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, B, B.Count, B.ColumnHint, Result, Result.Count, Result.ColumnHint);
                 }

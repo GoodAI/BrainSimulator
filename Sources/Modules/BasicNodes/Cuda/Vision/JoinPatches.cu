@@ -30,7 +30,7 @@ extern "C"
 		int idx = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		int icol = idx % cols;
 		int irow = idx / cols;
-		int seg_id1=-1, seg_id2=-1;
+		int seg_id1=-1;
 		if (idx<size){
 			if (icol<cols-2 && irow<rows-2 && irow>1 && icol>1){
 				seg_id1 = maskBuffer[idx];				

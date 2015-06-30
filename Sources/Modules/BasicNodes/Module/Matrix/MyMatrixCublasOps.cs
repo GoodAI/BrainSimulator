@@ -124,7 +124,7 @@ namespace BrainSimulator.Matrix
                         B.SafeCopyToHost();
                         MyCublasFactory.Instance.Axpy(B.Host[0], A.GetDevice(callee), 1, Result.GetDevice(callee), 1);
                     }
-                    else /// another executions...
+                    else // another executions...
                     {
                         Run(operation, A.GetDevice(callee), A.Count, A.ColumnHint, B.GetDevice(callee), B.Count, B.ColumnHint, Result.GetDevice(callee), Result.Count, Result.ColumnHint);
                     }

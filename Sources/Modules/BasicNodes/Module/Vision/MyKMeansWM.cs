@@ -27,17 +27,39 @@ namespace BrainSimulator.Vision
     /// <author> Honza and Michal</author>
     /// <status> Working</status>
     /// <summary>
-    ///    On-the-fly clustering of incoming data. The node expects descriptor of the patch and its position. Then. it assignes cluster id to the input and change the clusters.
+    ///    On-the-fly clustering of incoming data. The node expects descriptor of the patch and its position. Then, it assigned cluster id to the input and change the clusters.
     /// </summary>
     /// <description>
-    ///    Sometimes it sets NearestCC_id to -1. Check it!
-    /// <h3>Paramters</h3>
+    ///    Clustering based on the position and desc of the element.
+    ///    
+    ///   <h4> Inputs:</h4>
+    ///    <ul>
+    ///     <li>ObjectDesc:  [1xdim]   Descriptor.</li>
+    ///     <li>ObjectXY:    [1x3]     XYS.</li>
+    ///     <li>WorldEvent:  [1]       Information such game over is used in that input.</li>
+    ///     <li>Image:       [N]       Image, used only for the visualization.</li>
+    ///    </ul>
+    ///    
+    ///   <h4> Outputs:</h4>
+    ///     <ul>
+    ///     <li>NOfObjects:     [1]                 number of objects/clusters in the dbse.</li>
+    ///     <li>ClusCenters:    [MaxClusters x dim] descriptors of each cluster.</li>
+    ///     <li>ClusCentersXY:  [MaxClusters x 3]   XYS positions of each cluster.</li>
+    ///    </ul>
+    ///    
+    /// 
+    /// <h4>Paramters</h4>
     ///  <ul> 
     ///    <li> MaxClusters: Maximum number of elements in the memory. </li>
-    ///    <li> ThresholdDescSim: Inverse distance that is necasaty to assign input data into the existing memory element.</li>
-    ///    <li> UpdateClusterCentersOrdering: Will I upodate database?</li>
-    ///    <li> WeightXY: how to prefer XY similarity vs. descritpro similarity.</li>
+    ///    <li> ThresholdDescSim: Inverse distance that is necessary to assign input data into the existing memory element.</li>
+    ///    <li> UpdateClusterCentersOrdering: Will I update database?</li>
+    ///    <li> WeightXY: how to prefer XY similarity vs. descriptor similarity.</li>
     ///   </ul>
+    ///   
+    ///
+    ///   <h4> Observer:</h4>
+    ///     It shows positions of clusters in the XY plane. If the the Image input is used, it overlays it on the image.
+    ///    
     /// </description>
     public class MyKMeansWM : MyWorkingNode
     {
@@ -64,11 +86,7 @@ namespace BrainSimulator.Vision
         {
             get { return GetInput(3); }
         }
-      /*  [MyInputBlock(4)]
-        public MyMemoryBlock<float> MyMovement
-        {
-            get { return GetInput(4); }
-        }*/
+     
 
 
 
@@ -171,7 +189,9 @@ namespace BrainSimulator.Vision
 
         
         public MyKMeansWMInitTask Init { get; private set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
         [MyTaskInfo(OneShot = true), Description("Init")]
         public class MyKMeansWMInitTask : MyTask<MyKMeansWM>       
         {
@@ -417,7 +437,7 @@ namespace BrainSimulator.Vision
         public MyKMeansWMReSortOutputTask ReSortOutput { get; private set; }
 
         /// <summary>
-        /// In each iteration step, resort databse that most occuring elements will be at the top of the memory block.
+        /// In each iteration step, resort databse as FILO. So, the element that just arrived will be always first, the element that arrived before will be second, etc.
         /// </summary>
         [Description("Re-sort output")]
         public class MyKMeansWMReSortOutputTask : MyTask<MyKMeansWM>

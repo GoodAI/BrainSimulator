@@ -13,45 +13,52 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-//using Accord.MachineLearning.Structures;   /// NN search
-//using Accord.Neuro.Networks;   /// DBN
+
 using ManagedCuda.VectorTypes;
 using System.Drawing;  // for PointF
 
 //---- observers
 using BrainSimulator.Vision;
-using OpenTK.Input; /// Because of the keyboard...
+//using OpenTK.Input; // Because of the keyboard...
 
 
 
 namespace BrainSimulator.Vision
 {
-    /// <author>Honza Knopp</author>
+    /// <author>Jan Knopp</author>
     /// <status> Working</status>
     /// <summary>
     ///   Concatenate patches/segments into objects.
     /// </summary>
     /// <description>
-    /// Takes as input set of patches/superpixels (each defined with its location x,y) and joins them into a groups,
-    /// in each group there has to exists a path from one input segment (S1) to the another one (S2) such that
+    /// The node requires a set of patches/superpixels (each defined with its location x,y) as input and joins them into a groups.
+    /// Within the every group, there have to exists a path from one input segment (S1) to the another one (S2) such that
     /// distance between each ngh. nodes on one way between S1 and S2 is smaller then the treshold.
     /// 
     ///   <h4> Inputs:</h4>
     ///    <ul>
-    ///     <li>Patches: [nx3]   matrix of x,y,scale of N patches/superpixels/objects.</li>
+    ///     <li>Patches: [nx3]   matrix of x,y,scale of n patches/superpixels/objects.</li>
     ///     <li>Desc:    [nxdim] descriptor of each path/superpixel/objects.</li>
-    ///     <li>Mask:    [axb]   image where each pixels value corresponds to the segmetn id of the pixel.</li>
+    ///     <li>Mask:    [axb]   image where each pixels value corresponds to the segment id of the pixel.</li>
     ///    </ul>
     ///    
     ///   <h4> Outputs:</h4>
-    ///    Same like input, but conncatenated. In Patches and Desc, there is -1 where it is empty.
+    ///    Same like input, but segmetns are concatenated. As the size of the output's Patches and Desc is smaller, undefined elements are with -1.
     ///    
-    ///   <h4>Observer:</h4>
-    ///    When observer is visualizing the result, you can press a key to change what is shows:
+    /// 
+    /// 
+    ///   <h4> Parameters </h4>
     ///   <ul>
-    ///    <li> default: new mask </li>
-    ///    <li> 6:       graph of neigh. segmetns</li>
-    ///    <li> 7:       graph with weights that is used for propagation that results in connected compenents </li>
+    ///     <li> ThresholdDescSim:  Required similarity between vicinity descriptors within a group.</li>
+    ///   </ul>
+    /// 
+    ///   <h4>Observer:</h4>
+    ///    When the observer is used to visualize the result, you can change Operation/ObserverMode to change what is shows:
+    ///   <ul>
+    ///    <li> Mask. </li>
+    ///    <li> Mask overlay with the graph.</li>
+    ///    <li> Graph with highlighted weights. </li>
+    ///    <li> Mask with ids. </li>
     ///   </ul>
     ///  
     /// </description>
@@ -122,7 +129,7 @@ namespace BrainSimulator.Vision
 
 
         public bool Is_input_RGB = true;
-        public int OF_desc_dim = 2; /// dimension of NEW Optical flow descriptor
+        public int OF_desc_dim = 2; // dimension of NEW Optical flow descriptor
 
 
 
@@ -219,8 +226,8 @@ namespace BrainSimulator.Vision
 
                 //---- init C# stuff
                 maskIds_new = new int[Owner.PatchesNum];
-                ListToGo = new List<int>();              /// which nodes Im CURRENTLY going to visit
-                DictUnmet = new Dictionary<int, int>();    /// which nodes were already visited so I wont meet it again... THIS SHOULD BE TREE for large # of nodes!!!!
+                ListToGo = new List<int>();              // which nodes Im CURRENTLY going to visit
+                DictUnmet = new Dictionary<int, int>();    // which nodes were already visited so I wont meet it again... THIS SHOULD BE TREE for large # of nodes!!!!
 
                 nPatchesInObj = new int[Owner.PatchesNum];
                 centers = new float2[Owner.PatchesNum];
@@ -262,7 +269,7 @@ namespace BrainSimulator.Vision
                 for (int i = 0; i < Owner.PatchesNum; i++)
                 {
                     DictUnmet.Add(i, i);
-                    centers[i].x = .0f; /// init data  that were before new...
+                    centers[i].x = .0f; // init data  that were before new...
                     centers[i].y = .0f;
                     nPointsInObj[i] = 0;
                     nPatchesInObj[i] = 0;
@@ -270,16 +277,16 @@ namespace BrainSimulator.Vision
                 //--- DO PROPAGATION -----------------------------
                 int maskId = 0;
                 while (DictUnmet.Count > 0)
-                { /// find conn. compenents within the treshold for each new node
+                { // find conn. compenents within the treshold for each new node
                     int patch_id = DictUnmet.First().Key;
-                    ListToGo.Add(patch_id); /// add to list for actual searching, the list has now only one element!
-                    DictUnmet.Remove(patch_id);  ///  I will check it now and never again :)
-                    PropageSimToConcatenate(maskId++, ref ListToGo, ref DictUnmet); /// 
+                    ListToGo.Add(patch_id); // add to list for actual searching, the list has now only one element!
+                    DictUnmet.Remove(patch_id);  //  I will check it now and never again :)
+                    PropageSimToConcatenate(maskId++, ref ListToGo, ref DictUnmet); // 
                 }
 
                 //---- PROCESS COMPONENTS AND SAVE TO OUT ---------
 
-                int nNew_patches = -1; /// number of new patches = ,,objects''
+                int nNew_patches = -1; // number of new patches = ,,objects''
                 for (int ip = 0; ip < Owner.PatchesNum; ip++)
                 {
                     //int id_obj = maskIds_new[ip];
@@ -295,25 +302,25 @@ namespace BrainSimulator.Vision
                         nNew_patches = id_obj;// maskIds_new[ip] + 1;
                     }
                 }
-                nNew_patches++; /// it was oindex to the last object, not their count :)
-                /// 
+                nNew_patches++; // it was oindex to the last object, not their count :)
+                // 
                 //--- update masks...
                 Owner.Mask_new.SafeCopyToDevice();
                 m_kernel_cumulatePosOfNewpatches.Run(Owner.Mask, Owner.Mask_new, Owner.OutMask, Owner.Mask.Count, Owner.Mask.ColumnHint, Owner.CentersSum, Owner.CentersSum.Count, Owner.CentersSum.ColumnHint);
                 Owner.CentersSum.SafeCopyToHost();
 
                 for (int ip = 0; ip < Owner.PatchesNum; ip++)
-                { /// create new patches structure of objects!!
+                { // create new patches structure of objects!!
                     int out_idDesc = ip * Owner.OutDesc.ColumnHint;
                     if (ip < nNew_patches)
-                    { /// if it is object
+                    { // if it is object
                         int out_idPatch = ip * Owner.OutPatches.ColumnHint;
                         float nPts = Owner.CentersSum.Host[2 + ip * Owner.CentersSum.ColumnHint];
                         Owner.OutPatches.Host[out_idPatch + 0] = Owner.CentersSum.Host[0 + ip * Owner.CentersSum.ColumnHint] / nPts;
                         Owner.OutPatches.Host[out_idPatch + 1] = Owner.CentersSum.Host[1 + ip * Owner.CentersSum.ColumnHint] / nPts;
                         Owner.OutPatches.Host[out_idPatch + 2] = (float)Math.Sqrt((double)nPts);
                         for (int i = 0; i < Owner.OutDesc.ColumnHint; i++)
-                        { /// there will be average over all super-pixels (!pathces no points)
+                        { // there will be average over all super-pixels (!pathces no points)
                             Owner.OutDesc.Host[out_idDesc + i] /= nPatchesInObj[ip];
                         }
 
@@ -448,7 +455,6 @@ namespace BrainSimulator.Observers
 
             m_kernel_fillImFromIm.Run(VBODevicePointer, Target.OutMask, TextureWidth * TextureHeight, 5);//(int)Target.PatchesNum /5);
 
-            var state = Keyboard.GetState();
 
 
             switch (ObserverMode)
