@@ -191,6 +191,41 @@ namespace GoodAI.BrainSimulator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to body { 
+        ///    font-family: Georgia, serif;
+        ///    font-size: 0.92em;
+        ///}
+        ///
+        ///h1 { 
+        ///    font-size: 1.3em 
+        ///}
+        ///
+        ///h2 {
+        ///    font-size: 1.2em 
+        ///}
+        ///
+        ///h3 {
+        ///    font-size: 1.1em 
+        ///}
+        ///
+        ///img.centered {
+        ///    display: block;
+        ///    margin-left: auto;
+        ///    margin-right: auto;
+        ///}
+        ///
+        ///.red {
+        ///    color: red;
+        ///}
+        ///.
+        /// </summary>
+        internal static string help_page {
+            get {
+                return ResourceManager.GetString("help_page", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap histo {

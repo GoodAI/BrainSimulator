@@ -21,6 +21,6 @@
     <Node type="GoodAI.Core.Nodes.MyOutput" CanBeAdded="false" BigIcon="output_big.png" SmallIcon="output.png"/>      
   </KnownNodes>
   <KnownWorlds>
-    <World type="GoodAI.Core.Testing.MyTestingWorld"/>    
+    <World type="GoodAI.Modules.Testing.MyTestingWorld"/>    
   </KnownWorlds>
 </Configuration>

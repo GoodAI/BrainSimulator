@@ -2,7 +2,6 @@
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Memory;
-using GoodAI.Core.Testing;
 using GoodAI.Core.Observers.Helper;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;

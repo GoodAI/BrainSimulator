@@ -41,7 +41,8 @@ namespace GoodAI.BrainSimulator.Forms
             InitializeComponent();
             m_mainForm = mainForm;
 
-            m_style = MyResources.GetTextFromAssembly(Assembly.GetExecutingAssembly(), "help_page.css", "res");
+            //m_style = MyResources.GetTextFromAssembly(Assembly.GetExecutingAssembly(), "help_page.css", "res");
+            m_style = Properties.Resources.help_page;
         }
 
         private void CheckText(ref string text) 
