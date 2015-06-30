@@ -61,9 +61,9 @@ Node definition has to be added to *conf/nodes.xml*. After that, you can enable 
 
 After that, you can go to the Configure Node Selection view (CTRL+L) and your node should be there
 
-![New node](img/tut01-01.png)
+![New node](steps/tut01-01.png)
 
-After checking the checkbox, your node will appear in the [nodes toolstrip](ui.md)
+After checking the checkbox, your node will appear in the [nodes toolstrip](../ui.md)
 
 # Add Memory Blocks
 
@@ -105,7 +105,7 @@ public MyMemoryBlock<float> YData { get; private set; }
 # Node Parameters
 Now we should consider some parameters, which our node will need. We will need to define the size of data buffer. When this buffer is full and new data arrives, the oldest data will be overwritten.
 
-The size of the buffer corresponds to the size of our data memory blocks. As this directly affects the size of memory block, this parameter has to be the *node parameter* (see [model](model.md)).
+The size of the buffer corresponds to the size of our data memory blocks. As this directly affects the size of memory block, this parameter has to be the *node parameter* (see [model](../model.md)).
 
 Add this code to your node's definition
 
@@ -128,7 +128,7 @@ public override void UpdateMemoryBlocks()
 
 If we now drag our node to the workplace, we can see its inputs, outputs as well as node parameter.
 
-![Node in project](img/tut01-02.png)
+![Node in project](steps/tut01-02.png)
 
 By now, our node should look like this
 
@@ -194,7 +194,7 @@ class MyGatherDataTask : MyTask<MyRegressionNode> {
 }
 ```
 
-As you can see, you can add *Description* annotation which will be visible in the UI. If you would like the task to run only in the first simulation step, you could add *MyTaskInfo* annotation with *OneShotOnly* argument (see [model description](model.md)). We also have to implement two abstract methods. `Init()` and `Execute()`.
+As you can see, you can add *Description* annotation which will be visible in the UI. If you would like the task to run only in the first simulation step, you could add *MyTaskInfo* annotation with *OneShotOnly* argument (see [model description](../model.md)). We also have to implement two abstract methods. `Init()` and `Execute()`.
 
 We will leave Init() method empty now, and will focus on Execute. This is the method, which will be executed each time the task will be run. Some simple code, which will copy input data to our memory blocks could look like this:
 
@@ -243,21 +243,21 @@ Now we have the task defined, but we need to actually **add** the task to the no
 public MyGatherDataTask GetData { get; private set; }
 ```
 
-If you now start BrainSimulator and add your node, you will see the task in its [node tasks bar](ui.md#node-tasks).
+If you now start BrainSimulator and add your node, you will see the task in its [node tasks bar](../ui.md#node-tasks).
 
-![Node tasks](img/tut01-03.png)
+![Node tasks](steps/tut01-03.png)
 
-Now let's try if the task works correctly. Add your node to empty project and connect some random data streams to its inputs. You should see something like this ([sleep interval](ui.md#simulation-controls) is set to 50ms in my example).
+Now let's try if the task works correctly. Add your node to empty project and connect some random data streams to its inputs. You should see something like this ([sleep interval](../ui.md#simulation-controls) is set to 50ms in my example).
 
-![Node tasks](img/tut01-04.gif)
+![Node tasks](steps/tut01-04.gif)
 
 # Validation
 
-You may have already noticed some (potential) problems. If you try to run a simulation with no data connected to your node, you will se an error in [validation log](ui.md).
+You may have already noticed some (potential) problems. If you try to run a simulation with no data connected to your node, you will se an error in [validation log](../ui.md).
 
-![Validation log errors](img/tut01-05.png)
+![Validation log errors](steps/tut01-05.png)
 
-That is to prevent running of nodes/tasks, which need data on all its inputs. If you want to disable this type of validation, override node's `Validate` method (see [model](model.md)).
+That is to prevent running of nodes/tasks, which need data on all its inputs. If you want to disable this type of validation, override node's `Validate` method (see [model](../model.md)).
 
 However in our case, we need to add one validation rule. We expect both inputs to be of size 1. That is why we move our cursor just one position forward each step. If you would connect input which is bigger, some bad things would happen, because we rely on "input of size 1" even when copying data by `CopyToMemoryBlock`.
 
@@ -283,12 +283,12 @@ Owner.YInput.CopyToMemoryBlock(Owner.YData, 0, m_cursor, 1);
 
 Now, the node will be working even with bigger inputs, nevertheless it will show a warning in validation log (which does not prevent simulation from running).
 
-![Validation warning](img/tut01-06.png)
+![Validation warning](steps/tut01-06.png)
 
 # Computation in a Task
 OK -- we have the data, and now we have to compute the actual linear regression model. We will consider the simplest one where
 
-![Linear regression](img/tut01-07.png)
+![Linear regression](steps/tut01-07.png)
 
 So let's create a new task and compute model parameters inside of it. We get the data from our memory blocks, compute the parameters and copy the result to *Output* memory block.
 
@@ -367,7 +367,7 @@ We also need to define *Output* memory block size in `UpdateMemoryBlocks`
 Output.Count = 2; 
 ```
 
-The node should be working now. You can observe (e.g. by [matrix observer](observer.md#matrix-observer)) the parameters of regression
+The node should be working now. You can observe (e.g. by [matrix observer](../observer.md#matrix-observer)) the parameters of regression
 
 Our complete code should be following:
 
@@ -671,15 +671,15 @@ using ManagedCuda;
 
 Now we can create a simple project, in which we could see our observer plotting some data. We will just take some random numbers from `TestingWorld`, multiply them and add some small noise to them.
 
-![Example project](img/tut01-08.png)
+![Example project](steps/tut01-08.png)
 
 In the Node Properties windows, you should be able to add your custom observer now.
 
-![Adding custom observer](img/tut01-09.png)
+![Adding custom observer](steps/tut01-09.png)
 
 And while running the project, you should see the data being plotted. I also added the matrix observer on the output, so you can see the regression parameters (with random data, it would be zeros and with the same data, it would be zero and one, so nothing to show).
 
-![RegressionNode output](img/tut01-10.gif)
+![RegressionNode output](steps/tut01-10.gif)
 
 You may notice the strange position of the data being plotted. That is because of setting the scale, according to wider range - therefore the shorter one remains partially unused. We can change it and use different scale for X scale and for Y scale. The view will not be proportional after that, but for testing purposes, it is okay.
 
@@ -777,4 +777,4 @@ __constant__ float D_YSCALE;
 
 And then replacing `D_SCALE` in kernels with appropriate scales is trivial. After these changes, your regression observer should look similar to this:
 
-![Regression observer](img/tut01-11.gif)
+![Regression observer](steps/tut01-11.gif)
