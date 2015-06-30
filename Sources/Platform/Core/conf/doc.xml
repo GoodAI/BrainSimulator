@@ -216,5 +216,10 @@
             convert QMatrix observer name
             </summary>        
         </member>
+        <member name="M:BrainSimulator.Versioning.MyConversion.Convert8To9(System.String)">
+            <summary>
+            ControllerNode renamed to PIDController
+            </summary>        
+        </member>
     </members>
 </doc>
