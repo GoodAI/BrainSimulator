@@ -44,7 +44,6 @@ namespace BrainSimulator.Matrix
 
 
         EuclidDist = 1 << 13,
-        CosDist = 1 << 14,
 
         Exp = 1 << 15,
         Log = 1 << 16,
@@ -167,8 +166,8 @@ namespace BrainSimulator.Matrix
                 }
                 else
                 {
-                    is_it_correct = (A.Count == B.Count) && (A.ColumnHint == B.ColumnHint);  /// same size
-                    is_it_correct |= A.ColumnHint == B.ColumnHint || A.Count / A.ColumnHint == B.Count / B.ColumnHint; /// same # of colums, rows
+                    is_it_correct = (A.Count == B.Count) && (A.ColumnHint == B.ColumnHint);  // same size
+                    is_it_correct |= A.ColumnHint == B.ColumnHint || A.Count / A.ColumnHint == B.Count / B.ColumnHint; // same # of colums, rows
                     is_it_correct |= A.Count == 1 || B.Count == 1;
                     is_it_correct |= (Math.Max(A.Count, B.Count) == Result.Count) && (Math.Max(A.ColumnHint, B.ColumnHint) == Result.ColumnHint);
                 }

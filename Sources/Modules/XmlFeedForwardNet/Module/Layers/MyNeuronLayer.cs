@@ -88,19 +88,19 @@ namespace XmlFeedForwardNet.Layers
         {
             // Create the kernels
             m_setKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\SetKernel");
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\NeuronLayerKernel", "ForwardKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\NeuronLayerKernel", "BackwardKernel");
-            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\NeuronLayerKernel", "WeightKernel");
-            m_biasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\NeuronLayerKernel", "BiasKernel");
-            m_backpropKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\NeuronLayerKernel", "BackpropKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\NeuronLayerKernel", "ForwardKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\NeuronLayerKernel", "BackwardKernel");
+            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\NeuronLayerKernel", "WeightKernel");
+            m_biasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\NeuronLayerKernel", "BiasKernel");
+            m_backpropKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\NeuronLayerKernel", "BackpropKernel");
 
-            m_RBMForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "ForwardKernel");
-            m_RBMForwardAndStoreKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "ForwardAndStoreKernel");
-            m_RBMBackwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "BackwardKernel");
-            m_RBMSampleKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "SampleKernel");
-            m_RBMUpdateWeightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "UpdateWeightKernel");
-            m_RBMUpdateBiasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "UpdateBiasKernel");
-            m_RBMObserverKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "ObserverKernel");
+            m_RBMForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "ForwardKernel");
+            m_RBMForwardAndStoreKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "ForwardAndStoreKernel");
+            m_RBMBackwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "BackwardKernel");
+            m_RBMSampleKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "SampleKernel");
+            m_RBMUpdateWeightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "UpdateWeightKernel");
+            m_RBMUpdateBiasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "UpdateBiasKernel");
+            m_RBMObserverKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "ObserverKernel");
 
             base.Initialize(nGPU);
         }

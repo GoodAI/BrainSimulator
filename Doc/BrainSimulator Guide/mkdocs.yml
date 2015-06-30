@@ -1,0 +1,19 @@
+site_name: BrainSim docs
+site_author: Dušan Fedorčák, Michal Vlasák
+#theme: bootstrap
+#theme: cosmo, flatly, spacelab, united, yeti
+theme_dir: 'goodai_theme'
+pages:
+- ['index.md', 'BSDoc']
+- ['model.md', 'Model']
+- ['persistence.md', 'Persistence']
+- ['ui.md', 'UI']
+- ['observer.md', 'Observer']
+#- ['nodes.md', 'Nodes']
+- ['steps.md', 'Tutorial']
+- ['examples.md', 'Examples']
+- ['changelog.md', 'Changelog']
+markdown_extensions: 
+    - fenced_code
+extra_javascript: ['https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML', 'js/mathjaxhelper.js']
+use_directory_urls: false

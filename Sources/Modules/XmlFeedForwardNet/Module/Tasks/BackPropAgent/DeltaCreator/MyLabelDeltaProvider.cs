@@ -25,7 +25,7 @@ namespace  XmlFeedForwardNet.Tasks.BackPropAgent.DeltaCreator
             : base(network)
         {
             m_combineKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel", "CombineTwoVectorsKernel");
-            m_energyKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\EnergyKernel");
+            m_energyKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\EnergyKernel");
         }
 
         public CUdeviceptr CurrentSampleLabelInputPtr

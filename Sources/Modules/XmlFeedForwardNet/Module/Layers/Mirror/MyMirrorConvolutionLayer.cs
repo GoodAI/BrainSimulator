@@ -62,11 +62,11 @@ namespace XmlFeedForwardNet.Layers.Mirror
         {
             // Create the kernels
             m_setKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\SetKernel");
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorConvolutionLayerKernel", "ForwardKernel");
-            m_forwardBiasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorConvolutionLayerKernel", "ForwardBiasKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorConvolutionLayerKernel", "BackwardKernel");
-            m_weightBiasesKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorConvolutionLayerKernel", "WeightBiasKernel");
-            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorConvolutionLayerKernel", "WeightKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorConvolutionLayerKernel", "ForwardKernel");
+            m_forwardBiasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorConvolutionLayerKernel", "ForwardBiasKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorConvolutionLayerKernel", "BackwardKernel");
+            m_weightBiasesKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorConvolutionLayerKernel", "WeightBiasKernel");
+            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorConvolutionLayerKernel", "WeightKernel");
 
             base.Initialize(nGPU);
 

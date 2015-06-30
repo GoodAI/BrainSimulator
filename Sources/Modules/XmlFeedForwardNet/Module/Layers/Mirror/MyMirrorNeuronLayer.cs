@@ -69,10 +69,10 @@ namespace XmlFeedForwardNet.Layers
             m_setKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\SetKernel");
 
             // Use the same kernels as MyNeuronLayer
-            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorNeuronLayerKernel", "ForwardKernel");
-            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorNeuronLayerKernel", "BackwardKernel");
-            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorNeuronLayerKernel", "WeightKernel");
-            m_biasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\MirrorNeuronLayerKernel", "BiasKernel");
+            m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorNeuronLayerKernel", "ForwardKernel");
+            m_backwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorNeuronLayerKernel", "BackwardKernel");
+            m_weightKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorNeuronLayerKernel", "WeightKernel");
+            m_biasKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\MirrorNeuronLayerKernel", "BiasKernel");
 
             base.Initialize(nGPU);
         }

@@ -1,3 +1,4 @@
 [submodule "BinaryLibs/GoodAiPlatformLibs"]
 	path = BinaryLibs/GoodAiPlatformLibs
 	url = https://github.com/KeenSoftwareHouse/GoodAiPlatformLibs
+	branch = master

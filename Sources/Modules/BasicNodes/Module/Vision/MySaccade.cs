@@ -20,24 +20,38 @@ using ManagedCuda.VectorTypes;           // manual kernel sizes are needed
 
 //---- observers
 using BrainSimulator.Vision;
-using OpenTK.Input; /// Because of the keyboard...
+using OpenTK.Input; // Because of the keyboard...
 
 
 namespace BrainSimulator.Vision
 {
 
-    /// <author>Honza Knopp</author>
+    /// <author>Jan Knopp</author>
     /// <status>Working </status>
     /// <summary>
-    ///   Select patch/segment/object for Saccadic movement...
+    ///   Select input patch/segment/object for Saccadic movement...
     /// </summary>
     /// <description>
+    ///   The node process set of hypothezied objects. Score each of them how likely it can be selected and selects the one.
     ///   <h4> Input </h4>
     ///   <ul>
-    ///     <li>Patches: [nx3]   matrix of x,y,scale of N patches/superpixels/objects. (-1 are ignored)</li>
-    ///     <li>Desc:    [nxdim] descriptor of each path/superpixel/objects.</li>
-    ///     <li>Mask:    [axb]   image where each pixels value corresponds to the segmetn id of the pixel.</li>
+    ///     <li>Patches:   [nx3]   matrix of x,y,scale of N patches/superpixels/objects. (-1 are ignored)</li>
+    ///     <li>Desc:      [nxdim] descriptor of each path/superpixel/objects.</li>
+    ///     <li>Mask:      [axb]   image where each pixels value corresponds to the segmetn id of the pixel.</li>
+    ///     <li>ForcedXYS: [3x1]   force the output.</li>
     ///   </ul> 
+    ///   
+    ///   <h4> Output </h4>
+    ///     Postion and size of the selected object/patch.
+    ///
+    ///  <h4> Parameters </h4>
+    ///   <ul>
+    ///     <li> Time Term / IncreaseOnFocus: How much to skip the object that the node selected last time.</li>
+    ///     <li> Time Term / DecreaseInTime: How long it will take to again look on the patch the node selected before.</li>
+    ///     <li> Terms Weighting / RationSupportMovement: How much favor moving elements.</li>
+    ///   </ul>
+    ///     
+    /// 
     /// </description>
     public class MySaccade : MyWorkingNode
     {
@@ -79,7 +93,7 @@ namespace BrainSimulator.Vision
         public int PatchesNum { get; set; }//{ get { return Patches != null ? Patches.Count / Patches.ColumnHint : 0; } }
         public int PatchesDim { get; set; }//{ get { return Patches != null ? Patches.ColumnHint : 0; } }
 
-        public int Real_NPatches;  /// real number of ppatches as there can be some zeros... :)
+        public int Real_NPatches;  // real number of ppatches as there can be some zeros... :)
 
         public int DescNum { get; set; }//{ get { return Desc != null ? Desc.Count / Desc.ColumnHint : 0; } }
         public int DescDim { get; set; }//{ get { return Desc != null ? Desc.ColumnHint : 0; } }
@@ -173,7 +187,6 @@ namespace BrainSimulator.Vision
         ///     <li> IncreaseOnFocus:       Term increase when focuser selects it. Lower will stay on the object longer</li>
         ///     <li> DecreaseInTime:        Ration for decresing time term in time. Higher will try to go back on the seen patch sooner.</li>
         ///     <li> RationSupportMovement: How much to prefer movement against time.</li>
-        ///     <li> RationSupportBrainFavour: how to favour brains need where to focus.</li>
         /// </ul>
         /// </summary>
         [Description("Update")]
@@ -188,9 +201,6 @@ namespace BrainSimulator.Vision
 
             [MyBrowsable, Category("Terms Weighting"), YAXSerializableField(DefaultValue = 0.95f)]
             public float RationSupportMovement { get; set; }
-
-            [MyBrowsable, Category("Terms Weighting"), YAXSerializableField(DefaultValue = 0.0f)]
-            public float RationSupportBrainFavour { get; set; }
 
 
 
@@ -250,10 +260,6 @@ namespace BrainSimulator.Vision
                 //--- get minimal energy's id as output
                 m_kernel_get_min_energy.Run(Owner.EnergyTotal, Owner.Output, Owner.Real_NPatches);
 
-                /*Owner.Output.SafeCopyToHost();
-                Owner.EnergyTotal.SafeCopyToHost();
-                Owner.Patches.SafeCopyToHost();
-                Owner.ForcedXYS.SafeCopyToHost();*/
 
                 //--- Update time-change energy term FOR the NEXT STEP, thus use id-output to update it :)
                 m_kernel_EnTermUpdate_time.Run(Owner.EnergyTerms, Owner.EnergyTerms.ColumnHint, Owner.Real_NPatches, Owner.Output,
@@ -330,7 +336,7 @@ namespace BrainSimulator.Vision
         public MySaccadeConvertOutId2XYTask ConvertOutId2XY { get; private set; }
 
         /// <summary>
-        /// Convert id into a xy+scale and set it as output :)
+        /// Convert id into a xy+scale and set it as the output
         /// </summary>
         [Description("ConvertOutId2XY")]
         public class MySaccadeConvertOutId2XYTask : MyTask<MySaccade>
