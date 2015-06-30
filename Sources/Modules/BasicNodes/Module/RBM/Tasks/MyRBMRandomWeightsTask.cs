@@ -11,6 +11,10 @@ using YAXLib;
 
 namespace BrainSimulator.RBM.Tasks
 {
+
+    /// <summary>
+    /// Randomly initalizes the weights of the RBM network using normal distribution and specified standard deviation.
+    /// </summary>
     [Description("RBMRandomWeightsTask"), MyTaskInfo(OneShot = true)]
     public class MyRBMRandomWeightsTask : MyTask<MyRBMLayer>
     {

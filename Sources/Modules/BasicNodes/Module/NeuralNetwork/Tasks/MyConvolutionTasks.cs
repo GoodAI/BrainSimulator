@@ -30,7 +30,6 @@ namespace CustomModels.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-
             m_kernel.SetupExecution(Owner.Neurons);
             m_kernel.Run(
                 Owner.Input,
@@ -95,7 +94,6 @@ namespace CustomModels.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-
             if (Owner.ZeroPadding <= 0) return;
 
             Owner.PaddedImage.Fill(0);
@@ -181,7 +179,6 @@ namespace CustomModels.NeuralNetwork.Tasks
         {
             MyLog.DEBUG.WriteLine("Convolution Back Execute");
         }
-
     }
 
 

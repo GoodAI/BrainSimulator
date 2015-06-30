@@ -11,15 +11,15 @@ using YAXLib;
 
 namespace BrainSimulator.RBM
 {
-    /// <author>Mikulas Zelinka</author>
+    /// <author>Mikuláš Zelinka</author>
     /// <status>Working</status>
     /// <summary>
-    ///     Node group used for Restricted Boltzmann Machines and deep learning.
-    ///     Derived from Neural Network group whose functionality it inherits.
+    ///     Restricted Boltzmann Machine node group.
     /// </summary>
     /// <description>
     ///     Node group used for Restricted Boltzmann Machines and deep learning.
     ///     Derived from Neural Network group whose functionality it inherits.
+    ///     Can be used for initialization of weights prior to using SGD.
     /// </description>
     public class MyRBMGroup : MyNeuralNetworkGroup
     {

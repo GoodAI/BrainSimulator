@@ -18,7 +18,7 @@ using BrainSimulator.NeuralNetwork.Tasks;
 namespace BrainSimulator.NeuralNetwork.Layers
 {
     /// <author>Philip Hilm</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Hidden layer node.</summary>
     /// <description></description>
     public class MyHiddenLayer : MyAbstractWeightLayer, IMyCustomTaskFactory

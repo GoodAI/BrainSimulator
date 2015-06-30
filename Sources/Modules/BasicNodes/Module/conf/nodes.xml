@@ -88,9 +88,6 @@
       <Observer type="BrainSimulator.Observers.MyRBMFilterObserver" />
     </Node>
 
-    <Node type="BrainSimulator.NeuralNetwork.Layers.MyPoolingLayer" CanBeAdded="true"/>
-    <Node type="BrainSimulator.NeuralNetwork.Layers.MyConvolutionLayer" CanBeAdded="true"/>
-
   	<Node type="BrainSimulator.LSTM.MyLSTMLayer" CanBeAdded="true"/>
 
   </KnownNodes>

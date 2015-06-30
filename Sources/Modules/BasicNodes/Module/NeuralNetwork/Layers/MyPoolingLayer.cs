@@ -191,7 +191,7 @@ namespace BrainSimulator.NeuralNetwork.Layers
             base.Validate(validator);
 
             if (PreviousLayer != null)
-                validator.AssertError(InputWidth * InputHeight == PreviousLayer.Neurons, this, "Input width * input height must be equal to output size of the previous layer.");
+                validator.AssertError(InputWidth * InputHeight * Depth == PreviousLayer.Neurons, this, "'Input width * input height * depth' must be equal to output size of the previous layer.");
 
             validator.AssertError((InputWidth - FilterWidth) % HorizontalStride == 0, this, "Filter does not fit the input image horizontally when striding.");
             

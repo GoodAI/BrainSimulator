@@ -18,6 +18,20 @@ namespace BrainSimulator.RBM
         HIDDEN
     }
 
+    /// <summary>
+    /// <p>
+    /// Reconstruction task for RBM.
+    /// </p>
+    /// <p>
+    /// Layers are indexed from 0 (zero).
+    /// </p>
+    /// 
+    /// Can reconstruct from
+    /// <ul>
+    ///     <li> input up to the layer specified by CurrentLayerIndex.</li>
+    ///     <li> layer specified by CurrentLayerIndex back towards the first (input) (0th) layer.</li>
+    /// </ul>
+    /// </summary>
     [Description("RBM Reconstruction"), MyTaskInfo(OneShot = false)]
     public class MyRBMReconstructionTask : MyTask<MyNeuralNetworkGroup>
     {
@@ -25,7 +39,7 @@ namespace BrainSimulator.RBM
         #region Layer indexing
         [YAXSerializableField(DefaultValue = 0)]
         private int m_layerIndex = 0;
-        [MyBrowsable, Category("\tIndexing"), Description("Index of current layer.")]
+        [MyBrowsable, Category("\tIndexing"), Description("Index of current VISIBLE layer.")]
         public int CurrentLayerIndex
         {
             get { return m_layerIndex; }
@@ -59,7 +73,7 @@ namespace BrainSimulator.RBM
         }
 
         [YAXSerializableField(DefaultValue = ReconstructionSource.INPUT)]
-        [MyBrowsable, DisplayName("Reconstruction source"), Category("\tReconstruction")]
+        [MyBrowsable, DisplayName("Reconstruction source"), Category("\tReconstruction"), Description("INPUT to reconstruct from the RBM group input.")]
         public ReconstructionSource ReconstructionSource { get; set; }
 
         #endregion
@@ -83,7 +97,7 @@ namespace BrainSimulator.RBM
         }
 
         [YAXSerializableField(DefaultValue = false)]
-        [MyBrowsable, Category("\tActivation"), Description("Is activation of the visible neurons random or determined by possibilities?")]
+        [MyBrowsable, Category("\tActivation"), Description("Is activation of the visible neurons random or equal to probability?")]
         public bool RandomVisible
         {
             get;
@@ -107,11 +121,6 @@ namespace BrainSimulator.RBM
         }
         #endregion
 
-
-        //parameterless constructor
-        public MyRBMReconstructionTask() { }
-
-        //put additional kernels here
 
         private int step;
         List<MyAbstractLayer> layers;

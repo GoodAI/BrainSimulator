@@ -61,7 +61,7 @@ namespace BrainSimulator.GridWorld
             Lights lll = new Lights();
             lll.TurnOn();
             this.PlaceObjectTo(new int2(2, 5), lll);
-            
+
             LightsControl lcc = new LightsControl();
             lcc.myObjects.Add(lll);
             lcc.TurnOn();
@@ -120,7 +120,7 @@ namespace BrainSimulator.GridWorld
         {
             Lights ll = new Lights();
             ll.TurnOff();
-            this.PlaceObjectTo(new int2(5,5), ll);
+            this.PlaceObjectTo(new int2(5, 5), ll);
             /*
             Lights lll = new Lights();
             lll.TurnOff();
@@ -134,7 +134,7 @@ namespace BrainSimulator.GridWorld
             LightsControl lc = new LightsControl();
             lc.TurnOff();
             lc.myObjects.Add(ll);
-            this.PlaceObjectTo(new int2(1,1), lc);
+            this.PlaceObjectTo(new int2(1, 1), lc);
 
             MyDoor door2 = new MyDoor();
             door2.TurnOff();
@@ -144,7 +144,7 @@ namespace BrainSimulator.GridWorld
             dc.myObjects.Add(door2);
             this.PlaceObjectTo(new int2(1, 5), dc);
 
-            StaticObjects = new MyStaticObject[]{ll, lc, door2, dc};//,lll,llll};
+            StaticObjects = new MyStaticObject[] { ll, lc, door2, dc };//,lll,llll};
 
         }
     }
@@ -557,14 +557,14 @@ namespace BrainSimulator.GridWorld
     public class Tale
     {
         public MyGridWorld.MyGraphicsPrototype Graphics { get; set; }
-        public Boolean IsObstacle{ get; set; }
-        public List<MyStaticObject> Objects{ get; set; }
+        public Boolean IsObstacle { get; set; }
+        public List<MyStaticObject> Objects { get; set; }
     }
 
     public abstract class AbstractTwoStateObject : MyStaticObject
     {
         public MyGridWorld.MyGraphicsPrototype OnGraphics { get; private set; }
-        public MyGridWorld.MyGraphicsPrototype OffGraphics{ get; private set; }
+        public MyGridWorld.MyGraphicsPrototype OffGraphics { get; private set; }
 
         public void UpdateGraphics(MyGridWorld.MyGraphicsPrototype off_g, MyGridWorld.MyGraphicsPrototype on_g)
         {
@@ -716,7 +716,7 @@ namespace BrainSimulator.GridWorld
         public static readonly float DEF_W;
         public static readonly float AGENT_W = 0.5f;    // weights
 
-        public MyGridWorld.MyGraphicsPrototype Graphics{ get; set; }
+        public MyGridWorld.MyGraphicsPrototype Graphics { get; set; }
         protected int2 m_position;
         private float m_weight = DEF_W;
 
@@ -765,7 +765,7 @@ namespace BrainSimulator.GridWorld
 
     public class MyMovingObject : MyStaticObject
     {
-        public int CurrentAction{ get; private set; }
+        public int CurrentAction { get; private set; }
 
         public void MoveUp()
         {
@@ -825,10 +825,10 @@ namespace BrainSimulator.GridWorld
         protected int[] m_array;
         protected int m_width = 0, m_height = 0;
 
-        public Tale[,] Tiles{ get; private set; } 
-        public MyMovingObject Agent {get; private set; }
+        public Tale[,] Tiles { get; private set; }
+        public MyMovingObject Agent { get; private set; }
         public MyStaticObject[] StaticObjects { get; set; }
-        public MyMovingObject[] MovingObjects {get; set; }
+        public MyMovingObject[] MovingObjects { get; set; }
 
         public AbstractMap()
         {
