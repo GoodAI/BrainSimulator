@@ -1,10 +1,10 @@
 ﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-using BrainSimulator;
-using BrainSimulator.Execution;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class DebugForm : DockContent
     {

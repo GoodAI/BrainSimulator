@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.VSA.Hashes
+namespace GoodAI.Modules.VSA.Hashes
 {
     ///<author>Martin Milota</author>
     ///<status>WIP</status>
@@ -85,7 +86,7 @@ namespace BrainSimulator.VSA.Hashes
 
 
         [Description("Randomize memory contents"), MyTaskInfo(OneShot = true, Disabled = true)]
-        public class RandomInitTask : Task.MyTask<MyHashingMemory>
+        public class RandomInitTask : MyTask<MyHashingMemory>
         {
             [MyBrowsable, Category("Structure")]
             [YAXSerializableField(DefaultValue = 0)]

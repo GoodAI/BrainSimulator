@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using System;
 using System.Collections.Generic;
@@ -9,13 +9,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Matrix;
-using BrainSimulator.Nodes;
-using BrainSimulator.Transforms;
+using GoodAI.Modules.Matrix;
+using GoodAI.Core.Nodes;
+using GoodAI.Modules.Transforms;
 using ManagedCuda.CudaBlas;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.VSA
+namespace GoodAI.Modules.VSA
 {
     ///<author>Good AI</author>
     ///<tag>#mm</tag>

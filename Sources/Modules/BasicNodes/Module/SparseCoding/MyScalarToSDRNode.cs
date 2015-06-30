@@ -4,15 +4,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
 using YAXLib;
 using ManagedCuda;
-using BrainSimulator.Transforms;
+using GoodAI.Modules.Transforms;
 
-namespace BrainSimulator.SparseCoding
+namespace GoodAI.Modules.SparseCoding
 {
     /// <author>Josef Strunc</author>
     /// <status>WIP</status>

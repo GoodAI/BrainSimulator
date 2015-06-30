@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using BrainSimulator.Memory;
-using BrainSimulator.Observers;
-using BrainSimulator.Task;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Task;
 using  XmlFeedForwardNet.Networks;
-using BrainSimulator;
+using GoodAI.Core;
 
 namespace XmlFeedForwardNet.Layers.Mirror
 {

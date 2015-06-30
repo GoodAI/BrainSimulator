@@ -1,16 +1,16 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Nodes;
+using GoodAI.Core.Nodes;
 using CustomModels.NeuralNetwork.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.NeuralNetwork.Layers
+namespace GoodAI.Modules.NeuralNetwork.Layers
 {
 
 

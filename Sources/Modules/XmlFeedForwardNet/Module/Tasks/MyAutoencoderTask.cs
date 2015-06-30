@@ -1,8 +1,8 @@
 ﻿using  XmlFeedForwardNet.Networks;
 using  XmlFeedForwardNet.Tasks.BackPropAgent;
-using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

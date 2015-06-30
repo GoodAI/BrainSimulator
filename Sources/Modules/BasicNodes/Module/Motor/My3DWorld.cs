@@ -9,10 +9,10 @@ using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Materials;
 using BEPUutilities;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,7 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Motor
+namespace GoodAI.Modules.Motor
 {
     /// <author>Dusan Fedorcak</author>
     /// <status>WIP</status>

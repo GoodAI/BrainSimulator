@@ -1,7 +1,7 @@
-﻿using BrainSimulator.NeuralNetwork.Group;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.RBM
+namespace GoodAI.Modules.RBM
 {
     public enum ReconstructionSource
     {

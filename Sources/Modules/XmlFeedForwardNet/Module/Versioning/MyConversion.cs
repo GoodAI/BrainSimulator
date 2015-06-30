@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Configuration;
+﻿using GoodAI.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;

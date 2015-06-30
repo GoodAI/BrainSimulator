@@ -1,5 +1,5 @@
 ﻿using System;
-using BrainSimulator.Memory;
+using GoodAI.Core.Memory;
 using ManagedCuda.BasicTypes;
 using  XmlFeedForwardNet.Networks;
 

@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Utils;
+﻿using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace BrainSimulator.Configuration
+namespace GoodAI.Core.Configuration
 {
     public abstract class MyBaseConversion
     {

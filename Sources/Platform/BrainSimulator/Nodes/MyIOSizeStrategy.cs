@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Graph;
 using Graph.Compatibility;
-using BrainSimulatorGUI.NodeView;
-using BrainSimulator.Nodes;
+using GoodAI.BrainSimulator.NodeView;
+using GoodAI.Core.Nodes;
 
-namespace BrainSimulatorGUI.Nodes
+namespace GoodAI.BrainSimulator.Nodes
 {
     class MyIOStrategy : ICompatibilityStrategy
     {

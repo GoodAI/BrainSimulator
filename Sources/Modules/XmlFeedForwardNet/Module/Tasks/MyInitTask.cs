@@ -1,13 +1,13 @@
 ﻿using XmlFeedForwardNet.Layers;
 using XmlFeedForwardNet.Networks;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using BrainSimulator;
+using GoodAI.Core;
 
 namespace  XmlFeedForwardNet.Tasks
 {

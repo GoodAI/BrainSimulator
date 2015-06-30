@@ -1,12 +1,12 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator
+namespace GoodAI.Core
 {
     public class MyConnection
     {

@@ -1,9 +1,8 @@
-﻿using BrainSimulator;
-using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
-using BrainSimulator.Observers.Helper;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Observers.Helper;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
 using System;
@@ -14,9 +13,9 @@ using System.Text;
 using System.Drawing;
 using System.Threading.Tasks;
 using YAXLib;
-using BrainSimulator.Task;
+using GoodAI.Core.Task;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Core.Observers
 {
     public class MyTimePlotObserver : MyObserver<MyMemoryBlock<float>>
     {

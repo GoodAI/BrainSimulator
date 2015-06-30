@@ -1,23 +1,23 @@
-﻿using BrainSimulator.Nodes;
+﻿using GoodAI.Core.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System.ComponentModel;
 using YAXLib;
-using BrainSimulator.Observers;
-using BrainSimulator.GridWorld;
+using GoodAI.Core.Observers;
+using GoodAI.Modules.GridWorld;
 
 
-namespace BrainSimulator.Harm
+namespace GoodAI.Modules.Harm
 {
     /// <author>Jaroslav Vitku</author>
     /// <status>Under development</status>

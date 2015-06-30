@@ -7,26 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BrainSimulatorGUI.NodeView;
+using GoodAI.BrainSimulator.NodeView;
 using Graph;
 using Graph.Compatibility;
 using System.IO;
 using WeifenLuo.WinFormsUI.Docking;
-using BrainSimulator.Nodes;
-using BrainSimulator;
+using GoodAI.Core.Nodes;
+using GoodAI.Core;
 using System.Diagnostics;
-using BrainSimulator.Utils;
-using BrainSimulatorGUI.Utils;
-using BrainSimulator.Observers;
-using BrainSimulatorGUI.Nodes;
+using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.Utils;
+using GoodAI.Core.Observers;
+using GoodAI.BrainSimulator.Nodes;
 using System.Reflection;
 using System.Collections.Specialized;
-using BrainSimulator.Execution;
+using GoodAI.Core.Execution;
 using YAXLib;
-using BrainSimulator.Memory;
-using BrainSimulator.Configuration;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Configuration;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class MainForm : Form
     {        

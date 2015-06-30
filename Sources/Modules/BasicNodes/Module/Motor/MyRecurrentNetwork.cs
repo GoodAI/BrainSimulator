@@ -4,19 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
-using BrainSimulator.Signals;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Signals;
 using System.Drawing;
 using YAXLib;
 using ManagedCuda;
 using System.Diagnostics;
-using BrainSimulator.Transforms;
-using BrainSimulator.NeuralNetwork.Layers;
+using GoodAI.Modules.Transforms;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Core;
 
-namespace BrainSimulator.Motor
+namespace GoodAI.Modules.Motor
 {
     /// <author>Karol Kuna</author>
     /// <status>Working</status>

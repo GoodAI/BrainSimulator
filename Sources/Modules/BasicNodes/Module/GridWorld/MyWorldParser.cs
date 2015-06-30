@@ -1,12 +1,12 @@
-﻿using BrainSimulator.Nodes;
+﻿using GoodAI.Core.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
-using BrainSimulator.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
 using System.ComponentModel;
 using YAXLib;
 using System.Drawing;
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 
 
-namespace BrainSimulator.GridWorld
+namespace GoodAI.Modules.GridWorld
 {
     public class MyMapI : AbstractMap
     {

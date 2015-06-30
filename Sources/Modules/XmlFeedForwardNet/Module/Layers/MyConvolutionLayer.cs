@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using BrainSimulator.Memory;
-using BrainSimulator.Observers;
-using BrainSimulator.Utils;
-using BrainSimulator.Task;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Task;
 using XmlFeedForwardNet.Networks;
-using BrainSimulator;
+using GoodAI.Core;
 
 namespace XmlFeedForwardNet.Layers
 {

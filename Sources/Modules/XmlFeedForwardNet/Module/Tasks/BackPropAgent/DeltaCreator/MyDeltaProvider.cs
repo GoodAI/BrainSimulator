@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using  XmlFeedForwardNet.Networks;
 
 namespace  XmlFeedForwardNet.Tasks.BackPropAgent.DeltaCreator

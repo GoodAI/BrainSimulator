@@ -1,8 +1,8 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaBlas;
@@ -14,11 +14,11 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-using BrainSimulator.Matrix;
+using GoodAI.Modules.Matrix;
 
 
 
-namespace BrainSimulator.Matrix
+namespace GoodAI.Modules.Matrix
 {
 
     public class MyCublasFactory// : IDisposable

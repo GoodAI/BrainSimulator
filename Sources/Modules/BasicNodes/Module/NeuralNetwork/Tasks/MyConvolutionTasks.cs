@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.NeuralNetwork.Tasks;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.NeuralNetwork.Tasks;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 
 namespace CustomModels.NeuralNetwork.Tasks
 {

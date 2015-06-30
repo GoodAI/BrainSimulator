@@ -8,14 +8,14 @@ using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
 using ManagedCuda.CudaRand;
-using BrainSimulator.Nodes;
-using BrainSimulator.Memory;
-using BrainSimulator.Utils;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
 using System.Reflection;
 using System.IO;
-using BrainSimulator.Configuration;
+using GoodAI.Core.Configuration;
 
-namespace BrainSimulator
+namespace GoodAI.Core
 {
     public class MyCudaKernel
     {

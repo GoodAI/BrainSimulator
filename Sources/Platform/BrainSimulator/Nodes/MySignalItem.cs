@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Signals;
-using BrainSimulatorGUI.Forms;
-using BrainSimulatorGUI.NodeView;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
+using GoodAI.BrainSimulator.Forms;
+using GoodAI.BrainSimulator.NodeView;
 using Graph;
 using Graph.Items;
 using System;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulatorGUI.Nodes
+namespace GoodAI.BrainSimulator.Nodes
 {
     internal class MySignalItem : NodeLabelItem
     {

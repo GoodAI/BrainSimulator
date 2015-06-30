@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Execution
+namespace GoodAI.Core.Execution
 {
     /// Managers MySimulation run
     public class MySimulationHandler

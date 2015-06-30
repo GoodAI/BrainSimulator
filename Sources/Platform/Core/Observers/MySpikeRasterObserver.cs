@@ -1,10 +1,9 @@
-﻿using BrainSimulator;
-using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
-using BrainSimulator.Testing;
-using BrainSimulator.Observers.Helper;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Testing;
+using GoodAI.Core.Observers.Helper;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
 using ManagedCuda.BasicTypes;
@@ -17,7 +16,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Core.Observers
 {
     public class MySpikeRasterObserver : MyAbstractMemoryBlockObserver
     {

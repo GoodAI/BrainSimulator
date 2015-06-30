@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     public static class MyResources
     {

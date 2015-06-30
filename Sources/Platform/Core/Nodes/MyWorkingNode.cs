@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using YAXLib;
 using System.Diagnostics;
 using System.ComponentModel;
-using BrainSimulator.Signals;
+using GoodAI.Core.Signals;
 using System.Drawing.Design;
-using BrainSimulator.Execution;
+using GoodAI.Core.Execution;
 
-namespace BrainSimulator.Nodes
+namespace GoodAI.Core.Nodes
 {
     public interface IMyCustomTaskFactory
     {

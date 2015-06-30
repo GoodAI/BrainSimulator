@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
-using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using BrainSimulator.Configuration;
+using GoodAI.Core.Configuration;
 using System.IO;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     [YAXSerializeAs("Project"), YAXSerializableType(FieldsToSerialize=YAXSerializationFields.AttributedFieldsOnly)]
     public class MyProject : IDisposable

@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Utils;
-namespace BrainSimulatorGUI.Forms
+﻿using GoodAI.Core.Utils;
+namespace GoodAI.BrainSimulator.Forms
 {
     partial class ConsoleForm
     {

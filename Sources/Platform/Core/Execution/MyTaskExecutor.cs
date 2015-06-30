@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Task;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Execution
+namespace GoodAI.Core.Execution
 {
     /// Run the tasks
     public class MyThreadPool

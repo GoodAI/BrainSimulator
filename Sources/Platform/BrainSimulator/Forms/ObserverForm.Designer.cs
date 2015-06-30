@@ -1,4 +1,4 @@
-﻿namespace BrainSimulatorGUI.Forms
+﻿namespace GoodAI.BrainSimulator.Forms
 {
     partial class ObserverForm
     {
@@ -64,7 +64,7 @@
             // updateViewToolStripMenuItem
             // 
             this.updateViewToolStripMenuItem.Enabled = false;
-            this.updateViewToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.refresh_16xLG;
+            this.updateViewToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.refresh_16xLG;
             this.updateViewToolStripMenuItem.Name = "updateViewToolStripMenuItem";
             this.updateViewToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.updateViewToolStripMenuItem.Text = "Update View";
@@ -73,7 +73,7 @@
             // snapshotToolStripMenuItem
             // 
             this.snapshotToolStripMenuItem.Enabled = false;
-            this.snapshotToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.Snapshot;
+            this.snapshotToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Snapshot;
             this.snapshotToolStripMenuItem.Name = "snapshotToolStripMenuItem";
             this.snapshotToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.snapshotToolStripMenuItem.Text = "Save Snapshot...";

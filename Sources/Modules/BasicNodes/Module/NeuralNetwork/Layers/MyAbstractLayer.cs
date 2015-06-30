@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Utils;
-using BrainSimulator.Signals;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Signals;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
-using BrainSimulator.Task;
-using BrainSimulator.Nodes;
-using BrainSimulator.NeuralNetwork.Group;
+using GoodAI.Core.Task;
+using GoodAI.Core.Nodes;
+using GoodAI.Modules.NeuralNetwork.Group;
 
-namespace BrainSimulator.NeuralNetwork.Layers
+namespace GoodAI.Modules.NeuralNetwork.Layers
 {
 
     public enum ConnectionType

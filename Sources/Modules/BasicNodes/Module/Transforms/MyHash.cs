@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using YAXLib;
 using System.Security.Cryptography;
 
-namespace BrainSimulator.Transforms
+namespace GoodAI.Modules.Transforms
 {
     [YAXSerializeAs("Hash")]
     public class MyHash : MyTransform

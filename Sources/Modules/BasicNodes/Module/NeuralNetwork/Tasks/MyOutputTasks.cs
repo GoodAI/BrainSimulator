@@ -1,7 +1,7 @@
-﻿using BrainSimulator;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.NeuralNetwork.Tasks
+namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
     /// <author>Philip Hilm</author>
     /// <status>Working</status>

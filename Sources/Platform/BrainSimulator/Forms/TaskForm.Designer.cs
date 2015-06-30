@@ -1,4 +1,4 @@
-﻿namespace BrainSimulatorGUI.Forms
+﻿namespace GoodAI.BrainSimulator.Forms
 {
     partial class TaskForm
     {
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView = new BrainSimulatorGUI.Forms.TaskForm.MyListView();
+            this.listView = new GoodAI.BrainSimulator.Forms.TaskForm.MyListView();
             this.nameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.oneShotColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();

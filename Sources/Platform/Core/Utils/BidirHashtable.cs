@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     #region Bidirectional Hashtable
     public class BidirHashtable<TKey,TValue> : IDictionary<TKey, TValue>

@@ -1,8 +1,8 @@
-﻿using BrainSimulator.Execution;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class MemoryBlocksForm : DockContent
     {

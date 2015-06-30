@@ -6,7 +6,7 @@ using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulatorGUI.Utils
+namespace GoodAI.BrainSimulator.Utils
 {
     [AttributeUsage(AttributeTargets.Class)]
     class MyIconAttribute : Attribute

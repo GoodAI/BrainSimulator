@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Observers.Helper;
-using BrainSimulator.Retina;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Observers.Helper;
+using GoodAI.Modules.Retina;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -13,9 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
-using BrainSimulator.Harm;
+using GoodAI.Modules.Harm;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Modules.Observers
 {
     /// <summary>
     /// Observers SRPs (Stochastic Return Predictors) in the HARM (each one has name, own motivation, promoted variable etc..).

@@ -1,4 +1,4 @@
-﻿namespace BrainSimulatorGUI.Forms
+﻿namespace GoodAI.BrainSimulator.Forms
 {
     partial class MainForm
     {
@@ -152,7 +152,7 @@
             // 
             // newProjectToolStripMenuItem
             // 
-            this.newProjectToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.AddNewItem_6273;
+            this.newProjectToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.AddNewItem_6273;
             this.newProjectToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
             this.newProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
@@ -162,7 +162,7 @@
             // 
             // openProjectToolStripMenuItem
             // 
-            this.openProjectToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.Open_6529;
+            this.openProjectToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Open_6529;
             this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
             this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
@@ -180,7 +180,7 @@
             // 
             // saveProjectToolStripMenuItem
             // 
-            this.saveProjectToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.save_16xLG;
+            this.saveProjectToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.save_16xLG;
             this.saveProjectToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
             this.saveProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
@@ -274,7 +274,7 @@
             // 
             // startToolStripMenuItem
             // 
-            this.startToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Play_16xLG_color;
+            this.startToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Play_16xLG_color;
             this.startToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
             this.startToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
@@ -285,7 +285,7 @@
             // pauseToolStripMenuItem
             // 
             this.pauseToolStripMenuItem.Enabled = false;
-            this.pauseToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Pause_16xLG_color;
+            this.pauseToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Pause_16xLG_color;
             this.pauseToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
             this.pauseToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
@@ -296,7 +296,7 @@
             // stopToolStripMenuItem
             // 
             this.stopToolStripMenuItem.Enabled = false;
-            this.stopToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Stop_16xLG_color;
+            this.stopToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Stop_16xLG_color;
             this.stopToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
             this.stopToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
@@ -311,7 +311,7 @@
             // 
             // debugToolStripMenuItem
             // 
-            this.debugToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.debug;
+            this.debugToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.debug;
             this.debugToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
             this.debugToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F5)));
@@ -321,7 +321,7 @@
             // 
             // stepOverToolStripMenuItem
             // 
-            this.stepOverToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.StepOver;
+            this.stepOverToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.StepOver;
             this.stepOverToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepOverToolStripMenuItem.Name = "stepOverToolStripMenuItem";
             this.stepOverToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
@@ -332,7 +332,7 @@
             // stepIntoToolStripMenuItem
             // 
             this.stepIntoToolStripMenuItem.Enabled = false;
-            this.stepIntoToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.StepIn;
+            this.stepIntoToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.StepIn;
             this.stepIntoToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepIntoToolStripMenuItem.Name = "stepIntoToolStripMenuItem";
             this.stepIntoToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F11;
@@ -343,7 +343,7 @@
             // stepOutToolStripMenuItem
             // 
             this.stepOutToolStripMenuItem.Enabled = false;
-            this.stepOutToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.Stepout;
+            this.stepOutToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Stepout;
             this.stepOutToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepOutToolStripMenuItem.Name = "stepOutToolStripMenuItem";
             this.stepOutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F11)));
@@ -367,7 +367,7 @@
             // 
             // updateMemoryBlocksToolStripMenuItem
             // 
-            this.updateMemoryBlocksToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.Restart_6322;
+            this.updateMemoryBlocksToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Restart_6322;
             this.updateMemoryBlocksToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.updateMemoryBlocksToolStripMenuItem.Name = "updateMemoryBlocksToolStripMenuItem";
             this.updateMemoryBlocksToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
@@ -385,7 +385,7 @@
             // 
             // guideToolStripMenuItem
             // 
-            this.guideToolStripMenuItem.Image = global::BrainSimulatorGUI.Properties.Resources.F1Help_7644;
+            this.guideToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.F1Help_7644;
             this.guideToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.guideToolStripMenuItem.Name = "guideToolStripMenuItem";
             this.guideToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
@@ -446,7 +446,7 @@
             // newProjectToolButton
             // 
             this.newProjectToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.newProjectToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.AddNewItem_6273;
+            this.newProjectToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.AddNewItem_6273;
             this.newProjectToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newProjectToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newProjectToolButton.Name = "newProjectToolButton";
@@ -457,7 +457,7 @@
             // openProjectToolButton
             // 
             this.openProjectToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.openProjectToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.Open_6529;
+            this.openProjectToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Open_6529;
             this.openProjectToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.openProjectToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openProjectToolButton.Name = "openProjectToolButton";
@@ -468,7 +468,7 @@
             // saveProjectToolButton
             // 
             this.saveProjectToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.saveProjectToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.save_16xLG;
+            this.saveProjectToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.save_16xLG;
             this.saveProjectToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.saveProjectToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveProjectToolButton.Name = "saveProjectToolButton";
@@ -484,7 +484,7 @@
             // runToolButton
             // 
             this.runToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.runToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Play_16xLG_color;
+            this.runToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Play_16xLG_color;
             this.runToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.runToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.runToolButton.Name = "runToolButton";
@@ -496,7 +496,7 @@
             // 
             this.stopToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.stopToolButton.Enabled = false;
-            this.stopToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Stop_16xLG_color;
+            this.stopToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Stop_16xLG_color;
             this.stopToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stopToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stopToolButton.Name = "stopToolButton";
@@ -508,7 +508,7 @@
             // 
             this.pauseToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.pauseToolButton.Enabled = false;
-            this.pauseToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Pause_16xLG_color;
+            this.pauseToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Pause_16xLG_color;
             this.pauseToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.pauseToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pauseToolButton.Name = "pauseToolButton";
@@ -519,7 +519,7 @@
             // stepOverToolButton
             // 
             this.stepOverToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.stepOverToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.StepOver;
+            this.stepOverToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StepOver;
             this.stepOverToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepOverToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stepOverToolButton.Name = "stepOverToolButton";
@@ -530,7 +530,7 @@
             // debugToolButton
             // 
             this.debugToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.debugToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.debug;
+            this.debugToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.debug;
             this.debugToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.debugToolButton.Name = "debugToolButton";
             this.debugToolButton.Size = new System.Drawing.Size(23, 20);
@@ -545,7 +545,7 @@
             // timerToolStripSplitButton
             // 
             this.timerToolStripSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.timerToolStripSplitButton.Image = global::BrainSimulatorGUI.Properties.Resources.timer_16xLG;
+            this.timerToolStripSplitButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.timer_16xLG;
             this.timerToolStripSplitButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.timerToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.timerToolStripSplitButton.Name = "timerToolStripSplitButton";
@@ -555,7 +555,7 @@
             // observerTimerToolButton
             // 
             this.observerTimerToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.observerTimerToolButton.Image = global::BrainSimulatorGUI.Properties.Resources.timer_observer;
+            this.observerTimerToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.timer_observer;
             this.observerTimerToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.observerTimerToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.observerTimerToolButton.Name = "observerTimerToolButton";
@@ -570,7 +570,7 @@
             // loadMemBlocksButton
             // 
             this.loadMemBlocksButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.loadMemBlocksButton.Image = global::BrainSimulatorGUI.Properties.Resources.open_mb;
+            this.loadMemBlocksButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.open_mb;
             this.loadMemBlocksButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.loadMemBlocksButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.loadMemBlocksButton.Margin = new System.Windows.Forms.Padding(0, 1, 1, 2);
@@ -583,7 +583,7 @@
             // 
             this.saveMemBlocksButton.CheckOnClick = true;
             this.saveMemBlocksButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.saveMemBlocksButton.Image = global::BrainSimulatorGUI.Properties.Resources.save_mb;
+            this.saveMemBlocksButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.save_mb;
             this.saveMemBlocksButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.saveMemBlocksButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveMemBlocksButton.Name = "saveMemBlocksButton";
@@ -594,7 +594,7 @@
             // clearDataButton
             // 
             this.clearDataButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearDataButton.Image = global::BrainSimulatorGUI.Properties.Resources.clear_mb;
+            this.clearDataButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.clear_mb;
             this.clearDataButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.clearDataButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearDataButton.Name = "clearDataButton";
@@ -605,7 +605,7 @@
             // exportStateButton
             // 
             this.exportStateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.exportStateButton.Image = global::BrainSimulatorGUI.Properties.Resources.export_mb;
+            this.exportStateButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.export_mb;
             this.exportStateButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.exportStateButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.exportStateButton.Name = "exportStateButton";
@@ -622,7 +622,7 @@
             // 
             this.autosaveButton.CheckOnClick = true;
             this.autosaveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.autosaveButton.Image = global::BrainSimulatorGUI.Properties.Resources.autosave;
+            this.autosaveButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.autosave;
             this.autosaveButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.autosaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.autosaveButton.Margin = new System.Windows.Forms.Padding(0, 1, 2, 2);
@@ -651,7 +651,7 @@
             // reloadButton
             // 
             this.reloadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.reloadButton.Image = global::BrainSimulatorGUI.Properties.Resources.Restart_6322;
+            this.reloadButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Restart_6322;
             this.reloadButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.reloadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.reloadButton.Name = "reloadButton";

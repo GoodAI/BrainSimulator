@@ -1,6 +1,6 @@
-﻿using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.RBM;
-using BrainSimulator.Utils;
+﻿using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.RBM;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
+using GoodAI.Core.Observers;
+using GoodAI.Core;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Modules.Observers
 {
     class MyRBMFilterObserver : MyNodeObserver<MyAbstractWeightLayer>
     {

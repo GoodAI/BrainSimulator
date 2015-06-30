@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
-using BrainSimulator.Utils;
-using BrainSimulator.Observers;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Observers;
 
-namespace BrainSimulatorGUI.Utils
+namespace GoodAI.BrainSimulator.Utils
 {    
     public abstract class MyCamera 
     {

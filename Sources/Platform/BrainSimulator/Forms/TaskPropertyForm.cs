@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulatorGUI.NodeView;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.NodeView;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class TaskPropertyForm : DockContent
     {

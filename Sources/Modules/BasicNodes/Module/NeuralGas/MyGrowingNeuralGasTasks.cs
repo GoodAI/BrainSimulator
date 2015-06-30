@@ -1,7 +1,7 @@
-using BrainSimulator;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Core;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using YAXLib;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
 
-namespace BrainSimulator.NeuralGas
+namespace GoodAI.Modules.NeuralGas
 {
     /// <summary>
     /// Initialization of the growing neural gas node

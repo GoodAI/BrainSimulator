@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Clustering
+namespace GoodAI.Modules.Clustering
 {
     /// <author>Radoslav Bielek</author>
     /// <status>WIP</status>

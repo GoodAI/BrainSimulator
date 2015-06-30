@@ -1,6 +1,7 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
@@ -12,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Transforms
+namespace GoodAI.Modules.Transforms
 {
     [YAXSerializeAs("Filter2D")]
     public class MyAnalyze2D : MyTransform

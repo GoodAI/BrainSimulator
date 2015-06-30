@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Core.Observers
 {
     [Flags]
     public enum MyVertexAttrib

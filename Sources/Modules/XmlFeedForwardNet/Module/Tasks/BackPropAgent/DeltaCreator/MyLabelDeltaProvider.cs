@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Task;
+using GoodAI.Core.Task;
 using XmlFeedForwardNet.Layers;
 using XmlFeedForwardNet.Tasks;
-using BrainSimulator.Utils;
+using GoodAI.Core.Utils;
 using  XmlFeedForwardNet.Networks;
-using BrainSimulator.Memory;
+using GoodAI.Core.Memory;
 using ManagedCuda.BasicTypes;
-using BrainSimulator;
+using GoodAI.Core;
 
 namespace  XmlFeedForwardNet.Tasks.BackPropAgent.DeltaCreator
 {

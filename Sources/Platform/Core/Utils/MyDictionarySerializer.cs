@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Task;
+﻿using GoodAI.Core.Task;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using YAXLib;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     public class MyTaskSerializer : ICustomSerializer<Dictionary<string, MyTask>>
     {

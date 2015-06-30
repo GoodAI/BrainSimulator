@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 
-namespace BrainSimulatorGUI.Utils
+namespace GoodAI.BrainSimulator.Utils
 {
     public class MyRenderUtils
     {

@@ -1,12 +1,12 @@
-﻿using BrainSimulator.Nodes;
+﻿using GoodAI.Core.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
-using BrainSimulator.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
 using System.ComponentModel;
 using YAXLib;
 using System.Drawing;
@@ -17,9 +17,10 @@ using ManagedCuda.VectorTypes;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Collections;
-using BrainSimulator.Signals;
+using GoodAI.Core.Signals;
+using GoodAI.Core;
 
-namespace BrainSimulator.TicTacToe
+namespace GoodAI.Modules.TicTacToe
 {
     /// <author>Jaroslav Vitku</author>
     /// <status>Working</status>

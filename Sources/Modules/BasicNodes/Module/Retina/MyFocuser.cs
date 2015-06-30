@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,8 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.Retina
+namespace GoodAI.Modules.Retina
 {
     ///<author>Dusan Fedorcak</author>
     ///<status>Working</status>

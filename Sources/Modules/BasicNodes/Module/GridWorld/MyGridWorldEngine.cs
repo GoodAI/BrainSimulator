@@ -7,9 +7,9 @@ using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
 using System.Collections;
-using BrainSimulator.Utils;
+using GoodAI.Core.Utils;
 
-namespace BrainSimulator.GridWorld
+namespace GoodAI.Modules.GridWorld
 {
 
     /// <summary>

@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -8,11 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
-using BrainSimulator.Task;
+using GoodAI.Core.Task;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using GoodAI.Core;
 
-namespace BrainSimulator.Common
+namespace GoodAI.Modules.Common
 {
     public enum MyGenerateType
     {

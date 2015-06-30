@@ -1,12 +1,14 @@
-﻿using BrainSimulator.Observers.Helper;
-using BrainSimulator.Retina;
+﻿using GoodAI.Core;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Observers.Helper;
+using GoodAI.Modules.Retina;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Modules.Observers
 {
     public class MyPupilControlObserver : MyNodeObserver<MyPupilControl>
     {

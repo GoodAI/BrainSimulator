@@ -1,5 +1,5 @@
-﻿using BrainSimulatorGUI.Utils;
-namespace BrainSimulatorGUI.Forms
+﻿using GoodAI.BrainSimulator.Utils;
+namespace GoodAI.BrainSimulator.Forms
 {
     partial class GraphLayoutForm
     {
@@ -39,7 +39,7 @@ namespace BrainSimulatorGUI.Forms
             this.removeNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Desktop = new Graph.GraphControl();
             this.desktopContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.searchTextBox = new BrainSimulatorGUI.Utils.CueToolStripTextBox();
+            this.searchTextBox = new GoodAI.BrainSimulator.Utils.CueToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.itemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topToolStrip = new System.Windows.Forms.ToolStrip();
@@ -81,7 +81,7 @@ namespace BrainSimulatorGUI.Forms
             // 
             // worldButton
             // 
-            this.worldButton.Image = global::BrainSimulatorGUI.Properties.Resources.world;
+            this.worldButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.world;
             this.worldButton.Location = new System.Drawing.Point(3, 3);
             this.worldButton.Name = "worldButton";
             this.worldButton.Size = new System.Drawing.Size(32, 32);
@@ -178,7 +178,7 @@ namespace BrainSimulatorGUI.Forms
             // updateModelButton
             // 
             this.updateModelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.updateModelButton.Image = global::BrainSimulatorGUI.Properties.Resources.Restart_6322;
+            this.updateModelButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Restart_6322;
             this.updateModelButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.updateModelButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.updateModelButton.Margin = new System.Windows.Forms.Padding(2, 1, 0, 2);
@@ -190,7 +190,7 @@ namespace BrainSimulatorGUI.Forms
             // zoomToFitButton
             // 
             this.zoomToFitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.zoomToFitButton.Image = global::BrainSimulatorGUI.Properties.Resources.ZoomToFit;
+            this.zoomToFitButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.ZoomToFit;
             this.zoomToFitButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.zoomToFitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.zoomToFitButton.Name = "zoomToFitButton";
@@ -210,7 +210,7 @@ namespace BrainSimulatorGUI.Forms
             // 
             // groupButton
             // 
-            this.groupButton.Image = global::BrainSimulatorGUI.Properties.Resources.group;
+            this.groupButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.group;
             this.groupButton.Location = new System.Drawing.Point(3, 3);
             this.groupButton.Name = "groupButton";
             this.groupButton.Size = new System.Drawing.Size(32, 32);

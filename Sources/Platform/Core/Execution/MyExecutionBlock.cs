@@ -1,13 +1,13 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Execution
+namespace GoodAI.Core.Execution
 {   
     /// Container for multiple IMyExecutable objects
     public class MyExecutionBlock : IMyExecutable

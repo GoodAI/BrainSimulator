@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Retina;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Modules.Retina;
+using GoodAI.Core.Utils;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -11,8 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
+using GoodAI.Core.Observers;
+using GoodAI.Core;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Modules.Observers
 {
     public class MyFocuserObjectsObserver : MyNodeObserver<MyFocuser>
     {

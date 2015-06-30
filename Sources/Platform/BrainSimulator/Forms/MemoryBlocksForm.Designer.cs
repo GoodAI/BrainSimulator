@@ -1,4 +1,4 @@
-﻿namespace BrainSimulatorGUI.Forms
+﻿namespace GoodAI.BrainSimulator.Forms
 {
     partial class MemoryBlocksForm
     {
@@ -95,7 +95,7 @@
             // addObserverButton
             // 
             this.addObserverButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addObserverButton.Image = global::BrainSimulatorGUI.Properties.Resources.add_observer;
+            this.addObserverButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_observer;
             this.addObserverButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addObserverButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addObserverButton.Name = "addObserverButton";
@@ -106,7 +106,7 @@
             // addPlotButton
             // 
             this.addPlotButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addPlotButton.Image = global::BrainSimulatorGUI.Properties.Resources.add_plot;
+            this.addPlotButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_plot;
             this.addPlotButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addPlotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addPlotButton.Name = "addPlotButton";
@@ -117,7 +117,7 @@
             // addMatrixObserver
             // 
             this.addMatrixObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addMatrixObserver.Image = global::BrainSimulatorGUI.Properties.Resources.matrix;
+            this.addMatrixObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.matrix;
             this.addMatrixObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addMatrixObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addMatrixObserver.Name = "addMatrixObserver";
@@ -128,7 +128,7 @@
             // addSpikeObserver
             // 
             this.addSpikeObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addSpikeObserver.Image = global::BrainSimulatorGUI.Properties.Resources.spike;
+            this.addSpikeObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.spike;
             this.addSpikeObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addSpikeObserver.Name = "addSpikeObserver";
             this.addSpikeObserver.Size = new System.Drawing.Size(23, 22);
@@ -138,7 +138,7 @@
             // addHistogramObserver
             // 
             this.addHistogramObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addHistogramObserver.Image = global::BrainSimulatorGUI.Properties.Resources.histo;
+            this.addHistogramObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.histo;
             this.addHistogramObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addHistogramObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addHistogramObserver.Name = "addHistogramObserver";

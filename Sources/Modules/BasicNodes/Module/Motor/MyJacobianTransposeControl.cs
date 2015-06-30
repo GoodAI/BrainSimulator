@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using YAXLib;
 using System.Windows.Media.Media3D;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.Matrix;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.Matrix;
 
-namespace BrainSimulator.Motor
+namespace GoodAI.Modules.Motor
 {
     /// <author>Karol Kuna</author>
     /// <status>Working</status>

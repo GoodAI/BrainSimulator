@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Task;
-using BrainSimulator.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Core.Memory;
 using ManagedCuda.BasicTypes;
 using System.Diagnostics;
 using System.ComponentModel;
-using BrainSimulator.Utils;
+using GoodAI.Core.Utils;
 using System.Drawing;
 using YAXLib;
 using System.Reflection;
-using BrainSimulator.Signals;
+using GoodAI.Core.Signals;
 
-namespace BrainSimulator.Nodes
+namespace GoodAI.Core.Nodes
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public abstract class MyNode : IDisposable

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using YAXLib;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     public class MyPathSerializer : ICustomSerializer<string>
     {

@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Utils;
+﻿using GoodAI.Core.Utils;
 using NDesk.Options;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using YAXLib;
 
-namespace BrainSimulator.Configuration
+namespace GoodAI.Core.Configuration
 {    
     public class MyConfiguration
     {

@@ -1,10 +1,10 @@
-﻿using BrainSimulator;
-using BrainSimulator.Configuration;
-using BrainSimulator.Execution;
-using BrainSimulator.Nodes;
-using BrainSimulator.Transforms;
-using BrainSimulatorGUI.Nodes;
-using BrainSimulatorGUI.NodeView;
+﻿using GoodAI.Core;
+using GoodAI.Core.Configuration;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Nodes;
+using GoodAI.Modules.Transforms;
+using GoodAI.BrainSimulator.Nodes;
+using GoodAI.BrainSimulator.NodeView;
 using Graph;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Resources;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class GraphLayoutForm : DockContent
     {

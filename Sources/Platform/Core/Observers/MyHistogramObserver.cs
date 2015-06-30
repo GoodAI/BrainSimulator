@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
 using System;
@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using YAXLib;
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Core.Observers
 {
     public class MyHistogramObserver : MyAbstractMemoryBlockObserver
     {

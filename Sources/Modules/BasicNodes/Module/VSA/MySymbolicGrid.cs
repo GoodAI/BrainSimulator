@@ -1,8 +1,8 @@
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
@@ -13,8 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ManagedCuda.CudaFFT;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.VSA
+namespace GoodAI.Modules.VSA
 {
     /// <author>Dusan Fedorcak, Radoslav Bielek</author>
     /// <status>Working, binary symbols not implemented</status>

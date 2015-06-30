@@ -1,9 +1,9 @@
-﻿using BrainSimulator;
-using BrainSimulator.NeuralNetwork.Group;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.RBM;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core;
+using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.RBM;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.NeuralNetwork.Tasks
+namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
     /// <author>Philip Hilm</author>
     /// <status>Working</status>

@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.RBM.Tasks;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.RBM.Tasks;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,8 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.RBM
+namespace GoodAI.Modules.RBM
 {
     /// <author>Mikulas Zelinka</author>
     /// <status>Working</status>

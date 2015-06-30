@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using BrainSimulator.Memory;
-using BrainSimulator.Observers;
-using BrainSimulator.Task;
-using BrainSimulator;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Task;
+using GoodAI.Core;
 using XmlFeedForwardNet.Networks;
 
 namespace XmlFeedForwardNet.Layers

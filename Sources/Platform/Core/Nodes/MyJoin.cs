@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.Transforms;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Nodes
+namespace GoodAI.Core.Nodes
 {
     public class MyJoin : MyWorkingNode
     {

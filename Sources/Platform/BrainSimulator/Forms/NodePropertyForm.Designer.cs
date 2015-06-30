@@ -1,4 +1,4 @@
-﻿namespace BrainSimulatorGUI.Forms
+﻿namespace GoodAI.BrainSimulator.Forms
 {
     partial class NodePropertyForm
     {
@@ -112,7 +112,7 @@
             // 
             this.observerDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.observerDropDownButton.Enabled = false;
-            this.observerDropDownButton.Image = global::BrainSimulatorGUI.Properties.Resources.add_observer;
+            this.observerDropDownButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_observer;
             this.observerDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.observerDropDownButton.Name = "observerDropDownButton";
             this.observerDropDownButton.Size = new System.Drawing.Size(29, 20);
@@ -123,7 +123,7 @@
             this.helpButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.helpButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.helpButton.Enabled = false;
-            this.helpButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Help;
+            this.helpButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Help;
             this.helpButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.helpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.helpButton.Name = "helpButton";
@@ -141,7 +141,7 @@
             this.loadNodeDataButton.CheckOnClick = true;
             this.loadNodeDataButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.loadNodeDataButton.Enabled = false;
-            this.loadNodeDataButton.Image = global::BrainSimulatorGUI.Properties.Resources.open_mb;
+            this.loadNodeDataButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.open_mb;
             this.loadNodeDataButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.loadNodeDataButton.Margin = new System.Windows.Forms.Padding(0, 1, 1, 2);
             this.loadNodeDataButton.Name = "loadNodeDataButton";
@@ -154,7 +154,7 @@
             this.saveNodeDataButton.CheckOnClick = true;
             this.saveNodeDataButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.saveNodeDataButton.Enabled = false;
-            this.saveNodeDataButton.Image = global::BrainSimulatorGUI.Properties.Resources.save_mb;
+            this.saveNodeDataButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.save_mb;
             this.saveNodeDataButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.saveNodeDataButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveNodeDataButton.Name = "saveNodeDataButton";
@@ -166,7 +166,7 @@
             // 
             this.clearDataButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.clearDataButton.Enabled = false;
-            this.clearDataButton.Image = global::BrainSimulatorGUI.Properties.Resources.clear_mb;
+            this.clearDataButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.clear_mb;
             this.clearDataButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearDataButton.Name = "clearDataButton";
             this.clearDataButton.Size = new System.Drawing.Size(23, 20);
@@ -183,7 +183,7 @@
             this.snapshotButton.CheckOnClick = true;
             this.snapshotButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.snapshotButton.Enabled = false;
-            this.snapshotButton.Image = global::BrainSimulatorGUI.Properties.Resources.Snapshot;
+            this.snapshotButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Snapshot;
             this.snapshotButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.snapshotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.snapshotButton.Name = "snapshotButton";

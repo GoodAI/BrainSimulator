@@ -1,5 +1,6 @@
-﻿using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda.VectorTypes;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Transforms
+namespace GoodAI.Modules.Transforms
 {
     [YAXSerializeAs("Resize2D")]
     public class MyResize2D : MyTransform

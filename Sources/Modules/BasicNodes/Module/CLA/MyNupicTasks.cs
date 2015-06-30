@@ -1,7 +1,7 @@
-﻿using BrainSimulator;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using nupic.algorithms.cla_classifier;
 using nupic.algorithms.spatial_pooler;
 using YAXLib;
 
-namespace BrainSimulator.CLA
+namespace GoodAI.Modules.CLA
 {
 
     // TODO: update parameters provided in Task's parameters (dynamicaly changed) - call the Managed Nupic API

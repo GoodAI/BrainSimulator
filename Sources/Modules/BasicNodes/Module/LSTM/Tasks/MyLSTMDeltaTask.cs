@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using YAXLib;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.NeuralNetwork.Group;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.NeuralNetwork.Tasks;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.NeuralNetwork.Tasks;
+using GoodAI.Core;
 
 
-namespace BrainSimulator.LSTM.Tasks
+namespace GoodAI.Modules.LSTM.Tasks
 {
     /// <summary>Dummy task, in truncated RTRL deltas are not propagated backwards from LSTM layer to input layer.</summary>
     [Description("Delta backprop"), MyTaskInfo(OneShot = false)]

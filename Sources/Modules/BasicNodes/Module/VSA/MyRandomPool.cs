@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,8 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ManagedCuda.BasicTypes;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.VSA
+namespace GoodAI.Modules.VSA
 {
     public abstract class MyRandomPool : MyWorkingNode
     {

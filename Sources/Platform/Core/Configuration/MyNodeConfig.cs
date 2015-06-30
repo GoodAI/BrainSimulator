@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Utils;
+﻿using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Configuration
+namespace GoodAI.Core.Configuration
 {
     [YAXSerializeAs("Node"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
     public class MyNodeConfig

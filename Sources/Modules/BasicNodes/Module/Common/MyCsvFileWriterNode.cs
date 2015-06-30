@@ -1,7 +1,7 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 
 using System;
 using System.IO;
@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Common
+namespace GoodAI.Modules.Common
 {
     /// <author>Josef Strunc</author>
     /// <status>Working</status>

@@ -1,8 +1,8 @@
-﻿using BrainSimulator;
-using BrainSimulator.Nodes;
-using BrainSimulator.Memory;
-using BrainSimulator.Utils;
-using BrainSimulator.Task;
+﻿using GoodAI.Core;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Task;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using YAXLib;
 using ManagedCuda;
 
-namespace BrainSimulator.Harm
+namespace GoodAI.Modules.Harm
 {
     /// <author>Jaroslav Vitku</author>
     /// <status>Working</status>

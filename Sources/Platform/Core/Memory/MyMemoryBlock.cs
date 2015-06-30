@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
@@ -12,9 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-//using BrainSimulator;
-
-namespace BrainSimulator.Memory
+namespace GoodAI.Core.Memory
 {
     public abstract class MyAbstractMemoryBlock
     {            

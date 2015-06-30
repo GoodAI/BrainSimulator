@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.IO;
 using XmlFeedForwardNet.Layers;
-using BrainSimulator.Utils;
+using GoodAI.Core.Utils;
 using XmlFeedForwardNet.Utils.WeightLoader;
 using System.Globalization;
 using XmlFeedForwardNet.Networks;

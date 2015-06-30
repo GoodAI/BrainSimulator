@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Threading;
 using Microsoft.Win32;
 
-namespace BrainSimulatorGUI.Utils
+namespace GoodAI.BrainSimulator.Utils
 {
 	/// <summary>
 	/// Represents a most recently used (MRU) menu.

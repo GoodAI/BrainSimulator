@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
-using BrainSimulatorGUI.Utils;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -14,9 +14,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
-using BrainSimulator.Configuration;
+using GoodAI.Core.Configuration;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {    
     public partial class NodeSelectionForm : Form
     {

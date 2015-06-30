@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Task
+namespace GoodAI.Core.Task
 {
     public interface IMyExecutable
     {

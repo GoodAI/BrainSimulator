@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BrainSimulatorGUI.Utils
+namespace GoodAI.BrainSimulator.Utils
 {
     public class MyFolderDialog : UITypeEditor
     {

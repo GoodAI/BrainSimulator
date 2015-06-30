@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
 using System.Runtime.InteropServices;
 using XmlFeedForwardNet.Networks;
-using BrainSimulator.Task;
-using BrainSimulator;
+using GoodAI.Core.Task;
+using GoodAI.Core;
 
 namespace XmlFeedForwardNet.Layers
 {

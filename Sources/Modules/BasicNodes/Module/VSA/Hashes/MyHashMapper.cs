@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
-using BrainSimulator.Matrix;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.VSA;
+using GoodAI.Modules.Matrix;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.VSA;
 using ManagedCuda;
 using System;
 using System.Collections.Generic;
@@ -18,8 +18,9 @@ using System.Threading.Tasks;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaBlas;
 using YAXLib;
+using GoodAI.Core;
 
-namespace BrainSimulator.VSA.Hashes
+namespace GoodAI.Modules.VSA.Hashes
 {
     ///<author>Martin Milota</author>
     ///<status>WIP</status>

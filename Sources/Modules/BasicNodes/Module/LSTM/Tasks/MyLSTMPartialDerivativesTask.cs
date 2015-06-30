@@ -5,15 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using YAXLib;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.NeuralNetwork.Group;
-using BrainSimulator.NeuralNetwork.Layers;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Core;
 
 
-namespace BrainSimulator.LSTM.Tasks
+namespace GoodAI.Modules.LSTM.Tasks
 {
     /// <summary>Computes truncated RTRL partial derivatives.</summary>
     [Description("RTRL Partial Derivatives"), MyTaskInfo(OneShot = false)]

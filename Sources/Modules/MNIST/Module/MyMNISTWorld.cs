@@ -1,8 +1,8 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Signals;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
 using System.Linq;

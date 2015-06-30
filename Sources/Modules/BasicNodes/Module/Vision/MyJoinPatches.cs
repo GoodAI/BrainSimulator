@@ -1,8 +1,8 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
@@ -18,12 +18,15 @@ using ManagedCuda.VectorTypes;
 using System.Drawing;  // for PointF
 
 //---- observers
-using BrainSimulator.Vision;
+using GoodAI.Modules.Vision;
+using GoodAI.Core;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Observers.Helper;
 //using OpenTK.Input; // Because of the keyboard...
 
 
 
-namespace BrainSimulator.Vision
+namespace GoodAI.Modules.Vision
 {
     /// <author>Jan Knopp</author>
     /// <status> Working</status>
@@ -419,7 +422,7 @@ namespace BrainSimulator.Vision
 
 
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Modules.Observers
 {
     public class MyJoinPatchesObserver : MyNodeObserver<MyJoinPatches>
     {
@@ -475,7 +478,7 @@ namespace BrainSimulator.Observers
                     {
                         int x = (int)Target.OutPatches.Host[i * Target.PatchesDim];
                         int y = (int)Target.OutPatches.Host[i * Target.PatchesDim + 1];
-                        BrainSimulator.Observers.Helper.MyDrawStringHelper.DrawString(i.ToString(), x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight);
+                        MyDrawStringHelper.DrawString(i.ToString(), x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight);
                     }
                     break;
             }

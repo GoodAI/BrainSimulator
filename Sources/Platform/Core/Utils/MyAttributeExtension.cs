@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     public static class MyAttributeExtension
     {

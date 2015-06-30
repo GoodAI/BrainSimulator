@@ -1,4 +1,4 @@
-﻿namespace BrainSimulatorGUI.Forms
+﻿namespace GoodAI.BrainSimulator.Forms
 {
     partial class ValidationForm
     {
@@ -90,7 +90,7 @@
             this.errorStripButton.Checked = true;
             this.errorStripButton.CheckOnClick = true;
             this.errorStripButton.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.errorStripButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Critical_16xMD;
+            this.errorStripButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Critical_16xMD;
             this.errorStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.errorStripButton.Name = "errorStripButton";
             this.errorStripButton.Size = new System.Drawing.Size(57, 22);
@@ -107,7 +107,7 @@
             this.warningStripButton.Checked = true;
             this.warningStripButton.CheckOnClick = true;
             this.warningStripButton.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.warningStripButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Warning_16xMD;
+            this.warningStripButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Warning_16xMD;
             this.warningStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.warningStripButton.Name = "warningStripButton";
             this.warningStripButton.Size = new System.Drawing.Size(77, 22);
@@ -124,7 +124,7 @@
             this.infoStripButton.Checked = true;
             this.infoStripButton.CheckOnClick = true;
             this.infoStripButton.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.infoStripButton.Image = global::BrainSimulatorGUI.Properties.Resources.StatusAnnotations_Information_16xMD;
+            this.infoStripButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Information_16xMD;
             this.infoStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.infoStripButton.Name = "infoStripButton";
             this.infoStripButton.Size = new System.Drawing.Size(48, 22);

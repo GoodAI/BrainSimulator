@@ -1,8 +1,8 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
@@ -19,12 +19,14 @@ using ManagedCuda.VectorTypes;           // manual kernel sizes are needed
 
 
 //---- observers
-using BrainSimulator.Vision;
+using GoodAI.Modules.Vision;
+using GoodAI.Core;
+using GoodAI.Core.Observers;
 //using OpenTK.Input; // Because of the keyboard...
 
 
 
-namespace BrainSimulator.Vision
+namespace GoodAI.Modules.Vision
 {
 
 
@@ -360,7 +362,7 @@ namespace BrainSimulator.Vision
 
 
 
-namespace BrainSimulator.Observers
+namespace GoodAI.Modules.Observers
 {
     public class MySegmentObserver : MyNodeObserver<MySegment>
     {

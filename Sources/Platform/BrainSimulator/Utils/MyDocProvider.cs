@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace BrainSimulatorGUI.Utils
+namespace GoodAI.BrainSimulator.Utils
 {
     public class MyDocProvider
     {

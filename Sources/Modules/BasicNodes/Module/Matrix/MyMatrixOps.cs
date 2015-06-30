@@ -1,8 +1,8 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using YAXLib;
 using ManagedCuda.CudaBlas;
 
-namespace BrainSimulator.Matrix
+namespace GoodAI.Modules.Matrix
 {
     /// <summary>
     /// Operations that are allowed to run using the Matrix Node

@@ -1,11 +1,11 @@
-﻿using BrainSimulator.Utils;
+﻿using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Harm
+namespace GoodAI.Modules.Harm
 {
     public interface IActionAdder
     {

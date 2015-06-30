@@ -4,16 +4,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
-using BrainSimulator.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Memory;
 using System.Drawing;
 using YAXLib;
 using ManagedCuda;
+using GoodAI.Core;
 
 
-namespace BrainSimulator.Motor
+namespace GoodAI.Modules.Motor
 {
     /// <author>Karol Kuna</author>
     /// <status>Working</status>

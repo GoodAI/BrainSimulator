@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Memory;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
 
-namespace BrainSimulator.VSA
+namespace GoodAI.Modules.VSA
 {
     public enum MyCodeVector
     {

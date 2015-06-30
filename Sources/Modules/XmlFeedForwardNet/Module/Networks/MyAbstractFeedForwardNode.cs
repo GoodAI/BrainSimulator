@@ -1,6 +1,6 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using XmlFeedForwardNet.Layers;
 using ManagedCuda.BasicTypes;
 using XmlFeedForwardNet.Tasks;
 using XmlFeedForwardNet.Utils;
-using BrainSimulator;
+using GoodAI.Core;
 
 namespace XmlFeedForwardNet.Networks
 {

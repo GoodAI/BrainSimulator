@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrainSimulator.Memory;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.Utils;
+using GoodAI.Core.Memory;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Core.Utils;
 using YAXLib;
 
 namespace CustomModels.NeuralNetwork.Layers

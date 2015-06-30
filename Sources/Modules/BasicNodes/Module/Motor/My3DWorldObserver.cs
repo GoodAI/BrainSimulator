@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Observers;
+﻿using GoodAI.Core.Observers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using BEPUphysics.CollisionShapes;
 
-namespace BrainSimulator.Motor
+namespace GoodAI.Modules.Motor
 {
     public class My3DWorldObserver : MyNodeObserver<My3DWorld>
     {

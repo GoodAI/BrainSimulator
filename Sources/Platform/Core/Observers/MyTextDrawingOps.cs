@@ -7,18 +7,18 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using BrainSimulator.Utils;
-using BrainSimulator.Observers.Helper;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Observers.Helper;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
 using ManagedCuda.BasicTypes;
-using BrainSimulator.Memory;
-using BrainSimulator.Task;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Task;
 using System.Drawing.Imaging;
 using System.Reflection;
 
 
-namespace BrainSimulator.Observers.Helper
+namespace GoodAI.Core.Observers.Helper
 {
     public class MyDrawStringHelper
     {
@@ -29,7 +29,7 @@ namespace BrainSimulator.Observers.Helper
 
         public static float[] LoadDigits()
         {                        
-            Image charactersTexture = BrainSimulator.Utils.MyResources.GetImage("plot_char.png"); 
+            Image charactersTexture = MyResources.GetImage("plot_char.png"); 
                 // = Image.FromFile("res/plot_char.png");
 
             int width = charactersTexture.Width;

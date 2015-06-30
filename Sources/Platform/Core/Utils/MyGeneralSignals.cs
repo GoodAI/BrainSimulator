@@ -1,4 +1,4 @@
-﻿namespace BrainSimulator.Signals
+﻿namespace GoodAI.Core.Signals
 {
     public class MyEOFSignal : MySignal { }
 }

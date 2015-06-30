@@ -1,8 +1,8 @@
-﻿using BrainSimulator;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Observers;
-using BrainSimulatorGUI.Utils;
+﻿using GoodAI.Core;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Observers;
+using GoodAI.BrainSimulator.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
@@ -17,15 +17,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using BrainSimulator.Utils;
+using GoodAI.Core.Utils;
 using OpenTK;
-using BrainSimulator.Execution;
+using GoodAI.Core.Execution;
 using OpenTK.Graphics;
 using System.IO;
 using System.Security.AccessControl;
-using BrainSimulator.Memory;
+using GoodAI.Core.Memory;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class ObserverForm : DockContent
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BrainSimulatorGUI</RootNamespace>
-    <AssemblyName>BrainSimulatorGUI</AssemblyName>
+    <RootNamespace>GoodAI.BrainSimulator</RootNamespace>
+    <AssemblyName>BrainSimulator</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -57,7 +57,7 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>BrainSimulatorGUI.Program</StartupObject>
+    <StartupObject>GoodAI.BrainSimulator.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>

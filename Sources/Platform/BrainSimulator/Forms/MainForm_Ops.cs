@@ -1,13 +1,13 @@
-﻿using BrainSimulator.Configuration;
-using BrainSimulator.Execution;
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Observers;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
-using BrainSimulatorGUI.Nodes;
-using BrainSimulatorGUI.NodeView;
-using BrainSimulatorGUI.Utils;
+﻿using GoodAI.Core.Configuration;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.Nodes;
+using GoodAI.BrainSimulator.NodeView;
+using GoodAI.BrainSimulator.Utils;
 using Graph;
 using ManagedCuda.BasicTypes;
 using System;
@@ -26,7 +26,7 @@ using System.Windows.Forms.Design;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class MainForm : Form
     {

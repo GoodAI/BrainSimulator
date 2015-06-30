@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Reflection;
 
 
-namespace BrainSimulator.Task
+namespace GoodAI.Core.Task
 {
     [YAXSerializeAs("Task"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public abstract class MyTask :  IMyExecutable

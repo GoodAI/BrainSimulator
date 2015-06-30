@@ -1,5 +1,5 @@
-﻿using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
+﻿using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     public interface IMyOrderingAlgorithm
     {

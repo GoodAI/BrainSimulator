@@ -1,4 +1,4 @@
-﻿using BrainSimulator.Observers;
+﻿using GoodAI.Core.Observers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     [YAXSerializeAs("Location")]
     public class MyLocation

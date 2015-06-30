@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BEPUphysics.BroadPhaseSystems;
-using BrainSimulator.NeuralNetwork.Layers;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using YAXLib;
 
-namespace BrainSimulator.NeuralNetwork.Tasks
+namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
     public interface IMyForwardTask { }
     public abstract class MyAbstractForwardTask<OwnerType> : MyTask<OwnerType>, IMyForwardTask where OwnerType : MyAbstractLayer

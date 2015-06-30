@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 using YAXLib;
 
-namespace BrainSimulator.Utils
+namespace GoodAI.Core.Utils
 {
     [YAXSerializeAs("Module"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
     public class MyUsedModuleInfo

@@ -1,10 +1,10 @@
-﻿using BrainSimulator;
-using BrainSimulator.Configuration;
-using BrainSimulator.Nodes;
-using BrainSimulator.Transforms;
-using BrainSimulator.Utils;
-using BrainSimulatorGUI.Nodes;
-using BrainSimulatorGUI.NodeView;
+﻿using GoodAI.Core;
+using GoodAI.Core.Configuration;
+using GoodAI.Core.Nodes;
+using GoodAI.Modules.Transforms;
+using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.Nodes;
+using GoodAI.BrainSimulator.NodeView;
 using Graph;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BrainSimulatorGUI.Forms
+namespace GoodAI.BrainSimulator.Forms
 {
     public partial class GraphLayoutForm
     {

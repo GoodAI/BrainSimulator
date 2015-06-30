@@ -7,18 +7,18 @@ using System.Text;
 using Graph;
 using Graph.Items;
 using YAXLib;
-using BrainSimulator.Nodes;
-using BrainSimulator.Utils;
-using BrainSimulatorGUI.Utils;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.Utils;
 using System.Windows.Forms;
 using System.Reflection;
-using BrainSimulatorGUI.Nodes;
-using BrainSimulatorGUI.Forms;
-using BrainSimulator.Memory;
-using BrainSimulator.Signals;
-using BrainSimulator.Configuration;
+using GoodAI.BrainSimulator.Nodes;
+using GoodAI.BrainSimulator.Forms;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Signals;
+using GoodAI.Core.Configuration;
 
-namespace BrainSimulatorGUI.NodeView
+namespace GoodAI.BrainSimulator.NodeView
 {
     internal class MyNodeView : Node
     {
