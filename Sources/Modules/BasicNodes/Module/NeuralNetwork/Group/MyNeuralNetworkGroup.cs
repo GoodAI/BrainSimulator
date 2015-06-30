@@ -21,9 +21,10 @@ using System.Diagnostics;
 namespace BrainSimulator.NeuralNetwork.Group
 {
     /// <author>Philip Hilm</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Network node group.</summary>
-    /// <description></description>
+    /// <description>This group is needed to control the work flow between neural layers.<br></br>
+    /// It takes care of the forward and backward flows needed during feed-forward and backpropagation.</description>
     public class MyNeuralNetworkGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         //Node properties
@@ -50,13 +51,17 @@ namespace BrainSimulator.NeuralNetwork.Group
         public MySGDTask SGD { get; protected set; }
         [MyTaskGroup("BackPropagation")]
         public MyRMSTask RMS { get; protected set; }
-        [MyTaskGroup("BackPropagation")]
-        public MyvSGDfdTask vSGD { get; protected set; }
+        //[MyTaskGroup("BackPropagation")]
+        //public MyvSGDfdTask vSGD { get; protected set; }
 
         public MyInitNNGroupTask InitGroup { get; protected set; }
         public MyGradientCheckTask GradientCheck { get; protected set; }
 
-        public MyNeuralNetworkGroup() { }  //parameterless constructor
+        public MyNeuralNetworkGroup()
+        {
+            InputBranches = 2; // usually 2 inputs (input, target or input, reward)
+            OutputBranches = 1; // usually 1 output (output or action)
+        }  //parameterless constructor
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
@@ -113,6 +118,16 @@ namespace BrainSimulator.NeuralNetwork.Group
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is MyGradientCheckTask)) + 1, selected);
 
+            // move MyQLearningTask after the last MyForwardTask
+            selected = newPlan.Where(task => task is MyQLearningTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
+
+            // move MyRestoreValuesTask after the last MyAbstractBackPropTask
+            selected = newPlan.Where(task => task is MyRestoreValuesTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
+
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());
         }
@@ -130,10 +145,10 @@ namespace BrainSimulator.NeuralNetwork.Group
         public float GetError()
         {
             // get the error from output layer
-            if (LastLayer is MyOutputLayer)
+            if (LastLayer is MyAbstractOutputLayer)
             {
                 // pointer to output layer
-                MyOutputLayer outputLayer = LastLayer as MyOutputLayer;
+                MyAbstractOutputLayer outputLayer = LastLayer as MyAbstractOutputLayer;
 
                 // get enabled loss function
                 MyTask lossTask = outputLayer.GetEnabledTask("LossFunctions");

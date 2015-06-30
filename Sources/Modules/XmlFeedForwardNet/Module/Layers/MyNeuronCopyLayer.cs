@@ -95,11 +95,11 @@ namespace XmlFeedForwardNet.Layers
             // Create the kernels
             m_setKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\SetKernel");
 
-            m_RBMBackwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "BackwardKernel");
-            m_RBMObserverKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "ObserverKernel");
+            m_RBMBackwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "BackwardKernel");
+            m_RBMObserverKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "ObserverKernel");
 
-            m_ForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "NeuronCopyForwardKernel");
-            m_ForwardAndStoreKernel = MyKernelFactory.Instance.Kernel(nGPU, @"FeatureDetection\RBMKernel", "NeuronCopyForwardAndStoreKernel");
+            m_ForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "NeuronCopyForwardKernel");
+            m_ForwardAndStoreKernel = MyKernelFactory.Instance.Kernel(nGPU, @"XmlFeedForwardNet\RBMKernel", "NeuronCopyForwardAndStoreKernel");
 
             base.Initialize(nGPU);
         }

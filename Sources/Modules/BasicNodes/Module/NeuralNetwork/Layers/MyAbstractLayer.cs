@@ -23,6 +23,17 @@ namespace BrainSimulator.NeuralNetwork.Layers
         ONE_TO_ONE
     }
 
+    public enum ActivationFunctionType
+    {
+        NO_ACTIVATION,
+        SIGMOID,
+        IDENTITY,
+        GAUSSIAN,
+        RATIONAL_SIGMOID,
+        RELU,
+        TANH
+    }
+
     public abstract class MyAbstractLayer : MyWorkingNode
     {
         // Properties
@@ -51,7 +62,7 @@ namespace BrainSimulator.NeuralNetwork.Layers
         {
             get { return ConnectionType.NOT_SET; }
         }
-        
+
 
         #region Memory blocks
         // Memory blocks
@@ -84,7 +95,7 @@ namespace BrainSimulator.NeuralNetwork.Layers
 
         public override void Validate(MyValidator validator)
         {
-//            base.Validate(validator);
+            //            base.Validate(validator);
             validator.AssertError(Neurons > 0, this, "Number of neurons should be > 0");
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }

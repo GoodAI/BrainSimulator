@@ -18,6 +18,10 @@ using BrainSimulator.NeuralNetwork.Layers;
 
 namespace BrainSimulator.NeuralNetwork.Group
 {
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>Initialises Neural Network Group and sets internally used properties.</summary>
+    /// <description></description>
     [Description("InitGroup"), MyTaskInfo(OneShot = true)]
     public class MyInitNNGroupTask : MyTask<MyNeuralNetworkGroup>
     {
@@ -25,7 +29,7 @@ namespace BrainSimulator.NeuralNetwork.Group
         public MyInitNNGroupTask() { }
 
         //Kernel initialization
-        public override void Init(int nGPU) {}
+        public override void Init(int nGPU) { }
 
         //Task execution
         public override void Execute()
@@ -91,6 +95,11 @@ namespace BrainSimulator.NeuralNetwork.Group
         }
     }
 
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>Stochastic gradient descent is an online training algorithm, that updates each parameter in the direction of the gradient for the current training example.<br></br>
+    /// The gradient used is the partial derivative of each parameter (weight or bias) with respect to the loss function.</summary>
+    /// <description></description>
     [Description("StochasticGradientDescent"), MyTaskInfo(OneShot = false)]
     public class MySGDTask : MyAbstractBackpropTask
     {
@@ -99,7 +108,7 @@ namespace BrainSimulator.NeuralNetwork.Group
         [MyBrowsable, Category("\tHyperParameters")]
         public float TrainingRate { get; set; }
 
-        [YAXSerializableField(DefaultValue = 0.15f)]
+        [YAXSerializableField(DefaultValue = 0.0f)]
         [MyBrowsable, Category("\tHyperParameters")]
         public float Momentum { get; set; }
 
@@ -147,6 +156,11 @@ namespace BrainSimulator.NeuralNetwork.Group
         }
     }
 
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>RMSProp is the online adaptation of the Resilient Backpropagation algorithm based on the mean squares of the parameters.<br></br>
+    /// It solves the problem of saturated neurons, which often occurs with SGD propagation.</summary>
+    /// <description></description>
     [Description("RMSProp"), MyTaskInfo(OneShot = false)]
     public class MyRMSTask : MyAbstractBackpropTask
     {
@@ -155,7 +169,7 @@ namespace BrainSimulator.NeuralNetwork.Group
         [MyBrowsable, Category("\tHyperParameters")]
         public float TrainingRate { get; set; }
 
-        [YAXSerializableField(DefaultValue = 0.15f)]
+        [YAXSerializableField(DefaultValue = 0.0f)]
         [MyBrowsable, Category("\tHyperParameters")]
         public float Momentum { get; set; }
 
@@ -210,252 +224,258 @@ namespace BrainSimulator.NeuralNetwork.Group
         }
     }
 
-    [Description("vSGD-fd"), MyTaskInfo(OneShot = false)]
-    public class MyvSGDfdTask : MyAbstractBackpropTask
-    {
-        //parameterless constructor
-        public MyvSGDfdTask() { }
+    //[Description("vSGD-fd"), MyTaskInfo(OneShot = false)]
+    //public class MyvSGDfdTask : MyAbstractBackpropTask
+    //{
+    //    //parameterless constructor
+    //    public MyvSGDfdTask() { }
 
-        //Kernel initialization
-        private MyCudaKernel m_ComputeGradientsKernel;
-        private MyCudaKernel m_ShiftParametersKernel;
-        private MyCudaKernel m_FDCurvatureKernel;
-        private MyCudaKernel m_AdjustMemoryKernel;
-        private MyCudaKernel m_UpdateMovingAveragesKernel;
-        private MyCudaKernel m_EstimateLearningRateKernel;
-        private MyCudaKernel m_UpdateMemoryKernel;
-        private MyCudaKernel m_UpdateParametersKernel;
-        public override void Init(int nGPU)
-        {
-            m_ComputeGradientsKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\GradientsKernels", "FullyConnectedGradientsKernel");
-            m_ShiftParametersKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\ShiftKernels", "FullyConnectedShiftKernel");
-            m_FDCurvatureKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\FDCurvatureKernels", "FullyConnectedCurvatureKernel");
-            m_AdjustMemoryKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\AdjustMemoryKernels", "FullyConnectedAdjustMemoryKernel");
-            m_UpdateMovingAveragesKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\UpdateMovingAveragesKernels", "FullyConnectedUpdateMovingAveragesKernel");
-            m_EstimateLearningRateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\EstimateLearningRateKernels", "FullyConnectedEstimateLearningRateKernel");
-            m_UpdateMemoryKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\AdjustMemoryKernels", "FullyConnectedUpdateMemoryKernel");
-            m_UpdateParametersKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\UpdateParametersKernels", "FullyConnectedUpdateParametersKernel");
-        }
+    //    //Kernel initialization
+    //    private MyCudaKernel m_ComputeGradientsKernel;
+    //    private MyCudaKernel m_ShiftParametersKernel;
+    //    private MyCudaKernel m_FDCurvatureKernel;
+    //    private MyCudaKernel m_AdjustMemoryKernel;
+    //    private MyCudaKernel m_UpdateMovingAveragesKernel;
+    //    private MyCudaKernel m_EstimateLearningRateKernel;
+    //    private MyCudaKernel m_UpdateMemoryKernel;
+    //    private MyCudaKernel m_UpdateParametersKernel;
+    //    public override void Init(int nGPU)
+    //    {
+    //        m_ComputeGradientsKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\GradientsKernels", "FullyConnectedGradientsKernel");
+    //        m_ShiftParametersKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\ShiftKernels", "FullyConnectedShiftKernel");
+    //        m_FDCurvatureKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\FDCurvatureKernels", "FullyConnectedCurvatureKernel");
+    //        m_AdjustMemoryKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\AdjustMemoryKernels", "FullyConnectedAdjustMemoryKernel");
+    //        m_UpdateMovingAveragesKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\UpdateMovingAveragesKernels", "FullyConnectedUpdateMovingAveragesKernel");
+    //        m_EstimateLearningRateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\EstimateLearningRateKernels", "FullyConnectedEstimateLearningRateKernel");
+    //        m_UpdateMemoryKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\AdjustMemoryKernels", "FullyConnectedUpdateMemoryKernel");
+    //        m_UpdateParametersKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\vSGD\UpdateParametersKernels", "FullyConnectedUpdateParametersKernel");
+    //    }
 
-        //Task execution
-        public override void Execute()
-        {
-            MyLog.ERROR.WriteLine("Please Execute MyvSGDfdTask with a layer parameter in " + Owner);
-        }
+    //    //Task execution
+    //    public override void Execute()
+    //    {
+    //        MyLog.ERROR.WriteLine("Please Execute MyvSGDfdTask with a layer parameter in " + Owner);
+    //    }
 
-        public override void Execute(MyAbstractWeightLayer layer)
-        {
-            if (layer.Connection == ConnectionType.FULLY_CONNECTED)
-            {
-                // compute gradients
-                GetGradients(layer);
+    //    public override void Execute(MyAbstractWeightLayer layer)
+    //    {
+    //        if (layer.Connection == ConnectionType.FULLY_CONNECTED)
+    //        {
+    //            // compute gradients
+    //            GetGradients(layer);
 
-                // save gradients
-                layer.OriginalWeightsGrad.CopyFromMemoryBlock(layer.WeightsGrad, 0, 0, layer.Weights.Count);
-                layer.OriginalBiasGrad.CopyFromMemoryBlock(layer.BiasGrad, 0, 0, layer.Bias.Count);
+    //            // save gradients
+    //            layer.OriginalWeightsGrad.CopyFromMemoryBlock(layer.WeightsGrad, 0, 0, layer.Weights.Count);
+    //            layer.OriginalBiasGrad.CopyFromMemoryBlock(layer.BiasGrad, 0, 0, layer.Bias.Count);
 
-                // save parameters
-                layer.OriginalWeights.CopyFromMemoryBlock(layer.Weights, 0, 0, layer.Weights.Count);
-                layer.OriginalBias.CopyFromMemoryBlock(layer.Bias, 0, 0, layer.Bias.Count);
+    //            // save parameters
+    //            layer.OriginalWeights.CopyFromMemoryBlock(layer.Weights, 0, 0, layer.Weights.Count);
+    //            layer.OriginalBias.CopyFromMemoryBlock(layer.Bias, 0, 0, layer.Bias.Count);
 
-                // save deltas
-                layer.OriginalDelta.CopyFromMemoryBlock(layer.Delta, 0, 0, layer.Delta.Count);
+    //            // save deltas
+    //            layer.OriginalDelta.CopyFromMemoryBlock(layer.Delta, 0, 0, layer.Delta.Count);
 
-                // shift parameters
-                m_ShiftParametersKernel.SetupExecution(layer.Neurons);
-                m_ShiftParametersKernel.Run(
-                    layer.Weights, // these are the shifted weights
-                    layer.Bias, // these are the shifted biases
-                    layer.OriginalWeights, // these are original weights
-                    layer.OriginalBias, // these are original biases
-                    layer.AvgWeightGrad,
-                    layer.AvgBiasGrad,
-                    layer.DropoutMask,
-                    layer.Input.Count,
-                    layer.Neurons
-                    );
+    //            // shift parameters
+    //            m_ShiftParametersKernel.SetupExecution(layer.Neurons);
+    //            m_ShiftParametersKernel.Run(
+    //                layer.Weights, // these are the shifted weights
+    //                layer.Bias, // these are the shifted biases
+    //                layer.OriginalWeights, // these are original weights
+    //                layer.OriginalBias, // these are original biases
+    //                layer.AvgWeightGrad,
+    //                layer.AvgBiasGrad,
+    //                layer.DropoutMask,
+    //                layer.Input.Count,
+    //                layer.Neurons
+    //                );
 
-                // let the first layer do the next forward and backward pass
-                if (layer.Id == Owner.FirstLayer.Id)
-                {
-                    // shifted forward pass                    
-                    Owner.FeedForward();
+    //            // let the first layer do the next forward and backward pass
+    //            if (layer.Id == Owner.FirstLayer.Id)
+    //            {
+    //                // shifted forward pass                    
+    //                Owner.FeedForward();
 
-                    // finite differente curvature
-                    vSGD_fdAlgorithm();                    
-                }
-            }
-            else
-            {
-                MyLog.ERROR.WriteLine("No method provided to vSGD-fd propagate a " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);
-            }
-        }
+    //                // finite differente curvature
+    //                vSGD_fdAlgorithm();                    
+    //            }
+    //        }
+    //        else
+    //        {
+    //            MyLog.ERROR.WriteLine("No method provided to vSGD-fd propagate a " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);
+    //        }
+    //    }
 
-        // vSGD_fdAlgorithm() is the main implementation of the vSGD-fd algorithm:
-        // finds deltas
-        // finds gradients for weights and biases
-        // computes finite difference curvature
-        // adjusts memory size for outliers
-        // update moving averages
-        private void vSGD_fdAlgorithm()
-        {
-            // this sets the output layer delta
-            Owner.GetError();
+    //    // vSGD_fdAlgorithm() is the main implementation of the vSGD-fd algorithm:
+    //    // finds deltas
+    //    // finds gradients for weights and biases
+    //    // computes finite difference curvature
+    //    // adjusts memory size for outliers
+    //    // update moving averages
+    //    private void vSGD_fdAlgorithm()
+    //    {
+    //        // this sets the output layer delta
+    //        Owner.GetError();
 
-            MyAbstractLayer layer = Owner.LastLayer;
-            while (layer != null)
-            {
-                // send deltas to previous layer
-                layer.DeltaBackTask.Execute();
-                if (layer is MyAbstractWeightLayer)
-                {
-                    MyAbstractWeightLayer weightLayer = layer as MyAbstractWeightLayer;
+    //        MyAbstractLayer layer = Owner.LastLayer;
+    //        while (layer != null)
+    //        {
+    //            // send deltas to previous layer
+    //            layer.DeltaBackTask.Execute();
+    //            if (layer is MyAbstractWeightLayer)
+    //            {
+    //                MyAbstractWeightLayer weightLayer = layer as MyAbstractWeightLayer;
 
-                    // get gradients for this layer
-                    GetGradients(weightLayer);
+    //                // get gradients for this layer
+    //                GetGradients(weightLayer);
 
-                    // get finite difference curvature for this layer
-                    m_FDCurvatureKernel.SetupExecution(weightLayer.Neurons);
-                    m_FDCurvatureKernel.Run(
-                        weightLayer.OriginalWeightsGrad, // these are original weights gradients
-                        weightLayer.OriginalBiasGrad, // these are original bias gradients
-                        weightLayer.WeightsGrad, // these are shifted weight gradients
-                        weightLayer.BiasGrad, // these are shifted bias gradients
-                        weightLayer.AvgWeightGrad,
-                        weightLayer.AvgBiasGrad,
-                        weightLayer.WeightGradCurve,
-                        weightLayer.BiasGradCurve,
-                        weightLayer.DropoutMask,
-                        weightLayer.Input.Count,
-                        weightLayer.Neurons
-                        );
+    //                // get finite difference curvature for this layer
+    //                m_FDCurvatureKernel.SetupExecution(weightLayer.Neurons);
+    //                m_FDCurvatureKernel.Run(
+    //                    weightLayer.OriginalWeightsGrad, // these are original weights gradients
+    //                    weightLayer.OriginalBiasGrad, // these are original bias gradients
+    //                    weightLayer.WeightsGrad, // these are shifted weight gradients
+    //                    weightLayer.BiasGrad, // these are shifted bias gradients
+    //                    weightLayer.AvgWeightGrad,
+    //                    weightLayer.AvgBiasGrad,
+    //                    weightLayer.WeightGradCurve,
+    //                    weightLayer.BiasGradCurve,
+    //                    weightLayer.DropoutMask,
+    //                    weightLayer.Input.Count,
+    //                    weightLayer.Neurons
+    //                    );
 
-                    // adjust memory size for outliers
-                    m_AdjustMemoryKernel.SetupExecution(weightLayer.Neurons);
-                    m_AdjustMemoryKernel.Run(
-                        weightLayer.OriginalWeightsGrad, // these are original weights gradients
-                        weightLayer.OriginalBiasGrad, // these are original bias gradients
-                        weightLayer.WeightGradCurve,
-                        weightLayer.BiasGradCurve,
-                        weightLayer.AvgWeightGrad,
-                        weightLayer.AvgBiasGrad,
-                        weightLayer.AvgWeightGradVar,
-                        weightLayer.AvgBiasGradVar,
-                        weightLayer.AvgWeightGradCurve,
-                        weightLayer.AvgBiasGradCurve,
-                        weightLayer.AvgWeightGradCurveVar,
-                        weightLayer.AvgBiasGradCurveVar,
-                        weightLayer.WeightMemorySize,
-                        weightLayer.BiasMemorySize,
-                        weightLayer.DropoutMask,
-                        weightLayer.Input.Count,
-                        weightLayer.Neurons
-                        );
+    //                // adjust memory size for outliers
+    //                m_AdjustMemoryKernel.SetupExecution(weightLayer.Neurons);
+    //                m_AdjustMemoryKernel.Run(
+    //                    weightLayer.OriginalWeightsGrad, // these are original weights gradients
+    //                    weightLayer.OriginalBiasGrad, // these are original bias gradients
+    //                    weightLayer.WeightGradCurve,
+    //                    weightLayer.BiasGradCurve,
+    //                    weightLayer.AvgWeightGrad,
+    //                    weightLayer.AvgBiasGrad,
+    //                    weightLayer.AvgWeightGradVar,
+    //                    weightLayer.AvgBiasGradVar,
+    //                    weightLayer.AvgWeightGradCurve,
+    //                    weightLayer.AvgBiasGradCurve,
+    //                    weightLayer.AvgWeightGradCurveVar,
+    //                    weightLayer.AvgBiasGradCurveVar,
+    //                    weightLayer.WeightMemorySize,
+    //                    weightLayer.BiasMemorySize,
+    //                    weightLayer.DropoutMask,
+    //                    weightLayer.Input.Count,
+    //                    weightLayer.Neurons
+    //                    );
 
-                    // update moving averages
-                    m_UpdateMovingAveragesKernel.SetupExecution(weightLayer.Neurons);
-                    m_UpdateMovingAveragesKernel.Run(
-                        weightLayer.OriginalWeightsGrad, // these are original weights gradients
-                        weightLayer.OriginalBiasGrad, // these are original bias gradients
-                        weightLayer.WeightGradCurve,
-                        weightLayer.BiasGradCurve,
-                        weightLayer.AvgWeightGrad,
-                        weightLayer.AvgBiasGrad,
-                        weightLayer.AvgWeightGradVar,
-                        weightLayer.AvgBiasGradVar,
-                        weightLayer.AvgWeightGradCurve,
-                        weightLayer.AvgBiasGradCurve,
-                        weightLayer.AvgWeightGradCurveVar,
-                        weightLayer.AvgBiasGradCurveVar,
-                        weightLayer.WeightMemorySize,
-                        weightLayer.BiasMemorySize,
-                        weightLayer.DropoutMask,
-                        weightLayer.Input.Count,
-                        weightLayer.Neurons
-                        );
+    //                // update moving averages
+    //                m_UpdateMovingAveragesKernel.SetupExecution(weightLayer.Neurons);
+    //                m_UpdateMovingAveragesKernel.Run(
+    //                    weightLayer.OriginalWeightsGrad, // these are original weights gradients
+    //                    weightLayer.OriginalBiasGrad, // these are original bias gradients
+    //                    weightLayer.WeightGradCurve,
+    //                    weightLayer.BiasGradCurve,
+    //                    weightLayer.AvgWeightGrad,
+    //                    weightLayer.AvgBiasGrad,
+    //                    weightLayer.AvgWeightGradVar,
+    //                    weightLayer.AvgBiasGradVar,
+    //                    weightLayer.AvgWeightGradCurve,
+    //                    weightLayer.AvgBiasGradCurve,
+    //                    weightLayer.AvgWeightGradCurveVar,
+    //                    weightLayer.AvgBiasGradCurveVar,
+    //                    weightLayer.WeightMemorySize,
+    //                    weightLayer.BiasMemorySize,
+    //                    weightLayer.DropoutMask,
+    //                    weightLayer.Input.Count,
+    //                    weightLayer.Neurons
+    //                    );
 
-                    // estimate learning rate
-                    m_EstimateLearningRateKernel.SetupExecution(weightLayer.Neurons);
-                    m_EstimateLearningRateKernel.Run(
-                        weightLayer.WeightLearningRate,
-                        weightLayer.BiasLearningRate,
-                        weightLayer.AvgWeightGrad,
-                        weightLayer.AvgBiasGrad,
-                        weightLayer.AvgWeightGradVar,
-                        weightLayer.AvgBiasGradVar,
-                        weightLayer.AvgWeightGradCurve,
-                        weightLayer.AvgBiasGradCurve,
-                        weightLayer.AvgWeightGradCurveVar,
-                        weightLayer.AvgBiasGradCurveVar,
-                        weightLayer.DropoutMask,
-                        weightLayer.Input.Count,
-                        weightLayer.Neurons
-                        );
+    //                // estimate learning rate
+    //                m_EstimateLearningRateKernel.SetupExecution(weightLayer.Neurons);
+    //                m_EstimateLearningRateKernel.Run(
+    //                    weightLayer.WeightLearningRate,
+    //                    weightLayer.BiasLearningRate,
+    //                    weightLayer.AvgWeightGrad,
+    //                    weightLayer.AvgBiasGrad,
+    //                    weightLayer.AvgWeightGradVar,
+    //                    weightLayer.AvgBiasGradVar,
+    //                    weightLayer.AvgWeightGradCurve,
+    //                    weightLayer.AvgBiasGradCurve,
+    //                    weightLayer.AvgWeightGradCurveVar,
+    //                    weightLayer.AvgBiasGradCurveVar,
+    //                    weightLayer.DropoutMask,
+    //                    weightLayer.Input.Count,
+    //                    weightLayer.Neurons
+    //                    );
 
-                    // update memory size
-                    m_UpdateMemoryKernel.SetupExecution(weightLayer.Neurons);
-                    m_UpdateMemoryKernel.Run(
-                        weightLayer.AvgWeightGrad,
-                        weightLayer.AvgBiasGrad,
-                        weightLayer.AvgWeightGradVar,
-                        weightLayer.AvgBiasGradVar,
-                        weightLayer.WeightMemorySize,
-                        weightLayer.BiasMemorySize,
-                        weightLayer.DropoutMask,
-                        weightLayer.Input.Count,
-                        weightLayer.Neurons
-                        );
+    //                // update memory size
+    //                m_UpdateMemoryKernel.SetupExecution(weightLayer.Neurons);
+    //                m_UpdateMemoryKernel.Run(
+    //                    weightLayer.AvgWeightGrad,
+    //                    weightLayer.AvgBiasGrad,
+    //                    weightLayer.AvgWeightGradVar,
+    //                    weightLayer.AvgBiasGradVar,
+    //                    weightLayer.WeightMemorySize,
+    //                    weightLayer.BiasMemorySize,
+    //                    weightLayer.DropoutMask,
+    //                    weightLayer.Input.Count,
+    //                    weightLayer.Neurons
+    //                    );
 
-                    // restore gradients
-                    weightLayer.WeightsGrad.CopyFromMemoryBlock(weightLayer.OriginalWeightsGrad, 0, 0, weightLayer.Weights.Count);
-                    weightLayer.BiasGrad.CopyFromMemoryBlock(weightLayer.OriginalBiasGrad, 0, 0, weightLayer.Bias.Count);
+    //                // restore gradients
+    //                weightLayer.WeightsGrad.CopyFromMemoryBlock(weightLayer.OriginalWeightsGrad, 0, 0, weightLayer.Weights.Count);
+    //                weightLayer.BiasGrad.CopyFromMemoryBlock(weightLayer.OriginalBiasGrad, 0, 0, weightLayer.Bias.Count);
 
-                    // restore parameters
-                    weightLayer.Weights.CopyFromMemoryBlock(weightLayer.OriginalWeights, 0, 0, weightLayer.Weights.Count);
-                    weightLayer.Bias.CopyFromMemoryBlock(weightLayer.OriginalBias, 0, 0, weightLayer.Bias.Count);
+    //                // restore parameters
+    //                weightLayer.Weights.CopyFromMemoryBlock(weightLayer.OriginalWeights, 0, 0, weightLayer.Weights.Count);
+    //                weightLayer.Bias.CopyFromMemoryBlock(weightLayer.OriginalBias, 0, 0, weightLayer.Bias.Count);
 
-                    // restore deltas
-                    weightLayer.Delta.CopyFromMemoryBlock(weightLayer.OriginalDelta, 0, 0, weightLayer.Delta.Count);
+    //                // restore deltas
+    //                weightLayer.Delta.CopyFromMemoryBlock(weightLayer.OriginalDelta, 0, 0, weightLayer.Delta.Count);
 
-                    // update parameters
-                    if (SimulationStep > 1000)
-                    {
-                        m_UpdateParametersKernel.SetupExecution(weightLayer.Neurons);
-                        m_UpdateMemoryKernel.Run(
-                            weightLayer.Weights,
-                            weightLayer.Bias,
-                            weightLayer.WeightLearningRate,
-                            weightLayer.BiasLearningRate,
-                            weightLayer.WeightsGrad,
-                            weightLayer.BiasGrad,
-                            weightLayer.DropoutMask,
-                            weightLayer.Input.Count,
-                            weightLayer.Neurons
-                            );
-                    }
-                }
-                layer = layer.PreviousLayer;
-            }
-        }
+    //                // update parameters
+    //                if (SimulationStep > 1000)
+    //                {
+    //                    m_UpdateParametersKernel.SetupExecution(weightLayer.Neurons);
+    //                    m_UpdateMemoryKernel.Run(
+    //                        weightLayer.Weights,
+    //                        weightLayer.Bias,
+    //                        weightLayer.WeightLearningRate,
+    //                        weightLayer.BiasLearningRate,
+    //                        weightLayer.WeightsGrad,
+    //                        weightLayer.BiasGrad,
+    //                        weightLayer.DropoutMask,
+    //                        weightLayer.Input.Count,
+    //                        weightLayer.Neurons
+    //                        );
+    //                }
+    //            }
+    //            layer = layer.PreviousLayer;
+    //        }
+    //    }
 
-        private void GetGradients(MyAbstractWeightLayer layer)
-        {
-            m_ComputeGradientsKernel.SetupExecution(layer.Neurons);
-            m_ComputeGradientsKernel.Run(
-                layer.Input,
-                layer.Delta,
-                layer.Weights,
-                Owner.L1,
-                Owner.L2,
-                layer.DropoutMask,
-                layer.WeightsGrad,
-                layer.BiasGrad,
-                layer.Input.Count,
-                layer.Neurons
-                );
-        }
-    }
+    //    private void GetGradients(MyAbstractWeightLayer layer)
+    //    {
+    //        m_ComputeGradientsKernel.SetupExecution(layer.Neurons);
+    //        m_ComputeGradientsKernel.Run(
+    //            layer.Input,
+    //            layer.Delta,
+    //            layer.Weights,
+    //            Owner.L1,
+    //            Owner.L2,
+    //            layer.DropoutMask,
+    //            layer.WeightsGrad,
+    //            layer.BiasGrad,
+    //            layer.Input.Count,
+    //            layer.Neurons
+    //            );
+    //    }
+    //}
 
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>Gradient checking mainly for developers to make sure the calculated gradients are correct.
+    /// <br></br>
+    /// This should generally be disabled during training, since it will negatively affect performance</summary>
+    /// <description></description>
     [Description("GradientCheck"), MyTaskInfo(OneShot = false)]
     public class MyGradientCheckTask : MyTask<MyNeuralNetworkGroup>
     {
@@ -470,7 +490,11 @@ namespace BrainSimulator.NeuralNetwork.Group
 
         [YAXSerializableField(DefaultValue = 0.001f)]
         [MyBrowsable, Category("\tParams")]
-        public float Threshold { get; set; }
+        public float ThresholdRelative { get; set; }
+
+        [YAXSerializableField(DefaultValue = 0.0001f)]
+        [MyBrowsable, Category("\tParams")]
+        public float ThresholdAbsolute { get; set; }
 
         private Random Rand = new Random();
 
@@ -481,6 +505,7 @@ namespace BrainSimulator.NeuralNetwork.Group
         public override void Execute()
         {
             float maxRelDiff = 0.0f;
+            float maxAbsDiff = 0.0f;
             int maxDiffLayer = 0;
             int maxDiffWeight = 0;
             float maxDiffWeightValue = 0.0f;
@@ -540,6 +565,12 @@ namespace BrainSimulator.NeuralNetwork.Group
                             // numerical gradient
                             float numericalGradient = (errorPlus - errorMinus) / (2 * stepSize);
 
+                            if (numericalGradient == 0)
+                            {
+                                MyLog.DEBUG.WriteLine("t: " + SimulationStep + " id: " + weightLayer.Id + " w" + w + ": " + weightLayer.Weights.Host[w] + " step: " + stepSize + " numerical gradient is 0.");
+                                break; // continue to next sample
+                            }
+
                             // analytical gradient
                             int n = w % weightLayer.Neurons;
                             int i = (w - n) / weightLayer.Neurons;
@@ -551,21 +582,26 @@ namespace BrainSimulator.NeuralNetwork.Group
                                 break;
                             float analyticalGradient = weightLayer.Delta.Host[n] * weightLayer.Input.Host[i] + Owner.L1 * (weightLayer.Weights.Host[w] < 0.0f ? -1.0f : 1.0f) + Owner.L2 * weightLayer.Weights.Host[w];
                             float relativeDiff = 0.0f;
-                            if (analyticalGradient != 0)
+                            float absoluteDiff = 0.0f;
+                            if (analyticalGradient == 0)
                             {
-                                relativeDiff = Math.Abs(numericalGradient - analyticalGradient) / (Math.Abs(numericalGradient) + Math.Abs(analyticalGradient));
-                                if (relativeDiff > maxRelDiff)
-                                {
-                                    maxRelDiff = relativeDiff;
-                                    maxDiffLayer = weightLayer.Id;
-                                    maxDiffWeight = w;
-                                    maxDiffWeightValue = weightLayer.Weights.Host[w];
-                                    maxDiffStepSize = stepSize;
-                                    maxDiffAnalyticalGrad = analyticalGradient;
-                                    maxDiffNumericalGrad = numericalGradient;
-                                }
-                                MyLog.DEBUG.WriteLine("t: " + SimulationStep + " id: " + weightLayer.Id + " w" + w + ": " + weightLayer.Weights.Host[w] + " step: " + stepSize + " AG: " + analyticalGradient + " NG: " + numericalGradient + " diff: " + relativeDiff);
+                                MyLog.DEBUG.WriteLine("t: " + SimulationStep + " id: " + weightLayer.Id + " w" + w + ": " + weightLayer.Weights.Host[w] + " step: " + stepSize + " analytical gradient is 0.");
+                                break; // continue to next sample
                             }
+                            absoluteDiff = Math.Abs(numericalGradient - analyticalGradient);
+                            relativeDiff = absoluteDiff / (Math.Abs(numericalGradient) + Math.Abs(analyticalGradient));
+                            if (relativeDiff > maxRelDiff && absoluteDiff > ThresholdAbsolute)
+                            {
+                                maxAbsDiff = absoluteDiff;
+                                maxRelDiff = relativeDiff;
+                                maxDiffLayer = weightLayer.Id;
+                                maxDiffWeight = w;
+                                maxDiffWeightValue = weightLayer.Weights.Host[w];
+                                maxDiffStepSize = stepSize;
+                                maxDiffAnalyticalGrad = analyticalGradient;
+                                maxDiffNumericalGrad = numericalGradient;
+                            }
+                            MyLog.DEBUG.WriteLine("t: " + SimulationStep + " id: " + weightLayer.Id + " w" + w + ": " + weightLayer.Weights.Host[w] + " step: " + stepSize + " AG: " + analyticalGradient + " NG: " + numericalGradient + " diff: " + relativeDiff);
                             break; // continue to next sample
                         }
                     }
@@ -577,12 +613,12 @@ namespace BrainSimulator.NeuralNetwork.Group
                 }
             }
             // handle the relativeDiff we just found
-            if (maxRelDiff > Threshold)
+            if (maxRelDiff > ThresholdRelative && maxRelDiff > ThresholdAbsolute)
             {
-                MyLog.ERROR.WriteLine("Gradient threshold exceeded on SimulationStep: " + SimulationStep);
-                MyLog.ERROR.WriteLine("Max analytical vs numerical relative gradient difference found in layer id " + maxDiffLayer + " for weight " + maxDiffWeight + ": " + maxDiffWeightValue + " with Step size: " + maxDiffStepSize);
-                MyLog.ERROR.WriteLine("Analytical gradient: " + maxDiffAnalyticalGrad + " Numerical gradient: " + maxDiffNumericalGrad + " Relative difference: " + maxRelDiff);
-                MyLog.ERROR.WriteLine();
+                MyLog.INFO.WriteLine("Gradient threshold exceeded on SimulationStep: " + SimulationStep);
+                MyLog.INFO.WriteLine("Max analytical vs numerical relative gradient difference found in layer id " + maxDiffLayer + " for weight " + maxDiffWeight + ": " + maxDiffWeightValue + " with Step size: " + maxDiffStepSize);
+                MyLog.INFO.WriteLine("Analytical gradient: " + maxDiffAnalyticalGrad + " Numerical gradient: " + maxDiffNumericalGrad + " Relative difference: " + maxRelDiff);
+                MyLog.INFO.WriteLine();
             }
         }
         //        // copy delta to host

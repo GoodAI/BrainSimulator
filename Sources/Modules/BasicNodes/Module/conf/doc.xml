@@ -482,18 +482,50 @@
         </member>
         <member name="T:BrainSimulator.NeuralNetwork.Group.MyNeuralNetworkGroup">
             <author>Philip Hilm</author>
-            <status>WIP</status>
+            <status>Working</status>
             <summary>Network node group.</summary>
+            <description>This group is needed to control the work flow between neural layers.<br></br>
+            It takes care of the forward and backward flows needed during feed-forward and backpropagation.</description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MyInitNNGroupTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Initialises Neural Network Group and sets internally used properties.</summary>
             <description></description>
         </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Group.MyQLearningGroup">
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MySGDTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Stochastic gradient descent is an online training algorithm, that updates each parameter in the direction of the gradient for the current training example.<br></br>
+            The gradient used is the partial derivative of each parameter (weight or bias) with respect to the loss function.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MyRMSTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>RMSProp is the online adaptation of the Resilient Backpropagation algorithm based on the mean squares of the parameters.<br></br>
+            It solves the problem of saturated neurons, which often occurs with SGD propagation.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Group.MyGradientCheckTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Gradient checking mainly for developers to make sure the calculated gradients are correct.
+            <br></br>
+            This should generally be disabled during training, since it will negatively affect performance</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyAbstractOutputLayer">
             <author>Philip Hilm</author>
             <status>WIP</status>
-            <summary>QLearning group.</summary>
-            <description>
-                Group with the functionality and execution planning needed for QLearning.
-                Derived from NeuralNetworkGroup
-            </description>
+            <summary>Output layer node.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Hidden layer node.</summary>
+            <description></description>
         </member>
         <member name="T:CustomModels.NeuralNetwork.Layers.MyActivationLayer">
             <author>Mikulas Zelinka</author>
@@ -507,21 +539,6 @@
             <summary>Convolutional layer.</summary>
             <description></description>
         </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyHiddenLayer">
-            <author>Philip Hilm</author>
-            <status>WIP</status>
-            <summary>Hidden layer node.</summary>
-            <description></description>
-        </member>
-        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyLayer">
-            <author>Philip Hilm</author>
-            <status>OBSOLETE</status>
-            <summary>Neural layer node.</summary>
-            <description></description>
-            
-            
-            WARNING: THIS LAYER IS NOW OBSOLETE. USE MYHIDDENLAYER / MYOUTPUTLAYER
-        </member>
         <member name="T:BrainSimulator.NeuralNetwork.Layers.MyOutputLayer">
             <author>Philip Hilm</author>
             <status>WIP</status>
@@ -532,6 +549,80 @@
             <author>Mikulas Zelinka</author>
             <status>WIP</status>
             <summary>Pooling layer.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Layers.MyQLearningLayer">
+            <author>Philip Hilm</author>
+            <status>WIP</status>
+            <summary>QLearning output layer node.</summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCForwardTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Feed forward task for a fully connected layer.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCBackDeltaTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Backpropagate the deltas to a fully connected previous layer.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyFCUpdateWeightsTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Updates weights, that are fully connected to the previous layer.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MySquaredLossTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Measures the distance from the target with the commonly used squared loss function.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyQLearningTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>Uses the current and the previous timestep to update the target according to:
+            <br></br>
+            <a href="https://en.wikipedia.org/wiki/Q-learning"> https://en.wikipedia.org/wiki/Q-learning </a>
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyRestoreValuesTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>The QLearning task sets and updates the values from the previous timestep.
+            <br></br>
+            This restores the values to the current timestep.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyInitWeightsTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Initialises the layer parameters randomly with mean 0 and stdDev: 1 / (sqrt(Input.Count + 1))
+            <br></br>
+            This gives a high certainty, that the neurons don't start out saturated.
+            </summary>
+            <description></description>
+        </member>
+        <member name="T:BrainSimulator.NeuralNetwork.Tasks.MyCreateDropoutMaskTask">
+            <author>Philip Hilm</author>
+            <status>Working</status>
+            <summary>
+            Creates a dropout mask for the layer according to the Dropout property of the Neural Network Group
+            </summary>
             <description></description>
         </member>
         <member name="T:BrainSimulator.RBM.MyRBMGroup">
@@ -1288,27 +1379,28 @@
         </member>
         <member name="T:BrainSimulator.TicTacToe.MyTicTacToeWorld">
             <author>Jaroslav Vitku</author>
-            <status>Under Development</status>
+            <status>Working</status>
             <summary>Simulator of Tic Tac Toe game.</summary>
             <description>
             
-            Player (the brain) has X and computer (world) has O. 
-            Games are repeated. If the player wins, reward is received. If the computer wins, punishment is received.
+            World for playing the TicTacToe game. The world has common output defining state of the game. 
+            For each player there is a separate output with events (reward=won, punishment=lost, incorrect_move=place already taken) and input for actions (max value is taken).  
             
             <h3>Outputs:</h3>
             <ul>
-                <li> <b>Global:</b>Vectort of all state variables of the world  = [State, Reward, Punishment]</li>
-                <li> <b>State:</b>Vector of length 9 with values {0,1,2} = {empty, player, computer}.</li>
-                <li> <b>RewardEvent:</b> Reward is received if the player wins the game.</li>
-                <li> <b>PunishmentEvent:</b> Punishment is received if the player wins the game.</li>
-                <li> <b>Visual:</b> bitmap representing the current world state.</li>
+                <li> <b>State:</b> Vector of length 9 with values {0,1,2} = {EMPTY, PLAYER_O, PLAYER_X}.</li>
+                <li> <b>EventO:</b> Vector of events for the PLAYER_O formatted as follows {REWARD, PUNISHMENT, INCORRECT_MOVE}.</li>
+                <li> <b>EventX:</b> Vector of events for the PLAYER_X formatted as follows {REWARD, PUNISHMENT, INCORRECT_MOVE}.</li>
+                <li> <b>Visual:</b> Bitmap representing the current game state.</li>
             </ul>
             
             <h3>Inputs</h3>
             <ul>
-                <li> <b>Action:</b> Vector of size 9 which chosen action. Action = place, where to put the X. If X is already taken, the step is missed and the player has another attempt.</li>
+                <li> <b>PlayerXAction:</b> Vector of size 9 which chosen action. Action = place, where to put the X (maximum value is taken as an action). If X is already taken, the step is missed and the player has another attempt.</li>
+                <li> <b>PlayerYAction:</b> Vector of size 9 which chosen action. Input is processed only if the corresponding signal is Raised.</li>
             </ul>
             
+            The world sends two signals which are supposed trigger players in conditional groups.
             </description>
         </member>
         <member name="T:BrainSimulator.TicTacToe.MyTicTacToeWorld.MyInitTask">
@@ -1321,23 +1413,44 @@
             Renders the visible area, not needed for simulation.
             </summary>
         </member>
-        <member name="T:BrainSimulator.TicTacToe.MyTicTacToeWorld.MyUpdateTask">
+        <member name="T:BrainSimulator.TicTacToe.MyTicTacToeWorld.MyMultiPlayerTask">
             <summary>
-            Read action, if valid check for win, choose the computer action, check for win, 
-            reset and publish reward/punishment if the game ends, publish new state.
+            Read action of a given player. If the aciton is incorrect, sets the event and the same player has another attempt.
+            
+            If the action is valid, signal for another player is raised.
+            
+            If some of players won, the corresponding events are set and game ends (after both players have seen the event).
             
             <description>
             <h3>Parameters</h3>
             <ul>
-                <li><b>Difficulty: </b>How well the computer plays</li>
+                <li><b>Player O Starts: </b>Whether the Player_O should start.</li>
+                <li><b>Randomize who starts: </b>Randomize who has the first move?</li>
             </ul>
             </description>
             </summary>
         </member>
-        <member name="T:CustomModels.TicTacToeWorld.ITicTacToeEngine">
+        <member name="T:BrainSimulator.TicTacToe.ITicTacToeEngine">
             <summary>
-            Thing, that plays the tic tac toe
+            Thing, which plays the tic tac toe
             </summary>
+        </member>
+        <member name="M:BrainSimulator.TicTacToe.MyEngineA.CanWinByMoving(System.Int32[],BrainSimulator.TicTacToe.MyTicTacToeWorld.PLAYERS)">
+            <summary>
+            If a given player can immediately win by moving an a particular place
+            </summary>
+            <param name="currentState">state of the board</param>
+            <param name="who">player who can win</param>
+            <returns>-1 if cannot win in one move, corrspoding board position otherwise</returns>
+        </member>
+        <member name="M:BrainSimulator.TicTacToe.MyEngineA.EvalSet(System.Int32[],System.Int32[],BrainSimulator.TicTacToe.MyTicTacToeWorld.PLAYERS)">
+            <summary>
+            returns the value of a given game state for given player
+            </summary>
+            <param name="state">game state to be evaluated</param>
+            <param name="indexes">list of 3 indexes (row, column, diagonal)</param>
+            <param name="player">COMPUTER or PLAYERS</param>
+            <returns>value of the state</returns>
         </member>
         <member name="M:BrainSimulator.Versioning.MyConversion.Convert1To2(System.String)">
             <summary>
@@ -1588,13 +1701,14 @@
             </summary>
         </member>
         <member name="T:BrainSimulator.Vision.MySegment">
-            <author>Honza Knopp</author>
-            <status>Working, while restriceted to square images and specific nSegments values</status>
+            <author>Jan Knopp</author>
+            <status>Working</status>
             <summary>
-              Segment image into a set of superpixels.
+              Segment image into a set of superpixels. The code is restriceted to square images and specific nSegments values.
             </summary>
             <description>
-              Takes image (RGB or just Black and White if G/B input channels are left free) as an input and runs SLIC algorithm to find segments.
+              Takes image (RGB or just Black and White if G/B input channels are left free) as an input and runs SLIC algorithm [1] to find segments. The code is calling the GPU version [2] of the 
+              SLIC method [1].
               
               <h4> Input</h4>
                 Image. When it is gray, use only the first branch.
@@ -1617,18 +1731,24 @@
               <ul>
                 <li> The width of the image has to correspond to its height.</li>
                 <li> If n is number of segments, there has to exist integer k such that k*k=n.</li>
-                <li> It is better to keep number of segments per rows/columns nicely divided in the context of number of pixels per row/column.</li>
+                <li> It is better to keep the number of segments per rows/columns nicely exactly divided by the number of pixels per row/column.</li>
               </ul>
               
               <h4>Observer</h4>
-               When observer is visualizing the result, you can press a key to change what is shows:
+               When observer is visualizing the result, you can change Operation/ObserverMode to change what is shows:
               <ul>
-                <li> default: borders of segments</li>
-                <li> 1: XYZ space of colors</li>
-                <li> 2: id of segments </li>
-                <li> 3: id os segments normalized for beter view </li>
-                <li> 4: center of each segment</li>
+                <li> Image with borders of segments</li>
+                <li> only borders of segmetns</li>
+                <li> XYZ space of colors</li>
+                <li> id of segments </li>
+                <li> id os segments normalized for beter view </li>
+                <li> center of each segment</li>
              </ul>
+             
+            <h4>References</h4>
+            [1] Radhakrishna Achanta, Appu Shaji, Kevin Smith, Aurelien Lucchi, Pascal Fua, and Sabine Süsstrunk, SLIC Superpixels Compared to State-of-the-art Superpixel Methods, PAMI vol. 34, num. 11, p. 2274 - 2282, May 2012.<br></br>
+            [2] <a href="https://github.com/painnick/gSLIC"> gSLIC is an GPU implementation of Simple Iterative Linear Clustering (SLIC) superpixel segmentation algorithm. </a>. Online avelaible June, 2015
+            
             </description>
         </member>
         <member name="P:BrainSimulator.Vision.MySegment.floatBuffer">

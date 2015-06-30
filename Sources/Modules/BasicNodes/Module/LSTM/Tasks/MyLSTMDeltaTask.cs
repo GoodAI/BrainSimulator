@@ -28,7 +28,7 @@ namespace BrainSimulator.LSTM.Tasks
 
         public override void Execute()
         {
-            MyLayer nextLayer = Owner.NextLayer as MyLayer;
+            MyHiddenLayer nextLayer = Owner.NextLayer as MyHiddenLayer; // TODO: nextLayer was based on the deprecated MyLayer. It was changed to MyHiddenLayer (PLZ CHECK FOR CORRECTNESS!)
 
             m_deltaKernel.Run(
                 Owner.CellStateErrors,

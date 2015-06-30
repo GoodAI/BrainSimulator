@@ -11,6 +11,14 @@ using System.Threading.Tasks;
 
 namespace BrainSimulator.NeuralNetwork.Tasks
 {
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>
+    /// Initialises the layer parameters randomly with mean 0 and stdDev: 1 / (sqrt(Input.Count + 1))
+    /// <br></br>
+    /// This gives a high certainty, that the neurons don't start out saturated.
+    /// </summary>
+    /// <description></description>
     [Description("InitWeights"), MyTaskInfo(OneShot = true)]
     public class MyInitWeightsTask : MyTask<MyAbstractWeightLayer>
     {
@@ -49,6 +57,12 @@ namespace BrainSimulator.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>
+    /// Creates a dropout mask for the layer according to the Dropout property of the Neural Network Group
+    /// </summary>
+    /// <description></description>
     [Description("DropoutMask"), MyTaskInfo(OneShot = false)]
     public class MyCreateDropoutMaskTask : MyTask<MyAbstractWeightLayer>
     {
