@@ -19,110 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="CLA\CLAKernel.cu" />
-    <CudaCompile Include="CLA\CLATPKernel.cu" />
-    <CudaCompile Include="CLA\VectorDirectionKernel.cu" />
-    <CudaCompile Include="Clustering\KMeansKernel.cu" />
-    <CudaCompile Include="Common\CombineVectorsKernel.cu" />
-    <CudaCompile Include="Common\ConvolutionSingle.cu" />
-    <CudaCompile Include="Common\CopyRectangleKernel.cu" />
-    <CudaCompile Include="Common\Reduction\Reduction.cu" />
-    <CudaCompile Include="Common\SetAllButOneKernel.cu" />
-    <CudaCompile Include="Common\SetKernel.cu" />
-    <CudaCompile Include="Common\Statistics.cu" />
-    <CudaCompile Include="Drawing\CustomPong.cu" />
-    <CudaCompile Include="Drawing\GridWorld.cu" />
-    <CudaCompile Include="GrowingNeuralGas\ClearCanvasKernel.cu" />
-    <CudaCompile Include="GrowingNeuralGas\Draw2DConnectionKernel.cu" />
-    <CudaCompile Include="GrowingNeuralGas\Draw2DGasKernel.cu" />
-    <CudaCompile Include="GrowingNeuralGas\FBAObserverKernel.cu" />
-    <CudaCompile Include="GrowingNeuralGas\GrowingNeuralGasKernel.cu" />
-    <CudaCompile Include="Harm\MatrixQLearningKernel.cu" />
-    <CudaCompile Include="LSTM\LSTMDeltaKernel.cu" />
-    <CudaCompile Include="LSTM\LSTMFeedForwardKernel.cu" />
-    <CudaCompile Include="LSTM\LSTMPartialDerivativesKernel.cu" />
-    <CudaCompile Include="LSTM\LSTMUpdateWeightsKernel.cu" />
-    <CudaCompile Include="Motor\ChangeWeightsKernel.cu" />
-    <CudaCompile Include="Motor\CompareVectorsKernel.cu" />
-    <CudaCompile Include="Motor\FeedforwardKernel.cu" />
-    <CudaCompile Include="Motor\OutputDeltaKernel.cu" />
-    <CudaCompile Include="Motor\PIDControllerKernel.cu" />
-    <CudaCompile Include="Motor\RTRLDerivativeKernel.cu" />
-    <CudaCompile Include="NeuralNetwork\Convolution\ConvolutionKernel.cu" />
-    <CudaCompile Include="NeuralNetwork\Convolution\PoolingKernel.cu" />
-    <CudaCompile Include="NeuralNetwork\Layer\DeltaKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\Layer\FeedForwardKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\Layer\RegularizationTermKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\Layer\UpdateWeightsKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\LossFunctions\SquaredLossKernel.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\AdjustMemoryKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\EstimateLearningRateKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\FDCurvatureKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\GradientsKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\ShiftKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\UpdateMovingAveragesKernels.cu" />
-    <CudaCompile Include="NeuralNetwork\vSGD\UpdateParametersKernels.cu" />
-    <CudaCompile Include="Observers\ColorHelpers.cu" />
-    <CudaCompile Include="Observers\ColorScaleObserverDouble.cu" />
-    <CudaCompile Include="Observers\ColorScaleObserverInt32.cu" />
-    <CudaCompile Include="Observers\ColorScaleObserverSingle.cu" />
-    <CudaCompile Include="Observers\ComputeHistogramKernel.cu" />
-    <CudaCompile Include="Observers\DrawDigitsKernel.cu" />
-    <CudaCompile Include="Observers\DrawMatrixKernel.cu" />
-    <CudaCompile Include="Observers\FocuserInputObserver.cu" />
-    <CudaCompile Include="Observers\PlotObserverCycleKernel.cu" />
-    <CudaCompile Include="Observers\PlotObserverScaleDownScaleKernel.cu" />
-    <CudaCompile Include="Observers\PlotObserverScaleKernel.cu" />
-    <CudaCompile Include="Observers\PlotObserverScrollKernel.cu" />
-    <CudaCompile Include="Observers\PlotObserverScrollShiftKernel.cu" />
-    <CudaCompile Include="Observers\SpikeRasterObserverKernel.cu" />
-    <CudaCompile Include="Observers\VerticalLineKernel.cu" />
-    <CudaCompile Include="Observers\VisualizeHistogramKernel.cu" />
-    <CudaCompile Include="Predictions\ResetLayerKernel.cu" />
-    <CudaCompile Include="RBM\RBMKernels.cu" />
-    <CudaCompile Include="Retina\FindBrightSpotKernel.cu" />
-    <CudaCompile Include="Transforms\EdgeDetectionKernel.cu" />
-    <CudaCompile Include="Transforms\IntervalToBinaryVector.cu" />
-    <CudaCompile Include="Transforms\InvertValuesKernel.cu" />
-    <CudaCompile Include="Transforms\OpticalFlow.cu" />
-    <CudaCompile Include="Transforms\Transform2DKernels.cu" />
-    <CudaCompile Include="Transforms\TransformKernels.cu" />
-    <CudaCompile Include="Transforms\Variance3x3Kernel.cu" />
-    <CudaCompile Include="Vision\JoinPatches.cu" />
-    <CudaCompile Include="Vision\JoinPatchesObs.cu" />
-    <CudaCompile Include="Vision\KMeansWM.cu" />
-    <CudaCompile Include="Vision\Matrix.cu" />
-    <CudaCompile Include="Vision\Saccade.cu" />
-    <CudaCompile Include="Vision\SaccadeObs.cu" />
-    <CudaCompile Include="Vision\Segment.cu" />
-    <CudaCompile Include="Vision\SegmentObs.cu" />
-    <CudaCompile Include="Vision\VisionMath.cu" />
-    <CudaCompile Include="Vision\VisionObsFce.cu" />
-    <CudaCompile Include="VSA\RandomMapper.cu" />
-    <CudaCompile Include="VSA\SpatialCoder.cu" />
-    <CudaCompile Include="VSA\SymbolicGrid.cu" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Common\helper_math.h" />
-    <ClInclude Include="Common\Reduction\f_Cosine_f.cuh" />
-    <ClInclude Include="Common\Reduction\f_Dot_f.cuh" />
-    <ClInclude Include="Common\Reduction\f_MaxIdx_ff.cuh" />
-    <ClInclude Include="Common\Reduction\f_MaxIdx_fi.cuh" />
-    <ClInclude Include="Common\Reduction\f_MinIdxMaxIdx_fifi.cuh" />
-    <ClInclude Include="Common\Reduction\f_MinIdx_ff.cuh" />
-    <ClInclude Include="Common\Reduction\f_MinIdx_fi.cuh" />
-    <ClInclude Include="Common\Reduction\f_MinMax_2f.cuh" />
-    <ClInclude Include="Common\Reduction\f_Sum_f.cuh" />
-    <ClInclude Include="Common\Reduction\i_Dot_i.cuh" />
-    <ClInclude Include="Common\Reduction\i_MaxIdx_2i.cuh" />
-    <ClInclude Include="Common\Reduction\i_MinIdxMaxIdx_4i.cuh" />
-    <ClInclude Include="Common\Reduction\i_MinIdx_2i.cuh" />
-    <ClInclude Include="Common\Reduction\i_Sum_i.cuh" />
-    <ClInclude Include="Common\Reduction\SharedMemory.cuh" />
+    <CudaCompile Include="Common\CopyKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\ActivationLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\ConvolutionLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\DrawDotsToCanvasKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\EnergyKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\LinearLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\MirrorConvolutionLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\MirrorNeuronLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\MirrorPoolLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\NeuronLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\PoolLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\RandomCropLayerForwardKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\RBMKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\SoftmaxLayerKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\UpdateWeightKernel.cu" />
+    <CudaCompile Include="XmlFeedForwardNet\utils.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{72423431-4A15-4E8D-B987-8E684BD730FE}</ProjectGuid>
-    <RootNamespace>BasicNodesCuda</RootNamespace>
+    <ProjectGuid>{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}</ProjectGuid>
+    <RootNamespace>XmlFeedForwardNetCuda</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
