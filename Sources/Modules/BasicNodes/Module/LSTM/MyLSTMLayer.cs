@@ -73,15 +73,19 @@ namespace GoodAI.Modules.LSTM
         [MyPersistable]
         public MyMemoryBlock<float> CellInputWeights { get; set; }
         public MyMemoryBlock<float> CellInputWeightDeltas { get; set; }
+        public MyMemoryBlock<float> CellInputWeightMeanSquares { get; set; } // RMSProp memory
         [MyPersistable]
         public MyMemoryBlock<float> InputGateWeights { get; set; }
         public MyMemoryBlock<float> InputGateWeightDeltas { get; set; }
+        public MyMemoryBlock<float> InputGateWeightMeanSquares { get; set; } // RMSProp memory
         [MyPersistable]
         public MyMemoryBlock<float> ForgetGateWeights { get; set; }
         public MyMemoryBlock<float> ForgetGateWeightDeltas { get; set; }
+        public MyMemoryBlock<float> ForgetGateWeightMeanSquares { get; set; } // RMSProp memory
         [MyPersistable]
         public MyMemoryBlock<float> OutputGateWeights { get; set; }
         public MyMemoryBlock<float> OutputGateWeightDeltas { get; set; }
+        public MyMemoryBlock<float> OutputGateWeightMeanSquares { get; set; } // RMSProp memory
 
         public MyMemoryBlock<float> CellWeightsRTRLPartials { get; set; }
         public MyMemoryBlock<float> InputGateWeightsRTRLPartials { get; set; }
@@ -127,6 +131,11 @@ namespace GoodAI.Modules.LSTM
             InputGateWeightDeltas.Count = InputGateWeights.Count;
             ForgetGateWeightDeltas.Count = ForgetGateWeights.Count;
             OutputGateWeightDeltas.Count = OutputGateWeights.Count;
+
+            CellInputWeightMeanSquares.Count = CellInputWeights.Count;
+            InputGateWeightMeanSquares.Count = InputGateWeights.Count;
+            ForgetGateWeightMeanSquares.Count = ForgetGateWeights.Count;
+            OutputGateWeightMeanSquares.Count = OutputGateWeights.Count;
 
             CellWeightsRTRLPartials.Count = CellInputWeights.Count;
             InputGateWeightsRTRLPartials.Count = InputGateWeights.Count * CellsPerBlock;

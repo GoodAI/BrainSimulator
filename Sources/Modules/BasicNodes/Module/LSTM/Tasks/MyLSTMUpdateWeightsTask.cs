@@ -36,6 +36,23 @@ namespace GoodAI.Modules.LSTM.Tasks
         {
             if (SimulationStep == 0) return;
 
+            int backPropMethod;
+            float trainingRate, momentum, smoothingFactor;
+            if (Owner.ParentNetwork.GetEnabledTask("BackPropagation") is MyRMSTask)
+            {
+                backPropMethod = 1;
+                trainingRate = Owner.ParentNetwork.RMS.TrainingRate;
+                momentum = Owner.ParentNetwork.RMS.Momentum;
+                smoothingFactor = Owner.ParentNetwork.RMS.SmoothingFactor;
+            }
+            else
+            {
+                backPropMethod = 0;
+                trainingRate = Owner.ParentNetwork.SGD.TrainingRate;
+                momentum = Owner.ParentNetwork.SGD.Momentum;
+                smoothingFactor = 0;
+            }
+
             m_updateGateWeightsKernel.Run(
                 Owner.Input,
 		        Owner.PreviousOutput,
@@ -51,8 +68,10 @@ namespace GoodAI.Modules.LSTM.Tasks
 		        Owner.InputGateWeightsRTRLPartials,
 		        Owner.ForgetGateWeightsRTRLPartials,
 
-                Owner.ParentNetwork.SGD.TrainingRate,
-                Owner.ParentNetwork.SGD.Momentum,
+                backPropMethod,
+                trainingRate,
+                momentum,
+                smoothingFactor,
 
 		        Owner.Input.Count,
 		        Owner.PreviousOutput.Count,

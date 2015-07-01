@@ -11,10 +11,32 @@
 
 #include "../NeuralNetwork/Activation/ActivationFunction.cu"
 
-
-
 extern "C"
 {
+	typedef enum MyBackPropMethod
+	{
+		SGD = 0,
+		RMSProp = 1,
+	} MyBackPropMethod;
+
+	__device__ void SGDWeightUpdate(float trainingRate, float momentum, float *weights, float *weightDeltas, int weightId, float gradient)
+	{
+		float weightDelta = trainingRate * gradient + momentum * weightDeltas[weightId];
+		weightDeltas[weightId] = weightDelta;
+		weights[weightId] += weightDelta;
+	}
+
+	__device__ void RMSPropWeightUpdate(float trainingRate, float momentum, float smoothingFactor, float *weights, float *weightDeltas, float *weightMeanSquares, int weightId, float gradient)
+	{
+		float rmsGradient = gradient + momentum * weightDeltas[weightId];
+		weightDeltas[weightId] = rmsGradient;
+		float weightMeanSquare = smoothingFactor * weightMeanSquares[weightId] + (1.0f - smoothingFactor) * rmsGradient * rmsGradient;
+		if (weightMeanSquare != 0)
+			rmsGradient /= sqrtf(weightMeanSquare);
+		weightMeanSquares[weightId] = weightMeanSquare;
+		weights[weightId] += trainingRate * rmsGradient;
+	}
+
 	__global__ void LSTMUpdateGateWeightsKernel(
 		float *input,
 		float *previousOutput,
@@ -23,15 +45,20 @@ extern "C"
 		float *outputGateDeltas,
 		float *inputGateWeights,
 		float *inputGateWeightDeltas,
+		float *inputGateWeightMeanSquares,
 		float *forgetGateWeights,
 		float *forgetGateWeightDeltas,
+		float *forgetGateWeightMeanSquares,
 		float *outputGateWeights,
 		float *outputGateWeightDeltas,
+		float *outputGateWeightMeanSquares,
 		float *inputGateWeightsRTRLPartials,
 		float *forgetGateWeightsRTRLPartials,
 
+		MyBackPropMethod backPropMethod,
 		float trainingRate,
 		float momentum,
+		float smoothingFactor,
 
 		int inputCount,
 		int previousOutputCount,
@@ -49,7 +76,7 @@ extern "C"
 			int fromId = weightId % weightsPerGate;
 			int toId = weightId / weightsPerGate;
 
-			//update output gate weight
+			//calculate output gate weight gradient
 			int isFromInputUnit = fromId >= 0 && fromId < inputCount;
 			int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < inputCount + previousOutputCount);
 			int isPeephole = (fromId >= inputCount + previousOutputCount) && (fromId < inputCount + previousOutputCount + cellsPerBlock);
@@ -59,33 +86,31 @@ extern "C"
 									+ isFromPreviousOutputUnit * previousOutput[isFromPreviousOutputUnit * (fromId - inputCount)]
 									+ isPeephole * cellStates[isPeephole * (toId * cellsPerBlock + (fromId - inputCount - previousOutputCount))]
 									+ isFromBiasUnit * 1;
-			
-			float outputGateWeightDelta = momentum * outputGateWeightDeltas[weightId];
-			outputGateWeightDelta += trainingRate * outputGateDeltas[toId] * inputFromWeight;
-			outputGateWeightDeltas[weightId] = outputGateWeightDelta;
-			outputGateWeights[weightId] += outputGateWeightDelta;
+			float outputGateWeightGradient = outputGateDeltas[toId] * inputFromWeight;
 
-			//update input and forget gate weights
-			float inputGateWeightDelta = 0;
-			float forgetGateWeightDelta = 0;
+			//calculate input and forget gate weight gradients
+			float inputGateWeightGradient = 0;
+			float forgetGateWeightGradient = 0;
 			//loop through cells
 			for (int cellId = toId * cellsPerBlock; cellId < (toId + 1) * cellsPerBlock; cellId++)
 			{
-				inputGateWeightDelta += cellStateErrors[cellId] * inputGateWeightsRTRLPartials[cellId * weightsPerGate + fromId];
-				forgetGateWeightDelta += cellStateErrors[cellId] * forgetGateWeightsRTRLPartials[cellId * weightsPerGate + fromId];
+				inputGateWeightGradient += cellStateErrors[cellId] * inputGateWeightsRTRLPartials[cellId * weightsPerGate + fromId];
+				forgetGateWeightGradient += cellStateErrors[cellId] * forgetGateWeightsRTRLPartials[cellId * weightsPerGate + fromId];
 			}
 
-			inputGateWeightDelta *= trainingRate;
-			forgetGateWeightDelta *= trainingRate;
-
-			inputGateWeightDelta += momentum * inputGateWeightDeltas[weightId];
-			forgetGateWeightDelta += momentum * forgetGateWeightDeltas[weightId];
-
-			inputGateWeightDeltas[weightId] = inputGateWeightDelta;
-			forgetGateWeightDeltas[weightId] = forgetGateWeightDelta;
-
-			inputGateWeights[weightId] += inputGateWeightDelta;
-			forgetGateWeights[weightId] += forgetGateWeightDelta;
+			//update gate weights
+			if (backPropMethod == RMSProp)
+			{
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, outputGateWeights, outputGateWeightDeltas, outputGateWeightMeanSquares, weightId, outputGateWeightGradient);
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, inputGateWeights, inputGateWeightDeltas, inputGateWeightMeanSquares, weightId, inputGateWeightGradient);
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, forgetGateWeights, forgetGateWeightDeltas, forgetGateWeightMeanSquares, weightId, forgetGateWeightGradient);
+			}
+			else // SGD
+			{
+				SGDWeightUpdate(trainingRate, momentum, outputGateWeights, outputGateWeightDeltas, weightId, outputGateWeightGradient);
+				SGDWeightUpdate(trainingRate, momentum, inputGateWeights, inputGateWeightDeltas, weightId, inputGateWeightGradient);
+				SGDWeightUpdate(trainingRate, momentum, forgetGateWeights, forgetGateWeightDeltas, weightId, forgetGateWeightGradient);
+			}
 		}
 	}
 
@@ -95,10 +120,13 @@ extern "C"
 		float *cellStateErrors,
 		float *cellInputWeights,
 		float *cellInputWeightDeltas,
+		float *cellInputWeightMeanSquares,
 		float *cellWeightsRTRLPartials,
 
+		MyBackPropMethod backPropMethod,
 		float trainingRate,
 		float momentum,
+		float smoothingFactor,
 
 		int inputCount,
 		int previousOutputCount,
@@ -114,11 +142,14 @@ extern "C"
 		if (weightId < weightsPerCell * previousOutputCount)
 		{
 			int cellId = weightId / weightsPerCell;
-			float weightDelta = momentum * cellInputWeightDeltas[weightId];
-
-			weightDelta += trainingRate * cellStateErrors[cellId] * cellWeightsRTRLPartials[weightId];
-			cellInputWeightDeltas[weightId] = weightDelta;
-			cellInputWeights[weightId] += weightDelta;
+			if (backPropMethod == RMSProp)
+			{
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, cellInputWeights, cellInputWeightDeltas, cellInputWeightMeanSquares, weightId, cellStateErrors[cellId] * cellWeightsRTRLPartials[weightId]);
+			}
+			else
+			{
+				SGDWeightUpdate(trainingRate, momentum, cellInputWeights, cellInputWeightDeltas, weightId, cellStateErrors[cellId] * cellWeightsRTRLPartials[weightId]);
+			}
 		}
 	}
 }
