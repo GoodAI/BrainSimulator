@@ -15,7 +15,7 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
-    [YAXSerializeAs("Filter2D")]
+    [YAXSerializeAs("Analyze2D")]
     public class MyAnalyze2D : MyTransform
     {        
         public MyOpticalFlowTask OpticalFlow { get; private set; }

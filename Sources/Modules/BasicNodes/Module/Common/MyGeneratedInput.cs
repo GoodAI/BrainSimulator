@@ -121,7 +121,7 @@ namespace GoodAI.Modules.Common
 
         public MyTransferTask GenerateInput { get; private set; }
 
-        /// <description></description>
+        /// <summary></summary>
         [Description("Generate input")]
         public class MyTransferTask : MyTask<MyGenerateInput>
         {
