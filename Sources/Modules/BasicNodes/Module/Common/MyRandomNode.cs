@@ -16,7 +16,8 @@ using ManagedCuda;
 
 namespace GoodAI.Modules.Testing
 {
-    /// <author>Michal Vlasak</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Generates numbers from chosen distribution</summary>
     /// <description></description>

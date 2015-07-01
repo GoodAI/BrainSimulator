@@ -10,7 +10,8 @@ using YAXLib;
 
 namespace MNIST
 {
-    /// <author>Michal Vlasak</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Provides MNIST dataset images</summary>
     /// <description></description>
