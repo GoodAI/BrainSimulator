@@ -548,13 +548,21 @@ namespace GoodAI.BrainSimulator.Forms
             InitializeComponent();            
 
             SimulationHandler = new MySimulationHandler(backgroundWorker);
-            SimulationHandler.Simulation = new MyLocalSimulation();
-
             SimulationHandler.StateChanged += SimulationHandler_StateChanged;
             SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
 
-            //must be created in advance to grab ass possible error logs
+            //must be created in advance to grab possible error logs
             ConsoleView = new ConsoleForm(this);
+
+            try
+            {
+                SimulationHandler.Simulation = new MyLocalSimulation();
+            }
+            catch (Exception e)
+            { 
+                // 
+            }
+
 
             MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
@@ -567,22 +575,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 Documentation.LoadXMLDoc(module.Assembly);
             }
-
-            /*
-            if (Properties.Settings.Default.UserNodesFile != String.Empty)
-            {
-                if (File.Exists(Properties.Settings.Default.UserNodesFile))
-                {
-                    MyConfiguration.AddNodesFromFile(Properties.Settings.Default.UserNodesFile, Assembly.Load(new AssemblyName("CustomModels")));
-                }
-                else
-                {
-                    MyLog.WARNING.WriteLine("Configuration file \"" + Properties.Settings.Default.UserNodesFile + "\" not found.");
-                    Properties.Settings.Default.UserNodesFile = String.Empty;
-                }
-            }
-            */
-              
+            
             NodePropertyView = new NodePropertyForm(this);
             MemoryBlocksView = new MemoryBlocksForm(this);
 
