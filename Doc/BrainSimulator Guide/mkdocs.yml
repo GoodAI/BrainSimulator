@@ -10,7 +10,7 @@ pages:
 - Observers: 'observer.md'
 #- ['nodes.md', 'Nodes']
 - Guides:
-    - Step-by-step tutorial: 'guides/steps.md'
+    - How to create a module: 'guides/steps.md'
     - Persitence: 'guides/persistence.md'
 - Examples: 'examples.md'
 - Changelog: 'changelog.md'
