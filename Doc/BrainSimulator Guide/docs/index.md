@@ -18,16 +18,5 @@ The Brain Simulator project is a framework/library/application for effective dev
 * **Guides** - various guides
 * [Changelog](changelog.md) - changelog and list of future ideas
 
-## Solution architecture
-
-The solution consists of four major projects:
-
-* **TODO: rename to platform? BrainSimulator** – Core project, you need not to modify it at all
-* **BrainSimulatorGUI** – Simulation front-end, you will alter only configuration of here (hopefully, we can get rid this in future as well)
-* **CUDAKernels** – A place to store your CUDA kernels which are needed for your model execution
-* **CustomModels** – A place where you put your C# code and implement a wrapper class for your model
-
-Surely, there will be a situation where existing API won’t be enough for your brand new model and the core project needs to be modified. Please inform me if such situation arise and we will implement it together.
-
 
 
