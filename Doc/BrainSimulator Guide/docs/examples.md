@@ -1,9 +1,6 @@
-# Example brain files will be here
-
-
 ## Matrix node
 
-Purpose of this node is to simplify vanilla matrix operations such as addtion or multiplication.
+Purpose of this node is to simplify vanilla matrix operations such as addition or multiplication.
 
 ### List of features
 
@@ -35,15 +32,19 @@ Link to the live demos/examples
 Here are few representative examples how to use Matrix node, more can be found in the Sample Projects, where you can play with parameters and copy-past them directly into your projects.
 
 * Two memory blocks that represents matrices are multiplied, below observers show what is inside the memory blocks.
+
 ![](img_examples/matrix_multi01.PNG)
 
-* Two memory blocks that respresents a matrices and a vector are multiplied, below obserevers again show what is inside the memory blocks.
+* Two memory blocks that represents a matrices and a vector are multiplied, below observers again show what is inside the memory blocks.
+
 ![](img_examples/matrix_multi02.PNG)
 
-* Two memory blocks that respresents a matrices and a vector are added, However the algorithm cannot perform elemnt-wise addition because of the mem. block sizes, the number of columns of the matrix and the vector corespond. Thus the algorithm performs element-wise addtion for each row.
+* Two memory blocks that respresents a matrices and a vector are added, However the algorithm cannot perform element-wise addition because of the memory block sizes, the number of columns of the matrix and the vector correspond. Thus the algorithm performs element-wise addition for each row.
+
 ![](img_examples/matrix_add01.PNG)
 
 * If memory block plus a known constat should be performed, the matrix node allows user to insert the constat as DataInput0 (see orange circle).
+
 ![](img_examples/matrix_add02.PNG)
 
 
@@ -108,26 +109,26 @@ The image processing nodes will be presented on the example of ball-tracking in 
 ### The method
 
 ![](img_examples/vision_scheme.PNG)
-First,  an  input  image  is  seg-mented  into  super-pixels  (SP)  using the SLIC  [1].   Second,  eachSP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy ($E_a$) is estimated for  each  object.   Fourth,  features  are  estimated  for  the  object with  the  highest $E_a$ by  a  hierarchy  of  convolutions  and  fully-connected layers.  Fifth, the object features are clustered into a Visual Words [5] to constitute a Working Memory.
+
+First,  an  input  image  is  segmented  into  super-pixels  (SP)  using the SLIC  [1].   Second,  eachSP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy ($E_a$) is estimated for  each  object.   Fourth,  features  are  estimated  for  the  object with  the  highest $E_a$ by  a  hierarchy  of  convolutions  and  fully-connected layers.  Fifth, the object features are clustered into a Visual Words [5] to constitute a Working Memory.
 
 
 * ** Super-pixels pre-processing. **
  SLIC algorithm [1,2] was used to divide image into a set of super-pixels (sp). Important is that the algorithm is fast, each sp covers roughly uniform area, and concatenating correct sps will results in objects. It also assign descriptor to each super pixel based on its average color and its change in time.
-The segmentation node is shown here. It requires number of segments (right side of the figure) as a paramter and the input image has to be squere.
+The segmentation node is shown here. It requires number of segments (right side of the figure) as a parameter and the input image has to be square.
 
 ![](img_examples/vison_seg_scheme.PNG)
 
 * ** Join patches. **
-Joining sp in the correct way should results in the objects. A graph of super-pixel conenctions is constitured. Each edge of the neighboring nodes is weighted based on the difference between the descriptor of edges and if the weight is larger $\tau$ than it conceive one object.
-
+Concatenating super-pixels results in objects. The goal is to find which neighborought super-pixels correspond to the same object and which do not. Thus, a graph of super-pixel conenctions is constituated. Each edge of the neighboring nodes is weighted based on the difference between the descriptor of edges and if the weight is larger $\tau$ than it conceive one object.
 
 ![](img_examples/vison_join_scheme.PNG)
 
 * ** Saccadic-like movement. **
-Now how to go from one object to another is modeled. Each object is assigned with an attension score $E_{a}(o_i)$ that concatenates the fact that we want to focus on stuff that moves, but we always dont want to look only on a single object all the time. It is an energy-like function calculated for each object in this way: $E_{a}(o_i) = E_{time}(o_i) + \alpha E_{move}(o_i)$, where $E_{time}$ decreases in time and increases only if it was just chosen, $E_{move}$ is from the change in time descriptor.
+The algorithm now decides on which object it focuses its attention. Thus, each object is has an attention value $E_{a}(o_i)$ that concatenates the fact that we want to focus on stuff that moves, but we want to focus on different objects too. It is an energy-like function calculated for each object in this way: $E_{a}(o_i) = E_{time}(o_i) + \alpha E_{move}(o_i)$, where $E_{time}$ decreases in time and increases only if it was just chosen, $E_{move}$ is from the change in time descriptor.
 
 * ** Representing the object. **
-In the example file, the image patch is represented only by the raw pixels, richer version that is based on the prelearn features in the Breakout game scheme. In the richer version, a neuron network after the focuser output is added and the back-propagation algorithm is used to learn the network (Auto-encoder in this case) to represent thedata [4]. In this example, the netowork is created from two convolutional layers and one full-connected layers. The last layer is the vector representation of the object. This corresponds to the patch descriptor.
+In the example file, the image patch is represented only by the raw pixels, richer version that is based on the pre-learn features in the Breakout game scheme. In the richer version, a neuron network after the focuser output is added and the back-propagation algorithm is used to learn the network (Auto-encoder in this case) to represent the data [4]. In this example, the network is created from two convolutional layers and one full-connected layers. The last layer is the vector representation of the object. This corresponds to the patch descriptor.
 
 * ** Visual memory of objects. **
 MyKMeansWM node stores all objects and where they are. The method is following. For the given focuser output, we compare it with the current state of the memory and if it is similar to an object, we update the object based on the given input data. If not, it creates the new object. The method can be seen as an on-line version of the popular K-Means clustering algorithm [5,6].
