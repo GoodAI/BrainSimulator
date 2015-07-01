@@ -16,7 +16,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.Testing
 {
-    /// <author>Michal Vlasak</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>WIP</status>
     /// <summary>Converts data from KMeansWM to Symbol rep.</summary>
     /// <description></description>

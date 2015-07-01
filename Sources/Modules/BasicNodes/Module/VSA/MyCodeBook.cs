@@ -139,6 +139,8 @@ namespace GoodAI.Modules.VSA
 
             public override void Init(int nGPU)
             {
+                lastIdx = -1;
+
                 if (Owner.UseBSCVariety)
                     m_kernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
                 else

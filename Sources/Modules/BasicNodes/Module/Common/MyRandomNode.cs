@@ -14,9 +14,10 @@ using GoodAI.Modules.VSA;
 using YAXLib;
 using ManagedCuda;
 
-namespace GoodAI.Modules.Testing
+namespace GoodAI.Modules.Common
 {
-    /// <author>Michal Vlasak</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Generates numbers from chosen distribution</summary>
     /// <description></description>

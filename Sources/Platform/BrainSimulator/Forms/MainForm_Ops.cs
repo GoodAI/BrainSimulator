@@ -548,13 +548,24 @@ namespace GoodAI.BrainSimulator.Forms
             InitializeComponent();            
 
             SimulationHandler = new MySimulationHandler(backgroundWorker);
-            SimulationHandler.Simulation = new MyLocalSimulation();
-
             SimulationHandler.StateChanged += SimulationHandler_StateChanged;
             SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
 
-            //must be created in advance to grab ass possible error logs
+            //must be created in advance to grab possible error logs
             ConsoleView = new ConsoleForm(this);
+
+            try
+            {
+                SimulationHandler.Simulation = new MyLocalSimulation();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("An error occured when initializing simulation. Please check that correct version of CUDA runtime is installed.\n\n" +
+                        "Technical details: " + e.Message, "Simulation Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // this way you do not have to tweak form Close and Closing events and it works even with any worker threads still running
+                Environment.Exit(1);
+            }
 
             MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
@@ -567,22 +578,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 Documentation.LoadXMLDoc(module.Assembly);
             }
-
-            /*
-            if (Properties.Settings.Default.UserNodesFile != String.Empty)
-            {
-                if (File.Exists(Properties.Settings.Default.UserNodesFile))
-                {
-                    MyConfiguration.AddNodesFromFile(Properties.Settings.Default.UserNodesFile, Assembly.Load(new AssemblyName("CustomModels")));
-                }
-                else
-                {
-                    MyLog.WARNING.WriteLine("Configuration file \"" + Properties.Settings.Default.UserNodesFile + "\" not found.");
-                    Properties.Settings.Default.UserNodesFile = String.Empty;
-                }
-            }
-            */
-              
+            
             NodePropertyView = new NodePropertyForm(this);
             MemoryBlocksView = new MemoryBlocksForm(this);
 
