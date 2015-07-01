@@ -228,17 +228,52 @@ Each SRP is composed of:
  * Source of motivation with own dynamics
  * Pointer to own source of reward
 
-The output of the `DiscreteHarmNode` is vector of utilities for all primitive actions in a given state. Utility of each primitive action is composed of utilities of all parent SRPs.
+The output of the `DiscreteHarmNode` is vector of utilities for all primitive actions in a given state. Utility of each primitive action is composed of utilities of all parent SRPs. This means that ***all SRPs vote what to do, and the strength of their vote*** is given by:
 
-Similarly to the `DiscreteQLearningNode`, the operation has two phases:
+  * their current motivation
+  * current distance from their goal.
+
+The  principle can be seen in the following figure. On the left: composition of strategies from two SRPs  with the same motivation. On the right: SRP for the goal on the right has higher motivation ([source](https://www.dropbox.com/s/30vq3ipduc9ghd5/jvitkudt2011.pdf?dl=0)). This defines what strategy will the agent use based on current motivations and position in the state space.
+
+![Composition of Utility Values](img/utility_composition.PNG)
+
+Similarly to the `DiscreteQLearningNode`, the operation has two consecutive phases:
 
  * **Learning:** all SRPs learn (update own Q-Values) in parallel
- * **Generating action utilities:** Utility of a primitive action is composed as a sum of utilities produced by all parent SRPs.
+ * **Generating utilities of primitive actions:** for each action, sum utilities produced by all parent SRPs.
 
 ![HARM Node](img/harm.PNG)
 
 
-Example of motivation dynamics in the HARM node.
+#### Main Principle of Work
+
+Here is simiplified sequence showing how the arhictecture works. It starts with no SRPs and no motivations at the beginning:
+
+  * Compute utilities of primitive actions and publish them
+  * ASM selects and applies action
+  * If some new variable changed, do **subspacing**:
+    * Create new SRP
+    * Add only variables that changed often recently
+    * Add only actions that were used often recently
+    * Define **reward** for this SRP as a **change of this variable**
+  * Perform variable removing for all SRPs:
+    * Drop variables that did not change often before receiving the reward
+  * Perform action adding
+    * If actino has been executed abd the SRP obtained the reward, add the action
+
+The following animation shows example of operation of the `DiscreteHarmNode` in the `GridWorld`. The agent can do 6 primitive actions $(\mathbf{A} = \{Left,Right,Up,Down,Noop,Press\})$ and has already discovered 6 own abilities. For each of them it created own decision space, these are:
+
+  * move in two directions (X and Y axis)
+  * control light 1
+  * open door 1
+  * control door 2
+  * control light 2
+
+The corresponding brain is depicted above. Here, the motivation of `ASM` is set to 1, so the agent selects actions based on utilities produced by the `DiscreteHarmNode`. We can see how the agent systematically trains the SRPs based on the dynamics of motivation sources.  
 
 
 ![Motivation Dynamics](img/motivation-dynamics.gif)
+
+#### How to Use the Node
+
+#### When to Use the Node
