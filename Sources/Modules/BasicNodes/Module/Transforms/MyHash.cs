@@ -11,6 +11,12 @@ using System.Security.Cryptography;
 
 namespace GoodAI.Modules.Transforms
 {
+
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
+    /// <status>Working</status>
+    /// <summary>Calculates a hash function of input data.</summary>
+    /// <description></description>
     [YAXSerializeAs("Hash")]
     public class MyHash : MyTransform
     {
@@ -30,6 +36,9 @@ namespace GoodAI.Modules.Transforms
 
         public MyMD5Task MD5Task { get; private set; }
 
+        /// <summary>
+        /// Calculates standard MD5 hash.
+        /// </summary>
         [Description("MD5"), MyTaskInfo(OneShot = false)]
         public class MyMD5Task : MyTask<MyHash>
         {
