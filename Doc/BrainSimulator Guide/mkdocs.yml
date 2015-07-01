@@ -12,9 +12,10 @@ pages:
 - Guides:
     - How to create a module: 'guides/steps.md'
     - Persitence: 'guides/persistence.md'
+    - Discrete QLearning: 'guides/discreteqlearning.md'
 - Examples: 'examples.md'
 - Changelog: 'changelog.md'
-markdown_extensions: 
+markdown_extensions:
     - fenced_code
 extra_javascript: ['https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML', 'js/mathjaxhelper.js']
 use_directory_urls: false
