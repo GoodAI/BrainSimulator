@@ -76,7 +76,7 @@ Becuase the `Addition` operation was initlized too, the user can proceed,
 mat_operation.Run(Matrix.MatOperation.Addition, A, B, C);
 ```
 
-Complete code in the BS node will look like:
+Complete code in the Brain Simulator node will look like:
 ``` csharp
 public class MyExecuteTask : MyTask<MyNode>
 {
@@ -137,7 +137,7 @@ MyKMeansWM node stores all objects and where they are. The method is following. 
 ![](img_examples/vison_kmeans_scheme.PNG)
 
 
-Overall, the final scheme for the vision part is implemented in BS as:
+Overall, the final scheme for the vision part is implemented in Brain Simulator as:
 
 ![Node in project](img_examples/vison_all_scheme.png)
 
