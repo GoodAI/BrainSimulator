@@ -66,7 +66,7 @@ namespace GoodAI.Modules.Transforms
                 m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\ConvolutionSingle", "Convolution3x3Single");                
                 m_derivativeKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\OpticalFlow", "PrepareDerivativesKernel");
                 m_velocityKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\OpticalFlow", "EvaluateVelocityKernel");
-                m_reductionKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\ReduceSingle");
+                m_reductionKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
                 m_finalizeKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\OpticalFlow", "FinalizeVelocityKernel");
 
                 imageWidth = Owner.Input.ColumnHint;
@@ -76,8 +76,6 @@ namespace GoodAI.Modules.Transforms
                 m_derivativeKernel.SetupExecution(Owner.InputSize);
                 m_velocityKernel.SetupExecution(Owner.InputSize);
                 m_finalizeKernel.SetupExecution(Owner.InputSize);
-
-                m_reductionKernel.SetupExecution(Owner.InputSize / 2);
             }
 
             public override void Execute()
@@ -118,7 +116,7 @@ namespace GoodAI.Modules.Transforms
                 m_velocityKernel.Run(Owner.Derivatives, Owner.Output, imageWidth, imageHeight);
 
                 if (SubtractGlobalFlow)
-                {                    
+                {
                     m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, 0, 0, 1);
                     m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, Owner.InputSize, 1, 1);
 
