@@ -300,6 +300,12 @@
     <EmbeddedResource Include="res\imagescale_big.png" />
     <EmbeddedResource Include="res\hash.png" />
     <EmbeddedResource Include="res\hash_big.png" />
+    <EmbeddedResource Include="res\hidden_layer.png" />
+    <EmbeddedResource Include="res\hidden_layer_big.png" />
+    <EmbeddedResource Include="res\output_layer.png" />
+    <EmbeddedResource Include="res\output_layer_big.png" />
+    <EmbeddedResource Include="res\keypad.png" />
+    <EmbeddedResource Include="res\keypad_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
