@@ -6,12 +6,8 @@ From your model point of view, you are representing a node in a kind of graph su
 
 Basically, you will organize your kernels into a set of **tasks**. Every task should aggregate a sub-step of your model (i.e. init stage, reward stage, etc.). Additionally, you can define a set of **parameters** both, for the task and for the node itself. Finally, your model will need a place to store the data, so you can define a number of **memory blocks** and set the size of these according to defined parameters. During execution, every memory block is allocated on host and on one or more devices (depends on how many GPUs you have). You are able to access the host memory from CPU code and pass device memory to kernels. Also, you have some limited control of memory transfers, as you can instruct the system to sync the content of the memory block in the task specific CPU code.
 
-## Custom Module Implementation
-
-To create your own algorithms for use in the Brain Simulator, you will have to create an independent DLL library, which can contain any number of your custom nodes, worlds and observers and other code. We call this library a module. The modules are used for easy sharing of content between developers. Any number of modules can be loaded into the Brain Simulator application. You can use the provided template Visual Studio solution SampleNewModule.sln (TODO: add link or path where to find this solution) when creating your new module. The solution contains a C# project in which you can implement classes for your custom nodes, worlds and observers. You can easily debug the module directly from the module's solution, when installed, the Brain Simulator is automatically started and your module is loaded into it. You just need to check and adjust the correct paths in the properties of the module's C# project in the Debug tab, specifically the path to the BrainSimulator.exe (depends on your installation path), the path to your generated module DLL and the Working directory (also the directory where the BrainSimulator.exe is located).
-
 ## Custom Node Implementation
-For creating a node, you will generally derive the BrainSimulator.Node.MyWorkingNode class. See the following snippet for details:
+For creating a node, you will generally derive the `GoodAI.Core.Nodes.MyWorkingNode` class. See the following snippet for details:
 
 ``` csharp
 
@@ -104,15 +100,15 @@ For **Node and Task**, you can use the following annotations:
 * `MyNodeInfo(FixedOutput=false)` - 
 * `MyTaskInfo(OneShot=false, Order=0, Disabled=false)`
     - `OneShot=true` - Task will run only in first step of simulation
-    - `Order=100` - For ordering the task in node. TODO - lower number earlier??
+    - `Order=100` - For ordering the task in node. Tasks in lower number are earlier.
     - `Disabled=true` - Task will be disabled by default
 * `YAXSerializeAs("Text")` - this will be used for serialization to XML
 
 For **Node and Task properties**, you can use the following annotations:
 
 * `MyBrowsable` - property will appear in UI
-* `MyPersistable` - makes property persistable, see [persistence](persistence.md)
-* `MyUnmanaged` - TODO
+* `MyPersistable` - makes property persistable, see [persistence](guides/persistence.md)
+* `MyUnmanaged` - Brain Simulator will not take care of memory block's memory managing
 * `Category("Text")` - used in UI in the Properties view as the name of a collapsible category group
 * `DisplayName("Text")` - used in UI instead of the property name; if omitted, the property name will be shown
 * `Description("Text")` - detailed description for UI, showed in the Properties view tooltip for the selected property and in the Node/World Help
@@ -179,7 +175,7 @@ Order of tasks in the source file will be preserved during the execution of your
 
 #### Task Implementation
 
-For every custom task of your node, you have to implement the following class derived from the `BrainSimulator.Task.MyTask` class. See the following code for details:
+For every custom task of your node, you have to implement the following class derived from the `GoodAI.Core.Task.MyTask` class. See the following code for details:
 
 ``` csharp
 [Description(“Initialize neurons”), MyTaskInfo(OneShot = true)]
@@ -288,12 +284,14 @@ How to do that?
 
 Methods for using singals are:
 
-* `Raise()` - sets the signal
+* `Raise()` - set the signal
 * `Drop()` - unset the signal
-* `Keep()` - TODO
+* `Keep()` - keep the signal state as on input
 * `IsIncomingRised()` - is incoming signal set?
 * `IsRised()` - is signal set in my node?
 * `IsDropped()` - is signal unset in my node?
+
+By default, nodes `Keep()` all signals until said otherwise.
 
 
 ### UI Registration
@@ -352,7 +350,7 @@ Tasks in this block are run multiple times.
 Number of executed iterations in the current time-step is passed to `condition()`, the block is executed if it returns true.
 
 ### Usage
-Usage of execution blocks is simple. Your node has to implement `IMyCustomExecutionPlanner` interface from `BrainSimulator.Execution` namespace and implement its two methods.
+Usage of execution blocks is simple. Your node has to implement `IMyCustomExecutionPlanner` interface from `GoodAI.Core.Execution` namespace and implement its two methods.
 
 * `CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)`
 * `CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)`
@@ -471,20 +469,20 @@ public class MySimpleTestNode : MyWorkingNode, IMyCustomExecutionPlanner
     }
 ```
 
-## Custom execution plan
+## Custom Module Implementation
 
-# Modules
-TODO
-describe nodes.xml file
+To create your own algorithms for use in the Brain Simulator, you will have to create an independent DLL library, which can contain any number of your custom nodes, worlds and observers and other code. We call this library a *module*. The modules are used for easy sharing of content between developers. Any number of modules can be loaded into the Brain Simulator application. 
 
-## Versioning
-Making changes in your code can sometimes break your .brain files. This can be due to renaming (nodes, tasks, parameters), deleting tasks/parameters or changing the structure of the node. Fortunately, BrainSimulator has means of maintaining compatibility of old .brain files with new project code. This can be done by implementing version converters.
+You can use the provided template Visual Studio solution on [GoodAI Github](https://github.com/GoodAI/BrainSimulatorNewModule/) when creating your new module. The solution contains a C# project in which you can implement classes for your custom nodes, worlds and observers. You can easily debug the module directly from the module's solution, when installed, the Brain Simulator is automatically started and your module is loaded into it. You just need to check and adjust the correct paths in the properties of the module's C# project in the Debug tab, specifically the path to the BrainSimulator.exe (depends on your installation path), the path to your generated module DLL and the Working directory (also the directory where the BrainSimulator.exe is located).
+
+### Versioning
+Making changes in your code can sometimes break your .brain files. This can be due to renaming (nodes, tasks, parameters), deleting tasks/parameters or changing the structure of the node. Fortunately, Brain Simulator has means of maintaining compatibility of old .brain files with new project code. This can be done by implementing version converters.
 
 Each module you create should contain a <RootNamespace>.Versioning.MyConversion class. RootNamespace can be defined in the `nodes.xml` configuration file as following
 
 ``` xml
 <?xml version="1.0" encoding="utf-8" ?>
-<Configuration RootNamespace="BrainSimulator">
+<Configuration RootNamespace="NewModule">
   <KnownNodes>    
     ...     
   </KnownNodes>
@@ -494,15 +492,13 @@ Each module you create should contain a <RootNamespace>.Versioning.MyConversion 
 </Configuration>
 ```
 
-By default, RootNamespace is `BrainSimulator`.
-
-Each `MyConversion` class should be inherited from `MyBaseConversion` class which resides in `BrainSimulator.Configuration` namespace. The only method you need to implement is `CurrentVersion` which should return the current version of your module. It can be as simple as
+Each `MyConversion` class should be inherited from `MyBaseConversion` class which resides in `GoodAI.Core.Configuration` namespace. The only method you need to implement is `CurrentVersion` which should return the current version of your module. It can be as simple as
 
 ``` csharp
 public override int CurrentVersion { get { return 2; } }
 ```
 
-This version is being saved to the .brain file and every time you load a .brain file into BrainSimulator, the saved version number is compared to the current version number. If they do not match, the .brain file (which has the lower version number) is converted to the current version by sequential invoking of conversion methods.
+This version is being saved to the .brain file and every time you load a .brain file into Brain Simulator, the saved version number is compared to the current version number. If they do not match, the .brain file (which has the lower version number) is converted to the current version by sequential invoking of conversion methods.
 
 Each conversion method in your `MyConversion` class must comply to following declaration:
 
@@ -514,4 +510,4 @@ Where `X` is a number of version the method accepts and `Y` is a number of versi
 
 Input to the conversion method is a string, which represents the loaded .brain file. The function can alter the string in any way it wants and then returns it (on return, the string should represent the .brain file in `Y` version).
 
-The sequence of conversion methods is invoked, until the opened project version is the same as the current module version. The project has to be saved after the conversion (message is written to BrainSimulator log).
+The sequence of conversion methods is invoked, until the opened project version is the same as the current module version. The project has to be saved after the conversion (message is written to Brain Simulator log).
