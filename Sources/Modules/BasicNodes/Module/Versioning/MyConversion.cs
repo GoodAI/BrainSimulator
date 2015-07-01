@@ -116,6 +116,7 @@ namespace GoodAI.Modules.Versioning
             string result = xml;
 
             result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRandomNode", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRandomNode");
+            result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRNGTask", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRNGTask");             
 
             return result;
         }

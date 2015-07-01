@@ -23,7 +23,7 @@
     <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true" />    
     <Node type="GoodAI.Modules.Common.MyInverseTransformSampling" CanBeAdded="true" BigIcon="distribution_big.png" SmallIcon="distribution.png" />
     
-    <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="matrixNode_big.png" SmallIcon="matrixNode.png" />
+    <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png" />
     
     <Node type="GoodAI.Modules.Vision.MySegment" CanBeAdded="true" BigIcon="Seg_big.png" SmallIcon="Seg.png">
       <Observer type="GoodAI.Modules.Observers.MySegmentObserver" />
