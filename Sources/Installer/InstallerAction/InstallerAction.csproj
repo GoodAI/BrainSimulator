@@ -56,7 +56,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)pack_ptx_zip.cmd $(ProjectDir) $(ConfigurationName)</PreBuildEvent>
+    <PreBuildEvent>"$(ProjectDir)pack_ptx_zip.cmd" "$(ProjectDir)" $(ConfigurationName)</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
