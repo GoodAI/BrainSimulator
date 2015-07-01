@@ -24,8 +24,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     /// <status>Working</status>
     /// <summary>Network node group.</summary>
     /// <description>
-    /// The Neural Network Group is necessary to build a neural network consisting of neural layers.<br></br>
-    /// It is required to control the data flow during feed-forward and backpropagation between layers, as well as holding important hyperparameters and method variables.<br></br>
+    /// The Neural Network Group is necessary to build a neural network consisting of neural layers.<br/>
+    /// It is required to control the data flow during feed-forward and backpropagation between layers, as well as holding important hyperparameters and method variables.<br/>
+    /// </description>
     public class MyNeuralNetworkGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         //Node properties
