@@ -1,5 +1,6 @@
 site_name: BrainSim docs
 site_author: GoodAI
+repo_url: https://github.com/GoodAI
 #theme: mkdocs, bootstrap, cosmo, flatly, spacelab, united, yeti
 theme_dir: 'goodai_theme'
 pages:

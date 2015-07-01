@@ -303,7 +303,7 @@ Simply, you need to add a line of code to the the **KnownNodes** (or **KnownWorl
 
 ``` xml
 <?xml version=”1.0″ encoding=”utf-8″ ?>
-<Configuration>
+<Configuration RootNamespace="YourModuleName">
     <KnownNodes>
         <Node type=”YourModuleName.Voting.MyVotingNode” CanBeAdded=”true” BigIcon=”res\filter_big.png” SmallIcon=”res\filter.png”/>
         <Node type=”YourModuleName.Prediction.MyPredictionNode” CanBeAdded=”true” BigIcon=”res\prediction_big.png” SmallIcon=”res\prediction.png”/>
