@@ -26,24 +26,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:cy="322.30702"
+     inkscape:cy="364.98163"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     showguides="true"
+     showguides="false"
      inkscape:guide-bbox="true"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-page="true"
-     inkscape:window-width="1902"
-     inkscape:window-height="1130"
-     inkscape:window-x="1"
-     inkscape:window-y="1"
+     inkscape:window-width="1920"
+     inkscape:window-height="1148"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-center="true"
-     inkscape:zoom="8"
-     inkscape:cx="232.62908"
+     inkscape:zoom="3.4960938"
+     inkscape:cx="256"
      inkscape:snap-bbox-midpoints="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -187,6 +187,10 @@
        orientation="1,0"
        position="264,392.7713"
        id="guide3532" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="312,384"
+       id="guide3531" />
   </sodipodi:namedview>
   <defs
      id="defs4">
@@ -564,7 +568,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -3760,5 +3764,117 @@
          x="262.29999"
          y="720.58221"
          style="font-size:28px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.40000001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Angsana New;-inkscape-font-specification:Angsana New Bold Italic">f</tspan></text>
+    <g
+       id="g3563"
+       inkscape:export-filename="D:\GitRepos\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\hidden_layer.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+         style="color:#000000;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect3489"
+         width="32"
+         height="32"
+         x="288"
+         y="668.36218"
+         rx="5"
+         ry="5" />
+      <path
+         id="path3493"
+         transform="translate(0,540.36218)"
+         d="M 303.625 134.90625 A 1.0043849 1.0043849 0 0 0 303.90625 136.90625 L 312 136.90625 L 312 134.90625 L 303.90625 134.90625 A 1.0000999 1.0000999 0 0 0 303.71875 134.90625 A 1.0043849 1.0043849 0 0 0 303.625 134.90625 z M 312 138.84375 L 303.625 143.03125 A 1.0043849 1.0043849 0 0 0 303.75 145.03125 L 312 149.15625 L 312 146.9375 L 308.125 145 L 312 145 L 312 143 L 308.125 143 L 312 141.0625 L 312 138.84375 z M 303.625 151.09375 A 1.0043849 1.0043849 0 0 0 303.90625 153.09375 L 312 153.09375 L 312 151.09375 L 303.90625 151.09375 A 1.0000999 1.0000999 0 0 0 303.71875 151.09375 A 1.0043849 1.0043849 0 0 0 303.625 151.09375 z "
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+      <path
+         sodipodi:type="arc"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="path3509"
+         sodipodi:cx="6"
+         sodipodi:cy="6"
+         sodipodi:rx="2.396893"
+         sodipodi:ry="2.396893"
+         d="M 8.396893,6 A 2.396893,2.396893 0 1 1 3.603107,6 2.396893,2.396893 0 1 1 8.396893,6 z"
+         transform="matrix(1.171555,0,0,1.171555,297.06592,685.4281)" />
+      <path
+         transform="matrix(1.171555,0,0,1.171555,297.06592,677.33285)"
+         d="M 8.396893,6 A 2.396893,2.396893 0 1 1 3.603107,6 2.396893,2.396893 0 1 1 8.396893,6 z"
+         sodipodi:ry="2.396893"
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         id="path3511"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+      <path
+         sodipodi:type="arc"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="path3513"
+         sodipodi:cx="6"
+         sodipodi:cy="6"
+         sodipodi:rx="2.396893"
+         sodipodi:ry="2.396893"
+         d="M 8.396893,6 A 2.396893,2.396893 0 1 1 3.603107,6 2.396893,2.396893 0 1 1 8.396893,6 z"
+         transform="matrix(1.171555,0,0,1.171555,297.06592,669.2376)" />
+      <path
+         id="path3558"
+         transform="translate(0,540.36218)"
+         d="M 303 134.90625 L 294.75 134.9375 L 294.75 136.9375 L 298.625 136.9375 L 294.75 138.875 L 294.75 141.09375 L 303.125 136.90625 C 303.62321 136.84005 304.03135 136.34535 304 135.84375 C 303.9687 135.34214 303 134.90625 303 134.90625 z M 294.75 142.90625 L 294.75 144.90625 L 302.84375 144.90625 C 303.36739 144.97996 303.9264 144.58614 304 144.0625 C 304.07364 143.53885 303.64866 142.97985 303.125 142.90625 C 303.0938 142.90525 303.06245 142.90525 303.03125 142.90625 C 302.96893 142.90025 302.90605 142.90025 302.84375 142.90625 L 294.75 142.90625 z M 294.75 146.84375 L 294.75 149.0625 L 298.625 151 L 294.75 151 L 294.75 153 L 303 153.03125 C 303 153.03125 303.9687 152.59536 304 152.09375 C 304.03135 151.59215 303.62321 151.09745 303.125 151.03125 L 294.75 146.84375 z "
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+    </g>
+    <g
+       id="g3571"
+       transform="translate(0,32)"
+       inkscape:export-filename="D:\GitRepos\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\output_layer_big.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         ry="5"
+         rx="5"
+         y="668.36218"
+         x="288"
+         height="32"
+         width="32"
+         id="rect3573"
+         style="color:#000000;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+         inkscape:export-xdpi="180"
+         inkscape:export-ydpi="180" />
+      <path
+         transform="matrix(1.171555,0,0,1.171555,301.06592,685.4281)"
+         d="M 8.396893,6 A 2.396893,2.396893 0 1 1 3.603107,6 2.396893,2.396893 0 1 1 8.396893,6 z"
+         sodipodi:ry="2.396893"
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         id="path3577"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+      <path
+         sodipodi:type="arc"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="path3579"
+         sodipodi:cx="6"
+         sodipodi:cy="6"
+         sodipodi:rx="2.396893"
+         sodipodi:ry="2.396893"
+         d="M 8.396893,6 A 2.396893,2.396893 0 1 1 3.603107,6 2.396893,2.396893 0 1 1 8.396893,6 z"
+         transform="matrix(1.171555,0,0,1.171555,301.06592,677.33285)" />
+      <path
+         transform="matrix(1.171555,0,0,1.171555,301.06592,669.2376)"
+         d="M 8.396893,6 A 2.396893,2.396893 0 1 1 3.603107,6 2.396893,2.396893 0 1 1 8.396893,6 z"
+         sodipodi:ry="2.396893"
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         id="path3581"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+      <path
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+         d="m 307,675.26843 -8.25,0.0312 0,2 3.875,0 -3.875,1.9375 0,2.21875 8.375,-4.1875 c 0.49821,-0.0662 0.90635,-0.5609 0.875,-1.0625 -0.0313,-0.50161 -1,-0.9375 -1,-0.9375 z m -8.25,8 0,2 8.09375,0 c 0.52364,0.0737 1.08265,-0.32011 1.15625,-0.84375 0.0736,-0.52365 -0.35134,-1.08265 -0.875,-1.15625 -0.0312,-10e-4 -0.0625,-10e-4 -0.0937,0 -0.0623,-0.006 -0.1252,-0.006 -0.1875,0 l -8.09375,0 z m 0,3.9375 0,2.21875 3.875,1.9375 -3.875,0 0,2 8.25,0.0312 c 0,0 0.9687,-0.43589 1,-0.9375 0.0313,-0.5016 -0.37679,-0.9963 -0.875,-1.0625 l -8.375,-4.1875 z"
+         id="path3583"
+         inkscape:connector-curvature="0" />
+    </g>
   </g>
 </svg>

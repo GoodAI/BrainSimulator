@@ -1,12 +1,24 @@
 # Introduction
 
-In this tutorial, you will learn, how to create a simple node with few tasks, add custom observer to it, and finally create a world of your own.
+In this tutorial, you will learn, how to create a simple node with few tasks, add custom observer to it.
 
 For the purpose of this tutorial, we will implement a regression node, which will process last N served data.
 
+# Clone a blank template
+
+* From [GoodAI GitHub repository](https://github.com/GoodAI/BrainSimulatorNewModule), clone blank template project. It contains preconfigured Visual Studio project which you can use right away.
+* In `Module` folder, rename `NewModule.csproj.user.template-RENAME_ME` to `RegressionModule.csproj.user`
+* Open `SampleNewModule` solution in Visual Studio
+* Rename solution to `RegressionModule`
+* In solution Properties-Application, change `Assembly name` and `Default namespace` to `RegressionModule`
+* In solution Properties-Debug check the path to your Brain Simulator installation (`Start external program` checkbox and `Working directory` path) and change `Command line arguments` so it links to folder with your module
+* Rename `NewModule` project to `RegressionModule`
+* Rename `NewModuleCuda` project to `RegressionModuleCuda`
+* Delete `SomeNode.cs` file from `RegressionModule` project and `SomeNode.cu` kernel file from `RegressionModuleCuda` project
+
 # Create a Node
 
-* In Visual Studio, create a new C# class **MyRegressionNode.cs**. Inside the file, you should have some basic structure already
+* Open the template project a create a new C# class **MyRegressionNode.cs**. Inside the file, you should have some basic structure already
 
 ``` csharp
 using System;
@@ -15,7 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Testing
+namespace RegressionModule
 {
     class MyRegressionNode
     {
@@ -23,21 +35,23 @@ namespace BrainSimulator.Testing
 }
 ```
 
-* To actually start implementing the node, your class have to be inherited from **MyWorkingNode** class, which is in **BrainSimulator.Nodes** package.
+* To actually start implementing the node, your class have to be inherited from **MyWorkingNode** class, which is in **GoodAI.Core.Nodes** package.
 * We need to implement abstract `UpdateMemoryBlocks` method
 * As a best practice, we should also add some meta-info about the node. Add comment describing the author of the node and its simple description
 
 ``` csharp
-using BrainSimulator.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrainSimulator.Testing
+using GoodAI.Core.Nodes;
+
+namespace RegressionModule
 {
-    /// <author>Michal Vlasák</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>Work in progress</status>
     /// <summary>Regression node</summary>
     /// <description>Will perform online linear regression</description>
@@ -51,23 +65,24 @@ namespace BrainSimulator.Testing
 }
 ```
 
-# Add Node to BrainSimulator
+# Add Node to Brain Simulator
 
-Node definition has to be added to *conf/nodes.xml*. After that, you can enable your node in View->Configure Node Selection (CTRL+L) view. Add following line to *conf/nodes.xml*.
+Node definition has to be added to *conf/nodes.xml*. After that, you can enable your node in View->Configure Node Selection (CTRL+L) view. Change *conf/nodes.xml* to:
 
 ``` xml
-<Node type="YourModuleNamespace.Testing.MyRegressionNode" CanBeAdded="true"/>
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration  RootNamespace="RegressionModule">
+  <KnownNodes>
+    <Node type="RegressionModule.MyRegressionNode" CanBeAdded="true" />
+  </KnownNodes>
+</Configuration>
 ```
 
-After that, you can go to the Configure Node Selection view (CTRL+L) and your node should be there
-
-![New node](steps/tut01-01.png)
-
-After checking the checkbox, your node will appear in the [nodes toolstrip](../ui.md)
+After that, you can go to the Configure Node Selection view (CTRL+L) and your node should be there. After checking the checkbox, your node will appear in the [nodes toolstrip](../ui.md)
 
 # Add Memory Blocks
 
-* If we want to actually process some data, we have to add *input memory blocks*. We will add two of them. One for X values and one for Y values. **MyMemoryBlock** class is in **BrainSimulator.Memory** namespace and **MyInputBlock** annotation in **BrainSimulator.Utils** namespace, so include those packages too.
+* If we want to actually process some data, we have to add *input memory blocks*. We will add two of them. One for X values and one for Y values. **MyMemoryBlock** class is in **GoodAI.Core.Memory** namespace and **MyInputBlock** annotation in **GoodAI.Core.Utils** namespace, so include those packages too.
 
 ``` csharp
 [MyInputBlock(0)]
@@ -133,9 +148,10 @@ If we now drag our node to the workplace, we can see its inputs, outputs as well
 By now, our node should look like this
 
 ``` csharp
-namespace BrainSimulator.Testing
+namespace RegressionModule
 {
-    /// <author>Michal Vlasák</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>Work in progress</status>
     /// <summary>Regression node</summary>
     /// <description>Will perform online linear regression</description>
@@ -176,7 +192,7 @@ namespace BrainSimulator.Testing
 ```
 
 # Add Task
-Main computation unit of nodes are **tasks**. We will add simple one, which will gather data from the input and save them to our memory blocks. Definition of **MyTask** class (which all tasks have to inherit from) is in the **BrainSimulator.Task** namespace.
+Main computation unit of nodes are **tasks**. We will add simple one, which will gather data from the input and save them to our memory blocks. Definition of **MyTask** class (which all tasks have to inherit from) is in the **GoodAI.Core.Task** namespace.
 
 ``` csharp
 [Description("Gather data")]
@@ -243,7 +259,7 @@ Now we have the task defined, but we need to actually **add** the task to the no
 public MyGatherDataTask GetData { get; private set; }
 ```
 
-If you now start BrainSimulator and add your node, you will see the task in its [node tasks bar](../ui.md#node-tasks).
+If you now start Brain Simulator and add your node, you will see the task in its [node tasks bar](../ui.md#node-tasks).
 
 ![Node tasks](steps/tut01-03.png)
 
@@ -372,10 +388,6 @@ The node should be working now. You can observe (e.g. by [matrix observer](../ob
 Our complete code should be following:
 
 ``` csharp
-using BrainSimulator.Memory;
-using BrainSimulator.Nodes;
-using BrainSimulator.Task;
-using BrainSimulator.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -384,9 +396,15 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace YourModuleNamespace.Testing
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+
+namespace RegressionModule
 {
-    /// <author>Michal Vlasák</author>
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
     /// <status>Work in progress</status>
     /// <summary>Regression node</summary>
     /// <description>Will perform online linear regression</description>
@@ -515,15 +533,16 @@ namespace YourModuleNamespace.Testing
 Now we will create a simple visualisation of the data and regression model. Start by creating new observer class
 
 ``` csharp
-using BrainSimulator.Testing;
-using BrainSimulator.Observers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YourModuleNamespace.Observers
+using GoodAI.Core.Testing;
+using GoodAI.Core.Observers;
+
+namespace RegressionModule.Observers
 {
     class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
     {
@@ -543,28 +562,18 @@ namespace YourModuleNamespace.Observers
 We also need to modify node entry in *conf/nodes.xml* to reflect the existence of custom observer
 
 ``` xml
-<Node type="YourModuleNamespace.Testing.MyRegressionNode" CanBeAdded="true">
-  <Observer type="YourModuleNamespace.Observers.MyRegressionObserver" />
+<Node type="RegressionModule.MyRegressionNode" CanBeAdded="true">
+  <Observer type="RegressionModule.Observers.MyRegressionObserver" />
 </Node>
 ```
 
-The observer now can be added, but doesn't do anything yet. Next step is to create a kernel, which will convert the data into pixels. Create new file `RegressionObserverKernel.cu`. You can see the boilerplate below
+The observer now can be added, but doesn't do anything yet. Next step is to create a kernel, which will convert the data into pixels. Create new file `RegressionObserverKernel.cu` in `RegressionModuleCuda` project. You can see the boilerplate below
 
 ``` csharp 
-#define _SIZE_T_DEFINED 
-#ifndef __CUDACC__ 
-#define __CUDACC__ 
-#endif 
-#ifndef __cplusplus 
-#define __cplusplus 
-#endif 
-
 #include <cuda.h> 
 #include <device_launch_parameters.h> 
-#include <texture_fetch_functions.h> 
-#include <builtin_types.h> 
-#include <vector_functions.h> 
-#include <float.h>
+
+#define PIXEL_COLOR 0xFF585858;
 
 extern "C" 
 {
@@ -605,7 +614,7 @@ int pixy = D_SIZE - ynew;
 
 int idx = pixy * D_SIZE + xnew;
 
-pixels[idx] = 0xFF585858;
+pixels[idx] = PIXEL_COLOR;
 ```
 
 We obtain x and y values from our data, scale them to plot size and then invert y coordinate (pixel buffer is indexed from left top, while we want to have center of coordinates in left bottom). After calculating the correct index in pixel array, we just set the pixel to black-ish color.
@@ -621,7 +630,7 @@ class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
     private MyCudaKernel m_lineKernel;
 
     public MyRegressionObserver() {
-        m_kernel = MyKernelFactory.Instance.Kernel(@"Observers\RegressionObserverKernel");
+        m_kernel = MyKernelFactory.Instance.Kernel(@"RegressionObserverKernel");
         Size = 200;
     }
 
@@ -664,7 +673,7 @@ class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
 We also need to include some packages for `MyBrowsable` and `Category` annotations and for `CudaDeviceVariable` class.
 
 ``` csharp
-using BrainSimulator.Utils;
+using GoodAI.Core.Utils;
 using System.ComponentModel;
 using ManagedCuda;
 ```
@@ -686,22 +695,8 @@ You may notice the strange position of the data being plotted. That is because o
 Another handy feature would be a visualization of the regression line. We can add the appropriate code to our `RegressionObserverKernel` or write new kernel. This new kernel can then be called either from `RegressionObserverKernel` or from `MyRegressionObserver`. I will show the latter option.
 
 ``` csharp
-
-#define _SIZE_T_DEFINED 
-#ifndef __CUDACC__ 
-#define __CUDACC__ 
-#endif 
-#ifndef __cplusplus 
-#define __cplusplus 
-#endif
-
 #include <cuda.h> 
 #include <device_launch_parameters.h> 
-#include <texture_fetch_functions.h> 
-#include <builtin_types.h> 
-#include <vector_functions.h> 
-#include <float.h>
-
 
 // draw line as y = k*x+q
 extern "C"
@@ -743,7 +738,7 @@ extern "C"
 Its definition in `MyRegressionObserver`'s constructor
 
 ``` csharp
-m_lineKernel = MyKernelFactory.Instance.Kernel(@"Observers\DrawLineKernel");
+m_lineKernel = MyKernelFactory.Instance.Kernel(@"DrawLineKernel");
 ```
 
 And calling it in `MyRegressionObserver`'s `Execute()`

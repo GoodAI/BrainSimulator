@@ -1,5 +1,5 @@
 # UI Guide
-We tried to keep the UI as simple as possible, you can see the basic controls of BS on the following screen-shot.
+We tried to keep the UI as simple as possible, you can see the basic controls of Brain Simulator on the following screen-shot.
 
 <a href="img/main.png">![Node](img/main.png)</a>
 
@@ -34,7 +34,7 @@ We tried to keep the UI as simple as possible, you can see the basic controls of
 * **Save Project As..., CTRL+SHIFT+S** - save project with dialog
 * List of recently opened projects
 * **Load User Nodes** - load nodes from custom XML file
-* **Quit** - quits BS
+* **Quit** - quits Brain Simulator
 
 #### Edit
 ![Edit](img/menu-edit.png)
@@ -55,7 +55,7 @@ It should be mentioned, that nodes are stored as XML text in a clipboard. Thanks
 #### View
 ![View](img/menu-view.png)
 
-* **Network, Node Properties, Tasks, Task Properties, Console, Validation** - Opens various BS windows (9, 7, 3, 4, 16, 17)
+* **Network, Node Properties, Tasks, Task Properties, Console, Validation** - Opens various Brain Simulator windows (9, 7, 3, 4, 16, 17)
 * **Node help, F1** - opens documentation for currently selected node
 * **Configure node selection..., CTRL+L** - opens configuration window, where you can choose which nodes should be visible in Nodes toolstrip (15) and which Worlds in Simulation controls (2)
 
@@ -77,14 +77,14 @@ Some of these are just shortcuts for menu items. Left to right:
 * **New/Open/Save Project**
 * **Run/Stop/Pause Simulation**
 * **Step Over**
-* **Sleep Interval** - after each simulation step, BS sleeps for X ms; used for slowing down the simulation
+* **Sleep Interval** - after each simulation step, Brain Simulator sleeps for X ms; used for slowing down the simulation
 * **Report Interval** - observers are rendered each X ms
 *  **Global Load on Start** - toggle; all nodes that have their own persistence data files with the state load them on start of the simulation
 *  **Global Save on Stop** - toggle; all nodes save their persistence data on simulation stop
 *  **Clear Stored Network State**
 *  **Export Stored Network State**
 *  **Autosave During Simulation each X steps** - toggle; all nodes save their persistence data on simulation stop
-*  **Reload CUDA Kernels** - TODO - what's usage of this?
+*  **Reload CUDA Kernels** - reloads kernel .PTX files. Can be used for adding kernels to running instance of Brain Simulator
 *  **World** - choose a world
 
 ### <a name="node-tasks">Node Tasks</a>
@@ -104,7 +104,7 @@ Left to right:
 * **Add Node Observer** - if node has any
 * **Load Data on Startup** - toggle; loads node's specific state data on the simulation start
 * **Save Data on Stop** - toggle; saves node's specific state data on the simulation stop
-* **Autosave Snapshot** - TODO
+* **Autosave Snapshot** - save observer snapshot (as .PNG) to %userprofile%\Documents\bs_snapshots
 * **Help, F1** - opens the documentation for the selected node
 
 ### <a name="workspace-controls">Workspace Controls</a>
@@ -112,7 +112,7 @@ Left to right:
 
 Left to right:
 
-* **Update Memory Blocks** - TODO: is this button still needed?
+* **Update Memory Blocks** - calls `UpdateMemoryBlocks()` for all nodes. Updates the memory block sizes on connections.
 * **Zoom To Fit** - makes all nodes in current node group visible in current viewport
 
 ### <a name="simulation-info">Simulation Info</a>
@@ -122,7 +122,7 @@ Left to right:
 
 * **Simulation state** - Running/Paused/Design Mode
 * **Current simulation step**
-* **Speed of simulation** - in steps/second (averaged over last TODO seconds)
+* **Speed of simulation** - in steps per second
 
 
 ### Node Group
@@ -135,4 +135,6 @@ When you are inside a node group workspace, you can rename its I/O connections b
 You can insert node groups into node groups how many times you want. You can copy/paste node groups as well.
 
 ### Conditional group
-TODO
+Conditional group serves for running a group of node only when a condition is met. The condition is transferred to a conditional group by means of signals. 
+
+Basically, you create a node which emits a signal, add it to your project and then choose the appropriate signal in the conditional group *Misc-Signal* attribute. Then, when the signal is raised, the content of the conditional group is ran.

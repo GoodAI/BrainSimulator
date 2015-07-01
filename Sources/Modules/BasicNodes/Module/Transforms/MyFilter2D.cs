@@ -2,14 +2,8 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using ManagedCuda;
-using ManagedCuda.VectorTypes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Modules.Transforms

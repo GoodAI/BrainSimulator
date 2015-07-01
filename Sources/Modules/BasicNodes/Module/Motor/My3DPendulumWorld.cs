@@ -26,7 +26,7 @@ using YAXLib;
 namespace GoodAI.Modules.Motor
 {
     /// <author>Karol Kuna</author>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Inverted pendulum in 3D World based on BEPUphysics engine.</summary>
     /// <description>Inverted pendulum with one or two controlled joints with one or three degrees of freedom. <br />
     /// Parameters:

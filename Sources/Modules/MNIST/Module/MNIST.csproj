@@ -51,6 +51,7 @@
     <Compile Include="MyMNISTWorld.cs" />
     <Compile Include="MyMovingObjectsWorld.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\nodes.xml">

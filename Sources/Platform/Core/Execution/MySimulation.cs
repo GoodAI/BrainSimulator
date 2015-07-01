@@ -116,13 +116,21 @@ namespace GoodAI.Core.Execution
             m_threadPool = new MyThreadPool(MyKernelFactory.Instance.DevCount, InitCore, ExecuteCore);
             m_threadPool.StartThreads();
 
-            ExecutionPlanner = new MyDefaultExecutionPlanner()
+            try
             {
-                PlanSignalTasks = true
-            };
+                ExecutionPlanner = new MyDefaultExecutionPlanner()
+                {
+                    PlanSignalTasks = true
+                };
 
-            PartitioningStrategy = new MyAllInOneGPUPartitioning(MyKernelFactory.Instance.DevCount, 0);
-            CurrentDebuggedBlocks = new MyExecutionBlock[MyKernelFactory.Instance.DevCount];
+                PartitioningStrategy = new MyAllInOneGPUPartitioning(MyKernelFactory.Instance.DevCount, 0);
+                CurrentDebuggedBlocks = new MyExecutionBlock[MyKernelFactory.Instance.DevCount];
+            }
+            catch (Exception e)
+            {
+                m_threadPool.Finish();
+                throw e;
+            }
         }
 
         /// <summary>

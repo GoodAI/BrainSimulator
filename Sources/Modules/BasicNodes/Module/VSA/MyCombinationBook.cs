@@ -19,14 +19,18 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA
 {
-    ///<author>Good AI</author>
-    ///<tag>#mm</tag>
-    ///<status>Not Optimized</status>
-    ///<summary>Generates static random permutations with either a single cycle or random cycles.
-    /// Optionally, generates random combinations with either unique numbers or allowed duplicates.</summary>
-    ///<description>A single cycle is created by applying the Sattolo's shuffle (as seen on <seealso cref="http://en.wikipedia.org/wiki/Fisher–Yates_shuffle#Sattolo.27s_algorithm"/>). 
-    /// Random cycles are created by using the Fisher-Yates shuffle (as seen on <seealso cref="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm"/>).
-    /// Use the <see cref="Power"/> property to pre-compute a desired power of the base permutation.</description>
+    /// <author>Good AI</author>
+    /// <tag>#mm</tag>
+    /// <status>Not Optimized</status>
+    /// <summary>
+    ///   Generates static random permutations with either a single cycle or random cycles.
+    ///   Optionally, generates random combinations with either unique numbers or allowed duplicates.
+    /// </summary>
+    /// <description>
+    ///   A single cycle is created by applying the Sattolo's shuffle (as seen on <seealso cref="http://en.wikipedia.org/wiki/Fisher–Yates_shuffle#Sattolo.27s_algorithm"/>). 
+    ///   Random cycles are created by using the Fisher-Yates shuffle (as seen on <seealso cref="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm"/>).
+    ///   Use the <see cref="Power"/> property to pre-compute a desired power of the base permutation.
+    /// </description>
     public class MyCombinationBook : MyCombinationBase
     {
         public enum CombinationMode
@@ -278,6 +282,9 @@ namespace GoodAI.Modules.VSA
         public MyMakePowerTask PerformTask { get; private set; }
 
 
+        /// <summary>
+        ///   Initializes all the memory needed for creating combinations.
+        /// </summary>
         [Description("Inititialize memory Task"), MyTaskInfo(OneShot = true)]
         public class MyInitMemTask : MyTask<MyCombinationBook>
         {
@@ -316,6 +323,9 @@ namespace GoodAI.Modules.VSA
         }
 
 
+        /// <summary>
+        ///   Copies combinations to the output
+        /// </summary>
         [Description("Perform Task")]
         public class MyMakePowerTask : MyTask<MyCombinationBook>
         {

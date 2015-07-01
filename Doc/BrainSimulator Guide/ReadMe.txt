@@ -12,6 +12,7 @@ How to edit documentation
 -------------------------
 Edit *.md files in ./docs folder
 Build HTML files by running: mkdocs build
+Show documentation locally by running: mkdocs serve
 
 How to use MkDocs
 -----------------

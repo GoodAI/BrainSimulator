@@ -1,6 +1,6 @@
-# Welcome to BSDoc
+# Welcome to Brain Simulator documentation
 
-The Brain Simulator project (abbr. as BS) is a framework/library/application for effective development/testing of our neural models. It will allow you to:
+The Brain Simulator project is a framework/library/application for effective development/testing of our neural models. It will allow you to:
 
 * Implement your specific model/algorithm as a node that can be used in a larger architecture
 * Simulate its behaviour in various environments (called worlds, which provide data sources and outputs/actuators)
@@ -15,7 +15,7 @@ The Brain Simulator project (abbr. as BS) is a framework/library/application for
 * [UI](ui.md) - UI description
 * [Model](model.md) - how to implement your own model
 * [Observer](observer.md) - how to implement your own observer
-* [Persistence](persistence.md) - how persistence works in BrainSimulator
+* **Guides** - various guides
 * [Changelog](changelog.md) - changelog and list of future ideas
 
 ## Solution architecture

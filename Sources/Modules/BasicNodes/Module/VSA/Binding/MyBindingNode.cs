@@ -19,8 +19,7 @@ namespace GoodAI.Modules.VSA
     /// <tag>#mm</tag>
     /// <status>Working</status>
     /// <summary>
-    /// BindInternal and unbind operations for symbols.
-    /// Based on fast Fourier transformation.
+    ///   Provides the Bind and Unbind operations for HRR or BSC symbols, as well permuting. The implementation for HRR is based on the fast Fourier transformation.
     /// </summary>
     public class MyBindingNode : MyWorkingNode
     {
@@ -117,6 +116,9 @@ namespace GoodAI.Modules.VSA
         public MyBindingTask BindInputs { get; private set; }
 
 
+        /// <summary>
+        ///   Performs the binding or unbinding operation.
+        /// </summary>
         [Description("BindInternal inputs")]
         public class MyBindingTask : MyTask<MyBindingNode>
         {

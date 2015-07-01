@@ -205,7 +205,10 @@
   <ItemGroup>
     <EmbeddedResource Include="conf\doc.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="res\sliders.png" />
+    <EmbeddedResource Include="res\sliders_big.png" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\world.png" />
     <EmbeddedResource Include="res\world_big.png" />
