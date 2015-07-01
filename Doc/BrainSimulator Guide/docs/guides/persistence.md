@@ -24,13 +24,22 @@ Be aware that temporal data will outlive Brain Simulator and nodes with enabled 
 ## Controls
 There are two toolbar groups for controlling which data to save and load. First of them is on the [simulation controls toolbar](../ui.md#simulation-controls)
 
-![Global persistence](img/persistence-01.png)
+![Global persistence](persistence/persistence-01.png)
 
 *  **Global Load on Start** - toggle, loads data from specified folder
 *  **Global Save on Stop** - toggle, saves data to temporary location
 *  **Clear Stored Network State** - deletes all data in temporary location
 *  **Export Stored Network State** - exports data from temporary location to specified folder
 *  **Autosave During Simulation each X steps** - toggle, saves data to temporary location each X steps
+
+Second one is specific for each node
+
+![Node persistence](persistence/persistence-02.png)
+
+*  **Load Data on Startup** - toggle, loads data from specified folder
+*  **Save Data on Stop** - toggle, saves data to temporary location
+*  **Clear Saved Data** - deletes data in temporary location
+
 
 ## Order of data operations
 After the first simulation step, all data loading is processed in following order:
