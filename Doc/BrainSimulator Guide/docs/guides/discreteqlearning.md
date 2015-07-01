@@ -1,4 +1,34 @@
+## Reinforcement Learning
 
+There are three basic types of learning: supervised, unsupervised and Reinforcement Learning (RL), which learns from rewards. Well known type of model-free RL is called Q-Learning, which does not require model of the problem before-head. The agent controlled by the Q-Learning algorithm is able to learn solely by:
+
+ * producing actions
+ * observing new states
+ * receiving rewards.
+
+And **it learns how to obtain the reward and while avoiding the punishment** (negative reward).
+The Q-Learning is named after the Q function, which computes Quantity of state-action combination: $\mathbf{Q} : \mathbf{S} \times \mathbf{A} \rightarrow \mathbb{R}$, where $\mathbf{S}$ is set of states and $\mathbf{A}$ set of actions. For each state, the $\mathbf{Q}$ tells the system *how good particular actions are*.
+
+In the discrete case, the system operates in discrete time-steps and the $\mathbf{Q}$-values are stored directly in the look-up table/matrix. The system learns iteratively by updating the following [equation](https://en.wikipedia.org/wiki/Q-learning):
+
+![QLearning Equation](discreteqlearning/Q-update.png)
+
+At each time step, the agent:
+
+ * selects the action $a_t$ at the current state $s_t$ (by using the Action Selection Mechanism (ASM), see below)
+ * executes the action $a_t$
+ * observes new state $s_{t+1}$
+ * receives the reward $R_{t+1}$
+ * finds the utility of the best action in the new state: $max_a Q_t(s_{t+1},a)$
+ * updates the $\mathbf{Q}$ value according to the equation above.  
+
+We can see that the equation *spreads the reward one step back*. The learning is is configured by parameters $\alpha$ (learning rate) and $\gamma$ (how strongly is the reward spread back ~ how far in the future agent sees).  
+
+The following figure shows an [illustration of](https://www.dropbox.com/s/30vq3ipduc9ghd5/jvitkudt2011.pdf?dl=0) **learned strategy** by the Q-Learning algorithm (actions: $\mathbf{A}$ *= {Left, Right, Down, Up, Eeat}*, positions: $\mathbf{S}$ *= {x,y}*). On the right there is a best action at each position, on the left side there is utility value of the best action in the position. Action *E* is at the position of the reward. The nearer the reward, the higher the action utilities are.
+
+![Example of Learned Strategy with the utility value](discreteqlearning/utility.PNG)
+
+Our discrete Q-Learning nodes use also **Eligibility trace**, which enables the system to update multiple $\mathbf{Q}$-values at [one time-step](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node78.html). This greatly speeds-up learning convergence. Such an improved algorithm is often called $\mathbf{Q(\lambda)}$. The parameter $\lambda$ defines how [strongly is current difference projected back](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node82.html). The higher the parameter, the faster the learning. But too high value can destabilize the learning.
 
 ### Discrete Q-Learning Node
 
