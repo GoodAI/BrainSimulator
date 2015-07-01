@@ -25,7 +25,8 @@ namespace GoodAI.Modules.Common
         SimulationStepFce,
     }
 
-    /// <author>Martin Balek</author>
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
     /// <status>Working</status>
     /// <summary>Samples a linear function values to the output array. 
     /// The output is shifted each step by ShiftSpeed parameter.
@@ -120,6 +121,7 @@ namespace GoodAI.Modules.Common
 
         public MyTransferTask GenerateInput { get; private set; }
 
+        /// <description></description>
         [Description("Generate input")]
         public class MyTransferTask : MyTask<MyGenerateInput>
         {

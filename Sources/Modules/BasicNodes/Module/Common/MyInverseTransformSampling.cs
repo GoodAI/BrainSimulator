@@ -11,10 +11,11 @@ using GoodAI.Core.Task;
 
 namespace GoodAI.Modules.Common
 {
-    /// <author>Martin Balek</author>
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
     /// <status>Working</status>
-    /// <summary>Generates proper output bit given a distribution</summary>
-    /// <description>Uses simple Inverse transform mapping</description>
+    /// <summary>Generates sample from given distribution</summary>
+    /// <description>Uses simple <a href="https://en.wikipedia.org/wiki/Inverse_transform_sampling">Inverse transform sampling</a></description>
     class MyInverseTransformSampling : MyWorkingNode
     {
         [MyOutputBlock(0)]
@@ -48,6 +49,7 @@ namespace GoodAI.Modules.Common
 
         public MyITSTask ITS { get; set; }
 
+        /// <description>Implements Inverse transform sampling</description>
         [Description("Inverse transform sampling"), MyTaskInfo(OneShot = false)]
         public class MyITSTask : MyTask<MyInverseTransformSampling>
         {
