@@ -14,7 +14,7 @@ using GoodAI.Modules.VSA;
 using YAXLib;
 using ManagedCuda;
 
-namespace GoodAI.Modules.Testing
+namespace GoodAI.Modules.Common
 {
     /// <author>GoodAI</author>
     /// <meta>mv</meta>

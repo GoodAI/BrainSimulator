@@ -17,7 +17,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.Common
 {
-    /// <author>Josef Strunc</author>
+    /// <author>GoodAI</author>
+    /// <meta>js</meta>
     /// <status>Working</status>
     /// <summary>Node for generating Comma Separated Value files. </summary>
     /// <description>The generated file starts with (possibly several lines of) headers

@@ -13,9 +13,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
-    /// <author>Pascal Heitz</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Crops a 2D image</summary>
+    /// <description></description>
     public class My2DCropNode : MyTransform
     {
         public MyImageCropTask ImageCrop { get; private set; }
@@ -39,6 +41,7 @@ namespace GoodAI.Modules.Transforms
 
         public override string Description { get { return LeftMargin.ToString("+#;-#;0") + " " + TopMargin.ToString("+#;-#;0") + " " + RightMargin.ToString("+#;-#;0") + " " + BottomMargin.ToString("+#;-#;0"); } }
 
+        /// <description>Performs cropping.</description>
         [Description("Crop"), MyTaskInfo(OneShot = false)]
         public class MyImageCropTask : MyTask<My2DCropNode>
         {
