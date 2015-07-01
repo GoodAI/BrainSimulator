@@ -18,13 +18,15 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA
 {
-    ///<author>Good AI</author>
-    ///<tag>#mm</tag>
-    ///<status>Working</status>
-    ///<summary>Performs a random projection to another dimension by computing A.x with a random matrix A and the input vector x.
-    ///The transformation matrix is shared with nodes that do the same transformation (including its inverse, see <see cref="DoDecoding"/>)
-    ///and have the same <see cref="NameGroup"/>. You can select which matrix axis to normalize to produce vectors of different lengths.</summary>
-    ///<description></description>
+    /// <author>Good AI</author>
+    /// <tag>#mm</tag>
+    /// <status>Working</status>
+    /// <summary>
+    ///   Performs a random projection to another dimension by computing A.x with a random matrix A and the input vector x.
+    ///   The transformation matrix is shared with nodes that do the same transformation (including its inverse, see <see cref="DoDecoding"/>)
+    ///   and have the same <see cref="NameGroup"/>. You can select which matrix axis to normalize to produce vectors of different lengths.
+    /// </summary>
+    /// <description></description>
     public class MyRandomMapper : MyRandomPool
     {
         #region Memory blocks
@@ -132,6 +134,9 @@ namespace GoodAI.Modules.VSA
         public MyRandomMapperTask PerformTask { get; private set; }
 
 
+        /// <summary>
+        ///   Allocates all the memory needed to store and create the desired transformation matrices and generates them based on the selected settings.
+        /// </summary>
         [Description("Generate projection vectors"), MyTaskInfo(OneShot = true, Disabled = false)]
         public class MyGenerateMatrixTask : MyTask<MyRandomMapper>
         {
@@ -206,6 +211,9 @@ namespace GoodAI.Modules.VSA
         }
 
 
+        /// <summary>
+        ///   Transforms the input by the transformation matrix as specified by the parameters.
+        /// </summary>
         [Description("Map to another dimension")]
         public class MyRandomMapperTask : MyTask<MyRandomMapper>
         {
