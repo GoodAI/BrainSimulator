@@ -78,7 +78,7 @@ mat_operation.Run(Matrix.MatOperation.Addition, A, B, C);
 
 Complete code in the BS node will look like:
 ``` csharp
-public class MyExecuteTask : MyTask<MyMatrixNode>
+public class MyExecuteTask : MyTask<MyNode>
 {
   private MyMatrixAutoOps mat_operation;
 
