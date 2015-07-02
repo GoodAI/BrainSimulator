@@ -587,6 +587,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\spike.png" />
+    <Content Include="res\splash.png" />
     <Content Include="res\StatusAnnotations_Critical_16xMD.png" />
     <None Include="res\StatusAnnotations_Debug.png" />
     <Content Include="res\StatusAnnotations_Help.png" />
