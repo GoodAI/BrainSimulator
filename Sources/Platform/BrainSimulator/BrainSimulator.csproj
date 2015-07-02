@@ -79,6 +79,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>brainSim.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -281,6 +284,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="brainSim.ico" />
     <Content Include="res\abs.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -315,6 +319,7 @@
     <Content Include="res\book_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\brainSim.ico" />
     <Content Include="res\button.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

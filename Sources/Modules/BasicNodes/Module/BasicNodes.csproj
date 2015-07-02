@@ -306,6 +306,10 @@
     <EmbeddedResource Include="res\output_layer_big.png" />
     <EmbeddedResource Include="res\keypad.png" />
     <EmbeddedResource Include="res\keypad_big.png" />
+    <EmbeddedResource Include="res\lstm.png" />
+    <EmbeddedResource Include="res\lstm_big.png" />
+    <EmbeddedResource Include="res\input_layer.png" />
+    <EmbeddedResource Include="res\input_layer_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
