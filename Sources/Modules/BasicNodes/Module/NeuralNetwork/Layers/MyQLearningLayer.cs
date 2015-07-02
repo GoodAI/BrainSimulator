@@ -73,6 +73,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         // Tasks
         public MyQLearningTask QLearning { get; protected set; }
         public MyRestoreValuesTask RestoreValues { get; protected set; }
+        public MySaveActionTask SaveAction { get; protected set; }
 
         // description
         public override string Description

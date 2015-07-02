@@ -12,6 +12,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
+    /// <status>Working</status>
+    /// <summary>Resizes input data.</summary>
+    /// <description>It is meant to be used with 2D-data (images).</description>
     [YAXSerializeAs("Resize2D")]
     public class MyResize2D : MyTransform
     {
@@ -27,6 +32,7 @@ namespace GoodAI.Modules.Transforms
 
         public override string Description { get { return "x" + Factor.ToString(); } }
 
+        /// <description>Uses bilinear resampling for perfroming resize</a></description>
         [Description("Image Scale"), MyTaskInfo(OneShot = false)]
         public class MyImageScaleTask : MyTask<MyResize2D>
         {

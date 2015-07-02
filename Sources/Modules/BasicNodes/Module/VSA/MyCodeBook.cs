@@ -17,12 +17,16 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA
 {
-    ///<author>Good AI</author>
-    ///<tag>#mm</tag>
-    ///<status>Working</status>
-    ///<summary>Static symbol table shared between all nodes of the same <see cref="MyRandomPool.SymbolSize"/>.
-    ///Use <see cref="Mode"/> to specify whether to generate a symbol or test it through dot product with the input.</summary>
-    ///<description></description>
+    /// <author>Good AI</author>
+    /// <tag>#mm</tag>
+    /// <status>Working</status>
+    /// <summary>
+    ///   Static symbol table shared between all nodes of the same SymbolSize.
+    ///   Use Mode to specify whether to generate a symbol or test it through dot product with the input.
+    /// </summary>
+    /// <description>
+    ///   Pre-computes vectors that are shared between nodes of this type that have the same SymbolSize.
+    /// </description>
     public class MyCodeBook : MyCodeBookBase
     {
         public enum CodeBookMode
@@ -37,7 +41,6 @@ namespace GoodAI.Modules.VSA
         public MyMemoryBlock<float> TempBlock { get; private set; }
 
         #endregion
-
 
         #region Properties
 
@@ -113,6 +116,9 @@ namespace GoodAI.Modules.VSA
         public MyCodeVectorsTask PerformTask { get; private set; }
 
 
+        /// <summary>
+        ///   Select pre-computed random vectors by using the CodeVector property.
+        /// </summary>
         [Description("Perform Task")]
         public class MyCodeVectorsTask : MyTask<MyCodeBook>
         {
@@ -139,6 +145,8 @@ namespace GoodAI.Modules.VSA
 
             public override void Init(int nGPU)
             {
+                lastIdx = -1;
+
                 if (Owner.UseBSCVariety)
                     m_kernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
                 else

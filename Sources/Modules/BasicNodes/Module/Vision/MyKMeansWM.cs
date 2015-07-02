@@ -26,7 +26,8 @@ using GoodAI.Core.Observers; // Because of the keyboard...
 
 namespace GoodAI.Modules.Vision
 {
-    /// <author> Honza and Michal</author>
+    /// <author>GoodAI</author>
+    /// <meta>jk,mv</meta>
     /// <status> Working</status>
     /// <summary>
     ///    On-the-fly clustering of incoming data. The node expects descriptor of the patch and its position. Then, it assigned cluster id to the input and change the clusters.

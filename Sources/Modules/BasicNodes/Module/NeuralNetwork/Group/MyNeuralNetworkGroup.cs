@@ -25,7 +25,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     /// <summary>Network node group.</summary>
     /// <description>
     /// The Neural Network Group is necessary to build a neural network consisting of neural layers.<br></br>
-    /// It is required to control the data flow during feed-forward and backpropagation between layers, as well as holding important hyperparameters and method variables.<br></br>
+    /// It is required to control the data flow during feed-forward and backpropagation between layers, as well as holding important hyperparameters and method variables.
+    /// </description>
     public class MyNeuralNetworkGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         //Node properties
@@ -128,6 +129,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             selected = newPlan.Where(task => task is MyRestoreValuesTask).ToList();
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
+
+            // move MySaveActionTask to the end of the task list
+            selected = newPlan.Where(task => task is MySaveActionTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.AddRange(selected);
 
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());

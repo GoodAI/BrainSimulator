@@ -3,7 +3,7 @@
   <KnownNodes>    
     <Node type="GoodAI.Core.Nodes.MyNodeGroup" CanBeAdded="true" BigIcon="group_big.png" SmallIcon="group.png"/>
     <Node type="GoodAI.Core.Nodes.MyConditionalGroup" CanBeAdded="true" BigIcon="group_signal_big.png" SmallIcon="group_signal.png"/>
-    <Node type="GoodAI.Core.Nodes.MyUserInput" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png"/>
+    <Node type="GoodAI.Core.Nodes.MyUserInput" CanBeAdded="true" BigIcon="sliders_big.png" SmallIcon="sliders.png"/>
             
     <Node type="GoodAI.Modules.Transforms.MyAbsoluteValue" CanBeAdded="true" BigIcon="abs_big.png" SmallIcon="abs.png"/>
     <Node type="GoodAI.Modules.Transforms.MyReduction" CanBeAdded="true" BigIcon="reduce_big.png" SmallIcon="reduce.png"/>

@@ -14,6 +14,14 @@ using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
+    /// <author>Good AI</author>
+    /// <tag>#mm</tag>
+    /// <status>Working</status>
+    /// <summary>
+    ///   Performs an element-wise join operation on the input vectors. This can be arithmetic (addition, multiplication,...), 
+    ///   binary (AND, XOR,...), permutation, distance measurement or stacking the inputs.
+    /// </summary>
+    /// <description>This node is OBSOLETE and exists only because of the need for backward compatibility. It is to be removed in a future update.</description>
     public class MyJoin : MyWorkingNode
     {
         [MyOutputBlock]
@@ -240,6 +248,10 @@ namespace GoodAI.Core.Nodes
             }
         }
 
+
+        /// <summary>
+        ///   Initializes any memory needed to perform the join operation.
+        /// </summary>
         [Description("Init memory mapping"), MyTaskInfo(OneShot = true)]
         public class MyInitTask : MyTask<MyJoin>
         {
@@ -266,6 +278,9 @@ namespace GoodAI.Core.Nodes
             }
         }
 
+        /// <summary>
+        ///   Performs the desired join operation.
+        /// </summary>
         [Description("Perform join operation")]
         public class MyStackInputsTask : MyTask<MyJoin>
         {

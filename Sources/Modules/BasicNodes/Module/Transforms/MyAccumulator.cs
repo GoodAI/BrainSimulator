@@ -13,6 +13,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
+    /// <status>Working</status>
+    /// <summary>Temporal operation on input data.</summary>
+    /// <description>Accumulates values according chosen strategy or delays or quantizes input data.</description>    
     [YAXSerializeAs("Accumulator")]
     public class MyAccumulator : MyTransform
     {
@@ -74,6 +79,10 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// Delays data for given number of timesteps.<br/>
+        /// For initial period it sets given value or uses first value available.
+        /// </summary>
         [Description("Delay")]
         public class MyShiftDataTask : MyTask<MyAccumulator>
         {
@@ -86,8 +95,7 @@ namespace GoodAI.Modules.Transforms
             public float InitialValue { get; set; }
 
             public override void Init(Int32 nGPU)
-            {
-                
+            {                
             }
 
             public override void Execute()
@@ -128,6 +136,12 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// Sums all input values with given decay:
+        /// For arithmetic adds/subtracts difference from previous step,<br/>
+        /// for geometric decay is given by chosen factor,<br/>
+        /// for momentum calculates approximation of moving average.<br/>
+        /// </summary>
         [Description("Approach Value")]
         public class MyApproachValueTask : MyTask<MyAccumulator>
         {
@@ -188,6 +202,9 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// Copies input to output in given period of steps. That value remains on output until next update.
+        /// </summary>
         [Description("Quantized Copy")]
         public class MyQuantizedCopyTask : MyTask<MyAccumulator>
         {

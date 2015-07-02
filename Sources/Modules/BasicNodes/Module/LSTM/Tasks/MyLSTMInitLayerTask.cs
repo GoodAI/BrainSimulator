@@ -45,6 +45,11 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.InputGateWeightDeltas.Fill(0);
             Owner.ForgetGateWeightDeltas.Fill(0);
             Owner.OutputGateWeightDeltas.Fill(0);
+
+            Owner.CellInputWeightMeanSquares.Fill(0);
+            Owner.InputGateWeightMeanSquares.Fill(0);
+            Owner.ForgetGateWeightMeanSquares.Fill(0);
+            Owner.OutputGateWeightMeanSquares.Fill(0);
         }
     }
 }

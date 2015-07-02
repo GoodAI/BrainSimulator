@@ -10,7 +10,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 3; } }
+        public override int CurrentVersion { get { return 4; } }
 
 
         /// <summary>
@@ -106,5 +106,20 @@ namespace GoodAI.Modules.Versioning
 
             return result;
         }
+
+        /// <summary>
+        /// Move random node to proper namespace
+        /// Author: MB
+        /// </summary>
+        public static string Convert3To4(string xml)
+        {
+            string result = xml;
+
+            result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRandomNode", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRandomNode");
+            result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRNGTask", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRNGTask");             
+
+            return result;
+        }
+
     }
 }
