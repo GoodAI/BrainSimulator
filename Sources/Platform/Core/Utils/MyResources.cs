@@ -8,8 +8,14 @@ namespace GoodAI.Core.Utils
     public static class MyResources
     {
         public static string GetMyAssemblyPath()
-        {
+        {            
             string location = Assembly.GetCallingAssembly().Location;
+            return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
+        }
+
+        public static string GetEntryAssemblyPath()
+        {
+            string location = Assembly.GetEntryAssembly().Location;
             return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
         }
 

@@ -29,7 +29,7 @@ namespace GoodAI.Core.Configuration
 
         static MyConfiguration()
         {
-            GlobalPTXFolder = @"modules\GoodAI.BasicNodes\ptx\";
+            GlobalPTXFolder = MyResources.GetEntryAssemblyPath() + @"\modules\GoodAI.BasicNodes\ptx\";
             KnownNodes = new Dictionary<Type, MyNodeConfig>();
             KnownWorlds = new Dictionary<Type, MyWorldConfig>();
             Modules = new List<MyModuleConfig>();
@@ -42,9 +42,9 @@ namespace GoodAI.Core.Configuration
         {
             //SearchPath.Add(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)); //add bs folder name
 
-            if (Directory.Exists(MODULES_PATH))
+            if (Directory.Exists(MyResources.GetEntryAssemblyPath() + "\\" + MODULES_PATH))
             {
-                foreach (string modulePath in Directory.GetDirectories(MODULES_PATH))
+                foreach (string modulePath in Directory.GetDirectories(MyResources.GetEntryAssemblyPath() + "\\" + MODULES_PATH))
                 {
                     ModulesSearchPath.Add(modulePath);
                 }
@@ -80,7 +80,7 @@ namespace GoodAI.Core.Configuration
         {
             MyLog.INFO.WriteLine("Loading system modules...");
 
-            AddModuleFromAssembly(new FileInfo(CORE_MODULE_NAME), true);            
+            AddModuleFromAssembly(new FileInfo(MyResources.GetEntryAssemblyPath() + "\\" + CORE_MODULE_NAME), true);                     
 
             MyLog.INFO.WriteLine("Loading custom modules...");
 
@@ -145,6 +145,11 @@ namespace GoodAI.Core.Configuration
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Module loading failed: " + e.Message);
+
+                if (basicNode)
+                {
+                    throw new MyModuleLoadingException("Core module loading failed (" + e.Message + ")", e);
+                }
             }
         }
     }
@@ -161,5 +166,10 @@ namespace GoodAI.Core.Configuration
 
         [YAXSerializableField, YAXAttributeFor("Simulation"), YAXSerializeAs("Step")]
         public uint SimulationStep { get; set; }
+    }
+
+    internal class MyModuleLoadingException : Exception 
+    {
+        public MyModuleLoadingException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

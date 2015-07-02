@@ -573,7 +573,15 @@ namespace GoodAI.BrainSimulator.Forms
             MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
 
-            MyConfiguration.LoadModules();
+            try
+            {
+                MyConfiguration.LoadModules();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Fatal error occured during initialization", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
+            }
 
             Documentation = new MyDocProvider();
 
