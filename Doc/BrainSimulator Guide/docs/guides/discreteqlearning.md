@@ -24,7 +24,7 @@ At each time step, the agent:
 
 We can see that the equation *spreads the reward one step back*. The learning is is configured by parameters $\alpha$ (learning rate) and $\gamma$ (how strongly is the reward spread back ~ how far in the future agent sees).  
 
-The following figure shows an [illustration of](https://www.dropbox.com/s/30vq3ipduc9ghd5/jvitkudt2011.pdf?dl=0) **learned strategy** by the Q-Learning algorithm (actions: $\mathbf{A}$ *= {Left, Right, Down, Up, Eeat}*, positions: $\mathbf{S}$ *= {x,y}*). On the right there is a best action at each position, on the left side there is utility value of the best action in the position. Action *Eat* is at the position of the reward. The nearer the reward, the higher the action utilities are.
+The following figure shows an [illustration of](https://www.dropbox.com/s/30vq3ipduc9ghd5/jvitkudt2011.pdf?dl=0) **learned strategy** by the Q-Learning algorithm (actions: $\mathbf{A} = \lbrace Left, Right, Down, Up, Eeat \rbrace$ , positions: $\mathbf{S}= \lbrace x,y \rbrace$). On the right there is a best action at each position, on the left side there is utility value of the best action in the position. Action *Eat* is at the position of the reward. The nearer the reward, the higher the action utilities are.
 
 ![Example of Learned Strategy with the utility value](discreteqlearning/utility.PNG)
 
@@ -108,7 +108,7 @@ Here is simplified sequence showing how the architecture works. It starts with n
 ![HARM Node](discreteqlearning/harm.PNG)
 
 
-The following animation shows example of operation of the `DiscreteHarmNode` in the `GridWorld`. The agent can do 6 primitive actions ($\mathbf{A}$ *= {Left,Right,Up,Down,Noop,Press}*) and has already discovered 6 own abilities. For each of them it created own decision space, these are:
+The following animation shows an [example](../examples.md#harmMapE) of operation of the `DiscreteHarmNode` in the `GridWorld`. The agent can do 6 primitive actions ($\mathbf{A} = \lbrace Left,Right,Up,Down,Noop,Press \rbrace)$ and has already discovered 6 own abilities. For each of them it created own decision space, these are:
 
   * move in two directions (X and Y axis)
   * control light 1
@@ -116,7 +116,7 @@ The following animation shows example of operation of the `DiscreteHarmNode` in 
   * control door 2
   * control light 2
 
-The corresponding brain is depicted above. Here, the motivation of `ASM` is set to 1, so the agent selects actions based on utilities produced by the `DiscreteHarmNode`. We can see how the agent systematically trains the SRPs based on the dynamics of the motivation sources.  
+The corresponding brain is depicted above. Here, the motivation of `ASM` is set to 1, so the agent selects actions based on utilities produced by the `DiscreteHarmNode`. We can see how the agent systematically trains the SRPs based on the dynamics of the motivation sources.  On the top left there are current utilities of each primitive action, under it there is the selected action.  
 
 
 ![Motivation Dynamics](discreteqlearning/motivation-dynamics.gif)
