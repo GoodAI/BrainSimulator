@@ -40,7 +40,7 @@ namespace GoodAI.Modules.CLA
         {
             get
             {
-                return 0; // m_regionSize;
+                return m_regionSize;
             }
             set
             {
