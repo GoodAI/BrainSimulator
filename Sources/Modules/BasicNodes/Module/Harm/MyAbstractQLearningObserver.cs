@@ -20,6 +20,9 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.Observers
 {
+    /// <author>GoodAI</author>
+    /// <meta>df,jv</meta>
+    /// <status>Working</status>
     /// <summary>
     /// Observes valdata stored in the QMatrix.
     /// </summary>

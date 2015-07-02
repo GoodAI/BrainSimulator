@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Modules.Harm
 {
+
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
+    /// <status>Working</status>
     /// <summary>
     /// Implements multidimensional matrix as recursive list of lists of depth = no. dimensions.
     /// </summary>

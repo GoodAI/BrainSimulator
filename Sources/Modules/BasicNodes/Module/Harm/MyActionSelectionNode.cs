@@ -15,7 +15,8 @@ using ManagedCuda;
 
 namespace GoodAI.Modules.Harm
 {
-    /// <author>Jaroslav Vitku</author>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
     /// <status>Working</status>
     /// <summary>Implements motivation-based action selection method. Motivation weights between greedy and random strategy.</summary>
     /// <description>

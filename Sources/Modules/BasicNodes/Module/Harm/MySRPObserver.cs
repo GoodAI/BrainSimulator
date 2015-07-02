@@ -17,6 +17,10 @@ using GoodAI.Modules.Harm;
 
 namespace GoodAI.Modules.Observers
 {
+
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
+    /// <status>Working</status>
     /// <summary>
     /// Observers SRPs (Stochastic Return Predictors) in the HARM (each one has name, own motivation, promoted variable etc..).
     /// </summary>

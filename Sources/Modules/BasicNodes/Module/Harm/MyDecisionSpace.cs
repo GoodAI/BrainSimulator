@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 namespace GoodAI.Modules.Harm
 {
 
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
+    /// <status>Working</status>
     /// <summary>
     /// Each stochastic return predictor has own DS, which contains subset of actions/vars
     /// of the Root Decision Space

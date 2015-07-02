@@ -19,8 +19,9 @@ using GoodAI.Modules.GridWorld;
 
 namespace GoodAI.Modules.Harm
 {
-    /// <author>Jaroslav Vitku</author>
-    /// <status>Under development</status>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
+    /// <status>Working</status>
     /// <summary>
     /// Parent of nodes that use discrete QLearning algorithms.
     /// </summary>

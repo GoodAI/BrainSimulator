@@ -12,6 +12,9 @@ namespace GoodAI.Modules.Harm
         void PerformActionAdding(List<int> actionsJustExecuted);
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
+    /// <status>Working</status>
     /// <summary>
     /// SRP is a standalone system, which includes: decision space, learning algorithm, action selection.
     /// </summary>

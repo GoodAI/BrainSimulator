@@ -18,7 +18,8 @@ using OpenTK.Input;
 
 namespace GoodAI.Modules.Harm
 {
-    /// <author>Jaroslav Vitku</author>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
     /// <status>Working</status>
     /// <summary>
     /// Implements Q-Learning (Q-Lambda) algorithm based on matrix representation of data.

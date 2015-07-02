@@ -16,7 +16,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.Harm
 {
-    /// <author>Jaroslav Vitku</author>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
     /// <status>Working</status>
     /// <summary>
     /// Computes direction of change of the input variables (independently). 
