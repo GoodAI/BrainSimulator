@@ -1,6 +1,6 @@
 /*
 *
-*   To work with matrixes.
+*   To work with matrices.
 *
 */
 

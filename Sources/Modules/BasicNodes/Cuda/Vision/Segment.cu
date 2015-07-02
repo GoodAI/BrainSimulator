@@ -90,10 +90,6 @@ extern "C"
 		if (threadIdx.x<3 && threadIdx.y<3) {
 			if (threadIdx.x>=cBegin && threadIdx.x<=cEnd && threadIdx.y>=rBegin && threadIdx.y<=rEnd) {
 				int cmprIdx=(blockRow+threadIdx.y-1)*nClusterIdxStride+(blockCol+threadIdx.x-1);
-				//if(cmprIdx >= listSize) {
-				//	// printf("[%s:%d] cmprIdx(%d) is greater than or equlas listSize(%d)\n", __FILE__, __LINE__, cmprIdx, listSize);
-				//	return;
-				//}
 
 				fShareLab[threadIdx.y][threadIdx.x]=vSLICCenterList[cmprIdx].lab;
 				fShareXY[threadIdx.y][threadIdx.x]=vSLICCenterList[cmprIdx].xy;
@@ -124,10 +120,6 @@ extern "C"
 				for (int c=cBegin;c<=cEnd;c++)
 				{
 					int cmprIdx=(blockRow+r-1)*nClusterIdxStride+(blockCol+c-1);
-					//if(cmprIdx >= nSegs) {
-					//	printf("[%s:%d] cmprIdx(%d) is greater than or equlas nSegs(%d)\n", __FILE__, __LINE__, cmprIdx, nSegs);
-					//	continue;
-					//}
 
 					//compute SLIC distance
 					float fDab=(fPoint.x-fShareLab[r][c].x)*(fPoint.x-fShareLab[r][c].x)
@@ -192,11 +184,6 @@ extern "C"
 
 		int clusterIdx=blockIdx.x*blockDim.x+threadIdx.x;
 
-		//if(clusterIdx >= listSize) {
-		//	printf("[%s:%d] clusterIdx(%d) is greater than or equlas listSize(%d)\n", __FILE__, __LINE__, clusterIdx, listSize);
-		//	return;
-		//}
-
 		int offsetBlock = threadIdx.x * blockWidth+ blockIdx.x * blockHeight * nWidth;
 
 		float2 crntXY=vSLICCenterList[clusterIdx].xy;
@@ -222,10 +209,6 @@ extern "C"
 			for (int j = xBegin; j < xEnd; j++)
 			{
 				int offset=j + i * nWidth;
-				//if(offset >= nWidth * nHeight) {
-				//	printf("[%s:%d] offset(%d) is greater than or equlas (width:%d, height:%d)\n", __FILE__, __LINE__, offset, nWidth, nHeight);
-				//	continue;
-				//}
 
 				float4 fPixel=floatBuffer[offset];
 				int pIdx=maskBuffer[offset];

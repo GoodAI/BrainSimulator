@@ -37,14 +37,14 @@ extern "C"
 		int nPatches, 
 		float * desc,
 		int desc_dim,
-		int id_desc_move) /// whic hindex is the one with movement
+		int id_desc_move) // whic hindex is the one with movement
 	{
 
 		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		int idDim   = id % energy_dim;
 		int idPatch = id / energy_dim;
 		if (id<energy_dim*nPatches){
-			if (idDim==1) /// movement
+			if (idDim==1) // movement
 				energy[id] = -desc[idPatch*desc_dim + id_desc_move];
 		}
 	}
@@ -64,8 +64,8 @@ extern "C"
 		int idDim   = id % energy_dim;
 		int idPatch = id / energy_dim;
 		if (id<energy_dim*nPatches){
-			if (idDim==0){ /// time
-				if (idPatch==(int)(*idFocuser_focused)) /// it is id that focuser just focused
+			if (idDim==0){ // time
+				if (idPatch==(int)(*idFocuser_focused)) // it is id that focuser just focused
 					energy[id] += par_time_increase_energy_on_focus;
 				else
 					energy[id] /= par_time_decrease_energy_in_time ;

@@ -28,8 +28,8 @@ using GoodAI.Core.Observers; // Because of the keyboard...
 namespace GoodAI.Modules.Vision
 {
 
-    /// <author>Jan Knopp</author>
-    /// <status>Working </status>
+    /// <author>GoodAI</author>
+    /// <meta>jk</meta>
     /// <summary>
     ///   Select input patch/segment/object for Saccadic movement...
     /// </summary>

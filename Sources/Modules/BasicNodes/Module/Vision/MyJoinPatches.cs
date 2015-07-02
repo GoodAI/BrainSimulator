@@ -28,8 +28,8 @@ using GoodAI.Core.Observers.Helper;
 
 namespace GoodAI.Modules.Vision
 {
-    /// <author>Jan Knopp</author>
-    /// <status> Working</status>
+    /// <author>GoodAI</author>
+    /// <meta>jk</meta>
     /// <summary>
     ///   Concatenate patches/segments into objects.
     /// </summary>

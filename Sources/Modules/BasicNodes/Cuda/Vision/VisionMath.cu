@@ -58,7 +58,7 @@ extern "C"
 
 
 
-	/// fil vector between idmin and idmadx to value :)
+	// fil vector between idmin and idmadx to value :)
 	__global__ void SetVauleInIdxMinMax(
 		float* vector, 
 		int id_min, 
@@ -79,7 +79,7 @@ extern "C"
 	}
 
 
-		/// this is called from kernel, so no idx... 
+		// this is called from kernel, so no idx... 
 	__device__ float Dist_between_two_vec(float * v0 , float *v1 , int size){
 			float dist = 0;
 			for (int i=0 ; i<size ; i++)
@@ -88,45 +88,14 @@ extern "C"
 			return sqrt(dist);
 	}
 	__global__ void Dist_between_two_vec_naive(float * v0 , float *v1 , int size , float * dst){
-//		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
-	//	if (id<1){
 			float dist = 0;
 			for (int i=0 ; i<size ; i++)
 				dist+= (v0[i]-v1[i]);//*(v0[i]-v1[i]);
 			
 			dst[0] = dist;
-		//}
 	}
 
 
-	/*__global__ void Vector_Dot_Product ( const float *V1 , const float *V2 , float *V3   )
-	{
-		__shared__ float chache[ThreadPerBlock] ;
-		float temp ;
-
-		const unsigned int tid = blockDim.x * blockIdx.x + threadIdx.x ;
-		const unsigned int chacheindex = threadIdx.x ;
-
-		while ( tid < N ){
-			temp += V1[tid] * V2[tid] ;
-			tid += blockDim.x * gridDim.x ;
-		}
-
-		chache[chacheindex] = temp ;
-
-		__synchthreads () ;
-
-		int i  = blockDim.x / 2 ;
-		while ( i!=0 ){
-			if ( chacheindex < i )
-				chache[chacheindex] += chache [chacheindex + i] ;
-			__synchthreads () ;
-			i/=2 ;
-		}
-		if ( chacheindex == 0 )
-			V3[blockIdx.x] = chache [0] ;
-	}
-	*/
 	
 	////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
@@ -138,7 +107,7 @@ extern "C"
 	////////////////////////////////////////////////////////////////////////
 	
 	
-	/// A+B=C
+	// A+B=C
 	__global__ void Sum(float * A , float  *B , float *C, int size) {
 		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (id<size){
@@ -159,9 +128,9 @@ extern "C"
 		if (id<size)
 			A[id] /= B[id];
 	}
-	///
-	/// get idx of max value... this is written in a stupid way using num of blocks & threads=1
-	///
+	//
+	// get idx of max value... this is written in a stupid way using num of blocks & threads=1
+	//
 	__global__ void getIdxOfMaxVal_naive(const float * A , float * out , int size) {
 		float max = -FLT_MAX;
 		float tmp = -1;
@@ -185,8 +154,8 @@ extern "C"
 		*out = tmp;
 	}
 
-	/// get row of C matrix
-	/// efficiency should imnprove when using __sync!  but it shouldne matter only for big matrices.. :)
+	// get row of C matrix
+	// efficiency should imnprove when using __sync!  but it shouldne matter only for big matrices.. :)
 	__global__ void getRow_naive(const float * A , float * row_id , float * out , int Acols) {
 		int id = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (id<Acols){

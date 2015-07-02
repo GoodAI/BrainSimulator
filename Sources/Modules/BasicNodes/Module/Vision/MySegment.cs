@@ -30,8 +30,8 @@ namespace GoodAI.Modules.Vision
 {
 
 
-    /// <author>Jan Knopp</author>
-    /// <status>Working</status>
+    /// <author>GoodAI</author>
+    /// <meta>jk</meta>
     /// <summary>
     ///   Segment image into a set of superpixels. The code is restriceted to square images and specific nSegments values.
     /// </summary>
