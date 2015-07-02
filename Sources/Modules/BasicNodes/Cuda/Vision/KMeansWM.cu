@@ -154,7 +154,6 @@ extern "C"
 		int id_Plot_i = threadIdx.x;
 		int id_Plot_j = threadIdx.y;
 		//int id_xy = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
-		int max_ = 500;
 
 		float2 xy;
 		xy.x = XY[id_Object*dim_xy];
@@ -182,10 +181,10 @@ extern "C"
 	__global__  void DownInTime (unsigned int * texture , int size_im){
 		int idx = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (idx<size_im){
-			int r = (char)(texture[idx] >> 16);//((100 << 24)  | (255 << 16) | (255 << 8) | 255)
+/*			int r = (char)(texture[idx] >> 16);//((100 << 24)  | (255 << 16) | (255 << 8) | 255)
 			int g = (char)(texture[idx] >> 8);//((100 << 24)  | (255 << 16) | (255 << 8) | 255)
 			int b = (char)(texture[idx] >> 0);//((100 << 24)  | (255 << 16) | (255 << 8) | 255)
-			/*r = 255-(255-r)*0.5;
+*/			/*r = 255-(255-r)*0.5;
 			g = 255-(255-g)*0.5;
 			b = 255-(255-b)*0.5;*/
 			texture[idx]   = GET_RGBA(0,0,0,255);
@@ -286,7 +285,7 @@ extern "C"
 			+ blockDim.x*blockIdx.x				
 			+ threadIdx.x;
 
-        float pupilControl[3];
+//        float pupilControl[3];
 		int numOfPixels = inputWidth * inputHeight;
 
 		if(id < numOfPixels) //id of the thread is valid
