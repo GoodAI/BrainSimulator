@@ -21,8 +21,9 @@ namespace GoodAI.Modules.Harm
     /// <author>GoodAI</author>
     /// <meta>jv</meta>
     /// <status>Working</status>
-    /// </summary>
+    /// <summary>
     /// Implements HARM based on the discrete Q-Learning algorithm.
+    /// </summary>
     /// <description>
     /// HARM - Hierarchy, Abstraction, Rinforcements, Motivations. 
     /// A system, that is able to autonomously identify own capabilities and tries to learn them (in a SMDP environments).
