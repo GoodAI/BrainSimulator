@@ -91,3 +91,22 @@ Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimula
 [MNIST database](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Mnist.brain) is a common testbed for Neural Networks.<br>
 
 [Breakout](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Breakout.brain) based on Q-learning, a type of reinforcement learning.
+
+## Motor Control Examples ##
+
+### PID Controller ###
+[Arm reaching setpoint with PID controller](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Motor/pid_arm_setpoint.brain)
+
+![](img/pid_arm_setpoint.png)
+
+---
+
+[Balancing inverted pendulum with PID Controller](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Motor/pid_pendulum.brain)
+
+![](img/pid_pendulum.png)
+
+### Jacobian Transpose Control ###
+
+[Bipedal robot doing crunches](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Motor/jtc_bipedal.brain)
+
+![](img/jtc_bipedal.png)
