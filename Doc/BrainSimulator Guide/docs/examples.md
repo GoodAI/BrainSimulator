@@ -50,16 +50,17 @@ Examples with Round, Exp, Log operations on the matrix.
 
 ## Discrete Q-Learning
 
-### Simple Q-Learning Example
+### <a name="qlearningSimple"> Simple Q-Learning Example </a>
 [Q-Learning one reward](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-oneReward.brain)
 
-### Composition of two Q-Learning Strategies
+### <a name="qlearningTwoNodes"> Composition of two Q-Learning Strategies </a>
+
 [Q-Learning two rewards](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-twoRewards.brain)
 
-### Q-Learning plays TicTacToe
+### <a name="qlearningTicTacToe"> Q-Learning plays TicTacToe </a>
 
 [Q-Learning example](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe.brain)
 
-## HARM Node examples
+### <a name="harmMapE"> HARM Node example </a>
 
 [HARM Node example](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapG.brain)
