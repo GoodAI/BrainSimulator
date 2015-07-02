@@ -13,14 +13,28 @@ $\mathbf{A} \cdot \mathbf{B}$ (where $\mathbf{A}$,$\mathbf{B}$ are matrices), it
 
 ## Operations
 
- * **Addition,Multiplication,Substraction,MultiplElemntWise** (two memBlock inputs, or one into A and set the DataInput0 parameter): If two inputs each of them can be matrix, or vector, or constant). Be careful about the correct sizes/dimensions of the inputs, it does column/row-wise operation. If only input to the A, then it performs multiplication with the value at DataInput.
- * **DotProd** (two memBlock inputs): performs $\\mathbf{v}^{\mathsf{T}} \cdot \mathbf{w}$. Again, be careful about the dimensions of your inputs.
- * **MinIndex, MaxIndex** (one mem block input): returns min/max index in the vector.
- * **GetCol,GetRow** (two memBlock inputs, or one into A and set the DataInput0 parameter): returns n-th column of the input. The n that defines column/row id can be DataInput0 or value in the memory block in the B-input.
- * **Minus** (one memBlock input): returns minus input block
- * **Normalize ** (one memBlock input): return normalized matrix A, Norm2 used in this case.
- * **Norm2** (one memBlock input): returns norm2 of the matrix A
- * **Exp, Abs, Log, Round, Floor, Ceil** (one memBlock input): returns Exp/Log/Abs/Floor/Round/Ceil of each element of the matrix A.
+The node is always expected that one input goes to **A** and, if second input requires, it goes to **B**.
+
+ | Operation | Input  | Comment |
+ | - | -  | - |
+ | **Multiplication**<br> $\mathbf A \cdot \mathbf B$      | Two MB | Each input can matrix, vector, or number. |
+ | **Multiplication**<br> $\mathbf A \cdot$`DataInput0`    | One MB + 'DataInput0'  | MB Input can be matrix, vector, or number.  |
+ | **Addition**<br> $\mathbf A + \mathbf B$                | Two MB  | Each input can matrix, vector, or number. If matrix/vector used as input, the node performs row/column-wise addition. |
+ | **Addition**<br> $\mathbf A +$`DataInput0`              | One MB + 'DataInput0'  | Input into `A` can be matrix, vector, or number.  |
+ | **Substraction**<br> $\mathbf A - \mathbf B$            | Two MB  | Each input can matrix, vector, or number. If matrix/vector used as input, the node performs row/column-wise addition. |
+ | **Substraction** <br> $\mathbf A -$`DataInput0`         | One MB + 'DataInput0'  | Input into `A` can be matrix, vector, or number. Performs A$-$DataInput0.  |
+ | **MultiplElemntWise**<br> $\mathbf A \circ \mathbf B$   | Two MB  | Element-wise product, each input can matrix, vector, or number. |
+ | **DotProd**<br> $\mathbf A^{\mathsf T} \cdot \mathbf B$ | Two MB | Each input is a vector. If same inputs (with same, correct, dimension) are provied for **Multiplication** operation, the multiplication also performs dot product. |
+ | **MinIndex**<br> $\textrm{arg min}_i ~\mathbf A_i$      | One MB |  Returns the index of the min value in the vector. |
+ | **MaxIndex**<br> $\textrm{arg max}_i ~\mathbf A_i$      | One MB |  Returns the index of the max value in the vector. |
+ | **GetCol**<br> $ \mathbf A_{i,:}$                       | Two MB |  First MB input is matrix, second input is number that defines the column to get (first one has index 0). |
+ | **GetCol**<br> $ \mathbf A_{i,:}$                       | One MB + 'DataInput0' |  MB input is matrix,  'DataInput0' defines the column to get (first one has index 0). |
+ | **GetRow**<br> $ \mathbf A_{:,i}$                       | Two MB |  First MB input is matrix, second input is number that defines the row to get (first one has index 0). |
+ | **GetRow**<br> $ \mathbf A_{:,i}$                       | One MB + 'DataInput0' |  MB input is matrix,  'DataInput0' defines the row to get (first one has index 0). |
+ | **Minus**<br>  $ -\mathbf A$                            | One MB |  MB input is matrix. |
+ | **Norm2**<br>  $ \Vert \mathbf A \Vert_2 $              | One MB |  Returns Norm2 of the input MB. |
+ | **Normalize**<br>  $ \frac{1}{\Vert \mathbf A \Vert_2} \mathbf A$   | One MB |  Normalizes the input MB. |
+ | **Exp, Log, Abs, Round, Flooe, Ceil**                   | One MB |  Performs the desired operation on each element in the input MB. |
 
 
 
