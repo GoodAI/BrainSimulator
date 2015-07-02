@@ -162,6 +162,10 @@ This example is well described in the [Guides section](guides/discreteqlearning.
 
 [Breakout](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Breakout.brain) based on Q-learning, a type of reinforcement learning.
 
+[Recurrent network](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/RNN_sine.brain) predicting sine wave 20 steps ahead.
+
+[Long Short Term Memory](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/LSTM_sine.brain) predicting sine wave 20 steps ahead.
+
 ## Motor Control Examples ##
 
 ### PID Controller ###
