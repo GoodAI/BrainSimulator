@@ -142,6 +142,12 @@
     <Compile Include="Forms\GraphLayoutForm_Ops.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\LicensesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LicensesForm.Designer.cs">
+      <DependentUpon>LicensesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MemoryBlocksForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -237,6 +243,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LicensesForm.resx">
+      <DependentUpon>LicensesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MemoryBlocksForm.resx">
       <DependentUpon>MemoryBlocksForm.cs</DependentUpon>
