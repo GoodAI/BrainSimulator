@@ -82,6 +82,8 @@ This brain file sample shows how to use MatrixNode for getting the desired row o
 ### <a name="qlearningSimple"> Simple Q-Learning Example </a>
 Brain:  [QLearning-gridworld-oneReward.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-oneReward.brain)
 
+This brain shows basic use of `DiscreteQLearningNode`. 
+
 ### <a name="qlearningTwoNodes"> Composition of two Q-Learning Strategies </a>
 
 Brain: [QLearning-gridworld-twoRewards.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-twoRewards.brain)
