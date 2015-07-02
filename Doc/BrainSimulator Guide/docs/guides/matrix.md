@@ -118,8 +118,8 @@ public class MyExecuteTask : MyTask<MyNode>
   }
   public override void Execute()
   {
-    mat_operation.Run(Matrix.MatOperation.Multiplication, Owner.A, Owner.B, Owner.C);
-    mat_operation.Run(Matrix.MatOperation.Multiplication, Owner.C, 10.3f, Owner.B);
+    mat_operation.Run(Matrix.MatOperation.Multiplication, Owner.A, Owner.B, Owner.C); // C = A*B
+    mat_operation.Run(Matrix.MatOperation.Multiplication, Owner.C, 10.3f, Owner.B); // B = C*10.3 = A*B*10.3
     mat_operation.Run(Matrix.MatOperation.Addition, Owner.A, Owner.B, Owner.C);  // C = A+A*B*10.3
   }
 }

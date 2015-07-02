@@ -1,4 +1,4 @@
-# Examples
+## Examples
 
 
 
@@ -10,7 +10,7 @@ These sample projects show several [examples](https://github.com/KeenSoftwareHou
 ### Segmentation
 Brain: [Vision/Vision_SLICsegmentation.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_SLICsegmentation.brain)
 
-The sample shows how to segment input image using SLIC algorithm.
+The sample shows how to segment input image using SLIC algorithm. Note that input is first modified to have a square shape. When one clicks on the observer, there is a `Operation/ObserverMode` property that allows to switch between different visualizations (such as segmentation borders, centers XYZ-color space etc.).
 
 ![](img/vision_ex_SLIC.PNG)
 
@@ -20,7 +20,9 @@ The sample shows how to segment input image using SLIC algorithm.
 
 Brain: [Vision/Vision_segmentationOfPhongGame.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_segmentationOfPhongGame.brain)
 
-The sample project shows the full pipeline. First, an input image is segmented into super-pixels (SP). Second, each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy (Ea) is estimated for each object. Fourth, features are estimated as raw image pathces. Fifth, the object features are clustered into a Visual Words to constitute a Working Memory.
+The sample project shows the full pipeline. First, an input image is segmented into super-pixels (SP). Second, each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy (Ea) is estimated for each object. Fourth, features are estimated as raw image patches. Fifth, the object features are clustered into a Visual Words to constitute a Working Memory.
+
+Again, `Operation/ObserverMode` property of most of observers switches between visualoizations modes.
 
 ![](img/vision_ex_pong.PNG)
 
@@ -34,7 +36,8 @@ These sample projects show several [examples](https://github.com/KeenSoftwareHou
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
-Example with addion of two matrices, the sample also shows row/column wise addion when matrix and vector is added.
+Brain file with several addition examples (and a comparison of the result to the Join node).
+It contains summations of two matrices. Row or column wise addition is included too. Note that dimension of inputs have to correspond.
 
 ![](img/matrix_ex_add.PNG)
 
@@ -44,7 +47,10 @@ Example with addion of two matrices, the sample also shows row/column wise addio
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
-Examples with multiplieg two matrix, matrix and vectors. Matrix and constant.
+
+Brain file with several multiplication examples.
+Again, note that dimension of inputs have to correspond to the desired opreation with matrices. The example containts examples with
+two memory block inputs as well as with only one, when the second is constat setted in `Params\DataInput0`.
 
 ![](img/matrix_ex_multipl.PNG)
 
@@ -54,7 +60,7 @@ Examples with multiplieg two matrix, matrix and vectors. Matrix and constant.
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_LogExpRound.brain)
 
-Examples with Round, Exp, Log operations on the matrix.
+Examples with Round, Exp, Log operations on the matrix. Note that only one input is used in this case. The MatrixNode now applied desired function on that input MemoryBlock.
 
 ![](img/matrix_ex_AbsExp.PNG)
 
@@ -64,7 +70,10 @@ Examples with Round, Exp, Log operations on the matrix.
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_getRowCol.brain)
 
+This brain file sample shows how to use MatrixNode for getting the desired row or column of the matrix, defined by the id (which row/column I want to get). The observers in the figure bellow shows an example where we want to get row id ,,1'' (so second row because counting starts with 0) of the matrix shown in the middle observer. The result (node's output) is shown in the last observer.
+
 ![](img/matrix_ex_getRowCol.PNG)
+
 
 
 
