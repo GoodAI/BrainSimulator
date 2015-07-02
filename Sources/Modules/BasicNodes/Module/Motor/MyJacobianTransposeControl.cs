@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using YAXLib;
-using System.Windows.Media.Media3D;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
@@ -59,11 +58,15 @@ namespace GoodAI.Modules.Motor
         [Description("Transpose method"), MyTaskInfo(OneShot = false)]
         public class MyJacobianTransposeTask : MyTask<MyJacobianTransposeControl>
         {
-            private Vector3D m_point, m_anchor, m_axis, m_rateOfChange;
+            private MyVector3D m_point, m_anchor, m_axis, m_rateOfChange;
             private MyMatrixOps m_matrixOps;
 
             public override void Init(int nGPU)
             {
+                m_point = new MyVector3D();
+                m_anchor = new MyVector3D();
+                m_axis = new MyVector3D();
+                m_rateOfChange = new MyVector3D();
                 m_matrixOps = new MyMatrixAutoOps(Owner, MatOperation.Multiplication);
             }
 
@@ -87,7 +90,7 @@ namespace GoodAI.Modules.Motor
                     m_axis.Y = Owner.RotationAxes.Host[3 * i + 1];
                     m_axis.Z = Owner.RotationAxes.Host[3 * i + 2];
                     
-                    m_rateOfChange = Vector3D.CrossProduct(m_axis, m_point - m_anchor);
+                    m_rateOfChange = MyVector3D.CrossProduct(m_axis, m_point - m_anchor);
                     
                     Owner.JacobianTranspose.Host[3 * i] = (float) m_rateOfChange.X;
                     Owner.JacobianTranspose.Host[3 * i + 1] = (float) m_rateOfChange.Y;
@@ -132,6 +135,35 @@ namespace GoodAI.Modules.Motor
             validator.AssertError(Anchors != null && RotationAxes != null && Anchors.Count == RotationAxes.Count, this, "Number of anchors and rotation axes must be the same");
             validator.AssertError(Point != null && Point.Count == 3, this, "Point must be a 3 dimensional vector");
             validator.AssertError(Force != null && Force.Count == 3, this, "Force must be a 3 dimensional vector");
+        }
+    }
+
+    internal class MyVector3D
+    {
+        public float X, Y, Z;
+
+        public MyVector3D() { }
+        public MyVector3D(MyVector3D vector)
+        {
+            X = vector.X;
+            Y = vector.Y;
+            Z = vector.Z;
+        }
+        public MyVector3D(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public static MyVector3D operator -(MyVector3D a, MyVector3D b)
+        {
+            return new MyVector3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static MyVector3D CrossProduct(MyVector3D a, MyVector3D b)
+        {
+            return new MyVector3D((a.Y * b.Z) - (b.Y * a.Z), (a.Z * b.X) - (b.Z * a.X), (a.X * b.Y) - (b.X * a.Y));
         }
     }
 }
