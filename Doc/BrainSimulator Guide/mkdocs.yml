@@ -11,10 +11,11 @@ pages:
 #- ['nodes.md', 'Nodes']
 - Guides:
     - How to create a module: 'guides/steps.md'
-    - Persitence: 'guides/persistence.md'
+    - Persistence: 'guides/persistence.md'
     - Discrete QLearning: 'guides/discreteqlearning.md'
     - Matrix Node: 'guides/matrix.md'
     - Image Processing: 'guides/improc.md'
+    - Neural Network: 'guides/neuralnetwork.md'
 - Examples: 'examples.md'
 - Changelog: 'changelog.md'
 markdown_extensions:

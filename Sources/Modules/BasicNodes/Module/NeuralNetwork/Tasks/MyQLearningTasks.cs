@@ -57,7 +57,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.ParentNetwork.FirstLayer.Input.CopyFromMemoryBlock(Owner.PreviousInput, 0, 0, Owner.PreviousInput.Count);
             Owner.ParentNetwork.FeedForward();
 
-            // set the target: q(s(t-1), a) -> reward(t-1) + q(s(t), maxarg(a)) * discountfactor // TODO: consider reward(t-1) vs reward(t) - reward(t-1) is correct, but reward(t) works better with our implementation of breakout
+            // set the target: q(s(t-1), a) -> reward(t-1) + q(s(t), maxarg(a)) * discountfactor // TODO: consider reward(t-1) vs reward(t) :: reward(t-1) is correct, but reward(t) works better with our implementation of breakout
             Owner.Target.CopyFromMemoryBlock(Owner.Output, 0, 0, Owner.Neurons);
             Owner.Target.SafeCopyToHost(); // manipulate at host
             Owner.PreviousAction.SafeCopyToHost(); // manipulate at host

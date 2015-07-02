@@ -84,3 +84,10 @@ Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimula
 ### <a name="harmMapE"> HARM Node example </a>
 
 [HARM Node example](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapG.brain)
+
+## Neural Network examples
+[XOR gate](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Xor.brain) can be emulated by a feed forward Neural Network.<br>
+
+[MNIST database](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Mnist.brain) is a common testbed for Neural Networks.<br>
+
+[Breakout](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Breakout.brain) based on Q-learning, a type of reinforcement learning.
