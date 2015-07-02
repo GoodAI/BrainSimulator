@@ -75,21 +75,33 @@ This brain file sample shows how to use MatrixNode for getting the desired row o
 ![](img/matrix_ex_getRowCol.PNG)
 
 
-
-
 ## Discrete Q-Learning
 
+---
 ### <a name="qlearningSimple"> Simple Q-Learning Example </a>
 Brain:  [QLearning-gridworld-oneReward.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-oneReward.brain)
 
-This brain shows basic use of `DiscreteQLearningNode`. 
+This brain shows basic use of `DiscreteQLearningNode` in the `GridWorld`. The Node receives state description as `GlobalData` (variables + constants) from the World. The reward is defined as a change of the state of the lights ($ values \in \lbrace 0, 1 \rbrace $). The nodes on the left detect changes of variables and select the one for the lights. In the current state, actions are chosen randomly - `GlobalMotivation` is set to 0. Utilities published by the `DiscreteQLearningNode` are multiplied by the `UtilityScaling` value.
 
+![DiscreteQLearningBrain](img/discreteQLearning-brain.PNG)
+
+The following figure shows state of the memory after about 400 simulation steps. It can be seen that the agent **received reward two times**. Also, the agent visited only left part of the World (including door), therefore the $\mathbf{Q}(s,a)$ matrix has currently dimensions only: $10 \times 6 \times 6 ~actions$. The `QLearningObserver` shows:
+
+  * graphical representation of the action with the highest utility.
+  * Color corresponds to the value of the utility of the best action (see [Guides section](guides/discreteqlearning.md)).
+
+It can be seen that the Eligibility Trace wrote the $Q$ values on multiple positions back in time. Also we can see that the current strategy already leads towards pressing the switch, despite the fact that it is suboptimal.
+
+![DiscreteQLearning](img/discreteQLearning.PNG)
+
+---
 ### <a name="qlearningTwoNodes"> Composition of two Q-Learning Strategies </a>
 
 Brain: [QLearning-gridworld-twoRewards.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-twoRewards.brain)
 
-The example shows how two different strategies can be composed as described in [Guides section](guides/discreteqlearning.md#harmNode).
+The example shows how two different strategies can be composed as described in [Guides section](guides/discreteqlearning.md#harmNode). The task is identical to the brain above, but it has one additional `DiscreteQLearningNode`, which learns different strategy - receives reward when controlling the door. By the `UtilityScaling` sliders it is possible to prioritize between these strategies.
 
+---
 ### <a name="qlearningTicTacToe"> Q-Learning plays TicTacToe </a>
 
 Brain: [QLearning-tictactoe.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe.brain)
@@ -110,7 +122,6 @@ Here, the PlayerO `ConditionalGroup` contains `TicTacToePlayerNode` and RL-Playe
   * avoid losing
   * avoid incorrect moves with lower importance
 
-
 #### <a name="ticTacToeHowToUse"> How to Use </a>
 
 In this case, the world is "*not passive*". In case that the `RL-PlayerX` produces only random actions it will receive  only punishments most of the time. The following approach works well:
@@ -122,12 +133,21 @@ In this case, the world is "*not passive*". In case that the `RL-PlayerX` produc
     * Observe the output of the `Reward+Punishment X` Node in order to see how well the `RL-PlayerX` plays.
     * Around time step 130000, the `RL-PlayerX` should play relatively well against `Difficulty` 0.5 .
 
+---
+### <a name="qlearningTicTacToe2"> Two Q-Learning Nodes play TicTacToe</a>
+Brain: [QLearning-tictactoe-twoNodes.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe-twoNodes.brain)
 
-### <a name="harmMapG"> HARM Node Example 1 </a>
+The same task as in the previous example, but in this case, two Nodes learn to play TicTacToe against each other.
 
-This example shows usage of the `DiscreteHarmNode`, see the [Guides section](guides/discreteqlearning.md#harmNode) for more details.
+---
+### <a name="harmMapG"> HARM Node Examples </a>
 
-The `GridWorld` contains an agent, walls and several controlled objects (2 doors and 1 light in this case) and switches which controll them. The agent is allowed to use 6 primitive actions $\mathbf{A}=\lbrace Left, Right, Up, Down, Noop, Press \rbrace$. If the agent is on the same position as a switch and executes the $Press$ action, the corresponding switch and its controlled object (e.g. door) change its state. Note: since the `DridWorld` publishes state of each switch and its controlled object separately, the `DiscreteHarmNode` learns two identical strategies for each of these variables.
+
+Brains: [HARM-gridworld-mapF.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapF.brain) and [HARM-gridworld-mapG.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapG.brain)
+
+These examples show usage of the `DiscreteHarmNode`, see the [Guides section](guides/discreteqlearning.md#harmNode) for more details.
+
+The `GridWorld` contains an agent, walls and several controlled objects (2 doors and 1 light in this case) and switches which control them. The agent is allowed to use 6 primitive actions $\mathbf{A}=\lbrace Left, Right, Up, Down, Noop, Press \rbrace$. If the agent is on the same position as a switch and executes the $Press$ action, the corresponding switch and its controlled object (e.g. door) change its state. Note: since the `DridWorld` publishes state of each switch and its controlled object separately, the `DiscreteHarmNode` learns two identical strategies for each of these variables.
 
 The following figures illustrate how to use the Node after it has already learned strategies:
 
@@ -148,15 +168,7 @@ After opening the door, the strategy leads directly towards the switch that cont
 ![Lights2](img/harm-lights2.PNG)
 
 
-
-
-### <a name="harmMapE"> HARM Node Example 2 </a>
-
-
-Brain: [HARM-gridworld-mapG.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapG.brain)
-
-This example is well described in the [Guides section](guides/discreteqlearning.md#harmNode).
-
+---
 ## Neural Network examples
 [XOR gate](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Xor.brain) can be emulated by a feed forward Neural Network.<br>
 
