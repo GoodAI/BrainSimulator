@@ -16,12 +16,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_02D10E7239274B539E24056A35974A7C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_09160BC3B78E4BE5AA1ECDC3D9142B78"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -83,6 +77,12 @@
         "Entry"
         {
         "MsmKey" = "8:_1AB033F9B27941E8A191B7B9A6EBCDB0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1B2514ADB79A4690A3405588478674FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -741,26 +741,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_02D10E7239274B539E24056A35974A7C"
-            {
-            "SourcePath" = "8:..\\Resources\\Licence agreement.rtf"
-            "TargetName" = "8:Licence agreement.rtf"
-            "Tag" = "8:"
-            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09160BC3B78E4BE5AA1ECDC3D9142B78"
             {
             "SourcePath" = "8:C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v7.0\\bin\\cublas64_70.dll"
@@ -810,6 +790,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1B2514ADB79A4690A3405588478674FB"
+            {
+            "SourcePath" = "8:..\\Resources\\License.rtf"
+            "TargetName" = "8:License.rtf"
+            "Tag" = "8:"
+            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2FF616595AFE476FA0B6C7BC6599B53C"
@@ -2467,7 +2467,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:_02D10E7239274B539E24056A35974A7C"
+                            "Value" = "8:_1B2514ADB79A4690A3405588478674FB"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "Sunken"
@@ -2596,7 +2596,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:_02D10E7239274B539E24056A35974A7C"
+                            "Value" = "8:_1B2514ADB79A4690A3405588478674FB"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "Sunken"
