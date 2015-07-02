@@ -10,7 +10,7 @@
 
 #include "../Observers/ColorHelpers.cu"
 
-// @author Jaroslav Vitku
+// @author jv
 extern "C"  
 {	
 	// detects multiple max values

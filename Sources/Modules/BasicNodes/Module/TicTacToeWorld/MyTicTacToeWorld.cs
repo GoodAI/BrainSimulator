@@ -22,7 +22,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.TicTacToe
 {
-    /// <author>Jaroslav Vitku</author>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
     /// <status>Working</status>
     /// <summary>Simulator of Tic Tac Toe game.</summary>
     /// <description>

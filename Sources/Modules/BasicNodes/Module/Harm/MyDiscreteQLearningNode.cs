@@ -47,6 +47,10 @@ namespace GoodAI.Modules.Harm
     /// <ul>
     ///     <li> <b>Utilities:</b> Vector of action utilities in a given state (the higher the value, the better to use the action).</li>
     /// </ul>
+    /// <h3>Memory Blocks</h3>
+    /// <ul>
+    ///     <li> <b>RewardStats:</b> Two values that indicate {Total Reward/Step, Total Reward}, where Total Reward is sum of all rewards received during the simulation.</li>
+    /// </ul>
     /// <h3>Parameters</h3>
     /// <ul>
     ///     <li> <b>InputRescaleSize:</b>Memory is indexed by integers, user should ideally rescale variable values to fit into integers.</li>
@@ -317,7 +321,7 @@ namespace GoodAI.Modules.Harm
         }
 
         /// <summary>
-        /// Updates the <b>RewardStats</b> values = {Reward/step, totalReward}.
+        /// Updates the <b>RewardStats</b> values = {Total Reward/Step, Total Reward}.
         /// </summary>
         [Description("Visualize learned data"), MyTaskInfo(OneShot = false)]
         public class MyActionUtilsVisualization : MyTask<MyDiscreteQLearningNode>

@@ -15,7 +15,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.TicTacToe
 {
-    /// <author>Jaroslav Vitku</author>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
     /// <status>Working</status>
     /// <summary>Node that plays the Tic Tac Toe game in MyTicTacToeWorld.</summary>
     /// <description>

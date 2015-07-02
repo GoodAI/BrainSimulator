@@ -8,7 +8,7 @@
 /*
 Inspired by the implementation of CustomPong.cu
 
-@author Jaroslav Vitku
+@author jv
 */
 extern "C"  
 {

@@ -22,7 +22,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.GridWorld
 {
-    /// <author>Jaroslav Vitku</author>
+    /// <author>GoodAI</author>
+    /// <meta>jv</meta>
     /// <status>Working</status>
     /// <summary>A simple discrete simulator with maze and controllable objects.</summary>
     /// <description>
