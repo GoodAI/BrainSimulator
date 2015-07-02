@@ -128,5 +128,14 @@ namespace GoodAI.BrainSimulator.Properties {
                 this["AutosaveEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://docs.goodai.com/brainsimulator/")]
+        public string HelpUrl {
+            get {
+                return ((string)(this["HelpUrl"]));
+            }
+        }
     }
 }

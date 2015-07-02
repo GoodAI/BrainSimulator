@@ -29,5 +29,8 @@
     <Setting Name="AutosaveEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="HelpUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://docs.goodai.com/brainsimulator/</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -457,7 +457,14 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void guideToolStripMenuItem_Click(object sender, EventArgs e) 
         {
-            MyDocProvider.Navigate(@"file:///D:/KeenSWH/AI/Docs/BrainSimulator%20Guide/site/index.html");
+            try
+            {
+                MyDocProvider.Navigate(Properties.Settings.Default.HelpUrl);
+            }
+            catch (Exception exc)
+            {
+                MyLog.ERROR.WriteLine("Failed to get HelpUrl setting: " + exc.Message);
+            }
         }
 
         private void autosaveButton_CheckedChanged(object sender, EventArgs e)
