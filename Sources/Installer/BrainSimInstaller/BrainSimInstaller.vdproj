@@ -16,6 +16,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_02D10E7239274B539E24056A35974A7C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_09160BC3B78E4BE5AA1ECDC3D9142B78"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -35,12 +41,6 @@
         "Entry"
         {
         "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -48,6 +48,12 @@
         {
         "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
         "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -95,12 +101,6 @@
         "Entry"
         {
         "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -120,6 +120,12 @@
         {
         "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
         "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -149,25 +155,19 @@
         "Entry"
         {
         "MsmKey" = "8:_33F63D0AB8A8D18C384A4EC8A50657F6"
-        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_33F63D0AB8A8D18C384A4EC8A50657F6"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
+        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
         "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -180,6 +180,12 @@
         {
         "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
         "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -208,14 +214,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_69F8607CF148456C2EB95BF03FAA190A"
-        "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
+        "MsmKey" = "8:_659C1A071778479DBB4216502ED5F84D"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_72CE76A52FFD47DB8755283AA52D49B8"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_69F8607CF148456C2EB95BF03FAA190A"
+        "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -245,12 +251,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -263,13 +263,19 @@
         "Entry"
         {
         "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
+        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
         "OwnerKey" = "8:_E3BAD0055BCC2242D9F52828B9EC62FC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
-        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -299,19 +305,13 @@
         "Entry"
         {
         "MsmKey" = "8:_8AC80B511BD35A7E37949BC729C8DCE2"
-        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8AC80B511BD35A7E37949BC729C8DCE2"
         "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_950E34FC6FEA417EAD55B73377344D3E"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_8AC80B511BD35A7E37949BC729C8DCE2"
+        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -347,13 +347,13 @@
         "Entry"
         {
         "MsmKey" = "8:_C65C9461C14E247A8D996C9630269F66"
-        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C65C9461C14E247A8D996C9630269F66"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
+        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -377,13 +377,13 @@
         "Entry"
         {
         "MsmKey" = "8:_E3BAD0055BCC2242D9F52828B9EC62FC"
-        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_E3BAD0055BCC2242D9F52828B9EC62FC"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
+        "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -413,12 +413,6 @@
         "Entry"
         {
         "MsmKey" = "8:_F34CF795347B5D573F55A379BD5836D7"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F34CF795347B5D573F55A379BD5836D7"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -426,6 +420,12 @@
         {
         "MsmKey" = "8:_F34CF795347B5D573F55A379BD5836D7"
         "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F34CF795347B5D573F55A379BD5836D7"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -444,12 +444,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_188DA237244E4EF29A9080F12E749ABC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -498,6 +492,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -741,6 +741,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_02D10E7239274B539E24056A35974A7C"
+            {
+            "SourcePath" = "8:..\\Resources\\Licence agreement.rtf"
+            "TargetName" = "8:Licence agreement.rtf"
+            "Tag" = "8:"
+            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09160BC3B78E4BE5AA1ECDC3D9142B78"
             {
             "SourcePath" = "8:C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v7.0\\bin\\cublas64_70.dll"
@@ -936,6 +956,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_659C1A071778479DBB4216502ED5F84D"
+            {
+            "SourcePath" = "8:..\\Resources\\brainSim_installBanner_owl.bmp"
+            "TargetName" = "8:brainSim_installBanner_owl.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_69F8607CF148456C2EB95BF03FAA190A"
             {
             "AssemblyRegister" = "3:1"
@@ -965,26 +1005,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_72CE76A52FFD47DB8755283AA52D49B8"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\..\\..\\..\\Desktop\\Licence agreement.rtf"
-            "TargetName" = "8:Licence agreement.rtf"
-            "Tag" = "8:"
-            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73512088152A455896DD6A3C132C69B4"
@@ -1107,26 +1127,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_950E34FC6FEA417EAD55B73377344D3E"
-            {
-            "SourcePath" = "8:D:\\KeenSWH\\Sandbox\\PressKits\\GoodAI\\BrainSimulator\\brainSim_installBanner_owl.bmp"
-            "TargetName" = "8:brainSim_installBanner_owl.bmp"
-            "Tag" = "8:"
-            "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B9A5D60255889C888B8C253410EE58F9"
@@ -1917,7 +1917,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -1955,7 +1955,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -2000,7 +2000,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "UpdateText"
@@ -2045,7 +2045,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -2090,7 +2090,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -2139,7 +2139,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "BannerText"
@@ -2396,7 +2396,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -2419,7 +2419,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "InstallAllUsersVisible"
@@ -2455,7 +2455,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "EulaText"
@@ -2467,7 +2467,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:_72CE76A52FFD47DB8755283AA52D49B8"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "Sunken"
@@ -2512,7 +2512,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -2535,7 +2535,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -2584,7 +2584,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "EulaText"
@@ -2596,7 +2596,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:_72CE76A52FFD47DB8755283AA52D49B8"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "Sunken"
@@ -2632,7 +2632,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_950E34FC6FEA417EAD55B73377344D3E"
+                            "Value" = "8:"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
