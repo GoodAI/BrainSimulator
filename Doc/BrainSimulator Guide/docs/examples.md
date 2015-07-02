@@ -166,7 +166,11 @@ This example is well described in the [Guides section](guides/discreteqlearning.
 
 [Recurrent network](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/RNN_sine.brain) predicting sine wave 20 steps ahead.
 
+![](img/RNN_sine.png)
+
 [Long Short Term Memory](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/LSTM_sine.brain) predicting sine wave 20 steps ahead.
+
+![](img/LSTM_sine.png)
 
 ## Motor Control Examples ##
 
