@@ -505,6 +505,12 @@ namespace GoodAI.BrainSimulator.Forms
         private void stepOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StartSimulation(true);
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var aboutDialog = new AboutDialog();
+            aboutDialog.ShowDialog();
         }    
     }
 }

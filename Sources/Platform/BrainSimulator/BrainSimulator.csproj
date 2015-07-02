@@ -121,6 +121,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\AboutDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AboutDialog.Designer.cs">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ConsoleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -223,6 +229,9 @@
     <Compile Include="Utils\MyFolderDialog.cs" />
     <Compile Include="Utils\MyIconAttribute.cs" />
     <Compile Include="Utils\MyRenderUtils.cs" />
+    <EmbeddedResource Include="Forms\AboutDialog.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConsoleForm.resx">
       <DependentUpon>ConsoleForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -578,6 +587,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\spike.png" />
+    <Content Include="res\splash.png" />
     <Content Include="res\StatusAnnotations_Critical_16xMD.png" />
     <None Include="res\StatusAnnotations_Debug.png" />
     <Content Include="res\StatusAnnotations_Help.png" />
