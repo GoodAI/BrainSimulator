@@ -38,7 +38,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         [YAXSerializableField(DefaultValue = false)]
         [MyBrowsable, Category("\tHyperParameters")]
-        public bool BindValues { get; set; }
+        public bool BindTarget { get; set; }
 
         public MyQLearningTask() { } //parameterless constructor
 
@@ -78,22 +78,25 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     Owner.PreviousAction.Host[a] = 1.0f / Owner.Neurons;
             }
             float value = Owner.Reward.Host[0] + maxValue;
-            if (BindValues)
-            {
-                if (value > BindUpper)
-                    value = BindUpper;
-                else if (value < BindLower)
-                    value = BindLower;
-            }
 
             for (int a = 0; a < Owner.Neurons; a++)
-                Owner.Target.Host[a] = Owner.PreviousAction.Host[a] * (value * DiscountFactor) + (1 - Owner.PreviousAction.Host[a]) * Owner.Target.Host[a];
+            {
+                float target = Owner.PreviousAction.Host[a] * (value * DiscountFactor) + (1 - Owner.PreviousAction.Host[a]) * Owner.Target.Host[a];
+                if (BindTarget)
+                {
+                    if (target > BindUpper)
+                        target = BindUpper;
+                    else if (target < BindLower)
+                        target = BindLower;
+                }
+
+                Owner.Target.Host[a] = target;
+            }
 
             Owner.Target.SafeCopyToDevice(); // back to device
 
-            // copy current values to previous values
+            // copy reward to previous value
             Owner.PreviousReward.CopyFromMemoryBlock(Owner.Reward, 0, 0, 1);
-            Owner.PreviousAction.CopyFromMemoryBlock(Owner.Action, 0, 0, Owner.Neurons);
         }
     }
 
@@ -103,7 +106,6 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     /// <br></br>
     /// This restores the values to the current timestep.
     /// </summary>
-    /// <description></description>
     [Description("Restore values"), MyTaskInfo(OneShot = false)]
     public class MyRestoreValuesTask : MyTask<MyQLearningLayer>
     {
@@ -119,6 +121,24 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             // restore input values from host
             Owner.ParentNetwork.FirstLayer.Input.SafeCopyToDevice();
             Owner.PreviousInput.CopyFromMemoryBlock(Owner.ParentNetwork.FirstLayer.Input, 0, 0, Owner.PreviousInput.Count);
+        }
+    }
+
+    /// <author>Philip Hilm</author>
+    /// <status>Working</status>
+    /// <summary>Saves the action taken in the current timestep, to use in the QLearning algorithm in the next timestep
+    /// </summary>
+    [Description("Save action"), MyTaskInfo(OneShot = false)]
+    public class MySaveActionTask : MyTask<MyQLearningLayer>
+    {
+        public MySaveActionTask() { } //parameterless constructor
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute() //Task execution
+        {
+            // copy action to previous value
+            Owner.PreviousAction.CopyFromMemoryBlock(Owner.Action, 0, 0, Owner.Neurons);
         }
     }
 }

@@ -130,6 +130,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
 
+            // move MySaveActionTask to the end of the task list
+            selected = newPlan.Where(task => task is MySaveActionTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.AddRange(selected);
+
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());
         }
