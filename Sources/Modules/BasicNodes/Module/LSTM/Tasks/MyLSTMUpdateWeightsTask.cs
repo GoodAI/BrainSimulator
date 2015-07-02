@@ -61,10 +61,13 @@ namespace GoodAI.Modules.LSTM.Tasks
 		        Owner.OutputGateDeltas,
 		        Owner.InputGateWeights,
                 Owner.InputGateWeightDeltas,
+                Owner.InputGateWeightMeanSquares,
 		        Owner.ForgetGateWeights,
                 Owner.ForgetGateWeightDeltas,
+                Owner.ForgetGateWeightMeanSquares,
 		        Owner.OutputGateWeights,
                 Owner.OutputGateWeightDeltas,
+                Owner.OutputGateWeightMeanSquares,
 		        Owner.InputGateWeightsRTRLPartials,
 		        Owner.ForgetGateWeightsRTRLPartials,
 
@@ -84,10 +87,13 @@ namespace GoodAI.Modules.LSTM.Tasks
 		        Owner.CellStateErrors,
 		        Owner.CellInputWeights,
                 Owner.CellInputWeightDeltas,
+                Owner.CellInputWeightMeanSquares,
 		        Owner.CellWeightsRTRLPartials,
-
-                Owner.ParentNetwork.SGD.TrainingRate,
-                Owner.ParentNetwork.SGD.Momentum,
+               
+                backPropMethod,
+                trainingRate,
+                momentum,
+                smoothingFactor,
 
                 Owner.Input.Count,
                 Owner.PreviousOutput.Count,
