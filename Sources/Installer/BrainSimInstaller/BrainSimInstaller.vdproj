@@ -1314,7 +1314,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:GoodAI.Platform.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:GoodAI.Platform.Core, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F34CF795347B5D573F55A379BD5836D7"
@@ -1486,7 +1486,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Brain Simulator"
         "ProductCode" = "8:{4A8BF46B-A1E4-4E8B-B9C3-D65C43E7626B}"
-        "PackageCode" = "8:{BA92BBC7-0A22-4452-89CC-602739DBB7DC}"
+        "PackageCode" = "8:{6869C7C0-84BE-4771-B5FC-76B6111EC7B0}"
         "UpgradeCode" = "8:{9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1706,12 +1706,12 @@
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
+            "IconIndex" = "3:32512"
             "Transitive" = "11:FALSE"
             "Target" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
             "Folder" = "8:_7410C268C4C74FF6B70487307AEC3D28"
             "WorkingFolder" = "8:_4614A5A859564308864629082A1DEA0E"
-            "Icon" = "8:"
+            "Icon" = "8:_E2C1F0F0B4C54610B96A679FC0982A09"
             "Feature" = "8:"
             }
         }
