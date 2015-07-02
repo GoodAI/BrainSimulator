@@ -4,16 +4,15 @@ Purpose of this node is to simplify vanilla matrix operations such as addition o
 
 ## List of features
 
- * The node allows multiplication or addition with different input sizes, so in addition to to matrix multiplication
-$\mathbf{A} \cdot \mathbf{B}$ (where $\mathbf{A}$,$\mathbf{B}$ are matrices), it directly supports $\mathbf{v}^{\mathsf{T}} \cdot \mathbf{A}$ ($\mathbf{v}$ is vector), or $\mathbf{A} \cdot \mathbf{v}$, $\mathbf{v}^{\mathsf{T}} \cdot \mathbf{w}$, $\mathbf{v} \cdot \mathbf{w}^{\mathsf{T}}$, or $ c \cdot \mathbf{A}$.
- * For several opts (getRow, $c \cdot \mathbf{A}$), two input types are supported: 1) a memory block from another node; 2) user writes number in `ExecuteParams/DataInput` task property.
- * The node is a layer above the `MatrixAutoOps` class, so you can use it in your code.
+ * The node allows orchestra of operations (like multiplication or addition) with a variety of inputs. For example matrix multiplication ($\mathbf{A} \cdot \mathbf{B}$, where $\mathbf{A}$,$\mathbf{B}$ are matrices), vector times matrix ($\mathbf{v}^{\mathsf{T}} \cdot \mathbf{A}$, where $\mathbf{v}$ is a vector), multiplication where inputs are vectors, ($\mathbf{w}^{\mathsf{T}} \cdot \mathbf{v}$, $\mathbf{v} \cdot \mathbf{w}^{\mathsf{T}}$), or operations with numbers like $ c \cdot \mathbf{A}$.
+ * Two input types are supported for several operations: 1) a memory block from another node; 2) a number in the task property `ExecuteParams/DataInput`.
+ * The node is a layer above the `MatrixAutoOps` class, so you can use it in your code as well as the node in Brain Simulator.
 
 
 
 ## Operations
 
-The node is always expected that one input goes to **A** and, if second input requires, it goes to **B**.
+The node is always expected that one input goes to **A** and, if second input is required,m it goes to **B**.
 
  | Operation | Input  | Comment |
  | - | -  | - |
@@ -25,8 +24,8 @@ The node is always expected that one input goes to **A** and, if second input re
  | **Substraction** <br> $\mathbf A -$`DataInput0`         | One MB + 'DataInput0'  | Input into `A` can be matrix, vector, or number. Performs A$-$DataInput0.  |
  | **MultiplElemntWise**<br> $\mathbf A \circ \mathbf B$   | Two MB  | Element-wise product, each input can matrix, vector, or number. |
  | **DotProd**<br> $\mathbf A^{\mathsf T} \cdot \mathbf B$ | Two MB | Each input is a vector. If same inputs (with same, correct, dimension) are provied for **Multiplication** operation, the multiplication also performs dot product. |
- | **MinIndex**<br> $\textrm{arg min}_i ~\mathbf A_i$      | One MB |  Returns the index of the min value in the vector. |
- | **MaxIndex**<br> $\textrm{arg max}_i ~\mathbf A_i$      | One MB |  Returns the index of the max value in the vector. |
+ | **MinIndex**<br> $\underset{i}{\textrm{arg min}} ~\mathbf A_i$      | One MB |  Returns the index of the min value in the vector. |
+ | **MaxIndex**<br> $\underset{i}{\textrm{arg max}} ~\mathbf A_i$      | One MB |  Returns the index of the max value in the vector. |
  | **GetCol**<br> $ \mathbf A_{i,:}$                       | Two MB |  First MB input is matrix, second input is number that defines the column to get (first one has index 0). |
  | **GetCol**<br> $ \mathbf A_{i,:}$                       | One MB + 'DataInput0' |  MB input is matrix,  'DataInput0' defines the column to get (first one has index 0). |
  | **GetRow**<br> $ \mathbf A_{:,i}$                       | Two MB |  First MB input is matrix, second input is number that defines the row to get (first one has index 0). |
