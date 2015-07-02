@@ -50,7 +50,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.textBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
             this.textBox.Size = new System.Drawing.Size(638, 256);
             this.textBox.TabIndex = 0;
-            this.textBox.Text = "Brain Simulator v0.1\n";
+            this.textBox.Text = "";
             this.textBox.WordWrap = false;
             // 
             // toolStrip
