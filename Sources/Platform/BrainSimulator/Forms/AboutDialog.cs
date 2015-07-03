@@ -105,5 +105,11 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
         #endregion
+
+        private void licencesButton_Click(object sender, EventArgs e)
+        {
+            var licensesForm = new LicensesForm();
+            licensesForm.Show();
+        }
     }
 }

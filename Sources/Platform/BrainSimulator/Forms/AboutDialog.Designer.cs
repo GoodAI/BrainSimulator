@@ -166,6 +166,7 @@
             this.licencesButton.TabIndex = 25;
             this.licencesButton.Text = "Credits...";
             this.licencesButton.UseVisualStyleBackColor = true;
+            this.licencesButton.Click += new System.EventHandler(this.licencesButton_Click);
             // 
             // AboutDialog
             // 
