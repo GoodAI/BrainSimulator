@@ -298,14 +298,14 @@ namespace GoodAI.Modules.Transforms
     /// <status>Working</status>
     /// <summary>Goniometric function</summary>
     /// <description>
-    /// The Node applies user specified goniometric on each element of the input memory block.
+    /// The node applies user specified goniometric function on each element of the input memory block.
     /// </description>
     [YAXSerializeAs("GoniometricFunction")]
     public class MyGoniometricFunction : MyTransform
     {
 
         /// <summary>
-        /// The node contains six functions: Sinus, Cosines, Tangents and their hyperbolic equivalents. It applies this function to the input.
+        /// The node contains six functions: Sinus, Cosines, Tangents and their hyperbolic equivalents.
         /// </summary>
         [Description("Goniometric")]
         public class MyGoniometricTask : MyTask<MyTransform>
