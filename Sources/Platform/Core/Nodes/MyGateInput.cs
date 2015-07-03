@@ -14,7 +14,10 @@ namespace GoodAI.Core.Nodes
     /// <author>GoodAI</author>
     /// <status>Working</status>
     /// <summary>A node for gating signals from two input branches</summary>
-    /// <description>The node let you mix two inputs together proportionally to the slider location.</description>
+    /// <description>
+    /// The node let you mix two inputs together proportionally to the slider location.
+    /// The slider value is from zero to one.
+    /// </description>
     public class MyGateInput : MyWorkingNode
     {
         [MyOutputBlock(0)]
