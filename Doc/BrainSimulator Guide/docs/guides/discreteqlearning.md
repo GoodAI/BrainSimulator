@@ -31,7 +31,7 @@ The following figure shows an [illustration of](https://www.dropbox.com/s/30vq3i
 Our discrete Q-Learning Node uses also **Eligibility trace**, which enables the system to update [multiple](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/Node78.html) $\mathbf{Q}$-values at one time-step. This improvement is often called $\mathbf{Q(\lambda)}$ and greatly speeds-up learning. The parameter $\lambda$ defines how [strongly is current difference projected back](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/Node82.html). The higher the parameter, the faster the learning. But too high value can destabilize the learning convergence.
 
 
-### <a name="qlearningNode"> Discrete Q-Learning Node </a>
+### <a name="qlearningNode"></a>Discrete Q-Learning Node
 
 The $\mathbf{Q(\lambda)}$ algorithm is implemented in the `DiscreteQLearningNode`. It receives **state description**, **reward(s)** and **action** that has been selected for execution. It **publishes vector of utility values** of all actions in the given state. Furthermore, these values are multiplied by the amount of motivation on the input.
 
@@ -39,7 +39,7 @@ The $\mathbf{Q(\lambda)}$ algorithm is implemented in the `DiscreteQLearningNode
 
 The Node expects positive values on the `GlobalData` input. If these are not integers, they can be discretized/rescaled in the Node's configuration. The Node updates sizes of particular Q-matrix dimensions on line, based on the input values that are fed into the Node. Therefore the input data can be either variables or constants. For more information, see the documentation of the Node.
 
-#### <a name="qlearningHowToUse">When to Use the Node </a>
+#### <a name="qlearningHowToUse"></a>When to Use the Node
 
 It is suitable to use this Node if the problem:
 
@@ -50,10 +50,10 @@ It is suitable to use this Node if the problem:
 
 Examples of use of this Node are [here](../examples/discreteqlearning.md#qlearningSimple), description how to use it [just below](discreteqlearning.md#asmHowToUse)
 
-### <a name="asmNode">Action Selection Method Node</a>
+### <a name="asmNode"></a>Action Selection Method Node
 The `DiscreteQLearningNode` **learns on line** by interaction with the environment through own actions. Therefore it has to be able to weight between **exploration** of new states (searching for rewards) and **exploitation** of the knowledge. Here we use motivation-based $\epsilon-greedy$ [Action Selection Method](http://www.tokic.com/www/tokicm/publikationen/papers/KI2011.pdf) (ASM). The $\epsilon-greedy$ selects random action with $P=\epsilon$ and the best action (the highest utility) otherwise. The `ActionSelectionNode` (see above) implements motivation-based $\epsilon-greedy$ method, where $\epsilon = 1-motivation$. This means that: the higher motivation: the less randomization (the more important is to exploit the knowledge).
 
-#### <a name="asmHowToUse">How to Use the Node </a>
+#### <a name="asmHowToUse"></a>How to Use the Node
 
 Supposed to be used mainly with the `DiscreteQLearningNode` or `DiscreteHarmNode` for selecting actions based on utility values and the motivation. Recommended use case is the following:
 
@@ -61,7 +61,7 @@ Supposed to be used mainly with the `DiscreteQLearningNode` or `DiscreteHarmNode
  * Optionally **increase the motivation** (system will tend to "*wander around reward source(s)*" more)
  * **Use the system** (motivation is high ~ knowledge exploitation is high). If the behavior is not sufficient, continue with exploration.
 
-### <a name="harmNode">Discrete HARM Node</a>
+### <a name="harmNode"></a>Discrete HARM Node
 
 
 The `DiscreteHarmNode` implements algorithm loosely inspired by the [Hierarchy Abstractions Reinforcements Motivations](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.227.3381) architecture. It uses multiple Q-Learning engines/**Stochastic Return Predictors** (SRPs) for learning. In this implementation, the SRPs are created on line (compared to episodic experiments) and only level of 1 of hierarchy is allowed.
@@ -122,7 +122,7 @@ The following animation shows an [example](../examples/discreteqlearning.md#harm
 
 ![Motivation Dynamics](discreteqlearning/motivation-dynamics.gif)
 
-#### <a name="harmHowToUse">How to Use the Node </a>
+#### <a name="harmHowToUse"></a>How to Use the Node
 
 In order to use the `DiscreteHarmNode`, connect state inputs, `ActionSelectionNode` and two inputs for manual override of inner motivations. If the value of `MotivationsOverride` input is above 0.5, the SRPs will not use own sources of motivations. Instead, the motivations can be set manually.
 
@@ -137,7 +137,7 @@ Typical use case of the `DiscreteHarmNode` is as follows:
   * If the system is learned well, you can use its capabilities by setting `MotivationsOverride`
 
 
-#### <a name="harmWenToUse"> When to Use the Node </a>
+#### <a name="harmWenToUse"></a>When to Use the Node
 
 On top of suggestions for use of the `DiscreteQLearningNode` it needs to be considered that the `DiscreteHarmNode` ***learns how to change the environment***. So it is best to use it in **static environments**, where the main changes are caused by the agent's actions.
 
