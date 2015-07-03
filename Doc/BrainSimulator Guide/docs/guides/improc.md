@@ -32,6 +32,11 @@ The algorithm now decides on which object it focuses its attention. Thus, each o
 ### Representing the object
 In the example file, the image patch is represented only by the raw pixels, richer version that is based on the pre-learn features is in the Breakout game scheme. In the richer version, the focuser output (image patch) is used as an input into a following neural network and the back-propagation algorithm is used to learn the network (Auto-encoder in this case) to represent the data [4]. In this example, the network is created from two convolutional layers and one fully-connected layer. The last layer is a vector representation of the object.
 
+In the [simple image processing example](../examples/improc.md), the object is represented as a raw image patch. It is visualized in the figure below. The Focuser node is used to visualized the the location and size of the selected object (observer on the left side in the figure bellow). Its output is raw image (middle observer i the figure below), then we used the resize node to get the desired resolution (right observer).
+
+![](img_examples/vision_focuserDesc.PNG)
+
+
 ### Visual memory of objects
 MyKMeansWM node clusters all objects, the method is following. For the given focuser output, we compare it with the current state of the memory and if it is similar to an object, we update the object based on the given input data. If not, it creates the new object. The method can be seen as an on-line version of the popular K-Means clustering algorithm [5,6].
 
