@@ -8,6 +8,14 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
+
+    /// <author>GoodAI</author>
+    /// <meta>xx</meta>
+    /// <status>Working</status>
+    /// <summary>Applies selected filter on the 2D input (i.e. an image).</summary>
+    /// <description>
+    /// 
+    /// </description>
     [YAXSerializeAs("Filter2D")]
     public class MyFilter2D : MyTransform
     {        
@@ -30,6 +38,9 @@ namespace GoodAI.Modules.Transforms
             Temp.ColumnHint = Output.ColumnHint;
         }
 
+        /// <summary>
+        /// Calculates static measure on the input mem. block on the 3x3 neighborohood of each pixel.
+        /// </summary>
         [Description("Variance 3x3")]
         public class MyVariance3x3Task : MyTask<MyFilter2D>
         {
@@ -47,6 +58,9 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// Simple edge detection algorithm that uses a constrast between each pixel value and the sum of its neighborohood pixels.
+        /// </summary>
         [Description("Edge detection")]
         public class MyEdgeDetectionTask : MyTask<MyFilter2D>
         {
@@ -64,6 +78,9 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// <a href="https://en.wikipedia.org/wiki/Gaussian_blur">Gaussian blur</a> method that convolves a 3x3 Gaussian matrix with the input image.
+        /// </summary>
         [Description("Gaussian Blur (3x3)")]
         public class MyGaussianBlurTask : MyTask<MyFilter2D>
         {
@@ -90,6 +107,9 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// Edge detectio nusing the <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel filter</a> of size 3x3.
+        /// </summary>
         [Description("Sobel Edge Detection (3x3)")]
         public class MySobelEdgeTask : MyTask<MyFilter2D>
         {
