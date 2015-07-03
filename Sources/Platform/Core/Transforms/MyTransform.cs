@@ -150,6 +150,21 @@ namespace GoodAI.Modules.Transforms
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>xx</meta>
+    /// <status>Working</status>
+    /// 
+    /// <summary>Reduction of the input.</summary>
+    /// 
+    /// <description>
+    ///  The node applies several reduction rechniques to scale down the input memory block.
+    ///  
+    ///  <h3> Operation </h3>
+    ///    The desired reduction technique is always in the form "input"_"operation type"_"output". So "f_MinIdx_fi" means that the input is a float memory block on which
+    ///    the Min function is applied and the output is: minimal value as a float, and its index as integer.  "i_MinIdxMaxIdx_4i" takes integer as an input and the output is four integers: minimal value of the
+    ///    input, index of the min-value, maximum value of the input and the max-value index
+    ///  
+    /// </description>
     [YAXSerializeAs("Reduction")]
     public class MyReduction : MyTransform
     {
@@ -178,6 +193,9 @@ namespace GoodAI.Modules.Transforms
         [YAXSerializableField(DefaultValue = MyReductionFactory.Mode.f_Sum_f)]
         public MyReductionFactory.Mode Mode { get; set; }
 
+        /// <summary>
+        /// Performs the reduction operation.
+        /// </summary>
         [Description("Reduction")]
         public class MyReductionTask : MyTask<MyReduction>
         {
