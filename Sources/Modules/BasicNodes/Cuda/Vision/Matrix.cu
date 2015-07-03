@@ -212,7 +212,7 @@ __global__ void Matrix_Substraction_naive(const float * A , int Acount, int Acol
 			out0[id] = exp(A[id]);
 		}
 	}
-    __global__ void LogKernel(const float * A , int Acount, int Acols, float * out0 , int out0count)
+    __global__ void LogKernel_naive(const float * A , int Acount, int Acols, float * out0 , int out0count)
 	{		
 		int id = blockDim.x * blockIdx.y * gridDim.x	+ blockDim.x * blockIdx.x	+ threadIdx.x;
 		if(id < out0count)

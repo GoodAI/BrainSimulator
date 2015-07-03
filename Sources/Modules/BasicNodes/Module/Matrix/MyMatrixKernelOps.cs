@@ -38,7 +38,7 @@ namespace GoodAI.Modules.Matrix
 
             if ((operations & MatOperation.Log) > 0)
             {
-                OpersKerlsDictionary.Add(MatOperation.Exp, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "LogKernel_naive"));
+                OpersKerlsDictionary.Add(MatOperation.Log, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "LogKernel_naive"));
             }
             if ((operations & MatOperation.Exp) > 0)
             {
