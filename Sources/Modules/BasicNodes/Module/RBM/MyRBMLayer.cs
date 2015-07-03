@@ -21,14 +21,15 @@ namespace GoodAI.Modules.RBM
     ///     Can act as both visible and hidden layer.
     /// </summary>
     /// <description>
-    /// Specify the layer to be learned with CurrentLayerIndex parameter.
-    /// Layers are indexed from 0 (zero).
+    /// <p>Specify the layer to be learned with CurrentLayerIndex parameter.</p>
+    /// <p>Layers are indexed from 0 (zero).</p>
+    /// <br/>
     /// 
-    /// Current layer 0 means we are learning weights between the 0th and 1st layers (i. e. the first two layers).
-    /// Typically, you want to learn the RBM layer-wise starting from 0.
-    /// Start with layer index of 0, after first weights (between 0 and 1 are learned), increase it to 1, etc., until you reach (last but one)th layer.
-    /// 
-    /// Use RBMFilterObserver (upper right by default) to see weights.
+    /// <p>Current layer 0 means we are learning weights between the 0th and 1st layers (i. e. the first two layers).</p>
+    /// <p>Typically, you want to learn the RBM layer-wise starting from 0.</p>
+    /// <p>Start with layer index of 0, after first weights (between 0 and 1) are learned, increase it to 1, etc., until you reach (last but one)th layer.</p>
+    /// <br/>
+    /// <p>Use RBMFilterObserver (upper right by default) to see weights.</p>
     /// </description>
     public class MyRBMLayer : MyHiddenLayer
     {
