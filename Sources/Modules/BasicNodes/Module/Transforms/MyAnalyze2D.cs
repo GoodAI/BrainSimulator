@@ -15,6 +15,15 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
+
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
+    /// <status>Working</status>
+    /// <summary>2D image analyzes.</summary>
+    /// <description>
+    ///    Given the input image (2D matrix as memory block), the node is able to apply image processing algorithm. So far, only the optical flow by Lucas and Kanade (1981) is available.
+    ///    
+    /// </description>
     [YAXSerializeAs("Analyze2D")]
     public class MyAnalyze2D : MyTransform
     {        
@@ -41,7 +50,11 @@ namespace GoodAI.Modules.Transforms
                 Derivatives.ColumnHint = Input.ColumnHint;
             }                     
         }
-
+        /// <summary>
+        ///   Optical flow algorithm tracks all  pixels (or specific features) in an image all the time. The is based on the following observation:
+        ///   If there is an object in the image, the difference between corresponding parts (pixels) of the object in two near-by frames should be constant.
+        ///   This formulation leads to the set of equations and their solution is solution of the optical flow: <b>the movement of image pixels/features</b>.
+        /// </summary>
         [Description("Optical Flow (Lucas-Kanade)")]
         public class MyOpticalFlowTask : MyTask<MyAnalyze2D>
         {
