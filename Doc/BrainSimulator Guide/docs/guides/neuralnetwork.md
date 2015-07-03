@@ -8,4 +8,5 @@ Typically, a Neural Network consists of several layers connected in succession. 
 
 The work flow of a Neural Network is bidirectional. Prediction is usually flowing forward, while learning is flowing backward. In Brain Simulator, this meticulous task planning is handled by a group planners like `NeuralNetworkGroup` or `RBMGroup`, which encapsulate the layers.<br>
 ![](img_examples/NeuralNetworkGroup.PNG)<br>
-Check out the [examples](../examples/index.html#neural-network-examples) for different sample implementations of Neural Networks.
+IMPORTANT: *Each network of layers need to be placed in immediate succession and placed inside an appropriate group eg.* `NeuralNetworkGroup`*. This is to ensure that the forward/backward flow planning is executed correctly. If a layer is placed outside the group or if other nodes are placed in between layers, the planning can fail with unexpected results following. At the moment there is no automatic validation of this, so please take care to place layers in succession inside the appropriate group.*<br><br>
+Check out the [examples](../examples/index.html#neural-network-examples) for a variety of implementations of Neural Networks.
