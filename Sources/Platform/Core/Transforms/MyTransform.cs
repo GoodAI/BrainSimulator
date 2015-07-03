@@ -227,8 +227,10 @@ namespace GoodAI.Modules.Transforms
     /// <author>GoodAI</author>
     /// <meta>mb</meta>
     /// <status>Working</status>
-    /// <summary> </summary>
+    /// <summary>For each input indicates (by 1.0f) wheather its value is in an interval.</summary>
     /// <description>
+    /// Set <b>Levels</b> to number of interval you want to indicate. 
+    /// The size of output equals size of input times number of selected levels.
     /// </description>
     [YAXSerializeAs("Thresholding")]
     public class MyThreshold : MyTransform
@@ -237,7 +239,12 @@ namespace GoodAI.Modules.Transforms
         [MyBrowsable, Category("Params")]
         [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = 2)]
         public int Levels { get; set; }
-     
+
+        /// <summary>
+        /// Set <b>Minimum</b> and <b>Maximum</b> for interval which is to be indicated.<br/>
+        /// 1.0f is then assigned to the i-th position if the value falls into i-th interval
+        /// of length (Maximum - Minimum) / Levels; 0.0f is assigned otherwise.
+        /// </summary>
         [Description("Threshold")]
         public class MyThresholdTask : MyTask<MyThreshold>
         {
@@ -275,7 +282,7 @@ namespace GoodAI.Modules.Transforms
 
         public override void UpdateMemoryBlocks()
         {
-            OutputSize = InputSize*Levels;
+            OutputSize = InputSize * Levels;
         }
     }
 
