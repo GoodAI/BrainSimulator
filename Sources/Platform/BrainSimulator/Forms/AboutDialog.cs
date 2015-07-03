@@ -63,8 +63,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                 return
                     "Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback." +                    
-                    "\r\n\r\n The platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules." +
-                    "\r\n\r\n Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.";
+                    "\r\n\r\nThe platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules." +
+                    "\r\n\r\nPlease keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.";
             }
         }
 
