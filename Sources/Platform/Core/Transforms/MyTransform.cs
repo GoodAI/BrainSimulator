@@ -485,7 +485,7 @@ namespace GoodAI.Modules.Transforms
         ///   There are two methods to apply:
         ///   <ul>
         ///    <li> Standart: simply cuts all values higher or lower. </li> 
-        ///    <li> Modulo: apllies the <b>modulus operator</b>, that computes the remainder that results from performing integer division. So the result is: ''value % Maximum + Minimum''</li> 
+        ///    <li> Modulo: apllies the <b>modulus operator</b> that computes the remainder from the integer division. So the result is: ''value % Maximum + Minimum''</li> 
         ///   </ul>
         /// </summary>
         [Description("Range Restriction")]
