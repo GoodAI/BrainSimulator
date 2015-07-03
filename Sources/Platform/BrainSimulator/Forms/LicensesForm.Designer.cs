@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LicensesForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.licenseList = new System.Windows.Forms.ListBox();
             this.licenseText = new System.Windows.Forms.RichTextBox();
@@ -84,8 +85,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(979, 499);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LicensesForm";
-            this.ShowIcon = false;
             this.Text = "Licensing Information";
             this.Load += new System.EventHandler(this.LicensesForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
