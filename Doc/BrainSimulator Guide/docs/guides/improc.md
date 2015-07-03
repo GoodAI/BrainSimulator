@@ -1,6 +1,5 @@
 
 
-
 # Image processing
 
 Brain Simulator contains several image processing nodes and algorithms. So far, it includes GPU implementation of the SLIC algorithm [1], basic algorithm for joining super-pixels, image patch selection algorithm, and on-line k-means clustering that constitute a working memory in our example.
@@ -15,13 +14,15 @@ The image processing nodes will be presented on the example of ball-tracking in 
 The algorithm drives its attention from one object to another and it works in the following way. First,  an  input  image  is  segmented  into  super-pixels  (SP)  using the SLIC [1] method.   Second,  each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy ($E_a$) is estimated for  each  object.   Fourth,  features  are  estimated  for  the  object with  the  highest $E_a$ by  a  hierarchy  of  convolutions  and  fully-connected layers.  Fifth, the object features are clustered into a Visual Words [5] to constitute a Working Memory.
 
 ### Super-pixels pre-processing
- SLIC algorithm [1,2] was used to divide image into a set of super-pixels (SP). Important is that the algorithm is fast, each SP covers roughly uniform area. It also assign a simple descriptor to each super pixel based on its average color and its change in time.
-The segmentation node in the image below. It requires the number of segments parameter (right side of the figure) and the input image has to be square.
+SLIC algorithm [1,2] was used to divide image into a set of super-pixels (SP). Important is that the algorithm is fast, each SP covers roughly uniform area. It also assigns a simple descriptor to each super pixel based on its average color and its change in time.
+An Example of usage of the segmentation node is shown in the image below. It requires to set up the `Params/nSegs` parameter (right side of the figure) that defines the number of segments. Number of pixels in the image has to be divisible by the number segments (`nSegs`). So far, the input image has to be always square.
 
 ![](img_examples/vison_seg_scheme.PNG)
 
 ### Join patches
-Concatenating super-pixels results in objects. The goal is to find which neighborhood super-pixels correspond to the same object and which do not. Thus, a graph of super-pixel connections is created. Each edge (that connects vicinity super-pixels) is weighted based on the difference between the super-pixels descriptor and if the weight is larger than a Params/Threshold super-pixels that are connected by the edge belongs to the same object.
+Super-pixels are now concatenated into more-meaingful sets, similar to objects. The goal is to find which neighborhood super-pixels correspond to the same object and which do not. Thus, a graph of super-pixel connections is created. Each edge (that connects vicinity super-pixels) is weighted based on the difference between the super-pixel descriptors. If the weight of the edge is larger than `Params/Threshold`, super-pixels that are connected by the edge belongs to the same object.
+
+Result of this node has same format as its input, but indexes of segments are now different as they correspond to the object proposals.
 
 ![](img_examples/vison_join_scheme.PNG)
 
