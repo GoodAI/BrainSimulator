@@ -33,6 +33,9 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 MessageBox.Show("Error loading licenses.\n\n" + exc.Message);
             }
+
+            if (licenseList.Items.Count > 0)
+                licenseList.SelectedIndex = 0;
         }
 
         private void LoadLicensesList()
