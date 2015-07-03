@@ -90,10 +90,10 @@ This brain shows basic use of `DiscreteQLearningNode` in the `GridWorld`. The No
 
 ![DiscreteQLearningBrain](img/discreteQLearning-brain.PNG)
 
-The following figure shows state of the memory after about 400 simulation steps. It can be seen that the agent **received reward two times**. Also, the agent visited only left part of the World (including door), therefore the $\mathbf{Q}(s,a)$ matrix has currently dimensions only: $10 \times 6 \times 6 ~actions$. The `QLearningObserver` shows:
+The following figure shows state of the memory after about 400 simulation steps. It can be seen that the agent **received reward two times**. Also, the agent visited only left part of the World (including door), therefore the $\mathbf{Q}(s,a)$ matrix has currently dimensions only: $10 \times 6 ~states \times 6 ~actions$. The `QLearningObserver` shows:
 
   * graphical representation of the action with the highest utility.
-  * Color corresponds to the value of the utility of the best action (see [Guides section](guides/discreteqlearning.md)).
+  * color corresponds to the value of the utility of the best action (see the [Guides section](guides/discreteqlearning.md)).
 
 It can be seen that the Eligibility Trace wrote the $Q$ values on multiple positions back in time. Also we can see that the current strategy already leads towards pressing the switch, despite the fact that it is suboptimal.
 
@@ -104,7 +104,7 @@ It can be seen that the Eligibility Trace wrote the $Q$ values on multiple posit
 
 Brain: [QLearning-gridworld-twoRewards.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-twoRewards.brain)
 
-The example shows how two different strategies can be composed as described in [Guides section](guides/discreteqlearning.md#harmNode). The task is identical to the brain above, but it has one additional `DiscreteQLearningNode`, which learns different strategy - receives reward when controlling the door. By the `UtilityScaling` sliders it is possible to prioritize between these strategies.
+The example shows how two different strategies can be composed as described in the [Guides section](guides/discreteqlearning.md#harmNode). The task is identical to the brain above, but there is one additional `DiscreteQLearningNode`, which learns different strategy - receives reward when controlling the door. By the `UtilityScaling` sliders it is possible to prioritize between these strategies.
 
 ---
 ### <a name="qlearningTicTacToe"> Q-Learning plays TicTacToe </a>
@@ -125,24 +125,24 @@ Here, the PlayerO `ConditionalGroup` contains `TicTacToePlayerNode` and RL-Playe
 
   * try to win
   * avoid losing
-  * avoid incorrect moves with lower importance
+  * avoid incorrect moves with a lower importance
 
 #### <a name="ticTacToeHowToUse"> How to Use </a>
 
 In this case, the world is "*not passive*". In case that the `RL-PlayerX` produces only random actions it will receive  only punishments most of the time. The following approach works well:
 
-  * Set the `Difficulty` parameter of the `TicTacToePlayerNode` to some lower value (e.g. 0.5)
+  * Set the `Difficulty` parameter of the `TicTacToePlayerNode` to some lower value (e.g. 0.25~0.5)
   * Set the `GlobalMotivation` to some small value (around 0.5).
   * Test the learning convergence:
     * Set the `GlobalMotivation` to 1.0
     * Observe the output of the `Reward+Punishment X` Node in order to see how well the `RL-PlayerX` plays.
-    * Around time step 130000, the `RL-PlayerX` should play relatively well against `Difficulty` 0.5 .
+    * Around time step no. 150000, the `RL-PlayerX` should play relatively well against `Difficulty` 0.5 .
 
 ---
 ### <a name="qlearningTicTacToe2"> Two Q-Learning Nodes play TicTacToe</a>
 Brain: [QLearning-tictactoe-twoNodes.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe-twoNodes.brain)
 
-The same task as in the previous example, but in this case, two Nodes learn to play TicTacToe against each other.
+The same task as in the previous example. But in this case, two Nodes learn to play TicTacToe against each other. User can alter the motivation and observe the effect on playing.
 
 ---
 ### <a name="harmMapG"> HARM Node Examples </a>
@@ -152,7 +152,7 @@ Brains: [HARM-gridworld-mapF.brain](https://github.com/KeenSoftwareHouse/BrainSi
 
 These examples show usage of the `DiscreteHarmNode`, see the [Guides section](guides/discreteqlearning.md#harmNode) for more details.
 
-The `GridWorld` contains an agent, walls and several controlled objects (2 doors and 1 light in this case) and switches which control them. The agent is allowed to use 6 primitive actions $\mathbf{A}=\lbrace Left, Right, Up, Down, Noop, Press \rbrace$. If the agent is on the same position as a switch and executes the $Press$ action, the corresponding switch and its controlled object (e.g. door) change its state. Note: since the `DridWorld` publishes state of each switch and its controlled object separately, the `DiscreteHarmNode` learns two identical strategies for each of these variables.
+The `GridWorld` contains an agent, walls and several controlled objects (2 doors and 1 light in this case) and switches which control them. The agent is allowed to use 6 primitive actions $\mathbf{A}=\lbrace Left, Right, Up, Down, Noop, Press \rbrace$. If the agent is on the same position as a switch and executes the $Press$ action, the corresponding switch and its controlled object (e.g. door) change the state. Note: since the `DridWorld` publishes state of each switch and its controlled object separately, the `DiscreteHarmNode` learns two identical strategies for each of these variables.
 
 The following figures illustrate how to use the Node after it has already learned strategies:
 
