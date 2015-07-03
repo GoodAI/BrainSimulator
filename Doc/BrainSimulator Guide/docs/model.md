@@ -22,7 +22,7 @@ public class MyTestingNode : MyWorkingNode
     [MyBrowsable, Category(“Structure”)] //these attributes are for the property grid
     [YAXSerializableField(DefaultValue = 2), YAXElementFor(“Structure”)] //these are for XML serializer
     public int InputsPerNeuron { get; set; }
-    
+
     [MyBrowsable, Category(“Structure”)]
     [YAXSerializableField(DefaultValue = 100), YAXElementFor(“Structure”)]
     public int NeuronsCount { get; set; }
@@ -97,7 +97,7 @@ Please notice several details in the implementation:
 For **Node and Task**, you can use the following annotations:
 
 * `MyObsolete(ReplacedBy=typeof(MyBetterNode))` - shows obsolete info in UI
-* `MyNodeInfo(FixedOutput=false)` - 
+* `MyNodeInfo(FixedOutput=false)` -
 * `MyTaskInfo(OneShot=false, Order=0, Disabled=false)`
     - `OneShot=true` - Task will run only in first step of simulation
     - `Order=100` - For ordering the task in node. Tasks in lower number are earlier.
@@ -129,7 +129,7 @@ Memory blocks are defined by MyMemoryBlock<T> type property. If you want your Me
 public MyMemoryBlock<float> Results
 {
     get { return GetOutput(0); }
-    set { SetOutput(0, value); }    
+    set { SetOutput(0, value); }
 }
 ```
 
@@ -241,7 +241,7 @@ Notice this:
 * You can have as many kernels defined as you wish.
 Kernel initialization must be placed inside the `MyTask.Init()` method to assure that they will be created on the proper GPU. (This might get changed in the future and only the name of the kernel will be needed here)
 * You can have multiple kernels in one .cu source file. `MyScheduler.Instance.KernelFactory.Kernel(int nGPU, string moduleName, string kernelName)` is there for accessing it.
-* The `MyTask.Execute()` method can contain any CPU code as well. For now, it’s ok but consider that in future, we are going to use the remote execution on the cluster. All CPU code here will be a problem as there won’t be any C# interpreter on the cluster (there might be some scripting possibilities then, it’s still an open problem).
+* The `MyTask.Execute()` method can contain any CPU code as well. For now, it’s OK, but consider that in future, we are going to use the remote execution on the cluster. All CPU code here will be a problem as there won’t be any C# interpreter on the cluster (there might be some scripting possibilities then, it’s still an open problem).
 * For testing purposes, you can put a CPU version of your algorithms to the `MyTask.ExecuteCPU()` method. Remember that in this method, you can access only the host part of the memory block. (The global CPU execution is not finished yet, use the original `Execute` method for now.)
 
 #### Task Group
@@ -318,7 +318,7 @@ Simply, you need to add a line of code to the the **KnownNodes** (or **KnownWorl
 </Configuration>
 ```
 
-Icon attributes are optional. If it is omitted, the default icon will be created from the initials of the name of your node. 
+Icon attributes are optional. If it is omitted, the default icon will be created from the initials of the name of your node.
 
 And that’s all. After a successful build and run of the module project, your models should appear in the list of nodes in the Configure Node Selection view (see [UI](ui.md)) and you are ready to experiment with it.
 
@@ -330,7 +330,7 @@ Execution blocks are a way of more detailed specification of task run order. Cur
 * `CurrentChild` - current child (task or execution block) which is to be run next
 * `Children` - all children elements
 * `ExecuteStep()` - executes CurrentChild element
-* `Execute()` - executes all children elements 
+* `Execute()` - executes all children elements
 * `MyExecutionBlock(params IMyExecutable[] children)` - constructor
 
 Constructor takes all execution block tasks as its parameters. And while `MyExecutionBlock` itself implements `IMyExecutable`, you can nest multiple execution blocks (see example below).
@@ -471,7 +471,7 @@ public class MySimpleTestNode : MyWorkingNode, IMyCustomExecutionPlanner
 
 ## Custom Module Implementation
 
-To create your own algorithms for use in the Brain Simulator, you will have to create an independent DLL library, which can contain any number of your custom nodes, worlds and observers and other code. We call this library a *module*. The modules are used for easy sharing of content between developers. Any number of modules can be loaded into the Brain Simulator application. 
+To create your own algorithms for use in the Brain Simulator, you will have to create an independent DLL library, which can contain any number of your custom nodes, worlds and observers and other code. We call this library a *module*. The modules are used for easy sharing of content between developers. Any number of modules can be loaded into the Brain Simulator application.
 
 You can use the provided template Visual Studio solution on [GoodAI Github](https://github.com/GoodAI/BrainSimulatorNewModule/) when creating your new module. The solution contains a C# project in which you can implement classes for your custom nodes, worlds and observers. You can easily debug the module directly from the module's solution, when installed, the Brain Simulator is automatically started and your module is loaded into it. You just need to check and adjust the correct paths in the properties of the module's C# project in the Debug tab, specifically the path to the BrainSimulator.exe (depends on your installation path), the path to your generated module DLL and the Working directory (also the directory where the BrainSimulator.exe is located).
 
@@ -483,11 +483,11 @@ Each module you create should contain a <RootNamespace>.Versioning.MyConversion 
 ``` xml
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration RootNamespace="NewModule">
-  <KnownNodes>    
-    ...     
+  <KnownNodes>
+    ...
   </KnownNodes>
   <KnownWorlds>
-    ...   
+    ...
   </KnownWorlds>
 </Configuration>
 ```

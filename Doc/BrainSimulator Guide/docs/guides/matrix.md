@@ -33,7 +33,7 @@ The node is always expected that one input as a Memory Block (MB) goes to **A** 
  | **Minus**<br>  $ -\mathbf A$                            | One MB |  MB input is matrix. |
  | **Norm2**<br>  $ \Vert \mathbf A \Vert_2 $              | One MB |  Returns Norm2 of the input MB. |
  | **Normalize**<br>  $ \frac{1}{\Vert \mathbf A \Vert_2} \mathbf A$   | One MB |  Normalizes the input MB. |
- | **Exp, Log, Abs, Round, Flooe, Ceil**                   | One MB |  Performs the desired operation on each element in the input MB. |
+ | **Exp, Log, Abs, Round, Floor, Ceil**                   | One MB |  Performs the desired operation on each element in the input MB. |
  |
 
 
@@ -72,7 +72,7 @@ Two memory blocks that represents a matrix and a vector are summed. The algorith
 
 **Addition of a matrix with a constant number**
 
-The matrix node allows user to insert the constant as DataInput0 (see orange circle) and the values in the memory block A will be increase by it, as shown in figure below. Note that if you will choose 
+The matrix node allows user to insert the constant as DataInput0 (see orange circle) and the values in the memory block A will be increase by it, as shown in figure below. Note that if you will choose
 
 ![](img_examples/matrix_add02.PNG)
 
@@ -86,7 +86,7 @@ You need create the Matrix object
 MyMatrixAutoOps mat_operation;
 ```
 
-In the `Init` part, it is necassary to create an instance of the object and set-up the desired operations:
+In the `Init` part, it is necessary to create an instance of the object and set-up the desired operations:
 ``` csharp
 mat_operation = new MyMatrixAutoOps(Owner, Matrix.MatOperation.Multiplication | Matrix.MatOperation.Addition, A);
 ```
