@@ -50,8 +50,14 @@ namespace GoodAI.Modules.Transforms
                 Output.ColumnHint = Input.ColumnHint;
             }
         }
-    }    
-
+    }
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
+    /// <status>Working</status>
+    /// <summary>Returns absolute for each element in the input memory block.</summary>
+    /// <description>
+    /// 
+    /// </description>
     [YAXSerializeAs("AbsoluteValue")]  
     public class MyAbsoluteValue : MyTransform
     {
@@ -62,7 +68,9 @@ namespace GoodAI.Modules.Transforms
             base.UpdateMemoryBlocks();
             Temp.Count = 1;
         }
-
+        /// <summary>
+        /// The node also provides couple of normalizations such as vector normalization and the scalar normalization.
+        /// </summary>
         [Description("Absolute Value")]
         public class MyAbsoluteValueTask : MyTask<MyAbsoluteValue>
         {
@@ -285,11 +293,20 @@ namespace GoodAI.Modules.Transforms
             OutputSize = InputSize * Levels;
         }
     }
-
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
+    /// <status>Working</status>
+    /// <summary>Goniometric function</summary>
+    /// <description>
+    /// The Node applies user specified goniometric on each element of the input memory block.
+    /// </description>
     [YAXSerializeAs("GoniometricFunction")]
     public class MyGoniometricFunction : MyTransform
     {
 
+        /// <summary>
+        /// The node contains six functions: Sinus, Cosines, Tangents and their hyperbolic equivalents. It applies this function to the input.
+        /// </summary>
         [Description("Goniometric")]
         public class MyGoniometricTask : MyTask<MyTransform>
         {
@@ -455,8 +472,22 @@ namespace GoodAI.Modules.Transforms
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mb,jk,df</meta>
+    /// <status>Working</status>
+    /// <summary>Filter.</summary>
+    /// <description>
+    ///   Node to apply a filter to each element of the input memory block.
+    /// </description>
     public class MyLowHighFilter : MyTransform
     {
+        /// <summary>Node to restrict the range of each element of the input memory block.
+        ///   There are two methods to apply:
+        ///   <ul>
+        ///    <li> Standart: simply cuts all values higher or lower. </li> 
+        ///    <li> Modulo: apllies the <b>modulus operator</b>, that computes the remainder that results from performing integer division. So the result is: ''value % Maximum + Minimum''</li> 
+        ///   </ul>
+        /// </summary>
         [Description("Range Restriction")]
         public class MyLowHighFilterTask : MyTask<MyTransform>
         {
@@ -555,6 +586,7 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary> Returns index of the max value in the mem. block </summary>
         [Description("Find max value ")]
         public class MyFindMaxTask : MyTask<MyTransform>
         {
@@ -583,7 +615,7 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
-        
+        /// <summary> Rounds elements in the mem. block. </summary>
         [Description("Round")]
         public class MyRoundTask : MyTask<MyTransform>
         {
@@ -600,7 +632,7 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
-
+        /// <summary> Rounds elemetns in the input mem. block. downwards. </summary>
         [Description("Floor")]
         public class MyFloorTask : MyTask<MyTransform>
         {
