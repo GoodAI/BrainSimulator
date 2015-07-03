@@ -5,7 +5,7 @@
 
 ## Image Processing
 
-These sample projects show several [examples](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/tree/master/Vision) to peform [image processing](guides/improc.md)
+These sample projects show several [examples](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/tree/master/Vision) to perform [image processing](guides/improc.md)
 
 ### Segmentation
 Brain: [Vision/Vision_SLICsegmentation.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_SLICsegmentation.brain)
@@ -22,7 +22,7 @@ Brain: [Vision/Vision_segmentationOfPhongGame.brain](https://github.com/KeenSoft
 
 The sample project shows the full pipeline. First, an input image is segmented into super-pixels (SP). Second, each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy (Ea) is estimated for each object. Fourth, features are estimated as raw image patches. Fifth, the object features are clustered into a Visual Words to constitute a Working Memory.
 
-Again, `Operation/ObserverMode` property of most of observers switches between visualoizations modes.
+Again, `Operation/ObserverMode` property of most of observers switches between visualization modes.
 
 ![](img/vision_ex_pong.PNG)
 
@@ -49,8 +49,8 @@ Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimula
 
 
 Brain file with several multiplication examples.
-Again, note that dimension of inputs have to correspond to the desired opreation with matrices. The example containts examples with
-two memory block inputs as well as with only one, when the second is constat setted in `Params\DataInput0`.
+Again, note that dimension of inputs have to correspond to the desired operation with matrices. The example contains examples with
+two memory block inputs as well as with only one, when the second is constant set in `Params\DataInput0`.
 
 ![](img/matrix_ex_multipl.PNG)
 
