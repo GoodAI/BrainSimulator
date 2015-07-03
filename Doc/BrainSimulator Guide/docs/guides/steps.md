@@ -59,7 +59,7 @@ namespace RegressionModule
     {
         public override void UpdateMemoryBlocks()
         {
-            
+
         }
     }
 }
@@ -200,12 +200,12 @@ class MyGatherDataTask : MyTask<MyRegressionNode> {
 
     public override void Init(int nGPU)
     {
-        
+
     }
 
     public override void Execute()
     {
-       
+
     }
 }
 ```
@@ -313,7 +313,7 @@ So let's create a new task and compute model parameters inside of it. We get the
 class MyComputeTask : MyTask<MyRegressionNode> {
     public override void Init(int nGPU)
     {
-        
+
     }
 
     public override void Execute()
@@ -330,7 +330,7 @@ class MyComputeTask : MyTask<MyRegressionNode> {
         double sumY = 0;
         double sumYY = 0;
         double sumProds = 0;
-        
+
 
         for (int i = 0; i < N; ++i) {
             x = X[i];
@@ -365,7 +365,7 @@ Definition in Node is `public int ValidFields { get; set; }`
 Setting it in `Execute()` of *MyGatherDataTask*
 
 ``` csharp
-if (Owner.ValidFields != Owner.BufferSize) 
+if (Owner.ValidFields != Owner.BufferSize)
 {
     Owner.ValidFields = m_cursor + 1;
 }
@@ -380,7 +380,7 @@ Owner.ValidFields = 0;
 We also need to define *Output* memory block size in `UpdateMemoryBlocks`
 
 ``` csharp
-Output.Count = 2; 
+Output.Count = 2;
 ```
 
 The node should be working now. You can observe (e.g. by [matrix observer](../observer.md#matrix-observer)) the parameters of regression
@@ -471,8 +471,8 @@ namespace RegressionModule
             Owner.XInput.CopyToMemoryBlock(Owner.XData, 0, m_cursor, 1);
             Owner.YInput.CopyToMemoryBlock(Owner.YData, 0, m_cursor, 1);
             m_cursor = (m_cursor + 1 ) % Owner.BufferSize;
-            
-            if (Owner.ValidFields != Owner.BufferSize) 
+
+            if (Owner.ValidFields != Owner.BufferSize)
             {
                 Owner.ValidFields = m_cursor + 1;
             }
@@ -483,7 +483,7 @@ namespace RegressionModule
     class MyComputeTask : MyTask<MyRegressionNode> {
         public override void Init(int nGPU)
         {
-            
+
         }
 
         public override void Execute()
@@ -500,7 +500,7 @@ namespace RegressionModule
             double sumY = 0;
             double sumYY = 0;
             double sumProds = 0;
-            
+
 
             for (int i = 0; i < N; ++i) {
                 x = X[i];
@@ -569,13 +569,13 @@ We also need to modify node entry in *conf/nodes.xml* to reflect the existence o
 
 The observer now can be added, but doesn't do anything yet. Next step is to create a kernel, which will convert the data into pixels. Create new file `RegressionObserverKernel.cu` in `RegressionModuleCuda` project. You can see the boilerplate below
 
-``` csharp 
-#include <cuda.h> 
-#include <device_launch_parameters.h> 
+``` csharp
+#include <cuda.h>
+#include <device_launch_parameters.h>
 
 #define PIXEL_COLOR 0xFF585858;
 
-extern "C" 
+extern "C"
 {
     __constant__ int D_SIZE;
     __constant__ float D_ALPHA;
@@ -589,7 +589,7 @@ extern "C"
         int threadId = blockDim.x*blockIdx.y*gridDim.x
                 + blockDim.x*blockIdx.x
                 + threadIdx.x;
-        
+
         if(threadId < count)
         {
             //code will be here
@@ -598,7 +598,7 @@ extern "C"
 }
 ```
 
-As you can see, we defined all necessary arguments. Data to plot, regression parameters, pixels to write and nr. of threads. Regression parameters and information important for correct plotting (minimal x and y values, plot scale and its size) will take place in CUDA's constant memory space.
+As you can see, we defined all necessary arguments. Data to plot, regression parameters, pixels to write and number of threads. Regression parameters and information important for correct plotting (minimal x and y values, plot scale and its size) will take place in CUDA's constant memory space.
 
 Let's add the implementation of data plotting. (Following code should be placed instead of `//code will be here`)
 
@@ -619,7 +619,7 @@ pixels[idx] = PIXEL_COLOR;
 
 We obtain x and y values from our data, scale them to plot size and then invert y coordinate (pixel buffer is indexed from left top, while we want to have center of coordinates in left bottom). After calculating the correct index in pixel array, we just set the pixel to black-ish color.
 
-Now, let's bring our attention back to `MyRegressionObserver` class. We will define the kernel. 
+Now, let's bring our attention back to `MyRegressionObserver` class. We will define the kernel.
 
 ``` csharp
 class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
@@ -657,7 +657,7 @@ class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
         m_kernel.SetConstantVariable("D_XMIN", xmin);
         m_kernel.SetConstantVariable("D_YMIN", ymin);
         m_kernel.SetConstantVariable("D_SIZE", Size);
-        
+
         m_kernel.SetupExecution(Target.ValidFields);
         m_kernel.Run(Target.XData, Target.YData, VBODevicePointer, Target.ValidFields);W
     }
@@ -695,8 +695,8 @@ You may notice the strange position of the data being plotted. That is because o
 Another handy feature would be a visualization of the regression line. We can add the appropriate code to our `RegressionObserverKernel` or write new kernel. This new kernel can then be called either from `RegressionObserverKernel` or from `MyRegressionObserver`. I will show the latter option.
 
 ``` csharp
-#include <cuda.h> 
-#include <device_launch_parameters.h> 
+#include <cuda.h>
+#include <device_launch_parameters.h>
 
 // draw line as y = k*x+q
 extern "C"

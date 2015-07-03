@@ -60,10 +60,10 @@ namespace GoodAI.Modules.Observers
             }
         }
 
-        [YAXSerializableField(DefaultValue = 0)]
+        [YAXSerializableField(DefaultValue = -5)]
         private float m_minValue;
 
-        [MyBrowsable, Category("Bounds")]
+        [MyBrowsable, Category("Bounds"), DisplayName("\tMinValue")]
         public float MinValue
         {
             get { return m_minValue; }
@@ -73,7 +73,7 @@ namespace GoodAI.Modules.Observers
             }
         }
 
-        [YAXSerializableField(DefaultValue = 1)]
+        [YAXSerializableField(DefaultValue = 5)]
         private float m_maxValue;
 
         [MyBrowsable, Category("Bounds")]
@@ -88,12 +88,14 @@ namespace GoodAI.Modules.Observers
 
         public MyRBMFilterObserver()
         {
-            m_maxValue = 1;
-            m_minValue = 0;
+            m_maxValue = 5;
+            m_minValue = -5;
             m_columns = 1;
             m_filterHeight = 0;
             m_filterWidth = 0;
             m_kernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"RBM\RBMKernels", "RBMFilterObserver");
+            if (Target != null && Target.Output != null)
+                m_columns = (int)Math.Sqrt(Target.Output.Count);
 
             TriggerReset();
         }
