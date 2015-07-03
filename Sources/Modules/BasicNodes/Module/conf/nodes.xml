@@ -17,7 +17,6 @@
       <Observer type="GoodAI.Modules.Observers.MyPupilControlObserver" />
     </Node>
     
-    <Node type="GoodAI.Modules.CLA.MyNupicNode" CanBeAdded="true" />
     <Node type="GoodAI.Modules.SparseCoding.MyScalarToSDRNode" CanBeAdded="true" />
 
     <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true" />    

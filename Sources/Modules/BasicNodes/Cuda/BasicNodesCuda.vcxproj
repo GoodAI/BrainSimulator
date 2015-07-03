@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="CLA\CLAKernel.cu" />
-    <CudaCompile Include="CLA\CLATPKernel.cu" />
-    <CudaCompile Include="CLA\VectorDirectionKernel.cu" />
     <CudaCompile Include="Clustering\KMeansKernel.cu" />
     <CudaCompile Include="Common\CombineBinaryVectorsKernel.cu" />
     <CudaCompile Include="Common\CombineVectorsKernel.cu" />

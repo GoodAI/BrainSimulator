@@ -96,9 +96,6 @@
     <Reference Include="ManagedCuda">
       <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\ManagedCuda.dll</HintPath>
     </Reference>
-    <Reference Include="NupicCoreSoloWrapper">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\Nupic\NupicCoreSoloWrapper.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
@@ -125,8 +122,6 @@
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
-    <Compile Include="CLA\MyNupicNode.cs" />
-    <Compile Include="CLA\MyNupicTasks.cs" />
     <Compile Include="Common\MyInverseTransformSampling.cs" />
     <Compile Include="Common\MyRandomNode.cs" />
     <Compile Include="Harm\MyAbstractDiscreteQLearningNode.cs" />
