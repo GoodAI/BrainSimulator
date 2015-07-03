@@ -25,6 +25,7 @@ pages:
     - Image Processing: 'examples/improc.md'
     - Restricted Boltzmann Machine: 'examples/rbm.md'
     - Motor Control: 'examples/motor.md'
+    - Vector Symbolic Architecture: 'examples/binding.md'
 
 - Changelog: 'changelog.md'
 markdown_extensions:
