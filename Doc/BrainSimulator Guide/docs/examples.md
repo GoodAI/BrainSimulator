@@ -10,7 +10,7 @@ These sample projects show several [examples](https://github.com/KeenSoftwareHou
 ### Segmentation
 Brain: [Vision/Vision_SLICsegmentation.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_SLICsegmentation.brain)
 
-The sample shows how to segment input image using SLIC algorithm. Note that input is first modified to have a square shape. When one clicks on the observer, there is a `Operation/ObserverMode` property that allows to switch between different visualizations (such as segmentation borders, centers XYZ-color space etc.).
+The sample shows how to segment input image using SLIC algorithm. Note that the input image is first modified to have a square shape. When one clicks on the observer, there is a `Operation/ObserverMode` property that allows to switch between different visualizations (such as segmentation borders, centers XYZ-color space etc.).
 
 ![](img/vision_ex_SLIC.PNG)
 
@@ -20,7 +20,7 @@ The sample shows how to segment input image using SLIC algorithm. Note that inpu
 
 Brain: [Vision/Vision_segmentationForBreakout.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_segmentationForBreakout.brain)
 
-The sample project shows the full pipeline. First, an input image is segmented into super-pixels (SP). Second, each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy (Ea) is estimated for each object. Fourth, features are estimated as raw image patches. Fifth, the object features are clustered into a Visual Words to constitute a Working Memory.
+The sample project shows the pipeline for unsupervised discovery of the hypothesized objects. First, an input image is segmented into super-pixels (SP). Second, each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy (Ea) is estimated for each object. Fourth, features are estimated as raw image patches. Fifth, the object features are clustered into a Visual Words to constitute a Working Memory.
 
 Again, `Operation/ObserverMode` property of most of observers switches between visualization modes.
 
@@ -36,10 +36,14 @@ These sample projects show several [examples](https://github.com/KeenSoftwareHou
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
-Brain file with several addition examples.
-It contains summations of two matrices. Row or column wise addition is included too. Note that dimension of inputs have to correspond.
+Brain file with several examples of the addtion operation.
+It contains :
 
-The JoinNode contais operation for addition of two matrices too. The example shows comparison of these two methods. Output of the MatrixNode and the JoinNode are compared in the new JoinNode using the DistanceSquere operations. The difference (visulizaed using the observer) is zero.
+ * Summation of matrix and number. The number is defiend as a memory block as well as as well as `Params\DataInput0` paramter.
+ * Row or column wise addition of vector and matrix.
+ * Summation of two matrices. The JoinNode contais operation for addition of two matrices too. Thus, the example shows comparison of these two methods. Output of the MatrixNode and the JoinNode are compared in the new JoinNode using the DistanceSquere operations. The difference (visulizaed using the observer) is zero.
+
+Note that dimensions of inputs must always correspond.
 
 ![](img/matrix_ex_add.PNG)
 
@@ -50,11 +54,11 @@ The JoinNode contais operation for addition of two matrices too. The example sho
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
 
-Brain file with several multiplication examples.
-Again, note that dimension of inputs have to correspond to the desired operation with matrices. The example contains examples with
-two memory block inputs as well as with only one, when the second is constant set in `Params\DataInput0`.
+Brain file with several multiplication examples. Again, note that dimension of inputs have to correspond to the desired operation with matrices. The sample project contains examples with:
 
-The JoinNode contais operation for matrix multiplication too. The example shows comparison of these two methods. Output of the MatrixNode and the JoinNode are compared in the new JoinNode using the DistanceSquere operations. The difference (visulizaed using the observer) is zero.
+ * Vector times number
+ * Vector time matrix
+ * Matrix times matrix. Again, the JoinNode contais operation for matrix multiplication too. The example shows comparison of these two methods. Output of the MatrixNode and the JoinNode are compared in the new JoinNode using the DistanceSquere operations. The difference (visulizaed using the observer) is zero.
 
 
 ![](img/matrix_ex_multipl.PNG)
