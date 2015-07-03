@@ -147,7 +147,7 @@ namespace GoodAI.Modules.Common
                     }
                     if (Owner.IncludeLabel)
                     {
-                        sb.Append(Owner.Label.Host[0].ToString());
+                        sb.Append(Owner.Label.Host[0].ToString("0.00000"));
                         sb.Append(',');
                     }
 
