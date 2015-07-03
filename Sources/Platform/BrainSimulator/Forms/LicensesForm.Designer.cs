@@ -73,6 +73,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.licenseText.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.licenseText.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.licenseText.Location = new System.Drawing.Point(3, 3);
             this.licenseText.Name = "licenseText";
             this.licenseText.ReadOnly = true;
