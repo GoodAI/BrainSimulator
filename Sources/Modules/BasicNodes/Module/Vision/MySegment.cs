@@ -32,6 +32,7 @@ namespace GoodAI.Modules.Vision
 
     /// <author>GoodAI</author>
     /// <meta>jk</meta>
+    /// <status> Working </status>
     /// <summary>
     ///   Segment image into a set of superpixels. The code is restriceted to square images and specific nSegments values.
     /// </summary>
@@ -129,7 +130,7 @@ namespace GoodAI.Modules.Vision
 
         public bool Is_input_RGB = true;
 
-        [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 256)]
+        [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 256), Description("Number of segmetns. Try to keep number such that int n exist: nSegs=n*n; Higher->faster")]
         public int nSegs { get; set; }     // # of segemtns
                                                                                                                               
      
@@ -221,10 +222,10 @@ namespace GoodAI.Modules.Vision
 
             
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 0.3f)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 0.3f), Description("Whether segmetns should prefer grid structure. 0.9 works the best for fishes, while 0.3 for phong.")]
             public float Weight { get; set; }  // How to prefer grid result
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 2)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 2), Description("Number of iterations. Something between 1-3 is usally more than enough.")]
             public float nIters { get; set; }  // # of iterations
             
 
@@ -379,7 +380,7 @@ namespace GoodAI.Modules.Observers
             SegmentCetners,
         }
 
-        [MyBrowsable, Category("Operation"), YAXSerializableField(DefaultValue = MySegObsMode.ImSegBorders)]
+        [MyBrowsable, Category("Operation"), YAXSerializableField(DefaultValue = MySegObsMode.ImSegBorders), Description("Visualization mode")]
         public MySegObsMode ObserverMode { get; set; }
 
         public MySegmentObserver()

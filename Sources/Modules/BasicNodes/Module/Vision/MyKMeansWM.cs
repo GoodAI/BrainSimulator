@@ -57,6 +57,7 @@ namespace GoodAI.Modules.Vision
     ///    <li> ThresholdDescSim: Inverse distance that is necessary to assign input data into the existing memory element.</li>
     ///    <li> UpdateClusterCentersOrdering: Will I update database?</li>
     ///    <li> WeightXY: how to prefer XY similarity vs. descriptor similarity.</li>
+    ///    <li> MoveClusCenterValue: Value to update cluster center, it is previous + c*newElemen</li>
     ///   </ul>
     ///   
     ///
@@ -114,14 +115,11 @@ namespace GoodAI.Modules.Vision
 
 
 
-
-
-        [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 90)]
+        [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 90), Description("Maximum number of elements in the memory.")]
         public int MaxClusters { get; set; }          //. # of clusters
                                                        
 
         
-
         //----------------------------------------------------------------------------
         // :: DATA VARS  ::
         [MyPersistable]
@@ -234,16 +232,18 @@ namespace GoodAI.Modules.Vision
             private MyCudaKernel m_minIdxKernel;
 
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = .6f)]
+
+
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = .6f), Description("Inverse distance that is necessary to assign input data into the existing memory element.")]
             public float ThresholdDescSim { get; set; }   //. if checking whether to create new cluster node...
 
-            [MyBrowsable, Category("Params"),YAXSerializableField(DefaultValue = false)]
+            [MyBrowsable, Category("Params"),YAXSerializableField(DefaultValue = false), Description("Update the database?")]
             public bool UpdateClusterCentersOrdering { get; set; }
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = .2f)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = .2f), Description("XY similarity vs. descriptor similarity weigthing.")]
             public float WeightXY { get; set; }
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = .08f)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = .08f), Description("Value to update cluster center, it is previous + c*newElement")]
             public float MoveClusCenterValue { get; set; }
 
 

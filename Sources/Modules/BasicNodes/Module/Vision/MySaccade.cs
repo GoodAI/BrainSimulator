@@ -30,6 +30,7 @@ namespace GoodAI.Modules.Vision
 
     /// <author>GoodAI</author>
     /// <meta>jk</meta>
+    /// <status> Working </status>
     /// <summary>
     ///   Select input patch/segment/object for Saccadic movement...
     /// </summary>
@@ -186,7 +187,7 @@ namespace GoodAI.Modules.Vision
         /// Update terms based on the actual inputs -> now we have id of min energy.
         ///   <h4> Paramters </h4>
         ///   <ul>
-        ///     <li> IncreaseOnFocus:       Term increase when focuser selects it. Lower will stay on the object longer</li>
+        ///     <li> IncreaseOnFocus:       Term increase when focuser selects it. Lower will stay on the object longer.</li>
         ///     <li> DecreaseInTime:        Ration for decresing time term in time. Higher will try to go back on the seen patch sooner.</li>
         ///     <li> RationSupportMovement: How much to prefer movement against time.</li>
         /// </ul>
@@ -195,13 +196,13 @@ namespace GoodAI.Modules.Vision
         public class MySaccadeUpdateTask : MyTask<MySaccade> 
         {
 
-            [MyBrowsable, Category("Time Term"), YAXSerializableField(DefaultValue = 0.1f)]
+            [MyBrowsable, Category("Time Term"), YAXSerializableField(DefaultValue = 0.1f), Description("Term increase when focuser selects it. Lower will stay on the object longer")]
             public float IncreaseOnFocus { get; set; }
 
-            [MyBrowsable, Category("Time Term"), YAXSerializableField(DefaultValue = 1.05f)]
+            [MyBrowsable, Category("Time Term"), YAXSerializableField(DefaultValue = 1.05f), Description("Ration for decresing time term in time. Higher will try to go back on the seen patch sooner.")]
             public float DecreaseInTime { get; set; }
 
-            [MyBrowsable, Category("Terms Weighting"), YAXSerializableField(DefaultValue = 0.95f)]
+            [MyBrowsable, Category("Terms Weighting"), YAXSerializableField(DefaultValue = 0.95f), Description("How much to prefer movement against time.")]
             public float RationSupportMovement { get; set; }
 
 
@@ -345,7 +346,7 @@ namespace GoodAI.Modules.Vision
         {
             public override void Init(int nGPU) {}
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = false)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = false), Description("Wheter to output center postion as [-1,+1] or as pixel position.")]
             public bool ReturnRelativeToCenter { get; set; }
 
             public override void Execute()

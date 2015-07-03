@@ -30,6 +30,7 @@ namespace GoodAI.Modules.Vision
 {
     /// <author>GoodAI</author>
     /// <meta>jk</meta>
+    /// <status> Working </status>
     /// <summary>
     ///   Concatenate patches/segments into objects.
     /// </summary>
@@ -199,7 +200,7 @@ namespace GoodAI.Modules.Vision
         [Description("Execute")]
         public class MyProcessImPatchBasTask : MyTask<MyJoinPatches>
         {
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 0.08f)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = 0.08f), Description("Required similarity between vicinity descriptors within a group.")]
             public float ThresholdDescSim { get; set; }
 
             private MyCudaKernel m_kernel;
