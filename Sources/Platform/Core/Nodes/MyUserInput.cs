@@ -11,7 +11,13 @@ using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Core.Nodes
-{    
+{
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>UserInputNode provides variable number of sliders for manual user input.</summary>
+    /// <description>You can set the number of sliders by setting the <b>OutputSize</b> property.
+    /// If you set the <b>ConvertToBinary</b> property then only the forst slider is used for the output and one value of the output block will be set to one proportionally to the slider location.
+    /// You can control bounds of your inputs with <b>MinValue</b> and <b>MaxValue</b> properties.</description>
     public class MyUserInput : MyWorkingNode
     {
         [MyOutputBlock(0)]
@@ -140,6 +146,9 @@ namespace GoodAI.Core.Nodes
 
         public MyTransferTask GenerateInput { get; protected set; }   
 
+        /// <summary>
+        /// This task will generate your inputs into the output memory block.
+        /// </summary>
         [Description("Generate input")]
         public class MyTransferTask : MyTask<MyUserInput>
         {

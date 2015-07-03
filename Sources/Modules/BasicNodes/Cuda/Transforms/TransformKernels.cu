@@ -88,7 +88,6 @@ extern "C"
 				output[id * count + i] = 0;
 
 			int idx = (int)floor(fmaxf(0, fminf(((input[id] - min) / delta), count - 1)));
-			//			output[id * count + idx] = 1.0f;
 			output[idx * size + id] = 1.0f;
 		}
 	}	

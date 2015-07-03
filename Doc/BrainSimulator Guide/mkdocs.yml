@@ -12,11 +12,20 @@ pages:
 - Guides:
     - How to create a module: 'guides/steps.md'
     - Persistence: 'guides/persistence.md'
-    - Discrete QLearning: 'guides/discreteqlearning.md'
     - Matrix Node: 'guides/matrix.md'
-    - Image Processing: 'guides/improc.md'
     - Neural Network: 'guides/neuralnetwork.md'
-- Examples: 'examples.md'
+    - Discrete Q-Learning: 'guides/discreteqlearning.md'
+    - Image Processing: 'guides/improc.md'
+    - Restricted Boltzmann Machine: 'guides/rbm.md'
+
+- Examples:
+    - Matrix Node: 'examples/matrix.md'
+    - Neural Network: 'examples/neuralnetwork.md'
+    - Discrete Q-Learning: 'examples/discreteqlearning.md'
+    - Image Processing: 'examples/improc.md'
+    - Restricted Boltzmann Machine: 'examples/rbm.md'
+    - Motor Control: 'examples/motor.md'
+
 - Changelog: 'changelog.md'
 markdown_extensions:
     - fenced_code

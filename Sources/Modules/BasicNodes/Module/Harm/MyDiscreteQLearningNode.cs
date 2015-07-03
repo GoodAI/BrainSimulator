@@ -27,8 +27,8 @@ namespace GoodAI.Modules.Harm
     /// <description>
     /// Node does the following:
     ///    <ul>
-    ///    <li> <b>Reveives data: </b>Accepts world state description and currently selected action (code 1ofN).</li>
-    ///    <li> <b>Learns: </b>Updates own Q(s,a) matix.</li>
+    ///    <li> <b>Reveives data:</b> Accepts world state description and currently selected action (code 1ofN).</li>
+    ///    <li> <b>Learns:</b> Updates own Q(s,a) matix.</li>
     ///    <li> <b>Publishes what it has learned: </b>Publishes utilities of actions in the current state, these are scaled by the value of motivation.</li>
     ///   </ul>
     ///
@@ -40,8 +40,8 @@ namespace GoodAI.Modules.Harm
     /// <ul>
     ///     <li> <b>GlobalData:</b> Vector describing state of the environment (can contain variables and constants). Values are scaled by the InputRescaleSize parameter.</li>
     ///     <li> <b>SelectedAction:</b> Vector of size [numberOfActions]. The highest value indicates action that has been executed by the agent.</li>
-    ///     <li> <b>Reward:</b>If the value is non-zero, the RL receives the reward.</li>
-    ///     <li> <b>Motivation:</b>Scales action utilities: the higher the motivation, higher values on the output.</li>
+    ///     <li> <b>Reward:</b> If the value is non-zero, the RL receives the reward.</li>
+    ///     <li> <b>Motivation:</b> Scales action utilities: the higher the motivation, higher values on the output.</li>
     /// </ul>
     /// <h3>Output</h3>
     /// <ul>
@@ -53,9 +53,9 @@ namespace GoodAI.Modules.Harm
     /// </ul>
     /// <h3>Parameters</h3>
     /// <ul>
-    ///     <li> <b>InputRescaleSize:</b>Memory is indexed by integers, user should ideally rescale variable values to fit into integers.</li>
-    ///     <li> <b>Number of Primitive Actions:</b>Number of primitive actions produced by the agent (e.g. 6 for the current gridworld, 3 for the breakout game).</li>
-    ///     <li> <b>SumRewards:</b>Sum across the values in the vector of rewards?</li>
+    ///     <li> <b>InputRescaleSize:</b> Memory is indexed by integers, user should ideally rescale variable values to fit into integers.</li>
+    ///     <li> <b>Number of Primitive Actions:</b> Number of primitive actions produced by the agent (e.g. 6 for the current gridworld, 9 for the tictactoe game).</li>
+    ///     <li> <b>SumRewards:</b> Sum across the values in the vector of rewards?</li>
     /// </ul>
     /// 
     /// </description>
@@ -223,12 +223,12 @@ namespace GoodAI.Modules.Harm
         /// 
         /// <h3>Parameters</h3>
         /// <ul>
-        ///     <li><b>Alpha: </b>Learning factor - the higher the faster the learning is.</li>
-        ///     <li><b>Gamma: </b>How far into the future algorithm looks for learning.</li>
-        ///     <li><b>RewardScale: </b>Increases the value of reward stored (helps increasing accuracy).</li>
-        ///     <li><b>Lambda: </b>How strongly are past values updated (bigger values increase the learning speed, but can cause learning oscilations).</li>
-        ///     <li><b>EligibilityTraceEnabled: </b>"Use the thrace?</li>
-        ///     <li><b>EligibilityTraceLen: </b>How many past steps to update at once (determined efectively by the lambda parameter).</li>
+        ///     <li><b>Alpha:</b> Learning factor - the higher the faster the learning is.</li>
+        ///     <li><b>Gamma:</b> How far into the future algorithm looks for learning.</li>
+        ///     <li><b>RewardScale:</b> Increases the value of reward stored (helps increasing accuracy).</li>
+        ///     <li><b>Lambda:</b> How strongly are past values updated (bigger values increase the learning speed, but can cause learning oscilations).</li>
+        ///     <li><b>EligibilityTraceEnabled:</b> Use the thrace?</li>
+        ///     <li><b>EligibilityTraceLen:</b> How many past steps to update at once (determined efectively by the lambda parameter).</li>
         /// </ul>
         /// 
         /// </summary>

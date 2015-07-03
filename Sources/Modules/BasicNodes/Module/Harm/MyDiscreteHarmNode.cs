@@ -26,7 +26,7 @@ namespace GoodAI.Modules.Harm
     /// </summary>
     /// <description>
     /// HARM - Hierarchy, Abstraction, Rinforcements, Motivations. 
-    /// A system, that is able to autonomously identify own capabilities and tries to learn them (in a SMDP environments).
+    /// A system, that is able to autonomously identify own capabilities and tries to learn them (in a MDP environments).
     /// The system:
     /// 
     ///  <ul> 
@@ -34,12 +34,12 @@ namespace GoodAI.Modules.Harm
     ///    <li> Acts in the environment (produces actions)</li>
     ///    <li> Observes consequences of own actions. If some variable changes, the agent asumes that it is a consequence of its action and tries to learn this new ability:</li>
     ///     <ul>
-    ///     <li> it creates new Stochastic Return Predictor (SRP) = decision space + discrete RL algorithm + source of motivation to execute this behavior</li>
-    ///     <li> this new SRP has a goal to learn how to change this variable. It is done by making connection link from variable change to reward of this SRP</li>
-    ///     <li> the decision space of this SRP should contain only subset of environment variables</li>
-    ///     <li> from now on, the SRP tries to learn how to change the variable by observing actions taken by the agent and receiving own reward</li>
-    ///     <li> all SRPs vote by publishing utilities of child actions in a given state.</li>
-    ///     <li> utilities produced by the SRP are scaled by the amoutn of motivation. Motivation increases in time and is set to 0 when the reward is received.</li>
+    ///     <li> It creates new Stochastic Return Predictor (SRP) = decision space + discrete RL algorithm + source of motivation to execute this behavior</li>
+    ///     <li> This new SRP has a goal to learn how to change this variable. It is done by making connection link from variable change to reward of this SRP</li>
+    ///     <li> The decision space of this SRP should contain only subset of environment variables</li>
+    ///     <li> From now on, the SRP tries to learn how to change the variable by observing actions taken by the agent and receiving own reward</li>
+    ///     <li> All SRPs vote by publishing utilities of child actions in a given state.</li>
+    ///     <li> Utilities produced by the SRP are scaled by the amount of motivation. Motivation increases in time and is set to 0 when the reward is received.</li>
     ///    </ul>
     ///  </ul> 
     /// 
@@ -52,10 +52,10 @@ namespace GoodAI.Modules.Harm
     /// </br>
     /// <h3>Before use:</h3>
     ///  <ul> 
-    ///     <li> Works only in environments which fulfill the SMDP (Semi-Markov Decision Process) environments.</li>
+    ///     <li> Works well in environments which fulfill the MDP (Markov Decision Process) environments.</li>
     ///     <li> Works only for positive integer values of variables. Need to rescale input values by the RescaleVariables parameter. </li>
     ///     <li> Currently uses one level of hierarchy of SRPs.</li>
-    ///     <li> Variable and action subspacing should be used carefully with respect to the environment, or disabled.</li>
+    ///     <li> Variable and action subspacing should be used carefully with respect to the environment, or disabled for slower, but safer learning.</li>
     ///  </ul> 
     /// </description>
     public class MyDiscreteHarmNode : MyAbstractDiscreteQLearningNode
@@ -258,7 +258,7 @@ namespace GoodAI.Modules.Harm
         }
 
         /// <summary>
-        /// Implements Q-learning in the action hiearchy
+        /// Implements Q-learning in multiple separate SRPs.
         ///
         /// <h3>Parameters</h3>
         /// <ul>
@@ -431,7 +431,7 @@ namespace GoodAI.Modules.Harm
         /// <h3>Parameters</h3>
         /// <ul>
         ///     <li><b>MotivationChange: </b>How much to increase the motivation each step if no reward is received.</li>
-        ///     <li><b>UseHierarchicalASM: </b>Eeach SRP publishes utilities of all actions or should use own Action Selection Method (ASM) (select only one action)?.</li>
+        ///     <li><b>UseHierarchicalASM: </b>Eeach SRP publishes utilities of all actions or should use own Action Selection Method (ASM) (select only one action)?</li>
         ///     <li><b>MinEpsilon: </b>If the UseHierarchicalASM is enabled, this is minimum probability of randomization in the ASM.</li>
         ///     <li><b>PropagateUtilitiesInHierarchy: </b>If disabled, utility does not propagete from SRPs to child actions.</li>
         /// </ul>

@@ -563,7 +563,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
             catch (Exception e)
             {
-                MessageBox.Show("An error occured when initializing simulation. Please check that correct version of CUDA runtime is installed.\n\n" +
+                MessageBox.Show("An error occured when initializing simulation. Please make sure you have a supported CUDA-enabled graphics card and apropriate drivers." +
                         "Technical details: " + e.Message, "Simulation Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 // this way you do not have to tweak form Close and Closing events and it works even with any worker threads still running

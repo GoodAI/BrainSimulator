@@ -197,8 +197,8 @@ public class MyInitTask : MyTask<MyTestingNode>
     //Kernel initialization
     public override void Init(int nGPU)
     {
-        m_kernel = MyScheduler.Instance.KernelFactory.Kernel(nGPU, “InitNeuronsKernel”);
-        m_additionalKernel = MyScheduler.Instance.KernelFactory.Kernel(nGPU, “SomeKernelFile”, “AdditionalKernel”);
+        m_kernel = MyKernelFactory.Instance.Kernel(nGPU, “InitNeuronsKernel”);
+        m_additionalKernel = MyKernelFactory.Instance.Kernel(nGPU, “SomeKernelFile”, “AdditionalKernel”);
     }
 
     //Task execution
@@ -227,11 +227,6 @@ public class MyInitTask : MyTask<MyTestingNode>
             Owner.NeuronsCount
         );
     }
-
-    public override void ExecuteCPU()
-    {
-    //Put the CPU version of task here (optional)
-    }
 }
 ```
 
@@ -240,7 +235,7 @@ Notice this:
 * There is the same option of creating task parameters, as for the parent node. Please consider the place where you are putting them. The node parameters should reflect the structure of the node (i.e. only parameters, which affect the memory block sizes should be in nodes). The task parameters should affect the task execution and should be changeable during the simulation runtime.
 * You can have as many kernels defined as you wish.
 Kernel initialization must be placed inside the `MyTask.Init()` method to assure that they will be created on the proper GPU. (This might get changed in the future and only the name of the kernel will be needed here)
-* You can have multiple kernels in one .cu source file. `MyScheduler.Instance.KernelFactory.Kernel(int nGPU, string moduleName, string kernelName)` is there for accessing it.
+* You can have multiple kernels in one .cu source file. `MyKernelFactory.Instance.Kernel(int nGPU, string moduleName, string kernelName)` is there for accessing it.
 * The `MyTask.Execute()` method can contain any CPU code as well. For now, it’s OK, but consider that in future, we are going to use the remote execution on the cluster. All CPU code here will be a problem as there won’t be any C# interpreter on the cluster (there might be some scripting possibilities then, it’s still an open problem).
 * For testing purposes, you can put a CPU version of your algorithms to the `MyTask.ExecuteCPU()` method. Remember that in this method, you can access only the host part of the memory block. (The global CPU execution is not finished yet, use the original `Execute` method for now.)
 
@@ -478,7 +473,7 @@ You can use the provided template Visual Studio solution on [GoodAI Github](http
 ### Versioning
 Making changes in your code can sometimes break your .brain files. This can be due to renaming (nodes, tasks, parameters), deleting tasks/parameters or changing the structure of the node. Fortunately, Brain Simulator has means of maintaining compatibility of old .brain files with new project code. This can be done by implementing version converters.
 
-Each module you create should contain a <RootNamespace>.Versioning.MyConversion class. RootNamespace can be defined in the `nodes.xml` configuration file as following
+Each module you create should contain a `<RootNamespace>.Versioning.MyConversion` class. RootNamespace can be defined in the `nodes.xml` configuration file as following
 
 ``` xml
 <?xml version="1.0" encoding="utf-8" ?>
@@ -495,7 +490,7 @@ Each module you create should contain a <RootNamespace>.Versioning.MyConversion 
 Each `MyConversion` class should be inherited from `MyBaseConversion` class which resides in `GoodAI.Core.Configuration` namespace. The only method you need to implement is `CurrentVersion` which should return the current version of your module. It can be as simple as
 
 ``` csharp
-public override int CurrentVersion { get { return 2; } }
+public override int CurrentVersion { get { return 1; } }
 ```
 
 This version is being saved to the .brain file and every time you load a .brain file into Brain Simulator, the saved version number is compared to the current version number. If they do not match, the .brain file (which has the lower version number) is converted to the current version by sequential invoking of conversion methods.
@@ -506,7 +501,7 @@ Each conversion method in your `MyConversion` class must comply to following dec
 public static string ConvertXToY(string xml)
 ```
 
-Where `X` is a number of version the method accepts and `Y` is a number of version which is produced by the method. E.g. `Convert1To2`.
+Where `X` is a number of version the method accepts and `Y` is a number of version which is produced by the method and `X + 1 = Y` (for example `Convert1To2`, `Convert2To3` etc.).
 
 Input to the conversion method is a string, which represents the loaded .brain file. The function can alter the string in any way it wants and then returns it (on return, the string should represent the .brain file in `Y` version).
 

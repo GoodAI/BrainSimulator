@@ -11,6 +11,10 @@ using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>A node for gating signals from two input branches</summary>
+    /// <description>The node let you mix two inputs together proportionally to the slider location.</description>
     public class MyGateInput : MyWorkingNode
     {
         [MyOutputBlock(0)]
@@ -70,6 +74,9 @@ namespace GoodAI.Core.Nodes
         
         public MyGateTask GateInputs { get; private set; }
 
+        /// <summary>
+        /// Performs the gating.
+        /// </summary>
         [Description("Gate Inputs")]
         public class MyGateTask : MyTask<MyGateInput>
         {
