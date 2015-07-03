@@ -23,6 +23,11 @@ namespace GoodAI.Modules.RBM
     ///     Input layer of Restricted Boltzmann Machine network.
     ///     Can only act as a visible layer. In an RBM network, there is only one input layer and it is its first node.
     /// </summary>
+    /// <description>
+    /// Index of this layer is (or rather must be) 0.
+    /// 
+    /// There must be precisely one input layer in an RBM group.
+    /// </description>
     class MyRBMInputLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
 

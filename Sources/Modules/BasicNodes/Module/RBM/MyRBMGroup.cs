@@ -27,6 +27,10 @@ namespace GoodAI.Modules.RBM
         public MyRBMLearningTask RBMLearning { get; private set; }
         [MyTaskGroup("BackPropagation")]
         public MyRBMReconstructionTask RBMReconstruction { get; private set; }
+
+        [YAXSerializableField(DefaultValue = 0.0f)]
+        [MyBrowsable, Category("\tRegularization"), Description("Only used for backprop in neural network, not used in RBM mode!"), DisplayName("Backprop dropout")]
+        public new float Dropout { get; set; }
     }
     
 

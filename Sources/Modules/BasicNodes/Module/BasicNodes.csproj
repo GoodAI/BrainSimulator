@@ -310,6 +310,8 @@
     <EmbeddedResource Include="res\lstm_big.png" />
     <EmbeddedResource Include="res\input_layer.png" />
     <EmbeddedResource Include="res\input_layer_big.png" />
+    <EmbeddedResource Include="res\harm.png" />
+    <EmbeddedResource Include="res\harm_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -483,8 +485,6 @@
     <Content Include="res\gridworld\taleObstacle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="res\harm.png" />
-    <EmbeddedResource Include="res\harm_big.png" />
     <EmbeddedResource Include="res\imagesaver.png" />
     <EmbeddedResource Include="res\imagesaver_big.png" />
     <EmbeddedResource Include="res\link.png" />
