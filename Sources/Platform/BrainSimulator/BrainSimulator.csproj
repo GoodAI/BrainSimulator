@@ -297,6 +297,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EULA.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="res\input.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

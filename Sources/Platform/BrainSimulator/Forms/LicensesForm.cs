@@ -38,8 +38,32 @@ namespace GoodAI.BrainSimulator.Forms
                 licenseList.SelectedIndex = 0;
         }
 
+        private void licenseList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var item = (LicenseItem)licenseList.SelectedItem;
+
+            try
+            {
+                if (Path.GetExtension(item.FileName).Equals(".rtf"))
+                    licenseText.LoadFile(item.FileName);
+                else
+                    licenseText.Text = File.ReadAllText(item.FileName);
+            }
+            catch (Exception exc)
+            {
+                licenseText.Text = "Error reading file " + item.FileName + "\n\n" + exc.Message;
+            }
+        }
+
         private void LoadLicensesList()
         {
+            // first add our own license
+            var eulaFile = Path.Combine(MyResources.GetEntryAssemblyPath(), @"EULA.rtf");
+
+            if (File.Exists(eulaFile))
+                licenseList.Items.Add(new LicenseItem(eulaFile, "GoodAI Brain Simulator"));
+
+            // add licenses for 3rd party libs
             var licensesDirInfo = new DirectoryInfo(Path.Combine(MyResources.GetEntryAssemblyPath(), @"licenses"));
 
             foreach (var file in licensesDirInfo.GetFiles("*.txt"))
@@ -77,23 +101,15 @@ namespace GoodAI.BrainSimulator.Forms
                 Name = Path.GetFileNameWithoutExtension(fileFullName);
             }
 
+            public LicenseItem(string fileFullName, string displayName)
+            {
+                FileName = fileFullName;
+                Name = displayName;
+            }
+
             public override string ToString()
             {
                 return Name;
-            }
-        }
-
-        private void licenseList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var item = (LicenseItem)licenseList.SelectedItem;
-
-            try
-            {
-                licenseText.Text = File.ReadAllText(item.FileName);
-            }
-            catch (Exception exc)
-            {
-                licenseText.Text = "Error reading file " + item.FileName + "\n\n" + exc.Message;
             }
         }
     }
