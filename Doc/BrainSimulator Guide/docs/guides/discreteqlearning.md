@@ -48,7 +48,7 @@ It is suitable to use this Node if the problem:
  * **Fulfills the MDP property:** A world fulfilling the [Markov Decision Process](https://en.wikipedia.org/wiki/Markov_decision_process) is such a world, where transition to the next state $s_{t+1}$ depends *only* on the current state $s_t$ and action taken by the agent $a_t$. That is: *"there is no hidden dynamics"* in the task. In other words: the **environment should be fully** (or at least partially) **observable**.
 
 
-Examples of use of this Node are [here](../examples.md#qlearningSimple), description how to use it [just below](discreteqlearning.md#asmHowToUse)
+Examples of use of this Node are [here](../examples/discreteqlearning.md#qlearningSimple), description how to use it [just below](discreteqlearning.md#asmHowToUse)
 
 ### <a name="asmNode">Action Selection Method Node</a>
 The `DiscreteQLearningNode` **learns on line** by interaction with the environment through own actions. Therefore it has to be able to weight between **exploration** of new states (searching for rewards) and **exploitation** of the knowledge. Here we use motivation-based $\epsilon-greedy$ [Action Selection Method](http://www.tokic.com/www/tokicm/publikationen/papers/KI2011.pdf) (ASM). The $\epsilon-greedy$ selects random action with $P=\epsilon$ and the best action (the highest utility) otherwise. The `ActionSelectionNode` (see above) implements motivation-based $\epsilon-greedy$ method, where $\epsilon = 1-motivation$. This means that: the higher motivation: the less randomization (the more important is to exploit the knowledge).
@@ -109,7 +109,7 @@ Here is simplified sequence showing how the architecture works. It starts with n
 ![HARM Node](discreteqlearning/harm.PNG)
 
 
-The following animation shows an [example](../examples.md#harmMapE) of operation of the `DiscreteHarmNode` in the `GridWorld`. The agent can do 6 primitive actions ($\mathbf{A} = \lbrace Left,Right,Up,Down,Noop,Press \rbrace)$ and has already discovered 6 own abilities. For each of them it created own decision space, these are:
+The following animation shows an [example](../examples/discreteqlearning.md#harmMapE) of operation of the `DiscreteHarmNode` in the `GridWorld`. The agent can do 6 primitive actions ($\mathbf{A} = \lbrace Left,Right,Up,Down,Noop,Press \rbrace)$ and has already discovered 6 own abilities. For each of them it created own decision space, these are:
 
   * move in two directions (X and Y axis - narrow Observers)
   * control light 1
@@ -147,4 +147,4 @@ In case that there is changing variable that is not influenced by the agent, the
   * If the variable does not change often, there is not much rewards generated and average utility values are very low. Therefore the corresponding SRP still **does not vote strongly** too, even if its motivation is constantly high.
 
 
-Example brain files with this node are located [here](../examples.md#harmMapG).
+Example brain files with this node are located [here](../examples/discreteqlearning.md#harmMapG).

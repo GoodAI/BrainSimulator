@@ -40,7 +40,7 @@ The node is always expected that one input as a Memory Block (MB) goes to **A** 
 ## Using as a node in Brain Simulator
 
 
-Here are few representative examples how to use Matrix node, more can be found in the [Sample Projects](..\examples.md), where you can play with parameters and copy-past nodes directly into your projects.
+Here are few representative examples how to use Matrix node, more can be found in the [Sample Projects](..\examples\matrix.md), where you can play with parameters and copy-past nodes directly into your projects.
 
 
 ---
