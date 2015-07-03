@@ -62,8 +62,8 @@ namespace MNIST
             m_sequenceIterator = 0;
             m_definedOrder = false;
 
-            FileStream ifsTrainLabels = new FileStream(m_baseFolder + "train-labels.idx1-ubyte", FileMode.Open);
-            FileStream ifsTrainImages = new FileStream(m_baseFolder + "train-images.idx3-ubyte", FileMode.Open);
+            FileStream ifsTrainLabels = new FileStream(m_baseFolder + "train-labels.idx1-ubyte", FileMode.Open, FileAccess.Read);
+            FileStream ifsTrainImages = new FileStream(m_baseFolder + "train-images.idx3-ubyte", FileMode.Open, FileAccess.Read);
 
             BinaryReader brTrainLabels = new BinaryReader(ifsTrainLabels);
             BinaryReader brTrainImages = new BinaryReader(ifsTrainImages);

@@ -16,6 +16,24 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_011747854B6F4A8680DBDE9D98B46D6A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_015E4D0D92D44B73B3A869F369409FA8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_01E81F799DFA4292BA1420257E0C0AE0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_09160BC3B78E4BE5AA1ECDC3D9142B78"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -28,14 +46,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
-        "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
+        "MsmKey" = "8:_0CE312E0741642219532F31F30E734BC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0F6A791CE9694482921DB2C078C4CD62"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
-        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -59,6 +83,12 @@
         "Entry"
         {
         "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
+        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1811091385AF57D42FCF31A201A487B1"
         "OwnerKey" = "8:_188DA237244E4EF29A9080F12E749ABC"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -76,6 +106,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_261E703EFDA043B0833147113BC7C4F7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2984B6B2333E4CEF918E46D74EC43AA0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2C185EFDF7BD47ABA60A8FDC7E6E315B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2E843417F36C482D830E1DC5D90C4FBA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2FF616595AFE476FA0B6C7BC6599B53C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -84,12 +138,6 @@
         {
         "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
         "OwnerKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
-        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -125,6 +173,12 @@
         "Entry"
         {
         "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
+        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_334A01428BB4ED392584A22A8D9A1D44"
         "OwnerKey" = "8:_188DA237244E4EF29A9080F12E749ABC"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -142,14 +196,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
-        "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
+        "MsmKey" = "8:_43F5AFD9E33C4710A8C67C9F6D5CD15C"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
-        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -173,13 +227,55 @@
         "Entry"
         {
         "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
+        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4798BD7545344FC9029AFCA6A2E7286F"
         "OwnerKey" = "8:_188DA237244E4EF29A9080F12E749ABC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_49F0438CC97644EF86075E9331813B24"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4ACA4AA6F12B796DE932C136663965E1"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4C71F8F94F4B4642852870A75992BF6F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4FBD3172B91C4FC293E3C1EE2BF70E26"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5161F36428364355B2E26E92CB882065"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_626981F5BBEB47EDB22B1A135D9DD350"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_648A9F3D210C4F4B86877B800D4BFC32"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -196,6 +292,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6E6DF58275A5488C8ED7F93C28D5F80E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_73512088152A455896DD6A3C132C69B4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -203,6 +305,18 @@
         "Entry"
         {
         "MsmKey" = "8:_7A731C5318F0492BBA510643479CB915"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7A9A55D5A0224C7DA9301243FABFD6CD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7BDBC2203359423090FAD1E2A1BCA4FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -216,12 +330,6 @@
         {
         "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
         "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
-        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -262,7 +370,31 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7F056B119B6384CE15CD3ED84D8867C0"
+        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_805C3A025BCE447D93A2D2FD6B30558C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_83FACE85F8D644E98B596CF0CFE3B2DD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8527750B79F744198D0C924304431CF4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8A044597489D4299813F787C6D5995D5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -274,7 +406,67 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8B78D12951AB4D38B3CE3985D02FEF67"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8CFE24708F3D4882B3A4353196AA868E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9230A27B411B4DDCBBB42A22BC84133D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_99D55534FC664547BCFF8366A337A412"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A7437029EDAF4428BF50CD9D70AE9695"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AA3E26E943A641DFBF6D71794EAB815F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AC2F3DF8A7C6457690BE01F428763618"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AC78571DC8FE4D57A9BD7A52282AA1B6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AFAA388315A74599A9BE1D200129F253"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B44CC9A8A138418884DA3AC2E49E6DF3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -304,8 +496,32 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B62972AA1C2F4CD4BC35C0CED283EFE7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B99AA96AFD8247FE834B99550016771F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B9A5D60255889C888B8C253410EE58F9"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BAEB416D6AD64866B7582DD3D3F93774"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BBB1780F4CB943088969EF5975DA1CC7"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -328,8 +544,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C55D82B49E1B46F3BB564A2BBF8C0A08"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C65C9461C14E247A8D996C9630269F66"
         "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CA3BDE4BF23A47C6B8493D8E35ED83B5"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -346,14 +574,56 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D1EBDE8896C14BA58CE260BD2E68DA8F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D473579751544122AD7C02657D72E49D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D689637AA7AF42459EED22D026554813"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DC828056CFD815EF68F03DBFF25020FB"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_E137BD3BBB834075A14F4332E9082AB3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E1665A7D941441AA88AD644526CFF612"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E3BAD0055BCC2242D9F52828B9EC62FC"
         "OwnerKey" = "8:_AF29E6E4F1D14BE2BDE7EB997B154330"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E56BE81589CB41ABA7BAE0CE5CB2735B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E808ACD91ACE4507B77EE4BCE8C01CE1"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -370,8 +640,26 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E973B4A757FA4702BB548405FED05172"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EAEBF10EADB6DCBE040184F41059C609"
         "OwnerKey" = "8:_7E789D5EA1F1433A9AFBE3D113863105"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F2430E67334D4A8EA26BC4F4C38EB674"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F48D7BA0DE7340889F2140773B6461A4"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -382,14 +670,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_188DA237244E4EF29A9080F12E749ABC"
+        "MsmKey" = "8:_FEC5143DE36849F7B5FDECD1C26DBBF9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FF5E2873B8024744B3A8C800F95BE897"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
+        "OwnerKey" = "8:_188DA237244E4EF29A9080F12E749ABC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -492,6 +786,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_E8CA407676C3312E81A5AADAE8484712"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B540BEF57718C27FAD5671093A73E779"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -675,12 +975,112 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_011747854B6F4A8680DBDE9D98B46D6A"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyRBMInputLayer_11\\Output.mb"
+            "TargetName" = "8:Output.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_184900F68B5D4C389372305C08F71795"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_015E4D0D92D44B73B3A869F369409FA8"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\README.md"
+            "TargetName" = "8:README.md"
+            "Tag" = "8:"
+            "Folder" = "8:_20137935B8784E3786DF2795BB21BD5F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_01E81F799DFA4292BA1420257E0C0AE0"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\NeuralNetworks\\RNN_sine.brain"
+            "TargetName" = "8:RNN_sine.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_CF3C845CAB2F430DB7711F427A0EDCE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09160BC3B78E4BE5AA1ECDC3D9142B78"
             {
             "SourcePath" = "8:C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v7.0\\bin\\cublas64_70.dll"
             "TargetName" = "8:cublas64_70.dll"
             "Tag" = "8:"
             "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0CE312E0741642219532F31F30E734BC"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\DiscreteQLearning\\QLearning-gridworld-oneReward.brain"
+            "TargetName" = "8:QLearning-gridworld-oneReward.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0F6A791CE9694482921DB2C078C4CD62"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\RBM_MNIST.brain"
+            "TargetName" = "8:RBM_MNIST.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_B5A055B93DF84B7AB42DD42A3E89760F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -724,6 +1124,86 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_261E703EFDA043B0833147113BC7C4F7"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyMNISTWorld_9\\Bitmap.mb"
+            "TargetName" = "8:Bitmap.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_456980E9F1194614B2DDA713013403ED"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2984B6B2333E4CEF918E46D74EC43AA0"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\obj_coding.statedata\\MyAutoencoderNode_267\\WeightsMemoryBlock.mb"
+            "TargetName" = "8:WeightsMemoryBlock.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_C5DD1A63A46146AABA171DEE19CC6CC8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C185EFDF7BD47ABA60A8FDC7E6E315B"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\NeuralNetworks\\LSTM_sine.brain"
+            "TargetName" = "8:LSTM_sine.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_CF3C845CAB2F430DB7711F427A0EDCE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2E843417F36C482D830E1DC5D90C4FBA"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\_2_1024_prelearned_to_wm3_meeting.statedata\\MyDynamicFFNode_371\\WeightsMemoryBlock.mb"
+            "TargetName" = "8:WeightsMemoryBlock.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_88227E1AB22749A2A5A0A0B7D8D5B91E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2FF616595AFE476FA0B6C7BC6599B53C"
@@ -808,6 +1288,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_43F5AFD9E33C4710A8C67C9F6D5CD15C"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusCentersSize.mb"
+            "TargetName" = "8:ClusCentersSize.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4798BD7545344FC9029AFCA6A2E7286F"
             {
             "AssemblyRegister" = "3:1"
@@ -839,6 +1339,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49F0438CC97644EF86075E9331813B24"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\NeuralNetworks\\Xor.brain"
+            "TargetName" = "8:Xor.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_CF3C845CAB2F430DB7711F427A0EDCE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4ACA4AA6F12B796DE932C136663965E1"
             {
             "AssemblyRegister" = "3:1"
@@ -868,6 +1388,106 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4C71F8F94F4B4642852870A75992BF6F"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyRBMInputLayer_11\\PreviousBiasDelta.mb"
+            "TargetName" = "8:PreviousBiasDelta.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_184900F68B5D4C389372305C08F71795"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4FBD3172B91C4FC293E3C1EE2BF70E26"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\action_net.xml"
+            "TargetName" = "8:action_net.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_64536EBA007B42D8AFAEE823B5C9E0E2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5161F36428364355B2E26E92CB882065"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyRBMInputLayer_11\\Bias.mb"
+            "TargetName" = "8:Bias.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_184900F68B5D4C389372305C08F71795"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_626981F5BBEB47EDB22B1A135D9DD350"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Motor\\pid_pendulum.brain"
+            "TargetName" = "8:pid_pendulum.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_145B5BD7181D4CC8B716BCAD68C92801"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_648A9F3D210C4F4B86877B800D4BFC32"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\obj_coding.statedata\\MyAutoencoderNode_267\\Output.mb"
+            "TargetName" = "8:Output.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_C5DD1A63A46146AABA171DEE19CC6CC8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_659C1A071778479DBB4216502ED5F84D"
@@ -921,6 +1541,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6E6DF58275A5488C8ED7F93C28D5F80E"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusterDists.mb"
+            "TargetName" = "8:ClusterDists.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73512088152A455896DD6A3C132C69B4"
             {
             "SourcePath" = "8:..\\InstallerAction\\bin\\modules\\GoodAI.BasicNodes\\ptx.zip"
@@ -947,6 +1587,46 @@
             "TargetName" = "8:cudart64_70.dll"
             "Tag" = "8:"
             "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7A9A55D5A0224C7DA9301243FABFD6CD"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\NeuralNetworks\\Mnist.brain"
+            "TargetName" = "8:Mnist.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_CF3C845CAB2F430DB7711F427A0EDCE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BDBC2203359423090FAD1E2A1BCA4FB"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\DiscreteQLearning\\HARM-gridworld-mapG.brain"
+            "TargetName" = "8:HARM-gridworld-mapG.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -992,12 +1672,72 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_805C3A025BCE447D93A2D2FD6B30558C"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Vision\\Vision_segmentationForBreakout.brain"
+            "TargetName" = "8:Vision_segmentationForBreakout.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_844340A7CC864FC59E0A218C34899CF3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_83FACE85F8D644E98B596CF0CFE3B2DD"
             {
             "SourcePath" = "8:..\\InstallerAction\\bin\\modules\\GoodAI.XmlFeedForwardNet\\ptx.zip"
             "TargetName" = "8:ptx.zip"
             "Tag" = "8:"
             "Folder" = "8:_E99135B7BA99429C9BA390265BB8F09D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8527750B79F744198D0C924304431CF4"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\DiscreteQLearning\\QLearning-tictactoe-twoNodes.brain"
+            "TargetName" = "8:QLearning-tictactoe-twoNodes.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8A044597489D4299813F787C6D5995D5"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\_2_1024_prelearned_to_wm3_meeting.statedata\\MyAbsoluteValue_411\\Output.mb"
+            "TargetName" = "8:Output.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_CE1937F3DAC14A8F8D633278351824A2"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1043,6 +1783,206 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8B78D12951AB4D38B3CE3985D02FEF67"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\DiscreteQLearning\\QLearning-tictactoe.brain"
+            "TargetName" = "8:QLearning-tictactoe.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8CFE24708F3D4882B3A4353196AA868E"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\DiscreteQLearning\\HARM-gridworld-mapF.brain"
+            "TargetName" = "8:HARM-gridworld-mapF.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9230A27B411B4DDCBBB42A22BC84133D"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusCentersXY.mb"
+            "TargetName" = "8:ClusCentersXY.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_99D55534FC664547BCFF8366A337A412"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Vision\\Vision_SLICsegmentation.brain"
+            "TargetName" = "8:Vision_SLICsegmentation.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_844340A7CC864FC59E0A218C34899CF3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7437029EDAF4428BF50CD9D70AE9695"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\breakout_final_release.brain"
+            "TargetName" = "8:breakout_final_release.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_01AF9F5D62C7434D9576D129693B3CE8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AA3E26E943A641DFBF6D71794EAB815F"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusterDistSym.mb"
+            "TargetName" = "8:ClusterDistSym.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AC2F3DF8A7C6457690BE01F428763618"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Matrix\\Matrix_LogExpRound.brain"
+            "TargetName" = "8:Matrix_LogExpRound.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_3271CE514B024532A59C7F6AF0339A6B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AC78571DC8FE4D57A9BD7A52282AA1B6"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusCentersLastSeen.mb"
+            "TargetName" = "8:ClusCentersLastSeen.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AFAA388315A74599A9BE1D200129F253"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Motor\\jtc_bipedal.brain"
+            "TargetName" = "8:jtc_bipedal.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_145B5BD7181D4CC8B716BCAD68C92801"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B44CC9A8A138418884DA3AC2E49E6DF3"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusterDistPos.mb"
+            "TargetName" = "8:ClusterDistPos.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B540BEF57718C27FAD5671093A73E779"
             {
             "AssemblyRegister" = "3:1"
@@ -1074,6 +2014,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B62972AA1C2F4CD4BC35C0CED283EFE7"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyMNISTWorld_9\\Label.mb"
+            "TargetName" = "8:Label.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_456980E9F1194614B2DDA713013403ED"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B99AA96AFD8247FE834B99550016771F"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.state"
+            "TargetName" = "8:mnist.state"
+            "Tag" = "8:"
+            "Folder" = "8:_B5A055B93DF84B7AB42DD42A3E89760F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B9A5D60255889C888B8C253410EE58F9"
             {
             "AssemblyRegister" = "3:1"
@@ -1103,6 +2083,46 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BAEB416D6AD64866B7582DD3D3F93774"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\VSA\\binding.brain"
+            "TargetName" = "8:binding.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_CF34DA6DE4784D57B257EDBD8256691A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BBB1780F4CB943088969EF5975DA1CC7"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyRBMLayer_10\\Bias.mb"
+            "TargetName" = "8:Bias.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_4F5103628F33456587808620D500F948"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C0E196669C5DF9AAC5A7538CD89314E6"
@@ -1167,6 +2187,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C55D82B49E1B46F3BB564A2BBF8C0A08"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\DiscreteQLearning\\QLearning-gridworld-twoRewards.brain"
+            "TargetName" = "8:QLearning-gridworld-twoRewards.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C65C9461C14E247A8D996C9630269F66"
             {
             "AssemblyRegister" = "3:1"
@@ -1198,6 +2238,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CA3BDE4BF23A47C6B8493D8E35ED83B5"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Motor\\pid_arm_setpoint.brain"
+            "TargetName" = "8:pid_arm_setpoint.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_145B5BD7181D4CC8B716BCAD68C92801"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CB549A03023E40CC8E60EB793A9B241D"
             {
             "SourcePath" = "8:..\\Resources\\EULA.rtf"
@@ -1224,6 +2284,66 @@
             "TargetName" = "8:cufft64_70.dll"
             "Tag" = "8:"
             "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D1EBDE8896C14BA58CE260BD2E68DA8F"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyRBMLayer_10\\Output.mb"
+            "TargetName" = "8:Output.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_4F5103628F33456587808620D500F948"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D473579751544122AD7C02657D72E49D"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\RBM\\mnist.statedata\\MyRBMLayer_10\\Weights.mb"
+            "TargetName" = "8:Weights.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_4F5103628F33456587808620D500F948"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D689637AA7AF42459EED22D026554813"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Matrix\\Matrix_Addition.brain"
+            "TargetName" = "8:Matrix_Addition.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_3271CE514B024532A59C7F6AF0339A6B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1269,6 +2389,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E137BD3BBB834075A14F4332E9082AB3"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\AN_netArchitecture.xml"
+            "TargetName" = "8:AN_netArchitecture.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_64536EBA007B42D8AFAEE823B5C9E0E2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E1665A7D941441AA88AD644526CFF612"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\obj_coding.statedata\\MyAutoencoderNode_267\\FeatureOutput.mb"
+            "TargetName" = "8:FeatureOutput.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_C5DD1A63A46146AABA171DEE19CC6CC8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E3BAD0055BCC2242D9F52828B9EC62FC"
             {
             "AssemblyRegister" = "3:1"
@@ -1298,6 +2458,46 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E56BE81589CB41ABA7BAE0CE5CB2735B"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\_2_1024_prelearned_to_wm3_meeting.statedata\\MyDynamicFFNode_371\\Output.mb"
+            "TargetName" = "8:Output.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_88227E1AB22749A2A5A0A0B7D8D5B91E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E808ACD91ACE4507B77EE4BCE8C01CE1"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\_2_1024_prelearned_to_wm3_meeting.statedata\\MyAbsoluteValue_413\\Output.mb"
+            "TargetName" = "8:Output.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E8A66485BE84BDB8342BCED912247ED"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E8CA407676C3312E81A5AADAE8484712"
@@ -1362,6 +2562,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E973B4A757FA4702BB548405FED05172"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\NeuralNetworks\\Breakout.brain"
+            "TargetName" = "8:Breakout.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_CF3C845CAB2F430DB7711F427A0EDCE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EAEBF10EADB6DCBE040184F41059C609"
             {
             "AssemblyRegister" = "3:1"
@@ -1391,6 +2611,86 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2430E67334D4A8EA26BC4F4C38EB674"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\NOfObjects.mb"
+            "TargetName" = "8:NOfObjects.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F48D7BA0DE7340889F2140773B6461A4"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusCenters.mb"
+            "TargetName" = "8:ClusCenters.mb"
+            "Tag" = "8:"
+            "Folder" = "8:_7E08F6C5F6BD4CE9977EF16C62142C42"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEC5143DE36849F7B5FDECD1C26DBBF9"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Matrix\\Matrix_testMultipl.brain"
+            "TargetName" = "8:Matrix_testMultipl.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_3271CE514B024532A59C7F6AF0339A6B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FF5E2873B8024744B3A8C800F95BE897"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Matrix\\Matrix_getRowCol.brain"
+            "TargetName" = "8:Matrix_getRowCol.brain"
+            "Tag" = "8:"
+            "Folder" = "8:_3271CE514B024532A59C7F6AF0339A6B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -1428,6 +2728,281 @@
                     "Property" = "8:_741C368B07A1443A8F40552E456D2C76"
                         "Folders"
                         {
+                        }
+                    }
+                }
+            }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_38DB0FCCDE3B4E9DAED9C431B4A222C3"
+            {
+            "Name" = "8:#1918"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:PersonalFolder"
+                "Folders"
+                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_D18A84D93AA74D5A96EACA74F2E036BB"
+                    {
+                    "Name" = "8:Brain Simulator"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_699E0DEA61164DC89F1DB93A6EBFB41C"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_20137935B8784E3786DF2795BB21BD5F"
+                            {
+                            "Name" = "8:Examples"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_7F385D97B4AF429FADF62B0EBE51B726"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_145B5BD7181D4CC8B716BCAD68C92801"
+                                    {
+                                    "Name" = "8:Motor"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_406478B2C37A4105B4C10A28A60CCBB6"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_1D5DB9BA582C4C9EBF348CEE0278EEB0"
+                                    {
+                                    "Name" = "8:DiscreteQLearning"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_5EA9D41370E64C25AB3BC9A69E297195"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_3271CE514B024532A59C7F6AF0339A6B"
+                                    {
+                                    "Name" = "8:Matrix"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_BC7E30F4CBA64856B4BF9EABA23C7B80"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_844340A7CC864FC59E0A218C34899CF3"
+                                    {
+                                    "Name" = "8:Vision"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_28DFD26FD8F9416A86325C74C39F54D9"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_B5A055B93DF84B7AB42DD42A3E89760F"
+                                    {
+                                    "Name" = "8:RBM"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_E113D8616ADD4359A71DE80C69A8EFA1"
+                                        "Folders"
+                                        {
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_773F08A128274D2CA1A4EEC369A94BD4"
+                                            {
+                                            "Name" = "8:mnist.statedata"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_EDBD4E6501DB423ABCDEC27A4B676E96"
+                                                "Folders"
+                                                {
+                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_184900F68B5D4C389372305C08F71795"
+                                                    {
+                                                    "Name" = "8:MyRBMInputLayer_11"
+                                                    "AlwaysCreate" = "11:FALSE"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "Property" = "8:_6EB1D6FBEFF94963AD85EEC966B23093"
+                                                        "Folders"
+                                                        {
+                                                        }
+                                                    }
+                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_456980E9F1194614B2DDA713013403ED"
+                                                    {
+                                                    "Name" = "8:MyMNISTWorld_9"
+                                                    "AlwaysCreate" = "11:FALSE"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "Property" = "8:_9A765D9CD3C54DB6BFED32E9418007C4"
+                                                        "Folders"
+                                                        {
+                                                        }
+                                                    }
+                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_4F5103628F33456587808620D500F948"
+                                                    {
+                                                    "Name" = "8:MyRBMLayer_10"
+                                                    "AlwaysCreate" = "11:FALSE"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "Property" = "8:_06FDD73183A44B48AC373051F2CB7248"
+                                                        "Folders"
+                                                        {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C58D24725A614FA39D1AF68B3D14E8BF"
+                                    {
+                                    "Name" = "8:Milestones"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_FD374B6C2D8F4D60ABED614E3D43A083"
+                                        "Folders"
+                                        {
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_01AF9F5D62C7434D9576D129693B3CE8"
+                                            {
+                                            "Name" = "8:Breakout"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_CA7ABE1E6CFA45B3AFED334D808B1220"
+                                                "Folders"
+                                                {
+                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_64536EBA007B42D8AFAEE823B5C9E0E2"
+                                                    {
+                                                    "Name" = "8:Pong_Final"
+                                                    "AlwaysCreate" = "11:FALSE"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "Property" = "8:_605556B91B86422B8D04EFF1799ECF09"
+                                                        "Folders"
+                                                        {
+                                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_0BFE798B0C50423A9A625FEE25D34F1C"
+                                                            {
+                                                            "Name" = "8:_2_1024_prelearned_to_wm3_meeting.statedata"
+                                                            "AlwaysCreate" = "11:FALSE"
+                                                            "Condition" = "8:"
+                                                            "Transitive" = "11:FALSE"
+                                                            "Property" = "8:_2ED20204741748888543F3853B31E775"
+                                                                "Folders"
+                                                                {
+                                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_7E8A66485BE84BDB8342BCED912247ED"
+                                                                    {
+                                                                    "Name" = "8:MyAbsoluteValue_413"
+                                                                    "AlwaysCreate" = "11:FALSE"
+                                                                    "Condition" = "8:"
+                                                                    "Transitive" = "11:FALSE"
+                                                                    "Property" = "8:_F983D82625384B63BA890C1FE2D1F8CD"
+                                                                        "Folders"
+                                                                        {
+                                                                        }
+                                                                    }
+                                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_88227E1AB22749A2A5A0A0B7D8D5B91E"
+                                                                    {
+                                                                    "Name" = "8:MyDynamicFFNode_371"
+                                                                    "AlwaysCreate" = "11:FALSE"
+                                                                    "Condition" = "8:"
+                                                                    "Transitive" = "11:FALSE"
+                                                                    "Property" = "8:_BEB2224001614737A6F94FFCF188E243"
+                                                                        "Folders"
+                                                                        {
+                                                                        }
+                                                                    }
+                                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_CE1937F3DAC14A8F8D633278351824A2"
+                                                                    {
+                                                                    "Name" = "8:MyAbsoluteValue_411"
+                                                                    "AlwaysCreate" = "11:FALSE"
+                                                                    "Condition" = "8:"
+                                                                    "Transitive" = "11:FALSE"
+                                                                    "Property" = "8:_8A5A29602BDA46E492B5929B3ED7DB3D"
+                                                                        "Folders"
+                                                                        {
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_1198A833CB1B4A85A8FEEA69B9BA0439"
+                                                            {
+                                                            "Name" = "8:VisualWM_32Feat_phong_prelearnWM.statedata"
+                                                            "AlwaysCreate" = "11:FALSE"
+                                                            "Condition" = "8:"
+                                                            "Transitive" = "11:FALSE"
+                                                            "Property" = "8:_FB859B3DEF264DB6906FD9EBC02271DD"
+                                                                "Folders"
+                                                                {
+                                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_7E08F6C5F6BD4CE9977EF16C62142C42"
+                                                                    {
+                                                                    "Name" = "8:MyKMeansWM_327"
+                                                                    "AlwaysCreate" = "11:FALSE"
+                                                                    "Condition" = "8:"
+                                                                    "Transitive" = "11:FALSE"
+                                                                    "Property" = "8:_1046016DCAFF42B4B829597157867162"
+                                                                        "Folders"
+                                                                        {
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_D5125015F3C24BF49DBED935237ECFF2"
+                                                            {
+                                                            "Name" = "8:obj_coding.statedata"
+                                                            "AlwaysCreate" = "11:FALSE"
+                                                            "Condition" = "8:"
+                                                            "Transitive" = "11:FALSE"
+                                                            "Property" = "8:_201A22B7BBC445BC85A79EF81BA8720B"
+                                                                "Folders"
+                                                                {
+                                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C5DD1A63A46146AABA171DEE19CC6CC8"
+                                                                    {
+                                                                    "Name" = "8:MyAutoencoderNode_267"
+                                                                    "AlwaysCreate" = "11:FALSE"
+                                                                    "Condition" = "8:"
+                                                                    "Transitive" = "11:FALSE"
+                                                                    "Property" = "8:_7F003AA5B4284DD38FF7A7996BEC36F7"
+                                                                        "Folders"
+                                                                        {
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_CF34DA6DE4784D57B257EDBD8256691A"
+                                    {
+                                    "Name" = "8:VSA"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_B9FD273DDF8E4B08B2842A5ABAADF018"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_CF3C845CAB2F430DB7711F427A0EDCE7"
+                                    {
+                                    "Name" = "8:NeuralNetworks"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_BD74BC2B232B4E71B5020849CA22A251"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1538,7 +3113,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Brain Simulator"
         "ProductCode" = "8:{4A8BF46B-A1E4-4E8B-B9C3-D65C43E7626B}"
-        "PackageCode" = "8:{25C7943E-9F17-4D1C-9856-C4D7050E8451}"
+        "PackageCode" = "8:{1D842062-0D36-497E-BDC5-C6A9B9CD2052}"
         "UpgradeCode" = "8:{9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -2275,6 +3850,34 @@
                 {
                 }
             }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_67A94030044F4984BFC657D63B5DAC75"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E99135B7BA99429C9BA390265BB8F09D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:ContentFiles"
+            "OutputProjectGuid" = "8:{D2A13F94-2024-4E44-B25E-8ED038A59CE2}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7E789D5EA1F1433A9AFBE3D113863105"
             {
             "SourcePath" = "8:..\\..\\Modules\\XmlFeedForwardNet\\Module\\obj\\Release\\GoodAI.XmlFeedForwardNet.dll"
@@ -2303,6 +3906,34 @@
                 {
                 }
             }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AE6CE2A3FBB9445BB86A10AAB70F2C86"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_9E36422E878F45A98D5BBE5F5EABD88F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:ContentFiles"
+            "OutputProjectGuid" = "8:{C8A4992F-F2CB-40E7-92AA-7D4239653517}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AF29E6E4F1D14BE2BDE7EB997B154330"
             {
             "SourcePath" = "8:..\\..\\Platform\\BrainSimulator\\obj\\Release\\BrainSimulator.exe"
@@ -2326,6 +3957,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F91E11FCFFFA427A92B2FA8BE71A881F"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_05A3A27F1A9444128E2F15E9DAEBD5D4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:ContentFiles"
+            "OutputProjectGuid" = "8:{EDC96485-A8A9-414C-A7D9-65EC0B817732}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
