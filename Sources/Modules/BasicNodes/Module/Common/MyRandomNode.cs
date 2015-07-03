@@ -20,7 +20,7 @@ namespace GoodAI.Modules.Common
     /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Generates numbers from chosen distribution</summary>
-    /// <description></description>
+    /// <description>The <b>SingleOutputProperty</b> will generate random number to one random position only.</description>
     public class MyRandomNode : MyWorkingNode
     {
         //Only one of outputs should be active each time. Maybe generalize to arbitrary number?
@@ -78,6 +78,11 @@ namespace GoodAI.Modules.Common
         }
     }
 
+    /// <summary>
+    /// This task will generate your rundom numbers.<br/>
+    /// <p><b>Period Parameters</b> let you control the period in which the new set of random values should be generated.
+    /// Other configutarion options are connected to the selected distribution.</p>
+    /// </summary>
     [Description("Generate random numbers")]
     public class MyRNGTask : MyTask<MyRandomNode>
     {
