@@ -173,11 +173,20 @@ namespace GoodAI.Modules.CLA
                 }
             }
         }
-        [MyBrowsable, Category("C) Classifier")]
+        [MyBrowsable, Category("C) Classifier"), ReadOnly(true)]
         public int[] PredictedStepsArray
         {
             get { return m_predictedStepsArray; }
-            private set {}
+            private set
+            {
+                m_predictedStepsString = "";
+                for (int i = 0; i < m_predictedStepsArray.Length; i++)
+                {
+                    m_predictedStepsString += m_predictedStepsArray[i];
+                    m_predictedStepsString += ",";
+                }
+                m_predictedStepsString.Remove(m_predictedStepsString.Length - 1);
+            }
         }
 
         // dependent variables:
