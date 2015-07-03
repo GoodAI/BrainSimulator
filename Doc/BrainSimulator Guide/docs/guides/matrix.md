@@ -91,7 +91,7 @@ In the `Init` part, it is necessary to create an instance of the object and set-
 mat_operation = new MyMatrixAutoOps(Owner, Matrix.MatOperation.Multiplication | Matrix.MatOperation.Addition, A);
 ```
 
-Inside details such as cublas, CPU, or kernels are hidden. So, you can directly multiply memory blocks `A` and `B` and save the result into memory the block `C`,
+Inside details of the architecture such as the cublas library, CPU implementaiobns, or kernel calls are hidden. So, you can directly multiply memory blocks `A` and `B` and save the result into memory the block `C`,
 ``` csharp
 mat_operation.Run(Matrix.MatOperation.Multiplication, A, B, C);
 ```

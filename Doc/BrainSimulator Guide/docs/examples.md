@@ -18,7 +18,7 @@ The sample shows how to segment input image using SLIC algorithm. Note that inpu
 
 ### Simple Image Pre-Processing
 
-Brain: [Vision/Vision_segmentationOfPhongGame.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_segmentationOfPhongGame.brain)
+Brain: [Vision/Vision_segmentationForBreakout.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Vision/Vision_segmentationForBreakout.brain)
 
 The sample project shows the full pipeline. First, an input image is segmented into super-pixels (SP). Second, each SP is connected with its neighbors and close-by SP are assigned into a same object id. Third, the attention energy (Ea) is estimated for each object. Fourth, features are estimated as raw image patches. Fifth, the object features are clustered into a Visual Words to constitute a Working Memory.
 
@@ -36,8 +36,10 @@ These sample projects show several [examples](https://github.com/KeenSoftwareHou
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
-Brain file with several addition examples (and a comparison of the result to the Join node).
+Brain file with several addition examples.
 It contains summations of two matrices. Row or column wise addition is included too. Note that dimension of inputs have to correspond.
+
+The JoinNode contais operation for addition of two matrices too. The example shows comparison of these two methods. Output of the MatrixNode and the JoinNode are compared in the new JoinNode using the DistanceSquere operations. The difference (visulizaed using the observer) is zero.
 
 ![](img/matrix_ex_add.PNG)
 
@@ -51,6 +53,9 @@ Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimula
 Brain file with several multiplication examples.
 Again, note that dimension of inputs have to correspond to the desired operation with matrices. The example contains examples with
 two memory block inputs as well as with only one, when the second is constant set in `Params\DataInput0`.
+
+The JoinNode contais operation for matrix multiplication too. The example shows comparison of these two methods. Output of the MatrixNode and the JoinNode are compared in the new JoinNode using the DistanceSquere operations. The difference (visulizaed using the observer) is zero.
+
 
 ![](img/matrix_ex_multipl.PNG)
 
