@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -61,8 +62,9 @@ namespace GoodAI.BrainSimulator.Forms
                 //return ((AssemblyDescriptionAttribute)attributes[0]).Description;
 
                 return
-                    "Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback." +
-                    "\r\n\r\n The platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules. GoodAI will continuously improve the platform based on its own research development and user feedback.";
+                    "Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback." +                    
+                    "\r\n\r\n The platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules." +
+                    "\r\n\r\n Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.";
             }
         }
 
@@ -110,6 +112,12 @@ namespace GoodAI.BrainSimulator.Forms
         {
             var licensesForm = new LicensesForm();
             licensesForm.Show();
+        }
+
+        private void labelCompanyLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            ProcessStartInfo sInfo = new ProcessStartInfo("http://www.goodai.com");
+            Process.Start(sInfo);
         }
     }
 }
