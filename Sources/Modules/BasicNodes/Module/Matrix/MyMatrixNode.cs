@@ -16,9 +16,9 @@ using YAXLib;
 namespace GoodAI.Modules.Matrix
 {
 
-    /// <author> Honza Knopp</author>
+    /// <author>GoodAI</author>
+    /// <meta>jk</meta>
     /// <status> Working </status>
-    ///    
     /// <summary>
     ///   This performs several operations like addition, multiplication etc.
     /// </summary>
@@ -41,6 +41,11 @@ namespace GoodAI.Modules.Matrix
     ///  <li><b>Normalize </b> (one memBlock input): return normalized matrix A, Norm2 used in this case.</li>
     ///  <li><b>Norm2 </b> (one memBlock input): returns norm2 of the matrix A</li>
     ///  <li><b>Exp, Abs, Log, Round, Floor, Ceil </b> (one memBlock input): returns Exp/Log/Abs/Floor/Round/Ceil of each element of the matrix A as a new matrix.</li>
+    /// <ul>
+    /// <h3> Parmaters</h3>
+    /// </ul>
+    ///   <li> <b>Behaviour/Operation:</b> Matrix operation. </li>
+    ///   <li> <b>Execute/DataInput0:</b> If one value should be inserted directly, the par. has usage in Multipl, Additon, GetRow... </li>
     /// </ul>
     /// </description>
 
@@ -73,7 +78,7 @@ namespace GoodAI.Modules.Matrix
 
 
 
-        [MyBrowsable, Category("Behavior"), YAXSerializableField(DefaultValue = Matrix.MatOperation.Multiplication), YAXElementFor("Behavior")]
+        [MyBrowsable, Category("Behavior"), YAXSerializableField(DefaultValue = Matrix.MatOperation.Multiplication), YAXElementFor("Behavior"), Description("Matrix operation")]
         public Matrix.MatOperation Operation { get; set; }
 
 
@@ -108,10 +113,8 @@ namespace GoodAI.Modules.Matrix
         {
             private MyMatrixAutoOps mat_operation;
 
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = float.NaN)]
+            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = float.NaN), Description("If one value should be inserted directly, the par. has usage in Multipl, Additon, GetRow...")]
             public float DataInput0 { get; set; }
-            [MyBrowsable, Category("Params"), YAXSerializableField(DefaultValue = float.NaN)]
-            public float DataInput1 { get; set; }
 
 
             public override void Init(int nGPU)
