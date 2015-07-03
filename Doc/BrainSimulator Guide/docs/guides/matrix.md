@@ -1,8 +1,15 @@
-# Matrix node
 
-Purpose of this node is to simplify vanilla matrix operations such as addition or multiplication.
 
-## List of features
+# Math Operations
+
+
+Math operations are performed by several nodes. While some nodes are specialized (gonimetric function, LowHigh filter), some functionalities overlap. For example addition is performed by Join as well by Matrix. We now describe major functionalities of these nodes and their usage.
+
+## Matrix node
+
+Purpose of this node is to simplify vanilla matrix operations such as addition, or multiplication.
+
+### List of features
 
  * The node allows a number of operations (like multiplication or addition) with a variety of inputs. For example matrix multiplication ($\mathbf{A} \cdot \mathbf{B}$, where $\mathbf{A}$,$\mathbf{B}$ are matrices), vector times matrix ($\mathbf{v}^{\mathsf{T}} \cdot \mathbf{A}$, where $\mathbf{v}$ is a vector), multiplication where inputs are vectors, ($\mathbf{w}^{\mathsf{T}} \cdot \mathbf{v}$, $\mathbf{v} \cdot \mathbf{w}^{\mathsf{T}}$), or operations with numbers like $ c \cdot \mathbf{A}$ and much more.
  * Two input types are supported for several operations: 1) a memory block from another node; 2) a number in the task property `Execute/Params/DataInput`.
@@ -10,7 +17,7 @@ Purpose of this node is to simplify vanilla matrix operations such as addition o
 
 
 
-## Operations
+### Operations
 
 The node always expects one input as a Memory Block (MB), **A**, and if second input is required, the second one goes to **B** (or it is optionally a number).
 
@@ -37,7 +44,7 @@ The node always expects one input as a Memory Block (MB), **A**, and if second i
  |
 
 
-## Using as a node in Brain Simulator
+### Using as a node in Brain Simulator
 
 
 Here are few representative examples how to use Matrix node, it gives basic idea how to use the node and what it should do. More examples can be found in the [Sample Projects](..\examples\matrix.md), where you can play with parameters and copy-past nodes directly into your projects.
@@ -79,7 +86,7 @@ The matrix node allows user to insert the constant as DataInput0 (see orange cir
 
 
 
-## Using Matrix operations in C# code
+### Using Matrix operations in C# code
 
 You need create the Matrix object
 ``` csharp
@@ -124,3 +131,37 @@ public class MyExecuteTask : MyTask<MyNode>
   }
 }
 ```
+
+
+
+## LowHigh Filter
+
+![](img_examples/LowHighFilter.PNG)
+
+Node to restrict the range of each element of the input memory block. There are two methods to apply: 
+
+ * **Standard:** simply cuts all values higher or lower. 
+
+ * **Modulo:** applies the modulus operator that computes the remainder from the integer division. So the result is: $\text{value} ~\%~ \text{Maximum} + \text{Minimum}$
+
+
+
+## Reduction
+
+The purpose of the rediction node is scale down the input memory block. As it efficiently operates on the cuda using the binary operations, the input is often re-casted, so even if integer is expected, user can provide float too.
+
+### Operations
+
+The node always expects one input as a Memory Block (MB), **A**, and if second input is required, the second one goes to **B** (or it is optionally a number).
+
+
+ | Operation | Input  | Output | Comment |
+ | - | -  | - | - |
+ | **i_Sum_i**| integer MB| integer| sum the input|
+ | **i_MinIdx_2i**| integer MB| two integers | min value and its index |
+ | **i_MaxIdx_2i**| integer MB| two integers | max value and its index |
+ | **i_MinIdxMaxIdx_4i**| integer MB| four integers | min value, its index, max value and its index  |
+ | **f_Sum_f**| float MB| float | sum of input|
+ | **f_MinMax_2f**| float MB| two floats| min value and max value of the input |
+ | **f_DotProduct_f**| float MB (vector) | float | dot product | 
+
