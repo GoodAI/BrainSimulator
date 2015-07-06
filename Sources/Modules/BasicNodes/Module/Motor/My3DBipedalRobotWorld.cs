@@ -25,7 +25,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>Bipedal robot in 3D world based on BEPUphysics engine.</summary>
     /// <description>Bipedal robot with 9 controlled joints. <br />

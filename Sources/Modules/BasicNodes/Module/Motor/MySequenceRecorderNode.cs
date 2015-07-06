@@ -14,7 +14,8 @@ using GoodAI.Modules.Transforms;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>Records sequence of input vectors into a matrix</summary>
     /// <description>Records sequence of predefined number of recent Inputs and stores them in Output as a matrix. Most recent input vector is in first row of the matrix.<br />

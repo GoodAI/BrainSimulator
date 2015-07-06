@@ -14,7 +14,8 @@ using GoodAI.Modules.Transforms;
 
 namespace GoodAI.Modules.SparseCoding
 {
-    /// <author>Josef Strunc</author>
+    /// <author>GoodAI</author>
+    /// <meta>js</meta>
     /// <status>WIP</status>
     /// <summary>Encodes scalar values into Sparse Distributed Representation
     /// with the required properties for the CLA Node</summary>

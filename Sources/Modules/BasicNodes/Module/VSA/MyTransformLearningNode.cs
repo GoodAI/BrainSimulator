@@ -16,7 +16,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.VSA
 {
-    /// <author>Peter Hrosso</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Learning transformations of Symbolic Pointers with gradient method</summary>
     /// <description>Works (probably) only on linear transformations</description>

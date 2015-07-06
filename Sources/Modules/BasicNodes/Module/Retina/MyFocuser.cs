@@ -13,7 +13,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.Retina
 {
-    ///<author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     ///<status>Working</status>
     ///<summary>Crops and resizes input image according to pupil control input.
     ///Pupil control input must contain position and size of focused area.</summary>

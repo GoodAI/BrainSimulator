@@ -13,7 +13,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Output layer node.</summary>
     /// <description>

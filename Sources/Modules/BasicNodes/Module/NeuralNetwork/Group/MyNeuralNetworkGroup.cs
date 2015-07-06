@@ -20,7 +20,8 @@ using System.Diagnostics;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Network node group.</summary>
     /// <description>
