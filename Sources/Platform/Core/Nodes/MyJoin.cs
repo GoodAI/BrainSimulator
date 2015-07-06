@@ -14,7 +14,7 @@ using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
-    /// <author>Good AI</author>
+    /// <author>GoodAI</author>
     /// <tag>#mm</tag>
     /// <status>Working</status>
     /// <summary>

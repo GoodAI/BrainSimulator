@@ -11,7 +11,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA.Hashes
 {
-    ///<author>Martin Milota</author>
+    /// <author>GoodAI</author>
+    /// <meta>mm</meta>
     ///<status>WIP</status>
     ///<summary></summary>
     ///<description></description>

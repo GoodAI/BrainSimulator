@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
     /// Measures the distance from the target with the commonly used squared loss function.

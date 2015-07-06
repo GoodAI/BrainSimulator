@@ -14,7 +14,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.VSA
 {
-    /// <author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     /// <status>WIP</status>
     /// <summary>Encodes &amp; decodes spatial values into symbols through linear interpolation</summary>
     /// <description></description>

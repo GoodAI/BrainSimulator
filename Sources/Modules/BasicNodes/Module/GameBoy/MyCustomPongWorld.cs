@@ -20,7 +20,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.GameBoy
 {
-    /// <author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     /// <status>Working</status>
     /// <summary>Custom implementation of the pong (arkanoid) game.</summary>
     /// <description>Follows the original game boy EVA pong game (same graphics &amp; levels). Bricks can be turned on and off. Ball can be fired in arbitrary direction. It is faster.</description>

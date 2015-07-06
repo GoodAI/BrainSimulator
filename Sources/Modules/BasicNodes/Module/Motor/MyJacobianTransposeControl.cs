@@ -14,7 +14,8 @@ using GoodAI.Modules.Matrix;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>Computes set of torques that emulate effect of a virtual force applied to a point on body</summary>
     /// <description>Inverse kinematics method that uses transpose of Jacobian matrix to calculate joint torques that emulate effect of a virtual force applied to a point of a body in 3D coordinates<br />

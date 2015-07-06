@@ -17,7 +17,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA
 {
-    /// <author>Dusan Fedorcak, Radoslav Bielek</author>
+    /// <author>GoodAI</author>
+    /// <meta>df, rb</meta>
     /// <status>Working, binary symbols not implemented</status>
     /// <summary>Symbolic representataion of uniform square grid.
     /// Will be used for storing spatial data into symbols.</summary>

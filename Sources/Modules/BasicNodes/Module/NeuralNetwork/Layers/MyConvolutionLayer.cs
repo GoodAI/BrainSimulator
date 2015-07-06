@@ -15,7 +15,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
 
 
-    /// <author>Mikulas Zelinka</author>
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
     /// <status>WIP</status>
     /// <summary>Convolutional layer.</summary>
     /// <description></description>

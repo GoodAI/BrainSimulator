@@ -16,7 +16,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>PID Controller</summary>
     /// <description>Proportional-Integral-Derivative (PID) controller.

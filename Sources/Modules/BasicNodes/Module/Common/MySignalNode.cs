@@ -12,7 +12,8 @@ using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
-    /// <author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     /// <status>Working</status>
     /// <summary>Alters signal on the data connection according to signal input.</summary>
     /// <description>Select a signal name and threshold to raise/drop selected signal on the data output.</description>

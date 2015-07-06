@@ -15,7 +15,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>This is the main QLearning algorithm, that uses the current timestep as 't+1' and the previous timestep as 't'
     /// </summary>
@@ -100,7 +101,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>The QLearning task sets and updates the values from the previous timestep.
     /// <br></br>
@@ -124,7 +126,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Saves the action taken in the current timestep, to use in the QLearning algorithm in the next timestep
     /// </summary>

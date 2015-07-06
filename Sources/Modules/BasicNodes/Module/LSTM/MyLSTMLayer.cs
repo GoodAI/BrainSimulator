@@ -15,7 +15,8 @@ using GoodAI.Modules.LSTM.Tasks;
 
 namespace GoodAI.Modules.LSTM
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>Long Short Term Memory layer</summary>
     /// <description>Fully recurrent Long Short Term Memory (LSTM) hidden layer with forget gates and peephole connections trained by truncated Real-Time Recurrent Learning (RTRL) algorithm.<br />

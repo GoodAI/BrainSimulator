@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
     /// Initialises the layer parameters randomly with mean 0 and stdDev: 1 / (sqrt(Input.Count + 1))
@@ -57,7 +58,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
     /// Creates a dropout mask for the layer according to the Dropout property of the Neural Network Group

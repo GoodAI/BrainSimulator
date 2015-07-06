@@ -11,7 +11,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.RBM
 {
-    /// <author>Mikuláš Zelinka</author>
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
     /// <status>Working</status>
     /// <summary>
     ///     Restricted Boltzmann Machine node group.

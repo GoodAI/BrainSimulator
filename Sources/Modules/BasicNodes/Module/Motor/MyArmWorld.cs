@@ -20,7 +20,8 @@ namespace GoodAI.Modules.Motor
         public int Y;
     }
 
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>World simulating robotic arm</summary>
     /// <description> Simulation of a robotic arm in 2D environment. <br />

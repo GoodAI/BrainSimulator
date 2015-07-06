@@ -11,7 +11,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.NeuralGas
 {
-    /// <author>Radoslav Bielek</author>
+    /// <author>GoodAI</author>
+    /// <meta>rb</meta>
     /// <status>Working</status>
     /// <summary>Growing neural gas implementation with various growing mechanisms</summary>
     /// <description>

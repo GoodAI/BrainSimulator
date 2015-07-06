@@ -13,7 +13,8 @@ using YAXLib;
 
 namespace BrainSimulator.Retina
 {
-    ///<author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     ///<status>Working</status>
     ///<summary>MNIST numbers moving accross the screen.
     ///Number of objects, sizes, durations and velocities can be adjusted.</summary>

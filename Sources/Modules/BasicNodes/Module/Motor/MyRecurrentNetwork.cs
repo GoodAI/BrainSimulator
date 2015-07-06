@@ -19,7 +19,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>Recurrent network trained by Real-Time Recurrent Learning</summary>
     /// <description>Simple recurrent network with fully recurrent hidden layer trained by Real-Time Recurrent Learning (RTRL) algorithm. <br />

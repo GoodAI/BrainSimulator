@@ -15,7 +15,7 @@ using ManagedCuda;
 
 namespace GoodAI.Modules.VSA
 {
-    /// <author>Good AI</author> 
+    /// <author>GoodAI</author> 
     /// <tag>#mm</tag>
     /// <status>Working</status>
     /// <summary>
