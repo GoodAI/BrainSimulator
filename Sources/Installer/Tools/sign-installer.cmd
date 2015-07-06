@@ -16,9 +16,12 @@ echo   Description             : %DESCRIPTION%
 
 set /p PASSWORD=Enter the certificate password (WARNING: will be echoed):
 
-"C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe" sign /fd SHA256 /a /f %CERT_FILE% /p %PASSWORD% /d %DESCRIPTION% %INSTALLER_FILE%
+set INSTALLER_FOR_SIGNING="%INSTALLER_NAME_BASE%%~1.msi"
+copy %INSTALLER_FILE% %INSTALLER_FOR_SIGNING%
 
-copy %INSTALLER_FILE% "%INSTALLER_NAME_BASE%%~1.msi"
+"C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe" sign /fd SHA256 /a /f %CERT_FILE% /p %PASSWORD% /d %DESCRIPTION% %INSTALLER_FOR_SIGNING%
+
+move %INSTALLER_FOR_SIGNING% "%INSTALLER_NAME_BASE%%~1.msi"
 
 rem Long live spaghetti code !-)
 goto DONE
