@@ -191,6 +191,12 @@
         "Entry"
         {
         "MsmKey" = "8:_6612A82FC29140E77537CF1E87A806E6"
+        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6612A82FC29140E77537CF1E87A806E6"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -226,14 +232,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6612A82FC29140E77537CF1E87A806E6"
-        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
+        "MsmKey" = "8:_681B448B951638FF9E0F3B9177F148A9"
+        "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_681B448B951638FF9E0F3B9177F148A9"
-        "OwnerKey" = "8:_0C96EB528D8C47319AC68DC7C80F6341"
+        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -252,12 +258,6 @@
         {
         "MsmKey" = "8:_681B448B951638FF9E0F3B9177F148A9"
         "OwnerKey" = "8:_7E789D5EA1F1433A9AFBE3D113863105"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_681B448B951638FF9E0F3B9177F148A9"
-        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -430,6 +430,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B1403B2CE6AA4711BB2734CEEAD3BE8B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B44CC9A8A138418884DA3AC2E49E6DF3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -449,6 +455,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B9610AED99A0019A204ED0C5A661BBA8"
+        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B9610AED99A0019A204ED0C5A661BBA8"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -462,12 +474,6 @@
         {
         "MsmKey" = "8:_B9610AED99A0019A204ED0C5A661BBA8"
         "OwnerKey" = "8:_7E789D5EA1F1433A9AFBE3D113863105"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B9610AED99A0019A204ED0C5A661BBA8"
-        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -545,6 +551,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C8D225853C39058218DE6DCEA69A9C94"
+        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C8D225853C39058218DE6DCEA69A9C94"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -570,12 +582,6 @@
         {
         "MsmKey" = "8:_C8D225853C39058218DE6DCEA69A9C94"
         "OwnerKey" = "8:_7E789D5EA1F1433A9AFBE3D113863105"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C8D225853C39058218DE6DCEA69A9C94"
-        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -731,6 +737,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_F992363B503E48D58395C6D173B2AA5F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -822,12 +834,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_E8CA407676C3312E81A5AADAE8484712"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BB01905CC047E24757A71EF903D43170"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2119,6 +2125,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B1403B2CE6AA4711BB2734CEEAD3BE8B"
+            {
+            "SourcePath" = "8:..\\..\\Modules\\MNIST\\Licenses\\MNIST Dataset.txt"
+            "TargetName" = "8:MNIST Dataset.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B697D2D63A8C4ADB9C4820F13122BC8E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B44CC9A8A138418884DA3AC2E49E6DF3"
             {
             "SourcePath" = "8:..\\..\\..\\..\\BrainSimulatorSampleProjects\\Milestones\\Breakout\\Pong_Final\\VisualWM_32Feat_phong_prelearnWM.statedata\\MyKMeansWM_327\\ClusterDistPos.mb"
@@ -3289,7 +3315,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Brain Simulator"
         "ProductCode" = "8:{4A8BF46B-A1E4-4E8B-B9C3-D65C43E7626B}"
-        "PackageCode" = "8:{6D06447F-A9EA-47CC-8A03-E6AB534B912C}"
+        "PackageCode" = "8:{6C3DB548-AFB1-499C-BBC3-38DD1893AD2A}"
         "UpgradeCode" = "8:{9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -3972,7 +3998,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_188DA237244E4EF29A9080F12E749ABC"
             {
-            "SourcePath" = "8:..\\..\\Modules\\MNIST\\Module\\obj\\Debug\\GoodAI.MNIST.dll"
+            "SourcePath" = "8:..\\..\\Modules\\MNIST\\Module\\obj\\Release\\GoodAI.MNIST.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_05A3A27F1A9444128E2F15E9DAEBD5D4"
@@ -4000,7 +4026,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1AB033F9B27941E8A191B7B9A6EBCDB0"
             {
-            "SourcePath" = "8:..\\InstallerAction\\obj\\Debug\\InstallerAction.dll"
+            "SourcePath" = "8:..\\InstallerAction\\obj\\Release\\InstallerAction.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4614A5A859564308864629082A1DEA0E"
