@@ -79,7 +79,7 @@ Two memory blocks that represent a matrix and a vector are summed. The algorithm
 
 **Addition of a matrix with a constant number**
 
-The matrix node allows user to insert the constant as `DataInput0` (see orange circle) and the values in the memory block A will be increased by it, as shown in the figure below. Note that if you will choose TODO: incomplete sentence :D
+The matrix node allows user to insert the constant as `DataInput0` (see orange circle) and the values in the memory block A will be increased by it, as shown in the figure below. So the input vector $[1,2]$ becomes: $[1,2]+5=[6,7]$.
 
 ![](img_examples/matrix_add02.PNG)
 
