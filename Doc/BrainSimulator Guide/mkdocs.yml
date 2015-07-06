@@ -26,6 +26,7 @@ pages:
     - Restricted Boltzmann Machine: 'examples/rbm.md'
     - Motor Control: 'examples/motor.md'
     - Vector Symbolic Architecture: 'examples/binding.md'
+    - Nupic Node: 'examples/nupic.md'
 
 - Changelog: 'changelog.md'
 markdown_extensions:
