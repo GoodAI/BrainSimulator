@@ -4,6 +4,8 @@ This sample project is distributed together with the NupicNode through a separat
 
 The NupicModule contains the Numenta's [nupic.core](https://github.com/numenta/nupic.core) C++ codes, needed external libraries and a C# wrapper, that allows to run the nupic.core functions from inside of the Brain Simulator node (`MyNupicNode.cs`, `MyNupicTasks.cs`). We made use of the [Numenta's open source project](https://github.com/numenta) in order to have the official Cortical Learning Algorithms (CLA) implementation, so we can have a direct comparison and we can easily utilize the future changes from the Nupic community.
 
+### Installation of the Nupic Node
+
 To start to use the NupicModule you have to:
 
  * have the Brain Simulator installed
@@ -14,24 +16,29 @@ To start to use the NupicModule you have to:
 
 ### CLA MNIST Prediction Example
 
-If the NupicModule is set up correctly, you can now load the `NupicModule\BrainSimulatorExample\CLA_mnist_prediction.brain` project, run the simulation and you shall see the following workspace:
- 
+Brain: [NupicModule\BrainSimulatorExample\CLA_mnist_prediction.brain](https://github.com/KeenSoftwareHouse/NupicModule/blob/master/BrainSimulatorExample/CLA_mnist_prediction.brain)
+<!--
+// If the NupicModule is set up correctly, you can now load the `NupicModule\BrainSimulatorExample\CLA_mnist_prediction.brain` project, run the simulation and you shall see the following workspace:
+ -->
 ![](../img/nupicNode.PNG)
+The project is set up for the MNIST hand-written numbers recognition and series prediction using the CLA algorithm  implemented in the NupicNode.
+<!-- following line is not necessary --> The available inputs are the standard 28 * 28 MNIST bitmap coded with float numbers (0 to 1) and the Label, which is the integer number that is represented on the bitmap.
+First, we do some pre-processing with the nodes `Prescaling` and `ProcessedMnistInput` in order to have the bitmap in a correct format for the NupicNode input - it expects a binary (0,1) vector. We connect the processed MNIST Bitmap and the input Label to the NupicNode's inputs Input and Label. There are several **outputs** from the NupicNode:
 
-The project is set up for the MNIST hand-written numbers recognition and series prediction using the CLA algorithm  implemented in the NupicNode. The available inputs are the standard 28 * 28 MNIST bitmap coded with float numbers (0 to 1) and the Label, which is the integer number that is represented on the bitmap. First, we do some pre-processing with the nodes `Prescaling` and `ProcessedMnistInput` in order to have the bitmap in a correct format for the NupicNode input - it expects a binary (0,1) vector. We connect the processed MNIST Bitmap and the input Label to the NupicNode's inputs Input and Label. There are several outputs from the NupicNode:
+ * `ActiveColumns` - a vector of active columns (the learned representation of the current input)
+ * `TP` - output of the Temporal Pooler part of the algorithm (vector of cells that are in predictive state)
+ * `Classifier` - shows the content of the classifier's buckets - each bucket contains probability value representing how sure the classifier is that this bucket will be active in the predicted time; several buckets can have non-zero values
+ * `ClassifierBestPredictions` - contains the single label assigned to the most probable bucket
 
- * ActiveColumns - a vector of active columns (the learned representation of the current input)
- * TP - output of the Temporal Pooler part of the algorithm (vector of cells that are in predictive state)
- * Classifier - shows the content of the classifier's buckets - each bucket contains probability value representing how sure the classifier is that this bucket will be active in the predicted time; several buckets can have non-zero values
- * ClassifierBestPredictions - contains the single label assigned to the most probable bucket
-
-In the example we are predicting only a single time step that is 1 step in the future (this is set up in the NupicNode's property `PredictedStepsList` - it can contain a list of more comma separated time step values and predict several several of them simultaneously). This value - the NupicNode's prediction is visualised in the top left observer. Below it is shown the actual input into the NupicNode. The input is being sent in a sequential way, every digit from 0 to 9 is sent one after another (after 9 it wraps up to 0 again), so the correct prediction should be exactly by 1 higher than the one in the current input. The bottom right observer `CLA_1_StepPrediction - ClassifierOutput` depicts the probability of different buckets. We can see, that sometimes the classifier assigns high probabilities to more buckets, i.e. when the current input is 9, it can predict both, 0 and 8 with a high probability, because they are similar from the NupicNode's point of view.
+In the example brain file, we are predicting only a single time step that is 1 step in the future (this is set up in the NupicNode's property `PredictedStepsList` - it can contain a list of more comma separated time step values and predict several of them simultaneously). This value - the NupicNode's prediction is visualised in the top left observer. Below it is shown the actual input into the NupicNode. The input is being sent in a sequential way, every digit from 0 to 9 is sent one after another (after 9 it wraps up to 0 again), so the correct prediction should be exactly by 1 higher than the one in the current input. The bottom right observer `CLA_1_StepPrediction - ClassifierOutput` depicts the probability of different buckets.
+<!-- now results -->  We can see, that sometimes the classifier assigns high probabilities to more buckets, i.e. when the current input is 9, it can predict both, 0 and 8 with a high probability, because they are similar from the NupicNode's point of view.
  
-The rightmost node is a NodeGroup that contains just several nodes for the calculation of error. The sliding average of the error over the last 100 time steps is plotted in the largest `TimePlotObserver: AverageErrorOverLast100Steps`. After starting the simulation, we can see that the error peaks somewhere around 100 steps, that means that the NupicNode needs to see about 100 input values (each digit 10 times) until it learns to recognize and predict them. The top right observer prints the current average error value and the one below it prints the total number of misses since the start of the simulation.
+The rightmost node is a NodeGroup that contains just several nodes for the calculation of error. The sliding average of the error over the last 100 time steps is plotted in the largest `TimePlotObserver: AverageErrorOverLast100Steps`.
+<!-- results -->After starting the simulation, we can see that the error peaks somewhere around 100 steps, that means that the NupicNode needs to see about 100 input values (each digit 10 times) until it learns to recognize and predict them. The top right observer prints the current average error value and the one below it prints the total number of misses since the start of the simulation.
 
 ### NupicNode Parameters
 
-The NupicNode has plenty of parameters to fine tune, which is very impractical to do manually. The actual parameters used in this example were obtained using the swarming optimization algorithm, present in the Nupic framework (currently working only in Linux/MacOS). The core CLA parameters were exported into the [nupic_params_from_swarm.txt file](https://github.com/KeenSoftwareHouse/NupicModule/blob/master/BrainSimulatorExample/nupic_params_from_swarm.txt) and are automatically loaded and set to the NupicNode through its property `PropertiesFileName`. The description of the swarming process is beyond the scope of this document, but you can find it on [Nupic's Github pages](https://github.com/numenta/nupic/wiki/Running-Swarms).
+The NupicNode has plenty of parameters to fine tune, which is very impractical to do manually. The actual parameters used in this example were obtained using the swarming optimization algorithm<!-- link to the code/paper? -->, present in the Nupic framework (currently working only in Linux/MacOS). The core CLA parameters were exported into the [nupic_params_from_swarm.txt file](https://github.com/KeenSoftwareHouse/NupicModule/blob/master/BrainSimulatorExample/nupic_params_from_swarm.txt) and are automatically loaded and set to the NupicNode through its property `PropertiesFileName`. The description of the swarming process is beyond the scope of this document, but you can find it on [Nupic's Github pages](https://github.com/numenta/nupic/wiki/Running-Swarms).
 
 ### Results
 
