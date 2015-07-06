@@ -14,7 +14,7 @@ It contains :
  * Row or column wise addition of vector and matrix.
  * Summation of two matrices. The `JoinNode` contains operation for addition of two matrices too. Thus, the example shows comparison of these two methods. Output of the `MatrixNode` and the `JoinNode` are compared in the new `JoinNode` using the `DistanceSquared` operation. The difference (visualized using the observer) is zero.
 
-Note that dimensions of inputs must always correspond.
+Note that dimensions (number of rows and columns) of all inputs must always make sense, thus the correct operation will performed.
 
 ![](../img/matrix_ex_add.PNG)
 
@@ -50,6 +50,6 @@ Examples with Round, Exp, Log operations on the matrix. Note that only one input
 
 Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_getRowCol.brain)
 
-This brain file sample shows how to use the `MatrixNode` for getting the desired row or column of the matrix, defined by the id (which row/column I want to get). The observers in the figure bellow show an example where we want to get row id ,,1'' (that is the second row because counting starts with 0) of the matrix shown in the middle observer. The result (node's output) is shown in the last observer.
+This brain file sample shows how to use the `MatrixNode` for getting the desired row or column of the matrix. The input is matrix and id of the row or the column (which row/column I want to get). The observers in the figure bellow show an example where we want to get row id ,,1'' (that is the second row because counting starts with 0). The matrix is shown in the middle observer. The result (node's output) is shown in the last observer.
 
 ![](../img/matrix_ex_getRowCol.PNG)
