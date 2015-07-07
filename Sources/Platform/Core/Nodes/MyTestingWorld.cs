@@ -13,6 +13,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.Testing
 {
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
+    /// <status>Working</status>
+    /// <summary>Default world implementation. It does not do anything useful. It is here for default compatibility and testing reasons only.</summary>
+    /// <description>The node can generate random output of arbitrary size. If <b>PatternCount</b> property is set then the node will generate a seqence of random patterns. If <b>PatternGroups</b> property is set then the node will assign an ascending label to each pattern within the group.</description>
     public class MyTestingWorld : MyWorld
     {
         [MyOutputBlock(0)]
@@ -69,6 +74,9 @@ namespace GoodAI.Modules.Testing
             }
         }
 
+        /// <summary>
+        /// This taks generates next random output. Exposition time and order can be set.
+        /// </summary>
         [Description("Generate random inputs")]
         public class MyCUDAGenerateInputTask : MyTask<MyTestingWorld>
         {

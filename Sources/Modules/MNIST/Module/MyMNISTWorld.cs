@@ -31,7 +31,7 @@ namespace MNIST
             set { SetOutput(1, value); }
         }
 
-        [MyBrowsable, Category("Output")]
+        [MyBrowsable, Category("Output"), Description("If set to true, output is binary vector of size 10")]
         [YAXSerializableField(DefaultValue = false)]
         public bool Binary { get; set; } // If set to true, output is binary vector of size 10
 
@@ -74,6 +74,9 @@ namespace MNIST
         }
     }
 
+    /// <summary>
+    /// Initializes the MNIST world node. Subset size and repeating strategy can be set here.
+    /// </summary>
     [Description("Init MNIST World"), MyTaskInfo(OneShot = true)]
     public class MyInitMNISTTask : MyTask<MyMNISTWorld>
     {
@@ -110,6 +113,15 @@ namespace MNIST
         }
     }
 
+    /// <summary>
+    /// Sends MNIST image patch to the world output.
+    /// <ul>
+    /// <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output</li>
+    /// <li><b>Send Numbers</b> - All or enumeration of numbers requested on the output</li>
+    /// <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file</li>
+    /// <li><b>Sequence Ordered</b> - Sends pathes in order defined in <b>Send Numbers</b> property</li>
+    /// </ul>
+    /// </summary>
     [Description("Send MNIST Data"), MyTaskInfo(OneShot = false)]
     public class MySendMNISTTask : MyTask<MyMNISTWorld>
     {
