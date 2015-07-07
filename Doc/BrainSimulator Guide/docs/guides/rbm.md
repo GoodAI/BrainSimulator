@@ -139,6 +139,6 @@ The only really important parameters are `Neurons`, which unsurprisingly determi
 ---
 ## Examples
 
-There is an [example tutorial](../examples/rbm.md) as well as a [brain file](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/RBM/RBM_MNIST.brain) with a two-layer RBM trained on the MNIST dataset.
+There is an [example tutorial](../examples/rbm.md) as well as a [brain file](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/RBM/RBM_MNIST.brain) with a two-layer RBM trained on the MNIST dataset.
 
 Additionally, an animated image of visualized filters when learning RBM on MNIST from scratch is available (*warning - 100 MB file*) [here](https://www.dropbox.com/s/yyy0so4d2mwl7f4/rbm.gif?dl=0).

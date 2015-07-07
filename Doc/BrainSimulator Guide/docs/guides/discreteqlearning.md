@@ -28,7 +28,7 @@ The following figure shows an [illustration of](https://www.dropbox.com/s/30vq3i
 
 ![Example of Learned Strategy with the utility value](discreteqlearning/utility.PNG)
 
-Our discrete Q-Learning Node uses also **Eligibility trace**, which enables the system to update [multiple](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/Node78.html) $\mathbf{Q}$-values at one time-step. This improvement is often called $\mathbf{Q(\lambda)}$ and greatly speeds-up learning. The parameter $\lambda$ defines how [strongly is current difference projected back](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/Node82.html). The higher the parameter, the faster the learning. But too high value can destabilize the learning convergence.
+Our discrete Q-Learning Node uses also **Eligibility trace**, which enables the system to update [multiple](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node78.html) $\mathbf{Q}$-values at one time-step. This improvement is often called $\mathbf{Q(\lambda)}$ and greatly speeds-up learning. The parameter $\lambda$ defines how [strongly is current difference projected back](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node82.html). The higher the parameter, the faster the learning. But too high value can destabilize the learning convergence.
 
 
 ### <a name="qlearningNode"></a>Discrete Q-Learning Node
