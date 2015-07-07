@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ManagedCuda, Version=7.0.27.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">

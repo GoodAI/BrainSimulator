@@ -303,7 +303,7 @@ namespace GoodAI.Core
                     m_contexts[i].Dispose();
                     CreateContext(i);
 
-                    MyLog.WARNING.WriteLine("Dead context detected. New context has been created.");
+                    MyLog.WARNING.WriteLine("Dead context detected. Restart of BrainSimulator is needed.");
                 }
             }
         }
