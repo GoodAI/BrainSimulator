@@ -1,9 +1,15 @@
-# BrainSimInternal
-Where Brain Simulator internal development happens.
+﻿# GoodAI Brain Simulator
 
-## VS Solution structure
+Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback.
 
-The solution consists of four major projects:
+The platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules.
+
+Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.
+
+
+## VS Solution Structure
+
+Basic info for researches / node developers:
 
 * **BasicNodes** – A place where you put your C# code and implement a wrapper class for your model
 * **BasicNodesCuda** – A place to store your CUDA kernels which are needed for your model execution
