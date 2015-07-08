@@ -2,7 +2,7 @@
 
 ---
 ### <a name="qlearningSimple"></a>Simple Q-Learning Example
-Brain:  [QLearning-gridworld-oneReward.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-oneReward.brain)
+Brain:  [QLearning-gridworld-oneReward.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-oneReward.brain)
 
 This brain shows basic use of `DiscreteQLearningNode` in the `GridWorld`. The Node receives state description as `GlobalData` (variables + constants) from the World. The reward is defined as a change of the state of the lights ($ values \in \lbrace 0, 1 \rbrace $). The nodes on the left detect changes of variables and select the one for the lights. In the current state, actions are chosen randomly - `GlobalMotivation` is set to 0. Utilities published by the `DiscreteQLearningNode` are multiplied by the `UtilityScaling` value.
 
@@ -20,14 +20,14 @@ It can be seen that the Eligibility Trace wrote the $Q$ values on multiple posit
 ---
 ### <a name="qlearningTwoNodes"></a>Composition of two Q-Learning Strategies
 
-Brain: [QLearning-gridworld-twoRewards.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-twoRewards.brain)
+Brain: [QLearning-gridworld-twoRewards.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-gridworld-twoRewards.brain)
 
 The example shows how two different strategies can be composed as described in the [Guides section](../guides/discreteqlearning.md#harmNode). The task is identical to the brain above, but there is one additional `DiscreteQLearningNode`, which learns different strategy - receives reward when controlling the door. By the `UtilityScaling` sliders it is possible to prioritize between these strategies.
 
 ---
 ### <a name="qlearningTicTacToe"></a>Q-Learning plays TicTacToe
 
-Brain: [QLearning-tictactoe.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe.brain)
+Brain: [QLearning-tictactoe.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe.brain)
 
 The brain can be seen in the figure. The `TicTacToeWorld` only receives actions and sends events indicating whether:
 
@@ -58,7 +58,7 @@ In this case, the world is "*not passive*". In case that the `RL-PlayerX` produc
 
 ---
 ### <a name="qlearningTicTacToe2"></a>Two Q-Learning Nodes play TicTacToe
-Brain: [QLearning-tictactoe-twoNodes.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe-twoNodes.brain)
+Brain: [QLearning-tictactoe-twoNodes.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/QLearning-tictactoe-twoNodes.brain)
 
 The same task as in the previous example. But in this case, two Nodes learn to play TicTacToe against each other. User can alter the motivation and observe the effect on playing.
 
@@ -66,7 +66,7 @@ The same task as in the previous example. But in this case, two Nodes learn to p
 ### <a name="harmMapG"></a>HARM Node Examples
 
 
-Brains: [HARM-gridworld-mapF.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapF.brain) and [HARM-gridworld-mapG.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapG.brain)
+Brains: [HARM-gridworld-mapF.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapF.brain) and [HARM-gridworld-mapG.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/DiscreteQLearning/HARM-gridworld-mapG.brain)
 
 These examples show usage of the `DiscreteHarmNode`, see the [Guides section](../guides/discreteqlearning.md#harmNode) for more details.
 

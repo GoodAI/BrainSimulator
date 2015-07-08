@@ -1,11 +1,11 @@
 ## Matrix Node
 
-These sample projects show several [examples](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/tree/master/Matrix) to perform [matrix operations](../guides/matrix.md).
+These sample projects show several [examples](https://github.com/GoodAI/BrainSimulatorSampleProjects/tree/master/Matrix) to perform [matrix operations](../guides/matrix.md).
 
 
 ### Addition
 
-Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
+Brain: [Matrix/Matrix_Addition](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
 Brain file with several examples of the addition operation.
 It contains :
@@ -22,7 +22,7 @@ Note that dimensions (number of rows and columns) of all inputs must always make
 
 ### Multiplication
 
-Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
+Brain: [Matrix/Matrix_Addition](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_Addition.brain)
 
 
 Brain file with several multiplication examples. Again, note that dimension of inputs has to correspond to the desired operation with matrices. The sample project contains examples with:
@@ -38,7 +38,7 @@ Brain file with several multiplication examples. Again, note that dimension of i
 
 ### Log, Exp, Round
 
-Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_LogExpRound.brain)
+Brain: [Matrix/Matrix_Addition](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_LogExpRound.brain)
 
 Examples with Round, Exp, Log operations on the matrix. Note that only one input is used in this case. The `MatrixNode` now applied desired function on that input MemoryBlock.
 
@@ -48,7 +48,7 @@ Examples with Round, Exp, Log operations on the matrix. Note that only one input
 
 ### Get Row / Column
 
-Brain: [Matrix/Matrix_Addition](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_getRowCol.brain)
+Brain: [Matrix/Matrix_Addition](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Matrix/Matrix_getRowCol.brain)
 
 This brain file sample shows how to use the `MatrixNode` for getting the desired row or column of the matrix. The input is matrix and id of the row or the column (which row/column I want to get). The observers in the figure bellow show an example where we want to get row id ,,1'' (that is the second row because counting starts with 0). The matrix is shown in the middle observer. The result (node's output) is shown in the last observer.
 

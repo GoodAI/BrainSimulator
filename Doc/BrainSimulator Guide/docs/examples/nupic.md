@@ -1,6 +1,6 @@
 ## Nupic Node
 
-This sample project is distributed together with the NupicNode through a separate [NupicModule repository](https://github.com/KeenSoftwareHouse/NupicModule), because of different licensing (GPL v3). The sample project file is located in the `BrainSimulatorExample` folder.
+This sample project is distributed together with the NupicNode through a separate [NupicModule repository](https://github.com/GoodAI/NupicModule), because of different licensing (GPL v3). The sample project file is located in the `BrainSimulatorExample` folder.
 
 The NupicModule contains the Numenta's [nupic.core](https://github.com/numenta/nupic.core) C++ codes, needed external libraries and a C# wrapper, that allows to run the nupic.core functions from inside of the Brain Simulator node (`MyNupicNode.cs`, `MyNupicTasks.cs`). We made use of the [Numenta's open source project](https://github.com/numenta) in order to have the official Cortical Learning Algorithms (CLA) implementation, so we can have a direct comparison and we can easily utilize the future changes from the Nupic community.
 
@@ -16,7 +16,7 @@ To start to use the NupicModule you have to:
 
 ### CLA MNIST Prediction Example
 
-Brain: [NupicModule\BrainSimulatorExample\CLA_mnist_prediction.brain](https://github.com/KeenSoftwareHouse/NupicModule/blob/master/BrainSimulatorExample/CLA_mnist_prediction.brain)
+Brain: [NupicModule\BrainSimulatorExample\CLA_mnist_prediction.brain](https://github.com/GoodAI/NupicModule/blob/master/BrainSimulatorExample/CLA_mnist_prediction.brain)
 
 If the NupicModule is set up correctly, you can now load the `NupicModule\BrainSimulatorExample\CLA_mnist_prediction.brain` project, run the simulation and you shall see the following workspace:
 ![](../img/nupicNode.PNG)
@@ -31,7 +31,7 @@ In the example brain file, we are predicting only a single time step that is 1 s
 
 #### NupicNode Parameters
 
-The NupicNode has plenty of parameters to fine tune, which is very impractical to do manually. The actual parameters used in this example were obtained using the [swarming optimization algorithm](https://github.com/numenta/nupic/wiki/Swarming-Algorithm), present in the Nupic framework (currently working only in Linux/MacOS). The core CLA parameters were exported into the [nupic_params_from_swarm.txt file](https://github.com/KeenSoftwareHouse/NupicModule/blob/master/BrainSimulatorExample/nupic_params_from_swarm.txt) and are automatically loaded and set to the NupicNode through its property `PropertiesFileName`. The description of the swarming process is beyond the scope of this document, but you can find it on [Nupic's Github pages](https://github.com/numenta/nupic/wiki/Running-Swarms).
+The NupicNode has plenty of parameters to fine tune, which is very impractical to do manually. The actual parameters used in this example were obtained using the [swarming optimization algorithm](https://github.com/numenta/nupic/wiki/Swarming-Algorithm), present in the Nupic framework (currently working only in Linux/MacOS). The core CLA parameters were exported into the [nupic_params_from_swarm.txt file](https://github.com/GoodAI/NupicModule/blob/master/BrainSimulatorExample/nupic_params_from_swarm.txt) and are automatically loaded and set to the NupicNode through its property `PropertiesFileName`. The description of the swarming process is beyond the scope of this document, but you can find it on [Nupic's Github pages](https://github.com/numenta/nupic/wiki/Running-Swarms).
 
 #### Results
 
