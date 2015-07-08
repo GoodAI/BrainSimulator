@@ -118,7 +118,7 @@ namespace GoodAI.Core.Observers
             if(target != null)
             {
                 //check correct type and size
-                int size = target.Host.Length;
+                int size = Math.Min(target.Host.Length, desiredNum);
 
                 //find max value
                 int idx = 0;
