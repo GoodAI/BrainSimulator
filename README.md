@@ -6,6 +6,13 @@ The platform is designed to simplify collaboration, testing, and the implementat
 
 Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.
 
+## System Requirements
+
+Running Brain Simulator requires an NVIDIA **CUDA-enabled graphics** card and **64-bit Windows**. More specifically, the requirements are:
+
+* 64-bit Windows 7, 8, 8.1 or 10
+* .NET Framework 4.5
+* NVIDIA graphics card with CUDA support (compute capability 2.0 or higher)
 
 ## VS Solution Structure
 
