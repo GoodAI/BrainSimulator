@@ -31,7 +31,7 @@ namespace GoodAI.Modules.TextProcessing
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = '~'-' ' + 2;
+            Output.Count = '~'-' ' + 2; // last character is \n
         }
 
         [Description("Read text inputs")]
@@ -79,6 +79,7 @@ namespace GoodAI.Modules.TextProcessing
                 {
                     char c = Owner.UserInput[(int)SimulationStep];
                     int index = StringToDigitIndexes(c);
+
                     Array.Clear(Owner.Output.Host, 0, Owner.Output.Count);
                     // if unknown character, continue without setting any connction
                     if (index > -1)
