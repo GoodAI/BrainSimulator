@@ -78,6 +78,12 @@ namespace GoodAI.Core.Observers.Helper
             if (str.Length > maxStringSize)
                 str = str.Substring(0, maxStringSize);
 
+            if (str.Length > 200)
+            {
+                //__constant__ int D_DIGIT_INDEXES[200];
+                throw new ArgumentException("Hardcoded value in DrawDigitsKernel.cs");
+            }
+
             MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawDigitsKernel");
             CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
             
