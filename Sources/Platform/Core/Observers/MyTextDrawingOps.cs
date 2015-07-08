@@ -72,11 +72,11 @@ namespace GoodAI.Core.Observers.Helper
             return res;
         }
 
-        public static void DrawString(string str, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight)
+        public static void DrawString(string str, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight, int maxStringSize = 20)
         {
             // Crop if the string is too long
-            if (str.Length > 20)
-                str = str.Substring(0, 20);
+            if (str.Length > maxStringSize)
+                str = str.Substring(0, maxStringSize);
 
             MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawDigitsKernel");
             CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
