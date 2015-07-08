@@ -24,19 +24,17 @@ namespace GoodAI.Core.Observers
         [YAXSerializableField]
         protected int m_MaxLines;
 
-        [MyBrowsable, Category("Display"), Description("Maximal number of lines")]
+        [MyBrowsable, Category("Display"), Description("Maximal number of lines"), DefaultValue(10)]
         public int MaxLines
         {
-            get
-            {
-                return m_MaxLines;
-            }
+            get { return m_MaxLines; }
             set
             {
-                if (value < 0)
-                    return;
+                if (value >= 0)
+                    m_MaxLines = value;
+                else
+                    m_MaxLines = 0;
 
-                m_MaxLines = value;
                 TriggerReset();
             }
         }
@@ -48,16 +46,14 @@ namespace GoodAI.Core.Observers
 
         public MyTextObserver() //constructor with node parameter
         {
-            MaxLines = 10;
-            TextureWidth = 300;
-            TextureHeight = 200;
-
             m_History = "";
+            TextureWidth = 800;
+            TextureHeight = 400;
         }
 
         protected override void Execute()
         {
-            int desiredNum = '~' - ' ' + 2; // the last character is \n
+            int endOfLine = '~' - ' ' + 2; // the last character is \n
 
             Target.SafeCopyToHost();
 
@@ -65,7 +61,7 @@ namespace GoodAI.Core.Observers
             if(target != null)
             {
                 //check correct type and size
-                int size = Math.Min(target.Host.Length, desiredNum);
+                int size = Math.Min(target.Host.Length, endOfLine);
 
                 //find max value
                 int idx = 0;
@@ -79,7 +75,7 @@ namespace GoodAI.Core.Observers
                     }
                 }
 
-                if (idx + 1 == desiredNum)
+                if (idx + 1 == endOfLine)
                 {
                     m_History += "\n";
                 }
@@ -88,11 +84,11 @@ namespace GoodAI.Core.Observers
                     m_History += (char)(' ' + idx);
                 }
 
-                string[] list = m_History.Split('\n');
                 int row = 0;
+                string[] list = m_History.Split('\n');
                 foreach (string s in list)
                 {
-                    MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 100);
+                    MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 80);
                     row += 1;
                 }
             }

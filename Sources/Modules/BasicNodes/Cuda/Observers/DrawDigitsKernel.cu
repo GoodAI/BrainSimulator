@@ -24,7 +24,7 @@ extern "C"
 	__constant__ int D_IMAGE_HEIGHT;
 	__constant__ int D_DIGIT_WIDTH;
 	__constant__ int D_DIGIT_SIZE;
-	__constant__ int D_DIGIT_INDEXES[20];
+	__constant__ int D_DIGIT_INDEXES[100];
 	__constant__ int D_DIGIT_INDEXES_LEN;
 	__constant__ int D_DIGITMAP_NBCHARS;
 
