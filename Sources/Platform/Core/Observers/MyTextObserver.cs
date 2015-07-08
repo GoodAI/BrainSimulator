@@ -49,8 +49,8 @@ namespace GoodAI.Core.Observers
         public MyTextObserver() //constructor with node parameter
         {
             MaxLines = 10;
-            TextureWidth = 1000;
-            TextureHeight = 500;
+            TextureWidth = 300;
+            TextureHeight = 200;
 
             m_History = "";
         }
