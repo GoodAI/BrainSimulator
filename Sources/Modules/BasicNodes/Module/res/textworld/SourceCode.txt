@@ -1,0 +1,8 @@
+﻿using namespace std;
+
+void main(params arg)
+{
+	printf("Hello world!");
+	printf("One more time.");
+	printf("And again.");
+}

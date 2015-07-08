@@ -52,7 +52,7 @@ namespace GoodAI.Core.Observers.Helper
             return alphaValues;
         }
 
-        private static int[] stringToDigitIndexes(string str)
+        private static int[] StringToDigitIndexes(string str)
         {
             int[] res = new int[str.Length];
 
@@ -89,7 +89,7 @@ namespace GoodAI.Core.Observers.Helper
             m_drawDigitKernel.SetConstantVariable("D_DIGIT_SIZE", CharacterSize);
             m_drawDigitKernel.SetConstantVariable("D_DIGITMAP_NBCHARS", CharacterMapNbChars);
 
-            int[] indexes = stringToDigitIndexes(str);
+            int[] indexes = StringToDigitIndexes(str);
             m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES", indexes);
             m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES_LEN", indexes.Length);                                   
 

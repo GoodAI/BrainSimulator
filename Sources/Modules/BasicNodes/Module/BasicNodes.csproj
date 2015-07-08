@@ -120,9 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
-    <Compile Include="Text\TextStream.cs" />
-    <Compile Include="Text\TextStreamObserver.cs" />
-    <Compile Include="Text\TextWorld.cs" />
+    <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
     <Compile Include="Common\MyInverseTransformSampling.cs" />
@@ -310,6 +308,8 @@
     <EmbeddedResource Include="res\input_layer_big.png" />
     <EmbeddedResource Include="res\harm.png" />
     <EmbeddedResource Include="res\harm_big.png" />
+    <Content Include="res\textworld\SourceCode.txt" />
+    <Content Include="res\textworld\Wiki.txt" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -524,6 +524,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>
