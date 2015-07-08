@@ -121,7 +121,6 @@
   <ItemGroup>
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="Text\TextStream.cs" />
-    <Compile Include="Text\TextStreamObserver.cs" />
     <Compile Include="Text\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
