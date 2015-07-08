@@ -18,7 +18,6 @@ using GoodAI.Core;
 
 namespace GoodAI.Core.Observers
 {
-    //using GoodAI.Core.Observers;
 
     public class MyTextObserver : MyAbstractMemoryBlockObserver
     {
@@ -111,16 +110,48 @@ namespace GoodAI.Core.Observers
                 m_setKernel.Run(VBODevicePointer, 0, 0xFFFFFFFF, TextureWidth * TextureHeight);                
             }*/
 
-            m_History += getRandomChar();
-            string[] list = m_History.Split('\n');
-            int row = 0;
-            foreach(string s in list)
-            {
-                MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight);
-                row += 1;
-            }
+            int desiredNum = '~' - ' ' + 2; // the last character is \n
 
-            //m_drawMatrixKernel.Run(m_isIntBlock);
+            Target.SafeCopyToHost();
+
+            MyMemoryBlock<float> target = (MyMemoryBlock<float>)Target;
+            if(target != null)
+            {
+                //check correct type and size
+                int size = target.Host.Length;
+
+                //find max value
+                int idx = 0;
+                float maxVal = target.Host[0];
+
+                for(int i = 1; i < size; ++i)
+                {
+                    if(target.Host[idx] < target.Host[i])
+                    {
+                        idx = i;
+                    }
+                }
+
+                //m_History += getRandomChar();
+                if (idx + 1 == desiredNum)
+                {
+                    m_History += "\n";
+                }
+                else
+                {
+                    m_History += (char)(' ' + idx);
+                }
+
+                string[] list = m_History.Split('\n');
+                int row = 0;
+                foreach (string s in list)
+                {
+                    MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight);
+                    row += 1;
+                }
+
+                //m_drawMatrixKernel.Run(m_isIntBlock);
+            }
         }
 
         protected override void Reset()
