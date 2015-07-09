@@ -7,14 +7,15 @@ For the purpose of this tutorial, we will implement a regression node, which wil
 # Clone a blank template
 
 * From [GoodAI GitHub repository](https://github.com/GoodAI/BrainSimulatorNewModule), clone blank template project. It contains preconfigured Visual Studio project which you can use right away.
+* We need to give our module a meaningfull name. Lets assume the best name is "RegressionModule" from now on...
 * In `Module` folder, rename `NewModule.csproj.user.template-RENAME_ME` to `RegressionModule.csproj.user`
 * Open `SampleNewModule` solution in Visual Studio
 * Rename solution to `RegressionModule`
-* In solution Properties-Application, change `Assembly name` and `Default namespace` to `RegressionModule`
-* In solution Properties-Debug check the path to your Brain Simulator installation (`Start external program` checkbox and `Working directory` path) and change `Command line arguments` so it links to folder with your module
+* In `NewModule -> Properties -> Application`; change `Assembly name` and `Default namespace` to `RegressionModule`
+* In `NewModule -> Properties -> Debug`; check the path to your Brain Simulator installation (`Start external program`)
 * Rename `NewModule` project to `RegressionModule`
 * Rename `NewModuleCuda` project to `RegressionModuleCuda`
-* Delete `SomeNode.cs` file from `RegressionModule` project and `SomeNode.cu` kernel file from `RegressionModuleCuda` project
+* Delete `SomeNode.cs` file from `RegressionModule` project and `SomeNode.cu` kernel file from `RegressionModuleCuda` project use these as templates and rename accordingly.
 
 # Create a Node
 
