@@ -120,8 +120,11 @@ namespace GoodAI.Core.Observers
        
                 //print only last maxRows lines
                 foreach (string s in m_History.GetRange(Math.Max(0, m_History.Count - maxRows), Math.Min(maxRows, m_History.Count)))
-                {                  
-                    MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 100);
+                {
+                    if (s.Length != 0)
+                    {
+                        MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 100);
+                    }
                     row += 1;
                 }
             }
