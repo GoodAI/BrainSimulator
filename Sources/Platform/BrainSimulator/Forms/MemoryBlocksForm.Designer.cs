@@ -132,9 +132,10 @@
             // 
             this.addSpikeObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.addSpikeObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.spike;
+            this.addSpikeObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addSpikeObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addSpikeObserver.Name = "addSpikeObserver";
-            this.addSpikeObserver.Size = new System.Drawing.Size(44, 45);
+            this.addSpikeObserver.Size = new System.Drawing.Size(23, 45);
             this.addSpikeObserver.Text = "Spike observer";
             this.addSpikeObserver.Click += new System.EventHandler(this.addSpikeObserver_Click);
             // 
@@ -152,7 +153,7 @@
             // addTextObserver
             // 
             this.addTextObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addTextObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_observer;
+            this.addTextObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_text_observer;
             this.addTextObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addTextObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addTextObserver.Name = "addTextObserver";

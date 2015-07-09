@@ -39,34 +39,53 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        protected String m_History;
+        [YAXSerializableField]
+        private uint BACKGROUND = 0xFFFFFFFF;
+
+        protected List<String> m_History;
 
         private CudaDeviceVariable<float> m_characters; // Reference to the characters bitmaps
+        private MyCudaKernel m_ClearCanvasKernel;
 
 
         public MyTextObserver() //constructor with node parameter
         {
-            m_History = "";
             TextureWidth = 800;
             TextureHeight = 400;
+
+            m_History = new List<string>();
+            m_History.Add("");
+
+            m_ClearCanvasKernel = MyKernelFactory.Instance.Kernel(@"GrowingNeuralGas\ClearCanvasKernel");
         }
 
         protected override void Execute()
         {
-            int endOfLine = '~' - ' ' + 2; // the last character is \n
+            int maxRowLen = 50;
+            int maxRows = 16;
 
-            Target.SafeCopyToHost();
+            //clear kernel
+            m_ClearCanvasKernel.SetConstantVariable("D_BACKGROUND", BACKGROUND);
+            m_ClearCanvasKernel.SetConstantVariable("D_X_PIXELS", TextureWidth);
+            m_ClearCanvasKernel.SetConstantVariable("D_Y_PIXELS", TextureHeight);
+            m_ClearCanvasKernel.SetupExecution(TextureWidth * TextureHeight);
+            m_ClearCanvasKernel.Run(VBODevicePointer);
+
+            //we are able to represent all characters from ' ' (space) to '~' (tilda) and new-line
+            int desiredNum = '~' - ' ' + 2; // the last character is \n
 
             MyMemoryBlock<float> target = (MyMemoryBlock<float>)Target;
             if(target != null)
             {
-                //check correct type and size
-                int size = Math.Min(target.Host.Length, endOfLine);
+                //get data to cpu
+                Target.SafeCopyToHost();
 
-                //find max value
+                //allow inputs that are different in size, only clamp it if neccessary
+                int size = Math.Min(target.Host.Length, desiredNum);
+
+                //find max value for character
                 int idx = 0;
                 float maxVal = target.Host[0];
-
                 for(int i = 1; i < size; ++i)
                 {
                     if(target.Host[idx] < target.Host[i])
@@ -75,20 +94,34 @@ namespace GoodAI.Core.Observers
                     }
                 }
 
-                if (idx + 1 == endOfLine)
+                //reconstruct a character
+                char newChar = '\n';
+                if (idx + 1 != desiredNum)
                 {
-                    m_History += "\n";
+                   newChar = (char)(' ' + idx);
+                }
+
+                //add character to history but split line it it is too long
+                if(newChar == '\n')
+                {
+                    m_History.Add("");
+                }
+                else if(m_History[m_History.Count -1].Length >= maxRowLen)
+                {
+                    m_History[m_History.Count -1] += "\\";
+                    m_History.Add(newChar.ToString());
                 }
                 else
                 {
-                    m_History += (char)(' ' + idx);
+                    m_History[m_History.Count -1] += newChar;
                 }
 
                 int row = 0;
-                string[] list = m_History.Split('\n');
-                foreach (string s in list)
-                {
-                    MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 80);
+       
+                //print only last maxRows lines
+                foreach (string s in m_History.GetRange(Math.Max(0, m_History.Count - maxRows), Math.Min(maxRows, m_History.Count)))
+                {                  
+                    MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 100);
                     row += 1;
                 }
             }
@@ -98,7 +131,8 @@ namespace GoodAI.Core.Observers
         {
             base.Reset();
 
-            m_History = "";
+            m_History = new List<string>();
+            m_History.Add("");
         }
     }
 }
