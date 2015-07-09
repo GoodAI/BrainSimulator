@@ -18,7 +18,7 @@ How to use MkDocs
 -----------------
 Install Python -- https://www.python.org/downloads/
 Install pip -- http://pip.readthedocs.org/en/latest/installing.html
-Install MkDocs -- pip install mkdocs
+Install MkDocs -- pip install mkdocs (you may need to go to your python install directory\Scripts as the python installer does not change the paths as needed)
 Serve locally -- mkdocs serve
 Build HTML files -- mkdocs build as D:\KeenSWH\AI\Docs\BrainSimulator Guide>C:\Python27\Scripts\mkdocs build
 
