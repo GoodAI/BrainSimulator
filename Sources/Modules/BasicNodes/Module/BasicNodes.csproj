@@ -119,6 +119,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
@@ -282,6 +287,10 @@
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="res\transform_big.png" />
     <EmbeddedResource Include="res\transform.png" />
     <EmbeddedResource Include="res\delayedcopy.png" />
@@ -308,7 +317,10 @@
     <EmbeddedResource Include="res\input_layer_big.png" />
     <EmbeddedResource Include="res\harm.png" />
     <EmbeddedResource Include="res\harm_big.png" />
-    <Content Include="res\textworld\SourceCode.txt" />
+    <Content Include="res\textworld\SourceCode.txt">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Content>
     <Content Include="res\textworld\Wiki.txt" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
