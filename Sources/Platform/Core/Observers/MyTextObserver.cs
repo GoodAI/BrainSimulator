@@ -41,9 +41,13 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        [YAXSerializableField]
+        private uint BACKGROUND = 0xFFFFFFFF;
+
         protected String m_History;
 
         private CudaDeviceVariable<float> m_characters; // Reference to the characters bitmaps
+        private MyCudaKernel m_ClearCanvasKernel;
 
 
         public MyTextObserver() //constructor with node parameter
@@ -53,10 +57,20 @@ namespace GoodAI.Core.Observers
             TextureHeight = 200;
 
             m_History = "";
+
+            m_ClearCanvasKernel = MyKernelFactory.Instance.Kernel(@"GrowingNeuralGas\ClearCanvasKernel");
         }
 
         protected override void Execute()
         {
+            m_ClearCanvasKernel.SetConstantVariable("D_BACKGROUND", BACKGROUND);
+            m_ClearCanvasKernel.SetConstantVariable("D_X_PIXELS", TextureWidth);
+            m_ClearCanvasKernel.SetConstantVariable("D_Y_PIXELS", TextureHeight);
+
+            m_ClearCanvasKernel.SetupExecution(TextureWidth * TextureHeight);
+
+            m_ClearCanvasKernel.Run(VBODevicePointer);
+
             int desiredNum = '~' - ' ' + 2; // the last character is \n
 
             Target.SafeCopyToHost();
