@@ -313,6 +313,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\add_observer.png" />
+    <Content Include="res\add_text_observer.png" />
     <Content Include="res\anaglyph.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
