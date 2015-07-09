@@ -61,7 +61,7 @@ namespace GoodAI.Core.Observers
 
         protected override void Execute()
         {
-            int maxRowLen = 50;
+            int maxRowLen = 80;
             int maxRows = 16;
 
             //clear kernel
