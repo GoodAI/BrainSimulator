@@ -113,11 +113,8 @@ namespace GoodAI.Modules.TextProcessing
 
                         Array.Clear(Owner.Output.Host, 0, Owner.Output.Count);
                         // if unknown character, continue without setting any connction
-                        if (index > -1)
-                        {
-                            Owner.Output.Host[index] = 1.00f;
-                            Owner.Output.SafeCopyToDevice();
-                        }
+                        Owner.Output.Host[index] = 1.00f;
+                        Owner.Output.SafeCopyToDevice();
                     }
                 }
             }
@@ -131,16 +128,13 @@ namespace GoodAI.Modules.TextProcessing
 
                     Array.Clear(Owner.Output.Host, 0, Owner.Output.Count);
                     // if unknown character, continue without setting any connction
-                    if (index > -1)
-                    {
-                        Owner.Output.Host[index] = 1.00f;
-                    }
+                    Owner.Output.Host[index] = 1.00f;
                 }
             }
 
             private int StringToDigitIndexes(char str)
             {
-                int res = -1;
+                int res = 0;
                 int charValue = str;
                 if (charValue >= ' ' && charValue <= '~')
                     res = charValue - ' ';

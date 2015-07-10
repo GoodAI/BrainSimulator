@@ -124,6 +124,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SoundProcessing\Helpers.cs" />
+    <Compile Include="SoundProcessing\Player.cs" />
+    <Compile Include="SoundProcessing\Recorder.cs" />
+    <Compile Include="SoundProcessing\SoundWorld.cs" />
+    <Compile Include="SoundProcessing\WaveFormat.cs" />
+    <Compile Include="SoundProcessing\WaveNative.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
@@ -317,6 +323,7 @@
     <EmbeddedResource Include="res\input_layer_big.png" />
     <EmbeddedResource Include="res\harm.png" />
     <EmbeddedResource Include="res\harm_big.png" />
+    <Content Include="res\soundworld\Sample.wav" />
     <Content Include="res\textworld\SourceCode.txt">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

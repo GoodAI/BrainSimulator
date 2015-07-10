@@ -97,7 +97,7 @@ namespace GoodAI.Core.Observers.Helper
 
             int[] indexes = StringToDigitIndexes(str);
             m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES", indexes);
-            m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES_LEN", indexes.Length);                                   
+            m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES_LEN", indexes.Length);
 
             m_drawDigitKernel.SetupExecution(CharacterSize * indexes.Length);
             m_drawDigitKernel.Run(image, characters.DevicePointer, x, y);

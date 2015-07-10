@@ -61,6 +61,15 @@ namespace GoodAI.BasicNodes.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream Sample {
+            get {
+                return ResourceManager.GetStream("Sample", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using namespace std;
         ///
         ///void main(params arg)
@@ -68,7 +77,8 @@ namespace GoodAI.BasicNodes.Properties {
         ///	printf(&quot;Hello world!&quot;);
         ///	printf(&quot;One more time.&quot;);
         ///	printf(&quot;And again.&quot;);
-        ///}.
+        ///}
+        ///.
         /// </summary>
         internal static string SourceCode {
             get {
@@ -79,7 +89,8 @@ namespace GoodAI.BasicNodes.Properties {
         /// <summary>
         ///   Looks up a localized string similar to At GoodAI, we are trying to build artificial brains that can learn, be creative, and adapt to the environment in the way a human does. 
         ///Our brains will respond to what they perceive, and will interact with their environment to achieve goals defined by human mentors.
-        ///Our mission is to develop general artificial intelligence, be helpful to humanity, and understand the universe..
+        ///Our mission is to develop general artificial intelligence, be helpful to humanity, and understand the universe.
+        ///.
         /// </summary>
         internal static string Wiki {
             get {

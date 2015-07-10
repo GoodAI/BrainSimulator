@@ -96,6 +96,7 @@
   <KnownWorlds>
     <World type="GoodAI.Modules.Motor.MyArmWorld" />
     <World type="GoodAI.Modules.TextProcessing.TextWorld" CanBeAdded="true"/>
+    <World type="GoodAI.Modules.SoundProcessing.SoundWorld" CanBeAdded="true"/>
     
     <World type="GoodAI.Modules.Motor.My3DManipulatorWorld" CanBeAdded="true">
       <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
