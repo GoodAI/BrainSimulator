@@ -12,6 +12,7 @@ pages:
 #- ['nodes.md', 'Nodes']
 - Guides:
     - How to create a module: 'guides/steps.md'
+    - How to share a module: 'guides/sharing.md'
     - Persistence: 'guides/persistence.md'
     - Math Operations: 'guides/matrix.md'
     - Neural Network: 'guides/neuralnetwork.md'
