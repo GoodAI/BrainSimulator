@@ -91,7 +91,7 @@ namespace GoodAI.Core.Utils
 
                 if (!uri.IsAbsoluteUri)
                 {
-                    return ReferencePath + relativePath;
+                    return ReferencePath + Uri.UnescapeDataString(relativePath);
                 }
             }
 
