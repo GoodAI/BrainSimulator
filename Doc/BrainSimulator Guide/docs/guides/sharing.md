@@ -1,4 +1,4 @@
-# Ways of sharing
+# How to share a module
 
 * The easiest way to share a module is to share its source code using [GitHub](https://github.com/). You just create a repository, put all your code in there, write some notes for the users and post a link to your repository on the [Brain Simulator forum](http://forum.goodai.com/index.php?forums/brain-simulator-shared-projects.16/).
 * If for some reason you do not want to share the source code you may use the [Brain Simulator forum](http://forum.goodai.com/index.php?forums/brain-simulator-shared-projects.16/) to upload zipped binaries.

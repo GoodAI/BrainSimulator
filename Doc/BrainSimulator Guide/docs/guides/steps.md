@@ -1,6 +1,6 @@
-# How to create module
+# How to create a module
 
-In this tutorial, you will learn, how to create a simple node with few tasks, add custom observer to it.
+In this tutorial, you will learn how to create a simple node with few tasks and add a custom observer to it.
 
 For the purpose of this tutorial, we will implement a regression node, which will process last N served data.
 
