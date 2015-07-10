@@ -33,18 +33,6 @@ extern "C"
 	
 
 
-	__global__ void ColorDown (unsigned int* im, float val, int size)
-	{
-		int id = blockDim.x*blockIdx.y*gridDim.x + blockDim.x*blockIdx.x	+ threadIdx.x;
-		int r,g,b;
-		if (id<size)
-		{
-			getRGBfromChar(im[id],r,g,b);
-			im[id] = GET_RGBA(weightColor(r,val),weightColor(g,val),weightColor(b,val),255);
-		}
-	}
-
-
 
 
 	__global__ void FillVBOFromInputImage (float* values, int imageSize, unsigned int* pixels){
