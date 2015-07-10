@@ -30,14 +30,6 @@ extern "C"
 
 
 
-
-	__device__ void getRGBfromChar(int rgb, int & r, int & g, int & b){
-//		int a = (rgb >> 24) & 255;
-		r = (rgb >> 16) & 255;
-		g = (rgb >> 8) & 255;
-		b = rgb & 255;
-	}
-
 	__device__ int weightColor(int color, float weight){
 		return (int) ( (float)color * weight);
 	}
