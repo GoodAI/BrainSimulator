@@ -24,6 +24,9 @@ __device__ void getRGBfromChar(int rgb, int & r, int & g, int & b){
 		g = (rgb >> 8) & 255;
 		b = rgb & 255;
 	}
+__device__ int weightColor(int color, float weight){
+		return (int) ( (float)color * weight);
+	}
 
 __device__ float scale_to_interval(float x, float min, float max) {
 	if (min >= max)

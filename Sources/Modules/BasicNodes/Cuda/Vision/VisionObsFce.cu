@@ -30,9 +30,7 @@ extern "C"
 
 
 
-	__device__ int weightColor(int color, float weight){
-		return (int) ( (float)color * weight);
-	}
+	
 
 
 	__global__ void ColorDown (unsigned int* im, float val, int size)
