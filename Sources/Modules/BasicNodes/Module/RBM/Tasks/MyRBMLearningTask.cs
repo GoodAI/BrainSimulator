@@ -29,7 +29,7 @@ namespace GoodAI.Modules.RBM
     /// </p>
     /// </summary>
     [Description("RBM Learning"), MyTaskInfo(OneShot = false)]
-    public class MyRBMLearningTask : MyTask<MyNeuralNetworkGroup>
+    public class MyRBMLearningTask : MyAbstractBackpropTask
     {
         #region Layer indexing
         [YAXSerializableField(DefaultValue = 0)]

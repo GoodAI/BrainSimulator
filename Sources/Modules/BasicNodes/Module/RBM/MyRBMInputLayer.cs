@@ -31,6 +31,10 @@ namespace GoodAI.Modules.RBM
     /// </description>
     class MyRBMInputLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
+        public override ConnectionType Connection
+        {
+            get { return ConnectionType.ONE_TO_ONE; } // phil inserted to remove warning about connection not set
+        }
 
         public MyRBMInitLayerTask RBMInitLayerTask { get; private set; }
 
