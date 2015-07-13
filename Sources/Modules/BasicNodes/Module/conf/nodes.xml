@@ -84,9 +84,9 @@
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true" BigIcon="output_layer_big.png" SmallIcon="output_layer.png"/>
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyQLearningLayer" CanBeAdded="true" BigIcon="qagent_big.png" SmallIcon="qagent.png"/>
 
-    <Node type="GoodAI.Modules.RBM.MyRBMGroup" CanBeAdded="true" BigIcon="network_big.png" SmallIcon="network.png" />
-    <Node type="GoodAI.Modules.RBM.MyRBMInputLayer" CanBeAdded="true"/>
-    <Node type="GoodAI.Modules.RBM.MyRBMLayer" CanBeAdded="true">
+    <Node type="GoodAI.Modules.RBM.MyRBMGroup" CanBeAdded="true" BigIcon="network_RBM_big.png" SmallIcon="network_RBM.png"/>
+    <Node type="GoodAI.Modules.RBM.MyRBMInputLayer" CanBeAdded="true" BigIcon="input_RBM_layer_big.png" SmallIcon="input_RBM_layer.png"/>
+    <Node type="GoodAI.Modules.RBM.MyRBMLayer" CanBeAdded="true" BigIcon="hidden_RBM_layer_big.png" SmallIcon="hidden_RBM_layer.png">
       <Observer type="GoodAI.Modules.Observers.MyRBMFilterObserver" />
     </Node>
 

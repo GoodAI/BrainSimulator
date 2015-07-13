@@ -307,6 +307,12 @@
     <EmbeddedResource Include="res\input_layer_big.png" />
     <EmbeddedResource Include="res\harm.png" />
     <EmbeddedResource Include="res\harm_big.png" />
+    <EmbeddedResource Include="res\hidden_RBM_layer.png" />
+    <EmbeddedResource Include="res\hidden_RBM_layer_big.png" />
+    <EmbeddedResource Include="res\input_RBM_layer.png" />
+    <EmbeddedResource Include="res\input_RBM_layer_big.png" />
+    <EmbeddedResource Include="res\network_RBM.png" />
+    <EmbeddedResource Include="res\network_RBM_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
