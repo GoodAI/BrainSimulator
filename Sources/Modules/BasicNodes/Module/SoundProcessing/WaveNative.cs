@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace AudioLib
+namespace GoodAI.Modules.SoundProcessing
 {
     /// <summary>
     /// Audio framework library wrapper.

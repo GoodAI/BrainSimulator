@@ -124,10 +124,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SoundProcessing\Helpers.cs" />
-    <Compile Include="SoundProcessing\Player.cs" />
+    <Compile Include="SoundProcessing\Complex.cs" />
+    <Compile Include="SoundProcessing\Features\MFCC.cs" />
+    <Compile Include="SoundProcessing\FFT.cs" />
     <Compile Include="SoundProcessing\Recorder.cs" />
     <Compile Include="SoundProcessing\SoundWorld.cs" />
+    <Compile Include="SoundProcessing\Formats\WavReader.cs" />
     <Compile Include="SoundProcessing\WaveFormat.cs" />
     <Compile Include="SoundProcessing\WaveNative.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />

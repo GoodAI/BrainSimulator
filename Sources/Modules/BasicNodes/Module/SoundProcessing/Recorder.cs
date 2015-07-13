@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
-namespace AudioLib
+namespace GoodAI.Modules.SoundProcessing
 {
     // Event delegates
     public delegate void ByteRecordingEventHandler(byte[] data);
@@ -173,7 +173,7 @@ namespace AudioLib
         public event ByteRecordingEventHandler ByteRecording;
         public event ShortRecordingEventHandler ShortRecording;
         public event FloatRecordingEventHandler FloatRecording;
-        public event PlaybackFinnishEventHandler RecordFinnish;
+        public event RecordFinnishEventHandler RecordFinnish;
 
         protected virtual void OnByteRecord(byte[] data)
         {

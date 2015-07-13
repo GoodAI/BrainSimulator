@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace AudioLib
+namespace GoodAI.Modules.SoundProcessing
 {
     [StructLayout(LayoutKind.Sequential)]
     public class WaveFormat
