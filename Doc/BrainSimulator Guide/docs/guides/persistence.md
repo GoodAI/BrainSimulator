@@ -3,55 +3,51 @@
 You can activate automatic data loading after the simulation is started and you can also enable automatic data saving just before the simulation is stopped. There are global (project scope) and local (node scope) switches for that. Global tools are on the main toolbar and local ones are in the node property window.
 
 ## Data Loading
-Selected nodes will be loaded with available data after the first simulation step is done. In this step, only `OneShot` tasks are executed (will be renamed to init tasks). Then, all persistable memory blocks will be overridden with loaded data.
+Selected nodes will be loaded with available data after the first simulation step is done. In this step, only `OneShot` tasks are executed. Then, all persistable memory blocks will be overridden with loaded data.
 
 There are three different places from where the data can be loaded:
 
 * **Temporal location** - automatic, cannot be changed by the user, dependent on the project name and node id. On Windows, it is `%userprofile%\AppData\Local\Temp\bs_temporal`
-* **User defined location** - node property `DataFolder`
-* **Global location** - for all nodes, can be set through global loading option
+* **Local data folder** - node property `DataFolder` (each node has its own place for data)
+* **Global data folder** - for all nodes, can be set through global loading option. Can be obtained by exporting (globally). Also requires the .state file to be present for it to work properly.
 
-According to this order, the first existing location is used for data loading. If no data is found, a validation error is thrown. Despite that, some error may appear during the loading process. For example, structure gets changed and the size of memory block as well. In such case, Brain Simulator will not load affected memory block and will throw a warning.
-
+The locations are used in this particular order so for example when there is any temporal data for a node it is loaded even if there is a local data folder or even global data folder set up. 
+Despite that, some error may appear during the loading process. For example, structure gets changed and the size of memory block as well. In such case, Brain Simulator will not load affected memory block and will throw a warning into the Console.
 
 ## Data Saving
 If you activate data saving (global or local), selected nodes will be saved to the temporal location after the last simulation step is finished. In such way, you can start from user defined data and continue from the last stored simulation data. Any other behavior should be possible by combining save and load switches.
 
-In order to store data outside of your Brain Simulator you have to export it from the temporal location. This is done globally (main toolbar button). All available data will be exported to user defined location and you can filter it out if needed.
+In order to store data outside of your Brain Simulator you have to export it from the temporal location. This is done globally (Main toolbar button. Creates the .state file as well.). All available data will be exported to user defined location and you can filter it out if needed. You can get to the right data using node IDs that are a part of the folder names.
 
 Be aware that temporal data will outlive Brain Simulator and nodes with enabled loading will always load temporal data of the last finished simulation if available. If you want to start with different data then you have to clear temporal data first. There is a local (node only) and a global tool (whole project) for that.
 
+After stopping the simulation, data is saved in the following order:
+
+* If **Save Data on Stop** is active for node -- node data is saved to temporary location
+* If **Global Save on Stop** is active -- all data are saved to temporary location
+
 ## Controls
-There are two toolbar groups for controlling which data to save and load. First of them is on the [simulation controls toolbar](../ui.md#simulation-controls)
+There are two toolbar groups for controlling which data to save and load. Global and node specific. 
+
+###Global
+
+Part of the [simulation controls toolbar](../ui.md#simulation-controls)
 
 ![Global persistence](persistence/persistence-01.png)
 
-*  **Global Load on Start** - toggle, loads data from specified folder
+*  **Global Load on Start** - toggle, loads data from specified folder if there are no temporal data and no local data folder set up or the local data folder is empty.
 *  **Global Save on Stop** - toggle, saves data to temporary location
 *  **Clear Stored Network State** - deletes all data in temporary location
-*  **Export Stored Network State** - exports data from temporary location to specified folder
+*  **Export Stored Network State** - exports data from temporary location to a specified folder (creates .state file as well)
 *  **Autosave During Simulation each X steps** - toggle, saves data to temporary location each X steps
 
-Second one is specific for each node
+###Node specific
 
 ![Node persistence](persistence/persistence-02.png)
 
-*  **Load Data on Startup** - toggle, loads data from specified folder
+*  **Load Data on Startup** - toggle, loads data from specified folder if no temporal data is found 
 *  **Save Data on Stop** - toggle, saves data to temporary location
 *  **Clear Saved Data** - deletes data in temporary location
-
-
-## Order of data operations
-After the first simulation step, all data loading is processed in following order:
-
-* If **Global Load on Start** is active -- data are loaded from the folder defined when activating that option
-* If **Load Data on Startup** is active for node -- node data are loaded from temporary location and overwrite previously loaded data
-* Node data are loaded from **DataFolder** (node attribute) location and overwrite previously loaded data
-
-After stopping the simulation, data are saved in following order:
-
-* If **Save Data on Stop** is active for node -- node data are saved to **DataFolder** (node attribute) location
-* If **Global Save on Stop** is active -- all data are saved to temporary location
 
 
 ## Validation
