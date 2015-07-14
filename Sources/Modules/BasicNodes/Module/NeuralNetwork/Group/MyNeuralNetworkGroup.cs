@@ -17,6 +17,7 @@ using ManagedCuda;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
 using System.Diagnostics;
+using GoodAI.Modules.RBM;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
@@ -91,7 +92,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     newPlan.Add(groupTask); // add group tasks
 
             // remove group backprop tasks (they should be called from the individual layers)
-            selected = newPlan.Where(task => task is MyAbstractBackpropTask).ToList();
+            // TODO - RBM planning properly
+            selected = newPlan.Where(task => task is MyAbstractBackpropTask && ! (task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
             newPlan.RemoveAll(selected.Contains);
 
             // move MyCreateDropoutMaskTask(s) before the first MyForwardTask

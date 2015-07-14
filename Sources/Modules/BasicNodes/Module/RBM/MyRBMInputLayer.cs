@@ -29,7 +29,7 @@ namespace GoodAI.Modules.RBM
     /// 
     /// There must be precisely one input layer in an RBM group.
     /// </description>
-    class MyRBMInputLayer : MyAbstractLayer, IMyCustomTaskFactory
+    public class MyRBMInputLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
         public override ConnectionType Connection
         {
@@ -200,9 +200,8 @@ namespace GoodAI.Modules.RBM
 
         public void CreateTasks()
         {
-            // TODO - can be replaced by copy tasks
-            ForwardTask = new MyEmptyTask();
-            DeltaBackTask = new MyEmptyTask();
+            ForwardTask = new MyRBMInputForwardTask();
+            DeltaBackTask = new MyRBMInputBackwardTask();
         }
 
         internal void SetOutput(float[] f)

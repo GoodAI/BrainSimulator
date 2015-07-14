@@ -160,9 +160,6 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 MyLog.ERROR.WriteLine("Undetermined backprop task in " + Owner.ParentNetwork);
             else
             {
-                if (Owner is MyRBMLayer)
-                    backpropTask.Execute(); // call RBM layers without the layer parameter
-                else
                 backpropTask.Execute(Owner); // call the group task to do the backpropagation
             }
         }
