@@ -218,10 +218,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 Delta.Count = Neurons;
                 Bias.Count = FilterCount;
 
-                if (ParentNetwork != null && ParentNetwork.SGD.Momentum != 0)
-                    PreviousBiasDelta.Count = Neurons;
-                else
-                    PreviousBiasDelta.Count = 0; // only allocate if momentum is used
+                PreviousBiasDelta.Count = Neurons;
 
                 if (ZeroPadding > 0)
                     PaddedImage.Count = InputDepth * (InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
@@ -233,10 +230,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 {
                     Weights.Count = FilterWidth * FilterHeight * InputDepth * FilterCount;
 
-                    if (ParentNetwork != null && ParentNetwork.SGD.Momentum != 0)
-                        PreviousWeightDelta.Count = Weights.Count;
-                    else
-                        PreviousWeightDelta.Count = 0; // only allocate if momentum is used
+                    PreviousWeightDelta.Count = Weights.Count;
                 }
             }
         }
