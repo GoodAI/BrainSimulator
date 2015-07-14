@@ -44,7 +44,6 @@ namespace GoodAI.Core.Observers
 
         protected List<String> m_History;
 
-        private CudaDeviceVariable<float> m_characters; // Reference to the characters bitmaps
         private MyCudaKernel m_ClearCanvasKernel;
 
 

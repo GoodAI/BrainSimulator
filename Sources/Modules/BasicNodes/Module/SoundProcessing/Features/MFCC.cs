@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace GoodAI.Modules.SoundProcessing.Features
 {
+    /// <summary>
+    /// Exracts mel-frequency cepstral coeficients. These are commonly used as feature vectors for speech recognition.
+    /// </summary>
     public static class MFCC
     {
         /// <summary>

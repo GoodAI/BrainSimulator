@@ -125,6 +125,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SoundProcessing\Complex.cs" />
+    <Compile Include="SoundProcessing\Features\CLPC.cs" />
+    <Compile Include="SoundProcessing\Features\LPC.cs" />
     <Compile Include="SoundProcessing\Features\MFCC.cs" />
     <Compile Include="SoundProcessing\FFT.cs" />
     <Compile Include="SoundProcessing\Recorder.cs" />

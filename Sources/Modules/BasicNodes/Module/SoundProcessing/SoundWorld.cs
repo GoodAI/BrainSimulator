@@ -19,8 +19,21 @@ namespace GoodAI.Modules.SoundProcessing
 {
     public class SoundWorld : MyWorld
     {
-        public enum InputTypeEnum {SampleSound, Microphone, UserDefined}
-        public enum FeatureType {Samples, FFT, MFCC}
+        public enum InputTypeEnum 
+        {
+            SampleSound,        // Sample sound example for showcase
+            Microphone,         // Input from microphone device
+            UserDefined         // User defined set of audio files
+        }
+        
+        public enum FeatureType 
+        {
+            Samples,            // Plain samples - suitable for audio file visualisation
+            FFT,                // Frequency spectrum computed by Fast Fourier transformation
+            MFCC,               // Mel-frequency cepstral coeficients (most common feature for speech recognition)
+            LPC,                // Linear predictive coeficients (common feature for speech recognition)
+            CLPC                // Linear predictive cepstral coeficients (common feature for speech recognition)
+        }
         
         protected Recorder m_recorder;
 
@@ -47,10 +60,12 @@ namespace GoodAI.Modules.SoundProcessing
         protected InputTypeEnum m_UserInput;
 
         #region I/O
+        [Description("Path to input audio files directory")]
         [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
         [MyBrowsable, Category("I/O"), Editor]
         public string UserDefinedPath { get; set; }
 
+        [Description("Type of input")]
         [MyBrowsable, Category("I/O")]
         [YAXSerializableField(DefaultValue = InputTypeEnum.SampleSound), YAXElementFor("IO")]
         public InputTypeEnum InputType
@@ -75,20 +90,24 @@ namespace GoodAI.Modules.SoundProcessing
             
         }
 
+        [Description("Id of microphone device")]
         [MyBrowsable, Category("I/O")]
         [YAXSerializableField(DefaultValue = -1), YAXElementFor("IO")]
         public int MicrophoneDevice { get; set; }
 
+        [Description("Number of seconds for microphone to record")]
         [MyBrowsable, Category("I/O")]
         [YAXSerializableField(DefaultValue = 3), YAXElementFor("IO")]
         public int RecordSeconds { get; set; }
         #endregion
 
         #region Features
+        [Description("Number of features to extract")]
         [MyBrowsable, Category("Features")]
         [YAXSerializableField(DefaultValue = 1), YAXElementFor("Features")]
         public int FeaturesCount  { get; set; }
-        
+
+        [Description("Type of features")]
         [MyBrowsable, Category("Features")]
         [YAXSerializableField(DefaultValue = FeatureType.Samples), YAXElementFor("Features")]
         public FeatureType FeaturesType 
@@ -107,6 +126,12 @@ namespace GoodAI.Modules.SoundProcessing
                         break;
                     case FeatureType.MFCC:
                         FeaturesCount = 12;
+                        break;
+                    case FeatureType.LPC:
+                        FeaturesCount = 10;
+                        break;
+                    case FeatureType.CLPC:
+                        FeaturesCount = 10;
                         break;
                 }
             }
@@ -207,6 +232,14 @@ namespace GoodAI.Modules.SoundProcessing
 
                             result = PerformFFT(PrepareInputs(512));
                             result = MFCC.Compute(result, m_format, Owner.FeaturesCount);
+                            break;
+                        case FeatureType.LPC:
+                            result = PrepareInputs(512);
+                            result = LPC.Compute(result, Owner.FeaturesCount);
+                            break;
+                        case FeatureType.CLPC:
+                            result = PrepareInputs(512);
+                            result = CLPC.Compute(result, Owner.FeaturesCount);
                             break;
                     }
 

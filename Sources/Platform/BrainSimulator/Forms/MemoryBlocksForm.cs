@@ -191,6 +191,11 @@ namespace GoodAI.BrainSimulator.Forms
         private void addTextObserver_Click(object sender, EventArgs e)
         {
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MyTextObserver));
+        }
+
+        private void addSpectrumObserver_Click(object sender, EventArgs e)
+        {
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MySpecrumObserver));
         }     
     }
 }
