@@ -327,5 +327,13 @@ namespace GoodAI.Core
                 m_ptxModules[i].Clear();
             }
         }
+
+        public void Synchronize()
+        {
+            foreach (CudaContext context in m_contexts)
+            {
+                context.Synchronize();
+            }
+        }
     }
 }

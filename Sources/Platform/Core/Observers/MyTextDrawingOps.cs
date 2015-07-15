@@ -86,7 +86,9 @@ namespace GoodAI.Core.Observers.Helper
 
             MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawDigitsKernel");
             CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
-            
+
+            MyKernelFactory.Instance.Synchronize();
+
             m_drawDigitKernel.SetConstantVariable("D_BG_COLOR", bgColor);
             m_drawDigitKernel.SetConstantVariable("D_FG_COLOR", fgColor);
             m_drawDigitKernel.SetConstantVariable("D_IMAGE_WIDTH", imageWidth);
