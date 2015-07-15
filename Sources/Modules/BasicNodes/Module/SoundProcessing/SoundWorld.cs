@@ -349,16 +349,21 @@ namespace GoodAI.Modules.SoundProcessing
             private float[] PrepareInputs(int count)
             {
                 #region Set Label
-                char c = m_wavReader.GetTranscription((int)m_position);
-                int index = StringToDigitIndexes(c);
+                if (Owner.m_InputPathTranscription != null)
+                {
+                    char c = m_wavReader.GetTranscription((int)m_position);
+                    int index = StringToDigitIndexes(c);
 
-                Array.Clear(Owner.Label.Host, 0, Owner.Label.Count);
-                // if unknown character, continue without setting any connection
-                Owner.Label.Host[index] = 1.00f;
-                Owner.Label.SafeCopyToDevice();
+                    Array.Clear(Owner.Label.Host, 0, Owner.Label.Count);
+
+                    // if unknown character, continue without setting any connection
+                    Owner.Label.Host[index] = 1.00f;
+                    Owner.Label.SafeCopyToDevice();
+                }
                 #endregion
 
                 float[] result = new float[count];
+                // if input is corpus, cycle files in the set
                 if (Owner.InputType == InputTypeEnum.UserDefined && Owner.m_InputPathCorpus != null)
                 {
                     bool eof = (m_position + count < m_InputData.Length)?false: true;
@@ -380,7 +385,7 @@ namespace GoodAI.Modules.SoundProcessing
                         m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                     }
                 }
-                else
+                else // if input is single audio, cycle the file itself
                 {
                     for (int i = 0; i < count; i++)
                     {
