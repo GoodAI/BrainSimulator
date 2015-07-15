@@ -349,7 +349,7 @@ namespace GoodAI.Modules.SoundProcessing
             private float[] PrepareInputs(int count)
             {
                 #region Set Label
-                if (Owner.m_InputPathTranscription != null)
+                if (Owner.m_InputPathTranscription != "")
                 {
                     char c = m_wavReader.GetTranscription((int)m_position);
                     int index = StringToDigitIndexes(c);
