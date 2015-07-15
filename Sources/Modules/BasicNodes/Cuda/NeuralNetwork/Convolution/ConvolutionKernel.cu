@@ -50,25 +50,27 @@ extern "C"
 
 			for (size_t z = 0; z < filterDepth; z++) // Z
 			{
+				int inputIndex = z * inputSliceSize;
 				int y = inputTileY * verStride;
+
 				for (size_t j = 0; j < filterHeight; j++) // Y
 				{
 					int x = inputTileX * horStride;
-					float input = inputPtr[z * inputSliceSize + indexFromXY(x, y, inputWidth)];
-
 					int filterIndex = filterSize * filterIdx + z * filterSliceSize;
 
 					for (size_t i = 0; i < filterWidth; i++) // X
 					{
 						result +=
-							filterPtr[filterIndex + indexFromXY(i, j, filterWidth)] *
-							input;
+							inputPtr[inputIndex + indexFromXY(x, y, inputWidth)] * // input
+							filterPtr[filterIndex + indexFromXY(i, j, filterWidth)]; // weight
 						++x;
 					}
 					++y;
+
 				}
-				result += biasPtr[z];
 			}
+
+			result += biasPtr[filterIdx];
 
 			outputPtr[idx] = result;
 

@@ -232,6 +232,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
                     PreviousWeightDelta.Count = Weights.Count;
                 }
+
+                if (Weights.Count % 2 != 0)
+                    Weights.Count++;
+                if (Bias.Count % 2 != 0)
+                    Bias.Count++;
             }
         }
 
