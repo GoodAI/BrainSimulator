@@ -15,8 +15,6 @@ namespace GoodAI.Modules.SoundProcessing.Features
             int i, j;
             float sum;
             float[] coefs = new float[coefCount];
-            for (i = 0; i < coefCount; i++)
-                coefs[i] = 0;
             
             for (i = 1; i < coefCount; i++)
             {

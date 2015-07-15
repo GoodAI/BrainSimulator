@@ -9,10 +9,13 @@ using ManagedCuda.VectorTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using YAXLib;
 
 namespace GoodAI.Modules.SoundProcessing
@@ -51,19 +54,78 @@ namespace GoodAI.Modules.SoundProcessing
             set { SetOutput(1, value); }
         }
 
-
         [YAXSerializableField]
-        protected string m_InputPath;
+        protected string m_InputPathAudio;
+        [YAXSerializableField]
+        protected string m_InputPathTranscription;
+        [YAXSerializableField]
+        protected string m_InputPathCorpus;
         [YAXSerializableField]
         protected FeatureType m_FeaturesType;
         [YAXSerializableField]
         protected InputTypeEnum m_UserInput;
 
         #region I/O
-        [Description("Path to input audio files directory")]
+        [Description("Path to input audio file")]
         [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
-        [MyBrowsable, Category("I/O"), Editor]
-        public string UserDefinedPath { get; set; }
+        [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
+        public string UserDefinedAudio { 
+            get{ return m_InputPathAudio; }
+            set
+            {
+                if (value == "")
+                    return;
+
+                if (Path.GetExtension(value) != ".wav")
+                {
+                    MyLog.ERROR.WriteLine("Not supported file type!");
+                    return;
+                }
+                m_InputPathAudio = value;
+                // if single selected, reset previous corpus selections
+                m_InputPathCorpus = "";
+            }
+        }
+
+        [Description("Path to input transcription file")]
+        [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
+        [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
+        public string UserDefinedTranscription
+        {
+            get { return m_InputPathTranscription; }
+            set
+            {
+                if (value == "")
+                    return;
+
+                if (Path.GetExtension(value) != ".phn")
+                {
+                    MyLog.ERROR.WriteLine("Not supported file type!");
+                    return;
+                }
+                m_InputPathTranscription = value;
+                // if single selected, reset previous corpus selections
+                m_InputPathCorpus = "";
+            }
+        }
+
+        [Description("Path to input corpus directory")]
+        [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
+        [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        public string InputPathCorpus
+        {
+            get { return m_InputPathCorpus; }
+            set
+            {
+                if (value == "")
+                    return;
+
+                m_InputPathCorpus = value;
+                // if corpus selected, reset single audio selections
+                m_InputPathAudio = "";
+                m_InputPathTranscription = "";
+            }
+        }
 
         [Description("Type of input")]
         [MyBrowsable, Category("I/O")]
@@ -82,12 +144,13 @@ namespace GoodAI.Modules.SoundProcessing
                         m_UserInput = InputTypeEnum.Microphone;
                         break;
                     case InputTypeEnum.UserDefined:
-                        if (m_InputPath != null)
+                        if (m_InputPathAudio != null && m_InputPathAudio != "")
                             m_UserInput = InputTypeEnum.UserDefined;
+                        else
+                            m_UserInput = InputTypeEnum.SampleSound;
                         break;
                 }
             }
-            
         }
 
         [Description("Id of microphone device")]
@@ -144,7 +207,7 @@ namespace GoodAI.Modules.SoundProcessing
         public override void UpdateMemoryBlocks()
         {
             Features.Count = FeaturesCount;
-            Label.Count = 1;
+            Label.Count = '~' - ' ' + 1;
         }
 
         public override void Cleanup()
@@ -162,7 +225,10 @@ namespace GoodAI.Modules.SoundProcessing
             public int ExpositionTime { get; set; }
 
             private WaveReader m_wavReader;
-            
+            private int m_currentCorpusFile = 0;
+
+            string[] audio;
+            string[] transcr;
             private short[] m_InputData;
             private long m_position = 0;
 
@@ -192,8 +258,24 @@ namespace GoodAI.Modules.SoundProcessing
                                 Owner.m_recorder.Record();
                                 break;
                             case InputTypeEnum.UserDefined:
-                                m_wavReader = new WaveReader(Owner.m_InputPath, -1, 4096);
-                                m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                                // reading corpus files
+                                if (Owner.m_InputPathCorpus != null)
+                                {
+                                    audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
+                                    transcr = Directory.GetFiles(Owner.m_InputPathCorpus, "*.txt");
+
+                                    m_wavReader = new WaveReader(audio[m_currentCorpusFile], -1, 4096);
+                                    m_wavReader.AttachTranscriptionFile(transcr[m_currentCorpusFile]);
+                                    m_currentCorpusFile = 1;
+                                    m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                                }
+                                else
+                                {
+                                    m_wavReader = new WaveReader(Owner.m_InputPathAudio, -1, 4096);
+                                    m_wavReader.AttachTranscriptionFile(Owner.m_InputPathTranscription);
+                                    m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                                }
+                                
                                 break;
                         }
                     }
@@ -266,14 +348,62 @@ namespace GoodAI.Modules.SoundProcessing
             // prepare batch for processing
             private float[] PrepareInputs(int count)
             {
+                #region Set Label
+                char c = m_wavReader.GetTranscription((int)m_position);
+                int index = StringToDigitIndexes(c);
+
+                Array.Clear(Owner.Label.Host, 0, Owner.Label.Count);
+                // if unknown character, continue without setting any connection
+                Owner.Label.Host[index] = 1.00f;
+                Owner.Label.SafeCopyToDevice();
+                #endregion
+
                 float[] result = new float[count];
-                for (int i = 0; i < count; i++)
+                if (Owner.InputType == InputTypeEnum.UserDefined && Owner.m_InputPathCorpus != null)
                 {
-                    result[i] = (float)m_InputData[m_position];
-                    m_position = ++m_position % m_InputData.Length;
+                    bool eof = (m_position + count < m_InputData.Length)?false: true;
+                    for (int i = 0; i < count; i++)
+                    {
+                        result[i] = (float)m_InputData[m_position];
+                        m_position = ++m_position % m_InputData.Length;
+                    }
+
+                    if (eof)
+                    {
+                        m_position = 0;
+                        m_wavReader = new WaveReader(audio[m_currentCorpusFile], -1, 4096);
+                        m_wavReader.AttachTranscriptionFile(transcr[m_currentCorpusFile]);
+                        if (m_currentCorpusFile + 1 < audio.Length)
+                            m_currentCorpusFile++;
+                        else
+                            m_currentCorpusFile = 0;
+                        m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        result[i] = (float)m_InputData[m_position];
+                        m_position = ++m_position % m_InputData.Length;
+                    }
                 }
 
                 return result;
+            }
+
+            private int StringToDigitIndexes(char str)
+            {
+                int res = 0;
+                int charValue = str;
+                if (charValue >= ' ' && charValue <= '~')
+                    res = charValue - ' ';
+                else
+                {
+                    if (charValue == '\n')
+                        res = '~' - ' ' + 1;
+                }
+                return res;
             }
 
             // perform Fast Fourier transform

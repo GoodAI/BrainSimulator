@@ -11,16 +11,38 @@ namespace GoodAI.Modules.SoundProcessing
         public int BUFF_SIZE = 4096;
         public const byte BUFF_CNT = 3;
 
+        /// <summary>
+        /// Helper class for storing interval data from transcription file
+        /// </summary>
+        internal class Intervals
+        {
+            public char Feature { get; set; }
+            public int Start { get; set; }
+            public int Stop { get; set; }
+
+            public Intervals(string feature, int start, int stop)
+            {
+                this.Feature = feature[0];
+                this.Start = start;
+                this.Stop = stop;
+            }
+        }
+
         #region Declarations
 
         public Stream m_stream;
+        public Stream m_t_stream;
         public WaveFormat m_format;
 
         public int m_length;
         public long m_position;
         private long m_start_pos;
 
+        private Intervals[] m_intervals;
+
         #endregion
+
+        
 
         
         public WaveReader(string filename, int device_id, int buff_size)
@@ -56,6 +78,48 @@ namespace GoodAI.Modules.SoundProcessing
             catch (Exception e) { throw new Exception(e.Message); }
         }
 
+        /// <summary>
+        /// Attach transcription of audio file.
+        /// </summary>
+        /// <param name="filename">File name.</param>
+        public void AttachTranscriptionFile(string filename)
+        {
+            if (!File.Exists(filename))
+                throw new Exception("File not found!");
+
+            int lineCount = File.ReadAllLines(filename).Length;
+            m_intervals = new Intervals[lineCount];
+
+            using (TextReader reader = File.OpenText(filename))
+            {
+                int i = 0;
+                string line;
+                while ((line = reader.ReadLine())!= null)
+                {
+                    string[] item = line.Split('\t');
+                    float start = float.Parse(item[1]) * m_format.nSamplesPerSec;
+                    float stop = float.Parse(item[2]) * m_format.nSamplesPerSec;
+                    m_intervals[i++] = new Intervals(item[0], (int)start, (int)stop);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Search transcription file and return current feature
+        /// </summary>
+        /// <param name="sample_idx">Index in audio file.</param>
+        /// <returns>Current feature.</returns>
+        public char GetTranscription(int sample_idx)
+        {
+            for (int i = 0; i < m_intervals.Length; i++)
+            {
+                if(sample_idx >= m_intervals[i].Start && sample_idx <= m_intervals[i].Stop)
+                {
+                    return m_intervals[i].Feature;
+                }
+            }
+            return ' ';
+        }
 
         private string ReadChunk(BinaryReader reader)
         {
