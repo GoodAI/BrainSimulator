@@ -133,10 +133,9 @@ namespace GoodAI.Core.Observers
         #endregion
 
         private CudaDeviceVariable<float> m_valuesHistory;
-        private MyMemoryBlock<float> m_history{get; set;}
 
         private int m_currentTimeStep;
-        private int m_numColumns = 100;
+        private int m_numColumns = 2;
         private int currentColumn = 0;
 
 
@@ -162,14 +161,16 @@ namespace GoodAI.Core.Observers
             m_currentTimeStep = (int)SimulationStep;
             currentColumn = (int)SimulationStep % m_numColumns;
 
-            if ((Target is MyMemoryBlock<float>) && m_history != null)
+            for (int i = 0; i < Target.Count; i++)
             {
-                //m_history.CopyFromMemoryBlock((Target as MyMemoryBlock<float>), 0, 0, Target.Count);
+                float val = 0;
+                Target.GetValueAt<float>(ref val, i);
+                m_valuesHistory[(currentColumn * Target.Count) + i] = val;
             }
-            
+            m_valuesHistory.CopyToDevice(Target.GetDevicePtr(this), 0, currentColumn * Target.Count * sizeof(float), Target.Count * sizeof(float));
 
             m_kernel.SetupExecution(TextureSize);
-            m_kernel.Run(Target, 5, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
+            m_kernel.Run(m_valuesHistory.DevicePointer, 5, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
         }
 
         private void ResetBounds()
@@ -192,11 +193,9 @@ namespace GoodAI.Core.Observers
             base.Reset();
             ResetBounds();
 
+            // Allocate the history
             m_valuesHistory = new CudaDeviceVariable<float>(Target.Count * m_numColumns);
             m_valuesHistory.Memset(0);
-
-            //m_history = MyMemoryManager.Instance.CreateMemoryBlock<float>(Target.Owner.Parent);
-            //m_history.Count = Target.Count * m_numColumns;
 
             SetDefaultTextureDimensions(Target.Count);
         }
