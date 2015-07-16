@@ -73,10 +73,7 @@ namespace GoodAI.Modules.SoundProcessing
             get{ return m_InputPathAudio; }
             set
             {
-                if (value == "")
-                    return;
-
-                if (Path.GetExtension(value) != ".wav")
+                if (value != "" && Path.GetExtension(value) != ".wav")
                 {
                     MyLog.ERROR.WriteLine("Not supported file type!");
                     return;
@@ -95,10 +92,7 @@ namespace GoodAI.Modules.SoundProcessing
             get { return m_InputPathTranscription; }
             set
             {
-                if (value == "")
-                    return;
-
-                if (Path.GetExtension(value) != ".phn")
+                if (value != "" && Path.GetExtension(value) != ".phn")
                 {
                     MyLog.ERROR.WriteLine("Not supported file type!");
                     return;
@@ -117,9 +111,6 @@ namespace GoodAI.Modules.SoundProcessing
             get { return m_InputPathCorpus; }
             set
             {
-                if (value == "")
-                    return;
-
                 m_InputPathCorpus = value;
                 // if corpus selected, reset single audio selections
                 m_InputPathAudio = "";
@@ -139,15 +130,26 @@ namespace GoodAI.Modules.SoundProcessing
                 {
                     case InputTypeEnum.SampleSound:
                         m_UserInput = InputTypeEnum.SampleSound;
+
+                        UserDefinedAudio = "";
+                        UserDefinedTranscription = "";
+                        InputPathCorpus = "";
                         break;
                     case InputTypeEnum.Microphone:
                         m_UserInput = InputTypeEnum.Microphone;
+
+                        UserDefinedAudio = "";
+                        UserDefinedTranscription = "";
+                        InputPathCorpus = "";
                         break;
                     case InputTypeEnum.UserDefined:
-                        if (m_InputPathAudio != null && m_InputPathAudio != "")
+                        if (m_InputPathAudio != "" || m_InputPathCorpus != "")
                             m_UserInput = InputTypeEnum.UserDefined;
                         else
+                        {
+                            MyLog.INFO.WriteLine("First select path to custom audio file/s.");
                             m_UserInput = InputTypeEnum.SampleSound;
+                        }
                         break;
                 }
             }
@@ -260,7 +262,7 @@ namespace GoodAI.Modules.SoundProcessing
                                 break;
                             case InputTypeEnum.UserDefined:
                                 // reading corpus files
-                                if (Owner.m_InputPathCorpus != null)
+                                if (Owner.m_InputPathCorpus != "")
                                 {
                                     audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
                                     transcr = Directory.GetFiles(Owner.m_InputPathCorpus, "*.txt");
@@ -563,6 +565,7 @@ namespace GoodAI.Modules.SoundProcessing
             #region Helper methods
             private int NextPowerOf2(int n)
             {
+                n--;
                 n |= (n >> 16);
                 n |= (n >> 8);
                 n |= (n >> 4);
