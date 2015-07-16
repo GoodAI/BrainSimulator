@@ -447,6 +447,8 @@ namespace GoodAI.Modules.SoundProcessing
             // prepare batch for processing
             private float[] PrepareInputs(int count)
             {
+                if (m_position >= count)
+                    m_position -= (int)(float)(count * 0.1);
                 #region Set Label
                 if (Owner.m_InputPathTranscription != "" || Owner.m_InputPathCorpus != "")
                 {
