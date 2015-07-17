@@ -21,19 +21,37 @@ namespace GoodAI.Core.Observers
 
     public class MyTextObserver : MyAbstractMemoryBlockObserver
     {
-        [YAXSerializableField]
-        protected int m_MaxLines;
+        [YAXSerializableField, DefaultValue(10)]
+        protected int m_Rows;
 
         [MyBrowsable, Category("Display"), Description("Maximal number of lines"), DefaultValue(10)]
-        public int MaxLines
+        public int MaxRows
         {
-            get { return m_MaxLines; }
+            get { return m_Rows; }
             set
             {
                 if (value >= 0)
-                    m_MaxLines = value;
+                    m_Rows = value;
                 else
-                    m_MaxLines = 0;
+                    m_Rows = 1;
+
+                TriggerReset();
+            }
+        }
+
+        [YAXSerializableField, DefaultValue(10)]
+        protected int m_Cols;
+
+        [MyBrowsable, Category("Display"), Description("Maximal number of characters per line"), DefaultValue(10)]
+        public int MaxLineLength
+        {
+            get { return m_Cols; }
+            set
+            {
+                if (value >= 0)
+                    m_Cols = value;
+                else
+                    m_Cols = 1;
 
                 TriggerReset();
             }
@@ -43,6 +61,7 @@ namespace GoodAI.Core.Observers
         private uint BACKGROUND = 0xFFFFFFFF;
 
         protected List<String> m_History;
+        private CudaDeviceVariable<int> m_HistoryDeviceBuffer;
 
         private MyCudaKernel m_ClearCanvasKernel;
 
@@ -122,7 +141,7 @@ namespace GoodAI.Core.Observers
                 {
                     if (s.Length != 0)
                     {
-                        MyDrawStringHelper.DrawString(s, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 100);
+                        MyDrawStringHelper.DrawStringFromGPUMem(m_HistoryDeviceBuffer, 0, row * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight);
                     }
                     row += 1;
                 }
@@ -132,6 +151,10 @@ namespace GoodAI.Core.Observers
         protected override void Reset()
         {
             base.Reset();
+
+            // Allocate the history
+            m_HistoryDeviceBuffer = new CudaDeviceVariable<int>(m_Rows * m_Cols);
+            m_HistoryDeviceBuffer.Memset(1);
 
             m_History = new List<string>();
             m_History.Add("");
