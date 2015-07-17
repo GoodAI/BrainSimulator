@@ -63,7 +63,7 @@ namespace GoodAI.Modules.SoundProcessing
         /// 
         public double Magnitude
         {
-            get { return Math.Sqrt(Re * Re + Im * Im); }
+            get { return (Re * Re + Im * Im); }
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace GoodAI.Modules.SoundProcessing
         /// </summary>
         public double SquaredMagnitude
         {
-            get { return (Re * Re + Im * Im); }
+            get { return Math.Sqrt(Re * Re + Im * Im); }
         }
 
 

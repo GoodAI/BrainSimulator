@@ -73,10 +73,7 @@ namespace GoodAI.Modules.SoundProcessing
             get{ return m_InputPathAudio; }
             set
             {
-                if (value == "")
-                    return;
-
-                if (Path.GetExtension(value) != ".wav")
+                if (value != "" && Path.GetExtension(value) != ".wav")
                 {
                     MyLog.ERROR.WriteLine("Not supported file type!");
                     return;
@@ -95,10 +92,7 @@ namespace GoodAI.Modules.SoundProcessing
             get { return m_InputPathTranscription; }
             set
             {
-                if (value == "")
-                    return;
-
-                if (Path.GetExtension(value) != ".phn")
+                if (value != "" && Path.GetExtension(value) != ".phn")
                 {
                     MyLog.ERROR.WriteLine("Not supported file type!");
                     return;
@@ -117,9 +111,6 @@ namespace GoodAI.Modules.SoundProcessing
             get { return m_InputPathCorpus; }
             set
             {
-                if (value == "")
-                    return;
-
                 m_InputPathCorpus = value;
                 // if corpus selected, reset single audio selections
                 m_InputPathAudio = "";
@@ -139,15 +130,26 @@ namespace GoodAI.Modules.SoundProcessing
                 {
                     case InputTypeEnum.SampleSound:
                         m_UserInput = InputTypeEnum.SampleSound;
+
+                        UserDefinedAudio = "";
+                        UserDefinedTranscription = "";
+                        InputPathCorpus = "";
                         break;
                     case InputTypeEnum.Microphone:
                         m_UserInput = InputTypeEnum.Microphone;
+
+                        UserDefinedAudio = "";
+                        UserDefinedTranscription = "";
+                        InputPathCorpus = "";
                         break;
                     case InputTypeEnum.UserDefined:
-                        if (m_InputPathAudio != null && m_InputPathAudio != "")
+                        if (m_InputPathAudio != "" || m_InputPathCorpus != "")
                             m_UserInput = InputTypeEnum.UserDefined;
                         else
+                        {
+                            MyLog.INFO.WriteLine("First select path to custom audio file/s.");
                             m_UserInput = InputTypeEnum.SampleSound;
+                        }
                         break;
                 }
             }
@@ -241,6 +243,7 @@ namespace GoodAI.Modules.SoundProcessing
             {
                 if (SimulationStep == 0)
                 {
+                    #region First step init
                     Owner.Features.Fill(0);
                     Owner.Label.Fill(0);
 
@@ -259,7 +262,7 @@ namespace GoodAI.Modules.SoundProcessing
                                 break;
                             case InputTypeEnum.UserDefined:
                                 // reading corpus files
-                                if (Owner.m_InputPathCorpus != null)
+                                if (Owner.m_InputPathCorpus != "")
                                 {
                                     audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
                                     transcr = Directory.GetFiles(Owner.m_InputPathCorpus, "*.txt");
@@ -283,10 +286,12 @@ namespace GoodAI.Modules.SoundProcessing
                     {
                         // Not a valid sound device!
                     }
+                    #endregion
                 }
 
                 if (SimulationStep % ExpositionTime == 0)
                 {
+                    #region Every time step
                     if (m_InputData == null)
                         return;
 
@@ -330,12 +335,106 @@ namespace GoodAI.Modules.SoundProcessing
                     for (int i = 0; i < Owner.FeaturesCount; i++)
                         Owner.Features.Host[i] = result[i];
                     Owner.Features.SafeCopyToDevice();
+                    #endregion
                 }
             }
 
             public void ExecuteCPU()
             {
-                
+                #region First step init
+                Owner.Features.Fill(0);
+                Owner.Label.Fill(0);
+
+                try
+                {   // load input data on simulation start
+                    switch (Owner.m_UserInput)
+                    {
+                        case InputTypeEnum.SampleSound:
+                            m_wavReader = new WaveReader(BasicNodes.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
+                            m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                            break;
+                        case InputTypeEnum.Microphone:
+                            Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 2), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds);
+                            Owner.m_recorder.ShortRecording += new ShortRecordingEventHandler(OnRecordShort);
+                            Owner.m_recorder.Record();
+                            break;
+                        case InputTypeEnum.UserDefined:
+                            // reading corpus files
+                            if (Owner.m_InputPathCorpus != null)
+                            {
+                                audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
+                                transcr = Directory.GetFiles(Owner.m_InputPathCorpus, "*.txt");
+
+                                m_wavReader = new WaveReader(audio[m_currentCorpusFile], -1, 4096);
+                                m_wavReader.AttachTranscriptionFile(transcr[m_currentCorpusFile]);
+                                m_currentCorpusFile = 1;
+                                m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                            }
+                            else
+                            {
+                                m_wavReader = new WaveReader(Owner.m_InputPathAudio, -1, 4096);
+                                m_wavReader.AttachTranscriptionFile(Owner.m_InputPathTranscription);
+                                m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
+                            }
+
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Not a valid sound device!
+                }
+                #endregion
+
+                while (true)
+                {
+                    #region Every time step
+                    if (m_InputData == null)
+                        return;
+
+                    int size = 0;
+                    float[] result = new float[Owner.FeaturesCount];
+
+                    // process data according to chosen feature type
+                    switch (Owner.FeaturesType)
+                    {
+                        case FeatureType.Samples:
+                            result = PrepareInputs(Owner.FeaturesCount);
+                            break;
+                        case FeatureType.FFT:
+                            // input size must be power of 2 and double sized due to the mirror nature of FFT
+                            size = NextPowerOf2(Owner.FeaturesCount * 2);
+                            result = PerformCPUFFT(PrepareInputs(size));
+                            //result = PerformCPUFFT(GenerateSine(size));  // generate a test sine signal
+
+                            break;
+                        case FeatureType.MFCC:
+                            WaveFormat m_format = null;
+                            if (Owner.m_recorder != null)
+                                m_format = Owner.m_recorder.m_format;
+                            else if (m_wavReader != null)
+                                m_format = m_wavReader.m_format;
+
+                            result = PerformCPUFFT(PrepareInputs(512));
+                            result = MFCC.Compute(result, m_format, Owner.FeaturesCount);
+                            break;
+                        case FeatureType.LPC:
+                            result = PrepareInputs(512);
+                            result = LPC.Compute(result, Owner.FeaturesCount);
+                            break;
+                        case FeatureType.CLPC:
+                            result = PrepareInputs(512);
+                            result = CLPC.Compute(result, Owner.FeaturesCount);
+                            break;
+                    }
+
+                    // flush processed features into GPU
+                    Array.Clear(Owner.Features.Host, 0, Owner.Features.Count);
+                    for (int i = 0; i < Owner.FeaturesCount; i++)
+                        Owner.Features.Host[i] = result[i];
+                    Owner.Features.SafeCopyToDevice();
+                    #endregion
+                }
             }
 
             
@@ -348,8 +447,10 @@ namespace GoodAI.Modules.SoundProcessing
             // prepare batch for processing
             private float[] PrepareInputs(int count)
             {
+                if (m_position >= count)
+                    m_position -= (int)(float)(count * 0.1);
                 #region Set Label
-                if (Owner.m_InputPathTranscription != "")
+                if (Owner.m_InputPathTranscription != "" || Owner.m_InputPathCorpus != "")
                 {
                     char c = m_wavReader.GetTranscription((int)m_position);
                     int index = StringToDigitIndexes(c);
@@ -444,9 +545,29 @@ namespace GoodAI.Modules.SoundProcessing
                 return result;
             }
 
+            private float[] PerformCPUFFT(float[] input)
+            {
+                float[] result = new float[input.Length];
+
+                // convert inputs to complex numbers
+                Complex[] data = new Complex[input.Length];
+                for (int i = 0; i < input.Length; i++)
+                    data[i] = new Complex(input[i], 0);
+
+                // perform FFT
+                FourierTransform.FFT(data, Direction.Forward);
+
+                // convert complex results back to real numbers
+                for (int i = 0; i < data.Length; i++)
+                    result[i] = (float)data[i].SquaredMagnitude;
+
+                return result;
+            }
+
             #region Helper methods
             private int NextPowerOf2(int n)
             {
+                n--;
                 n |= (n >> 16);
                 n |= (n >> 8);
                 n |= (n >> 4);
