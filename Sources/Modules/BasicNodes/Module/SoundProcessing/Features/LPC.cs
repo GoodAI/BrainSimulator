@@ -8,83 +8,75 @@ namespace GoodAI.Modules.SoundProcessing.Features
     public static class LPC
     {
         /// <summary>
-        /// Computes linear predictive coeficients features.
+        /// LPC Analysis using Durbin-Levinson's recursion algorithm
         /// </summary>
-        /// <param name="frame">Input frame buffer.</param>
-        /// <param name="coefCount">Number of ceoficients to be extracted.</param>
-        /// <returns>Final LPC coeficients.</returns>
-        public static float[] Compute(float[] frame, int coefCount)
+        public static float[] Compute(float[] x, int p)
         {
-            float[] win = HammingWindow(frame);
-            // Apply window funciton and compute autocorelation on current frame
-            float[] ac = AutoCorrelate(win, coefCount);
+            // Variable used in Durbin's algorithm
+            float[] e = new float[p + 1];
+            float[,] alpha = new float[p + 1, p + 1];
+            float[] r = new float[p + 1];
+            float[] k = new float[p + 1];
+            float[] c = new float[p + 1];
+            int N = x.Length;
 
-            return LPCAnalysis(ac, coefCount);
-        }
+            float[] lpc = new float[p];
 
-        /// <summary>
-        /// Performs calculations of the Hamming function for a given frame
-        /// </summary>
-        /// <param name="frame">Frame to be windowed</param>
-        /// <returns>Windowed frame</returns>
-        private static float[] HammingWindow(float[] frame)
-        {
-            for (int n = 0; n < frame.Length; n++)
-                frame[n] = 0.54f - 0.46f * (float)Math.Cos(2 * Math.PI * n / (frame.Length - 1));
-
-            return frame;
-        }
-
-        /// <summary>
-        /// Auto-correlation method
-        /// </summary>
-        /// <param name="frame"></param>
-        /// <param name="order"></param>
-        /// <returns></returns>
-        private static float[] AutoCorrelate(float[] frame, int coefCount)
-        {
-            float[] ac = new float[coefCount + 1];
-            for (int i = 0; i < coefCount + 1; i++)
+            // initialize
+            for (int i = 0; i < p + 1; i++)
             {
-                ac[i] = 0;
-                for (int j = 0; j < coefCount - i; j++)
-                    ac[i] += (frame[j] * frame[j + i]);
+                e[i] = k[i] = 0;
+                for (int j = 0; j < p + 1; j++)
+                    alpha[i, j] = 0;
             }
 
-            return ac;
-        }
+            // Autocorelation of input frame
+            for (int i = 0; i < p + 1; i++)
+            {
+                r[i] = 0;
+                for (int j = 0; j < N - i; j++)
+                    r[i] += (x[j] * x[j + i]);
+            }
 
-        /// <summary>
-        /// LPC Analysis using Durbin-Levinson's algorithm
-        /// </summary>
-        private static float[] LPCAnalysis(float[] frame, int coefCount)
-        {
-            // init
-            float[] lpc = new float[coefCount + 1];
-            float[] err = new float[coefCount + 1];
-            float[] parcor = new float[coefCount + 1];
-            float[,] alpha = new float[coefCount + 1, coefCount + 1];
+            e[0] = r[0];
+
+            // LPCAnalysis
+            float sum;
+            for (int i = 1; i <= p; i++)
+            {
+                sum = 0;
+                for (int j = 1; j <= i - 1; j++)
+                    sum += (alpha[j, i - 1] * r[i - j]);
+                
+                k[i] = (r[i] - sum) / e[i - 1];
+                alpha[i, i] = k[i];
+                for (int j = 1; j <= i - 1; j++)
+                    alpha[j, i] = alpha[j, i - 1] - k[i] * alpha[i - j, i - 1];
+                
+                e[i] = (1 - k[i] * k[i]) * e[i - 1];
+            }
+
+
+            // extractSolution
+            for (int i = 0; i < p; i++)
+                lpc[i] = alpha[i + 1, p];
+
+
+            // calculateCepstralCoefficients
+            sum = 0;
+            for (int i = 0; i < c.Length; i++)
+                c[i] = 0;
             
-            err[0] = frame[0];
-            for (int i = 1; i <= coefCount; i++)
+            for (int i = 1; i < c.Length; i++)
             {
-                float sum = 0;
+                sum = 0;
                 for (int j = 1; j <= i - 1; j++)
-                    sum += (alpha[j, i - 1] * frame[i - j]);
+                {
+                    sum += ((j / (float)i) * c[j] * lpc[i - j - 1]);
+                }
+                c[i] = lpc[i - 1] + sum;
 
-                parcor[i] = (frame[i] - sum) / err[i - 1];
-                alpha[i, i] = parcor[i];
-
-                for (int j = 1; j <= i - 1; j++)
-                    alpha[j, i] = alpha[j, i - 1] - parcor[i] * alpha[i - j, i - 1];
-
-                err[i] = (1 - parcor[i] * parcor[i]) * err[i - 1];
             }
-
-            // extract solution
-            for (int i = 0; i < coefCount; i++)
-                lpc[i] = alpha[i + 1, coefCount];
-
             return lpc;
         }
     }

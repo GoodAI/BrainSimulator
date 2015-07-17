@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace GoodAI.Modules.SoundProcessing.Features
 {
     /// <summary>
@@ -15,7 +16,8 @@ namespace GoodAI.Modules.SoundProcessing.Features
             int i, j;
             float sum;
             float[] coefs = new float[coefCount];
-            
+
+            coefs[0] = (float)Math.Log10(coefCount);
             for (i = 1; i < coefCount; i++)
             {
                 sum = 0;
