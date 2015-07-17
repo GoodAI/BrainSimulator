@@ -27,7 +27,7 @@ extern "C"
 	__constant__ int D_DIGITMAP_NBCHARS;
 
 	//kernel code
-	__global__ void DrawStringKernel(unsigned int* canvas, float* characterMap, int offsetX, int offsetY, int *stringIndexVector, int stringIndexLen)
+	__global__ void DrawStringKernel(unsigned int* canvas, float* characterMap, int offsetX, int offsetY, float *stringIndexVector, int stringIndexLen)
 	{		
 		int id = blockDim.x*blockIdx.y*gridDim.x
 				+ blockDim.x*blockIdx.x	
@@ -54,7 +54,7 @@ extern "C"
 		float fgGreen = (D_FG_COLOR & 0x0000FF00) >> 8;
 		float fgBlue = (D_FG_COLOR & 0x000000FF);
 		
-		int localX = stringIndexVector[digitIndex] * D_DIGIT_WIDTH + id % D_DIGIT_WIDTH;
+		int localX = int(stringIndexVector[digitIndex]) * D_DIGIT_WIDTH + id % D_DIGIT_WIDTH;
 		int localY = (id % D_DIGIT_SIZE) / D_DIGIT_WIDTH;
 		float factor = characterMap[localX + localY * D_DIGIT_WIDTH * D_DIGITMAP_NBCHARS];
 
