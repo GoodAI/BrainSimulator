@@ -87,8 +87,6 @@ namespace GoodAI.Core.Observers.Helper
             MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawDigitsKernel");
             CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
 
-            MyKernelFactory.Instance.Synchronize();
-
             m_drawDigitKernel.SetConstantVariable("D_BG_COLOR", bgColor);
             m_drawDigitKernel.SetConstantVariable("D_FG_COLOR", fgColor);
             m_drawDigitKernel.SetConstantVariable("D_IMAGE_WIDTH", imageWidth);
@@ -103,6 +101,25 @@ namespace GoodAI.Core.Observers.Helper
 
             m_drawDigitKernel.SetupExecution(CharacterSize * indexes.Length);
             m_drawDigitKernel.Run(image, characters.DevicePointer, x, y);
+        }
+
+        public static void DrawStringFromGPUMem(CudaDeviceVariable<float> inString, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight, int stringOffset, int stringLen)
+        {
+            MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawStringKernel");
+            CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
+
+            //MyKernelFactory.Instance.Synchronize();
+
+            m_drawDigitKernel.SetConstantVariable("D_BG_COLOR", bgColor);
+            m_drawDigitKernel.SetConstantVariable("D_FG_COLOR", fgColor);
+            m_drawDigitKernel.SetConstantVariable("D_IMAGE_WIDTH", imageWidth);
+            m_drawDigitKernel.SetConstantVariable("D_IMAGE_HEIGHT", imageHeight);
+            m_drawDigitKernel.SetConstantVariable("D_DIGIT_WIDTH", CharacterWidth);
+            m_drawDigitKernel.SetConstantVariable("D_DIGIT_SIZE", CharacterSize);
+            m_drawDigitKernel.SetConstantVariable("D_DIGITMAP_NBCHARS", CharacterMapNbChars);
+
+            m_drawDigitKernel.SetupExecution(CharacterSize * stringLen);
+            m_drawDigitKernel.Run(image, characters.DevicePointer, x, y, inString.DevicePointer + sizeof(float) * stringOffset, stringLen);
         }
     }
 }
