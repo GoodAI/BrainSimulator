@@ -21,10 +21,10 @@ namespace GoodAI.Core.Observers
 
     public class MyTextObserver : MyAbstractMemoryBlockObserver
     {
-        [YAXSerializableField, DefaultValue(10)]
-        protected int m_Rows;
+        [YAXSerializableField, DefaultValue(16)]
+        protected int m_Rows ;
 
-        [MyBrowsable, Category("Display"), Description("Maximal number of lines"), DefaultValue(10)]
+        [MyBrowsable, Category("Display"), Description("Maximal number of lines"), DefaultValue(16)]
         public int MaxRows
         {
             get { return m_Rows; }
@@ -39,10 +39,10 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        [YAXSerializableField, DefaultValue(10)]
+        [YAXSerializableField, DefaultValue(80)]
         protected int m_Cols;
 
-        [MyBrowsable, Category("Display"), Description("Maximal number of characters per line"), DefaultValue(10)]
+        [MyBrowsable, Category("Display"), Description("Maximal number of characters per line"), DefaultValue(80)]
         public int MaxLineLength
         {
             get { return m_Cols; }
@@ -58,7 +58,7 @@ namespace GoodAI.Core.Observers
         }
 
         [YAXSerializableField]
-        private uint BACKGROUND = 0xFFFFFFFF;
+        private uint BACKGROUND = 0x00;
 
         protected List<String> m_History;
         private CudaDeviceVariable<float> m_HistoryDeviceBuffer;
@@ -68,8 +68,8 @@ namespace GoodAI.Core.Observers
 
         public MyTextObserver() //constructor with node parameter
         {
-            MaxLineLength = 80;
-            MaxRows = 16;
+            //MaxLineLength = 80;
+            //MaxRows = 16;
 
             TextureWidth = 800;
             TextureHeight = 400;
