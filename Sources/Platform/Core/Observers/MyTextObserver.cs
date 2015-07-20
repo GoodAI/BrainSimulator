@@ -21,9 +21,10 @@ namespace GoodAI.Core.Observers
 
     public class MyTextObserver : MyAbstractMemoryBlockObserver
     {
-        [YAXSerializableField, DefaultValue(16)]
+        [YAXSerializableField(DefaultValue=16)]
         protected int m_Rows ;
 
+        [YAXSerializableField(DefaultValue = 16)]
         [MyBrowsable, Category("Display"), Description("Maximal number of lines"), DefaultValue(16)]
         public int MaxRows
         {
@@ -39,9 +40,10 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        [YAXSerializableField, DefaultValue(80)]
+        [YAXSerializableField(DefaultValue=80)]
         protected int m_Cols;
 
+        [YAXSerializableField(DefaultValue = 80)]
         [MyBrowsable, Category("Display"), Description("Maximal number of characters per line"), DefaultValue(80)]
         public int MaxLineLength
         {
@@ -65,11 +67,10 @@ namespace GoodAI.Core.Observers
 
         private MyCudaKernel m_ClearCanvasKernel;
 
-
         public MyTextObserver() //constructor with node parameter
         {
-            //MaxLineLength = 80;
-            //MaxRows = 16;
+            MaxLineLength = 80;
+            MaxRows = 16;
 
             TextureWidth = 800;
             TextureHeight = 400;
