@@ -10,7 +10,7 @@ namespace GoodAI.Modules.SoundProcessing.Features
         /// <summary>
         /// LPC Analysis using Durbin-Levinson's recursion algorithm
         /// </summary>
-        public static float[] Compute(float[] x, int p)
+        public static float[] Compute(float[] x, int p) 
         {
             // Variable used in Durbin's algorithm
             float[] e = new float[p + 1];
@@ -48,7 +48,7 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 for (int j = 1; j <= i - 1; j++)
                     sum += (alpha[j, i - 1] * r[i - j]);
                 
-                k[i] = (r[i] - sum) / e[i - 1];
+                k[i] = -(r[i] + sum) / e[i - 1];
                 alpha[i, i] = k[i];
                 for (int j = 1; j <= i - 1; j++)
                     alpha[j, i] = alpha[j, i - 1] - k[i] * alpha[i - j, i - 1];
@@ -56,27 +56,10 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 e[i] = (1 - k[i] * k[i]) * e[i - 1];
             }
 
-
             // extractSolution
             for (int i = 0; i < p; i++)
                 lpc[i] = alpha[i + 1, p];
 
-
-            // calculateCepstralCoefficients
-            sum = 0;
-            for (int i = 0; i < c.Length; i++)
-                c[i] = 0;
-            
-            for (int i = 1; i < c.Length; i++)
-            {
-                sum = 0;
-                for (int j = 1; j <= i - 1; j++)
-                {
-                    sum += ((j / (float)i) * c[j] * lpc[i - j - 1]);
-                }
-                c[i] = lpc[i - 1] + sum;
-
-            }
             return lpc;
         }
     }

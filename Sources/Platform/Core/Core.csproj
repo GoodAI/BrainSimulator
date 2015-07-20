@@ -107,7 +107,7 @@
     <Compile Include="Nodes\MyUserInput.cs" />
     <Compile Include="Observers\MyMemoryBlockEditor.cs" />
     <Compile Include="Observers\MyHistogramObserver.cs" />
-    <Compile Include="Observers\MySpecrumObserver.cs" />
+    <Compile Include="Observers\MySpectrumObserver.cs" />
     <Compile Include="Observers\MyShape.cs" />
     <Compile Include="Observers\MySpikeRasterObserver.cs" />
     <Compile Include="Observers\MyTextObserver.cs" />
@@ -159,7 +159,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\nodes.xml">

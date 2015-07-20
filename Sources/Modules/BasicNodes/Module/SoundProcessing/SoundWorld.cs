@@ -35,7 +35,6 @@ namespace GoodAI.Modules.SoundProcessing
             FFT,                // Frequency spectrum computed by Fast Fourier transformation
             MFCC,               // Mel-frequency cepstral coeficients (most common feature for speech recognition)
             LPC,                // Linear predictive coeficients (common feature for speech recognition)
-            CLPC                // Linear predictive cepstral coeficients (common feature for speech recognition)
         }
         
         protected Recorder m_recorder;
@@ -195,9 +194,6 @@ namespace GoodAI.Modules.SoundProcessing
                     case FeatureType.LPC:
                         FeaturesCount = 10;
                         break;
-                    case FeatureType.CLPC:
-                        FeaturesCount = 10;
-                        break;
                 }
             }
         }
@@ -256,7 +252,7 @@ namespace GoodAI.Modules.SoundProcessing
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 break;
                             case InputTypeEnum.Microphone:
-                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 2), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds);
+                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 1), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds * 2);
                                 Owner.m_recorder.ShortRecording += new ShortRecordingEventHandler(OnRecordShort);
                                 Owner.m_recorder.Record();
                                 break;
@@ -317,16 +313,12 @@ namespace GoodAI.Modules.SoundProcessing
                             else if (m_wavReader != null)
                                 m_format = m_wavReader.m_format;
 
-                            result = PerformFFT(PrepareInputs(512));
+                            result = PerformFFT(PrepareInputs(256));
                             result = MFCC.Compute(result, m_format, Owner.FeaturesCount);
                             break;
                         case FeatureType.LPC:
-                            result = PrepareInputs(512);
+                            result = PrepareInputs(256);
                             result = LPC.Compute(result, Owner.FeaturesCount);
-                            break;
-                        case FeatureType.CLPC:
-                            result = PrepareInputs(512);
-                            result = CLPC.Compute(result, Owner.FeaturesCount);
                             break;
                     }
 
@@ -422,10 +414,6 @@ namespace GoodAI.Modules.SoundProcessing
                             result = PrepareInputs(512);
                             result = LPC.Compute(result, Owner.FeaturesCount);
                             break;
-                        case FeatureType.CLPC:
-                            result = PrepareInputs(512);
-                            result = CLPC.Compute(result, Owner.FeaturesCount);
-                            break;
                     }
 
                     // flush processed features into GPU
@@ -437,10 +425,13 @@ namespace GoodAI.Modules.SoundProcessing
                 }
             }
 
-            
+
             public void OnRecordShort(short[] input)
             {
                 m_InputData = input;
+
+                WaveReader.Save(@"E:\microphone.wav", input, Owner.m_recorder.m_format);
+
                 Owner.m_recorder.Stop();
             }
 
@@ -452,7 +443,7 @@ namespace GoodAI.Modules.SoundProcessing
                 #region Set Label
                 if (Owner.m_InputPathTranscription != "" || Owner.m_InputPathCorpus != "")
                 {
-                    char c = m_wavReader.GetTranscription((int)m_position);
+                    char c = m_wavReader.GetTranscription((int)m_position, (int)m_position + count);
                     int index = StringToDigitIndexes(c);
 
                     Array.Clear(Owner.Label.Host, 0, Owner.Label.Count);

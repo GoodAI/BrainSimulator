@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -107,15 +108,21 @@ namespace GoodAI.Modules.SoundProcessing
         /// <summary>
         /// Search transcription file and return current feature
         /// </summary>
-        /// <param name="sample_idx">Index in audio file.</param>
+        /// <param name="ax">Index in audio file.</param>
         /// <returns>Current feature.</returns>
-        public char GetTranscription(int sample_idx)
+        public char GetTranscription(int x, int y)
         {
             for (int i = 0; i < m_intervals.Length; i++)
             {
-                if(sample_idx >= m_intervals[i].Start && sample_idx <= m_intervals[i].Stop)
+                Point AB = new Point(m_intervals[i].Start, m_intervals[i].Stop);
+                if(x >= AB.X && x <= AB.Y)
                 {
-                    return m_intervals[i].Feature;
+                    int a = x - AB.X;
+                    int b = y - AB.Y;
+                    if (a >= b)
+                        return m_intervals[i].Feature;
+                    else
+                        return m_intervals[i].Feature;
                 }
             }
             return ' ';
@@ -222,19 +229,36 @@ namespace GoodAI.Modules.SoundProcessing
         /// <param name="filename">File name</param>
         /// <param name="data">Dat to write in byte format</param>
         /// <param name="format">Wave format of RIFF file</param>
-        public static void Save(string filename, byte[] data, WaveFormat format)
+        public static void Save(string filename, short[] data, WaveFormat format)
         {
+            byte[] buff = ToByte(data);
             FileStream fs = null;
             try
             {
                 fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
-                Recorder.WriteHeader(fs, format, data.Length);
-                fs.Write(data, 0, data.Length);
+                Recorder.WriteHeader(fs, format, buff.Length);
+                fs.Write(buff, 0, buff.Length);
             }
             finally
             {
                 fs.Close();
             }
+        }
+
+        public static byte[] ToByte(Int16[] data)
+        {
+            if (data == null)
+                return null;
+
+            byte[] data_out = new byte[data.Length * 2];
+            for (int index = 0; index < data.Length; index++)
+            {
+                Int16 sample = data[index];
+                data_out[index * 2] = (byte)Convert.ToByte(sample & 0xff);
+                data_out[(index * 2) + 1] = (byte)Convert.ToByte((sample >> 8) & 0xff);
+            }
+
+            return data_out;
         }
 
         #region Split channel
