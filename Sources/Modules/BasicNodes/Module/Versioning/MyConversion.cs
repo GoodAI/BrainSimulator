@@ -10,7 +10,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 4; } }
+        public override int CurrentVersion { get { return 5; } }
 
 
         /// <summary>
@@ -121,5 +121,18 @@ namespace GoodAI.Modules.Versioning
             return result;
         }
 
+        /// <summary>
+        /// Convert LSTM delta tasks
+        /// Author: KK
+        /// </summary>
+        public static string Convert4To5(string xml)
+        {
+            string result = xml;
+
+            result = result.Replace("<Task Enabled=\"True\" PropertyName=\"deltaTask\" yaxlib:realtype=\"GoodAI.Modules.LSTM.Tasks.MyLSTMDeltaTask\" />", "");
+            result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.LSTM.Tasks.MyLSTMDummyDeltaTask", "yaxlib:realtype=\"GoodAI.Modules.LSTM.Tasks.MyLSTMDeltaTask");
+
+            return result;
+        }
     }
 }

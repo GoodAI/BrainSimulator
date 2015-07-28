@@ -45,4 +45,38 @@ extern "C"
 			outputGateDeltas[memoryBlockId] = outputGateActivationDerivatives[memoryBlockId] * outputGateDeltaSum;
 		}
 	}
+
+	__global__ void LSTMDeltaBackKernel(
+		ActivationFunctionEnum prevLayerActivationFunction,
+		float *prevWeighedInputPtr,
+		float *prevDeltaPtr,
+		float *cellStateErrors,
+		float *inputGateActivations,
+		float *cellInputWeights,
+
+		int prevLayerNeurons,
+		int cellCount,
+		int cellsPerBlock
+		)
+	{
+		int neuronId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (neuronId < prevLayerNeurons)
+		{
+			float deltaSum = 0.0f;
+
+			for (int memoryBlockId = 0; memoryBlockId < cellCount / cellsPerBlock; memoryBlockId++)
+			{
+				float inputGate = inputGateActivations[memoryBlockId];
+				for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
+				{
+					deltaSum += cellInputWeights[cellId * (prevLayerNeurons + cellCount + 1) + neuronId] * inputGate * cellStateErrors[cellId];
+				}
+			}
+
+			prevDeltaPtr[neuronId] = -deltaSum * EvaluateDerivative(prevLayerActivationFunction, prevWeighedInputPtr[neuronId]);
+		}
+	}
 }
