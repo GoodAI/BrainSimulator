@@ -30,29 +30,7 @@ extern "C"
 
 
 
-
-	__device__ void getRGBfromChar(int rgb, int & r, int & g, int & b){
-//		int a = (rgb >> 24) & 255;
-		r = (rgb >> 16) & 255;
-		g = (rgb >> 8) & 255;
-		b = rgb & 255;
-	}
-
-	__device__ int weightColor(int color, float weight){
-		return (int) ( (float)color * weight);
-	}
-
-
-	__global__ void ColorDown (unsigned int* im, float val, int size)
-	{
-		int id = blockDim.x*blockIdx.y*gridDim.x + blockDim.x*blockIdx.x	+ threadIdx.x;
-		int r,g,b;
-		if (id<size)
-		{
-			getRGBfromChar(im[id],r,g,b);
-			im[id] = GET_RGBA(weightColor(r,val),weightColor(g,val),weightColor(b,val),255);
-		}
-	}
+	
 
 
 

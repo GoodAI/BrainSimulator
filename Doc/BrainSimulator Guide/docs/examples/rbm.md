@@ -2,9 +2,9 @@
 
 This is a working example of a simple two-layer RBM (i.e. not a [DBN](https://en.wikipedia.org/wiki/Deep_belief_network)) trained on the full [MNIST dataset](http://yann.lecun.com/exdb/mnist/) (60000 images).
 
-Brain file: [RBM_MNIST.brain](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/blob/master/RBM/RBM_MNIST.brain)
+Brain file: [RBM_MNIST.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/RBM/RBM_MNIST.brain)
 
-Make sure you also have the [saved state](https://github.com/KeenSoftwareHouse/BrainSimulatorSampleProjects/tree/master/RBM "mnist.state file and mnist.statedata folder") available if you'd like to see the pretrained version.
+Make sure you also have the [saved state](https://github.com/GoodAI/BrainSimulatorSampleProjects/tree/master/RBM "mnist.state file and mnist.statedata folder") available if you'd like to see the pretrained version.
 
 **For introduction to RBMs, see the [RBM guide](../guides/rbm.md) entry first.**
 

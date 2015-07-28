@@ -46,7 +46,8 @@ namespace GoodAI.Core.Execution
         public MySimulation()
         {
             AutoSaveInterval = 0;
-            GlobalDataFolder = String.Empty;            
+            GlobalDataFolder = String.Empty;
+            LoadAllNodesData = false;
         }
 
         public virtual void Init()

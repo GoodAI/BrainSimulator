@@ -13,21 +13,32 @@ using ManagedCuda.BasicTypes;
 
 namespace CustomModels.RBM.Tasks
 {
-    /// <summary>
-    /// Empty task that hides unused neural layer tasks.
-    /// Doesn't do anything and can be safely ignored.
-    /// </summary>
-    [Description("EmptyTask"), MyTaskInfo(OneShot = true)]
-    public class MyEmptyTask : MyAbstractBackDeltaTask<MyAbstractLayer>
-    {
-        public MyEmptyTask() { } //parameterless constructor
 
+    [Description("RBMInputForward"), MyTaskInfo(OneShot = false)]
+    public class MyRBMInputForwardTask : MyAbstractForwardTask<MyRBMInputLayer>
+    {
         public override void Init(int nGPU)
         {
         }
 
-        public override void Execute() //Task execution
+        public override void Execute()
         {
+            Owner.Output.CopyFromMemoryBlock(Owner.Input, 0, 0, Owner.Neurons);
+            MyLog.DEBUG.WriteLine("RBM input layer forward");
+        }
+    }
+
+    [Description("RBMInputBackward"), MyTaskInfo(OneShot = false)]
+    public class MyRBMInputBackwardTask : MyAbstractBackDeltaTask<MyRBMInputLayer>
+    {
+        public override void Init(int nGPU)
+        {
+        }
+
+        public override void Execute()
+        {
+            Owner.Input.CopyFromMemoryBlock(Owner.Output, 0, 0, Owner.Neurons);
+            MyLog.DEBUG.WriteLine("RBM input layer backwards");
         }
     }
 }

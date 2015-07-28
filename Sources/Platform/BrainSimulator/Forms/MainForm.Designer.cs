@@ -55,6 +55,7 @@
             this.recentFilesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadUserNodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setGlobalDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,6 +75,7 @@
             this.updateMemoryBlocksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.guideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.mainToolStrip = new System.Windows.Forms.ToolStrip();
@@ -112,7 +114,7 @@
             this.openNodeFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMemFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openMemFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearGlobalDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.mainToolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -145,6 +147,8 @@
             this.recentFilesMenuItem,
             this.toolStripMenuItem1,
             this.loadUserNodesToolStripMenuItem,
+            this.setGlobalDataFolderToolStripMenuItem,
+            this.clearGlobalDataFolderToolStripMenuItem,
             this.toolStripSeparator5,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -220,6 +224,13 @@
             this.loadUserNodesToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
             this.loadUserNodesToolStripMenuItem.Text = "Load User Nodes...";
             this.loadUserNodesToolStripMenuItem.Click += new System.EventHandler(this.loadUserNodesToolStripMenuItem_Click);
+            // 
+            // setGlobalDataFolderToolStripMenuItem
+            // 
+            this.setGlobalDataFolderToolStripMenuItem.Name = "setGlobalDataFolderToolStripMenuItem";
+            this.setGlobalDataFolderToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.setGlobalDataFolderToolStripMenuItem.Text = "Set global data folder";
+            this.setGlobalDataFolderToolStripMenuItem.Click += new System.EventHandler(this.setGlobalDataFolderToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -394,6 +405,13 @@
             this.guideToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.guideToolStripMenuItem.Text = "Guide...";
             this.guideToolStripMenuItem.Click += new System.EventHandler(this.guideToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.aboutToolStripMenuItem.Text = "About...";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // saveFileDialog
             // 
@@ -796,12 +814,13 @@
             this.openMemFileDialog.Filter = "Nework state files|*.state";
             this.openMemFileDialog.Title = "Open Network State...";
             // 
-            // aboutToolStripMenuItem
+            // clearGlobalDataFolderToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.aboutToolStripMenuItem.Text = "About...";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.clearGlobalDataFolderToolStripMenuItem.Name = "clearGlobalDataFolderToolStripMenuItem";
+            this.clearGlobalDataFolderToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.clearGlobalDataFolderToolStripMenuItem.Text = "Clear global data folder";
+            this.clearGlobalDataFolderToolStripMenuItem.Visible = false;
+            this.clearGlobalDataFolderToolStripMenuItem.Click += new System.EventHandler(this.clearGlobalDataFolderToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -902,6 +921,8 @@
         public System.Windows.Forms.ToolStripMenuItem stepIntoToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem stepOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setGlobalDataFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearGlobalDataFolderToolStripMenuItem;
     }
 }
 

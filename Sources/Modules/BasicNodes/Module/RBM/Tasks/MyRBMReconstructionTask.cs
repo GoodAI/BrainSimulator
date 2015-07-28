@@ -33,7 +33,7 @@ namespace GoodAI.Modules.RBM
     /// </ul>
     /// </summary>
     [Description("RBM Reconstruction"), MyTaskInfo(OneShot = false)]
-    public class MyRBMReconstructionTask : MyTask<MyNeuralNetworkGroup>
+    public class MyRBMReconstructionTask : MyAbstractBackpropTask
     {
 
         #region Layer indexing

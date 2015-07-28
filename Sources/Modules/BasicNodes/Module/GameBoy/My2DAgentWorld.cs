@@ -19,7 +19,8 @@ using YAXLib;
 
 namespace GoodAI.Modules.GameBoy
 {
-    /// <author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     /// <status>WIP</status>
     /// <summary>Simple 2D topview world with agent and target.</summary>
     /// <description>Agent and target positions are available. Agent movement can be controlled.</description>

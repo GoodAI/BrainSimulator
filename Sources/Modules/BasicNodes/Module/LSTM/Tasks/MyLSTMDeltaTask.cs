@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using ManagedCuda.BasicTypes;
 using YAXLib;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
@@ -17,27 +18,19 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.LSTM.Tasks
 {
-    /// <summary>Dummy task, in truncated RTRL deltas are not propagated backwards from LSTM layer to input layer.</summary>
-    [Description("Delta backprop"), MyTaskInfo(OneShot = false)]
-    public class MyLSTMDummyDeltaTask : MyAbstractBackDeltaTask<MyAbstractLayer>
-    {
-        public MyLSTMDummyDeltaTask() { }
-        public override void Init(int nGPU) { }
-        public override void Execute()
-        {
-            // error is not propagated backwards from LSTM layer
-        }
-    }
-
     /// <summary>Computes deltas of output gates and cell state errors.</summary>
     [Description("Calculate deltas"), MyTaskInfo(OneShot = false)]
-    public class MyLSTMDeltaTask : MyTask<MyLSTMLayer>
+    public class MyLSTMDeltaTask : MyAbstractBackDeltaTask<MyLSTMLayer>
     {
+        public MyLSTMDeltaTask() {}
+
         private MyCudaKernel m_deltaKernel;
+        private MyCudaKernel m_deltaBackKernel;
 
         public override void Init(int nGPU)
         {
             m_deltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"LSTM\LSTMDeltaKernel", "LSTMDeltaKernel");
+            m_deltaBackKernel = MyKernelFactory.Instance.Kernel(nGPU, @"LSTM\LSTMDeltaKernel", "LSTMDeltaBackKernel");
             m_deltaKernel.SetupExecution(Owner.MemoryBlocks);
         }
 
@@ -45,6 +38,7 @@ namespace GoodAI.Modules.LSTM.Tasks
         {
             if (SimulationStep == 0) return;
 
+            // propagate delta to output gates
             m_deltaKernel.Run(
                 Owner.CellStateErrors,
 		        Owner.OutputGateDeltas,
@@ -56,6 +50,37 @@ namespace GoodAI.Modules.LSTM.Tasks
 		        Owner.CellStates.Count,
 		        Owner.CellsPerBlock
                 );
+
+            // pointer to previous layer
+            MyAbstractLayer previousLayer = Owner.PreviousLayer;
+
+            if (previousLayer != null)
+            {
+                // reset delta
+                previousLayer.Delta.Fill(0);
+
+                // determine input to previous layer
+                CUdeviceptr prevInputPtr;
+                if (previousLayer is MyAbstractWeightLayer)
+                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
+                else
+                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+
+                // propagate delta to previous layer
+                m_deltaBackKernel.SetupExecution(previousLayer.Neurons);
+                m_deltaBackKernel.Run(
+                    (int)previousLayer.ActivationFunction,
+                    prevInputPtr,
+                    previousLayer.Delta,
+                    Owner.CellStateErrors,
+                    Owner.InputGateActivations,
+                    Owner.CellInputWeights,
+
+                    previousLayer.Neurons,
+                    Owner.CellStates.Count,
+                    Owner.CellsPerBlock
+                    );
+            }
         }
     }
 }

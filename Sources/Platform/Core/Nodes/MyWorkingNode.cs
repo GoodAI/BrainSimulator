@@ -278,14 +278,18 @@ namespace GoodAI.Core.Nodes
                 {
                     validator.AddInfo(this, "Node will load data from user defined folder: " + DataFolder);
                 }
-                else if (validator.Simulation.LoadAllNodesData)
+                else if (validator.Simulation.LoadAllNodesData && ! (String.IsNullOrEmpty(validator.Simulation.GlobalDataFolder)))
                 {
                     validator.AddInfo(this, "Node will load data from user defined folder: "
                         + validator.Simulation.GlobalDataFolder + "\\" + MyMemoryBlockSerializer.GetNodeFolder(this));
                 }
+                else if (validator.Simulation.LoadAllNodesData && (String.IsNullOrEmpty(validator.Simulation.GlobalDataFolder)))
+                {
+                    validator.AddInfo(this, "Node will load data from temporal storage.");
+                }
                 else
                 {
-                    validator.AddError(this, "LoadOnStart is active and no temporal data is available. DataFolder must be defined");
+                    validator.AddWarning(this, "LoadOnStart is active but no temporal data and no local or global data folder is set. Data will NOT be loaded.");
                 }
             }
 

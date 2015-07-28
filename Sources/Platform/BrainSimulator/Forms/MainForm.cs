@@ -375,23 +375,43 @@ namespace GoodAI.BrainSimulator.Forms
             saveFileDialog.FileName = filename;
             OpenProject(filename);
             m_recentMenu.AddFile(saveFileDialog.FileName);
-        }        
+        }
 
-        private void loadOnStartMenuItem_Click(object sender, EventArgs e)
+
+        private void setGlobalDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!loadMemBlocksButton.Checked && openMemFileDialog.ShowDialog(this) == DialogResult.OK)
+            if (openMemFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string dataFolder = Path.GetDirectoryName(openMemFileDialog.FileName) + "\\" +
                         Path.GetFileNameWithoutExtension(openMemFileDialog.FileName) + ".statedata";
 
                 SimulationHandler.Simulation.GlobalDataFolder = dataFolder;
+                setGlobalDataFolderToolStripMenuItem.Text = "Change global data folder: " + SimulationHandler.Simulation.GlobalDataFolder;
+                clearGlobalDataFolderToolStripMenuItem.Visible = true;
+            }
+        }
+
+        private void clearGlobalDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Unset the global data folder: " + SimulationHandler.Simulation.GlobalDataFolder + " ?",
+                "Unset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                SimulationHandler.Simulation.GlobalDataFolder = String.Empty;
+                setGlobalDataFolderToolStripMenuItem.Text = "Set global data folder";
+                clearGlobalDataFolderToolStripMenuItem.Visible = false;
+            }
+        }
+
+        private void loadOnStartMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!loadMemBlocksButton.Checked)
+            {
                 SimulationHandler.Simulation.LoadAllNodesData = true;
                 loadMemBlocksButton.Checked = true;
             }
             else
             {
                 SimulationHandler.Simulation.LoadAllNodesData = false;
-                SimulationHandler.Simulation.GlobalDataFolder = String.Empty;
                 loadMemBlocksButton.Checked = false;                
             }
         }
@@ -511,6 +531,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             var aboutDialog = new AboutDialog();
             aboutDialog.ShowDialog();
-        }    
+        }
+    
     }
 }

@@ -18,7 +18,8 @@ using GoodAI.Modules.NeuralNetwork.Layers;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Initialises Neural Network Group and sets internally used properties.</summary>
     /// <description></description>
@@ -95,7 +96,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Stochastic gradient descent is an online training algorithm, that updates each parameter in the direction of the gradient for the current training example.<br></br>
     /// The gradient used is the partial derivative of each parameter (weight or bias) with respect to the loss function.</summary>
@@ -156,7 +158,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>RMSProp is the online adaptation of the Resilient Backpropagation algorithm based on the mean squares of the parameters.<br></br>
     /// It solves the problem of saturated neurons and vanishing gradients, which can occur with other backpropagation methods.<br></br>
@@ -471,7 +474,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     //    }
     //}
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Gradient checking mainly for developers to make sure the calculated gradients are correct.
     /// <br></br>

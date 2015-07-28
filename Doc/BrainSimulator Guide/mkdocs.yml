@@ -1,6 +1,7 @@
-site_name: BrainSim docs
+site_name: Brain Sim docs
 site_author: GoodAI
 repo_url: https://github.com/GoodAI
+site_favicon: favicon.ico
 #theme: mkdocs, bootstrap, cosmo, flatly, spacelab, united, yeti
 theme_dir: 'goodai_theme'
 pages:
@@ -11,6 +12,7 @@ pages:
 #- ['nodes.md', 'Nodes']
 - Guides:
     - How to create a module: 'guides/steps.md'
+    - How to share a module: 'guides/sharing.md'
     - Persistence: 'guides/persistence.md'
     - Math Operations: 'guides/matrix.md'
     - Neural Network: 'guides/neuralnetwork.md'
@@ -26,6 +28,7 @@ pages:
     - Restricted Boltzmann Machine: 'examples/rbm.md'
     - Motor Control: 'examples/motor.md'
     - Vector Symbolic Architecture: 'examples/binding.md'
+    - Nupic Node: 'examples/nupic.md'
 
 - Changelog: 'changelog.md'
 markdown_extensions:

@@ -17,10 +17,13 @@ using ManagedCuda;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
 using System.Diagnostics;
+using GoodAI.Modules.RBM;
+using GoodAI.Modules.LSTM.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>Network node group.</summary>
     /// <description>
@@ -90,7 +93,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     newPlan.Add(groupTask); // add group tasks
 
             // remove group backprop tasks (they should be called from the individual layers)
-            selected = newPlan.Where(task => task is MyAbstractBackpropTask).ToList();
+            // TODO - RBM planning properly
+            selected = newPlan.Where(task => task is MyAbstractBackpropTask && ! (task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
             newPlan.RemoveAll(selected.Contains);
 
             // move MyCreateDropoutMaskTask(s) before the first MyForwardTask
@@ -129,6 +133,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             selected = newPlan.Where(task => task is MyRestoreValuesTask).ToList();
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
+
+            // move MyLSTMPartialDerivativesTask after the last MyForwardTask
+            selected = newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
 
             // move MySaveActionTask to the end of the task list
             selected = newPlan.Where(task => task is MySaveActionTask).ToList();

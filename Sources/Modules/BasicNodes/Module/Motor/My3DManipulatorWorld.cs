@@ -23,7 +23,8 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     /// <status>Working</status>
     /// <summary>Manipulator in 3D World based on BEPUphysics engine</summary>
     /// <description>Manipulator from BEPUphysics demo "Robotic Arm Thingamajig" with 5 rotational joints. <br />

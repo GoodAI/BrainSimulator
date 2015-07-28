@@ -11,6 +11,7 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.NeuralNetwork.Tasks;
 using GoodAI.Core;
 
 
@@ -18,7 +19,7 @@ namespace GoodAI.Modules.LSTM.Tasks
 {
     /// <summary>Updates all network weights according to gradient.</summary>
     [Description("Update weights"), MyTaskInfo(OneShot = false)]
-    public class MyLSTMUpdateWeightsTask : MyTask<MyLSTMLayer>
+    public class MyLSTMUpdateWeightsTask : MyAbstractUpdateWeightsTask<MyLSTMLayer>
     {
         private MyCudaKernel m_updateGateWeightsKernel;
         private MyCudaKernel m_updateCellWeightsKernel;

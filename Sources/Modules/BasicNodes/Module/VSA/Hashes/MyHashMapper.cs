@@ -22,7 +22,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA.Hashes
 {
-    ///<author>Martin Milota</author>
+    /// <author>GoodAI</author>
+    /// <meta>mm</meta>
     ///<status>WIP</status>
     ///<summary>Constructs an index key for every element of the input. The range of the indices is [0, <seealso cref="MyHashMapperTask.InternalBinCount"/>).
     /// You can optionally change the dimensionality of the input.</summary>

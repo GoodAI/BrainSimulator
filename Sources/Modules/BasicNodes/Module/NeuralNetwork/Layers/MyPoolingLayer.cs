@@ -8,7 +8,8 @@ using YAXLib;
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
 
-    /// <author>Mikulas Zelinka</author>
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
     /// <status>WIP</status>
     /// <summary>Pooling layer.</summary>
     /// <description></description>

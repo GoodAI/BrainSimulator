@@ -13,7 +13,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.RBM
 {
-    /// <author>Mikulas Zelinka</author>
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
     /// <status>Working</status>
     /// <summary>
     ///     One layer of Restricted Boltzmann Machine network.

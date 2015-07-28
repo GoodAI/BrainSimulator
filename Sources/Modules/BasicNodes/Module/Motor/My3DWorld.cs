@@ -22,8 +22,9 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Modules.Motor
 {
-    /// <author>Dusan Fedorcak</author>
-    /// <status>WIP</status>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
+    /// <status>Working</status>
     /// <summary>3D World based on BEPUphysics engine.
     /// It can simulate various constraint systems defined via XML.</summary>
     /// <description></description>

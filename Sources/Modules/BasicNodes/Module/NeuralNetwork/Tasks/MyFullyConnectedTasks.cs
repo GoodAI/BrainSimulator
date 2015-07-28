@@ -14,7 +14,8 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
     /// Feed forward task for a fully connected layer.
@@ -81,7 +82,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
     /// Backpropagate the deltas to a fully connected previous layer.
@@ -130,7 +132,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
-    /// <author>Philip Hilm</author>
+    /// <author>GoodAI</author>
+    /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
     /// Updates weights, that are fully connected to the previous layer.
@@ -156,7 +159,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (backpropTask == null)
                 MyLog.ERROR.WriteLine("Undetermined backprop task in " + Owner.ParentNetwork);
             else
+            {
                 backpropTask.Execute(Owner); // call the group task to do the backpropagation
+            }
         }
     }
 }

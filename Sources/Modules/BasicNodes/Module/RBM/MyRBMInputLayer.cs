@@ -17,7 +17,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.RBM
 {
-    /// <author>Mikulas Zelinka</author>
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
     /// <status>Working</status>
     /// <summary>
     ///     Input layer of Restricted Boltzmann Machine network.
@@ -28,8 +29,12 @@ namespace GoodAI.Modules.RBM
     /// 
     /// There must be precisely one input layer in an RBM group.
     /// </description>
-    class MyRBMInputLayer : MyAbstractLayer, IMyCustomTaskFactory
+    public class MyRBMInputLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
+        public override ConnectionType Connection
+        {
+            get { return ConnectionType.ONE_TO_ONE; } // phil inserted to remove warning about connection not set
+        }
 
         public MyRBMInitLayerTask RBMInitLayerTask { get; private set; }
 
@@ -195,9 +200,8 @@ namespace GoodAI.Modules.RBM
 
         public void CreateTasks()
         {
-            // TODO - can be replaced by copy tasks
-            ForwardTask = new MyEmptyTask();
-            DeltaBackTask = new MyEmptyTask();
+            ForwardTask = new MyRBMInputForwardTask();
+            DeltaBackTask = new MyRBMInputBackwardTask();
         }
 
         internal void SetOutput(float[] f)

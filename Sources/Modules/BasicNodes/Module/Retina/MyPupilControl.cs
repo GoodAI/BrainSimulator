@@ -17,7 +17,8 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.Retina
 {
-    ///<author>Dusan Fedorcak</author>
+    /// <author>GoodAI</author>
+    /// <meta>df</meta>
     ///<status>Working (K-Means only)</status>
     ///<summary>Analyzes visual input through growing K-Means clustering.
     ///Clusters are iterated and current cluster data (position and scale) is sent to the output.</summary>

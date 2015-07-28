@@ -12,7 +12,8 @@ using YAXLib;
 namespace CustomModels.NeuralNetwork.Layers
 {
 
-    /// <author>Mikulas Zelinka</author>
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
     /// <status>WIP</status>
     /// <summary>Activation layer.</summary>
     /// <description>Activation layer of the NN group.</description>

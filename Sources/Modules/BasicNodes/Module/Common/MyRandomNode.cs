@@ -79,7 +79,7 @@ namespace GoodAI.Modules.Common
     }
 
     /// <summary>
-    /// This task will generate your rundom numbers.<br/>
+    /// This task will generate your random numbers.<br/>
     /// <p><b>Period Parameters</b> let you control the period in which the new set of random values should be generated.
     /// Other configutarion options are connected to the selected distribution.</p>
     /// </summary>

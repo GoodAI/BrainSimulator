@@ -15,7 +15,8 @@ using GoodAI.Modules.LSTM.Tasks;
 
 namespace GoodAI.Modules.LSTM
 {
-    /// <author>Karol Kuna</author>
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>Long Short Term Memory layer</summary>
     /// <description>Fully recurrent Long Short Term Memory (LSTM) hidden layer with forget gates and peephole connections trained by truncated Real-Time Recurrent Learning (RTRL) algorithm.<br />
@@ -53,7 +54,6 @@ namespace GoodAI.Modules.LSTM
         //Tasks
         MyLSTMInitLayerTask initLayerTask { get; set; }
         MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
-        MyLSTMDeltaTask deltaTask { get; set; }
         MyLSTMUpdateWeightsTask updateWeightsTask { get; set; }
 
         // Memory blocks
@@ -160,17 +160,12 @@ namespace GoodAI.Modules.LSTM
         public void CreateTasks()
         {
             ForwardTask = new MyLSTMFeedForwardTask();
-            DeltaBackTask = new MyLSTMDummyDeltaTask(); // error is not propagated backwards from LSTM layer!
+            DeltaBackTask = new MyLSTMDeltaTask();
         }
 
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-
-            if (PreviousLayer != null)
-            {
-                MyLog.WARNING.WriteLine("Deltas are not propagated backwards from LSTM layer!");
-            }
         }
 
         public override string Description
