@@ -18,6 +18,7 @@ using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
 using System.Diagnostics;
 using GoodAI.Modules.RBM;
+using GoodAI.Modules.LSTM.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
@@ -132,6 +133,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             selected = newPlan.Where(task => task is MyRestoreValuesTask).ToList();
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
+
+            // move MyLSTMPartialDerivativesTask after the last MyForwardTask
+            selected = newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
 
             // move MySaveActionTask to the end of the task list
             selected = newPlan.Where(task => task is MySaveActionTask).ToList();
