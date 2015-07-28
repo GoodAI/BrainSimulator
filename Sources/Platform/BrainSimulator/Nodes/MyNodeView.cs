@@ -106,7 +106,7 @@ namespace GoodAI.BrainSimulator.NodeView
                 m_outputBranches.Add(m_iconItem);
             }
             else
-            {
+            {   
                 for (int i = 0; i < Node.OutputBranches; i++)
                 {
                     string name = (i + 1) + "";

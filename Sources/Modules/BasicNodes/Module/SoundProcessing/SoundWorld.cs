@@ -20,6 +20,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.SoundProcessing
 {
+    /// <author>Martin Hyben</author>
+    /// <meta>mv</meta>
+    /// <status>Working</status>
+    /// <summary>Provides default or custom dataset audio input in various feature types.</summary>
+    /// <description></description>
     public class SoundWorld : MyWorld
     {
         public enum InputTypeEnum 
@@ -193,6 +198,7 @@ namespace GoodAI.Modules.SoundProcessing
                         break;
                     case FeatureType.LPC:
                         FeaturesCount = 10;
+                        //float[] lpc = LPC.Compute(SinusData.input, 10);
                         break;
                 }
             }
@@ -430,7 +436,8 @@ namespace GoodAI.Modules.SoundProcessing
             {
                 m_InputData = input;
 
-                WaveReader.Save(@"E:\microphone.wav", input, Owner.m_recorder.m_format);
+                // Uncomment in case of microphone test 
+                //WaveReader.Save(@"E:\microphone.wav", input, Owner.m_recorder.m_format);
 
                 Owner.m_recorder.Stop();
             }

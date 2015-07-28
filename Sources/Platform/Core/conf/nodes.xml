@@ -13,6 +13,7 @@
     <Node type="GoodAI.Modules.Transforms.MyThreshold" CanBeAdded="true" BigIcon="threshold_big.png" SmallIcon="threshold.png"/>        
     
     <Node type="GoodAI.Core.Nodes.MyJoin" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
+    <Node type="GoodAI.Core.Nodes.MyStackJoin" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
     <Node type="GoodAI.Core.Nodes.MyFork" CanBeAdded="true" BigIcon="fork_big.png" SmallIcon="fork.png"/>
     <Node type="GoodAI.Core.Nodes.MyGateInput" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png"/>
     <Node type="GoodAI.Core.Nodes.MyDataGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png"/>
@@ -21,6 +22,6 @@
     <Node type="GoodAI.Core.Nodes.MyOutput" CanBeAdded="false" BigIcon="output_big.png" SmallIcon="output.png"/>      
   </KnownNodes>
   <KnownWorlds>
-    <World type="GoodAI.Modules.Testing.MyTestingWorld"/>    
+    <World type="GoodAI.Modules.Testing.MyTestingWorld"/>
   </KnownWorlds>
 </Configuration>
