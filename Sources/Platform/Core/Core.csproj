@@ -103,7 +103,6 @@
     <Compile Include="Nodes\MyGateInput.cs" />
     <Compile Include="Nodes\MyJoin.cs" />
     <Compile Include="Nodes\MyNodeInfo.cs" />
-    <Compile Include="Nodes\MyStackJoin.cs" />
     <Compile Include="Nodes\MyTestingWorld.cs" />
     <Compile Include="Nodes\MyUserInput.cs" />
     <Compile Include="Observers\MyMemoryBlockEditor.cs" />
