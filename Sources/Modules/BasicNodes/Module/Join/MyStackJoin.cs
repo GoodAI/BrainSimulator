@@ -3,6 +3,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Tasks;
 using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
 
-namespace GoodAI.Core.Nodes
+namespace GoodAI.Modules.Join
 {
     /// <author>Good AI</author>
     /// <tag>#mm</tag>
@@ -20,7 +21,7 @@ namespace GoodAI.Core.Nodes
     /// <summary>
     ///   Performs an element-wise stacking join operation on the input vectors with error backpropagation to previous layer.
     /// </summary>
-    public class MyStackJoin : MyWorkingNode//, IMyCustomTaskFactory
+    public class MyStackJoin : MyWorkingNode, IMyCustomTaskFactory
     {
         [MyOutputBlock]
         public MyMemoryBlock<float> Output
@@ -57,12 +58,12 @@ namespace GoodAI.Core.Nodes
 
         public MyInitTask InitMemoryMapping { get; private set; }
         public MyStackInputsTask StackInputs { get; private set; }
-        //public MyFCBackDeltaTask DeltaBackTask { get; private set; }
+        public MyFCBackDeltaTask DeltaBackTask { get; private set; }
 
         public MyStackJoin()
         {
             //Output.Count = 1;
-            InputBranches = 2;
+            //InputBranches = 2;
             //UpdateMemoryBlocks();
         }
 
@@ -111,11 +112,11 @@ namespace GoodAI.Core.Nodes
                 return "Stack join";
             }
         }
-        /*
+        
         public void CreateTasks()
         {
             DeltaBackTask = new MyFCBackDeltaTask();
-        }*/
+        }
 
         /// <summary>
         ///   Initializes any memory needed to perform the join operation.

@@ -91,6 +91,7 @@
     </Node>
 
   	<Node type="GoodAI.Modules.LSTM.MyLSTMLayer" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
+    <Node type="GoodAI.Modules.Join.MyStackJoin" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
 
   </KnownNodes>
   <KnownWorlds>
