@@ -66,6 +66,7 @@
     <CudaCompile Include="Observers\ColorScaleObserverSingle.cu" />
     <CudaCompile Include="Observers\ComputeHistogramKernel.cu" />
     <CudaCompile Include="Observers\DrawDigitsKernel.cu" />
+    <CudaCompile Include="Observers\DrawStringKernel.cu" />
     <CudaCompile Include="Observers\DrawMatrixKernel.cu" />
     <CudaCompile Include="Observers\FocuserInputObserver.cu" />
     <CudaCompile Include="Observers\PlotObserverCycleKernel.cu" />

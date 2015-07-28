@@ -52,7 +52,7 @@ namespace GoodAI.Core.Observers.Helper
             return alphaValues;
         }
 
-        private static int[] stringToDigitIndexes(string str)
+        private static int[] StringToDigitIndexes(string str)
         {
             int[] res = new int[str.Length];
 
@@ -72,15 +72,21 @@ namespace GoodAI.Core.Observers.Helper
             return res;
         }
 
-        public static void DrawString(string str, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight)
+        public static void DrawString(string str, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight, int maxStringSize = 20)
         {
             // Crop if the string is too long
-            if (str.Length > 20)
-                str = str.Substring(0, 20);
+            if (str.Length > maxStringSize)
+                str = str.Substring(0, maxStringSize);
+
+            if (str.Length > 200)
+            {
+                //__constant__ int D_DIGIT_INDEXES[200];
+                throw new ArgumentException("Hardcoded value in DrawDigitsKernel.cs");
+            }
 
             MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawDigitsKernel");
             CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
-            
+
             m_drawDigitKernel.SetConstantVariable("D_BG_COLOR", bgColor);
             m_drawDigitKernel.SetConstantVariable("D_FG_COLOR", fgColor);
             m_drawDigitKernel.SetConstantVariable("D_IMAGE_WIDTH", imageWidth);
@@ -89,12 +95,31 @@ namespace GoodAI.Core.Observers.Helper
             m_drawDigitKernel.SetConstantVariable("D_DIGIT_SIZE", CharacterSize);
             m_drawDigitKernel.SetConstantVariable("D_DIGITMAP_NBCHARS", CharacterMapNbChars);
 
-            int[] indexes = stringToDigitIndexes(str);
+            int[] indexes = StringToDigitIndexes(str);
             m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES", indexes);
-            m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES_LEN", indexes.Length);                                   
+            m_drawDigitKernel.SetConstantVariable("D_DIGIT_INDEXES_LEN", indexes.Length);
 
             m_drawDigitKernel.SetupExecution(CharacterSize * indexes.Length);
             m_drawDigitKernel.Run(image, characters.DevicePointer, x, y);
+        }
+
+        public static void DrawStringFromGPUMem(CudaDeviceVariable<float> inString, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight, int stringOffset, int stringLen)
+        {
+            MyCudaKernel m_drawDigitKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\DrawStringKernel");
+            CudaDeviceVariable<float> characters = MyMemoryManager.Instance.GetGlobalVariable<float>("CHARACTERS_TEXTURE", MyKernelFactory.Instance.DevCount - 1, LoadDigits);
+
+            //MyKernelFactory.Instance.Synchronize();
+
+            m_drawDigitKernel.SetConstantVariable("D_BG_COLOR", bgColor);
+            m_drawDigitKernel.SetConstantVariable("D_FG_COLOR", fgColor);
+            m_drawDigitKernel.SetConstantVariable("D_IMAGE_WIDTH", imageWidth);
+            m_drawDigitKernel.SetConstantVariable("D_IMAGE_HEIGHT", imageHeight);
+            m_drawDigitKernel.SetConstantVariable("D_DIGIT_WIDTH", CharacterWidth);
+            m_drawDigitKernel.SetConstantVariable("D_DIGIT_SIZE", CharacterSize);
+            m_drawDigitKernel.SetConstantVariable("D_DIGITMAP_NBCHARS", CharacterMapNbChars);
+
+            m_drawDigitKernel.SetupExecution(CharacterSize * stringLen);
+            m_drawDigitKernel.Run(image, characters.DevicePointer, x, y, inString.DevicePointer + sizeof(float) * stringOffset, stringLen);
         }
     }
 }

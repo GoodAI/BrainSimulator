@@ -733,7 +733,7 @@ namespace GoodAI.Core.Observers
                 m_cycleKernel.SetupExecution(nbColumnsToDraw * m_plotAreaHeight);
                 m_cycleKernel.Run(
                     VBODevicePointer,
-                    0,
+                    5,
                     nbColumnsToDraw,
                     m_valuesHistory.DevicePointer
                     );
