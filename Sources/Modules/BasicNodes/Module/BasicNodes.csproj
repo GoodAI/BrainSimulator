@@ -119,7 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Join\MyStackJoin.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -130,7 +130,6 @@
     <Compile Include="SoundProcessing\Features\MFCC.cs" />
     <Compile Include="SoundProcessing\FFT.cs" />
     <Compile Include="SoundProcessing\Recorder.cs" />
-    <Compile Include="SoundProcessing\SinusData.cs" />
     <Compile Include="SoundProcessing\SoundWorld.cs" />
     <Compile Include="SoundProcessing\Formats\WavReader.cs" />
     <Compile Include="SoundProcessing\WaveFormat.cs" />
@@ -328,10 +327,8 @@
     <EmbeddedResource Include="res\input_layer_big.png" />
     <EmbeddedResource Include="res\harm.png" />
     <EmbeddedResource Include="res\harm_big.png" />
-
     <EmbeddedResource Include="res\join.png" />
     <EmbeddedResource Include="res\join_big.png" />
-
     <EmbeddedResource Include="res\hidden_RBM_layer.png" />
     <EmbeddedResource Include="res\hidden_RBM_layer_big.png" />
     <EmbeddedResource Include="res\input_RBM_layer.png" />
