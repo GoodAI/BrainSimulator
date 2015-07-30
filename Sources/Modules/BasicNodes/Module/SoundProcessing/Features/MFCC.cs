@@ -17,7 +17,7 @@ namespace GoodAI.Modules.SoundProcessing.Features
         /// <returns>Mel-frequency cepstral coeficients.</returns>
         public static float[] Compute(float[] fft, WaveFormat format, int coefCount)
         {
-            if (format == null || fft == null || fft.Length == 0)
+            if (fft == null || fft.Length == 0)
                 return new float[0];
 
             // Compute mel scale filterbank
@@ -28,31 +28,61 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 if (mel_scale[i] == 0)
                     continue;
                 else
-                    mel_scale[i] = (float)Math.Log10(mel_scale[i]);
+                    mel_scale[i] = (float)Math.Log(mel_scale[i]);
 
-            float[] mfcc = CosinusTransform(mel_scale);
+            float[] mfcc = DCT(mel_scale);
 
             return mfcc;
         }
 
+        #region Private stuff
+        public const float Sqrt2 = 1.4142135623730950488016887f;
+
+        internal class Point
+        {
+            public int X { get; set; }
+            public int Y { get; set; }
+
+            public Point(int x, int y)
+            {
+                this.X = x;
+                this.Y = y;
+            }
+        }
+
         private static float[] MelFilterBank(float[] fft, int filters_cnt, int sample_rate)
         {
+            // Prepare initial values
+            float mel_min = toMel(300);
+            float mel_max = toMel(sample_rate);
+            float mel_step = (mel_max - mel_min) / (filters_cnt + 1);
+            double[] f = new double[filters_cnt + 2];
+            float[] mel = new float[filters_cnt + 2];
+            float[] hertz = new float[filters_cnt + 2];
             float[] mel_scale = new float[filters_cnt];
+            
+            // Prepare count +2 mel bins
+            mel[0] = mel_min;
+            for (int n = 1; n < filters_cnt + 2; n++)
+            {
+                mel[n] = mel[n - 1] + mel_step;
+            }
 
-            // parametre pre (uzitocnu) polovicu frekvencneho spektra z FFT
-            int fvz_pol = sample_rate / 2;                                                          // 8000
-            int fft_pol = fft.Length / 2;                                                           // 256
-            int m_step = (int)(MFCC.toMel((float)sample_rate) / ((float)(filters_cnt / 2) + 0.5f)); // 795
-            int m_step_pol = m_step / 2;                                                            // 398
+            // Convert to hertz bins and to FFT bins
+            int nfft = fft.Length;
+            for (int n = 0; n < filters_cnt + 2; n++)
+            {
+                hertz[n] = fromMel(mel[n]);
+                f[n] = Math.Floor((nfft) * hertz[n] / sample_rate);
+            }
 
             // find peaks of triangular filters
             for (int n = 1; n < filters_cnt; n++)
             {
+                int A = (int)f[n - 1];
+                int B = (int)f[n];
+                int C = (int)f[n + 1];
                 // triangle filter in mel scale and convert to non-transformed scale
-                int C = (int)MFCC.fromMel((n * m_step_pol) + m_step_pol) / fft_pol;
-                int A = (int)MFCC.fromMel((n * m_step_pol) - m_step_pol) / fft_pol;
-                int B = A + ((C - A) / 2);
-                // compute weights of triangle filter
                 float[] ab = Line(new Point(A, 0), new Point(B, 1));
                 float[] bc = Line(new Point(B, 1), new Point(C, 0));
                 // apply triangle fitler
@@ -65,22 +95,29 @@ namespace GoodAI.Modules.SoundProcessing.Features
             return mel_scale;
         }
 
-        private static float[] CosinusTransform(float[] input)
+        /// <summary>
+        ///   Forward Discrete Cosine Transform.
+        /// </summary>
+        /// 
+        public static float[] DCT(float[] data)
         {
-            float sqrtOfLength = (float)Math.Sqrt(input.Length);
+            float[] result = new float[data.Length];
+            double c = Math.PI / (2.0 * data.Length);
+            double scale = Math.Sqrt(2.0 / data.Length);
 
-            int N = input.GetLength(0);
-
-            float[] output = new float[N];
-
-            for (int u = 0; u <= N - 1; u++)
+            for (int k = 0; k < data.Length; k++)
             {
-                float sum = 0.0f;
-                for (int x = 0; x <= N - 1; x++)
-                    sum += input[x] * (float)Math.Cos(((2.0 * x + 1.0) / (2.0 * N)) * u * Math.PI);
-                output[u] = (float)Math.Round(sum);
+                double sum = 0;
+                for (int n = 0; n < data.Length; n++)
+                    sum += data[n] * Math.Cos((2.0 * n + 1.0) * k * c);
+                result[k] = (float)(scale * sum);
             }
-            return output;
+
+            data[0] = result[0] / Sqrt2;
+            for (int i = 1; i < data.Length; i++)
+                data[i] = result[i];
+
+            return data;
         }
 
         /// <summary>
@@ -107,12 +144,13 @@ namespace GoodAI.Modules.SoundProcessing.Features
 
         private static float toMel(float f)
         {
-            return 2595 * (float)Math.Log10(1 + f / 700);
+            return 1125 * (float)Math.Log(1 + (f / 700));
         }
 
         private static float fromMel(float m)
         {
-            return 700 * ((float)Math.Exp(m / 1127) - 1);
+            return 700 * ((float)Math.Exp(m / 1125) - 1);
         }
+        #endregion
     }
 }

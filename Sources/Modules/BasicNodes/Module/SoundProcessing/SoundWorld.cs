@@ -198,7 +198,11 @@ namespace GoodAI.Modules.SoundProcessing
                         break;
                     case FeatureType.LPC:
                         FeaturesCount = 10;
-                        //float[] lpc = LPC.Compute(SinusData.input, 10);
+
+                        float[] input = new float[50];
+                        for (int i = 0; i < 50; i++)
+                            input[i] = i+1;
+                        //float[] lpc = LPC.Compute(input, 10);
                         break;
                 }
             }
@@ -553,7 +557,7 @@ namespace GoodAI.Modules.SoundProcessing
                     data[i] = new Complex(input[i], 0);
 
                 // perform FFT
-                FourierTransform.FFT(data, Direction.Forward);
+                FFT.Compute(data);
 
                 // convert complex results back to real numbers
                 for (int i = 0; i < data.Length; i++)

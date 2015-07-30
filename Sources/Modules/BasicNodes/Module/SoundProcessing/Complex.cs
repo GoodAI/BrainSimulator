@@ -61,9 +61,9 @@ namespace GoodAI.Modules.SoundProcessing
         /// 
         /// <remarks><para>Magnitude of the complex number, which equals to <b>Sqrt( Re * Re + Im * Im )</b>.</para></remarks>
         /// 
-        public double Magnitude
+        public double SquaredMagnitude
         {
-            get { return (Re * Re + Im * Im); }
+            get { return Math.Sqrt(Re * Re + Im * Im); }
         }
 
         /// <summary>
@@ -80,9 +80,9 @@ namespace GoodAI.Modules.SoundProcessing
         /// <summary>
         /// Squared magnitude value of the complex number.
         /// </summary>
-        public double SquaredMagnitude
+        public double Magnitude
         {
-            get { return Math.Sqrt(Re * Re + Im * Im); }
+            get { return (Re * Re + Im * Im); }
         }
 
 

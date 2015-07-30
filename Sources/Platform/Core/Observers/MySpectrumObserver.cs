@@ -27,6 +27,7 @@ namespace GoodAI.Core.Observers
 
         private CudaDeviceVariable<uint> m_canvas;
         private CudaDeviceVariable<float> m_valuesHistory;
+        private CudaDeviceVariable<float> m_HistoryDeviceBuffer;
 
         private int m_numRows;
         private int m_numColumns;
@@ -63,10 +64,19 @@ namespace GoodAI.Core.Observers
                     maxValue = (int)val;
             }
 
-            //MyDrawStringHelper.DrawString("Testovaci text", 100, (int)100, COLOR_BACKGROUND, COLOR_FONT, m_valuesHistory.DevicePointer, 256, 256);
-
             m_kernel.SetupExecution(TextureSize);
             m_kernel.Run(m_valuesHistory.DevicePointer, 5, 0, 0, maxValue, VBODevicePointer, TextureSize);
+
+            /*
+            String text = "Spectrogram";
+            int colIdx = 0;
+            foreach (char c in text)
+            {
+                m_HistoryDeviceBuffer[10 + colIdx] = (float)(c - ' ');
+                colIdx += 1;
+            }
+            MyDrawStringHelper.DrawStringFromGPUMem(m_HistoryDeviceBuffer, 0, (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 0, 0);*/
+            //MyDrawStringHelper.DrawString(text, 0, 0, COLOR_BACKGROUND, COLOR_FONT, m_valuesHistory.DevicePointer, TextureWidth, TextureHeight);
             
         }
 
@@ -109,6 +119,10 @@ namespace GoodAI.Core.Observers
             // Allocate the history
             m_valuesHistory = new CudaDeviceVariable<float>((Target.Count / 2) * m_numColumns);
             m_valuesHistory.Memset(0);
+
+            // Allocate the history
+            m_HistoryDeviceBuffer = new CudaDeviceVariable<float>(m_numRows * m_numColumns);
+            m_HistoryDeviceBuffer.Memset(0);
 
             SetDefaultTextureDimensions(Target.Count);
         }

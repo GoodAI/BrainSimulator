@@ -2,22 +2,6 @@ using System;
 
 namespace GoodAI.Modules.SoundProcessing
 {
-    /// <summary>
-    /// Fourier transformation direction.
-    /// </summary>
-    public enum Direction
-    {
-        /// <summary>
-        /// Forward direction of Fourier transformation.
-        /// </summary>
-        Forward = 1,
-
-        /// <summary>
-        /// Backward direction of Fourier transformation.
-        /// </summary>
-        Backward = -1
-    };		
-
 	/// <summary>
 	/// Fourier transformation.
 	/// </summary>
@@ -25,7 +9,7 @@ namespace GoodAI.Modules.SoundProcessing
 	/// <remarks>The class implements one dimensional and two dimensional
 	/// Discrete and Fast Fourier Transformation.</remarks>
 	/// 
-	public static class FourierTransform
+	public static class FFT
 	{
 		/// <summary>
 		/// One dimensional Fast Fourier Transform.
@@ -39,55 +23,52 @@ namespace GoodAI.Modules.SoundProcessing
         /// 
         /// <exception cref="ArgumentException">Incorrect data length.</exception>
         /// 
-        public static void FFT( Complex[] data, Direction direction )
-		{
-			int		n = data.Length;
-            int     m = (int)Math.Round(Math.Log(n, 2));
+        public static void Compute(Complex[] data)
+        {
+            int n = data.Length;
+            int m = (int)Math.Log(n, 2);
 
-			// reorder data first
-			ReorderData( data );
+            // reorder data first
+            ReorderData(data);
 
-			// compute FFT
-			int tn = 1, tm;
+            // compute FFT
+            int tn = 1, tm;
 
-			for ( int k = 1; k <= m; k++ )
-			{
-				Complex[] rotation = FourierTransform.GetComplexRotation( k, direction );
+            for (int k = 1; k <= m; k++)
+            {
+                Complex[] rotation = GetComplexRotation(k);
 
-				tm = tn;
-				tn <<= 1;
+                tm = tn;
+                tn <<= 1;
 
-				for ( int i = 0; i < tm; i++ )
-				{
-					Complex t = rotation[i];
+                for (int i = 0; i < tm; i++)
+                {
+                    Complex t = rotation[i];
 
-					for ( int even = i; even < n; even += tn )
-					{
-						int		odd = even + tm;
-						Complex	ce = data[even];
-						Complex	co = data[odd];
+                    for (int even = i; even < n; even += tn)
+                    {
+                        int odd = even + tm;
+                        Complex ce = data[even];
+                        Complex co = data[odd];
 
-						double	tr = co.Re * t.Re - co.Im * t.Im;
-						double	ti = co.Re * t.Im + co.Im * t.Re;
+                        double tr = co.Re * t.Re - co.Im * t.Im;
+                        double ti = co.Re * t.Im + co.Im * t.Re;
 
-						data[even].Re += tr;
-						data[even].Im += ti;
+                        data[even].Re += tr;
+                        data[even].Im += ti;
 
-						data[odd].Re = ce.Re - tr;
-						data[odd].Im = ce.Im - ti;
-					}
-				}
-			}
+                        data[odd].Re = ce.Re - tr;
+                        data[odd].Im = ce.Im - ti;
+                    }
+                }
+            }
 
-            if ( direction == Direction.Forward ) 
-			{
-				for (int i = 0; i < n; i++) 
-				{
-					data[i].Re /= (double) n;
-					data[i].Im /= (double) n;
-				}
-			}
-		}
+            for (int i = 0; i < n; i++)
+            {
+                data[i].Re /= (double)n;
+                data[i].Im /= (double)n;
+            }
+        }
 
         #region Private Region
 
@@ -98,6 +79,30 @@ namespace GoodAI.Modules.SoundProcessing
 		private static int[][]	reversedBits = new int[maxBits][];
 		private static Complex[,][]	complexRotation = new Complex[maxBits, 2][];
 
+        /// <summary>
+        /// Calculates power of 2.
+        /// </summary>
+        /// 
+        /// <param name="power">Power to raise in.</param>
+        /// 
+        /// <returns>Returns specified power of 2 in the case if power is in the range of
+        /// [0, 30]. Otherwise returns 0.</returns>
+        /// 
+        public static int Pow2(int power)
+        {
+            return ((power >= 0) && (power <= 30)) ? (1 << power) : 0;
+        }
+
+        /// <summary>
+        /// Checks if number is power of 2.
+        /// </summary>
+        /// <param name="n">Input number.</param>
+        /// <returns>True if input is power of 2.</returns>
+        public static bool IsPowerOf2(int n)
+        {
+            return (n & (n - 1)) == 0;
+        }
+
 		// Get array, indicating which data members should be swapped before FFT
 		private static int[] GetReversedBits( int numberOfBits )
 		{
@@ -107,7 +112,7 @@ namespace GoodAI.Modules.SoundProcessing
 			// check if the array is already calculated
 			if ( reversedBits[numberOfBits - 1] == null )
 			{
-				int		n = numberOfBits * numberOfBits;
+				int		n = Pow2( numberOfBits );
 				int[]	rBits = new int[n];
 
 				// calculate the array
@@ -129,9 +134,9 @@ namespace GoodAI.Modules.SoundProcessing
 		}
 
 		// Get rotation of complex number
-        private static Complex[] GetComplexRotation( int numberOfBits, Direction direction )
+        private static Complex[] GetComplexRotation( int numberOfBits)
 		{
-            int directionIndex = ( direction == Direction.Forward ) ? 0 : 1;
+            int directionIndex = 0 ;
 
 			// check if the array is already calculated
 			if ( complexRotation[numberOfBits - 1, directionIndex] == null )
@@ -139,7 +144,7 @@ namespace GoodAI.Modules.SoundProcessing
 				int			n = 1 << ( numberOfBits - 1 );
                 float       uR = 1.0f;
                 float       uI = 0.0f;
-				float		angle = (float)Math.PI / n * (int) direction;
+				float		angle = (float)Math.PI / n;
 				float		wR = (float)Math.Cos( angle );
                 float       wI = (float)Math.Sin(angle);
                 float       t;
@@ -182,10 +187,6 @@ namespace GoodAI.Modules.SoundProcessing
 			}
 		}
 
-        public static bool IsPowerOf2(int n)
-        {
-            return (n & (n - 1)) == 0;
-        }
 		#endregion
 
 	}
