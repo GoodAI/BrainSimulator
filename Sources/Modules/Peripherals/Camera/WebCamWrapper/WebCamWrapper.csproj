@@ -97,7 +97,7 @@
     </Reference>
     <Reference Include="WebCamLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\WebCamLib\bin\x64\Release\WebCamLib.dll</HintPath>
+      <HintPath>..\WebCamLib\bin\Release\WebCamLib.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
