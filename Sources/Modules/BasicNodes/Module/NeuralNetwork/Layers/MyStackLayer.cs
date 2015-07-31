@@ -17,12 +17,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 {
     public class MyStackLayer : MyAbstractWeightLayer, IMyCustomTaskFactory
     {
-        [MyInputBlock(1)]
-        public MyMemoryBlock<float> Input1
-        {
-            get { return GetInput(1); }
-        }
-
         public override ConnectionType Connection
         {
             get { return ConnectionType.FULLY_CONNECTED; }
@@ -32,31 +26,13 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public MyStackLayer()
         {
-            //InputBranches = 2;
+            InputBranches = 2;
             this.ActivationFunction = ActivationFunctionType.NO_ACTIVATION;
         }
 
 
         public override void UpdateMemoryBlocks()
         {
-            int totalOutputs = 0;
-            Output.ColumnHint = 1;
-
-            for (int i = 0; i < InputBranches; i++)
-            {
-                MyMemoryBlock<float> ai = GetInput(i);
-
-                if (ai == null)
-                    continue;
-
-                totalOutputs += ai.Count;
-
-                if (Output.ColumnHint == 1 && ai.ColumnHint > 1)
-                {
-                    Output.ColumnHint = ai.ColumnHint;
-                }
-            }
-
             base.UpdateMemoryBlocks();
 
             if (Neurons > 0)
@@ -79,6 +55,24 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
 
             // StackInputs operation
+            int totalOutputs = 0;
+            Output.ColumnHint = 1;
+
+            for (int i = 0; i < InputBranches; i++)
+            {
+                MyMemoryBlock<float> ai = GetInput(i);
+
+                if (ai == null)
+                    continue;
+
+                totalOutputs += ai.Count;
+
+                if (Output.ColumnHint == 1 && ai.ColumnHint > 1)
+                {
+                    Output.ColumnHint = ai.ColumnHint;
+                }
+            }
+
             Output.Count = totalOutputs;
             Neurons = totalOutputs;
         }
@@ -122,7 +116,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     // propagate delta
                     //nextLayer.Delta.CopyToMemoryBlock(previousLayer.Delta, 0, 0, nextLayer.Delta.Count);
                     Owner.Delta.CopyFromMemoryBlock(nextLayer.Delta, 0, 0, nextLayer.Delta.Count);
-                    //Owner.Delta.CopyFromMemoryBlock(previousLayer.Delta, 0, 0, previousLayer.Delta.Count);
+                    Owner.Delta.CopyFromMemoryBlock(previousLayer.Delta, 0, 0, previousLayer.Delta.Count);
 
                     previousLayer.Delta.SafeCopyToHost();
                     Owner.Delta.SafeCopyToHost();
