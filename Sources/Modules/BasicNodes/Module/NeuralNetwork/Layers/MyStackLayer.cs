@@ -119,8 +119,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     input.CopyToMemoryBlock(Owner.Output, 0, totalOutputs, input.Count);
                     totalOutputs += input.Count;
                 }
-                Owner.Output.SafeCopyToHost();
-            }
+            }   
         }
     }
 }
