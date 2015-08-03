@@ -433,7 +433,18 @@ extern "C"
 
 		if(threadId < inputSize)
 		{												
-			output[threadId] = (1 - weight) * input1[threadId] + weight * input2[threadId];
+			if (weight <= 0)
+			{
+				output[threadId] = input1[threadId];
+			}
+			else if (weight >= 1)
+			{
+				output[threadId] = input2[threadId];
+			}
+			else
+			{
+				output[threadId] = (1 - weight) * input1[threadId] + weight * input2[threadId];
+			}
 		}
 	}
 
@@ -444,8 +455,19 @@ extern "C"
 			+ threadIdx.x;
 
 		if(threadId < inputSize)
-		{												
-			output[threadId] = (1 - weightMemBlock[0]) * input1[threadId] + weightMemBlock[0] * input2[threadId];
+		{					
+			if (weightMemBlock[0] <= 0)
+			{
+				output[threadId] = input1[threadId];
+			}
+			else if (weightMemBlock[0] >= 1)
+			{
+				output[threadId] = input2[threadId];
+			}
+			else
+			{
+				output[threadId] = (1 - weightMemBlock[0]) * input1[threadId] + weightMemBlock[0] * input2[threadId];
+			}
 		}
 	}
 
