@@ -60,6 +60,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             // StackInputs operation
             Output.Count = totalOutputs;
+            Neurons = totalOutputs;
         }
 
         public override string Description
@@ -86,10 +87,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             public override void Execute() //Task execution
             {
                 // propagate delta
-                Owner.Delta.CopyFromMemoryBlock(Owner.NextLayer.Delta, 0, 0, Owner.NextLayer.Delta.Count);
+                //Owner.Delta.CopyFromMemoryBlock(Owner.NextLayer.Delta, 0, 0, Owner.NextLayer.Delta.Count);
 
+                int totalInputs = 0;
                 for (int i = 0; i < Owner.InputBranches; i++)
-                    Owner.PreviousLayer[i].Delta.CopyFromMemoryBlock(Owner.Delta, 0, 0, Owner.Delta.Count);
+                {
+                    MyMemoryBlock<float> input = Owner.GetInput(i);
+                    Owner.PreviousLayer[i].Delta.CopyFromMemoryBlock(Owner.Delta, totalInputs, 0, input.Count);
+                    totalInputs += input.Count;
+                }
             }
         }
 
