@@ -472,12 +472,13 @@ namespace RegressionModule
         {
             Owner.XInput.CopyToMemoryBlock(Owner.XData, 0, m_cursor, 1);
             Owner.YInput.CopyToMemoryBlock(Owner.YData, 0, m_cursor, 1);
-            m_cursor = (m_cursor + 1 ) % Owner.BufferSize;
-
+            
             if (Owner.ValidFields != Owner.BufferSize)
             {
-                Owner.ValidFields = m_cursor;
+                Owner.ValidFields = m_cursor + 1;
             }
+
+            m_cursor = (m_cursor + 1 ) % Owner.BufferSize;
         }
     }
 
