@@ -7,8 +7,9 @@ For the purpose of this tutorial, we will implement a regression node, which wil
 ## Clone a blank template
 
 * From [GoodAI GitHub repository](https://github.com/GoodAI/BrainSimulatorNewModule), clone blank template project. It contains preconfigured Visual Studio project which you can use right away.
+* Do NOT open solution in Visual studio!
 * We need to give our module a meaningfull name. Lets assume the best name is "RegressionModule" from now on...
-* In `Module` folder, rename `NewModule.csproj.user.template-RENAME_ME` to `NewModule.csproj.user`.
+* In `Module` folder, rename `NewModule.csproj.user.template-RENAME_ME` to `NewModule.csproj.user`. This has to be done with Visual Studio not running. Now you can open the solution.
 * Open `SampleNewModule` solution in Visual Studio.
 * Rename solution to `RegressionModule` within the Visual Studio.
 * In `NewModule -> Properties -> Application`; change `Assembly name` and `Default namespace` to `RegressionModule`.
@@ -475,7 +476,7 @@ namespace RegressionModule
 
             if (Owner.ValidFields != Owner.BufferSize)
             {
-                Owner.ValidFields = m_cursor + 1;
+                Owner.ValidFields = m_cursor;
             }
         }
     }
@@ -540,7 +541,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using GoodAI.Core.Testing;
 using GoodAI.Core.Observers;
 
 namespace RegressionModule.Observers
@@ -660,7 +660,7 @@ class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
         m_kernel.SetConstantVariable("D_SIZE", Size);
 
         m_kernel.SetupExecution(Target.ValidFields);
-        m_kernel.Run(Target.XData, Target.YData, VBODevicePointer, Target.ValidFields);W
+        m_kernel.Run(Target.XData, Target.YData, VBODevicePointer, Target.ValidFields);
     }
 
     protected override void Reset()
@@ -671,9 +671,10 @@ class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
 }
 ```
 
-We also need to include some packages for `MyBrowsable` and `Category` annotations and for `CudaDeviceVariable` class.
+We also need to include some packages for `MyBrowsable` and `Category` annotations and for `CudaDeviceVariable` and `MyCudaKernel` classes.
 
 ``` csharp
+using GoodAI.Core;
 using GoodAI.Core.Utils;
 using System.ComponentModel;
 using ManagedCuda;
