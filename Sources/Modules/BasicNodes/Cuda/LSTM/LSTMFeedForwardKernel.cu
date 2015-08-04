@@ -15,6 +15,22 @@
 
 extern "C"
 {
+	__device__ float Clip(float value, float clip)
+	{
+		return (clip == 0) * value + (clip != 0) * ((value > clip) * clip + (value < -clip) * -clip + (value >= -clip && value <= clip) * value);
+
+		/* avoids thread divergence, equivalent to:
+		if (clip == 0)
+			return value;
+		else if (value > clip)
+			return clip;
+		else if (value < -clip)
+			return -clip;
+		else
+			return value;
+		*/
+	}
+
 	__device__ float GetNetInput(
 		int memoryBlockId,
 		int cellsPerBlock,
@@ -85,6 +101,8 @@ extern "C"
 		float *inputGateWeights,
 		float *forgetGateWeights,
 		float *outputGateWeights,
+
+		float clipCellState,
 
 		int inputCount,
 		int cellCount,
@@ -158,7 +176,7 @@ extern "C"
 				cellInputActivations[cellId] = cellInputActivation;
 				cellInputActivationDerivatives[cellId] = EvaluateDerivative(activationFunction, cellNetInput);
 
-				cellStates[cellId] = forgetGateActivation * previousCellStates[cellId] + inputGateActivation * cellInputActivation;
+				cellStates[cellId] = Clip(forgetGateActivation * previousCellStates[cellId] + inputGateActivation * cellInputActivation, clipCellState);
 			}
 
 			// step 3: calculate output gate activation
