@@ -165,8 +165,19 @@ extern "C"
 				+ threadIdx.x;
 		
 		if(threadId < inputSize)
-		{												
-			output[threadId] = (1 - weight) * input1[threadId] + weight * input2[threadId];
+		{					
+			if (weight <= 0)
+			{
+				output[threadId] = input1[threadId];
+			}
+			else if (weight >= 1)
+			{
+				output[threadId] = input2[threadId];
+			}
+			else
+			{
+				output[threadId] = (1 - weight) * input1[threadId] + weight * input2[threadId];
+			}
 		}
 	}
 }

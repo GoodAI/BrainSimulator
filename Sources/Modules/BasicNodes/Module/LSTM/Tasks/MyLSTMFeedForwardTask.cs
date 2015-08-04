@@ -21,6 +21,10 @@ namespace GoodAI.Modules.LSTM.Tasks
     [Description("Feed forward"), MyTaskInfo(OneShot = false)]
     public class MyLSTMFeedForwardTask : MyAbstractForwardTask<MyLSTMLayer>
     {
+        [YAXSerializableField(DefaultValue = 0f)]
+        [MyBrowsable, Category("\tLayer")]
+        public float CLIP_CELL_STATE { get; set; }
+
         private MyCudaKernel m_feedForwardKernel;
 
         public MyLSTMFeedForwardTask() { }
@@ -56,7 +60,8 @@ namespace GoodAI.Modules.LSTM.Tasks
                 Owner.InputGateWeights,
                 Owner.ForgetGateWeights,
                 Owner.OutputGateWeights,
-
+                
+                CLIP_CELL_STATE,
                 Owner.Input.Count,
                 Owner.CellStates.Count,
                 Owner.CellsPerBlock
