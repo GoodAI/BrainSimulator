@@ -194,8 +194,8 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 return new MyNodeGroupView(config, owner);
             }
-            else if (typeof(MyFork).IsAssignableFrom(nodeType) ||
-                typeof(MyJoin).IsAssignableFrom(nodeType))
+            else if (typeof(MyFork).IsAssignableFrom(nodeType) 
+                || typeof(IMyVariableBranchViewNodeBase).IsAssignableFrom(nodeType))
             {
                 return new MyVariableBranchView(config, owner);
             }
