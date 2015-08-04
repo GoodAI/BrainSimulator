@@ -42,7 +42,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public virtual ActivationFunctionType ActivationFunction { get; set; }
 
         [YAXSerializableField(DefaultValue = 128)]
-        [MyBrowsable, Category("\tLayer")]
+        [MyBrowsable, Category("\tLayer"), DisplayName("\tNeurons")]
         public virtual int Neurons { get; set; }
 
         [YAXSerializableField(DefaultValue = 1)]
