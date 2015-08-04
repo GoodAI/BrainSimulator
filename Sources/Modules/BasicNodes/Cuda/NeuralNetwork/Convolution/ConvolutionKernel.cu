@@ -78,6 +78,7 @@ extern "C"
 	}
 
 
+	// computes deltas
 	__global__ void ConvolutionBackwardKernel(
 		float *filterPtr,
 		float *deltaPtr,
