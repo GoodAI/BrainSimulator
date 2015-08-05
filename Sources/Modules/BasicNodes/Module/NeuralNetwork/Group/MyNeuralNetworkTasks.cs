@@ -118,10 +118,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MySGDTask() { }
 
         // kernel
-        private MyCudaKernel m_SGDupdateKernel;
+        private MyCudaKernel m_SGDupdateKernel, m_convSGDupdateKernel;
         public override void Init(int nGPU)
         {
             m_SGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "FullyConnectedSGDUpdateKernel");
+            m_convSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionUpdateWeightsKernel");
         }
 
         //Task execution - should be called with a parameter
@@ -150,6 +151,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     layer.Input.Count,
                     layer.Neurons
                     );
+            }
+            else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
+            {
+                MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
+                m_convSGDupdateKernel.SetupExecution(convLayer.Neurons);
+                m_convSGDupdateKernel.Run(
+                    
+                    );
+
             }
             else
             {
