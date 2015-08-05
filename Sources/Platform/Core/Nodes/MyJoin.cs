@@ -22,7 +22,7 @@ namespace GoodAI.Core.Nodes
     ///   binary (AND, XOR,...), permutation, distance measurement or stacking the inputs.
     /// </summary>
     /// <description>This node is OBSOLETE and exists only because of the need for backward compatibility. It is to be removed in a future update.</description>
-    public class MyJoin : MyWorkingNode
+    public class MyJoin : MyWorkingNode, IMyVariableBranchViewNodeBase
     {
         [MyOutputBlock]
         public MyMemoryBlock<float> Output

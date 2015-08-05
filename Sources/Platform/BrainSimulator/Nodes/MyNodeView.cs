@@ -89,7 +89,6 @@ namespace GoodAI.BrainSimulator.NodeView
 
                     if (Node is MyWorkingNode)
                     {
-                        int cnt = Node.GetInfo().InputBlocks.Count;
                         name = Node.GetInfo().InputBlocks[i].Name;
                     }
 
@@ -107,7 +106,7 @@ namespace GoodAI.BrainSimulator.NodeView
                 m_outputBranches.Add(m_iconItem);
             }
             else
-            {   
+            {
                 for (int i = 0; i < Node.OutputBranches; i++)
                 {
                     string name = (i + 1) + "";
@@ -195,8 +194,8 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 return new MyNodeGroupView(config, owner);
             }
-            else if (typeof(MyFork).IsAssignableFrom(nodeType) ||
-                     typeof(MyJoin).IsAssignableFrom(nodeType))
+            else if (typeof(MyFork).IsAssignableFrom(nodeType) 
+                || typeof(IMyVariableBranchViewNodeBase).IsAssignableFrom(nodeType))
             {
                 return new MyVariableBranchView(config, owner);
             }

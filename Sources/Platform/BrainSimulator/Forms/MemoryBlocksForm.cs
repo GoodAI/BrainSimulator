@@ -70,7 +70,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                     if (mb != null)
                     {
-                        if (Target is MyJoin)
+                        if (Target is IMyVariableBranchViewNodeBase)
                         {
                             addListViewItem(mb, "<Input_" + (i + 1) + ">", false);
                         }
