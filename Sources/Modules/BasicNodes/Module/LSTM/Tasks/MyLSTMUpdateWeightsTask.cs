@@ -21,6 +21,10 @@ namespace GoodAI.Modules.LSTM.Tasks
     [Description("Update weights"), MyTaskInfo(OneShot = false)]
     public class MyLSTMUpdateWeightsTask : MyAbstractUpdateWeightsTask<MyLSTMLayer>
     {
+        [YAXSerializableField(DefaultValue = 0f)]
+        [MyBrowsable, Category("\tLayer")]
+        public float CLIP_GRADIENT { get; set; }
+
         private MyCudaKernel m_updateGateWeightsKernel;
         private MyCudaKernel m_updateCellWeightsKernel;
 
@@ -76,6 +80,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                 trainingRate,
                 momentum,
                 smoothingFactor,
+                CLIP_GRADIENT,
 
 		        Owner.Input.Count,
 		        Owner.PreviousOutput.Count,
@@ -95,6 +100,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                 trainingRate,
                 momentum,
                 smoothingFactor,
+                CLIP_GRADIENT,
 
                 Owner.Input.Count,
                 Owner.PreviousOutput.Count,

@@ -93,7 +93,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 for (int i = 0; i < Owner.InputBranches; i++)
                 {
                     MyMemoryBlock<float> input = Owner.GetInput(i);
-                    Owner.PreviousLayer[i].Delta.CopyFromMemoryBlock(Owner.Delta, totalInputs, 0, input.Count);
+                    MyAbstractLayer prevLayer = Owner.PreviousLayer[i];
+                    if (prevLayer != null)
+                    {
+                        prevLayer.Delta.CopyFromMemoryBlock(Owner.Delta, totalInputs, 0, input.Count);
+                    }
                     totalInputs += input.Count;
                 }
             }

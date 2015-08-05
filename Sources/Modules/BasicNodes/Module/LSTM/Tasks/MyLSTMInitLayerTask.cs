@@ -19,6 +19,10 @@ namespace GoodAI.Modules.LSTM.Tasks
     [Description("Init LSTM layer"), MyTaskInfo(OneShot = true)]
     public class MyLSTMInitLayerTask : MyTask<MyLSTMLayer>
     {
+        [YAXSerializableField(DefaultValue = 0.25f)]
+        [MyBrowsable, Category("\tLayer")]
+        public float INIT_WEIGHTS_STDDEV { get; set; }
+
         public override void Init(int nGPU)
         {
             
@@ -32,10 +36,10 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.Output.Fill(0);
             Owner.PreviousOutput.Fill(0);
 
-            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.CellInputWeights.GetDevice(Owner), 0, 0.25f);
-            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.InputGateWeights.GetDevice(Owner), 0, 0.25f);
-            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.ForgetGateWeights.GetDevice(Owner), 0, 0.25f);
-            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.OutputGateWeights.GetDevice(Owner), 0, 0.25f);
+            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.CellInputWeights.GetDevice(Owner), 0, INIT_WEIGHTS_STDDEV);
+            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.InputGateWeights.GetDevice(Owner), 0, INIT_WEIGHTS_STDDEV);
+            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.ForgetGateWeights.GetDevice(Owner), 0, INIT_WEIGHTS_STDDEV);
+            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.OutputGateWeights.GetDevice(Owner), 0, INIT_WEIGHTS_STDDEV);
 
             Owner.CellWeightsRTRLPartials.Fill(0);
             Owner.InputGateWeightsRTRLPartials.Fill(0);

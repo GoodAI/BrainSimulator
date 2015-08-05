@@ -32,12 +32,14 @@ extern "C"
 		loss[tid] = 0;
 		while (k < thisLayerSize)
 		{
-			// accumulate loss
-			loss[tid] += 0.5f * (outputPtr[k] - targetPtr[k]) * (outputPtr[k] - targetPtr[k]);
+			if (!isnan(targetPtr[k]))
+			{
+				// accumulate loss
+				loss[tid] += 0.5f * (outputPtr[k] - targetPtr[k]) * (outputPtr[k] - targetPtr[k]);
 
-			// calculate delta
-			deltaPtr[k] += EvaluateDerivative(actFunc, neuronInputPtr[k]) * (outputPtr[k] - targetPtr[k]); // batch learning, remember to initialize delta
-
+				// calculate delta
+				deltaPtr[k] += EvaluateDerivative(actFunc, neuronInputPtr[k]) * (outputPtr[k] - targetPtr[k]); // batch learning, remember to initialize delta
+			}
 			k += blockSize;
 		}
 

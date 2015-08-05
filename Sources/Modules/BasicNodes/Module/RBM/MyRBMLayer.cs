@@ -45,7 +45,7 @@ namespace GoodAI.Modules.RBM
 
         [YAXSerializableField(DefaultValue = 0)]
         private float m_dropout = 0;
-        [MyBrowsable, Category("\tActivation")]
+        [MyBrowsable, Category("\tLayer"), DisplayName("RBM Dropout")]
         public float Dropout
         {
             get { return m_dropout; }
