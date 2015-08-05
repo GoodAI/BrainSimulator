@@ -78,24 +78,20 @@ extern "C"
 	}
 
 
-	// TODO: send error backwards (using activatedNeuronsPtr for choosing corect input neuron)
 	__global__ void PoolingBackwardKernel (
-		float *inputPtr,
-		float *outputPtr,
-
-		bool applyBias,
+		float *thisLayerDelta,
+		float *prevLayerDelta,
+		int *activatedNeuronsPtr,
 		int thisLayerSize
 	)
 	{
-		// i: current neuron id
-		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
 				+ blockDim.x * blockIdx.x				//blocks preceeding current block
 				+ threadIdx.x;
 
-		if (i < thisLayerSize)
+		if (idx < thisLayerSize)
 		{
-			float result = inputPtr[i];
-			outputPtr[i] = inputPtr[i];
+			prevLayerDelta[activatedNeuronsPtr[idx]] = thisLayerDelta[idx];
 		}
 	}
 }
