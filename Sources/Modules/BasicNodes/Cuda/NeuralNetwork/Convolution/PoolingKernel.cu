@@ -21,13 +21,10 @@ extern "C"
 		float *inputPtr,
 		float *outputPtr,
 		int *activatedNeuronsPtr,
-		int inputWidth,
-		int inputSize,
-		int filterWidth,
-		int filterHeight,
-		int horStride,
-		int verStride,
-		int outputSize,
+		int inputWidth, int inputSize,
+		int filterWidth, int filterHeight,
+		int horStride, int verStride,
+		int outputWidth, int outputSize,
 		int thisLayerSize
 	)
 	{
@@ -41,24 +38,24 @@ extern "C"
 			int depth = idx / outputSize;
 			int depthShift = depth * inputSize;
 
-			int filtersPerRow = 1 + (inputWidth - filterWidth) / horStride;
+//			int filtersPerRow = 1 + (inputWidth - filterWidth) / horStride;
 //			int filtersPerCol = 1 + (inputHeight - filterHeight) / verStride;
 
-			int inputTileX = (idx % outputSize) % filtersPerRow;
-			int inputTileY = (idx % outputSize) / filtersPerRow;
+			int inputTileX = (idx % outputSize) % outputWidth;
+			int inputTileY = (idx % outputSize) / outputWidth;
 			
 
-			int y = inputTileY * filterHeight;
+			int y = inputTileY * verStride;
 			int maxY = y;
 
-			int maxX = inputTileX * filterWidth;
+			int maxX = inputTileX * horStride;
 
 			
 			float maxValue = inputPtr[depthShift + indexFromXY(maxX, y, inputWidth)];
 
 			for (int j = 0; j < filterHeight; j++)
 			{
-				int x = inputTileX * filterWidth;
+				int x = inputTileX * horStride;
 				for (int i = 0; i < filterWidth; i++)
 				{
 					float value = inputPtr[depthShift + indexFromXY(x, y, inputWidth)];
@@ -73,7 +70,7 @@ extern "C"
 			}
 
 			outputPtr[idx] = maxValue;
-			activatedNeuronsPtr[idx] = indexFromXY(maxX, maxY, inputWidth);
+			activatedNeuronsPtr[idx] = depthShift + indexFromXY(maxX, maxY, inputWidth);
 		}
 	}
 
