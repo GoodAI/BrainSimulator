@@ -59,6 +59,17 @@ namespace GoodAI.Modules.Robotic
             public float[] Command;
             public float[] State;
 
+            public float diffState(Pattern p)
+            {
+                float sum2 = 0.0f;
+                for (int i = 0; i < State.Length; ++i)
+                {
+                    sum2 += (p.State[i] - State[i]) * (p.State[i] - State[i]);
+                }
+
+                return (float)Math.Sqrt(sum2);
+            }
+
             public static void MyBlockCopy(float[] source, float[] target, int n)
             {
                 //Buffer.BlockCopy(source, 0, target, 0, n);
@@ -116,24 +127,49 @@ namespace GoodAI.Modules.Robotic
         public int MaxOneCommandTime { get; set; }
 
         [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 5), YAXElementFor("Behavior")]
+        public int MinOneCommandTime { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 10), YAXElementFor("Behavior")]
+        public int MaxNoStateChangeTime { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
         public int RandomSeed { get; set; }
 
         protected List<Pattern> m_ActualData;
         protected int m_ActTime;
         protected Random m_Rnd;
+        protected int m_NoStateChangeTime;
 
         public override void Init(int nGPU)
         {
             m_ActualData = new List<Pattern>();
             m_ActTime = MaxOneCommandTime;//to immediately trigger command
             m_Rnd = new Random(RandomSeed);
+            m_NoStateChangeTime = 0;
         }
 
         protected bool ShouldTriggerAnother()
         {
             //TODO add faster stop when nothing happens for some time period
-            return m_ActTime >= MaxOneCommandTime;
+            if(m_ActTime >= MaxOneCommandTime)
+            {
+                return true;
+            }
+            
+            if(m_ActTime > MinOneCommandTime && 0.001f > m_ActualData[m_ActualData.Count-1].diffState(m_ActualData[m_ActualData.Count-2]))
+            {
+                m_NoStateChangeTime += 1;
+            }
+
+            if(m_NoStateChangeTime > MaxNoStateChangeTime)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected void TriggerNewCommand()
@@ -163,6 +199,7 @@ namespace GoodAI.Modules.Robotic
                 Owner.generateTask.AddRawData(m_ActualData);
 
                 m_ActTime = 0;
+                m_NoStateChangeTime = 0;
                 m_ActualData.Clear();
 
                 TriggerNewCommand();
