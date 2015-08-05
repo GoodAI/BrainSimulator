@@ -50,9 +50,6 @@ namespace GoodAI.Core.Observers
             m_currentTimeStep = (int)SimulationStep;
             currentColumn = (int)SimulationStep % m_numColumns;
 
-            //drawCoordinates();
-
-            //m_valuesHistory.Memset(0);
             int maxValue = 0;
             for (int i = 0; i < Target.Count / 2; i++)
             {

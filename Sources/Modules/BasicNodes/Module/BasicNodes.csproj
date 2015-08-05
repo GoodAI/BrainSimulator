@@ -125,15 +125,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SoundProcessing\Complex.cs" />
-    <Compile Include="SoundProcessing\Features\LPC.cs" />
-    <Compile Include="SoundProcessing\Features\MFCC.cs" />
-    <Compile Include="SoundProcessing\FFT.cs" />
-    <Compile Include="SoundProcessing\Recorder.cs" />
-    <Compile Include="SoundProcessing\SoundWorld.cs" />
-    <Compile Include="SoundProcessing\Formats\WavReader.cs" />
-    <Compile Include="SoundProcessing\WaveFormat.cs" />
-    <Compile Include="SoundProcessing\WaveNative.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
@@ -335,7 +326,6 @@
     <EmbeddedResource Include="res\input_RBM_layer_big.png" />
     <EmbeddedResource Include="res\network_RBM.png" />
     <EmbeddedResource Include="res\network_RBM_big.png" />
-    <Content Include="res\soundworld\Sample.wav" />
     <Content Include="res\textworld\SourceCode.txt">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

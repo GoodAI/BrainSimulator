@@ -2,6 +2,7 @@
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.SoundProcessing;
 using GoodAI.Modules.SoundProcessing.Features;
 using ManagedCuda;
 using ManagedCuda.CudaFFT;
@@ -18,14 +19,14 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using YAXLib;
 
-namespace GoodAI.Modules.SoundProcessing
+namespace SoundWorld
 {
     /// <author>Martin Hyben</author>
     /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Provides default or custom dataset audio input in various feature types.</summary>
     /// <description></description>
-    public class SoundWorld : MyWorld
+    public class MySoundWorld : MyWorld
     {
         public enum InputTypeEnum 
         {
@@ -226,7 +227,7 @@ namespace GoodAI.Modules.SoundProcessing
         }
 
         [Description("Read sound inputs")]
-        public class MyCUDAGenerateInputTask : MyTask<SoundWorld>
+        public class MyCUDAGenerateInputTask : MyTask<MySoundWorld>
         {
             [MyBrowsable, Category("Params")]
             [YAXSerializableField(DefaultValue = 1)]
@@ -258,7 +259,7 @@ namespace GoodAI.Modules.SoundProcessing
                         switch (Owner.m_UserInput)
                         {
                             case InputTypeEnum.SampleSound:
-                                m_wavReader = new WaveReader(BasicNodes.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
+                                m_wavReader = new WaveReader(SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 break;
                             case InputTypeEnum.Microphone:
@@ -352,7 +353,7 @@ namespace GoodAI.Modules.SoundProcessing
                     switch (Owner.m_UserInput)
                     {
                         case InputTypeEnum.SampleSound:
-                            m_wavReader = new WaveReader(BasicNodes.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
+                            m_wavReader = new WaveReader(SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
                             m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                             break;
                         case InputTypeEnum.Microphone:

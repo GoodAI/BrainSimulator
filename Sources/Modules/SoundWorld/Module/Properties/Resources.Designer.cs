@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GoodAI.BasicNodes.Properties {
+namespace SoundWorld.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GoodAI.BasicNodes.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GoodAI.BasicNodes.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SoundWorld.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,31 +61,11 @@ namespace GoodAI.BasicNodes.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using namespace std;
-        ///
-        ///void main(params arg)
-        ///{
-        ///	printf(&quot;Hello world!&quot;);
-        ///	printf(&quot;One more time.&quot;);
-        ///	printf(&quot;And again.&quot;);
-        ///}
-        ///.
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
-        internal static string SourceCode {
+        internal static System.IO.UnmanagedMemoryStream Sample {
             get {
-                return ResourceManager.GetString("SourceCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to At GoodAI, we are trying to build artificial brains that can learn, be creative, and adapt to the environment in the way a human does. 
-        ///Our brains will respond to what they perceive, and will interact with their environment to achieve goals defined by human mentors.
-        ///Our mission is to develop general artificial intelligence, be helpful to humanity, and understand the universe.
-        ///.
-        /// </summary>
-        internal static string Wiki {
-            get {
-                return ResourceManager.GetString("Wiki", resourceCulture);
+                return ResourceManager.GetStream("Sample", resourceCulture);
             }
         }
     }
