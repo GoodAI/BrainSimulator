@@ -238,8 +238,8 @@ namespace GoodAI.Modules.Robotic
         protected Random m_Rnd;
 
         [MyBrowsable, Category("Behavior")]
-        [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Behavior")]
-        public uint TargetDelay { get; set; }
+        [YAXSerializableField(DefaultValue = 1), YAXElementFor("Behavior")]
+        public int TargetDelay { get; set; }
 
         [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Behavior")]
@@ -270,9 +270,16 @@ namespace GoodAI.Modules.Robotic
             {
                 int size = m_NewRawData.Count;
 
-                for (int i = (int)IgnoredBegining; i + TargetDelay < size; ++i)
+                int tot = TargetDelay > 0 ? size - TargetDelay : size;
+
+                for (int i = (int)IgnoredBegining; i < tot; ++i)
                 {
-                    TrainingPattern p = TrainingPattern.Create((uint)m_TrainingData.Count, m_NewRawData[i].Command, m_NewRawData[i].State, m_NewRawData[i + (int)TargetDelay].State);
+                    //if TargetDelay == 0 then we set as target the last state for the command
+                    float[] target = TargetDelay > 0 ?
+                        m_NewRawData[i + TargetDelay].State :
+                        m_NewRawData[size-1].State;
+
+                    TrainingPattern p = TrainingPattern.Create((uint)m_TrainingData.Count, m_NewRawData[i].Command, m_NewRawData[i].State, target);
                     m_TrainingData.Add(p);
                 }
 
