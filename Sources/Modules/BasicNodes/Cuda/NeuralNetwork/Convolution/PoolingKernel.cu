@@ -38,8 +38,6 @@ extern "C"
 			int depth = idx / outputSize;
 			int depthShift = depth * inputSize;
 
-//			int filtersPerRow = 1 + (inputWidth - filterWidth) / horStride;
-//			int filtersPerCol = 1 + (inputHeight - filterHeight) / verStride;
 
 			int inputTileX = (idx % outputSize) % outputWidth;
 			int inputTileY = (idx % outputSize) / outputWidth;
