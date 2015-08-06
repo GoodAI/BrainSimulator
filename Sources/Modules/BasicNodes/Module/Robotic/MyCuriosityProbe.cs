@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using YAXLib;
 using GoodAI.Core.Nodes;
 
-
 namespace GoodAI.Modules.Robotic
 {
     /// <summary>Initialization of curiosity probe.</summary>
@@ -138,6 +137,10 @@ namespace GoodAI.Modules.Robotic
         [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
         public int RandomSeed { get; set; }
 
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0.01f), YAXElementFor("Behavior")]
+        public float NoiseLevel { get; set; }
+
         protected List<Pattern> m_ActualData;
         protected int m_ActTime;
         protected Random m_Rnd;
@@ -188,6 +191,26 @@ namespace GoodAI.Modules.Robotic
             }
         }
 
+        protected void AddNoiseToCommand()
+        {
+            if (ExplorationType == MyExplorationType.Random)
+            {
+                if (NoiseLevel > 0.0f)
+                {
+                    for (int i = 0; i < Owner.RealCommands.Count; ++i)
+                    {
+                        //TODO: better add normal distribution sample
+                        Owner.RealCommands.Host[i] += Math.Min(1.0f, Math.Max(-1.0f, NoiseLevel*(1.0f - 2.0f * (float)m_Rnd.NextDouble())));
+                    }
+                    Owner.RealCommands.SafeCopyToDevice();
+                }
+            }
+            else
+            {
+                //TODO
+            }
+        }
+
         public override void Execute()
         {
             //store actual data
@@ -205,6 +228,7 @@ namespace GoodAI.Modules.Robotic
                 TriggerNewCommand();
             }
 
+            AddNoiseToCommand();
             m_ActTime += 1;
         }
     }
@@ -213,24 +237,64 @@ namespace GoodAI.Modules.Robotic
     [Description("Generates training data."), MyTaskInfo(OneShot = false)]
     public class MCPGenerateDataTask : MyTask<MyCuriosityProbe>
     {
-        public struct TrainingPattern
+        public struct TrainingPatterns
         {
-            public uint Time;
-            public float[] Command;
-            public float[] State;
-            public float[] Target;
+            public int Id;
+            public List<float[]> Commands;
+            public List<float[]> States;
 
-            public static TrainingPattern Create(uint time, float[] command, float[] state, float[] target)
+            public void GetControllerPattern(int random, out float[] command, out float[] state, out float[] target)
             {
-                TrainingPattern p;
-                p.Time = time;
-                p.Command = command;
-                p.State = state;
-                p.Target = target;
+                int stateId = random % (Commands.Count - 1);
+                int targetId = 1 + stateId + random % (Commands.Count - stateId - 1);
+                command = Commands[stateId];
+                state = States[stateId];
+                target = States[targetId];
+            }
+
+            public bool GetModelPattern(int random, int targetDelay, out float[] command, out float[] state, out float[] target)
+            {
+                if(Commands.Count <= targetDelay)
+                {
+                    command = null;
+                    state = null;
+                    target = null;
+
+                    return false;
+                }
+                int stateId = random % (Commands.Count - targetDelay);
+                int targetId = targetDelay + stateId;
+                command = Commands[stateId];
+                state = States[stateId];
+                target = States[targetId];
+
+                return true;
+            }
+
+            public static TrainingPatterns Create(int id, List<float[]> commands, List<float[]> states)
+            {
+                if (commands.Count != states.Count || commands.Count < 2)
+                {
+                    throw new Exception("Too few command or states.");
+                }
+
+                TrainingPatterns p;
+                p.Id = id;
+                p.Commands = commands;
+                p.States = states;
 
                 return p;
             }
         };
+
+        public enum PatternType
+        {
+            ForModel,
+            ForController
+        }
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = PatternType.ForModel), YAXElementFor("Behavior")]
+        public PatternType DataGenerator { get; set; }
 
         [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
@@ -239,14 +303,14 @@ namespace GoodAI.Modules.Robotic
 
         [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 1), YAXElementFor("Behavior")]
-        public int TargetDelay { get; set; }
+        public int ModelTargetDelay { get; set; }
 
         [MyBrowsable, Category("Behavior")]
-        [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Behavior")]
-        public uint IgnoredBegining { get; set; }
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
+        public int IgnoredBegining { get; set; }
 
         protected List<MCPExploreTask.Pattern> m_NewRawData;
-        protected List<TrainingPattern> m_TrainingData;
+        protected List<TrainingPatterns> m_TrainingData;
 
         public void AddRawData(List<MCPExploreTask.Pattern> data)
         {
@@ -261,40 +325,59 @@ namespace GoodAI.Modules.Robotic
         {
             m_Rnd = new Random(RandomSeed);
             m_NewRawData = new List<MCPExploreTask.Pattern>();
-            m_TrainingData = new List<TrainingPattern>();
+            m_TrainingData = new List<TrainingPatterns>();
         }
 
         protected void ProcessRawData()
         {
-            if(m_NewRawData.Count > 0)
+            if(m_NewRawData.Count > 1)
             {
+                
                 int size = m_NewRawData.Count;
 
-                int tot = TargetDelay > 0 ? size - TargetDelay : size;
+                List<float[]> states = new List<float[]>();
+                List<float[]> commands = new List<float[]>();
 
-                for (int i = (int)IgnoredBegining; i < tot; ++i)
+                for (int i = (int)IgnoredBegining; i < size; ++i)
                 {
-                    //if TargetDelay == 0 then we set as target the last state for the command
-                    float[] target = TargetDelay > 0 ?
-                        m_NewRawData[i + TargetDelay].State :
-                        m_NewRawData[size-1].State;
-
-                    TrainingPattern p = TrainingPattern.Create((uint)m_TrainingData.Count, m_NewRawData[i].Command, m_NewRawData[i].State, target);
-                    m_TrainingData.Add(p);
+                    states.Add(m_NewRawData[i].State);
+                    commands.Add(m_NewRawData[i].Command);
                 }
 
-                m_NewRawData.Clear();
+                TrainingPatterns p = TrainingPatterns.Create(m_TrainingData.Count, commands, states);
+                m_TrainingData.Add(p);
             }
+            m_NewRawData.Clear();
         }
 
         protected void SelectTrainingPattern()
         {
             if (m_TrainingData.Count > 0)
             {
-                TrainingPattern p = m_TrainingData[m_Rnd.Next(m_TrainingData.Count)];
-                MCPExploreTask.Pattern.putData(p.State, Owner.VirtualState);
-                MCPExploreTask.Pattern.putData(p.Command, Owner.VirtualCommands);
-                MCPExploreTask.Pattern.putData(p.Target, Owner.VirtualTarget);
+                TrainingPatterns p = m_TrainingData[m_Rnd.Next(m_TrainingData.Count)];
+                float[] state;
+                float[] command;
+                float[] target;
+                bool good = true;
+                if (DataGenerator == PatternType.ForModel)
+                {
+                    good = p.GetModelPattern(m_Rnd.Next(), ModelTargetDelay, out command, out state, out target);
+                }
+                else
+                {
+                    p.GetControllerPattern(m_Rnd.Next(), out command, out state, out target);
+                }
+
+                if (good)
+                {
+                    MCPExploreTask.Pattern.putData(state, Owner.VirtualState);
+                    MCPExploreTask.Pattern.putData(command, Owner.VirtualCommands);
+                    MCPExploreTask.Pattern.putData(target, Owner.VirtualTarget);
+                }
+                else
+                {
+                    //TODO: warning terminal output
+                }
             }
         }
 
