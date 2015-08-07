@@ -25,6 +25,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public MyPadImageTask PadImageTask { get; protected set; }
         public MyConvolutionInitLayerTask InitLayerTask { get; protected set; }
+        public MyConvolutionUpdateWeights UpdateWeights { get; protected set; }
 
         #region Parameters
 

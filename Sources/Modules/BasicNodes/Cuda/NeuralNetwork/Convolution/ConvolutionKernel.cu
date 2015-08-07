@@ -74,8 +74,8 @@ extern "C"
 
 			result += biasPtr[filterIdx];
 
-			outputWeightedPtr[idx] = Evaluate(activationFunction, result);
-			outputPtr[idx] = result;
+			outputWeightedPtr[idx] = result;
+			outputPtr[idx] = Evaluate(activationFunction, result);
 
 		}
 	}
@@ -145,21 +145,72 @@ extern "C"
 				}
 			}
 
-			// multiply by derivative (if there is an activation function)
 			delta *= EvaluateDerivative(inputActFunc, inputWeightedPtr[idx]);
-			// .
 
-			
+			// NO batch learning -> might this be a problem?
 			inputDeltaPtr[idx] = delta;
 
 		}
 	}
 
 	__global__ void ConvolutionUpdateWeightsKernel(
-
+		float learningRate,
+		float *filterPtr,
+		float *thisDeltaPtr,
+		float *inputPaddedPtr,
+		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
+		int filterWidth,
+		int filterSliceSize, // one layer of filter volume, fW * fH
+		int filterSize,
+		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
+		int horStride, int verStride,
+		int weightCount
 		)
 	{
+		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
 
+		if (idx < weightCount)
+		{
+			// determine the exact weight to be updated (one thread corresponds to exactly one weight)
+			// index of the weight inside the filter:
+			int filterX = (idx % filterSliceSize) % filterWidth;
+			int filterY = (idx % filterSliceSize) / filterWidth;
+			// filterZ:
+			int depth = (idx % filterSize) / filterSliceSize;
+
+			int inputDepthShift = depth * inputPaddedSliceSize;
+			int outputDepthShift = depth * outputSliceSize;
+			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
+
+			// apply the filter over the whole image (do convolution again) with this one weight
+			int delta = 0;
+
+			for (size_t j = 0; j < outputHeight; j++)
+			{
+				for (size_t i = 0; i < outputWidth; i++)
+				{
+					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+						inputPaddedPtr[
+							inputDepthShift +
+							j * verStride * inputPaddedWidth +
+							i * horStride +
+							filterInputShift
+					];
+
+				}
+			}
+
+
+
+			delta *= learningRate;
+			filterPtr[idx] -= delta;
+
+
+
+
+		}
 
 
 	}
