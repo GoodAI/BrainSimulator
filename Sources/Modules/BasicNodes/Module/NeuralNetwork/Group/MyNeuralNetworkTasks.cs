@@ -221,6 +221,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     Owner.RMS.SmoothingFactor
                     );
             }
+            else if (layer.Connection == ConnectionType.GAUSSIAN)
+            {
+                // TODO GAUSSIAN
+                MyLog.ERROR.WriteLine("TODO GAUSSIAN connection in " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);
+            }
             else
             {
                 MyLog.ERROR.WriteLine("No method provided to RMS propagate a " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);

@@ -20,7 +20,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         NOT_SET,
         FULLY_CONNECTED,
         CONVOLUTION,
-        ONE_TO_ONE
+        ONE_TO_ONE,
+        GAUSSIAN
     }
 
     public enum ActivationFunctionType
@@ -49,10 +50,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyBrowsable, Category("Misc")]
         public int OutputColumnHint { get; set; }
 
-        internal MyAbstractLayer PreviousLayer { get; set; }
-        internal MyAbstractLayer NextLayer { get; set; }
+        public MyAbstractLayer PreviousLayer { get; set; }
+        public MyAbstractLayer NextLayer { get; set; }
 
-        internal MyNeuralNetworkGroup ParentNetwork
+        public MyNeuralNetworkGroup ParentNetwork
         {
             get { return Parent as MyNeuralNetworkGroup; }
         }

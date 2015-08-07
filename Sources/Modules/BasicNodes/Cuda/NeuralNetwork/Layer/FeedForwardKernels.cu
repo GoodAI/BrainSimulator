@@ -75,4 +75,39 @@ extern "C"
 		if (i < layerSize)
 			outputPtr[i] = Evaluate(activationFunction, inputPtr[i]);
 	}
+
+
+    __global__ void GaussianForwardSamplingKernel(
+		float* gaussianParamsInputPtr,
+		float* outputPtr,
+		float* neuronInputPtr,
+		float* biasPtr,
+		float* randomUniformPtr,
+		int prevLayerSize,
+		int thisLayerSize
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			for (int i = 0; i < prevLayerSize / 2; i++)
+			{
+				float mu = gaussianParamsInputPtr[i];
+				float sigma = gaussianParamsInputPtr[i + prevLayerSize / 2];
+				float x = randomUniformPtr[i];
+				
+				// sample Gaussian from Uniform
+				float t = expf(-pow((x - mu), 2) / powf(sigma, 2));
+	
+				// renormalize to <0, 1>
+				outputPtr[i] = fminf(fmaxf(t, 0), 1);
+			}
+		}
+	}
+
+
 }
