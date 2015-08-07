@@ -44,7 +44,7 @@ namespace GoodAI.SoundWorld
         }
         
         protected Recorder m_recorder;
-
+        
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Features
         {
@@ -142,7 +142,7 @@ namespace GoodAI.SoundWorld
             }
         }
 
-        [Description("Id of microphone device")]
+        [Description("Microphone device (default value is -1)")]
         [MyBrowsable, Category("I/O")]
         [YAXSerializableField(DefaultValue = -1), YAXElementFor("IO")]
         public int MicrophoneDevice { get; set; }
@@ -212,15 +212,19 @@ namespace GoodAI.SoundWorld
 
             private WavPlayer m_wavReader;
             private int m_currentCorpusFile = 0;
-
+            
             string[] audio;
-            //string[] transcr;
+            Stream m_stream;
+            WavPlayer player;
             private short[] m_InputData;
             private long m_position = 0;
+            
 
             public override void Init(Int32 nGPU)
             {
                 // do nothing here
+                m_stream = new MemoryStream();
+                player = new WavPlayer(m_stream, new WaveFormat(44100, 16, 2));
             }
 
             public override void Execute()
@@ -308,13 +312,13 @@ namespace GoodAI.SoundWorld
                             result = LPC.Compute(result, Owner.FeaturesCount);
                             break;
                     }
+                    #endregion
 
                     // flush processed features into GPU
                     Array.Clear(Owner.Features.Host, 0, Owner.Features.Count);
                     for (int i = 0; i < Owner.FeaturesCount; i++)
                         Owner.Features.Host[i] = result[i];
                     Owner.Features.SafeCopyToDevice();
-                    #endregion
                 }
             }
 
