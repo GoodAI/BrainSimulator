@@ -532,6 +532,7 @@ namespace GoodAI.Modules.SoundProcessing
         {
             byte[] m_PlayBuffer = new byte[count];
             m_stream.Read(m_PlayBuffer, 0, count);
+            m_stream.Position = m_start_pos;
             return m_PlayBuffer;
         }
 
