@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using YAXLib;
 using GoodAI.Core.Nodes;
 
-
 namespace GoodAI.Modules.Robotic
 {
     /// <summary>Initialization of curiosity probe.</summary>
@@ -135,8 +134,16 @@ namespace GoodAI.Modules.Robotic
         public int MaxNoStateChangeTime { get; set; }
 
         [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0.01f), YAXElementFor("Behavior")]
+        public float StateIdentityDiff { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
         public int RandomSeed { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0.01f), YAXElementFor("Behavior")]
+        public float NoiseLevel { get; set; }
 
         protected List<Pattern> m_ActualData;
         protected int m_ActTime;
@@ -158,8 +165,8 @@ namespace GoodAI.Modules.Robotic
             {
                 return true;
             }
-            
-            if(m_ActTime > MinOneCommandTime && 0.001f > m_ActualData[m_ActualData.Count-1].diffState(m_ActualData[m_ActualData.Count-2]))
+
+            if (m_ActTime > MinOneCommandTime && StateIdentityDiff > m_ActualData[m_ActualData.Count - 1].diffState(m_ActualData[m_ActualData.Count - 2]))
             {
                 m_NoStateChangeTime += 1;
             }
@@ -188,6 +195,27 @@ namespace GoodAI.Modules.Robotic
             }
         }
 
+        protected void AddNoiseToCommand()
+        {
+            if (ExplorationType == MyExplorationType.Random)
+            {
+                if (NoiseLevel > 0.0f)
+                {
+                    for (int i = 0; i < Owner.RealCommands.Count; ++i)
+                    {
+                        //TODO: better add normal distribution sample
+                        float value = Owner.RealCommands.Host[i] + NoiseLevel * (1.0f - 2.0f * (float)m_Rnd.NextDouble());
+                        Owner.RealCommands.Host[i] = Math.Min(1.0f, Math.Max(-1.0f, value));
+                    }
+                    Owner.RealCommands.SafeCopyToDevice();
+                }
+            }
+            else
+            {
+                //TODO
+            }
+        }
+
         public override void Execute()
         {
             //store actual data
@@ -205,6 +233,7 @@ namespace GoodAI.Modules.Robotic
                 TriggerNewCommand();
             }
 
+            AddNoiseToCommand();
             m_ActTime += 1;
         }
     }
@@ -213,24 +242,75 @@ namespace GoodAI.Modules.Robotic
     [Description("Generates training data."), MyTaskInfo(OneShot = false)]
     public class MCPGenerateDataTask : MyTask<MyCuriosityProbe>
     {
-        public struct TrainingPattern
+        public struct TrainingPatterns
         {
-            public uint Time;
-            public float[] Command;
-            public float[] State;
-            public float[] Target;
+            public int Id;
+            public List<float[]> Commands;
+            public List<float[]> States;
 
-            public static TrainingPattern Create(uint time, float[] command, float[] state, float[] target)
+            public bool GetControllerPattern(int random, out float[] command, out float[] state, out float[] target)
             {
-                TrainingPattern p;
-                p.Time = time;
-                p.Command = command;
-                p.State = state;
-                p.Target = target;
+                if(Commands.Count <= 2)
+                {
+                    command = null;
+                    state = null;
+                    target = null; 
+                    
+                    return false;
+                }
+
+                int stateId = random % (Commands.Count - 1);
+                int targetId = 1 + stateId + random % (Commands.Count - stateId - 1);
+                command = Commands[stateId];
+                state = States[stateId];
+                target = States[targetId];
+
+                return true;
+            }
+
+            public bool GetModelPattern(int random, int targetDelay, out float[] command, out float[] state, out float[] target)
+            {
+                if(Commands.Count <= targetDelay)
+                {
+                    command = null;
+                    state = null;
+                    target = null;
+
+                    return false;
+                }
+                int stateId = random % (Commands.Count - targetDelay);
+                int targetId = targetDelay + stateId;
+                command = Commands[stateId];
+                state = States[stateId];
+                target = States[targetId];
+
+                return true;
+            }
+
+            public static TrainingPatterns Create(int id, List<float[]> commands, List<float[]> states)
+            {
+                if (commands.Count != states.Count || commands.Count < 2)
+                {
+                    throw new Exception("Too few command or states.");
+                }
+
+                TrainingPatterns p;
+                p.Id = id;
+                p.Commands = commands;
+                p.States = states;
 
                 return p;
             }
         };
+
+        public enum PatternType
+        {
+            ForModel,
+            ForController
+        }
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = PatternType.ForModel), YAXElementFor("Behavior")]
+        public PatternType DataGenerator { get; set; }
 
         [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
@@ -239,14 +319,48 @@ namespace GoodAI.Modules.Robotic
 
         [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = 1), YAXElementFor("Behavior")]
-        public int TargetDelay { get; set; }
+        public int ModelTargetDelay { get; set; }
 
         [MyBrowsable, Category("Behavior")]
-        [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Behavior")]
-        public uint IgnoredBegining { get; set; }
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
+        public int IgnoredBegining { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 100), YAXElementFor("Behavior")]
+        public int MaxHardExamples { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0.1f), YAXElementFor("Behavior")]
+        public float HardExamplesFraction { get; set; }
+
+        public struct OneShotPattern
+        {
+            public float[] State;
+            public float[] Command;
+            public float[] Target;
+
+            public void GetPattern(out float[] command, out float[] state, out float[] target)
+            {
+                command = Command;
+                state = State;
+                target = Target;
+            }
+
+            public static OneShotPattern Create(float[] command, float[] state, float[] target)
+            {
+                OneShotPattern p;
+                p.Command = command;
+                p.State = state;
+                p.Target = target;
+                return p;
+            }
+        }
 
         protected List<MCPExploreTask.Pattern> m_NewRawData;
-        protected List<TrainingPattern> m_TrainingData;
+        protected List<TrainingPatterns> m_TrainingData;
+        protected SortedDictionary<Tuple<float, int>, OneShotPattern> m_HardData;
+        protected bool m_LastGood;
+        protected OneShotPattern m_LastPattern;
 
         public void AddRawData(List<MCPExploreTask.Pattern> data)
         {
@@ -259,48 +373,112 @@ namespace GoodAI.Modules.Robotic
 
         public override void Init(int nGPU)
         {
+            m_LastGood = false;
             m_Rnd = new Random(RandomSeed);
             m_NewRawData = new List<MCPExploreTask.Pattern>();
-            m_TrainingData = new List<TrainingPattern>();
+            m_TrainingData = new List<TrainingPatterns>();
+            m_HardData = new SortedDictionary<Tuple<float, int>, OneShotPattern>();
         }
 
         protected void ProcessRawData()
         {
-            if(m_NewRawData.Count > 0)
+            if(m_NewRawData.Count > 1)
             {
+                
                 int size = m_NewRawData.Count;
 
-                int tot = TargetDelay > 0 ? size - TargetDelay : size;
+                List<float[]> states = new List<float[]>();
+                List<float[]> commands = new List<float[]>();
 
-                for (int i = (int)IgnoredBegining; i < tot; ++i)
+                for (int i = (int)IgnoredBegining; i < size; ++i)
                 {
-                    //if TargetDelay == 0 then we set as target the last state for the command
-                    float[] target = TargetDelay > 0 ?
-                        m_NewRawData[i + TargetDelay].State :
-                        m_NewRawData[size-1].State;
-
-                    TrainingPattern p = TrainingPattern.Create((uint)m_TrainingData.Count, m_NewRawData[i].Command, m_NewRawData[i].State, target);
-                    m_TrainingData.Add(p);
+                    states.Add(m_NewRawData[i].State);
+                    commands.Add(m_NewRawData[i].Command);
                 }
 
-                m_NewRawData.Clear();
+                TrainingPatterns p = TrainingPatterns.Create(m_TrainingData.Count, commands, states);
+                m_TrainingData.Add(p);
             }
+            m_NewRawData.Clear();
         }
 
         protected void SelectTrainingPattern()
         {
+            m_LastGood = false;
+            float[] state = null;
+            float[] command = null;
+            float[] target = null;
+
             if (m_TrainingData.Count > 0)
             {
-                TrainingPattern p = m_TrainingData[m_Rnd.Next(m_TrainingData.Count)];
-                MCPExploreTask.Pattern.putData(p.State, Owner.VirtualState);
-                MCPExploreTask.Pattern.putData(p.Command, Owner.VirtualCommands);
-                MCPExploreTask.Pattern.putData(p.Target, Owner.VirtualTarget);
+                if (m_Rnd.NextDouble() < HardExamplesFraction && m_HardData.Count > 0)
+                {
+                    //reuse a pattern with the highest cost
+                    OneShotPattern p = m_HardData.Last().Value;
+                    Tuple<float, int> k = m_HardData.Last().Key;
+                    p.GetPattern(out command, out state, out target);
+
+                    m_HardData.Remove(k);
+                    m_LastGood = true;
+                }
+                else
+                {
+                    TrainingPatterns p = m_TrainingData[m_Rnd.Next(m_TrainingData.Count)];
+                    if (DataGenerator == PatternType.ForModel)
+                    {
+                        m_LastGood = p.GetModelPattern(m_Rnd.Next(), ModelTargetDelay, out command, out state, out target);
+                    }
+                    else
+                    {
+                        m_LastGood = p.GetControllerPattern(m_Rnd.Next(), out command, out state, out target);
+                    }
+                }
             }
+
+            if (m_LastGood)
+            {
+                m_LastPattern = OneShotPattern.Create(command, state, target);
+
+                MCPExploreTask.Pattern.putData(state, Owner.VirtualState);
+                MCPExploreTask.Pattern.putData(command, Owner.VirtualCommands);
+                MCPExploreTask.Pattern.putData(target, Owner.VirtualTarget);
+            }
+            else
+            {
+                //TODO: warning terminal output
+            }
+        }
+
+        protected void ProcessFeedback()
+        {
+            if(m_LastGood && Owner.LastVirtualCost != null)
+            {
+                Owner.LastVirtualCost.SafeCopyToHost();
+
+                float cost = Owner.LastVirtualCost.Host[0];
+
+                if (m_HardData.Count < MaxHardExamples || m_HardData.Count > 0 && m_HardData.First().Key.Item1 < cost)
+                {
+                    //added SimulationStep as second value to make key unique
+                    Tuple<float, int> k = Tuple.Create(cost, (int)SimulationStep);
+
+                    m_HardData.Add(k, m_LastPattern);
+                }
+
+                //if buffer limit changed or data exceed limit then remove the easiest ones
+                while(m_HardData.Count > 0 && m_HardData.Count > MaxHardExamples)
+                {
+                    m_HardData.Remove(m_HardData.First().Key);
+                }
+            }
+
         }
 
         public override void Execute()
         {
             ProcessRawData();
+
+            ProcessFeedback();
 
             SelectTrainingPattern();
         }
@@ -350,6 +528,11 @@ namespace GoodAI.Modules.Robotic
             get { return GetInput(0); }
         }
 
+        [MyInputBlock(1)]
+        public MyMemoryBlock<float> LastVirtualCost
+        {
+            get { return GetInput(1); }
+        }
         //Tasks
         protected MCPInitTask initTask { get; set; }
         protected MCPExploreTask exploreTask { get; set; }
@@ -390,13 +573,18 @@ namespace GoodAI.Modules.Robotic
 
         public override void Validate(MyValidator validator)
         {
-            for (int i = 0; i < InputBranches; i++)
+            MyMemoryBlock<float> ai = GetInput(0);
+
+            if (ai == null)
+                validator.AddError(this, string.Format("Missing input {0}.", 0));
+
+            /*for (int i = 0; i < InputBranches; i++)
             {
                 MyMemoryBlock<float> ai = GetInput(i);
 
                 if (ai == null)
                     validator.AddError(this, string.Format("Missing input {0}.", i));
-            }
+            }*/
         }
 
         public override string Description
