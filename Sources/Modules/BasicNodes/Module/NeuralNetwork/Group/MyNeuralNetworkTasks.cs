@@ -155,9 +155,19 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
             {
                 MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
-                m_convSGDupdateKernel.SetupExecution(convLayer.Neurons);
+                m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
                 m_convSGDupdateKernel.Run(
-                    
+                    Owner.SGD.TrainingRate,
+                    convLayer.Weights,
+                    convLayer.Delta,
+                    convLayer.PaddedImage,
+                    convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding, (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) * (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
+                    convLayer.FilterWidth,
+                    convLayer.FilterWidth * convLayer.FilterHeight,
+                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
                     );
 
             }

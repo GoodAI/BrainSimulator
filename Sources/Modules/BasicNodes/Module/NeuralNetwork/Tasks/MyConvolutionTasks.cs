@@ -250,13 +250,7 @@ namespace CustomModels.NeuralNetwork.Tasks
         }
     }
 
-    /// <author>GoodAI</author>
-    /// <meta>ph</meta>
-    /// <status>Working</status>
-    /// <summary>
-    /// Updates weights, that are fully connected to the previous layer.
-    /// </summary>
-    /// <description></description>
+
     [Description("UpdateWeights"), MyTaskInfo(OneShot = false)]
     public class MyConvolutionUpdateWeights : MyAbstractUpdateWeightsTask<MyConvolutionLayer>
     {
