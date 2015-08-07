@@ -16,9 +16,9 @@ using GoodAI.Core.Nodes;
 
 namespace GoodAI.Modules.Robotic
 {
-    /// <summary>Initialises Curiosity Probe.</summary>
-    [Description("Init Curiosity Probe"), MyTaskInfo(OneShot = true)]
-    public class MyCuriosityProbeInitTask : MyTask<MyCuriosityProbe>
+    /// <summary>Initialization of curiosity probe.</summary>
+    [Description("Initialization of curiosity probe."), MyTaskInfo(OneShot = true)]
+    public class MCPInitTask : MyTask<MyCuriosityProbe>
     {
         public override void Init(int nGPU)
         {
@@ -26,29 +26,283 @@ namespace GoodAI.Modules.Robotic
 
         public override void Execute()
         {
-            Owner.RealCommands.Fill(0);
-            Owner.VirtualCommands.Fill(0);
+            if (Owner.VirtualCommands != null)
+            {
+                Owner.VirtualCommands.Fill(0);
+            }
 
-            Owner.VirtualState.Fill(0);
-            Owner.VirtualTarget.Fill(0);
+            if (Owner.VirtualState != null)
+            {
+                Owner.VirtualState.CopyFromMemoryBlock(Owner.RealState, 0, 0, Owner.RealState.Count);
+            }
+
+            if (Owner.VirtualTarget != null)
+            {
+                Owner.VirtualTarget.Fill(0);
+            }
         }
     }
 
-    /// <summary>Updates Curiosity Probe.</summary>
-    [Description("Updates Curiosity Probe"), MyTaskInfo(OneShot = true)]
-    public class MyCuriosityProbeUpdateTask : MyTask<MyCuriosityProbe>
+    /// <summary>Explores command-space and stores it.</summary>
+    [Description("Explores command-space and stores it."), MyTaskInfo(OneShot = false)]
+    public class MCPExploreTask : MyTask<MyCuriosityProbe>
     {
+        public enum MyExplorationType
+        {
+            Random,
+            Systematic
+        }
+
+        public struct Pattern
+        {
+            public int Time;
+            public float[] Command;
+            public float[] State;
+
+            public float diffState(Pattern p)
+            {
+                float sum2 = 0.0f;
+                for (int i = 0; i < State.Length; ++i)
+                {
+                    sum2 += (p.State[i] - State[i]) * (p.State[i] - State[i]);
+                }
+
+                return (float)Math.Sqrt(sum2);
+            }
+
+            public static void MyBlockCopy(float[] source, float[] target, int n)
+            {
+                //Buffer.BlockCopy(source, 0, target, 0, n);
+                for(int i = 0; i < n; ++i)
+                {
+                    target[i] = source[i];
+                }
+            }
+
+            public static float[] getData(MyMemoryBlock<float> memBlock)
+            {
+                memBlock.SafeCopyToHost();
+
+                float[] d = new float[memBlock.Count];
+                MyBlockCopy(memBlock.Host, d, memBlock.Count);
+
+                return d;
+            }
+
+            public static void putData(float[] source, MyMemoryBlock<float> destination)
+            {
+                if (destination != null)
+                {
+                    MyBlockCopy(source, destination.Host, destination.Count);
+                    destination.SafeCopyToDevice();
+                }
+            }
+
+            public static Pattern Create(int time, MyMemoryBlock<float> command, MyMemoryBlock<float> state)
+            {
+                Pattern p;
+                p.State = getData(state);
+                p.Command = getData(command);
+                p.Time = time;
+
+                return p;
+            }
+            public static Pattern Create(int time, float[] command, float[] state)
+            {
+                Pattern p;
+                p.State = state;
+                p.Command = command;
+                p.Time = time;
+
+                return p;
+            }
+        };
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = MyExplorationType.Random), YAXElementFor("Behavior")]
+        public MyExplorationType ExplorationType { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 200), YAXElementFor("Behavior")]
+        public int MaxOneCommandTime { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 5), YAXElementFor("Behavior")]
+        public int MinOneCommandTime { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 10), YAXElementFor("Behavior")]
+        public int MaxNoStateChangeTime { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
+        public int RandomSeed { get; set; }
+
+        protected List<Pattern> m_ActualData;
+        protected int m_ActTime;
+        protected Random m_Rnd;
+        protected int m_NoStateChangeTime;
+
         public override void Init(int nGPU)
         {
+            m_ActualData = new List<Pattern>();
+            m_ActTime = MaxOneCommandTime;//to immediately trigger command
+            m_Rnd = new Random(RandomSeed);
+            m_NoStateChangeTime = 0;
+        }
+
+        protected bool ShouldTriggerAnother()
+        {
+            //TODO add faster stop when nothing happens for some time period
+            if(m_ActTime >= MaxOneCommandTime)
+            {
+                return true;
+            }
+            
+            if(m_ActTime > MinOneCommandTime && 0.001f > m_ActualData[m_ActualData.Count-1].diffState(m_ActualData[m_ActualData.Count-2]))
+            {
+                m_NoStateChangeTime += 1;
+            }
+
+            if(m_NoStateChangeTime > MaxNoStateChangeTime)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        protected void TriggerNewCommand()
+        {
+            if(ExplorationType == MyExplorationType.Random)
+            {
+                for (int i = 0; i < Owner.RealCommands.Count; ++i)
+                {
+                    Owner.RealCommands.Host[i] = 1.0f - 2.0f*(float)m_Rnd.NextDouble();
+                }
+                Owner.RealCommands.SafeCopyToDevice();
+            }
+            else
+            {
+                //TODO
+            }
         }
 
         public override void Execute()
         {
-            Owner.RealCommands.Fill(0);
-            Owner.VirtualCommands.Fill(0);
+            //store actual data
+            m_ActualData.Add(Pattern.Create(m_ActTime, Owner.RealCommands, Owner.RealState));
 
-            Owner.VirtualState.Fill(0);
-            Owner.VirtualTarget.Fill(0);
+            //trigger new command if needed
+            if(ShouldTriggerAnother())
+            {
+                Owner.generateTask.AddRawData(m_ActualData);
+
+                m_ActTime = 0;
+                m_NoStateChangeTime = 0;
+                m_ActualData.Clear();
+
+                TriggerNewCommand();
+            }
+
+            m_ActTime += 1;
+        }
+    }
+
+    /// <summary>Generates training data.</summary>
+    [Description("Generates training data."), MyTaskInfo(OneShot = false)]
+    public class MCPGenerateDataTask : MyTask<MyCuriosityProbe>
+    {
+        public struct TrainingPattern
+        {
+            public uint Time;
+            public float[] Command;
+            public float[] State;
+            public float[] Target;
+
+            public static TrainingPattern Create(uint time, float[] command, float[] state, float[] target)
+            {
+                TrainingPattern p;
+                p.Time = time;
+                p.Command = command;
+                p.State = state;
+                p.Target = target;
+
+                return p;
+            }
+        };
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
+        public int RandomSeed { get; set; }
+        protected Random m_Rnd;
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 1), YAXElementFor("Behavior")]
+        public int TargetDelay { get; set; }
+
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Behavior")]
+        public uint IgnoredBegining { get; set; }
+
+        protected List<MCPExploreTask.Pattern> m_NewRawData;
+        protected List<TrainingPattern> m_TrainingData;
+
+        public void AddRawData(List<MCPExploreTask.Pattern> data)
+        {
+            if(m_NewRawData.Count > 0)
+            {
+                throw new Exception("repeated addition of raw data to " + this.ToString() + "!");
+            }
+            m_NewRawData.AddRange(data);
+        }
+
+        public override void Init(int nGPU)
+        {
+            m_Rnd = new Random(RandomSeed);
+            m_NewRawData = new List<MCPExploreTask.Pattern>();
+            m_TrainingData = new List<TrainingPattern>();
+        }
+
+        protected void ProcessRawData()
+        {
+            if(m_NewRawData.Count > 0)
+            {
+                int size = m_NewRawData.Count;
+
+                int tot = TargetDelay > 0 ? size - TargetDelay : size;
+
+                for (int i = (int)IgnoredBegining; i < tot; ++i)
+                {
+                    //if TargetDelay == 0 then we set as target the last state for the command
+                    float[] target = TargetDelay > 0 ?
+                        m_NewRawData[i + TargetDelay].State :
+                        m_NewRawData[size-1].State;
+
+                    TrainingPattern p = TrainingPattern.Create((uint)m_TrainingData.Count, m_NewRawData[i].Command, m_NewRawData[i].State, target);
+                    m_TrainingData.Add(p);
+                }
+
+                m_NewRawData.Clear();
+            }
+        }
+
+        protected void SelectTrainingPattern()
+        {
+            if (m_TrainingData.Count > 0)
+            {
+                TrainingPattern p = m_TrainingData[m_Rnd.Next(m_TrainingData.Count)];
+                MCPExploreTask.Pattern.putData(p.State, Owner.VirtualState);
+                MCPExploreTask.Pattern.putData(p.Command, Owner.VirtualCommands);
+                MCPExploreTask.Pattern.putData(p.Target, Owner.VirtualTarget);
+            }
+        }
+
+        public override void Execute()
+        {
+            ProcessRawData();
+
+            SelectTrainingPattern();
         }
     }
 
@@ -96,65 +350,42 @@ namespace GoodAI.Modules.Robotic
             get { return GetInput(0); }
         }
 
-        /*
-        [ReadOnly(false)]
-        [YAXSerializableField, YAXElementFor("IO")]
-        public override int InputBranches
-        {
-            get { return base.InputBranches; }
-            set
-            {
-                base.InputBranches = value;
-                m_offsets = new int[value];
-            }
-        }
-
-        [MyBrowsable, YAXSerializableField(DefaultValue = 0), YAXElementFor("IO")]
-        public int OutputColHint { get; set; }
-
-        public int[] m_offsets = new int[0];
-        */
-
-        public enum MyCuriosityType
-        {
-            Random,
-            Random2
-        }
+        //Tasks
+        protected MCPInitTask initTask { get; set; }
+        protected MCPExploreTask exploreTask { get; set; }
+        public MCPGenerateDataTask generateTask { get; set; }
 
         [MyBrowsable, Category("Behavior")]
-        [YAXSerializableField(DefaultValue = MyCuriosityType.Random), YAXElementFor("Behavior")]
-        public MyCuriosityType CuriosityType { get; set; }
-        /*
-        public MyMemoryBlock<CUdeviceptr> InputBlocksPointers { get; private set; }
-        public MyMemoryBlock<float> Temp { get; private set; }
-
-        public MyInitTask InitMemoryMapping { get; private set; }
-        public MyStackInputsTask StackInputs { get; private set; }
-        */
-
-        //Tasks
-        MyCuriosityProbeInitTask initTask { get; set; }
-        MyCuriosityProbeUpdateTask updateTask { get; set; }
+        [YAXSerializableField(DefaultValue = 3), YAXElementFor("Behavior")]
+        public int CommandSize
+        {
+            get { return RealCommands.Count; }
+            set { RealCommands.Count = value; }
+        }
 
         public MyCuriosityProbe()
         {
-            //InputBranches = 1;
-            //OutputBranches = 4;
         }
 
         public void CreateTasks()
         {
-            initTask = new MyCuriosityProbeInitTask();
-            updateTask = new MyCuriosityProbeUpdateTask();
+            initTask = new MCPInitTask();
+            exploreTask = new MCPExploreTask();
+            generateTask = new MCPGenerateDataTask();
         }
 
         public override void UpdateMemoryBlocks()
         {
-            RealCommands.Count = 3;
-            VirtualState.Count = 11;
-            VirtualCommands.Count = 12;
-            VirtualTarget.Count = 13;
-            VirtualTarget.Count = 14;
+            if (RealCommands != null)
+            {
+                VirtualCommands.Count = RealCommands.Count;
+            }
+
+            if (RealState != null)
+            {
+                VirtualState.Count = RealState.Count;
+                VirtualTarget.Count = RealState.Count;
+            }
         }
 
         public override void Validate(MyValidator validator)
@@ -172,7 +403,7 @@ namespace GoodAI.Modules.Robotic
         {
             get
             {
-                return CuriosityType.ToString();
+                return exploreTask.ExplorationType.ToString();
             }
         }
 
