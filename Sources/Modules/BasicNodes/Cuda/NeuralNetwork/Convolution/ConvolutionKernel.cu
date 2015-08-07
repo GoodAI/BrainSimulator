@@ -8,6 +8,7 @@
 #include <builtin_types.h>
 #include <vector_functions.h>
 #include <math.h>
+#include "..\Activation\ActivationFunction.cu"
 
 extern "C"
 {
@@ -18,12 +19,13 @@ extern "C"
 	}
 
 	__global__ void ConvolutionForwardKernel(
+		ActivationFunctionEnum activationFunction,
 		float *inputPtr,
 		float *filterPtr,
 		float *biasPtr,
 		float *outputPtr,
-		int filterWidth, int filterHeight,
-		int filterDepth,
+		float *outputWeightedPtr,
+		int filterWidth, int filterHeight, int filterDepth,
 		int filterSliceSize, // one layer of filter volume, fW * fH
 		int filterSize, // one filter volume, fW * fH * inputDepth
 		int inputSliceSize, // one layer of input data, e.g. one channel of an RGB image
@@ -72,6 +74,7 @@ extern "C"
 
 			result += biasPtr[filterIdx];
 
+			outputWeightedPtr[idx] = Evaluate(activationFunction, result);
 			outputPtr[idx] = result;
 
 		}
@@ -79,56 +82,86 @@ extern "C"
 
 
 	// computes deltas
+	// launched size(prevDeltaPtr) times, i.e. separately for each delta to be computed
 	__global__ void ConvolutionBackwardKernel(
+		ActivationFunctionEnum inputActFunc,
 		float *filterPtr,
-		float *deltaPtr,
-		float *nextLayerDeltaPtr,
-		int filterWidth, int filterHeight,
-		int filterDepth,
-		int filterSliceSize, // one layer of filter volume, fW * fH
-		int filterSize, // one filter volume, fW * fH * inputDepth
+		float *thisDeltaPtr,
+		float *inputDeltaPtr,
+		float *inputWeightedPtr,
+		int filterCount,
 		int inputSliceSize, // one layer of input data, e.g. one channel of an RGB image
-		int inputWidth,
-		int outputSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
-		int filtersPerRow,
+		int inputPaddedSliceSize, // same, but accounting for possible padding
+		int padding,
+		int inputWidth, int inputHeight,
+		int filterWidth, int filterHeight,
+		int filterSliceSize, // one layer of filter volume, fW * fH
+		int outputWidth, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
 		int horStride, int verStride,
-		int thisLayerSize
+		int prevLayerSize
 		)
 	{
 		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
 			+ blockDim.x * blockIdx.x				//blocks preceeding current block
 			+ threadIdx.x;
 
-		if (idx < thisLayerSize)
+		if (idx < prevLayerSize)
 		{
-			int filterIdx = idx / outputSize;
-
-			int inputTileX = (idx % outputSize) % filtersPerRow;
-			int inputTileY = (idx % outputSize) / filtersPerRow;
-
-
-			float result = 0;
-
-			for (size_t z = 0; z < filterDepth; z++) // Z
+			float delta = 0;
+			for (size_t filterIdx = 0; filterIdx < filterCount; filterIdx++)
 			{
-				int y = inputTileY * verStride;
-				for (size_t j = 0; j < filterHeight; j++) // Y
+				int currentDepth = idx / inputSliceSize; // currentZ
+
+				int weightDepthShift = currentDepth * filterSliceSize;
+				int deltaDepthShift = currentDepth * outputSliceSize;
+
+				// index in the current slice (ignoring depth), accounting for padding
+				int rowIdx = (idx % inputSliceSize) / inputWidth;
+				int currentIdx = (idx % inputSliceSize) + (2 * padding * padding) + (padding * inputWidth) + padding + (padding * padding * rowIdx);
+
+				int paddedWidth = padding + inputWidth + padding;
+				int paddedHeight = padding + inputHeight + padding;
+				int currentX = currentIdx % paddedWidth;
+				int currentY = currentIdx / paddedWidth;
+
+				int filterX = 0;
+				int filterY = 0;
+				// cycle filter through the whole (virtually padded) image
+				for (int j = 0; filterY + filterHeight <= paddedHeight; j++, filterY += verStride)
 				{
-					int x = inputTileX * horStride;
-					for (size_t i = 0; i < filterWidth; i++) // X
+					for (int i = 0; filterX + filterWidth <= paddedWidth; i++, filterX += horStride)
 					{
-						result +=
-							filterPtr[filterSize * filterIdx + z * filterSliceSize + indexFromXY(filterWidth - 1 - i, filterHeight - 1 - j, filterWidth)] *
-							nextLayerDeltaPtr[z * inputSliceSize + indexFromXY(x, y, inputWidth)];
-						++x;
+						if ( // check if the current neuron is in the filter's receptive field
+							filterX <= currentX && filterX + filterWidth > currentX &&
+							filterY <= currentY && filterY + filterHeight > currentY )
+						{
+							// identify the proper filter part (weight)
+							int weightIdx = weightDepthShift + indexFromXY(currentX - filterX, currentY - filterY, filterWidth);
+							// identify the proper output neuron (delta)
+							int deltaIdx = deltaDepthShift + j * outputWidth + i;
+							delta += filterPtr[weightIdx] * thisDeltaPtr[deltaIdx];
+						}
 					}
-					++y;
 				}
 			}
 
-			deltaPtr[idx] = result;
+			// multiply by derivative (if there is an activation function)
+			delta *= EvaluateDerivative(inputActFunc, inputWeightedPtr[idx]);
+			// .
+
+			
+			inputDeltaPtr[idx] = delta;
 
 		}
+	}
+
+	__global__ void ConvolutionUpdateWeightsKernel(
+
+		)
+	{
+
+
+
 	}
 
 	__global__ void PadImageKernel(
