@@ -19,7 +19,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using YAXLib;
 
-namespace SoundWorld
+namespace GoodAI.SoundWorld
 {
     /// <author>Martin Hyben</author>
     /// <meta>mv</meta>
@@ -62,8 +62,6 @@ namespace SoundWorld
         [YAXSerializableField]
         protected string m_InputPathAudio;
         [YAXSerializableField]
-        protected string m_InputPathTranscription;
-        [YAXSerializableField]
         protected string m_InputPathCorpus;
         [YAXSerializableField]
         protected FeatureType m_FeaturesType;
@@ -83,28 +81,13 @@ namespace SoundWorld
                     MyLog.ERROR.WriteLine("Not supported file type!");
                     return;
                 }
-                m_InputPathAudio = value;
-                // if single selected, reset previous corpus selections
+                
+                // if single selected, set inputType to User defined
+                m_UserInput = InputTypeEnum.UserDefined;
+                // andreset previous corpus selections
                 m_InputPathCorpus = "";
-            }
-        }
 
-        [Description("Path to input transcription file")]
-        [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
-        [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public string UserDefinedTranscription
-        {
-            get { return m_InputPathTranscription; }
-            set
-            {
-                if (value != "" && Path.GetExtension(value) != ".phn")
-                {
-                    MyLog.ERROR.WriteLine("Not supported file type!");
-                    return;
-                }
-                m_InputPathTranscription = value;
-                // if single selected, reset previous corpus selections
-                m_InputPathCorpus = "";
+                m_InputPathAudio = value;
             }
         }
 
@@ -117,9 +100,10 @@ namespace SoundWorld
             set
             {
                 m_InputPathCorpus = value;
-                // if corpus selected, reset single audio selections
+                // andreset previous corpus selections
                 m_InputPathAudio = "";
-                m_InputPathTranscription = "";
+                // if single selected, set inputType to User defined
+                m_UserInput = InputTypeEnum.UserDefined;
             }
         }
 
@@ -134,18 +118,16 @@ namespace SoundWorld
                 switch (value)
                 {
                     case InputTypeEnum.SampleSound:
-                        m_UserInput = InputTypeEnum.SampleSound;
-
                         UserDefinedAudio = "";
-                        UserDefinedTranscription = "";
                         InputPathCorpus = "";
+
+                        m_UserInput = InputTypeEnum.SampleSound;
                         break;
                     case InputTypeEnum.Microphone:
-                        m_UserInput = InputTypeEnum.Microphone;
-
                         UserDefinedAudio = "";
-                        UserDefinedTranscription = "";
                         InputPathCorpus = "";
+
+                        m_UserInput = InputTypeEnum.Microphone;
                         break;
                     case InputTypeEnum.UserDefined:
                         if (m_InputPathAudio != "" || m_InputPathCorpus != "")
@@ -174,7 +156,7 @@ namespace SoundWorld
         #region Features
         [Description("Number of features to extract")]
         [MyBrowsable, Category("Features")]
-        [YAXSerializableField(DefaultValue = 1), YAXElementFor("Features")]
+        [YAXSerializableField(DefaultValue = 4096), YAXElementFor("Features")]
         public int FeaturesCount  { get; set; }
 
         [Description("Type of features")]
@@ -199,11 +181,6 @@ namespace SoundWorld
                         break;
                     case FeatureType.LPC:
                         FeaturesCount = 10;
-
-                        float[] input = new float[50];
-                        for (int i = 0; i < 50; i++)
-                            input[i] = i+1;
-                        //float[] lpc = LPC.Compute(input, 10);
                         break;
                 }
             }
@@ -233,11 +210,11 @@ namespace SoundWorld
             [YAXSerializableField(DefaultValue = 1)]
             public int ExpositionTime { get; set; }
 
-            private WaveReader m_wavReader;
+            private WavPlayer m_wavReader;
             private int m_currentCorpusFile = 0;
 
             string[] audio;
-            string[] transcr;
+            //string[] transcr;
             private short[] m_InputData;
             private long m_position = 0;
 
@@ -259,7 +236,7 @@ namespace SoundWorld
                         switch (Owner.m_UserInput)
                         {
                             case InputTypeEnum.SampleSound:
-                                m_wavReader = new WaveReader(SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
+                                m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 break;
                             case InputTypeEnum.Microphone:
@@ -272,17 +249,16 @@ namespace SoundWorld
                                 if (Owner.m_InputPathCorpus != "")
                                 {
                                     audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
-                                    transcr = Directory.GetFiles(Owner.m_InputPathCorpus, "*.txt");
 
-                                    m_wavReader = new WaveReader(audio[m_currentCorpusFile], -1, 4096);
-                                    m_wavReader.AttachTranscriptionFile(transcr[m_currentCorpusFile]);
+                                    m_wavReader = new WavPlayer(audio[m_currentCorpusFile], -1, 4096);
+                                    AttachTranscriptFileIfExists(audio[m_currentCorpusFile]);
                                     m_currentCorpusFile = 1;
                                     m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 }
                                 else
                                 {
-                                    m_wavReader = new WaveReader(Owner.m_InputPathAudio, -1, 4096);
-                                    m_wavReader.AttachTranscriptionFile(Owner.m_InputPathTranscription);
+                                    m_wavReader = new WavPlayer(Owner.m_InputPathAudio, -1, 4096);
+                                    AttachTranscriptFileIfExists(Owner.m_InputPathAudio);
                                     m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 }
                                 
@@ -353,7 +329,7 @@ namespace SoundWorld
                     switch (Owner.m_UserInput)
                     {
                         case InputTypeEnum.SampleSound:
-                            m_wavReader = new WaveReader(SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
+                            m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
                             m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                             break;
                         case InputTypeEnum.Microphone:
@@ -366,17 +342,16 @@ namespace SoundWorld
                             if (Owner.m_InputPathCorpus != null)
                             {
                                 audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
-                                transcr = Directory.GetFiles(Owner.m_InputPathCorpus, "*.txt");
 
-                                m_wavReader = new WaveReader(audio[m_currentCorpusFile], -1, 4096);
-                                m_wavReader.AttachTranscriptionFile(transcr[m_currentCorpusFile]);
+                                m_wavReader = new WavPlayer(audio[m_currentCorpusFile], -1, 4096);
+                                AttachTranscriptFileIfExists(audio[m_currentCorpusFile]);
                                 m_currentCorpusFile = 1;
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                             }
                             else
                             {
-                                m_wavReader = new WaveReader(Owner.m_InputPathAudio, -1, 4096);
-                                m_wavReader.AttachTranscriptionFile(Owner.m_InputPathTranscription);
+                                m_wavReader = new WavPlayer(Owner.m_InputPathAudio, -1, 4096);
+                                AttachTranscriptFileIfExists(Owner.m_InputPathAudio);
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                             }
 
@@ -453,7 +428,7 @@ namespace SoundWorld
                 if (m_position >= count)
                     m_position -= (int)(float)(count * 0.1);
                 #region Set Label
-                if (Owner.m_InputPathTranscription != "" || Owner.m_InputPathCorpus != "")
+                if (m_wavReader.HasTranscription)
                 {
                     char c = m_wavReader.GetTranscription((int)m_position, (int)m_position + count);
                     int index = StringToDigitIndexes(c);
@@ -480,8 +455,8 @@ namespace SoundWorld
                     if (eof)
                     {
                         m_position = 0;
-                        m_wavReader = new WaveReader(audio[m_currentCorpusFile], -1, 4096);
-                        m_wavReader.AttachTranscriptionFile(transcr[m_currentCorpusFile]);
+                        m_wavReader = new WavPlayer(audio[m_currentCorpusFile], -1, 4096);
+                        AttachTranscriptFileIfExists(audio[m_currentCorpusFile]);
                         if (m_currentCorpusFile + 1 < audio.Length)
                             m_currentCorpusFile++;
                         else
@@ -558,7 +533,7 @@ namespace SoundWorld
                     data[i] = new Complex(input[i], 0);
 
                 // perform FFT
-                FFT.Compute(data);
+                FourierTransform.FFT(data, FourierTransform.Direction.Forward);
 
                 // convert complex results back to real numbers
                 for (int i = 0; i < data.Length; i++)
@@ -567,6 +542,13 @@ namespace SoundWorld
                 return result;
             }
 
+            private void AttachTranscriptFileIfExists(string audioPath)
+            {
+                string transcrPath = Path.GetFullPath(audioPath) + "\\" +
+                                     Path.GetFileNameWithoutExtension(Owner.m_InputPathAudio) + ".txt";
+                if (File.Exists(transcrPath))
+                    m_wavReader.AttachTranscriptionFile(transcrPath);
+            }
             #region Helper methods
             private int NextPowerOf2(int n)
             {

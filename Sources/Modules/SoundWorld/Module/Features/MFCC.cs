@@ -28,7 +28,7 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 if (mel_scale[i] == 0)
                     continue;
                 else
-                    mel_scale[i] = (float)Math.Log(mel_scale[i]);
+                    mel_scale[i] = (float)Math.Log10(mel_scale[i]);
 
             float[] mfcc = DCT(mel_scale);
 
