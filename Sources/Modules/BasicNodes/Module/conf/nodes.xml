@@ -95,8 +95,7 @@
 
   	<Node type="GoodAI.Modules.LSTM.MyLSTMLayer" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyStackLayer" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
-    <Node type="GoodAI.Modules.Robotic.MyCuriosityProbe" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
-
+    
   </KnownNodes>
   <KnownWorlds>
     <World type="GoodAI.Modules.Motor.MyArmWorld" />
