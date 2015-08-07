@@ -548,7 +548,7 @@ namespace GoodAI.Modules.SoundProcessing
 
             if (data == null)
                 return null;
-
+            
             int index = 0;
             data_out = new Int16[data.Length / 2];
             for (int i = 0; i + 2 <= data.Length; i += 2)
@@ -557,7 +557,6 @@ namespace GoodAI.Modules.SoundProcessing
                 data_out[index] = (Int16)(d == Int16.MinValue ? Int16.MinValue + 1 : d);
                 index++;
             }
-
 
             return data_out;
         }
