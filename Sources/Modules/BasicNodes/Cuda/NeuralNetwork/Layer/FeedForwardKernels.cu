@@ -80,9 +80,8 @@ extern "C"
     __global__ void GaussianForwardSamplingKernel(
 		float* gaussianParamsInputPtr,
 		float* outputPtr,
-		float* neuronInputPtr,
 		float* biasPtr,
-		float* randomUniformPtr,
+		float* randomNormalPtr,
 		int prevLayerSize,
 		int thisLayerSize
 		)
@@ -94,20 +93,16 @@ extern "C"
 
 		if (j < thisLayerSize)
 		{
-			for (int i = 0; i < prevLayerSize / 2; i++)
-			{
-				float mu = gaussianParamsInputPtr[i];
-				float sigma = gaussianParamsInputPtr[i + prevLayerSize / 2];
-				float x = randomUniformPtr[i];
+			float mu = gaussianParamsInputPtr[j];
+			float sigma = gaussianParamsInputPtr[j + prevLayerSize / 2];
+			float x = randomNormalPtr[j];
 				
-				// sample Gaussian from Uniform
-				float t = expf(-pow((x - mu), 2) / powf(sigma, 2));
-	
-				// renormalize to <0, 1>
-				outputPtr[i] = fminf(fmaxf(t, 0), 1);
-			}
+			// sample Gaussian from Uniform
+			//float t = expf(-pow((x - mu), 2) / powf(sigma, 2));
+
+			// renormalize to <0, 1>
+			//outputPtr[j] = fminf(fmaxf(t, 0), 1);
+			outputPtr[j] = sigmoid(mu + x * sigma);
 		}
 	}
-
-
 }

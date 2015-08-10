@@ -151,6 +151,10 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     layer.Neurons
                     );
             }
+            else if (layer.Connection == ConnectionType.GAUSSIAN)
+            {
+                // Gaussian hidden layer just propagates delta, no weight updates
+            }
             else
             {
                 MyLog.ERROR.WriteLine("No method provided to SGD propagate a " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);
@@ -223,8 +227,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             }
             else if (layer.Connection == ConnectionType.GAUSSIAN)
             {
-                // TODO GAUSSIAN
-                MyLog.ERROR.WriteLine("TODO GAUSSIAN connection in " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);
+                // Gaussian hidden layer just propagates delta, no weight updates
             }
             else
             {
