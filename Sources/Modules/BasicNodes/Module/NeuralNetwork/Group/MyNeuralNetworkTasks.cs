@@ -118,10 +118,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MySGDTask() { }
 
         // kernel
-        private MyCudaKernel m_SGDupdateKernel;
+        private MyCudaKernel m_SGDupdateKernel, m_convSGDupdateKernel;
         public override void Init(int nGPU)
         {
             m_SGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "FullyConnectedSGDUpdateKernel");
+            m_convSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionUpdateWeightsKernel");
         }
 
         //Task execution - should be called with a parameter
@@ -154,6 +155,24 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             else if (layer.Connection == ConnectionType.GAUSSIAN)
             {
                 // Gaussian hidden layer just propagates delta, no weight updates
+            }
+            else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
+            {
+                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
+                m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
+                m_convSGDupdateKernel.Run(
+                    Owner.SGD.TrainingRate,
+                    convLayer.Weights,
+                    convLayer.Delta,
+                    convLayer.PaddedImage,
+                    convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding, (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) * (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
+                    convLayer.FilterWidth,
+                    convLayer.FilterWidth * convLayer.FilterHeight,
+                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
+                    );
             }
             else
             {

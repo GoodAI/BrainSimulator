@@ -22,7 +22,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public override ConnectionType Connection
         {
-            get { return ConnectionType.CONVOLUTION; }
+            get { return ConnectionType.ONE_TO_ONE; }
         }
 
         [YAXSerializableField(DefaultValue = 128)]
