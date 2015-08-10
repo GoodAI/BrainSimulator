@@ -37,6 +37,12 @@ namespace GoodAI.Modules.LSTM.Tasks
 
         public override void Execute()
         {
+            if (Owner.ResetSignal.IsIncomingRised())
+            {
+                Owner.CellStates.Fill(0);
+                Owner.Output.Fill(0);
+            }
+
             Owner.CellStates.CopyToMemoryBlock(Owner.PreviousCellStates, 0, 0, Owner.CellStates.Count);
             Owner.Output.CopyToMemoryBlock(Owner.PreviousOutput, 0, 0, Owner.Output.Count);
 
