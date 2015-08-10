@@ -217,6 +217,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             {
                 // allocate memory scaling with number of neurons in layer
                 Delta.Count = Neurons;
+                Delta.ColumnHint = OutputWidth;
                 Bias.Count = FilterCount;
 
                 PreviousBiasDelta.Count = Neurons;
@@ -230,6 +231,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 if (Input != null)
                 {
                     Weights.Count = FilterWidth * FilterHeight * InputDepth * FilterCount;
+                    Weights.ColumnHint = FilterWidth;
 
                     PreviousWeightDelta.Count = Weights.Count;
                 }
@@ -238,6 +240,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     Weights.Count++;
                 if (Bias.Count % 2 != 0)
                     Bias.Count++;
+
+
             }
         }
 

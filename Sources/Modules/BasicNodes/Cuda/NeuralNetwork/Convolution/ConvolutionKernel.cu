@@ -9,6 +9,7 @@
 #include <vector_functions.h>
 #include <math.h>
 #include "..\Activation\ActivationFunction.cu"
+#include <stdio.h>
 
 extern "C"
 {
@@ -163,7 +164,7 @@ extern "C"
 		int filterSliceSize, // one layer of filter volume, fW * fH
 		int filterSize,
 		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
-		int horStride, int verStride,
+		int horStride, int verStride, //float *outputPtr,
 		int weightCount
 		)
 	{
@@ -178,15 +179,16 @@ extern "C"
 			int filterX = (idx % filterSliceSize) % filterWidth;
 			int filterY = (idx % filterSliceSize) / filterWidth;
 			// filterZ:
-			int depth = (idx % filterSize) / filterSliceSize;
+			int inputDepth = (idx % filterSize) / filterSliceSize;
+			int outputDepth = idx / filterSize; // index of the current filter
 
-			int inputDepthShift = depth * inputPaddedSliceSize;
-			int outputDepthShift = depth * outputSliceSize;
+			int inputDepthShift = inputDepth * inputPaddedSliceSize;
+			int outputDepthShift = outputDepth * outputSliceSize;
 			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
 
 			// apply the filter over the whole image (do convolution again) with this one weight
-			int delta = 0;
-
+			float delta = 0;
+			//int a = 0;
 			for (size_t j = 0; j < outputHeight; j++)
 			{
 				for (size_t i = 0; i < outputWidth; i++)
@@ -194,22 +196,52 @@ extern "C"
 					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
 						inputPaddedPtr[
 							inputDepthShift +
-							j * verStride * inputPaddedWidth +
-							i * horStride +
-							filterInputShift
-					];
+								j * verStride * inputPaddedWidth +
+								i * horStride +
+								filterInputShift
+						];
+
+
+			/// DEBUG START --------------------------------------------------------------
+					/*
+					int inputIdx = inputDepthShift +
+						j * verStride * inputPaddedWidth +
+						i * horStride +
+						filterInputShift;
+					
+					
+					float thisDelta = thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+					float input = inputPaddedPtr[inputIdx];
+					delta += thisDelta * input;*/
+
+					
+					/*
+					if (idx == 7)
+					{
+						outputPtr[a] = 10000 * inputIdx + outputDepthShift + i + j * outputWidth;
+						++a;
+					}*/
+
+					/*if ((input > 0.0001f || input < -0.0001f) && (thisDelta > 0.0001f || thisDelta < -0.0001f))
+					{
+						printf("INZ: %.7f, delta: %.7f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", input, thisDelta, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
+					}*/
+
+					/*if (thisDelta > 0.00001f || thisDelta < -0.00001f)
+					{
+						printf("DNZ: %.6f, input: %.6f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", delta, input, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
+					}*/
 
 				}
 			}
-
-
+			/// DEBUG END --------------------------------------------------
 
 			delta *= learningRate;
-			filterPtr[idx] -= delta;
-
-
-
-
+			if (delta != 0)
+			{
+				filterPtr[idx] -= delta;
+			}
+			
 		}
 
 
