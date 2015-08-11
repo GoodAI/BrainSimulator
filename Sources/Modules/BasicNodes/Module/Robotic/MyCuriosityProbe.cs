@@ -145,6 +145,10 @@ namespace GoodAI.Modules.Robotic
         [YAXSerializableField(DefaultValue = 0.01f), YAXElementFor("Behavior")]
         public float NoiseLevel { get; set; }
 
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Behavior")]
+        public float ProbabilityOfCollectingCommand { get; set; }
+
         protected List<Pattern> m_ActualData;
         protected int m_ActTime;
         protected Random m_Rnd;
@@ -224,7 +228,10 @@ namespace GoodAI.Modules.Robotic
             //trigger new command if needed
             if(ShouldTriggerAnother())
             {
-                Owner.generateTask.AddRawData(m_ActualData);
+                if (ProbabilityOfCollectingCommand >= m_Rnd.NextDouble())
+                {
+                    Owner.generateTask.AddRawData(m_ActualData);
+                }
 
                 m_ActTime = 0;
                 m_NoStateChangeTime = 0;
@@ -333,6 +340,10 @@ namespace GoodAI.Modules.Robotic
         [YAXSerializableField(DefaultValue = 0.1f), YAXElementFor("Behavior")]
         public float HardExamplesFraction { get; set; }
 
+        [MyBrowsable, Category("Behavior")]
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("Behavior")]
+        public int MaxTrainingCommands { get; set; }
+
         public struct OneShotPattern
         {
             public float[] State;
@@ -368,7 +379,10 @@ namespace GoodAI.Modules.Robotic
             {
                 throw new Exception("repeated addition of raw data to " + this.ToString() + "!");
             }
-            m_NewRawData.AddRange(data);
+            if (MaxTrainingCommands == 0 || MaxTrainingCommands > m_TrainingData.Count)
+            {
+                m_NewRawData.AddRange(data);
+            }
         }
 
         public override void Init(int nGPU)
