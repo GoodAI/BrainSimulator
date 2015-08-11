@@ -9,6 +9,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Core.Signals;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.LSTM.Tasks;
@@ -55,6 +56,10 @@ namespace GoodAI.Modules.LSTM
         MyLSTMInitLayerTask initLayerTask { get; set; }
         MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
         MyLSTMUpdateWeightsTask updateWeightsTask { get; set; }
+
+        //Signals
+        public MyResetSignal ResetSignal { get; private set; }
+        public class MyResetSignal : MySignal { }
 
         // Memory blocks
         public MyMemoryBlock<float> CellStates { get; set; }

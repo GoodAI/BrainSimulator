@@ -60,4 +60,26 @@ extern "C"
 		if (i < layerSize)
 			prevDeltaPtr[i] += thisDeltaPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]); // batch learning, remember to initialize delta
 	}
+
+
+    __global__ void GaussianSamplingDeltaKernel(
+		float* inputPtr,
+		float* outputPtr,
+		float* prevDeltaPtr,
+		float* thisDeltaPtr,
+		float* randomNormalPtr,
+		int thisLayerSize
+		)
+	{
+		// i: prev layer neuron id
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < thisLayerSize)
+		{
+			prevDeltaPtr[i] += thisDeltaPtr[i] * sigmoid_derivative(outputPtr[i]);
+			prevDeltaPtr[2 * i] += thisDeltaPtr[i] * randomNormalPtr[i] * sigmoid_derivative(outputPtr[i]);
+		}
+	}
 }

@@ -9,6 +9,7 @@
 #include <vector_functions.h>
 #include <math.h>
 #include "..\Activation\ActivationFunction.cu"
+#include <stdio.h>
 
 extern "C"
 {
@@ -74,8 +75,8 @@ extern "C"
 
 			result += biasPtr[filterIdx];
 
-			outputWeightedPtr[idx] = Evaluate(activationFunction, result);
-			outputPtr[idx] = result;
+			outputWeightedPtr[idx] = result;
+			outputPtr[idx] = Evaluate(activationFunction, result);
 
 		}
 	}
@@ -145,21 +146,106 @@ extern "C"
 				}
 			}
 
-			// multiply by derivative (if there is an activation function)
 			delta *= EvaluateDerivative(inputActFunc, inputWeightedPtr[idx]);
-			// .
 
-			
+			// NO batch learning -> might this be a problem?
 			inputDeltaPtr[idx] = delta;
 
 		}
 	}
 
 	__global__ void ConvolutionUpdateWeightsKernel(
-
+		float learningRate,
+		float *filterPtr,
+		float *biasPtr,
+		float *thisDeltaPtr,
+		float *inputPaddedPtr,
+		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
+		int filterWidth,
+		int filterSliceSize, // one layer of filter volume, fW * fH
+		int filterSize,
+		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
+		int horStride, int verStride, //float *outputPtr,
+		int weightCount
 		)
 	{
+		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
 
+		if (idx < weightCount)
+		{
+			// determine the exact weight to be updated (one thread corresponds to exactly one weight)
+			// index of the weight inside the filter:
+			int filterX = (idx % filterSliceSize) % filterWidth;
+			int filterY = (idx % filterSliceSize) / filterWidth;
+			// filterZ:
+			int inputDepth = (idx % filterSize) / filterSliceSize;
+			int outputDepth = idx / filterSize; // index of the current filter
+
+			int inputDepthShift = inputDepth * inputPaddedSliceSize;
+			int outputDepthShift = outputDepth * outputSliceSize;
+			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
+
+			// apply the filter over the whole image (do convolution again) with this one weight
+			float delta = 0;
+			//int a = 0;
+			for (size_t j = 0; j < outputHeight; j++)
+			{
+				for (size_t i = 0; i < outputWidth; i++)
+				{
+					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+						inputPaddedPtr[
+							inputDepthShift +
+								j * verStride * inputPaddedWidth +
+								i * horStride +
+								filterInputShift
+						];
+
+
+			/// DEBUG START --------------------------------------------------------------
+					/*
+					int inputIdx = inputDepthShift +
+						j * verStride * inputPaddedWidth +
+						i * horStride +
+						filterInputShift;
+					
+					
+					float thisDelta = thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+					float input = inputPaddedPtr[inputIdx];
+					delta += thisDelta * input;*/
+
+					
+					/*
+					if (idx == 7)
+					{
+						outputPtr[a] = 10000 * inputIdx + outputDepthShift + i + j * outputWidth;
+						++a;
+					}*/
+
+					/*if ((input > 0.0001f || input < -0.0001f) && (thisDelta > 0.0001f || thisDelta < -0.0001f))
+					{
+						printf("INZ: %.7f, delta: %.7f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", input, thisDelta, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
+					}*/
+
+					/*if (thisDelta > 0.00001f || thisDelta < -0.00001f)
+					{
+						printf("DNZ: %.6f, input: %.6f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", delta, input, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
+					}*/
+
+				}
+			}
+			/// DEBUG END --------------------------------------------------
+
+			delta *= learningRate;
+			if (delta != 0)
+			{
+				filterPtr[idx] -= delta;
+				// update bias
+				biasPtr[idx / filterSize] -= delta;
+			}
+			
+		}
 
 
 	}
