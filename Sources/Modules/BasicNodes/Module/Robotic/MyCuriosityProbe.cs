@@ -605,7 +605,7 @@ namespace GoodAI.Modules.Robotic
         {
             get
             {
-                return exploreTask.ExplorationType.ToString();
+                return "Curiosity Probe"; // exploreTask.ExplorationType.ToString();
             }
         }
 
