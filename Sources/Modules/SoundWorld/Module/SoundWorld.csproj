@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CudaFFT">
-      <HintPath>..\..\BrainSimInternal\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
     </Reference>
     <Reference Include="GoodAI.Platform.Core">
       <HintPath>C:\Program Files\GoodAI\Brain Simulator\GoodAI.Platform.Core.dll</HintPath>
