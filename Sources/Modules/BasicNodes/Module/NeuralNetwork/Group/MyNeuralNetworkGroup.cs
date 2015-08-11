@@ -47,7 +47,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         //Memory Blocks
         public List<MyNode> SortedChildren;
-        internal MyAbstractLayer FirstLayer;
+        public MyAbstractLayer FirstLayer;
         internal MyAbstractLayer LastLayer;
         internal int TotalWeights;
 

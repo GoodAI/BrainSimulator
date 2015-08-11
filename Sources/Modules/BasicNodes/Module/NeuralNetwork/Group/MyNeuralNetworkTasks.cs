@@ -152,9 +152,13 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     layer.Neurons
                     );
             }
+            else if (layer.Connection == ConnectionType.GAUSSIAN)
+            {
+                // Gaussian hidden layer just propagates delta, no weight updates
+            }
             else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
             {
-                MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
+                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
                 m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
                 m_convSGDupdateKernel.Run(
                     Owner.SGD.TrainingRate,
@@ -170,7 +174,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     convLayer.HorizontalStride, convLayer.VerticalStride,
                     convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
                     );
-
             }
             else
             {
@@ -244,8 +247,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             }
             else if (layer.Connection == ConnectionType.GAUSSIAN)
             {
-                // TODO GAUSSIAN
-                MyLog.ERROR.WriteLine("TODO GAUSSIAN connection in " + layer.Connection + " connected MyAbstractWeightLayer in " + Owner);
+                // Gaussian hidden layer just propagates delta, no weight updates
             }
             else
             {
