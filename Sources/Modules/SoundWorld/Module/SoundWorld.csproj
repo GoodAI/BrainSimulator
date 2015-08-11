@@ -33,14 +33,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CudaFFT">
-      <HintPath>..\..\BrainSimInternal\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
     </Reference>
     <Reference Include="GoodAI.Platform.Core">
-      <HintPath>C:\Program Files\GoodAI\Brain Simulator\GoodAI.Platform.Core.dll</HintPath>
+      <HintPath>..\..\..\Platform\Core\bin\Debug\GoodAI.Platform.Core.dll</HintPath>
     </Reference>
     <Reference Include="ManagedCuda, Version=7.0.27.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\GoodAI\Brain Simulator\ManagedCuda.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\ManagedCuda.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,7 +53,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="YAXLib">
-      <HintPath>C:\Program Files\GoodAI\Brain Simulator\YAXLib.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
