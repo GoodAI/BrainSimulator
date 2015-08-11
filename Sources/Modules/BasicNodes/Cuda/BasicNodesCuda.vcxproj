@@ -46,6 +46,7 @@
     <CudaCompile Include="Motor\OutputDeltaKernel.cu" />
     <CudaCompile Include="Motor\PIDControllerKernel.cu" />
     <CudaCompile Include="Motor\RTRLDerivativeKernel.cu" />
+    <CudaCompile Include="NeuralNetwork\Activation\ActivationFunction.cu" />
     <CudaCompile Include="NeuralNetwork\Convolution\ConvolutionKernel.cu" />
     <CudaCompile Include="NeuralNetwork\Convolution\PoolingKernel.cu" />
     <CudaCompile Include="NeuralNetwork\Layer\DeltaKernels.cu" />

@@ -70,14 +70,12 @@ extern "C"
 
 	__device__ float rectifiedLinearUnit(float x)
 	{
-		if (x > 0.0f)
-			return x;
-		return 0.0f;
+		return (x > 0.0f) * x;
 	}
 
 	__device__ float rectifiedLinearUnit_derivative(float x)
 	{
-		return x > 0.0f;
+		return (x > 0.0f);
 	}
 
 	__device__ float RBMbinary(float x, float random)

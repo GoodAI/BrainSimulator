@@ -81,7 +81,11 @@ namespace GoodAI.Modules.Retina
             public override void Execute()
             {
                 Owner.Output.Fill(SafeBounds_FillInValue);
-                m_kernel.Run(Owner.Input, Owner.Output, Owner.PupilControl, SafeBounds ? 1 : 0, inputWidth, inputHeight, outputWidth, outputHeight);
+                if (Owner.Input != null)
+                    m_kernel.Run(Owner.Input, Owner.Output, Owner.PupilControl, SafeBounds ? 1 : 0, inputWidth,
+                        inputHeight, outputWidth, outputHeight);
+                else
+                    MyLog.ERROR.WriteLine("Owner.Input is null.");
             }
         }
 
