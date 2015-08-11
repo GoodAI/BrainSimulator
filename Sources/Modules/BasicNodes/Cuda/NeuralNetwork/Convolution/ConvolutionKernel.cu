@@ -202,6 +202,10 @@ extern "C"
 								filterInputShift
 						];
 
+					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
+					if (idx % filterSize == 0)
+						biasPtr[idx / filterSize] -= learningRate * thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+
 
 			/// DEBUG START --------------------------------------------------------------
 					/*
@@ -241,8 +245,6 @@ extern "C"
 			if (delta != 0)
 			{
 				filterPtr[idx] -= delta;
-				// update bias
-				biasPtr[idx / filterSize] -= delta;
 			}
 			
 		}
