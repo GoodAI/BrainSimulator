@@ -159,6 +159,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 m_convSGDupdateKernel.Run(
                     Owner.SGD.TrainingRate,
                     convLayer.Weights,
+                    convLayer.Bias,
                     convLayer.Delta,
                     convLayer.PaddedImage,
                     convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding, (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) * (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),

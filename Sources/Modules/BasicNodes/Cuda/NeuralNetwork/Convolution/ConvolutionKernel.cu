@@ -157,6 +157,7 @@ extern "C"
 	__global__ void ConvolutionUpdateWeightsKernel(
 		float learningRate,
 		float *filterPtr,
+		float *biasPtr,
 		float *thisDeltaPtr,
 		float *inputPaddedPtr,
 		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
@@ -240,6 +241,8 @@ extern "C"
 			if (delta != 0)
 			{
 				filterPtr[idx] -= delta;
+				// update bias
+				biasPtr[idx / filterSize] -= delta;
 			}
 			
 		}
