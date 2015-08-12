@@ -104,11 +104,14 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         {
             // pointer to previous layer
             MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyAbstractLayer nextLayer = Owner.NextLayer;
 
             if (previousLayer != null)
             {
-                // reset delta
-                previousLayer.Delta.Fill(0);
+                // reset delta only if next is not Gaussian HACK.
+                // (Gaussian layer already reseted delta and filled with regularization deltas)
+                if (nextLayer==null || !((nextLayer is MyGaussianHiddenLayer) && (nextLayer.DeltaBackTask as MyGaussianBackDeltaTask).Regularize))
+                    previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr;

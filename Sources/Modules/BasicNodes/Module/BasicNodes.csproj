@@ -119,6 +119,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
+    <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />

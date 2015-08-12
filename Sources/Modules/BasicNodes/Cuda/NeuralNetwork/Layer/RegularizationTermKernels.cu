@@ -9,6 +9,9 @@
 #include <vector_functions.h>
 #include <math.h>
 
+// Gaussian regularization coefficient
+__constant__ float RegularizationCoefficient;
+
 extern "C"
 {
 	__global__ void L1TermKernel(
@@ -110,41 +113,41 @@ extern "C"
 			*regularizationPtr = partialSum[0];
 	}
 
-	__global__ void GaussianRegularizationDeltaKernel(
-		float* prevLayerOutputPtr,
-		int prevLayerOutputCount,
-		float* prevLayerInputPtr,
-		int prevLayerInputCount,
-		float* prevLayerWeights,
-		float* prevPrevLayerDelta
-		)
-	{
-		// i: previous layer output (which is mu, sigma params)
-		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x * blockIdx.x				//blocks preceeding current block
-			+ threadIdx.x;
-
-		if (i < prevLayerOutputCount / 2)
-		{
-			// first half are mu params
-			for (int j = 0; j < prevLayerInputCount; j++)
-			{
-				float w = prevLayerWeights[j * prevLayerOutputCount];
-				float x_sq = pow(prevLayerInputPtr[j], 2);
-				prevPrevLayerDelta[j * prevLayerOutputCount] += 2 * w * x_sq;
-			}
-		}
-		else if (i < prevLayerOutputCount)
-		{
-			// second half are sigma params
-			for (int j = 0; j < prevLayerInputCount; j++)
-			{
-				float w = prevLayerWeights[j * prevLayerOutputCount];
-				float x_sq = pow(prevLayerInputPtr[j], 2);
-				prevPrevLayerDelta[j * prevLayerOutputCount] += 2 * (w * x_sq - 1 / w);
-			}
-		}
-	}
+    __global__ void GaussianRegularizationDeltaKernel(
+            float* prevLayerOutputPtr,
+            int prevLayerOutputCount,
+            float* prevLayerInputPtr,
+            int prevLayerInputCount,
+            float* prevLayerWeights,
+            float* prevPrevLayerDelta
+            )
+    {
+            // i: previous layer output (which is mu, sigma params)
+            int i = blockDim.x * blockIdx.y * gridDim.x     //rows preceeding current row in grid
+                    + blockDim.x * blockIdx.x                               //blocks preceeding current block
+                    + threadIdx.x;
+ 
+            if (i < prevLayerOutputCount / 2)
+            {
+                    // first half are mu params
+                    for (int j = 0; j < prevLayerInputCount; j++)
+                    {
+                            float w = prevLayerWeights[j * prevLayerOutputCount];
+                            float x_sq = pow(prevLayerInputPtr[j], 2);
+                            prevPrevLayerDelta[j] += RegularizationCoefficient * w * x_sq;
+                    }
+            }
+            else if (i < prevLayerOutputCount)
+            {
+                    // second half are sigma params
+                    for (int j = 0; j < prevLayerInputCount; j++)
+                    {
+                            float w = prevLayerWeights[j * prevLayerOutputCount];
+                            float x_sq = pow(prevLayerInputPtr[j], 2);
+                            prevPrevLayerDelta[j] += RegularizationCoefficient * (w * x_sq - 1 / w);
+                    }
+            }
+    }
 
 	__global__ void DropoutMaskKernel(
 		float *dropoutMaskPtr,
