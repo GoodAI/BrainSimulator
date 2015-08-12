@@ -212,6 +212,10 @@ namespace GoodAI.Modules.Transforms
             [YAXSerializableField(DefaultValue = 10)]
             public int TimePeriod { get; set; }
 
+            [MyBrowsable, Category("Params"), Description("Offset before first copy")]
+            [YAXSerializableField(DefaultValue = 0)]
+            public int TimeOffset { get; set; }
+
             public override void Init(Int32 nGPU)
             {
 
@@ -219,7 +223,7 @@ namespace GoodAI.Modules.Transforms
 
             public override void Execute()
             {
-                if (SimulationStep % TimePeriod == 0)
+                if ((SimulationStep - TimeOffset) % TimePeriod == 0)
                 {
                     Owner.Input.CopyToMemoryBlock(Owner.Output, 0, 0, Owner.InputSize);
                 }
