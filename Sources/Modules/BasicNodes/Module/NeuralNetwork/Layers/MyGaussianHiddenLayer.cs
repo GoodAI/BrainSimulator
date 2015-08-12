@@ -37,6 +37,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> RandomNormal { get; private set; }
         public MyMemoryBlock<float> Regularization { get; private set; }
 
+        public MyMemoryBlock<float> PriorGaussHiddenStatesMean { get; private set; }  // for generation
+        public MyMemoryBlock<float> PriorGaussHiddenStatesSigma { get; private set; }
+
+        public MyMemoryBlock<float> PriorGaussHiddenStatesMin { get; private set; }
+        public MyMemoryBlock<float> PriorGaussHiddenStatesMax { get; private set; }
+
         public override ConnectionType Connection
         {
             get { return ConnectionType.GAUSSIAN; }
@@ -47,30 +53,33 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             base.UpdateMemoryBlocks();
 
-            if (Neurons > 0)
+            if (Input != null && Input.Count > 0)
             {
-                if (Input != null)
-                {
-                    // two parameters (mu, sigma) from previous layer for each neuron
-                    Neurons = Input.Count / 2;
+                // two parameters (mu, sigma) from previous layer for each neuron
+                Neurons = Input.Count / 2;
 
-                    // Random numbers for sampling
-                    RandomNormal.Count = Neurons;
-                    Regularization.Count = 1;
+                // Random numbers for sampling
+                RandomNormal.Count = Neurons;
+                Regularization.Count = 1;
 
-                    // parameter allocations
-                    Weights.Count = 1;
-                    Bias.Count = 1;
+                // parameter allocations
+                Weights.Count = 1;
+                Bias.Count = 1;
 
-                    // SGD allocations
-                    Delta.Count = Neurons;
-                    PreviousWeightDelta.Count = Neurons; // momentum method
-                    PreviousBiasDelta.Count = Neurons; // momentum method
+                // SGD allocations
+                Delta.Count = Neurons;
+                PreviousWeightDelta.Count = Neurons; // momentum method
+                PreviousBiasDelta.Count = Neurons; // momentum method
 
-                    // RMSProp allocations
-                    MeanSquareWeight.Count = Weights.Count;
-                    MeanSquareBias.Count = Bias.Count;
-                }
+                // RMSProp allocations
+                MeanSquareWeight.Count = Weights.Count;
+                MeanSquareBias.Count = Bias.Count;
+
+                // Priors for generation
+                PriorGaussHiddenStatesMean.Count = Input.Count;
+                PriorGaussHiddenStatesSigma.Count = Input.Count;
+                PriorGaussHiddenStatesMin.Count = Input.Count;
+                PriorGaussHiddenStatesMax.Count = Input.Count;
             }
         }
 
@@ -80,11 +89,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
         // Tasks
-        public MyFCUpdateWeightsTask UpdateWeights { get; protected set; }
+        public MyGaussianInitTask InitTask { get; protected set; }
         public virtual void CreateTasks()
         {
             ForwardTask = new MyGaussianForwardTask();
             DeltaBackTask = new MyGaussianBackDeltaTask();
+            InitTask = new MyGaussianInitTask();
         }
 
         // Parameterless constructor
@@ -97,6 +107,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             {
                 return "Gaussian hidden layer";
             }
+        }
+
+        public void ResetPriorStats()
+        {
+            PriorGaussHiddenStatesMax.Fill(float.MinValue);
+            PriorGaussHiddenStatesMin.Fill(float.MaxValue);
         }
     }
 }
