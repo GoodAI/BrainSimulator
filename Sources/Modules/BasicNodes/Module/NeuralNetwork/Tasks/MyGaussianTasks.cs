@@ -45,6 +45,18 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             MyKernelFactory.Instance.GetRandDevice(Owner).GenerateUniform(Owner.RandomNormal.GetDevice(Owner));
             Owner.RandomNormal.CopyToMemoryBlock(Owner.Output, 0, 0, Owner.Output.Count);
 
+            if (Owner.Generate.IsIncomingRised())
+            {
+                (Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate = 0;
+
+                for (int i = 0; i < Owner.Input.Count; i++)
+                {
+                    if (i < Owner.Input.Count / 2) Owner.Input.Host[i] = 0.0f;
+                    else Owner.Input.Host[i] = 1.0f;
+                }
+                Owner.Input.SafeCopyToDevice();
+            }
+
             m_forwardSamplingKernel.SetupExecution(Owner.Neurons);
             m_forwardSamplingKernel.Run(
                 Owner.Input,

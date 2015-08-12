@@ -3,6 +3,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Task;
+using GoodAI.Core.Signals;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +30,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     /// </description>
     public class MyGaussianHiddenLayer : MyAbstractWeightLayer, IMyCustomTaskFactory
     {
+        [MyPersistable]
+        public MyGenerateSignal Generate { get; private set; }
+        public class MyGenerateSignal : MySignal { }
+
         public MyMemoryBlock<float> RandomNormal { get; private set; }
         public MyMemoryBlock<float> Regularization { get; private set; }
 
