@@ -37,9 +37,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> RandomNormal { get; private set; }
         public MyMemoryBlock<float> Regularization { get; private set; }
 
-        public MyMemoryBlock<float> PriorGaussHiddenStatesMean { get; private set; }  // for generation
-        public MyMemoryBlock<float> PriorGaussHiddenStatesSigma { get; private set; }
-
         public MyMemoryBlock<float> PriorGaussHiddenStatesMin { get; private set; }
         public MyMemoryBlock<float> PriorGaussHiddenStatesMax { get; private set; }
 
@@ -76,8 +73,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 MeanSquareBias.Count = Bias.Count;
 
                 // Priors for generation
-                PriorGaussHiddenStatesMean.Count = Input.Count;
-                PriorGaussHiddenStatesSigma.Count = Input.Count;
                 PriorGaussHiddenStatesMin.Count = Input.Count;
                 PriorGaussHiddenStatesMax.Count = Input.Count;
             }

@@ -42,6 +42,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     public class MyGaussianForwardTask : MyAbstractForwardTask<MyGaussianHiddenLayer>
     {
         Random rnd = new Random();
+        float OriginalNeuralNetTrainingRate;
 
         public MyGaussianForwardTask() { }
 
@@ -74,23 +75,28 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.ResetPriorStats();
                 ResetPriorStats = !ResetPriorStats;
             }
+            // another snall HACK, store tr.rate the training rate if it is nonzero..
+            if ((Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate>0)
+            {
+                OriginalNeuralNetTrainingRate = (Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate;
+            }
             // If signal on, do generation, so overwrite the Input
             if (Owner.Generate.IsIncomingRised())
             {
+                Owner.PriorGaussHiddenStatesMin.SafeCopyToHost();
+                Owner.PriorGaussHiddenStatesMax.SafeCopyToHost();
                 (Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate = 0;
-                Owner.PriorGaussHiddenStatesMean.SafeCopyToHost();
-                Owner.PriorGaussHiddenStatesSigma.SafeCopyToHost();
                 for (int i = 0; i < Owner.Input.Count; i++)
                 {
                     double diff = Owner.PriorGaussHiddenStatesMax.Host[i] - Owner.PriorGaussHiddenStatesMin.Host[i];
                     if (i < Owner.Input.Count / 2) Owner.Input.Host[i] = (float)(rnd.NextDouble() * diff + Owner.PriorGaussHiddenStatesMin.Host[i]);
-                    else Owner.Input.Host[i] = 0.0f;
+                    else Owner.Input.Host[i] = 0.01f;
                 }
                 Owner.Input.SafeCopyToDevice();
             }
             else
             {
-                (Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate = 0.15f;
+                (Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate = OriginalNeuralNetTrainingRate;
             }
 
             // FeedForward 
