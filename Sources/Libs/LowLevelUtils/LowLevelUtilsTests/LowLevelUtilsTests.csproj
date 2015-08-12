@@ -55,6 +55,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LowLevelUtilsIface\LowLevelUtilsIface.csproj">
+      <Project>{e4c4daee-79bc-4e37-b316-2b8a87d4052c}</Project>
+      <Name>LowLevelUtilsIface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LowLevelUtils\LowLevelUtils.csproj">
       <Project>{86a2f44d-6850-4878-88ed-abbfbbb92235}</Project>
       <Name>LowLevelUtils</Name>

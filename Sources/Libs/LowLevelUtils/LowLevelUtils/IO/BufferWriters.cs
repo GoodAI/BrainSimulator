@@ -71,15 +71,15 @@ namespace GoodAI.LowLevelUtils.IO
         }
     }
 
-    public class NewBufferWriter : IBufferWriter
+    public class BufferWriter : IBufferWriter
     {
-        private IRawBufferWriter rawWriter;
+        protected IRawBufferWriter rawWriter;
 
-        public NewBufferWriter(IRawBufferWriter rawWriter)
+        public BufferWriter(IRawBufferWriter rawWriter)
         {
             this.rawWriter = rawWriter;
         }
-
+        
         #region IBuffer Writer implementations
         
         public Array Buffer
@@ -110,7 +110,6 @@ namespace GoodAI.LowLevelUtils.IO
         {
             PutInt(Convert.ToInt32(b));
         }
-
 
         #endregion
     }
@@ -154,5 +153,18 @@ namespace GoodAI.LowLevelUtils.IO
 
             buffer[index++] = (float)i;
         }
+    }
+
+    public static class BufferWriterFactory
+    {
+        public static BufferWriter GetFloatWriter()
+        {
+            return new BufferWriter(new RawFloatBufferWriter());
+        }
+
+        public static BufferWriter GetFloatWriter(float[] buffer)
+        {
+            return new BufferWriter(new RawFloatBufferWriter(buffer));
+        }        
     }
 }

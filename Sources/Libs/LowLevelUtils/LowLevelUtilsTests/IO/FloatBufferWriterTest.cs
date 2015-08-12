@@ -10,11 +10,16 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
     {
         const double DELTA = 0.000001;
 
+        private BufferWriter CreateWriter(float[] buffer)
+        {
+            return BufferWriterFactory.GetFloatWriter(buffer);
+        }
+
         [TestMethod]
         public void WritesDouble()
         {
             var floatBuffer = new float[1];
-            var writer = new FloatBufferWriter(floatBuffer);
+            var writer = CreateWriter(floatBuffer);
 
             writer.PutDouble(5.0);
 
@@ -25,7 +30,7 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
         public void WritesTwoDoubles()
         {
             var floatBuffer = new float[2];
-            var writer = new FloatBufferWriter(floatBuffer);
+            var writer = CreateWriter(floatBuffer);
 
             writer.PutDouble(0.0);
             writer.PutDouble(1.0);
@@ -38,7 +43,7 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
         public void WritesFromStartAfterSetBuffer()
         {
             var floatBuffer = new float[5];
-            var writer = new FloatBufferWriter(floatBuffer);
+            var writer = CreateWriter(floatBuffer);
             
             writer.PutDouble(77.7);  // should be overwritten
 
@@ -51,7 +56,7 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
         [TestMethod, ExpectedException(typeof(InvalidOperationException))]
         public void ThrowsInvalidOperationWithoutBuffer()
         {
-            var writer = new FloatBufferWriter();
+            var writer = BufferWriterFactory.GetFloatWriter();
 
             writer.PutDouble(1.0);
         }
@@ -60,7 +65,7 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
         public void WritesTwoInts()
         {
             var floatBuffer = new float[2];
-            var writer = new FloatBufferWriter(floatBuffer);
+            var writer = CreateWriter(floatBuffer);
 
             writer.PutInt(7);
             writer.PutInt(-1);
@@ -73,7 +78,7 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
         public void WritesTwoBoolsAndInt()
         {
             var floatBuffer = new float[3];
-            var writer = new FloatBufferWriter(floatBuffer);
+            var writer = CreateWriter(floatBuffer);
 
             writer.PutBool(true);
             writer.PutBool(false);
