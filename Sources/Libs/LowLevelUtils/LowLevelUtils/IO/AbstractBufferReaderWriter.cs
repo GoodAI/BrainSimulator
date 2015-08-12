@@ -8,14 +8,24 @@ namespace GoodAI.LowLevelUtils.IO
 {
     public abstract class AbstractBufferReaderWriter
     {
-        /// <summary>
-        /// The derived class must set this to reference the typed buffer (presumably float[] or double[])
-        /// </summary>
         protected Array untypedBufferRef = null;
 
         protected int index = 0;
 
-        protected void CheckBufferSpace(int size)
+        public Array Buffer
+        {
+            get { return untypedBufferRef; }
+            set
+            {
+                untypedBufferRef = value;
+                SetTypedBuffer(value);
+                index = 0;
+            }
+        }
+
+        protected abstract void SetTypedBuffer(Array array);
+
+        public void CheckBufferSpace(int size)
         {
             if (untypedBufferRef == null)
                 throw new InvalidOperationException("Somebody didn't bother to set the buffer before use.");

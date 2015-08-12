@@ -32,20 +32,97 @@ namespace GoodAI.LowLevelUtils.IO
         }
     }
 
-    public class FloatBufferWriter : AbstractBufferWriter
+    public class RawFloatBufferWriter : AbstractBufferReaderWriter, IRawBufferWriter
     {
-        public float[] Buffer
+        protected override void SetTypedBuffer(Array array)
         {
-            get { return buffer; }
-            set
-            {
-                buffer = value;
-                index = 0;
-                untypedBufferRef = buffer;
-            }
+            buffer = (float[])array;
         }
 
         private float[] buffer;
+
+        /// <summary>
+        /// The user must set Buffer before use.
+        /// </summary>
+        public RawFloatBufferWriter()
+        { }
+
+        public RawFloatBufferWriter(float[] externalBuffer)
+        {
+            if (externalBuffer == null)
+                throw new ArgumentNullException();
+
+            Buffer = externalBuffer;
+        }
+
+        public void PutDoubleUnchecked(double d)
+        {
+            buffer[index++] = (float)d;
+        }
+
+        public void PutFloatUnchecked(float f)
+        {
+            buffer[index++] = f;
+        }
+
+        public void PutIntUnchecked(int i)
+        {
+            buffer[index++] = (float)i;
+        }
+    }
+
+    public class NewBufferWriter : IBufferWriter
+    {
+        private IRawBufferWriter rawWriter;
+
+        public NewBufferWriter(IRawBufferWriter rawWriter)
+        {
+            this.rawWriter = rawWriter;
+        }
+
+        #region IBuffer Writer implementations
+        
+        public Array Buffer
+        {
+            get { return rawWriter.Buffer; }
+            set { rawWriter.Buffer = value; }
+        }
+
+        public void PutDouble(double d)
+        {
+            rawWriter.CheckBufferSpace(1);
+            rawWriter.PutDoubleUnchecked(d);
+        }
+
+        public void PutFloat(float f)
+        {
+            rawWriter.CheckBufferSpace(1);
+            rawWriter.PutFloatUnchecked(f);
+        }
+
+        public void PutInt(int i)
+        {
+            rawWriter.CheckBufferSpace(1);
+            rawWriter.PutIntUnchecked(i);
+        }
+
+        public void PutBool(bool b)
+        {
+            PutInt(Convert.ToInt32(b));
+        }
+
+
+        #endregion
+    }
+
+    public class FloatBufferWriter : AbstractBufferWriter
+    {
+        private float[] buffer;
+
+        protected override void SetTypedBuffer(Array array)
+        {
+            buffer = (float[])array;
+        }
 
         /// <summary>
         /// The user must set Buffer before use.
