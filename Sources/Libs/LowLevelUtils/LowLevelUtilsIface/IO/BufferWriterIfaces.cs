@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GoodAI.LowLevelUtils.IO
 {
     /// <summary>
-    /// Low level buffer writer that deals with convertion to the destination type (presumably float or double)
+    /// Low level buffer writer that deals with conversion to the destination type (presumably float or double)
     /// </summary>
     public interface IRawBufferWriter
     {

@@ -6,56 +6,103 @@ using System.Threading.Tasks;
 
 namespace GoodAI.LowLevelUtils.IO
 {
-    public abstract class AbstractBufferReader : AbstractBufferReaderWriter
+    /// <summary>
+    /// Raw buffer reader for float array. Handles the type conversion.
+    /// 
+    /// Intended to be used only as a low level layer for higher level buffer readers.
+    /// </summary>
+    public class RawFloatBufferReader : AbstractRawFloatBufferReaderWriter, IRawBufferReader
     {
-        protected static int RoundToNearestInt(double d)
+        /// <summary>
+        /// The user must set Buffer before use.
+        /// </summary>
+        public RawFloatBufferReader(): base()
+        {}
+
+        public RawFloatBufferReader(float[] externalBuffer): base(externalBuffer)
+        {}
+
+        public double ReadDoubleUnchecked()
         {
-            return Convert.ToInt32(Math.Round(d, MidpointRounding.AwayFromZero));
+            return (double)buffer[index++];
         }
 
-        /// <summary>
-        /// Reads a double, does not check buffer boundaries.
-        /// </summary>
-        /// <returns>A double value of the next item</returns>
-        protected abstract double ReadDoubleUnchecked();
+        public float ReadFloatUnchecked()
+        {
+            return buffer[index++];
+        }
+
+        public int ReadIntUnchecked()
+        {
+            return RoundToNearestInt(ReadFloatUnchecked());
+        }
+
+        protected static int RoundToNearestInt(float f)
+        {
+            return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
+        }
+    }
+
+    /// <summary>
+    /// Buffer reader that can read basic value types from a typed buffer.
+    /// The type of the target array is determinded by the IRawBufferReader implementation used.
+    /// </summary>
+    public class BufferReader : IBufferReader
+    {
+        protected IRawBufferReader rawReader;
+
+        public BufferReader(IRawBufferReader rawReader)
+        {
+            this.rawReader = rawReader;
+        }
+
+        #region IBufferReader implementation
+
+        public Array Buffer
+        {
+            get { return rawReader.Buffer; }
+            set { rawReader.Buffer = value; }
+        }
 
         public double ReadDouble()
         {
-            CheckBufferSpace(1);
+            rawReader.CheckBufferSpace(1);
+            return rawReader.ReadDoubleUnchecked();
+        }
 
-            return ReadDoubleUnchecked();
+        public float ReadFloat()
+        {
+            rawReader.CheckBufferSpace(1);
+            return rawReader.ReadFloatUnchecked();
         }
 
         public int ReadInt()
         {
-            return RoundToNearestInt(ReadDouble());  // NOTE: converts float to double unnecessarily
+            rawReader.CheckBufferSpace(1);
+            return rawReader.ReadIntUnchecked();
         }
 
         public bool ReadBool()
         {
             return Convert.ToBoolean(ReadInt());
         }
+
+        #endregion
     }
 
-    public class FloatBufferReader : AbstractBufferReader
+    /// <summary>
+    /// Provides easy construction of buffer readers for concrete types.
+    /// </summary>
+    public static class BufferReaderFactory
     {
-        private float[] buffer;
-
-        protected override void SetTypedBuffer(Array array)
+        public static BufferReader GetFloatReader()
         {
-            buffer = (float[])array;
+            return new BufferReader(new RawFloatBufferReader());
         }
 
-        /// <summary>
-        /// The user must set Buffer before use.
-        /// </summary>
-        public FloatBufferReader()
+        public static BufferReader GetFloatReader(float[] buffer)
         {
-        }
-
-        protected override double ReadDoubleUnchecked()
-        {
-            return (double)buffer[index++];
+            return new BufferReader(new RawFloatBufferReader(buffer));
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoodAI.LowLevelUtils.IO
 {
-    public abstract class AbstractBufferReaderWriter
+    public abstract class AbstractRawBufferReaderWriter
     {
         protected Array untypedBufferRef = null;
 
@@ -33,6 +33,30 @@ namespace GoodAI.LowLevelUtils.IO
             if (index + size > untypedBufferRef.Length)
                 throw new IndexOutOfRangeException(
                     "There is no space for " + size + " additional items in the buffer.");
+        }
+    }
+
+    public abstract class AbstractRawFloatBufferReaderWriter : AbstractRawBufferReaderWriter
+    {
+        protected override void SetTypedBuffer(Array array)
+        {
+            buffer = (float[])array;
+        }
+
+        protected float[] buffer;
+
+        /// <summary>
+        /// The user must set Buffer before use.
+        /// </summary>
+        public AbstractRawFloatBufferReaderWriter()
+        { }
+
+        public AbstractRawFloatBufferReaderWriter(float[] externalBuffer)
+        {
+            if (externalBuffer == null)
+                throw new ArgumentNullException();
+
+            Buffer = externalBuffer;
         }
     }
 }
