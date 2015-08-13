@@ -11,28 +11,16 @@ namespace GoodAI.LowLevelUtils.IO
     /// 
     /// Intended to be used only as a low level layer for higher level buffer readers.
     /// </summary>
-    public class RawFloatBufferReader : AbstractBufferReaderWriter, IRawBufferReader
+    public class RawFloatBufferReader : AbstractRawFloatBufferReaderWriter, IRawBufferReader
     {
-        protected override void SetTypedBuffer(Array array)
-        {
-            buffer = (float[])array;
-        }
-
-        private float[] buffer;
-
         /// <summary>
         /// The user must set Buffer before use.
         /// </summary>
-        public RawFloatBufferReader()
-        { }
+        public RawFloatBufferReader(): base()
+        {}
 
-        public RawFloatBufferReader(float[] externalBuffer)
-        {
-            if (externalBuffer == null)
-                throw new ArgumentNullException();
-
-            Buffer = externalBuffer;
-        }
+        public RawFloatBufferReader(float[] externalBuffer): base(externalBuffer)
+        {}
 
         public double ReadDoubleUnchecked()
         {

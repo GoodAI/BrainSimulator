@@ -35,4 +35,28 @@ namespace GoodAI.LowLevelUtils.IO
                     "There is no space for " + size + " additional items in the buffer.");
         }
     }
+
+    public abstract class AbstractRawFloatBufferReaderWriter : AbstractBufferReaderWriter
+    {
+        protected override void SetTypedBuffer(Array array)
+        {
+            buffer = (float[])array;
+        }
+
+        protected float[] buffer;
+
+        /// <summary>
+        /// The user must set Buffer before use.
+        /// </summary>
+        public AbstractRawFloatBufferReaderWriter()
+        { }
+
+        public AbstractRawFloatBufferReaderWriter(float[] externalBuffer)
+        {
+            if (externalBuffer == null)
+                throw new ArgumentNullException();
+
+            Buffer = externalBuffer;
+        }
+    }
 }
