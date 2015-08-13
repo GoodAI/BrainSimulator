@@ -86,7 +86,13 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             {
                 Owner.Output.SafeCopyToHost();
                 float expSum = Owner.Output.Host.Sum();
-                MyLog.INFO.WriteLine(expSum);
+
+                expSum = Math.Min(expSum, 1e6f);
+
+                if (expSum > 2 * Owner.Neurons)
+                    MyLog.INFO.WriteLine(expSum);
+
+                
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
                 m_softmaxKernel.Run(
                     Owner.Output,
