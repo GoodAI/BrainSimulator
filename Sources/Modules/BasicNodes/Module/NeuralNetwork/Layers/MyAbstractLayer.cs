@@ -32,6 +32,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         GAUSSIAN,
         RATIONAL_SIGMOID,
         RELU,
+        SOFTMAX,
         TANH
     }
 

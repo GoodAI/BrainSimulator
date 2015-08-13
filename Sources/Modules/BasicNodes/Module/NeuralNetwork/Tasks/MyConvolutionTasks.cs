@@ -98,6 +98,11 @@ namespace CustomModels.NeuralNetwork.Tasks
         {
             if (Owner.ZeroPadding <= 0) return;
 
+            if (Owner.Input == null)
+            {
+                MyLog.ERROR.WriteLine("MyPadImageTask error: Input to " + Owner + " is null.");
+                return;
+            }
             Owner.PaddedImage.Fill(0);
 
             m_kernel.SetupExecution(Owner.Input.Count);
