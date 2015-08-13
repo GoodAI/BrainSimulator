@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoodAI.LowLevelUtils.IO
 {
-    public abstract class AbstractBufferReaderWriter
+    public abstract class AbstractRawBufferReaderWriter
     {
         protected Array untypedBufferRef = null;
 
@@ -36,7 +36,7 @@ namespace GoodAI.LowLevelUtils.IO
         }
     }
 
-    public abstract class AbstractRawFloatBufferReaderWriter : AbstractBufferReaderWriter
+    public abstract class AbstractRawFloatBufferReaderWriter : AbstractRawBufferReaderWriter
     {
         protected override void SetTypedBuffer(Array array)
         {
