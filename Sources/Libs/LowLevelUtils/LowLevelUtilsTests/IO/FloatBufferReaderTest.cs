@@ -8,16 +8,14 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
     [TestClass]
     public class FloatBufferReaderTest
     {
-        FloatBufferReader reader;
+        IBufferReader reader;
         float[] buffer;
 
         [TestInitialize]
         public void SetupBufferAndReader()
         {
-            reader = new FloatBufferReader();
             buffer = new float[1];
-
-            reader.Buffer = buffer;
+            reader = BufferReaderFactory.GetFloatReader(buffer);
         }
 
         public void CheckRounding(float f, int expected)

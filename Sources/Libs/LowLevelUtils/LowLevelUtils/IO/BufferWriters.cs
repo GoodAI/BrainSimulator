@@ -63,7 +63,7 @@ namespace GoodAI.LowLevelUtils.IO
             this.rawWriter = rawWriter;
         }
         
-        #region IBuffer Writer implementations
+        #region IBufferWriter implementation
         
         public Array Buffer
         {
