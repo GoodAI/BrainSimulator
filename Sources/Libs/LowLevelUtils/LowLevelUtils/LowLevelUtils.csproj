@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IO\AbstractBufferReaderWriter.cs" />
+    <Compile Include="IO\AbstractRawBufferRW.cs" />
     <Compile Include="IO\BufferReaders.cs" />
     <Compile Include="IO\BufferWriters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
