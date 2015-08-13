@@ -39,18 +39,12 @@ namespace GoodAI.LowLevelUtils.IO
 
     public class FloatBufferReader : AbstractBufferReader
     {
-        public float[] Buffer
-        {
-            get { return buffer; }
-            set
-            {
-                buffer = value;
-                index = 0;
-                untypedBufferRef = buffer;
-            }
-        }
-
         private float[] buffer;
+
+        protected override void SetTypedBuffer(Array array)
+        {
+            buffer = (float[])array;
+        }
 
         /// <summary>
         /// The user must set Buffer before use.
