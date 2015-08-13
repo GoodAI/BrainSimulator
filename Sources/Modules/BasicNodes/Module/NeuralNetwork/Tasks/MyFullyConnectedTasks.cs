@@ -86,12 +86,19 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             {
                 Owner.Output.SafeCopyToHost();
                 float expSum = Owner.Output.Host.Sum();
+                MyLog.INFO.WriteLine(expSum);
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
                 m_softmaxKernel.Run(
                     Owner.Output,
                     expSum,
                     Owner.Neurons
                     );
+
+
+                Owner.Output.SafeCopyToHost();
+                expSum = Owner.Output.Host.Sum();
+                MyLog.DEBUG.WriteLine("Sum of softmax activations is " + expSum + ". Should be 1.");
+
 
             }
         }

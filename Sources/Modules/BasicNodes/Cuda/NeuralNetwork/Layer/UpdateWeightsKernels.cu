@@ -13,11 +13,6 @@
 
 extern "C"
 {
-	__device__ int sign(float val)
-	{
-		return (val > 0) - (val < 0);
-	}
-
 	__global__ void FullyConnectedSGDUpdateKernel(
 		float *inputPtr,
 		float *deltaPtr,

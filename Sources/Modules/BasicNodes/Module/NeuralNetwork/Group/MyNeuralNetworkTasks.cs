@@ -161,10 +161,10 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
                 m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
                 m_convSGDupdateKernel.Run(
-                    Owner.SGD.TrainingRate,
+                    Owner.SGD.TrainingRate, Owner.SGD.Momentum,
                     convLayer.Weights,
-                    convLayer.Bias,
-                    convLayer.Delta,
+                    convLayer.Bias, convLayer.PreviousBiasDelta,
+                    convLayer.Delta, convLayer.PreviousWeightDelta,
                     convLayer.PaddedImage,
                     convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding, (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) * (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
                     convLayer.FilterWidth,
@@ -172,6 +172,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
                     convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
                     convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.L1Term, convLayer.L2Term,
                     convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
                     );
             }

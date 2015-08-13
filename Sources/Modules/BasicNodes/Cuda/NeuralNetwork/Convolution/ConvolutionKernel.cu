@@ -155,10 +155,10 @@ extern "C"
 	}
 
 	__global__ void ConvolutionUpdateWeightsKernel(
-		float learningRate,
+		float learningRate, float momentum,
 		float *filterPtr,
-		float *biasPtr,
-		float *thisDeltaPtr,
+		float *biasPtr, float *previousBiasDeltaPtr,
+		float *thisDeltaPtr, float *previousWeightDeltaPtr,
 		float *inputPaddedPtr,
 		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
 		int filterWidth,
@@ -166,7 +166,8 @@ extern "C"
 		int filterSize,
 		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
 		int horStride, int verStride, //float *outputPtr,
-		int weightCount
+		float L1Lambda, float L2Lambda,
+		int weightCount // == filterSize * filterCount
 		)
 	{
 		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
@@ -189,6 +190,7 @@ extern "C"
 
 			// apply the filter over the whole image (do convolution again) with this one weight
 			float delta = 0;
+			float biasDelta = 0;
 			//int a = 0;
 			for (size_t j = 0; j < outputHeight; j++)
 			{
@@ -203,8 +205,9 @@ extern "C"
 						];
 
 					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
+					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
-						biasPtr[idx / filterSize] -= learningRate * thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+						biasDelta += learningRate * thisDeltaPtr[outputDepthShift + i + j * outputWidth];
 
 
 			/// DEBUG START --------------------------------------------------------------
@@ -236,12 +239,41 @@ extern "C"
 					{
 						printf("DNZ: %.6f, input: %.6f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", delta, input, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
 					}*/
+			/// DEBUG END --------------------------------------------------
+
 
 				}
 			}
-			/// DEBUG END --------------------------------------------------
+			
+			// update bias
+			if (idx % filterSize == 0)
+			{
+				biasDelta *= learningRate;
+				biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+
+				if (momentum != 0)
+				{
+					biasDelta += momentum * previousBiasDeltaPtr[idx / filterSize];
+					previousBiasDeltaPtr[idx / filterSize] = biasDelta;
+				}
+
+				biasPtr[idx / filterSize] -= biasDelta;
+
+			}
+
 
 			delta *= learningRate;
+
+			// add regularization
+			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			
+			// add momentum
+			if (momentum != 0)
+			{
+				delta += momentum * previousWeightDeltaPtr[idx];
+				previousWeightDeltaPtr[idx] = delta;
+			}
+
 			if (delta != 0)
 			{
 				filterPtr[idx] -= delta;
