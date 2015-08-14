@@ -62,12 +62,16 @@ namespace GoodAI.Core.Observers
         [YAXSerializableField]
         private uint BACKGROUND = 0x00;
 
+        private bool isScreenClear = false;
         protected List<String> m_History;
         private CudaDeviceVariable<float> m_HistoryDeviceBuffer;
 
         private MyCudaKernel m_ClearCanvasKernel;
 
-        public MyTextObserver() //constructor with node parameter
+        /// <summary>
+        /// /Constructor with node parameter
+        /// </summary>
+        public MyTextObserver()
         {
             MaxLineLength = 80;
             MaxRows = 16;
@@ -83,9 +87,11 @@ namespace GoodAI.Core.Observers
             TriggerReset();
         }
 
+        /// <summary>
+        /// Clear screen kernel
+        /// </summary>
         protected void Clear()
         {
-            //clear kernel
             m_ClearCanvasKernel.SetConstantVariable("D_BACKGROUND", BACKGROUND);
             m_ClearCanvasKernel.SetConstantVariable("D_X_PIXELS", TextureWidth);
             m_ClearCanvasKernel.SetConstantVariable("D_Y_PIXELS", TextureHeight);
@@ -95,10 +101,13 @@ namespace GoodAI.Core.Observers
 
         protected override void Execute()
         {
-            if(SimulationStep == 1)
+            // Clear screen on simulation start
+            if(!isScreenClear)
             {
                 Clear();
+                isScreenClear = true;
             }
+
             //we are able to represent all characters from ' ' (space) to '~' (tilda) and new-line
             int desiredNum = '~' - ' ' + 2; // the last character is \n
 
@@ -196,6 +205,8 @@ namespace GoodAI.Core.Observers
         protected override void Reset()
         {
             base.Reset();
+
+            isScreenClear = false;
 
             // Allocate the history
             m_HistoryDeviceBuffer = new CudaDeviceVariable<float>(m_Rows * m_Cols);

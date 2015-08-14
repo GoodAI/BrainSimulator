@@ -20,6 +20,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.TextProcessing
 {
+    /// <author>Martin Hyben</author>
+    /// <meta>mv</meta>
+    /// <status>Working</status>
+    /// <summary>Provides sample or custom text input for additional processing.</summary>
+    /// <description>Provides sample or custom text input for additional processing.</description>
     public class TextWorld : MyWorld
     {
         public enum InputType {Text, Source, UserDefined}
@@ -40,6 +45,9 @@ namespace GoodAI.Modules.TextProcessing
         [YAXSerializableField]
         protected InputType m_UserInput;
 
+        public MyCUDAGenerateInputTask GenerateInput { get; private set; }
+
+        #region I/O
         [Description("Path to input text file")]
         [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
         [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
@@ -86,12 +94,15 @@ namespace GoodAI.Modules.TextProcessing
             }
             
         }
+        #endregion
 
-        public MyCUDAGenerateInputTask GenerateInput { get; private set; }
+        // Parameterless constructor
+        public TextWorld() { }
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = '~'-' ' + 2; // last character is \n
+            //we are able to represent all characters from ' ' (space) to '~' (tilda) and new-line(/n)
+            Output.Count = '~'-' ' + 2; 
         }
 
         [Description("Read text inputs")]
@@ -132,9 +143,9 @@ namespace GoodAI.Modules.TextProcessing
 
             public void ExecuteCPU()
             {
-                for (int i = 0; i < Owner.UserDefined.Length; i++)
+                for (int i = 0; i < Owner.m_Text.Length; i++)
                 {
-                    char c = Owner.UserDefined[(int)SimulationStep];
+                    char c = Owner.m_Text[(int)SimulationStep];
                     int index = StringToDigitIndexes(c);
 
                     Array.Clear(Owner.Output.Host, 0, Owner.Output.Count);
@@ -143,6 +154,11 @@ namespace GoodAI.Modules.TextProcessing
                 }
             }
 
+            /// <summary>
+            /// Converts char to index in ASCII table.
+            /// </summary>
+            /// <param name="str">Input char.</param>
+            /// <returns>Index of char in ASCII table.</returns>
             private int StringToDigitIndexes(char str)
             {
                 int res = 0;
