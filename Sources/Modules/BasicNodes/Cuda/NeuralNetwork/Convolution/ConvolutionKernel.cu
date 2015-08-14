@@ -154,7 +154,7 @@ extern "C"
 		}
 	}
 
-	__global__ void ConvolutionUpdateWeightsKernel(
+	__global__ void ConvolutionSGDUpdateWeightsKernel(
 		float learningRate, float momentum,
 		float *filterPtr,
 		float *biasPtr, float *previousBiasDeltaPtr,
@@ -207,40 +207,7 @@ extern "C"
 					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
 					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
-						biasDelta += learningRate * thisDeltaPtr[outputDepthShift + i + j * outputWidth];
-
-
-			/// DEBUG START --------------------------------------------------------------
-					/*
-					int inputIdx = inputDepthShift +
-						j * verStride * inputPaddedWidth +
-						i * horStride +
-						filterInputShift;
-					
-					
-					float thisDelta = thisDeltaPtr[outputDepthShift + i + j * outputWidth];
-					float input = inputPaddedPtr[inputIdx];
-					delta += thisDelta * input;*/
-
-					
-					/*
-					if (idx == 7)
-					{
-						outputPtr[a] = 10000 * inputIdx + outputDepthShift + i + j * outputWidth;
-						++a;
-					}*/
-
-					/*if ((input > 0.0001f || input < -0.0001f) && (thisDelta > 0.0001f || thisDelta < -0.0001f))
-					{
-						printf("INZ: %.7f, delta: %.7f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", input, thisDelta, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
-					}*/
-
-					/*if (thisDelta > 0.00001f || thisDelta < -0.00001f)
-					{
-						printf("DNZ: %.6f, input: %.6f, index: %d, inputIdx: %d, i: %d, j: %d, deltaIdx: %d \n", delta, input, idx, inputIdx, i, j, outputDepthShift + i + j * outputWidth);
-					}*/
-			/// DEBUG END --------------------------------------------------
-
+						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
 
 				}
 			}
@@ -283,6 +250,127 @@ extern "C"
 
 
 	}
+
+
+
+
+
+	__global__ void ConvolutionRMSPropUpdateWeightsKernel(
+		float learningRate, float momentum,
+		float *filterPtr,
+		float *biasPtr, float *previousBiasDeltaPtr,
+		float *thisDeltaPtr, float *previousWeightDeltaPtr,
+		float *inputPaddedPtr,
+		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
+		int filterWidth,
+		int filterSliceSize, // one layer of filter volume, fW * fH
+		int filterSize,
+		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
+		int horStride, int verStride, //float *outputPtr,
+		float L1Lambda, float L2Lambda,
+		float *meanSquareWeight, float *meanSquareBias, float smoothingFactor,
+		int weightCount // == filterSize * filterCount
+		)
+	{
+		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (idx < weightCount)
+		{
+			// determine the exact weight to be updated (one thread corresponds to exactly one weight)
+			// index of the weight inside the filter:
+			int filterX = (idx % filterSliceSize) % filterWidth;
+			int filterY = (idx % filterSliceSize) / filterWidth;
+			// filterZ:
+			int inputDepth = (idx % filterSize) / filterSliceSize;
+			int outputDepth = idx / filterSize; // index of the current filter
+
+			int inputDepthShift = inputDepth * inputPaddedSliceSize;
+			int outputDepthShift = outputDepth * outputSliceSize;
+			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
+
+			// apply the filter over the whole image (do convolution again) with this one weight
+			float delta = 0;
+			float biasDelta = 0;
+			for (size_t j = 0; j < outputHeight; j++)
+			{
+				for (size_t i = 0; i < outputWidth; i++)
+				{
+					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+						inputPaddedPtr[
+							inputDepthShift +
+								j * verStride * inputPaddedWidth +
+								i * horStride +
+								filterInputShift
+						];
+
+					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
+					// it seems to work better without the following condition though it shouldn't be the case
+					if (idx % filterSize == 0)
+						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+
+				}
+			}
+
+			// UPDATE WEIGHT
+			delta *= learningRate;
+			// add regularization
+			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			// add momentum
+			if (momentum != 0)
+			{
+				delta += momentum * previousWeightDeltaPtr[idx];
+				previousWeightDeltaPtr[idx] = delta;
+			}
+
+			// calculate meansquare
+			meanSquareWeight[idx] = smoothingFactor * meanSquareWeight[idx] + (1.0f - smoothingFactor) * delta * delta;
+			if (meanSquareWeight[idx] != 0)
+				delta /= sqrtf(meanSquareWeight[idx]);
+
+
+			if (delta != 0)
+			{
+				filterPtr[idx] -= delta;
+			}
+
+
+
+
+			// UPDATE BIAS
+			if (idx % filterSize == 0)
+			{
+				biasDelta *= learningRate;
+				biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+
+				if (momentum != 0)
+				{
+					biasDelta += momentum * previousBiasDeltaPtr[idx / filterSize];
+					previousBiasDeltaPtr[idx / filterSize] = biasDelta;
+				}
+				// calculate meansquare
+				meanSquareBias[idx / filterSize] = smoothingFactor * meanSquareBias[idx / filterSize] + (1.0f - smoothingFactor) * biasDelta * biasDelta;
+				if (meanSquareBias[idx / filterSize] != 0)
+					biasDelta /= sqrtf(meanSquareBias[idx / filterSize]);
+
+				biasPtr[idx / filterSize] -= biasDelta;
+
+			}
+
+
+
+
+
+		}
+
+
+	}
+
+
+
+
+
 
 	__global__ void PadImageKernel(
 		float *inputPtr,

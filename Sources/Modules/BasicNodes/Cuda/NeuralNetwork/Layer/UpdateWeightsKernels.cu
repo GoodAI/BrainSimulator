@@ -121,7 +121,7 @@ extern "C"
 					gradient = deltaPtr[j];
 					if (momentum != 0)
 					{
-						biasPtr[j] -= momentum * previousBiasDeltaPtr[j];
+						gradient += momentum * previousBiasDeltaPtr[j];
 						previousBiasDeltaPtr[j] = gradient;
 					}
 					// calculate meansquare

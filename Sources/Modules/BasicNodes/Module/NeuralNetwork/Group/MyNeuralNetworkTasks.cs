@@ -122,7 +122,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public override void Init(int nGPU)
         {
             m_SGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "FullyConnectedSGDUpdateKernel");
-            m_convSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionUpdateWeightsKernel");
+            m_convSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionSGDUpdateWeightsKernel");
         }
 
         //Task execution - should be called with a parameter
@@ -210,10 +210,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MyRMSTask() { }
 
         //Kernel initialization
-        private MyCudaKernel m_RMSPropUpdateKernel;
+        private MyCudaKernel m_RMSPropUpdateKernel, m_convRMSPropUpdateKernel;
         public override void Init(int nGPU)
         {
             m_RMSPropUpdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "FullyConnectedRMSPropUpdateKernel");
+            m_convRMSPropUpdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionRMSPropUpdateWeightsKernel");
         }
 
         //Task execution
@@ -249,6 +250,27 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             else if (layer.Connection == ConnectionType.GAUSSIAN)
             {
                 // Gaussian hidden layer just propagates delta, no weight updates
+            }
+            else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
+            {
+                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
+                m_convRMSPropUpdateKernel.SetupExecution(convLayer.Weights.Count);
+                m_convRMSPropUpdateKernel.Run(
+                    Owner.RMS.TrainingRate, Owner.RMS.Momentum,
+                    convLayer.Weights,
+                    convLayer.Bias, convLayer.PreviousBiasDelta,
+                    convLayer.Delta, convLayer.PreviousWeightDelta,
+                    convLayer.PaddedImage,
+                    convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding, (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) * (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
+                    convLayer.FilterWidth,
+                    convLayer.FilterWidth * convLayer.FilterHeight,
+                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.L1Term, convLayer.L2Term,
+                    convLayer.MeanSquareWeight, convLayer.MeanSquareBias, Owner.RMS.SmoothingFactor,
+                    convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
+                    );
             }
             else
             {

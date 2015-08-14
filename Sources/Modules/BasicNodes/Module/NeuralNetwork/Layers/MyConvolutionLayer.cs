@@ -219,8 +219,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 Delta.Count = Neurons;
                 Delta.ColumnHint = OutputWidth;
                 Bias.Count = FilterCount;
+                PreviousBiasDelta.Count = Neurons; // momentum method
 
-                PreviousBiasDelta.Count = Neurons;
+                // RMSProp allocations
+                MeanSquareWeight.Count = Weights.Count;
+                MeanSquareBias.Count = Bias.Count;
 
                 if (ZeroPadding > 0)
                     PaddedImage.Count = InputDepth * (InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
