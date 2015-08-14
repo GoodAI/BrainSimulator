@@ -58,7 +58,7 @@ extern "C"
 					float biasDelta = trainingRate * deltaPtr[j];
 					if (momentum != 0)
 					{
-						biasPtr[j] -= momentum * previousBiasDeltaPtr[j];
+						biasDelta += momentum * previousBiasDeltaPtr[j];
 						previousBiasDeltaPtr[j] = biasDelta;
 					}
 					biasPtr[j] -= biasDelta;

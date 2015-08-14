@@ -217,8 +217,9 @@ extern "C"
 			// UPDATE BIAS --------------------------------
 			if (idx % filterSize == 0)
 			{
+				// bias usually doesn't get regularised
+				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
 				biasDelta *= learningRate;
-				biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
 
 				if (momentum != 0)
 				{
@@ -232,10 +233,10 @@ extern "C"
 
 
 			// UPDATE WEIGHT -----------------------------
-			delta *= learningRate;
 
 			// add regularization
 			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			delta *= learningRate;
 			
 			// add momentum
 			if (momentum != 0)
@@ -317,8 +318,8 @@ extern "C"
 			// UPDATE BIAS ---------------------------
 			if (idx % filterSize == 0)
 			{
-				biasDelta *= learningRate;
-				biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+				// bias usually doesn't get regularised
+				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
 
 				if (momentum != 0)
 				{
@@ -330,13 +331,13 @@ extern "C"
 				if (meanSquareBias[idx / filterSize] != 0)
 					biasDelta /= sqrtf(meanSquareBias[idx / filterSize]);
 
-				biasPtr[idx / filterSize] -= biasDelta;
+				biasPtr[idx / filterSize] -= learningRate * biasDelta;
 			}
 			// ----------------------------------------
 
 
 			// UPDATE WEIGHT --------------------------
-			delta *= learningRate;
+
 			// add regularization
 			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
 			// add momentum
@@ -353,7 +354,7 @@ extern "C"
 
 			if (delta != 0)
 			{
-				filterPtr[idx] -= delta;
+				filterPtr[idx] -= learningRate * delta;
 			}
 			// -----------------------------------------
 		}
