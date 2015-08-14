@@ -282,6 +282,7 @@
     <EmbeddedResource Include="Forms\TaskForm.resx">
       <DependentUpon>TaskForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="post_build.cmd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -313,6 +314,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\add_observer.png" />
+    <Content Include="res\add_text_observer.png" />
     <Content Include="res\anaglyph.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

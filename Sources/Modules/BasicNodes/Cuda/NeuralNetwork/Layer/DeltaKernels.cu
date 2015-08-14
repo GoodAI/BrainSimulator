@@ -26,7 +26,7 @@ extern "C"
 	{
 		// i: prev layer neuron id
 		// j: this layer neuron id
-		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+		int i = blockDim.x * blockIdx.y * gridDim.x			//rows preceeding current row in grid
 					+ blockDim.x * blockIdx.x				//blocks preceeding current block
 					+ threadIdx.x;
 		int j;

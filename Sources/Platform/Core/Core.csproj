@@ -110,6 +110,7 @@
     <Compile Include="Observers\MyHistogramObserver.cs" />
     <Compile Include="Observers\MyShape.cs" />
     <Compile Include="Observers\MySpikeRasterObserver.cs" />
+    <Compile Include="Observers\MyTextObserver.cs" />
     <Compile Include="Transforms\MyReduction.cs" />
     <Compile Include="Utils\BidirHashtable.cs" />
     <Compile Include="Utils\MyGeneralSignals.cs" />

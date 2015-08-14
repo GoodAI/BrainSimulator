@@ -38,6 +38,8 @@
             this.addMatrixObserver = new System.Windows.Forms.ToolStripButton();
             this.addSpikeObserver = new System.Windows.Forms.ToolStripButton();
             this.addHistogramObserver = new System.Windows.Forms.ToolStripButton();
+            this.addTextObserver = new System.Windows.Forms.ToolStripButton();
+            this.addSpectrumObserver = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,11 +53,11 @@
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
             this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(0, 25);
+            this.listView.Location = new System.Drawing.Point(0, 38);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(284, 237);
+            this.listView.Size = new System.Drawing.Size(308, 224);
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -80,15 +82,18 @@
             // 
             this.toolStrip.BackColor = System.Drawing.SystemColors.Control;
             this.toolStrip.Enabled = false;
+            this.toolStrip.ImageScalingSize = new System.Drawing.Size(40, 40);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addObserverButton,
             this.addPlotButton,
             this.addMatrixObserver,
             this.addSpikeObserver,
-            this.addHistogramObserver});
+            this.addHistogramObserver,
+            this.addTextObserver,
+            this.addSpectrumObserver});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(284, 25);
+            this.toolStrip.Size = new System.Drawing.Size(308, 38);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -99,7 +104,7 @@
             this.addObserverButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addObserverButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addObserverButton.Name = "addObserverButton";
-            this.addObserverButton.Size = new System.Drawing.Size(23, 22);
+            this.addObserverButton.Size = new System.Drawing.Size(23, 35);
             this.addObserverButton.Text = "Add Observer to Block";
             this.addObserverButton.Click += new System.EventHandler(this.addObserverButton_Click);
             // 
@@ -110,7 +115,7 @@
             this.addPlotButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addPlotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addPlotButton.Name = "addPlotButton";
-            this.addPlotButton.Size = new System.Drawing.Size(23, 22);
+            this.addPlotButton.Size = new System.Drawing.Size(23, 35);
             this.addPlotButton.Text = "Add Plot Observer to Block";
             this.addPlotButton.Click += new System.EventHandler(this.addPlotButton_Click);
             // 
@@ -121,7 +126,7 @@
             this.addMatrixObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addMatrixObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addMatrixObserver.Name = "addMatrixObserver";
-            this.addMatrixObserver.Size = new System.Drawing.Size(23, 22);
+            this.addMatrixObserver.Size = new System.Drawing.Size(23, 35);
             this.addMatrixObserver.Text = "Add Matrix Observer to Block";
             this.addMatrixObserver.Click += new System.EventHandler(this.addMatrixObserver_Click);
             // 
@@ -129,9 +134,10 @@
             // 
             this.addSpikeObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.addSpikeObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.spike;
+            this.addSpikeObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addSpikeObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addSpikeObserver.Name = "addSpikeObserver";
-            this.addSpikeObserver.Size = new System.Drawing.Size(23, 22);
+            this.addSpikeObserver.Size = new System.Drawing.Size(23, 35);
             this.addSpikeObserver.Text = "Spike observer";
             this.addSpikeObserver.Click += new System.EventHandler(this.addSpikeObserver_Click);
             // 
@@ -142,15 +148,26 @@
             this.addHistogramObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addHistogramObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addHistogramObserver.Name = "addHistogramObserver";
-            this.addHistogramObserver.Size = new System.Drawing.Size(23, 22);
+            this.addHistogramObserver.Size = new System.Drawing.Size(23, 35);
             this.addHistogramObserver.Text = "Add Histogram to Block";
             this.addHistogramObserver.Click += new System.EventHandler(this.addHistogramObserver_Click);
             // 
+            // addTextObserver
+            // 
+            this.addTextObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addTextObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_text_observer;
+            this.addTextObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.addTextObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addTextObserver.Name = "addTextObserver";
+            this.addTextObserver.Size = new System.Drawing.Size(23, 35);
+            this.addTextObserver.Text = "Add Text Observer";
+            this.addTextObserver.Click += new System.EventHandler(this.addTextObserver_Click);
+            // 
             // MemoryBlocksForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(308, 262);
             this.Controls.Add(this.listView);
             this.Controls.Add(this.toolStrip);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -176,6 +193,8 @@
         private System.Windows.Forms.ToolStripButton addMatrixObserver;
         private System.Windows.Forms.ToolStripButton addSpikeObserver;
         private System.Windows.Forms.ToolStripButton addHistogramObserver;
+        private System.Windows.Forms.ToolStripButton addTextObserver;
+        private System.Windows.Forms.ToolStripButton addSpectrumObserver;
 
     }
 }

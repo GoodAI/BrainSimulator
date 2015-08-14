@@ -24,18 +24,16 @@ extern "C"
 	__constant__ int D_IMAGE_HEIGHT;
 	__constant__ int D_DIGIT_WIDTH;
 	__constant__ int D_DIGIT_SIZE;
-	__constant__ int D_DIGIT_INDEXES[100];
-	__constant__ int D_DIGIT_INDEXES_LEN;
 	__constant__ int D_DIGITMAP_NBCHARS;
 
 	//kernel code
-	__global__ void DrawDigitsKernel(unsigned int* canvas, float* digitBuffer, int offsetX, int offsetY)
+	__global__ void DrawStringKernel(unsigned int* canvas, float* characterMap, int offsetX, int offsetY, float *stringIndexVector, int stringIndexLen)
 	{		
-		int id = blockDim.x*blockIdx.y*gridDim.x	
-				+ blockDim.x*blockIdx.x				
+		int id = blockDim.x*blockIdx.y*gridDim.x
+				+ blockDim.x*blockIdx.x	
 				+ threadIdx.x;
 
-		if (id >= D_DIGIT_SIZE * D_DIGIT_INDEXES_LEN)
+		if (id >= D_DIGIT_SIZE * stringIndexLen)
 			return;
 
 		int digitIndex = id / D_DIGIT_SIZE;
@@ -56,9 +54,9 @@ extern "C"
 		float fgGreen = (D_FG_COLOR & 0x0000FF00) >> 8;
 		float fgBlue = (D_FG_COLOR & 0x000000FF);
 		
-		int localX = D_DIGIT_INDEXES[digitIndex] * D_DIGIT_WIDTH + id % D_DIGIT_WIDTH;
+		int localX = int(stringIndexVector[digitIndex]) * D_DIGIT_WIDTH + id % D_DIGIT_WIDTH;
 		int localY = (id % D_DIGIT_SIZE) / D_DIGIT_WIDTH;
-		float factor = digitBuffer[localX + localY * D_DIGIT_WIDTH * D_DIGITMAP_NBCHARS];
+		float factor = characterMap[localX + localY * D_DIGIT_WIDTH * D_DIGITMAP_NBCHARS];
 
 		unsigned int red = (unsigned int)(factor * fgRed + (1 - factor) * bgRed);
 		unsigned int green = (unsigned int)(factor * fgGreen + (1 - factor) * bgGreen);
