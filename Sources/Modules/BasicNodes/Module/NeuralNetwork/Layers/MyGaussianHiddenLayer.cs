@@ -72,6 +72,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 MeanSquareWeight.Count = Weights.Count;
                 MeanSquareBias.Count = Bias.Count;
 
+                // Adadelta allocation
+                AdadeltaWeight.Count = Weights.Count;
+                AdadeltaBias.Count = Bias.Count;
+
                 // Priors for generation
                 PriorGaussHiddenStatesMin.Count = Input.Count;
                 PriorGaussHiddenStatesMax.Count = Input.Count;

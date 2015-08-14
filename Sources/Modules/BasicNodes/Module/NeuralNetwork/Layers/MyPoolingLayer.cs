@@ -183,6 +183,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             if (Neurons > 0)
             {
                 ActivatedNeurons.Count = Neurons;
+                Delta.ColumnHint = OutputWidth;
             }
         }
 

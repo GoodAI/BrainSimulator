@@ -56,6 +56,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MySGDTask SGD { get; protected set; }
         [MyTaskGroup("BackPropagation")]
         public MyRMSTask RMS { get; protected set; }
+        [MyTaskGroup("BackPropagation")]
+        public MyAdadeltaTask Adadelta { get; protected set; }
+
         //[MyTaskGroup("BackPropagation")]
         //public MyvSGDfdTask vSGD { get; protected set; }
 

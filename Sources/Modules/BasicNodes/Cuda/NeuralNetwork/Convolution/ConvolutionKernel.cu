@@ -44,11 +44,11 @@ extern "C"
 		if (idx < thisLayerSize)
 		{
 			int filterIdx = idx / outputSize;
-			
+
 			int inputTileX = (idx % outputSize) % filtersPerRow;
 			int inputTileY = (idx % outputSize) / filtersPerRow;
 
-			
+
 			float result = 0;
 
 			for (size_t z = 0; z < filterDepth; z++) // Z
@@ -134,7 +134,7 @@ extern "C"
 					{
 						if ( // check if the current neuron is in the filter's receptive field
 							filterX <= currentX && filterX + filterWidth > currentX &&
-							filterY <= currentY && filterY + filterHeight > currentY )
+							filterY <= currentY && filterY + filterHeight > currentY)
 						{
 							// identify the proper filter part (weight)
 							int weightIdx = weightDepthShift + indexFromXY(currentX - filterX, currentY - filterY, filterWidth);
@@ -213,7 +213,7 @@ extern "C"
 
 				}
 			}
-			
+
 			// UPDATE BIAS --------------------------------
 			if (idx % filterSize == 0)
 			{
@@ -237,7 +237,7 @@ extern "C"
 			// add regularization
 			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
 			delta *= learningRate;
-			
+
 			// add momentum
 			if (momentum != 0)
 			{
@@ -359,6 +359,100 @@ extern "C"
 			// -----------------------------------------
 		}
 	}
+
+
+
+
+	__global__ void ConvolutionAdadeltaUpdateWeightsKernel(
+		float *filterPtr,
+		float *biasPtr, float *previousBiasDeltaPtr,
+		float *thisDeltaPtr, float *previousWeightDeltaPtr,
+		float *inputPaddedPtr,
+		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
+		int filterWidth,
+		int filterSliceSize, // one layer of filter volume, fW * fH
+		int filterSize,
+		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
+		int horStride, int verStride, //float *outputPtr,
+		float L1Lambda, float L2Lambda,
+		float *adaSquares, float *adaDeltas, float *adaBiasSquares, float *adaBiasDeltas, float ro, float epsilon,
+		int weightCount // == filterSize * filterCount
+		)
+	{
+		int idx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (idx < weightCount)
+		{
+			// determine the exact weight to be updated (one thread corresponds to exactly one weight)
+			// index of the weight inside the filter:
+			int filterX = (idx % filterSliceSize) % filterWidth;
+			int filterY = (idx % filterSliceSize) / filterWidth;
+			// filterZ:
+			int inputDepth = (idx % filterSize) / filterSliceSize;
+			int outputDepth = idx / filterSize; // index of the current filter
+
+			int inputDepthShift = inputDepth * inputPaddedSliceSize;
+			int outputDepthShift = outputDepth * outputSliceSize;
+			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
+
+			// apply the filter over the whole image (do convolution again) with this one weight
+			float delta = 0;
+			float biasDelta = 0;
+			for (size_t j = 0; j < outputHeight; j++)
+			{
+				for (size_t i = 0; i < outputWidth; i++)
+				{
+					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+						inputPaddedPtr[
+							inputDepthShift +
+								j * verStride * inputPaddedWidth +
+								i * horStride +
+								filterInputShift
+						];
+
+					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
+					// it seems to work better without the following condition though it shouldn't be the case
+					if (idx % filterSize == 0)
+						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+
+				}
+			}
+
+			// UPDATE BIAS ---------------------------
+			if (idx % filterSize == 0)
+			{
+				// bias usually doesn't get regularised
+				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+
+				biasDelta *= -1;
+
+				adaBiasSquares[idx / filterSize] = ro * adaBiasSquares[idx / filterSize] + (1 - ro) * biasDelta * biasDelta;
+				float dx = -sqrtf((adaBiasDeltas[idx / filterSize] + epsilon) / (adaBiasSquares[idx / filterSize] + epsilon)) * biasDelta;
+				adaBiasDeltas[idx / filterSize] = ro + adaBiasDeltas[idx / filterSize] + (1 - ro) * dx * dx;
+				//biasPtr[idx / filterSize] -= dx;
+			}
+			// ----------------------------------------
+
+
+			// UPDATE WEIGHT --------------------------
+
+			// should we even support regularization here? and how?
+			//delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+
+			//delta *= -1; // go down the gradient // TODO - figure out the correct way
+
+			// adadelta:
+			adaSquares[idx] = ro * adaSquares[idx] + (1 - ro) * delta * delta;
+			float dx = -sqrtf((adaDeltas[idx] + epsilon) / (adaSquares[idx] + epsilon)) * delta;
+			adaDeltas[idx] = ro * adaDeltas[idx] + (1 - ro) * dx * dx;
+			filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
+
+			// -----------------------------------------
+		}
+	}
+
 
 
 	__global__ void PadImageKernel(

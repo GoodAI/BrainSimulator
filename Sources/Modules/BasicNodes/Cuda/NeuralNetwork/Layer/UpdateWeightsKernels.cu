@@ -134,4 +134,58 @@ extern "C"
 			}
 		}
 	}
+
+
+	__global__ void FullyConnectedAdadeltaUpdateKernel(
+		float *inputPtr,
+		float *deltaPtr,
+		float *weightPtr,
+		float *previousWeightDeltaPtr,
+		float *biasPtr,
+		float *previousBiasDeltaPtr,
+		float L1Lambda,
+		float L2Lambda,
+		float *dropoutMaskPtr,
+		int thisLayerSize,
+		int weightCount,
+		float *adaSquares, float *adaDeltas, float *adaBiasSquares, float *adaBiasDeltas,
+		float ro, float epsilon
+		)
+	{
+		// i: prev. layer neuron id
+		// j: current layer neuron id
+		int weightIdx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (weightIdx < weightCount)
+		{
+			int j = weightIdx % thisLayerSize; // index of output neuron
+			if (!dropoutMaskPtr[j])
+			{
+				// update weights
+				int i = weightIdx / thisLayerSize; // index of input neuron
+
+				// should we even support regularization here? and how?
+				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
+				//gradient *= -1; // TODO - figure out the correct way
+
+				adaSquares[weightIdx] = ro * adaSquares[weightIdx] + (1 - ro) * gradient * gradient;
+				float dx = -sqrtf((adaDeltas[weightIdx] + epsilon) / (adaSquares[weightIdx] + epsilon)) * gradient;
+				adaDeltas[weightIdx] = ro * adaDeltas[weightIdx] + (1 - ro) * dx * dx;
+				weightPtr[weightIdx] += dx; // there should be a '+' here, but '+' doesn't and '-' does work...?
+
+				// update bias
+				if (weightIdx / thisLayerSize == 0)
+				{
+					gradient = -deltaPtr[j];
+					adaBiasSquares[j] = ro * adaBiasSquares[j] + (1 - ro) * gradient * gradient;
+					float dx = -sqrtf((adaBiasDeltas[j] + epsilon) / (adaBiasSquares[j] + epsilon)) * gradient;
+					adaBiasDeltas[j] = ro * adaBiasDeltas[j] + (1 - ro) * dx * dx;
+					//biasPtr[j] += dx;
+				}
+			}
+		}
+	}
+
 }

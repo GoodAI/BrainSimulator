@@ -42,6 +42,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> MeanSquareWeight { get; protected set; }
         public MyMemoryBlock<float> MeanSquareBias { get; protected set; }
 
+        // Adadelta memory
+        public MyMemoryBlock<float> AdadeltaWeight { get; protected set; }
+        public MyMemoryBlock<float> AdadeltaBias { get; protected set; }
+
         //// vSGD-fd memory
         //public MyMemoryBlock<float> OriginalWeights { get; protected set; }
         //public MyMemoryBlock<float> OriginalBias { get; protected set; }

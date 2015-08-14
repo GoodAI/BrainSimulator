@@ -225,6 +225,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 MeanSquareWeight.Count = Weights.Count;
                 MeanSquareBias.Count = Bias.Count;
 
+                // Adadelta allocation
+                AdadeltaWeight.Count = Weights.Count;
+                AdadeltaBias.Count = Bias.Count;
+
                 if (ZeroPadding > 0)
                     PaddedImage.Count = InputDepth * (InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
                 else
