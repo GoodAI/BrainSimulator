@@ -154,6 +154,8 @@ extern "C"
 		}
 	}
 
+
+
 	__global__ void ConvolutionSGDUpdateWeightsKernel(
 		float learningRate, float momentum,
 		float *filterPtr,
@@ -212,7 +214,7 @@ extern "C"
 				}
 			}
 			
-			// update bias
+			// UPDATE BIAS --------------------------------
 			if (idx % filterSize == 0)
 			{
 				biasDelta *= learningRate;
@@ -225,10 +227,11 @@ extern "C"
 				}
 
 				biasPtr[idx / filterSize] -= biasDelta;
-
 			}
+			// -------------------------------------------
 
 
+			// UPDATE WEIGHT -----------------------------
 			delta *= learningRate;
 
 			// add regularization
@@ -245,10 +248,8 @@ extern "C"
 			{
 				filterPtr[idx] -= delta;
 			}
-			
+			// -----------------------------------------------
 		}
-
-
 	}
 
 
@@ -313,32 +314,7 @@ extern "C"
 				}
 			}
 
-			// UPDATE WEIGHT
-			delta *= learningRate;
-			// add regularization
-			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
-			// add momentum
-			if (momentum != 0)
-			{
-				delta += momentum * previousWeightDeltaPtr[idx];
-				previousWeightDeltaPtr[idx] = delta;
-			}
-
-			// calculate meansquare
-			meanSquareWeight[idx] = smoothingFactor * meanSquareWeight[idx] + (1.0f - smoothingFactor) * delta * delta;
-			if (meanSquareWeight[idx] != 0)
-				delta /= sqrtf(meanSquareWeight[idx]);
-
-
-			if (delta != 0)
-			{
-				filterPtr[idx] -= delta;
-			}
-
-
-
-
-			// UPDATE BIAS
+			// UPDATE BIAS ---------------------------
 			if (idx % filterSize == 0)
 			{
 				biasDelta *= learningRate;
@@ -355,21 +331,33 @@ extern "C"
 					biasDelta /= sqrtf(meanSquareBias[idx / filterSize]);
 
 				biasPtr[idx / filterSize] -= biasDelta;
+			}
+			// ----------------------------------------
 
+
+			// UPDATE WEIGHT --------------------------
+			delta *= learningRate;
+			// add regularization
+			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			// add momentum
+			if (momentum != 0)
+			{
+				delta += momentum * previousWeightDeltaPtr[idx];
+				previousWeightDeltaPtr[idx] = delta;
 			}
 
+			// calculate meansquare
+			meanSquareWeight[idx] = smoothingFactor * meanSquareWeight[idx] + (1.0f - smoothingFactor) * delta * delta;
+			if (meanSquareWeight[idx] != 0)
+				delta /= sqrtf(meanSquareWeight[idx]);
 
-
-
-
+			if (delta != 0)
+			{
+				filterPtr[idx] -= delta;
+			}
+			// -----------------------------------------
 		}
-
-
 	}
-
-
-
-
 
 
 	__global__ void PadImageKernel(
@@ -390,12 +378,10 @@ extern "C"
 		{
 			int depth = idx / inputSize;
 
-			int outputDepthShift = depth * outputSize;
-
 			int rowIdx = (idx % inputSize) / inputWidth;
 			int colIdx = (idx % inputSize) % inputWidth;
 
-			outputPtr[indexFromXY(pad + colIdx, pad + rowIdx, pad + inputWidth + pad) + outputDepthShift] = inputPtr[idx];
+			outputPtr[indexFromXY(pad + colIdx, pad + rowIdx, pad + inputWidth + pad) + (depth * outputSize)] = inputPtr[idx];
 		}
 	}
 }

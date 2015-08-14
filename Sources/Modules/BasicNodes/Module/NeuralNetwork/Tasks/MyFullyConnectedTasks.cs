@@ -87,10 +87,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Output.SafeCopyToHost();
                 float expSum = Owner.Output.Host.Sum();
 
-                expSum = Math.Min(expSum, 1e6f);
-
                 if (expSum > 2 * Owner.Neurons)
-                    MyLog.INFO.WriteLine(expSum);
+                    MyLog.WARNING.WriteLine("Exponential sum (danger/suspici)ously high: " + expSum);
 
                 
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
