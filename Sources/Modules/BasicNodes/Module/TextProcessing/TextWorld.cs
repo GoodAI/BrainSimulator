@@ -7,6 +7,7 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.Design;
 using YAXLib;
 
 namespace GoodAI.Modules.TextProcessing
@@ -21,7 +23,7 @@ namespace GoodAI.Modules.TextProcessing
     public class TextWorld : MyWorld
     {
         public enum InputType {Text, Source, UserDefined}
-
+        
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Output
         {
@@ -29,28 +31,32 @@ namespace GoodAI.Modules.TextProcessing
             set { SetOutput(0, value); }
         }
 
-        //private string m_Text = "";
+        [YAXSerializableField]
+        protected string m_Text;
 
         [YAXSerializableField]
         protected string m_UserDefined;
-
+        
         [YAXSerializableField]
         protected InputType m_UserInput;
 
-        [MyBrowsable, Category("I/O")]
-        [YAXSerializableField(DefaultValue = "Hello world! "), YAXElementFor("IO")]
-        public string UserDefined
+        [Description("Path to input text file")]
+        [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
+        [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
+        public string UserDefined 
         {
             get { return m_UserDefined; }
             set
             {
-                if (!(UserInput.CompareTo(InputType.UserDefined) == 0))
-                    m_UserDefined = "";
-                else
-                    m_UserDefined = value;
-            }
-        }
+                m_UserDefined = value;
 
+                if(File.Exists(value))
+                using (StreamReader sr = new StreamReader(value))
+                {
+                    m_Text = sr.ReadToEnd();
+                }
+            } 
+        }
 
         [MyBrowsable, Category("I/O")]
         [YAXSerializableField(DefaultValue = InputType.Text), YAXElementFor("IO")]
@@ -66,10 +72,15 @@ namespace GoodAI.Modules.TextProcessing
                 switch (value)
                 {
                     case InputType.Text:
-                        m_UserDefined = BasicNodes.Properties.Resources.Wiki;
+                        m_UserDefined = "Sample Text";
+                        m_Text = BasicNodes.Properties.Resources.Wiki;
                         break;
                     case InputType.Source:
-                        m_UserDefined = BasicNodes.Properties.Resources.SourceCode;
+                        m_UserDefined = "Sample Source code";
+                        m_Text = BasicNodes.Properties.Resources.SourceCode;
+                        break;
+                    case InputType.UserDefined:
+                        m_UserDefined = "";
                         break;
                 }
             }
@@ -97,7 +108,7 @@ namespace GoodAI.Modules.TextProcessing
 
             public override void Execute()
             {
-                if (Owner.UserDefined.Length > 0)
+                if (Owner.m_Text.Length > 0)
                 {
                     if (SimulationStep == 0)
                     {
@@ -107,8 +118,8 @@ namespace GoodAI.Modules.TextProcessing
                     if (SimulationStep % ExpositionTime == 0)
                     {
                         // convert character into digit index
-                        int id = (int)SimulationStep % Owner.UserDefined.Length;
-                        char c = Owner.UserDefined[id];
+                        int id = (int)SimulationStep % Owner.m_Text.Length;
+                        char c = Owner.m_Text[id];
                         int index = StringToDigitIndexes(c);
 
                         Array.Clear(Owner.Output.Host, 0, Owner.Output.Count);
