@@ -135,7 +135,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         {
             if (layer.Connection == ConnectionType.FULLY_CONNECTED)
             {
-                m_SGDupdateKernel.SetupExecution(layer.Neurons);
+                m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
                 m_SGDupdateKernel.Run(
                     layer.Input,
                     layer.Delta,
@@ -148,8 +148,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     Owner.L1,
                     Owner.L2,
                     layer.DropoutMask,
-                    layer.Input.Count,
-                    layer.Neurons
+                    layer.Neurons,
+                    layer.Weights.Count
                     );
             }
             else if (layer.Connection == ConnectionType.GAUSSIAN)
@@ -226,7 +226,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         {
             if (layer.Connection == ConnectionType.FULLY_CONNECTED)
             {
-                m_RMSPropUpdateKernel.SetupExecution(layer.Neurons);
+                m_RMSPropUpdateKernel.SetupExecution(layer.Weights.Count);
                 m_RMSPropUpdateKernel.Run(
                     layer.Input,
                     layer.Delta,
@@ -239,8 +239,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     Owner.L1,
                     Owner.L2,
                     layer.DropoutMask,
-                    layer.Input.Count,
                     layer.Neurons,
+                    layer.Weights.Count,
                     layer.MeanSquareWeight,
                     layer.MeanSquareBias,
                     Owner.RMS.SmoothingFactor
