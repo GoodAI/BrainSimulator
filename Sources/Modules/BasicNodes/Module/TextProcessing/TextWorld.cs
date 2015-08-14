@@ -20,7 +20,7 @@ using YAXLib;
 
 namespace GoodAI.Modules.TextProcessing
 {
-    /// <author>Martin Hyben</author>
+    /// <author>GoodAI</author>
     /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Provides sample or custom text input for additional processing.</summary>

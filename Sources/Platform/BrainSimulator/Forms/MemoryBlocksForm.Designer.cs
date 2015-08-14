@@ -163,18 +163,6 @@
             this.addTextObserver.Text = "Add Text Observer";
             this.addTextObserver.Click += new System.EventHandler(this.addTextObserver_Click);
             // 
-            // addSpectrumObserver
-            // 
-            this.addSpectrumObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addSpectrumObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_spectrum_observer;
-            this.addSpectrumObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.addSpectrumObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addSpectrumObserver.Name = "addSpectrumObserver";
-            this.addSpectrumObserver.Size = new System.Drawing.Size(23, 35);
-            this.addSpectrumObserver.Text = "Add spectrogram observer";
-            this.addSpectrumObserver.ToolTipText = "Add spectrum observer";
-            this.addSpectrumObserver.Click += new System.EventHandler(this.addSpectrumObserver_Click);
-            // 
             // MemoryBlocksForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);

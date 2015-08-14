@@ -15,6 +15,12 @@ using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>
+    ///   Performs an element-wise stack-join operation on the input vectors.
+    /// </summary>
+    /// <description></description>
     public class MyStackLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
         [MyInputBlock(1)]

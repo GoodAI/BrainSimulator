@@ -108,7 +108,6 @@
     <Compile Include="Nodes\IMyVariableBranchViewNodeBase.cs" />
     <Compile Include="Observers\MyMemoryBlockEditor.cs" />
     <Compile Include="Observers\MyHistogramObserver.cs" />
-    <Compile Include="Observers\MySpectrumObserver.cs" />
     <Compile Include="Observers\MyShape.cs" />
     <Compile Include="Observers\MySpikeRasterObserver.cs" />
     <Compile Include="Observers\MyTextObserver.cs" />

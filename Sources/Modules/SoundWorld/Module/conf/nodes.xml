@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Configuration RootNamespace="SoundWorld">
-  <KnownNodes>
-    <Node type="GoodAI.SoundWorld.MyAudioPlayerNode" CanBeAdded="true" />
-  </KnownNodes>
-    <KnownWorlds>
-      <World type="GoodAI.SoundWorld.MySoundWorld" CanBeAdded="true" />
-    </KnownWorlds>
-</Configuration>
