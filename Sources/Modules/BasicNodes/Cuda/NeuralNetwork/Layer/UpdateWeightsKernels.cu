@@ -178,11 +178,11 @@ extern "C"
 				// update bias
 				if (weightIdx / thisLayerSize == 0)
 				{
-					gradient = -deltaPtr[j];
+					gradient = deltaPtr[j];
 					adaBiasSquares[j] = ro * adaBiasSquares[j] + (1 - ro) * gradient * gradient;
 					float dx = -sqrtf((adaBiasDeltas[j] + epsilon) / (adaBiasSquares[j] + epsilon)) * gradient;
 					adaBiasDeltas[j] = ro * adaBiasDeltas[j] + (1 - ro) * dx * dx;
-					//biasPtr[j] += dx;
+					biasPtr[j] += dx;
 				}
 			}
 		}

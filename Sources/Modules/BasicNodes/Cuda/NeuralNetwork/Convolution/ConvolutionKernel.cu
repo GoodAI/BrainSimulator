@@ -426,12 +426,12 @@ extern "C"
 				// bias usually doesn't get regularised
 				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
 
-				biasDelta *= -1;
+				//biasDelta *= -1;
 
-				adaBiasSquares[idx / filterSize] = ro * adaBiasSquares[idx / filterSize] + (1 - ro) * biasDelta * biasDelta;
-				float dx = -sqrtf((adaBiasDeltas[idx / filterSize] + epsilon) / (adaBiasSquares[idx / filterSize] + epsilon)) * biasDelta;
-				adaBiasDeltas[idx / filterSize] = ro + adaBiasDeltas[idx / filterSize] + (1 - ro) * dx * dx;
-				//biasPtr[idx / filterSize] -= dx;
+				adaBiasSquares[idx] = ro * adaBiasSquares[idx] + (1 - ro) * biasDelta * biasDelta;
+				float dx = -sqrtf((adaBiasDeltas[idx] + epsilon) / (adaBiasSquares[idx] + epsilon)) * biasDelta;
+				adaBiasDeltas[idx] = ro * adaBiasDeltas[idx] + (1 - ro) * dx * dx;
+				filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
 			}
 			// ----------------------------------------
 
