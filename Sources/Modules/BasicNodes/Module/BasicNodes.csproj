@@ -286,6 +286,8 @@
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="res\variGauss_layer.png" />
+    <EmbeddedResource Include="res\variGauss_layer_big.png" />
     <EmbeddedResource Include="res\transform_big.png" />
     <EmbeddedResource Include="res\transform.png" />
     <EmbeddedResource Include="res\delayedcopy.png" />
