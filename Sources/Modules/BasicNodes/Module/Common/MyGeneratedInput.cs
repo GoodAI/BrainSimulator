@@ -59,7 +59,10 @@ namespace GoodAI.Modules.Common
                 if (value.Length > 0)
                 {
                     UserInput_parsed = value.Trim().Split(',', ' ').Select(a => float.Parse(a, CultureInfo.InvariantCulture)).ToList();
-                    Output.Count = UserInput_parsed.Count;
+                }
+                else
+                {
+                    UserInput_parsed = null;
                 }
                 m_userInput = value;
             }
@@ -102,7 +105,7 @@ namespace GoodAI.Modules.Common
         public override void UpdateMemoryBlocks()
         {
             Output.ColumnHint = ColumnHint > 0 ? ColumnHint : 1;
-            if (GenerateType == MyGenerateType.SimulationStepFce)
+            if (!(GenerateType == MyGenerateType.Linear || GenerateType == MyGenerateType.UserData))
             {
                 OutputSize = 1;
             }
@@ -116,12 +119,20 @@ namespace GoodAI.Modules.Common
         public override void Validate(MyValidator validator)
         {
             validator.AssertError(OutputSize > 0, this, "Invalid OutputSize, must be at least 1");
-            validator.AssertError(!(GenerateType == MyGenerateType.UserData && UserInput.Length == 0), this, "You need to enter some values to UserData");
+            validator.AssertError(!(GenerateType != MyGenerateType.Linear && UserInput.Length == 0), this, "You need to enter some values to UserInput field");
+            validator.AssertError(!(GenerateType == MyGenerateType.Linear && OutputSize < 2), this, "Output has to be larger than 1 when using Linear method");
         }
 
         public MyTransferTask GenerateInput { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>Generates input. Possible methods are:<dl>
+        /// <dt><b>Linear</b></dt><dd>Set output to numbers spread evenly between <b>MinValue</b> and <b>MaxValue</b> (including) and shifts them each step by <b>ShiftSpeed</b> positions. Output has to be at least of size 2.</dd>
+        /// <dt><b>Sine</b></dt><dd>Sets first output element to sine of 2*Pi*SimulationStep*UserInput. Therefore first value in UserInput serves as inverse "sampling frequency". Setting it to 1 or 0.5 will give you just zeros while setting it to 0.01 will spread one sine period to 100 simulation steps.</dd>
+        /// <dt><b>Cosine</b></dt><dd>Sets first output element to cosine of 2*Pi*SimulationStep*UserInput. Therefore first value in UserInput serves as inverse "sampling frequency". Setting it to 1 will give you just ones while setting it to 0.01 will spread one cosine period to 100 simulation steps.</dd>
+        /// <dt><b>UserData</b></dt><dd>Data in node's <b>UserInput</b> are copied into output</dd>
+        /// <dt><b>SimulationStep</b></dt><dd>Output is set to current simulation step number</dd>
+        /// <dt><b>SimulationStepFce</b></dt><dd>Task cyclically iterates over node's UserInput and puts values from it to output</dd>
+        /// </dl></summary>
         [Description("Generate input")]
         public class MyTransferTask : MyTask<MyGenerateInput>
         {
