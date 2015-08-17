@@ -177,7 +177,7 @@ namespace GoodAI.SoundWorld
                         FeaturesCount = 256;
                         break;
                     case FeatureType.MFCC:
-                        FeaturesCount = 12;
+                        FeaturesCount = 13;
                         break;
                     case FeatureType.LPC:
                         FeaturesCount = 10;
@@ -244,7 +244,7 @@ namespace GoodAI.SoundWorld
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 break;
                             case InputTypeEnum.Microphone:
-                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 1), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds * 2);
+                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 1), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds * sizeof(Int16));
                                 Owner.m_recorder.ShortRecording += new ShortRecordingEventHandler(OnRecordShort);
                                 Owner.m_recorder.Record();
                                 break;
@@ -415,13 +415,12 @@ namespace GoodAI.SoundWorld
                 }
             }
 
-
             public void OnRecordShort(short[] input)
             {
                 m_InputData = input;
 
                 // Uncomment in case of microphone test 
-                //WaveReader.Save(@"E:\microphone.wav", input, Owner.m_recorder.m_format);
+                //WavPlayer.Save(@"C:\microphone.wav", input, Owner.m_recorder.m_format);
 
                 Owner.m_recorder.Stop();
             }
@@ -432,7 +431,7 @@ namespace GoodAI.SoundWorld
                 if (m_position >= count)
                     m_position -= (int)(float)(count * 0.1);
                 #region Set Label
-                if (m_wavReader.HasTranscription)
+                if (m_wavReader != null && m_wavReader.HasTranscription)
                 {
                     char c = m_wavReader.GetTranscription((int)m_position, (int)m_position + count);
                     int index = StringToDigitIndexes(c);
@@ -553,6 +552,7 @@ namespace GoodAI.SoundWorld
                 if (File.Exists(transcrPath))
                     m_wavReader.AttachTranscriptionFile(transcrPath);
             }
+
             #region Helper methods
             private int NextPowerOf2(int n)
             {

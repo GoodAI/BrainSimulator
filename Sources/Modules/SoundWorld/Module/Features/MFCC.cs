@@ -21,23 +21,23 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 return new float[0];
 
             // Compute mel scale filterbank
-            float[] mel_scale = MelFilterBank(fft, coefCount, format.nSamplesPerSec);
+            float[] mel_scale = MelFilterBank(fft, (int)Math.Ceiling(coefCount * 1.5), format.nSamplesPerSec);
 
             // Apply logarithm
             for (int i = 0; i < mel_scale.Length; i++)
                 if (mel_scale[i] == 0)
                     continue;
                 else
-                    mel_scale[i] = (float)Math.Log10(mel_scale[i]);
+                    mel_scale[i] = (float)Math.Log(mel_scale[i]);
 
-            float[] mfcc = DCT(mel_scale);
+            float[] dct = DCT(mel_scale);
+            float[] mfcc = new float[coefCount];
+            Array.Copy(dct, mfcc, coefCount);
 
-            return mfcc;
+            return Normalize(mfcc);
         }
 
         #region Private stuff
-        public const float Sqrt2 = 1.4142135623730950488016887f;
-
         internal class Point
         {
             public int X { get; set; }
@@ -53,14 +53,14 @@ namespace GoodAI.Modules.SoundProcessing.Features
         private static float[] MelFilterBank(float[] fft, int filters_cnt, int sample_rate)
         {
             // Prepare initial values
-            float mel_min = toMel(300);
+            float mel_min = toMel(0);
             float mel_max = toMel(sample_rate);
             float mel_step = (mel_max - mel_min) / (filters_cnt + 1);
             double[] f = new double[filters_cnt + 2];
             float[] mel = new float[filters_cnt + 2];
             float[] hertz = new float[filters_cnt + 2];
             float[] mel_scale = new float[filters_cnt];
-            
+
             // Prepare count +2 mel bins
             mel[0] = mel_min;
             for (int n = 1; n < filters_cnt + 2; n++)
@@ -113,7 +113,7 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 result[k] = (float)(scale * sum);
             }
 
-            data[0] = result[0] / Sqrt2;
+            data[0] = result[0] / (float)Math.Sqrt(2);
             for (int i = 1; i < data.Length; i++)
                 data[i] = result[i];
 
@@ -140,6 +140,35 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 res[x] = (a * (A.X + x) + b);
 
             return res;
+        }
+
+        /// <summary>
+        /// Normalization of input to 0-1 range.
+        /// </summary>
+        /// <param name="input">Target data.</param>
+        /// <returns>Normalized data.</returns>
+        private static float[] Normalize(float[] input)
+        {
+            // Find minimum and maximum
+            float max = 0;
+            float min = 0;
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] > max)
+                    max = input[i];
+                if (input[i] < min)
+                    min = input[i];
+            }
+
+            // Normalize
+            float diff = max - min;
+            float[] result = new float[input.Length];
+            for (int i = 0; i < input.Length; i++)
+            {
+                result[i] = (input[i] - min) / diff;
+            }
+
+            return result;
         }
 
         private static float toMel(float f)
