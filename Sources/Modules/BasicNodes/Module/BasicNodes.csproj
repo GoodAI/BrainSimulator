@@ -120,8 +120,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
+    <Compile Include="Robotic\MyCuriosityProbe.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
+    <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
     <Compile Include="Common\MyInverseTransformSampling.cs" />
@@ -315,6 +318,8 @@
     <EmbeddedResource Include="res\input_RBM_layer_big.png" />
     <EmbeddedResource Include="res\network_RBM.png" />
     <EmbeddedResource Include="res\network_RBM_big.png" />
+    <EmbeddedResource Include="res\join.png" />
+    <EmbeddedResource Include="res\join_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
