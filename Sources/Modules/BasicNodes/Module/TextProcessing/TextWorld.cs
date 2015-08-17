@@ -27,7 +27,7 @@ namespace GoodAI.Modules.TextProcessing
     /// <description>Provides sample or custom text input for additional processing.</description>
     public class TextWorld : MyWorld
     {
-        public enum InputType {Text, Source, UserDefined}
+        public enum UserInput {UserText, UserFile}
         
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Output
@@ -36,63 +36,57 @@ namespace GoodAI.Modules.TextProcessing
             set { SetOutput(0, value); }
         }
 
-        [YAXSerializableField]
         protected string m_Text;
 
         [YAXSerializableField]
-        protected string m_UserDefined;
+        protected string m_UserFile;
         
         [YAXSerializableField]
-        protected InputType m_UserInput;
+        protected UserInput m_UserInput;
 
         public MyCUDAGenerateInputTask GenerateInput { get; private set; }
 
         #region I/O
+        [MyBrowsable, Category("I/O")]
+        [YAXSerializableField(DefaultValue = "User text"), YAXElementFor("IO")]
+        public string UserText { get; set; }
+
         [Description("Path to input text file")]
         [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
         [MyBrowsable, Category("I/O"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public string UserDefined 
+        public string UserFile 
         {
-            get { return m_UserDefined; }
+            get { return m_UserFile; }
             set
             {
-                m_UserDefined = value;
-
-                if(File.Exists(value))
-                using (StreamReader sr = new StreamReader(value))
-                {
-                    m_Text = sr.ReadToEnd();
-                }
+                InputType = UserInput.UserFile;
+                m_UserFile = value;
             } 
         }
 
         [MyBrowsable, Category("I/O")]
-        [YAXSerializableField(DefaultValue = InputType.Text), YAXElementFor("IO")]
-        public InputType UserInput
+        [YAXSerializableField(DefaultValue = UserInput.UserText), YAXElementFor("IO")]
+        public UserInput InputType
         {
             get { return m_UserInput; }
             set
             {
                 m_UserInput = value;
-                if (!(value.CompareTo(InputType.UserDefined) == 0))
-                    m_UserDefined = "";
 
                 switch (value)
                 {
-                    case InputType.Text:
-                        m_UserDefined = "Sample Text";
-                        //m_Text = BasicNodes.Properties.Resources.Wiki;
+                    case UserInput.UserText:
+                        m_Text = UserText;
                         break;
-                    case InputType.Source:
-                        m_UserDefined = "Sample Source code";
-                        //m_Text = BasicNodes.Properties.Resources.SourceCode;
-                        break;
-                    case InputType.UserDefined:
-                        m_UserDefined = "";
+                    case UserInput.UserFile:
+                        if (File.Exists(UserFile))
+                            using (StreamReader sr = new StreamReader(UserFile))
+                            {
+                                m_Text = sr.ReadToEnd();
+                            }
                         break;
                 }
             }
-            
         }
         #endregion
 
