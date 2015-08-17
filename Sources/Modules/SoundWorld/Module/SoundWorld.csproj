@@ -60,7 +60,6 @@
     <Compile Include="Features\LPC.cs" />
     <Compile Include="Features\MFCC.cs" />
     <Compile Include="Formats\WavPlayer.cs" />
-    <Compile Include="MyAudioPlayerNode.cs" />
     <Compile Include="MySoundWorld.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
