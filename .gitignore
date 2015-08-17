@@ -9,3 +9,4 @@ Release
 *.user
 doc.xml
 /Sources/Modules/InternalNodes
+/Sources/Modules/SeMeIntModule

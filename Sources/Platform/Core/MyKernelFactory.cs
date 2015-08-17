@@ -57,6 +57,11 @@ namespace GoodAI.Core
                 if (args[i] is MyAbstractMemoryBlock)
                 {
                     args[i] = (args[i] as MyAbstractMemoryBlock).GetDevicePtr(m_GPU);
+                    if (((CUdeviceptr)args[i]).Pointer == 0)
+                    {
+                        // TODO(Premek): this is now handled in observers, should be also handled in the simulation
+                        throw new InvalidOperationException("Memory block resolved to null device ptr (not allocated on device?).");
+                    }
                 }
             }
             m_kernel.Run(args);

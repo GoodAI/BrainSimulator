@@ -35,7 +35,10 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.PreviousWeightDelta.Fill(0);
 
             // set standard deviation
-            float stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
+            float stdDev = 0.01f;
+            if (Owner.Input != null)
+                stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
+                
 
             // init random weights
             for (int w = 0; w < Owner.Weights.Count; w++)

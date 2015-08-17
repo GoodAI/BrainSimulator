@@ -18,9 +18,11 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public MyOneToOneForwardTask() { } //parameterless constructor
 
         private MyCudaKernel m_forwardKernel; // kernel
+        private MyCudaKernel m_softmaxKernel;
         public override void Init(int nGPU)
         {
             m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\FeedForwardKernels", "OneToOneForwardKernel");
+            m_softmaxKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Activation\ActivationFunction", "SoftmaxKernel");
         }
 
         public override void Execute() //Task execution
@@ -32,6 +34,19 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Output,
                 Owner.Neurons
                 );
+
+            if (Owner.ActivationFunction == ActivationFunctionType.SOFTMAX)
+            {
+                Owner.Output.SafeCopyToHost();
+                float expSum = Owner.Output.Host.Sum();
+                m_softmaxKernel.SetupExecution(Owner.Neurons);
+                m_softmaxKernel.Run(
+                    Owner.Output,
+                    expSum,
+                    Owner.Neurons
+                    );
+
+            }
         }
     }
 

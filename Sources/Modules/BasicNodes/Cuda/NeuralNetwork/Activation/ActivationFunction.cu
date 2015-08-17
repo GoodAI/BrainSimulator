@@ -19,8 +19,14 @@ extern "C"
 		GAUSSIAN,
 		RATIONAL_SIGMOID,
 		RELU,
+		SOFTMAX,
 		TANH
 	};
+
+	__device__ int sign(float val)
+	{
+		return (val > 0) - (val < 0);
+	}
 
 	/* Transfer function definitions */
 	__device__ float sigmoid(float x)
@@ -70,14 +76,28 @@ extern "C"
 
 	__device__ float rectifiedLinearUnit(float x)
 	{
-		if (x > 0.0f)
-			return x;
-		return 0.0f;
+		return (x > 0.0f) * x;
 	}
 
 	__device__ float rectifiedLinearUnit_derivative(float x)
 	{
-		return x > 0.0f;
+		return (x > 0.0f);
+	}
+
+	// not used for now
+	__device__ float softmax(float* x, int index, int length)
+	{
+		float result = exp(x[index]);
+		for (size_t i = 0; i < length; i++)
+		{
+			result /= exp(x[i]);
+		}
+		return result;
+	}
+
+	__device__ float softmax_derivative(float x)
+	{
+		return (x * (1 - x));
 	}
 
 	__device__ float RBMbinary(float x, float random)
@@ -104,6 +124,11 @@ extern "C"
 
 			case RELU:
 				return rectifiedLinearUnit(input);
+
+			case SOFTMAX:
+				// softmax is computed by a separate kernel (needs data from the whole layer)
+				// here we only prepare exp value of input
+				return expf(input);
 
 			case TANH:
 				return tanhf(input);
@@ -135,6 +160,9 @@ extern "C"
 			case RELU:
 				return rectifiedLinearUnit_derivative(input);
 
+			case SOFTMAX:
+				return softmax_derivative(input);
+
 			case TANH:
 				return tanh_derivative(input);
 
@@ -145,4 +173,25 @@ extern "C"
 				return 0.0f;
 		}
 	}
+
+	__global__ void SoftmaxKernel(
+		float *outputPtr,
+		float expSum,
+		int layerSize
+		)
+	{
+		// i: neuron id
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < layerSize)
+		{
+			// exp value is already present in the ouput array, so just divide by sum of exps (computed before kernel call)
+			outputPtr[i] /= expSum;
+		}
+
+
+	}
+
 }

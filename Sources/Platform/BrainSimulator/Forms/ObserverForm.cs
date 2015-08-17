@@ -160,8 +160,19 @@ namespace GoodAI.BrainSimulator.Forms
             if (!this.IsDisposed)
             {
                 peekLabel.Visible = false;
-                Observer.UpdateFrame(simulationStep);
-                glControl.Invalidate();
+
+                try
+                {
+                    Observer.UpdateFrame(simulationStep);
+                }
+                catch (Exception exc)
+                {
+                    MyLog.ERROR.WriteLine("Observer update failed: " + exc.Message);
+                }
+                finally
+                {
+                    glControl.Invalidate();
+                }
 
                 if (Observer.AutosaveSnapshop)
                 {

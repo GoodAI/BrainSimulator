@@ -121,17 +121,22 @@ namespace GoodAI.Core.Observers
             {
                 m_cudaVertexSource.Map();
             }
-            
-            Execute();
 
-            if (m_cudaTextureSource != null)
+            try
             {
-                m_cudaTextureSource.UnMap();
+                Execute();
             }
-
-            if (m_cudaVertexSource != null)
+            finally
             {
-                m_cudaVertexSource.UnMap();
+                if (m_cudaTextureSource != null)
+                {
+                    m_cudaTextureSource.UnMap();
+                }
+
+                if (m_cudaVertexSource != null)
+                {
+                    m_cudaVertexSource.UnMap();
+                }
             }
         }
 

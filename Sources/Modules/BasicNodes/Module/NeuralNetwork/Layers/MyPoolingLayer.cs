@@ -22,7 +22,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public override ConnectionType Connection
         {
-            get { return ConnectionType.CONVOLUTION; }
+            get { return ConnectionType.ONE_TO_ONE; }
         }
 
         [YAXSerializableField(DefaultValue = 128)]
@@ -183,6 +183,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             if (Neurons > 0)
             {
                 ActivatedNeurons.Count = Neurons;
+                Delta.ColumnHint = OutputWidth;
             }
         }
 

@@ -55,6 +55,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     MeanSquareWeight.Count = Weights.Count;
                     MeanSquareBias.Count = Bias.Count;
 
+                    // Adadelta allocation
+                    AdadeltaWeight.Count = Weights.Count;
+                    AdadeltaBias.Count = Bias.Count;
+
                     //// vSGD-fd allocations
                     //OriginalWeights.Count = Weights.Count;
                     //OriginalBias.Count = Bias.Count;

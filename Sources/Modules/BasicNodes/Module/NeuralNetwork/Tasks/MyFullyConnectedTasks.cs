@@ -29,11 +29,13 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         private MyCudaKernel m_forwardKernel;
         private MyCudaKernel m_L1TermKernel;
         private MyCudaKernel m_L2TermKernel;
+        private MyCudaKernel m_softmaxKernel;
         public override void Init(int nGPU)
         {
             m_forwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\FeedForwardKernels", "FullyConnectedForwardKernel");
             m_L1TermKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "L1TermKernel");
             m_L2TermKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "L2TermKernel");
+            m_softmaxKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Activation\ActivationFunction", "SoftmaxKernel");
         }
 
         public override void Execute() //Task execution
@@ -79,6 +81,30 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     Owner.Weights.Count
                     );
             }
+
+            if (Owner.ActivationFunction == ActivationFunctionType.SOFTMAX)
+            {
+                Owner.Output.SafeCopyToHost();
+                float expSum = Owner.Output.Host.Sum();
+
+                if (expSum > 2 * Owner.Neurons)
+                    MyLog.WARNING.WriteLine("Exponential sum (danger/suspici)ously high: " + expSum);
+
+                
+                m_softmaxKernel.SetupExecution(Owner.Neurons);
+                m_softmaxKernel.Run(
+                    Owner.Output,
+                    expSum,
+                    Owner.Neurons
+                    );
+
+
+                Owner.Output.SafeCopyToHost();
+                expSum = Owner.Output.Host.Sum();
+                MyLog.DEBUG.WriteLine("Sum of softmax activations is " + expSum + ". Should be 1.");
+
+
+            }
         }
     }
 
@@ -104,11 +130,14 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         {
             // pointer to previous layer
             MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyAbstractLayer nextLayer = Owner.NextLayer;
 
             if (previousLayer != null)
             {
-                // reset delta
-                previousLayer.Delta.Fill(0);
+                // reset delta only if next is not Gaussian HACK.
+                // (Gaussian layer already reseted delta and filled with regularization deltas)
+                if (nextLayer==null || !((nextLayer is MyGaussianHiddenLayer) && (nextLayer.DeltaBackTask as MyGaussianBackDeltaTask).Regularize))
+                    previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr;

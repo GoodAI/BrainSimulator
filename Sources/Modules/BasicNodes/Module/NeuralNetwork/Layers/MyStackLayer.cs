@@ -15,6 +15,12 @@ using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>
+    ///   Performs an element-wise stack-join operation on the input vectors.
+    /// </summary>
+    /// <description></description>
     public class MyStackLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
         [MyInputBlock(1)]
@@ -78,7 +84,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
         [Description("DeltaBackTask"), MyTaskInfo(OneShot = false)]
-        public class MyStackBackDeltaTask : MyTask<MyStackLayer>
+        public class MyStackBackDeltaTask : MyAbstractBackDeltaTask<MyStackLayer>
         {
             public MyStackBackDeltaTask() { } //parameterless constructor
 
@@ -104,7 +110,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
         [Description("ForwardTask"), MyTaskInfo(OneShot = false)]
-        public class MyStackForwardTask : MyTask<MyStackLayer>
+        public class MyStackForwardTask : MyAbstractForwardTask<MyStackLayer>
         {
             public MyStackForwardTask() { } //parameterless constructor
 

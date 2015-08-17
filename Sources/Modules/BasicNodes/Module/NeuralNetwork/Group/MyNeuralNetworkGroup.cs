@@ -47,7 +47,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         //Memory Blocks
         public List<MyNode> SortedChildren;
-        internal MyAbstractLayer FirstLayer;
+        public MyAbstractLayer FirstLayer;
         internal MyAbstractLayer LastLayer;
         internal int TotalWeights;
 
@@ -56,6 +56,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MySGDTask SGD { get; protected set; }
         [MyTaskGroup("BackPropagation")]
         public MyRMSTask RMS { get; protected set; }
+        [MyTaskGroup("BackPropagation")]
+        public MyAdadeltaTask Adadelta { get; protected set; }
+
         //[MyTaskGroup("BackPropagation")]
         //public MyvSGDfdTask vSGD { get; protected set; }
 

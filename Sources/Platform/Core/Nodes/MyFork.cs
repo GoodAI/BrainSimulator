@@ -52,14 +52,34 @@ namespace GoodAI.Core.Nodes
             {
                 string[] branchConf = Branches.Split(',');
 
-                for (int i = 0; i < OutputBranches; i++)
-                {
-                    MyMemoryBlock<float> mb = GetOutput(i);
-                    MyMemoryManager.Instance.RemoveBlock(this, mb);
-                }
+                if (branchConf.Length != OutputBranches) {
 
-                OutputBranches = branchConf.Length;
+                    for (int i = 0; i < OutputBranches; i++)
+                    {
+                        MyMemoryBlock<float> mb = GetOutput(i);
+                        MyMemoryManager.Instance.RemoveBlock(this, mb);
+                    }
 
+                    OutputBranches = branchConf.Length;
+
+                    for (int i = 0; i < branchConf.Length; i++)
+                    {
+                        MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+                        mb.Name = "Output_" + (i + 1);
+                        mb.Count = -1;
+                        m_outputs[i] = mb;
+                    }
+                }                               
+
+               UpdateMemoryBlocks();                         
+            }
+        }
+
+        private void UpdateOutputBlocks()
+        {
+            if (Branches != null && Branches != String.Empty)
+            {
+                string[] branchConf = Branches.Split(',');
                 int[] branchSizes = new int[OutputBranches];
 
                 List<int> stars = new List<int>();
@@ -92,22 +112,14 @@ namespace GoodAI.Core.Nodes
 
                 for (int i = 0; i < branchConf.Length; i++)
                 {
-                    MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-                    mb.Name = "Output_" + (i + 1);
-                    mb.Count = branchSizes[i];
-                    m_outputs[i] = mb;
+                    GetOutput(i).Count = branchSizes[i];
                 }
-
-               // UpdateMemoryBlocks();                         
             }
         }
 
         public override void UpdateMemoryBlocks()
         {
-            if (InputSize > 0)
-            {
-                InitOutputs();
-            }
+            UpdateOutputBlocks();
 
             //column hint update
             for (int i = 0; i < OutputBranches; i++)
