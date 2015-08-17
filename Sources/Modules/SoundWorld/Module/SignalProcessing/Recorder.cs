@@ -101,7 +101,9 @@ namespace GoodAI.Modules.SoundProcessing
                             WaveBuffer buf = (WaveBuffer)h.Target;
                             buf.OnCompleted();
                         }
-                        catch { }
+                        catch {
+                            Thread.CurrentThread.Join();
+                        }
                         break;
                     case WaveNative.MM_WIM_CLOSE:
                         break;

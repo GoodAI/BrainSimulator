@@ -218,6 +218,7 @@ namespace GoodAI.SoundWorld
             WavPlayer player;
             private short[] m_InputData;
             private long m_position = 0;
+            private int m_InputOffset = 0;
             
 
             public override void Init(Int32 nGPU)
@@ -244,7 +245,9 @@ namespace GoodAI.SoundWorld
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 break;
                             case InputTypeEnum.Microphone:
-                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 1), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds * sizeof(Int16));
+                                m_InputOffset = 0;
+                                m_InputData = new short[32000 * Owner.RecordSeconds * sizeof(Int16)];
+                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 1), Owner.MicrophoneDevice, 4096);
                                 Owner.m_recorder.ShortRecording += new ShortRecordingEventHandler(OnRecordShort);
                                 Owner.m_recorder.Record();
                                 break;
@@ -417,12 +420,14 @@ namespace GoodAI.SoundWorld
 
             public void OnRecordShort(short[] input)
             {
-                m_InputData = input;
+                Array.Copy(input, 0, m_InputData, m_InputOffset, input.Length);
+                m_InputOffset += input.Length;
 
                 // Uncomment in case of microphone test 
-                //WavPlayer.Save(@"C:\microphone.wav", input, Owner.m_recorder.m_format);
+                //WavPlayer.Save(@"C:\User\microphone.wav", input, Owner.m_recorder.m_format);
 
-                Owner.m_recorder.Stop();
+                if(m_InputOffset + input.Length > m_InputData.Length)
+                    Owner.m_recorder.Stop();
             }
 
             // prepare batch for processing
