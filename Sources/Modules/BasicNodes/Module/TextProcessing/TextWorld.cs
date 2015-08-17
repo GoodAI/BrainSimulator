@@ -81,11 +81,11 @@ namespace GoodAI.Modules.TextProcessing
                 {
                     case InputType.Text:
                         m_UserDefined = "Sample Text";
-                        m_Text = BasicNodes.Properties.Resources.Wiki;
+                        //m_Text = BasicNodes.Properties.Resources.Wiki;
                         break;
                     case InputType.Source:
                         m_UserDefined = "Sample Source code";
-                        m_Text = BasicNodes.Properties.Resources.SourceCode;
+                        //m_Text = BasicNodes.Properties.Resources.SourceCode;
                         break;
                     case InputType.UserDefined:
                         m_UserDefined = "";
