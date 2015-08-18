@@ -13,7 +13,7 @@ For the purpose of this tutorial, we will implement a regression node, which wil
 * Open `SampleNewModule` solution in Visual Studio.
 * Rename solution to `RegressionModule` within the Visual Studio.
 * In `NewModule -> Properties -> Application`; change `Assembly name` and `Default namespace` to `RegressionModule`.
-* In `NewModule -> Properties -> Debug`; check the path to your Brain Simulator installation (`Start external program`).
+* In `NewModule -> Properties -> Debug`; check the path to your Brain Simulator installation (`Start external program`) and an argument for loading your module on startup (`-m RegressionModule.dll`).
 * Rename `NewModule` project to `RegressionModule` within the Visual Studio.
 * Rename `NewModuleCuda` project to `RegressionModuleCuda`.
 * Delete `SomeNode.cs` file from `RegressionModule` project and `SomeNode.cu` kernel file from `RegressionModuleCuda` project use these as templates and rename accordingly.

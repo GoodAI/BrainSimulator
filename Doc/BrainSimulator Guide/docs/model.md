@@ -256,7 +256,18 @@ During the run, you will see a set of 3 tasks, from which only one can be active
 ![Task group](img/model-taskgroup.png)
 
 ### Worlds
-Worlds correspond to various environments in Brain Simulator. You can implement your own worlds in a same way, as you implement Nodes (`MyWorld` actually inherits from `MyWorkingNode`), but instead of `MyWorkingNode`, your World will inherit from `MyWorld`.
+Worlds correspond to various environments in Brain Simulator. You can implement your own worlds in a same way, as you implement Nodes (`MyWorld` actually inherits from `MyWorkingNode`), but instead of `MyWorkingNode`, your World will inherit from `MyWorld`. You need to register the new worlds in the `nodes.xml` in the `KnownWorlds` node like this:
+``` xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration  RootNamespace="GoodAI.SeMeIntegration">
+  <KnownNodes>
+  </KnownNodes>
+  <KnownWorlds>
+    <World type="GoodAI.MyNewModule.MyNewWorld" >
+    </World>
+  </KnownWorlds>
+</Configuration>
+``` 
 
 ### Signals
 Signals are a way of unusual communication between nodes. They can be used to transfer some specific information (so you don't need another MemoryBlock) to any node, following in the data flow (so inter-nodes don't have to have some knowledge about your signals).
