@@ -120,13 +120,12 @@ namespace GoodAI.Modules.Common
         {
             validator.AssertError(OutputSize > 0, this, "Invalid OutputSize, must be at least 1");
             validator.AssertError(!(GenerateType != MyGenerateType.Linear && UserInput.Length == 0), this, "You need to enter some values to UserInput field");
-            validator.AssertError(!(GenerateType == MyGenerateType.Linear && OutputSize < 2), this, "Output has to be larger than 1 when using Linear method");
         }
 
         public MyTransferTask GenerateInput { get; private set; }
 
         /// <summary>Generates input. Possible methods are:<dl>
-        /// <dt><b>Linear</b></dt><dd>Set output to numbers spread evenly between <b>MinValue</b> and <b>MaxValue</b> (including) and shifts them each step by <b>ShiftSpeed</b> positions. Output has to be at least of size 2.</dd>
+        /// <dt><b>Linear</b></dt><dd>Set output to numbers spread evenly between <b>MinValue</b> and <b>MaxValue</b> (including) and shifts them each step by <b>ShiftSpeed</b> positions. If the output size is 1, MinValue will be set as output.</dd>
         /// <dt><b>Sine</b></dt><dd>Sets first output element to sine of 2*Pi*SimulationStep*UserInput. Therefore first value in UserInput serves as inverse "sampling frequency". Setting it to 1 or 0.5 will give you just zeros while setting it to 0.01 will spread one sine period to 100 simulation steps.</dd>
         /// <dt><b>Cosine</b></dt><dd>Sets first output element to cosine of 2*Pi*SimulationStep*UserInput. Therefore first value in UserInput serves as inverse "sampling frequency". Setting it to 1 will give you just ones while setting it to 0.01 will spread one cosine period to 100 simulation steps.</dd>
         /// <dt><b>UserData</b></dt><dd>Data in node's <b>UserInput</b> are copied into output</dd>
