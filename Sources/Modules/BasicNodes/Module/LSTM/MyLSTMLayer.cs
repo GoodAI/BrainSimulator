@@ -53,53 +53,53 @@ namespace GoodAI.Modules.LSTM
         public int CellsPerBlock { get; set; }
 
         //Tasks
-        MyLSTMInitLayerTask initLayerTask { get; set; }
-        MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
-        MyLSTMUpdateWeightsTask updateWeightsTask { get; set; }
+        protected MyLSTMInitLayerTask initLayerTask { get; set; }
+        protected MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
+        protected MyLSTMUpdateWeightsTask updateWeightsTask { get; set; }
 
         //Signals
-        public MyResetSignal ResetSignal { get; private set; }
+        public MyResetSignal ResetSignal { get; set; }
         public class MyResetSignal : MySignal { }
 
         // Memory blocks
-        public MyMemoryBlock<float> CellStates { get; set; }
-        public MyMemoryBlock<float> PreviousCellStates { get; set; }
+        public virtual MyMemoryBlock<float> CellStates { get; set; }
+        public virtual MyMemoryBlock<float> PreviousCellStates { get; set; }
 
-        public MyMemoryBlock<float> CellInputActivations { get; set; }
-        public MyMemoryBlock<float> InputGateActivations { get; set; }
-        public MyMemoryBlock<float> ForgetGateActivations { get; set; }
-        public MyMemoryBlock<float> OutputGateActivations { get; set; }
+        public virtual MyMemoryBlock<float> CellInputActivations { get; set; }
+        public virtual MyMemoryBlock<float> InputGateActivations { get; set; }
+        public virtual MyMemoryBlock<float> ForgetGateActivations { get; set; }
+        public virtual MyMemoryBlock<float> OutputGateActivations { get; set; }
 
-        public MyMemoryBlock<float> CellInputActivationDerivatives { get; set; }
-        public MyMemoryBlock<float> InputGateActivationDerivatives { get; set; }
-        public MyMemoryBlock<float> ForgetGateActivationDerivatives { get; set; }
-        public MyMemoryBlock<float> OutputGateActivationDerivatives { get; set; }
+        public virtual MyMemoryBlock<float> CellInputActivationDerivatives { get; set; }
+        public virtual MyMemoryBlock<float> InputGateActivationDerivatives { get; set; }
+        public virtual MyMemoryBlock<float> ForgetGateActivationDerivatives { get; set; }
+        public virtual MyMemoryBlock<float> OutputGateActivationDerivatives { get; set; }
 
         [MyPersistable]
-        public MyMemoryBlock<float> CellInputWeights { get; set; }
-        public MyMemoryBlock<float> CellInputWeightDeltas { get; set; }
-        public MyMemoryBlock<float> CellInputWeightMeanSquares { get; set; } // RMSProp memory
+        public virtual MyMemoryBlock<float> CellInputWeights { get; set; }
+        public virtual MyMemoryBlock<float> CellInputWeightDeltas { get; set; }
+        public virtual MyMemoryBlock<float> CellInputWeightMeanSquares { get; set; } // RMSProp memory
         [MyPersistable]
-        public MyMemoryBlock<float> InputGateWeights { get; set; }
-        public MyMemoryBlock<float> InputGateWeightDeltas { get; set; }
-        public MyMemoryBlock<float> InputGateWeightMeanSquares { get; set; } // RMSProp memory
+        public virtual MyMemoryBlock<float> InputGateWeights { get; set; }
+        public virtual MyMemoryBlock<float> InputGateWeightDeltas { get; set; }
+        public virtual MyMemoryBlock<float> InputGateWeightMeanSquares { get; set; } // RMSProp memory
         [MyPersistable]
-        public MyMemoryBlock<float> ForgetGateWeights { get; set; }
-        public MyMemoryBlock<float> ForgetGateWeightDeltas { get; set; }
-        public MyMemoryBlock<float> ForgetGateWeightMeanSquares { get; set; } // RMSProp memory
+        public virtual MyMemoryBlock<float> ForgetGateWeights { get; set; }
+        public virtual MyMemoryBlock<float> ForgetGateWeightDeltas { get; set; }
+        public virtual MyMemoryBlock<float> ForgetGateWeightMeanSquares { get; set; } // RMSProp memory
         [MyPersistable]
-        public MyMemoryBlock<float> OutputGateWeights { get; set; }
-        public MyMemoryBlock<float> OutputGateWeightDeltas { get; set; }
-        public MyMemoryBlock<float> OutputGateWeightMeanSquares { get; set; } // RMSProp memory
+        public virtual MyMemoryBlock<float> OutputGateWeights { get; set; }
+        public virtual MyMemoryBlock<float> OutputGateWeightDeltas { get; set; }
+        public virtual MyMemoryBlock<float> OutputGateWeightMeanSquares { get; set; } // RMSProp memory
 
-        public MyMemoryBlock<float> CellWeightsRTRLPartials { get; set; }
-        public MyMemoryBlock<float> InputGateWeightsRTRLPartials { get; set; }
-        public MyMemoryBlock<float> ForgetGateWeightsRTRLPartials { get; set; }
+        public virtual MyMemoryBlock<float> CellWeightsRTRLPartials { get; set; }
+        public virtual MyMemoryBlock<float> InputGateWeightsRTRLPartials { get; set; }
+        public virtual MyMemoryBlock<float> ForgetGateWeightsRTRLPartials { get; set; }
 
-        public MyMemoryBlock<float> CellStateErrors { get; set; }
-        public MyMemoryBlock<float> OutputGateDeltas { get; set; }
+        public virtual MyMemoryBlock<float> CellStateErrors { get; set; }
+        public virtual MyMemoryBlock<float> OutputGateDeltas { get; set; }
 
-        public MyMemoryBlock<float> PreviousOutput { get; set; }
+        public virtual MyMemoryBlock<float> PreviousOutput { get; set; }
 
         public override void UpdateMemoryBlocks()
         {

@@ -75,13 +75,13 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> Output
+        public virtual MyMemoryBlock<float> Output
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
-        public MyMemoryBlock<float> Delta { get; protected set; }
+        public virtual MyMemoryBlock<float> Delta { get; protected set; }
         #endregion
 
         //parameterless constructor
