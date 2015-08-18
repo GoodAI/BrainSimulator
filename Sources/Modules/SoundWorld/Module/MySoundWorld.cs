@@ -325,99 +325,6 @@ namespace GoodAI.SoundWorld
                 }
             }
 
-            public void ExecuteCPU()
-            {
-                #region First step init
-                Owner.Features.Fill(0);
-                Owner.Label.Fill(0);
-
-                try
-                {   // load input data on simulation start
-                    switch (Owner.m_UserInput)
-                    {
-                        case InputTypeEnum.SampleSound:
-                            m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
-                            m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
-                            break;
-                        case InputTypeEnum.Microphone:
-                            Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 2), Owner.MicrophoneDevice, 32000 * Owner.RecordSeconds);
-                            Owner.m_recorder.ShortRecording += new ShortRecordingEventHandler(OnRecordShort);
-                            Owner.m_recorder.Record();
-                            break;
-                        case InputTypeEnum.UserDefined:
-                            // reading corpus files
-                            if (Owner.m_InputPathCorpus != null)
-                            {
-                                audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
-
-                                m_wavReader = new WavPlayer(audio[m_currentCorpusFile], -1, 4096);
-                                AttachTranscriptFileIfExists(audio[m_currentCorpusFile]);
-                                m_currentCorpusFile = 1;
-                                m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
-                            }
-                            else
-                            {
-                                m_wavReader = new WavPlayer(Owner.m_InputPathAudio, -1, 4096);
-                                AttachTranscriptFileIfExists(Owner.m_InputPathAudio);
-                                m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
-                            }
-
-                            break;
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Not a valid sound device!
-                }
-                #endregion
-
-                while (true)
-                {
-                    #region Every time step
-                    if (m_InputData == null)
-                        return;
-
-                    int size = 0;
-                    float[] result = new float[Owner.FeaturesCount];
-
-                    // process data according to chosen feature type
-                    switch (Owner.FeaturesType)
-                    {
-                        case FeatureType.Samples:
-                            result = PrepareInputs(Owner.FeaturesCount);
-                            break;
-                        case FeatureType.FFT:
-                            // input size must be power of 2 and double sized due to the mirror nature of FFT
-                            size = NextPowerOf2(Owner.FeaturesCount * 2);
-                            result = PerformCPUFFT(PrepareInputs(size));
-                            //result = PerformCPUFFT(GenerateSine(size));  // generate a test sine signal
-
-                            break;
-                        case FeatureType.MFCC:
-                            WaveFormat m_format = null;
-                            if (Owner.m_recorder != null)
-                                m_format = Owner.m_recorder.m_format;
-                            else if (m_wavReader != null)
-                                m_format = m_wavReader.m_format;
-
-                            result = PerformCPUFFT(PrepareInputs(512));
-                            result = MFCC.Compute(result, m_format, Owner.FeaturesCount);
-                            break;
-                        case FeatureType.LPC:
-                            result = PrepareInputs(512);
-                            result = LPC.Compute(result, Owner.FeaturesCount);
-                            break;
-                    }
-
-                    // flush processed features into GPU
-                    Array.Clear(Owner.Features.Host, 0, Owner.Features.Count);
-                    for (int i = 0; i < Owner.FeaturesCount; i++)
-                        Owner.Features.Host[i] = result[i];
-                    Owner.Features.SafeCopyToDevice();
-                    #endregion
-                }
-            }
-
             public void OnRecordShort(short[] input)
             {
                 Array.Copy(input, 0, m_InputData, m_InputOffset, input.Length);
@@ -527,25 +434,6 @@ namespace GoodAI.SoundWorld
                 // squared magnitude of complex output as a result
                 for (int i = 0; i < output.Length; i++)
                     result[i] = (float)Math.Sqrt((output[i].x * output[i].x) + (output[i].y * output[i].y));
-
-                return result;
-            }
-
-            private float[] PerformCPUFFT(float[] input)
-            {
-                float[] result = new float[input.Length];
-
-                // convert inputs to complex numbers
-                Complex[] data = new Complex[input.Length];
-                for (int i = 0; i < input.Length; i++)
-                    data[i] = new Complex(input[i], 0);
-
-                // perform FFT
-                FourierTransform.FFT(data, FourierTransform.Direction.Forward);
-
-                // convert complex results back to real numbers
-                for (int i = 0; i < data.Length; i++)
-                    result[i] = (float)data[i].SquaredMagnitude;
 
                 return result;
             }
