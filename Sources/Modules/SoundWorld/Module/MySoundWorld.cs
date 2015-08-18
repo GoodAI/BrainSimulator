@@ -340,8 +340,10 @@ namespace GoodAI.SoundWorld
             // prepare batch for processing
             private float[] PrepareInputs(int count)
             {
+                // define overlap
                 if (m_position >= count)
                     m_position -= (int)(float)(count * 0.1);
+
                 #region Set Label
                 if (m_wavReader != null && m_wavReader.HasTranscription)
                 {
@@ -440,8 +442,7 @@ namespace GoodAI.SoundWorld
 
             private void AttachTranscriptFileIfExists(string audioPath)
             {
-                string transcrPath = Path.GetFullPath(audioPath) + "\\" +
-                                     Path.GetFileNameWithoutExtension(Owner.m_InputPathAudio) + ".txt";
+                string transcrPath = audioPath.Replace("wav", "txt");
                 if (File.Exists(transcrPath))
                     m_wavReader.AttachTranscriptionFile(transcrPath);
             }
