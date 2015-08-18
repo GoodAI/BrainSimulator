@@ -66,8 +66,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SignalProcessing\Complex.cs" />
-    <Compile Include="SignalProcessing\FFT.cs" />
     <Compile Include="SignalProcessing\Recorder.cs" />
     <Compile Include="SignalProcessing\WaveFormat.cs" />
     <Compile Include="SignalProcessing\WaveNative.cs" />
