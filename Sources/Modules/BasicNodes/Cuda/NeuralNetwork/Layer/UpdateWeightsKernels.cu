@@ -168,7 +168,6 @@ extern "C"
 
 				// should we even support regularization here? and how?
 				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
-				//gradient *= -1; // TODO - figure out the correct way
 
 				adaSquares[weightIdx] = ro * adaSquares[weightIdx] + (1 - ro) * gradient * gradient;
 				float dx = -sqrtf((adaDeltas[weightIdx] + epsilon) / (adaSquares[weightIdx] + epsilon)) * gradient;

@@ -400,6 +400,7 @@ extern "C"
 			// apply the filter over the whole image (do convolution again) with this one weight
 			float delta = 0;
 			float biasDelta = 0;
+
 			for (size_t j = 0; j < outputHeight; j++)
 			{
 				for (size_t i = 0; i < outputWidth; i++)
@@ -416,32 +417,14 @@ extern "C"
 					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
 						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
-
 				}
 			}
 
-			// UPDATE BIAS ---------------------------
-			if (idx % filterSize == 0)
-			{
-				// bias usually doesn't get regularised
-				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
-
-				//biasDelta *= -1;
-
-				adaBiasSquares[idx] = ro * adaBiasSquares[idx] + (1 - ro) * biasDelta * biasDelta;
-				float dx = -sqrtf((adaBiasDeltas[idx] + epsilon) / (adaBiasSquares[idx] + epsilon)) * biasDelta;
-				adaBiasDeltas[idx] = ro * adaBiasDeltas[idx] + (1 - ro) * dx * dx;
-				filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
-			}
-			// ----------------------------------------
-
-
 			// UPDATE WEIGHT --------------------------
 
-			// should we even support regularization here? and how?
-			//delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			// should we even support regularization here? ok...
+			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
 
-			//delta *= -1; // go down the gradient // TODO - figure out the correct way
 
 			// adadelta:
 			adaSquares[idx] = ro * adaSquares[idx] + (1 - ro) * delta * delta;
@@ -450,6 +433,21 @@ extern "C"
 			filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
 
 			// -----------------------------------------
+
+
+			// UPDATE BIAS ---------------------------
+			if (idx % filterSize == 0)
+			{
+				// bias usually doesn't get regularised
+				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+
+				adaBiasSquares[idx] = ro * adaBiasSquares[idx] + (1 - ro) * biasDelta * biasDelta;
+				float dx = -sqrtf((adaBiasDeltas[idx] + epsilon) / (adaBiasSquares[idx] + epsilon)) * biasDelta;
+				adaBiasDeltas[idx] = ro * adaBiasDeltas[idx] + (1 - ro) * dx * dx;
+				filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
+			}
+			// ----------------------------------------
+
 		}
 	}
 
