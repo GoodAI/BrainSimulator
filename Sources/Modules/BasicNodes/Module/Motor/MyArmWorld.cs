@@ -81,6 +81,12 @@ namespace GoodAI.Modules.Motor
             get { return GetInput(2); }
         }
 
+        [MyInputBlock]
+        public MyMemoryBlock<float> HighlightPointInput
+        {
+            get { return GetInput(3); }
+        }
+
 		public MyMemoryBlock<float> Reach { get; private set; }
 
         [MyOutputBlock]
@@ -301,6 +307,17 @@ namespace GoodAI.Modules.Motor
                     for (int i = 0; i < Owner.VisualOutput.Count; i++)
                     {
                         Owner.VisualOutput.Host[i] = 0.0f;
+                    }
+
+                    if (Owner.HighlightPointInput != null && Owner.HighlightPointInput.Count >= 2)
+                    {
+                        Owner.HighlightPointInput.SafeCopyToHost();
+                        int highlightX = (int) Owner.HighlightPointInput.Host[0];
+                        int highlightY = (int) Owner.HighlightPointInput.Host[1];
+                        int highlightRadius = 10;
+
+                        DrawLine(highlightX + highlightRadius / 2, highlightY, highlightX - highlightRadius / 2, highlightY, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
+                        DrawLine(highlightX, highlightY + highlightRadius / 2, highlightX, highlightY - highlightRadius / 2, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
                     }
 
                     //draw joints
