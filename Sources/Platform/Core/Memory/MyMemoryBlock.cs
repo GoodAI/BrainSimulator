@@ -91,6 +91,12 @@ namespace GoodAI.Core.Memory
             Host = null;
         }
 
+        public void AllocateMemory()
+        {
+            AllocateDevice();
+            AllocateHost();
+        }
+
         internal override void AllocateDevice()
         {
             if (Count > 0)

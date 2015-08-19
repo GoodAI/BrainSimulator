@@ -51,7 +51,7 @@ namespace GoodAI.Core.Memory
             return (MyMemoryBlock<T>)CreateMemoryBlock(holder, typeof(MyMemoryBlock<T>));
         }
 
-        internal MyAbstractMemoryBlock CreateMemoryBlock(MyNode holder, Type blockType)
+        public MyAbstractMemoryBlock CreateMemoryBlock(MyNode holder, Type blockType)
         {
             MyAbstractMemoryBlock block = (MyAbstractMemoryBlock)Activator.CreateInstance(blockType, true);
             block.Owner = holder;
