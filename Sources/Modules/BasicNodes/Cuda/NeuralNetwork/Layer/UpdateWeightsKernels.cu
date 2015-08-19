@@ -102,42 +102,34 @@ extern "C"
 
 				//weightDelta = trainingRate * deltaPtr[j] * inputPtr[i];
 				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
+				if (momentum != 0)
+				{
+					gradient += momentum * previousWeightDeltaPtr[weightIdx];
+					previousWeightDeltaPtr[weightIdx] = gradient;
+				}
 
 				// calculate meansquare
 				meanSquareWeight[weightIdx] = smoothingFactor * meanSquareWeight[weightIdx] + (1.0f - smoothingFactor) * gradient * gradient;
 				if (meanSquareWeight[weightIdx] != 0)
 					gradient /= sqrtf(meanSquareWeight[weightIdx]);
 
-				float dx = -gradient * trainingRate;
-
-				if (momentum != 0)
-				{
-					dx += momentum * previousWeightDeltaPtr[weightIdx];
-					previousWeightDeltaPtr[weightIdx] = dx;
-				}
-
-
-				weightPtr[weightIdx] += dx;
+				weightPtr[weightIdx] -= trainingRate * gradient;
 
 				// update bias
 				if (weightIdx / thisLayerSize == 0)
 				{
 					gradient = deltaPtr[j];
-
+					if (momentum != 0)
+					{
+						gradient += momentum * previousBiasDeltaPtr[j];
+						previousBiasDeltaPtr[j] = gradient;
+					}
 					// calculate meansquare
 					meanSquareBias[j] = smoothingFactor * meanSquareBias[j] + (1.0f - smoothingFactor) * gradient * gradient;
 					if (meanSquareBias[j] != 0)
 						gradient /= sqrtf(meanSquareBias[j]);
 
-					float dx = -gradient * trainingRate;
-
-					if (momentum != 0)
-					{
-						dx += momentum * previousBiasDeltaPtr[j];
-						previousBiasDeltaPtr[j] = dx;
-					}
-
-					biasPtr[j] += dx;
+					biasPtr[j] -= trainingRate * gradient;
 				}
 			}
 		}
