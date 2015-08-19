@@ -317,7 +317,10 @@ namespace GoodAI.Core.Execution
                 foreach (MyWorkingNode node in NodePartitioning[i])
                 {                    
                     MyMemoryManager.Instance.FreeBlocks(node, false);
+                    
+                    node.Cleanup();
                 }
+
             }
         }
 

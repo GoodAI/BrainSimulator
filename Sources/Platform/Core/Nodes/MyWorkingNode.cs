@@ -23,6 +23,12 @@ namespace GoodAI.Core.Nodes
 
     public abstract class MyWorkingNode : MyNode
     {
+
+        public virtual void Cleanup()
+        {
+
+        }
+
         #region Persistance
 
         [YAXSerializableField, YAXAttributeForClass]
