@@ -80,6 +80,7 @@
             this.licenseText.Size = new System.Drawing.Size(613, 588);
             this.licenseText.TabIndex = 0;
             this.licenseText.Text = "";
+            this.licenseText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.licenseText_LinkClicked);
             // 
             // LicensesForm
             // 

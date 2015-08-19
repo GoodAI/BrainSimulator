@@ -166,14 +166,12 @@ extern "C"
 				// update weights
 				int i = weightIdx / thisLayerSize; // index of input neuron
 
-				// should we even support regularization here? and how?
 				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
-				//gradient *= -1; // TODO - figure out the correct way
 
 				adaSquares[weightIdx] = ro * adaSquares[weightIdx] + (1 - ro) * gradient * gradient;
 				float dx = -sqrtf((adaDeltas[weightIdx] + epsilon) / (adaSquares[weightIdx] + epsilon)) * gradient;
 				adaDeltas[weightIdx] = ro * adaDeltas[weightIdx] + (1 - ro) * dx * dx;
-				weightPtr[weightIdx] += dx; // there should be a '+' here, but '+' doesn't and '-' does work...?
+				weightPtr[weightIdx] += dx;
 
 				// update bias
 				if (weightIdx / thisLayerSize == 0)

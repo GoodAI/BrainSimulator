@@ -15,50 +15,63 @@ extern "C"
 	__constant__ int D_INPUT_UNITS;
 	__constant__ int D_HIDDEN_UNITS;
 	__constant__ int D_OUTPUT_UNITS;
-	__constant__ int D_UNITS;
-	__constant__ int D_HIDDEN_UNIT_WEIGHTS;
-	__constant__ int D_OUTPUT_UNIT_WEIGHTS;
-	__constant__ int D_WEIGHTS;
-	
 
-	//kernel code
-	__global__ void RTRLDerivativeKernel(
-		float *activation,
-		float *previousActivation,
-		float *activationDerivative,
-		float *weights,
-		float *RTRLDerivatives,
-		float *previousRTRLDerivatives
+
+	__global__ void InputWeightsRTRLDerivativesKernel(
+		float *input,
+		float *hiddenActivationDerivatives,
+		float *recurrentWeights,
+		float *inputWeightRTRLDerivatives,
+		float *previousInputWeightRTRLDerivatives
 		)
 	{
-		int threadId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
+		int partialId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
 			+ blockDim.x*blockIdx.x				//blocks preceeding current block
 			+ threadIdx.x;
 
-		if (threadId < D_WEIGHTS * (D_HIDDEN_UNITS + D_OUTPUT_UNITS))
+		if (partialId < D_HIDDEN_UNITS * D_HIDDEN_UNITS * D_INPUT_UNITS)
 		{
-			int unitId = threadId % (D_HIDDEN_UNITS + D_OUTPUT_UNITS);
-			int isHiddenUnit = unitId < D_HIDDEN_UNITS;
-			//rows to be skipped in the weights matrix
-			int offset = isHiddenUnit * (unitId * (1 + D_INPUT_UNITS + D_HIDDEN_UNITS)); //hidden units are connected to threshold, input and hidden units
-			offset += !isHiddenUnit * (D_HIDDEN_UNIT_WEIGHTS //if output unit then skip all hidden unit weights
-					+ (unitId - D_HIDDEN_UNITS) * (1 + D_HIDDEN_UNITS)); //output units are connected to threshold and hidden units
-
-			int weightId = threadId / (D_HIDDEN_UNITS + D_OUTPUT_UNITS);
-			int isHiddenUnitWeight = weightId < D_HIDDEN_UNIT_WEIGHTS;
-
-			int to = (weightId - !isHiddenUnitWeight * D_HIDDEN_UNIT_WEIGHTS) / (1 + isHiddenUnitWeight * D_INPUT_UNITS + D_HIDDEN_UNITS);
-			int from = (weightId - !isHiddenUnitWeight * D_HIDDEN_UNIT_WEIGHTS) % (1 + isHiddenUnitWeight * D_INPUT_UNITS + D_HIDDEN_UNITS);
-			from += !isHiddenUnitWeight * (from > 0) * D_INPUT_UNITS; //if this is weight from hidden unit to output unit, skip threshold and input units
-
-			float weightedSum = 0.0f;
-
+			int unitId = partialId / (D_HIDDEN_UNITS * D_INPUT_UNITS);
+			int weightId = partialId % (D_HIDDEN_UNITS * D_INPUT_UNITS);
+			int to = weightId / D_INPUT_UNITS;
+			int from = weightId % D_INPUT_UNITS;
+			
+			float sum = 0;
 			for (int i = 0; i < D_HIDDEN_UNITS; i++)
 			{
-				weightedSum += weights[offset + 1 + isHiddenUnit * D_INPUT_UNITS + i] * previousRTRLDerivatives[weightId * (D_HIDDEN_UNITS + D_OUTPUT_UNITS) + i];
+				sum += recurrentWeights[unitId * D_HIDDEN_UNITS + i] * previousInputWeightRTRLDerivatives[i * (D_HIDDEN_UNITS * D_INPUT_UNITS) + weightId];
 			}
 
-			RTRLDerivatives[threadId] = activationDerivative[1 + D_INPUT_UNITS + unitId] * (weightedSum + (to == unitId) * activation[from]);
+			inputWeightRTRLDerivatives[partialId] = hiddenActivationDerivatives[unitId] * ((unitId == to) * input[from] + sum);
+		}
+	}
+
+	__global__ void RecurrentWeightsRTRLDerivativesKernel(
+		float *previousHiddenActivations,
+		float *hiddenActivationDerivatives,
+		float *recurrentWeights,
+		float *recurrentWeightRTRLDerivatives,
+		float *previousRecurrentWeightRTRLDerivatives
+		)
+	{
+		int partialId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x*blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (partialId < D_HIDDEN_UNITS * D_HIDDEN_UNITS * D_HIDDEN_UNITS)
+		{
+			int unitId = partialId / (D_HIDDEN_UNITS * D_HIDDEN_UNITS);
+			int weightId = partialId % (D_HIDDEN_UNITS * D_HIDDEN_UNITS);
+			int to = weightId / D_HIDDEN_UNITS;
+			int from = weightId % D_HIDDEN_UNITS;
+
+			float sum = 0;
+			for (int i = 0; i < D_HIDDEN_UNITS; i++)
+			{
+				sum += recurrentWeights[unitId * D_HIDDEN_UNITS + i] * previousRecurrentWeightRTRLDerivatives[i * (D_HIDDEN_UNITS * D_HIDDEN_UNITS) + weightId];
+			}
+
+			recurrentWeightRTRLDerivatives[partialId] = hiddenActivationDerivatives[unitId] * ((unitId == to) * previousHiddenActivations[from] + sum);
 		}
 	}
 }

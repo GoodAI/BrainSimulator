@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using GoodAI.Core.Utils;
+using GoodAI.BrainSimulator.Utils;
 
 namespace GoodAI.BrainSimulator.Forms
 {
@@ -110,6 +111,18 @@ namespace GoodAI.BrainSimulator.Forms
             public override string ToString()
             {
                 return Name;
+            }
+        }
+
+        private void licenseText_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            try
+            {
+                MyDocProvider.Navigate(e.LinkText);
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Could not open link. " + exc.Message, ":-(", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }

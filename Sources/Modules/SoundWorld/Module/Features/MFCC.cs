@@ -96,25 +96,23 @@ namespace GoodAI.Modules.SoundProcessing.Features
         }
 
         /// <summary>
-        ///   Forward Discrete Cosine Transform.
+        /// Forward Discrete Cosine Transform.
         /// </summary>
         /// 
         public static float[] DCT(float[] data)
         {
-            float[] result = new float[data.Length];
-            double c = Math.PI / (2.0 * data.Length);
-            double scale = Math.Sqrt(2.0 / data.Length);
-
-            for (int k = 0; k < data.Length; k++)
+            int N = data.Length;
+            float[] result = new float[N];
+            for (int k = 0; k < N; k++)
             {
                 double sum = 0;
-                for (int n = 0; n < data.Length; n++)
-                    sum += data[n] * Math.Cos((2.0 * n + 1.0) * k * c);
-                result[k] = (float)(scale * sum);
+                for (int n = 0; n < N; n++)
+                    sum += data[n] * Math.Cos(Math.PI / (2.0 * N) * (2.0 * n + 1.0) * k);
+                result[k] = (float)(Math.Sqrt(2.0 / N) * sum);
             }
 
             data[0] = result[0] / (float)Math.Sqrt(2);
-            for (int i = 1; i < data.Length; i++)
+            for (int i = 1; i < N; i++)
                 data[i] = result[i];
 
             return data;

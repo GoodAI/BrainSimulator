@@ -28,7 +28,11 @@ namespace GoodAI.Modules.LSTM
     ///                 <li>MemoryBlocks: Number of LSTM memory blocks in the layer</li>
     ///                 <li>Neurons: Read-only number of cells in the layer calculated as MemoryBlocks * CellsPerBlock</li>
     ///              </ul>
-    ///              Training hyperparameters are set by neural network group and can be configured there.
+    ///              
+    ///              Signals:
+    ///              <ul>
+    ///                 <li>Reset: Resets LSTM's internal state to initial value</li>
+    ///              </ul>
     /// </description>
     public class MyLSTMLayer : MyAbstractLayer, IMyCustomTaskFactory
     {

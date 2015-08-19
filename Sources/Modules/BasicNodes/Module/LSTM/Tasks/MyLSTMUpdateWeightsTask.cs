@@ -17,7 +17,12 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.LSTM.Tasks
 {
-    /// <summary>Updates all network weights according to gradient.</summary>
+    /// <summary>Updates all network weights according to gradient. <br />
+    /// Parameters:
+    /// <ul>
+    ///     <li>CLIP_GRADIENT: Limits error gradient into [-CLIP_GRADIENT,CLIP_GRADIENT] interval. Set to 0 for no bounds</li>
+    /// </ul>
+    /// </summary>
     [Description("Update weights"), MyTaskInfo(OneShot = false)]
     public class MyLSTMUpdateWeightsTask : MyAbstractUpdateWeightsTask<MyLSTMLayer>
     {

@@ -87,8 +87,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Output.SafeCopyToHost();
                 float expSum = Owner.Output.Host.Sum();
 
+                /*
                 if (expSum > 2 * Owner.Neurons)
-                    MyLog.WARNING.WriteLine("Exponential sum (danger/suspici)ously high: " + expSum);
+                    MyLog.WARNING.WriteLine("Exponential sum (danger/suspici)ously high: " + expSum);*/
 
                 
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
@@ -98,10 +99,11 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     Owner.Neurons
                     );
 
-
+                /*
+                 * DEBUG:
                 Owner.Output.SafeCopyToHost();
                 expSum = Owner.Output.Host.Sum();
-                MyLog.DEBUG.WriteLine("Sum of softmax activations is " + expSum + ". Should be 1.");
+                MyLog.DEBUG.WriteLine("Sum of softmax activations is " + expSum + ". Should be 1.");*/
 
 
             }

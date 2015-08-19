@@ -85,7 +85,10 @@ namespace GoodAI.Core.Configuration
 
         private void LoadConversionClass()
         {
-            string typeName = (string.IsNullOrEmpty(RootNamespace) ? "" : RootNamespace + ".") + CONVERSION_TYPE_NAME;
+            if (String.IsNullOrEmpty(RootNamespace))
+                RootNamespace = Assembly.GetName().Name;
+
+            string typeName = RootNamespace + "." + CONVERSION_TYPE_NAME;
 
             try
             {
@@ -97,7 +100,15 @@ namespace GoodAI.Core.Configuration
                     Conversion.Module = this;
                 }
             }
-            catch { Conversion = null; }
+            catch
+            {
+                Conversion = null;
+            }
+
+            if (Conversion == null)
+            {
+                MyLog.WARNING.WriteLine("Failed to load version (looking for type {0}).", typeName);
+            }
         }
 
         public int GetXmlVersion()
