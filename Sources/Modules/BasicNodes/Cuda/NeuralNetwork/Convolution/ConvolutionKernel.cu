@@ -191,14 +191,13 @@ extern "C"
 			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
 
 			// apply the filter over the whole image (do convolution again) with this one weight
-			float delta = 0;
-			float biasDelta = 0;
-			//int a = 0;
+			float gradient = 0;
+			float biasGradient = 0;
 			for (size_t j = 0; j < outputHeight; j++)
 			{
 				for (size_t i = 0; i < outputWidth; i++)
 				{
-					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+					gradient += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
 						inputPaddedPtr[
 							inputDepthShift +
 								j * verStride * inputPaddedWidth +
@@ -209,47 +208,46 @@ extern "C"
 					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
 					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
-						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+						biasGradient += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
 
 				}
 			}
-
-			// UPDATE BIAS --------------------------------
-			if (idx % filterSize == 0)
-			{
-				// bias usually doesn't get regularised
-				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
-				biasDelta *= learningRate;
-
-				if (momentum != 0)
-				{
-					biasDelta += momentum * previousBiasDeltaPtr[idx / filterSize];
-					previousBiasDeltaPtr[idx / filterSize] = biasDelta;
-				}
-
-				biasPtr[idx / filterSize] -= biasDelta;
-			}
-			// -------------------------------------------
 
 
 			// UPDATE WEIGHT -----------------------------
 
 			// add regularization
-			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
-			delta *= learningRate;
+			gradient += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+
+			float dx = -gradient * learningRate;
 
 			// add momentum
 			if (momentum != 0)
 			{
-				delta += momentum * previousWeightDeltaPtr[idx];
-				previousWeightDeltaPtr[idx] = delta;
+				dx += momentum * previousWeightDeltaPtr[idx];
+				previousWeightDeltaPtr[idx] = dx;
 			}
 
-			if (delta != 0)
-			{
-				filterPtr[idx] -= delta;
-			}
+			filterPtr[idx] += dx;
 			// -----------------------------------------------
+
+			// UPDATE BIAS --------------------------------
+			if (idx % filterSize == 0)
+			{
+				// bias usually doesn't get regularised
+				// biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+				float dx = -biasGradient * learningRate;
+
+				if (momentum != 0)
+				{
+					dx += momentum * previousBiasDeltaPtr[idx / filterSize];
+					previousBiasDeltaPtr[idx / filterSize] = dx;
+				}
+
+				biasPtr[idx / filterSize] += dx;
+			}
+			// -------------------------------------------
+
 		}
 	}
 
@@ -293,13 +291,13 @@ extern "C"
 			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
 
 			// apply the filter over the whole image (do convolution again) with this one weight
-			float delta = 0;
-			float biasDelta = 0;
+			float gradient = 0;
+			float biasGradient = 0;
 			for (size_t j = 0; j < outputHeight; j++)
 			{
 				for (size_t i = 0; i < outputWidth; i++)
 				{
-					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+					gradient += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
 						inputPaddedPtr[
 							inputDepthShift +
 								j * verStride * inputPaddedWidth +
@@ -310,10 +308,33 @@ extern "C"
 					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
 					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
-						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+						biasGradient += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
 
 				}
 			}
+
+
+			// UPDATE WEIGHT -----------------------------
+			// add regularization
+			gradient += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+
+			// calculate meansquare
+			meanSquareWeight[idx] = smoothingFactor * meanSquareWeight[idx] + (1.0f - smoothingFactor) * gradient * gradient;
+			if (meanSquareWeight[idx] != 0)
+				gradient /= sqrtf(meanSquareWeight[idx]);
+
+			float dx = -gradient * learningRate;
+
+			// add momentum
+			if (momentum != 0)
+			{
+				dx += momentum * previousWeightDeltaPtr[idx];
+				previousWeightDeltaPtr[idx] = dx;
+			}
+
+			filterPtr[idx] += dx;
+			// -----------------------------------------
+
 
 			// UPDATE BIAS ---------------------------
 			if (idx % filterSize == 0)
@@ -321,42 +342,25 @@ extern "C"
 				// bias usually doesn't get regularised
 				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
 
+				// calculate meansquare
+				meanSquareBias[idx / filterSize] = smoothingFactor * meanSquareBias[idx / filterSize] + (1.0f - smoothingFactor) * biasGradient * biasGradient;
+				if (meanSquareBias[idx / filterSize] != 0)
+					biasGradient /= sqrtf(meanSquareBias[idx / filterSize]);
+
+				float dx = -biasGradient * learningRate;
+
 				if (momentum != 0)
 				{
-					biasDelta += momentum * previousBiasDeltaPtr[idx / filterSize];
-					previousBiasDeltaPtr[idx / filterSize] = biasDelta;
+					dx += momentum * previousBiasDeltaPtr[idx / filterSize];
+					previousBiasDeltaPtr[idx / filterSize] = dx;
 				}
-				// calculate meansquare
-				meanSquareBias[idx / filterSize] = smoothingFactor * meanSquareBias[idx / filterSize] + (1.0f - smoothingFactor) * biasDelta * biasDelta;
-				if (meanSquareBias[idx / filterSize] != 0)
-					biasDelta /= sqrtf(meanSquareBias[idx / filterSize]);
 
-				biasPtr[idx / filterSize] -= learningRate * biasDelta;
+				biasPtr[idx / filterSize] += dx;
 			}
 			// ----------------------------------------
 
 
-			// UPDATE WEIGHT --------------------------
 
-			// add regularization
-			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
-			// add momentum
-			if (momentum != 0)
-			{
-				delta += momentum * previousWeightDeltaPtr[idx];
-				previousWeightDeltaPtr[idx] = delta;
-			}
-
-			// calculate meansquare
-			meanSquareWeight[idx] = smoothingFactor * meanSquareWeight[idx] + (1.0f - smoothingFactor) * delta * delta;
-			if (meanSquareWeight[idx] != 0)
-				delta /= sqrtf(meanSquareWeight[idx]);
-
-			if (delta != 0)
-			{
-				filterPtr[idx] -= learningRate * delta;
-			}
-			// -----------------------------------------
 		}
 	}
 
@@ -398,14 +402,13 @@ extern "C"
 			int filterInputShift = filterX + filterY * inputPaddedWidth; // by how much is the current weight shifted from the upper-left corner of the filter IN THE INPUT IMAGE
 
 			// apply the filter over the whole image (do convolution again) with this one weight
-			float delta = 0;
-			float biasDelta = 0;
-
+			float gradient = 0;
+			float biasGradient = 0;
 			for (size_t j = 0; j < outputHeight; j++)
 			{
 				for (size_t i = 0; i < outputWidth; i++)
 				{
-					delta += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
+					gradient += thisDeltaPtr[outputDepthShift + i + j * outputWidth] *
 						inputPaddedPtr[
 							inputDepthShift +
 								j * verStride * inputPaddedWidth +
@@ -416,21 +419,22 @@ extern "C"
 					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
 					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
-						biasDelta += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+						biasGradient += thisDeltaPtr[outputDepthShift + i + j * outputWidth];
+
 				}
 			}
 
-			// UPDATE WEIGHT --------------------------
 
-			// should we even support regularization here? ok...
-			delta += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			// UPDATE WEIGHT -----------------------------
 
+			// add regularization
+			gradient += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
 
 			// adadelta:
-			adaSquares[idx] = ro * adaSquares[idx] + (1 - ro) * delta * delta;
-			float dx = -sqrtf((adaDeltas[idx] + epsilon) / (adaSquares[idx] + epsilon)) * delta;
+			adaSquares[idx] = ro * adaSquares[idx] + (1 - ro) * gradient * gradient;
+			float dx = -sqrtf((adaDeltas[idx] + epsilon) / (adaSquares[idx] + epsilon)) * gradient;
 			adaDeltas[idx] = ro * adaDeltas[idx] + (1 - ro) * dx * dx;
-			filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
+			filterPtr[idx] += dx;
 
 			// -----------------------------------------
 
@@ -439,12 +443,13 @@ extern "C"
 			if (idx % filterSize == 0)
 			{
 				// bias usually doesn't get regularised
-				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+				//biasGradient += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+				int biasIdx = idx / filterSize;
 
-				adaBiasSquares[idx] = ro * adaBiasSquares[idx] + (1 - ro) * biasDelta * biasDelta;
-				float dx = -sqrtf((adaBiasDeltas[idx] + epsilon) / (adaBiasSquares[idx] + epsilon)) * biasDelta;
-				adaBiasDeltas[idx] = ro * adaBiasDeltas[idx] + (1 - ro) * dx * dx;
-				filterPtr[idx] += dx;  // there should be a '+' here, but '+' doesn't and '-' does work...?
+				adaBiasSquares[biasIdx] = ro * adaBiasSquares[biasIdx] + (1 - ro) * biasGradient * biasGradient;
+				float dx = -sqrtf((adaBiasDeltas[biasIdx] + epsilon) / (adaBiasSquares[biasIdx] + epsilon)) * biasGradient;
+				adaBiasDeltas[biasIdx] = ro * adaBiasDeltas[biasIdx] + (1 - ro) * dx * dx;
+				biasPtr[biasIdx] += dx;
 			}
 			// ----------------------------------------
 

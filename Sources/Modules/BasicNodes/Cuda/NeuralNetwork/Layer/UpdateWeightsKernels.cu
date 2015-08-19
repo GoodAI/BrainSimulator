@@ -102,34 +102,42 @@ extern "C"
 
 				//weightDelta = trainingRate * deltaPtr[j] * inputPtr[i];
 				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
-				if (momentum != 0)
-				{
-					gradient += momentum * previousWeightDeltaPtr[weightIdx];
-					previousWeightDeltaPtr[weightIdx] = gradient;
-				}
 
 				// calculate meansquare
 				meanSquareWeight[weightIdx] = smoothingFactor * meanSquareWeight[weightIdx] + (1.0f - smoothingFactor) * gradient * gradient;
 				if (meanSquareWeight[weightIdx] != 0)
 					gradient /= sqrtf(meanSquareWeight[weightIdx]);
 
-				weightPtr[weightIdx] -= trainingRate * gradient;
+				float dx = -gradient * trainingRate;
+
+				if (momentum != 0)
+				{
+					dx += momentum * previousWeightDeltaPtr[weightIdx];
+					previousWeightDeltaPtr[weightIdx] = dx;
+				}
+
+
+				weightPtr[weightIdx] += dx;
 
 				// update bias
 				if (weightIdx / thisLayerSize == 0)
 				{
 					gradient = deltaPtr[j];
-					if (momentum != 0)
-					{
-						gradient += momentum * previousBiasDeltaPtr[j];
-						previousBiasDeltaPtr[j] = gradient;
-					}
+
 					// calculate meansquare
 					meanSquareBias[j] = smoothingFactor * meanSquareBias[j] + (1.0f - smoothingFactor) * gradient * gradient;
 					if (meanSquareBias[j] != 0)
 						gradient /= sqrtf(meanSquareBias[j]);
 
-					biasPtr[j] -= trainingRate * gradient;
+					float dx = -gradient * trainingRate;
+
+					if (momentum != 0)
+					{
+						dx += momentum * previousBiasDeltaPtr[j];
+						previousBiasDeltaPtr[j] = dx;
+					}
+
+					biasPtr[j] += dx;
 				}
 			}
 		}
@@ -166,13 +174,12 @@ extern "C"
 				// update weights
 				int i = weightIdx / thisLayerSize; // index of input neuron
 
-				// should we even support regularization here? and how?
 				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
 
 				adaSquares[weightIdx] = ro * adaSquares[weightIdx] + (1 - ro) * gradient * gradient;
 				float dx = -sqrtf((adaDeltas[weightIdx] + epsilon) / (adaSquares[weightIdx] + epsilon)) * gradient;
 				adaDeltas[weightIdx] = ro * adaDeltas[weightIdx] + (1 - ro) * dx * dx;
-				weightPtr[weightIdx] += dx; // there should be a '+' here, but '+' doesn't and '-' does work...?
+				weightPtr[weightIdx] += dx;
 
 				// update bias
 				if (weightIdx / thisLayerSize == 0)
