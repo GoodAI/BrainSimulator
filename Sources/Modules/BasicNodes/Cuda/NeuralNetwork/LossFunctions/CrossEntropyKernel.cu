@@ -36,10 +36,13 @@ extern "C"
 			{
 				// accumulate loss
 				if (targetPtr[k])
-					loss[tid] -= logf(outputPtr[k]);
+					loss[tid] -= logf(outputPtr[k]); // exp(output[k])/sum of exps of outputs should be here by this time (use softmax activation)
 
-				// calculate delta
+				// calculate delta, assuming that target is a vector of 0s with exactly one 1
 				deltaPtr[k] += (outputPtr[k] - targetPtr[k]);
+
+				// meaning this would be equivalent
+				// deltaPtr[k] += outputPtr[k] - (targetPtr[k] == 1);
 
 
 
