@@ -493,6 +493,8 @@ namespace GoodAI.Modules.Observers
 
         protected override void Reset()
         {
+            m_StringDeviceBuffer = new CudaDeviceVariable<float>(1000);
+            m_StringDeviceBuffer.Memset(0);
             TextureWidth = Target.Mask.ColumnHint;
             TextureHeight = Target.MaskCount / TextureWidth;
         }

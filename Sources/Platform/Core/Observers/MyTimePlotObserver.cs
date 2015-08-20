@@ -515,6 +515,9 @@ namespace GoodAI.Core.Observers
         {
             base.Reset();
 
+            m_StringDeviceBuffer = new CudaDeviceVariable<float>(1000);
+            m_StringDeviceBuffer.Memset(0);
+
             switch (DisplayMethod)
             {
                 case MyDisplayMethod.CYCLE:
