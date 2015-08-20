@@ -72,6 +72,27 @@ namespace GoodAI.Core.Observers.Helper
             return res;
         }
 
+        public static void String2Index(string str, CudaDeviceVariable<float> outIndexes)
+        {
+            if(str.Length > outIndexes.Size)
+            {
+                //TODO: new?
+                //outIndexes.Size = str.Length + 1;
+            }
+
+            for(int i = 0; i < str.Length && i < outIndexes.Size; ++i)
+            {
+                if (str[i] >= ' ' && str[i] <= '~')
+                {
+                    outIndexes[i] = (float)(str[i] - ' ');
+                }
+                else//by default create "space" for unknown character
+                {
+                    outIndexes[i] = ' ';
+                }
+            }
+        }
+
         public static void DrawString(string str, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight, int maxStringSize = 20)
         {
             // Crop if the string is too long

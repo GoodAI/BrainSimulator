@@ -48,6 +48,8 @@ namespace GoodAI.Modules.Observers
 
         public MyRootDecisionSpace Rds { get; set; }
 
+        private CudaDeviceVariable<float> m_StringDeviceBuffer;
+
         protected override void Execute()
         {
             if (m_qMatrix != null)
@@ -93,13 +95,18 @@ namespace GoodAI.Modules.Observers
 
                     String label = srp.GetLabel() + " M:" + srp.GetMyTotalMotivation();
 
-                    MyDrawStringHelper.DrawString(label, 0, 0, 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight);
+                    MyDrawStringHelper.String2Index(label, m_StringDeviceBuffer);
+                    MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, 0, 0, 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, 0, label.Length);
+                    //MyDrawStringHelper.DrawString(label, 0, 0, 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight);
                 }
             }
         }
 
         protected override void Reset()
         {
+            m_StringDeviceBuffer = new CudaDeviceVariable<float>(1000);
+            m_StringDeviceBuffer.Memset(0);
+
             List<MyMotivatedAction> actions = Target.Rds.ActionManager.Actions;
 
             if (numOfActions < actions.Count)
@@ -114,7 +121,8 @@ namespace GoodAI.Modules.Observers
 
                 for (int i = 0; i < actions.Count; i++)
                 {
-                    MyDrawStringHelper.DrawString(actions[i].GetLabel(), i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH);
+                    MyDrawStringHelper.String2Index(actions[i].GetLabel(), m_StringDeviceBuffer);
+                    MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH, 0, actions[i].GetLabel().Length);
                 }
 
                 numOfActions = actions.Count;
