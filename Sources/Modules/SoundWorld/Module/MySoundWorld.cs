@@ -275,8 +275,8 @@ namespace GoodAI.SoundWorld
                         case FeatureType.FFT:
                             // input size must be power of 2 and double sized due to the mirror nature of FFT
                             size = NextPowerOf2(Owner.FeaturesCount * 2);
-                            //result = PerformFFT(PrepareInputs(size));
-                            result = PerformFFT(GenerateSine(size));  // generate a test sine signal
+                            result = PerformFFT(PrepareInputs(size));
+                            //result = PerformFFT(GenerateSine(size));  // generate a test sine signal
                             break;
                         case FeatureType.MFCC:
                             result = PerformFFT(PrepareInputs(256));
