@@ -143,7 +143,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                     if (newNode is MyWorkingNode)
                     {
-                        (newNode as MyWorkingNode).EnableAllTasks();
+                        (newNode as MyWorkingNode).EnableDefaultTasks();
                     }
 
                     newNodeView.Node = newNode;
