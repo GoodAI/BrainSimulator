@@ -39,6 +39,11 @@ namespace GoodAI.Core.Task
             get { return GetInfo().OneShot; }
         }
 
+        public bool EnabledByDefault 
+        {
+            get { return !(GetInfo().Disabled); }
+        }
+
         private MyWorkingNode m_genericOwner;
 
         public virtual MyWorkingNode GenericOwner 
@@ -120,7 +125,6 @@ namespace GoodAI.Core.Task
                 }
             }
         }
-
     }
 
     public abstract class MyTask<OwnerType> : MyTask where OwnerType : MyWorkingNode
