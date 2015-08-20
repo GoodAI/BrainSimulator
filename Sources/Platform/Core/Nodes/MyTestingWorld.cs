@@ -64,14 +64,10 @@ namespace GoodAI.Modules.Testing
         {
             Output.Count = OutputSize;
             Output.ColumnHint = ColumnHint;
-
-            if (PatternCount > 0)
-            {
-                RandomPool.Count = PatternCount * OutputSize;
-                RandomPool.ColumnHint = ColumnHint;
-                Label.Count = PatternCount / PatternGroups;
-                Label.ColumnHint = Label.Count;
-            }
+            RandomPool.Count = PatternCount * OutputSize;
+            RandomPool.ColumnHint = ColumnHint;
+            Label.Count = PatternCount / PatternGroups;
+            Label.ColumnHint = Label.Count;
         }
 
         /// <summary>
