@@ -187,7 +187,7 @@ extern "C"
 
 		if (i < layerSize)
 		{
-			// exp value is already present in the ouput array, so just divide by sum of exps (computed before kernel call)
+			// exp value is already present in the output array, so just divide by sum of exps (computed before kernel call)
 			outputPtr[i] /= expSum;
 		}
 

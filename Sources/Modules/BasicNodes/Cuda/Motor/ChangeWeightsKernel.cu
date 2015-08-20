@@ -16,33 +16,102 @@ extern "C"
 	__constant__ int D_INPUT_UNITS;
 	__constant__ int D_HIDDEN_UNITS;
 	__constant__ int D_OUTPUT_UNITS;
-	__constant__ int D_UNITS;
-	__constant__ int D_HIDDEN_UNIT_WEIGHTS;
-	__constant__ int D_OUTPUT_UNIT_WEIGHTS;
-	__constant__ int D_WEIGHTS;
-	__constant__ float D_LEARNING_RATE;
-	__constant__ float D_MOMENTUM_RATE;
 	
+	__global__ void ChangeInputWeightsKernel(
+			float *inputWeights,
+			float *inputWeightDeltas,
+			float *outputWeights,
+			float *outputDeltas,
+			float *inputWeightRTRLDerivatives,
 
-	
-	//kernel code
-	__global__ void ChangeWeightsKernel(float *rtrlDerivative, float *outputDelta, float *weightsDelta, float *weights)
+			float trainingRate,
+			float momentum
+		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
+		int weightId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
 			+ blockDim.x*blockIdx.x				//blocks preceeding current block
 			+ threadIdx.x;
-		if (id < D_WEIGHTS)
+
+		if (weightId < D_HIDDEN_UNITS * D_INPUT_UNITS)
 		{
-			float weightDelta = 0.0f;
+			float gradient = 0;
 
 			for (int i = 0; i < D_OUTPUT_UNITS; i++)
 			{
-				weightDelta += outputDelta[i] * rtrlDerivative[id * (D_HIDDEN_UNITS + D_OUTPUT_UNITS) + D_HIDDEN_UNITS + i];
+				float sum = 0;
+				for (int j = 0; j < D_HIDDEN_UNITS; j++)
+				{
+					sum += outputWeights[i * D_HIDDEN_UNITS + j] * inputWeightRTRLDerivatives[j * D_HIDDEN_UNITS * D_INPUT_UNITS + weightId];
+				}
+
+				gradient += outputDeltas[i] * sum;
 			}
 
-			weightDelta = D_LEARNING_RATE * weightDelta + D_MOMENTUM_RATE * weightsDelta[id];
-			weightsDelta[id] = weightDelta;
-			weights[id] += weightDelta;
+			float weightDelta = trainingRate * gradient + momentum * inputWeightDeltas[weightId];
+			inputWeightDeltas[weightId] = weightDelta;
+			inputWeights[weightId] += weightDelta;
+		}
+	}
+	
+	__global__ void ChangeRecurrentWeightsKernel(
+		float *recurrentWeights,
+		float *recurrentWeightDeltas,
+		float *outputWeights,
+		float *outputDeltas,
+		float *recurrentWeightRTRLDerivatives,
+
+		float trainingRate,
+		float momentum
+		)
+	{
+		int weightId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x*blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (weightId < D_HIDDEN_UNITS * D_HIDDEN_UNITS)
+		{
+			float gradient = 0;
+
+			for (int i = 0; i < D_OUTPUT_UNITS; i++)
+			{
+				float sum = 0;
+				for (int j = 0; j < D_HIDDEN_UNITS; j++)
+				{
+					sum += outputWeights[i * D_HIDDEN_UNITS + j] * recurrentWeightRTRLDerivatives[j * D_HIDDEN_UNITS * D_HIDDEN_UNITS + weightId];
+				}
+
+				gradient += outputDeltas[i] * sum;
+			}
+
+			float weightDelta = trainingRate * gradient + momentum * recurrentWeightDeltas[weightId];
+			recurrentWeightDeltas[weightId] = weightDelta;
+			recurrentWeights[weightId] += weightDelta;
+		}
+	}
+
+	__global__ void ChangeOutputWeightsKernel(
+		float *outputWeights,
+		float *outputWeightDeltas,
+		float *outputDeltas,
+		float *hiddenActivations,
+
+		float trainingRate,
+		float momentum
+		)
+	{
+		int weightId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x*blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		int to = weightId / D_HIDDEN_UNITS;
+		int from = weightId % D_HIDDEN_UNITS;
+
+		if (weightId < D_OUTPUT_UNITS * D_HIDDEN_UNITS)
+		{
+			float gradient = outputDeltas[to] * hiddenActivations[from];
+			float weightDelta = trainingRate * gradient + momentum * outputWeightDeltas[weightId];
+			outputWeightDeltas[weightId] = weightDelta;
+			outputWeights[weightId] += weightDelta;
 		}
 	}
 }

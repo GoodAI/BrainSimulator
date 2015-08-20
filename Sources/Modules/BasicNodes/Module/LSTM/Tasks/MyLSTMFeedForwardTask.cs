@@ -17,7 +17,12 @@ using GoodAI.Core;
 
 namespace GoodAI.Modules.LSTM.Tasks
 {
-    /// <summary>Performs forward pass in the layer.</summary>
+    /// <summary>Performs forward pass in the layer. <br />
+    /// Parameters:
+    /// <ul>
+    ///     <li>CLIP_CELL_STATE: Limits cell states into [-CLIP_CELL_STATE,CLIP_CELL_STATE] interval. Set to 0 for no bounds</li>
+    /// </ul>
+    /// </summary>
     [Description("Feed forward"), MyTaskInfo(OneShot = false)]
     public class MyLSTMFeedForwardTask : MyAbstractForwardTask<MyLSTMLayer>
     {

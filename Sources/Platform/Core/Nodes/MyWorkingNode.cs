@@ -138,12 +138,20 @@ namespace GoodAI.Core.Nodes
         }
 
         public void EnableFirstTask()
-        {          
+        {
             if (m_tasks.Count > 0)
             {
                 (GetInfo().TaskOrder[0].GetValue(this) as MyTask).Enabled = true;                
             }
-        }        
+        }   
+     
+        public void EnableDefaultTasks()
+        {
+            foreach (MyTask task in m_tasks.Values.Reverse())
+            {
+                task.Enabled = task.EnabledByDefault;
+            }
+        }
 
         public void EnableAllTasks()
         {            
