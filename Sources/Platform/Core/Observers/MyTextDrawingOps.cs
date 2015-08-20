@@ -93,6 +93,7 @@ namespace GoodAI.Core.Observers.Helper
             }
         }
 
+        [Obsolete("This method causes a crash when used multiple times in one brain. Please use DrawStringFromGPUMem with String2Index instead. JM")]
         public static void DrawString(string str, int x, int y, uint bgColor, uint fgColor, CUdeviceptr image, int imageWidth, int imageHeight, int maxStringSize = 20)
         {
             // Crop if the string is too long

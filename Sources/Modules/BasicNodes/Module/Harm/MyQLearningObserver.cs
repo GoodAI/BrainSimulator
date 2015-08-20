@@ -56,6 +56,8 @@ namespace GoodAI.Modules.Observers
             }
         }
 
+        private CudaDeviceVariable<float> m_StringDeviceBuffer;
+
         protected override void Reset()
         {
             List<MyMotivatedAction> actions = Target.Rds.ActionManager.Actions;
@@ -72,7 +74,8 @@ namespace GoodAI.Modules.Observers
 
                 for (int i = 0; i < actions.Count; i++)
                 {
-                    MyDrawStringHelper.DrawString(actions[i].GetLabel(), i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH);
+                    MyDrawStringHelper.String2Index(actions[i].GetLabel(), m_StringDeviceBuffer);
+                    MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH, 0, actions[i].GetLabel().Length);
                 }
 
                 numOfActions = actions.Count;

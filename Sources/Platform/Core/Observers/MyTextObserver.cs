@@ -194,7 +194,6 @@ namespace GoodAI.Core.Observers
                     if(splitOccured)
                     {
                         m_HistoryDeviceBuffer[m_Cols * lastRow-1] = (float)('\\' - ' ');
-
                         MyDrawStringHelper.DrawStringFromGPUMem(m_HistoryDeviceBuffer, 0, (lastRow-1)* (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, (lastRow-1) * m_Cols, m_Cols);
                     }
                     MyDrawStringHelper.DrawStringFromGPUMem(m_HistoryDeviceBuffer, 0, lastRow * (MyDrawStringHelper.CharacterHeight + 1), 0, 0x999999, VBODevicePointer, TextureWidth, TextureHeight, lastRow * m_Cols, m_Cols);
