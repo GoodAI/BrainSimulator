@@ -23,7 +23,23 @@ namespace GoodAI.Core.Configuration
         public List<MyWorldConfig> WorldConfigList = null;
 
         [YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
-        public string RootNamespace { get; private set; }
+        public string RootNamespace
+        {
+            get
+            {
+                return (String.IsNullOrEmpty(rootNamespace) && (this.Assembly != null)) ?
+                    Assembly.GetName().Name  // (we could cache this if there's a performance problem)
+                    :   
+                    rootNamespace;
+            }
+
+            private set
+            {
+                rootNamespace = (value != null) ? value : String.Empty;
+            }
+        }
+        [YAXDontSerialize]
+        private string rootNamespace = String.Empty;
 
         [YAXDontSerialize]
         public Assembly Assembly { get; private set; }
@@ -33,6 +49,10 @@ namespace GoodAI.Core.Configuration
 
         [YAXDontSerialize]
         public MyBaseConversion Conversion { get; private set; }
+
+        public MyModuleConfig()
+        {
+        }
 
         public static MyModuleConfig LoadModuleConfig(FileInfo assemblyFile)
         {
@@ -85,9 +105,6 @@ namespace GoodAI.Core.Configuration
 
         private void LoadConversionClass()
         {
-            if (String.IsNullOrEmpty(RootNamespace))
-                RootNamespace = Assembly.GetName().Name;
-
             string typeName = RootNamespace + "." + CONVERSION_TYPE_NAME;
 
             try
@@ -107,18 +124,13 @@ namespace GoodAI.Core.Configuration
 
             if (Conversion == null)
             {
-                MyLog.WARNING.WriteLine("Failed to load version (looking for type {0}).", typeName);
+                MyLog.WARNING.WriteLine("Can't load version (looking for type {0}).", typeName);
             }
         }
 
         public int GetXmlVersion()
         {
             return Conversion != null ? Conversion.CurrentVersion : 1;
-        }
-
-        public MyModuleConfig()
-        {
-            RootNamespace = String.Empty;
         }
     }
 }

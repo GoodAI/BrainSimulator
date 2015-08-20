@@ -111,10 +111,11 @@ extern "C"
 			float delta = 0;
 			for (size_t filterIdx = 0; filterIdx < filterCount; filterIdx++)
 			{
-				int currentDepth = idx / inputSliceSize; // currentZ
 
-				int weightDepthShift = currentDepth * filterSliceSize;
-				int deltaDepthShift = currentDepth * outputSliceSize;
+				int inputDepth = idx / inputSliceSize; // currentZ
+
+				int weightDepthShift = inputDepth * filterSliceSize;
+				int deltaDepthShift = filterIdx * outputSliceSize;
 
 				// index in the current slice (ignoring depth), accounting for padding
 				int rowIdx = (idx % inputSliceSize) / inputWidth;
@@ -130,6 +131,7 @@ extern "C"
 				// cycle filter through the whole (virtually padded) image
 				for (int j = 0; filterY + filterHeight <= paddedHeight; j++, filterY += verStride)
 				{
+					filterX = 0;
 					for (int i = 0; filterX + filterWidth <= paddedWidth; i++, filterX += horStride)
 					{
 						if ( // check if the current neuron is in the filter's receptive field

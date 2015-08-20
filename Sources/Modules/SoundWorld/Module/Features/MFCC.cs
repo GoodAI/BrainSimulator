@@ -15,13 +15,13 @@ namespace GoodAI.Modules.SoundProcessing.Features
         /// <param name="format">Format of input aoudio.</param>
         /// <param name="coefCount">Number of coeficients to compute.</param>
         /// <returns>Mel-frequency cepstral coeficients.</returns>
-        public static float[] Compute(float[] fft, WaveFormat format, int coefCount)
+        public static float[] Compute(float[] fft, int sample_rate, int coefCount)
         {
             if (fft == null || fft.Length == 0)
                 return new float[0];
 
             // Compute mel scale filterbank
-            float[] mel_scale = MelFilterBank(fft, (int)Math.Ceiling(coefCount * 1.5), format.nSamplesPerSec);
+            float[] mel_scale = MelFilterBank(fft, (int)Math.Ceiling(coefCount * 1.5), sample_rate);
 
             // Apply logarithm
             for (int i = 0; i < mel_scale.Length; i++)
