@@ -21,7 +21,7 @@ using YAXLib;
 
 namespace GoodAI.SoundWorld
 {
-    /// <author>Martin Hyben</author>
+    /// <author>GoodAI</author>
     /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Provides default or custom dataset audio input in various feature types.</summary>
