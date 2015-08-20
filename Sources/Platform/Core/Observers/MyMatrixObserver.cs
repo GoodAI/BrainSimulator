@@ -184,7 +184,7 @@ namespace GoodAI.Core.Observers
                 return;
 
             Type type = Target.GetType().GenericTypeArguments[0];
-            m_isIntBlock = type == typeof(Single) ? 0 : 1;            
+            m_isIntBlock = type == typeof(Single) ? 0 : 1;
         }                
 
         protected override void Execute()
@@ -208,7 +208,7 @@ namespace GoodAI.Core.Observers
 
             m_nbCharacterPerBox = (1 + 1 + (NbDecimals > 0 ? (1 + NbDecimals) : 0) + 1 + 3);
             m_matrixBoxWidthInPixel = (m_nbCharacterPerBox + 1) * MyDrawStringHelper.CharacterWidth;
-
+            m_nbValues = Target.Count;
             if (m_matrixCols > 0)
             {         
                 m_matrixRows = (int)Math.Ceiling((float)(m_nbValues) / m_matrixCols);
@@ -219,7 +219,6 @@ namespace GoodAI.Core.Observers
             }
             else
             {                 
-                m_nbValues = Target.Count;
                 if (Target.ColumnHint > 0)
                 {
                     m_matrixCols = Math.Min(Target.Count, Target.ColumnHint);
