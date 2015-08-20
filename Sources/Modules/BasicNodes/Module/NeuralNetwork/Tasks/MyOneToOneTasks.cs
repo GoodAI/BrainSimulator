@@ -27,6 +27,23 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
+            // do a trick to avoid infinity (NaN) problems with exponential values in softmax
+            if (Owner.ActivationFunction == ActivationFunctionType.SOFTMAX)
+            {
+                Owner.Output.SafeCopyToHost();
+                float[] f = Owner.Output.Host;
+
+                float max = f.Max();
+                for (int i = 0; i < f.Length; i++)
+                {
+                    f[i] -= max;
+                }
+
+                Array.Copy(f, Owner.Output.Host, f.Length);
+
+                Owner.Output.SafeCopyToDevice();
+            }
+
             m_forwardKernel.SetupExecution(Owner.Neurons);
             m_forwardKernel.Run(
                 (int)Owner.ActivationFunction,
@@ -38,7 +55,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (Owner.ActivationFunction == ActivationFunctionType.SOFTMAX)
             {
                 Owner.Output.SafeCopyToHost();
+
                 float expSum = Owner.Output.Host.Sum();
+
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
                 m_softmaxKernel.Run(
                     Owner.Output,
