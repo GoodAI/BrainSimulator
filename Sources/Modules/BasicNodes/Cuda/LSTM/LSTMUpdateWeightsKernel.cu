@@ -132,6 +132,83 @@ extern "C"
 		}
 	}
 
+
+
+
+__global__ void LSTMUpdateGateWeightsKernelBPTT(
+		float *input,
+		float *previousOutput,
+		float *cellStates,
+		float *cellStateErrors,
+        float *inputGateDeltas,
+        float *forgetGateDeltas,
+		float *outputGateDeltas,
+		float *inputGateWeights,
+		float *inputGateWeightDeltas,
+		float *inputGateWeightMeanSquares,
+		float *forgetGateWeights,
+		float *forgetGateWeightDeltas,
+		float *forgetGateWeightMeanSquares,
+		float *outputGateWeights,
+		float *outputGateWeightDeltas,
+		float *outputGateWeightMeanSquares,
+
+		MyBackPropMethod backPropMethod,
+		float trainingRate,
+		float momentum,
+		float smoothingFactor,
+		float clipGradient,
+
+		int inputCount,
+		int previousOutputCount,
+		int cellsPerBlock
+		)
+	{
+		int weightId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		int weightsPerGate = inputCount + previousOutputCount + cellsPerBlock + 1;
+
+		if (weightId < weightsPerGate * previousOutputCount/cellsPerBlock)
+		{
+			int fromId = weightId % weightsPerGate;
+			int toId = weightId / weightsPerGate;
+
+			//calculate output gate weight gradient
+			int isFromInputUnit = fromId >= 0 && fromId < inputCount;
+			int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < inputCount + previousOutputCount);
+			int isPeephole = (fromId >= inputCount + previousOutputCount) && (fromId < inputCount + previousOutputCount + cellsPerBlock);
+			int isFromBiasUnit = fromId == (inputCount + previousOutputCount + cellsPerBlock);
+
+			float inputFromWeight = isFromInputUnit * input[isFromInputUnit * fromId]
+									+ isFromPreviousOutputUnit * previousOutput[isFromPreviousOutputUnit * (fromId - inputCount)]
+									+ isPeephole * cellStates[isPeephole * (toId * cellsPerBlock + (fromId - inputCount - previousOutputCount))]
+									+ isFromBiasUnit * 1;
+			float outputGateWeightGradient = outputGateDeltas[toId] * inputFromWeight;
+
+			//calculate input and forget gate weight gradients
+			float inputGateWeightGradient = inputGateDeltas[toId] * inputFromWeight;
+			float forgetGateWeightGradient = forgetGateDeltas[toId] * inputFromWeight;
+			
+
+			//update gate weights
+			if (backPropMethod == RMSProp)
+			{
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, clipGradient, outputGateWeights, outputGateWeightDeltas, outputGateWeightMeanSquares, weightId, outputGateWeightGradient);
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, clipGradient, inputGateWeights, inputGateWeightDeltas, inputGateWeightMeanSquares, weightId, inputGateWeightGradient);
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, clipGradient, forgetGateWeights, forgetGateWeightDeltas, forgetGateWeightMeanSquares, weightId, forgetGateWeightGradient);
+			}
+			else // SGD
+			{
+				SGDWeightUpdate(trainingRate, momentum, clipGradient, outputGateWeights, outputGateWeightDeltas, weightId, outputGateWeightGradient);
+				SGDWeightUpdate(trainingRate, momentum, clipGradient, inputGateWeights, inputGateWeightDeltas, weightId, inputGateWeightGradient);
+				SGDWeightUpdate(trainingRate, momentum, clipGradient, forgetGateWeights, forgetGateWeightDeltas, weightId, forgetGateWeightGradient);
+			}
+		}
+	}
+
+
 	__global__ void LSTMUpdateCellWeightsKernel(
 		float *input,
 		float *previousOutput,
@@ -168,6 +245,64 @@ extern "C"
 			else
 			{
 				SGDWeightUpdate(trainingRate, momentum, clipGradient, cellInputWeights, cellInputWeightDeltas, weightId, cellStateErrors[cellId] * cellWeightsRTRLPartials[weightId]);
+			}
+		}
+	}
+
+    __global__ void LSTMUpdateCellWeightsKernelBPTT(
+		float *input,
+		float *previousOutput,
+		float *cellStateErrors,
+		float *cellInputWeights,
+		float *cellInputWeightDeltas,
+		float *cellInputWeightMeanSquares,
+		float *cellWeightsRTRLPartials,
+
+		MyBackPropMethod backPropMethod,
+		float trainingRate,
+		float momentum,
+		float smoothingFactor,
+		float clipGradient,
+
+        float *cellInputDeltas, // ADDED
+
+		int inputCount,
+		int previousOutputCount,
+		int cellsPerBlock
+		)
+	{
+		int weightId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		int weightsPerCell = inputCount + previousOutputCount + 1;
+		
+
+
+
+        int fromId = weightId % weightsPerCell;
+		int toId = weightId / weightsPerCell;
+
+		int isFromInputUnit = fromId >= 0 && fromId < inputCount;
+		int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < inputCount + previousOutputCount);
+		int isFromBiasUnit = fromId == (inputCount + previousOutputCount);
+
+		float inputFromWeight = isFromInputUnit * input[isFromInputUnit * fromId]
+								  + isFromPreviousOutputUnit * previousOutput[isFromPreviousOutputUnit * (fromId - inputCount)]
+								  + isFromBiasUnit * 1;
+
+
+
+		if (weightId < weightsPerCell * previousOutputCount)
+		{
+			int cellId = weightId / weightsPerCell;
+			if (backPropMethod == RMSProp)
+			{
+				RMSPropWeightUpdate(trainingRate, momentum, smoothingFactor, clipGradient, cellInputWeights, cellInputWeightDeltas, cellInputWeightMeanSquares, weightId, cellInputDeltas[toId]*inputFromWeight);
+			}
+			else
+			{
+				SGDWeightUpdate(trainingRate, momentum, clipGradient, cellInputWeights, cellInputWeightDeltas, weightId, cellInputDeltas[toId]*inputFromWeight );
 			}
 		}
 	}
