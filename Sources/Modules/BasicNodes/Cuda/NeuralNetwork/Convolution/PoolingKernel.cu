@@ -68,6 +68,8 @@ extern "C"
 				++y;
 			}
 
+			// probably no need to save weighted input (without activation), since pool layer has no activation
+			// if it would have, it would be needed to add this
 			outputPtr[idx] = maxValue;
 			activatedNeuronsPtr[idx] = depthShift + indexFromXY(maxX, maxY, inputWidth);
 		}
