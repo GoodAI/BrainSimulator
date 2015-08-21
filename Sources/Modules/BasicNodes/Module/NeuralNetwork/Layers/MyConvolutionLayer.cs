@@ -230,7 +230,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 AdadeltaBias.Count = Bias.Count;
 
                 if (ZeroPadding > 0)
-                    PaddedImage.Count = InputDepth * (InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
+                {
+                    PaddedImage.Count = InputDepth*(InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
+                    PaddedImage.ColumnHint = InputWidth + 2*ZeroPadding;
+                }
                 else
                     PaddedImage.Count = 0;
 

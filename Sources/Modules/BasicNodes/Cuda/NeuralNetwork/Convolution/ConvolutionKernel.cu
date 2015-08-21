@@ -217,6 +217,17 @@ extern "C"
 								filterInputShift
 						];
 
+					/*if (idx == 49)
+					{
+						thisDeltaPtr[outputDepthShift + i + j * outputWidth] = -100;
+						inputPaddedPtr[
+							inputDepthShift +
+								j * verStride * inputPaddedWidth +
+								i * horStride +
+								filterInputShift
+						] = -100;
+					}*/
+
 					// update bias (one bias per filter, so only do it if we are in the first weight of any filter)
 					// it seems to work better without the following condition though it shouldn't be the case
 					if (idx % filterSize == 0)
