@@ -20,7 +20,17 @@
 
 ![](../img/Vari_AutoEncoder_brain.PNG)
 
+[Learning Simple Text Sequence by LSTM](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/LSTM_text.brain)
+Learning a simple text sequence by LSTM neural network.
+We use Text-World, in its properties set InputType:UserText and set UserText to "Hello world!".
+We can add a text-observer on world memory-block to see what characters the world generates.
+Having selected world's "Output-96-memory-block" the text-observer can be added by small icon with "Tt", see following screenshot.
+![](../img/LSTM_text2.png)
 
+All is completely set in the provided brain-file for you.
+After executing it you can watch repeated "Hello world!" sample from text-world and also LSTM prediction which should be more and more accurate over short time-period.
+You can notice its error (cost) in a graph-window. See next screenshot. 
+![](../img/LSTM_text.png)
 
 ### References
  [1] [Diederik P Kingma, Max Welling. Auto-Encoding Variational Bayes](http://arxiv.org/abs/1312.6114)
