@@ -128,21 +128,24 @@ extern "C"
 
 				int filterX = 0;
 				int filterY = 0;
+
 				// cycle filter through the whole (virtually padded) image
 				for (int j = 0; filterY + filterHeight <= paddedHeight; j++, filterY += verStride)
 				{
-					filterX = 0;
-					for (int i = 0; filterX + filterWidth <= paddedWidth; i++, filterX += horStride)
-					{
-						if ( // check if the current neuron is in the filter's receptive field
-							filterX <= currentX && filterX + filterWidth > currentX &&
-							filterY <= currentY && filterY + filterHeight > currentY)
+					// check if the current neuron is in the filter's receptive field
+					if (filterY <= currentY && filterY + filterHeight > currentY) {
+						filterX = 0;
+						for (int i = 0; filterX + filterWidth <= paddedWidth; i++, filterX += horStride)
 						{
-							// identify the proper filter part (weight)
-							int weightIdx = weightDepthShift + indexFromXY(currentX - filterX, currentY - filterY, filterWidth);
-							// identify the proper output neuron (delta)
-							int deltaIdx = deltaDepthShift + j * outputWidth + i;
-							delta += filterPtr[weightIdx] * thisDeltaPtr[deltaIdx];
+							// check if the current neuron is in the filter's receptive field
+							if (filterX <= currentX && filterX + filterWidth > currentX)
+							{
+								// identify the proper filter part (weight)
+								int weightIdx = weightDepthShift + indexFromXY(currentX - filterX, currentY - filterY, filterWidth);
+								// identify the proper output neuron (delta)
+								int deltaIdx = deltaDepthShift + indexFromXY(i, j, outputWidth);
+								delta += filterPtr[weightIdx] * thisDeltaPtr[deltaIdx];
+							}
 						}
 					}
 				}
