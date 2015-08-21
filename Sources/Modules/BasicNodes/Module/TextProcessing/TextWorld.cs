@@ -21,7 +21,7 @@ using YAXLib;
 namespace GoodAI.Modules.TextProcessing
 {
     /// <author>GoodAI</author>
-    /// <meta>mv</meta>
+    /// <meta>mh</meta>
     /// <status>Working</status>
     /// <summary>Provides sample or custom text input for additional processing.</summary>
     /// <description>Provides sample or custom text input for additional processing.</description>
@@ -99,6 +99,7 @@ namespace GoodAI.Modules.TextProcessing
             Output.Count = '~'-' ' + 2; 
         }
 
+        /// <summary>Provides sample or custom text input for additional processing.</summary>
         [Description("Read text inputs")]
         public class MyCUDAGenerateInputTask : MyTask<TextWorld>
         {
