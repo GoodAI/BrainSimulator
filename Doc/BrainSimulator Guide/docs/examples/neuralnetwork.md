@@ -22,14 +22,15 @@
 
 [Learning Simple Text Sequence by LSTM](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/LSTM_text.brain)
 Learning a simple text sequence by LSTM neural network.
-We use Text-World, in its properties set InputType:UserText and set UserText to "Hello world!".
-We can add a text-observer on world memory-block to see what characters the world generates.
-Having selected world's "Output-96-memory-block" the text-observer can be added by small icon with "Tt", see following screenshot.
+To use the TextWorld, in its properties set InputType:UserText and set UserText to "Hello world!".
+We can add a text-observer to the world memory-block to see what characters the world generates.
+Having selected the world's "Output 96 memory block" the text-observer can be added using the small icon with "Tt", see the following screenshot.
 ![](../img/LSTM_text2.png)
 
-All is completely set in the provided brain-file for you.
-After executing it you can watch repeated "Hello world!" sample from text-world and also LSTM prediction which should be more and more accurate over short time-period.
-You can notice its error (cost) in a graph-window. See next screenshot. 
+All is completely set in the provided brain file for you.
+After executing it you can watch a repeated "Hello world!" sample from TextWorld and also LSTM prediction which should be more and more accurate over a short time period.
+You can notice its error (cost) in the TimePlotObserver. See the next screenshot.
+The text observers may not display the text properly. This error is caused by the simulation running too quickly, so please make sure that the report interval is set to 0 and consider slowing the simulation using the sleep interval (two stopwatch icons in the main Brain Simulator toolbar)
 ![](../img/LSTM_text.png)
 
 ### References
