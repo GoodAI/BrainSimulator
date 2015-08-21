@@ -97,7 +97,8 @@ extern "C"
 		int inputWidth, int inputHeight,
 		int filterWidth, int filterHeight,
 		int filterSliceSize, // one layer of filter volume, fW * fH
-		int outputWidth, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
+		int filterSize, // one filter volume, fW * fH * inputDepth
+		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
 		int horStride, int verStride,
 		int prevLayerSize
 		)
@@ -114,7 +115,9 @@ extern "C"
 
 				int inputDepth = idx / inputSliceSize; // currentZ
 
-				int weightDepthShift = inputDepth * filterSliceSize;
+				// shift to correct filter index by current index and size, then shift inside the correct filter to the correct depth
+				int filterDepthShift = filterIdx * filterSize + inputDepth * filterSliceSize;
+
 				int deltaDepthShift = filterIdx * outputSliceSize;
 
 				// index in the current slice (ignoring depth), accounting for padding
@@ -126,28 +129,32 @@ extern "C"
 				int currentX = currentIdx % paddedWidth;
 				int currentY = currentIdx / paddedWidth;
 
-				int filterX = 0;
 				int filterY = 0;
-
 				// cycle filter through the whole (virtually padded) image
-				for (int j = 0; filterY + filterHeight <= paddedHeight; j++, filterY += verStride)
+				for (int j = 0; j < outputHeight; j++)
 				{
-					// check if the current neuron is in the filter's receptive field
-					if (filterY <= currentY && filterY + filterHeight > currentY) {
-						filterX = 0;
-						for (int i = 0; filterX + filterWidth <= paddedWidth; i++, filterX += horStride)
+					// check if the current neuron is in the filter's vertical receptive field
+					if (filterY <= currentY && currentY < filterY + filterHeight) {
+
+
+						int filterX = 0;
+						for (int i = 0; i < outputWidth; i++)
 						{
-							// check if the current neuron is in the filter's receptive field
-							if (filterX <= currentX && filterX + filterWidth > currentX)
+							// check if the current neuron is in the filter's horizontal receptive field
+							if (filterX <= currentX && currentX < filterX + filterWidth)
 							{
 								// identify the proper filter part (weight)
-								int weightIdx = weightDepthShift + indexFromXY(currentX - filterX, currentY - filterY, filterWidth);
+								int filterIdx = filterDepthShift + indexFromXY(currentX - filterX, currentY - filterY, filterWidth);
 								// identify the proper output neuron (delta)
 								int deltaIdx = deltaDepthShift + indexFromXY(i, j, outputWidth);
-								delta += filterPtr[weightIdx] * thisDeltaPtr[deltaIdx];
+								delta += filterPtr[filterIdx] * thisDeltaPtr[deltaIdx];
 							}
+							filterX += horStride;
 						}
+
+
 					}
+					filterY += verStride;
 				}
 			}
 

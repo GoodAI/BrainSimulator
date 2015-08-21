@@ -8,6 +8,7 @@
 #include <builtin_types.h>
 #include <vector_functions.h>
 #include <math.h>
+#include "..\Activation\ActivationFunction.cu"
 
 extern "C"
 {
@@ -74,8 +75,10 @@ extern "C"
 
 
 	__global__ void PoolingBackwardKernel (
+		ActivationFunctionEnum inputActFunc,
 		float *thisLayerDelta,
-		float *prevLayerDelta,
+		float *inputLayerDelta,
+		float *inputWeightedPtr,
 		int *activatedNeuronsPtr,
 		int thisLayerSize
 	)
@@ -86,7 +89,8 @@ extern "C"
 
 		if (idx < thisLayerSize)
 		{
-			prevLayerDelta[activatedNeuronsPtr[idx]] = thisLayerDelta[idx];
+			int inputIdx = activatedNeuronsPtr[idx];
+			inputLayerDelta[inputIdx] = thisLayerDelta[idx] * EvaluateDerivative(inputActFunc, inputWeightedPtr[inputIdx]);
 		}
 	}
 }
