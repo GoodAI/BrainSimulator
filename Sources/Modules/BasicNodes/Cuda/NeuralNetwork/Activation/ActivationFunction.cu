@@ -127,8 +127,8 @@ extern "C"
 
 			case SOFTMAX:
 				// softmax is computed by a separate kernel (needs data from the whole layer)
-				// here we only prepare exp value of input
-				return expf(input);
+				// to avoid infinity problems, handle softmax activation differently (use log trick)
+				return input;
 
 			case TANH:
 				return tanhf(input);

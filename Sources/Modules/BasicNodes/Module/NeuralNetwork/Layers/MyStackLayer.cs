@@ -18,9 +18,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     /// <author>GoodAI</author>
     /// <status>Working</status>
     /// <summary>
-    ///   Performs an element-wise stack-join operation on the input vectors.
+    ///   Node that stacks 2 input nodes and forwards them as one output. It can send deltas back from output to inputs while gradient descent is performed.
     /// </summary>
-    /// <description></description>
+    /// <description>
+    ///   A Stack-Layer node should be used as a subnode of the NeuralNetworkGroup.
+    ///   It can join 2 nodes together (stack them) and forward them as one node.
+    ///   Moreover, while a learning phase of the gradient descent is active and deltas are
+    ///   back-prapagated to StackLayer than they are properly distributed to its input nodes.
+    ///   Specifically, this is important when we need 2 neural-layers to work in parallel.
+    /// </description>
     public class MyStackLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
         [MyInputBlock(1)]
@@ -83,6 +89,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             DeltaBackTask = new MyStackBackDeltaTask();
         }
 
+        /// <summary>
+        /// Sends deltas back
+        /// </summary>
         [Description("DeltaBackTask"), MyTaskInfo(OneShot = false)]
         public class MyStackBackDeltaTask : MyAbstractBackDeltaTask<MyStackLayer>
         {
@@ -109,6 +118,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
+        /// <summary>
+        /// Forwards inputs to output
+        /// </summary>
         [Description("ForwardTask"), MyTaskInfo(OneShot = false)]
         public class MyStackForwardTask : MyAbstractForwardTask<MyStackLayer>
         {

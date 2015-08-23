@@ -83,10 +83,19 @@ namespace CustomModels.NeuralNetwork.Tasks
                 // reset delta
                 previousLayer.Delta.Fill(0);
 
+                // determine input to previous layer
+                CUdeviceptr prevInputPtr;
+                if (previousLayer is MyAbstractWeightLayer)
+                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
+                else
+                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+
                 m_kernel.SetupExecution(Owner.Neurons);
                 m_kernel.Run(
+                    (int)previousLayer.ActivationFunction,
                     Owner.Delta,
                     previousLayer.Delta,
+                    prevInputPtr,
                     Owner.ActivatedNeurons,
                     Owner.Neurons
                     );
@@ -255,7 +264,8 @@ namespace CustomModels.NeuralNetwork.Tasks
                     Owner.InputWidth, Owner.InputHeight,
                     Owner.FilterWidth, Owner.FilterHeight,
                     Owner.FilterWidth * Owner.FilterHeight,
-                    Owner.OutputWidth, Owner.OutputWidth * Owner.OutputHeight,
+                    Owner.FilterWidth * Owner.FilterHeight * Owner.InputDepth, 
+                    Owner.OutputWidth, Owner.OutputHeight, Owner.OutputWidth * Owner.OutputHeight,
                     Owner.HorizontalStride, Owner.VerticalStride,
                     previousLayer.Neurons
 

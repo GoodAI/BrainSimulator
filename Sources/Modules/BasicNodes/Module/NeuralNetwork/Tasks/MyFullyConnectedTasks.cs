@@ -82,29 +82,43 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     );
             }
 
+
+            // do a trick to avoid infinity (NaN) problems with exponential values in softmax
             if (Owner.ActivationFunction == ActivationFunctionType.SOFTMAX)
             {
                 Owner.Output.SafeCopyToHost();
-                float expSum = Owner.Output.Host.Sum();
 
-                /*
-                if (expSum > 2 * Owner.Neurons)
-                    MyLog.WARNING.WriteLine("Exponential sum (danger/suspici)ously high: " + expSum);*/
+                float expSum = 0;
 
-                
+                float[] f = Owner.Output.Host;
+                float max = f.Max();
+
+                for (int i = 0; i < f.Length; i++)
+                {
+                    float exp = (float) Math.Exp(f[i] - max);
+                    f[i] = exp;
+                    expSum += exp;
+                }
+
+
+                // CPU version of the commented kernel below
+                for (int i = 0; i < f.Length; i++)
+                {
+                    f[i] /= expSum;
+                }
+
+                Array.Copy(f, Owner.Output.Host, f.Length);
+
+                Owner.Output.SafeCopyToDevice();
+
+                /* 
+                 * GPU version is slower, don't use it for now
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
                 m_softmaxKernel.Run(
                     Owner.Output,
                     expSum,
                     Owner.Neurons
-                    );
-
-                /*
-                 * DEBUG:
-                Owner.Output.SafeCopyToHost();
-                expSum = Owner.Output.Host.Sum();
-                MyLog.DEBUG.WriteLine("Sum of softmax activations is " + expSum + ". Should be 1.");*/
-
+                    );*/
 
             }
         }
