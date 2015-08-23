@@ -203,7 +203,6 @@ namespace GoodAI.SoundWorld
             WavPlayer player;
             private short[] m_InputData;
             private long m_position = 0;
-            private int m_InputOffset = 0;
             
 
             public override void Init(Int32 nGPU)
@@ -218,6 +217,7 @@ namespace GoodAI.SoundWorld
                 if (SimulationStep == 0)
                 {
                     #region First step init
+                    m_position = 0;
                     Owner.Features.Fill(0);
                     Owner.Label.Fill(0);
 
@@ -226,7 +226,10 @@ namespace GoodAI.SoundWorld
                         switch (Owner.m_UserInput)
                         {
                             case InputTypeEnum.SampleSound:
-                                m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Sample);
+                                m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Digits_en_wav);
+                                m_wavReader.m_SamplesPerSec = 32000;
+                                m_wavReader.AttachTranscription(GoodAI.SoundWorld.Properties.Resources.Digits_en_txt);
+                                
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 break;
                             case InputTypeEnum.UserDefined:
@@ -279,11 +282,12 @@ namespace GoodAI.SoundWorld
                             //result = PerformFFT(GenerateSine(size));  // generate a test sine signal
                             break;
                         case FeatureType.MFCC:
-                            result = PerformFFT(PrepareInputs(256));
+                            result = WindowFunction.Hanning(PrepareInputs(256));
+                            result = PerformFFT(result);
                             result = MFCC.Compute(result, player.m_SamplesPerSec, Owner.FeaturesCount);
                             break;
                         case FeatureType.LPC:
-                            result = PrepareInputs(256);
+                            result = WindowFunction.Hanning(PrepareInputs(256));
                             result = LPC.Compute(result, Owner.FeaturesCount);
                             break;
                     }
@@ -302,7 +306,7 @@ namespace GoodAI.SoundWorld
             {
                 // define overlap
                 if (m_position >= count)
-                    m_position -= (int)(float)(count * 0.33);
+                    m_position -= (int)(float)(count * 0.5);
 
                 // Set Label
                 if (m_wavReader != null && m_wavReader.HasTranscription)
@@ -319,7 +323,7 @@ namespace GoodAI.SoundWorld
 
                 // if input is corpus, cycle files in the set
                 float[] result = new float[count];
-                if (Owner.InputType == InputTypeEnum.UserDefined && Owner.m_InputPathCorpus != null)
+                if (Owner.InputType == InputTypeEnum.UserDefined && Owner.m_InputPathCorpus != "")
                 {
                     bool eof = (m_position + count < m_InputData.Length)?false: true;
                     for (int i = 0; i < count; i++)
@@ -369,7 +373,6 @@ namespace GoodAI.SoundWorld
             // perform Fast Fourier transform
             private float[] PerformFFT(float[] input)
             {
-                float[] result = new float[input.Length];
                 int size_real = input.Length;
                 int size_complex = (int)Math.Floor(size_real / 2.0) + 1;
 
@@ -393,6 +396,7 @@ namespace GoodAI.SoundWorld
                 fftPlan.Dispose();
 
                 // squared magnitude of complex output as a result
+                float[] result = new float[output.Length];
                 for (int i = 0; i < output.Length; i++)
                     result[i] = (float)Math.Sqrt((output[i].x * output[i].x) + (output[i].y * output[i].y));
 
@@ -431,6 +435,50 @@ namespace GoodAI.SoundWorld
                 return buffer;
             }
             #endregion
+        }
+    }
+
+    /// <summary>
+    /// Filter typu dolny priepust
+    /// </summary>
+    public static class WindowFunction
+    {
+        public static float[] Hanning(float[] signal)
+        {
+            int frame_size = signal.Length;
+            float[] window = new float[frame_size];
+            for (int n = 0; n < frame_size; n++)
+            {
+                window[n] = 0.5f * (float)(1 - Math.Cos(2 * Math.PI * n / (frame_size - 1)));
+                window[n] *= signal[n];
+            }
+            return window;
+        }
+
+        public static double[] Hamming(float[] signal)
+        {
+            int frame_size = signal.Length;
+            double[] window = new double[frame_size];
+            for (int n = 0; n < frame_size; n++)
+            {
+                window[n] = 0.54 - 0.46 * Math.Cos(2 * Math.PI * n / (frame_size - 1));
+                window[n] *= signal[n];
+            }
+            return window;
+        }
+
+        public static double[] Square(float[] signal)
+        {
+            int frame_size = signal.Length;
+            double[] window = new double[frame_size];
+            for (int n = 0; n < frame_size; n++)
+            {
+                if (0 <= n & n <= frame_size - 1)
+                    window[n] = signal[n];
+                else
+                    window[n] = 0;
+            }
+            return window;
         }
     }
 }

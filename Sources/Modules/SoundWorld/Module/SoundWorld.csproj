@@ -76,15 +76,15 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\doc.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="res\Digits_en.txt" />
     <Content Include="res\Digits_en.wav" />
-    <Content Include="res\Digits_sk.wav" />
-    <Content Include="res\Sample.wav" />
   </ItemGroup>
   <ItemGroup>
     <None Include="post_build.cmd" />

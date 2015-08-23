@@ -11,60 +11,71 @@ namespace GoodAI.Modules.SoundProcessing.Features
         /// Algorithm for generation of autocorelation LPC coeficients invented by
         /// N. Levinsonom in 1947, modified by J. Durbinom in 1959.
         /// </summary>
-        /// <param name="data">PCM data.</param>
-        /// <param name="m">Number of LPC coeficients.</param>
+        /// <param name="x">PCM data.</param>
+        /// <param name="p">Number of LPC coeficients.</param>
         /// <returns>LPC coeficients.</returns>
-        public static float[] Compute(float[] data, int m)
+        public static float[] Compute(float[] x, int p)
         {
-            float[] aut = new float[m + 1];
-            float[] lpc = new float[m];
-            float error;
-            int n = data.Length;
-            int i, j;
+            // Variable used in Durbin's algorithm
+            float[] e = new float[p + 1];
+            float[,] alpha = new float[p + 1, p + 1];
+            float[] r = new float[p + 1];
+            float[] k = new float[p + 1];
+            float[] c = new float[p + 1];
+            int N = x.Length;
 
-            // autocorrelation, p+1 lag coefficients
-            j = m + 1;
-            while (j-- != 0)
+            float[] lpc = new float[p + 1];
+
+            // initialize
+            for (int i = 0; i < p + 1; i++)
             {
-                float d = 0.0F;
-                for (i = j; i < n; i++) d += data[i] * data[i - j];
-                aut[j] = d;
+                e[i] = k[i] = 0;
+                for (int j = 0; j < p + 1; j++)
+                    alpha[i, j] = 1;
             }
 
-            // Generate lpc coefficients from autocorr values
-            error = aut[0];
-
-            for (i = 0; i < m; i++)
+            // Autocorelation of input frame
+            float max = 0;
+            for (int i = 0; i < p + 1; i++)
             {
-                float r = -aut[i + 1];
-                if (error == 0)
-                {
-                    for (int k = 0; k < m; k++) lpc[k] = 0.0f;
-                    return null;
-                }
+                r[i] = 0;
+                for (int j = 0; j < N - i; j++)
+                    r[i] += (x[j] * x[j + i]);
 
-                // Sum up this iteration's reflection coefficient; note that in
-                // Vorbis we don't save it.  If anyone wants to recycle this code
-                // and needs reflection coefficients, save the results of 'r' from
-                // each iteration.
-                for (j = 0; j < i; j++) r -= lpc[j] * aut[i - j];
-                r /= error;
-
-                // Update LPC coefficients and total error
-                lpc[i] = r;
-                for (j = 0; j < i / 2; j++)
-                {
-                    float tmp = lpc[j];
-                    lpc[j] += r * lpc[i - 1 - j];
-                    lpc[i - 1 - j] += r * tmp;
-                }
-                if (i % 2 != 0) lpc[j] += lpc[j] * r;
-
-                error *= (float)(1.0 - r * r);
+                if (Math.Abs(r[i]) > max)
+                    max = Math.Abs(r[i]);
             }
 
-            // we need the error value to know how big an impulse to hit the
-            // filter with later
+            for (int i = 0; i < p + 1; i++)
+            {
+                r[i] /= max;
+            }
+
+            e[0] = r[0];
+
+            // LPC Analysis
+            float sum;
+            for (int i = 1; i <= p; i++)
+            {
+                sum = 0;
+                for (int j = 1; j <= i - 1; j++)
+                {
+                    sum += (alpha[j, i - 1] * r[i - j]);
+                }
+                k[i] = (r[i] - sum) / e[i - 1];
+                alpha[i, i] = k[i];
+                for (int j = 1; j <= i - 1; j++)
+                {
+                    alpha[j, i] = alpha[j, i - 1] - k[i] * alpha[i - j, i - 1];
+                }
+                e[i] = (1 - k[i] * k[i]) * e[i - 1];
+            }
+
+            // extract solution
+            lpc[0] = 1;
+            for (int i = 0; i < p; i++)
+                lpc[i + 1] = alpha[i + 1, p];
+
             return lpc;
         }
 
@@ -88,9 +99,8 @@ namespace GoodAI.Modules.SoundProcessing.Features
 
             for (int e = 0; e < n; e++)
                 for (int i = 0; i < m; i++)
-                {
                     error[e] += lpc1[i] * ((e - i >= 0) ? data[e - i] : 0);
-                }
+            
             return error;
         }
 
