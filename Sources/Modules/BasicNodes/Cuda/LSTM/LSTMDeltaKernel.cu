@@ -24,6 +24,7 @@ extern "C"
 		float* outputGateDeltas,
 		float* forgetGateDeltas,
 		float* inputGateDeltas,
+        float* cellInputDeltas,
 
 		float* outputGateActivations,
 		float* forgetGateActivations,
@@ -65,7 +66,9 @@ extern "C"
 					inputGateDeltas[cellId] * inputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount] +
 					forgetGateDeltas[cellId] * forgetGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount] +
 					outputGateDeltas[cellId] * outputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount];
-			}
+
+                cellInputDeltas[cellId] = inputGateActivations[memoryBlockId] *  cellInputActivationDerivatives[memoryBlockId] * cellStateErrors[cellId];
+            }
 
 			inputGateDeltas[memoryBlockId] = 0;
 			forgetGateDeltas[memoryBlockId] = 0;
