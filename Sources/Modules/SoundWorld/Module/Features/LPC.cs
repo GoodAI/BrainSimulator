@@ -53,15 +53,14 @@ namespace GoodAI.Modules.SoundProcessing.Features
 
             e[0] = r[0];
 
-            // LPC Analysis
+            // LPC analysis
             float sum;
             for (int i = 1; i <= p; i++)
             {
                 sum = 0;
                 for (int j = 1; j <= i - 1; j++)
-                {
                     sum += (alpha[j, i - 1] * r[i - j]);
-                }
+                
                 k[i] = (r[i] - sum) / e[i - 1];
                 alpha[i, i] = k[i];
                 for (int j = 1; j <= i - 1; j++)
@@ -71,12 +70,21 @@ namespace GoodAI.Modules.SoundProcessing.Features
                 e[i] = (1 - k[i] * k[i]) * e[i - 1];
             }
 
-            // extract solution
-            lpc[0] = 1;
+            // Compute LPC
             for (int i = 0; i < p; i++)
                 lpc[i + 1] = alpha[i + 1, p];
 
-            return lpc;
+            sum = 0;
+            for (int i = 1; i < c.Length; i++)
+            {
+                sum = 0;
+                for (int j = 1; j <= i - 1; j++)
+                    sum += ((j / (float)i) * c[j] * lpc[i - j - 1]);
+                
+                c[i] = lpc[i - 1] + sum;
+            }
+
+            return c;
         }
 
         /// <summary>
