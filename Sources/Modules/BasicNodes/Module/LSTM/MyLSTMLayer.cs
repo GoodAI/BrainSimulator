@@ -102,6 +102,8 @@ namespace GoodAI.Modules.LSTM
 
         public virtual MyMemoryBlock<float> CellStateErrors { get; set; }
         public virtual MyMemoryBlock<float> OutputGateDeltas { get; set; }
+        public virtual MyMemoryBlock<float> ForgetGateDeltas { get; set; }
+        public virtual MyMemoryBlock<float> InputGateDeltas { get; set; }
 
         public virtual MyMemoryBlock<float> PreviousOutput { get; set; }
 
@@ -152,6 +154,8 @@ namespace GoodAI.Modules.LSTM
             
             CellStateErrors.Count = CellStates.Count;
             OutputGateDeltas.Count = MemoryBlocks;
+            ForgetGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???
+            InputGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???
 
             Delta.Count = CellStates.Count; // computed by previous layer
 
