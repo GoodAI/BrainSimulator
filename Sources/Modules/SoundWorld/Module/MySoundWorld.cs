@@ -133,16 +133,6 @@ namespace GoodAI.SoundWorld
                 }
             }
         }
-
-        [Description("Microphone device (default value is -1)")]
-        [MyBrowsable, Category("I/O")]
-        [YAXSerializableField(DefaultValue = -1), YAXElementFor("IO")]
-        public int MicrophoneDevice { get; set; }
-
-        [Description("Number of seconds for microphone to record")]
-        [MyBrowsable, Category("I/O")]
-        [YAXSerializableField(DefaultValue = 3), YAXElementFor("IO")]
-        public int RecordSeconds { get; set; }
         #endregion
 
         #region Features
