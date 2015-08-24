@@ -82,7 +82,8 @@ extern "C"
 
 
 	__global__ void LSTMFeedForwardKernel(
-		ActivationFunctionEnum activationFunction,
+		ActivationFunctionEnum inputActivationFunction,
+		ActivationFunctionEnum gateActivationFunction,
 		float *input,
 		float *output,
 		float *previousOutput,
@@ -145,14 +146,14 @@ extern "C"
 				);
 
 			// activation function of all gates must be in range [0,1], sigmoid activation function is used
-			float inputGateActivation = Evaluate(SIGMOID, inputGateNetInput);
-			float forgetGateActivation = Evaluate(SIGMOID, forgetGateNetInput);
+			float inputGateActivation = Evaluate(gateActivationFunction, inputGateNetInput);
+			float forgetGateActivation = Evaluate(gateActivationFunction, forgetGateNetInput);
 
 			inputGateActivations[memoryBlockId] = inputGateActivation;
 			forgetGateActivations[memoryBlockId] = forgetGateActivation;
 
-			inputGateActivationDerivatives[memoryBlockId] = EvaluateDerivative(SIGMOID, inputGateNetInput);
-			forgetGateActivationDerivatives[memoryBlockId] = EvaluateDerivative(SIGMOID, forgetGateNetInput);
+			inputGateActivationDerivatives[memoryBlockId] = EvaluateDerivative(gateActivationFunction, inputGateNetInput);
+			forgetGateActivationDerivatives[memoryBlockId] = EvaluateDerivative(gateActivationFunction, forgetGateNetInput);
 
 			// step 2: calculate activation of memory block's cells
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
@@ -171,10 +172,10 @@ extern "C"
 					true
 					);
 
-				float cellInputActivation = Evaluate(activationFunction, cellNetInput);
+				float cellInputActivation = Evaluate(inputActivationFunction, cellNetInput);
 
 				cellInputActivations[cellId] = cellInputActivation;
-				cellInputActivationDerivatives[cellId] = EvaluateDerivative(activationFunction, cellNetInput);
+				cellInputActivationDerivatives[cellId] = EvaluateDerivative(inputActivationFunction, cellNetInput);
 
 				cellStates[cellId] = Clip(forgetGateActivation * previousCellStates[cellId] + inputGateActivation * cellInputActivation, clipCellState);
 			}
@@ -194,9 +195,9 @@ extern "C"
 				true
 				);
 
-			float outputGateActivation = Evaluate(SIGMOID, outputGateNetInput);
+			float outputGateActivation = Evaluate(gateActivationFunction, outputGateNetInput);
 			outputGateActivations[memoryBlockId] = outputGateActivation;
-			outputGateActivationDerivatives[memoryBlockId] = EvaluateDerivative(SIGMOID, outputGateNetInput);
+			outputGateActivationDerivatives[memoryBlockId] = EvaluateDerivative(gateActivationFunction, outputGateNetInput);
 
 			// step 4: calculate output of all memory block's cells
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)

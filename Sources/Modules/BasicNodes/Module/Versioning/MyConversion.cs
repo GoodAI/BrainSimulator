@@ -10,7 +10,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 5; } }
+        public override int CurrentVersion { get { return 6; } }
 
 
         /// <summary>
@@ -133,6 +133,27 @@ namespace GoodAI.Modules.Versioning
             result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.LSTM.Tasks.MyLSTMDummyDeltaTask", "yaxlib:realtype=\"GoodAI.Modules.LSTM.Tasks.MyLSTMDeltaTask");
 
             return result;
+        }
+
+        /// <summary>
+        /// Convert LSTM activation function property names
+        /// Author: KK
+        /// </summary>
+        public static string Convert5To6(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            foreach (var lstm in document.Root.Descendants("MyLSTMLayer"))
+            {
+                var activationFunction = lstm.Descendants("ActivationFunction").First();
+                lstm.Add(new XElement("InputActivationFunction", activationFunction.Value));
+                lstm.Add(new XElement("GateActivationFunction", "SIGMOID"));
+            }
+
+            return document.ToString();
         }
     }
 }
