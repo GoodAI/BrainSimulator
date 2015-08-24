@@ -69,7 +69,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         #region Memory blocks
         // Memory blocks
         [MyInputBlock(0)]
-        public MyMemoryBlock<float> Input
+        public virtual MyMemoryBlock<float> Input
         {
             get { return GetInput(0); }
         }
