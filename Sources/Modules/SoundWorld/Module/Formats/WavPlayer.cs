@@ -325,6 +325,28 @@ namespace GoodAI.Modules.SoundProcessing
         }
 
         /// <summary>
+        /// Attach transcription of audio file.
+        /// </summary>
+        /// <param name="filename">File name.</param>
+        public void AttachTranscription(string transcription)
+        {
+            if (transcription == "")
+                return;
+
+            string[] line = transcription.Split('\n');
+            m_intervals = new Intervals[line.Length];
+            for (int i = 0; i < line.Length; i++)
+            {
+                string[] item = line[i].Split('\t');
+                float start = float.Parse(item[1]) * m_SamplesPerSec;
+                float stop = float.Parse(item[2]) * m_SamplesPerSec;
+                m_intervals[i] = new Intervals(item[0], (int)start, (int)stop);
+            }
+
+            HasTranscription = true;
+        }
+
+        /// <summary>
         /// Search transcription file and return current feature
         /// </summary>
         /// <param name="ax">Index in audio file.</param>
@@ -432,7 +454,13 @@ namespace GoodAI.Modules.SoundProcessing
 
         public void Dispose()
         {
-            m_stream.Close();
+            try
+            {
+                m_stream.Close();
+            }catch(Exception e)
+            {
+                m_stream = null;
+            }
         }
 
         ~WavPlayer()

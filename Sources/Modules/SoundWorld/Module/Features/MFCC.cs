@@ -12,7 +12,7 @@ namespace GoodAI.Modules.SoundProcessing.Features
         /// Compute mel-frequency cepstral coeficients for given frequency spectrum.
         /// </summary>
         /// <param name="fft">Frequency spectrum.</param>
-        /// <param name="format">Format of input aoudio.</param>
+        /// <param name="sample_rate">Sample rate of input audio.</param>
         /// <param name="coefCount">Number of coeficients to compute.</param>
         /// <returns>Mel-frequency cepstral coeficients.</returns>
         public static float[] Compute(float[] fft, int sample_rate, int coefCount)
@@ -34,10 +34,9 @@ namespace GoodAI.Modules.SoundProcessing.Features
             float[] mfcc = new float[coefCount];
             Array.Copy(dct, mfcc, coefCount);
 
-            return Normalize(mfcc);
+            return mfcc;
         }
 
-        #region Private stuff
         internal class Point
         {
             public int X { get; set; }
@@ -140,35 +139,6 @@ namespace GoodAI.Modules.SoundProcessing.Features
             return res;
         }
 
-        /// <summary>
-        /// Normalization of input to 0-1 range.
-        /// </summary>
-        /// <param name="input">Target data.</param>
-        /// <returns>Normalized data.</returns>
-        private static float[] Normalize(float[] input)
-        {
-            // Find minimum and maximum
-            float max = 0;
-            float min = 0;
-            for (int i = 0; i < input.Length; i++)
-            {
-                if (input[i] > max)
-                    max = input[i];
-                if (input[i] < min)
-                    min = input[i];
-            }
-
-            // Normalize
-            float diff = max - min;
-            float[] result = new float[input.Length];
-            for (int i = 0; i < input.Length; i++)
-            {
-                result[i] = (input[i] - min) / diff;
-            }
-
-            return result;
-        }
-
         private static float toMel(float f)
         {
             return 1125 * (float)Math.Log(1 + (f / 700));
@@ -178,6 +148,6 @@ namespace GoodAI.Modules.SoundProcessing.Features
         {
             return 700 * ((float)Math.Exp(m / 1125) - 1);
         }
-        #endregion
+        
     }
 }

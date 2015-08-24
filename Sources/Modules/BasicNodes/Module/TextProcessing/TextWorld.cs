@@ -21,7 +21,7 @@ using YAXLib;
 namespace GoodAI.Modules.TextProcessing
 {
     /// <author>GoodAI</author>
-    /// <meta>mv</meta>
+    /// <meta>mh</meta>
     /// <status>Working</status>
     /// <summary>Provides sample or custom text input for additional processing.</summary>
     /// <description>Provides sample or custom text input for additional processing.</description>
@@ -72,20 +72,6 @@ namespace GoodAI.Modules.TextProcessing
             set
             {
                 m_UserInput = value;
-
-                switch (value)
-                {
-                    case UserInput.UserText:
-                        m_Text = UserText;
-                        break;
-                    case UserInput.UserFile:
-                        if (File.Exists(UserFile))
-                            using (StreamReader sr = new StreamReader(UserFile))
-                            {
-                                m_Text = sr.ReadToEnd();
-                            }
-                        break;
-                }
             }
         }
         #endregion
@@ -99,6 +85,7 @@ namespace GoodAI.Modules.TextProcessing
             Output.Count = '~'-' ' + 2; 
         }
 
+        /// <summary>Provides sample or custom text input for additional processing.</summary>
         [Description("Read text inputs")]
         public class MyCUDAGenerateInputTask : MyTask<TextWorld>
         {
@@ -108,7 +95,20 @@ namespace GoodAI.Modules.TextProcessing
 
             public override void Init(Int32 nGPU)
             {
-                // do nothing here
+                //read file/user-input
+                switch (Owner.InputType)
+                {
+                    case UserInput.UserText:
+                        Owner.m_Text = Owner.UserText;
+                        break;
+                    case UserInput.UserFile:
+                        if (File.Exists(Owner.UserFile))
+                            using (StreamReader sr = new StreamReader(Owner.UserFile))
+                            {
+                                Owner.m_Text = sr.ReadToEnd();
+                            }
+                        break;
+                }
             }
 
             public override void Execute()
