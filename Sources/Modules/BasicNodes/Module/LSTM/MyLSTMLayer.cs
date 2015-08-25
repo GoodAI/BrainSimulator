@@ -23,7 +23,9 @@ namespace GoodAI.Modules.LSTM
     /// <description>Fully recurrent Long Short Term Memory (LSTM) hidden layer with forget gates and peephole connections trained by truncated Real-Time Recurrent Learning (RTRL) algorithm.<br />
     ///              Parameters:
     ///              <ul>
-    ///                 <li>ActivationFunction: Activation function applied to cell input. All gates use sigmoid activation function</li>
+    ///                 <li>InputActivationFunction: Activation function applied to cell input</li>
+    ///                 <li>GateActivationFunction: Activation function applied to gate input. Read-only, all gates use sigmoid activation function</li>
+    ///                 <li>ActivationFunction: Activation function applied to cell output. Read-only, no activation function is used</li>
     ///                 <li>CellsPerBlock: Number of cells in each LSTM memory block</li>
     ///                 <li>MemoryBlocks: Number of LSTM memory blocks in the layer</li>
     ///                 <li>Neurons: Read-only number of cells in the layer calculated as MemoryBlocks * CellsPerBlock</li>
@@ -37,10 +39,26 @@ namespace GoodAI.Modules.LSTM
     public class MyLSTMLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
         // Properties
+        [ReadOnly(true)]
         public override int Neurons
         {
             get { return MemoryBlocks * CellsPerBlock; }
             set {}
+        }
+
+        [YAXSerializableField(DefaultValue = ActivationFunctionType.TANH)]
+        [MyBrowsable, Category("\tLayer")]
+        public ActivationFunctionType InputActivationFunction { get; set; }
+
+        [YAXSerializableField(DefaultValue = ActivationFunctionType.SIGMOID)]
+        [MyBrowsable, Category("\tLayer"), ReadOnly(true)]
+        public ActivationFunctionType GateActivationFunction { get; set; }
+
+        [MyBrowsable, Category("\tLayer"), ReadOnly(true)]
+        public override ActivationFunctionType ActivationFunction
+        {
+            get { return ActivationFunctionType.NO_ACTIVATION; }
+            set { }
         }
 
         public override ConnectionType Connection

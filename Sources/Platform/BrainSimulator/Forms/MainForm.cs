@@ -282,7 +282,7 @@ namespace GoodAI.BrainSimulator.Forms
                 if (Project.World == null || wc.NodeType != Project.World.GetType())
                 {
                     Project.CreateWorld(wc.NodeType);
-                    Project.World.EnableAllTasks();
+                    Project.World.EnableDefaultTasks();
                     NodePropertyView.Target = null;
 
                     if (NetworkView != null)

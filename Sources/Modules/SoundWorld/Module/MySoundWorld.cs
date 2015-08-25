@@ -21,7 +21,7 @@ using YAXLib;
 
 namespace GoodAI.SoundWorld
 {
-    /// <author>Martin Hyben</author>
+    /// <author>GoodAI</author>
     /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Provides default or custom dataset audio input in various feature types.</summary>
@@ -31,7 +31,6 @@ namespace GoodAI.SoundWorld
         public enum InputTypeEnum 
         {
             SampleSound,        // Sample sound example for showcase
-            Microphone,         // Input from microphone device
             UserDefined         // User defined set of audio files
         }
         
@@ -43,7 +42,6 @@ namespace GoodAI.SoundWorld
             LPC,                // Linear predictive coeficients (common feature for speech recognition)
         }
         
-        protected Recorder m_recorder;
         
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Features
@@ -122,13 +120,7 @@ namespace GoodAI.SoundWorld
                         InputPathCorpus = "";
 
                         m_UserInput = InputTypeEnum.SampleSound;
-                        break;
-                    case InputTypeEnum.Microphone:
-                        UserDefinedAudio = "";
-                        InputPathCorpus = "";
-
-                        m_UserInput = InputTypeEnum.Microphone;
-                        break;
+                    break;
                     case InputTypeEnum.UserDefined:
                         if (m_InputPathAudio != "" || m_InputPathCorpus != "")
                             m_UserInput = InputTypeEnum.UserDefined;
@@ -137,20 +129,10 @@ namespace GoodAI.SoundWorld
                             MyLog.INFO.WriteLine("First select path to custom audio file/s.");
                             m_UserInput = InputTypeEnum.SampleSound;
                         }
-                        break;
+                    break;
                 }
             }
         }
-
-        [Description("Microphone device (default value is -1)")]
-        [MyBrowsable, Category("I/O")]
-        [YAXSerializableField(DefaultValue = -1), YAXElementFor("IO")]
-        public int MicrophoneDevice { get; set; }
-
-        [Description("Number of seconds for microphone to record")]
-        [MyBrowsable, Category("I/O")]
-        [YAXSerializableField(DefaultValue = 3), YAXElementFor("IO")]
-        public int RecordSeconds { get; set; }
         #endregion
 
         #region Features
@@ -196,13 +178,6 @@ namespace GoodAI.SoundWorld
             Label.Count = '~' - ' ' + 1;
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            if(m_recorder!= null && m_recorder.is_recording)
-                m_recorder.Stop();
-        }
-
         [Description("Read sound inputs")]
         public class MyCUDAGenerateInputTask : MyTask<MySoundWorld>
         {
@@ -218,14 +193,13 @@ namespace GoodAI.SoundWorld
             WavPlayer player;
             private short[] m_InputData;
             private long m_position = 0;
-            private int m_InputOffset = 0;
             
 
             public override void Init(Int32 nGPU)
             {
-                // do nothing here
+                // init wavPlayer with memory stream
                 m_stream = new MemoryStream();
-                player = new WavPlayer(m_stream, new WaveFormat(44100, 16, 2));
+                player = new WavPlayer(m_stream);
             }
 
             public override void Execute()
@@ -233,6 +207,7 @@ namespace GoodAI.SoundWorld
                 if (SimulationStep == 0)
                 {
                     #region First step init
+                    m_position = 0;
                     Owner.Features.Fill(0);
                     Owner.Label.Fill(0);
 
@@ -241,15 +216,11 @@ namespace GoodAI.SoundWorld
                         switch (Owner.m_UserInput)
                         {
                             case InputTypeEnum.SampleSound:
-                                m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Sample, new WaveFormat(44100, 16, 2), -1, Owner.FeaturesCount);
+                                m_wavReader = new WavPlayer(GoodAI.SoundWorld.Properties.Resources.Digits_en_wav);
+                                m_wavReader.m_SamplesPerSec = 32000;
+                                m_wavReader.AttachTranscription(GoodAI.SoundWorld.Properties.Resources.Digits_en_txt);
+                                
                                 m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
-                                break;
-                            case InputTypeEnum.Microphone:
-                                m_InputOffset = 0;
-                                m_InputData = new short[32000 * Owner.RecordSeconds * sizeof(Int16)];
-                                Owner.m_recorder = new Recorder(new WaveFormat(32000, 16, 1), Owner.MicrophoneDevice, 4096);
-                                Owner.m_recorder.ShortRecording += new ShortRecordingEventHandler(OnRecordShort);
-                                Owner.m_recorder.Record();
                                 break;
                             case InputTypeEnum.UserDefined:
                                 // reading corpus files
@@ -257,14 +228,14 @@ namespace GoodAI.SoundWorld
                                 {
                                     audio = Directory.GetFiles(Owner.m_InputPathCorpus, "*.wav");
 
-                                    m_wavReader = new WavPlayer(audio[m_currentCorpusFile], -1, 4096);
+                                    m_wavReader = new WavPlayer(audio[m_currentCorpusFile]);
                                     AttachTranscriptFileIfExists(audio[m_currentCorpusFile]);
                                     m_currentCorpusFile = 1;
                                     m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 }
                                 else
                                 {
-                                    m_wavReader = new WavPlayer(Owner.m_InputPathAudio, -1, 4096);
+                                    m_wavReader = new WavPlayer(Owner.m_InputPathAudio);
                                     AttachTranscriptFileIfExists(Owner.m_InputPathAudio);
                                     m_InputData = m_wavReader.ReadShort(m_wavReader.m_length);
                                 }
@@ -274,7 +245,7 @@ namespace GoodAI.SoundWorld
                     }
                     catch (Exception e)
                     {
-                        // Not a valid sound device!
+                        MyLog.ERROR.WriteLine("Not a valid sound device!");
                     }
                     #endregion
                 }
@@ -301,17 +272,12 @@ namespace GoodAI.SoundWorld
                             //result = PerformFFT(GenerateSine(size));  // generate a test sine signal
                             break;
                         case FeatureType.MFCC:
-                            WaveFormat m_format = null;
-                            if (Owner.m_recorder != null)
-                                m_format = Owner.m_recorder.m_format;
-                            else if (m_wavReader != null)
-                                m_format = m_wavReader.m_format;
-
-                            result = PerformFFT(PrepareInputs(256));
-                            result = MFCC.Compute(result, m_format, Owner.FeaturesCount);
+                            result = WindowFunction.Hanning(PrepareInputs(256));
+                            result = PerformFFT(result);
+                            result = MFCC.Compute(result, player.m_SamplesPerSec, Owner.FeaturesCount);
                             break;
                         case FeatureType.LPC:
-                            result = PrepareInputs(256);
+                            result = WindowFunction.Hanning(PrepareInputs(256));
                             result = LPC.Compute(result, Owner.FeaturesCount);
                             break;
                     }
@@ -325,26 +291,14 @@ namespace GoodAI.SoundWorld
                 }
             }
 
-            public void OnRecordShort(short[] input)
-            {
-                Array.Copy(input, 0, m_InputData, m_InputOffset, input.Length);
-                m_InputOffset += input.Length;
-
-                // Uncomment in case of microphone test 
-                //WavPlayer.Save(@"C:\User\microphone.wav", input, Owner.m_recorder.m_format);
-
-                if(m_InputOffset + input.Length > m_InputData.Length)
-                    Owner.m_recorder.Stop();
-            }
-
             // prepare batch for processing
             private float[] PrepareInputs(int count)
             {
                 // define overlap
                 if (m_position >= count)
-                    m_position -= (int)(float)(count * 0.1);
+                    m_position -= (int)(float)(count * 0.5);
 
-                #region Set Label
+                // Set Label
                 if (m_wavReader != null && m_wavReader.HasTranscription)
                 {
                     char c = m_wavReader.GetTranscription((int)m_position, (int)m_position + count);
@@ -356,11 +310,10 @@ namespace GoodAI.SoundWorld
                     Owner.Label.Host[index] = 1.00f;
                     Owner.Label.SafeCopyToDevice();
                 }
-                #endregion
 
-                float[] result = new float[count];
                 // if input is corpus, cycle files in the set
-                if (Owner.InputType == InputTypeEnum.UserDefined && Owner.m_InputPathCorpus != null)
+                float[] result = new float[count];
+                if (Owner.InputType == InputTypeEnum.UserDefined && Owner.m_InputPathCorpus != "")
                 {
                     bool eof = (m_position + count < m_InputData.Length)?false: true;
                     for (int i = 0; i < count; i++)
@@ -372,7 +325,7 @@ namespace GoodAI.SoundWorld
                     if (eof)
                     {
                         m_position = 0;
-                        m_wavReader = new WavPlayer(audio[m_currentCorpusFile], -1, 4096);
+                        m_wavReader = new WavPlayer(audio[m_currentCorpusFile]);
                         AttachTranscriptFileIfExists(audio[m_currentCorpusFile]);
                         if (m_currentCorpusFile + 1 < audio.Length)
                             m_currentCorpusFile++;
@@ -410,7 +363,6 @@ namespace GoodAI.SoundWorld
             // perform Fast Fourier transform
             private float[] PerformFFT(float[] input)
             {
-                float[] result = new float[input.Length];
                 int size_real = input.Length;
                 int size_complex = (int)Math.Floor(size_real / 2.0) + 1;
 
@@ -434,6 +386,7 @@ namespace GoodAI.SoundWorld
                 fftPlan.Dispose();
 
                 // squared magnitude of complex output as a result
+                float[] result = new float[output.Length];
                 for (int i = 0; i < output.Length; i++)
                     result[i] = (float)Math.Sqrt((output[i].x * output[i].x) + (output[i].y * output[i].y));
 
@@ -464,7 +417,7 @@ namespace GoodAI.SoundWorld
             {
                 int sampleRate = size;
                 float[] buffer = new float[size];
-                double amplitude = 0.25 * short.MaxValue;
+                double amplitude = 0.5 * short.MaxValue;
                 double frequency = 1000;
                 for (int n = 0; n < buffer.Length; n++)
                     buffer[n] = (float)(amplitude * Math.Sin((2 * Math.PI * n * frequency) / sampleRate));
@@ -472,6 +425,50 @@ namespace GoodAI.SoundWorld
                 return buffer;
             }
             #endregion
+        }
+    }
+
+    /// <summary>
+    /// Filter typu dolny priepust
+    /// </summary>
+    public static class WindowFunction
+    {
+        public static float[] Hanning(float[] signal)
+        {
+            int frame_size = signal.Length;
+            float[] window = new float[frame_size];
+            for (int n = 0; n < frame_size; n++)
+            {
+                window[n] = 0.5f * (float)(1 - Math.Cos(2 * Math.PI * n / (frame_size - 1)));
+                window[n] *= signal[n];
+            }
+            return window;
+        }
+
+        public static double[] Hamming(float[] signal)
+        {
+            int frame_size = signal.Length;
+            double[] window = new double[frame_size];
+            for (int n = 0; n < frame_size; n++)
+            {
+                window[n] = 0.54 - 0.46 * Math.Cos(2 * Math.PI * n / (frame_size - 1));
+                window[n] *= signal[n];
+            }
+            return window;
+        }
+
+        public static double[] Square(float[] signal)
+        {
+            int frame_size = signal.Length;
+            double[] window = new double[frame_size];
+            for (int n = 0; n < frame_size; n++)
+            {
+                if (0 <= n & n <= frame_size - 1)
+                    window[n] = signal[n];
+                else
+                    window[n] = 0;
+            }
+            return window;
         }
     }
 }

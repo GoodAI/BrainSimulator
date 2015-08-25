@@ -16,10 +16,6 @@ namespace GoodAI.Modules.SoundProcessing
 
     public class WavPlayer : IDisposable
     {
-        //const
-        public int BUFF_SIZE = 4096;
-        public const byte BUFF_CNT = 3;
-
         // flags
         public bool HasTranscription = false;
 
@@ -41,239 +37,55 @@ namespace GoodAI.Modules.SoundProcessing
             }
         }
 
-        /// <summary>
-        /// Internal class for translation of exception messages
-        /// </summary>
-        internal class WaveOutHelper
-        {
-            public static void Try(int err)
-            {
-                if (err != WaveNative.MMSYSERR_NOERROR)
-                    throw new Exception(err.ToString());
-            }
-        }//end class
-
-        /// <summary>
-        /// Internal class for Buffer list
-        /// </summary>
-        internal class WaveBuffer : IDisposable
-        {
-            #region Declaration
-            public WaveBuffer NextBuffer;
-
-            private AutoResetEvent m_PlayEvent = new AutoResetEvent(false);
-            private IntPtr m_Wave;
-
-            private byte[] m_HeaderData;
-            private WaveNative.WaveHdr m_Header;
-            private GCHandle m_HeaderHandle;
-            private GCHandle m_HeaderDataHandle;
-
-            private bool m_Playing;
-            #endregion
-
-            // Properties
-            public int Size
-            {
-                get { return m_Header.dwBufferLength; }
-            }
-
-            public IntPtr Data
-            {
-                get { return m_Header.lpData; }
-            }
-
-            [STAThread]
-            internal static void ProcessMsg(IntPtr hdrvr, int uMsg, int dwUser, ref WaveNative.WaveHdr wavhdr, int dwParam2)
-            {
-                switch (uMsg)
-                {
-                    case WaveNative.MM_WOM_OPEN:
-                        break;
-                    case WaveNative.MM_WOM_DONE:
-                        try
-                        {
-                            GCHandle h = (GCHandle)wavhdr.dwUser;
-                            WaveBuffer buf = (WaveBuffer)h.Target;
-                            buf.OnCompleted();
-                        }
-                        catch { }
-                        break;
-                    case WaveNative.MM_WOM_CLOSE:
-                        break;
-                }
-            }
-
-            public WaveBuffer(IntPtr waveOutHandle, int size)
-            {
-                m_Wave = waveOutHandle;
-
-                m_HeaderHandle = GCHandle.Alloc(m_Header, GCHandleType.Pinned);
-                m_Header.dwUser = (IntPtr)GCHandle.Alloc(this);
-                m_HeaderData = new byte[size];
-                m_HeaderDataHandle = GCHandle.Alloc(m_HeaderData, GCHandleType.Pinned);
-                m_Header.lpData = m_HeaderDataHandle.AddrOfPinnedObject();
-                m_Header.dwBufferLength = size;
-                WaveNative.waveOutPrepareHeader(m_Wave, ref m_Header, Marshal.SizeOf(m_Header));
-            }
-
-            public bool Write()
-            {
-                lock (this)
-                {
-                    m_PlayEvent.Reset();
-                    m_Playing = WaveNative.waveOutWrite(m_Wave, ref m_Header, Marshal.SizeOf(m_Header)) == WaveNative.MMSYSERR_NOERROR;
-                    return m_Playing;
-                }
-            }
-
-            public void WaitFor()
-            {
-                if (m_Playing)
-                {
-                    m_Playing = m_PlayEvent.WaitOne();
-                }
-                else
-                {
-                    Thread.Sleep(0);
-                }
-            }
-
-            public void OnCompleted()
-            {
-                m_PlayEvent.Set();
-                m_Playing = false;
-            }
-
-            public void Dispose()
-            {
-                if (m_Header.lpData != IntPtr.Zero)
-                {
-                    WaveNative.waveOutUnprepareHeader(m_Wave, ref m_Header, Marshal.SizeOf(m_Header));
-                    m_HeaderHandle.Free();
-                    m_Header.lpData = IntPtr.Zero;
-                }
-                m_PlayEvent.Close();
-                if (m_HeaderDataHandle.IsAllocated)
-                    m_HeaderDataHandle.Free();
-                GC.SuppressFinalize(this);
-            }
-
-            ~WaveBuffer()
-            {
-                Dispose();
-            }
-
-        }//end class
-
         #endregion
 
         #region Declarations
 
         public Stream m_stream;
-        public WaveFormat m_format;
-
+        
         public int m_length;
         public long m_position;
         private long m_start_pos;
 
         // flags
         public bool is_playing = false;
-        private byte m_zero;
 
-        //var
-        private Thread m_Thread;
-        private IntPtr m_WavePtr;
-        private WaveBuffer m_Buffers;                       // linked list
-        private WaveBuffer m_CurrentBuffer;
+        // Format
+        public short m_FormatTag;
+        public short m_NumChannels = 1;
+        public int m_SamplesPerSec = 44100;
+        public int m_AvgBytesPerSec;
+        public short m_NumBlockAlign;
+        public short m_BitsPerSample = 16;
 
         private Intervals[] m_intervals;
 
         #endregion
 
-        // callbacks
-        private static WaveNative.WaveDelegate m_BufferProc = new WaveNative.WaveDelegate(WaveBuffer.ProcessMsg);
-
-        #region Events
-        public event PositionChangeEventHandler PositionChange;
-        public event BytePlaybackEventHandler BytePlayback;
-        public event ShortPlaybackEventHandler ShortPlayback;
-        public event PlaybackFinnishEventHandler PlaybackFinnish;
-
-        protected virtual void OnPositionChange(long position)
-        {
-            if (PositionChange != null)
-                PositionChange(position);
-        }
-
-        protected virtual void OnBytePlayback(byte[] data)
-        {
-            if (BytePlayback != null)
-                BytePlayback(data);
-        }
-
-        protected virtual void OnShortPlayback(short[] data)
-        {
-            if (ShortPlayback != null)
-                ShortPlayback(data);
-        }
-
-        protected virtual void OnPlaybackFinnish()
-        {
-            if (PlaybackFinnish != null)
-                PlaybackFinnish();
-        }
-        #endregion
 
         /// <summary>
         /// Low-level .wav format audio player.
         /// </summary>
         /// <param name="filename">Path to audio file to play.</param>
-        public WavPlayer(string filename) : this(filename, -1, 4096) { }
-
-        /// <summary>
-        /// Low-level .wav format audio player.
-        /// </summary>
-        /// <param name="filename">Path to audio file to play.</param>
-        /// <param name="device_id">Id of system device to play (default value is -1).</param>
-        /// <param name="buff_size">Size of each batch to be sent to the device.</param>
-        public WavPlayer(string filename, int device_id, int buff_size)
+        public WavPlayer(string filename) 
         {
             if (!File.Exists(filename))
                 throw new Exception("File not found!");
 
             try
             {
-                BUFF_SIZE = buff_size;
                 // Open file, read header and open playback device
                 m_stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
                 ReadHeader();
                 m_start_pos = m_stream.Position;
-
-                m_zero = m_format.wBitsPerSample == 8 ? (byte)128 : (byte)0;
-                WaveOutHelper.Try(WaveNative.waveOutOpen(out m_WavePtr, device_id, m_format, m_BufferProc, 0, WaveNative.CALLBACK_FUNCTION));
-                AllocateBuffers(BUFF_SIZE, BUFF_CNT);
             }
-            catch 
-            {
-                m_stream.Close();
-            }
+            catch { }
         }
 
         /// <summary>
-        /// Low-level .wav format audio player.
+        /// Low level Audio player.
         /// </summary>
-        /// <param name="stream">Audio stream to play.</param>
-        public WavPlayer(Stream stream, WaveFormat format) : this(stream, format, -1, 4096) { }
-
-        /// <summary>
-        /// Low-level .wav format audio player.
-        /// </summary>
-        /// <param name="stream">Audio stream to play.</param>
-        /// <param name="format">Audio format of stream to be played.</param>
-        /// <param name="device_id">Id of system device to play (default value is -1).</param>
-        /// <param name="buff_size">Size of each batch to be sent to the device.</param>
-        public WavPlayer(Stream stream, WaveFormat format, int device_id, int buff_size)
+        public WavPlayer(Stream stream)
         {
             if (stream == null)
                 throw new Exception("Invalid stream!");
@@ -281,197 +93,25 @@ namespace GoodAI.Modules.SoundProcessing
             try
             {
                 // Set the buf size, open stream, prepare format and open playback device
-                BUFF_SIZE = buff_size;
                 m_stream = stream;
-                m_format = format;
-                m_start_pos = m_stream.Position;
-                m_length = (int)(stream.Length / 2);
-
-                // Try to read header if there's any
-                BinaryReader Reader = new BinaryReader(m_stream);
-                if (ReadChunk(Reader) == "RIFF")
-                {
-                    m_stream.Position = m_start_pos;
-                    ReadHeader();
-                }
-
-                // Open WaveOut
-                m_zero = m_format.wBitsPerSample == 8 ? (byte)128 : (byte)0;
-                WaveOutHelper.Try(WaveNative.waveOutOpen(out m_WavePtr, device_id, m_format, m_BufferProc, 0, WaveNative.CALLBACK_FUNCTION));
-                AllocateBuffers(BUFF_SIZE, BUFF_CNT);
+                m_start_pos = 0;
+                m_length = (int)stream.Length;
             }
             catch (Exception e) { throw new Exception(e.Message); }
         }
 
-        #region Playback functions
-        /// <summary>
-        /// Start playback
-        /// </summary>
-        public void Play()
-        {
-            if (is_playing)
-                return;
-            else
-                is_playing = true;
-
-            m_Thread = new Thread(new ThreadStart(ThreadPlay));
-            m_Thread.Start();
-        }
-
-        /// <summary>
-        /// Start playback from stream.
-        /// </summary>
-        /// <param name="stream">Source stream.</param>
-        public void Play(Stream stream)
-        {
-            if (stream == null)
-                throw new Exception("Invalid stream!");
-
-            m_stream = stream;
-            if (is_playing)
-                return;
-            else
-                is_playing = true;
-
-            m_Thread = new Thread(new ThreadStart(ThreadPlay));
-            m_Thread.Start();
-        }
-
-        /// <summary>
-        /// Temporarily pause playback
-        /// </summary>
-        public void Pause()
-        {
-            is_playing = false;
-
-            if (m_Thread != null)
-            {
-                m_Thread.Abort();
-                m_Thread.Join();
-            }
-        }
-
-        /// <summary>
-        /// Stop playback
-        /// </summary>
-        public void Stop()
-        {
-            m_stream.Close();
-            is_playing = false;
-
-            if (m_stream.CanRead)
-                m_stream.Position = m_start_pos;
-
-            if (m_Thread != null)
-            {
-                m_Thread.Abort();
-                m_Thread.Join();
-            }
-        }
-
-        /// <summary>
-        /// Get list of available playback devices.
-        /// </summary>
-        /// <returns>List of names.</returns>
-        public string[] GetDevicesList()
-        {
-            List<string> DevList = new List<string>();
-
-            // get number of available output devices
-            int waveOutDevicesCount = WaveNative.waveOutGetNumDevs();
-            if (waveOutDevicesCount > 0)
-            {
-                for (int uDeviceID = 0; uDeviceID < waveOutDevicesCount; uDeviceID++)
-                {
-                    WaveNative.WaveOutCaps waveOutCaps = new WaveNative.WaveOutCaps();
-                    WaveNative.waveOutGetDevCaps(uDeviceID, ref waveOutCaps, Marshal.SizeOf(typeof(WaveNative.WaveOutCaps)));
-                    DevList.Add(new string(waveOutCaps.szPname).Remove(
-                                new string(waveOutCaps.szPname).IndexOf('\0')).Trim());
-                }
-            }
-            return DevList.ToArray();
-        }
-
-        private void ThreadPlay()
-        {
-            while (m_stream.Position != m_stream.Length)
-            {
-                // playback
-                Advance();
-                byte[] m_PlayBuffer = new byte[BUFF_SIZE];
-                m_stream.Read(m_PlayBuffer, 0, BUFF_SIZE);
-                Marshal.Copy(m_PlayBuffer, 0, m_CurrentBuffer.Data, m_PlayBuffer.Length);
-                m_CurrentBuffer.Write();
-
-                // Position change event
-                OnPositionChange(m_stream.Position);
-
-                // access low level playback data
-                OnBytePlayback(m_PlayBuffer);
-                short[] data = new short[m_PlayBuffer.Length / 2];
-                Buffer.BlockCopy(m_PlayBuffer, 0, data, 0, m_PlayBuffer.Length);
-                OnShortPlayback(data);
-            }
-
-            is_playing = false;
-            m_stream.Position = m_start_pos;
-            OnPlaybackFinnish();
-        }
-
-        private void Advance()
-        {
-            m_CurrentBuffer = m_CurrentBuffer == null ? m_Buffers : m_CurrentBuffer.NextBuffer;
-            m_CurrentBuffer.WaitFor();
-        }
-
-        private void AllocateBuffers(int bufferSize, int bufferCount)
-        {
-            FreeBuffers();
-            if (bufferCount > 0)
-            {
-                m_Buffers = new WaveBuffer(m_WavePtr, bufferSize);
-                WaveBuffer Prev = m_Buffers;
-                try
-                {
-                    for (int i = 1; i < bufferCount; i++)
-                    {
-                        WaveBuffer Buf = new WaveBuffer(m_WavePtr, bufferSize);
-                        Prev.NextBuffer = Buf;
-                        Prev = Buf;
-                    }
-                }
-                finally
-                {
-                    Prev.NextBuffer = m_Buffers;
-                }
-            }
-        }
-
-        private void FreeBuffers()
-        {
-            m_CurrentBuffer = null;
-            if (m_Buffers != null)
-            {
-                WaveBuffer First = m_Buffers;
-                m_Buffers = null;
-
-                WaveBuffer Current = First;
-                do
-                {
-                    WaveBuffer Next = Current.NextBuffer;
-                    Current.Dispose();
-                    Current = Next;
-                } while (Current != First);
-            }
-        }
-        #endregion
-
-        
         private string ReadChunk(BinaryReader reader)
         {
             byte[] ch = new byte[4];
             reader.Read(ch, 0, ch.Length);
             return Encoding.ASCII.GetString(ch);
+        }
+
+        private byte[] WriteChunk(string chunk)
+        {
+            byte[] ch = new byte[4];
+            ch = Encoding.ASCII.GetBytes(chunk);
+            return ch;
         }
 
         /// <summary>
@@ -495,13 +135,12 @@ namespace GoodAI.Modules.SoundProcessing
             if (len < 16)                                                       // bad format chunk length
                 throw new Exception("Invalid file format - bad chunk length!");
 
-            m_format = new WaveFormat(22050, 16, 2);                            // initialize to any format and fill it with valid info
-            m_format.wFormatTag = Reader.ReadInt16();
-            m_format.nChannels = Reader.ReadInt16();
-            m_format.nSamplesPerSec = Reader.ReadInt32();
-            m_format.nAvgBytesPerSec = Reader.ReadInt32();
-            m_format.nBlockAlign = Reader.ReadInt16();
-            m_format.wBitsPerSample = Reader.ReadInt16();
+            m_FormatTag = Reader.ReadInt16();
+            m_NumChannels = Reader.ReadInt16();
+            m_SamplesPerSec = Reader.ReadInt32();
+            m_AvgBytesPerSec = Reader.ReadInt32();
+            m_NumBlockAlign = Reader.ReadInt16();
+            m_BitsPerSample = Reader.ReadInt16();
 
             // advance in the stream to skip the wave format block 
             len -= 16;                                                          // minimum format size
@@ -521,6 +160,38 @@ namespace GoodAI.Modules.SoundProcessing
             m_length = Reader.ReadInt32();
             m_start_pos = m_stream.Position;
             m_position = 0;
+        }
+
+        /// <summary>
+        /// Write RIFF header to the stream.
+        /// </summary>
+        /// <param name="stream">Source stream.</param>
+        /// <param name="stream_length">Stream length.</param>
+        public void WriteHeader(Stream stream, long stream_length)
+        {
+            if (stream == null)
+                throw new Exception("No stream available.");
+
+            if (!stream.CanWrite)
+                throw new Exception("Cannot write into stream.");
+
+            BinaryWriter Writer = new BinaryWriter(stream);
+            Writer.Write(WriteChunk("RIFF"));                       //chunk descriptor
+            Writer.Write((Int32)2048);                              //chunk size = 2048
+            Writer.Write(WriteChunk("WAVE"));
+            Writer.Write(WriteChunk("fmt "));                       //fmt subchunk
+            Writer.Write((Int32)16);                                //subchunk1 size = 16
+
+            Writer.Write(m_FormatTag);                        //audio format = 1(PCM)
+            Writer.Write(m_NumChannels);                         //count of channels
+            Writer.Write(m_SamplesPerSec);                    //sample rate
+            Writer.Write(m_AvgBytesPerSec);                   //byte rate
+            Writer.Write(m_NumBlockAlign);                       //block align
+            Writer.Write(m_BitsPerSample);                    //bits per sample
+
+            Writer.Write(WriteChunk("data"));                       //data chunk
+            Writer.Write(stream_length);                            //subchunk2 size
+            //data
         }
 
         /// <summary>
@@ -591,14 +262,14 @@ namespace GoodAI.Modules.SoundProcessing
         /// <param name="filename">File name</param>
         /// <param name="data">Dat to write in byte format</param>
         /// <param name="format">Wave format of RIFF file</param>
-        public static void Save(string filename, short[] data, WaveFormat format)
+        public void Save(string filename, short[] data)
         {
             byte[] buff = ToByte(data);
             FileStream fs = null;
             try
             {
                 fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
-                Recorder.WriteHeader(fs, format, buff.Length);
+                WriteHeader(fs, buff.Length);
                 fs.Write(buff, 0, buff.Length);
             }
             finally
@@ -644,10 +315,32 @@ namespace GoodAI.Modules.SoundProcessing
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] item = line.Split('\t');
-                    float start = float.Parse(item[1]) * m_format.nSamplesPerSec;
-                    float stop = float.Parse(item[2]) * m_format.nSamplesPerSec;
+                    float start = float.Parse(item[1]) * m_SamplesPerSec;
+                    float stop = float.Parse(item[2]) * m_SamplesPerSec;
                     m_intervals[i++] = new Intervals(item[0], (int)start, (int)stop);
                 }
+            }
+
+            HasTranscription = true;
+        }
+
+        /// <summary>
+        /// Attach transcription of audio file.
+        /// </summary>
+        /// <param name="filename">File name.</param>
+        public void AttachTranscription(string transcription)
+        {
+            if (transcription == "")
+                return;
+
+            string[] line = transcription.Split('\n');
+            m_intervals = new Intervals[line.Length];
+            for (int i = 0; i < line.Length; i++)
+            {
+                string[] item = line[i].Split('\t');
+                float start = float.Parse(item[1]) * m_SamplesPerSec;
+                float stop = float.Parse(item[2]) * m_SamplesPerSec;
+                m_intervals[i] = new Intervals(item[0], (int)start, (int)stop);
             }
 
             HasTranscription = true;
@@ -759,18 +452,22 @@ namespace GoodAI.Modules.SoundProcessing
         }
         #endregion
 
-        /// <summary>
-        /// Stop playback and close record stream.
-        /// </summary>
         public void Dispose()
         {
-            Stop();
+            try
+            {
+                m_stream.Close();
+            }catch(Exception e)
+            {
+                m_stream = null;
+            }
         }
 
         ~WavPlayer()
         {
             Dispose();
-            m_stream.Close();
         }
+
+        
     }//end class
 }//end namespace

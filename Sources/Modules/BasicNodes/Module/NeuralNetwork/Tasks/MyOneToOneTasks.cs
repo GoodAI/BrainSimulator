@@ -27,6 +27,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
+
             m_forwardKernel.SetupExecution(Owner.Neurons);
             m_forwardKernel.Run(
                 (int)Owner.ActivationFunction,
@@ -35,16 +36,42 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Neurons
                 );
 
+            // do a trick to avoid infinity (NaN) problems with exponential values in softmax
             if (Owner.ActivationFunction == ActivationFunctionType.SOFTMAX)
             {
                 Owner.Output.SafeCopyToHost();
-                float expSum = Owner.Output.Host.Sum();
+
+                float expSum = 0;
+
+                float[] f = Owner.Output.Host;
+                float max = f.Max();
+
+                for (int i = 0; i < f.Length; i++)
+                {
+                    float exp = (float) Math.Exp(f[i] - max);
+                    f[i] = exp;
+                    expSum += exp;
+                }
+
+
+                // CPU version of the commented kernel below
+                for (int i = 0; i < f.Length; i++)
+                {
+                    f[i] /= expSum;
+                }
+
+                Array.Copy(f, Owner.Output.Host, f.Length);
+
+                Owner.Output.SafeCopyToDevice();
+
+                /* 
+                 * GPU version is slower, don't use it for now
                 m_softmaxKernel.SetupExecution(Owner.Neurons);
                 m_softmaxKernel.Run(
                     Owner.Output,
                     expSum,
                     Owner.Neurons
-                    );
+                    );*/
 
             }
         }

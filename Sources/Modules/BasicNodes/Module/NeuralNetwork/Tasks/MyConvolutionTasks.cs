@@ -14,10 +14,14 @@ using ManagedCuda.BasicTypes;
 
 namespace CustomModels.NeuralNetwork.Tasks
 {
-    class MyConvolutionTasks
-    {
-    }
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Performs MAX pooling forward pass. Chooses the max value from each receptive field and its each position (determined by FilterW/H and Stride parameters).
+    /// </summary>
+    /// <description></description>
     [Description("PoolingForward"), MyTaskInfo(OneShot = false)]
     public class MyPoolingForwardTask : MyAbstractForwardTask<MyPoolingLayer>
     {
@@ -47,6 +51,14 @@ namespace CustomModels.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Propagates deltas back through the pooling layer.
+    /// The chosen max value is saved in each forward pass and used in this backward pass to determine the neuron that will receive the delta.
+    /// </summary>
+    /// <description></description>
     [Description("PoolingBackward"), MyTaskInfo(OneShot = false)]
     public class MyPoolingBackwardTask : MyAbstractBackDeltaTask<MyPoolingLayer>
     {
@@ -71,10 +83,19 @@ namespace CustomModels.NeuralNetwork.Tasks
                 // reset delta
                 previousLayer.Delta.Fill(0);
 
+                // determine input to previous layer
+                CUdeviceptr prevInputPtr;
+                if (previousLayer is MyAbstractWeightLayer)
+                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
+                else
+                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+
                 m_kernel.SetupExecution(Owner.Neurons);
                 m_kernel.Run(
+                    (int)previousLayer.ActivationFunction,
                     Owner.Delta,
                     previousLayer.Delta,
+                    prevInputPtr,
                     Owner.ActivatedNeurons,
                     Owner.Neurons
                     );
@@ -82,6 +103,13 @@ namespace CustomModels.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Pads the input (image) with zeros to allow the result of convolution have the same dimension as the input.
+    /// </summary>
+    /// <description></description>
     [Description("PadImage"), MyTaskInfo(OneShot = false)]
     public class MyPadImageTask : MyTask<MyConvolutionLayer>
     {
@@ -118,6 +146,13 @@ namespace CustomModels.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Standard forward pass of the convolution operation.
+    /// </summary>
+    /// <description></description>
     [Description("ConvolutionForward"), MyTaskInfo(OneShot = false)]
     public class MyConvolutionForwardTask : MyAbstractForwardTask<MyConvolutionLayer>
     {
@@ -179,6 +214,13 @@ namespace CustomModels.NeuralNetwork.Tasks
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Computes deltas of the previous layer from deltas on this convolutional layer.
+    /// </summary>
+    /// <description></description>
     [Description("ConvolutionBackward"), MyTaskInfo(OneShot = false)]
     public class MyConvolutionBackwardTask : MyAbstractBackDeltaTask<MyConvolutionLayer>
     {
@@ -222,7 +264,8 @@ namespace CustomModels.NeuralNetwork.Tasks
                     Owner.InputWidth, Owner.InputHeight,
                     Owner.FilterWidth, Owner.FilterHeight,
                     Owner.FilterWidth * Owner.FilterHeight,
-                    Owner.OutputWidth, Owner.OutputWidth * Owner.OutputHeight,
+                    Owner.FilterWidth * Owner.FilterHeight * Owner.InputDepth, 
+                    Owner.OutputWidth, Owner.OutputHeight, Owner.OutputWidth * Owner.OutputHeight,
                     Owner.HorizontalStride, Owner.VerticalStride,
                     previousLayer.Neurons
 
@@ -232,7 +275,14 @@ namespace CustomModels.NeuralNetwork.Tasks
         }
     }
 
-
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Randomly initialises weights and biases of the convolution layer.
+    /// Uses normal distribution with standard deviation of 1 / (sqrt(input.Count))
+    /// </summary>
+    /// <description></description>
     [Description("InitLayer"), MyTaskInfo(OneShot = true)]
     public class MyConvolutionInitLayerTask : MyTask<MyConvolutionLayer>
     {
@@ -245,17 +295,25 @@ namespace CustomModels.NeuralNetwork.Tasks
             Owner.PreviousBiasDelta.Fill(0f);
             Owner.PreviousWeightDelta.Fill(0f);
 
-            // init random weights
-            // float stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
             float stdDev = 0.01f;
+
+            // init random weights
+            if (Owner.Input != null && Owner.Input.Count > 0)
+                stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
+                
             MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.Weights.GetDevice(Owner), 0, stdDev);
             MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.Bias.GetDevice(Owner), 0, stdDev);
-//            Owner.Weights.Fill(1f);
-//            Owner.Bias.Fill(0f);
         }
     }
 
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    /// Updates the weights (filters) of this convolutional layer. The exact algorithm is determined by the parent network's settings.
+    /// </summary>
+    /// <description></description>
     [Description("UpdateWeights"), MyTaskInfo(OneShot = false)]
     public class MyConvolutionUpdateWeights : MyAbstractUpdateWeightsTask<MyConvolutionLayer>
     {

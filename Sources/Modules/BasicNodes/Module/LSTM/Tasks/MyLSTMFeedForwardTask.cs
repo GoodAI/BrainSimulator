@@ -52,7 +52,8 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.Output.CopyToMemoryBlock(Owner.PreviousOutput, 0, 0, Owner.Output.Count);
 
             m_feedForwardKernel.Run(
-                (int) Owner.ActivationFunction,
+                (int) Owner.InputActivationFunction,
+                (int) Owner.GateActivationFunction,
                 Owner.Input,
                 Owner.Output,
                 Owner.PreviousOutput,

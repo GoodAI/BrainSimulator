@@ -66,11 +66,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SignalProcessing\Recorder.cs" />
-    <Compile Include="SignalProcessing\WaveFormat.cs" />
-    <Compile Include="SignalProcessing\WaveNative.cs" />
-    <Compile Include="Versioning\MyConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\nodes.xml">
@@ -79,15 +76,15 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\doc.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="res\Digits_en.txt" />
     <Content Include="res\Digits_en.wav" />
-    <Content Include="res\Digits_sk.wav" />
-    <Content Include="res\Sample.wav" />
   </ItemGroup>
   <ItemGroup>
     <None Include="post_build.cmd" />

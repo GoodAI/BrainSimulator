@@ -58,7 +58,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     /// <meta>mz</meta>
     /// <status>Working</status>
     /// <summary>
-    ///     Standard cross-entropy loss function. Use with layer with softmax activations.
+    ///     Standard cross-entropy loss function. Use with output layer with softmax activation function.
+    ///     Multiclass target vector with '0's and exactly one '1' is expected.
     /// </summary>
     /// <description></description>
     [Description("CrossEntropyLoss"), MyTaskInfo(OneShot = false)]

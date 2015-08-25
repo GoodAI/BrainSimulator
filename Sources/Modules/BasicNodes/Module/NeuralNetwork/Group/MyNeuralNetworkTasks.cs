@@ -279,6 +279,13 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mz</meta>
+    /// <status>Working</status>
+    /// <summary>
+    ///     Adadelta is an adaptive learning method that changes each weight (parameter) separately and automatically over time.<br></br>
+    ///     No manual settings are needed and it is recommended to use the default values which should behave well in all cases.
+    /// </summary>
     [Description("Adadelta"), MyTaskInfo(OneShot = false)]
     public class MyAdadeltaTask : MyAbstractBackpropTask
     {

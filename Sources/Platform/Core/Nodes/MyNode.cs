@@ -248,13 +248,21 @@ namespace GoodAI.Core.Nodes
                 Name = DefaultName;
             }             
         }
-        
+
         public virtual void Validate(MyValidator validator)
         {
             for (int i = 0; i < InputBranches; i++)
             {
-                validator.AssertError(GetAbstractInput(i) != null, this, "No input available");            
-            }            
+                validator.AssertError(GetAbstractInput(i) != null, this, "No input available");   
+            }          
+  
+            if (!(this is MyNetwork))
+            {
+                for (int i = 0; i < InputBranches; i++)
+                {
+                    validator.AssertError(GetAbstractInput(i).Count > 0, this, "Input size has to be larger than zero.");
+                }
+            }
         }      
   
         internal virtual void ValidateMandatory(MyValidator validator) { }

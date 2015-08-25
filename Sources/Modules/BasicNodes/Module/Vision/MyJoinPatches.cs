@@ -430,6 +430,7 @@ namespace GoodAI.Modules.Observers
         MyCudaKernel m_kernel_drawEdges;
         MyCudaKernel m_kernel_fillImWhite;
         MyCudaKernel m_kernel_fillImFromIm;
+        private CudaDeviceVariable<float> m_StringDeviceBuffer;
 
         public enum MyJoinPatObsMode
         {
@@ -479,7 +480,8 @@ namespace GoodAI.Modules.Observers
                     {
                         int x = (int)Target.OutPatches.Host[i * Target.PatchesDim];
                         int y = (int)Target.OutPatches.Host[i * Target.PatchesDim + 1];
-                        MyDrawStringHelper.DrawString(i.ToString(), x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight);
+                        MyDrawStringHelper.String2Index(i.ToString(), m_StringDeviceBuffer);
+                        MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight,0,i.ToString().Length);
                     }
                     break;
             }
@@ -491,6 +493,8 @@ namespace GoodAI.Modules.Observers
 
         protected override void Reset()
         {
+            m_StringDeviceBuffer = new CudaDeviceVariable<float>(1000);
+            m_StringDeviceBuffer.Memset(0);
             TextureWidth = Target.Mask.ColumnHint;
             TextureHeight = Target.MaskCount / TextureWidth;
         }
