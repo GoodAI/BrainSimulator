@@ -260,7 +260,8 @@ namespace GoodAI.Core.Nodes
             {
                 for (int i = 0; i < InputBranches; i++)
                 {
-                    validator.AssertError(GetAbstractInput(i).Count > 0, this, "Input size has to be larger than zero.");
+                    if (GetAbstractInput(i) != null)
+                        validator.AssertError(GetAbstractInput(i).Count > 0, this, "Input size has to be larger than zero.");
                 }
             }
         }      
