@@ -31,14 +31,14 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     public class MyGaussianHiddenLayer : MyAbstractWeightLayer, IMyCustomTaskFactory
     {
         [MyPersistable]
-        public MyGenerateSignal Generate { get; private set; }
+        public MyGenerateSignal Generate { get; protected set; }
         public class MyGenerateSignal : MySignal { }
 
-        public MyMemoryBlock<float> RandomNormal { get; private set; }
-        public MyMemoryBlock<float> Regularization { get; private set; }
+        public virtual MyMemoryBlock<float> RandomNormal { get; protected set; }
+        public MyMemoryBlock<float> Regularization { get; protected set; }
 
-        public MyMemoryBlock<float> PriorGaussHiddenStatesMin { get; private set; }
-        public MyMemoryBlock<float> PriorGaussHiddenStatesMax { get; private set; }
+        public MyMemoryBlock<float> PriorGaussHiddenStatesMin { get; protected set; }
+        public MyMemoryBlock<float> PriorGaussHiddenStatesMax { get; protected set; }
 
         public override ConnectionType Connection
         {
@@ -50,10 +50,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             base.UpdateMemoryBlocks();
 
-            if (Input != null && Input.Count > 0)
-            {
+           // if (Input != null && Input.Count > 0)
+           // {
                 // two parameters (mu, sigma) from previous layer for each neuron
-                Neurons = Input.Count / 2;
+                Neurons = Input!=null ? Input.Count / 2 : 1;
 
                 // Random numbers for sampling
                 RandomNormal.Count = Neurons;
@@ -77,9 +77,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 AdadeltaBias.Count = Bias.Count;
 
                 // Priors for generation
-                PriorGaussHiddenStatesMin.Count = Input.Count;
-                PriorGaussHiddenStatesMax.Count = Input.Count;
-            }
+                PriorGaussHiddenStatesMin.Count = Input!=null ? Input.Count : 1;
+                PriorGaussHiddenStatesMax.Count = Input!=null ? Input.Count : 1;
+            //}
         }
 
         public override void Validate(MyValidator validator)
