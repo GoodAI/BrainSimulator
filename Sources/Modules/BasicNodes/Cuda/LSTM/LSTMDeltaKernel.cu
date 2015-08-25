@@ -55,13 +55,13 @@ extern "C"
 
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				outputGateDeltaSum += cellStates[cellId] * deltas[cellId];
+				outputGateDeltaSum += cellStates[cellId] * -deltas[cellId];
 			}
 			outputGateDeltas[memoryBlockId] = outputGateActivationDerivatives[memoryBlockId] * outputGateDeltaSum;
 
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				cellStateErrors[cellId] = deltas[cellId] * outputGateActivations[memoryBlockId] * cellStates[cellId] +
+				cellStateErrors[cellId] = -deltas[cellId] * outputGateActivations[memoryBlockId] * cellStates[cellId] +
 					cellStateErrors[cellId] * forgetGateActivations[cellId] +
 					inputGateDeltas[cellId] * inputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount] +
 					forgetGateDeltas[cellId] * forgetGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount] +
@@ -85,7 +85,7 @@ extern "C"
 	{
 		for (int memoryBlockId = 0; memoryBlockId < cellCountDevcellsPerBlock; memoryBlockId++)
 		{
-			prevDeltaPtr[neuronId] += gateDeltas[memoryBlockId] * gateWeights[neuronId];
+			prevDeltaPtr[neuronId] += -gateDeltas[memoryBlockId] * gateWeights[neuronId];
 		}
 	}
 
