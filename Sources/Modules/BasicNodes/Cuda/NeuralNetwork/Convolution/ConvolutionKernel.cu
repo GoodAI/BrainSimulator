@@ -392,8 +392,8 @@ extern "C"
 
 	__global__ void ConvolutionAdadeltaUpdateWeightsKernel(
 		float *filterPtr,
-		float *biasPtr, float *previousBiasDeltaPtr,
-		float *thisDeltaPtr, float *previousWeightDeltaPtr,
+		float *biasPtr,
+		float *thisDeltaPtr,
 		float *inputPaddedPtr,
 		int inputPaddedWidth, int inputPaddedSliceSize, // needs to account for padding!
 		int filterWidth,
