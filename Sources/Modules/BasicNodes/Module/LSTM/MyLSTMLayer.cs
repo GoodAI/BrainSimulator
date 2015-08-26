@@ -10,6 +10,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Signals;
+using GoodAI.Modules.NeuralNetwork;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.LSTM.Tasks;
@@ -45,6 +46,15 @@ namespace GoodAI.Modules.LSTM
             get { return MemoryBlocks * CellsPerBlock; }
             set {}
         }
+        public enum LearningTasksType
+        {
+            RTRL,
+            BPTT
+        }
+
+        [YAXSerializableField(DefaultValue = LearningTasksType.BPTT)]
+        [MyBrowsable, Category("\tLayer")]
+        public LearningTasksType LearningTasks { get; set; }
 
         [YAXSerializableField(DefaultValue = ActivationFunctionType.TANH)]
         [MyBrowsable, Category("\tLayer")]
@@ -84,18 +94,18 @@ namespace GoodAI.Modules.LSTM
         public class MyResetSignal : MySignal { }
 
         // Memory blocks
-        public virtual MyMemoryBlock<float> CellStates { get; set; }
-        public virtual MyMemoryBlock<float> PreviousCellStates { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellStates { get; set; }
+        public virtual MyTemporalMemoryBlock<float> PreviousCellStates { get; set; }
 
-        public virtual MyMemoryBlock<float> CellInputActivations { get; set; }
-        public virtual MyMemoryBlock<float> InputGateActivations { get; set; }
-        public virtual MyMemoryBlock<float> ForgetGateActivations { get; set; }
-        public virtual MyMemoryBlock<float> OutputGateActivations { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellInputActivations { get; set; }
+        public virtual MyTemporalMemoryBlock<float> InputGateActivations { get; set; }
+        public virtual MyTemporalMemoryBlock<float> ForgetGateActivations { get; set; }
+        public virtual MyTemporalMemoryBlock<float> OutputGateActivations { get; set; }
 
-        public virtual MyMemoryBlock<float> CellInputActivationDerivatives { get; set; }
-        public virtual MyMemoryBlock<float> InputGateActivationDerivatives { get; set; }
-        public virtual MyMemoryBlock<float> ForgetGateActivationDerivatives { get; set; }
-        public virtual MyMemoryBlock<float> OutputGateActivationDerivatives { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellInputActivationDerivatives { get; set; }
+        public virtual MyTemporalMemoryBlock<float> InputGateActivationDerivatives { get; set; }
+        public virtual MyTemporalMemoryBlock<float> ForgetGateActivationDerivatives { get; set; }
+        public virtual MyTemporalMemoryBlock<float> OutputGateActivationDerivatives { get; set; }
 
         [MyPersistable]
         public virtual MyMemoryBlock<float> CellInputWeights { get; set; }
@@ -114,16 +124,22 @@ namespace GoodAI.Modules.LSTM
         public virtual MyMemoryBlock<float> OutputGateWeightDeltas { get; set; }
         public virtual MyMemoryBlock<float> OutputGateWeightMeanSquares { get; set; } // RMSProp memory
 
+        public virtual MyTemporalMemoryBlock<float> CellInputWeightGradient { get; set; }
+        public virtual MyTemporalMemoryBlock<float> OutputGateWeightGradient { get; set; }
+        public virtual MyTemporalMemoryBlock<float> InputGateWeightGradient { get; set; }
+        public virtual MyTemporalMemoryBlock<float> ForgetGateWeightGradient { get; set; }
+
         public virtual MyMemoryBlock<float> CellWeightsRTRLPartials { get; set; }
         public virtual MyMemoryBlock<float> InputGateWeightsRTRLPartials { get; set; }
         public virtual MyMemoryBlock<float> ForgetGateWeightsRTRLPartials { get; set; }
 
-        public virtual MyMemoryBlock<float> CellStateErrors { get; set; }
-        public virtual MyMemoryBlock<float> OutputGateDeltas { get; set; }
-        public virtual MyMemoryBlock<float> ForgetGateDeltas { get; set; }
-        public virtual MyMemoryBlock<float> InputGateDeltas { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellStateErrors { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellInputDeltas { get; set; }
+        public virtual MyTemporalMemoryBlock<float> OutputGateDeltas { get; set; }
+        public virtual MyTemporalMemoryBlock<float> ForgetGateDeltas { get; set; }
+        public virtual MyTemporalMemoryBlock<float> InputGateDeltas { get; set; }
 
-        public virtual MyMemoryBlock<float> PreviousOutput { get; set; }
+        public virtual MyTemporalMemoryBlock<float> PreviousOutput { get; set; }
 
         public override void UpdateMemoryBlocks()
         {
@@ -156,6 +172,15 @@ namespace GoodAI.Modules.LSTM
             ForgetGateWeights.Count = gateInputSize * ForgetGateActivations.Count;
             OutputGateWeights.Count = gateInputSize * OutputGateActivations.Count;
 
+            CellInputWeightGradient.Count = CellInputWeights.Count;
+            CellInputWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            OutputGateWeightGradient.Count = OutputGateWeights.Count;
+            OutputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            InputGateWeightGradient.Count = InputGateWeights.Count;
+            InputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            ForgetGateWeightGradient.Count = ForgetGateWeights.Count;
+            ForgetGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+
             CellInputWeightDeltas.Count = CellInputWeights.Count;
             InputGateWeightDeltas.Count = InputGateWeights.Count;
             ForgetGateWeightDeltas.Count = ForgetGateWeights.Count;
@@ -171,6 +196,7 @@ namespace GoodAI.Modules.LSTM
             ForgetGateWeightsRTRLPartials.Count = ForgetGateWeights.Count * CellsPerBlock;
             
             CellStateErrors.Count = CellStates.Count;
+            CellInputDeltas.Count = CellStates.Count;
             OutputGateDeltas.Count = MemoryBlocks;
             ForgetGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???
             InputGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???

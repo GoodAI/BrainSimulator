@@ -74,14 +74,14 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             get { return GetInput(0); }
         }
 
-        [MyOutputBlock(0)]
-        public virtual MyMemoryBlock<float> Output
+       [MyOutputBlock(0)]
+        public virtual MyTemporalMemoryBlock<float> Output
         {
-            get { return GetOutput(0); }
+            get { return GetOutput(0) as MyTemporalMemoryBlock<float>; }
             set { SetOutput(0, value); }
         }
 
-        public virtual MyMemoryBlock<float> Delta { get; protected set; }
+        public virtual MyTemporalMemoryBlock<float> Delta { get; protected set; }
         #endregion
 
         //parameterless constructor

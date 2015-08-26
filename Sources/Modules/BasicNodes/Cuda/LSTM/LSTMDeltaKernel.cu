@@ -81,7 +81,88 @@ extern "C"
 		}
 	}
 
-	__device__ float GateDeltaBack(float* prevDeltaPtr, float* gateDeltas, float* gateWeights,int neuronId, int cellCountDevcellsPerBlock) // ???? IS TI CORRECT????
+	__global__ void LSTMGateGradientKernelBPTT(
+		float *input,
+		float *previousOutput,
+		float *cellStates,
+
+		float *inputGateDeltas,
+		float *forgetGateDeltas,
+		float *outputGateDeltas,
+
+		float* outputGateWeightGradient,
+		float* inputGateWeightGradient,
+		float* forgetGateWeightGradient,
+
+		int inputCount,
+		int previousOutputCount,
+		int cellsPerBlock
+		)
+	{
+		int weightId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		int weightsPerGate = inputCount + previousOutputCount + cellsPerBlock + 1;
+
+		if (weightId < weightsPerGate * previousOutputCount / cellsPerBlock)
+		{
+			int fromId = weightId % weightsPerGate;
+			int toId = weightId / weightsPerGate;
+
+			//calculate output gate weight gradient
+			int isFromInputUnit = fromId >= 0 && fromId < inputCount;
+			int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < inputCount + previousOutputCount);
+			int isPeephole = (fromId >= inputCount + previousOutputCount) && (fromId < inputCount + previousOutputCount + cellsPerBlock);
+			int isFromBiasUnit = fromId == (inputCount + previousOutputCount + cellsPerBlock);
+
+			float inputFromWeight = isFromInputUnit * input[isFromInputUnit * fromId]
+				+ isFromPreviousOutputUnit * previousOutput[isFromPreviousOutputUnit * (fromId - inputCount)]
+				+ isPeephole * cellStates[isPeephole * (toId * cellsPerBlock + (fromId - inputCount - previousOutputCount))]
+				+ isFromBiasUnit * 1;
+
+			outputGateWeightGradient[weightId] = outputGateDeltas[toId] * inputFromWeight;
+			inputGateWeightGradient[weightId] = inputGateDeltas[toId] * inputFromWeight;
+			forgetGateWeightGradient[weightId] = forgetGateDeltas[toId] * inputFromWeight;
+		}
+	}
+
+	__global__ void LSTMCellInputGradientKernelBPTT(
+		float *input,
+		float *previousOutput,
+
+		float *cellInputDeltas,
+		float *cellInputWeightGradient,
+
+		int inputCount,
+		int previousOutputCount,
+		int cellsPerBlock
+		)
+	{
+		int weightId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		int weightsPerCell = inputCount + previousOutputCount + 1;
+
+		if (weightId < weightsPerCell * previousOutputCount)
+		{
+			int fromId = weightId % weightsPerCell;
+			int toId = weightId / weightsPerCell;
+
+			int isFromInputUnit = fromId >= 0 && fromId < inputCount;
+			int isFromPreviousOutputUnit = (fromId >= inputCount) && (fromId < inputCount + previousOutputCount);
+			int isFromBiasUnit = fromId == (inputCount + previousOutputCount);
+
+			float inputFromWeight = isFromInputUnit * input[isFromInputUnit * fromId]
+				+ isFromPreviousOutputUnit * previousOutput[isFromPreviousOutputUnit * (fromId - inputCount)]
+				+ isFromBiasUnit * 1;
+
+			cellInputWeightGradient[weightId] = cellInputDeltas[toId] * inputFromWeight;
+		}
+	}
+
+	__device__ float GateDeltaBack(float* prevDeltaPtr, float* gateDeltas, float* gateWeights, int neuronId, int cellCountDevcellsPerBlock) // ???? IS TI CORRECT????
 	{
 		for (int memoryBlockId = 0; memoryBlockId < cellCountDevcellsPerBlock; memoryBlockId++)
 		{
@@ -89,7 +170,7 @@ extern "C"
 		}
 	}
 
-	__global__ void LSTMDeltaBackKernelBPPT(
+	__global__ void LSTMDeltaBackKernelBPTT(
 		ActivationFunctionEnum prevLayerActivationFunction,
 		float *prevDeltaPtr,
 
@@ -113,9 +194,9 @@ extern "C"
 
 		if (neuronId < prevLayerNeurons)
 		{
-			GateDeltaBack(prevDeltaPtr, inputGateDeltas, inputGateWeights,neuronId, cellCount / cellsPerBlock);
-			GateDeltaBack(prevDeltaPtr, forgetGateDeltas, forgetGateWeights,neuronId, cellCount / cellsPerBlock);
-			GateDeltaBack(prevDeltaPtr, outputGateDeltas, outputGateWeights,neuronId, cellCount / cellsPerBlock);
+			GateDeltaBack(prevDeltaPtr, inputGateDeltas, inputGateWeights, neuronId, cellCount / cellsPerBlock);
+			GateDeltaBack(prevDeltaPtr, forgetGateDeltas, forgetGateWeights, neuronId, cellCount / cellsPerBlock);
+			GateDeltaBack(prevDeltaPtr, outputGateDeltas, outputGateWeights, neuronId, cellCount / cellsPerBlock);
 		}
 	}
 

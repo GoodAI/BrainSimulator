@@ -15,6 +15,7 @@ using System.ComponentModel;
 using YAXLib;
 using ManagedCuda;
 using GoodAI.Modules.NeuralNetwork.Layers;
+using System.Reflection;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
@@ -35,6 +36,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Task execution
         public override void Execute()
         {
+            Owner.TimeStep = 0;
+
             // disable GradientCheck by default - TODO: fix this somehow
             Owner.GradientCheck.Enabled = false;
 
@@ -79,6 +82,59 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 if (layer is MyAbstractWeightLayer)
                     Owner.TotalWeights += (layer as MyAbstractWeightLayer).Weights.Count;
                 layer = layer.NextLayer;
+            }
+        }
+    }
+
+    [Description("IncrementTimeStep"), MyTaskInfo(OneShot = false)]
+    public class MyIncrementTimeStepTask : MyTask<MyNeuralNetworkGroup>
+    {
+        public MyIncrementTimeStepTask() { }
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute()
+        {
+            //System.Console.WriteLine(Owner.TimeStep + " " + Owner.SequenceLength);
+            Owner.TimeStep++;
+        }
+    }
+
+    [Description("DecrementTimeStep"), MyTaskInfo(OneShot = false)]
+    public class MyDecrementTimeStepTask : MyTask<MyNeuralNetworkGroup>
+    {
+        public MyDecrementTimeStepTask() { }
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute()
+        {
+            Owner.TimeStep--;
+        }
+    }
+
+    [Description("RunTemporalBlocksMode"), MyTaskInfo(OneShot = false)]
+    public class MyRunTemporalBlocksModeTask : MyTask<MyNeuralNetworkGroup>
+    {
+        public override void Init(int nGPU)
+        {
+        }
+
+        public override void Execute()
+        {
+            foreach (MyNode child in Owner.SortedChildren)
+            {
+                if (child is MyAbstractLayer)
+                {
+                    foreach (PropertyInfo memBlockInfo in MyNodeInfo.Get(child.GetType()).OwnedMemoryBlocks)
+                    {
+                        Object memBlock = memBlockInfo.GetValue(child);
+                        if (memBlock is MyTemporalMemoryBlock<float>)
+                        {
+                            (memBlock as MyTemporalMemoryBlock<float>).RunMode();
+                        }
+                    }
+                }
             }
         }
     }

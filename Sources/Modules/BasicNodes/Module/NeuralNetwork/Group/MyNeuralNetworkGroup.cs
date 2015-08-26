@@ -33,6 +33,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     public class MyNeuralNetworkGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         //Node properties
+        [ReadOnly(true)]
+        [YAXSerializableField(DefaultValue = -1)]
+        [MyBrowsable, Category("\tTemporal")]
+        public int TimeStep { get; set; }
+
+        [YAXSerializableField(DefaultValue = 1)]
+        [MyBrowsable, Category("\tTemporal")]
+        public int SequenceLength { get; set; }
+
         [YAXSerializableField(DefaultValue = 0.0f)]
         [MyBrowsable, Category("\tRegularization")]
         public float L1 { get; set; }
@@ -63,6 +72,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //public MyvSGDfdTask vSGD { get; protected set; }
 
         public MyInitNNGroupTask InitGroup { get; protected set; }
+        public MyIncrementTimeStepTask IncrementTimeStep { get; protected set; }
+        public MyDecrementTimeStepTask DecrementTimeStep { get; protected set; }
+        public MyRunTemporalBlocksModeTask RunTemporalBlocksMode { get; protected set; }
         public MyGradientCheckTask GradientCheck { get; protected set; }
 
         public MyNeuralNetworkGroup()
@@ -87,6 +99,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             List<IMyExecutable> selected = new List<IMyExecutable>();
             List<IMyExecutable> newPlan = new List<IMyExecutable>();
 
+            List<IMyExecutable> BPTTSingleStep = new List<IMyExecutable>();
+            List<IMyExecutable> BPTTAllSteps = new List<IMyExecutable>();
+            
             // copy default plan content to new plan content
             foreach (IMyExecutable groupTask in defaultPlan.Children)
                 if (groupTask is MyExecutionBlock)
@@ -95,57 +110,50 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 else
                     newPlan.Add(groupTask); // add group tasks
 
+            // bbpt single step
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Reverse<IMyExecutable>());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyDeltaTask).ToList().Reverse<IMyExecutable>());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyQLearningTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyGradientCheckTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyRestoreValuesTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MySaveActionTask).ToList());
+            BPTTSingleStep.Add(DecrementTimeStep);
+
+            // backprop until unfolded (timestep=0)
+            MyExecutionBlock BPTTLoop = new MyLoopBlock(i => TimeStep != -1,
+                BPTTSingleStep.ToArray()
+            );
+
+            // bptt architecture
+            BPTTAllSteps.Add(BPTTLoop);
+            BPTTAllSteps.Add(IncrementTimeStep);
+            BPTTAllSteps.Add(RunTemporalBlocksMode);
+            BPTTAllSteps.AddRange(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList());
+            BPTTAllSteps.Add(DecrementTimeStep);
+
+            // if current time is time for bbp, do it
+            MyExecutionBlock BPTTExecuteBPTTIfTimeCountReachedSequenceLength = new MyIfBlock(() => TimeStep == SequenceLength - 1,
+                BPTTAllSteps.ToArray()
+            );
+
             // remove group backprop tasks (they should be called from the individual layers)
-            // TODO - RBM planning properly
-            selected = newPlan.Where(task => task is MyAbstractBackpropTask && ! (task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
-            newPlan.RemoveAll(selected.Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyAbstractBackpropTask && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyCreateDropoutMaskTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is IMyDeltaTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyGradientCheckTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyQLearningTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyRestoreValuesTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MySaveActionTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyIncrementTimeStepTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyDecrementTimeStepTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);
 
-            // move MyCreateDropoutMaskTask(s) before the first MyForwardTask
-            selected = newPlan.Where(task => task is MyCreateDropoutMaskTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.Find(task => task is IMyForwardTask)), selected);
-
-            // move reversed MyOutputDeltaTask(s) after the last MyForwardTask (usually there is only one)
-            selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            selected.Reverse();
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
-
-            // move reversed MyDeltaTask(s) after the last MyOutputDeltaTask
-            selected = newPlan.Where(task => task is IMyDeltaTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            selected.Reverse();
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyOutputDeltaTask)) + 1, selected);
-
-            // move MyGradientCheckTask after the last MyDeltaTask
-            selected = newPlan.Where(task => task is MyGradientCheckTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyDeltaTask)) + 1, selected);
-
-            // move MyUpdateWeightsTask(s) after the last MyGradientCheckTask
-            selected = newPlan.Where(task => task is IMyUpdateWeightsTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is MyGradientCheckTask)) + 1, selected);
-
-            // move MyQLearningTask after the last MyForwardTask
-            selected = newPlan.Where(task => task is MyQLearningTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
-
-            // move MyRestoreValuesTask after the last MyAbstractBackPropTask
-            selected = newPlan.Where(task => task is MyRestoreValuesTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
-
-            // move MyLSTMPartialDerivativesTask after the last MyForwardTask
-            selected = newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
-
-            // move MySaveActionTask to the end of the task list
-            selected = newPlan.Where(task => task is MySaveActionTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.AddRange(selected);
+            newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
+            newPlan.Add(IncrementTimeStep);
 
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());
