@@ -59,6 +59,16 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyTaskGroup("BackPropagation")]
         public MyAdadeltaTask Adadelta { get; protected set; }
 
+        public MyAbstractBackpropTask GetActiveBackpropTask() {
+            if (SGD.Enabled)
+                return SGD;
+            if (RMS.Enabled)
+                return RMS;
+            if (Adadelta.Enabled)
+                return Adadelta;
+            return null;
+        }
+
         //[MyTaskGroup("BackPropagation")]
         //public MyvSGDfdTask vSGD { get; protected set; }
 
@@ -96,8 +106,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     newPlan.Add(groupTask); // add group tasks
 
             // remove group backprop tasks (they should be called from the individual layers)
-            // TODO - RBM planning properly
-            selected = newPlan.Where(task => task is MyAbstractBackpropTask && ! (task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
+            // DO NOT remove RBM tasks
+            // DO NOT remove the currently selected backprop task (it handles batch learning)
+            selected = newPlan.Where(task => task is MyAbstractBackpropTask &&  !(task.Enabled) && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
             newPlan.RemoveAll(selected.Contains);
 
             // move MyCreateDropoutMaskTask(s) before the first MyForwardTask
@@ -117,10 +128,23 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             selected.Reverse();
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyOutputDeltaTask)) + 1, selected);
 
+
             // move MyGradientCheckTask after the last MyDeltaTask
             selected = newPlan.Where(task => task is MyGradientCheckTask).ToList();
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyDeltaTask)) + 1, selected);
+
+            // move currently selected backprop task between Delta tasks and UpdateWeights task
+            selected = newPlan.Where(task => task is MyAbstractBackpropTask && (task.Enabled)).ToList();
+            if (selected.Count > 1)
+                MyLog.WARNING.WriteLine("Two or more backprop tasks selected.");
+            if (selected.Count <= 0)
+                MyLog.WARNING.WriteLine("No backprop task selected.");
+            newPlan.RemoveAll(selected.Contains);
+            selected.Reverse();
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyDeltaTask)) + 1, selected);
+
+
 
             // move MyUpdateWeightsTask(s) after the last MyGradientCheckTask
             selected = newPlan.Where(task => task is IMyUpdateWeightsTask).ToList();
@@ -199,6 +223,20 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 MyLog.ERROR.WriteLine("ERROR: GetError() called from " + stackTrace.GetFrame(1).GetMethod().Name + " needs an OutputLayer as the last layer.");
                 return 0.0f;
             }
+        }
+
+        // handles batch learning
+        // should be called after every backward pass
+        public void NextSample()
+        {
+            if (GetActiveBackpropTask() != null)
+                GetActiveBackpropTask().BatchIndex++;
+        }
+
+        // are we at the beginning of a new batch - should we reset deltas?
+        public bool NewBatch()
+        {
+            return (GetActiveBackpropTask() != null) && (GetActiveBackpropTask().BatchIndex == 0);
         }
     }
 }

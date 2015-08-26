@@ -92,7 +92,7 @@ extern "C"
 		if (idx < thisLayerSize)
 		{
 			int inputIdx = activatedNeuronsPtr[idx];
-			inputLayerDelta[inputIdx] = thisLayerDelta[idx] * EvaluateDerivative(inputActFunc, inputWeightedPtr[inputIdx]);
+			inputLayerDelta[inputIdx] += thisLayerDelta[idx] * EvaluateDerivative(inputActFunc, inputWeightedPtr[inputIdx]);
 		}
 	}
 }

@@ -160,8 +160,7 @@ extern "C"
 
 			delta *= EvaluateDerivative(inputActFunc, inputWeightedPtr[idx]);
 
-			// NO batch learning -> might this be a problem?
-			inputDeltaPtr[idx] = delta;
+			inputDeltaPtr[idx] += delta;
 
 		}
 	}
@@ -181,6 +180,7 @@ extern "C"
 		int outputWidth, int outputHeight, int outputSliceSize, // size of one resulting output layer = one learned filter, oW * oH (there are filterCount of these)
 		int horStride, int verStride, //float *outputPtr,
 		float L1Lambda, float L2Lambda,
+		int batchSize,
 		int weightCount // == filterSize * filterCount
 		)
 	{
@@ -242,7 +242,7 @@ extern "C"
 			// add regularization
 			gradient += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
 
-			float dx = -gradient * learningRate;
+			float dx = -gradient * learningRate / batchSize;
 
 			// add momentum
 			if (momentum != 0)
@@ -259,7 +259,7 @@ extern "C"
 			{
 				// bias usually doesn't get regularised
 				// biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
-				float dx = -biasGradient * learningRate;
+				float dx = -biasGradient * learningRate / batchSize;
 
 				if (momentum != 0)
 				{
@@ -292,6 +292,7 @@ extern "C"
 		int horStride, int verStride, //float *outputPtr,
 		float L1Lambda, float L2Lambda,
 		float *meanSquareWeight, float *meanSquareBias, float smoothingFactor,
+		int batchSize,
 		int weightCount // == filterSize * filterCount
 		)
 	{
@@ -340,6 +341,7 @@ extern "C"
 			// UPDATE WEIGHT -----------------------------
 			// add regularization
 			gradient += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			gradient /= batchSize;
 
 			// calculate meansquare
 			meanSquareWeight[idx] = smoothingFactor * meanSquareWeight[idx] + (1.0f - smoothingFactor) * gradient * gradient;
@@ -364,6 +366,7 @@ extern "C"
 			{
 				// bias usually doesn't get regularised
 				//biasDelta += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+				biasGradient /= batchSize;
 
 				// calculate meansquare
 				meanSquareBias[idx / filterSize] = smoothingFactor * meanSquareBias[idx / filterSize] + (1.0f - smoothingFactor) * biasGradient * biasGradient;
@@ -403,6 +406,7 @@ extern "C"
 		int horStride, int verStride, //float *outputPtr,
 		float L1Lambda, float L2Lambda,
 		float *adaSquares, float *adaDeltas, float *adaBiasSquares, float *adaBiasDeltas, float ro, float epsilon,
+		int batchSize,
 		int weightCount // == filterSize * filterCount
 		)
 	{
@@ -452,6 +456,7 @@ extern "C"
 
 			// add regularization
 			gradient += L1Lambda * sign(filterPtr[idx]) + L2Lambda * filterPtr[idx];
+			gradient /= batchSize;
 
 			// adadelta:
 			adaSquares[idx] = ro * adaSquares[idx] + (1 - ro) * gradient * gradient;
@@ -467,6 +472,7 @@ extern "C"
 			{
 				// bias usually doesn't get regularised
 				//biasGradient += L1Lambda * sign(biasPtr[idx / filterSize]) + L2Lambda * biasPtr[idx / filterSize];
+				biasGradient /= batchSize;
 				int biasIdx = idx / filterSize;
 
 				adaBiasSquares[biasIdx] = ro * adaBiasSquares[biasIdx] + (1 - ro) * biasGradient * biasGradient;
