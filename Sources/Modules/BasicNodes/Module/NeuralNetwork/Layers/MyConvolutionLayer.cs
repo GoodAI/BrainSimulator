@@ -226,8 +226,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 MeanSquareBias.Count = Bias.Count;
 
                 // Adadelta allocation
-                AdadeltaWeight.Count = Weights.Count;
-                AdadeltaBias.Count = Bias.Count;
+                //AdadeltaWeight.Count = Weights.Count;
+                //AdadeltaBias.Count = Bias.Count;
 
                 if (ZeroPadding > 0)
                 {
@@ -244,6 +244,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     Weights.ColumnHint = FilterWidth;
 
                     PreviousWeightDelta.Count = Weights.Count;
+                    PreviousWeightDelta.ColumnHint = Weights.ColumnHint;
+
+                    //AdadeltaWeight.ColumnHint = Weights.ColumnHint;
+                    MeanSquareWeight.ColumnHint = Weights.ColumnHint;
                 }
 
                 if (Weights.Count % 2 != 0)

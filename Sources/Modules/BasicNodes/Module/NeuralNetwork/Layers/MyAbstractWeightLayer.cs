@@ -43,8 +43,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> MeanSquareBias { get; protected set; }
 
         // Adadelta memory
-        public MyMemoryBlock<float> AdadeltaWeight { get; protected set; }
-        public MyMemoryBlock<float> AdadeltaBias { get; protected set; }
+        // not necessary, we can use PreviousDelta blocks instead (adadelta doesn't use momentum so they are free)
+        //public MyMemoryBlock<float> AdadeltaWeight { get; protected set; }
+        //public MyMemoryBlock<float> AdadeltaBias { get; protected set; }
 
         //// vSGD-fd memory
         //public MyMemoryBlock<float> OriginalWeights { get; protected set; }

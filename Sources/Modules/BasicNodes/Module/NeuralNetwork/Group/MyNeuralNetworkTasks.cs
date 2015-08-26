@@ -322,15 +322,13 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     layer.Input,
                     layer.Delta,
                     layer.Weights,
-                    layer.PreviousWeightDelta,
                     layer.Bias,
-                    layer.PreviousBiasDelta,
                     Owner.L1,
                     Owner.L2,
                     layer.DropoutMask,
                     layer.Neurons,
                     layer.Weights.Count,
-                    layer.MeanSquareWeight, layer.AdadeltaWeight, layer.MeanSquareBias, layer.AdadeltaBias,
+                    layer.MeanSquareWeight, layer.PreviousWeightDelta, layer.MeanSquareBias, layer.PreviousBiasDelta,
                     Owner.Adadelta.Ro, Owner.Adadelta.Epsilon
                     );
             }
@@ -344,8 +342,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 m_convAdadeltaUpdateKernel.SetupExecution(convLayer.Weights.Count);
                 m_convAdadeltaUpdateKernel.Run(
                     convLayer.Weights,
-                    convLayer.Bias, convLayer.PreviousBiasDelta,
-                    convLayer.Delta, convLayer.PreviousWeightDelta,
+                    convLayer.Bias,
+                    convLayer.Delta,
                     convLayer.PaddedImage,
                     convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding, (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) * (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
                     convLayer.FilterWidth,
@@ -354,8 +352,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
                     convLayer.HorizontalStride, convLayer.VerticalStride,
                     convLayer.L1Term, convLayer.L2Term,
-                    convLayer.MeanSquareWeight, convLayer.AdadeltaWeight,
-                    convLayer.MeanSquareBias, convLayer.AdadeltaBias,
+                    convLayer.MeanSquareWeight, convLayer.PreviousWeightDelta, convLayer.MeanSquareBias, convLayer.PreviousBiasDelta,
                     Owner.Adadelta.Ro, Owner.Adadelta.Epsilon,
                     convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
                     );
