@@ -158,13 +158,9 @@ namespace GoodAI.Modules.LSTM.Tasks
                     );
 
                     m_updateCellWeightsKernel.Run(
-                        Owner.Input,
-                        Owner.PreviousOutput,
-                        Owner.CellStateErrors,
                         Owner.CellInputWeights,
                         Owner.CellInputWeightDeltas,
                         Owner.CellInputWeightMeanSquares,
-                        Owner.CellWeightsRTRLPartials,
 
                         backPropMethod,
                         trainingRate,
@@ -175,8 +171,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.CellInputWeightGradient,
 
                         Owner.Input.Count,
-                        Owner.PreviousOutput.Count,
-                        Owner.CellsPerBlock
+                        Owner.PreviousOutput.Count
                     );
                     break;
                 }

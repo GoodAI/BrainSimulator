@@ -27,7 +27,8 @@ namespace GoodAI.Modules.NeuralNetwork
                 if (Owner is MyAbstractLayer)
                 {
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    return layer.ParentNetwork.SequenceLength;
+                    // +1 because there is one empty block at time [SequenceLength]
+                    return layer.ParentNetwork.SequenceLength + 1;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
             }
@@ -84,7 +85,7 @@ namespace GoodAI.Modules.NeuralNetwork
                 // make it efficient
                 T[] HostAtTimeZero = new T[Count];
                 Device[Owner.GPU].CopyToHost(HostAtTimeZero, 0, 0, size * Count);
-                for (int t = 1; t < SequenceLength; t++)
+                for (int t = 1; t < SequenceLength-1; t++)
 			    {
                     Device[Owner.GPU].CopyToHost(Host, size * t * Count, 0, size * Count);
                     for (int i = 0; i < HostAtTimeZero.Length; i++)
@@ -97,6 +98,14 @@ namespace GoodAI.Modules.NeuralNetwork
 			    }
                 Device[Owner.GPU].CopyToDevice(HostAtTimeZero, 0, 0, size * Count);
             }
+        }
+
+        public CUdeviceptr GetTimeShiftedBlock(int timeShift)
+        {
+            int t = TimeStep + timeShift;
+            if (t <= -1 || t > SequenceLength)
+                return GetDevicePtr(Owner.GPU, 0, SequenceLength-1);
+            return GetDevicePtr(Owner.GPU, 0, t);
         }
 
         public override void AllocateDevice()

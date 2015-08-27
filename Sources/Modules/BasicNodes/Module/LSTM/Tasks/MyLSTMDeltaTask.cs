@@ -125,16 +125,19 @@ namespace GoodAI.Modules.LSTM.Tasks
                     m_deltaKernel.Run(
                         Owner.Delta,
                         Owner.CellStates,
-                        Owner.PreviousCellStates,
+                        Owner.CellStates.GetTimeShiftedBlock(-1),
                         Owner.CellStateErrors,
+                        Owner.CellStateErrors.GetTimeShiftedBlock(+1),
 
                         Owner.OutputGateDeltas,
                         Owner.ForgetGateDeltas,
+                        Owner.ForgetGateDeltas.GetTimeShiftedBlock(+1),
                         Owner.InputGateDeltas,
+                        Owner.InputGateDeltas.GetTimeShiftedBlock(+1),
                         Owner.CellInputDeltas,
 
                         Owner.OutputGateActivations,
-                        Owner.ForgetGateActivations,
+                        Owner.ForgetGateActivations.GetTimeShiftedBlock(+1),
                         Owner.InputGateActivations,
 
                         Owner.CellInputActivationDerivatives,
@@ -154,9 +157,8 @@ namespace GoodAI.Modules.LSTM.Tasks
 
                     m_gateGradientKernel.Run(
                         Owner.Input,
-                        Owner.PreviousOutput,
+                        Owner.Output.GetTimeShiftedBlock(-1),
                         Owner.CellStates,
-
 
                         Owner.InputGateDeltas,
                         Owner.ForgetGateDeltas,
@@ -173,7 +175,7 @@ namespace GoodAI.Modules.LSTM.Tasks
 
                     m_cellInputGradientKernel.Run(
                         Owner.Input,
-                        Owner.PreviousOutput,
+                        Owner.Output.GetTimeShiftedBlock(-1),
 
                         Owner.CellInputDeltas,
                         Owner.CellInputWeightGradient,

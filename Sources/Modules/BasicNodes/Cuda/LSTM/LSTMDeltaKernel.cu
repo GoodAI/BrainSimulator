@@ -20,14 +20,17 @@ extern "C"
 		float* cellStates,
 		float* previousCellStates,
 		float* cellStateErrors,
+		float* nextCellStateErrors,
 
 		float* outputGateDeltas,
 		float* forgetGateDeltas,
+		float* nextForgetGateDeltas,
 		float* inputGateDeltas,
+		float* nextInputGateDeltas,
         float* cellInputDeltas,
 
 		float* outputGateActivations,
-		float* forgetGateActivations,
+		float* nextForgetGateActivations,
 		float* inputGateActivations,
 
 		float* cellInputActivationDerivatives,
@@ -51,21 +54,20 @@ extern "C"
 
 		if (memoryBlockId < cellCount / cellsPerBlock)
 		{
-			float outputGateDeltaSum = 0.0;
-
+			outputGateDeltas[memoryBlockId] = 0.0f;
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				outputGateDeltaSum += cellStates[cellId] * -deltas[cellId];
+				outputGateDeltas[memoryBlockId] += cellStates[cellId] * -deltas[cellId];
 			}
-			outputGateDeltas[memoryBlockId] = outputGateActivationDerivatives[memoryBlockId] * outputGateDeltaSum;
+			outputGateDeltas[memoryBlockId] *= outputGateActivationDerivatives[memoryBlockId];
 
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
 				int peepHoleWeightId = (memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId;
 				cellStateErrors[cellId] = -deltas[cellId] * outputGateActivations[memoryBlockId] * cellStates[cellId] +
-					cellStateErrors[cellId] * forgetGateActivations[cellId] +
-					inputGateDeltas[memoryBlockId] * inputGateWeights[peepHoleWeightId] +
-					forgetGateDeltas[memoryBlockId] * forgetGateWeights[peepHoleWeightId] +
+					nextCellStateErrors[cellId] * nextForgetGateActivations[cellId] +
+					nextInputGateDeltas[memoryBlockId] * inputGateWeights[peepHoleWeightId] +
+					nextForgetGateDeltas[memoryBlockId] * forgetGateWeights[peepHoleWeightId] +
 					outputGateDeltas[memoryBlockId] * outputGateWeights[peepHoleWeightId];
 
                 cellInputDeltas[cellId] = inputGateActivations[memoryBlockId] *  cellInputActivationDerivatives[memoryBlockId] * cellStateErrors[cellId];
@@ -73,12 +75,13 @@ extern "C"
 
 			inputGateDeltas[memoryBlockId] = 0;
 			forgetGateDeltas[memoryBlockId] = 0;
-
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				inputGateDeltas[memoryBlockId] += inputGateActivationDerivatives[memoryBlockId] * cellStateErrors[cellId] * inputGateActivations[memoryBlockId];
-				forgetGateDeltas[memoryBlockId] += forgetGateActivationDerivatives[memoryBlockId] * cellStateErrors[cellId] * previousCellStates[cellId];
+				inputGateDeltas[memoryBlockId] += cellStateErrors[cellId] * inputGateActivations[memoryBlockId];
+				forgetGateDeltas[memoryBlockId] += cellStateErrors[cellId] * previousCellStates[cellId];
 			}
+			inputGateDeltas[memoryBlockId] *= inputGateActivationDerivatives[memoryBlockId];
+			forgetGateDeltas[memoryBlockId] *= forgetGateActivationDerivatives[memoryBlockId];
 		}
 	}
 

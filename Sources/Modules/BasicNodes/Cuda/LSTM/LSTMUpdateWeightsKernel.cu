@@ -106,13 +106,9 @@ extern "C"
 
 
     __global__ void LSTMUpdateCellWeightsKernelBPTT(
-		float *input,
-		float *previousOutput,
-		float *cellStateErrors,
 		float *cellInputWeights,
 		float *cellInputWeightDeltas,
 		float *cellInputWeightMeanSquares,
-		float *cellWeightsRTRLPartials,
 
 		MyBackPropMethod backPropMethod,
 		float trainingRate,
@@ -123,8 +119,7 @@ extern "C"
 		float *cellInputWeightGradient,
 
 		int inputCount,
-		int previousOutputCount,
-		int cellsPerBlock
+		int previousOutputCount
 		)
 	{
 		int weightId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
@@ -132,8 +127,9 @@ extern "C"
 			+ threadIdx.x;
 
 		int weightsPerCell = inputCount + previousOutputCount + 1;
-		
-		if (weightId < weightsPerCell * previousOutputCount)
+		int cellStatesCount = previousOutputCount;
+
+		if (weightId < weightsPerCell * cellStatesCount)
 		{
 			int cellId = weightId / weightsPerCell;
 			if (backPropMethod == RMSProp)
