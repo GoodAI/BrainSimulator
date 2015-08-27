@@ -46,10 +46,9 @@ namespace GoodAI.Modules.LSTM.Tasks
             {
                 Owner.CellStates.Fill(0);
                 Owner.Output.Fill(0);
+                Owner.PreviousCellStates.Fill(0);
+                Owner.PreviousOutput.Fill(0);
             }
-
-            Owner.CellStates.CopyToMemoryBlock(Owner.PreviousCellStates, 0, 0, Owner.CellStates.Count);
-            Owner.Output.CopyToMemoryBlock(Owner.PreviousOutput, 0, 0, Owner.Output.Count);
 
             m_feedForwardKernel.Run(
                 (int) Owner.InputActivationFunction,
@@ -77,7 +76,10 @@ namespace GoodAI.Modules.LSTM.Tasks
                 Owner.Input.Count,
                 Owner.CellStates.Count,
                 Owner.CellsPerBlock
-                );
+            );
+
+            Owner.CellStates.CopyToMemoryBlock(Owner.PreviousCellStates, 0, 0, Owner.CellStates.Count);
+            Owner.Output.CopyToMemoryBlock(Owner.PreviousOutput, 0, 0, Owner.Output.Count);
         }
     }
 }
