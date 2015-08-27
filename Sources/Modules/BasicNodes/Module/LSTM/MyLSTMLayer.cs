@@ -95,7 +95,7 @@ namespace GoodAI.Modules.LSTM
 
         // Memory blocks
         public virtual MyTemporalMemoryBlock<float> CellStates { get; set; }
-        public virtual MyTemporalMemoryBlock<float> PreviousCellStates { get; set; }
+        public virtual MyMemoryBlock<float> PreviousCellStates { get; set; }
 
         public virtual MyTemporalMemoryBlock<float> CellInputActivations { get; set; }
         public virtual MyTemporalMemoryBlock<float> InputGateActivations { get; set; }
@@ -139,7 +139,7 @@ namespace GoodAI.Modules.LSTM
         public virtual MyTemporalMemoryBlock<float> ForgetGateDeltas { get; set; }
         public virtual MyTemporalMemoryBlock<float> InputGateDeltas { get; set; }
 
-        public virtual MyTemporalMemoryBlock<float> PreviousOutput { get; set; }
+        public virtual MyMemoryBlock<float> PreviousOutput { get; set; }
 
         public override void UpdateMemoryBlocks()
         {
