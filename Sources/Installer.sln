@@ -120,6 +120,7 @@ Global
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
