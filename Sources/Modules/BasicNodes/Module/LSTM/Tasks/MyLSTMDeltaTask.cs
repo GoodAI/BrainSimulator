@@ -191,6 +191,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                             (int)previousLayer.ActivationFunction,
                             previousLayer.Delta,
 
+                            Owner.CellInputDeltas,
                             Owner.OutputGateDeltas,
                             Owner.ForgetGateDeltas,
                             Owner.InputGateDeltas,

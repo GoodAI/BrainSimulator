@@ -61,11 +61,12 @@ extern "C"
 
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
+				int peepHoleWeightId = (memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId;
 				cellStateErrors[cellId] = -deltas[cellId] * outputGateActivations[memoryBlockId] * cellStates[cellId] +
 					cellStateErrors[cellId] * forgetGateActivations[cellId] +
-					inputGateDeltas[memoryBlockId] * inputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId] +
-					forgetGateDeltas[memoryBlockId] * forgetGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId] +
-					outputGateDeltas[memoryBlockId] * outputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId];
+					inputGateDeltas[memoryBlockId] * inputGateWeights[peepHoleWeightId] +
+					forgetGateDeltas[memoryBlockId] * forgetGateWeights[peepHoleWeightId] +
+					outputGateDeltas[memoryBlockId] * outputGateWeights[peepHoleWeightId];
 
                 cellInputDeltas[cellId] = inputGateActivations[memoryBlockId] *  cellInputActivationDerivatives[memoryBlockId] * cellStateErrors[cellId];
             }
@@ -162,18 +163,11 @@ extern "C"
 		}
 	}
 
-	__device__ float GateDeltaBack(float* prevDeltaPtr, float* gateDeltas, float* gateWeights, int neuronId, int cellCountDevcellsPerBlock) // ???? IS TI CORRECT????
-	{
-		for (int memoryBlockId = 0; memoryBlockId < cellCountDevcellsPerBlock; memoryBlockId++)
-		{
-			prevDeltaPtr[neuronId] += -gateDeltas[memoryBlockId] * gateWeights[neuronId];
-		}
-	}
-
 	__global__ void LSTMDeltaBackKernelBPTT(
 		ActivationFunctionEnum prevLayerActivationFunction,
 		float *prevDeltaPtr,
 
+		float* cellInputDeltas,
 		float* outputGateDeltas,
 		float* forgetGateDeltas,
 		float* inputGateDeltas,
@@ -192,11 +186,22 @@ extern "C"
 			+ blockDim.x * blockIdx.x				//blocks preceeding current block
 			+ threadIdx.x;
 
+		int weightsPerCell = prevLayerNeurons + cellCount + 1;
+		int weightsPerGate = prevLayerNeurons + cellCount + cellsPerBlock + 1;
+
 		if (neuronId < prevLayerNeurons)
 		{
-			GateDeltaBack(prevDeltaPtr, inputGateDeltas, inputGateWeights, neuronId, cellCount / cellsPerBlock);
-			GateDeltaBack(prevDeltaPtr, forgetGateDeltas, forgetGateWeights, neuronId, cellCount / cellsPerBlock);
-			GateDeltaBack(prevDeltaPtr, outputGateDeltas, outputGateWeights, neuronId, cellCount / cellsPerBlock);
+			int memoryBlockCount = cellCount / cellsPerBlock;
+			for (int memoryBlockId = 0; memoryBlockId < memoryBlockCount; memoryBlockId++)
+			{
+				int cellWeightId = memoryBlockId * weightsPerCell + neuronId;
+				int gateWeightId = memoryBlockId * weightsPerGate + neuronId;
+
+				prevDeltaPtr[neuronId] += -cellInputDeltas[memoryBlockId] * cellInputWeights[cellWeightId];
+				prevDeltaPtr[neuronId] += -inputGateDeltas[memoryBlockId] * inputGateWeights[gateWeightId];
+				prevDeltaPtr[neuronId] += -forgetGateDeltas[memoryBlockId] * forgetGateWeights[gateWeightId];
+				prevDeltaPtr[neuronId] += -outputGateDeltas[memoryBlockId] * outputGateWeights[gateWeightId];
+			}
 		}
 	}
 
