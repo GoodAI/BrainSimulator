@@ -34,7 +34,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     {
         //Node properties
         [ReadOnly(true)]
-        [YAXSerializableField(DefaultValue = -1)]
+        [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("\tTemporal")]
         public int TimeStep { get; set; }
 
