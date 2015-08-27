@@ -86,6 +86,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
+            TimeStep = 0;
             base.UpdateMemoryBlocks();
         }
 
