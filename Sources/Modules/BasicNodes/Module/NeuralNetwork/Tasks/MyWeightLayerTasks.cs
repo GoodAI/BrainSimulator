@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -28,6 +29,14 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public MyInitWeightsTask() { } //parameterless constructor
         public override void Init(int nGPU) { } //Kernel initialization
 
+
+        [MyBrowsable, Category("Param")]
+        [Description("Ommit random initizalization and set the number.")]
+        [YAXSerializableField(DefaultValue = float.NaN)]
+        public float UserInitWeightValue { get; set; }
+
+        float stdDev = 0.01f;
+
         public override void Execute() //Task execution
         {
             // init vars to 0
@@ -35,20 +44,29 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.PreviousWeightDelta.Fill(0);
 
             // set standard deviation
-            float stdDev = 0.01f;
+            
             if (Owner.Input != null)
                 stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
                 
 
             // init random weights
             for (int w = 0; w < Owner.Weights.Count; w++)
-                Owner.Weights.Host[w] = GetRandomGaussian(0.0f, stdDev);
+                Owner.Weights.Host[w] = GetWeightInitValue();
             Owner.Weights.SafeCopyToDevice(); // copy to device
 
             // init random biases
             for (int b = 0; b < Owner.Bias.Count; b++)
-                Owner.Bias.Host[b] = GetRandomGaussian(0.0f, stdDev);
+                Owner.Bias.Host[b] = GetWeightInitValue();
             Owner.Bias.SafeCopyToDevice(); // copy to device
+        }
+
+        private float GetWeightInitValue()
+        {
+            if (float.IsNaN(UserInitWeightValue))
+            {
+                return GetRandomGaussian(0.0f, stdDev);
+            }
+            return UserInitWeightValue;
         }
 
         private float GetRandomGaussian(float mean, float stdDev)
