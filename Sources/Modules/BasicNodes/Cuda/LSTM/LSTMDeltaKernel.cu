@@ -63,9 +63,9 @@ extern "C"
 			{
 				cellStateErrors[cellId] = -deltas[cellId] * outputGateActivations[memoryBlockId] * cellStates[cellId] +
 					cellStateErrors[cellId] * forgetGateActivations[cellId] +
-					inputGateDeltas[cellId] * inputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount] +
-					forgetGateDeltas[cellId] * forgetGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount] +
-					outputGateDeltas[cellId] * outputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount];
+					inputGateDeltas[memoryBlockId] * inputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId] +
+					forgetGateDeltas[memoryBlockId] * forgetGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId] +
+					outputGateDeltas[memoryBlockId] * outputGateWeights[(memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId];
 
                 cellInputDeltas[cellId] = inputGateActivations[memoryBlockId] *  cellInputActivationDerivatives[memoryBlockId] * cellStateErrors[cellId];
             }
