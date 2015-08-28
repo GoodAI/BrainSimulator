@@ -30,10 +30,16 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Init(int nGPU) { } //Kernel initialization
 
 
+        public enum WeightInitType
+        {
+            RandomGaussian,
+            ConstantOne,
+            ConstantStdDev
+        }
         [MyBrowsable, Category("Param")]
-        [Description("Ommit random initizalization and set the number.")]
-        [YAXSerializableField(DefaultValue = float.NaN)]
-        public float UserInitWeightValue { get; set; }
+        [Description("Random = default; One = all weights equ. to 1. StdDev = 1/Input.Count")]
+        [YAXSerializableField(DefaultValue = WeightInitType.RandomGaussian)]
+        public WeightInitType UserInitWeightValue { get; set; }
 
         float stdDev = 0.01f;
 
@@ -62,11 +68,23 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         private float GetWeightInitValue()
         {
-            if (float.IsNaN(UserInitWeightValue))
+            switch (UserInitWeightValue)
             {
-                return GetRandomGaussian(0.0f, stdDev);
+                case WeightInitType.RandomGaussian:
+                    {
+                        return GetRandomGaussian(0.0f, stdDev);
+                    }
+                case WeightInitType.ConstantOne:
+                    {
+                        return 1.0f;
+                    }
+                case WeightInitType.ConstantStdDev:
+                    {
+                        return stdDev;
+                    }
+                default :
+                    return float.NaN;
             }
-            return UserInitWeightValue;
         }
 
         private float GetRandomGaussian(float mean, float stdDev)
