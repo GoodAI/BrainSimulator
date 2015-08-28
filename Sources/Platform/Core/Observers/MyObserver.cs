@@ -21,7 +21,7 @@ using YAXLib;
 namespace GoodAI.Core.Observers
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public abstract class MyAbstractObserver : IDisposable
+    public abstract class MyAbstractObserver : IDisposable, IValidable
     {
         #region Core stuff
 
@@ -213,6 +213,10 @@ namespace GoodAI.Core.Observers
 
         #endregion
 
+        #region Validation
+        public virtual void Validate(MyValidator validator) { }
+
+        #endregion
 
         #region Texture
 
@@ -439,6 +443,8 @@ namespace GoodAI.Core.Observers
                 TargetIdentifier = CreateTargetIdentifier();
             }
         }
+
+        public string Name { get { return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; } set { } }
 
         #endregion
 

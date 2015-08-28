@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Core.Utils
 {
+    public interface IValidable
+    {
+        string Name { get; set; }
+
+        void Validate(MyValidator validator);
+    }
+
     public class MyValidator
     {
         public List<MyValidationMessage> Messages { get; private set; }    
@@ -27,7 +34,7 @@ namespace GoodAI.Core.Utils
             ValidationSucessfull = true;
         }
 
-        private void AddMessage(MyValidationLevel level, string message, MyNode sender) {
+        private void AddMessage(MyValidationLevel level, string message, IValidable sender) {
 
             string[] lines = message.Split('\n');
 
@@ -39,7 +46,7 @@ namespace GoodAI.Core.Utils
             }
         }        
 
-        public void AssertError(bool result, MyNode sender, string failMessage) 
+        public void AssertError(bool result, IValidable sender, string failMessage) 
         {
             if (!result)
             {
@@ -48,12 +55,12 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddError(MyNode sender, string message)
+        public void AddError(IValidable sender, string message)
         {
             AssertError(false, sender, message);
         }
 
-        public void AssertWarning(bool result, MyNode sender, string failMessage) 
+        public void AssertWarning(bool result, IValidable sender, string failMessage) 
         {
             if (!result)
             {
@@ -61,12 +68,12 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddWarning(MyNode sender, string message)
+        public void AddWarning(IValidable sender, string message)
         {
             AssertWarning(false, sender, message);
         }
 
-        public void AssertInfo(bool result, MyNode sender, string failMessage) 
+        public void AssertInfo(bool result, IValidable sender, string failMessage) 
         {
             if (!result)
             {
@@ -74,7 +81,7 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddInfo(MyNode sender, string message)
+        public void AddInfo(IValidable sender, string message)
         {           
             AssertInfo(false, sender, message);            
         }

@@ -17,7 +17,7 @@ using GoodAI.Core.Signals;
 namespace GoodAI.Core.Nodes
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public abstract class MyNode : IDisposable
+    public abstract class MyNode : IDisposable, IValidable
     {
         #region Common properties
         
