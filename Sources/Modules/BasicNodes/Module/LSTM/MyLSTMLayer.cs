@@ -229,7 +229,17 @@ namespace GoodAI.Modules.LSTM
         {
             get
             {
-                return "LSTM Layer";
+                string str = "LSTM Layer";
+                switch (LearningTasks)
+                {
+                    case LearningTasksType.RTRL:
+                        str += " (RTRL)";
+                        break;
+                    case LearningTasksType.BPTT:
+                        str += " (BPTT)";
+                        break;
+                }
+                return str;
             }
         }
     }

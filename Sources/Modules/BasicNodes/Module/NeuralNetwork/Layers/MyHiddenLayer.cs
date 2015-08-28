@@ -48,6 +48,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
                     // SGD allocations
                     Delta.Count = Neurons;
+                    Delta.Mode =  MyTemporalMemoryBlock<float>.ModeType.Cumulate;
                     PreviousWeightDelta.Count = Neurons * Input.Count; // momentum method
                     PreviousBiasDelta.Count = Neurons; // momentum method
 

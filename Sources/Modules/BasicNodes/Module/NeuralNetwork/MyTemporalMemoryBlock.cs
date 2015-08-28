@@ -258,6 +258,13 @@ namespace GoodAI.Modules.NeuralNetwork
             return rDeviceVar != null ? rDeviceVar.DevicePointer + (TimeOffset + offset) * rDeviceVar.TypeSize : default(CUdeviceptr);
         }
 
+        public void FillAll(float value)
+        {
+            CudaDeviceVariable<T> rDeviceVar = GetDevice(Owner.GPU);
+            CudaDeviceVariable<T> rTimeOffsettedDeviceVar = new CudaDeviceVariable<T>(rDeviceVar.DevicePointer, false, SequenceLength * GetSize());
+            rTimeOffsettedDeviceVar.Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
+        }
+
         public override void Fill(float value)
         {
             CudaDeviceVariable<T> rDeviceVar = GetDevice(Owner.GPU);

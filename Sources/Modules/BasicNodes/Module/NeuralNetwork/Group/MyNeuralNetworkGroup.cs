@@ -112,7 +112,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     newPlan.Add(groupTask); // add group tasks
 
             // bbpt single step
-            BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Reverse<IMyExecutable>());
             BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyDeltaTask).ToList().Reverse<IMyExecutable>());
             BPTTSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
             BPTTSingleStep.AddRange(newPlan.Where(task => task is MyQLearningTask).ToList());
@@ -141,7 +140,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             // remove group backprop tasks (they should be called from the individual layers)
             newPlan.RemoveAll(newPlan.Where(task => task is MyAbstractBackpropTask && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyCreateDropoutMaskTask).ToList().Contains);
-            newPlan.RemoveAll(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Contains);
+            //newPlan.RemoveAll(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is IMyDeltaTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyGradientCheckTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList().Contains);
@@ -152,6 +151,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(newPlan.Where(task => task is MyIncrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyDecrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);
+            selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
+            newPlan.RemoveAll(selected.Contains);
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
 
             newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
             newPlan.Add(IncrementTimeStep);
