@@ -64,13 +64,13 @@ extern "C"
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
 				int peepHoleWeightId = (memoryBlockId * (inputCount + cellCount + cellsPerBlock + 1)) + inputCount + cellCount + cellId;
-				cellStateErrors[cellId] = -deltas[cellId] * outputGateActivations[memoryBlockId] * cellStates[cellId] +
-					nextCellStateErrors[cellId] * nextForgetGateActivations[cellId] +
+				cellStateErrors[cellId] = -deltas[cellId] * outputGateActivations[memoryBlockId] * 1 +//cellStates[cellId] +
+					nextCellStateErrors[cellId] * nextForgetGateActivations[memoryBlockId] +
 					nextInputGateDeltas[memoryBlockId] * inputGateWeights[peepHoleWeightId] +
 					nextForgetGateDeltas[memoryBlockId] * forgetGateWeights[peepHoleWeightId] +
 					outputGateDeltas[memoryBlockId] * outputGateWeights[peepHoleWeightId];
 
-                cellInputDeltas[cellId] = inputGateActivations[memoryBlockId] *  cellInputActivationDerivatives[memoryBlockId] * cellStateErrors[cellId];
+                cellInputDeltas[cellId] = inputGateActivations[memoryBlockId] *  cellInputActivationDerivatives[cellId] * cellStateErrors[cellId];
             }
 
 			inputGateDeltas[memoryBlockId] = 0;

@@ -54,6 +54,30 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.InputGateWeightMeanSquares.Fill(0);
             Owner.ForgetGateWeightMeanSquares.Fill(0);
             Owner.OutputGateWeightMeanSquares.Fill(0);
+
+            Owner.Output.FillAll(0);
+            Owner.Delta.FillAll(0);
+            Owner.CellStateErrors.FillAll(0);
+            Owner.CellInputDeltas.FillAll(0);
+            Owner.OutputGateDeltas.FillAll(0);
+            Owner.ForgetGateDeltas.FillAll(0);
+            Owner.InputGateDeltas.FillAll(0);
+            Owner.CellInputWeightGradient.FillAll(0);
+            Owner.OutputGateWeightGradient.FillAll(0);
+            Owner.InputGateWeightGradient.FillAll(0);
+            Owner.ForgetGateWeightGradient.FillAll(0);
+            Owner.CellStates.FillAll(0);
+
+            Owner.CellInputActivations.FillAll(0);
+            Owner.InputGateActivations.FillAll(0);
+            Owner.ForgetGateActivations.FillAll(0);
+            Owner.OutputGateActivations.FillAll(0);
+
+            Owner.CellInputActivationDerivatives.FillAll(0);
+            Owner.InputGateActivationDerivatives.FillAll(0);
+            Owner.ForgetGateActivationDerivatives.FillAll(0);
+            Owner.OutputGateActivationDerivatives.FillAll(0);
+
         }
     }
 }

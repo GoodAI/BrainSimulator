@@ -153,8 +153,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);
             selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
             newPlan.RemoveAll(selected.Contains);
+    
+            // after FF add deltaoutput and bptt if needed, then increpement one step :)
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
-
             newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
             newPlan.Add(IncrementTimeStep);
 
