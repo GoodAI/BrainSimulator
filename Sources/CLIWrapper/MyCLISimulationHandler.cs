@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Utils;
+using ManagedCuda.BasicTypes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -104,7 +105,7 @@ namespace CLIWrapper
             uint speedStep = SimulationStep;
             for (int i = 0; i < steps; ++i)
             {
-                Simulation.ExecuteStep();
+                Simulation.PerformStep(false);
 
                 foreach (Tuple<int, uint, MonitorFunc> m in SimulationMonitors)
                 {

@@ -75,8 +75,9 @@ namespace CLIWrapper
             SimulationHandler.Simulation = new MyLocalSimulation();
             uid = 0;
 
-            MyConfiguration.AddNodesFromFile(@"conf\basic_nodes.xml", Assembly.Load(new AssemblyName("BrainSimulator")));
-            MyConfiguration.AddNodesFromFile(@"conf\custom_nodes.xml", Assembly.Load(new AssemblyName("CustomModels")));
+            MyConfiguration.LoadModules();
+            //MyConfiguration.AddNodesFromFile(@"conf\basic_nodes.xml", Assembly.Load(new AssemblyName("BrainSimulator")));
+            //MyConfiguration.AddNodesFromFile(@"conf\custom_nodes.xml", Assembly.Load(new AssemblyName("CustomModels")));
 
             MyLog.Level = level;
         }
@@ -86,7 +87,7 @@ namespace CLIWrapper
         /// </summary>
         public void DumpNodes()
         {
-            BrainSimulator.Nodes.MyNodeGroup.IteratorAction a = x => { MyLog.DEBUG.WriteLine("[{0}] {1}: {2}", x.Id, x.Name, x.GetType()); };
+            MyNodeGroup.IteratorAction a = x => { MyLog.DEBUG.WriteLine("[{0}] {1}: {2}", x.Id, x.Name, x.GetType()); };
             Project.Network.Iterate(true, a);
         }
 
@@ -109,7 +110,7 @@ namespace CLIWrapper
         public List<MyNode> Filter(FilterFunc userFunc)
         {
             List<MyNode> nodes = new List<MyNode>();
-            BrainSimulator.Nodes.MyNodeGroup.IteratorAction a = x => { if (x.GetType() != typeof(MyNodeGroup) && userFunc(x)) { nodes.Add(x); } };
+            MyNodeGroup.IteratorAction a = x => { if (x.GetType() != typeof(MyNodeGroup) && userFunc(x)) { nodes.Add(x); } };
             Project.Network.Iterate(true, a);
             return nodes;
         }
@@ -121,7 +122,7 @@ namespace CLIWrapper
         /// <returns></returns>
         public List<MyNode> GetNodesOfType(Type type)
         {
-            BrainSimulatorCLI.BSCLI.FilterFunc filter = x => { if (x.GetType() == typeof(MyCodeBook)) return true; return false; };
+            FilterFunc filter = x => { if (x.GetType() == type) return true; return false; };
             return Filter(filter);
         }
 
@@ -207,7 +208,7 @@ namespace CLIWrapper
                 string content = reader.ReadToEnd();
                 reader.Close();
 
-                Project = MyProject.Deserialize(content);
+                Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
             }
             catch (Exception e)
             {
@@ -225,8 +226,8 @@ namespace CLIWrapper
             MyLog.INFO.WriteLine("Saving project: " + fileName);
             try
             {
-                Project.Name = System.IO.Path.GetFileNameWithoutExtension(fileName);
-                string fileContent = Project.Serialize();
+                Project.Name = Path.GetFileNameWithoutExtension(fileName);
+                string fileContent = Project.Serialize(Path.GetFileNameWithoutExtension(fileName));
 
                 TextWriter writer = new StreamWriter(fileName);
                 writer.Write(fileContent);
@@ -285,8 +286,9 @@ namespace CLIWrapper
         /// <param name="value">New property value</param>
         public void Set(int id, Type taskType, string propName, object value)
         {
-            MyTask t = Project.GetNodeById(id).GetTask(taskType);
-            setProperty(t, propName, value);
+            MyWorkingNode node = (Project.GetNodeById(id) as MyWorkingNode);
+            MyTask task = (Project.GetNodeById(id) as MyWorkingNode).GetTaskByType(taskType);
+            setProperty(task, propName, value);
         }
 
         /// <summary>
@@ -300,14 +302,14 @@ namespace CLIWrapper
         /// <returns>Id of result</returns>
         public int TrackValue(int id, int length, uint step = 10, int offset = 0, string memName = "Output")
         {
-            BrainSimulatorCLI.MyCLISimulationHandler.MonitorFunc valueMonitor = x =>
+            MyCLISimulationHandler.MonitorFunc valueMonitor = x =>
             {
                 float value = GetValues(id, memName)[offset];
                 float[] record = new float[2] { SimulationHandler.SimulationStep, value };
                 return record;
             };
 
-            Tuple<int, uint, BrainSimulatorCLI.MyCLISimulationHandler.MonitorFunc> rec = new Tuple<int, uint, BrainSimulatorCLI.MyCLISimulationHandler.MonitorFunc>(uid++, step, valueMonitor);
+            Tuple<int, uint, MyCLISimulationHandler.MonitorFunc> rec = new Tuple<int, uint, MyCLISimulationHandler.MonitorFunc>(uid++, step, valueMonitor);
             SimulationHandler.AddMonitor(rec);
             MyLog.INFO.WriteLine(memName + "[" + offset + "]@" + id + "is now being tracked with ID " + (uid - 1));
             return uid - 1;
@@ -411,25 +413,38 @@ namespace CLIWrapper
                 MyLog.INFO.WriteLine("--------------");
                 MyLog.INFO.WriteLine("Updating memory blocks...");
 
-                MyTopologyOps topoOps = new MyTopologyOps();
-                topoOps.EvaluateOrder(Project.Network);
+                IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
+                List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
+
+                if (!orderedNodes.Any())
+                {
+                    return;
+                }
 
                 int attempts = 0;
                 bool anyOutputChanged = false;
 
-                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
+                try
                 {
-                    attempts++;
-                    anyOutputChanged = false;
-
-                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
-                    topoOps.OrderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
-
-                    if (!anyOutputChanged)
+                    while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
                     {
-                        MyLog.DEBUG.WriteLine("Successful update after " + attempts + " cycle(s).");
-                        break;
+                        attempts++;
+                        anyOutputChanged = false;
+
+                        anyOutputChanged |= UpdateAndCheckChange(Project.World);
+                        orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
+
+                        if (!anyOutputChanged)
+                        {
+                            MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
+                            break;
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
+                    return;
                 }
 
                 /*MyValidator validator = ValidationView.Validator;
