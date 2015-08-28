@@ -119,7 +119,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             // move reversed MyOutputDeltaTask(s) after the last MyForwardTask (usually there is only one)
             selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
             newPlan.RemoveAll(selected.Contains);
-            if (selected.Count > 1)
+            if ((selected.Where(task => task.Enabled)).Count() > 1)
                 MyLog.WARNING.WriteLine("More than one output tasks are active!");
             if (selected.Count <= 0)
                 MyLog.WARNING.WriteLine("No output tasks are active! Planning (of SGD, RMS, Adadelta etc.) might not work properly. Possible cause: no output layer is present.\nIgnore this if RBM task is currently selected.");
