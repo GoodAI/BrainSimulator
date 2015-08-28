@@ -21,7 +21,7 @@ using YAXLib;
 namespace GoodAI.Core.Observers
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public abstract class MyAbstractObserver : IDisposable, IValidable
+    public abstract class MyAbstractObserver : IDisposable, IValidatable
     {
         #region Core stuff
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Core.Utils
 {
-    public interface IValidable
+    public interface IValidatable
     {
         string Name { get; set; }
 
@@ -34,7 +34,7 @@ namespace GoodAI.Core.Utils
             ValidationSucessfull = true;
         }
 
-        private void AddMessage(MyValidationLevel level, string message, IValidable sender) {
+        private void AddMessage(MyValidationLevel level, string message, IValidatable sender) {
 
             string[] lines = message.Split('\n');
 
@@ -46,7 +46,7 @@ namespace GoodAI.Core.Utils
             }
         }        
 
-        public void AssertError(bool result, IValidable sender, string failMessage) 
+        public void AssertError(bool result, IValidatable sender, string failMessage) 
         {
             if (!result)
             {
@@ -55,12 +55,12 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddError(IValidable sender, string message)
+        public void AddError(IValidatable sender, string message)
         {
             AssertError(false, sender, message);
         }
 
-        public void AssertWarning(bool result, IValidable sender, string failMessage) 
+        public void AssertWarning(bool result, IValidatable sender, string failMessage) 
         {
             if (!result)
             {
@@ -68,12 +68,12 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddWarning(IValidable sender, string message)
+        public void AddWarning(IValidatable sender, string message)
         {
             AssertWarning(false, sender, message);
         }
 
-        public void AssertInfo(bool result, IValidable sender, string failMessage) 
+        public void AssertInfo(bool result, IValidatable sender, string failMessage) 
         {
             if (!result)
             {
@@ -81,7 +81,7 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddInfo(IValidable sender, string message)
+        public void AddInfo(IValidatable sender, string message)
         {           
             AssertInfo(false, sender, message);            
         }

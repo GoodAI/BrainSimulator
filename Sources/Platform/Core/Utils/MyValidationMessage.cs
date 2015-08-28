@@ -18,9 +18,9 @@ namespace GoodAI.Core.Utils
     {
         public MyValidationLevel Level { get; private set; }
         public string Message { get; private set; }
-        public IValidable Sender { get; private set; }
+        public IValidatable Sender { get; private set; }
 
-        internal MyValidationMessage(MyValidationLevel level, string message, IValidable sender)
+        internal MyValidationMessage(MyValidationLevel level, string message, IValidatable sender)
         {
             Level = level;
             Message = message;
