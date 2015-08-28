@@ -96,7 +96,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (previousLayer != null)
             {
                 //// reset delta
-                //previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)
+                previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr;
