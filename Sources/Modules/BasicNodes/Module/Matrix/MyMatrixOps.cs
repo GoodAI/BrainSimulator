@@ -53,7 +53,9 @@ namespace GoodAI.Modules.Matrix
         Round = 1 << 19,
         Ceil = 1 << 20,
 
-        Copy = 1 << 21
+        Copy = 1 << 21,
+
+        Transpose = 1 << 22
     }
 
 
@@ -130,6 +132,10 @@ namespace GoodAI.Modules.Matrix
                 {
                     Result.ColumnHint = Math.Max(A.ColumnHint, B.ColumnHint);
                     Result.Count = Math.Max(A.Count, B.Count);
+                }
+                else if (operation == MatOperation.Transpose)
+                {
+                    Result.ColumnHint = A.Count / A.ColumnHint;
                 }
             }
             return Result;
