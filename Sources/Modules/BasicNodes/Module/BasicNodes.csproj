@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyOne2OneOutputLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
@@ -323,6 +324,8 @@
     <EmbeddedResource Include="res\network_RBM_big.png" />
     <EmbeddedResource Include="res\join.png" />
     <EmbeddedResource Include="res\join_big.png" />
+    <EmbeddedResource Include="res\one2one_layer.png" />
+    <EmbeddedResource Include="res\one2one_layer_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
