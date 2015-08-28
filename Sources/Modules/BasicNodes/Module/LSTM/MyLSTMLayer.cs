@@ -143,6 +143,24 @@ namespace GoodAI.Modules.LSTM
 
         public override void UpdateMemoryBlocks()
         {
+            //---- set paramters for BPTT/RTRL
+            if (ParentNetwork.GroupOutputNodes.Length > 0)
+            {
+                switch (LearningTasks)
+                {
+                    case MyLSTMLayer.LearningTasksType.RTRL:
+                        ParentNetwork.SequenceLength = 1;
+                        //System.Console.WriteLine("LSTM: Udpated Group parameters to RTRL: SequenceLength");
+                        break;
+                    case MyLSTMLayer.LearningTasksType.BPTT:
+                        ParentNetwork.SequenceLength = 3;
+                        //System.Console.WriteLine("LSTM: Udpated Group parameters to BPTT: SequenceLength");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             base.UpdateMemoryBlocks();
 
             if (Input == null)
