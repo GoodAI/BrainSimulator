@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLITester</RootNamespace>
-    <AssemblyName>CLITester</AssemblyName>
+    <RootNamespace>CLIWrapper</RootNamespace>
+    <AssemblyName>CLIWrapper</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,17 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLITester.cs" />
+    <Compile Include="CLIWrapper.cs" />
+    <Compile Include="MyCLISimulationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CLIWrapper\CLIWrapper.csproj">
-      <Project>{0e37a51b-fa28-42a1-adb3-0a7dba655d48}</Project>
-      <Name>CLIWrapper</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platform\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
