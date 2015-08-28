@@ -9,11 +9,20 @@ using System.Threading.Tasks;
 
 namespace CLITester
 {
-    class CLITester
+    class CLIProgram
     {
         static void Main(string[] args)
         {
             BSCLI CLI = new BSCLI(MyLogLevel.WARNING);
+            CLI.Quit();
+            Console.ReadLine();
+            return;
+        }
+    }
+}
+
+/* Last bind test
+ * BSCLI CLI = new BSCLI(MyLogLevel.WARNING);
             CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\bindTest2.brain");
             float iterations = 250;
 
@@ -52,9 +61,7 @@ namespace CLITester
 
             CLI.Quit();
             Console.ReadLine();
-        }
-    }
-}
+ * /
 
 
 /* Binding test 2
