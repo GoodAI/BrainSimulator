@@ -58,7 +58,8 @@ extern "C"
 			+ threadIdx.x;
 
 		if (i < layerSize)
-			prevDeltaPtr[i] += thisDeltaPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]); // batch learning, remember to initialize delta
+            prevDeltaPtr[i] = thisDeltaPtr[i];// * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]); // batch learning, remember to initialize delta
+			//prevDeltaPtr[i] += thisDeltaPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]); // batch learning, remember to initialize delta
 	}
 
 
