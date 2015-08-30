@@ -153,7 +153,7 @@ namespace GoodAI.Modules.LSTM
                         //System.Console.WriteLine("LSTM: Udpated Group parameters to RTRL: SequenceLength");
                         break;
                     case MyLSTMLayer.LearningTasksType.BPTT:
-                        ParentNetwork.SequenceLength = 3;
+                        //ParentNetwork.SequenceLength = 2;
                         //System.Console.WriteLine("LSTM: Udpated Group parameters to BPTT: SequenceLength");
                         break;
                     default:
@@ -260,5 +260,16 @@ namespace GoodAI.Modules.LSTM
                 return str;
             }
         }
+        public void PrintMemBlock2Console(MyMemoryBlock<float> m, string s = "")
+        {
+            System.Console.Write("  + " + s + ": ");
+            m.SafeCopyToHost();
+            for (int i = 0; i < Math.Min(30,m.Count); i++)
+			{
+                System.Console.Write(m.Host[i]+" ");
+            }
+            System.Console.WriteLine("");
+        }
+
     }
 }

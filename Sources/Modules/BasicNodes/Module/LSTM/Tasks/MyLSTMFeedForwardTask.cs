@@ -81,6 +81,68 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.CellStates.CopyToMemoryBlock(Owner.PreviousCellStates, 0, 0, Owner.CellStates.Count);
             Owner.Output.CopyToMemoryBlock(Owner.PreviousOutput, 0, 0, Owner.Output.Count);
         }
+
+        private void RunFeedForwardKernel()
+        {
+            m_feedForwardKernel.Run(
+                (int)Owner.InputActivationFunction,
+                (int)Owner.GateActivationFunction,
+                Owner.Input,
+                Owner.Output,
+                Owner.PreviousOutput,
+                Owner.CellStates,
+                //Owner.PreviousCellStates,
+                Owner.CellStates.GetTimeShiftedBlock(-1),
+                Owner.CellInputActivations,
+                Owner.CellInputActivationDerivatives,
+                Owner.InputGateActivations,
+                Owner.InputGateActivationDerivatives,
+                Owner.ForgetGateActivations,
+                Owner.ForgetGateActivationDerivatives,
+                Owner.OutputGateActivations,
+                Owner.OutputGateActivationDerivatives,
+
+                Owner.CellInputWeights,
+                Owner.InputGateWeights,
+                Owner.ForgetGateWeights,
+                Owner.OutputGateWeights,
+
+                CLIP_CELL_STATE,
+                Owner.Input.Count,
+                Owner.CellStates.Count,
+                Owner.CellsPerBlock
+            );
+        }
+        private void RunFeedForwardKernelWithReset()
+        {
+            m_feedForwardKernel.Run(
+                (int)Owner.InputActivationFunction,
+                (int)Owner.GateActivationFunction,
+                Owner.Input,
+                Owner.Output,
+                Owner.PreviousOutput,
+                Owner.CellStates,
+                Owner.PreviousCellStates,
+                Owner.CellInputActivations,
+                Owner.CellInputActivationDerivatives,
+                Owner.InputGateActivations,
+                Owner.InputGateActivationDerivatives,
+                Owner.ForgetGateActivations,
+                Owner.ForgetGateActivationDerivatives,
+                Owner.OutputGateActivations,
+                Owner.OutputGateActivationDerivatives,
+
+                Owner.CellInputWeights,
+                Owner.InputGateWeights,
+                Owner.ForgetGateWeights,
+                Owner.OutputGateWeights,
+
+                CLIP_CELL_STATE,
+                Owner.Input.Count,
+                Owner.CellStates.Count,
+                Owner.CellsPerBlock
+            );
+        }
     }
 }
 

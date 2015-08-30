@@ -133,14 +133,14 @@ namespace GoodAI.Modules.LSTM.Tasks
                 {
                     m_updateGateWeightsKernel.Run(
                         Owner.InputGateWeights,
-                        Owner.InputGateWeightDeltas,
-                        Owner.InputGateWeightMeanSquares,
+                        Owner.InputGateWeightDeltas, // RMS
+                        Owner.InputGateWeightMeanSquares, // RMS
                         Owner.ForgetGateWeights,
-                        Owner.ForgetGateWeightDeltas,
-                        Owner.ForgetGateWeightMeanSquares,
+                        Owner.ForgetGateWeightDeltas, // RMS
+                        Owner.ForgetGateWeightMeanSquares, // RMS
                         Owner.OutputGateWeights,
-                        Owner.OutputGateWeightDeltas,
-                        Owner.OutputGateWeightMeanSquares,
+                        Owner.OutputGateWeightDeltas, // RMS
+                        Owner.OutputGateWeightMeanSquares, //RMS
 
                         Owner.OutputGateWeightGradient,
                         Owner.InputGateWeightGradient,
