@@ -52,7 +52,7 @@ namespace GoodAI.Modules.LSTM
             BPTT
         }
 
-        [YAXSerializableField(DefaultValue = LearningTasksType.BPTT)]
+        [YAXSerializableField(DefaultValue = LearningTasksType.RTRL)]
         [MyBrowsable, Category("\tLayer")]
         public LearningTasksType LearningTasks { get; set; }
 
