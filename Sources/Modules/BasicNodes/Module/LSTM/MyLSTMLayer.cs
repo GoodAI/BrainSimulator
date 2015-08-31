@@ -98,11 +98,13 @@ namespace GoodAI.Modules.LSTM
         public virtual MyMemoryBlock<float> PreviousCellStates { get; set; }
 
         public virtual MyTemporalMemoryBlock<float> CellInputActivations { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellStateActivations { get; set; }
         public virtual MyTemporalMemoryBlock<float> InputGateActivations { get; set; }
         public virtual MyTemporalMemoryBlock<float> ForgetGateActivations { get; set; }
         public virtual MyTemporalMemoryBlock<float> OutputGateActivations { get; set; }
 
         public virtual MyTemporalMemoryBlock<float> CellInputActivationDerivatives { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellStateActivationDerivatives { get; set; }
         public virtual MyTemporalMemoryBlock<float> InputGateActivationDerivatives { get; set; }
         public virtual MyTemporalMemoryBlock<float> ForgetGateActivationDerivatives { get; set; }
         public virtual MyTemporalMemoryBlock<float> OutputGateActivationDerivatives { get; set; }
@@ -173,11 +175,13 @@ namespace GoodAI.Modules.LSTM
             PreviousOutput.Count = CellStates.Count;
 
             CellInputActivations.Count = CellStates.Count;
+            CellStateActivations.Count = CellStates.Count;
             InputGateActivations.Count = MemoryBlocks;
             ForgetGateActivations.Count = MemoryBlocks;
             OutputGateActivations.Count = MemoryBlocks;
 
             CellInputActivationDerivatives.Count = CellStates.Count;
+            CellStateActivationDerivatives.Count = CellStates.Count;
             InputGateActivationDerivatives.Count = MemoryBlocks;
             ForgetGateActivationDerivatives.Count = MemoryBlocks;
             OutputGateActivationDerivatives.Count = MemoryBlocks;

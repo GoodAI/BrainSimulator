@@ -20,15 +20,15 @@ namespace GoodAI.Modules.NeuralNetwork
 {
     public class MyTemporalMemoryBlock<T> : MyMemoryBlock<T> where T : struct
     {
-        public int SequenceLength
+        public int BoundedSequenceLength
         {
             get
             {
                 if (Owner is MyAbstractLayer)
                 {
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    // +1 because there is one empty block at time [SequenceLength]
-                    return layer.ParentNetwork.SequenceLength + 1;
+                    // +2 because there is one empty block at beginning and end (spec. boundary conditions)
+                    return layer.ParentNetwork.SequenceLength + 2;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
             }
@@ -41,7 +41,8 @@ namespace GoodAI.Modules.NeuralNetwork
                 if (Owner is MyAbstractLayer)
                 {
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    return layer.ParentNetwork.TimeStep;
+                    // +1 to skip first boundary block
+                    return layer.ParentNetwork.TimeStep + 1;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
             }
@@ -55,25 +56,67 @@ namespace GoodAI.Modules.NeuralNetwork
             }
         }
 
+        private MyCudaKernel modeKernel;
+
         public enum ModeType
         {
             None,
-            Cumulate
+            Cumulate,
+            Copy
         }
-        public ModeType Mode = ModeType.None;
+        private ModeType mode;
+        public ModeType Mode
+        {
+            get
+            {
+                return mode;
+            }
+            set
+            {
+                mode = value;
+                switch (mode)
+                {
+                    case ModeType.None:
+                        {
+                            modeKernel = null;
+                            break;
+                        }
+                    case ModeType.Cumulate:
+                        {
+                            modeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"NeuralNetwork\TemporalMemoryBlock", "CumulateThroughTimeKernel");
+                            break;
+                        }
+                    case ModeType.Copy:
+                        {
+                            modeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"NeuralNetwork\TemporalMemoryBlock", "CopyThroughTimeKernel");
+                            break;
+                        }
+                    default:
+                        break;
+                }
+                modeKernel.SetupExecution(Count);
+            }
+        }
 
         public void RunMode()
         {
-            switch (Mode)
-            {
-                case ModeType.None: break;
-                case ModeType.Cumulate:
-                {
-                    CumulateThroughTime();
-                    break;
-                }
-                default: break;
-            }
+            if (modeKernel != null)
+                modeKernel.Run(GetDevicePtr(Owner.GPU, 0, 0), Count, BoundedSequenceLength);
+            //switch (Mode)
+            //{
+            //    case ModeType.None: break;
+            //    case ModeType.Cumulate:
+            //    {
+            //        CumulateThroughTime();
+            //        break;
+            //    }
+            //    case ModeType.Copy:
+            //    {
+            //        CopyThroughTime();
+            //        break;
+            //    }
+            //    default: break;
+            //}
         }
 
         private void CumulateThroughTime()
@@ -84,27 +127,54 @@ namespace GoodAI.Modules.NeuralNetwork
 
                 // make it efficient
                 T[] HostAtTimeZero = new T[Count];
-                Device[Owner.GPU].CopyToHost(HostAtTimeZero, 0, 0, size * Count);
-                for (int t = 1; t < SequenceLength-1; t++)
-			    {
+                // offset device 1 block (to skip first 'boundary condition' block)
+                Device[Owner.GPU].CopyToHost(HostAtTimeZero, size * Count, 0, size * Count);
+                // start from 2 to skip boundary block and first block is already on host
+                // go to t < BoundedSequenceLength-1 because to skip last boundary block
+                for (int t = 2; t < BoundedSequenceLength - 1; t++)
+                {
                     Device[Owner.GPU].CopyToHost(Host, size * t * Count, 0, size * Count);
                     for (int i = 0; i < HostAtTimeZero.Length; i++)
-			        {
+                    {
                         // C# thingy...
                         float x = (float)(object)HostAtTimeZero[i];
                         x += (float)(object)Host[i];
                         HostAtTimeZero[i] = (T)(object)x;
-			        }
-			    }
-                Device[Owner.GPU].CopyToDevice(HostAtTimeZero, 0, 0, size * Count);
+                    }
+                }
+                // offset device 1 block (to skip first 'boundary condition' block)
+                Device[Owner.GPU].CopyToDevice(HostAtTimeZero, 0, size * Count, size * Count);
+            }
+        }
+
+        private void CopyThroughTime()
+        {
+            if (typeof(T) == typeof(float))
+            {
+                int size = Marshal.SizeOf(typeof(T));
+
+                // make it efficient
+                T[] HostAtTheEnd = new T[Count];
+                Device[Owner.GPU].CopyToHost(HostAtTheEnd, size * (BoundedSequenceLength - 2) * Count, 0, size * Count);
+                for (int t = BoundedSequenceLength - 3; t > 0; t--)
+                {
+                    Device[Owner.GPU].CopyToHost(Host, size * t * Count, 0, size * Count);
+                    for (int i = 0; i < HostAtTheEnd.Length; i++)
+                    {
+                        Host[i] = HostAtTheEnd[i];
+                        Device[Owner.GPU].CopyToDevice(Host, 0, size * t * Count, size * Count);
+                    }
+                }
             }
         }
 
         public CUdeviceptr GetTimeShiftedBlock(int timeShift)
         {
             int t = TimeStep + timeShift;
-            if (t <= -1 || t > SequenceLength)
-                return GetDevicePtr(Owner.GPU, 0, SequenceLength-1);
+            if (t <= -1) // boundary block at t = -1 or less
+                return GetDevicePtr(Owner.GPU, 0, 0);
+            else if (BoundedSequenceLength - 1 <= t) // boundary block at t = seqLen - 1 or graeter
+                return GetDevicePtr(Owner.GPU, 0, BoundedSequenceLength - 1);
             return GetDevicePtr(Owner.GPU, 0, t);
         }
 
@@ -118,10 +188,10 @@ namespace GoodAI.Modules.NeuralNetwork
 
                     if (!Unmanaged)
                     {
-                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T).ToString() + ", " + Count * SequenceLength * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T)));
+                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T).ToString() + ", " + Count * BoundedSequenceLength * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T)));
                         Device[Owner.GPU] = new CudaDeviceVariable<T>(
                            MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
-                           Count * SequenceLength * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T))));
+                           Count * BoundedSequenceLength * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T))));
 
                         Fill(0);
                     }
@@ -129,7 +199,7 @@ namespace GoodAI.Modules.NeuralNetwork
                     {
                         if (ExternalPointer != 0)
                         {
-                            Device[Owner.GPU] = new CudaDeviceVariable<T>(new CUdeviceptr(ExternalPointer), Count * SequenceLength * sizeof(float));
+                            Device[Owner.GPU] = new CudaDeviceVariable<T>(new CUdeviceptr(ExternalPointer), Count * BoundedSequenceLength * sizeof(float));
                         }
                         else
                         {
@@ -232,7 +302,7 @@ namespace GoodAI.Modules.NeuralNetwork
                     {
                         Device[nGPU] = new CudaDeviceVariable<T>(
                             MyKernelFactory.Instance.GetContextByGPU(nGPU).AllocateMemory(
-                            SequenceLength * Count * Marshal.SizeOf(typeof(T))));
+                            BoundedSequenceLength * Count * Marshal.SizeOf(typeof(T))));
 
                         CopyToGPU(nGPU);
                         Shared = true;
@@ -244,11 +314,11 @@ namespace GoodAI.Modules.NeuralNetwork
                 return null;
         }
 
-        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int timeStep = -1)
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int memBlockIdx = -1)
         {
             CudaDeviceVariable<T> rDeviceVar = GetDevice(GPU);
-            if (0 <= timeStep && timeStep < SequenceLength)
-                return rDeviceVar != null ? rDeviceVar.DevicePointer + (timeStep * Count) * rDeviceVar.TypeSize : default(CUdeviceptr);
+            if (0 <= memBlockIdx && memBlockIdx < BoundedSequenceLength)
+                return rDeviceVar != null ? rDeviceVar.DevicePointer + (memBlockIdx * Count) * rDeviceVar.TypeSize : default(CUdeviceptr);
             return rDeviceVar != null ? rDeviceVar.DevicePointer + (TimeOffset + offset) * rDeviceVar.TypeSize : default(CUdeviceptr);
         }
 
@@ -261,7 +331,7 @@ namespace GoodAI.Modules.NeuralNetwork
         public void FillAll(float value)
         {
             CudaDeviceVariable<T> rDeviceVar = GetDevice(Owner.GPU);
-            CudaDeviceVariable<T> rTimeOffsettedDeviceVar = new CudaDeviceVariable<T>(rDeviceVar.DevicePointer, false, SequenceLength * GetSize());
+            CudaDeviceVariable<T> rTimeOffsettedDeviceVar = new CudaDeviceVariable<T>(rDeviceVar.DevicePointer, false, BoundedSequenceLength * GetSize());
             rTimeOffsettedDeviceVar.Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
 

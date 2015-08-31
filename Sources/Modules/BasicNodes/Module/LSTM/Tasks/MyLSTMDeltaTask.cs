@@ -136,11 +136,13 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.InputGateDeltas.GetTimeShiftedBlock(+1),
                         Owner.CellInputDeltas,
 
+                        Owner.CellStateActivations,
                         Owner.OutputGateActivations,
                         Owner.ForgetGateActivations.GetTimeShiftedBlock(+1),
                         Owner.InputGateActivations,
 
                         Owner.CellInputActivationDerivatives,
+                        Owner.CellStateActivationDerivatives,
                         Owner.OutputGateActivationDerivatives,
                         Owner.ForgetGateActivationDerivatives,
                         Owner.InputGateActivationDerivatives,

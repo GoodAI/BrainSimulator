@@ -40,7 +40,7 @@ extern "C"
 	{
 		float weightDelta = trainingRate * Clip(gradient, clipGradient) + momentum * weightDeltas[weightId];
 		weightDeltas[weightId] = weightDelta;
-		weights[weightId] += weightDelta;
+		weights[weightId] -= weightDelta;
 	}
 
 	__device__ void RMSPropWeightUpdate(float trainingRate, float momentum, float smoothingFactor, float clipGradient, float *weights, float *weightDeltas, float *weightMeanSquares, int weightId, float gradient)
@@ -51,7 +51,7 @@ extern "C"
 		if (weightMeanSquare != 0)
 			rmsGradient /= sqrtf(weightMeanSquare);
 		weightMeanSquares[weightId] = weightMeanSquare;
-		weights[weightId] += trainingRate * rmsGradient;
+		weights[weightId] -= trainingRate * rmsGradient;
 	}
 
 
