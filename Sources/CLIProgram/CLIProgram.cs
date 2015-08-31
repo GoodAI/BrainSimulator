@@ -14,6 +14,7 @@ namespace CLITester
         static void Main(string[] args)
         {
             BSCLI CLI = new BSCLI(MyLogLevel.WARNING);
+            CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\Breakout.brain");
             CLI.Quit();
             Console.ReadLine();
             return;
