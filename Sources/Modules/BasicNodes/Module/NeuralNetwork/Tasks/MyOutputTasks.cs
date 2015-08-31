@@ -106,7 +106,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         private MyCudaKernel m_lossKernel; // kernel
         public override void Init(int nGPU)
         {
-            m_lossKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\LossFunctions\ImageLossKernel", "ImageLossKernel");
+            m_lossKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\LossFunctions\ImageLoss", "ImageLossKernel");
         }
 
         public override void Execute() //Task execution

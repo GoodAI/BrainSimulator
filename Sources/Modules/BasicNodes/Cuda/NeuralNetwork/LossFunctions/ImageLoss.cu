@@ -66,7 +66,8 @@ extern "C"
 			if (blockSize >= 4) loss[tid] += loss[tid + 2];
 			if (blockSize >= 2) loss[tid] += loss[tid + 1];
 		}
+		// Add, not assign, because we may be using this loss measure in combination with another
 		if (tid == 0)
-			*costPtr = loss[0];
+			*costPtr += loss[0];
 	}
 }
