@@ -13,8 +13,11 @@ namespace CLITester
     {
         static void Main(string[] args)
         {
-            BSCLI CLI = new BSCLI(MyLogLevel.WARNING);
+            BSCLI CLI = new BSCLI(MyLogLevel.DEBUG);
             CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\Breakout.brain");
+            CLI.DumpNodes();
+            CLI.Run(1000, 100);
+            float[] data = CLI.GetValues(24, "Output");
             CLI.Quit();
             Console.ReadLine();
             return;

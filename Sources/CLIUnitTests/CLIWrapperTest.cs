@@ -4,8 +4,9 @@ using CLIWrapper;
 using GoodAI.Core.Utils;
 using System.Collections.Generic;
 using GoodAI.Core.Nodes;
-using GoodAI.Modules.Common;
 using System.Reflection;
+using GoodAI.Core.Memory;
+using System.Linq;
 
 // For debugging:
 // Make sure, that your setting is Test->Test setting->Default processor architecture->X64
@@ -48,15 +49,26 @@ namespace CLIUnitTests
         {
             SetEntryAssembly();
             CLI = new BSCLI(MyLogLevel.WARNING);
-            CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\Breakout.brain");
+            CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\Breakout.brain");  //TODO> rewrite to in-file XML
         }
 
+        //[TestMethod]
+        //public void GetNodesOfType()
+        //{
+        //    List<MyNode> cbs = CLI.GetNodesOfType(typeof(MyRandomNode));
+        //    Assert.AreEqual(1, cbs.Count);
+        //    Assert.AreEqual("Node_24", cbs[0].Name);
+        //}
+
         [TestMethod]
-        public void GetNodesOfType()
+        public void GetValues()
         {
-            List<MyNode> cbs = CLI.GetNodesOfType(typeof(MyRandomNode));
-            var test = "ahoj";
-            MyLog.DEBUG.WriteLine(test);
+            float[] data = CLI.GetValues(24, "RandomNumbers");
+            Assert.AreEqual(0, data.Length);
+            CLI.Run(10);
+            data = CLI.GetValues(24, "Output");
+            Assert.AreEqual(3, data.Length);
+            Assert.AreEqual(1, data.Sum());
         }
 
         [TestCleanup]

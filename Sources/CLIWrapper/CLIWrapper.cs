@@ -46,29 +46,6 @@ namespace CLIWrapper
             }
         }
 
-        public static void Main(string[] args)
-        {
-            BSCLI cli = new BSCLI();
-            cli.OpenProject(@"C:\Users\michal.vlasak\Downloads\lt.brain");
-            //List<MyNode> nodes = CLI.GetNodesOfType(typeof(MyCodeBook));
-            //CLI.DumpNodes(); // OK
-
-            //CLI.Set(323, "Mode", "GenerateOutput");  // OK
-            //CLI.Set(323, "InputAsOffset", true); // OK
-            //CLI.Set(323, "SymbolSize", 65); // OK
-
-            //BrainSimulatorCLI.BSCLI.FilterFunc filter = x => { return true; };
-
-            //float[] values = CLI.GetValues(527, "Output");
-            //foreach (float f in values) {
-            //    MyLog.DEBUG.WriteLine(f);
-            //}
-            cli.Run(100);
-            //CLI.SaveProject(@"C:\Users\michal.vlasak\Desktop\export.brain");
-            cli.Quit();
-            Console.ReadLine();
-        }
-
         public BSCLI(MyLogLevel level = MyLogLevel.DEBUG)
         {
             SimulationHandler = new MyCLISimulationHandler();
@@ -133,7 +110,9 @@ namespace CLIWrapper
         /// <returns></returns>
         public List<MyNode> GetNodesOfType(Type type)
         {
-            FilterFunc filter = x => { if (x.GetType() == type) return true; return false; };
+            // Comparing strings is a really really bad hack. But == comparison of GetType() (or typeof) and type or using Equals methods stopped working.
+            // And you cannot use "is" since the "type" is known at the execution time
+            FilterFunc filter = x => { if (x.GetType().ToString() == type.ToString()) return true; return false; };
             return Filter(filter);
         }
 
