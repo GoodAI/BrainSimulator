@@ -75,9 +75,20 @@ namespace CLIWrapper
             SimulationHandler.Simulation = new MyLocalSimulation();
             uid = 0;
 
-            MyConfiguration.LoadModules();
-            //MyConfiguration.AddNodesFromFile(@"conf\basic_nodes.xml", Assembly.Load(new AssemblyName("BrainSimulator")));
-            //MyConfiguration.AddNodesFromFile(@"conf\custom_nodes.xml", Assembly.Load(new AssemblyName("CustomModels")));
+            var path = MyResources.GetEntryAssemblyPath();
+
+            MyConfiguration.SetupModuleSearchPath();
+            MyConfiguration.ProcessCommandParams();
+
+            try
+            {
+                MyConfiguration.LoadModules();
+            }
+            catch (Exception e)
+            {
+                MyLog.WARNING.WriteLine(e.Message);
+                Environment.Exit(1);
+            }
 
             MyLog.Level = level;
         }
