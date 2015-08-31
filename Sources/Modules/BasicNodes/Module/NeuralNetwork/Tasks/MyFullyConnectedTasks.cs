@@ -150,9 +150,15 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
             if (previousLayer != null)
             {
-                // reset delta only if next is not Gaussian HACK.
-                // (Gaussian layer already reseted delta and filled with regularization deltas)
-                if (nextLayer==null || !((nextLayer is MyGaussianHiddenLayer) && (nextLayer.DeltaBackTask as MyGaussianBackDeltaTask).Regularize))
+
+                if (
+                    // batch learning check - only reset if batch index is zero (we are starting a new batch)
+                    (Owner.ParentNetwork.NewBatch()) &&
+                    // reset delta only if next is not Gaussian HACK.
+                    // (Gaussian layer already reseted delta and filled with regularization deltas)
+                    nextLayer==null || !((nextLayer is MyGaussianHiddenLayer) && (nextLayer.DeltaBackTask as MyGaussianBackDeltaTask).Regularize)
+                )
+
                     previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer

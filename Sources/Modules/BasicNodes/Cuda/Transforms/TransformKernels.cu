@@ -176,7 +176,13 @@ extern "C"
 				break;
 			case 5:
 				output[id] = coshf(input[id]);
-				break;			
+				break;
+			case 6:
+				output[id] = asinf(input[id]);
+				break;
+			case 7:
+				output[id] = acosf(input[id]);
+				break;
 			}
 		}		
 	}

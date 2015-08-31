@@ -57,6 +57,7 @@ namespace GoodAI.Modules.LSTM.Tasks
             if (previousLayer != null)
             {
                 // reset delta
+                // TODO - batch checking? if (Owner.ParentNetwork.NewBatch())
                 previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
