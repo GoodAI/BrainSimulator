@@ -3,13 +3,13 @@
 
 #### New Features
 
-**TextWorld** – We’ve enabled the use of text as input for Brain Simulator, a feature that was previously unavailable. TextWorld now converts text to a format that neural networks understand, allows the user to choose between two types of sample text inputs, and makes it possible to load external plain text files to be used as input
+**TextWorld** - We`ve enabled the use of text as input for Brain Simulator, a feature that was previously unavailable. TextWorld now converts text to a format that neural networks understand, allows the user to choose between two types of sample text inputs, and makes it possible to load external plain text files to be used as input
 
-**SoundWorld** – SoundWorld update is similar to TextWorld, but uses sound rather than text as input. It brings the processing of raw audio samples inside Brain Simulator (for example, for speech recognition tasks)
+**SoundWorld** - SoundWorld update is similar to TextWorld, but uses sound rather than text as input. It brings the processing of raw audio samples inside Brain Simulator (for example, for speech recognition tasks)
 
-**StackLayers** – StackLayers provides users with a mechanism for building more complex neural networks. The update enables the stacking of several neural networks in parallel and also putting another layer above them, and connects all networks in the stack to it. This ensures that information between the stack and the higher layer flows correctly
+**StackLayers** - StackLayers provides users with a mechanism for building more complex neural networks. The update enables the stacking of several neural networks in parallel and also putting another layer above them, and connects all networks in the stack to it. This ensures that information between the stack and the higher layer flows correctly
 
-**GaussLayer** – the layer samples from the distribution that is parametrized by the output of the previous layer and this sampling is further used as the input to the following layer. Then it can be applied to sample novel (unseen) data from the distributions.
+**GaussLayer** - the layer samples from the distribution that is parametrized by the output of the previous layer and this sampling is further used as the input to the following layer. Then it can be applied to sample novel (unseen) data from the distributions.
 
 #### Improvements
 - Global data folder is now selected independently from the *Global Load on Start* function
