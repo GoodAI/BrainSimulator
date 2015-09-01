@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
+﻿using GoodAI.BrainSimulator.Utils;
+using System;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using GoodAI.BrainSimulator.Utils;
 
 namespace GoodAI.BrainSimulator.Forms
 {

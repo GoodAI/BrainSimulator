@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Observers;
-using System.Runtime.InteropServices;
-using  XmlFeedForwardNet.Networks;
-using GoodAI.Core.Task;
-using GoodAI.Core;
+﻿using GoodAI.Core;
+using System;
+using XmlFeedForwardNet.Networks;
 
 namespace XmlFeedForwardNet.Layers
 {

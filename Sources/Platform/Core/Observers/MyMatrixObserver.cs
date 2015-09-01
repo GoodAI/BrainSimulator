@@ -1,20 +1,10 @@
-﻿using GoodAI.Core.Nodes;
-using GoodAI.Core.Observers;
-using GoodAI.Core.Utils;
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Observers.Helper;
+using GoodAI.Core.Utils;
 using ManagedCuda;
-using ManagedCuda.VectorTypes;
-using ManagedCuda.BasicTypes;
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Threading.Tasks;
 using YAXLib;
-using GoodAI.Core.Task;
 
 namespace GoodAI.Core.Observers
 {

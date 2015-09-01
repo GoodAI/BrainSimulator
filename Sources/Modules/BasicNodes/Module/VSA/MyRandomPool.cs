@@ -1,17 +1,11 @@
-﻿using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
+﻿using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManagedCuda.BasicTypes;
+using System.Diagnostics;
 using YAXLib;
-using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA
 {

@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Observers.Helper;
 using ManagedCuda;
-using ManagedCuda.VectorTypes;
 using ManagedCuda.BasicTypes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Task;
+using System;
+using System.Drawing;
 using System.Drawing.Imaging;
-using System.Reflection;
+using System.Runtime.InteropServices;
 
 
 namespace GoodAI.Core.Observers.Helper

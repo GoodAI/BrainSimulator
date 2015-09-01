@@ -1,18 +1,10 @@
 ﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-using GoodAI.Core;
 using GoodAI.Core.Execution;
-using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
-using GoodAI.Core.Utils;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 

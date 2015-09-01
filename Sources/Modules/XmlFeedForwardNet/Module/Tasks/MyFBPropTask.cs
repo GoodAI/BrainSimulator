@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManagedCuda;
-using ManagedCuda.VectorTypes;
-using ManagedCuda.BasicTypes;
-using ManagedCuda.CudaRand;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using  XmlFeedForwardNet.Tasks.BackPropAgent;
+using System;
 using System.ComponentModel;
+using XmlFeedForwardNet.Networks;
+using XmlFeedForwardNet.Tasks.BackPropAgent;
 using YAXLib;
-using  XmlFeedForwardNet.Networks;
 
 namespace  XmlFeedForwardNet.Tasks
 {

@@ -2,13 +2,9 @@
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManagedCuda.BasicTypes;
-using YAXLib;
 using System.ComponentModel;
 using System.Reflection;
+using YAXLib;
 
 
 namespace GoodAI.Core.Task

@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Memory;
-using System.Drawing;
+using System.ComponentModel;
 using YAXLib;
-using ManagedCuda;
-using GoodAI.Core;
 
 
 namespace GoodAI.Modules.Motor

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core.Task;
-using GoodAI.Core.Utils;
-using  XmlFeedForwardNet.Networks;
+﻿using XmlFeedForwardNet.Networks;
 
 namespace  XmlFeedForwardNet.Tasks.BackPropAgent.DeltaCreator
 {

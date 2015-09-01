@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
+﻿using ManagedCuda.VectorTypes;
+using System;
 using System.Collections;
-using GoodAI.Core.Utils;
+using System.Collections.Generic;
 
 namespace GoodAI.Modules.GridWorld
 {

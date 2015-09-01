@@ -1,13 +1,8 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
+﻿using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Observers;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System.Windows.Forms;
 
 namespace GoodAI.BrainSimulator.Utils
 {    

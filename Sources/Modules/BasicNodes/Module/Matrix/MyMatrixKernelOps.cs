@@ -1,22 +1,8 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;           // manual kernel sizes are needed
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-
-using GoodAI.Modules.Matrix;
-
-using ManagedCuda.VectorTypes;
-using GoodAI.Core;           // manual kernel sizes are needed
 
 
 namespace GoodAI.Modules.Matrix
