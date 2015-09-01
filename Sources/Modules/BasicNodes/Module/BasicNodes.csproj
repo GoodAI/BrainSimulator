@@ -119,6 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\MyLoopGroup.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
