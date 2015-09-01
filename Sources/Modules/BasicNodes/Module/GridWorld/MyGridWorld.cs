@@ -179,7 +179,8 @@ namespace GoodAI.Modules.GridWorld
             textureA = 0,
             textureB = 1,
             textureC = 2,
-            textureD = 3
+            textureD = 3,
+            textureE = 4
         };
 
         [MyBrowsable, Category("Constants")]
@@ -252,6 +253,9 @@ namespace GoodAI.Modules.GridWorld
                     break;
                 case MyTextureSets.textureD:
                     TEXTURE_SET = @"res\gridworld4\";
+                    break;
+                case MyTextureSets.textureE:
+                    TEXTURE_SET = @"res\gridworld5\";
                     break;
             }
 
