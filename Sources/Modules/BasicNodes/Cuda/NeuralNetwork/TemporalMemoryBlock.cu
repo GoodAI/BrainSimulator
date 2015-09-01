@@ -13,45 +13,31 @@ extern "C"
 {
 	__global__ void CumulateThroughTimeKernel(float* memoryBlocks, int count, int sequenceLength)
 	{
-		int memoryIdx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+		int memoryIdx = blockDim.x * blockIdx.y * gridDim.x
+			+ blockDim.x * blockIdx.x
 			+ threadIdx.x;
-
-		// 0 is boundary block
-		int firstMemoryBlockId = 1;
-		int firstMemoryBlockOffset = firstMemoryBlockId * count;
-
-		// sequenceLength - 1 is boundary block
-		int lastMemoryBlockId = sequenceLength - 2;
 
 		if (memoryIdx < count)
 		{
-			// firstMemoryBlockId + 1 excludes the first block (which we are summing into)
-			for (size_t i = firstMemoryBlockId + 1; i < lastMemoryBlockId; i++)
+			for (size_t i = 1; i < sequenceLength; i++)
 			{
 				int memoryBlockOffset = i * count;
-				memoryBlocks[firstMemoryBlockOffset + memoryIdx] += memoryBlocks[memoryBlockOffset + memoryIdx];
+				memoryBlocks[memoryIdx] += memoryBlocks[memoryBlockOffset + memoryIdx];
 			}
 		}
 	}
 
 	__global__ void CopyThroughTimeKernel(float* memoryBlocks, int count, int sequenceLength)
 	{
-		int memoryIdx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+		int memoryIdx = blockDim.x * blockIdx.y * gridDim.x
+			+ blockDim.x * blockIdx.x
 			+ threadIdx.x;
-
-		// 0 is boundary block
-		int firstMemoryBlockId = 1;
-
-		// sequenceLength - 1 is boundary block
-		int lastMemoryBlockId = sequenceLength - 2;
-		int lastMemoryBlockOffset = lastMemoryBlockId * count;
 
 		if (memoryIdx < count)
 		{
-			// lastMemoryBlockId - 1 excludes last memory block (we are taking values from that block)
-			for (size_t i = lastMemoryBlockId - 1; i >= firstMemoryBlockId; i--)
+			int lastMemoryBlockOffset = sequenceLength - 1;
+
+			for (size_t i = sequenceLength - 2; i >= 0; i--)
 			{
 				int memoryBlockOffset = i * count;
 				memoryBlocks[memoryBlockOffset + memoryIdx] = memoryBlocks[lastMemoryBlockOffset + memoryIdx];

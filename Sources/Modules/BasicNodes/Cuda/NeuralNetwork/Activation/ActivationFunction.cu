@@ -20,7 +20,8 @@ extern "C"
 		RATIONAL_SIGMOID,
 		RELU,
 		SOFTMAX,
-		TANH
+		TANH,
+		LECUN_TANH,
 	};
 
 	__device__ int sign(float val)
@@ -44,6 +45,21 @@ extern "C"
 	{
 		float val = tanhf(x);
 		return 1 - val * val;
+	}
+
+	__device__ float lecun_tanh(float x)
+	{
+		return 1.7159f * tanh((2.0f * x) / 3.0f);
+	}
+
+	__device__ float hyperbolic_secant(float x)
+	{
+		return 2.0f / (expf(x) + expf(-x));
+	}
+
+	__device__ float lecun_tanh_derivative(float x)
+	{
+		return 1.14393 * powf(hyperbolic_secant((2.0f * x) / 3.0f), 2.0f);
 	}
 
 	__device__ float identity(float x)
@@ -136,6 +152,9 @@ extern "C"
 			case NO_ACTIVATION_FUNCTION:
 				return input;
 
+			case LECUN_TANH:
+				return lecun_tanh(input);
+
 			default:
 				return 0.0f;
 		}
@@ -168,6 +187,9 @@ extern "C"
 
 			case NO_ACTIVATION_FUNCTION:
 				return 1.0f;
+
+			case LECUN_TANH:
+				return lecun_tanh_derivative(input);
 
 			default:
 				return 0.0f;

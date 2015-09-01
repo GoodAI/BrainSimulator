@@ -33,7 +33,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         RATIONAL_SIGMOID,
         RELU,
         SOFTMAX,
-        TANH
+        TANH,
+        LECUN_TANH,
     }
 
     public abstract class MyAbstractLayer : MyWorkingNode

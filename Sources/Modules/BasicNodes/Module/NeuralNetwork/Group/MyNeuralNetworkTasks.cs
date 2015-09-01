@@ -95,7 +95,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public override void Execute()
         {
-            //System.Console.WriteLine(Owner.TimeStep + " " + Owner.SequenceLength);
             Owner.TimeStep++;
         }
     }
@@ -206,7 +205,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     layer.DropoutMask,
                     layer.Neurons,
                     layer.Weights.Count
-                    );
+                );
             }
             else if (layer.Connection == ConnectionType.GAUSSIAN)
             {
@@ -230,7 +229,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     convLayer.HorizontalStride, convLayer.VerticalStride,
                     convLayer.L1Term, convLayer.L2Term,
                     convLayer.Weights.Count // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
-                    );
+                );
             }
             else
             {

@@ -56,10 +56,10 @@ namespace GoodAI.Modules.LSTM.Tasks
                 {
                     if (Owner.ResetSignal.IsIncomingRised())
                     {
-                        Owner.CellStates.Fill(0);
                         Owner.Output.Fill(0);
-                        Owner.PreviousCellStates.Fill(0);
                         Owner.PreviousOutput.Fill(0);
+                        Owner.CellStates.Fill(0);
+                        Owner.PreviousCellStates.Fill(0);
                     }
 
                     m_feedForwardKernel.Run(
@@ -107,18 +107,18 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.InputGateActivations.FillAll(0);
                         Owner.ForgetGateActivations.FillAll(0);
                         Owner.OutputGateActivations.FillAll(0);
-
+                        
                         Owner.CellInputActivationDerivatives.FillAll(0);
                         Owner.CellStateActivationDerivatives.FillAll(0);
                         Owner.InputGateActivationDerivatives.FillAll(0);
                         Owner.ForgetGateActivationDerivatives.FillAll(0);
                         Owner.OutputGateActivationDerivatives.FillAll(0);
-
+                        
                         Owner.CellInputWeightGradient.FillAll(0);
                         Owner.OutputGateWeightGradient.FillAll(0);
                         Owner.InputGateWeightGradient.FillAll(0);
                         Owner.ForgetGateWeightGradient.FillAll(0);
-
+                        
                         Owner.CellStateErrors.FillAll(0);
                         Owner.CellInputDeltas.FillAll(0);
                         Owner.OutputGateDeltas.FillAll(0);
@@ -160,8 +160,8 @@ namespace GoodAI.Modules.LSTM.Tasks
                     }
 
                     m_feedForwardKernel.Run(
-                        (int)Owner.InputActivationFunction,
-                        (int)Owner.GateActivationFunction,
+                        (int) Owner.InputActivationFunction,
+                        (int) Owner.GateActivationFunction,
                         Owner.Input,
                         Owner.Output,
                         Owner.Output.GetTimeShiftedBlock(-1),
@@ -182,7 +182,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.InputGateWeights,
                         Owner.ForgetGateWeights,
                         Owner.OutputGateWeights,
-
+                
                         CLIP_CELL_STATE,
                         Owner.Input.Count,
                         Owner.CellStates.Count,
@@ -191,7 +191,6 @@ namespace GoodAI.Modules.LSTM.Tasks
                     break;
                 }
             }
-
         }
     }
 }

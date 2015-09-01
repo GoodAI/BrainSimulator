@@ -20,17 +20,26 @@ namespace GoodAI.Modules.NeuralNetwork
 {
     public class MyTemporalMemoryBlock<T> : MyMemoryBlock<T> where T : struct
     {
-        public int BoundedSequenceLength
+        public int SequenceLength
         {
             get
             {
                 if (Owner is MyAbstractLayer)
                 {
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    // +2 because there is one empty block at beginning and end (spec. boundary conditions)
-                    return layer.ParentNetwork.SequenceLength + 2;
+                    return layer.ParentNetwork.SequenceLength;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
+            }
+        }
+        
+        public int BoundedSequenceLength
+        {
+            get
+            {
+                // +2 because there are two empty boundary blocks one before, one after
+                // however they are physically both at the end of memory
+                return SequenceLength + 2;
             }
         }
 
@@ -41,8 +50,7 @@ namespace GoodAI.Modules.NeuralNetwork
                 if (Owner is MyAbstractLayer)
                 {
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    // +1 to skip first boundary block
-                    return layer.ParentNetwork.TimeStep + 1;
+                    return layer.ParentNetwork.TimeStep;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
             }
@@ -77,21 +85,13 @@ namespace GoodAI.Modules.NeuralNetwork
                 switch (mode)
                 {
                     case ModeType.None:
-                        {
-                            modeKernel = null;
-                            break;
-                        }
+                        modeKernel = null;
+                        return;
                     case ModeType.Cumulate:
-                        {
-                            modeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"NeuralNetwork\TemporalMemoryBlock", "CumulateThroughTimeKernel");
-                            break;
-                        }
+                        modeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"NeuralNetwork\TemporalMemoryBlock", "CumulateThroughTimeKernel");
+                        break;
                     case ModeType.Copy:
-                        {
-                            modeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"NeuralNetwork\TemporalMemoryBlock", "CopyThroughTimeKernel");
-                            break;
-                        }
-                    default:
+                        modeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"NeuralNetwork\TemporalMemoryBlock", "CopyThroughTimeKernel");
                         break;
                 }
                 modeKernel.SetupExecution(Count);
@@ -101,79 +101,15 @@ namespace GoodAI.Modules.NeuralNetwork
         public void RunMode()
         {
             if (modeKernel != null)
-                modeKernel.Run(GetDevicePtr(Owner.GPU, 0, 0), Count, BoundedSequenceLength);
-            //switch (Mode)
-            //{
-            //    case ModeType.None: break;
-            //    case ModeType.Cumulate:
-            //    {
-            //        CumulateThroughTime();
-            //        break;
-            //    }
-            //    case ModeType.Copy:
-            //    {
-            //        CopyThroughTime();
-            //        break;
-            //    }
-            //    default: break;
-            //}
-        }
-
-        private void CumulateThroughTime()
-        {
-            if (typeof(T) == typeof(float))
-            {
-                int size = Marshal.SizeOf(typeof(T));
-
-                // make it efficient
-                T[] HostAtTimeZero = new T[Count];
-                // offset device 1 block (to skip first 'boundary condition' block)
-                Device[Owner.GPU].CopyToHost(HostAtTimeZero, size * Count, 0, size * Count);
-                // start from 2 to skip boundary block and first block is already on host
-                // go to t < BoundedSequenceLength-1 because to skip last boundary block
-                for (int t = 2; t < BoundedSequenceLength - 1; t++)
-                {
-                    Device[Owner.GPU].CopyToHost(Host, size * t * Count, 0, size * Count);
-                    for (int i = 0; i < HostAtTimeZero.Length; i++)
-                    {
-                        // C# thingy...
-                        float x = (float)(object)HostAtTimeZero[i];
-                        x += (float)(object)Host[i];
-                        HostAtTimeZero[i] = (T)(object)x;
-                    }
-                }
-                // offset device 1 block (to skip first 'boundary condition' block)
-                Device[Owner.GPU].CopyToDevice(HostAtTimeZero, 0, size * Count, size * Count);
-            }
-        }
-
-        private void CopyThroughTime()
-        {
-            if (typeof(T) == typeof(float))
-            {
-                int size = Marshal.SizeOf(typeof(T));
-
-                // make it efficient
-                T[] HostAtTheEnd = new T[Count];
-                Device[Owner.GPU].CopyToHost(HostAtTheEnd, size * (BoundedSequenceLength - 2) * Count, 0, size * Count);
-                for (int t = BoundedSequenceLength - 3; t > 0; t--)
-                {
-                    Device[Owner.GPU].CopyToHost(Host, size * t * Count, 0, size * Count);
-                    for (int i = 0; i < HostAtTheEnd.Length; i++)
-                    {
-                        Host[i] = HostAtTheEnd[i];
-                        Device[Owner.GPU].CopyToDevice(Host, 0, size * t * Count, size * Count);
-                    }
-                }
-            }
+                modeKernel.Run(GetDevicePtr(Owner.GPU, 0, 0), Count, SequenceLength);
         }
 
         public CUdeviceptr GetTimeShiftedBlock(int timeShift)
         {
             int t = TimeStep + timeShift;
-            if (t <= -1) // boundary block at t = -1 or less
-                return GetDevicePtr(Owner.GPU, 0, 0);
-            else if (BoundedSequenceLength - 1 <= t) // boundary block at t = seqLen - 1 or graeter
+            if (t < 0) // get boundary block at beginning
+                return GetDevicePtr(Owner.GPU, 0, BoundedSequenceLength - 2);
+            else if (SequenceLength <= t) // get boundary block at the end
                 return GetDevicePtr(Owner.GPU, 0, BoundedSequenceLength - 1);
             return GetDevicePtr(Owner.GPU, 0, t);
         }

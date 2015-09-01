@@ -9,6 +9,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Core;
@@ -78,6 +79,10 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.ForgetGateActivationDerivatives.FillAll(0);
             Owner.OutputGateActivationDerivatives.FillAll(0);
 
+            Owner.CellInputWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            Owner.OutputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            Owner.InputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            Owner.ForgetGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
         }
     }
 }

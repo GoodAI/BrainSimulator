@@ -195,13 +195,9 @@ namespace GoodAI.Modules.LSTM
             OutputGateWeights.Count = gateInputSize * OutputGateActivations.Count;
 
             CellInputWeightGradient.Count = CellInputWeights.Count;
-            CellInputWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
             OutputGateWeightGradient.Count = OutputGateWeights.Count;
-            OutputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
             InputGateWeightGradient.Count = InputGateWeights.Count;
-            InputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
             ForgetGateWeightGradient.Count = ForgetGateWeights.Count;
-            ForgetGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
 
             CellInputWeightDeltas.Count = CellInputWeights.Count;
             InputGateWeightDeltas.Count = InputGateWeights.Count;
@@ -216,6 +212,11 @@ namespace GoodAI.Modules.LSTM
             CellWeightsRTRLPartials.Count = CellInputWeights.Count;
             InputGateWeightsRTRLPartials.Count = InputGateWeights.Count * CellsPerBlock;
             ForgetGateWeightsRTRLPartials.Count = ForgetGateWeights.Count * CellsPerBlock;
+
+            CellInputWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            OutputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            InputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
+            ForgetGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
             
             CellStateErrors.Count = CellStates.Count;
             CellInputDeltas.Count = CellStates.Count;
@@ -224,6 +225,7 @@ namespace GoodAI.Modules.LSTM
             InputGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???
 
             Delta.Count = CellStates.Count; // computed by previous layer
+            //Delta.Mode = MyTemporalMemoryBlock<float>.ModeType.Copy;
 
             // make an even number of weights for the cuda random initialisation
             if (CellInputWeights.Count % 2 != 0)
