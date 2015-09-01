@@ -436,7 +436,14 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        public string Name { get { return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; } set { } }
+        public string Name 
+        { 
+            get 
+            { 
+                return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; 
+            } 
+            set { } 
+        }
 
         #endregion
 

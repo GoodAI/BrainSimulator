@@ -839,7 +839,7 @@ namespace GoodAI.BrainSimulator.Forms
                 Project.World.ValidateWorld(validator);                
                 Project.Network.Validate(validator);
 
-                if(ObserverViews != null)
+                if (ObserverViews != null)
                     ObserverViews.ForEach(view => view.Observer.Validate(validator));
 
                 validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
