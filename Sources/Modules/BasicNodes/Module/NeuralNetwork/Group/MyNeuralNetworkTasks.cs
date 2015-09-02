@@ -46,42 +46,55 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
             // set next and previous layer
             MyAbstractLayer layer;
-            MyAbstractLayer lastLayer = null;
+            MyAbstractLayer lastTopologicalLayer = null;
             foreach (MyNode child in Owner.SortedChildren)
             {
                 if (child is MyAbstractLayer)
                 {
                     layer = child as MyAbstractLayer;
 
-                    if (lastLayer != null)
+                    if (lastTopologicalLayer != null)
                     {
-                        lastLayer.NextLayer = layer;
+                        lastTopologicalLayer.NextTopologicalLayer = layer;
                     }
 
-                    layer.NextLayer = null;
-                    layer.PreviousLayer = lastLayer;
-                    lastLayer = layer;
+                    layer.NextTopologicalLayer = null;
+                    layer.PreviousTopologicalLayer = lastTopologicalLayer;
+                    lastTopologicalLayer = layer;
+
+                    // collect all next and all previous conneted layers
+                    layer.PreviousConnectedLayers = new List<MyAbstractLayer>();
+                    layer.NextConnectedLayers = new List<MyAbstractLayer>();
+                    foreach (MyConnection inputConnection in child.InputConnections)
+                    {
+                        if (inputConnection.From is MyAbstractLayer)
+                        {
+                            MyAbstractLayer lastConnectedLayer = inputConnection.From as MyAbstractLayer;
+                            layer.PreviousConnectedLayers.Add(lastConnectedLayer);
+                            lastConnectedLayer.NextConnectedLayers.Add(layer);
+                        }
+                    }
                 }
             }
 
             // set first and last layer
-            layer = lastLayer;
-            Owner.FirstLayer = layer;
-            Owner.LastLayer = layer;
+            layer = lastTopologicalLayer;
+            Owner.FirstTopologicalLayer = layer;
+            Owner.LastTopologicalLayer = layer;
             while (layer != null)
             {
-                Owner.FirstLayer = layer;
-                layer = layer.PreviousLayer;
+                Owner.FirstTopologicalLayer = layer;
+                layer = layer.PreviousTopologicalLayer;
             }
 
             // count total number of weights
             Owner.TotalWeights = 0;
-            layer = Owner.FirstLayer;
+            layer = Owner.FirstTopologicalLayer;
             while (layer != null)
             {
                 if (layer is MyAbstractWeightLayer)
                     Owner.TotalWeights += (layer as MyAbstractWeightLayer).Weights.Count;
-                layer = layer.NextLayer;
+                layer = layer.NextTopologicalLayer;
             }
         }
     }
@@ -753,7 +766,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 }
 
                 // loop through the layers
-                MyAbstractLayer layer = Owner.FirstLayer;
+                MyAbstractLayer layer = Owner.FirstTopologicalLayer;
                 while (layer != null)
                 {
                     // check for weights
@@ -829,7 +842,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                             break; // continue to next sample
                         }
                     }
-                    layer = layer.NextLayer;
+                    layer = layer.NextTopologicalLayer;
 
                     // catch unmatched dice-rolls
                     if (layer == null)

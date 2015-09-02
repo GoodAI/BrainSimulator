@@ -76,7 +76,7 @@ namespace CustomModels.NeuralNetwork.Tasks
             MyLog.DEBUG.WriteLine("Pooling backward.");
 
             // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
 
             if (previousLayer != null)
             {
@@ -84,11 +84,7 @@ namespace CustomModels.NeuralNetwork.Tasks
                 previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_kernel.SetupExecution(Owner.Neurons);
                 m_kernel.Run(
@@ -236,7 +232,7 @@ namespace CustomModels.NeuralNetwork.Tasks
             MyLog.DEBUG.WriteLine("Convolution backward.");
 
             // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
 
             if (previousLayer != null)
             {
@@ -244,11 +240,7 @@ namespace CustomModels.NeuralNetwork.Tasks
                 previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_kernel.SetupExecution(previousLayer.Neurons);
                 m_kernel.Run(

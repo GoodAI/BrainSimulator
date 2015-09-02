@@ -78,9 +78,11 @@ extern "C"
 
 
     __global__ void GaussianForwardSamplingKernel(
-		float* gaussianParamsInputPtr,
+		ActivationFunctionEnum activationFunction,
+		float* means,
+		float* sigmas,
+		float* noisyInput,
 		float* outputPtr,
-		float* biasPtr,
 		float* randomNormalPtr,
 		int prevLayerSize,
 		int thisLayerSize
@@ -93,16 +95,13 @@ extern "C"
 
 		if (j < thisLayerSize)
 		{
-			float mu = gaussianParamsInputPtr[j];
-			float sigma = gaussianParamsInputPtr[j + prevLayerSize / 2];
-			float x = randomNormalPtr[j];
-				
-			// sample Gaussian from Uniform
-			//float t = expf(-pow((x - mu), 2) / powf(sigma, 2));
+			float mu = means[j], sigma = sigmas[j], x = randomNormalPtr[j];
 
-			// renormalize to <0, 1>
-			//outputPtr[j] = fminf(fmaxf(t, 0), 1);
-			outputPtr[j] = sigmoid(mu + x * sigma);
+			// input means after applying noise
+			noisyInput[j] = mu + x * sigma;
+
+			// squashing function applied to noisy input
+			outputPtr[j] = Evaluate(activationFunction, noisyInput[j]);
 		}
 	}
 }

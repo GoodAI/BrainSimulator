@@ -82,7 +82,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 float L1Sum = 0.0f;
                 float L2Sum = 0.0f;
 
-                MyAbstractLayer layer = ParentNetwork.FirstLayer; // pointer to first layer
+                MyAbstractLayer layer = ParentNetwork.FirstTopologicalLayer; // pointer to first layer
                 while (layer != null)
                 {
                     if (layer is MyAbstractWeightLayer)
@@ -100,7 +100,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     }
 
                     // next layer
-                    layer = layer.NextLayer;
+                    layer = layer.NextTopologicalLayer;
                 }
 
                 // add sums to cost

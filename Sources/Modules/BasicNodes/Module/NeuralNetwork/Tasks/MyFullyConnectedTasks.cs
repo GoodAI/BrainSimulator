@@ -145,22 +145,17 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Execute() //Task execution
         {
             // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
-            MyAbstractLayer nextLayer = Owner.NextLayer;
+            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
+            MyAbstractLayer nextLayer = Owner.NextTopologicalLayer;
 
             if (previousLayer != null)
             {
                 // reset delta only if next is not Gaussian HACK.
                 // (Gaussian layer already reseted delta and filled with regularization deltas)
-                if (nextLayer==null || !((nextLayer is MyGaussianHiddenLayer) && (nextLayer.DeltaBackTask as MyGaussianBackDeltaTask).Regularize))
-                    previousLayer.Delta.Fill(0);
+                previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_deltaKernel.SetupExecution(previousLayer.Neurons);
                 m_deltaKernel.Run(
@@ -172,7 +167,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     Owner.ParentNetwork.Dropout,
                     previousLayer.Neurons,
                     Owner.Neurons
-                    );
+                );
             }
         }
     }

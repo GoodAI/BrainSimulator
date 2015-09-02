@@ -62,10 +62,12 @@ extern "C"
 	}
 
 
-    __global__ void GaussianSamplingDeltaKernel(
-		float* inputPtr,
-		float* outputPtr,
-		float* prevDeltaPtr,
+	__global__ void GaussianSamplingDeltaKernel(
+		int useSigmaConstant,
+		ActivationFunctionEnum prevActFunc,
+		float* prevWeighedInputPtr,
+		float* meanDeltas,
+		float* sigmaDeltas,
 		float* thisDeltaPtr,
 		float* randomNormalPtr,
 		int thisLayerSize
@@ -78,8 +80,12 @@ extern "C"
 
 		if (i < thisLayerSize)
 		{
-			prevDeltaPtr[i] += thisDeltaPtr[i] * sigmoid_derivative(outputPtr[i]);
-			prevDeltaPtr[2 * i] += thisDeltaPtr[i] * randomNormalPtr[i] * sigmoid_derivative(outputPtr[i]);
+			// no extra term from transformation when taking derivative w.r.t mean: mean + randomNormal * sigma
+			meanDeltas[i] += thisDeltaPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]);
+
+			// if not using constant sigmas, then they are in second half
+			// randomNormal term is because there is one more transformation before squasing: mean + randomNormal * sigma
+			sigmaDeltas[i] += !useSigmaConstant * (thisDeltaPtr[i] * randomNormalPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]));
 		}
 	}
 }

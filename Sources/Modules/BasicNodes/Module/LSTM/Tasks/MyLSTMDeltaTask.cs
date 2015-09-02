@@ -29,6 +29,8 @@ namespace GoodAI.Modules.LSTM.Tasks
         private MyCudaKernel m_cellInputGradientKernel;
         private MyCudaKernel m_deltaBackKernel;
 
+        private CUdeviceptr nullCUdeviceptr = new CUdeviceptr(0);
+
         public override void Init(int nGPU)
         {
             switch (Owner.LearningTasks)
@@ -61,18 +63,15 @@ namespace GoodAI.Modules.LSTM.Tasks
 
             // pointer to previous layer
             //MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
-            CUdeviceptr prevInputPtr = new CUdeviceptr(0); // 2 improve
+            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
+            CUdeviceptr prevInputPtr = nullCUdeviceptr; // 2 improve
             if (previousLayer != null)
             {
                 // reset delta
                 previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
             }
 
             switch (Owner.LearningTasks)

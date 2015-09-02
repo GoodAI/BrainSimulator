@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.RBM;
@@ -15,8 +16,6 @@ using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
-
-
     [Description("Init"), MyTaskInfo(OneShot = true)]
     public class MyGaussianInitTask : MyTask<MyGaussianHiddenLayer>
     {
@@ -27,9 +26,18 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Execute()
         {
             Owner.ResetPriorStats();
+
+            // fill constant sigma memory block with selected constant
+            if (Owner.SigmaConstants.Count > 0)
+            {
+                for (int i = 0; i < Owner.SigmaConstants.Count; i++)
+			    {
+                    Owner.SigmaConstants.Host[i] = Owner.SigmaConstant;
+			    }
+                Owner.SigmaConstants.SafeCopyToDevice();
+            }
         }
     }
-
 
     /// <author>GoodAI</author>
     /// <meta>mbr</meta>
@@ -57,17 +65,34 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Init(int nGPU)
         {
             m_forwardSamplingKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\FeedForwardKernels", "GaussianForwardSamplingKernel");
-            m_L1TermKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "L1TermKernel");
-            m_L2TermKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "L2TermKernel");
-            m_gaussianRegularizationKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "GaussianRegularizationKernel");
-        }
+            m_forwardSamplingKernel.SetupExecution(Owner.Neurons);
 
+            m_L1TermKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "L1TermKernel");
+            m_L1TermKernel.SetupExecution(m_L1TermKernel.MAX_THREADS);
+            m_L1TermKernel.DynamicSharedMemory = m_L1TermKernel.BlockDimensions.x * sizeof(float);
+
+            m_L2TermKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "L2TermKernel");
+            m_L2TermKernel.SetupExecution(m_L2TermKernel.MAX_THREADS);
+            m_L2TermKernel.DynamicSharedMemory = m_L2TermKernel.BlockDimensions.x * sizeof(float);
+            
+            m_gaussianRegularizationKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "GaussianRegularizationKernel");
+            m_gaussianRegularizationKernel.SetupExecution(m_gaussianRegularizationKernel.MAX_THREADS);
+            m_gaussianRegularizationKernel.DynamicSharedMemory = m_gaussianRegularizationKernel.BlockDimensions.x * sizeof(float);
+        }
             
         public override void Execute()
         {
-            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateUniform(Owner.RandomNormal.GetDevice(Owner));
-            Owner.RandomNormal.CopyToMemoryBlock(Owner.Output, 0, 0, Owner.Output.Count);
+            // set locations for means
+            CUdeviceptr means = Owner.Input.GetDevicePtr(Owner, 0);
+            // set locations for sigmas (prev layer or constant
+            CUdeviceptr sigmas;
+            if (Owner.UseSigmaConstant)
+                sigmas = Owner.SigmaConstants.GetDevicePtr(Owner);
+            else
+                sigmas = Owner.Input.GetDevicePtr(Owner, Owner.Input.Count / 2);
 
+            MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.RandomNormal.GetDevice(Owner), 0, 1);
+            Owner.RandomNormal.CopyToMemoryBlock(Owner.Output, 0, 0, Owner.Output.Count);
 
             // small HACK
             if (ResetPriorStats)
@@ -99,12 +124,12 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 (Owner.Parent as MyNeuralNetworkGroup).SGD.TrainingRate = OriginalNeuralNetTrainingRate;
             }
 
-            // FeedForward 
-            m_forwardSamplingKernel.SetupExecution(Owner.Neurons);
             m_forwardSamplingKernel.Run(
-                Owner.Input,
+                (int)Owner.ActivationFunction,
+                means,
+                sigmas,
+                Owner.NoisyInput,
                 Owner.Output,
-                Owner.Bias,
                 Owner.RandomNormal,
                 Owner.Input.Count,
                 Owner.Output.Count
@@ -121,15 +146,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             }
             Owner.PriorGaussHiddenStatesMax.SafeCopyToDevice();
             Owner.PriorGaussHiddenStatesMin.SafeCopyToDevice();
-                
-
-
-
 
             if (Owner.ParentNetwork.L1 > 0) // don't take performance hit if L1 is not used
             {
-                m_L1TermKernel.SetupExecution(m_L1TermKernel.MAX_THREADS);
-                m_L1TermKernel.DynamicSharedMemory = m_L1TermKernel.BlockDimensions.x * sizeof(float);
                 m_L1TermKernel.Run(
                     Owner.Weights,
                     Owner.L1Term,
@@ -139,8 +158,6 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
             if (Owner.ParentNetwork.L2 > 0) // don't take performance hit if L2 is not used
             {
-                m_L2TermKernel.SetupExecution(m_L2TermKernel.MAX_THREADS);
-                m_L2TermKernel.DynamicSharedMemory = m_L2TermKernel.BlockDimensions.x * sizeof(float);
                 m_L2TermKernel.Run(
                     Owner.Weights,
                     Owner.L2Term,
@@ -148,10 +165,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 );
             }
 
-            m_gaussianRegularizationKernel.SetupExecution(m_gaussianRegularizationKernel.MAX_THREADS / 2);
-            m_gaussianRegularizationKernel.DynamicSharedMemory = m_gaussianRegularizationKernel.BlockDimensions.x * sizeof(float);
             m_gaussianRegularizationKernel.Run(
-                Owner.Input,
+                means,
+                sigmas,
                 Owner.Input.Count,
                 Owner.Regularization
             );
@@ -183,57 +199,66 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         private MyCudaKernel m_samplingDeltaKernel;
         private MyCudaKernel m_regularizationDeltaKernel;
 
+        private CUdeviceptr nullCUdeviceptr = new CUdeviceptr(0);
+
         public override void Init(int nGPU)
         {
             m_samplingDeltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "GaussianSamplingDeltaKernel");
+            m_samplingDeltaKernel.SetupExecution(Owner.Neurons);
+
             m_regularizationDeltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "GaussianRegularizationDeltaKernel");
+            m_regularizationDeltaKernel.SetConstantVariable<float>("RegularizationCoefficient", RegularizationCoefficient);
         }
 
         public override void Execute()
         {
-            // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
-
-            if (previousLayer != null)
+            if (Owner.PreviousConnectedLayers.Count > 0)
             {
-                // reset delta
-                previousLayer.Delta.Fill(0);
-                if (Regularize) previousLayer.PreviousLayer.Delta.Fill(0);
+                // pointer to previous layer
+                MyAbstractLayer previousLayer = Owner.PreviousConnectedLayers[0];
 
-                // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
-
-                m_samplingDeltaKernel.SetupExecution(previousLayer.Neurons);
-                m_samplingDeltaKernel.Run(
-                    Owner.Input,
-                    Owner.Output,
-                    previousLayer.Delta,
-                    Owner.Delta,
-                    Owner.RandomNormal,
-                    Owner.Neurons
-                );
-
-                if (Regularize)
+                if (previousLayer != null && previousLayer is MyAbstractWeightLayer)
                 {
-                    m_regularizationDeltaKernel.SetConstantVariable<float>("RegularizationCoefficient", RegularizationCoefficient);
-                    m_regularizationDeltaKernel.SetupExecution(previousLayer.Neurons);
-                    m_regularizationDeltaKernel.Run(
-                        previousLayer.Output,
-                        previousLayer.Output.Count,
-                        previousLayer.Input,
-                        previousLayer.Input.Count,
-                        (previousLayer as MyAbstractWeightLayer).Weights,
-                        previousLayer.PreviousLayer.Delta
+                    MyAbstractWeightLayer previousWeightLayer = previousLayer as MyAbstractWeightLayer;
+
+                    // set locations for mean deltas
+                    CUdeviceptr meanDeltas = previousLayer.Delta.GetDevicePtr(Owner, 0);
+                    // set locations for sigma deltas
+                    CUdeviceptr sigmaDeltas = previousLayer.Delta.GetDevicePtr(Owner, previousLayer.Delta.Count / 2);
+                    
+                    // reset delta
+                    previousLayer.Delta.FillAll(0);
+
+                    // determine input to previous layer
+                    CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
+
+                    m_samplingDeltaKernel.Run(
+                        Convert.ToInt32(Owner.UseSigmaConstant),
+                        (int)previousLayer.ActivationFunction,
+                        prevInputPtr,
+                        meanDeltas,
+                        sigmaDeltas,
+                        Owner.Delta,
+                        Owner.RandomNormal,
+                        Owner.Neurons
                     );
+
+                    if (Regularize)
+                    {
+                        int weightCount = previousWeightLayer.Weights.Count;
+                        m_regularizationDeltaKernel.SetupExecution(weightCount);
+
+                        m_regularizationDeltaKernel.Run(
+                            Convert.ToInt32(Owner.UseSigmaConstant),
+                            previousLayer.Input,
+                            previousWeightLayer.Weights,
+                            previousLayer.Output.Count,
+                            meanDeltas,
+                            sigmaDeltas
+                        );
+                    }
                 }
             }
         }
     }
-
-
- 
 }

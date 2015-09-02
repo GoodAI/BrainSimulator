@@ -91,7 +91,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Execute() //Task execution
         {
             // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
 
             if (previousLayer != null)
             {
@@ -99,11 +99,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_deltaKernel.SetupExecution(Owner.Neurons);
                 m_deltaKernel.Run(

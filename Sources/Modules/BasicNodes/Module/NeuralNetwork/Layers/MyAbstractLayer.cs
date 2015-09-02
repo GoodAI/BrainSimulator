@@ -11,6 +11,7 @@ using YAXLib;
 using GoodAI.Core.Task;
 using GoodAI.Core.Nodes;
 using GoodAI.Modules.NeuralNetwork.Group;
+using ManagedCuda.BasicTypes;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
@@ -53,8 +54,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyBrowsable, Category("Misc")]
         public int OutputColumnHint { get; set; }
 
-        public MyAbstractLayer PreviousLayer { get; set; }
-        public MyAbstractLayer NextLayer { get; set; }
+        public MyAbstractLayer PreviousTopologicalLayer { get; set; }
+        public MyAbstractLayer NextTopologicalLayer { get; set; }
+
+        public List<MyAbstractLayer> PreviousConnectedLayers { get; set; }
+        public List<MyAbstractLayer> NextConnectedLayers { get; set; }
 
         public MyNeuralNetworkGroup ParentNetwork
         {
@@ -75,8 +79,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             get
             {
-                if (PreviousLayer != null)
-                    return PreviousLayer.Output;
+                if (PreviousConnectedLayers.Count > 0)
+                    return PreviousConnectedLayers[0].Output;
                 return GetInput(0);
             }
         }
@@ -91,8 +95,22 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public virtual MyTemporalMemoryBlock<float> Delta { get; protected set; }
         #endregion
 
+        static public CUdeviceptr DetermineInput(MyAbstractLayer layer)
+        {
+            if(layer is MyGaussianHiddenLayer)
+                return (layer as MyGaussianHiddenLayer).NoisyInput.GetDevicePtr(layer.GPU);
+            else if (layer is MyAbstractWeightLayer)
+                return (layer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(layer.GPU);
+            else
+                return layer.Input.GetDevicePtr(layer.GPU);
+        }
+
         //parameterless constructor
-        public MyAbstractLayer() { }
+        public MyAbstractLayer()
+        {
+            PreviousConnectedLayers = new List<MyAbstractLayer>();
+            NextConnectedLayers = new List<MyAbstractLayer>();
+        }
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()

@@ -56,8 +56,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         //Memory Blocks
         public List<MyNode> SortedChildren;
-        public MyAbstractLayer FirstLayer;
-        internal MyAbstractLayer LastLayer;
+        public MyAbstractLayer FirstTopologicalLayer;
+        internal MyAbstractLayer LastTopologicalLayer;
         internal int TotalWeights;
 
         //Tasks
@@ -165,21 +165,21 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public void FeedForward()
         {
-            MyAbstractLayer layer = FirstLayer;
+            MyAbstractLayer layer = FirstTopologicalLayer;
             while (layer != null)
             {
                 layer.ForwardTask.Execute();
-                layer = layer.NextLayer;
+                layer = layer.NextTopologicalLayer;
             }
         }
 
         public float GetError()
         {
             // get the error from output layer
-            if (LastLayer is MyAbstractOutputLayer)
+            if (LastTopologicalLayer is MyAbstractOutputLayer)
             {
                 // pointer to output layer
-                MyAbstractOutputLayer outputLayer = LastLayer as MyAbstractOutputLayer;
+                MyAbstractOutputLayer outputLayer = LastTopologicalLayer as MyAbstractOutputLayer;
 
                 // get enabled loss function
                 MyTask lossTask = outputLayer.GetEnabledTask("LossFunctions");
