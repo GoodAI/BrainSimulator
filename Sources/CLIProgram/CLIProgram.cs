@@ -1,5 +1,6 @@
 ﻿using CLIWrapper;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +17,19 @@ namespace CLITester
             BSCLI CLI = new BSCLI(MyLogLevel.DEBUG);
             CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\Breakout.brain");
             CLI.DumpNodes();
-            CLI.Run(1000, 100);
+            for (int i = 0; i < 5; ++i )
+            {
+                CLI.Run(1000, 100);
+                float[] data = CLI.GetValues(23, "Bias");
+                MyLog.DEBUG.WriteLine(data[0]);
+                MyLog.DEBUG.WriteLine(data[1]);
+                CLI.Stop();
+                CLI.Set(23, typeof(MyQLearningTask), "DiscountFactor", 0.6);
+                CLI.Run(1000, 300);
+                data = CLI.GetValues(23, "Bias");
+                MyLog.DEBUG.WriteLine(data[0]);
+                MyLog.DEBUG.WriteLine(data[1]);
+            }
             CLI.Quit();
             Console.ReadLine();
             return;
@@ -97,3 +110,4 @@ namespace CLITester
 
 //## Example using all features
 //TODO
+
