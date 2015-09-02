@@ -27,7 +27,8 @@ extern "C"
 		float *targetPtr,
 		float *deltaPtr,
 		float *costPtr,
-		int thisLayerSize
+		int thisLayerSize,
+		float imageLossLearningRate
 		)
 	{
 		extern __shared__ float loss[];
@@ -48,7 +49,7 @@ extern "C"
 				// Use cross entropy for the loss
 				loss[tid] -= t * logf(o) + (1 - t) * logf(1 - o);
 
-				deltaPtr[k] += o - t;
+				deltaPtr[k] += imageLossLearningRate * (o - t);
 			}
 			k += blockSize;
 		}
