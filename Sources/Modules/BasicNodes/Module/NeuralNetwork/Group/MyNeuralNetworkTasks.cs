@@ -173,11 +173,12 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MySGDTask() { }
 
         // kernel
-        private MyCudaKernel m_SGDupdateKernel, m_convSGDupdateKernel;
+        private MyCudaKernel m_SGDupdateKernel, m_convSGDupdateKernel, m_partialSGDupdateKernel;
         public override void Init(int nGPU)
         {
             m_SGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "FullyConnectedSGDUpdateKernel");
             m_convSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionSGDUpdateWeightsKernel");
+            m_partialSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "PartialSGDUpdateKernel");
         }
 
         //Task execution - should be called with a parameter
@@ -210,6 +211,30 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             else if (layer.Connection == ConnectionType.GAUSSIAN)
             {
                 // Gaussian hidden layer just propagates delta, no weight updates
+            }
+            else if (layer.Connection == ConnectionType.PARTIAL_UPDATE && layer is IPartialUpdateLayer)
+            {
+                // Update some but not all of the weights
+                IPartialUpdateLayer partialUpdateLayer = layer as IPartialUpdateLayer;
+
+                m_partialSGDupdateKernel.SetupExecution(layer.Weights.Count);
+                m_partialSGDupdateKernel.Run(
+                    layer.Input,
+                    layer.Delta,
+                    layer.Weights,
+                    layer.PreviousWeightDelta,
+                    layer.Bias,
+                    layer.PreviousBiasDelta,
+                    Owner.SGD.TrainingRate,
+                    Owner.SGD.Momentum,
+                    Owner.L1,
+                    Owner.L2,
+                    layer.DropoutMask,
+                    layer.Neurons,
+                    layer.Weights.Count,
+                    partialUpdateLayer.SuppressUpdatesAt(),
+                    partialUpdateLayer.SuppressUpdatesCount()
+                );
             }
             else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
             {

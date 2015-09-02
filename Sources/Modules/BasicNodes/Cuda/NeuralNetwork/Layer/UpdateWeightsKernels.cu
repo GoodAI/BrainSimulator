@@ -186,4 +186,61 @@ extern "C"
 		}
 	}
 
+	__global__ void PartialSGDUpdateKernel(
+		float *inputPtr,
+		float *deltaPtr,
+		float *weightPtr,
+		float *previousWeightDeltaPtr,
+		float *biasPtr,
+		float *previousBiasDeltaPtr,
+		float trainingRate,
+		float momentum,
+		float L1Lambda,
+		float L2Lambda,
+		float *dropoutMaskPtr,
+		int thisLayerSize,
+		int weightCount,
+		int suppressUpdatesAt,
+		int suppressUpdatesCount
+		)
+	{
+		// i: prev. layer neuron id
+		// j: current layer neuron id
+		int weightIdx = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (weightIdx < weightCount)
+		{
+			int j = weightIdx % thisLayerSize; // index of output neuron
+
+			if (!dropoutMaskPtr[j] && (suppressUpdatesCount == 0 || j < suppressUpdatesAt || j >= suppressUpdatesAt + suppressUpdatesCount))
+			{
+				// update weights
+				int i = weightIdx / thisLayerSize; // index of input neuron
+
+				//weightDelta = trainingRate * deltaPtr[j] * inputPtr[i];
+				float weightDelta = trainingRate * (deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx]);
+				if (momentum != 0)
+				{
+					weightDelta += momentum * previousWeightDeltaPtr[weightIdx];
+					previousWeightDeltaPtr[weightIdx] = weightDelta;
+				}
+
+				weightPtr[weightIdx] -= weightDelta;
+
+				// update bias
+				if (weightIdx / thisLayerSize == 0) {
+					float biasDelta = trainingRate * deltaPtr[j];
+					if (momentum != 0)
+					{
+						biasDelta += momentum * previousBiasDeltaPtr[j];
+						previousBiasDeltaPtr[j] = biasDelta;
+					}
+					biasPtr[j] -= biasDelta;
+				}
+			}
+		}
+	}
+
 }

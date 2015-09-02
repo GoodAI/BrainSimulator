@@ -119,6 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyOne2OneOutputLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />

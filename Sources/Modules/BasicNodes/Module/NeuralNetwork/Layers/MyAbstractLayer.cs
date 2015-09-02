@@ -21,7 +21,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         FULLY_CONNECTED,
         CONVOLUTION,
         ONE_TO_ONE,
-        GAUSSIAN
+        GAUSSIAN,
+        PARTIAL_UPDATE
     }
 
     public enum ActivationFunctionType
