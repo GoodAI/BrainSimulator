@@ -60,7 +60,11 @@ namespace GoodAI.Modules.Common
 
         public override void Validate(MyValidator validator)
         {
-            base.Validate(validator);
+            if (Input1 == null || Input2 == null)
+            {
+                validator.AddWarning(this, "One of Inputs is not connected, will not gate");
+                return;
+            }
             validator.AssertError(GetInputSize(0) == GetInputSize(1), this, "Input sizes differs!");
         }
 
@@ -72,7 +76,37 @@ namespace GoodAI.Modules.Common
             }
         }
 
+        public MyCountInterationsTask CountIterations{ get; private set; }
         public MyGateTask ConditionalGateInputs { get; private set; }
+
+        private int m_iteration;
+
+        [Description("Count Iterations"), MyTaskInfo(Disabled = false, OneShot = false)]
+        public class MyCountInterationsTask : MyTask<MyConditionalGate>
+        {
+            private uint m_prevSimulationStep;
+           
+            public override void Init(Int32 nGPU)
+            {
+                Owner.m_iteration = 0;
+                m_prevSimulationStep = uint.MaxValue;
+            }
+
+            public override void Execute()
+            {
+                if (m_prevSimulationStep != SimulationStep)
+                {
+                    m_prevSimulationStep = SimulationStep;
+                    Owner.m_iteration = 0;
+                }
+
+                Owner.IterationOutput.SafeCopyToHost();
+                Owner.IterationOutput.Host[0] = Owner.m_iteration;
+                Owner.IterationOutput.SafeCopyToDevice();
+
+                Owner.m_iteration++;
+            }
+        }
 
         /// <summary>
         /// Performs gating based on counter how many times has been called during this simulation step.
@@ -99,24 +133,19 @@ namespace GoodAI.Modules.Common
                 }
             }
 
-            private uint m_prevSimulationStep;
-            private int m_iteration;
-
             public override void Init(Int32 nGPU)
             {
-                m_iteration = 0;
-                m_prevSimulationStep = uint.MaxValue;
             }
 
             public override void Execute()
             {
-                if (m_prevSimulationStep != SimulationStep)
+                if (Owner.Input1 == null || Owner.Input2 == null)
                 {
-                    m_prevSimulationStep = SimulationStep;
-                    m_iteration = 0;
+                    Owner.Output.Fill(0);
+                    return;
                 }
 
-                if (m_iteration < m_iterationThreshold)
+                if (Owner.m_iteration < m_iterationThreshold)
                 {
                     Owner.Output.CopyFromMemoryBlock(Owner.Input1, 0, 0, Owner.Input1.Count);
                 }
@@ -124,11 +153,6 @@ namespace GoodAI.Modules.Common
                 {
                     Owner.Output.CopyFromMemoryBlock(Owner.Input2, 0, 0, Owner.Input2.Count);
                 }
-                Owner.IterationOutput.SafeCopyToHost();
-                Owner.IterationOutput.Host[0] = m_iteration;
-                Owner.IterationOutput.SafeCopyToDevice();
-
-                m_iteration++;
             }
         }
     }
