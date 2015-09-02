@@ -2,17 +2,13 @@
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-
 using System;
-using System.IO;
 using System.ComponentModel;
-using System.Windows.Forms.Design;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms.Design;
 using YAXLib;
 
 namespace GoodAI.Modules.Common

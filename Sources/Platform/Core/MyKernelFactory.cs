@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+﻿using GoodAI.Core.Configuration;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
 using ManagedCuda.CudaRand;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
-using System.Reflection;
+using ManagedCuda.VectorTypes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using GoodAI.Core.Configuration;
+using System.Reflection;
 
 namespace GoodAI.Core
 {

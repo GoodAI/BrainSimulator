@@ -1,16 +1,11 @@
 ﻿using GoodAI.Core;
-using GoodAI.Modules.NeuralNetwork.Group;
-using GoodAI.Modules.NeuralNetwork.Layers;
-using GoodAI.Modules.RBM;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
 using ManagedCuda.BasicTypes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks

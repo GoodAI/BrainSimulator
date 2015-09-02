@@ -1,15 +1,10 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
+using GoodAI.Modules.Transforms;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
-using GoodAI.Core;
 
 namespace GoodAI.Modules.Retina
 {

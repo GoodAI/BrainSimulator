@@ -1,11 +1,6 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Observers;
 using GoodAI.Modules.Retina;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Modules.Observers
 {

@@ -1,19 +1,13 @@
-﻿using GoodAI.Core.Memory;
-using GoodAI.Modules.NeuralNetwork.Layers;
-using GoodAI.Modules.NeuralNetwork.Tasks;
-using GoodAI.Modules.RBM.Tasks;
-using GoodAI.Core.Task;
-using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core.Nodes;
-using CustomModels.RBM.Tasks;
-using YAXLib;
+﻿using CustomModels.RBM.Tasks;
 using GoodAI.Core;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.RBM.Tasks;
+using System;
+using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.RBM
 {

@@ -1,16 +1,10 @@
 using GoodAI.Core;
-using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
-using ManagedCuda;
-using ManagedCuda.VectorTypes;
 
 namespace GoodAI.Modules.NeuralGas
 {

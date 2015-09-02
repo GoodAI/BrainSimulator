@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core.Utils;
-using GoodAI.Core.Task;
-using XmlFeedForwardNet.Networks;
-using XmlFeedForwardNet.Layers;
-using XmlFeedForwardNet.Tasks;
-using XmlFeedForwardNet.Tasks.BackPropAgent;
-using XmlFeedForwardNet.Tasks.BackPropAgent.DeltaCreator;
+﻿using GoodAI.Core;
 using GoodAI.Core.Memory;
-using GoodAI.Core;
+using GoodAI.Core.Utils;
+using XmlFeedForwardNet.Layers;
+using XmlFeedForwardNet.Networks;
+using XmlFeedForwardNet.Tasks.BackPropAgent.DeltaCreator;
 
 
 namespace XmlFeedForwardNet.Tasks.BackPropAgent

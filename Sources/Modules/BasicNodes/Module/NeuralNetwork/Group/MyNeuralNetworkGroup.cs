@@ -1,24 +1,16 @@
-﻿using GoodAI.Core;
+﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
 using GoodAI.Core.Task;
-using GoodAI.Core.Execution;
-using GoodAI.Core.Signals;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using YAXLib;
-using ManagedCuda;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.LSTM.Tasks;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
-using System.Diagnostics;
 using GoodAI.Modules.RBM;
-using GoodAI.Modules.LSTM.Tasks;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
@@ -119,7 +111,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             // move reversed MyOutputDeltaTask(s) after the last MyForwardTask (usually there is only one)
             selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
             newPlan.RemoveAll(selected.Contains);
-            if (selected.Count > 1)
+            if ((selected.Where(task => task.Enabled)).Count() > 1)
                 MyLog.WARNING.WriteLine("More than one output tasks are active!");
             if (selected.Count <= 0)
                 MyLog.WARNING.WriteLine("No output tasks are active! Planning (of SGD, RMS, Adadelta etc.) might not work properly. Possible cause: no output layer is present.\nIgnore this if RBM task is currently selected.");

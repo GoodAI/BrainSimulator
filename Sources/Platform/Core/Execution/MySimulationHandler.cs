@@ -1,13 +1,9 @@
-﻿using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
+﻿using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GoodAI.Core.Execution
 {

@@ -1,21 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Signals;
-using System.Drawing;
-using YAXLib;
-using ManagedCuda;
-using System.Diagnostics;
-using GoodAI.Modules.Transforms;
 using GoodAI.Modules.NeuralNetwork.Layers;
-using GoodAI.Core;
+using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.Motor
 {

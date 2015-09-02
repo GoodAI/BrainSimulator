@@ -1,19 +1,11 @@
 ﻿using GoodAI.Core.Observers.Helper;
-using GoodAI.Modules.Retina;
-using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.Harm;
 using ManagedCuda;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
-using GoodAI.Modules.Harm;
 
 namespace GoodAI.Modules.Observers
 {

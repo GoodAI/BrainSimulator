@@ -1,11 +1,5 @@
 ﻿using GoodAI.Core.Memory;
-using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Core.Nodes
 {

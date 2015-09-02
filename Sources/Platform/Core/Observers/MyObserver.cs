@@ -1,21 +1,13 @@
-﻿using GoodAI.Core.Memory;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
+﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
-using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Core.Observers
@@ -444,7 +436,14 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        public string Name { get { return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; } set { } }
+        public string Name 
+        { 
+            get 
+            { 
+                return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; 
+            } 
+            set { } 
+        }
 
         #endregion
 

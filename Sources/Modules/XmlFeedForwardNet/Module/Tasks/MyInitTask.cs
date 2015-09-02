@@ -1,13 +1,10 @@
-﻿using XmlFeedForwardNet.Layers;
-using XmlFeedForwardNet.Networks;
+﻿using GoodAI.Core;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using GoodAI.Core;
+using XmlFeedForwardNet.Layers;
+using XmlFeedForwardNet.Networks;
 
 namespace  XmlFeedForwardNet.Tasks
 {

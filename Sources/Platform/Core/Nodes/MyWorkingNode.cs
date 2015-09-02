@@ -3,16 +3,10 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
-using System.Diagnostics;
-using System.ComponentModel;
-using GoodAI.Core.Signals;
-using System.Drawing.Design;
-using GoodAI.Core.Execution;
 
 namespace GoodAI.Core.Nodes
 {

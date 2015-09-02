@@ -1,17 +1,12 @@
 using GoodAI.Core;
 using GoodAI.Core.Memory;
-using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.VSA;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Modules.Testing
