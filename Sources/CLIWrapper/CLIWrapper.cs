@@ -116,6 +116,23 @@ namespace CLIWrapper
             return Filter(filter);
         }
 
+        /// <summary>
+        /// Return task of given type from given node
+        /// </summary>
+        /// <param name="node">Node</param>
+        /// <param name="type">Type of task</param>
+        /// <returns></returns>
+        protected MyTask GetTaskByType(MyWorkingNode node, Type type)
+        {
+            foreach (PropertyInfo taskPropInfo in node.GetInfo().TaskOrder)
+            {
+                MyTask task = node.GetTaskByPropertyName(taskPropInfo.Name);
+                if (task.GetType().ToString() == type.ToString())
+                    return task;
+            }
+            return null;
+        }
+
         protected MyMemoryBlock<float> GetMemBlock(int nodeId, string blockName)
         {
             MyNode n = Project.GetNodeById(nodeId);
@@ -277,7 +294,7 @@ namespace CLIWrapper
         public void Set(int id, Type taskType, string propName, object value)
         {
             MyWorkingNode node = (Project.GetNodeById(id) as MyWorkingNode);
-            MyTask task = (Project.GetNodeById(id) as MyWorkingNode).GetTaskByType(taskType);
+            MyTask task = GetTaskByType(node, taskType);
             setProperty(task, propName, value);
         }
 

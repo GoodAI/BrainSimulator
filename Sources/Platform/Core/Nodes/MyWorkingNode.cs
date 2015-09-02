@@ -88,16 +88,6 @@ namespace GoodAI.Core.Nodes
             return m_tasks.ContainsKey(propertyName) ? m_tasks[propertyName] : null;
         }
 
-        public MyTask GetTaskByType(Type taskType)
-        {
-            foreach (KeyValuePair<string, MyTask> pair in m_tasks)
-            {
-                if (pair.Value.GetType() == taskType)
-                    return pair.Value;
-            }
-            return null;
-        }
-
         internal bool DisableTaskGroup(MyTask excludedTask)
         {
             bool anyTaskDisabled = false;
