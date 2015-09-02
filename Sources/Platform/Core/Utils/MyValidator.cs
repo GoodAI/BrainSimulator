@@ -5,7 +5,7 @@ namespace GoodAI.Core.Utils
 {
     public interface IValidatable
     {
-        string Name { get; set; }
+        string Name { get; }
 
         void Validate(MyValidator validator);
     }

@@ -442,7 +442,6 @@ namespace GoodAI.Core.Observers
             { 
                 return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; 
             } 
-            set { } 
         }
 
         #endregion
