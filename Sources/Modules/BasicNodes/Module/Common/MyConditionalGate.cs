@@ -62,10 +62,10 @@ namespace GoodAI.Modules.Common
         {
             if (Input1 == null || Input2 == null)
             {
-                validator.AddWarning(this, "One of Inputs is not connected, will not gate");
+                validator.AddWarning(this, "One of Inputs is not connected, will publish zeros instead");
                 return;
             }
-            validator.AssertError(GetInputSize(0) == GetInputSize(1), this, "Input sizes differs!");
+            validator.AssertError(GetInputSize(0) == GetInputSize(1), this, "Input sizes differ!");
         }
 
         public override string Description
@@ -97,20 +97,20 @@ namespace GoodAI.Modules.Common
                 if (m_prevSimulationStep != SimulationStep)
                 {
                     m_prevSimulationStep = SimulationStep;
-                    Owner.m_iteration = 0;
+                    Owner.m_iteration = -1;
                 }
+                Owner.m_iteration++;
 
                 Owner.IterationOutput.SafeCopyToHost();
                 Owner.IterationOutput.Host[0] = Owner.m_iteration;
                 Owner.IterationOutput.SafeCopyToDevice();
-
-                Owner.m_iteration++;
             }
         }
 
         /// <summary>
         /// Performs gating based on counter how many times has been called during this simulation step.
         /// If Iteration lower than IterationThreshold, copy Input1 to the Output, Input2 otherwise. Iteration is reset each time step.
+        /// Inputs do not have to be connected at all.
         /// </summary>
         [Description("Gate Inputs"), MyTaskInfo(Disabled=false, OneShot=false)]
         public class MyGateTask : MyTask<MyConditionalGate>
@@ -139,19 +139,27 @@ namespace GoodAI.Modules.Common
 
             public override void Execute()
             {
-                if (Owner.Input1 == null || Owner.Input2 == null)
-                {
-                    Owner.Output.Fill(0);
-                    return;
-                }
-
                 if (Owner.m_iteration < m_iterationThreshold)
                 {
-                    Owner.Output.CopyFromMemoryBlock(Owner.Input1, 0, 0, Owner.Input1.Count);
+                    if (Owner.Input1 == null)
+                    {
+                        Owner.Output.Fill(0);
+                    }
+                    else
+                    {
+                        Owner.Output.CopyFromMemoryBlock(Owner.Input1, 0, 0, Owner.Input1.Count);
+                    }
                 }
                 else
                 {
-                    Owner.Output.CopyFromMemoryBlock(Owner.Input2, 0, 0, Owner.Input2.Count);
+                    if (Owner.Input2 == null)
+                    {
+                        Owner.Output.Fill(0);
+                    }
+                    else
+                    {
+                        Owner.Output.CopyFromMemoryBlock(Owner.Input2, 0, 0, Owner.Input2.Count);
+                    }
                 }
             }
         }
