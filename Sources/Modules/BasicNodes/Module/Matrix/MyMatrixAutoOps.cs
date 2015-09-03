@@ -46,7 +46,7 @@ namespace GoodAI.Modules.Matrix
         {
             if ((MyMatrixKernelOps.AvailableOperations() & operations) > 0)
             {
-                MatKerlOps = new MyMatrixKernelOps(callee, operations, A);
+                MatKerlOps = new MyMatrixKernelOps(callee, operations);
             }
             if ((MyMatrixCublasOps.AvailableOperations() & operations) > 0)
             {

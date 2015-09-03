@@ -135,7 +135,10 @@ namespace GoodAI.Modules.Matrix
                 }
                 else if (operation == MatOperation.Transpose)
                 {
-                    Result.ColumnHint = A.Count / A.ColumnHint;
+                    if (A.ColumnHint != 0)
+                    {
+                        Result.ColumnHint = A.Count / A.ColumnHint;
+                    }
                 }
             }
             return Result;
