@@ -26,6 +26,10 @@ namespace GoodAI.Modules.LSTM.Tasks
     [Description("Feed forward"), MyTaskInfo(OneShot = false)]
     public class MyLSTMFeedForwardTask : MyAbstractForwardTask<MyLSTMLayer>
     {
+        [YAXSerializableField(DefaultValue = false)]
+        [MyBrowsable, Category("\tLayer")]
+        public bool INITIALIZE_SEQUENCE { get; set; }
+
         [YAXSerializableField(DefaultValue = 0f)]
         [MyBrowsable, Category("\tLayer")]
         public float CLIP_CELL_STATE { get; set; }
@@ -126,7 +130,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.InputGateDeltas.FillAll(0);
                     }
 
-                    if (Owner.ParentNetwork.TimeStep == 0)
+                    if (Owner.ParentNetwork.TimeStep == 0 && INITIALIZE_SEQUENCE)
                     {
                         m_feedForwardKernel.Run(
                             (int)Owner.InputActivationFunction,

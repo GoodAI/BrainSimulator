@@ -77,7 +77,7 @@ extern "C"
 	}
 
 
-    __global__ void GaussianForwardSamplingKernel(
+	__global__ void GaussianForwardSamplingKernel(
 		ActivationFunctionEnum activationFunction,
 		float* means,
 		float* sigmas,
