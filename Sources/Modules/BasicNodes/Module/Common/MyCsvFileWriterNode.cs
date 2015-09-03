@@ -74,7 +74,18 @@ namespace GoodAI.Modules.Common
         [MyBrowsable, Category("Content")]
         [YAXSerializableField, YAXElementFor("Structure")]
         [EditorAttribute(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string ListSeparator { get; set; }
+        public string ListSeparator 
+        { 
+            get { return listSeparator; }
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                    listSeparator = ",";
+                else
+                    listSeparator = value;
+            }
+        }
+        private string listSeparator;
 
         [MyBrowsable, Category("Input")]
         [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Structure")]
@@ -90,8 +101,8 @@ namespace GoodAI.Modules.Common
 
         public MyCsvFileWriterNode()
         {
-            ListSeparator = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
-            Headers = "timestamp" + ListSeparator + "label" + ListSeparator + "data";
+            listSeparator = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+            Headers = "timestamp" + listSeparator + "label" + listSeparator + "data";
         }
 
 
