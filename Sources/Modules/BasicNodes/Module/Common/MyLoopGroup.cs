@@ -18,29 +18,59 @@ namespace GoodAI.Modules.Common
         [MyBrowsable, Category("Iterations")]
         public int Iterations { get; set; }
 
+        public enum MyLoopOperation
+        {
+            Normal, 
+            All
+        }
+
+        [MyBrowsable, Category("Iterations")]
+        [YAXSerializableField(DefaultValue = MyLoopOperation.Normal)]
+        public MyLoopOperation LoopType{ get; set; }
+
+        private MyExecutionBlock m_oneShotTasks;
+
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            return defaultInitPhasePlan;
+            m_oneShotTasks = defaultInitPhasePlan;
+            switch (LoopType)
+            {
+                case MyLoopOperation.All:
+                {
+                    return new MyExecutionBlock();
+                }
+                case MyLoopOperation.Normal:
+                default:
+                {
+                    return defaultInitPhasePlan;
+                }
+            }
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
-            List<IMyExecutable> newPlan = new List<IMyExecutable>();
-
-            // copy default plan content to new plan content
-            foreach (IMyExecutable groupTask in defaultPlan.Children)
-                if (groupTask is MyExecutionBlock)
-                    foreach (IMyExecutable nodeTask in (groupTask as MyExecutionBlock).Children)
-                        newPlan.Add(nodeTask); // add individual node tasks
-                else
-                    newPlan.Add(groupTask); // add group tasks
-
-            List<IMyExecutable> completePlan = new List<IMyExecutable>();
-            for (int i = 0; i < Iterations; ++i)
+            switch (LoopType)
             {
-                completePlan.AddRange(newPlan);
+                case MyLoopOperation.All:
+                {
+                    var res = new MyLoopBlock(
+                        x => x < Iterations,
+                        new MyExecutionBlock(
+                            m_oneShotTasks,
+                            defaultPlan
+                        )
+                    );
+                    return res;
+                }
+                case MyLoopOperation.Normal:
+                default:
+                {
+                    return new MyLoopBlock(
+                        x => x < Iterations,
+                        defaultPlan
+                    );
+                }
             }
-            return new MyExecutionBlock(completePlan.ToArray());
         }
     }
 }
