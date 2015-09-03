@@ -364,7 +364,7 @@ namespace GoodAI.Modules.Motor
                     Owner.VirtualMusclesLengthInput.SafeCopyToHost();
                     float virtualRotation = 90; //sum of rotations of all previous joins to calculate real rotation
 
-                    Owner.VirtualJointPosition[0].X = Owner.WORLD_WIDTH - 64;
+                    Owner.VirtualJointPosition[0].X = 2 * Owner.WORLD_WIDTH / 3;;
                     Owner.VirtualJointPosition[0].Y = Owner.WORLD_HEIGHT / 2;
 
                     for (int i = 1; i < Owner.JOINTS + 1; i++)
