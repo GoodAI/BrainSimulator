@@ -32,24 +32,35 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     {
         [YAXSerializableField(DefaultValue = false)]
         [MyBrowsable, Category("\tSigma")]
+        // Wheter to use constant sigma or not
         public bool UseSigmaConstant { get; set; }
 
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("\tSigma")]
+        // If UseSigmaConstant = true, sigmas will be set to this value
+        // It also sets neurons count = input count, and use all neurons from prev layer as means
         public float SigmaConstant { get; set; }
 
         [MyPersistable]
+        // If Generate is on, it samples input from prior and does not propagate delta
         public MyGenerateSignal Generate { get; protected set; }
         public class MyGenerateSignal : MySignal { }
 
+        // Samples from random uniform distriution used for sampling in generative mode
+        public MyMemoryBlock<float> RandomUniform { get; protected set; }
+
+        // Those are transformed by: NoisyInput = mean + RandomNormal * sigma
         public MyMemoryBlock<float> RandomNormal { get; protected set; }
         public MyMemoryBlock<float> NoisyInput { get; protected set; }
 
+        // Regularization loss is stored here (computation is turned off by default)
         public MyMemoryBlock<float> Regularization { get; protected set; }
 
+        // Mins and maxes of both means and sigmas so far, can be reset
         public MyMemoryBlock<float> PriorGaussHiddenStatesMin { get; protected set; }
         public MyMemoryBlock<float> PriorGaussHiddenStatesMax { get; protected set; }
 
+        // If UseSigmaConstant is true then this will be the block filled with SigmaConstant
         public MyMemoryBlock<float> SigmaConstants { get; protected set; }
 
         public override ConnectionType Connection
@@ -77,6 +88,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 // No memory for constants
                 SigmaConstants.Count = 1;
             }
+
+            // Random numbers for generation
+            RandomUniform.Count = Input != null ? Input.Count : 1;
 
             // Random numbers for sampling
             RandomNormal.Count = Neurons;
@@ -129,14 +143,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             get
             {
-                return "Gaussian hidden layer";
+                return "Gaussian layer";
             }
-        }
-
-        public void ResetPriorStats()
-        {
-            PriorGaussHiddenStatesMax.Fill(float.MinValue);
-            PriorGaussHiddenStatesMin.Fill(float.MaxValue);
         }
     }
 }

@@ -8,6 +8,7 @@
 #include <builtin_types.h>
 #include <vector_functions.h>
 #include <math.h>
+#include <cfloat>
 
 #include "..\Activation\ActivationFunction.cu"
 
@@ -102,6 +103,45 @@ extern "C"
 
 			// squashing function applied to noisy input
 			outputPtr[j] = Evaluate(activationFunction, noisyInput[j]);
+		}
+	}
+
+	__global__ void GaussianMinMaxField(float* input, int inputCount, float* mins, float* maxes)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < inputCount)
+		{
+			mins[i] = fminf(mins[i], input[i]);
+			maxes[i] = fmaxf(maxes[i], input[i]);
+		}
+	}
+
+	__global__ void GaussianResetPriorStats(int inputCount, float* mins, float* maxes)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < inputCount)
+		{
+			mins[i] = FLT_MAX;
+			maxes[i] = FLT_MIN;
+		}
+	}
+
+	__global__ void GaussianSamplePrior(float* input, int inputCount, float* mins, float* maxes, float* randomUniform)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < inputCount)
+		{
+			float diff = maxes[i] - mins[i];
+			input[i] = randomUniform[i] * diff + mins[i];
 		}
 	}
 }

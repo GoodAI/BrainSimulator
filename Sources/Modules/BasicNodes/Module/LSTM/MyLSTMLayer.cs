@@ -152,9 +152,15 @@ namespace GoodAI.Modules.LSTM
                 {
                     case MyLSTMLayer.LearningTasksType.RTRL:
                         ParentNetwork.SequenceLength = 1;
+                        // TODO this actually does not allow 0.25 for RTRL, should be improved
+                        if (initLayerTask.INIT_WEIGHTS_STDDEV == 0.2f)
+                            initLayerTask.INIT_WEIGHTS_STDDEV = 0.025f;
                         //System.Console.WriteLine("LSTM: Udpated Group parameters to RTRL: SequenceLength");
                         break;
                     case MyLSTMLayer.LearningTasksType.BPTT:
+                        // TODO this actually does not allow 0.025 for BPTT, should be improved
+                        if (initLayerTask.INIT_WEIGHTS_STDDEV == 0.025f)
+                            initLayerTask.INIT_WEIGHTS_STDDEV = 0.2f;
                         //ParentNetwork.SequenceLength = 2;
                         //System.Console.WriteLine("LSTM: Udpated Group parameters to BPTT: SequenceLength");
                         break;
@@ -221,11 +227,10 @@ namespace GoodAI.Modules.LSTM
             CellStateErrors.Count = CellStates.Count;
             CellInputDeltas.Count = CellStates.Count;
             OutputGateDeltas.Count = MemoryBlocks;
-            ForgetGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???
-            InputGateDeltas.Count = MemoryBlocks; // ??? IS IT CORRECT???
+            ForgetGateDeltas.Count = MemoryBlocks;
+            InputGateDeltas.Count = MemoryBlocks;
 
             Delta.Count = CellStates.Count; // computed by previous layer
-            //Delta.Mode = MyTemporalMemoryBlock<float>.ModeType.Copy;
 
             // make an even number of weights for the cuda random initialisation
             if (CellInputWeights.Count % 2 != 0)
@@ -266,6 +271,7 @@ namespace GoodAI.Modules.LSTM
                 return str;
             }
         }
+
         public void PrintMemBlock2Console(MyMemoryBlock<float> m, string s = "")
         {
             System.Console.Write("  + " + s + ": ");
