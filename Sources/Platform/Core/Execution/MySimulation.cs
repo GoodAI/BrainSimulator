@@ -302,7 +302,7 @@ namespace GoodAI.Core.Execution
         }
 
         public override void FreeMemory()
-        {            
+        {
             for (int i = 0; i < NodePartitioning.Length; i++)
             {
                 MyKernelFactory.Instance.SetCurrent(i);
