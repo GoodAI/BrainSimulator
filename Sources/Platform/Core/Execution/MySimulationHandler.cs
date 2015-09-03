@@ -186,6 +186,11 @@ namespace GoodAI.Core.Execution
             m_worker.CancelAsync();
         }
 
+        /// <summary>
+        /// The closeCallback action is invoked after all of the cleanup is done.
+        /// This is because the background thread cleanup cannot be done synchronously.
+        /// </summary>
+        /// <param name="closeCallback"></param>
         //UI thread
         public void Finish(Action closeCallback)
         {
@@ -298,6 +303,7 @@ namespace GoodAI.Core.Execution
             MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
             State = SimulationState.STOPPED;
 
+            // Cleanup and invoke the callback action.
             if (m_closeCallback != null)
             {
                 Simulation = null;

@@ -309,12 +309,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             // When this is true, the event will just return next time it's called.
             m_isClosing = true;
-            SimulationHandler.Finish(CloseCallback);
-        }
-
-        private void CloseCallback()
-        {
-            Close();
+            SimulationHandler.Finish(Close);
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
