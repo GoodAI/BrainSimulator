@@ -187,7 +187,15 @@ extern "C"
 		}		
 	}
 
-	__global__ void AddAndApproachValueKernel(float targetValue, float delta, float factor, int method, float* input, float* output, int size)
+	// have to be same as in MyAccumulator node
+	enum SequenceType
+	{
+		Arithmetic,
+		Geometric,
+		Momentum
+	};
+
+	__global__ void AddAndApproachValueKernel(float targetValue, float delta, float factor, SequenceType method, float* input, float* output, int size)
 	{		
 		int id = blockDim.x * blockIdx.y * gridDim.x
 			+ blockDim.x * blockIdx.x
@@ -195,7 +203,7 @@ extern "C"
 
 		if(id < size)
 		{	           
-			if (method == 0) 
+			if (method == Arithmetic) 
 			{
 				output[id] += input[id];
 				float x = output[id];
@@ -204,14 +212,14 @@ extern "C"
 				float finalDelta = copysign(delta, diff);
 				output[id] = x + finalDelta;
 			}
-			else if (method == 1) 
+			else if (method == Geometric) 
 			{
 				output[id] += input[id];
 				float x = output[id];
 
 				output[id] = factor * (x - targetValue) + targetValue;
 			}
-			else 
+			else if (method == Momentum)
 			{
 				output[id] = input[id] * (1 - factor) + output[id] * factor;
 			}
