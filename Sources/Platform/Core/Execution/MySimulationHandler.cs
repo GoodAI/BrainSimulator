@@ -30,11 +30,8 @@ namespace GoodAI.Core.Execution
             get { return m_simulation; }
             set
             {
-                if (m_simulation != null)
-                {
-                    m_simulation.Clear();
-                    m_simulation.Finish();
-                }
+                if (m_simulation != null && !m_simulation.IsFinished)
+                    throw new InvalidOperationException("The simulation was not cleared. Call Finish() first.");
                 m_simulation = value;
             }
         }
@@ -308,7 +305,7 @@ namespace GoodAI.Core.Execution
             // Cleanup and invoke the callback action.
             if (m_closeCallback != null)
             {
-                Simulation = null;
+                Simulation.Finish();
                 m_closeCallback();
             }
         }

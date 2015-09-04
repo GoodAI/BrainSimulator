@@ -13,7 +13,9 @@ namespace GoodAI.Core.Execution
 
         public bool LoadAllNodesData { get; set; }
         public bool SaveAllNodesData { get; set; }
-        public int AutoSaveInterval { get; set; }   
+        public int AutoSaveInterval { get; set; }
+
+        public bool IsFinished { get; protected set; }
 
         public string GlobalDataFolder { get; set; }        
 
@@ -53,6 +55,8 @@ namespace GoodAI.Core.Execution
             {
                 CurrentDebuggedBlocks[i] = null;
             }
+
+            IsFinished = false;
         }
 
         public abstract void AllocateMemory();
@@ -65,7 +69,14 @@ namespace GoodAI.Core.Execution
             ExecutionPlan = null;
         }
 
-        public abstract void Finish();
+        public void Finish()
+        {
+            Clear();
+            DoFinish();
+            IsFinished = true;
+        }
+
+        protected abstract void DoFinish();
 
         public void Schedule(MyProject project)
         {
@@ -277,6 +288,7 @@ namespace GoodAI.Core.Execution
                         m_debugStepComplete = false;
                     }
 
+
                     CurrentDebuggedBlocks[coreNumber] = currentBlock;
                 }
                 else //not in debug mode
@@ -316,7 +328,7 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        public override void Finish()
+        protected override void DoFinish()
         {
             m_threadPool.FinishFromSTAThread();
         }
