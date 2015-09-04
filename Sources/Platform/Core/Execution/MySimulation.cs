@@ -4,6 +4,8 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using GoodAI.Platform.Core.Utils;
 
 namespace GoodAI.Core.Execution
 {
@@ -89,6 +91,9 @@ namespace GoodAI.Core.Execution
 
         private void ExtractPartitioningFromExecutionPlan()
         {
+            if (ExecutionPlan == null)
+                throw new SimulationControlException("The simulation hasn't been set up.");
+
             HashSet<MyWorkingNode>[] indexTable = new HashSet<MyWorkingNode>[ExecutionPlan.Length];
             NodePartitioning = new List<MyWorkingNode>[ExecutionPlan.Length];
 
@@ -101,7 +106,7 @@ namespace GoodAI.Core.Execution
                 }
             };
 
-            for (int i = 0; i < ExecutionPlan.Length; i++)
+            ExecutionPlan.EachWithIndex((item, i) =>
             {
                 indexTable[i] = new HashSet<MyWorkingNode>();
 
@@ -109,7 +114,7 @@ namespace GoodAI.Core.Execution
                 ExecutionPlan[i].StandardStepPlan.Iterate(true, extractNodesAction);
 
                 NodePartitioning[i] = new List<MyWorkingNode>(indexTable[i]);
-            }
+            });
         }        
     }
 
@@ -147,29 +152,35 @@ namespace GoodAI.Core.Execution
         {
             base.Init();
 
-            for (int i = 0; i < NodePartitioning.Length; i++)
+            if (NodePartitioning == null)
+                throw new SimulationControlException("The simulation hasn't been set up.");
+
+            NodePartitioning.EachWithIndex((partition, i) =>
             {
                 MyKernelFactory.Instance.SetCurrent(i);
 
-                foreach (MyWorkingNode node in NodePartitioning[i])
+                foreach (MyWorkingNode node in partition)
                 {
                     //TODO: fix UI to not flicker and disable next line to clear signals after every simulation step
                     node.ClearSignals();
                     node.InitTasks();
                 }
-            }
+            });
         }
 
         public override void AllocateMemory()
         {
-            for (int i = 0; i < NodePartitioning.Length; i++)
-            {                
-                foreach (MyWorkingNode node in NodePartitioning[i])
+            if (NodePartitioning == null)
+                throw new SimulationControlException("The simulation is not set up.");
+
+            NodePartitioning.EachWithIndex((partition, i) =>
+            {
+                foreach (MyWorkingNode node in partition)
                 {
                     MyKernelFactory.Instance.SetCurrent(i);
-                    MyMemoryManager.Instance.AllocateBlocks(node, false);       
+                    MyMemoryManager.Instance.AllocateBlocks(node, false);
                 }
-            }            
+            });
         }           
 
         /// <summary>
@@ -197,21 +208,26 @@ namespace GoodAI.Core.Execution
             //mainly for observers
             if (InDebugMode && stepByStepRun)
             {
-                for (int i = 0; i < NodePartitioning.Length; i++)
+                if (NodePartitioning == null)
+                    throw new SimulationControlException("The simulation is not set up.");
+
+                NodePartitioning.EachWithIndex((item, i) =>
                 {
-                    List<MyWorkingNode> nodeList = NodePartitioning[i];
+                    List<MyWorkingNode> nodeList = item;
                     MyKernelFactory.Instance.SetCurrent(i);
 
-                    for (int j = 0; j < nodeList.Count; j++)
+                    foreach (MyWorkingNode node in nodeList)
                     {
-                        MyWorkingNode node = nodeList[j];
                         MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
                     }
-                }
+                });
             }
 
             if (!InDebugMode || m_debugStepComplete)
             {
+                if (NodePartitioning == null)
+                    throw new SimulationControlException("The simulation is not set up.");
+
                 bool doAutoSave = SimulationStep > 0 && AutoSaveInterval > 0 && SimulationStep % AutoSaveInterval == 0;
 
                 if (doAutoSave)
@@ -219,9 +235,12 @@ namespace GoodAI.Core.Execution
                     MyLog.INFO.WriteLine("Autosave (" + SimulationStep + " steps)");
                 }
 
-                for (int i = 0; i < NodePartitioning.Length; i++)
+                if (NodePartitioning == null)
+                    throw new SimulationControlException("The simulation is not set up.");
+
+                NodePartitioning.EachWithIndex((item, i) =>
                 {
-                    List<MyWorkingNode> nodeList = NodePartitioning[i];
+                    List<MyWorkingNode> nodeList = item;
                     MyKernelFactory.Instance.SetCurrent(i);
 
                     if (SimulationStep == 0)
@@ -234,16 +253,14 @@ namespace GoodAI.Core.Execution
                         SaveBlocks(nodeList);
                     }
 
-                    for (int j = 0; j < nodeList.Count; j++)
+                    foreach (MyWorkingNode node in nodeList)
                     {
-                        MyWorkingNode node = nodeList[j];
-
                         //TODO: fix UI to not flicker and enable this line to clear signals after every simulation step
                         //node.ClearSignals();
-                        
+
                         MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
                     }
-                }
+                });
                 SimulationStep++;
             }
         }
@@ -315,17 +332,20 @@ namespace GoodAI.Core.Execution
 
         public override void FreeMemory()
         {
-            for (int i = 0; i < NodePartitioning.Length; i++)
+            if (NodePartitioning == null)
+                return;
+
+            NodePartitioning.EachWithIndex((partition, i) =>
             {
                 MyKernelFactory.Instance.SetCurrent(i);
 
-                SaveBlocks(NodePartitioning[i]);
+                SaveBlocks(partition);
 
-                foreach (MyWorkingNode node in NodePartitioning[i])
-                {                    
+                foreach (MyWorkingNode node in partition)
+                {
                     MyMemoryManager.Instance.FreeBlocks(node, false);
                 }
-            }
+            });
         }
 
         protected override void DoFinish()
@@ -334,13 +354,11 @@ namespace GoodAI.Core.Execution
         }
 
         private void LoadBlocks(List<MyWorkingNode> nodeList)
-        {            
-            MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();                    
+        {
+            MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();
 
-            for (int j = 0; j < nodeList.Count; j++)
+            foreach (MyWorkingNode node in nodeList)
             {
-                MyWorkingNode node = nodeList[j];
-
                 if (LoadAllNodesData || node.LoadOnStart)
                 {
                     foreach (MyAbstractMemoryBlock mb in MyMemoryManager.Instance.GetBlocks(node))
@@ -355,13 +373,11 @@ namespace GoodAI.Core.Execution
         }
 
         private void SaveBlocks(List<MyWorkingNode> nodeList)
-        {            
+        {
             MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();
 
-            for (int j = 0; j < nodeList.Count; j++)
+            foreach (MyWorkingNode node in nodeList)
             {
-                MyWorkingNode node = nodeList[j];
-
                 if (SaveAllNodesData || node.SaveOnStop)
                 {
                     foreach (MyAbstractMemoryBlock mb in MyMemoryManager.Instance.GetBlocks(node))
@@ -374,6 +390,11 @@ namespace GoodAI.Core.Execution
                 }
             }
         }
+    }
+
+    public class SimulationControlException : Exception
+    {
+        public SimulationControlException(string message) : base(message) { }
     }
 
     public class MySimulationException : Exception 
