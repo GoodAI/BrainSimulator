@@ -92,7 +92,7 @@ namespace GoodAI.Core.Execution
         private void ExtractPartitioningFromExecutionPlan()
         {
             if (ExecutionPlan == null)
-                throw new SimulationControlException("The simulation hasn't been set up.");
+                throw new SimulationControlException("The simulation is not set up.");
 
             HashSet<MyWorkingNode>[] indexTable = new HashSet<MyWorkingNode>[ExecutionPlan.Length];
             NodePartitioning = new List<MyWorkingNode>[ExecutionPlan.Length];
@@ -153,7 +153,7 @@ namespace GoodAI.Core.Execution
             base.Init();
 
             if (NodePartitioning == null)
-                throw new SimulationControlException("The simulation hasn't been set up.");
+                throw new SimulationControlException("The execution plan is not set up.");
 
             NodePartitioning.EachWithIndex((partition, i) =>
             {
@@ -171,7 +171,7 @@ namespace GoodAI.Core.Execution
         public override void AllocateMemory()
         {
             if (NodePartitioning == null)
-                throw new SimulationControlException("The simulation is not set up.");
+                throw new SimulationControlException("The execution plan is not set up.");
 
             NodePartitioning.EachWithIndex((partition, i) =>
             {
@@ -209,7 +209,7 @@ namespace GoodAI.Core.Execution
             if (InDebugMode && stepByStepRun)
             {
                 if (NodePartitioning == null)
-                    throw new SimulationControlException("The simulation is not set up.");
+                    throw new SimulationControlException("The execution plan is not set up.");
 
                 NodePartitioning.EachWithIndex((item, i) =>
                 {

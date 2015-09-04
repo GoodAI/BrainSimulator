@@ -136,7 +136,7 @@ namespace GoodAI.Core.Execution
         public void StartSimulation(bool oneStepOnly)
         {
             if (State == SimulationState.STOPPED)
-            {             
+            {
                 MyLog.INFO.WriteLine("Scheduling...");                
                 Simulation.Schedule(Project);
 
