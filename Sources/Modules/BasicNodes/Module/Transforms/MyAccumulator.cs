@@ -77,7 +77,7 @@ namespace GoodAI.Modules.Transforms
         }
 
         /// <summary>
-        /// Delays data for given number of timesteps.<br/>
+        /// Delays data for given number of timesteps (set in node's <b>DelayMemorySize</b> parameter)<br/>
         /// For initial period it sets given value or uses first value available.
         /// </summary>
         [Description("Delay")]
