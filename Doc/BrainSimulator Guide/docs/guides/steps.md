@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace RegressionModule
 {
-    class MyRegressionNode
+    public class MyRegressionNode
     {
     }
 }
@@ -57,7 +57,7 @@ namespace RegressionModule
     /// <status>Work in progress</status>
     /// <summary>Regression node</summary>
     /// <description>Will perform online linear regression</description>
-    class MyRegressionNode : MyWorkingNode
+    public class MyRegressionNode : MyWorkingNode
     {
         public override void UpdateMemoryBlocks()
         {
@@ -157,7 +157,7 @@ namespace RegressionModule
     /// <status>Work in progress</status>
     /// <summary>Regression node</summary>
     /// <description>Will perform online linear regression</description>
-    class MyRegressionNode : MyWorkingNode
+    public class MyRegressionNode : MyWorkingNode
     {
         [MyInputBlock(0)]
         public MyMemoryBlock<float> XInput
@@ -198,7 +198,7 @@ Main computation unit of nodes are **tasks**. We will add simple one, which will
 
 ``` csharp
 [Description("Gather data")]
-class MyGatherDataTask : MyTask<MyRegressionNode> {
+public class MyGatherDataTask : MyTask<MyRegressionNode> {
 
     public override void Init(int nGPU)
     {
@@ -235,7 +235,7 @@ We can also add printing some debug information into the UI console for testing 
 
 ``` csharp
 [Description("Gather data")]
-class MyGatherDataTask : MyTask<MyRegressionNode> {
+public class MyGatherDataTask : MyTask<MyRegressionNode> {
 
     private int m_cursor;
 
@@ -312,7 +312,7 @@ So let's create a new task and compute model parameters inside of it. We get the
 
 ``` csharp
 [Description("Compute model")]
-class MyComputeTask : MyTask<MyRegressionNode> {
+public class MyComputeTask : MyTask<MyRegressionNode> {
     public override void Init(int nGPU)
     {
 
@@ -410,7 +410,7 @@ namespace RegressionModule
     /// <status>Work in progress</status>
     /// <summary>Regression node</summary>
     /// <description>Will perform online linear regression</description>
-    class MyRegressionNode : MyWorkingNode
+    public class MyRegressionNode : MyWorkingNode
     {
         [MyInputBlock(0)]
         public MyMemoryBlock<float> XInput
@@ -458,7 +458,7 @@ namespace RegressionModule
     }
 
     [Description("Gather data")]
-    class MyGatherDataTask : MyTask<MyRegressionNode> {
+    public class MyGatherDataTask : MyTask<MyRegressionNode> {
 
         private int m_cursor;
 
@@ -483,7 +483,7 @@ namespace RegressionModule
     }
 
     [Description("Compute model")]
-    class MyComputeTask : MyTask<MyRegressionNode> {
+    public class MyComputeTask : MyTask<MyRegressionNode> {
         public override void Init(int nGPU)
         {
 
@@ -546,7 +546,7 @@ using GoodAI.Core.Observers;
 
 namespace RegressionModule.Observers
 {
-    class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
+    public class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
     {
         protected override void Execute()
         {
@@ -624,7 +624,7 @@ We obtain x and y values from our data, scale them to plot size and then invert 
 Now, let's bring our attention back to `MyRegressionObserver` class. We will define the kernel.
 
 ``` csharp
-class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
+public class MyRegressionObserver : MyNodeObserver<MyRegressionNode>
 {
     [MyBrowsable, Category("Display")]
     public int Size { get; set; }
