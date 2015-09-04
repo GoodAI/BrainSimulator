@@ -51,8 +51,19 @@ namespace GoodAI.Modules.Common
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = GetInputSize(0);
-            Output.ColumnHint = GetInput(0) != null ? GetInput(0).ColumnHint : 1;
+            int c = 1, ch = 1;
+            if (Input1 != null)
+            {
+                c = Input1.Count;
+                ch = Input2.ColumnHint;
+            }
+            else if (Input2 != null)
+            {
+                c = Input2.Count;
+                ch = Input2.ColumnHint;
+            }
+            Output.Count = c;
+            Output.ColumnHint = ch;
 
             IterationOutput.Count = 1;
             IterationOutput.ColumnHint = 1;
