@@ -3,7 +3,6 @@ using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SqlTypes;
 using System.Threading;
 
 namespace GoodAI.Core.Execution
