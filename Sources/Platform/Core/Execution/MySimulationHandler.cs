@@ -39,8 +39,10 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        private BackgroundWorker m_worker;
+        private readonly BackgroundWorker m_worker;
         private bool doPause = false;
+
+        private Action closeCallback = null;
 
         public int ReportInterval { get; set; } // How often should be speed of simulation reported
         public int SleepInterval { get; set; }  // Amount of sleep (in ms) between two steps
@@ -75,11 +77,13 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        private int m_speedMeasureInterval;
+        private readonly int m_speedMeasureInterval;
 
         public float SimulationSpeed { get; private set; }
 
         private SimulationState m_state;
+        private Action m_closeCallback;
+
         public SimulationState State    ///< State of the simulation
         { 
             get 
@@ -163,14 +167,14 @@ namespace GoodAI.Core.Execution
         //UI thread
         public void StopSimulation()
         {
-            if (State != SimulationState.PAUSED)
+            if (State == SimulationState.RUNNING || State == SimulationState.RUNNING_STEP)
             {
                 doPause = false;
                 m_worker.CancelAsync();
             }
             else
             {
-                DoStop();                
+                DoStop();
             }
         }
 
@@ -181,14 +185,24 @@ namespace GoodAI.Core.Execution
             m_worker.CancelAsync();
         }
 
-        public void Finish()
-        {            
-            Simulation = null;
+        /// <summary>
+        /// The closeCallback action is invoked after all of the cleanup is done.
+        /// This is because the background thread cleanup cannot be done synchronously.
+        /// </summary>
+        /// <param name="closeCallback"></param>
+        //UI thread
+        public void Finish(Action closeCallback)
+        {
+            m_closeCallback = closeCallback;
+            StopSimulation();
         }
 
         //NOT in UI thread
         void m_worker_DoWork(object sender, DoWorkEventArgs e)
-        {                             
+        {
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "Background Simulation Thread";
+
             if (State == SimulationState.RUNNING_STEP)
             {
                 try
@@ -256,7 +270,7 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        //UI thread
+        // NOT UI thread
         void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled && !doPause)
@@ -268,7 +282,7 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Paused.");
                 State = SimulationState.PAUSED;
                 Project.World.DoPause();
-            }                        
+            }
         }
 
         private void DoStop()
@@ -287,6 +301,13 @@ namespace GoodAI.Core.Execution
 
             MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
             State = SimulationState.STOPPED;
+
+            // Cleanup and invoke the callback action.
+            if (m_closeCallback != null)
+            {
+                Simulation = null;
+                m_closeCallback();
+            }
         }
 
         private void PrintMemoryInfo() 

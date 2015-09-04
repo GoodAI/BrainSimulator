@@ -11,7 +11,8 @@ pages:
 - Observers: 'observer.md'
 #- ['nodes.md', 'Nodes']
 - Guides:
-    - How to create a module: 'guides/steps.md'
+    - How to create a module linked to binaries: 'guides/steps.md'
+    - How to create a module linked to source code: 'guides/module_with_project_deps.md'
     - How to share a module: 'guides/sharing.md'
     - Persistence: 'guides/persistence.md'
     - Math Operations: 'guides/matrix.md'
