@@ -55,7 +55,7 @@ namespace GoodAI.Modules.Common
             if (Input1 != null)
             {
                 c = Input1.Count;
-                ch = Input2.ColumnHint;
+                ch = Input1.ColumnHint;
             }
             else if (Input2 != null)
             {
