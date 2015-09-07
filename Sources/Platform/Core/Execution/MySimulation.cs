@@ -211,16 +211,16 @@ namespace GoodAI.Core.Execution
                 if (NodePartitioning == null)
                     throw new SimulationControlException("The execution plan is not set up.");
 
-                NodePartitioning.EachWithIndex((item, i) =>
+                for (int i = 0; i < NodePartitioning.Length; i++)
                 {
-                    List<MyWorkingNode> nodeList = item;
+                    List<MyWorkingNode> nodeList = NodePartitioning[i];
                     MyKernelFactory.Instance.SetCurrent(i);
 
                     foreach (MyWorkingNode node in nodeList)
                     {
                         MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
                     }
-                });
+                }
             }
 
             if (!InDebugMode || m_debugStepComplete)
@@ -238,9 +238,9 @@ namespace GoodAI.Core.Execution
                 if (NodePartitioning == null)
                     throw new SimulationControlException("The simulation is not set up.");
 
-                NodePartitioning.EachWithIndex((item, i) =>
+                for (int i = 0; i < NodePartitioning.Length; i++)
                 {
-                    List<MyWorkingNode> nodeList = item;
+                    List<MyWorkingNode> nodeList = NodePartitioning[i];
                     MyKernelFactory.Instance.SetCurrent(i);
 
                     if (SimulationStep == 0)
@@ -260,7 +260,7 @@ namespace GoodAI.Core.Execution
 
                         MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
                     }
-                });
+                };
                 SimulationStep++;
             }
         }
