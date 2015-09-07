@@ -149,6 +149,125 @@ namespace GoodAI.Modules.GridWorld
         }
     }
 
+    /// <summary>
+    /// definitions of custom maps here
+    /// </summary>
+    /// 
+    public class MyMapJ : AbstractMap
+    {
+        protected override void DefineArray()
+        {
+            m_array = new int[] 
+            {                 
+                0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, A, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            };
+            m_width = 7;
+            m_height = 7;
+        }
+
+        protected override void DefineMovingObjects()
+        {
+            MovingObjects = new MyMovingObject[0];
+        }
+
+        protected override void DefineStaticObjects()
+        {
+            Lights ll = new Lights();
+            ll.TurnOff();
+            this.PlaceObjectTo(new int2(4, 4), ll);
+            /*
+            Lights lll = new Lights();
+            lll.TurnOff();
+            this.PlaceObjectTo(new int2(2, 5), lll);
+
+            Lights llll = new Lights();
+            llll.TurnOff();
+            this.PlaceObjectTo(new int2(2, 2), llll);
+
+            */
+            LightsControl lc = new LightsControl();
+            lc.TurnOff();
+            lc.myObjects.Add(ll);
+            this.PlaceObjectTo(new int2(2, 2), lc);
+
+            MyDoor door2 = new MyDoor();
+            door2.TurnOff();
+            this.PlaceObjectTo(new int2(4, 2), door2);
+
+            DoorControl dc = new DoorControl();
+            dc.myObjects.Add(door2);
+            this.PlaceObjectTo(new int2(2, 4), dc);
+
+            StaticObjects = new MyStaticObject[] { ll, lc, door2, dc };//,lll,llll};
+
+        }
+    }
+
+
+
+    /// <summary>
+    /// definitions of custom maps here
+    /// </summary>
+    /// 
+    public class MyMapK : AbstractMap
+    {
+        protected override void DefineArray()
+        {
+            m_array = new int[] 
+            {                 
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, A, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0
+            };
+            m_width = 5;
+            m_height = 5;
+        }
+
+        protected override void DefineMovingObjects()
+        {
+            MovingObjects = new MyMovingObject[0];
+        }
+
+        protected override void DefineStaticObjects()
+        {
+            Lights ll = new Lights();
+            ll.TurnOff();
+            this.PlaceObjectTo(new int2(3, 3), ll);
+            /*
+            Lights lll = new Lights();
+            lll.TurnOff();
+            this.PlaceObjectTo(new int2(2, 5), lll);
+
+            Lights llll = new Lights();
+            llll.TurnOff();
+            this.PlaceObjectTo(new int2(2, 2), llll);
+
+            */
+            LightsControl lc = new LightsControl();
+            lc.TurnOff();
+            lc.myObjects.Add(ll);
+            this.PlaceObjectTo(new int2(1, 1), lc);
+
+            MyDoor door2 = new MyDoor();
+            door2.TurnOff();
+            this.PlaceObjectTo(new int2(3, 1), door2);
+
+            DoorControl dc = new DoorControl();
+            dc.myObjects.Add(door2);
+            this.PlaceObjectTo(new int2(1, 3), dc);
+
+            StaticObjects = new MyStaticObject[] { ll, lc, door2, dc };//,lll,llll};
+
+        }
+    }
 
     public class MyMapE : AbstractMap
     {

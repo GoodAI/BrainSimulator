@@ -170,7 +170,9 @@ namespace GoodAI.Modules.GridWorld
             mapF = 5,
             mapG = 6,
             mapH = 7,
-            mapI = 8
+            mapI = 8,
+            mapJ = 9,
+            mapK = 10
         };
 
         MyTextureSets ts;
@@ -304,6 +306,12 @@ namespace GoodAI.Modules.GridWorld
                     break;
                 case MyCustomMaps.mapI:
                     World = new MyMapI();
+                    break;
+                case MyCustomMaps.mapJ:
+                    World = new MyMapJ();
+                    break;
+                case MyCustomMaps.mapK:
+                    World = new MyMapK();
                     break;
                 default:
                     World = new MyMapA();
