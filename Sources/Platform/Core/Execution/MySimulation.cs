@@ -73,8 +73,8 @@ namespace GoodAI.Core.Execution
 
         public void Finish()
         {
-            Clear();
             DoFinish();
+            Clear();
             IsFinished = true;
         }
 

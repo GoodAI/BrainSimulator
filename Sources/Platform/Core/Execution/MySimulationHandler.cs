@@ -284,6 +284,9 @@ namespace GoodAI.Core.Execution
 
         private void DoStop()
         {
+            if (m_closeCallback != null)
+                Simulation.Finish();
+
             if (State != SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("Cleaning up world...");
@@ -304,10 +307,7 @@ namespace GoodAI.Core.Execution
 
             // Cleanup and invoke the callback action.
             if (m_closeCallback != null)
-            {
-                Simulation.Finish();
                 m_closeCallback();
-            }
         }
 
         private void PrintMemoryInfo() 
