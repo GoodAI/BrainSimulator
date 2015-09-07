@@ -299,7 +299,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 var dialogResult =
                     MessageBox.Show(
-                        "Do you want to quit while the simulation is running? You will lose all trained data.",
+                        "Do you want to quit while the simulation is running?",
                         "Quit?",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
