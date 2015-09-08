@@ -1,21 +1,13 @@
-﻿using GoodAI.Core.Configuration;
+﻿using GoodAI.BrainSimulator.NodeView;
+using GoodAI.Core.Configuration;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
-using GoodAI.BrainSimulator.Nodes;
-using GoodAI.BrainSimulator.NodeView;
-using GoodAI.BrainSimulator.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 

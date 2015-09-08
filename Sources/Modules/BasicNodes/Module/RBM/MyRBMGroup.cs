@@ -1,12 +1,6 @@
-﻿using GoodAI.Modules.NeuralNetwork.Group;
-using GoodAI.Core.Task;
-using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
+﻿using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Group;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Modules.RBM

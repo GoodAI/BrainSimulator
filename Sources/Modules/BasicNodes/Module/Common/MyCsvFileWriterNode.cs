@@ -2,17 +2,14 @@
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-
 using System;
-using System.IO;
 using System.ComponentModel;
-using System.Windows.Forms.Design;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Windows.Forms.Design;
 using YAXLib;
 
 namespace GoodAI.Modules.Common
@@ -20,11 +17,11 @@ namespace GoodAI.Modules.Common
     /// <author>GoodAI</author>
     /// <meta>js</meta>
     /// <status>Working</status>
-    /// <summary>Node for generating Comma Separated Value files. </summary>
+    /// <summary>Node for generating CSV files. </summary>
     /// <description>The generated file starts with (possibly several lines of) headers
     /// copied from the property "Headers". Then every other line contains consecutively:
     /// the time step, the label and input value (formatted according to the property
-    /// "InputValueWriteFormat" separated by commas (no tabs or spaces).
+    /// "InputValueWriteFormat" and separated by the property "ListSeparator").
     /// One line corresponds to one data point.
     /// </description>
     class MyCsvFileWriterNode:MyWorkingNode
@@ -40,7 +37,7 @@ namespace GoodAI.Modules.Common
             // the input array is transformed into string containing only zeros and ones
             // input value lower than threshold (0.5) becomes 0, larger than threshold becomes 1
             BinaryString,
-            // the input array is written on one line as comma separated values
+            // the input array is written on one line as values separated by the "ListSeparator" property
             Array
         }
 
@@ -58,7 +55,7 @@ namespace GoodAI.Modules.Common
         public FileWriteMethod WriteMethod { get; set; }
 
         [MyBrowsable, Category("Content")]
-        [YAXSerializableField(DefaultValue = "timestamp,label,data"), YAXElementFor("Structure")]
+        [YAXSerializableField, YAXElementFor("Structure")]
         [EditorAttribute(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public string Headers { get; set; }
 
@@ -74,6 +71,22 @@ namespace GoodAI.Modules.Common
         [YAXSerializableField(DefaultValue = true), YAXElementFor("Structure")]
         public bool IncludeLabel { get; set; }
 
+        [MyBrowsable, Category("Content")]
+        [YAXSerializableField, YAXElementFor("Structure")]
+        [EditorAttribute(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+        public string ListSeparator 
+        { 
+            get { return listSeparator; }
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                    listSeparator = ",";
+                else
+                    listSeparator = value;
+            }
+        }
+        private string listSeparator;
+
         [MyBrowsable, Category("Input")]
         [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Structure")]
         public uint InputSize { get; private set; }
@@ -85,6 +98,12 @@ namespace GoodAI.Modules.Common
         [MyBrowsable, Category("Input")]
         [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Structure")]
         public uint InputHeight { get; private set; }
+
+        public MyCsvFileWriterNode()
+        {
+            listSeparator = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+            Headers = "timestamp" + listSeparator + "label" + listSeparator + "data";
+        }
 
 
         // INPUT / OUTPUT -----------------------------------------------------
@@ -143,12 +162,12 @@ namespace GoodAI.Modules.Common
                     if (Owner.IncludeTimeStep)
                     {
                         sb.Append(m_step);
-                        sb.Append(',');
+                        sb.Append(Owner.ListSeparator);
                     }
                     if (Owner.IncludeLabel)
                     {
                         sb.Append(Owner.Label.Host[0].ToString("0.00000"));
-                        sb.Append(',');
+                        sb.Append(Owner.ListSeparator);
                     }
 
                     if (Owner.InputValueWriteFormat == ValueWriteFormat.BinaryString)
@@ -170,7 +189,7 @@ namespace GoodAI.Modules.Common
                         for (int i = 0; i < Owner.Input.Count; i++)
                         {
                             sb.Append(Owner.Input.Host[i].ToString("0.00"));
-                            sb.Append(',');
+                            sb.Append(Owner.ListSeparator);
                         }
                     }
                     m_stream.WriteLine(sb.ToString());

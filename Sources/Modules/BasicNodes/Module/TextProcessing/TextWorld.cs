@@ -1,20 +1,11 @@
-﻿using GoodAI.Core;
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Observers.Helper;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms.Design;
 using YAXLib;
 

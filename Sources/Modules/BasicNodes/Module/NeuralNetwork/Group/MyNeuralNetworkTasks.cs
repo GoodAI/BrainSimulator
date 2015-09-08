@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using GoodAI.Core;
+﻿using GoodAI.Core;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
 using GoodAI.Core.Task;
-using System.Collections;
-using System.ComponentModel;
-
-using YAXLib;
-using ManagedCuda;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Layers;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {

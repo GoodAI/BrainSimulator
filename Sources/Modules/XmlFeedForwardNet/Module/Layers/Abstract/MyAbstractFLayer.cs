@@ -1,7 +1,7 @@
-﻿using System;
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Memory;
 using ManagedCuda.BasicTypes;
-using  XmlFeedForwardNet.Networks;
+using System;
+using XmlFeedForwardNet.Networks;
 
 namespace XmlFeedForwardNet.Layers
 {

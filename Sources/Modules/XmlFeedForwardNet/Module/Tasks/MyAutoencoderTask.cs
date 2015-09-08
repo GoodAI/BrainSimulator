@@ -1,14 +1,9 @@
-﻿using  XmlFeedForwardNet.Networks;
-using  XmlFeedForwardNet.Tasks.BackPropAgent;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Task;
+﻿using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using XmlFeedForwardNet.Networks;
+using XmlFeedForwardNet.Tasks.BackPropAgent;
 using YAXLib;
 
 namespace  XmlFeedForwardNet.Tasks

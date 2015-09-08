@@ -1,22 +1,7 @@
-﻿using GoodAI.Core.Nodes;
+﻿using ManagedCuda.VectorTypes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core.Utils;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Task;
-using System.ComponentModel;
-using YAXLib;
-using System.Drawing;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
 
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Collections;
 
 
 namespace GoodAI.Modules.GridWorld

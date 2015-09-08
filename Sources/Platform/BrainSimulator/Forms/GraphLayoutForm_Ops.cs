@@ -1,19 +1,13 @@
-﻿using GoodAI.Core;
+﻿using GoodAI.BrainSimulator.NodeView;
+using GoodAI.Core;
 using GoodAI.Core.Configuration;
 using GoodAI.Core.Nodes;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
-using GoodAI.BrainSimulator.Nodes;
-using GoodAI.BrainSimulator.NodeView;
 using Graph;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GoodAI.BrainSimulator.Forms

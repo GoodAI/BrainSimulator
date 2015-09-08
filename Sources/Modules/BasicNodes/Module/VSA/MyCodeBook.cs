@@ -1,19 +1,12 @@
+using GoodAI.Core;
 using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManagedCuda.CudaFFT;
-using GoodAI.Core.Nodes;
-using ManagedCuda.VectorTypes;
+using GoodAI.Modules.Transforms;
+using ManagedCuda;
 using System.ComponentModel;
 using YAXLib;
-using ManagedCuda;
-using GoodAI.Modules.Transforms;
-using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA
 {

@@ -1,16 +1,11 @@
-﻿using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
+﻿using GoodAI.Core.Configuration;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Threading.Tasks;
-using YAXLib;
 using System.IO;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Configuration;
+using System.Reflection;
+using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {

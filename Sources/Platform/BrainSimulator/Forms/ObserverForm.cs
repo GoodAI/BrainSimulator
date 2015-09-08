@@ -1,29 +1,19 @@
-﻿using GoodAI.Core;
+﻿using GoodAI.BrainSimulator.Utils;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
 using GoodAI.Core.Observers;
-using GoodAI.BrainSimulator.Utils;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
+using GoodAI.Core.Utils;
 using ManagedCuda.VectorTypes;
+using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using GoodAI.Core.Utils;
-using OpenTK;
-using GoodAI.Core.Execution;
-using OpenTK.Graphics;
-using System.IO;
-using System.Security.AccessControl;
-using GoodAI.Core.Memory;
 
 namespace GoodAI.BrainSimulator.Forms
 {

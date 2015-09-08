@@ -1,16 +1,10 @@
 ﻿using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
-using GoodAI.Core.Signals;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-using GoodAI.Core.Task;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
+using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {

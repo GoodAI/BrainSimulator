@@ -1,24 +1,16 @@
-﻿using GoodAI.Core;
+﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
 using GoodAI.Core.Task;
-using GoodAI.Core.Execution;
-using GoodAI.Core.Signals;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using YAXLib;
-using ManagedCuda;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.LSTM.Tasks;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
-using System.Diagnostics;
 using GoodAI.Modules.RBM;
-using GoodAI.Modules.LSTM.Tasks;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {

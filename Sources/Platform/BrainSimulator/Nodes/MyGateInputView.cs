@@ -1,13 +1,7 @@
 ﻿using GoodAI.Core.Configuration;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Utils;
 using Graph;
 using Graph.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.BrainSimulator.NodeView
 {

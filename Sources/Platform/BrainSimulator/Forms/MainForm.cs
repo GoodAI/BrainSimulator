@@ -1,30 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GoodAI.BrainSimulator.NodeView;
-using Graph;
-using Graph.Compatibility;
-using System.IO;
-using WeifenLuo.WinFormsUI.Docking;
-using GoodAI.Core.Nodes;
+﻿using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core;
-using System.Diagnostics;
-using GoodAI.Core.Utils;
-using GoodAI.BrainSimulator.Utils;
-using GoodAI.Core.Observers;
-using GoodAI.BrainSimulator.Nodes;
-using System.Reflection;
-using System.Collections.Specialized;
-using GoodAI.Core.Execution;
-using YAXLib;
-using GoodAI.Core.Memory;
 using GoodAI.Core.Configuration;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
+using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
+using YAXLib;
 
 namespace GoodAI.BrainSimulator.Forms
 {
@@ -34,6 +21,7 @@ namespace GoodAI.BrainSimulator.Forms
         private static Color STATUS_BAR_BLUE_BUILDING = Color.FromArgb(255, 14, 99, 156);
 
         private MruStripMenuInline m_recentMenu;
+        private bool m_isClosing = false;
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -301,21 +289,27 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (m_isClosing) return;
+
+            // Cancel the event - the window will close when the simulation is finished.
+            e.Cancel = true;
+
             if ((String.IsNullOrEmpty(saveFileDialog.FileName)) || !IsProjectSaved(saveFileDialog.FileName))
             {
                 var dialogResult = MessageBox.Show("Save project changes?",
                     "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
-                if (dialogResult == DialogResult.Yes)
-                {
-                    AskForFileNameAndSaveProject();
-                }
-                else if (dialogResult == DialogResult.Cancel)
-                {
-                    e.Cancel = true;
+                // Do not close.
+                if (dialogResult == DialogResult.Cancel)
                     return;
-                }
+
+                if (dialogResult == DialogResult.Yes)
+                    AskForFileNameAndSaveProject();
             }
+
+            // When this is true, the event will just return next time it's called.
+            m_isClosing = true;
+            SimulationHandler.Finish(Close);
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -326,8 +320,6 @@ namespace GoodAI.BrainSimulator.Forms
             Properties.Settings.Default.RecentFilesList.AddRange(m_recentMenu.GetFiles());
 
             Properties.Settings.Default.Save();
-
-            SimulationHandler.Finish();
         }
 
         private void reloadButton_Click(object sender, EventArgs e)

@@ -1,16 +1,9 @@
-﻿using XmlFeedForwardNet.Layers;
-using XmlFeedForwardNet.Tasks;
-using  XmlFeedForwardNet.Tasks.RBM;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Signals;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
-using ManagedCuda.BasicTypes;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using XmlFeedForwardNet.Layers;
+using XmlFeedForwardNet.Tasks;
+using XmlFeedForwardNet.Tasks.RBM;
 using YAXLib;
 
 namespace  XmlFeedForwardNet.Networks

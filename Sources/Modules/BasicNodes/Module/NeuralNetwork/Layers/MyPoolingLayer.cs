@@ -1,8 +1,8 @@
-﻿using GoodAI.Core.Utils;
-using System.ComponentModel;
+﻿using CustomModels.NeuralNetwork.Tasks;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using CustomModels.NeuralNetwork.Tasks;
+using GoodAI.Core.Utils;
+using System.ComponentModel;
 using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers

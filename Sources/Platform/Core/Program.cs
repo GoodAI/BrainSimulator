@@ -1,13 +1,4 @@
-﻿using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
+﻿
 
 namespace BrainSimulator
 {

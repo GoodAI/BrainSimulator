@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core;
-using GoodAI.Modules.NeuralNetwork.Layers;
-using GoodAI.Modules.NeuralNetwork.Tasks;
+﻿using GoodAI.Core;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.NeuralNetwork.Tasks;
 using ManagedCuda.BasicTypes;
+using System;
+using System.ComponentModel;
 
 namespace CustomModels.NeuralNetwork.Tasks
 {

@@ -4,11 +4,6 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Core.Execution
 {
@@ -307,7 +302,7 @@ namespace GoodAI.Core.Execution
         }
 
         public override void FreeMemory()
-        {            
+        {
             for (int i = 0; i < NodePartitioning.Length; i++)
             {
                 MyKernelFactory.Instance.SetCurrent(i);

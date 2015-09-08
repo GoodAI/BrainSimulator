@@ -1,15 +1,10 @@
-﻿using GoodAI.Modules.NeuralNetwork.Layers;
-using GoodAI.Modules.RBM;
-using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
+﻿using GoodAI.Core;
 using GoodAI.Core.Observers;
-using GoodAI.Core;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using System;
+using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.Observers
 {

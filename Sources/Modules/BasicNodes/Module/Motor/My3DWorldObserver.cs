@@ -1,19 +1,13 @@
-﻿using GoodAI.Core.Observers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Graphics;
-using System.Drawing;
-using BEPUphysics;
-using BEPUphysics.Entities;
-using BEPUphysics.Entities.Prefabs;
-using BEPUphysics.CollisionShapes.ConvexShapes;
+﻿using BEPUphysics;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using BEPUphysics.CollisionShapes;
+using BEPUphysics.CollisionShapes.ConvexShapes;
+using BEPUphysics.Entities;
+using GoodAI.Core.Observers;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.Motor
 {

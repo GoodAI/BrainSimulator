@@ -1,16 +1,13 @@
-﻿using System;
+﻿using GoodAI.Core.Utils;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.IO;
-using XmlFeedForwardNet.Layers;
-using GoodAI.Core.Utils;
-using XmlFeedForwardNet.Utils.WeightLoader;
 using System.Globalization;
-using XmlFeedForwardNet.Networks;
+using System.IO;
+using System.Xml;
+using XmlFeedForwardNet.Layers;
 using XmlFeedForwardNet.Layers.Mirror;
+using XmlFeedForwardNet.Networks;
+using XmlFeedForwardNet.Utils.WeightLoader;
 
 namespace XmlFeedForwardNet.Utils
 {

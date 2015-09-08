@@ -1,28 +1,16 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers; // Because of the keyboard...
 using GoodAI.Core.Task;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-
-using ManagedCuda.VectorTypes;
-
-
-
-
+using GoodAI.Modules.Transforms;
 //---- observers
 using GoodAI.Modules.Vision;
-using OpenTK.Input;
-using GoodAI.Core;
-using GoodAI.Core.Observers; // Because of the keyboard...
+using ManagedCuda.BasicTypes;
+using System;
+using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.Vision
 {

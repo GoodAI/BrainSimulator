@@ -1,27 +1,16 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
 using GoodAI.Core.Task;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-
-
-
-using ManagedCuda.VectorTypes;           // manual kernel sizes are needed
-
-
 //---- observers
 using GoodAI.Modules.Vision;
-using GoodAI.Core;
-using GoodAI.Core.Observers;
+using ManagedCuda;
+using ManagedCuda.VectorTypes;           // manual kernel sizes are needed
+using System;
+using System.ComponentModel;
+using YAXLib;
 //using OpenTK.Input; // Because of the keyboard...
 
 

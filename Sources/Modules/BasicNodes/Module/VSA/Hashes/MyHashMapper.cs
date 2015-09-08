@@ -1,24 +1,13 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Security.Policy;
-using GoodAI.Modules.Matrix;
+﻿using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Modules.VSA;
-using ManagedCuda;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ManagedCuda.BasicTypes;
-using ManagedCuda.CudaBlas;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using YAXLib;
-using GoodAI.Core;
 
 namespace GoodAI.Modules.VSA.Hashes
 {
