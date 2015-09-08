@@ -15,7 +15,7 @@ namespace GoodAI.BrainSimulator.Forms
         private MainForm m_mainForm;
 
         private static int MAX_LINES = 1000;
-        private static int LINES_REMOVED_PER_CHECK = 50;
+        private static int ADDITIONAL_LINES_REMOVED_PER_CHECK = 50;
 
         private class TextBoxCache : MyLogWriter
         {
@@ -206,7 +206,9 @@ namespace GoodAI.BrainSimulator.Forms
 
             if (textBox.Lines.Length > MAX_LINES)
             {
-                textBox.Lines = textBox.Lines.Skip(LINES_REMOVED_PER_CHECK).ToArray();
+                textBox.Lines = textBox.Lines.Skip(
+                        textBox.Lines.Length - MAX_LINES + ADDITIONAL_LINES_REMOVED_PER_CHECK
+                        ).ToArray();
             }
         }
     }

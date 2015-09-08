@@ -286,21 +286,24 @@ namespace GoodAI.Core.Execution
         }
 
         private void DoStop()
-        {            
-            MyLog.INFO.WriteLine("Cleaning up world...");
-            Project.World.Cleanup();
+        {
+            if (State != SimulationState.STOPPED)
+            {
+                MyLog.INFO.WriteLine("Cleaning up world...");
+                Project.World.Cleanup();
 
-            MyLog.INFO.WriteLine("Freeing memory...");
-            Simulation.FreeMemory();
-            PrintMemoryInfo();
+                MyLog.INFO.WriteLine("Freeing memory...");
+                Simulation.FreeMemory();
+                PrintMemoryInfo();
 
-            MyKernelFactory.Instance.RecoverContexts();
+                MyKernelFactory.Instance.RecoverContexts();
 
-            MyLog.INFO.WriteLine("Clearing simulation...");
-            Simulation.Clear();            
+                MyLog.INFO.WriteLine("Clearing simulation...");
+                Simulation.Clear();            
 
-            MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
-            State = SimulationState.STOPPED;
+                MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
+                State = SimulationState.STOPPED;
+            }
 
             // Cleanup and invoke the callback action.
             if (m_closeCallback != null)
