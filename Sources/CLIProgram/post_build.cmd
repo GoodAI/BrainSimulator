@@ -12,3 +12,6 @@ xcopy /y /s %2..\Modules\InternalNodes\Module\bin\%4\*.* %2%3\modules\GoodAI.Int
 
 mkdir %2%3modules\GoodAI.MNIST
 xcopy /y /s %2..\Modules\MNIST\Module\bin\%4\*.* %2%3\modules\GoodAI.MNIST
+
+mkdir %2%3modules\GoodAI.SeMeIntegration
+xcopy /y /s %2..\Modules\SeMeIntegrationModule\Module\bin\%4\*.* %2%3\modules\GoodAI.SeMeIntegration
