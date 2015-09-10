@@ -90,10 +90,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-            // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
-
-            if (previousLayer != null)
+            foreach (MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
             {
                 //// reset delta
                 previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)

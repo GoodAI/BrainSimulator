@@ -121,10 +121,12 @@
   <ItemGroup>
     <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyNegativeCorrelationEnsembleLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyOne2OneOutputLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
+    <Compile Include="NeuralNetwork\Tasks\MyNegativeCorrelationEnsembleTasks.cs" />
     <Compile Include="Robotic\MyCuriosityProbe.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />

@@ -20,7 +20,7 @@ namespace GoodAI.Modules.LSTM.Tasks
     [Description("Init LSTM layer"), MyTaskInfo(OneShot = true)]
     public class MyLSTMInitLayerTask : MyTask<MyLSTMLayer>
     {
-        [YAXSerializableField(DefaultValue = 0.25f)]
+        [YAXSerializableField(DefaultValue = 0.025f)]
         [MyBrowsable, Category("\tLayer")]
         public float INIT_WEIGHTS_STDDEV { get; set; }
 

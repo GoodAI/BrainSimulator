@@ -86,7 +86,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
-            TimeStep = 0;
+            TimeStep = -1;
             base.UpdateMemoryBlocks();
         }
 
@@ -127,13 +127,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
             // bptt architecture
             BPTTAllSteps.Add(BPTTLoop);
-            BPTTAllSteps.Add(IncrementTimeStep);
             BPTTAllSteps.Add(RunTemporalBlocksMode);
             BPTTAllSteps.AddRange(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList());
-            BPTTAllSteps.Add(DecrementTimeStep);
 
             // if current time is time for bbp, do it
-            MyExecutionBlock BPTTExecuteBPTTIfTimeCountReachedSequenceLength = new MyIfBlock(() => TimeStep == SequenceLength - 1,
+            MyExecutionBlock BPTTExecuteBPTTIfTimeCountReachedSequenceLength = new MyIfBlock(() => TimeStep == SequenceLength-1,
                 BPTTAllSteps.ToArray()
             );
 
@@ -151,13 +149,14 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(newPlan.Where(task => task is MyIncrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyDecrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);
+            
             selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
             newPlan.RemoveAll(selected.Contains);
     
             // after FF add deltaoutput and bptt if needed, then increpement one step :)
+            newPlan.Insert(0, IncrementTimeStep);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
             newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
-            newPlan.Add(IncrementTimeStep);
 
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());

@@ -46,7 +46,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Delta,
                 Owner.Cost,
                 Owner.Neurons
-                );
+            );
 
             // IMPORTANT: Add regularization
             Owner.AddRegularization();
@@ -87,7 +87,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Delta,
                 Owner.Cost,
                 Owner.Neurons
-                );
+            );
 
             // IMPORTANT: Add regularization
             Owner.AddRegularization();
@@ -123,7 +123,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Delta,
                 Owner.Cost,
                 Owner.Neurons
-                );
+            );
 
             // IMPORTANT: Add regularization
             Owner.AddRegularization();

@@ -36,7 +36,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Task execution
         public override void Execute()
         {
-            Owner.TimeStep = 0;
+            Owner.TimeStep = -1;
 
             // disable GradientCheck by default - TODO: fix this somehow
             Owner.GradientCheck.Enabled = false;

@@ -203,10 +203,10 @@ extern "C"
 				int cellWeightId = memoryBlockId * weightsPerCell + neuronId;
 				int gateWeightId = memoryBlockId * weightsPerGate + neuronId;
 
-				prevDeltaPtr[neuronId] += -cellInputDeltas[memoryBlockId] * cellInputWeights[cellWeightId];
-				prevDeltaPtr[neuronId] += -inputGateDeltas[memoryBlockId] * inputGateWeights[gateWeightId];
-				prevDeltaPtr[neuronId] += -forgetGateDeltas[memoryBlockId] * forgetGateWeights[gateWeightId];
-				prevDeltaPtr[neuronId] += -outputGateDeltas[memoryBlockId] * outputGateWeights[gateWeightId];
+				prevDeltaPtr[neuronId] += cellInputDeltas[memoryBlockId] * cellInputWeights[cellWeightId];
+				prevDeltaPtr[neuronId] += inputGateDeltas[memoryBlockId] * inputGateWeights[gateWeightId];
+				prevDeltaPtr[neuronId] += forgetGateDeltas[memoryBlockId] * forgetGateWeights[gateWeightId];
+				prevDeltaPtr[neuronId] += outputGateDeltas[memoryBlockId] * outputGateWeights[gateWeightId];
 			}
 		}
 	}

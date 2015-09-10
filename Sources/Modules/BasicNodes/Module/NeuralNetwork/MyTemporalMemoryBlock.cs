@@ -50,7 +50,10 @@ namespace GoodAI.Modules.NeuralNetwork
                 if (Owner is MyAbstractLayer)
                 {
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    return layer.ParentNetwork.TimeStep;
+                    int timeStep = layer.ParentNetwork.TimeStep;
+                    if (0 <= timeStep && timeStep < SequenceLength)
+                        return timeStep;
+                    return 0;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
             }
@@ -222,6 +225,11 @@ namespace GoodAI.Modules.NeuralNetwork
                 destination.GetDevice(Owner.GPU).CopyToDevice(Device[Owner.GPU], (TimeOffset + srcOffset) * size, (TimeOffset + destOffset) * size, count * size);
             else
                 destination.GetDevice(Owner.GPU).CopyToDevice(Device[Owner.GPU], (TimeOffset + srcOffset) * size, destOffset * size, count * size);
+        }
+
+        public override CudaDeviceVariable<T> GetDevice(MyWorkingNode callee)
+        {
+            return GetDevice(callee.GPU);
         }
 
         public override CudaDeviceVariable<T> GetDevice(int nGPU)

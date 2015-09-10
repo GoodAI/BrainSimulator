@@ -236,7 +236,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             foreach (var previousLayer in Owner.PreviousConnectedLayers)
             {
                 // Reset delta
-                previousLayer.Delta.FillAll(0);
+                previousLayer.Delta.Fill(0);
 
                 // Disable backprop when in generative mode
                 if (!Owner.Generate.IsIncomingRised())

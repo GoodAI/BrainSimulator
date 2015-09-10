@@ -58,21 +58,7 @@ namespace GoodAI.Modules.LSTM.Tasks
 
         public override void Execute()
         {
-                 
             if (SimulationStep == 0) return;
-
-            // pointer to previous layer
-            //MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
-            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
-            CUdeviceptr prevInputPtr = nullCUdeviceptr; // 2 improve
-            if (previousLayer != null)
-            {
-                // reset delta
-                previousLayer.Delta.Fill(0);
-
-                // determine input to previous layer
-                prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
-            }
 
             switch (Owner.LearningTasks)
             {
@@ -90,32 +76,6 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.CellStates.Count,
                         Owner.CellsPerBlock
                     );
-
-                    if (previousLayer != null)
-                    {
-                        // propagate delta to previous layer
-                        m_deltaBackKernel.SetupExecution(previousLayer.Neurons);
-                        m_deltaBackKernel.Run(
-                            (int)previousLayer.ActivationFunction,
-                            prevInputPtr,
-                            previousLayer.Delta,
-                            Owner.CellStateErrors,
-                            Owner.PreviousCellStates,
-                            Owner.InputGateActivations,
-                            Owner.CellInputActivationDerivatives,
-                            Owner.InputGateActivationDerivatives,
-                            Owner.ForgetGateActivationDerivatives,
-                            Owner.CellInputWeights,
-                            Owner.InputGateWeights,
-                            Owner.ForgetGateWeights,
-                            Owner.OutputGateWeights,
-                            Owner.OutputGateDeltas,
-
-                            previousLayer.Neurons,
-                            Owner.CellStates.Count,
-                            Owner.CellsPerBlock
-                        );
-                    }
                     break;
                 }
                 case MyLSTMLayer.LearningTasksType.BPTT:
@@ -185,8 +145,49 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.CellStates.Count,
                         Owner.CellsPerBlock
                     );
+                    break;
+                }
+            }
 
-                    if (previousLayer != null)
+            foreach (MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
+            {
+                CUdeviceptr prevInputPtr = nullCUdeviceptr;
+
+                // reset delta
+                previousLayer.Delta.Fill(0);
+
+                // determine input to previous layer
+                prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
+
+                switch (Owner.LearningTasks)
+                {
+                    case MyLSTMLayer.LearningTasksType.RTRL:
+                    {
+                        // propagate delta to previous layer
+                        m_deltaBackKernel.SetupExecution(previousLayer.Neurons);
+                        m_deltaBackKernel.Run(
+                            (int)previousLayer.ActivationFunction,
+                            prevInputPtr,
+                            previousLayer.Delta,
+                            Owner.CellStateErrors,
+                            Owner.PreviousCellStates,
+                            Owner.InputGateActivations,
+                            Owner.CellInputActivationDerivatives,
+                            Owner.InputGateActivationDerivatives,
+                            Owner.ForgetGateActivationDerivatives,
+                            Owner.CellInputWeights,
+                            Owner.InputGateWeights,
+                            Owner.ForgetGateWeights,
+                            Owner.OutputGateWeights,
+                            Owner.OutputGateDeltas,
+
+                            previousLayer.Neurons,
+                            Owner.CellStates.Count,
+                            Owner.CellsPerBlock
+                        );
+                        break;
+                    }
+                    case MyLSTMLayer.LearningTasksType.BPTT:
                     {
                         // propagate delta to previous layer
                         m_deltaBackKernel.SetupExecution(previousLayer.Neurons);
@@ -208,11 +209,10 @@ namespace GoodAI.Modules.LSTM.Tasks
                             Owner.CellStates.Count,
                             Owner.CellsPerBlock
                         );
+                        break;
                     }
-                    break;
                 }
             }
-
         }
     }
 }

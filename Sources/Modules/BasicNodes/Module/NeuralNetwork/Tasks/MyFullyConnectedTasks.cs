@@ -58,7 +58,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 dropout,
                 Owner.Input.Count,
                 Owner.Output.Count
-                );
+            );
 
             if (Owner.ParentNetwork.L1 > 0) // don't take performance hit if L1 is not used
             {
@@ -144,11 +144,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-            // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousTopologicalLayer;
-            MyAbstractLayer nextLayer = Owner.NextTopologicalLayer;
-
-            if (previousLayer != null)
+            foreach(MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
             {
                 // reset delta only if next is not Gaussian HACK.
                 // (Gaussian layer already reseted delta and filled with regularization deltas)

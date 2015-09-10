@@ -144,4 +144,54 @@ extern "C"
 			input[i] = randomUniform[i] * diff + mins[i];
 		}
 	}
+
+	__global__ void NegativeCorrelationForwardResetKernel(
+		float* outputPtr,
+		int thisLayerSize
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			outputPtr[j] = 0;
+		}
+	}
+
+	__global__ void NegativeCorrelationForwardSumKernel(
+		float* inputPtr,
+		float* outputPtr,
+		int thisLayerSize
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			outputPtr[j] += inputPtr[j];
+		}
+	}
+
+	__global__ void NegativeCorrelationForwardDivideKernel(
+		float* outputPtr,
+		int thisLayerSize,
+		int inputModelCount
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			outputPtr[j] /= (float)inputModelCount;
+		}
+	}
 }
