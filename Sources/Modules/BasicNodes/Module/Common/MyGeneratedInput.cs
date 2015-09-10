@@ -1,17 +1,14 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-using GoodAI.Core.Task;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.Globalization;
-using GoodAI.Core;
+using System.Linq;
+using YAXLib;
 
 namespace GoodAI.Modules.Common
 {

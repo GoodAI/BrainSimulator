@@ -26,6 +26,7 @@ extern "C"
 		float L2Lambda,
 		float *dropoutMaskPtr,
 		int thisLayerSize,
+		int batchSize,
 		int weightCount
 		)
 	{
@@ -44,7 +45,7 @@ extern "C"
 				int i = weightIdx / thisLayerSize; // index of input neuron
 
 				//weightDelta = trainingRate * deltaPtr[j] * inputPtr[i];
-				float weightDelta = trainingRate * (deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx]);
+				float weightDelta = trainingRate * (deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx]) / batchSize;
 				if (momentum != 0)
 				{
 					weightDelta += momentum * previousWeightDeltaPtr[weightIdx];
@@ -55,7 +56,7 @@ extern "C"
 
 				// update bias
 				if (weightIdx / thisLayerSize == 0) {
-					float biasDelta = trainingRate * deltaPtr[j];
+					float biasDelta = trainingRate * deltaPtr[j] / batchSize;
 					if (momentum != 0)
 					{
 						biasDelta += momentum * previousBiasDeltaPtr[j];
@@ -80,6 +81,7 @@ extern "C"
 		float L2Lambda,
 		float *dropoutMaskPtr,
 		int thisLayerSize,
+		int batchSize,
 		int weightCount,
 		float *meanSquareWeight,
 		float *meanSquareBias,
@@ -101,7 +103,7 @@ extern "C"
 				int i = weightIdx / thisLayerSize; // index of input neuron
 
 				//weightDelta = trainingRate * deltaPtr[j] * inputPtr[i];
-				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
+				float gradient = (deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx]) / batchSize;
 				if (momentum != 0)
 				{
 					gradient += momentum * previousWeightDeltaPtr[weightIdx];
@@ -118,7 +120,7 @@ extern "C"
 				// update bias
 				if (weightIdx / thisLayerSize == 0)
 				{
-					gradient = deltaPtr[j];
+					gradient = deltaPtr[j] / batchSize;
 					if (momentum != 0)
 					{
 						gradient += momentum * previousBiasDeltaPtr[j];
@@ -140,13 +142,12 @@ extern "C"
 		float *inputPtr,
 		float *deltaPtr,
 		float *weightPtr,
-		float *previousWeightDeltaPtr,
 		float *biasPtr,
-		float *previousBiasDeltaPtr,
 		float L1Lambda,
 		float L2Lambda,
 		float *dropoutMaskPtr,
 		int thisLayerSize,
+		int batchSize,
 		int weightCount,
 		float *adaSquares, float *adaDeltas, float *adaBiasSquares, float *adaBiasDeltas,
 		float ro, float epsilon
@@ -166,7 +167,7 @@ extern "C"
 				// update weights
 				int i = weightIdx / thisLayerSize; // index of input neuron
 
-				float gradient = deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx];
+				float gradient = (deltaPtr[j] * inputPtr[i] + L1Lambda * sign(weightPtr[weightIdx]) + L2Lambda * weightPtr[weightIdx]) / batchSize;
 
 				adaSquares[weightIdx] = ro * adaSquares[weightIdx] + (1 - ro) * gradient * gradient;
 				float dx = -sqrtf((adaDeltas[weightIdx] + epsilon) / (adaSquares[weightIdx] + epsilon)) * gradient;
@@ -176,7 +177,7 @@ extern "C"
 				// update bias
 				if (weightIdx / thisLayerSize == 0)
 				{
-					gradient = deltaPtr[j];
+					gradient = deltaPtr[j] / batchSize;
 					adaBiasSquares[j] = ro * adaBiasSquares[j] + (1 - ro) * gradient * gradient;
 					float dx = -sqrtf((adaBiasDeltas[j] + epsilon) / (adaBiasSquares[j] + epsilon)) * gradient;
 					adaBiasDeltas[j] = ro * adaBiasDeltas[j] + (1 - ro) * dx * dx;

@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core.Task;
-using GoodAI.Core.Memory;
-using ManagedCuda.BasicTypes;
-using System.Diagnostics;
-using System.ComponentModel;
-using GoodAI.Core.Utils;
-using System.Drawing;
-using YAXLib;
-using System.Reflection;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Signals;
+using GoodAI.Core.Utils;
+using System;
+using System.ComponentModel;
+using System.Reflection;
+using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public abstract class MyNode : IDisposable
+    public abstract class MyNode : IDisposable, IValidatable
     {
         #region Common properties
         
@@ -260,7 +252,8 @@ namespace GoodAI.Core.Nodes
             {
                 for (int i = 0; i < InputBranches; i++)
                 {
-                    validator.AssertError(GetAbstractInput(i).Count > 0, this, "Input size has to be larger than zero.");
+                    if (GetAbstractInput(i) != null)
+                        validator.AssertError(GetAbstractInput(i).Count > 0, this, "Input size has to be larger than zero.");
                 }
             }
         }      

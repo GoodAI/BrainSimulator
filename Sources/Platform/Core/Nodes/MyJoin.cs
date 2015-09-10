@@ -2,14 +2,8 @@
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Transforms;
-using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Core.Nodes

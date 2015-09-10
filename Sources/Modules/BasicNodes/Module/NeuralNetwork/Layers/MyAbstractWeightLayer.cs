@@ -1,17 +1,8 @@
 ﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Signals;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-using GoodAI.Core.Task;
-using GoodAI.Core.Nodes;
-using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Tasks;
+using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
@@ -43,8 +34,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> MeanSquareBias { get; protected set; }
 
         // Adadelta memory
-        public MyMemoryBlock<float> AdadeltaWeight { get; protected set; }
-        public MyMemoryBlock<float> AdadeltaBias { get; protected set; }
+        // not necessary, we can use PreviousDelta blocks instead (adadelta doesn't use momentum so they are free)
+        //public MyMemoryBlock<float> AdadeltaWeight { get; protected set; }
+        //public MyMemoryBlock<float> AdadeltaBias { get; protected set; }
 
         //// vSGD-fd memory
         //public MyMemoryBlock<float> OriginalWeights { get; protected set; }

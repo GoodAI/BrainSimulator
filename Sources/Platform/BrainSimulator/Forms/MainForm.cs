@@ -1,30 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GoodAI.BrainSimulator.NodeView;
-using Graph;
-using Graph.Compatibility;
-using System.IO;
-using WeifenLuo.WinFormsUI.Docking;
-using GoodAI.Core.Nodes;
+﻿using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core;
-using System.Diagnostics;
-using GoodAI.Core.Utils;
-using GoodAI.BrainSimulator.Utils;
-using GoodAI.Core.Observers;
-using GoodAI.BrainSimulator.Nodes;
-using System.Reflection;
-using System.Collections.Specialized;
-using GoodAI.Core.Execution;
-using YAXLib;
-using GoodAI.Core.Memory;
 using GoodAI.Core.Configuration;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
+using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
+using YAXLib;
 
 namespace GoodAI.BrainSimulator.Forms
 {
@@ -34,6 +21,7 @@ namespace GoodAI.BrainSimulator.Forms
         private static Color STATUS_BAR_BLUE_BUILDING = Color.FromArgb(255, 14, 99, 156);
 
         private MruStripMenuInline m_recentMenu;
+        private bool m_isClosing = false;
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -301,21 +289,40 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (m_isClosing) return;
+
+            // Cancel the event - the window will close when the simulation is finished.
+            e.Cancel = true;
+
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING ||
+                SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING_STEP)
+            {
+                var dialogResult =
+                    MessageBox.Show(
+                        "Do you want to quit while the simulation is running?",
+                        "Quit?",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (dialogResult == DialogResult.No)
+                    return;
+            }
+
             if ((String.IsNullOrEmpty(saveFileDialog.FileName)) || !IsProjectSaved(saveFileDialog.FileName))
             {
                 var dialogResult = MessageBox.Show("Save project changes?",
                     "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
-                if (dialogResult == DialogResult.Yes)
-                {
-                    AskForFileNameAndSaveProject();
-                }
-                else if (dialogResult == DialogResult.Cancel)
-                {
-                    e.Cancel = true;
+                // Do not close.
+                if (dialogResult == DialogResult.Cancel)
                     return;
-                }
+
+                if (dialogResult == DialogResult.Yes)
+                    AskForFileNameAndSaveProject();
             }
+
+            // When this is true, the event will just return next time it's called.
+            m_isClosing = true;
+            SimulationHandler.Finish(Close);
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -326,8 +333,6 @@ namespace GoodAI.BrainSimulator.Forms
             Properties.Settings.Default.RecentFilesList.AddRange(m_recentMenu.GetFiles());
 
             Properties.Settings.Default.Save();
-
-            SimulationHandler.Finish();
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -532,6 +537,85 @@ namespace GoodAI.BrainSimulator.Forms
             var aboutDialog = new AboutDialog();
             aboutDialog.ShowDialog();
         }
-    
+
+        private bool handleFirstClickOnActivated = false;
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Form.Activated" /> event.
+        /// Handle WinForms bug for first click during activation
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            if (this.handleFirstClickOnActivated)
+            {
+                var cursorPosition = Cursor.Position;
+                var clientPoint = this.PointToClient(cursorPosition);
+                var child = this.GetChildAtPoint(clientPoint);
+
+                while (this.handleFirstClickOnActivated && child != null)
+                {
+                    var toolStrip = child as ToolStrip;
+                    if (toolStrip != null)
+                    {
+                        this.handleFirstClickOnActivated = false;
+                        clientPoint = toolStrip.PointToClient(cursorPosition);
+                        foreach (var item in toolStrip.Items)
+                        {
+                            var toolStripItem = item as ToolStripItem;
+                            if (toolStripItem != null && toolStripItem.Bounds.Contains(clientPoint))
+                            {
+                                var tsMenuItem = item as ToolStripDropDownItem;
+                                if (tsMenuItem != null)
+                                {
+                                    tsMenuItem.ShowDropDown();
+                                    break;
+                                }
+
+                                toolStripItem.PerformClick();
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        child = child.GetChildAtPoint(clientPoint);
+                    }
+                }
+                this.handleFirstClickOnActivated = false;
+            }
+        }
+
+        /// <summary>
+        /// If the form is being focused (activated), set the handleFirstClickOnActivated flag
+        /// indicating that so that it can be later used in OnActivated.
+        /// </summary>
+        /// <param name="m"></param>
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_ACTIVATE = 0x0006;
+            const int WA_CLICKACTIVE = 0x0002;
+            if (m.Msg == WM_ACTIVATE && Low16(m.WParam) == WA_CLICKACTIVE)
+            {
+                handleFirstClickOnActivated = true;
+            }
+            base.WndProc(ref m);
+        }
+
+        private static int GetIntUnchecked(IntPtr value)
+        {
+            return IntPtr.Size == 8 ? unchecked((int)value.ToInt64()) : value.ToInt32();
+        }
+
+        private static int Low16(IntPtr value)
+        {
+            return unchecked((short)GetIntUnchecked(value));
+        }
+
+        private static int High16(IntPtr value)
+        {
+            return unchecked((short)(((uint)GetIntUnchecked(value)) >> 16));
+        }
     }
 }

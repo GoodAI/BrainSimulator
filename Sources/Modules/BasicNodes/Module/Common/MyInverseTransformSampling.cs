@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Utils;
-using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using System;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.Common
 {

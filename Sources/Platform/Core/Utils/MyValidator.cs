@@ -1,13 +1,15 @@
 ﻿using GoodAI.Core.Execution;
-using GoodAI.Core.Nodes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Core.Utils
 {
+    public interface IValidatable
+    {
+        string Name { get; }
+
+        void Validate(MyValidator validator);
+    }
+
     public class MyValidator
     {
         public List<MyValidationMessage> Messages { get; private set; }    
@@ -27,7 +29,7 @@ namespace GoodAI.Core.Utils
             ValidationSucessfull = true;
         }
 
-        private void AddMessage(MyValidationLevel level, string message, MyNode sender) {
+        private void AddMessage(MyValidationLevel level, string message, IValidatable sender) {
 
             string[] lines = message.Split('\n');
 
@@ -39,7 +41,7 @@ namespace GoodAI.Core.Utils
             }
         }        
 
-        public void AssertError(bool result, MyNode sender, string failMessage) 
+        public void AssertError(bool result, IValidatable sender, string failMessage) 
         {
             if (!result)
             {
@@ -48,12 +50,12 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddError(MyNode sender, string message)
+        public void AddError(IValidatable sender, string message)
         {
             AssertError(false, sender, message);
         }
 
-        public void AssertWarning(bool result, MyNode sender, string failMessage) 
+        public void AssertWarning(bool result, IValidatable sender, string failMessage) 
         {
             if (!result)
             {
@@ -61,12 +63,12 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddWarning(MyNode sender, string message)
+        public void AddWarning(IValidatable sender, string message)
         {
             AssertWarning(false, sender, message);
         }
 
-        public void AssertInfo(bool result, MyNode sender, string failMessage) 
+        public void AssertInfo(bool result, IValidatable sender, string failMessage) 
         {
             if (!result)
             {
@@ -74,7 +76,7 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public void AddInfo(MyNode sender, string message)
+        public void AddInfo(IValidatable sender, string message)
         {           
             AssertInfo(false, sender, message);            
         }

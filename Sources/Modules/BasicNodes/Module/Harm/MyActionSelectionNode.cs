@@ -1,17 +1,11 @@
 ﻿using GoodAI.Core;
-using GoodAI.Core.Nodes;
 using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using YAXLib;
-using ManagedCuda;
 
 namespace GoodAI.Modules.Harm
 {

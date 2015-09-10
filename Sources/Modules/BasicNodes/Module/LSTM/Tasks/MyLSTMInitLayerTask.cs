@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GoodAI.Core;
 using System.ComponentModel;
 using YAXLib;
 using GoodAI.Core.Memory;
@@ -20,7 +16,7 @@ namespace GoodAI.Modules.LSTM.Tasks
     [Description("Init LSTM layer"), MyTaskInfo(OneShot = true)]
     public class MyLSTMInitLayerTask : MyTask<MyLSTMLayer>
     {
-        [YAXSerializableField(DefaultValue = 0.025f)]
+        [YAXSerializableField(DefaultValue = 0.25f)]
         [MyBrowsable, Category("\tLayer")]
         public float INIT_WEIGHTS_STDDEV { get; set; }
 

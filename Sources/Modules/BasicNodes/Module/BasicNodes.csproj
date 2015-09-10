@@ -297,6 +297,8 @@
     <EmbeddedResource Include="res\transform.png" />
     <EmbeddedResource Include="res\delayedcopy.png" />
     <EmbeddedResource Include="res\delayedcopy_big.png" />
+    <EmbeddedResource Include="res\convolution.png" />
+    <EmbeddedResource Include="res\convolution_big.png" />
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -329,6 +331,8 @@
     <EmbeddedResource Include="res\join_big.png" />
     <EmbeddedResource Include="res\one2one_layer.png" />
     <EmbeddedResource Include="res\one2one_layer_big.png" />
+    <EmbeddedResource Include="res\pooling.png" />
+    <EmbeddedResource Include="res\pooling_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

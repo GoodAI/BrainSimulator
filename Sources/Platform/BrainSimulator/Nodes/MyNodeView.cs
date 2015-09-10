@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using GoodAI.BrainSimulator.Nodes;
+using GoodAI.Core.Configuration;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
+using GoodAI.Core.Utils;
 using Graph;
 using Graph.Items;
-using YAXLib;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Utils;
-using GoodAI.BrainSimulator.Utils;
-using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Reflection;
-using GoodAI.BrainSimulator.Nodes;
-using GoodAI.BrainSimulator.Forms;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Signals;
-using GoodAI.Core.Configuration;
 
 namespace GoodAI.BrainSimulator.NodeView
 {

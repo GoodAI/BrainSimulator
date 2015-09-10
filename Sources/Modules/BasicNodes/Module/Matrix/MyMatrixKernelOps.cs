@@ -1,22 +1,8 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;           // manual kernel sizes are needed
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-
-using GoodAI.Modules.Matrix;
-
-using ManagedCuda.VectorTypes;
-using GoodAI.Core;           // manual kernel sizes are needed
 
 
 namespace GoodAI.Modules.Matrix
@@ -79,6 +65,10 @@ namespace GoodAI.Modules.Matrix
             if ((operations & MatOperation.Substraction) > 0)
             {
                 OpersKerlsDictionary.Add(MatOperation.Substraction, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_Substraction_naive"));
+            }
+            if ((operations & MatOperation.Transpose) > 0)
+            {
+                OpersKerlsDictionary.Add(MatOperation.Transpose, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_transposeFromSVDnodeCOPY"));
             }
             if (operations > 0 && OpersKerlsDictionary.Count == 0)
             {
@@ -190,7 +180,7 @@ namespace GoodAI.Modules.Matrix
 
         public static MatOperation AvailableOperations()
         {
-            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction;
+            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction | MatOperation.Transpose;
         }
 
 

@@ -1,27 +1,19 @@
-﻿using GoodAI.Core.Memory;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
+﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
-using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Core.Observers
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public abstract class MyAbstractObserver : IDisposable
+    public abstract class MyAbstractObserver : IDisposable, IValidatable
     {
         #region Core stuff
 
@@ -213,6 +205,10 @@ namespace GoodAI.Core.Observers
 
         #endregion
 
+        #region Validation
+        public virtual void Validate(MyValidator validator) { }
+
+        #endregion
 
         #region Texture
 
@@ -438,6 +434,14 @@ namespace GoodAI.Core.Observers
             {
                 TargetIdentifier = CreateTargetIdentifier();
             }
+        }
+
+        public string Name 
+        { 
+            get 
+            { 
+                return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; 
+            } 
         }
 
         #endregion

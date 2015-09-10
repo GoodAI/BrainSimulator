@@ -1,18 +1,4 @@
-﻿using GoodAI.Core;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
-using GoodAI.Core.Task;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using YAXLib;
-using ManagedCuda;
-using GoodAI.Modules.NeuralNetwork.Group;
+﻿using GoodAI.Core.Nodes;
 using GoodAI.Modules.NeuralNetwork.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
@@ -57,8 +43,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     MeanSquareBias.Count = Bias.Count;
 
                     // Adadelta allocation
-                    AdadeltaWeight.Count = Weights.Count;
-                    AdadeltaBias.Count = Bias.Count;
+                    //AdadeltaWeight.Count = Weights.Count;
+                    //AdadeltaBias.Count = Bias.Count;
 
                     //// vSGD-fd allocations
                     //OriginalWeights.Count = Weights.Count;

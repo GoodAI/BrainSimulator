@@ -1,24 +1,16 @@
-﻿using GoodAI.Core;
+﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
 using GoodAI.Core.Task;
-using GoodAI.Core.Execution;
-using GoodAI.Core.Signals;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using YAXLib;
-using ManagedCuda;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.LSTM.Tasks;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
-using System.Diagnostics;
 using GoodAI.Modules.RBM;
-using GoodAI.Modules.LSTM.Tasks;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
@@ -68,6 +60,16 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyTaskGroup("BackPropagation")]
         public MyAdadeltaTask Adadelta { get; protected set; }
 
+        public MyAbstractBackpropTask GetActiveBackpropTask() {
+            if (SGD.Enabled)
+                return SGD;
+            if (RMS.Enabled)
+                return RMS;
+            if (Adadelta.Enabled)
+                return Adadelta;
+            return null;
+        }
+
         //[MyTaskGroup("BackPropagation")]
         //public MyvSGDfdTask vSGD { get; protected set; }
 
@@ -111,6 +113,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 else
                     newPlan.Add(groupTask); // add group tasks
 
+            // remove group backprop tasks (they should be called from the individual layers)
+            // DO NOT remove RBM tasks
+            // DO NOT remove the currently selected backprop task (it handles batch learning)
+            selected = newPlan.Where(task => task is MyAbstractBackpropTask &&  !(task.Enabled) && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
+            newPlan.RemoveAll(selected.Contains);
             // bbpt single step
             BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyDeltaTask).ToList().Reverse<IMyExecutable>());
             BPTTSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
@@ -210,6 +217,20 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 MyLog.ERROR.WriteLine("ERROR: GetError() called from " + stackTrace.GetFrame(1).GetMethod().Name + " needs an OutputLayer as the last layer.");
                 return 0.0f;
             }
+        }
+
+        // handles batch learning
+        // should be called after every backward pass
+        public void NextSample()
+        {
+            if (GetActiveBackpropTask() != null)
+                GetActiveBackpropTask().BatchIndex++;
+        }
+
+        // are we at the beginning of a new batch - should we reset deltas?
+        public bool NewBatch()
+        {
+            return (GetActiveBackpropTask() != null) && (GetActiveBackpropTask().BatchIndex == 0);
         }
     }
 }

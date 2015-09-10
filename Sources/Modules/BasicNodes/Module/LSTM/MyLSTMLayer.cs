@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using YAXLib;
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
+using GoodAI.Core.Signals;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Signals;
 using GoodAI.Modules.NeuralNetwork;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
+using System.ComponentModel;
+using YAXLib;
+using System;
 using GoodAI.Modules.LSTM.Tasks;
 
 namespace GoodAI.Modules.LSTM

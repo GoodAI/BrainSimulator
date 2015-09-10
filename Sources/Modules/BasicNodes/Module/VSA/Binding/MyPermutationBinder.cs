@@ -1,14 +1,7 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
-using GoodAI.Modules.Transforms;
 using ManagedCuda.BasicTypes;
-using ManagedCuda.CudaFFT;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Modules.VSA
 {

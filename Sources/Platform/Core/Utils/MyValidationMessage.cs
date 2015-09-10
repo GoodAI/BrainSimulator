@@ -1,10 +1,4 @@
-﻿using GoodAI.Core.Nodes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace GoodAI.Core.Utils
 {
     public enum MyValidationLevel
@@ -18,9 +12,9 @@ namespace GoodAI.Core.Utils
     {
         public MyValidationLevel Level { get; private set; }
         public string Message { get; private set; }
-        public MyNode Sender { get; private set; }
+        public IValidatable Sender { get; private set; }
 
-        internal MyValidationMessage(MyValidationLevel level, string message, MyNode sender)
+        internal MyValidationMessage(MyValidationLevel level, string message, IValidatable sender)
         {
             Level = level;
             Message = message;

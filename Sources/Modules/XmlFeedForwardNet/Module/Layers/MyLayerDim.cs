@@ -1,5 +1,4 @@
-﻿using ManagedCuda;
-using ManagedCuda.BasicTypes;
+﻿using ManagedCuda.BasicTypes;
 using System.Runtime.InteropServices;
 
 /*

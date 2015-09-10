@@ -1,27 +1,20 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Observers.Helper;
 using GoodAI.Core.Task;
-using GoodAI.Modules.Transforms;
 using GoodAI.Core.Utils;
+//---- observers
+using GoodAI.Modules.Vision;
 using ManagedCuda;
-using ManagedCuda.BasicTypes;
+using ManagedCuda.VectorTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
-
-
-using ManagedCuda.VectorTypes;
 using System.Drawing;  // for PointF
-
-//---- observers
-using GoodAI.Modules.Vision;
-using GoodAI.Core;
-using GoodAI.Core.Observers;
-using GoodAI.Core.Observers.Helper;
+using System.Linq;
+using YAXLib;
 //using OpenTK.Input; // Because of the keyboard...
 
 

@@ -84,8 +84,8 @@
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true" BigIcon="output_layer_big.png" SmallIcon="output_layer.png"/>
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyQLearningLayer" CanBeAdded="true" BigIcon="qagent_big.png" SmallIcon="qagent.png"/>
 
-    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyPoolingLayer"/>
-    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyConvolutionLayer"/>
+    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyPoolingLayer" BigIcon="pooling_big.png" SmallIcon="pooling.png"/>
+    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyConvolutionLayer" BigIcon="convolution_big.png" SmallIcon="convolution.png"/>
 
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyGaussianHiddenLayer" CanBeAdded="true" BigIcon="variGauss_layer_big.png" SmallIcon="variGauss_layer.png" />
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputOne2OneLayer" CanBeAdded="true" BigIcon="one2one_layer_big.png" SmallIcon="one2one_layer.png" />

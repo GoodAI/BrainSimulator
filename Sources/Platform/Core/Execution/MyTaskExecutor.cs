@@ -1,12 +1,6 @@
-﻿using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GoodAI.Core.Execution
 {
@@ -63,6 +57,7 @@ namespace GoodAI.Core.Execution
             for (int i = 0; i < m_numOfThreads; i++)
             {
                 m_threads[i] = new Thread(Worker);
+                m_threads[i].Name = "Task Executor Thread #" + i;
                 m_threadExecInfos[i] = new ThreadExecInfo(i);
                 m_eventsDone[i] = m_threadExecInfos[i].EventDone;
 

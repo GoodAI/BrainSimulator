@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YAXLib;
+﻿using GoodAI.Core.Configuration;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using GoodAI.Core.Configuration;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using YAXLib;
 
 namespace GoodAI.Core.Utils
 {

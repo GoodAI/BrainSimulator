@@ -3,13 +3,10 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using ManagedCuda;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Modules.Transforms
@@ -330,7 +327,7 @@ namespace GoodAI.Modules.Transforms
         {
             private MyCudaKernel m_kernel;
 
-            public enum MyGonioType             
+            public enum MyGonioType
             {
                 [Description("sin(x)")]
                 Sine = 0,
@@ -343,7 +340,11 @@ namespace GoodAI.Modules.Transforms
                 [Description("sinh(x)")]
                 Sinh = 4,
                 [Description("cosh(x)")]
-                Cosh = 5
+                Cosh = 5,
+                [Description("asin(x)")]
+                Asin = 6,
+                [Description("acos(x)")]
+                Acos = 7
             }
 
             [MyBrowsable, Category("Params")]

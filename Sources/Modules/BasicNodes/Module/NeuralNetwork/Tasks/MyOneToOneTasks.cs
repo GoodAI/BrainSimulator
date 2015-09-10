@@ -1,14 +1,10 @@
 ﻿using GoodAI.Core;
-using GoodAI.Modules.NeuralNetwork.Layers;
-using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.NeuralNetwork.Layers;
 using ManagedCuda.BasicTypes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -92,8 +88,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         {
             foreach (MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
             {
-                //// reset delta
-                previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)
+                // reset delta
+                if (Owner.ParentNetwork.NewBatch())
+                    previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
