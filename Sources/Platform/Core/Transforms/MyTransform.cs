@@ -493,7 +493,7 @@ namespace GoodAI.Modules.Transforms
 
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Applies exponential or logarithmic function on each member of input array.</summary>
     /// <description></description>
     [YAXSerializeAs("ExpLogFunction")]
