@@ -12,6 +12,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.Common
 {
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
+    /// <summary>
+    /// Group that is ran multiple iterations at one simulation step. 
+    /// </summary>
     public class MyLoopGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         [YAXSerializableField(DefaultValue = 3)]
