@@ -9,6 +9,7 @@
     <Node type="GoodAI.Modules.Transforms.MyReduction" CanBeAdded="true" BigIcon="reduce_big.png" SmallIcon="reduce.png"/>
     <Node type="GoodAI.Modules.Transforms.MyGoniometricFunction" CanBeAdded="true" BigIcon="sine_big.png" SmallIcon="sine.png"/>
     <Node type="GoodAI.Modules.Transforms.MyPolynomialFunction" CanBeAdded="true" BigIcon="linear_big.png" SmallIcon="linear.png"/>
+    <Node type="GoodAI.Modules.Transforms.MyExpLogFunction" CanBeAdded="true"/>
     <Node type="GoodAI.Modules.Transforms.MyLowHighFilter" CanBeAdded="true" BigIcon="ceil_floor_big.png" SmallIcon="ceil_floor.png"/>
     <Node type="GoodAI.Modules.Transforms.MyThreshold" CanBeAdded="true" BigIcon="threshold_big.png" SmallIcon="threshold.png"/>        
     
