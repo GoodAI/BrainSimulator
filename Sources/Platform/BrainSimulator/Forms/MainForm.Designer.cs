@@ -423,13 +423,13 @@
             // saveFileDialog
             // 
             this.saveFileDialog.DefaultExt = "brain";
-            this.saveFileDialog.Filter = "Project files|*.brain";
+            this.saveFileDialog.Filter = "Project only|*.brain|Project with data|*.brainz";
             this.saveFileDialog.Title = "Save Project...";
             // 
             // openFileDialog
             // 
             this.openFileDialog.DefaultExt = "brain";
-            this.openFileDialog.Filter = "Project files|*.brain";
+            this.openFileDialog.Filter = "Project only|*.brain|Project with data|*.brainz";
             this.openFileDialog.Title = "Open Project...";
             // 
             // mainToolStrip
