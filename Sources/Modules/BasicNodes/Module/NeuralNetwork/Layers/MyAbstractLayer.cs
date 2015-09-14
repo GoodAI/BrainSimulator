@@ -72,12 +72,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyInputBlock(0)]
         public virtual MyMemoryBlock<float> Input
         {
-            get
-            {
-                if (PreviousConnectedLayers.Count > 0)
-                    return PreviousConnectedLayers[0].Output;
-                return GetInput(0);
-            }
+            get { return GetInput(0); }
         }
 
        [MyOutputBlock(0)]
