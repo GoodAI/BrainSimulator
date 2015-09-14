@@ -49,10 +49,16 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyBrowsable, Category("Misc")]
         public int OutputColumnHint { get; set; }
 
+        // The preceding layer in the topological ordering
         public MyAbstractLayer PreviousTopologicalLayer { get; set; }
+
+        // The succeeding layer in the topological ordering
         public MyAbstractLayer NextTopologicalLayer { get; set; }
 
+        // The layers feeding into this layer
         public List<MyAbstractLayer> PreviousConnectedLayers { get; set; }
+
+        // The layers receiving the outputs of this layer
         public List<MyAbstractLayer> NextConnectedLayers { get; set; }
 
         public MyNeuralNetworkGroup ParentNetwork
