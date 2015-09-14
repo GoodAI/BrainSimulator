@@ -267,6 +267,9 @@ namespace GoodAI.Modules.Transforms
         /// Set <b>Minimum</b> and <b>Maximum</b> for interval which is to be indicated.<br/>
         /// 1.0f is then assigned to the i-th position if the value falls into i-th interval
         /// of length (Maximum - Minimum) / Levels; 0.0f is assigned otherwise.
+        /// If <b>StrictThreshold</b> is true, then values that fall outside of interval
+        /// &lt;Minimum, Maximum&gt; will not be in any of the Levels intervals. Otherwise
+        /// input values less than Minimum are internally changed to Minimum and vice versa for Maximum.
         /// </summary>
         [Description("Threshold")]
         public class MyThresholdTask : MyTask<MyThreshold>
@@ -281,6 +284,10 @@ namespace GoodAI.Modules.Transforms
             [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = float.PositiveInfinity)]
             public float Maximum { get; set; }
 
+            [MyBrowsable, Category("Params")]
+            [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = false)]
+            public bool StrictThreshold {get; set; }
+
             public override void Init(int nGPU)
             {
                 m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "ThresholdKernel");
@@ -289,7 +296,7 @@ namespace GoodAI.Modules.Transforms
             public override void Execute()
             {
                 m_kernel.SetupExecution(Owner.InputSize);
-                m_kernel.Run(Minimum, Maximum, Owner.Input, Owner.Output, Owner.InputSize, Owner.Levels);
+                m_kernel.Run(Minimum, Maximum, StrictThreshold ? 1 : 0, Owner.Input, Owner.Output, Owner.InputSize, Owner.Levels);
             }
         }
 
@@ -299,7 +306,14 @@ namespace GoodAI.Modules.Transforms
         {
             get
             {
-                return "__\u2015\u203E\u203E";
+                if (DoTransform.StrictThreshold)
+                {
+                    return "__\u2015\u203E\u203E strict";
+                }
+                else
+                {
+                    return "__\u2015\u203E\u203E";
+                }
             }
         }
 

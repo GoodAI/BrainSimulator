@@ -70,7 +70,7 @@ extern "C"
 		}
 	}	
 
-	__global__ void ThresholdKernel(float min, float max, float* input, float* output, int size, int count)
+	__global__ void ThresholdKernel(float min, float max, int mode, float* input, float* output, int size, int count)
 	{		
 		int id = blockDim.x * blockIdx.y * gridDim.x
 			+ blockDim.x * blockIdx.x
@@ -78,16 +78,31 @@ extern "C"
 
 		__shared__ float delta;
 
-		if(threadIdx.x < size)
+		if(id < size)
 		{	
-			if (id == 0)
+			if (threadIdx.x == 0)
 				delta = (max - min)/count;
 			__syncthreads();
 
 			for (int i = 0; i < count; i++)
-				output[id * count + i] = 0;
+				output[i * size + id] = 0;
 
-			int idx = (int)floor(fmaxf(0, fminf(((input[id] - min) / delta), count - 1)));
+			int idx;
+			float fidx = ((input[id] - min) / delta);
+
+			switch (mode)
+			{
+			case 0: // consider values outside of the interval <min,max>
+				idx = (int)floor(fmaxf(0, fminf(fidx, count - 1)));
+				break;
+			case 1: // strict threshold
+				if (fidx < 0.0f || fidx >= count)
+				{
+					return;
+				}
+				idx = (int)fidx;
+				break;
+			}
 			output[idx * size + id] = 1.0f;
 		}
 	}	
