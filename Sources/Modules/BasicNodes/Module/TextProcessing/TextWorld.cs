@@ -35,7 +35,7 @@ namespace GoodAI.Modules.TextProcessing
         [YAXSerializableField]
         protected UserInput m_UserInput;
 
-        public MyCUDAGenerateInputTask GenerateInput { get; private set; }
+        public MyCUDAGenerateInputTask GenerateInput { get; protected set; }
 
         #region I/O
         [MyBrowsable, Category("I/O")]

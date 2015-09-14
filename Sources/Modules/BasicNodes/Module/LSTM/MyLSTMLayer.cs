@@ -77,7 +77,9 @@ namespace GoodAI.Modules.LSTM
         public class MyResetSignal : MySignal { }
 
         // Memory blocks
+        [MyPersistable]
         public MyMemoryBlock<float> CellStates { get; set; }
+        [MyPersistable]
         public MyMemoryBlock<float> PreviousCellStates { get; set; }
 
         public MyMemoryBlock<float> CellInputActivations { get; set; }

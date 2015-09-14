@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
 EndProject
@@ -20,6 +20,16 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XmlFeedForwardNetCuda", "Modules\XmlFeedForwardNet\Cuda\XmlFeedForwardNetCuda.vcxproj", "{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundWorld", "Modules\SoundWorld\Module\SoundWorld.csproj", "{A0084F22-B436-4068-8F18-EC182EE78927}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{772FEA22-0714-4097-9D81-8BE4D607E6E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreTests", "CoreTests\CoreTests.csproj", "{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DD234EF1-5B73-4712-8BA5-8EF290E4D7DD}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,8 +99,17 @@ Global
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 	EndGlobalSection
 EndGlobal
