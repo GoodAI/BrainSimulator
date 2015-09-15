@@ -119,7 +119,12 @@ namespace GoodAI.BrainSimulator.Forms
                 typeStr = block.GetType().GetGenericArguments()[0].Name;
             }
 
-            string size = block.ColumnHint + "x" + (block.Count / block.ColumnHint) + " (" + block.Count.ToString() + ")";
+            string size = block.Count.ToString();
+
+            if (block.ColumnHint > 0 && block.ColumnHint <= block.Count)
+            {
+                size = block.ColumnHint + "x" + (block.Count / block.ColumnHint) + " (" + block.Count.ToString() + ")";
+            }
 
             ListViewItem item = new ListViewItem(new string[] { name, size, typeStr });
             item.Tag = block;
