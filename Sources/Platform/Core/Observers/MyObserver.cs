@@ -477,7 +477,7 @@ namespace GoodAI.Core.Observers
         public int ObserverGPU
         {
             //TODO: replace this with code for finding GPU with connected display
-            get { return 0; }
+            get { return MyKernelFactory.Instance.DevCount - 1; }
         }
 
         #endregion         
