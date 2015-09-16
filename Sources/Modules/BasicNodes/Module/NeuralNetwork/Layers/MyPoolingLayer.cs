@@ -270,8 +270,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
 
-        public void CreateTasks()
+        public override void CreateTasks()
         {
+            base.CreateTasks();
+
             ForwardTask = new MyPoolingForwardTask();
             DeltaBackTask = new MyPoolingBackwardTask();
         }

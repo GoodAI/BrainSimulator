@@ -21,15 +21,16 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     [Description("InitGroup"), MyTaskInfo(OneShot = true)]
     public class MyInitNNGroupTask : MyTask<MyNeuralNetworkGroup>
     {
-        //parameterless constructor
+        // parameterless constructor
         public MyInitNNGroupTask() { }
 
-        //Kernel initialization
+        // Kernel initialization
         public override void Init(int nGPU) { }
 
-        //Task execution
+        // Task execution
         public override void Execute()
         {
+            // timeStep is -1, because it is incremented at beginning of new timestep
             Owner.TimeStep = -1;
 
             // disable GradientCheck by default - TODO: fix this somehow
@@ -61,7 +62,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     layer.NextConnectedLayers = new List<MyAbstractLayer>();
                     foreach (MyConnection inputConnection in child.InputConnections)
                     {
-                        if (inputConnection.From is MyAbstractLayer)
+                        if (inputConnection != null && inputConnection.From is MyAbstractLayer)
                         {
                             MyAbstractLayer lastConnectedLayer = inputConnection.From as MyAbstractLayer;
                             layer.PreviousConnectedLayers.Add(lastConnectedLayer);

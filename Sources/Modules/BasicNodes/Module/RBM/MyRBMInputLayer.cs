@@ -192,8 +192,10 @@ namespace GoodAI.Modules.RBM
             }
         }
 
-        public void CreateTasks()
+        public override void CreateTasks()
         {
+            base.CreateTasks();
+
             ForwardTask = new MyRBMInputForwardTask();
             DeltaBackTask = new MyRBMInputBackwardTask();
         }

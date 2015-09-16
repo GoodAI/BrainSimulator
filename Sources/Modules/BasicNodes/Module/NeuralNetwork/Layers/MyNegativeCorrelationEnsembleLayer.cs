@@ -61,8 +61,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             base.UpdateMemoryBlocks(); // call after number of neurons are set
         }
 
-        public void CreateTasks()
+        public override void CreateTasks()
         {
+            base.CreateTasks();
+
             ForwardTask = new MyNegativeCorrelationForwardTask();
             DeltaBackTask = new MyNegativeCorrelationBackDeltaTask();
         }

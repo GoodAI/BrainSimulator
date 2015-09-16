@@ -127,6 +127,7 @@
     <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyNegativeCorrelationEnsembleTasks.cs" />
+    <Compile Include="NeuralNetwork\Tasks\MyConditionTasks.cs" />
     <Compile Include="Robotic\MyCuriosityProbe.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />

@@ -348,7 +348,7 @@ namespace GoodAI.Core.Nodes
                             MyMemoryBlock<float> ai = Owner.GetInput(i);
                             if (ai != null)
                             {
-                                out0.CopyFromMemoryBlock(ai, 0, Owner.m_offsets[i], ai.Count);
+                                ai.CopyToMemoryBlock(out0, 0, Owner.m_offsets[i], ai.Count);
                             }
                         }
                         break;

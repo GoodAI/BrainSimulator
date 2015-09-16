@@ -14,10 +14,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     public class MyOutputLayer : MyAbstractOutputLayer
     {
         // Memory blocks
-        [MyInputBlock(1)]
+        [MyInputBlock(2)]
         public override MyMemoryBlock<float> Target
         {
-            get { return GetInput(1); }
+            get { return GetInput(2); }
         }
 
         //Memory blocks size rules

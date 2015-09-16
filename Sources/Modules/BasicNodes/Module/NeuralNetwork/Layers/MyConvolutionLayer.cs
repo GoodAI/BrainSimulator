@@ -362,8 +362,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
 
-        public void CreateTasks()
+        public override void CreateTasks()
         {
+            base.CreateTasks();
+
             ForwardTask = new MyConvolutionForwardTask();
             DeltaBackTask = new MyConvolutionBackwardTask();
         }

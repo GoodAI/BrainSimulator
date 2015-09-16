@@ -3,13 +3,16 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Tasks;
 using System.ComponentModel;
 using YAXLib;
 using ManagedCuda.BasicTypes;
 using System.Collections.Generic;
+using GoodAI.Core.Signals;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
+    public class MyIsLearningSignal : MySignal { }
 
     public enum ConnectionType
     {
@@ -34,8 +37,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         LECUN_TANH,
     }
 
-    public abstract class MyAbstractLayer : MyWorkingNode
+    public abstract class MyAbstractLayer : MyWorkingNode, IMyCustomTaskFactory
     {
+
+        public MyIsLearningSignal IsLearning { get; set; }
+
         // Properties
         [YAXSerializableField(DefaultValue = ActivationFunctionType.NO_ACTIVATION)]
         [MyBrowsable, Category("\tLayer")]
@@ -51,14 +57,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         // The preceding layer in the topological ordering
         public MyAbstractLayer PreviousTopologicalLayer { get; set; }
-
         // The succeeding layer in the topological ordering
         public MyAbstractLayer NextTopologicalLayer { get; set; }
 
-        // The layers feeding into this layer
+        // layers feeding connections into this layer
         public List<MyAbstractLayer> PreviousConnectedLayers { get; set; }
-
-        // The layers receiving the outputs of this layer
+        // layers in which this layer feeds connections
         public List<MyAbstractLayer> NextConnectedLayers { get; set; }
 
         public MyNeuralNetworkGroup ParentNetwork
@@ -79,6 +83,13 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public virtual MyMemoryBlock<float> Input
         {
             get { return GetInput(0); }
+        }
+
+        [MyInputBlock(1)]
+        // only host side of the memory is ever used!
+        public virtual MyMemoryBlock<float> CanLearn
+        {
+            get { return GetInput(1); }
         }
 
        [MyOutputBlock(0)]
@@ -108,6 +119,23 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             NextConnectedLayers = new List<MyAbstractLayer>();
         }
 
+        public virtual void DisableLearningTasks()
+        {
+            ForwardTask.Enabled = false;
+            DeltaBackTask.Enabled = false;
+        }
+
+        public virtual void EnableLearningTasks()
+        {
+            ForwardTask.Enabled = true;
+            DeltaBackTask.Enabled = true;
+        }
+
+        public virtual void CreateTasks()
+        {
+            ConditionTask = new MyNodeConditionTask();
+        }
+
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
@@ -118,12 +146,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public override void Validate(MyValidator validator)
         {
-            //            base.Validate(validator);
+            // base.Validate(validator);
             validator.AssertError(Neurons > 0, this, "Number of neurons should be > 0");
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }
 
-        //tasks
+        public MyTask ConditionTask { get; protected set; }
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
     }

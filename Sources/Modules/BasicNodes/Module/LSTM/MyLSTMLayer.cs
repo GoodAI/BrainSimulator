@@ -239,8 +239,10 @@ namespace GoodAI.Modules.LSTM
                 OutputGateWeights.Count++;
         }
 
-        public virtual void CreateTasks()
+        public override void CreateTasks()
         {
+            base.CreateTasks();
+
             ForwardTask = new MyLSTMFeedForwardTask();
             DeltaBackTask = new MyLSTMDeltaTask();
         }

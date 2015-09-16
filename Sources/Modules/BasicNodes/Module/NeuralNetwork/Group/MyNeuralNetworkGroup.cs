@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.LSTM.Tasks;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System;
 using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
@@ -24,6 +26,16 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     /// </description>
     public class MyNeuralNetworkGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
+        // global rand which should be used by layers
+        public static Random rng = new Random();
+
+        // Signals
+        // IsLearning is added to network input and set to true
+        // it can be used in combination with output layers as
+        // learning barriers which are useful for pretraining
+        //public MyIsLearningSignal IsLearning { get; set; }
+        //public class MyIsLearningSignal : MySignal { }
+
         //Node properties
         [ReadOnly(true)]
         [YAXSerializableField(DefaultValue = 0)]

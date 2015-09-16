@@ -19,24 +19,49 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [ReadOnly(true)]
         public override int Neurons { get; set; }
 
+        [YAXSerializableField(DefaultValue = true)]
+        [MyBrowsable, Category("\tPretraining")]
+        public bool ContinueAfterTrained { get; set; }
+
+        [YAXSerializableField(DefaultValue = 0)]
+        [MyBrowsable, Category("\tPretraining")]
+        public int NumberOfSteps { get; set; }
+
         // Memory blocks
+        public virtual MyMemoryBlock<float> Target { get; protected set; }
+
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Cost
+        public virtual MyMemoryBlock<float> Cost
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
-        public virtual MyMemoryBlock<float> Target { get; protected set; }
+        [MyOutputBlock(2)]
+        // only HOST side of the memory is ever used!
+        public virtual MyMemoryBlock<float> IsLearned
+        {
+            get { return GetOutput(2); }
+            set { SetOutput(2, value); }
+        }
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
             base.UpdateMemoryBlocks();
+
             Cost.Count = 1;
+            IsLearned.Count = 1;
         }
 
         // Tasks
+        public override void CreateTasks()
+        {
+            base.CreateTasks();
+
+            ConditionTask = new MyBarrierConditionTask();
+        }
+
         [MyTaskGroup("LossFunctions")]
         public MySquaredLossTask SquaredLoss { get; protected set; }
         [MyTaskGroup("LossFunctions")]
