@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EnumerableExtensionsTests.cs" />
+    <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="SimulationHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

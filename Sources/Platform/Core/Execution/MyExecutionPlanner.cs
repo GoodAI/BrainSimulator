@@ -72,15 +72,17 @@ namespace GoodAI.Core.Execution
                 }
             }
 
-            if (node is MyNodeGroup)
+            MyNodeGroup nodeGroup = node as MyNodeGroup;
+            if (nodeGroup != null)
             {
-                IEnumerable<MyNode> children = (node as MyNodeGroup).Children.OrderBy(x => x.TopologicalOrder);
+                IEnumerable<MyNode> children = nodeGroup.Children.OrderBy(x => x.TopologicalOrder);
 
                 foreach (MyNode childNode in children)
                 {
-                    if (childNode is MyWorkingNode)
+                    MyWorkingNode childWorkingNode = childNode as MyWorkingNode;
+                    if (childWorkingNode != null)
                     {
-                        defaultPlanContent.Add(CreateNodeExecutionPlan(childNode as MyWorkingNode, initPhase));
+                        defaultPlanContent.Add(CreateNodeExecutionPlan(childWorkingNode, initPhase));
                     }
                 }
             }
@@ -95,15 +97,16 @@ namespace GoodAI.Core.Execution
 
             MyExecutionBlock resultPlan = defaultPlan;
 
-            if (node is IMyCustomExecutionPlanner)
+            IMyCustomExecutionPlanner executionPlannerNode = node as IMyCustomExecutionPlanner;
+            if (executionPlannerNode != null)
             {
                 if (initPhase)
                 {
-                    resultPlan = (node as IMyCustomExecutionPlanner).CreateCustomInitPhasePlan(defaultPlan);
+                    resultPlan = executionPlannerNode.CreateCustomInitPhasePlan(defaultPlan);
                 }
                 else
                 {
-                    resultPlan = (node as IMyCustomExecutionPlanner).CreateCustomExecutionPlan(defaultPlan);
+                    resultPlan = executionPlannerNode.CreateCustomExecutionPlan(defaultPlan);
                 }
                 resultPlan.Name = defaultPlan.Name;
             }
