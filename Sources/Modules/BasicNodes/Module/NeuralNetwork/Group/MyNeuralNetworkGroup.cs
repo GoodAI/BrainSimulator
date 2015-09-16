@@ -79,6 +79,26 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             base.UpdateMemoryBlocks();
         }
 
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+
+            List<IMyExecutable> tasks = new List<IMyExecutable>();
+
+            foreach (IMyExecutable groupTask in Children)
+                if (groupTask is MyExecutionBlock)
+                    foreach (IMyExecutable nodeTask in (groupTask as MyExecutionBlock).Children)
+                        tasks.Add(nodeTask); // add individual node tasks
+                else
+                    tasks.Add(groupTask); // add group tasks
+
+            validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
+            validator.AssertError(tasks.Find(task => task is IMyOutputDeltaTask) != null, this, "You need to have at least one output delta task");
+            validator.AssertError(tasks.Find(task => task is IMyDeltaTask) != null, this, "You need to have at least one delta task");
+            validator.AssertError(tasks.Find(task => task is MyGradientCheckTask) != null, this, "You need to have at least one gradient check task");
+            validator.AssertError(tasks.Find(task => task is IMyUpdateWeightsTask) != null, this, "You need to have at least one update weights task");
+        }
+
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
             return defaultInitPhasePlan;
