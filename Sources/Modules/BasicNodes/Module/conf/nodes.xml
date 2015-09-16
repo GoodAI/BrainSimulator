@@ -8,6 +8,7 @@
     <Node type="GoodAI.Modules.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="delayedcopy_big.png" SmallIcon="delayedcopy.png"/>
     <Node type="GoodAI.Modules.Transforms.MyHash" CanBeAdded="true" BigIcon="hash_big.png" SmallIcon="hash.png"/>
     <Node type="GoodAI.Modules.Transforms.My2DCropNode" CanBeAdded="true" BigIcon="crop2d_big.png" SmallIcon="crop2d.png" />
+    <Node type="GoodAI.Modules.Transforms.MyVectorOpsNode" CanBeAdded="true"/>
 
     <Node type="GoodAI.Core.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png" />
 
