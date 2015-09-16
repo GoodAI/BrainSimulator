@@ -351,7 +351,7 @@ namespace GoodAI.Modules.Transforms
             [Description("acos(x)")]
             Acos = 7,
             [Description("atan2(x,y)")]
-            Atan2 = 10
+            Atan2 = 10  // 8 and 9 is for atan and acot
         }
 
         [MyBrowsable, Category("Params")]
@@ -377,7 +377,7 @@ namespace GoodAI.Modules.Transforms
         }
 
         /// <summary>
-        /// The node contains nine functions: Sine, Cosine, Tangent and their hyperbolic and inverse equivalents. Atan2 takes pairs of float on input.
+        /// The node contains sine, cosine, tangent and their hyperbolic and inverse equivalents. Atan2 takes pairs of floats on input.
         /// </summary>
         [Description("Goniometric")]
         public class MyGoniometricTask : MyTask<MyGoniometricFunction>

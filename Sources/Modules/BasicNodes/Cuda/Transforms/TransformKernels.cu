@@ -200,6 +200,7 @@ extern "C"
 				break;
 			case 10:
 				output[id] = atan2f(input[2*id], input[2*id+1]);
+				break;
 			}
 		}		
 	}
