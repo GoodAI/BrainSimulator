@@ -349,7 +349,9 @@ namespace GoodAI.Modules.Transforms
             [Description("asin(x)")]
             Asin = 6,
             [Description("acos(x)")]
-            Acos = 7
+            Acos = 7,
+            [Description("atan2(x,y)")]
+            Atan2 = 10
         }
 
         [MyBrowsable, Category("Params")]
@@ -368,11 +370,14 @@ namespace GoodAI.Modules.Transforms
 
         public override void UpdateMemoryBlocks()
         {
-            OutputSize = InputSize;
+            if (Type == MyGonioType.Atan2)
+                OutputSize = InputSize / 2;
+            else
+                OutputSize = InputSize;
         }
 
         /// <summary>
-        /// The node contains nine functions: Sine, Cosine, Tangent and their hyperbolic and inverse equivalents.
+        /// The node contains nine functions: Sine, Cosine, Tangent and their hyperbolic and inverse equivalents. Atan2 takes pairs of float on input.
         /// </summary>
         [Description("Goniometric")]
         public class MyGoniometricTask : MyTask<MyGoniometricFunction>
