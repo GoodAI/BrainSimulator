@@ -46,9 +46,15 @@ namespace GoodAI.BrainSimulator.NodeView
 
             m_icon = nodeInfo.BigImage;
 
-            m_iconItem = new NodeImageItem(m_icon, 48, 48, false, false);
-            m_iconItem.Tag = 0;
-            m_descItem = new NodeLabelItem("");
+            m_iconItem = new NodeImageItem(m_icon, 48, 48, false, false)
+            {
+                IsPassive = true,
+                Tag = 0
+            };
+            m_descItem = new NodeLabelItem("")
+            {
+                IsPassive = true
+            };
 
             AddItem(m_iconItem);       
             AddItem(m_descItem);            
@@ -84,8 +90,11 @@ namespace GoodAI.BrainSimulator.NodeView
                         name = Node.GetInfo().InputBlocks[i].Name;
                     }
 
-                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), true, false);
-                    branch.Tag = i;
+                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), true, false)
+                    {
+                        Tag = i,
+                        IsPassive = true
+                    };
 
                     m_inputBranches.Add(branch);
                     AddItem(branch);
@@ -108,8 +117,11 @@ namespace GoodAI.BrainSimulator.NodeView
                         name = Node.GetInfo().OutputBlocks[i].Name;
                     }
 
-                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), false, true);
-                    branch.Tag = i;
+                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), false, true)
+                    {
+                        Tag = i,
+                        IsPassive = true
+                    };
 
                     m_outputBranches.Add(branch);
                     AddItem(branch);
