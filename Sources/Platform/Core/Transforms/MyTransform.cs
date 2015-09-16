@@ -392,7 +392,7 @@ namespace GoodAI.Modules.Transforms
             public override void Execute()
             {
                 m_kernel.SetupExecution(Owner.OutputSize);
-                m_kernel.Run(Owner.Input, Owner.Output, Owner.InputSize, (int)Owner.Type);  //TODO
+                m_kernel.Run(Owner.Input, Owner.Output, Owner.InputSize, (int)Owner.Type);
             }
         }
     }
