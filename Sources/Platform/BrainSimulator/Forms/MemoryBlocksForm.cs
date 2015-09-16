@@ -121,7 +121,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             string size = block.Count.ToString();
 
-            if (block.ColumnHint > 1 && block.ColumnHint < block.Count)
+            if (block.ColumnHint > 0 && block.ColumnHint <= block.Count)
             {
                 size = block.ColumnHint + "x" + (block.Count / block.ColumnHint) + " (" + block.Count.ToString() + ")";
             }

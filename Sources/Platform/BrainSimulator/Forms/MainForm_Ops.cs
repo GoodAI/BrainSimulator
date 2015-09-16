@@ -894,6 +894,28 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        /// <summary>
+        /// This method is mainly for extensive UI action (e.g. modal dialogs) to be executed during simulation
+        /// </summary>
+        /// <param name="actionToExecute">Action should return true if resume of simulation is needed after the action is finished</param>        
+        internal void PauseSimulationForAction(Func<bool> actionToExecute)
+        {
+            bool wasRunning = false;
+
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING)
+            {
+                SimulationHandler.PauseSimulation();
+                wasRunning = true;
+            }
+
+            bool resume = actionToExecute();
+
+            if (wasRunning && resume)
+            {
+                SimulationHandler.StartSimulation(false);
+            }
+        }
+
         #endregion
 
         #region Global Shortcuts        

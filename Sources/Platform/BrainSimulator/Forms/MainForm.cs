@@ -293,19 +293,27 @@ namespace GoodAI.BrainSimulator.Forms
 
             // Cancel the event - the window will close when the simulation is finished.
             e.Cancel = true;
-
-            if (SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING ||
-                SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING_STEP)
+           
+            if (SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
             {
-                var dialogResult =
-                    MessageBox.Show(
-                        "Do you want to quit while the simulation is running?",
-                        "Quit?",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult dialogResult = DialogResult.None;
+
+                PauseSimulationForAction(() =>
+                {
+                    dialogResult =
+                        MessageBox.Show(
+                            "Do you want to quit while the simulation is running?",
+                            "Quit?",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    return dialogResult == DialogResult.No;                    
+                });
 
                 if (dialogResult == DialogResult.No)
+                {
                     return;
-            }
+                }
+            }           
 
             if ((String.IsNullOrEmpty(saveFileDialog.FileName)) || !IsProjectSaved(saveFileDialog.FileName))
             {
