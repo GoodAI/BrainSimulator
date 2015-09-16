@@ -142,7 +142,7 @@ namespace GoodAI.Modules.LSTM
         public override void UpdateMemoryBlocks()
         {
             //---- set paramters for BPTT/RTRL
-            if (ParentNetwork.GroupOutputNodes.Length > 0)
+            if (ParentNetwork != null && ParentNetwork.GroupOutputNodes.Length > 0)
             {
                 switch (LearningTasks)
                 {
@@ -248,6 +248,10 @@ namespace GoodAI.Modules.LSTM
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
+            if (ParentNetwork == null)
+            {
+                validator.AddError(this, "LSTM layer needs to be in a neural network group");
+            }
         }
 
         public override string Description
