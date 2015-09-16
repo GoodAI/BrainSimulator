@@ -666,27 +666,22 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void PopulateWorldList()
         {
-            Type selectedWorldType = null;
-
-            if (worldList.SelectedIndex != -1)
-            {
-                selectedWorldType = ((MyWorldConfig)worldList.SelectedItem).NodeType;
-            }
-
-            worldList.Items.Clear();
+            int itemIndex = 0;
 
             foreach (MyWorldConfig wc in MyConfiguration.KnownWorlds.Values)
             {
-                if ((Properties.Settings.Default.ToolBarNodes != null &&
-                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name)) ||
-                    wc.IsBasicNode)
+                bool isAmongToolBarNodes = (Properties.Settings.Default.ToolBarNodes != null &&
+                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name));
+                if (isAmongToolBarNodes || wc.IsBasicNode)
                 {
-                    worldList.Items.Add(wc);
-
-                    if (wc.NodeType == selectedWorldType)
-                    {
-                        worldList.SelectedItem = wc;
-                    }
+                    if (!worldList.Items.Contains(wc))
+                        worldList.Items.Insert(itemIndex, wc);
+                    itemIndex++;
+                }
+                else
+                {
+                    if (worldList.Items.Contains(wc))
+                        worldList.Items.RemoveAt(itemIndex);
                 }
             }
         }
