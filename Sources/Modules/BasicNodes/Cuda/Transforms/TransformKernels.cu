@@ -198,6 +198,9 @@ extern "C"
 			case 7:
 				output[id] = acosf(input[id]);
 				break;
+			case 10:
+				output[id] = atan2f(input[2*id], input[2*id+1]);
+				break;
 			}
 		}		
 	}

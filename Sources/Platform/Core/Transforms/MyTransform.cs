@@ -332,46 +332,57 @@ namespace GoodAI.Modules.Transforms
     [YAXSerializeAs("GoniometricFunction")]
     public class MyGoniometricFunction : MyTransform
     {
+        public enum MyGonioType
+        {
+            [Description("sin(x)")]
+            Sine = 0,
+            [Description("cos(x)")]
+            Cosine = 1,
+            [Description("tan(x)")]
+            Tan = 2,
+            [Description("tanh(x)")]
+            Tanh = 3,
+            [Description("sinh(x)")]
+            Sinh = 4,
+            [Description("cosh(x)")]
+            Cosh = 5,
+            [Description("asin(x)")]
+            Asin = 6,
+            [Description("acos(x)")]
+            Acos = 7,
+            [Description("atan2(x,y)")]
+            Atan2 = 10  // 8 and 9 is for atan and acot
+        }
+
+        [MyBrowsable, Category("Params")]
+        [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = MyGonioType.Sine)]
+        public MyGonioType Type { get; set; }
+
+        public MyGoniometricTask DoTransform { get; private set; }
+
+        public override string Description
+        {
+            get
+            {
+                return "f(x) = " + Type.GetAttributeProperty((DescriptionAttribute x) => x.Description);
+            }
+        }
+
+        public override void UpdateMemoryBlocks()
+        {
+            if (Type == MyGonioType.Atan2)
+                OutputSize = InputSize / 2;
+            else
+                OutputSize = InputSize;
+        }
 
         /// <summary>
-        /// The node contains six functions: Sinus, Cosines, Tangents and their hyperbolic equivalents.
+        /// The node contains sine, cosine, tangent and their hyperbolic and inverse equivalents. Atan2 takes pairs of floats on input.
         /// </summary>
         [Description("Goniometric")]
-        public class MyGoniometricTask : MyTask<MyTransform>
+        public class MyGoniometricTask : MyTask<MyGoniometricFunction>
         {
             private MyCudaKernel m_kernel;
-
-            public enum MyGonioType
-            {
-                [Description("sin(x)")]
-                Sine = 0,
-                [Description("cos(x)")]
-                Cosine = 1,
-                [Description("tan(x)")]
-                Tan = 2,
-                [Description("tanh(x)")]
-                Tanh = 3,
-                [Description("sinh(x)")]
-                Sinh = 4,
-                [Description("cosh(x)")]
-                Cosh = 5,
-                [Description("asin(x)")]
-                Asin = 6,
-                [Description("acos(x)")]
-                Acos = 7
-            }
-
-            [MyBrowsable, Category("Params")]
-            [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = MyGonioType.Sine)]
-            public MyGonioType Type {get; set;}
-
-            public string Description
-            {
-                get
-                {
-                    return "f(x) = " + Type.GetAttributeProperty((DescriptionAttribute x) => x.Description);
-                }
-            }
 
             public override void Init(int nGPU)
             {
@@ -381,27 +392,9 @@ namespace GoodAI.Modules.Transforms
             public override void Execute()
             {
                 m_kernel.SetupExecution(Owner.OutputSize);
-                m_kernel.Run(Owner.Input, Owner.Output, Owner.InputSize, (int)Type);  //TODO
+                m_kernel.Run(Owner.Input, Owner.Output, Owner.InputSize, (int)Owner.Type);
             }
         }
-
-        public MyGoniometricTask DoTransform { get; private set; }
-
-        public override string Description
-        {
-            get
-            {
-                if (DoTransform != null)
-                {
-                    return DoTransform.Description;
-                }
-                else
-                {
-                    return base.Description;
-                }
-            }
-        }
-
     }
 
     /// <author>GoodAI</author>
