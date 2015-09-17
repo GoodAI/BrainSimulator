@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLIWrapper\CLIWrapper.csproj">
