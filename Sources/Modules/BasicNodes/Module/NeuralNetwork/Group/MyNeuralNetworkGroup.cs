@@ -83,18 +83,22 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         {
             List<IMyExecutable> tasks = new List<IMyExecutable>();
 
-            foreach (string taskName in GetInfo().KnownTasks.Keys)
+            foreach (string taskName in node.GetInfo().KnownTasks.Keys)
             {
-                MyTask task = GetTaskByPropertyName(taskName);
+                MyTask task = node.GetTaskByPropertyName(taskName);
                 tasks.Add(task);
             }
 
-            foreach (MyNode childNode in Children)
+            MyNodeGroup nodeGroup = node as MyNodeGroup;
+            if (nodeGroup != null)
             {
-                MyWorkingNode childWorkingNode = childNode as MyWorkingNode;
-                if (childWorkingNode != null)
+                foreach (MyNode childNode in nodeGroup.Children)
                 {
-                    tasks.AddRange(GetTasks(childWorkingNode));
+                    MyWorkingNode childWorkingNode = childNode as MyWorkingNode;
+                    if (childWorkingNode != null)
+                    {
+                        tasks.AddRange(GetTasks(childWorkingNode));
+                    }
                 }
             }
 
@@ -106,12 +110,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             base.Validate(validator);
 
             List<IMyExecutable> tasks = GetTasks(this);
-
+            
             validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
-            validator.AssertError(tasks.Find(task => task is IMyOutputDeltaTask) != null, this, "You need to have at least one output delta task");
-            validator.AssertError(tasks.Find(task => task is IMyDeltaTask) != null, this, "You need to have at least one delta task");
-            validator.AssertError(tasks.Find(task => task is MyGradientCheckTask) != null, this, "You need to have at least one gradient check task");
-            validator.AssertError(tasks.Find(task => task is IMyUpdateWeightsTask) != null, this, "You need to have at least one update weights task");
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
@@ -151,6 +151,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             if (selected.Count <= 0)
                 MyLog.WARNING.WriteLine("No output tasks are active! Planning (of SGD, RMS, Adadelta etc.) might not work properly. Possible cause: no output layer is present.\nIgnore this if RBM task is currently selected.");
             selected.Reverse();
+            
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
 
             // move reversed MyDeltaTask(s) after the last MyOutputDeltaTask
