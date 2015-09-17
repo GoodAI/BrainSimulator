@@ -74,11 +74,11 @@ namespace GoodAI.BrainSimulator.NodeView
                 AddItem(signalItem);
             }
 
-            InitIOBranches(true, Node.InputBranches, m_iconItem.Input, m_inputBranches, Node.GetInfo().InputBlocks);
-            InitIOBranches(false, Node.OutputBranches, m_iconItem.Output, m_outputBranches, Node.GetInfo().OutputBlocks);
+            InitIOBranches(Node.InputBranches, m_iconItem.Input, m_inputBranches, Node.GetInfo().InputBlocks, isInput: true);
+            InitIOBranches(Node.OutputBranches, m_iconItem.Output, m_outputBranches, Node.GetInfo().OutputBlocks, isInput: false);
         }
 
-        private void InitIOBranches(bool isInput, int branchCount, NodeConnector connector, ICollection<NodeItem> branchList, IList<PropertyInfo> blocks)
+        private void InitIOBranches(int branchCount, NodeConnector connector, ICollection<NodeItem> branchList, IList<PropertyInfo> blocks, bool isInput)
         {
             if (branchCount == 1)
             {
