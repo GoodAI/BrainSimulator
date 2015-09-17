@@ -267,6 +267,9 @@ namespace GoodAI.Modules.Transforms
         /// Set <b>Minimum</b> and <b>Maximum</b> for interval which is to be indicated.<br/>
         /// 1.0f is then assigned to the i-th position if the value falls into i-th interval
         /// of length (Maximum - Minimum) / Levels; 0.0f is assigned otherwise.
+        /// If <b>StrictThreshold</b> is true, then values that fall outside of interval
+        /// &lt;Minimum, Maximum&gt; will not be in any of the Levels intervals. Otherwise
+        /// input values less than Minimum are internally changed to Minimum and vice versa for Maximum.
         /// </summary>
         [Description("Threshold")]
         public class MyThresholdTask : MyTask<MyThreshold>
@@ -281,6 +284,10 @@ namespace GoodAI.Modules.Transforms
             [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = float.PositiveInfinity)]
             public float Maximum { get; set; }
 
+            [MyBrowsable, Category("Params")]
+            [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = false)]
+            public bool StrictThreshold {get; set; }
+
             public override void Init(int nGPU)
             {
                 m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "ThresholdKernel");
@@ -289,7 +296,7 @@ namespace GoodAI.Modules.Transforms
             public override void Execute()
             {
                 m_kernel.SetupExecution(Owner.InputSize);
-                m_kernel.Run(Minimum, Maximum, Owner.Input, Owner.Output, Owner.InputSize, Owner.Levels);
+                m_kernel.Run(Minimum, Maximum, StrictThreshold ? 1 : 0, Owner.Input, Owner.Output, Owner.InputSize, Owner.Levels);
             }
         }
 
@@ -299,7 +306,14 @@ namespace GoodAI.Modules.Transforms
         {
             get
             {
-                return "__\u2015\u203E\u203E";
+                if (DoTransform.StrictThreshold)
+                {
+                    return "__\u2015\u203E\u203E strict";
+                }
+                else
+                {
+                    return "__\u2015\u203E\u203E";
+                }
             }
         }
 
@@ -318,46 +332,57 @@ namespace GoodAI.Modules.Transforms
     [YAXSerializeAs("GoniometricFunction")]
     public class MyGoniometricFunction : MyTransform
     {
+        public enum MyGonioType
+        {
+            [Description("sin(x)")]
+            Sine = 0,
+            [Description("cos(x)")]
+            Cosine = 1,
+            [Description("tan(x)")]
+            Tan = 2,
+            [Description("tanh(x)")]
+            Tanh = 3,
+            [Description("sinh(x)")]
+            Sinh = 4,
+            [Description("cosh(x)")]
+            Cosh = 5,
+            [Description("asin(x)")]
+            Asin = 6,
+            [Description("acos(x)")]
+            Acos = 7,
+            [Description("atan2(x,y)")]
+            Atan2 = 10  // 8 and 9 is for atan and acot
+        }
+
+        [MyBrowsable, Category("Params")]
+        [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = MyGonioType.Sine)]
+        public MyGonioType Type { get; set; }
+
+        public MyGoniometricTask DoTransform { get; private set; }
+
+        public override string Description
+        {
+            get
+            {
+                return "f(x) = " + Type.GetAttributeProperty((DescriptionAttribute x) => x.Description);
+            }
+        }
+
+        public override void UpdateMemoryBlocks()
+        {
+            if (Type == MyGonioType.Atan2)
+                OutputSize = InputSize / 2;
+            else
+                OutputSize = InputSize;
+        }
 
         /// <summary>
-        /// The node contains six functions: Sinus, Cosines, Tangents and their hyperbolic equivalents.
+        /// The node contains sine, cosine, tangent and their hyperbolic and inverse equivalents. Atan2 takes pairs of floats on input.
         /// </summary>
         [Description("Goniometric")]
-        public class MyGoniometricTask : MyTask<MyTransform>
+        public class MyGoniometricTask : MyTask<MyGoniometricFunction>
         {
             private MyCudaKernel m_kernel;
-
-            public enum MyGonioType
-            {
-                [Description("sin(x)")]
-                Sine = 0,
-                [Description("cos(x)")]
-                Cosine = 1,
-                [Description("tan(x)")]
-                Tan = 2,
-                [Description("tanh(x)")]
-                Tanh = 3,
-                [Description("sinh(x)")]
-                Sinh = 4,
-                [Description("cosh(x)")]
-                Cosh = 5,
-                [Description("asin(x)")]
-                Asin = 6,
-                [Description("acos(x)")]
-                Acos = 7
-            }
-
-            [MyBrowsable, Category("Params")]
-            [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = MyGonioType.Sine)]
-            public MyGonioType Type {get; set;}
-
-            public string Description
-            {
-                get
-                {
-                    return "f(x) = " + Type.GetAttributeProperty((DescriptionAttribute x) => x.Description);
-                }
-            }
 
             public override void Init(int nGPU)
             {
@@ -367,27 +392,9 @@ namespace GoodAI.Modules.Transforms
             public override void Execute()
             {
                 m_kernel.SetupExecution(Owner.OutputSize);
-                m_kernel.Run(Owner.Input, Owner.Output, Owner.InputSize, (int)Type);  //TODO
+                m_kernel.Run(Owner.Input, Owner.Output, Owner.InputSize, (int)Owner.Type);
             }
         }
-
-        public MyGoniometricTask DoTransform { get; private set; }
-
-        public override string Description
-        {
-            get
-            {
-                if (DoTransform != null)
-                {
-                    return DoTransform.Description;
-                }
-                else
-                {
-                    return base.Description;
-                }
-            }
-        }
-
     }
 
     /// <author>GoodAI</author>
@@ -484,6 +491,109 @@ namespace GoodAI.Modules.Transforms
                     return DoTransform.Description;
                 }
                 else 
+                {
+                    return base.Description;
+                }
+            }
+        }
+    }
+
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
+    /// <status>Working</status>
+    /// <summary>Applies exponential or logarithmic function on each member of input array.</summary>
+    /// <description></description>
+    [YAXSerializeAs("ExpLogFunction")]
+    public class MyExpLogFunction : MyTransform
+    {
+        /// <summary>Applies exponential function with given coeffitient on all input values.</summary>
+        [Description("Exponential Function")]
+        public class MyExponentialFunctionTask : MyTask<MyTransform>
+        {
+            private MyCudaKernel m_kernel;
+
+            [MyBrowsable, Category("Params")]
+            [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = 1)]
+            public float Exponent { get; set; }
+
+            public override void Init(int nGPU)
+            {
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "ExponentialFunctionKernel");
+            }
+
+            public override void Execute()
+            {
+                m_kernel.SetupExecution(Owner.OutputSize);
+                m_kernel.Run(Exponent, Owner.Input, Owner.Output, Owner.OutputSize);
+            }
+
+            public string Description
+            {
+                get
+                {
+                    return "f(x)=x^" + Exponent;
+                }
+            }
+        }
+
+        /// <summary>Calculates logarithm of all input values.</summary>
+        [Description("Logarithmic Function")]
+        public class MyLogarithmicFunctionTask : MyTask<MyTransform>
+        {
+            private MyCudaKernel m_kernel;
+
+            public enum MyLogBase
+            {
+                [Description("log(x)")]
+                Log = 1,
+                [Description("log_2(x)")]
+                Log2 = 2,
+                [Description("log_10(x)")]
+                Log10 = 3
+            }
+
+            [MyBrowsable, Category("Params")]
+            [YAXAttributeFor("Params"), YAXSerializableField(DefaultValue = MyLogBase.Log)]
+            public MyLogBase Base { get; set; }
+
+            public override void Init(int nGPU)
+            {
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "LogarithmicFunctionKernel");
+            }
+
+            public override void Execute()
+            {
+                m_kernel.SetupExecution(Owner.OutputSize);
+                m_kernel.Run(Owner.Input, Owner.Output, Owner.OutputSize, (int)Base);
+            }
+
+            public string Description
+            {
+                get
+                {
+                    return "f(x)=" + Base.GetAttributeProperty((DescriptionAttribute x) => x.Description);
+                }
+            }
+        }
+
+        [MyTaskGroup("Mode")]
+        public MyExponentialFunctionTask ExpTransform { get; private set; }
+        [MyTaskGroup("Mode")]
+        public MyLogarithmicFunctionTask LogTransform { get; private set; }
+
+        public override string Description
+        {
+            get
+            {
+                if (ExpTransform != null && ExpTransform.Enabled)
+                {
+                    return ExpTransform.Description;
+                }
+                else if (LogTransform != null && LogTransform.Enabled)
+                {
+                    return LogTransform.Description;
+                }
+                else
                 {
                     return base.Description;
                 }

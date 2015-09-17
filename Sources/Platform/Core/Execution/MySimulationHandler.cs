@@ -30,11 +30,8 @@ namespace GoodAI.Core.Execution
             get { return m_simulation; }
             set
             {
-                if (m_simulation != null)
-                {
-                    m_simulation.Clear();
-                    m_simulation.Finish();
-                }
+                if (m_simulation != null && !m_simulation.IsFinished)
+                    throw new InvalidOperationException("The simulation was not cleared. Call Finish() first.");
                 m_simulation = value;
             }
         }
@@ -139,7 +136,7 @@ namespace GoodAI.Core.Execution
         public void StartSimulation(bool oneStepOnly)
         {
             if (State == SimulationState.STOPPED)
-            {             
+            {
                 MyLog.INFO.WriteLine("Scheduling...");                
                 Simulation.Schedule(Project);
 
@@ -287,6 +284,9 @@ namespace GoodAI.Core.Execution
 
         private void DoStop()
         {
+            if (m_closeCallback != null)
+                Simulation.Finish();
+
             if (State != SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("Cleaning up world...");
@@ -307,10 +307,7 @@ namespace GoodAI.Core.Execution
 
             // Cleanup and invoke the callback action.
             if (m_closeCallback != null)
-            {
-                Simulation = null;
                 m_closeCallback();
-            }
         }
 
         private void PrintMemoryInfo() 

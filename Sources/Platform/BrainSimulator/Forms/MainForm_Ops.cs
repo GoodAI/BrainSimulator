@@ -666,27 +666,22 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void PopulateWorldList()
         {
-            Type selectedWorldType = null;
-
-            if (worldList.SelectedIndex != -1)
-            {
-                selectedWorldType = ((MyWorldConfig)worldList.SelectedItem).NodeType;
-            }
-
-            worldList.Items.Clear();
+            int itemIndex = 0;
 
             foreach (MyWorldConfig wc in MyConfiguration.KnownWorlds.Values)
             {
-                if ((Properties.Settings.Default.ToolBarNodes != null &&
-                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name)) ||
-                    wc.IsBasicNode)
+                bool isAmongToolBarNodes = (Properties.Settings.Default.ToolBarNodes != null &&
+                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name));
+                if (isAmongToolBarNodes || wc.IsBasicNode)
                 {
-                    worldList.Items.Add(wc);
-
-                    if (wc.NodeType == selectedWorldType)
-                    {
-                        worldList.SelectedItem = wc;
-                    }
+                    if (!worldList.Items.Contains(wc))
+                        worldList.Items.Insert(itemIndex, wc);
+                    itemIndex++;
+                }
+                else
+                {
+                    if (worldList.Items.Contains(wc))
+                        worldList.Items.RemoveAt(itemIndex);
                 }
             }
         }
@@ -891,6 +886,28 @@ namespace GoodAI.BrainSimulator.Forms
             else
             {
                 statusStrip.Invoke((MethodInvoker)(() => stepStatusLabel.Text = String.Empty));                                                       
+            }
+        }
+
+        /// <summary>
+        /// This method is mainly for extensive UI action (e.g. modal dialogs) to be executed during simulation
+        /// </summary>
+        /// <param name="actionToExecute">Action should return true if resume of simulation is needed after the action is finished</param>        
+        internal void PauseSimulationForAction(Func<bool> actionToExecute)
+        {
+            bool wasRunning = false;
+
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING)
+            {
+                SimulationHandler.PauseSimulation();
+                wasRunning = true;
+            }
+
+            bool resume = actionToExecute();
+
+            if (wasRunning && resume)
+            {
+                SimulationHandler.StartSimulation(false);
             }
         }
 

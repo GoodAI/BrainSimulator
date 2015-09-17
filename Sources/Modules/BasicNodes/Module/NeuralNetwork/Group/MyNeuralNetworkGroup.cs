@@ -79,6 +79,41 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             base.UpdateMemoryBlocks();
         }
 
+        private List<IMyExecutable> GetTasks(MyWorkingNode node)
+        {
+            List<IMyExecutable> tasks = new List<IMyExecutable>();
+
+            foreach (string taskName in node.GetInfo().KnownTasks.Keys)
+            {
+                MyTask task = node.GetTaskByPropertyName(taskName);
+                tasks.Add(task);
+            }
+
+            MyNodeGroup nodeGroup = node as MyNodeGroup;
+            if (nodeGroup != null)
+            {
+                foreach (MyNode childNode in nodeGroup.Children)
+                {
+                    MyWorkingNode childWorkingNode = childNode as MyWorkingNode;
+                    if (childWorkingNode != null)
+                    {
+                        tasks.AddRange(GetTasks(childWorkingNode));
+                    }
+                }
+            }
+
+            return tasks;
+        }
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+
+            List<IMyExecutable> tasks = GetTasks(this);
+            
+            validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
+        }
+
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
             return defaultInitPhasePlan;
@@ -116,6 +151,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             if (selected.Count <= 0)
                 MyLog.WARNING.WriteLine("No output tasks are active! Planning (of SGD, RMS, Adadelta etc.) might not work properly. Possible cause: no output layer is present.\nIgnore this if RBM task is currently selected.");
             selected.Reverse();
+            
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
 
             // move reversed MyDeltaTask(s) after the last MyOutputDeltaTask
