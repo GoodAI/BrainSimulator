@@ -105,7 +105,6 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.worldList = new System.Windows.Forms.ToolStripComboBox();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.vS2012LightTheme = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -710,11 +709,6 @@
             this.worldList.Size = new System.Drawing.Size(150, 23);
             this.worldList.SelectedIndexChanged += new System.EventHandler(this.worldList_SelectedIndexChanged);
             // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.WorkerSupportsCancellation = true;
-            // 
             // dockPanel
             // 
             this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -885,7 +879,6 @@
         private System.Windows.Forms.ToolStripButton reloadButton;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox worldList;
-        public System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.ToolStripSplitButton timerToolStripSplitButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.StatusStrip statusStrip;

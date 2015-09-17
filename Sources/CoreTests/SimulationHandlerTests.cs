@@ -16,11 +16,13 @@ namespace CoreTests
         [Test]
         public void SimulationPropertySetterTest()
         {
-            var handler = new MySimulationHandler(new BackgroundWorker());
-
             var simulation = MockRepository.GenerateStub<MySimulation>();
+            var handler = new MySimulationHandler(simulation)
+            {
+                Simulation = simulation
+            };
+
             // This should not throw, it's the first simulation.
-            handler.Simulation = simulation;
 
             Assert.Throws<InvalidOperationException>(() => handler.Simulation = simulation);
         }
