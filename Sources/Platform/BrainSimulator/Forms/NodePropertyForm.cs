@@ -64,6 +64,14 @@ namespace GoodAI.BrainSimulator.Forms
                 graphView.Desktop.Invalidate();
             }
 
+            foreach (TextEditForm textEditor in m_mainForm.TextEditors.Values)
+            {
+                if (textEditor.Target == propertyGrid.SelectedObject)
+                {
+                    textEditor.Text = textEditor.Target.Name;
+                }
+            }
+
             if (nodeView != null)
             {
                 if (nodeView.BranchChangeNeeded)

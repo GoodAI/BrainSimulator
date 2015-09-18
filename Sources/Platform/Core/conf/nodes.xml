@@ -20,6 +20,8 @@
 
     <Node type="GoodAI.Core.Nodes.MyParentInput" CanBeAdded="false" BigIcon="input_big.png" SmallIcon="input.png"/>
     <Node type="GoodAI.Core.Nodes.MyOutput" CanBeAdded="false" BigIcon="output_big.png" SmallIcon="output.png"/>      
+    
+    <Node type="GoodAI.Core.Nodes.MyTestingScriptableNode" CanBeAdded="true"/>      
   </KnownNodes>
   <KnownWorlds>
     <World type="GoodAI.Modules.Testing.MyTestingWorld"/>

@@ -193,6 +193,12 @@
     <Compile Include="Forms\MainForm_Ops.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\TextEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TextEditForm.Designer.cs">
+      <DependentUpon>TextEditForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ValidationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -267,6 +273,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TextEditForm.resx">
+      <DependentUpon>TextEditForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ValidationForm.resx">
       <DependentUpon>ValidationForm.cs</DependentUpon>

@@ -225,6 +225,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloseAllGraphLayouts();
+            CloseAllTextEditors();
             CloseAllObservers();
 
             CreateNewProject();            
