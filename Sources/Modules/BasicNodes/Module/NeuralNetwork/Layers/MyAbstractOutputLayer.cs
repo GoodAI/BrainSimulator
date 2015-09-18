@@ -19,14 +19,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [ReadOnly(true)]
         public override int Neurons { get; set; }
 
-        [YAXSerializableField(DefaultValue = true)]
-        [MyBrowsable, Category("\tPretraining")]
-        public bool ContinueAfterTrained { get; set; }
-
-        [YAXSerializableField(DefaultValue = 0)]
-        [MyBrowsable, Category("\tPretraining")]
-        public int NumberOfSteps { get; set; }
-
         // Memory blocks
         public virtual MyMemoryBlock<float> Target { get; protected set; }
 
@@ -65,7 +57,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyTaskGroup("LossFunctions")]
         public MySquaredLossTask SquaredLoss { get; protected set; }
         [MyTaskGroup("LossFunctions")]
-        public MyCrossEntropyLossTask CrossEntropy { get; protected set; }
+        public MyCrossEntropyLossTask CrossEntropyLoss { get; protected set; }
         // put more loss functions here according to: http://image.diku.dk/shark/sphinx_pages/build/html/rest_sources/tutorials/concepts/library_design/losses.html
         //AbsoluteLoss
         //SquaredLoss

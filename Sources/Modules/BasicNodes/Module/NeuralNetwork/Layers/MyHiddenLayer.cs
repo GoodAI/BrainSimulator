@@ -73,6 +73,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
+
         // Tasks
         public MyFCUpdateWeightsTask UpdateWeights { get; protected set; }
         public override void CreateTasks()
@@ -81,6 +82,20 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             ForwardTask = new MyFCForwardTask();
             DeltaBackTask = new MyFCBackDeltaTask();
+        }
+
+        public override void DisableLearningTasks()
+        {
+            base.DisableLearningTasks();
+
+            UpdateWeights.Enabled = false;
+        }
+
+        public override void EnableLearningTasks()
+        {
+            base.EnableLearningTasks();
+
+            UpdateWeights.Enabled = true;
         }
 
         // Parameterless constructor

@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -144,8 +145,12 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-            foreach(MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
+            MyNode node = Owner.Input.Owner;
+
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
+
                 // reset delta only if next is not Gaussian HACK.
                 // (Gaussian layer already reseted delta and filled with regularization deltas)
                 previousLayer.Delta.Fill(0);

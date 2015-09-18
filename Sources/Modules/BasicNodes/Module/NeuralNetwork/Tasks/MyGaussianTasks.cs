@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -233,8 +234,12 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute()
         {
-            foreach (var previousLayer in Owner.PreviousConnectedLayers)
+            MyNode node = Owner.Input.Owner;
+
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
+
                 // Reset delta
                 previousLayer.Delta.Fill(0);
 
@@ -271,6 +276,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                         m_regularizationDeltaKernel.SetupExecution(weightCount);
                         m_regularizationDeltaKernel.Run(
                             Convert.ToInt32(Owner.UseSigmaConstant),
+                            (int)previousLayer.ActivationFunction,
+                            prevInputPtr,
                             previousLayer.Input,
                             previousWeightLayer.Weights,
                             previousLayer.Output.Count,

@@ -25,19 +25,19 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     /// </description>
     public class MyNegativeCorrelationEnsembleLayer : MyAbstractLayer, IMyCustomTaskFactory, IMyVariableBranchViewNodeBase
     {
-        [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Cost
-        {
-            get { return GetOutput(1); }
-            set { SetOutput(1, value); }
-        }
-
         [ReadOnly(false)]
         [YAXSerializableField, YAXElementFor("IO")]
         public override int InputBranches
         {
             get { return base.InputBranches; }
             set { base.InputBranches = value; }
+        }
+
+        [MyOutputBlock(1)]
+        public MyMemoryBlock<float> Cost
+        {
+            get { return GetOutput(1); }
+            set { SetOutput(1, value); }
         }
 
         public override ConnectionType Connection
@@ -78,7 +78,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 // all inputs have equal size (so take first and check others)
                 for (int i = 1, size = GetInputSize(0); i < InputBranches; i++)
                 {
-                    validator.AssertError(size == GetInputSize(i), this, "All input dimensions must be the same size");
+                    validator.AssertError(size == GetInputSize(i), this, "All inputs must be the same size");
                 }
                 validator.AssertError(InputBranches >= 2, this, "At least one target and one input have to be set");
             }

@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using GoodAI.Modules.NeuralNetwork.Tasks;
@@ -139,8 +140,12 @@ namespace GoodAI.Modules.LSTM.Tasks
                 }
             }
 
-            foreach (MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
+            MyNode node = Owner.Input.Owner;
+
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
+
                 CUdeviceptr prevInputPtr = nullCUdeviceptr;
 
                 // reset delta

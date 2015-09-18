@@ -86,23 +86,28 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-            foreach (MyAbstractLayer previousLayer in Owner.PreviousConnectedLayers)
+            foreach (MyConnection connection in Owner.InputConnections)
             {
-                // reset delta
-                if (Owner.ParentNetwork.NewBatch())
-                    previousLayer.Delta.Fill(0); // do this after updating weights (batch learning)
+                if (connection.From is MyAbstractLayer)
+                {
+                    MyAbstractLayer prevLayer = connection.From as MyAbstractLayer;
 
-                // determine input to previous layer
-                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
+                    // reset delta
+                    if (Owner.ParentNetwork.NewBatch())
+                        prevLayer.Delta.Fill(0); // do this after updating weights (batch learning)
 
-                m_deltaKernel.SetupExecution(Owner.Neurons);
-                m_deltaKernel.Run(
-                    (int)previousLayer.ActivationFunction,
-                    prevInputPtr,
-                    previousLayer.Delta,
-                    Owner.Delta,
-                    Owner.Neurons
+                    // determine input to previous layer
+                    CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(prevLayer);
+
+                    m_deltaKernel.SetupExecution(Owner.Neurons);
+                    m_deltaKernel.Run(
+                        (int)prevLayer.ActivationFunction,
+                        prevInputPtr,
+                        prevLayer.Delta,
+                        Owner.Delta,
+                        Owner.Neurons
                     );
+                }
             }
         }
     }

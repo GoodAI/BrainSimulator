@@ -121,6 +121,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public virtual void DisableLearningTasks()
         {
+            Delta.FillAll(0);
             ForwardTask.Enabled = false;
             DeltaBackTask.Enabled = false;
         }

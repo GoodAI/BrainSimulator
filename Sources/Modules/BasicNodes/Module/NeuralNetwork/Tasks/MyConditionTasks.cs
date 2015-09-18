@@ -51,13 +51,25 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     [Description("Condition"), MyTaskInfo(OneShot = false, Disabled = false)]
     public class MyBarrierConditionTask : MyTask<MyAbstractOutputLayer>
     {
+        [YAXSerializableField(DefaultValue = false)]
+        [MyBrowsable, Category("\tTasksAfterLearned")]
+        public virtual bool Feedforward { get; set; }
+
+        [YAXSerializableField(DefaultValue = false)]
+        [MyBrowsable, Category("\tTasksAfterLearned")]
+        public virtual bool Backpropagation { get; set; }
+
+        public virtual bool IsThereAnyTaskAfterLearned
+        { get { return Feedforward || Backpropagation; } }
+
+        [ReadOnly(true)]
         [YAXSerializableField(DefaultValue = 0)]
-        [MyBrowsable, Category("\tNumberOfStepsCondition"), ReadOnly(true)]
-        public virtual int LearningStepCounter { get; set; }
+        [MyBrowsable, Category("\tNumberOfStepsCondition")]
+        public int LearningStepCounter { get; set; }
 
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("\tNumberOfStepsCondition")]
-        public virtual int NumberOfLearningSteps { get; set; }
+        public int NumberOfLearningSteps { get; set; }
 
         public override void Init(int nGPU)
         {
@@ -77,7 +89,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (Owner.CanLearn != null)
                 canLearn = System.Convert.ToBoolean(Owner.CanLearn.Host[0]);
 
-            if (canLearn && Owner.IsLearning.IsIncomingRised() && !isLearned)
+            if (canLearn && Owner.IsLearning.IsIncomingRised() && (!isLearned || IsThereAnyTaskAfterLearned))
                 Owner.IsLearning.Raise();
             else
                 Owner.IsLearning.Drop();
@@ -103,7 +115,15 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (Owner.IsLearning.IsRised())
             {
                 // should be overloaded for nodes with non-standard set of learning tasks
-                Owner.EnableLearningTasks();
+                if (!isLearned)
+                    Owner.EnableLearningTasks();
+                else if (IsThereAnyTaskAfterLearned)
+                {
+                    if (Feedforward)
+                        Owner.ForwardTask.Enabled = true;
+                    if (Backpropagation)
+                        Owner.DeltaBackTask.Enabled = true;
+                }
                 //Owner.IsLearning.Raise();
                 LearningStepCounter++;
             }

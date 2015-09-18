@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YAXLib;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -76,14 +77,21 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Output,
                 Owner.Output.Count
             );
-            foreach (MyAbstractLayer prevLayer in Owner.PreviousConnectedLayers)
+
+            foreach (MyConnection connection in Owner.InputConnections)
             {
-                m_forwardSumKernel.Run(
-                    prevLayer.Output,
-                    Owner.Output,
-                    Owner.Output.Count
-                );
+                if (connection.From is MyAbstractLayer)
+                {
+                    MyAbstractLayer prevLayer = connection.From as MyAbstractLayer;
+
+                    m_forwardSumKernel.Run(
+                        prevLayer.Output,
+                        Owner.Output,
+                        Owner.Output.Count
+                    );
+                }
             }
+
             // Then divide output by input size
             m_forwardDivideKernel.Run(
                 Owner.Output,
@@ -122,25 +130,33 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.Delta.Fill(0.0f);
             // number of neurons of ensemble is the same as for each input
             m_deltaKernel.SetConstantVariable<float>("Lambda", Lambda);
-            foreach (MyAbstractLayer prevLayer in Owner.PreviousConnectedLayers)
-            {
-                if (prevLayer is MyAbstractWeightLayer)
-                {
-                    MyAbstractWeightLayer prevWeightLayer = prevLayer as MyAbstractWeightLayer;
 
-                    m_deltaKernel.Run(
-                        (int)prevLayer.ActivationFunction,
-                        prevWeightLayer.NeuronInput,
-                        prevLayer.Output,
-                        Owner.Output,
-                        Owner.Neurons,
-                        prevLayer.Delta,
-                        Owner.Delta,
-                        Owner.PreviousConnectedLayers.Count
-                    );
+            int inputLayerCount = Owner.InputConnections.Count(x => x.From is MyAbstractWeightLayer);
+
+            foreach (MyConnection connection in Owner.InputConnections)
+            {
+                if (connection.From is MyAbstractLayer)
+                {
+                    MyAbstractLayer prevLayer = connection.From as MyAbstractLayer;
+
+                    if (prevLayer is MyAbstractWeightLayer)
+                    {
+                        MyAbstractWeightLayer prevWeightLayer = prevLayer as MyAbstractWeightLayer;
+
+                        m_deltaKernel.Run(
+                            (int)prevLayer.ActivationFunction,
+                            prevWeightLayer.NeuronInput,
+                            prevLayer.Output,
+                            Owner.Output,
+                            Owner.Neurons,
+                            prevLayer.Delta,
+                            Owner.Delta,
+                            inputLayerCount
+                        );
+                    }
+                    prevLayer.Delta.SafeCopyToHost();
+                    Owner.Delta.SafeCopyToHost();
                 }
-                prevLayer.Delta.SafeCopyToHost();
-                Owner.Delta.SafeCopyToHost();
             }
             Owner.Delta.SafeCopyToHost();
         }
