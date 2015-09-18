@@ -18,7 +18,7 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
             reader = BufferReaderFactory.GetFloatReader(buffer);
         }
 
-        public void CheckRounding(float f, int expected)
+        private void CheckRounding(float f, int expected)
         {
             buffer[0] = f;
             reader.Buffer = buffer;  // rewind to the start of the buffer
@@ -54,11 +54,27 @@ namespace GoodAI.LowLevelsUtilsUnitTests.IO
         }
 
         [TestMethod]
-        public void ReadsCloseToZeroAsFalse()
+        public void ReadsZeroAsFalseBoolean()
+        {
+            buffer[0] = 0.0f;
+
+            Assert.AreEqual(false, reader.ReadBool());
+        }
+
+        [TestMethod]
+        public void ReadsSmallFractionAsTrueBoolean()
+        {
+            buffer[0] = 0.02f;
+
+            Assert.AreEqual(true, reader.ReadBool());
+        }
+
+        [TestMethod]
+        public void ReadsCloseToZeroAsTrue()
         {
             buffer[0] = -0.35f;
 
-            Assert.AreEqual(false, reader.ReadBool());
+            Assert.AreEqual(true, reader.ReadBool());
         }
     }
 }
