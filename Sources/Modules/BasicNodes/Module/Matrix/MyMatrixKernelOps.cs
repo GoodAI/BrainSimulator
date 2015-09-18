@@ -17,7 +17,7 @@ namespace GoodAI.Modules.Matrix
     {
         private Dictionary<MatOperation, MyCudaKernel> OpersKerlsDictionary;
 
-        public MyMatrixKernelOps(MyWorkingNode callee, MatOperation operations, MyMemoryBlock<float> A, MyMemoryBlock<float> B = null)
+        public MyMatrixKernelOps(MyWorkingNode callee, MatOperation operations, MyMemoryBlock<float> A = null, MyMemoryBlock<float> B = null)
         {
             OpersKerlsDictionary = new Dictionary<MatOperation, MyCudaKernel>();
             this.callee = callee;
@@ -140,6 +140,7 @@ namespace GoodAI.Modules.Matrix
         {
             if (OpersKerlsDictionary.ContainsKey(operation))
             {
+                OpersKerlsDictionary[operation].SetupExecution(A.Count);
                 OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint);
             }
         }
@@ -166,6 +167,7 @@ namespace GoodAI.Modules.Matrix
                 }
                 else
                 {
+                    OpersKerlsDictionary[operation].SetupExecution(A.Count);
                     OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint, value);
                 }
             }

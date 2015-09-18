@@ -209,8 +209,7 @@ namespace GoodAI.Modules.VSA.Hashes
                 if (offsets != null)
                 {
                     // Offset to [-1,3]
-                    combineVectorsKernel.Run(input, offsets.Value, output,
-                        (int)MyJoin.MyJoinOperation.Addition, vectorSize, vectorSize);
+                    combineVectorsKernel.Run(input, offsets.Value, output, (int)MyJoin.MyJoinOperation.Addition, vectorSize, vectorSize);
                 }
 
                 // Modulate to [0,2]
