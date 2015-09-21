@@ -114,6 +114,7 @@
     <Compile Include="Observers\MyTextObserver.cs" />
     <Compile Include="Transforms\MyReduction.cs" />
     <Compile Include="Utils\BidirHashtable.cs" />
+    <Compile Include="Utils\MyPropertyChangedEventArgs.cs" />
     <Compile Include="Utils\EnumerableExtensions.cs" />
     <Compile Include="Utils\MyGeneralSignals.cs" />
     <Compile Include="Utils\MyHierarchicalOrdering.cs" />

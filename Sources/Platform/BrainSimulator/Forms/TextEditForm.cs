@@ -25,12 +25,30 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm = mainForm;
             Target = target;
             Text = target.Name;
-            textBox.Text = Target.Script;
+            textBox.Text = Target.Script.Replace("\n", Environment.NewLine);            
         }
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             Target.Script = textBox.Text;
+        }
+
+        private void TextEditForm_Enter(object sender, EventArgs e)
+        {
+            if (Target != null)
+            {
+                m_mainForm.NodePropertyView.Target = Target;
+                m_mainForm.MemoryBlocksView.Target = Target;
+                m_mainForm.HelpView.Target = Target;
+                m_mainForm.TaskView.Target = Target;                
+            }
+            else
+            {
+                m_mainForm.NodePropertyView.Target = null;
+                m_mainForm.TaskView.Target = null;
+                m_mainForm.MemoryBlocksView.Target = null;
+                m_mainForm.HelpView.Target = null;
+            }
         }
     }
 }

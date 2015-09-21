@@ -927,8 +927,11 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 statusStrip.BeginInvoke((MethodInvoker)(() => stepStatusLabel.Text = "(" + SimulationHandler.SimulationStep + ", " + SimulationHandler.SimulationSpeed + "/s)"));
 
-                GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
-                activeLayout.Desktop.Invalidate();                
+                if (dockPanel.ActiveDocument is GraphLayoutForm)
+                {
+                    GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
+                    activeLayout.Desktop.Invalidate();
+                }
             }
             else
             {
