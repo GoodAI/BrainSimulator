@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.BasicNodes.Transforms;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
@@ -13,6 +14,12 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
+    /// <author>GoodAI</author>
+    /// <meta>mv</meta>
+    /// <status> WIP </status>
+    /// <summary></summary>
+    /// <description>
+    /// </description>
     public class MyVectorOpsNode : MyWorkingNode
     {
         [MyInputBlock]
@@ -34,9 +41,7 @@ namespace GoodAI.Modules.Transforms
             set { SetOutput(0, value); }
         }
 
-        public MyMemoryBlock<float> Transformation { get; private set; }
         public MyMemoryBlock<float> Temp { get; private set; }
-        public MyMemoryBlock<float> TempVector { get; private set; }
 
         [MyTaskGroup("VectorOp")]
         public MyRotateTask RotateTask { get; private set; }
@@ -48,11 +53,8 @@ namespace GoodAI.Modules.Transforms
             Output.Count = InputA != null ? InputA.Count : 1;
             Output.ColumnHint = InputA != null ? InputA.ColumnHint : 1;
 
-            Temp.ColumnHint = Transformation.ColumnHint = Output.Count;
-            Temp.Count = Transformation.Count = Temp.ColumnHint * Temp.ColumnHint;
-
-            TempVector.Count = Output.Count;
-            TempVector.ColumnHint = Output.ColumnHint;
+            Temp.ColumnHint = Output.Count;
+            Temp.Count = Temp.ColumnHint * Temp.ColumnHint;
         }
 
         [Description("Rotate vector in 2D")]
@@ -62,20 +64,16 @@ namespace GoodAI.Modules.Transforms
             [YAXSerializableField(DefaultValue = 90)]
             public int Degrees { get; set; }
 
-            private MyMatrixAutoOps mat_operation;
+            private MyVectorOps vec_ops;
 
             public override void Init(int nGPU)
             {
-                mat_operation = new MyMatrixAutoOps(Owner, Matrix.MatOperation.Multiplication, Owner.Temp);
+                vec_ops = new MyVectorOps(Owner, MyVectorOps.VectorOperation.Rotate, Owner.Temp);
             }
 
             public override void Execute()
             {
-                double rads = Degrees * Math.PI / 180;
-                float[] transform = new float[] { (float)Math.Cos(rads), -(float)Math.Sin(rads), (float)Math.Sin(rads), (float)Math.Cos(rads) };
-                Array.Copy(transform, Owner.Transformation.Host, transform.Length);
-                Owner.Transformation.SafeCopyToDevice();
-                mat_operation.Run(Matrix.MatOperation.Multiplication, Owner.Transformation, Owner.InputA, Owner.Output);
+                vec_ops.Run(MyVectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
             }
         }
 
@@ -86,48 +84,22 @@ namespace GoodAI.Modules.Transforms
             [YAXSerializableField(DefaultValue = false)]
             public bool Directed { get; set; }
 
-            private MyMatrixAutoOps mat_operation;
+            private MyVectorOps vec_ops;
 
             public override void Init(int nGPU)
             {
-                mat_operation = new MyMatrixAutoOps(Owner, Matrix.MatOperation.Multiplication | Matrix.MatOperation.DotProd, Owner.Temp);
+                vec_ops = new MyVectorOps(Owner, MyVectorOps.VectorOperation.Angle | MyVectorOps.VectorOperation.DirectedAngle, Owner.Temp);
             }
 
             public override void Execute()
             {
                 if (Directed)
                 {
-                    double rads = -Math.PI / 2;
-                    float[] transform = new float[] { (float)Math.Cos(rads), -(float)Math.Sin(rads), (float)Math.Sin(rads), (float)Math.Cos(rads) };
-                    Array.Copy(transform, Owner.Transformation.Host, transform.Length);
-                    Owner.Transformation.SafeCopyToDevice();
-                    mat_operation.Run(Matrix.MatOperation.Multiplication, Owner.Transformation, Owner.InputA, Owner.Output);
-                    Owner.Output.CopyToMemoryBlock(Owner.TempVector, 0, 0, Owner.Output.Count);
-
-                    mat_operation.Run(Matrix.MatOperation.DotProd, Owner.InputA, Owner.InputB, Owner.Output);
-                    Owner.Output.SafeCopyToHost();
-                    float dotProd = Owner.Output.Host[0];
-                    float angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
-
-                    mat_operation.Run(Matrix.MatOperation.DotProd, Owner.TempVector, Owner.InputB, Owner.Output);
-                    Owner.Output.SafeCopyToHost();
-                    float perpDotProd = Owner.Output.Host[0];
-
-                    if (perpDotProd > 0)
-                        angle *= -1;
-                    Owner.Output.Fill(0);
-                    Owner.Output.Host[0] = angle;
-                    Owner.Output.SafeCopyToDevice();
+                    vec_ops.Run(MyVectorOps.VectorOperation.DirectedAngle, Owner.InputA, Owner.InputB, Owner.Output);
                 }
                 else
                 {
-                    mat_operation.Run(Matrix.MatOperation.DotProd, Owner.InputA, Owner.InputB, Owner.Output);
-                    Owner.Output.SafeCopyToHost();
-                    float dotProd = Owner.Output.Host[0];
-                    float angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
-                    Owner.Output.Fill(0);
-                    Owner.Output.Host[0] = angle;
-                    Owner.Output.SafeCopyToDevice();
+                    vec_ops.Run(MyVectorOps.VectorOperation.Angle, Owner.InputA, Owner.InputB, Owner.Output);
                 }
             }
         }
