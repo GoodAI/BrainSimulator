@@ -538,21 +538,13 @@ namespace GoodAI.BrainSimulator.Forms
         public MainForm()
         {
             this.Font = SystemFonts.MessageBoxFont;
-            InitializeComponent();            
+            InitializeComponent();
 
-            SimulationHandler = new MySimulationHandler(backgroundWorker);
-            SimulationHandler.StateChanged += SimulationHandler_StateChanged;
-            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
 
-            // must be created in advance to grab possible error logs
-            ConsoleView = new ConsoleForm(this);
-
-            var assemblyName = Assembly.GetExecutingAssembly().GetName();
-            MyLog.INFO.WriteLine(assemblyName.Name + " version " + assemblyName.Version);
-
+            MySimulation simulation = null;
             try
             {
-                SimulationHandler.Simulation = new MyLocalSimulation();
+                simulation = new MyLocalSimulation();
             }
             catch (Exception e)
             {
@@ -562,6 +554,17 @@ namespace GoodAI.BrainSimulator.Forms
                 // this way you do not have to tweak form Close and Closing events and it works even with any worker threads still running
                 Environment.Exit(1);
             }
+
+            SimulationHandler = new MySimulationHandler(simulation);
+            SimulationHandler.StateChanged += SimulationHandler_StateChanged;
+            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+
+            // must be created in advance to grab possible error logs
+            ConsoleView = new ConsoleForm(this);
+
+            var assemblyName = Assembly.GetExecutingAssembly().GetName();
+            MyLog.INFO.WriteLine(assemblyName.Name + " version " + assemblyName.Version);
+
 
             MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
