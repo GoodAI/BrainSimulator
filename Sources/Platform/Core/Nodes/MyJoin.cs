@@ -223,6 +223,10 @@ namespace GoodAI.Core.Nodes
                     validator.AssertError(InputBranches >= 2, this, "Must provide the Target vector and the idcs as the first two inputs");
                     validator.AssertError(GetInputSize(0) >= GetInputSize(1), this, "Target vector must be bigger than the idcs");
                     return;
+
+                default:
+                    validator.AssertError(InputBranches >= 2, this, "Operation needs at least two operands");
+                    break;
             }
 
             for (int i = 0; i < InputBranches; i++)

@@ -538,21 +538,13 @@ namespace GoodAI.BrainSimulator.Forms
         public MainForm()
         {
             this.Font = SystemFonts.MessageBoxFont;
-            InitializeComponent();            
+            InitializeComponent();
 
-            SimulationHandler = new MySimulationHandler(backgroundWorker);
-            SimulationHandler.StateChanged += SimulationHandler_StateChanged;
-            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
 
-            // must be created in advance to grab possible error logs
-            ConsoleView = new ConsoleForm(this);
-
-            var assemblyName = Assembly.GetExecutingAssembly().GetName();
-            MyLog.INFO.WriteLine(assemblyName.Name + " version " + assemblyName.Version);
-
+            MySimulation simulation = null;
             try
             {
-                SimulationHandler.Simulation = new MyLocalSimulation();
+                simulation = new MyLocalSimulation();
             }
             catch (Exception e)
             {
@@ -562,6 +554,17 @@ namespace GoodAI.BrainSimulator.Forms
                 // this way you do not have to tweak form Close and Closing events and it works even with any worker threads still running
                 Environment.Exit(1);
             }
+
+            SimulationHandler = new MySimulationHandler(simulation);
+            SimulationHandler.StateChanged += SimulationHandler_StateChanged;
+            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+
+            // must be created in advance to grab possible error logs
+            ConsoleView = new ConsoleForm(this);
+
+            var assemblyName = Assembly.GetExecutingAssembly().GetName();
+            MyLog.INFO.WriteLine(assemblyName.Name + " version " + assemblyName.Version);
+
 
             MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
@@ -666,27 +669,22 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void PopulateWorldList()
         {
-            Type selectedWorldType = null;
-
-            if (worldList.SelectedIndex != -1)
-            {
-                selectedWorldType = ((MyWorldConfig)worldList.SelectedItem).NodeType;
-            }
-
-            worldList.Items.Clear();
+            int itemIndex = 0;
 
             foreach (MyWorldConfig wc in MyConfiguration.KnownWorlds.Values)
             {
-                if ((Properties.Settings.Default.ToolBarNodes != null &&
-                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name)) ||
-                    wc.IsBasicNode)
+                bool isAmongToolBarNodes = (Properties.Settings.Default.ToolBarNodes != null &&
+                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name));
+                if (isAmongToolBarNodes || wc.IsBasicNode)
                 {
-                    worldList.Items.Add(wc);
-
-                    if (wc.NodeType == selectedWorldType)
-                    {
-                        worldList.SelectedItem = wc;
-                    }
+                    if (!worldList.Items.Contains(wc))
+                        worldList.Items.Insert(itemIndex, wc);
+                    itemIndex++;
+                }
+                else
+                {
+                    if (worldList.Items.Contains(wc))
+                        worldList.Items.RemoveAt(itemIndex);
                 }
             }
         }

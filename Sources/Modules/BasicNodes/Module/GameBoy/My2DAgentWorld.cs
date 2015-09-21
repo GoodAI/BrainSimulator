@@ -113,7 +113,7 @@ namespace GoodAI.Modules.GameBoy
             {
                 try
                 {
-                    Bitmap bitmap = (Bitmap)Image.FromFile(path, true);
+                    Bitmap bitmap = (Bitmap)Image.FromFile(MyResources.GetMyAssemblyPath() + "\\" + path, true);
                     m_bitmapTable[path] = bitmap;
                     return bitmap.Width * bitmap.Height;
                 }

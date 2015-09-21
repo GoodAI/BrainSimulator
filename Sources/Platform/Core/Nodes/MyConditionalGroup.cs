@@ -70,7 +70,7 @@ namespace GoodAI.Core.Nodes
             //place if block inside
             return new MyExecutionBlock(
                 defaultPlan.Children[0],
-                new MyIfBlock(() => IsActive(), content),
+                new MyIfBlock(IsActive, content),
                 defaultPlan.Children.Last()) { Name = defaultPlan.Name };
         }
 

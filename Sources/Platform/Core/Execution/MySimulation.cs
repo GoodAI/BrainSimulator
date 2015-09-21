@@ -19,7 +19,7 @@ namespace GoodAI.Core.Execution
 
         public bool IsFinished { get; protected set; }
 
-        public string GlobalDataFolder { get; set; }        
+        public string GlobalDataFolder { get; set; }
 
         public bool InDebugMode { get; set; }
         public ExecutionStepMode DebugStepMode { get; set; }
@@ -41,7 +41,7 @@ namespace GoodAI.Core.Execution
 
         protected bool m_errorOccured;
         protected Exception m_lastException;
-                       
+
         public MySimulation()
         {
             AutoSaveInterval = 0;
@@ -66,7 +66,7 @@ namespace GoodAI.Core.Execution
         public abstract void FreeMemory();
 
         public virtual void Clear()
-        {            
+        {
             NodePartitioning = null;
             ExecutionPlan = null;
         }
@@ -115,13 +115,13 @@ namespace GoodAI.Core.Execution
 
                 NodePartitioning[i] = new List<MyWorkingNode>(indexTable[i]);
             });
-        }        
+        }
     }
 
     public class MyLocalSimulation : MySimulation
     {
         private MyThreadPool m_threadPool;
-        protected bool m_debugStepComplete; 
+        protected bool m_debugStepComplete;
 
         public MyLocalSimulation()
         {
@@ -181,7 +181,7 @@ namespace GoodAI.Core.Execution
                     MyMemoryManager.Instance.AllocateBlocks(node, false);
                 }
             });
-        }           
+        }
 
         /// <summary>
         /// Performs one step of simulation
@@ -194,12 +194,12 @@ namespace GoodAI.Core.Execution
             m_threadPool.ResumeThreads(ExecutionPlan);
 
             if (m_errorOccured)
-            {                
-                if (m_lastException != null) 
-                {                    
+            {
+                if (m_lastException != null)
+                {
                     throw m_lastException;
-                }   
-                else 
+                }
+                else
                 {
                     throw new MySimulationException(-1, "Unknown simulation exception occured");
                 }
@@ -326,7 +326,7 @@ namespace GoodAI.Core.Execution
                 m_errorOccured = true;
                 m_lastException = new MySimulationException(coreNumber, e.Message, e);
 
-                MyKernelFactory.Instance.MarkContextDead(coreNumber);               
+                MyKernelFactory.Instance.MarkContextDead(coreNumber);
             }
         }
 
@@ -344,6 +344,8 @@ namespace GoodAI.Core.Execution
                 foreach (MyWorkingNode node in partition)
                 {
                     MyMemoryManager.Instance.FreeBlocks(node, false);
+
+                    node.Cleanup();
                 }
             });
         }
@@ -397,7 +399,7 @@ namespace GoodAI.Core.Execution
         public SimulationControlException(string message) : base(message) { }
     }
 
-    public class MySimulationException : Exception 
+    public class MySimulationException : Exception
     {
         public int CoreNumber { get; private set; }
 

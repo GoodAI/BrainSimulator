@@ -84,7 +84,7 @@ namespace GoodAI.LowLevelUtils.IO
 
         public bool ReadBool()
         {
-            return Convert.ToBoolean(ReadInt());
+            return Convert.ToBoolean(ReadFloat());
         }
 
         #endregion
