@@ -28,21 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox = new System.Windows.Forms.TextBox();
+            this.scintilla = new ScintillaNET.Scintilla();
             this.SuspendLayout();
             // 
-            // textBox
+            // scintilla
             // 
-            this.textBox.AcceptsReturn = true;
-            this.textBox.AcceptsTab = true;
-            this.textBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox.Location = new System.Drawing.Point(0, 0);
-            this.textBox.Multiline = true;
-            this.textBox.Name = "textBox";
-            this.textBox.Size = new System.Drawing.Size(284, 262);
-            this.textBox.TabIndex = 0;
-            this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            this.scintilla.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.scintilla.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.scintilla.IndentWidth = 4;
+            this.scintilla.Location = new System.Drawing.Point(1, 0);
+            this.scintilla.Name = "scintilla";
+            this.scintilla.Size = new System.Drawing.Size(283, 262);
+            this.scintilla.TabIndex = 1;
+            this.scintilla.Text = "scintilla editor";
+            this.scintilla.UseTabs = false;
+            this.scintilla.CharAdded += new System.EventHandler<ScintillaNET.CharAddedEventArgs>(this.scintilla_CharAdded);
             // 
             // TextEditForm
             // 
@@ -50,19 +52,19 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.CloseButtonVisible = false;
-            this.Controls.Add(this.textBox);
+            this.Controls.Add(this.scintilla);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "TextEditForm";
             this.Text = "Code Editor";
             this.Enter += new System.EventHandler(this.TextEditForm_Enter);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox;
+        private ScintillaNET.Scintilla scintilla;
+
     }
 }

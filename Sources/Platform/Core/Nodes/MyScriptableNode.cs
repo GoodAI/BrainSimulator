@@ -31,6 +31,8 @@ namespace GoodAI.Core.Nodes
                 }
             }
         }
+
+        public abstract string[] NameExpressions { get; }
     }
 
     public class MyTestingScriptableNode : MyScriptableNode 
@@ -51,6 +53,11 @@ namespace GoodAI.Core.Nodes
         public override void UpdateMemoryBlocks()
         {
             
+        }
+
+        public override string[] NameExpressions
+        {
+            get { return new string[0]; }
         }
     }  
 }

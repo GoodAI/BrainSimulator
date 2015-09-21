@@ -101,6 +101,9 @@
     <Reference Include="OpenTK.GLControl">
       <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.GLControl.dll</HintPath>
     </Reference>
+    <Reference Include="ScintillaNET">
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ScintillaNET\ScintillaNET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
