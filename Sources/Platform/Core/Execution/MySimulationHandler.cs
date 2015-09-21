@@ -204,7 +204,7 @@ namespace GoodAI.Core.Execution
 
         public void Dispose()
         {
-            Finish(() => {});
+            Finish();
         }
 
         //NOT in UI thread
