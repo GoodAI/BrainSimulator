@@ -89,6 +89,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         // Tasks
         public MyInitWeightsTask InitWeights { get; protected set; }
         public MyCreateDropoutMaskTask CreateDropoutMask { get; protected set; }
+        public MyShareWeightsTask ShareWeightsTask { get; protected set; }
 
         //parameterless constructor
         public MyAbstractWeightLayer() { }

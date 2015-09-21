@@ -4,6 +4,7 @@ using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using System;
 using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -94,6 +95,84 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 );
         }
     }
+
+    /// <author>GoodAI</author>
+    /// <meta>kk</meta>
+    /// <status>Working</status>
+    /// <summary>
+    /// Approaches weights of another layer
+    /// </summary>
+    /// <description></description>
+    [Description("ShareWeights"), MyTaskInfo(OneShot = false)]
+    public class MyShareWeightsTask : MyTask<MyAbstractWeightLayer>
+    {
+        [YAXSerializableField(DefaultValue = -1)]
+        [MyBrowsable, Category("\tLayer")]
+        public int ShareWeightsWithNodeId { get; set; }
+
+        [YAXSerializableField(DefaultValue = 0.01f)]
+        [MyBrowsable, Category("\tLayer")]
+        public float ApproachWeightsRate { get; set; }
+
+        private int m_previousShareWeightsWithNodeId = -1;
+        private MyAbstractWeightLayer m_shareWeightsWithLayer = null;
+        private MyCudaKernel m_interpolateKernel;
+
+        public MyShareWeightsTask() { } //parameterless constructor
+
+        public override void Init(int nGPU)
+        {
+            m_interpolateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel", "Interpolate");
+        }
+
+        public override void Execute()
+        {
+            if (ShareWeightsWithNodeId == -1)
+            {
+                return;
+            }
+
+            if (ShareWeightsWithNodeId != m_previousShareWeightsWithNodeId)
+            {
+                m_shareWeightsWithLayer = null;
+
+                var fromNode = Owner.Owner.GetNodeById(ShareWeightsWithNodeId);
+                if (fromNode == null)
+                {
+                    MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + ShareWeightsWithNodeId + " because it was not found!");
+                    return;
+                }
+
+                if (!(fromNode is MyAbstractWeightLayer))
+                {
+                    MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + ShareWeightsWithNodeId + " because it is not a weight layer!");
+                    return;                    
+                }
+
+                MyAbstractWeightLayer fromLayer = (MyAbstractWeightLayer) fromNode;
+                if (fromLayer.Weights.Count != Owner.Weights.Count || fromLayer.Bias.Count != Owner.Bias.Count)
+                {
+                    MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + ShareWeightsWithNodeId + " because the sizes do not match!");
+                    return;
+                }
+
+                m_previousShareWeightsWithNodeId = ShareWeightsWithNodeId;
+                m_shareWeightsWithLayer = fromLayer;
+
+                m_shareWeightsWithLayer.Weights.CopyToMemoryBlock(Owner.Weights, 0, 0, Owner.Weights.Count);
+                m_shareWeightsWithLayer.Bias.CopyToMemoryBlock(Owner.Bias, 0, 0, Owner.Bias.Count);
+            }
+
+            if (m_shareWeightsWithLayer != null)
+            {
+                m_interpolateKernel.SetupExecution(Owner.Weights.Count);
+                m_interpolateKernel.Run(Owner.Weights, m_shareWeightsWithLayer.Weights, Owner.Weights, ApproachWeightsRate, Owner.Weights.Count);
+                m_interpolateKernel.SetupExecution(Owner.Bias.Count);
+                m_interpolateKernel.Run(Owner.Bias, m_shareWeightsWithLayer.Bias, Owner.Bias, ApproachWeightsRate, Owner.Bias.Count);
+            }
+        }
+    }
+
 
     //[Description("GetL1Term"), MyTaskInfo(OneShot = false)]
     //public class MyGetL1TermTask : MyTask<MyAbstractWeightLayer>
