@@ -89,7 +89,11 @@ namespace GoodAI.BasicNodes.Transforms
                     mat_operation.Run(MatOperation.DotProd, A, B, Result);
                     Result.SafeCopyToHost();
                     float dotProd = Result.Host[0];
-                    float angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
+                    float angle;
+                    if (dotProd == 1)
+                        angle = 0;
+                    else
+                        angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
 
                     mat_operation.Run(MatOperation.DotProd, m_temp, B, Result);
                     Result.SafeCopyToHost();
