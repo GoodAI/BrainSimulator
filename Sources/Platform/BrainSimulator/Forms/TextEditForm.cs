@@ -34,15 +34,30 @@ namespace GoodAI.BrainSimulator.Forms
             
             scintilla.TextChanged += scintilla_TextChanged;
             scintilla.HandleDestroyed += scintilla_HandleDestroyed;
-            scintilla.HandleCreated += scintilla_HandleCreated;
+            scintilla.HandleCreated += scintilla_HandleCreated;            
         }
 
-        void scintilla_HandleDestroyed(object sender, EventArgs e)
+        public void PasteText()
+        {
+            scintilla.Paste();
+        }
+
+        public void CopyText()
+        {
+            scintilla.Copy();
+        }
+
+        public void CutText()
+        {
+            scintilla.Cut();
+        }
+
+        private void scintilla_HandleDestroyed(object sender, EventArgs e)
         {         
             scintilla.TextChanged -= scintilla_TextChanged;            
         }
 
-        void scintilla_HandleCreated(object sender, EventArgs e)
+        private void scintilla_HandleCreated(object sender, EventArgs e)
         {         
             scintilla.Text = Target.Script;
             scintilla.TextChanged += scintilla_TextChanged;
@@ -78,11 +93,21 @@ namespace GoodAI.BrainSimulator.Forms
             var currentPos = scintilla.CurrentPosition;
             var wordStartPos = scintilla.WordStartPosition(currentPos, true);
 
+            if (e.Char == '\n')
+            {
+                if (scintilla.Lines.Count > 1)
+                {
+                    Line lastLine = scintilla.Lines[scintilla.Lines.Count - 2];
+                    string lastIndent = lastLine.Text.Substring(0, lastLine.Indentation);
+                    scintilla.AddText(lastIndent);
+                }
+            }
+
             // Display the autocompletion list
             var lenEntered = currentPos - wordStartPos;
             if (lenEntered > 0)
             {
-                scintilla.AutoCShow(lenEntered, "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while");
+                scintilla.AutoCShow(lenEntered, Target.NameExpressions);
             }
         }
 
@@ -173,21 +198,10 @@ namespace GoodAI.BrainSimulator.Forms
 
             // Keyword lists:
             // 0 "Keywords",
-            // 1 "Highlighted identifiers"
+            // 1 "Highlighted identifiers"            
 
-            var python2 = "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield";
-            //var python3 = "False None True and as assert break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield";
-            var cython = "cdef cimport cpdef";
-
-            string nameExpressions = "";
-
-            foreach (string name in Target.NameExpressions)
-            {
-                nameExpressions += name + " "; 
-            }
-
-            scintilla.SetKeywords(0, python2 + " " + cython);
-            scintilla.SetKeywords(1, nameExpressions);
+            scintilla.SetKeywords(0, Target.Keywords);
+            scintilla.SetKeywords(1, Target.NameExpressions);
         }
     }
 }

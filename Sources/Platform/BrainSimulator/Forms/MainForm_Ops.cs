@@ -1007,12 +1007,6 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void CopySelectedNodesToClipboard()
         {
-            if (dockPanel.ActiveContent is ConsoleForm)
-            {
-                Clipboard.SetText((dockPanel.ActiveContent as ConsoleForm).textBox.SelectedText);
-                return;
-            }
-
             if (dockPanel.ActiveDocument is GraphLayoutForm)
             {
                 GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;

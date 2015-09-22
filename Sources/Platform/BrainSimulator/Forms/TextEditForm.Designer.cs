@@ -33,14 +33,12 @@
             // 
             // scintilla
             // 
-            this.scintilla.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.scintilla.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scintilla.IndentWidth = 4;
-            this.scintilla.Location = new System.Drawing.Point(1, 0);
+            this.scintilla.Location = new System.Drawing.Point(0, 0);
             this.scintilla.Name = "scintilla";
-            this.scintilla.Size = new System.Drawing.Size(283, 262);
+            this.scintilla.Size = new System.Drawing.Size(284, 262);
             this.scintilla.TabIndex = 1;
             this.scintilla.Text = "scintilla editor";
             this.scintilla.UseTabs = false;
@@ -53,7 +51,7 @@
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.CloseButtonVisible = false;
             this.Controls.Add(this.scintilla);
-            this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
+            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "TextEditForm";
             this.Text = "Code Editor";
