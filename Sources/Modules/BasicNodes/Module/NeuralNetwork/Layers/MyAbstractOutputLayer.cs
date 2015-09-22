@@ -51,7 +51,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             base.CreateTasks();
 
-            ConditionTask = new MyBarrierConditionTask();
+            PretrainingTask = new MyBarrierPretrainingTask();
         }
 
         [MyTaskGroup("LossFunctions")]

@@ -88,7 +88,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         {
             foreach (MyConnection connection in Owner.InputConnections)
             {
-                if (connection.From is MyAbstractLayer)
+                if (connection != null && connection.From is MyAbstractLayer)
                 {
                     MyAbstractLayer prevLayer = connection.From as MyAbstractLayer;
 

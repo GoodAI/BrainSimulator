@@ -53,7 +53,7 @@ namespace GoodAI.Modules.NeuralNetwork
                     int timeStep = layer.ParentNetwork.TimeStep;
                     if (0 <= timeStep && timeStep < SequenceLength)
                         return timeStep;
-                    return 0;
+                    return SequenceLength - 1;
                 }
                 throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
             }

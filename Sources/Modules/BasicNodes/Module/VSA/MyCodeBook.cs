@@ -183,10 +183,10 @@ namespace GoodAI.Modules.VSA
                     if (Owner.UseBSCVariety)
                     {
                         m_similarityKernel.Run(codeVector.DevicePointer, Owner.Input, Owner.TempBlock, (int)SimilarityOperator, Owner.SymbolSize);
-                        m_kernel.Run(Owner.Output, Owner.TempBlock, Owner.SymbolSize, 0, 0, 1);
+                        m_kernel.Run(Owner.Output, Owner.TempBlock, Owner.SymbolSize, 0, 0, 1, false);
                     }
                     else
-                        m_kernel.Run(Owner.Output, 0, codeVector.DevicePointer, Owner.Input, Owner.SymbolSize);
+                        m_kernel.Run(Owner.Output, 0, codeVector.DevicePointer, Owner.Input, Owner.SymbolSize, false);
                 }
 
                 lastIdx = index;

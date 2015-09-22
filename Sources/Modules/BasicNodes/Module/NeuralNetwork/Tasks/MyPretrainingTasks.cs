@@ -14,8 +14,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     // checks the if node is ready for learning or not depending on any of two things
     // 1) CanLearn input flag (if it is not null)
     // 2) Incoming IsLearning signal
-    [Description("Condition"), MyTaskInfo(OneShot = false, Disabled = false)]
-    public class MyNodeConditionTask : MyTask<MyAbstractLayer>
+    [Description("Pretraining"), MyTaskInfo(OneShot = false, Disabled = false)]
+    public class MyNodePretrainingTask : MyTask<MyAbstractLayer>
     {
         public override void Init(int nGPU)
         {
@@ -48,8 +48,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     
     // checks the if inner barrier condition is satisfied
     // 1) If inner conditions are satisfied (only Output nodes)
-    [Description("Condition"), MyTaskInfo(OneShot = false, Disabled = false)]
-    public class MyBarrierConditionTask : MyTask<MyAbstractOutputLayer>
+    [Description("Pretraining"), MyTaskInfo(OneShot = false, Disabled = false)]
+    public class MyBarrierPretrainingTask : MyTask<MyAbstractOutputLayer>
     {
         [YAXSerializableField(DefaultValue = false)]
         [MyBrowsable, Category("\tTasksAfterLearned")]
@@ -64,11 +64,11 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         [ReadOnly(true)]
         [YAXSerializableField(DefaultValue = 0)]
-        [MyBrowsable, Category("\tNumberOfStepsCondition")]
+        [MyBrowsable, Category("\tNumberOfStepsPretraining")]
         public int LearningStepCounter { get; set; }
 
         [YAXSerializableField(DefaultValue = 0)]
-        [MyBrowsable, Category("\tNumberOfStepsCondition")]
+        [MyBrowsable, Category("\tNumberOfStepsPretraining")]
         public int NumberOfLearningSteps { get; set; }
 
         public override void Init(int nGPU)

@@ -134,7 +134,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public virtual void CreateTasks()
         {
-            ConditionTask = new MyNodeConditionTask();
+            PretrainingTask = new MyNodePretrainingTask();
         }
 
         //Memory blocks size rules
@@ -152,7 +152,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }
 
-        public MyTask ConditionTask { get; protected set; }
+        public MyTask PretrainingTask { get; protected set; }
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
     }

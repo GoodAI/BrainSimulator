@@ -212,7 +212,7 @@ namespace GoodAI.Modules.VSA.Hashes
                             src = Temp.GetDevicePtr(Owner);
                         }
 
-                        _dotKernel.Run(Temp, 2 * symbolSize, src, src, symbolSize);
+                        _dotKernel.Run(Temp, 2 * symbolSize, src, src, symbolSize, 0);
 
                         _mapToIdcsKernel.Run(src, Temp.GetDevicePtr(Owner.GPU, 2 * symbolSize), index, Memory, symbolSize);
                     }

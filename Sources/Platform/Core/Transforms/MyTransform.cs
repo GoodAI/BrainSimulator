@@ -100,7 +100,7 @@ namespace GoodAI.Modules.Transforms
             {
                 if (VectorNormalization)
                 {
-                    m_dotKernel.Run(Owner.Temp, 0, Owner.Input, Owner.Input, Owner.InputSize);
+                    m_dotKernel.Run(Owner.Temp, 0, Owner.Input, Owner.Input, Owner.InputSize, 0);
                     Owner.Temp.SafeCopyToHost();
                     float length = (float)Math.Sqrt(Owner.Temp.Host[0]);
 
@@ -115,7 +115,7 @@ namespace GoodAI.Modules.Transforms
                 }
                 else if (ScalarNormalization)
                 {
-                    m_sumKernel.Run(Owner.Temp, Owner.Input, Owner.InputSize, 0, 0, 1);
+                    m_sumKernel.Run(Owner.Temp, Owner.Input, Owner.InputSize, 0, 0, 1, 0);
                     Owner.Temp.SafeCopyToHost();
 
                     float length = Owner.Temp.Host[0];
@@ -206,7 +206,7 @@ namespace GoodAI.Modules.Transforms
             public override void Execute()
             {
                 // no in offset, no out offset, stride 1
-                m_kernel.Run(Owner.Output, Owner.Input, Owner.InputSize, 0, 0, 1);
+                m_kernel.Run(Owner.Output, Owner.Input, Owner.InputSize, 0, 0, 1, false);
             }
         }
 

@@ -120,7 +120,7 @@ namespace GoodAI.Modules.VSA
 
             if (NormalizeOutput)
             {
-                m_dotKernel.Run(m_tempBlock, 0, output, output, m_inputSize);
+                m_dotKernel.Run(m_tempBlock, 0, output, output, m_inputSize, 0);
                 m_tempBlock.SafeCopyToHost(0, 1);
 
                 if (m_tempBlock.Host[0] > 0.000001f)

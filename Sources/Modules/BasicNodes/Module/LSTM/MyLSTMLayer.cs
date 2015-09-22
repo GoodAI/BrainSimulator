@@ -80,6 +80,9 @@ namespace GoodAI.Modules.LSTM
         [MyBrowsable, Category("\tLayer")]
         public int CellsPerBlock { get; set; }
 
+        public int CellInputSize { get { return Input.Count + Output.Count + 1; } }
+        public int GateInputSize { get { return Input.Count + Output.Count + CellsPerBlock + 1; } }
+
         //Tasks
         protected MyLSTMInitLayerTask initLayerTask { get; set; }
         protected MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
@@ -90,8 +93,15 @@ namespace GoodAI.Modules.LSTM
         public class MyResetSignal : MySignal { }
 
         // Memory blocks
+        public virtual MyMemoryBlock<float> Temporary { get; set; }
+
         public virtual MyTemporalMemoryBlock<float> CellStates { get; set; }
         public virtual MyMemoryBlock<float> PreviousCellStates { get; set; }
+
+        public virtual MyTemporalMemoryBlock<float> InputGateNetInput { get; set; }
+        public virtual MyTemporalMemoryBlock<float> ForgetGateNetInput { get; set; }
+        public virtual MyTemporalMemoryBlock<float> OutputGateNetInput { get; set; }
+        public virtual MyTemporalMemoryBlock<float> CellInputNetInput { get; set; }
 
         public virtual MyTemporalMemoryBlock<float> CellInputActivations { get; set; }
         public virtual MyTemporalMemoryBlock<float> CellStateActivations { get; set; }
@@ -170,11 +180,18 @@ namespace GoodAI.Modules.LSTM
             if (Input == null)
                 return;
 
+            Temporary.Count = MemoryBlocks * GateInputSize;
+
             CellStates.Count = MemoryBlocks * CellsPerBlock;
             PreviousCellStates.Count = CellStates.Count;
 
             Output.Count = CellStates.Count;
             PreviousOutput.Count = CellStates.Count;
+
+            CellInputNetInput.Count = MemoryBlocks * CellsPerBlock;
+            InputGateNetInput.Count = MemoryBlocks;
+            ForgetGateNetInput.Count = MemoryBlocks;
+            OutputGateNetInput.Count = MemoryBlocks;
 
             CellInputActivations.Count = CellStates.Count;
             CellStateActivations.Count = CellStates.Count;
@@ -188,13 +205,10 @@ namespace GoodAI.Modules.LSTM
             ForgetGateActivationDerivatives.Count = MemoryBlocks;
             OutputGateActivationDerivatives.Count = MemoryBlocks;
 
-            int cellInputSize = Input.Count + Output.Count + 1;
-            int gateInputSize = Input.Count + Output.Count + CellsPerBlock + 1;
-
-            CellInputWeights.Count = cellInputSize * CellStates.Count;
-            InputGateWeights.Count = gateInputSize * InputGateActivations.Count;
-            ForgetGateWeights.Count = gateInputSize * ForgetGateActivations.Count;
-            OutputGateWeights.Count = gateInputSize * OutputGateActivations.Count;
+            CellInputWeights.Count = CellInputSize * CellStates.Count;
+            InputGateWeights.Count = GateInputSize * InputGateActivations.Count;
+            ForgetGateWeights.Count = GateInputSize * ForgetGateActivations.Count;
+            OutputGateWeights.Count = GateInputSize * OutputGateActivations.Count;
 
             CellInputWeightGradient.Count = CellInputWeights.Count;
             OutputGateWeightGradient.Count = OutputGateWeights.Count;
