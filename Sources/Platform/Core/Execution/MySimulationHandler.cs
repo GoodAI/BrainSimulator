@@ -74,6 +74,16 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        internal Exception m_simulationStoppedException;
+        public class SimulationStoppedEventArgs : EventArgs
+        {
+            public Exception Exception { get; set; }
+            public uint StepCount { get; set; }
+        }
+
+        public delegate void SimulationStoppedEventHandler(object sender, SimulationStoppedEventArgs args);
+        public event SimulationStoppedEventHandler SimulationStopped;
+
         private readonly int m_speedMeasureInterval;
 
         public float SimulationSpeed { get; private set; }
@@ -204,7 +214,8 @@ namespace GoodAI.Core.Execution
 
         public void Dispose()
         {
-            Finish();
+            if (State != SimulationState.STOPPED)
+                Finish();
         }
 
         //NOT in UI thread
@@ -221,6 +232,7 @@ namespace GoodAI.Core.Execution
                 }
                 catch (Exception ex)
                 {
+                    m_simulationStoppedException = ex;
                     MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
                     e.Cancel = true;
                 }
@@ -316,6 +328,16 @@ namespace GoodAI.Core.Execution
 
                 MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
                 State = SimulationState.STOPPED;
+
+                if (SimulationStopped != null)
+                {
+                    var args = new SimulationStoppedEventArgs
+                    {
+                        Exception = m_simulationStoppedException,
+                        StepCount = SimulationStep
+                    };
+                    SimulationStopped(this, args);
+                }
             }
 
             // Cleanup and invoke the callback action.
