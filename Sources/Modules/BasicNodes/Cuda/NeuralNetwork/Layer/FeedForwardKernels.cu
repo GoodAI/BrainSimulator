@@ -60,6 +60,34 @@ extern "C"
 		}
 	}
 
+
+	__global__ void FullyConnectedForwardBatchKernel(
+		ActivationFunctionEnum activationFunction,
+		float *outputPtr,
+		float *neuronInputPtr,
+		float *biasPtr,
+		float *dropoutMaskPtr,
+		float dropout,
+		int thisLayerSize,
+		int batchSize
+		)
+	{
+		int threadId = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+		int neuronId = threadId % thisLayerSize;
+
+		if (threadId < thisLayerSize * batchSize)
+		{
+			// sum neuron input
+			neuronInputPtr[threadId] = !dropoutMaskPtr[neuronId] * (neuronInputPtr[threadId] + biasPtr[neuronId]);
+
+			// set output value
+			outputPtr[threadId] = !dropoutMaskPtr[neuronId] * (Evaluate(activationFunction, neuronInputPtr[threadId]) / (1.0f - dropout));
+		}
+	}
+
+
 	__global__ void OneToOneForwardKernel(
 		ActivationFunctionEnum activationFunction,
 		float *inputPtr,

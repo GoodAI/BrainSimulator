@@ -68,7 +68,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public override void UpdateMemoryBlocks()
         {
             base.UpdateMemoryBlocks();
-            NeuronInput.Count = Neurons;
+            NeuronInput.Count = Neurons * ParentNetwork.BatchSize;
             if (Neurons % 2 == 0)
                 DropoutMask.Count = Neurons;
             else

@@ -25,7 +25,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             // automatically set number of neurons to the same size as target
             if (Target != null)
-                Neurons = Target.Count;
+                Neurons = Target.Count / ParentNetwork.BatchSize;
 
             base.UpdateMemoryBlocks(); // call after number of neurons are set
         }

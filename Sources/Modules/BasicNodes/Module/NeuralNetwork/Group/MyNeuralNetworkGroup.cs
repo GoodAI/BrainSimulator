@@ -37,6 +37,10 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyBrowsable, Category("\tRegularization")]
         public float Dropout { get; set; }
 
+        [YAXSerializableField(DefaultValue = 1)]
+        [MyBrowsable, Category("\tBatchLearning")]
+        public int BatchSize { get; set; }
+
         //Memory Blocks
         public List<MyNode> SortedChildren;
         public MyAbstractLayer FirstLayer;

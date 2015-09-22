@@ -29,12 +29,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 if (Input != null)
                 {
                     // parameter allocations
-                    Weights.Count = Neurons * Input.Count;
+                    Weights.Count = Neurons * Input.Count / ParentNetwork.BatchSize;
                     Bias.Count = Neurons;
 
                     // SGD allocations
-                    Delta.Count = Neurons;
-                    PreviousWeightDelta.Count = Neurons * Input.Count; // momentum method
+                    Delta.Count = Neurons * ParentNetwork.BatchSize;
+                    PreviousWeightDelta.Count = Weights.Count; // momentum method
                     PreviousBiasDelta.Count = Neurons; // momentum method
 
                     // RMSProp allocations
