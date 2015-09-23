@@ -107,6 +107,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             get { return batchIndex; }
             set { batchIndex = (value >= BatchSize) ? 0 : value; }
         }
+
+        public void SumGradientBatch(MyAbstractWeightLayer layer)
+        {
+            
+        }
     }
 
     /// <author>GoodAI</author>

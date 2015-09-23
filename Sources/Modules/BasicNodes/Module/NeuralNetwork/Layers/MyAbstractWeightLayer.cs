@@ -29,6 +29,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> L1Term { get; protected set; }
         public MyMemoryBlock<float> L2Term { get; protected set; }
 
+        public MyMemoryBlock<float> Ones { get; protected set; }
+        public MyMemoryBlock<float> Gradient { get; protected set; }
+        public MyMemoryBlock<float> GradientSum { get; protected set; }
+
         // RMSProp memory
         public MyMemoryBlock<float> MeanSquareWeight { get; protected set; }
         public MyMemoryBlock<float> MeanSquareBias { get; protected set; }
@@ -75,6 +79,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 DropoutMask.Count = Neurons + 1;
             L1Term.Count = 1;
             L2Term.Count = 1;
+
+            Ones.Count = Neurons;
+            Gradient.Count = Neurons * ParentNetwork.BatchSize;
+            GradientSum.Count = Neurons;
         }
 
         // Tasks
