@@ -7,7 +7,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 6; } }
+        public override int CurrentVersion { get { return 7; } }
 
 
         /// <summary>
@@ -150,6 +150,39 @@ namespace GoodAI.Modules.Versioning
                 lstm.Add(new XElement("GateActivationFunction", "SIGMOID"));
             }
 
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert connections to output layer (the index of the target input has changed)
+        /// Author: Vision 
+        /// </summary>
+        public static string Convert6To7(string xml)
+        {
+            const string OLD_TARGET_INDEX = "1";
+            const string NEW_TARGET_INDEX = "2";
+
+            XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            foreach (var outLayer in document.Root.Descendants("MyOutputLayer"))
+            {
+                string nodeID = outLayer.Attribute("Id").Value;
+                foreach (var connection in document.Root.Descendants("Connection"))
+                {
+                    if (connection.Attribute("To").Value == nodeID)
+                    {
+                        var toIndexAttribute = connection.Attribute("ToIndex");
+                        if (toIndexAttribute.Value == OLD_TARGET_INDEX)
+                        {
+                            toIndexAttribute.SetValue(NEW_TARGET_INDEX);
+                        }
+                    }
+                }
+            }
+            
             return document.ToString();
         }
     }
