@@ -18,8 +18,8 @@ namespace GoodAI.BasicNodes.Transforms
         }
 
         private readonly MyWorkingNode m_caller;
-        private VectorOperation m_operations;
-        private MyMatrixAutoOps mat_operation;
+        private readonly VectorOperation m_operations;
+        private readonly MyMatrixAutoOps mat_operation;
         private readonly MyMemoryBlock<float> m_temp;
 
         public MyVectorOps(MyWorkingNode caller, VectorOperation operations, MyMemoryBlock<float> tempBlock)
