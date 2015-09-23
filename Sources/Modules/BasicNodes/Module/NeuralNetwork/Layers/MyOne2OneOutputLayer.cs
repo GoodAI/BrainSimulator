@@ -65,5 +65,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             ForwardTask = new MyOneToOneForwardTask();
             DeltaBackTask = new MyOneToOneDeltaBackTask();
         }
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+            validator.AssertError(Target != null, this, "Target not defiend");
+        }
     }
 }
