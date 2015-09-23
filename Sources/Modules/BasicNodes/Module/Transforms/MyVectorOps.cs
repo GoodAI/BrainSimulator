@@ -85,6 +85,7 @@ namespace GoodAI.BasicNodes.Transforms
                     Result.Host[0] = -90;
                     Result.SafeCopyToDevice();
                     Run(VectorOperation.Rotate, A, Result, Result);
+                    Result.CopyToMemoryBlock(m_temp, 0, 0, Result.Count);
 
                     mat_operation.Run(MatOperation.DotProd, A, B, Result);
                     Result.SafeCopyToHost();
