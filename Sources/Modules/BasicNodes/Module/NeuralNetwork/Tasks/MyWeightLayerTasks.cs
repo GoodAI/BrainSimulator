@@ -29,7 +29,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             m_polynomialKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "PolynomialFunctionKernel");
         }
 
-        private Random Rand = new Random();
+        private static Random Rand = new Random();
 
         public enum RandomDistribution
         {
