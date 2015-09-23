@@ -63,7 +63,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 		        Owner.DropoutMask,
 		        dropout,
 		        Owner.Neurons,
-		        Owner.Output.Count
+                Owner.ParentNetwork.BatchSize
                 );
 
             /*
