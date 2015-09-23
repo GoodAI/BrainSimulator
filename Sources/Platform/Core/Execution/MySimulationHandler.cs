@@ -3,13 +3,17 @@ using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Core.Execution
 {
     /// Managers MySimulation run
     public class MySimulationHandler : IDisposable
     {
+        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
+
         public enum SimulationState
         {
             [Description("Running")]
@@ -306,6 +310,57 @@ namespace GoodAI.Core.Execution
                 Project.World.DoPause();
             }
         }
+
+        public bool UpdateMemoryModel()
+        {            
+            MyLog.INFO.WriteLine("Updating memory blocks...");
+
+            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
+            List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
+
+            if (!orderedNodes.Any())
+            {
+                return true;
+            }
+
+            int attempts = 0;
+            bool anyOutputChanged = false;
+
+            try
+            {
+
+                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
+                {
+                    attempts++;
+                    anyOutputChanged = false;
+
+                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
+                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
+
+                    if (!anyOutputChanged)
+                    {
+                        MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
+                return true;
+            }
+
+            return anyOutputChanged;                        
+        }
+
+        private bool UpdateAndCheckChange(MyNode node)
+        {
+            node.PushOutputBlockSizes();
+            node.UpdateMemoryBlocks();
+            return node.AnyOutputSizeChanged();
+        }
+
+
 
         private void DoStop()
         {

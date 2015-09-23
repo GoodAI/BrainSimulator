@@ -480,7 +480,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void updateMemoryBlocksToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateMemoryModel();
+            SimulationHandler.UpdateMemoryModel();
 
             foreach (GraphLayoutForm graphView in GraphViews.Values)
             {
