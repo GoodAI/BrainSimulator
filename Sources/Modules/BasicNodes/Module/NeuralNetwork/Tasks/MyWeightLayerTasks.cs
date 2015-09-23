@@ -29,56 +29,18 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             m_polynomialKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "PolynomialFunctionKernel");
         }
 
+        private Random Rand = new Random();
 
         public enum RandomDistribution
         {
-            Uniform,
-            Normal,
-            Constant
+            Ones,
+            Default
         }
 
         //Choose distribution
         [MyBrowsable, Category("\t\tParams")]
-        [YAXSerializableField(DefaultValue = RandomDistribution.Normal)]
+        [YAXSerializableField(DefaultValue = RandomDistribution.Default)]
         public RandomDistribution Distribution { get; set; }
-
-
-        //Minimal value
-        [MyBrowsable, Category("Uniform distribution"), DisplayName("M\tinValue")]
-        [YAXSerializableField(DefaultValue = 0f)]
-        public float MinValue { get; set; }
-
-        //Maximum value
-        [MyBrowsable, Category("Uniform distribution")]
-        [YAXSerializableField(DefaultValue = 1f)]
-        public float MaxValue { get; set; }
-
-        //Mean for normal dist.
-        [MyBrowsable, Category("\tNormal distribution")]
-        [YAXSerializableField(DefaultValue = 0f)]
-        public float Mean { get; set; }
-
-        //StdDev for normal dist.
-        [MyBrowsable, Category("\tNormal distribution")]
-        [YAXSerializableField(DefaultValue = 0.01f)]
-        public float StdDev { get; set; }
-
-        [MyBrowsable, Category("\tNormal distribution")]
-        [YAXSerializableField(DefaultValue = true)]
-        [Description("Automatically sets standard deviation to 1.0/sqrt(Input.Count).\nOverrides the StdDev parameter.")]
-        public bool AutomaticStdDev { get; set; }
-
-        //Constant value
-        [MyBrowsable, Category("Constant distribution")]
-        [YAXSerializableField(DefaultValue = 1f)]
-        //public float Constant { get; set; }
-        public float WeightValue { get; set; }
-
-        [MyBrowsable, Category("Constant distribution")]
-        [YAXSerializableField(DefaultValue = 1f)]
-        //public float Constant { get; set; }
-        public float BiasValue { get; set; }
-
 
         public override void Execute() //Task execution
         {
@@ -86,46 +48,44 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.PreviousBiasDelta.Fill(0);
             Owner.PreviousWeightDelta.Fill(0);
 
-            // init random weights
-
+            // init weights
             switch (Distribution)
             {
-                case RandomDistribution.Uniform:
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateUniform(Owner.Weights.GetDevice(Owner));
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateUniform(Owner.Bias.GetDevice(Owner));
-                    if (MinValue != 0 && MaxValue != 1)
-                    {
-                        //scale from 0-1 to min-max
-                        m_polynomialKernel.SetupExecution(Owner.Weights.Count);
-                        m_polynomialKernel.Run(0, 0, (MaxValue - MinValue), MinValue,
-                            Owner.Weights,
-                            Owner.Weights,
-                            Owner.Weights.Count
-                        );
-                        //scale from 0-1 to min-max
-                        m_polynomialKernel.SetupExecution(Owner.Bias.Count);
-                        m_polynomialKernel.Run(0, 0, (MaxValue - MinValue), MinValue,
-                            Owner.Bias,
-                            Owner.Bias,
-                            Owner.Bias.Count
-                        );
-                    }
+                case RandomDistribution.Ones:
+                    Owner.Weights.Fill(1.0f);
+                    Owner.Bias.Fill(1.0f);
                     break;
-                case RandomDistribution.Normal:
-                    float stdDev = StdDev;
-                    if (AutomaticStdDev && Owner.Input != null)
+
+                case RandomDistribution.Default:
+                    float stdDev = 1.0f;
+                    float Mean = 0.0f;
+                    if (Owner.Input != null)
                         stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.Weights.GetDevice(Owner), Mean, stdDev);
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.Bias.GetDevice(Owner), Mean, stdDev);
+
+                    // init random weights
+                    for (int w = 0; w < Owner.Weights.Count; w++)
+                        Owner.Weights.Host[w] = GetRandomGaussian(0.0f, stdDev);
+                    Owner.Weights.SafeCopyToDevice(); // copy to device
+
+                    // init random biases
+                    for (int b = 0; b < Owner.Bias.Count; b++)
+                        Owner.Bias.Host[b] = GetRandomGaussian(0.0f, stdDev);
+                    Owner.Bias.SafeCopyToDevice(); // copy to device
                     break;
-                case RandomDistribution.Constant:
-                    Owner.Weights.Fill(WeightValue);
-                    Owner.Bias.Fill(BiasValue);
-                    break;
+
                 default:
                     MyLog.WARNING.WriteLine("No initialization distribution set.");
                     return;
             }
+        }
+
+        private float GetRandomGaussian(float mean, float stdDev)
+        {
+            float u1 = Convert.ToSingle(Rand.NextDouble()); //these are uniform(0,1) random doubles
+            float u2 = Convert.ToSingle(Rand.NextDouble()); //these are uniform(0,1) random doubles
+            float randStdNormal = Convert.ToSingle(Math.Sqrt(-2.0 * Math.Log(u1)) *
+                         Math.Sin(2.0 * Math.PI * u2)); //random normal(0,1)
+            return mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
         }
 
     }
