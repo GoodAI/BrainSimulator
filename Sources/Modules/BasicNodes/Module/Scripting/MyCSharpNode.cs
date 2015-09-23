@@ -16,11 +16,44 @@ using YAXLib;
 
 namespace GoodAI.Modules.Scripting
 {
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>Experimental C# scripting node</summary>
+    /// <description>Node allows user to write C# code directly and run it during simulation. Example code:
+    /// <pre>
+    /// using System;
+    /// using GoodAI.Core.Utils;
+    /// using GoodAI.Core.Nodes;
+    /// using GoodAI.Modules.Scripting;
+    /// 
+    /// namespace Runtime
+    /// {
+    ///   public class Script
+    ///     {
+    ///         public static void Init(MyCSharpNode owner)
+    ///         {
+    ///             MyLog.DEBUG.WriteLine("Init called");
+    ///         }
+    /// 
+    ///         public static void Execute(MyCSharpNode owner)
+    ///         {
+    ///             MyLog.DEBUG.WriteLine("Execute called");
+    /// 
+    ///             float[] input = owner.GetInput(0).Host;
+    ///             float[] output = owner.GetOutput(0).Host;
+    /// 
+    ///             output[0] = 3 * (float)Math.Cos(input[0]);
+    ///         }
+    ///     }
+    /// }
+    /// </pre>
+    /// </description>    
     public class MyCSharpNode : MyScriptableNode, IMyVariableBranchViewNodeBase
     {
         public MyCSharpNode()
         {
             InputBranches = 1;
+            Script = EXAMPLE_CODE;
         }
 
         public override string NameExpressions
@@ -167,6 +200,9 @@ namespace GoodAI.Modules.Scripting
 
         public MyInitScriptTask InitScript { get; private set; }
 
+        /// <summary>
+        /// Compiles the script and runs Init() method once
+        /// </summary>
         [Description("Init script"), MyTaskInfo(OneShot = true)]
         public class MyInitScriptTask : MyTask<MyCSharpNode>
         {
@@ -229,6 +265,9 @@ namespace GoodAI.Modules.Scripting
                 }         
             }
 
+            /// <summary>
+            /// Runs Execute() method.
+            /// </summary>
             public override void Execute()
             {
                 if (ScriptInitMethod != null)
@@ -299,6 +338,34 @@ namespace GoodAI.Modules.Scripting
             }
         }
 
+        #endregion
+
+        #region ExampleCode
+        private const string EXAMPLE_CODE = @"using System;
+using GoodAI.Core.Utils;
+using GoodAI.Core.Nodes;
+using GoodAI.Modules.Scripting;
+
+namespace Runtime
+{
+    public class Script
+    {
+        public static void Init(MyCSharpNode owner)
+        {
+            MyLog.DEBUG.WriteLine(""Init called"");
+        }
+        
+        public static void Execute(MyCSharpNode owner)
+        {
+            MyLog.DEBUG.WriteLine(""Execute called"");
+            
+            float[] input = owner.GetInput(0).Host;
+            float[] output = owner.GetOutput(0).Host;
+        
+            output[0] = 3 * (float)Math.Cos(input[0]);
+        }
+    }
+}";
         #endregion
     }
 }
