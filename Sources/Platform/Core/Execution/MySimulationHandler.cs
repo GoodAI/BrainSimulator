@@ -311,6 +311,12 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        // TODO: throw an exception if the model doesn't converge. The return value is unintuitive.
+        /// <summary>
+        /// Update the whole memory model - all blocks will get their memory block sizes updated correctly.
+        /// Since this might not converge, only a set number of iterations is done.
+        /// </summary>
+        /// <returns>true if the model did not converge (error), false if it did.</returns>
         public bool UpdateMemoryModel()
         {            
             MyLog.INFO.WriteLine("Updating memory blocks...");
