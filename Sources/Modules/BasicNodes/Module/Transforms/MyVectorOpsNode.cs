@@ -64,16 +64,16 @@ namespace GoodAI.Modules.Transforms
             [YAXSerializableField(DefaultValue = 90)]
             public int Degrees { get; set; }
 
-            private MyVectorOps vec_ops;
+            private MyVectorOps vecOps;
 
             public override void Init(int nGPU)
             {
-                vec_ops = new MyVectorOps(Owner, MyVectorOps.VectorOperation.Rotate, Owner.Temp);
+                vecOps = new MyVectorOps(Owner, MyVectorOps.VectorOperation.Rotate, Owner.Temp);
             }
 
             public override void Execute()
             {
-                vec_ops.Run(MyVectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
+                vecOps.Run(MyVectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
             }
         }
 
