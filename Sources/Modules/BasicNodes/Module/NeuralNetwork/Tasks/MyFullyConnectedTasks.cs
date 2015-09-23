@@ -63,7 +63,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 		        Owner.DropoutMask,
 		        dropout,
 		        Owner.Neurons,
-                Owner.ParentNetwork.BatchSize
+		        Owner.ParentNetwork.BatchSize
                 );
 
             /*
@@ -158,10 +158,12 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     {
         public MyFCBackDeltaTask() { } //parameterless constructor
 
-        private MyCudaKernel m_deltaKernel; // kernel
+        //private MyCudaKernel m_deltaKernel; // kernel
+        private MyCudaKernel m_deltaBatchKernel; // kernel
         public override void Init(int nGPU)
         {
-            m_deltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "FullyConnectedDeltaKernel");
+            //m_deltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "FullyConnectedDeltaKernel");
+            m_deltaBatchKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "FullyConnectedDeltaBatchKernel");
         }
 
         public override void Execute() //Task execution
@@ -190,6 +192,23 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 else
                     prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
 
+                MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
+                           previousLayer.Neurons, Owner.ParentNetwork.BatchSize, Owner.Neurons, 1.0f,
+                           Owner.Weights.GetDevice(Owner), Owner.Neurons,
+                           Owner.Delta.GetDevice(Owner), Owner.Neurons,
+                           0.0f, previousLayer.Delta.GetDevice(Owner), previousLayer.Neurons
+                    );
+
+                m_deltaBatchKernel.SetupExecution(previousLayer.Neurons * Owner.ParentNetwork.BatchSize);
+                m_deltaBatchKernel.Run(
+                    (int)previousLayer.ActivationFunction,
+                    prevInputPtr,
+                    previousLayer.Delta,
+                    Owner.ParentNetwork.Dropout,
+                    previousLayer.Neurons,
+                    Owner.ParentNetwork.BatchSize
+                    );
+                /*
                 m_deltaKernel.SetupExecution(previousLayer.Neurons);
                 m_deltaKernel.Run(
                     (int)previousLayer.ActivationFunction,
@@ -201,6 +220,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     previousLayer.Neurons,
                     Owner.Neurons
                     );
+                */
             }
         }
     }
