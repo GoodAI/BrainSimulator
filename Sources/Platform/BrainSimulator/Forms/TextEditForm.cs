@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Nodes;
+﻿using GoodAI.Core.Execution;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using ScintillaNET;
 using System;
@@ -28,7 +29,7 @@ namespace GoodAI.BrainSimulator.Forms
             Target = target;
             Text = target.Name;
 
-            SetupPythonRecipe();
+            SetupEditorStyle();
 
             scintilla.Text = Target.Script;
             
@@ -61,7 +62,7 @@ namespace GoodAI.BrainSimulator.Forms
         {         
             scintilla.Text = Target.Script;
             scintilla.TextChanged += scintilla_TextChanged;
-            SetupPythonRecipe();                      
+            SetupEditorStyle();                      
         }
 
         private void scintilla_TextChanged(object sender, EventArgs e)
@@ -97,7 +98,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 if (scintilla.Lines.Count > 1)
                 {
-                    Line lastLine = scintilla.Lines[scintilla.Lines.Count - 2];
+                    Line lastLine = scintilla.Lines[scintilla.CurrentLine - 1];                    
                     string lastIndent = lastLine.Text.Substring(0, lastLine.Indentation);
                     scintilla.AddText(lastIndent);
                 }
@@ -111,17 +112,54 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private void SetupPythonRecipe()
+        private void SetupEditorStyle()
         {
             // Reset the styles
             scintilla.StyleResetDefault();
             scintilla.Styles[Style.Default].Font = "Consolas";
             scintilla.Styles[Style.Default].Size = 11;
-            scintilla.Styles[Style.Default].BackColor = Color.WhiteSmoke;
+            scintilla.Styles[Style.Default].BackColor = scintilla.Enabled ? Color.FromArgb(250, 250, 250) : Color.WhiteSmoke;
+            scintilla.Styles[Style.Default].ForeColor = scintilla.Enabled ? Color.Black : Color.DarkGray;
             scintilla.StyleClearAll(); // i.e. Apply to all
 
+            if (scintilla.Enabled) 
+            {
+                if (Target.Language == "Python")
+                {
+                    ApplyPythonRecipe();
+                }
+                else if (Target.Language == "CSharp")
+                {
+                    ApplyCSharpRecipe();
+                }
+            }
+
+            // Important for Python
+            scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
+
+            scintilla.SetKeywords(0, Target.Keywords);
+            scintilla.SetKeywords(1, Target.NameExpressions);
+        }
+
+        private void ApplyCSharpRecipe()
+        {
+            scintilla.Lexer = Lexer.Cpp;
+            
+            scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;
+            scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+            scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.FromArgb(0, 128, 0); // Green
+            scintilla.Styles[Style.Cpp.CommentLineDoc].ForeColor = Color.FromArgb(128, 128, 128); // Gray            
+            scintilla.Styles[Style.Cpp.Word].ForeColor = Color.Blue;
+            scintilla.Styles[Style.Cpp.Word2].ForeColor = Color.Maroon;
+            scintilla.Styles[Style.Cpp.String].ForeColor = Color.DarkMagenta;
+            scintilla.Styles[Style.Cpp.Character].ForeColor = Color.FromArgb(163, 21, 21); // Red
+            scintilla.Styles[Style.Cpp.Verbatim].ForeColor = Color.FromArgb(163, 21, 21); // Red                        
+        }
+
+        private void ApplyPythonRecipe()
+        {
             // Set the lexer
-            scintilla.Lexer = Lexer.Python;         
+            scintilla.Lexer = Lexer.Python;
 
             // Known lexer properties:
             // "tab.timmy.whinge.level",
@@ -139,7 +177,7 @@ namespace GoodAI.BrainSimulator.Forms
             scintilla.SetProperty("fold", "1");
 
             //enable basic line numbering
-            scintilla.Margins[0].Width = 20;            
+            scintilla.Margins[0].Width = 20;
 
             // Use margin 2 for fold markers
             scintilla.Margins[2].Type = MarginType.Symbol;
@@ -175,7 +213,7 @@ namespace GoodAI.BrainSimulator.Forms
             scintilla.Styles[Style.Python.Number].ForeColor = Color.FromArgb(0x00, 0x7F, 0x7F);
             scintilla.Styles[Style.Python.String].ForeColor = Color.FromArgb(0x7F, 0x00, 0x7F);
             scintilla.Styles[Style.Python.Character].ForeColor = Color.FromArgb(0x7F, 0x00, 0x7F);
-            scintilla.Styles[Style.Python.Word].ForeColor = Color.Blue;            
+            scintilla.Styles[Style.Python.Word].ForeColor = Color.Blue;
             scintilla.Styles[Style.Python.Triple].ForeColor = Color.FromArgb(0x7F, 0x00, 0x00);
             scintilla.Styles[Style.Python.TripleDouble].ForeColor = Color.FromArgb(0x7F, 0x00, 0x00);
             scintilla.Styles[Style.Python.ClassName].ForeColor = Color.FromArgb(0x00, 0x00, 0xFF);
@@ -192,16 +230,26 @@ namespace GoodAI.BrainSimulator.Forms
 
             scintilla.Styles[Style.Python.Word2].ForeColor = Color.DarkRed;
             scintilla.Styles[Style.Python.Decorator].ForeColor = Color.FromArgb(0x80, 0x50, 0x00);
+        }
 
-            // Important for Python
-            //scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
+        private void TextEditForm_Load(object sender, EventArgs e)
+        {
+            m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
 
-            // Keyword lists:
-            // 0 "Keywords",
-            // 1 "Highlighted identifiers"            
+            SimulationHandler_StateChanged(this,
+                new MySimulationHandler.StateEventArgs(m_mainForm.SimulationHandler.State, m_mainForm.SimulationHandler.State));
+        }
 
-            scintilla.SetKeywords(0, Target.Keywords);
-            scintilla.SetKeywords(1, Target.NameExpressions);
+        void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
+        {
+            scintilla.Enabled = e.NewState == MySimulationHandler.SimulationState.STOPPED;
+
+            SetupEditorStyle();
+        }
+
+        private void TextEditForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            m_mainForm.SimulationHandler.StateChanged -= SimulationHandler_StateChanged;
         }
     }
 }

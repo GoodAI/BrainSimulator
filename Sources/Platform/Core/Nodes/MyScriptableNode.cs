@@ -41,5 +41,10 @@ namespace GoodAI.Core.Nodes
         /// Should return alphabetically ordered space delimited list of keywords for auto complete & syntax highlighting.
         /// </summary>
         public abstract string Keywords { get; }
+
+        /// <summary>
+        /// Should return language name. Temporaly used for syntax highlighting settings.
+        /// </summary>
+        public abstract string Language { get; }
     } 
 }
