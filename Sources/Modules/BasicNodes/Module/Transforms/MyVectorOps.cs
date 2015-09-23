@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.Matrix;
 using System;
 
@@ -47,6 +48,9 @@ namespace GoodAI.BasicNodes.Transforms
             MyMemoryBlock<float> B,
             MyMemoryBlock<float> Result)
         {
+            if (!Validate(operation))
+                return;
+
             switch (operation)
             {
                 case VectorOperation.Rotate:
@@ -102,6 +106,20 @@ namespace GoodAI.BasicNodes.Transforms
                 }
                 break;
             }
+        }
+
+        private bool Validate(VectorOperation operation)
+        {
+            if (operation == VectorOperation.None)
+                return false;
+
+            if ((operation & m_operations) == 0)
+            {
+                MyLog.WARNING.WriteLine("Trying to execute an uninitialized vector operation. Owner: " + m_caller.Name);
+                return false;
+            }
+
+            return true;
         }
     }
 }
