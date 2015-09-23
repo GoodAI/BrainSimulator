@@ -38,7 +38,11 @@ namespace GoodAI.BasicNodes.Transforms
                 mat_ops |= MatOperation.DotProd;
 
             if (operations.HasFlag(VectorOperation.DirectedAngle))
+            {
                 mat_ops |= MatOperation.Multiplication | MatOperation.DotProd;
+                m_operations |= VectorOperation.Angle | VectorOperation.Rotate;
+            }
+                
 
             mat_operation = new MyMatrixAutoOps(m_caller, mat_ops);
         }
@@ -48,7 +52,7 @@ namespace GoodAI.BasicNodes.Transforms
             MyMemoryBlock<float> B,
             MyMemoryBlock<float> Result)
         {
-            if (!Validate(operation))
+            if (!Validate(operation, A.Count, B.Count))
                 return;
 
             switch (operation)
@@ -108,7 +112,7 @@ namespace GoodAI.BasicNodes.Transforms
             }
         }
 
-        private bool Validate(VectorOperation operation)
+        private bool Validate(VectorOperation operation, int sizeA, int sizeB)
         {
             if (operation == VectorOperation.None)
                 return false;
@@ -116,6 +120,12 @@ namespace GoodAI.BasicNodes.Transforms
             if ((operation & m_operations) == 0)
             {
                 MyLog.WARNING.WriteLine("Trying to execute an uninitialized vector operation. Owner: " + m_caller.Name);
+                return false;
+            }
+
+            if (operation != VectorOperation.Rotate && sizeA != sizeB)
+            {
+                MyLog.ERROR.WriteLine("Vectors have to be the same length for this operation. Owner: " + m_caller.Name);
                 return false;
             }
 
