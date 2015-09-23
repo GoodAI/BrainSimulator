@@ -82,12 +82,9 @@ namespace GoodAI.BasicNodes.Transforms
 
                 case VectorOperation.DirectedAngle:
                 {
-                    float rads = -(float)Math.PI / 2;
-                    float[] transform = new float[] { (float)Math.Cos(rads), -(float)Math.Sin(rads), (float)Math.Sin(rads), (float)Math.Cos(rads) };
-                    Array.Copy(transform, m_temp.Host, transform.Length);
-                    m_temp.SafeCopyToDevice();
-                    mat_operation.Run(MatOperation.Multiplication, m_temp, A, Result);
-                    Result.CopyToMemoryBlock(m_temp, 0, 0, Result.Count);
+                    Result.Host[0] = -90;
+                    Result.SafeCopyToDevice();
+                    Run(VectorOperation.Rotate, A, Result, Result);
 
                     mat_operation.Run(MatOperation.DotProd, A, B, Result);
                     Result.SafeCopyToHost();
