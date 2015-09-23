@@ -41,7 +41,7 @@ namespace GoodAI.Modules.Transforms
             set { SetOutput(0, value); }
         }
 
-        public MyMemoryBlock<float> Temp { get; private set; }
+        private MyMemoryBlock<float> Temp { get; set; }
 
         [MyTaskGroup("VectorOp")]
         public MyRotateTask RotateTask { get; private set; }
