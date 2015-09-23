@@ -338,6 +338,12 @@ namespace GoodAI.Modules.VSA
                             }
                         }
 
+                        if (maxXIdx == -1)
+                        {
+                            HandleIncorrectPosition();
+                            return;
+                        }
+
                         int bestNeighborId = 0;
                         if (maxXIdx > 0 && maxXIdx < Owner.X_POINTS - 1)
                         {
@@ -381,6 +387,12 @@ namespace GoodAI.Modules.VSA
                                 max = Owner.Distance.Host[i];
                                 maxYIdx = i - Owner.X_POINTS;
                             }
+                        }
+
+                        if (maxYIdx == -1)
+                        {
+                            HandleIncorrectPosition();
+                            return;
                         }
 
                         bestNeighborId = 0;
@@ -452,6 +464,12 @@ namespace GoodAI.Modules.VSA
                             );
                     }
                 }
+            }
+
+            private void HandleIncorrectPosition()
+            {
+                MyLog.WARNING.WriteLine("Incorrect position detected");
+                Owner.Output.Fill(0);
             }
         }
 

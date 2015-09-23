@@ -8,7 +8,7 @@ using System.Threading;
 namespace GoodAI.Core.Execution
 {
     /// Managers MySimulation run
-    public class MySimulationHandler
+    public class MySimulationHandler : IDisposable
     {
         public enum SimulationState
         {
@@ -113,16 +113,20 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="backgroundWorker">Worker, which will manage the simulation run</param>
-        public MySimulationHandler(BackgroundWorker backgroundWorker)
+        public MySimulationHandler(MySimulation simulation)
         {            
             State = SimulationState.STOPPED;
             ReportInterval = 20;
             SleepInterval = 0;
             m_speedMeasureInterval = 2000;
             AutosaveInterval = 10000;
+            Simulation = simulation;
 
-            m_worker = backgroundWorker;
+            m_worker = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
 
             m_worker.DoWork += m_worker_DoWork;
             m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
@@ -188,10 +192,19 @@ namespace GoodAI.Core.Execution
         /// </summary>
         /// <param name="closeCallback"></param>
         //UI thread
-        public void Finish(Action closeCallback)
+        public void Finish(Action closeCallback = null)
         {
+            // If no callback is specified, use an empty one so that the sim still finishes.
+            if (closeCallback == null)
+                closeCallback = () => { };
+
             m_closeCallback = closeCallback;
             StopSimulation();
+        }
+
+        public void Dispose()
+        {
+            Finish();
         }
 
         //NOT in UI thread

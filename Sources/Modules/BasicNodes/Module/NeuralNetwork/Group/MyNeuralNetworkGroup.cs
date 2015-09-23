@@ -103,6 +103,41 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             base.UpdateMemoryBlocks();
         }
 
+        private List<IMyExecutable> GetTasks(MyWorkingNode node)
+        {
+            List<IMyExecutable> tasks = new List<IMyExecutable>();
+
+            foreach (string taskName in node.GetInfo().KnownTasks.Keys)
+            {
+                MyTask task = node.GetTaskByPropertyName(taskName);
+                tasks.Add(task);
+            }
+
+            MyNodeGroup nodeGroup = node as MyNodeGroup;
+            if (nodeGroup != null)
+            {
+                foreach (MyNode childNode in nodeGroup.Children)
+                {
+                    MyWorkingNode childWorkingNode = childNode as MyWorkingNode;
+                    if (childWorkingNode != null)
+                    {
+                        tasks.AddRange(GetTasks(childWorkingNode));
+                    }
+                }
+            }
+
+            return tasks;
+        }
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+
+            List<IMyExecutable> tasks = GetTasks(this);
+            
+            validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
+        }
+
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
             return defaultInitPhasePlan;

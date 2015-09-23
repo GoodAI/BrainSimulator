@@ -190,7 +190,12 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (m_mainForm.SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
             {
-                MessageBox.Show("Not allowed during simulation", "Invalid operation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                m_mainForm.PauseSimulationForAction(() =>
+                {
+                    MessageBox.Show("Not allowed during simulation", "Invalid operation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return true;
+                });                
+
                 return true;
             }
             else return false;

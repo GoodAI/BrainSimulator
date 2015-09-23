@@ -165,7 +165,9 @@ namespace GoodAI.Modules.GridWorld
             mapF = 5,
             mapG = 6,
             mapH = 7,
-            mapI = 8
+            mapI = 8,
+            mapJ = 9,
+            mapK = 10
         };
 
         MyTextureSets ts;
@@ -174,7 +176,8 @@ namespace GoodAI.Modules.GridWorld
             textureA = 0,
             textureB = 1,
             textureC = 2,
-            textureD = 3
+            textureD = 3,
+            textureE = 4
         };
 
         [MyBrowsable, Category("Constants")]
@@ -248,6 +251,9 @@ namespace GoodAI.Modules.GridWorld
                 case MyTextureSets.textureD:
                     TEXTURE_SET = @"res\gridworld4\";
                     break;
+                case MyTextureSets.textureE:
+                    TEXTURE_SET = @"res\gridworld5\";
+                    break;
             }
 
             Bitmaps.Count += LoadAndGetBitmapSize(TEXTURE_SET + "taleEmpty.png");
@@ -295,6 +301,12 @@ namespace GoodAI.Modules.GridWorld
                     break;
                 case MyCustomMaps.mapI:
                     World = new MyMapI();
+                    break;
+                case MyCustomMaps.mapJ:
+                    World = new MyMapJ();
+                    break;
+                case MyCustomMaps.mapK:
+                    World = new MyMapK();
                     break;
                 default:
                     World = new MyMapA();

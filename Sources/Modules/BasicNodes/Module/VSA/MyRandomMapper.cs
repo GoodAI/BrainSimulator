@@ -232,7 +232,7 @@ namespace GoodAI.Modules.VSA
                 // Transposition is needed because of legacy reasons
                 if (!Owner.DoDecoding)
                     // Non-query -- transposed multiplication
-                    ops.Run(MatOperation.Multiplication, x, yDim, yDim, A, xDim * yDim, xDim, y, xDim, xDim, 0);
+                    ops.Run(MatOperation.Multiplication, x, xDim, xDim, A, xDim * yDim, yDim, y, yDim, yDim, 0);
                 else
                     // Query mode -- non-transposed multiplication
                     ops.Run(MatOperation.Multiplication, A, xDim * yDim, xDim, x, xDim, 1, y, yDim, 1, 0);

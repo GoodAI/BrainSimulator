@@ -116,7 +116,7 @@ namespace GoodAI.Modules.Common
         public override void Validate(MyValidator validator)
         {
             validator.AssertError(OutputSize > 0, this, "Invalid OutputSize, must be at least 1");
-            validator.AssertError(!(GenerateType != MyGenerateType.Linear && UserInput.Length == 0), this, "You need to enter some values to UserInput field");
+            validator.AssertError(GenerateType == MyGenerateType.Linear || GenerateType == MyGenerateType.SimulationStep || UserInput.Length != 0, this, "You need to enter some values to UserInput field");
         }
 
         public MyTransferTask GenerateInput { get; private set; }

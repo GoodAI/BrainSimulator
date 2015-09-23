@@ -4,11 +4,6 @@ namespace GoodAI.Core.Nodes
 {
     public abstract class MyWorld : MyWorkingNode
     {
-        public virtual void Cleanup() 
-        {
-        
-        }
-
         public virtual void DoPause()
         {
 

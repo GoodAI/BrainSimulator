@@ -363,6 +363,8 @@ Usage of execution blocks is simple. Your node has to implement `IMyCustomExecut
 
 InitPhasePlan is being used for first step of simulation. ExecutionPlan is being used for all following simulation steps. Each method gets the default plan as argument, so if you do not want to make any changes to it, you can simply return it.
 
+Every time you implement your own execution plan in node group, make sure that it will work even when the group will be empty. You can easily check necessary prerequisities in `Validate` method.
+
 Some simple usage of execution blocks can be seen in following example. You can change `SomeValue` and see (in log) how the execution of tasks change accordingly.
 
 ``` csharp
