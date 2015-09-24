@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System;
 
 namespace GoodAI.Modules.Versioning
 {
@@ -167,47 +168,75 @@ namespace GoodAI.Modules.Versioning
             if (document.Root == null)
                 return xml;
 
-            // Rewire connections to output layer (the index of the target input has changed)
-            foreach (var outLayer in document.Root.Descendants("MyOutputLayer"))
-            {
-                string nodeID = outLayer.Attribute("Id").Value;
-                foreach (var connection in document.Root.Descendants("Connection"))
-                {
-                    if (connection.Attribute("To").Value == nodeID)
-                    {
-                        var toIndexAttribute = connection.Attribute("ToIndex");
-                        if (toIndexAttribute.Value == OLD_TARGET_INDEX)
-                        {
-                            toIndexAttribute.SetValue(NEW_TARGET_INDEX);
-                        }
-                    }
-                }
-            }
-
+            // Rewire connections to layers inheriting from MyAbstractLayer (there's an extra input, "CanLearn")
             // Add tasks for neural network group
-            XNamespace yaxlib = "http://www.sinairv.com/yaxlib/";
-            XName realtype = yaxlib + "realtype";
             foreach (var neuralNetworkGroup in document.Root.Descendants("Group"))
             {
-                var groupTypeAttribute = neuralNetworkGroup.Attribute(realtype);
+                var groupTypeAttribute = neuralNetworkGroup.Attribute(GetRealTypeAttributeName());
                 if (groupTypeAttribute != null && groupTypeAttribute.Value.EndsWith(".MyNeuralNetworkGroup"))
                 {
-                    var tasks = neuralNetworkGroup.Element("Tasks");
-
-                    var incrementTask = new XElement("Task");
-                    incrementTask.Add(new XAttribute("Enabled", "True"));
-                    incrementTask.Add(new XAttribute("PropertyName", "IncrementTimeStep"));
-                    incrementTask.Add(new XAttribute(realtype, "GoodAI.Modules.NeuralNetwork.Group.MyIncrementTimeStepTask"));
-                    tasks.Add(incrementTask);
-                    var decrementTask = new XElement("Task");
-                    decrementTask.Add(new XAttribute("Enabled", "True"));
-                    decrementTask.Add(new XAttribute("PropertyName", "DecrementTimeStep"));
-                    decrementTask.Add(new XAttribute(realtype, "GoodAI.Modules.NeuralNetwork.Group.MyDecrementTimeStepTask"));
-                    tasks.Add(decrementTask);
+                    Add6To7GroupTasks(neuralNetworkGroup);
+                    RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
                 }
             }
             
             return document.ToString();
+        }
+
+        private static void RewireLayerInputs(XElement neuralNetworkGroup, IEnumerable<XElement> allConnections)
+        {
+            const int INDEX_OF_CAN_LEARN = 1;
+
+            var children = neuralNetworkGroup.Element("Children");
+            foreach (var layer in children.Elements())
+            {
+                string layerTypeName = layer.Attribute(GetRealTypeAttributeName()).Value;
+                Type layerType = Type.GetType(layerTypeName);
+                if (layerType != null)
+                {
+                    Type abstractLayerType = Type.GetType("GoodAI.Modules.NeuralNetwork.Layers.MyAbstractLayer");
+
+                    if (layerType.IsSubclassOf(abstractLayerType))
+                    {
+                        string nodeID = layer.Attribute("Id").Value;
+                        foreach (var connection in allConnections)
+                        {
+                            if (connection.Attribute("To").Value == nodeID)
+                            {
+                                var toIndexAttribute = connection.Attribute("ToIndex");
+                                int toIndex = Convert.ToInt32(toIndexAttribute.Value);
+                                if (toIndex >= INDEX_OF_CAN_LEARN)
+                                {
+                                    toIndexAttribute.SetValue(toIndex + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void Add6To7GroupTasks(XElement neuralNetworkGroup)
+        {
+            var tasks = neuralNetworkGroup.Element("Tasks");
+
+            var incrementTask = new XElement("Task");
+            incrementTask.Add(new XAttribute("Enabled", "True"));
+            incrementTask.Add(new XAttribute("PropertyName", "IncrementTimeStep"));
+            incrementTask.Add(new XAttribute(GetRealTypeAttributeName(), "GoodAI.Modules.NeuralNetwork.Group.MyIncrementTimeStepTask"));
+            tasks.Add(incrementTask);
+            var decrementTask = new XElement("Task");
+            decrementTask.Add(new XAttribute("Enabled", "True"));
+            decrementTask.Add(new XAttribute("PropertyName", "DecrementTimeStep"));
+            decrementTask.Add(new XAttribute(GetRealTypeAttributeName(), "GoodAI.Modules.NeuralNetwork.Group.MyDecrementTimeStepTask"));
+            tasks.Add(decrementTask);
+        }
+
+        private static XName GetRealTypeAttributeName() 
+        {
+            XNamespace yaxlib = "http://www.sinairv.com/yaxlib/";
+            XName realtype = yaxlib + "realtype";
+            return realtype;
         }
     }
 }

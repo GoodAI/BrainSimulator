@@ -29,16 +29,16 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         #region Memory blocks
         // Memory blocks
-        [MyInputBlock(1)]
+        [MyInputBlock(2)]
         public MyMemoryBlock<float> Reward
         {
-            get { return GetInput(1); }
+            get { return GetInput(2); }
         }
 
-        [MyInputBlock(2)]
+        [MyInputBlock(3)]
         public MyMemoryBlock<float> Action
         {
-            get { return GetInput(2); }
+            get { return GetInput(3); }
         }
         public MyMemoryBlock<float> PreviousAction { get; protected set; }
         public MyMemoryBlock<float> PreviousInput { get; protected set; }
