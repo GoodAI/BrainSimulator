@@ -176,6 +176,14 @@ namespace GoodAI.Modules.Versioning
                     RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
                 }
             }
+
+            // Move "Type" param from task to node
+            foreach (var goniometricNode in document.Root.Descendants("GoniometricFunction"))
+            {
+                XElement gonioParams = goniometricNode.Descendants("Params").First();   // GoniometricFunction does not have "Params" so this yields task's "Params" field
+                goniometricNode.Add(gonioParams);   // Type parameter in node is in "Params" section as well so this can be done
+                gonioParams.Remove();   // removes only "Params" element in task; the new one in Node is intact
+            }
             
             return document.ToString();
         }
