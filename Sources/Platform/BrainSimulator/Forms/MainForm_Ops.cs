@@ -771,64 +771,15 @@ namespace GoodAI.BrainSimulator.Forms
                      
         #region Simulation               
 
-        private bool UpdateAndCheckChange(MyNode node)
-        {
-            node.PushOutputBlockSizes();
-            node.UpdateMemoryBlocks();
-            return node.AnyOutputSizeChanged();
-        }
-
-        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
-
-        public bool UpdateMemoryModel()
-        {            
-            MyLog.INFO.WriteLine("Updating memory blocks...");
-
-            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
-            List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
-
-            if (!orderedNodes.Any())
-            {
-                return true;
-            }
-
-            int attempts = 0;
-            bool anyOutputChanged = false;
-
-            try
-            {
-
-                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
-                {
-                    attempts++;
-                    anyOutputChanged = false;
-
-                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
-                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
-
-                    if (!anyOutputChanged)
-                    {
-                        MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
-                return true;
-            }
-
-            return anyOutputChanged;                        
-        }
-
+        // TODO: move all bits related to simulation out of here and into SimulationHandler, leave only the GUI-specific things.
         private void StartSimulation(bool oneStepOnly) 
         {            
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("--------------");
-                bool anyOutputChanged = UpdateMemoryModel();
+                bool anyOutputChanged = SimulationHandler.UpdateMemoryModel();
 
+                // TODO: move this out.
                 MyValidator validator = ValidationView.Validator;
                 validator.Simulation = SimulationHandler.Simulation;
 

@@ -338,7 +338,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void updateModelButton_Click(object sender, EventArgs e)
         {
-            m_mainForm.UpdateMemoryModel();
+            m_mainForm.SimulationHandler.UpdateMemoryModel();
             Desktop.Invalidate();
         }
 
