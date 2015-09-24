@@ -154,7 +154,7 @@ namespace GoodAI.Modules.Versioning
         }
 
         /// <summary>
-        /// Convert connections to output layer (the index of the target input has changed)
+        /// Convert version 6->7
         /// Author: Vision 
         /// </summary>
         public static string Convert6To7(string xml)
@@ -167,6 +167,7 @@ namespace GoodAI.Modules.Versioning
             if (document.Root == null)
                 return xml;
 
+            // Rewire connections to output layer (the index of the target input has changed)
             foreach (var outLayer in document.Root.Descendants("MyOutputLayer"))
             {
                 string nodeID = outLayer.Attribute("Id").Value;
@@ -180,6 +181,29 @@ namespace GoodAI.Modules.Versioning
                             toIndexAttribute.SetValue(NEW_TARGET_INDEX);
                         }
                     }
+                }
+            }
+
+            // Add tasks for neural network group
+            XNamespace yaxlib = "http://www.sinairv.com/yaxlib/";
+            XName realtype = yaxlib + "realtype";
+            foreach (var neuralNetworkGroup in document.Root.Descendants("Group"))
+            {
+                var groupTypeAttribute = neuralNetworkGroup.Attribute(realtype);
+                if (groupTypeAttribute != null && groupTypeAttribute.Value.EndsWith(".MyNeuralNetworkGroup"))
+                {
+                    var tasks = neuralNetworkGroup.Element("Tasks");
+
+                    var incrementTask = new XElement("Task");
+                    incrementTask.Add(new XAttribute("Enabled", "True"));
+                    incrementTask.Add(new XAttribute("PropertyName", "IncrementTimeStep"));
+                    incrementTask.Add(new XAttribute(realtype, "GoodAI.Modules.NeuralNetwork.Group.MyIncrementTimeStepTask"));
+                    tasks.Add(incrementTask);
+                    var decrementTask = new XElement("Task");
+                    decrementTask.Add(new XAttribute("Enabled", "True"));
+                    decrementTask.Add(new XAttribute("PropertyName", "DecrementTimeStep"));
+                    decrementTask.Add(new XAttribute(realtype, "GoodAI.Modules.NeuralNetwork.Group.MyDecrementTimeStepTask"));
+                    tasks.Add(decrementTask);
                 }
             }
             
