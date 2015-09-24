@@ -160,9 +160,6 @@ namespace GoodAI.Modules.Versioning
         /// </summary>
         public static string Convert6To7(string xml)
         {
-            const string OLD_TARGET_INDEX = "1";
-            const string NEW_TARGET_INDEX = "2";
-
             XDocument document = XDocument.Parse(xml);
 
             if (document.Root == null)
