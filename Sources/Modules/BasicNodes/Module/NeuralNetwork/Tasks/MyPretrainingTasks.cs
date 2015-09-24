@@ -31,7 +31,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 canLearn = System.Convert.ToBoolean(Owner.CanLearn.Host[0]);
 
             // if incoming learning signal is rised or has been overriden by canLearn flag
-            if (canLearn && Owner.IsLearning.IsIncomingRised())
+            if (Owner == Owner.ParentNetwork.FirstTopologicalLayer ||
+                canLearn && Owner.IsLearning.IsIncomingRised())
                 Owner.IsLearning.Raise();
             else
                 Owner.IsLearning.Drop();
@@ -89,7 +90,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (Owner.CanLearn != null)
                 canLearn = System.Convert.ToBoolean(Owner.CanLearn.Host[0]);
 
-            if (canLearn && Owner.IsLearning.IsIncomingRised() && (!isLearned || IsThereAnyTaskAfterLearned))
+            if (Owner == Owner.ParentNetwork.FirstTopologicalLayer ||
+                canLearn && Owner.IsLearning.IsIncomingRised() && (!isLearned || IsThereAnyTaskAfterLearned))
                 Owner.IsLearning.Raise();
             else
                 Owner.IsLearning.Drop();
