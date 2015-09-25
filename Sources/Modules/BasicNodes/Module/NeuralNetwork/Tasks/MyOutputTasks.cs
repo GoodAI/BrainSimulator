@@ -39,7 +39,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Target,
                 Owner.Delta,
                 Owner.Cost,
-                Owner.Neurons
+                Owner.Neurons,
+                Owner.ParentNetwork.BatchSize
                 );
 
             // IMPORTANT: Add regularization

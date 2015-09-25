@@ -20,7 +20,8 @@ extern "C"
 		float *targetPtr,
 		float *deltaPtr,
 		float *costPtr,
-		int thisLayerSize
+		int thisLayerSize,
+		int batchSize
 		)
 	{
 		extern __shared__ float loss[];
@@ -30,7 +31,7 @@ extern "C"
 		unsigned int k = tid;
 
 		loss[tid] = 0;
-		while (k < thisLayerSize)
+		while (k < thisLayerSize * batchSize)
 		{
 			if (!isnan(targetPtr[k]))
 			{

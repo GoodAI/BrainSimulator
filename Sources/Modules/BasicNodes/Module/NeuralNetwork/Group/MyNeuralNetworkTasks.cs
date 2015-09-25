@@ -120,7 +120,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 layer.Delta.GetDevice(layer), BatchSize,
                 0.0f, layer.WeightGradient.GetDevice(layer), layer.Input.Count
                 );
-
+            
             //do the same computation for bias
             MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
                 1, layer.Neurons, BatchSize, 1.0f,
@@ -180,8 +180,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
                     m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
                     m_SGDupdateKernel.Run(
-                        layer.Input,
-                        layer.Delta,
+                        layer.WeightGradient,
+                        layer.BiasGradient,
                         layer.Weights,
                         layer.PreviousWeightDelta,
                         layer.Bias,
@@ -192,7 +192,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                         Owner.L2,
                         layer.DropoutMask,
                         layer.Neurons,
-                        Owner.SGD.BatchSize,
+                        BatchSize,
                         layer.Weights.Count
                         );
                 }
@@ -280,10 +280,12 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             {
                 if (layer.Connection == ConnectionType.FULLY_CONNECTED)
                 {
+                    ComputeWeightGradientSum(layer);
+
                     m_RMSPropUpdateKernel.SetupExecution(layer.Weights.Count);
                     m_RMSPropUpdateKernel.Run(
-                        layer.Input,
-                        layer.Delta,
+                        layer.WeightGradient,
+                        layer.BiasGradient,
                         layer.Weights,
                         layer.PreviousWeightDelta,
                         layer.Bias,
@@ -294,7 +296,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                         Owner.L2,
                         layer.DropoutMask,
                         layer.Neurons,
-                        Owner.RMS.BatchSize,
+                        BatchSize,
                         layer.Weights.Count,
                         layer.MeanSquareWeight,
                         layer.MeanSquareBias,
@@ -380,17 +382,19 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             {
                 if (layer.Connection == ConnectionType.FULLY_CONNECTED)
                 {
+                    ComputeWeightGradientSum(layer);
+
                     m_adadeltaUpdateKernel.SetupExecution(layer.Weights.Count);
                     m_adadeltaUpdateKernel.Run(
-                        layer.Input,
-                        layer.Delta,
+                        layer.WeightGradient,
+                        layer.BiasGradient,
                         layer.Weights,
                         layer.Bias,
                         Owner.L1,
                         Owner.L2,
                         layer.DropoutMask,
                         layer.Neurons,
-                        Owner.Adadelta.BatchSize,
+                        BatchSize,
                         layer.Weights.Count,
                         layer.MeanSquareWeight, layer.PreviousWeightDelta, layer.MeanSquareBias, layer.PreviousBiasDelta,
                         Owner.Adadelta.Ro, Owner.Adadelta.Epsilon
