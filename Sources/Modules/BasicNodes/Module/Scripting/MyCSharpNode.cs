@@ -76,17 +76,12 @@ namespace GoodAI.Modules.Scripting
         public override void UpdateMemoryBlocks()
         {
             UpdateOutputBlocks();
-        }
-
-        public override void Validate(MyValidator validator)
-        {
-
-        }
+        }        
 
         #region inputs & outputs
         [ReadOnly(false)]
         [YAXSerializableField, YAXElementFor("IO")]
-        public override int InputBranches
+        public override sealed int InputBranches
         {
             get { return base.InputBranches; }
             set
@@ -94,10 +89,7 @@ namespace GoodAI.Modules.Scripting
                 base.InputBranches = Math.Max(value, 1);
             }
         }        
-
-        public int Input0Count { get { return GetInput(0) != null ? GetInput(0).Count : 0; } }
-        public int Input0ColHint { get { return GetInput(0) != null ? GetInput(0).ColumnHint : 0; } }
-
+        
         private string m_branches;
         [MyBrowsable, Category("Structure")]
         [YAXSerializableField(DefaultValue = "1,1"), YAXElementFor("IO")]
@@ -142,50 +134,31 @@ namespace GoodAI.Modules.Scripting
         }
 
         private int[] GetOutputBranchSpec()
-        {
-            int[] branchSizes = null;
-
-            bool ok = true;
-            if (OutputBranchesSpec != null && OutputBranchesSpec != "")
+        {            
+            if (!string.IsNullOrEmpty(OutputBranchesSpec))
             {
-                string[] branchConf = OutputBranchesSpec.Split(',');
-
-                if (branchConf.Length > 0)
+                try
                 {
-                    branchSizes = new int[branchConf.Length];
-
-                    for (int i = 0; i < branchConf.Length; i++)
-                    {
-                        try
-                        {
-                            branchSizes[i] = int.Parse(branchConf[i], CultureInfo.InvariantCulture);
-                        }
-                        catch
-                        {
-                            ok = false;
-                        }
-                    }
+                    return OutputBranchesSpec.Split(',').Select(spec => int.Parse(spec, CultureInfo.InvariantCulture)).ToArray();
                 }
-            }
-            if (!ok)
+                catch
+                {
+                    return null;
+                }                
+            }          
+            else 
             {
                 return null;
             }
-
-            return branchSizes;
         }
 
         private void UpdateOutputBlocks()
         {
-            int [] op = GetOutputBranchSpec();
+            int[] op = GetOutputBranchSpec();
 
             if (op != null)
             {
-                int sum = 0;
-                for (int i = 0; i < op.Length; i++)
-                {
-                    sum += op[i];
-                }
+                int sum = op.Sum();
 
                 for (int i = 0; i < op.Length; i++)
                 {
@@ -196,81 +169,90 @@ namespace GoodAI.Modules.Scripting
 
         #endregion       
 
+        #region Compilation
+
+        internal MethodInfo ScriptInitMethod { get; private set; }
+        internal MethodInfo ScriptExecuteMethod { get; private set; }
+
+        public override void Validate(MyValidator validator)
+        {
+            ScriptInitMethod = null;
+            ScriptExecuteMethod = null;
+
+            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+            CompilerParameters parameters = new CompilerParameters()
+            {
+                GenerateInMemory = false,
+                GenerateExecutable = false,
+            };
+
+            parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
+            parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
+
+            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
+            Assembly compiledAssembly = null;
+
+            if (results.Errors.HasErrors)
+            {
+                string message = "";
+
+                foreach (CompilerError error in results.Errors)
+                {
+                    message += "Line " + error.Line + ": " + error.ErrorText + "\n";
+                }
+                validator.AddError(this, "Errors in compiled script:\n" + message);                
+            }
+            else
+            {
+                compiledAssembly = results.CompiledAssembly;
+            }            
+
+            if (compiledAssembly != null)
+            {
+                try
+                {
+                    Type eclosingType = compiledAssembly.GetType("Runtime.Script");
+                    ScriptInitMethod = eclosingType.GetMethod("Init");
+                    validator.AssertError(ScriptInitMethod != null, this, "Init() method not found in compiled script");
+                }
+                catch (Exception e)
+                {
+                    validator.AddError(this, "Init() method retrieval failed: " + e.GetType().Name + ": " + e.Message);
+                }
+
+                try
+                {
+                    Type eclosingType = compiledAssembly.GetType("Runtime.Script");
+                    ScriptExecuteMethod = eclosingType.GetMethod("Execute");
+                    validator.AssertError(ScriptExecuteMethod != null, this, "Execute() method not found in compiled script");
+                }
+                catch (Exception e)
+                {
+                    validator.AddError(this, "Execute() method retrieval failed: " + e.GetType().Name + ": " + e.Message);
+                }                
+            }
+        }
+
+        #endregion
+
         #region Tasks
 
         public MyInitScriptTask InitScript { get; private set; }
 
         /// <summary>
-        /// Compiles the script and runs Init() method once
+        /// Runs Init() method of the script one time
         /// </summary>
         [Description("Init script"), MyTaskInfo(OneShot = true)]
         public class MyInitScriptTask : MyTask<MyCSharpNode>
         {
-            internal MethodInfo ScriptInitMethod { get; private set; }
-            internal MethodInfo ScriptExecuteMethod { get; private set; }
-
             public override void Init(int nGPU)
             {
-                CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-                CompilerParameters parameters = new CompilerParameters()
-                {
-                    GenerateInMemory = false,
-                    GenerateExecutable = false,                    
-                };
-
-                parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
-                parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
-
-                CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Owner.Script);
-                Assembly compiledAssembly = null;
-
-                if (results.Errors.HasErrors)
-                {
-                    MyLog.WARNING.WriteLine(Owner.Name +  ": Errors in compiled script");
-
-                    foreach (CompilerError error in results.Errors)
-                    {
-                        MyLog.WARNING.WriteLine("Error (" + error.ErrorNumber + "): " + error.ErrorText);
-                    }                   
-                }
-                else
-                {
-                    compiledAssembly = results.CompiledAssembly;                    
-                }
-
-                ScriptInitMethod = null;
-                ScriptExecuteMethod = null;
-
-                if (compiledAssembly != null)
-                {
-                    try
-                    {
-                        Type eclosingType = compiledAssembly.GetType("Runtime.Script");
-                        ScriptInitMethod = eclosingType.GetMethod("Init");
-                    }
-                    catch (Exception e)
-                    {
-                        MyLog.WARNING.WriteLine(Owner.Name +  ": Init() method retrieval failed: " + e.GetType().Name + ": " + e.Message);                        
-                    }
-
-                    try
-                    {
-                        Type eclosingType = compiledAssembly.GetType("Runtime.Script");
-                        ScriptExecuteMethod = eclosingType.GetMethod("Execute");
-                    }
-                    catch (Exception e)
-                    {
-                        MyLog.WARNING.WriteLine(Owner.Name +  ": Execute() method retrieval failed: " + e.GetType().Name + ": " + e.Message);                        
-                    }
-                }         
+                      
             }
-
-            /// <summary>
-            /// Runs Execute() method.
-            /// </summary>
+            
             public override void Execute()
             {
-                if (ScriptInitMethod != null)
+                if (Owner.ScriptInitMethod != null)
                 {
                     for (int i = 0; i < Owner.InputBranches; i++)
                     {
@@ -279,7 +261,7 @@ namespace GoodAI.Modules.Scripting
 
                     try
                     {
-                        ScriptInitMethod.Invoke(null, new object[] { Owner });
+                        Owner.ScriptInitMethod.Invoke(null, new object[] { Owner });
                     }
                     catch (Exception e)
                     {
@@ -298,8 +280,11 @@ namespace GoodAI.Modules.Scripting
             }
         }
         
-        public MyExecuteScriptTask ExecuteScript { get; private set; }     
+        public MyExecuteScriptTask ExecuteScript { get; private set; }
 
+        /// <summary>
+        /// Runs Execute() method of the script
+        /// </summary>
         [Description("Execute script")]
         public class MyExecuteScriptTask : MyTask<MyCSharpNode>
         {
@@ -315,11 +300,11 @@ namespace GoodAI.Modules.Scripting
                     Owner.GetAbstractInput(i).SafeCopyToHost();
                 }
 
-                if (Owner.InitScript.ScriptExecuteMethod != null)
+                if (Owner.ScriptExecuteMethod != null)
                 {
                     try
                     {
-                        Owner.InitScript.ScriptExecuteMethod.Invoke(null, new object[] { Owner });
+                        Owner.ScriptExecuteMethod.Invoke(null, new object[] { Owner });
                     }
                     catch (Exception e)
                     {

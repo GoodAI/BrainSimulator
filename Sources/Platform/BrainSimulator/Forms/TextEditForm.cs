@@ -15,15 +15,17 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
-    public partial class TextEditForm : DockContent
+    public sealed partial class TextEditForm : DockContent
     {
-        private MainForm m_mainForm;        
+        private readonly MainForm m_mainForm;        
 
         public MyScriptableNode Target { get; private set; } 
 
         public TextEditForm(MainForm mainForm, MyScriptableNode target)
         {
-            InitializeComponent();          
+            InitializeComponent();
+
+            //Icon = Properties.Resources.TextDoc;                        
 
             m_mainForm = mainForm;
             Target = target;
@@ -143,6 +145,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void ApplyCSharpRecipe()
         {
+            //enable basic line numbering
+            scintilla.Margins[0].Width = 20;
+
             scintilla.Lexer = Lexer.Cpp;
             
             scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextEditForm));
             this.scintilla = new ScintillaNET.Scintilla();
             this.SuspendLayout();
             // 
@@ -53,6 +54,7 @@
             this.Controls.Add(this.scintilla);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TextEditForm";
             this.Text = "Code Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TextEditForm_FormClosed);

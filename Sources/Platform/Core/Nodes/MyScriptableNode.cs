@@ -16,7 +16,7 @@ namespace GoodAI.Core.Nodes
         [YAXSerializableField]
         protected string m_script;
 
-        protected event EventHandler<MyPropertyChangedEventArgs<string>> ScriptChanged;
+        public event EventHandler<MyPropertyChangedEventArgs<string>> ScriptChanged;
 
         public string Script 
         {

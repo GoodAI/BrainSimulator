@@ -429,15 +429,11 @@ namespace GoodAI.BrainSimulator.Forms
         {
             TextEditForm textEditor;
 
-            if (TextEditors.ContainsKey(target))
-            {
-                textEditor = TextEditors[target];
-            }
-            else
+            if (!TextEditors.TryGetValue(target, out textEditor))
             {
                 textEditor = new TextEditForm(this, target);
                 textEditor.FormClosed += textEditor_FormClosed;
-                TextEditors.Add(target, textEditor);
+                TextEditors[target] = textEditor;
             }
 
             textEditor.Show(dockPanel, DockState.Document);
@@ -451,10 +447,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         internal void CloseTextEditor(MyScriptableNode target)
         {
-            if (TextEditors.ContainsKey(target))
+            TextEditForm textEditor;
+
+            if (TextEditors.TryGetValue(target, out textEditor))
             {
-                TextEditors[target].Close();
-            }
+                textEditor.Close();
+            }            
         }
 
         private void CloseAllTextEditors()

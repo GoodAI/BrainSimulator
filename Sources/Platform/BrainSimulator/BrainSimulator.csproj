@@ -399,6 +399,7 @@
     <Content Include="res\confusion_matrix_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\Diagram_16XMD.ico" />
     <Content Include="res\distribution.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -634,6 +635,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\tasks_disabled.png" />
+    <Content Include="res\text_16xMD.ico" />
     <Content Include="res\threshold.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
