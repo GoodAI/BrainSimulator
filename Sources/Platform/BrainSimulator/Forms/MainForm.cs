@@ -225,6 +225,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloseAllGraphLayouts();
+            CloseAllTextEditors();
             CloseAllObservers();
 
             CreateNewProject();            
@@ -375,12 +376,31 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void copySelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CopySelectedNodesToClipboard();            
+            if (dockPanel.ActiveContent is TextEditForm)
+            {
+                (dockPanel.ActiveDocument as TextEditForm).CopyText();
+            }
+            else if (dockPanel.ActiveContent is ConsoleForm)
+            {
+                Clipboard.SetText((dockPanel.ActiveContent as ConsoleForm).textBox.SelectedText);
+                return;
+            }
+            else if (dockPanel.ActiveDocument is GraphLayoutForm)
+            {
+                CopySelectedNodesToClipboard();
+            }
         }
 
         private void pasteSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PasteNodesFromClipboard();
+            if (dockPanel.ActiveContent is TextEditForm)
+            {
+                (dockPanel.ActiveDocument as TextEditForm).PasteText();
+            }            
+            else if (dockPanel.ActiveDocument is GraphLayoutForm)
+            {
+                PasteNodesFromClipboard();
+            }            
         }
 
         private void RecentFiles_Click(int number, string filename)

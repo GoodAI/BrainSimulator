@@ -209,9 +209,16 @@ namespace GoodAI.BrainSimulator.Forms
         private void Desktop_DoubleClick(object sender, EventArgs e)
         {
             MyNodeView nodeView = Desktop.FocusElement as MyNodeView;
-            if (nodeView != null && nodeView.Node is MyNodeGroup)
+            if (nodeView != null)
             {
-                m_mainForm.OpenGraphLayout(nodeView.Node as MyNodeGroup);
+                if (nodeView.Node is MyNodeGroup)
+                {
+                    m_mainForm.OpenGraphLayout(nodeView.Node as MyNodeGroup);
+                }
+                else if (nodeView.Node is MyScriptableNode)
+                {
+                    m_mainForm.OpenTextEditor(nodeView.Node as MyScriptableNode);
+                }
             }            
         }
 
@@ -234,6 +241,10 @@ namespace GoodAI.BrainSimulator.Forms
             if (node is MyNodeGroup)
             {
                 m_mainForm.CloseGraphLayout(node as MyNodeGroup);                            
+            }
+            else if (node is MyScriptableNode)
+            {
+                m_mainForm.CloseTextEditor(node as MyScriptableNode);
             }
 
             m_mainForm.CloseObservers(node);

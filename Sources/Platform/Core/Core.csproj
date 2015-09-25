@@ -98,6 +98,7 @@
     <Compile Include="Execution\MyPartitionStrategy.cs" />
     <Compile Include="Execution\MyTaskExecutor.cs" />
     <Compile Include="Memory\MemoryBlockSerializer.cs" />
+    <Compile Include="Nodes\MyScriptableNode.cs" />
     <Compile Include="Nodes\MyConditionalGroup.cs" />
     <Compile Include="Nodes\MyDataGate.cs" />
     <Compile Include="Nodes\MyGateInput.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Observers\MyTextObserver.cs" />
     <Compile Include="Transforms\MyReduction.cs" />
     <Compile Include="Utils\BidirHashtable.cs" />
+    <Compile Include="Utils\MyPropertyChangedEventArgs.cs" />
     <Compile Include="Utils\EnumerableExtensions.cs" />
     <Compile Include="Utils\MyGeneralSignals.cs" />
     <Compile Include="Utils\MyHierarchicalOrdering.cs" />

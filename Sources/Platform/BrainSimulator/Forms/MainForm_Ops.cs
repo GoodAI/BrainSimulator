@@ -108,6 +108,7 @@ namespace GoodAI.BrainSimulator.Forms
                 m_savedProjectRepresentation = content;
 
                 CloseAllGraphLayouts();
+                CloseAllTextEditors();
                 CloseAllObservers();
 
                 CreateNetworkView();
@@ -247,7 +248,10 @@ namespace GoodAI.BrainSimulator.Forms
         public DebugForm DebugView { get; private set; }
 
         protected List<DockContent> m_views;
+
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
+        public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
+
         public List<ObserverForm> ObserverViews { get; private set; }     
 
         private void CreateNetworkView()
@@ -419,6 +423,42 @@ namespace GoodAI.BrainSimulator.Forms
         public void RemoveObserverView(ObserverForm view)
         {
             ObserverViews.Remove(view);
+        }
+
+        public TextEditForm OpenTextEditor(MyScriptableNode target)
+        {
+            TextEditForm textEditor;
+
+            if (!TextEditors.TryGetValue(target, out textEditor))
+            {
+                textEditor = new TextEditForm(this, target);
+                textEditor.FormClosed += textEditor_FormClosed;
+                TextEditors[target] = textEditor;
+            }
+
+            textEditor.Show(dockPanel, DockState.Document);
+            return textEditor;
+        }
+
+        void textEditor_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            TextEditors.Remove((sender as TextEditForm).Target);
+        }
+
+        internal void CloseTextEditor(MyScriptableNode target)
+        {
+            TextEditForm textEditor;
+
+            if (TextEditors.TryGetValue(target, out textEditor))
+            {
+                textEditor.Close();
+            }            
+        }
+
+        private void CloseAllTextEditors()
+        {
+            TextEditors.Values.ToList().ForEach(editor => editor.Close());
+            TextEditors.Clear();
         }
 
         public GraphLayoutForm OpenGraphLayout(MyNodeGroup target)
@@ -593,6 +633,8 @@ namespace GoodAI.BrainSimulator.Forms
             TaskPropertyView = new TaskPropertyForm(this);
 
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
+            TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
+
             ObserverViews = new List<ObserverForm>();
             
             ValidationView = new ValidationForm(this);
@@ -834,8 +876,11 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 statusStrip.BeginInvoke((MethodInvoker)(() => stepStatusLabel.Text = "(" + SimulationHandler.SimulationStep + ", " + SimulationHandler.SimulationSpeed + "/s)"));
 
-                GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
-                activeLayout.Desktop.Invalidate();                
+                if (dockPanel.ActiveDocument is GraphLayoutForm)
+                {
+                    GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
+                    activeLayout.Desktop.Invalidate();
+                }
             }
             else
             {
@@ -911,12 +956,6 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void CopySelectedNodesToClipboard()
         {
-            if (dockPanel.ActiveContent is ConsoleForm)
-            {
-                Clipboard.SetText((dockPanel.ActiveContent as ConsoleForm).textBox.SelectedText);
-                return;
-            }
-
             if (dockPanel.ActiveDocument is GraphLayoutForm)
             {
                 GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
