@@ -29,6 +29,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> L1Term { get; protected set; }
         public MyMemoryBlock<float> L2Term { get; protected set; }
 
+        public MyMemoryBlock<float> BiasInput { get; protected set; }
         public MyMemoryBlock<float> BiasGradient { get; protected set; }
         public MyMemoryBlock<float> WeightGradient { get; protected set; }
 
@@ -79,6 +80,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             L1Term.Count = 1;
             L2Term.Count = 1;
 
+            BiasInput.Count = ParentNetwork.BatchSize;
             BiasGradient.Count = Bias.Count;
             WeightGradient.Count = Weights.Count;
         }

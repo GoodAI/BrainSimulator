@@ -29,6 +29,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             // init vars to 0
             Owner.PreviousBiasDelta.Fill(0);
             Owner.PreviousWeightDelta.Fill(0);
+            Owner.BiasInput.Fill(1.0f);
 
             // set standard deviation
             float stdDev = 0.01f;

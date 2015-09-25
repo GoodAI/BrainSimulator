@@ -114,13 +114,20 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public void ComputeWeightGradientSum(MyAbstractWeightLayer layer)
         {
-            MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
+            MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
                 layer.Input.Count, layer.Neurons, BatchSize, 1.0f,
-                layer.Delta.GetDevice(layer), layer.Input.Count,
-                layer.Delta.GetDevice(layer), layer.Neurons,
-                0.0f, layer.WeightGradient.GetDevice(layer), layer.Neurons
+                layer.Input.GetDevice(layer), layer.Neurons,
+                layer.Delta.GetDevice(layer), BatchSize,
+                0.0f, layer.WeightGradient.GetDevice(layer), layer.Input.Count
                 );
-            // TODO: do the same computation for bias
+
+            //do the same computation for bias
+            MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
+                1, layer.Neurons, BatchSize, 1.0f,
+                layer.BiasInput.GetDevice(layer), layer.Neurons,
+                layer.Delta.GetDevice(layer), BatchSize,
+                0.0f, layer.BiasGradient.GetDevice(layer), 1
+                );
         }
     }
 
