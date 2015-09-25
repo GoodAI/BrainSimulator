@@ -177,6 +177,14 @@ namespace GoodAI.Modules.Versioning
                 }
             }
 
+            // Rename CrossEntropy field to CrossEntropyLoss
+            foreach (var task in document.Root.Descendants("Task")) // go through all tasks because CrossEntropy is in multiple classes
+            {
+                var realTypeAttribute = task.Attribute(GetRealTypeAttributeName());
+                if (realTypeAttribute != null && realTypeAttribute.Value.EndsWith(".MyCrossEntropyLossTask"))
+                    task.Attribute("PropertyName").SetValue("CrossEntropyLoss");
+            }
+
             // Move "Type" param from task to node
             foreach (var goniometricNode in document.Root.Descendants("GoniometricFunction"))
             {
