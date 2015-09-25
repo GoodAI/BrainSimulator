@@ -2,6 +2,10 @@
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using ManagedCuda;
+using ManagedCuda.BasicTypes;
+using ManagedCuda.CudaBlas;
+using GoodAI.Modules.Matrix;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using System;
 using System.ComponentModel;
@@ -108,9 +112,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             set { batchIndex = (value >= BatchSize) ? 0 : value; }
         }
 
-        public void SumGradientBatch(MyAbstractWeightLayer layer)
+        public void ComputeWeightGradientSum(MyAbstractWeightLayer layer)
         {
-            
+            MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
+                layer.Input.Count, layer.Neurons, BatchSize, 1.0f,
+                layer.Delta.GetDevice(layer), layer.Input.Count,
+                layer.Delta.GetDevice(layer), layer.Neurons,
+                0.0f, layer.WeightGradient.GetDevice(layer), layer.Neurons
+                );
+            // TODO: do the same computation for bias
         }
     }
 
@@ -156,6 +166,11 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             {
                 if (layer.Connection == ConnectionType.FULLY_CONNECTED)
                 {
+                    ComputeWeightGradientSum(layer);
+                    // TODO: change following kernel to use WeightGradient and BiasGradient memory blocks instead of multiplying Delta with Input
+                    // TODO: do the same for RMSProp and Adadelta
+                    // TODO: should we keep the old batch code for backwards compatibility?
+
                     m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
                     m_SGDupdateKernel.Run(
                         layer.Input,

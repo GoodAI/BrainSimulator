@@ -161,12 +161,10 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         //private MyCudaKernel m_deltaKernel; // kernel
         private MyCudaKernel m_deltaBatchKernel; // kernel
-        private MyCudaKernel m_multiplyKernel; // kernel
         public override void Init(int nGPU)
         {
             //m_deltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "FullyConnectedDeltaKernel");
             m_deltaBatchKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "FullyConnectedDeltaBatchKernel");
-            m_multiplyKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel");
         }
 
         public override void Execute() //Task execution
@@ -211,18 +209,6 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     previousLayer.Neurons,
                     Owner.ParentNetwork.BatchSize
                     );
-
-                if (previousLayer is MyAbstractWeightLayer)
-                {
-                    m_multiplyKernel.Run(
-                        previousLayer.Delta,
-                        2,
-                        (previousLayer as MyAbstractWeightLayer).Gradient,
-                        2, // multiplication
-                        previousLayer.Delta.Count
-                        );
-                }
-
 
                 /*
                 m_deltaKernel.SetupExecution(previousLayer.Neurons);
