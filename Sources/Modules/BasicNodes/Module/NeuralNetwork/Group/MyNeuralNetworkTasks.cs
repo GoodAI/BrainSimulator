@@ -76,11 +76,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     Owner.TotalWeights += (layer as MyAbstractWeightLayer).Weights.Count;
                 layer = layer.NextLayer;
             }
-
-            // reset batches
-            Owner.SGD.BatchIndex = 0;
-            Owner.RMS.BatchIndex = 0;
-            Owner.Adadelta.BatchIndex = 0;
         }
     }
 
@@ -94,22 +89,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public virtual void Execute(MyAbstractWeightLayer layer)
         {
             MyLog.ERROR.WriteLine("No method provided to backpropagate MyAbstractWeightLayer " + layer + " in " + Owner);
-        }
-
-        private int batchSize = 1;
-        [YAXSerializableField(DefaultValue = 1)]
-        [MyBrowsable, Category("\tHyperParameters"), ReadOnly(true)]
-        public int BatchSize
-        {
-            get { return batchSize; }
-            set { batchSize = Math.Max(1, value); }
-        }
-
-        private int batchIndex = 0;
-        public int BatchIndex
-        {
-            get { return batchIndex; }
-            set { batchIndex = (value >= BatchSize) ? 0 : value; }
         }
 
         public void ComputeWeightGradientSum(MyAbstractWeightLayer layer)
@@ -163,72 +142,68 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Task execution - should be called with a parameter
         public override void Execute()
         {
-            Owner.NextSample();
             //MyLog.ERROR.WriteLine("Please Execute MySGDTask with a layer parameter in " + Owner);
         }
 
         public override void Execute(MyAbstractWeightLayer layer)
         {
-            if (Owner.NewBatch())
+            if (layer.Connection == ConnectionType.FULLY_CONNECTED)
             {
-                if (layer.Connection == ConnectionType.FULLY_CONNECTED)
-                {
-                    ComputeWeightGradientSum(layer);
-                    // TODO: change following kernel to use WeightGradient and BiasGradient memory blocks instead of multiplying Delta with Input
-                    // TODO: do the same for RMSProp and Adadelta
-                    // TODO: should we keep the old batch code for backwards compatibility?
+                ComputeWeightGradientSum(layer);
+                // TODO: change following kernel to use WeightGradient and BiasGradient memory blocks instead of multiplying Delta with Input
+                // TODO: do the same for RMSProp and Adadelta
+                // TODO: should we keep the old batch code for backwards compatibility?
 
-                    m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
-                    m_SGDupdateKernel.Run(
-                        layer.WeightGradient,
-                        layer.BiasGradient,
-                        layer.Weights,
-                        layer.PreviousWeightDelta,
-                        layer.Bias,
-                        layer.PreviousBiasDelta,
-                        Owner.SGD.TrainingRate,
-                        Owner.SGD.Momentum,
-                        Owner.L1,
-                        Owner.L2,
-                        layer.DropoutMask,
-                        layer.Neurons,
-                        Owner.BatchSize,
-                        layer.Weights.Count
-                        );
-                }
-                else if (layer.Connection == ConnectionType.GAUSSIAN)
-                {
-                    // Gaussian hidden layer just propagates delta, no weight updates
-                }
-                else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
-                {
-                    MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
-                    m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
-                    m_convSGDupdateKernel.Run(
-                        Owner.SGD.TrainingRate, Owner.SGD.Momentum,
-                        convLayer.Weights,
-                        convLayer.Bias, convLayer.PreviousBiasDelta,
-                        convLayer.Delta, convLayer.PreviousWeightDelta,
-                        convLayer.PaddedImage,
-                        convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
-                        (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding)*
-                        (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
-                        convLayer.FilterWidth,
-                        convLayer.FilterWidth*convLayer.FilterHeight,
-                        convLayer.FilterWidth*convLayer.FilterHeight*convLayer.InputDepth,
-                        convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth*convLayer.OutputHeight,
-                        convLayer.HorizontalStride, convLayer.VerticalStride,
-                        convLayer.L1Term, convLayer.L2Term,
-                        Owner.SGD.BatchSize,
-                        convLayer.Weights.Count
-                        // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
-                        );
-                }
-                else
-                {
-                    MyLog.ERROR.WriteLine("No method provided to SGD propagate a " + layer.Connection +
-                                          " connected MyAbstractWeightLayer in " + Owner);
-                }
+                m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
+                m_SGDupdateKernel.Run(
+                    layer.WeightGradient,
+                    layer.BiasGradient,
+                    layer.Weights,
+                    layer.PreviousWeightDelta,
+                    layer.Bias,
+                    layer.PreviousBiasDelta,
+                    Owner.SGD.TrainingRate,
+                    Owner.SGD.Momentum,
+                    Owner.L1,
+                    Owner.L2,
+                    layer.DropoutMask,
+                    layer.Neurons,
+                    Owner.BatchSize,
+                    layer.Weights.Count
+                    );
+            }
+            else if (layer.Connection == ConnectionType.GAUSSIAN)
+            {
+                // Gaussian hidden layer just propagates delta, no weight updates
+            }
+            else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
+            {
+                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
+                m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
+                m_convSGDupdateKernel.Run(
+                    Owner.SGD.TrainingRate, Owner.SGD.Momentum,
+                    convLayer.Weights,
+                    convLayer.Bias, convLayer.PreviousBiasDelta,
+                    convLayer.Delta, convLayer.PreviousWeightDelta,
+                    convLayer.PaddedImage,
+                    convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
+                    (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) *
+                    (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
+                    convLayer.FilterWidth,
+                    convLayer.FilterWidth * convLayer.FilterHeight,
+                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.L1Term, convLayer.L2Term,
+                    Owner.BatchSize,
+                    convLayer.Weights.Count
+                    // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
+                    );
+            }
+            else
+            {
+                MyLog.ERROR.WriteLine("No method provided to SGD propagate a " + layer.Connection +
+                                      " connected MyAbstractWeightLayer in " + Owner);
             }
         }
     }
@@ -270,73 +245,69 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Task execution
         public override void Execute()
         {
-            Owner.NextSample();
             //MyLog.ERROR.WriteLine("Please Execute MyRMSTask with a layer parameter in " + Owner);
         }
 
         public override void Execute(MyAbstractWeightLayer layer)
         {
-            if (Owner.NewBatch())
+            if (layer.Connection == ConnectionType.FULLY_CONNECTED)
             {
-                if (layer.Connection == ConnectionType.FULLY_CONNECTED)
-                {
-                    ComputeWeightGradientSum(layer);
+                ComputeWeightGradientSum(layer);
 
-                    m_RMSPropUpdateKernel.SetupExecution(layer.Weights.Count);
-                    m_RMSPropUpdateKernel.Run(
-                        layer.WeightGradient,
-                        layer.BiasGradient,
-                        layer.Weights,
-                        layer.PreviousWeightDelta,
-                        layer.Bias,
-                        layer.PreviousBiasDelta,
-                        Owner.RMS.TrainingRate,
-                        Owner.RMS.Momentum,
-                        Owner.L1,
-                        Owner.L2,
-                        layer.DropoutMask,
-                        layer.Neurons,
-                        Owner.BatchSize,
-                        layer.Weights.Count,
-                        layer.MeanSquareWeight,
-                        layer.MeanSquareBias,
-                        Owner.RMS.SmoothingFactor
-                        );
-                }
-                else if (layer.Connection == ConnectionType.GAUSSIAN)
-                {
-                    // Gaussian hidden layer just propagates delta, no weight updates
-                }
-                else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
-                {
-                    MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
-                    m_convRMSPropUpdateKernel.SetupExecution(convLayer.Weights.Count);
-                    m_convRMSPropUpdateKernel.Run(
-                        Owner.RMS.TrainingRate, Owner.RMS.Momentum,
-                        convLayer.Weights,
-                        convLayer.Bias, convLayer.PreviousBiasDelta,
-                        convLayer.Delta, convLayer.PreviousWeightDelta,
-                        convLayer.PaddedImage,
-                        convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
-                        (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding)*
-                        (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
-                        convLayer.FilterWidth,
-                        convLayer.FilterWidth*convLayer.FilterHeight,
-                        convLayer.FilterWidth*convLayer.FilterHeight*convLayer.InputDepth,
-                        convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth*convLayer.OutputHeight,
-                        convLayer.HorizontalStride, convLayer.VerticalStride,
-                        convLayer.L1Term, convLayer.L2Term,
-                        convLayer.MeanSquareWeight, convLayer.MeanSquareBias, Owner.RMS.SmoothingFactor,
-                        Owner.RMS.BatchSize,
-                        convLayer.Weights.Count
-                        // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
-                        );
-                }
-                else
-                {
-                    MyLog.ERROR.WriteLine("No method provided to RMS propagate a " + layer.Connection +
-                                          " connected MyAbstractWeightLayer in " + Owner);
-                }
+                m_RMSPropUpdateKernel.SetupExecution(layer.Weights.Count);
+                m_RMSPropUpdateKernel.Run(
+                    layer.WeightGradient,
+                    layer.BiasGradient,
+                    layer.Weights,
+                    layer.PreviousWeightDelta,
+                    layer.Bias,
+                    layer.PreviousBiasDelta,
+                    Owner.RMS.TrainingRate,
+                    Owner.RMS.Momentum,
+                    Owner.L1,
+                    Owner.L2,
+                    layer.DropoutMask,
+                    layer.Neurons,
+                    Owner.BatchSize,
+                    layer.Weights.Count,
+                    layer.MeanSquareWeight,
+                    layer.MeanSquareBias,
+                    Owner.RMS.SmoothingFactor
+                    );
+            }
+            else if (layer.Connection == ConnectionType.GAUSSIAN)
+            {
+                // Gaussian hidden layer just propagates delta, no weight updates
+            }
+            else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
+            {
+                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
+                m_convRMSPropUpdateKernel.SetupExecution(convLayer.Weights.Count);
+                m_convRMSPropUpdateKernel.Run(
+                    Owner.RMS.TrainingRate, Owner.RMS.Momentum,
+                    convLayer.Weights,
+                    convLayer.Bias, convLayer.PreviousBiasDelta,
+                    convLayer.Delta, convLayer.PreviousWeightDelta,
+                    convLayer.PaddedImage,
+                    convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
+                    (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) *
+                    (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
+                    convLayer.FilterWidth,
+                    convLayer.FilterWidth * convLayer.FilterHeight,
+                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.L1Term, convLayer.L2Term,
+                    convLayer.MeanSquareWeight, convLayer.MeanSquareBias, Owner.RMS.SmoothingFactor,
+                    Owner.BatchSize,
+                    convLayer.Weights.Count
+                    // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
+                    );
+            }
+            else
+            {
+                MyLog.ERROR.WriteLine("No method provided to RMS propagate a " + layer.Connection +
+                                      " connected MyAbstractWeightLayer in " + Owner);
             }
         }
     }
@@ -372,69 +343,65 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //Task execution
         public override void Execute()
         {
-            Owner.NextSample();
             //MyLog.ERROR.WriteLine("Please Execute Adadelta with a layer parameter in " + Owner);
         }
 
         public override void Execute(MyAbstractWeightLayer layer)
         {
-            if (Owner.NewBatch())
+            if (layer.Connection == ConnectionType.FULLY_CONNECTED)
             {
-                if (layer.Connection == ConnectionType.FULLY_CONNECTED)
-                {
-                    ComputeWeightGradientSum(layer);
+                ComputeWeightGradientSum(layer);
 
-                    m_adadeltaUpdateKernel.SetupExecution(layer.Weights.Count);
-                    m_adadeltaUpdateKernel.Run(
-                        layer.WeightGradient,
-                        layer.BiasGradient,
-                        layer.Weights,
-                        layer.Bias,
-                        Owner.L1,
-                        Owner.L2,
-                        layer.DropoutMask,
-                        layer.Neurons,
-                        Owner.BatchSize,
-                        layer.Weights.Count,
-                        layer.MeanSquareWeight, layer.PreviousWeightDelta, layer.MeanSquareBias, layer.PreviousBiasDelta,
-                        Owner.Adadelta.Ro, Owner.Adadelta.Epsilon
-                        );
-                }
-                else if (layer.Connection == ConnectionType.GAUSSIAN)
-                {
-                    // Gaussian hidden layer just propagates delta, no weight updates
-                }
-                else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
-                {
-                    MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
-                    m_convAdadeltaUpdateKernel.SetupExecution(convLayer.Weights.Count);
-                    m_convAdadeltaUpdateKernel.Run(
-                        convLayer.Weights,
-                        convLayer.Bias,
-                        convLayer.Delta,
-                        convLayer.PaddedImage,
-                        convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
-                        (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding)*
-                        (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
-                        convLayer.FilterWidth,
-                        convLayer.FilterWidth*convLayer.FilterHeight,
-                        convLayer.FilterWidth*convLayer.FilterHeight*convLayer.InputDepth,
-                        convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth*convLayer.OutputHeight,
-                        convLayer.HorizontalStride, convLayer.VerticalStride,
-                        convLayer.L1Term, convLayer.L2Term,
-                        convLayer.MeanSquareWeight, convLayer.PreviousWeightDelta, convLayer.MeanSquareBias,
-                        convLayer.PreviousBiasDelta,
-                        Owner.Adadelta.Ro, Owner.Adadelta.Epsilon,
-                        Owner.Adadelta.BatchSize,
-                        convLayer.Weights.Count
-                        // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
-                        );
-                }
-                else
-                {
-                    MyLog.ERROR.WriteLine("No method provided to Adadelta propagate a " + layer.Connection +
-                                          " connected MyAbstractWeightLayer in " + Owner);
-                }
+                m_adadeltaUpdateKernel.SetupExecution(layer.Weights.Count);
+                m_adadeltaUpdateKernel.Run(
+                    layer.WeightGradient,
+                    layer.BiasGradient,
+                    layer.Weights,
+                    layer.Bias,
+                    Owner.L1,
+                    Owner.L2,
+                    layer.DropoutMask,
+                    layer.Neurons,
+                    Owner.BatchSize,
+                    layer.Weights.Count,
+                    layer.MeanSquareWeight, layer.PreviousWeightDelta, layer.MeanSquareBias, layer.PreviousBiasDelta,
+                    Owner.Adadelta.Ro, Owner.Adadelta.Epsilon
+                    );
+            }
+            else if (layer.Connection == ConnectionType.GAUSSIAN)
+            {
+                // Gaussian hidden layer just propagates delta, no weight updates
+            }
+            else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
+            {
+                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
+                m_convAdadeltaUpdateKernel.SetupExecution(convLayer.Weights.Count);
+                m_convAdadeltaUpdateKernel.Run(
+                    convLayer.Weights,
+                    convLayer.Bias,
+                    convLayer.Delta,
+                    convLayer.PaddedImage,
+                    convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
+                    (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) *
+                    (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
+                    convLayer.FilterWidth,
+                    convLayer.FilterWidth * convLayer.FilterHeight,
+                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.HorizontalStride, convLayer.VerticalStride,
+                    convLayer.L1Term, convLayer.L2Term,
+                    convLayer.MeanSquareWeight, convLayer.PreviousWeightDelta, convLayer.MeanSquareBias,
+                    convLayer.PreviousBiasDelta,
+                    Owner.Adadelta.Ro, Owner.Adadelta.Epsilon,
+                    Owner.BatchSize,
+                    convLayer.Weights.Count
+                    // should be equal to FilterWidth * FilterHeight * FilterCount * InputDepth
+                    );
+            }
+            else
+            {
+                MyLog.ERROR.WriteLine("No method provided to Adadelta propagate a " + layer.Connection +
+                                      " connected MyAbstractWeightLayer in " + Owner);
             }
         }
     }

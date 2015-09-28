@@ -260,19 +260,5 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 return 0.0f;
             }
         }
-
-        // handles batch learning
-        // should be called after every backward pass
-        public void NextSample()
-        {
-            if (GetActiveBackpropTask() != null)
-                GetActiveBackpropTask().BatchIndex++;
-        }
-
-        // are we at the beginning of a new batch - should we reset deltas?
-        public bool NewBatch()
-        {
-            return (GetActiveBackpropTask() != null) && (GetActiveBackpropTask().BatchIndex == 0);
-        }
     }
 }

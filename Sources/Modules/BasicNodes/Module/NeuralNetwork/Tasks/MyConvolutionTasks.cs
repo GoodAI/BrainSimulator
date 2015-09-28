@@ -77,8 +77,7 @@ namespace CustomModels.NeuralNetwork.Tasks
             if (previousLayer != null)
             {
                 // reset delta
-                if (Owner.ParentNetwork.NewBatch())
-                    previousLayer.Delta.Fill(0);
+                previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr;
@@ -238,8 +237,7 @@ namespace CustomModels.NeuralNetwork.Tasks
             if (previousLayer != null)
             {
                 // reset delta
-                if (Owner.ParentNetwork.NewBatch())
-                    previousLayer.Delta.Fill(0);
+                previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr;

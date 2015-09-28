@@ -192,12 +192,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             if (previousLayer != null)
             {
                 // reset delta
-                if (Owner.ParentNetwork.NewBatch())
-                {
-                    previousLayer.Delta.Fill(0);
-                    if (Regularize)
-                        previousLayer.PreviousLayer.Delta.Fill(0);
-                }
+                previousLayer.Delta.Fill(0);
+                if (Regularize)
+                    previousLayer.PreviousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
                 CUdeviceptr prevInputPtr;
