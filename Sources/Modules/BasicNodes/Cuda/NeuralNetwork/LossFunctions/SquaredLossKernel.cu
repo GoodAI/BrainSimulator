@@ -31,6 +31,8 @@ extern "C"
 		unsigned int k = tid;
 
 		loss[tid] = 0;
+		__syncthreads();
+
 		while (k < thisLayerSize * batchSize)
 		{
 			if (!isnan(targetPtr[k]))
