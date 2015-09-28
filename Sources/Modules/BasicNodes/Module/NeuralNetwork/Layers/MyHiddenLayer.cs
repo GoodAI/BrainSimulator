@@ -91,5 +91,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 return "Hidden layer";
             }
         }
+
+        public override bool SupportsBatchLearning() { return true; }
     }
 }

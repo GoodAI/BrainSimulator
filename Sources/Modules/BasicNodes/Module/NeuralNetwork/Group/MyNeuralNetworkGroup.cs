@@ -129,7 +129,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                         validator.AssertError(false, layer, "Does not suport batch-learning but BatchSize=" + BatchSize.ToString() + "!");
                     }
                 }
-                validator.AssertError(Children.Find(node => node is MyAbstractLayer && !((MyAbstractLayer)node).SupportsBatchLearning()) != null, this, "You need to have at least one forward task");
             }
         }
 
