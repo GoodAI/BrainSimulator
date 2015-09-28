@@ -93,6 +93,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public void ComputeWeightGradientSum(MyAbstractWeightLayer layer)
         {
+            // WeightGradient = Delta x Input
             MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
                 layer.Neurons, layer.Input.Count / Owner.BatchSize, Owner.BatchSize, 1.0f,
                 layer.Delta.GetDevice(layer), layer.Neurons,
@@ -100,7 +101,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 0.0f, layer.WeightGradient.GetDevice(layer), layer.Neurons
                 );
             
-            //do the same computation for bias
+            // BiasGradient = Delta x BiasInput. BiasInput is vector of ones
             MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
                 layer.Neurons, 1, Owner.BatchSize, 1.0f,
                 layer.Delta.GetDevice(layer), layer.Neurons,
@@ -150,10 +151,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             if (layer.Connection == ConnectionType.FULLY_CONNECTED)
             {
                 ComputeWeightGradientSum(layer);
-                // TODO: change following kernel to use WeightGradient and BiasGradient memory blocks instead of multiplying Delta with Input
-                // TODO: do the same for RMSProp and Adadelta
-                // TODO: should we keep the old batch code for backwards compatibility?
-
+                
                 m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
                 m_SGDupdateKernel.Run(
                     layer.WeightGradient,

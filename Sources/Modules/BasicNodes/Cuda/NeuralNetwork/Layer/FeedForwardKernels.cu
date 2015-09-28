@@ -79,7 +79,7 @@ extern "C"
 
 		if (threadId < thisLayerSize * batchSize)
 		{
-			// sum neuron input
+			// add bias to neuron input and apply dropout mask
 			neuronInputPtr[threadId] = !dropoutMaskPtr[neuronId] * (neuronInputPtr[threadId] + biasPtr[neuronId]);
 
 			// set output value
