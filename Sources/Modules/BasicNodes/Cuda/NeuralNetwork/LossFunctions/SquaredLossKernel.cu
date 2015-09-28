@@ -38,7 +38,7 @@ extern "C"
 			if (!isnan(targetPtr[k]))
 			{
 				// accumulate loss
-				loss[tid] += 0.5f * (outputPtr[k] - targetPtr[k]) * (outputPtr[k] - targetPtr[k]);
+				loss[tid] += 0.5f * (outputPtr[k] - targetPtr[k]) * (outputPtr[k] - targetPtr[k]) / batchSize;
 
 				// calculate delta
 				deltaPtr[k] += EvaluateDerivative(actFunc, neuronInputPtr[k]) * (outputPtr[k] - targetPtr[k]); // batch learning, remember to initialize delta
