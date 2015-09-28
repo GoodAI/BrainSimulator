@@ -114,19 +114,19 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public void ComputeWeightGradientSum(MyAbstractWeightLayer layer)
         {
-            MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
-                layer.Input.Count, layer.Neurons, BatchSize, 1.0f,
-                layer.Input.GetDevice(layer), layer.Neurons,
-                layer.Delta.GetDevice(layer), BatchSize,
-                0.0f, layer.WeightGradient.GetDevice(layer), layer.Input.Count
+            MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
+                layer.Neurons, layer.Input.Count / Owner.BatchSize, Owner.BatchSize, 1.0f,
+                layer.Delta.GetDevice(layer), layer.Neurons,
+                layer.Input.GetDevice(layer), layer.Input.Count / Owner.BatchSize,
+                0.0f, layer.WeightGradient.GetDevice(layer), layer.Neurons
                 );
             
             //do the same computation for bias
-            MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
-                1, layer.Neurons, BatchSize, 1.0f,
-                layer.BiasInput.GetDevice(layer), layer.Neurons,
-                layer.Delta.GetDevice(layer), BatchSize,
-                0.0f, layer.BiasGradient.GetDevice(layer), 1
+            MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
+                layer.Neurons, 1, Owner.BatchSize, 1.0f,
+                layer.Delta.GetDevice(layer), layer.Neurons,
+                layer.BiasInput.GetDevice(layer), 1,
+                0.0f, layer.BiasGradient.GetDevice(layer), layer.Neurons
                 );
         }
     }
@@ -192,7 +192,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                         Owner.L2,
                         layer.DropoutMask,
                         layer.Neurons,
-                        BatchSize,
+                        Owner.BatchSize,
                         layer.Weights.Count
                         );
                 }
@@ -296,7 +296,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                         Owner.L2,
                         layer.DropoutMask,
                         layer.Neurons,
-                        BatchSize,
+                        Owner.BatchSize,
                         layer.Weights.Count,
                         layer.MeanSquareWeight,
                         layer.MeanSquareBias,
@@ -394,7 +394,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                         Owner.L2,
                         layer.DropoutMask,
                         layer.Neurons,
-                        BatchSize,
+                        Owner.BatchSize,
                         layer.Weights.Count,
                         layer.MeanSquareWeight, layer.PreviousWeightDelta, layer.MeanSquareBias, layer.PreviousBiasDelta,
                         Owner.Adadelta.Ro, Owner.Adadelta.Epsilon
