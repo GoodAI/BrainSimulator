@@ -116,6 +116,21 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             List<IMyExecutable> tasks = GetTasks(this);
             
             validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
+
+            //var supportsBatch = node => node is MyAbstractLayer && ((MyAbstractLayer)node).SupportsBatchLearning();
+
+            if (BatchSize > 1)
+            {
+                foreach (MyNode n in Children)
+                {
+                    var layer = n as MyAbstractLayer;
+                    if (layer != null && !layer.SupportsBatchLearning())
+                    {
+                        validator.AssertError(false, layer, "Does not suport batch-learning but BatchSize=" + BatchSize.ToString() + "!");
+                    }
+                }
+                validator.AssertError(Children.Find(node => node is MyAbstractLayer && !((MyAbstractLayer)node).SupportsBatchLearning()) != null, this, "You need to have at least one forward task");
+            }
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
