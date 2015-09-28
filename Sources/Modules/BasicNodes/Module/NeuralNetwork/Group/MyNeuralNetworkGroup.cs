@@ -37,7 +37,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyBrowsable, Category("\tRegularization")]
         public float Dropout { get; set; }
 
-        [YAXSerializableField(DefaultValue = 1)]
+        [YAXSerializableField(DefaultValue = 1), YAXErrorIfMissed(YAXExceptionTypes.Ignore)]
         [MyBrowsable, Category("\tBatchLearning")]
         public int BatchSize { get; set; }
 
