@@ -173,7 +173,7 @@ namespace GoodAI.Modules.Versioning
                 if (groupTypeAttribute != null && groupTypeAttribute.Value.EndsWith(".MyNeuralNetworkGroup"))
                 {
                     Add6To7GroupTasks(neuralNetworkGroup);
-                    RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
+//                    RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
                 }
             }
 
