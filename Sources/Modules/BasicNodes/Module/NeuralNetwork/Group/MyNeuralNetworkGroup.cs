@@ -117,8 +117,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             
             validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
 
-            //var supportsBatch = node => node is MyAbstractLayer && ((MyAbstractLayer)node).SupportsBatchLearning();
-
             if (BatchSize > 1)
             {
                 foreach (MyNode n in Children)

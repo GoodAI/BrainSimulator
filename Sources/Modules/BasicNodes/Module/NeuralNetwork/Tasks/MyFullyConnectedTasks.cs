@@ -163,7 +163,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 else
                     prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
 
-                // previousLayer.Delta = Weights x Delta
+                // previousLayer.Delta = Transpose(Weights) x Delta
                 MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
                     previousLayer.Neurons, Owner.ParentNetwork.BatchSize, Owner.Neurons, 1.0f,
                     Owner.Weights.GetDevice(Owner), Owner.Neurons,
