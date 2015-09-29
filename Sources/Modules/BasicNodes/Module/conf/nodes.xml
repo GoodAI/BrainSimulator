@@ -57,6 +57,7 @@
     <Node type="GoodAI.Modules.Motor.MyPIDController" CanBeAdded="true" />
     <Node type="GoodAI.Modules.Motor.MySequenceRecorderNode" CanBeAdded="true" />
     <Node type="GoodAI.Modules.Motor.MyJacobianTransposeControl" CanBeAdded="true" />
+    <Node type="GoodAI.Modules.Motor.MyReplayBuffer" CanBeAdded="true" />
     
     <Node type="GoodAI.Modules.VSA.MyBindingNode" CanBeAdded="true" BigIcon="link_big.png" SmallIcon="link.png" />
     <Node type="GoodAI.Modules.VSA.MyCodeBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png" />
