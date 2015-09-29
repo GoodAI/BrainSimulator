@@ -128,10 +128,16 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         // Tasks
         public MyGaussianInitTask InitTask { get; protected set; }
-        public override void CreateTasks()
+        // PRETRAINING
+        //public override void CreateTasks()
+        //{
+        //    base.CreateTasks();
+        //    ForwardTask = new MyGaussianForwardTask();
+        //    DeltaBackTask = new MyGaussianBackDeltaTask();
+        //    InitTask = new MyGaussianInitTask();
+        //}
+        public void CreateTasks()
         {
-            base.CreateTasks();
-
             ForwardTask = new MyGaussianForwardTask();
             DeltaBackTask = new MyGaussianBackDeltaTask();
             InitTask = new MyGaussianInitTask();

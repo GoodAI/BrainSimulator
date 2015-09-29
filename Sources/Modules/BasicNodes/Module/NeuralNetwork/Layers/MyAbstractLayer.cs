@@ -12,7 +12,8 @@ using GoodAI.Core.Signals;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
-    public class MyIsLearningSignal : MySignal { }
+    // PRETRAINING
+    //public class MyIsLearningSignal : MySignal { }
 
     public enum ConnectionType
     {
@@ -37,10 +38,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         LECUN_TANH,
     }
 
-    public abstract class MyAbstractLayer : MyWorkingNode, IMyCustomTaskFactory
+    public abstract class MyAbstractLayer : MyWorkingNode//, IMyCustomTaskFactory
     {
-
-        public MyIsLearningSignal IsLearning { get; set; }
+        // PRETRAINING
+        //public MyIsLearningSignal IsLearning { get; set; }
 
         // Properties
         [YAXSerializableField(DefaultValue = ActivationFunctionType.NO_ACTIVATION)]
@@ -85,12 +86,13 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             get { return GetInput(0); }
         }
 
-        [MyInputBlock(1)]
-        // only host side of the memory is ever used!
-        public virtual MyMemoryBlock<float> CanLearn
-        {
-            get { return GetInput(1); }
-        }
+        // PRETRAINING
+        //[MyInputBlock(1)]
+        //// only host side of the memory is ever used!
+        //public virtual MyMemoryBlock<float> CanLearn
+        //{
+        //    get { return GetInput(1); }
+        //}
 
        [MyOutputBlock(0)]
         public virtual MyTemporalMemoryBlock<float> Output
@@ -132,10 +134,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             DeltaBackTask.Enabled = true;
         }
 
-        public virtual void CreateTasks()
-        {
-            PretrainingTask = new MyNodePretrainingTask();
-        }
+        // PRETRAINING
+        //public virtual void CreateTasks()
+        //{
+        //    PretrainingTask = new MyNodePretrainingTask();
+        //}
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
@@ -152,7 +155,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }
 
-        public MyTask PretrainingTask { get; protected set; }
+        // PRETRAINING
+        //public MyTask PretrainingTask { get; protected set; }
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
     }

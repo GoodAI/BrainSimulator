@@ -22,11 +22,17 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     public class MyOutputOne2OneLayer : MyAbstractOutputLayer
     {
         // Memory blocks
-        [MyInputBlock(2)]
+        [MyInputBlock(1)]
         public override MyMemoryBlock<float> Target
         {
-            get { return GetInput(2); }
+            get { return GetInput(1); }
         }
+        // PRETRAINING
+        //[MyInputBlock(2)]
+        //public override MyMemoryBlock<float> Target
+        //{
+        //    get { return GetInput(2); }
+        //}
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
@@ -58,10 +64,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
-        public override void CreateTasks()
+        // PRETRAINING
+        //public override void CreateTasks()
+        //{
+        //    base.CreateTasks();
+        //    ForwardTask = new MyOneToOneForwardTask();
+        //    DeltaBackTask = new MyOneToOneDeltaBackTask();
+        //}
+        public void CreateTasks()
         {
-            base.CreateTasks();
-
             ForwardTask = new MyOneToOneForwardTask();
             DeltaBackTask = new MyOneToOneDeltaBackTask();
         }

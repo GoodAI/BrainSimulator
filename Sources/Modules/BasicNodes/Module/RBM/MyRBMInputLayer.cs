@@ -192,10 +192,15 @@ namespace GoodAI.Modules.RBM
             }
         }
 
-        public override void CreateTasks()
+        // PRETRAINING
+        //public override void CreateTasks()
+        //{
+        //    base.CreateTasks();
+        //    ForwardTask = new MyRBMInputForwardTask();
+        //    DeltaBackTask = new MyRBMInputBackwardTask();
+        //}
+        public void CreateTasks()
         {
-            base.CreateTasks();
-
             ForwardTask = new MyRBMInputForwardTask();
             DeltaBackTask = new MyRBMInputBackwardTask();
         }

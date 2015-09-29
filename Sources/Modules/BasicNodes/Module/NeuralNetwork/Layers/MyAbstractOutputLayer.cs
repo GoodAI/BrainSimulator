@@ -29,13 +29,14 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             set { SetOutput(1, value); }
         }
 
-        [MyOutputBlock(2)]
-        // only HOST side of the memory is ever used!
-        public virtual MyMemoryBlock<float> IsLearned
-        {
-            get { return GetOutput(2); }
-            set { SetOutput(2, value); }
-        }
+        // PRETRAINING
+        //[MyOutputBlock(2)]
+        //// only HOST side of the memory is ever used!
+        //public virtual MyMemoryBlock<float> IsLearned
+        //{
+        //    get { return GetOutput(2); }
+        //    set { SetOutput(2, value); }
+        //}
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
@@ -43,16 +44,17 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             base.UpdateMemoryBlocks();
 
             Cost.Count = 1;
-            IsLearned.Count = 1;
+            // PRETRAINING
+            //IsLearned.Count = 1;
         }
 
         // Tasks
-        public override void CreateTasks()
-        {
-            base.CreateTasks();
-
-            PretrainingTask = new MyBarrierPretrainingTask();
-        }
+        // PRETRAINING
+        //public override void CreateTasks()
+        //{
+        //    base.CreateTasks();
+        //    PretrainingTask = new MyBarrierPretrainingTask();
+        //}
 
         [MyTaskGroup("LossFunctions")]
         public MySquaredLossTask SquaredLoss { get; protected set; }

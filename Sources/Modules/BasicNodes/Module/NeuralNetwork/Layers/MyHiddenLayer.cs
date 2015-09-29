@@ -76,10 +76,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         // Tasks
         public MyFCUpdateWeightsTask UpdateWeights { get; protected set; }
-        public override void CreateTasks()
+        // PRETRAINING
+        //public override void CreateTasks()
+        //{
+        //    base.CreateTasks();
+        //    ForwardTask = new MyFCForwardTask();
+        //    DeltaBackTask = new MyFCBackDeltaTask();
+        //}
+        public void CreateTasks()
         {
-            base.CreateTasks();
-
             ForwardTask = new MyFCForwardTask();
             DeltaBackTask = new MyFCBackDeltaTask();
         }
