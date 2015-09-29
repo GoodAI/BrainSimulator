@@ -101,6 +101,9 @@
     <Reference Include="OpenTK.GLControl">
       <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.GLControl.dll</HintPath>
     </Reference>
+    <Reference Include="ScintillaNET">
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ScintillaNET\ScintillaNET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
@@ -193,6 +196,12 @@
     <Compile Include="Forms\MainForm_Ops.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\TextEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TextEditForm.Designer.cs">
+      <DependentUpon>TextEditForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ValidationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -267,6 +276,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TextEditForm.resx">
+      <DependentUpon>TextEditForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ValidationForm.resx">
       <DependentUpon>ValidationForm.cs</DependentUpon>
@@ -387,6 +399,7 @@
     <Content Include="res\confusion_matrix_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\Diagram_16XMD.ico" />
     <Content Include="res\distribution.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -622,6 +635,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\tasks_disabled.png" />
+    <Content Include="res\text_16xMD.ico" />
     <Content Include="res\threshold.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

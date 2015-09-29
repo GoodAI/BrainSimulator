@@ -108,6 +108,7 @@ namespace GoodAI.BrainSimulator.Forms
                 m_savedProjectRepresentation = content;
 
                 CloseAllGraphLayouts();
+                CloseAllTextEditors();
                 CloseAllObservers();
 
                 CreateNetworkView();
@@ -247,7 +248,10 @@ namespace GoodAI.BrainSimulator.Forms
         public DebugForm DebugView { get; private set; }
 
         protected List<DockContent> m_views;
+
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
+        public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
+
         public List<ObserverForm> ObserverViews { get; private set; }     
 
         private void CreateNetworkView()
@@ -421,6 +425,42 @@ namespace GoodAI.BrainSimulator.Forms
             ObserverViews.Remove(view);
         }
 
+        public TextEditForm OpenTextEditor(MyScriptableNode target)
+        {
+            TextEditForm textEditor;
+
+            if (!TextEditors.TryGetValue(target, out textEditor))
+            {
+                textEditor = new TextEditForm(this, target);
+                textEditor.FormClosed += textEditor_FormClosed;
+                TextEditors[target] = textEditor;
+            }
+
+            textEditor.Show(dockPanel, DockState.Document);
+            return textEditor;
+        }
+
+        void textEditor_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            TextEditors.Remove((sender as TextEditForm).Target);
+        }
+
+        internal void CloseTextEditor(MyScriptableNode target)
+        {
+            TextEditForm textEditor;
+
+            if (TextEditors.TryGetValue(target, out textEditor))
+            {
+                textEditor.Close();
+            }            
+        }
+
+        private void CloseAllTextEditors()
+        {
+            TextEditors.Values.ToList().ForEach(editor => editor.Close());
+            TextEditors.Clear();
+        }
+
         public GraphLayoutForm OpenGraphLayout(MyNodeGroup target)
         {
             GraphLayoutForm graphForm;
@@ -538,21 +578,13 @@ namespace GoodAI.BrainSimulator.Forms
         public MainForm()
         {
             this.Font = SystemFonts.MessageBoxFont;
-            InitializeComponent();            
+            InitializeComponent();
 
-            SimulationHandler = new MySimulationHandler(backgroundWorker);
-            SimulationHandler.StateChanged += SimulationHandler_StateChanged;
-            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
 
-            // must be created in advance to grab possible error logs
-            ConsoleView = new ConsoleForm(this);
-
-            var assemblyName = Assembly.GetExecutingAssembly().GetName();
-            MyLog.INFO.WriteLine(assemblyName.Name + " version " + assemblyName.Version);
-
+            MySimulation simulation = null;
             try
             {
-                SimulationHandler.Simulation = new MyLocalSimulation();
+                simulation = new MyLocalSimulation();
             }
             catch (Exception e)
             {
@@ -562,6 +594,17 @@ namespace GoodAI.BrainSimulator.Forms
                 // this way you do not have to tweak form Close and Closing events and it works even with any worker threads still running
                 Environment.Exit(1);
             }
+
+            SimulationHandler = new MySimulationHandler(simulation);
+            SimulationHandler.StateChanged += SimulationHandler_StateChanged;
+            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+
+            // must be created in advance to grab possible error logs
+            ConsoleView = new ConsoleForm(this);
+
+            var assemblyName = Assembly.GetExecutingAssembly().GetName();
+            MyLog.INFO.WriteLine(assemblyName.Name + " version " + assemblyName.Version);
+
 
             MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
@@ -590,6 +633,8 @@ namespace GoodAI.BrainSimulator.Forms
             TaskPropertyView = new TaskPropertyForm(this);
 
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
+            TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
+
             ObserverViews = new List<ObserverForm>();
             
             ValidationView = new ValidationForm(this);
@@ -768,64 +813,15 @@ namespace GoodAI.BrainSimulator.Forms
                      
         #region Simulation               
 
-        private bool UpdateAndCheckChange(MyNode node)
-        {
-            node.PushOutputBlockSizes();
-            node.UpdateMemoryBlocks();
-            return node.AnyOutputSizeChanged();
-        }
-
-        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
-
-        public bool UpdateMemoryModel()
-        {            
-            MyLog.INFO.WriteLine("Updating memory blocks...");
-
-            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
-            List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
-
-            if (!orderedNodes.Any())
-            {
-                return true;
-            }
-
-            int attempts = 0;
-            bool anyOutputChanged = false;
-
-            try
-            {
-
-                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
-                {
-                    attempts++;
-                    anyOutputChanged = false;
-
-                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
-                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
-
-                    if (!anyOutputChanged)
-                    {
-                        MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
-                return true;
-            }
-
-            return anyOutputChanged;                        
-        }
-
+        // TODO: move all bits related to simulation out of here and into SimulationHandler, leave only the GUI-specific things.
         private void StartSimulation(bool oneStepOnly) 
         {            
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("--------------");
-                bool anyOutputChanged = UpdateMemoryModel();
+                bool anyOutputChanged = SimulationHandler.UpdateMemoryModel();
 
+                // TODO: move this out.
                 MyValidator validator = ValidationView.Validator;
                 validator.Simulation = SimulationHandler.Simulation;
 
@@ -880,8 +876,11 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 statusStrip.BeginInvoke((MethodInvoker)(() => stepStatusLabel.Text = "(" + SimulationHandler.SimulationStep + ", " + SimulationHandler.SimulationSpeed + "/s)"));
 
-                GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
-                activeLayout.Desktop.Invalidate();                
+                if (dockPanel.ActiveDocument is GraphLayoutForm)
+                {
+                    GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
+                    activeLayout.Desktop.Invalidate();
+                }
             }
             else
             {
@@ -957,12 +956,6 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void CopySelectedNodesToClipboard()
         {
-            if (dockPanel.ActiveContent is ConsoleForm)
-            {
-                Clipboard.SetText((dockPanel.ActiveContent as ConsoleForm).textBox.SelectedText);
-                return;
-            }
-
             if (dockPanel.ActiveDocument is GraphLayoutForm)
             {
                 GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;

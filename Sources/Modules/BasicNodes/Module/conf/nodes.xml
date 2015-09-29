@@ -21,7 +21,9 @@
 
     <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true" />    
     <Node type="GoodAI.Modules.Common.MyInverseTransformSampling" CanBeAdded="true" BigIcon="distribution_big.png" SmallIcon="distribution.png" />
-    
+    <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" />
+    <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true"/>
+
     <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png" />
     
     <Node type="GoodAI.Modules.Vision.MySegment" CanBeAdded="true" BigIcon="Seg_big.png" SmallIcon="Seg.png">
@@ -98,6 +100,9 @@
   	<Node type="GoodAI.Modules.LSTM.MyLSTMLayer" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyStackLayer" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
     <Node type="GoodAI.Modules.Robotic.MyCuriosityProbe" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
+
+    <Node type="GoodAI.Modules.Scripting.MyCSharpNode" CanBeAdded="true" />    
+    
   </KnownNodes>
   <KnownWorlds>
     <World type="GoodAI.Modules.Motor.MyArmWorld" />

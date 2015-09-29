@@ -3,13 +3,17 @@ using ManagedCuda.BasicTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Core.Execution
 {
     /// Managers MySimulation run
-    public class MySimulationHandler
+    public class MySimulationHandler : IDisposable
     {
+        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
+
         public enum SimulationState
         {
             [Description("Running")]
@@ -74,6 +78,16 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        internal Exception m_simulationStoppedException;
+        public class SimulationStoppedEventArgs : EventArgs
+        {
+            public Exception Exception { get; set; }
+            public uint StepCount { get; set; }
+        }
+
+        public delegate void SimulationStoppedEventHandler(object sender, SimulationStoppedEventArgs args);
+        public event SimulationStoppedEventHandler SimulationStopped;
+
         private readonly int m_speedMeasureInterval;
 
         public float SimulationSpeed { get; private set; }
@@ -113,16 +127,20 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="backgroundWorker">Worker, which will manage the simulation run</param>
-        public MySimulationHandler(BackgroundWorker backgroundWorker)
+        public MySimulationHandler(MySimulation simulation)
         {            
             State = SimulationState.STOPPED;
             ReportInterval = 20;
             SleepInterval = 0;
             m_speedMeasureInterval = 2000;
             AutosaveInterval = 10000;
+            Simulation = simulation;
 
-            m_worker = backgroundWorker;
+            m_worker = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
 
             m_worker.DoWork += m_worker_DoWork;
             m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
@@ -188,10 +206,20 @@ namespace GoodAI.Core.Execution
         /// </summary>
         /// <param name="closeCallback"></param>
         //UI thread
-        public void Finish(Action closeCallback)
+        public void Finish(Action closeCallback = null)
         {
+            // If no callback is specified, use an empty one so that the sim still finishes.
+            if (closeCallback == null)
+                closeCallback = () => { };
+
             m_closeCallback = closeCallback;
             StopSimulation();
+        }
+
+        public void Dispose()
+        {
+            if (State != SimulationState.STOPPED)
+                Finish();
         }
 
         //NOT in UI thread
@@ -208,6 +236,7 @@ namespace GoodAI.Core.Execution
                 }
                 catch (Exception ex)
                 {
+                    m_simulationStoppedException = ex;
                     MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
                     e.Cancel = true;
                 }
@@ -282,6 +311,63 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        // TODO: throw an exception if the model doesn't converge. The return value is unintuitive.
+        /// <summary>
+        /// Update the whole memory model - all blocks will get their memory block sizes updated correctly.
+        /// Since this might not converge, only a set number of iterations is done.
+        /// </summary>
+        /// <returns>true if the model did not converge (error), false if it did.</returns>
+        public bool UpdateMemoryModel()
+        {            
+            MyLog.INFO.WriteLine("Updating memory blocks...");
+
+            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
+            List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
+
+            if (!orderedNodes.Any())
+            {
+                return true;
+            }
+
+            int attempts = 0;
+            bool anyOutputChanged = false;
+
+            try
+            {
+
+                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
+                {
+                    attempts++;
+                    anyOutputChanged = false;
+
+                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
+                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
+
+                    if (!anyOutputChanged)
+                    {
+                        MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
+                return true;
+            }
+
+            return anyOutputChanged;                        
+        }
+
+        private bool UpdateAndCheckChange(MyNode node)
+        {
+            node.PushOutputBlockSizes();
+            node.UpdateMemoryBlocks();
+            return node.AnyOutputSizeChanged();
+        }
+
+
+
         private void DoStop()
         {
             if (m_closeCallback != null)
@@ -303,6 +389,16 @@ namespace GoodAI.Core.Execution
 
                 MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
                 State = SimulationState.STOPPED;
+
+                if (SimulationStopped != null)
+                {
+                    var args = new SimulationStoppedEventArgs
+                    {
+                        Exception = m_simulationStoppedException,
+                        StepCount = SimulationStep
+                    };
+                    SimulationStopped(this, args);
+                }
             }
 
             // Cleanup and invoke the callback action.

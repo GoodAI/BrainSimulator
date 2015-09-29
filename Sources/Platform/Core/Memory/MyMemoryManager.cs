@@ -42,7 +42,7 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        internal MyMemoryBlock<T> CreateMemoryBlock<T>(MyNode holder) where T : struct
+        public MyMemoryBlock<T> CreateMemoryBlock<T>(MyNode holder) where T : struct
         {
             return (MyMemoryBlock<T>)CreateMemoryBlock(holder, typeof(MyMemoryBlock<T>));
         }
