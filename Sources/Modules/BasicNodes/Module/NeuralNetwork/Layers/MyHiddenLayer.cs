@@ -12,7 +12,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     /// It takes an input and feeds another layer, which can be either an output layer or another hidden layer.<br></br>
     /// The capacity of the network can be scaled by the number of neurons in each layer or by placing multiple layers in succession (deep networks).
     /// </description>
-    public class MyHiddenLayer : MyAbstractWeightLayer
+    public class MyHiddenLayer : MyAbstractWeightLayer, IMyCustomTaskFactory
     {
         public override ConnectionType Connection
         {
@@ -89,19 +89,21 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             DeltaBackTask = new MyFCBackDeltaTask();
         }
 
-        public override void DisableLearningTasks()
-        {
-            base.DisableLearningTasks();
+        //PRETRAINING
+        //public override void DisableLearningTasks()
+        //{
+        //    base.DisableLearningTasks();
 
-            UpdateWeights.Enabled = false;
-        }
+        //    UpdateWeights.Enabled = false;
+        //}
 
-        public override void EnableLearningTasks()
-        {
-            base.EnableLearningTasks();
+        //PRETRAINING
+        //public override void EnableLearningTasks()
+        //{
+        //    base.EnableLearningTasks();
 
-            UpdateWeights.Enabled = true;
-        }
+        //    UpdateWeights.Enabled = true;
+        //}
 
         // Parameterless constructor
         public MyHiddenLayer() { }

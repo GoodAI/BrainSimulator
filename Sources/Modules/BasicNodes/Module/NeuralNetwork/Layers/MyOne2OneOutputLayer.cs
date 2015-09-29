@@ -19,7 +19,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     /// <summary>One-2-One Output layer node.</summary>
     /// <description>
     /// </description>
-    public class MyOutputOne2OneLayer : MyAbstractOutputLayer
+    public class MyOutputOne2OneLayer : MyAbstractOutputLayer, IMyCustomTaskFactory
     {
         // Memory blocks
         [MyInputBlock(1)]

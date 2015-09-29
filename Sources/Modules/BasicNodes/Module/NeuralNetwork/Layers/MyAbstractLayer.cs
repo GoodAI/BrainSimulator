@@ -38,7 +38,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         LECUN_TANH,
     }
 
-    public abstract class MyAbstractLayer : MyWorkingNode//, IMyCustomTaskFactory
+    public abstract class MyAbstractLayer : MyWorkingNode
     {
         // PRETRAINING
         //public MyIsLearningSignal IsLearning { get; set; }
@@ -121,18 +121,20 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             NextConnectedLayers = new List<MyAbstractLayer>();
         }
 
-        public virtual void DisableLearningTasks()
-        {
-            Delta.FillAll(0);
-            ForwardTask.Enabled = false;
-            DeltaBackTask.Enabled = false;
-        }
+        // PRETRAINING
+        //public virtual void DisableLearningTasks()
+        //{
+        //    Delta.FillAll(0);
+        //    ForwardTask.Enabled = false;
+        //    DeltaBackTask.Enabled = false;
+        //}
 
-        public virtual void EnableLearningTasks()
-        {
-            ForwardTask.Enabled = true;
-            DeltaBackTask.Enabled = true;
-        }
+        // PRETRAINING
+        //public virtual void EnableLearningTasks()
+        //{
+        //    ForwardTask.Enabled = true;
+        //    DeltaBackTask.Enabled = true;
+        //}
 
         // PRETRAINING
         //public virtual void CreateTasks()

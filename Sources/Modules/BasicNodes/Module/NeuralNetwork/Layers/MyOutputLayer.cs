@@ -36,8 +36,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             base.UpdateMemoryBlocks(); // call after number of neurons are set
         }
 
-
-        //
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
