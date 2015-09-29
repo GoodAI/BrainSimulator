@@ -32,13 +32,13 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyInputBlock(1)]
         public MyMemoryBlock<float> Reward
         {
-            get { return GetInput(2); }
+            get { return GetInput(1); }
         }
 
         [MyInputBlock(2)]
         public MyMemoryBlock<float> Action
         {
-            get { return GetInput(3); }
+            get { return GetInput(2); }
         }
 
         // PRETRAINING
