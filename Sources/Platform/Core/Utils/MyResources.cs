@@ -15,7 +15,10 @@ namespace GoodAI.Core.Utils
 
         public static string GetEntryAssemblyPath()
         {
-            string location = Assembly.GetEntryAssembly().Location;
+            // Static initialization must not crash when called from tests!
+            var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+
+            string location = assembly.Location;
             return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
         }
 
