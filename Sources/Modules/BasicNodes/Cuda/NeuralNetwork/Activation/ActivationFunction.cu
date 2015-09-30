@@ -47,6 +47,9 @@ extern "C"
 		return 1 - val * val;
 	}
 
+	// This activation function is recommended in 
+	// "Efficient backprop" (LeCun 1998) and also discussed here:
+	// http://stats.stackexchange.com/questions/38225/neural-net-cost-function-for-hyperbolic-tangent-activation
 	__device__ float lecun_tanh(float x)
 	{
 		return 1.7159f * tanh((2.0f * x) / 3.0f);
