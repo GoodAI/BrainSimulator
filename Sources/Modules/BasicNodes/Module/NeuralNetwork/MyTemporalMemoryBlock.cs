@@ -258,7 +258,17 @@ namespace GoodAI.Modules.NeuralNetwork
                 return null;
         }
 
-        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int memBlockIdx = -1)
+        public override CUdeviceptr GetDevicePtr(int GPU)
+        {
+            return GetDevicePtr(GPU, 0);
+        }
+
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset)
+        {
+            return GetDevicePtr(GPU, offset, -1);
+        }
+
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int memBlockIdx)
         {
             CudaDeviceVariable<T> rDeviceVar = GetDevice(GPU);
             if (0 <= memBlockIdx && memBlockIdx < BoundedSequenceLength)

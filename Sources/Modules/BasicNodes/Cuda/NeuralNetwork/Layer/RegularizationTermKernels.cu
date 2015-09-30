@@ -8,6 +8,7 @@
 #include <builtin_types.h>
 #include <vector_functions.h>
 #include <math.h>
+#include "..\Activation\ActivationFunction.cu"
 
 // Gaussian regularization coefficient
 __constant__ float RegularizationCoefficient;
@@ -115,30 +116,32 @@ extern "C"
 	}
 
 	__global__ void GaussianRegularizationDeltaKernel(
-			int useSigmaConstant,
-			float* prevLayerInputPtr,
-			float* prevLayerWeights,
-			int prevLayerOutputCount,
-			float* meanDeltas,
-			float* sigmaDeltas
-			)
+		int useSigmaConstant,
+		ActivationFunctionEnum prevActFunc,
+		float* prevWeighedInputPtr,
+		float* prevLayerInputPtr,
+		float* prevLayerWeights,
+		int prevLayerOutputCount,
+		float* meanDeltas,
+		float* sigmaDeltas
+		)
 	{
-			// i: previous layer output (which is mu, sigma params)
-			int weightId = blockDim.x * blockIdx.y * gridDim.x     //rows preceeding current row in grid
-					+ blockDim.x * blockIdx.x                               //blocks preceeding current block
-					+ threadIdx.x;
- 
-			int prevLayerId = weightId % prevLayerOutputCount;
-			int prevPrevLayerId = weightId / prevLayerOutputCount;
+		// i: previous layer output (which is mu, sigma params)
+		int weightId = blockDim.x * blockIdx.y * gridDim.x     //rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x                               //blocks preceeding current block
+			+ threadIdx.x;
 
-			int isMean = prevLayerId < prevLayerOutputCount / 2 || useSigmaConstant;
-			int isSigma = prevLayerId >= prevLayerOutputCount / 2 && !useSigmaConstant;
+		int prevLayerId = weightId % prevLayerOutputCount;
+		int prevPrevLayerId = weightId / prevLayerOutputCount;
 
-			float regularization = isMean * prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2)
-				+ isSigma * (prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2) - 1.0f / (0.00000001 + prevLayerWeights[weightId]));
+		int isMean = prevLayerId < prevLayerOutputCount / 2 || useSigmaConstant;
+		int isSigma = prevLayerId >= prevLayerOutputCount / 2 && !useSigmaConstant;
 
-			meanDeltas[prevLayerId] += RegularizationCoefficient * regularization * isMean;
-			sigmaDeltas[prevLayerId] += RegularizationCoefficient * regularization * isSigma;
+		float regularization = isMean * prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2)
+			+ isSigma * (prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2) - 1.0f / (0.00000001 + prevLayerWeights[weightId]));
+
+		meanDeltas[prevLayerId] += isMean * RegularizationCoefficient * regularization * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevLayerId]);
+		sigmaDeltas[prevLayerId] += isSigma * RegularizationCoefficient * regularization * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevLayerId]);
 	}
 
 	__global__ void DropoutMaskKernel(
