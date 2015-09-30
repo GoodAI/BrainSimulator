@@ -153,7 +153,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             
             // copy default plan content to new plan content
             foreach (IMyExecutable groupTask in defaultPlan.Children)
-                if (groupTask is MyExecutionBlock)
+                if (groupTask.GetType() == typeof(MyExecutionBlock))
                     foreach (IMyExecutable nodeTask in (groupTask as MyExecutionBlock).Children)
                         newPlan.Add(nodeTask); // add individual node tasks
                 else
