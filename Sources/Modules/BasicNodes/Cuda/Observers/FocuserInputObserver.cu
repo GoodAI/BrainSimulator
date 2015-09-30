@@ -12,6 +12,7 @@
 extern "C"  
 {		
 	//kernel code
+    // There is ,,Vision/KMeansWM.cu/FocuserInputObserver''   that defines part of this function as device and has some features as plotting multiple lines 
 	__global__ void FocuserInputObserver(float* values, float* pupilControl, int inputWidth, int inputHeight, unsigned int* pixels)
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	

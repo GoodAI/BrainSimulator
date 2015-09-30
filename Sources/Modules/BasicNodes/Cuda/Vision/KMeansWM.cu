@@ -206,7 +206,7 @@ extern "C"
 
 
 
-	__device__ void deviceFocuserInputObserver(int id, float* values, float cX, float cY, float subImgDiameter, int inputWidth, int inputHeight, unsigned int* pixels, float color)
+	__device__ void deviceFocuserInputObserver(int id, float* values, float cX, float cY, float subImgDiameter, int inputWidth, int inputHeight, unsigned int* pixels, float color, int keepLines=1)
 	{
     		int maxDiameter = min(inputWidth, inputHeight);
 			int diameterPix = (int)(subImgDiameter * maxDiameter);
@@ -246,7 +246,8 @@ extern "C"
 			}			
 
 			//--- update what is inside box
-			if (  (px >= subImgX && py >= subImgY &&  px <= subImgX + diameterPix && py <= subImgY + diameterPix) )
+			//if (  (px >= subImgX && py >= subImgY &&  px <= subImgX + diameterPix && py <= subImgY + diameterPix) ) // update only inside box :)
+            if (  (keepLines && (cXPix == px || cYPix == py)) || (px >= subImgX && py >= subImgY &&  px <= subImgX + diameterPix && py <= subImgY + diameterPix)  ) // update insde box and keep lines around
             {
 				value = fminf(fmaxf(value, 0), 1);
 				pixels[id] = hsva_to_uint_rgba(hue, saturation, value, 1.0f);
@@ -256,7 +257,7 @@ extern "C"
 
 
 
-	__global__ void FocuserInputObserver(float* values, float* pupilControl, int id_pupil , int inputWidth, int inputHeight, unsigned int* pixels, float color)
+	__global__ void FocuserInputObserver(float* values, float* pupilControl, int inputWidth, int inputHeight, unsigned int* pixels, float color, int keepLines=1)
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	
 			+ blockDim.x*blockIdx.x				
@@ -266,11 +267,11 @@ extern "C"
 
 		if(id < numOfPixels) //id of the thread is valid
 		{		
-			float cX = pupilControl[id_pupil*3 + 0]; // <-1, 1>
-			float cY = pupilControl[id_pupil*3 + 1]; // <-1, 1>
-			float subImgDiameter = pupilControl[id_pupil*3 + 2]; // <0,1>
+            float cX = pupilControl[0]; // <-1, 1>
+			float cY = pupilControl[1]; // <-1, 1>
+			float subImgDiameter = pupilControl[2]; // <0,1>
 
-            deviceFocuserInputObserver(id, values, cX, cY, subImgDiameter, inputWidth, inputHeight, pixels, color);
+            deviceFocuserInputObserver(id, values, cX, cY, subImgDiameter, inputWidth, inputHeight, pixels, color,keepLines);
 		}
 	}
 
