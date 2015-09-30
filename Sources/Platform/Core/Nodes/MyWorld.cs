@@ -4,11 +4,6 @@ namespace GoodAI.Core.Nodes
 {
     public abstract class MyWorld : MyWorkingNode
     {
-        public virtual void DoPause()
-        {
-
-        }
-
         public void ValidateWorld(MyValidator validator)
         {
             ValidateMandatory(validator);

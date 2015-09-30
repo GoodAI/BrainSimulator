@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using GoodAI.Core.Execution;
 using YAXLib;
 
 namespace GoodAI.Core.Nodes
@@ -259,6 +260,14 @@ namespace GoodAI.Core.Nodes
         }
 
         #endregion
+
+        /// <summary>
+        /// This allows the node implementations to react to the simulation's state.
+        /// This is useful for e.g. resource management.
+        /// </summary>
+        public virtual void OnSimulationStateChanged(MySimulationHandler.StateEventArgs args)
+        {
+        }
 
         internal protected MyWorkingNode()
         {
