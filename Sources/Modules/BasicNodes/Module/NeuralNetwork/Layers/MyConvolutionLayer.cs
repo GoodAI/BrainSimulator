@@ -362,13 +362,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             return 1 + (zeroPadding * 2 + inputSize - filterSize) / stride;
         }
 
-        // PRETRAINING
-        //public override void CreateTasks()
-        //{
-        //    base.CreateTasks();
-        //    ForwardTask = new MyConvolutionForwardTask();
-        //    DeltaBackTask = new MyConvolutionBackwardTask();
-        //}
         public void CreateTasks()
         {
             ForwardTask = new MyConvolutionForwardTask();

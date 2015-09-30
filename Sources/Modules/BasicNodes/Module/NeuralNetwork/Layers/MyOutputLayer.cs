@@ -19,12 +19,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             get { return GetInput(1); }
         }
-        // PRETRAINING
-        //[MyInputBlock(2)]
-        //public override MyMemoryBlock<float> Target
-        //{
-        //    get { return GetInput(2); }
-        //}
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()

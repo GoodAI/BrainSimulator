@@ -12,9 +12,6 @@ using GoodAI.Core.Signals;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
-    // PRETRAINING
-    //public class MyIsLearningSignal : MySignal { }
-
     public enum ConnectionType
     {
         NOT_SET,
@@ -40,9 +37,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
     public abstract class MyAbstractLayer : MyWorkingNode
     {
-        // PRETRAINING
-        //public MyIsLearningSignal IsLearning { get; set; }
-
         // Properties
         [YAXSerializableField(DefaultValue = ActivationFunctionType.NO_ACTIVATION)]
         [MyBrowsable, Category("\tLayer")]
@@ -86,14 +80,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             get { return GetInput(0); }
         }
 
-        // PRETRAINING
-        //[MyInputBlock(1)]
-        //// only host side of the memory is ever used!
-        //public virtual MyMemoryBlock<float> CanLearn
-        //{
-        //    get { return GetInput(1); }
-        //}
-
        [MyOutputBlock(0)]
         public virtual MyTemporalMemoryBlock<float> Output
         {
@@ -121,27 +107,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             NextConnectedLayers = new List<MyAbstractLayer>();
         }
 
-        // PRETRAINING
-        //public virtual void DisableLearningTasks()
-        //{
-        //    Delta.FillAll(0);
-        //    ForwardTask.Enabled = false;
-        //    DeltaBackTask.Enabled = false;
-        //}
-
-        // PRETRAINING
-        //public virtual void EnableLearningTasks()
-        //{
-        //    ForwardTask.Enabled = true;
-        //    DeltaBackTask.Enabled = true;
-        //}
-
-        // PRETRAINING
-        //public virtual void CreateTasks()
-        //{
-        //    PretrainingTask = new MyNodePretrainingTask();
-        //}
-
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
@@ -157,8 +122,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }
 
-        // PRETRAINING
-        //public MyTask PretrainingTask { get; protected set; }
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
     }

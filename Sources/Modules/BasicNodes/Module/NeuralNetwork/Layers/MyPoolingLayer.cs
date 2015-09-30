@@ -269,13 +269,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
-        // PRETRAINING
-        //public override void CreateTasks()
-        //{
-        //    base.CreateTasks();
-        //    ForwardTask = new MyPoolingForwardTask();
-        //    DeltaBackTask = new MyPoolingBackwardTask();
-        //}
         public void CreateTasks()
         {
             ForwardTask = new MyPoolingForwardTask();

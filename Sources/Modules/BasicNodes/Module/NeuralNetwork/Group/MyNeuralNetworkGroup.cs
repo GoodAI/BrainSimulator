@@ -29,13 +29,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         // global rand which should be used by layers
         public static Random rng = new Random();
 
-        // Signals
-        // IsLearning is added to network input and set to true
-        // it can be used in combination with output layers as
-        // learning barriers which are useful for pretraining
-        //public MyIsLearningSignal IsLearning { get; set; }
-        //public class MyIsLearningSignal : MySignal { }
-
         //Node properties
         [ReadOnly(true)]
         [YAXSerializableField(DefaultValue = 0)]
