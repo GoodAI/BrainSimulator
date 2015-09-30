@@ -63,7 +63,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             // StackInputs operation
             Output.Count = totalOutputs;
-            Neurons = totalOutputs;
+            Neurons = totalOutputs / ParentNetwork.BatchSize;
         }
 
         public override string Description
@@ -73,7 +73,23 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 return "Stack layer";
             }
         }
-        
+
+        public override void Validate(MyValidator validator)
+        {
+            for (int i = 0; i < InputBranches; i++)
+            {
+                MyMemoryBlock<float> ai = GetInput(i);
+
+                if (ai == null)
+                    validator.AddError(this, string.Format("Missing input {0}.", i));
+            }
+        }
+
+        public override bool SupportsBatchLearning()
+        {
+            return true;
+        }
+
         public void CreateTasks()
         {
             ForwardTask = new MyStackForwardTask();
@@ -92,19 +108,23 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             public override void Execute() //Task execution
             {
-                // propagate delta
-                //Owner.Delta.CopyFromMemoryBlock(Owner.NextLayer.Delta, 0, 0, Owner.NextLayer.Delta.Count);
-
-                int totalInputs = 0;
-                for (int i = 0; i < Owner.InputBranches; i++)
+                int deltaIdx = 0;
+                for (int b = 0; b < Owner.ParentNetwork.BatchSize; b++)
                 {
-                    MyMemoryBlock<float> input = Owner.GetInput(i);
-                    MyAbstractLayer prevLayer = Owner.PreviousLayer[i];
-                    if (prevLayer != null)
+                    for (int i = 0; i < Owner.InputBranches; i++)
                     {
-                        prevLayer.Delta.CopyFromMemoryBlock(Owner.Delta, totalInputs, 0, input.Count);
+                        MyMemoryBlock<float> input = Owner.GetInput(i);
+                        MyAbstractLayer prevLayer = Owner.PreviousLayer[i];
+                        if (prevLayer != null)
+                        {
+                            int singleInputSize = input.Count / Owner.ParentNetwork.BatchSize;
+                            Owner.Delta.CopyToMemoryBlock(prevLayer.Delta, deltaIdx, b * singleInputSize, singleInputSize);
+                            Owner.Delta.SafeCopyToHost();
+                            prevLayer.Delta.SafeCopyToHost();
+
+                            deltaIdx += singleInputSize;
+                        }
                     }
-                    totalInputs += input.Count;
                 }
             }
         }
@@ -121,18 +141,20 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             public override void Execute() //Task execution
             {
-                int totalOutputs = 0;
-                for (int i = 0; i < Owner.InputBranches; i++)
+                int outputIdx = 0;
+                for (int b = 0; b < Owner.ParentNetwork.BatchSize; b++)
                 {
-                    MyMemoryBlock<float> input = Owner.GetInput(i);
+                    for (int i = 0; i < Owner.InputBranches; i++)
+                    {
+                        MyMemoryBlock<float> input = Owner.GetInput(i);
+                        int singleInputSize = input.Count / Owner.ParentNetwork.BatchSize;
 
-                    if (input == null)
-                        continue;
+                        input.CopyToMemoryBlock(Owner.Output, b * singleInputSize, outputIdx, singleInputSize);
 
-                    input.CopyToMemoryBlock(Owner.Output, 0, totalOutputs, input.Count);
-                    totalOutputs += input.Count;
+                        outputIdx += singleInputSize;
+                    }
                 }
-            }   
+            }
         }
     }
 }
