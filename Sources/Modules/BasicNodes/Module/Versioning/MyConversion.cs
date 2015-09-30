@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System;
 
 namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 6; } }
+        public override int CurrentVersion { get { return 7; } }
 
 
         /// <summary>
@@ -151,6 +152,104 @@ namespace GoodAI.Modules.Versioning
             }
 
             return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert version 6->7
+        /// Author: Vision 
+        /// </summary>
+        public static string Convert6To7(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            // Rewire connections to layers inheriting from MyAbstractLayer (there's an extra input, "CanLearn")
+            // Add tasks for neural network group
+            foreach (var neuralNetworkGroup in document.Root.Descendants("Group"))
+            {
+                var groupTypeAttribute = neuralNetworkGroup.Attribute(GetRealTypeAttributeName());
+                if (groupTypeAttribute != null && groupTypeAttribute.Value.EndsWith(".MyNeuralNetworkGroup"))
+                {
+                    Add6To7GroupTasks(neuralNetworkGroup);
+//                    RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
+                }
+            }
+
+            // Rename CrossEntropy field to CrossEntropyLoss
+            foreach (var task in document.Root.Descendants("Task")) // go through all tasks because CrossEntropy is in multiple classes
+            {
+                var realTypeAttribute = task.Attribute(GetRealTypeAttributeName());
+                if (realTypeAttribute != null && realTypeAttribute.Value.EndsWith(".MyCrossEntropyLossTask"))
+                    task.Attribute("PropertyName").SetValue("CrossEntropyLoss");
+            }
+
+            // Move "Type" param from task to node
+            foreach (var goniometricNode in document.Root.Descendants("GoniometricFunction"))
+            {
+                XElement gonioParams = goniometricNode.Descendants("Params").First();   // GoniometricFunction does not have "Params" so this yields task's "Params" field
+                goniometricNode.Add(gonioParams);   // Type parameter in node is in "Params" section as well so this can be done
+                gonioParams.Remove();   // removes only "Params" element in task; the new one in Node is intact
+            }
+            
+            return document.ToString();
+        }
+
+        private static void RewireLayerInputs(XElement neuralNetworkGroup, IEnumerable<XElement> allConnections)
+        {
+            const int INDEX_OF_CAN_LEARN = 1;
+
+            var children = neuralNetworkGroup.Element("Children");
+            foreach (var layer in children.Elements())
+            {
+                string layerTypeName = layer.Attribute(GetRealTypeAttributeName()).Value;
+                Type layerType = Type.GetType(layerTypeName);
+                if (layerType != null)
+                {
+                    Type abstractLayerType = Type.GetType("GoodAI.Modules.NeuralNetwork.Layers.MyAbstractLayer");
+
+                    if (layerType.IsSubclassOf(abstractLayerType))
+                    {
+                        string nodeID = layer.Attribute("Id").Value;
+                        foreach (var connection in allConnections)
+                        {
+                            if (connection.Attribute("To").Value == nodeID)
+                            {
+                                var toIndexAttribute = connection.Attribute("ToIndex");
+                                int toIndex = Convert.ToInt32(toIndexAttribute.Value);
+                                if (toIndex >= INDEX_OF_CAN_LEARN)
+                                {
+                                    toIndexAttribute.SetValue(toIndex + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void Add6To7GroupTasks(XElement neuralNetworkGroup)
+        {
+            var tasks = neuralNetworkGroup.Element("Tasks");
+
+            var incrementTask = new XElement("Task");
+            incrementTask.Add(new XAttribute("Enabled", "True"));
+            incrementTask.Add(new XAttribute("PropertyName", "IncrementTimeStep"));
+            incrementTask.Add(new XAttribute(GetRealTypeAttributeName(), "GoodAI.Modules.NeuralNetwork.Group.MyIncrementTimeStepTask"));
+            tasks.Add(incrementTask);
+            var decrementTask = new XElement("Task");
+            decrementTask.Add(new XAttribute("Enabled", "True"));
+            decrementTask.Add(new XAttribute("PropertyName", "DecrementTimeStep"));
+            decrementTask.Add(new XAttribute(GetRealTypeAttributeName(), "GoodAI.Modules.NeuralNetwork.Group.MyDecrementTimeStepTask"));
+            tasks.Add(decrementTask);
+        }
+
+        private static XName GetRealTypeAttributeName() 
+        {
+            XNamespace yaxlib = "http://www.sinairv.com/yaxlib/";
+            XName realtype = yaxlib + "realtype";
+            return realtype;
         }
     }
 }

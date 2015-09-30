@@ -44,10 +44,10 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             float maxValue = Owner.Output.Host.Max();
 
             // backup network inputs in host memory
-            Owner.ParentNetwork.FirstLayer.Input.SafeCopyToHost();
+            Owner.ParentNetwork.FirstTopologicalLayer.Input.SafeCopyToHost();
 
             // do a forward pass with the previous inputs
-            Owner.ParentNetwork.FirstLayer.Input.CopyFromMemoryBlock(Owner.PreviousInput, 0, 0, Owner.PreviousInput.Count);
+            Owner.ParentNetwork.FirstTopologicalLayer.Input.CopyFromMemoryBlock(Owner.PreviousInput, 0, 0, Owner.PreviousInput.Count);
             Owner.ParentNetwork.FeedForward();
 
             // set the target: q(s(t-1), a) -> reward(t-1) + q(s(t), maxarg(a)) * discountfactor // TODO: consider reward(t-1) vs reward(t) :: reward(t-1) is correct, but reward(t) works better with our implementation of breakout
@@ -113,8 +113,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.Output.SafeCopyToDevice();
 
             // restore input values from host
-            Owner.ParentNetwork.FirstLayer.Input.SafeCopyToDevice();
-            Owner.PreviousInput.CopyFromMemoryBlock(Owner.ParentNetwork.FirstLayer.Input, 0, 0, Owner.PreviousInput.Count);
+            Owner.ParentNetwork.FirstTopologicalLayer.Input.SafeCopyToDevice();
+            Owner.PreviousInput.CopyFromMemoryBlock(Owner.ParentNetwork.FirstTopologicalLayer.Input, 0, 0, Owner.PreviousInput.Count);
         }
     }
 

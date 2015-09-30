@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.LSTM.Tasks;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System;
 using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
@@ -24,7 +26,19 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     /// </description>
     public class MyNeuralNetworkGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
+        // global rand which should be used by layers
+        public static Random rng = new Random();
+
         //Node properties
+        [ReadOnly(true)]
+        [YAXSerializableField(DefaultValue = 0)]
+        [MyBrowsable, Category("\tTemporal")]
+        public int TimeStep { get; set; }
+
+        [YAXSerializableField(DefaultValue = 1)]
+        [MyBrowsable, Category("\tTemporal")]
+        public int SequenceLength { get; set; }
+
         [YAXSerializableField(DefaultValue = 0.0f)]
         [MyBrowsable, Category("\tRegularization")]
         public float L1 { get; set; }
@@ -39,8 +53,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         //Memory Blocks
         public List<MyNode> SortedChildren;
-        public MyAbstractLayer FirstLayer;
-        internal MyAbstractLayer LastLayer;
+        public MyAbstractLayer FirstTopologicalLayer;
+        internal MyAbstractLayer LastTopologicalLayer;
         internal int TotalWeights;
 
         //Tasks
@@ -65,6 +79,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         //public MyvSGDfdTask vSGD { get; protected set; }
 
         public MyInitNNGroupTask InitGroup { get; protected set; }
+        public MyIncrementTimeStepTask IncrementTimeStep { get; protected set; }
+        public MyDecrementTimeStepTask DecrementTimeStep { get; protected set; }
+        public MyRunTemporalBlocksModeTask RunTemporalBlocksMode { get; protected set; }
         public MyGradientCheckTask GradientCheck { get; protected set; }
 
         public MyNeuralNetworkGroup()
@@ -124,6 +141,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             List<IMyExecutable> selected = new List<IMyExecutable>();
             List<IMyExecutable> newPlan = new List<IMyExecutable>();
 
+            List<IMyExecutable> BPTTSingleStep = new List<IMyExecutable>();
+            List<IMyExecutable> BPTTAllSteps = new List<IMyExecutable>();
+            
             // copy default plan content to new plan content
             foreach (IMyExecutable groupTask in defaultPlan.Children)
                 if (groupTask.GetType() == typeof(MyExecutionBlock))
@@ -137,71 +157,52 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             // DO NOT remove the currently selected backprop task (it handles batch learning)
             selected = newPlan.Where(task => task is MyAbstractBackpropTask &&  !(task.Enabled) && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
             newPlan.RemoveAll(selected.Contains);
+            // bbpt single step
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyDeltaTask).ToList().Reverse<IMyExecutable>());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyQLearningTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyGradientCheckTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyRestoreValuesTask).ToList());
+            BPTTSingleStep.AddRange(newPlan.Where(task => task is MySaveActionTask).ToList());
+            BPTTSingleStep.Add(DecrementTimeStep);
 
-            // move MyCreateDropoutMaskTask(s) before the first MyForwardTask
-            selected = newPlan.Where(task => task is MyCreateDropoutMaskTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.Find(task => task is IMyForwardTask)), selected);
+            // backprop until unfolded (timestep=0)
+            MyExecutionBlock BPTTLoop = new MyLoopBlock(i => TimeStep != -1,
+                BPTTSingleStep.ToArray()
+            );
 
-            // move reversed MyOutputDeltaTask(s) after the last MyForwardTask (usually there is only one)
+            // bptt architecture
+            BPTTAllSteps.Add(BPTTLoop);
+            BPTTAllSteps.Add(RunTemporalBlocksMode);
+            BPTTAllSteps.AddRange(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList());
+
+            // if current time is time for bbp, do it
+            MyExecutionBlock BPTTExecuteBPTTIfTimeCountReachedSequenceLength = new MyIfBlock(() => TimeStep == SequenceLength-1,
+                BPTTAllSteps.ToArray()
+            );
+
+            // remove group backprop tasks (they should be called from the individual layers)
+            newPlan.RemoveAll(newPlan.Where(task => task is MyAbstractBackpropTask && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyCreateDropoutMaskTask).ToList().Contains);
+            //newPlan.RemoveAll(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is IMyDeltaTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyGradientCheckTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyQLearningTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyRestoreValuesTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MySaveActionTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyIncrementTimeStepTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyDecrementTimeStepTask).ToList().Contains);
+            newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);
+            
             selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
             newPlan.RemoveAll(selected.Contains);
-            if ((selected.Where(task => task.Enabled)).Count() > 1)
-                MyLog.WARNING.WriteLine("More than one output tasks are active!");
-            if (selected.Count <= 0)
-                MyLog.WARNING.WriteLine("No output tasks are active! Planning (of SGD, RMS, Adadelta etc.) might not work properly. Possible cause: no output layer is present.\nIgnore this if RBM task is currently selected.");
-            selected.Reverse();
-            
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
-
-            // move reversed MyDeltaTask(s) after the last MyOutputDeltaTask
-            selected = newPlan.Where(task => task is IMyDeltaTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            selected.Reverse();
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyOutputDeltaTask)) + 1, selected);
-
-
-            // move MyGradientCheckTask after the last MyDeltaTask
-            selected = newPlan.Where(task => task is MyGradientCheckTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyDeltaTask)) + 1, selected);
-
-            // move currently selected backprop task between Delta tasks and UpdateWeights task
-            selected = newPlan.Where(task => task is MyAbstractBackpropTask && (task.Enabled)).ToList();
-            if (selected.Count > 1)
-                MyLog.WARNING.WriteLine("Two or more backprop tasks selected.");
-            if (selected.Count <= 0)
-                MyLog.WARNING.WriteLine("No backprop task selected.");
-            newPlan.RemoveAll(selected.Contains);
-            selected.Reverse();
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyDeltaTask)) + 1, selected);
-
-
-
-            // move MyUpdateWeightsTask(s) after the last MyGradientCheckTask
-            selected = newPlan.Where(task => task is IMyUpdateWeightsTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is MyGradientCheckTask)) + 1, selected);
-
-            // move MyQLearningTask after the last MyForwardTask
-            selected = newPlan.Where(task => task is MyQLearningTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
-
-            // move MyRestoreValuesTask after the last MyAbstractBackPropTask
-            selected = newPlan.Where(task => task is MyRestoreValuesTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyUpdateWeightsTask)) + 1, selected);
-
-            // move MyLSTMPartialDerivativesTask after the last MyForwardTask
-            selected = newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected);
-
-            // move MySaveActionTask to the end of the task list
-            selected = newPlan.Where(task => task is MySaveActionTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-            newPlan.AddRange(selected);
+    
+            // after FF add deltaoutput and bptt if needed, then increpement one step :)
+            newPlan.Insert(0, IncrementTimeStep);
+            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
+            newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
 
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());
@@ -209,21 +210,21 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public void FeedForward()
         {
-            MyAbstractLayer layer = FirstLayer;
+            MyAbstractLayer layer = FirstTopologicalLayer;
             while (layer != null)
             {
                 layer.ForwardTask.Execute();
-                layer = layer.NextLayer;
+                layer = layer.NextTopologicalLayer;
             }
         }
 
         public float GetError()
         {
             // get the error from output layer
-            if (LastLayer is MyAbstractOutputLayer)
+            if (LastTopologicalLayer is MyAbstractOutputLayer)
             {
                 // pointer to output layer
-                MyAbstractOutputLayer outputLayer = LastLayer as MyAbstractOutputLayer;
+                MyAbstractOutputLayer outputLayer = LastTopologicalLayer as MyAbstractOutputLayer;
 
                 // get enabled loss function
                 MyTask lossTask = outputLayer.GetEnabledTask("LossFunctions");

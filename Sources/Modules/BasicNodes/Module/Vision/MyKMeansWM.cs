@@ -322,7 +322,7 @@ namespace GoodAI.Modules.Vision
             private void NormalizeVector(MyMemoryBlock<float> Vec, int dim ,int id_start=0){
                 CUdeviceptr VecDevPtr = Vec.GetDevicePtr(0,id_start * dim);
 
-                m_dotKernel.Run(Owner.TempVal, 0, VecDevPtr, VecDevPtr, dim);
+                m_dotKernel.Run(Owner.TempVal, 0, VecDevPtr, VecDevPtr, dim, /* distributed: */ 0);
                 Owner.TempVal.SafeCopyToHost();
                 float length = (float)Math.Sqrt(Owner.TempVal.Host[0]);
 

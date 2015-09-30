@@ -99,8 +99,12 @@ namespace GoodAI.Core.Observers
         [MyBrowsable, Category("Texture"), DisplayName("Vector Elements")]
         public int Elements { get; set; }
 
-        private MyCudaKernel m_vectorKernel;
-        private MyCudaKernel m_rgbKernel;
+        [YAXSerializableField(DefaultValue = 0)]
+        [MyBrowsable, Category("Temporal")]
+        public int TimeStep { get; set; }
+
+        protected MyCudaKernel m_vectorKernel;
+        protected MyCudaKernel m_rgbKernel;
 
         public MyMemoryBlockObserver()
         {
@@ -126,17 +130,17 @@ namespace GoodAI.Core.Observers
             if (Method == RenderingMethod.Vector)
             {
                 m_vectorKernel.SetupExecution(TextureSize);
-                m_vectorKernel.Run(Target, Elements, MaxValue, VBODevicePointer, TextureSize);
+                m_vectorKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), Elements, MaxValue, VBODevicePointer, TextureSize);
             }
             else if (Method == RenderingMethod.RGB)
             {
                 m_rgbKernel.SetupExecution(TextureSize);
-                m_rgbKernel.Run(Target, VBODevicePointer, TextureSize);
+                m_rgbKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureSize);
             }
             else
             {
                 m_kernel.SetupExecution(TextureSize);                
-                m_kernel.Run(Target, (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
+                m_kernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
             }
         }
 

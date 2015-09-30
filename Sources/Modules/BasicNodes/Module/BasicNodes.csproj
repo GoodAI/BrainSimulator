@@ -121,9 +121,14 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyNegativeCorrelationEnsembleLayer.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyOne2OneOutputLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
+    <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
+    <Compile Include="NeuralNetwork\Tasks\MyNegativeCorrelationEnsembleTasks.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
@@ -326,6 +331,8 @@
     <EmbeddedResource Include="res\network_RBM_big.png" />
     <EmbeddedResource Include="res\join.png" />
     <EmbeddedResource Include="res\join_big.png" />
+    <EmbeddedResource Include="res\one2one_layer.png" />
+    <EmbeddedResource Include="res\one2one_layer_big.png" />
     <EmbeddedResource Include="res\pooling.png" />
     <EmbeddedResource Include="res\pooling_big.png" />
     <Content Include="res\gridworld5\agent.png">

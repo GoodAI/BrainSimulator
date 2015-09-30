@@ -3,19 +3,23 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Tasks;
 using System.ComponentModel;
 using YAXLib;
+using ManagedCuda.BasicTypes;
+using System.Collections.Generic;
+using GoodAI.Core.Signals;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
-
     public enum ConnectionType
     {
         NOT_SET,
         FULLY_CONNECTED,
         CONVOLUTION,
         ONE_TO_ONE,
-        GAUSSIAN
+        GAUSSIAN,
+        PARTIAL_UPDATE
     }
 
     public enum ActivationFunctionType
@@ -27,7 +31,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         RATIONAL_SIGMOID,
         RELU,
         SOFTMAX,
-        TANH
+        TANH,
+        LECUN_TANH,
     }
 
     public abstract class MyAbstractLayer : MyWorkingNode
@@ -45,8 +50,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyBrowsable, Category("Misc")]
         public int OutputColumnHint { get; set; }
 
-        public MyAbstractLayer PreviousLayer { get; set; }
-        public MyAbstractLayer NextLayer { get; set; }
+        // The preceding layer in the topological ordering
+        public MyAbstractLayer PreviousTopologicalLayer { get; set; }
+        // The succeeding layer in the topological ordering
+        public MyAbstractLayer NextTopologicalLayer { get; set; }
+
+        // layers feeding connections into this layer
+        public List<MyAbstractLayer> PreviousConnectedLayers { get; set; }
+        // layers in which this layer feeds connections
+        public List<MyAbstractLayer> NextConnectedLayers { get; set; }
 
         public MyNeuralNetworkGroup ParentNetwork
         {
@@ -63,23 +75,37 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         #region Memory blocks
         // Memory blocks
         [MyInputBlock(0)]
-        public MyMemoryBlock<float> Input
+        public virtual MyMemoryBlock<float> Input
         {
             get { return GetInput(0); }
         }
 
-        [MyOutputBlock(0)]
-        public MyMemoryBlock<float> Output
+       [MyOutputBlock(0)]
+        public virtual MyTemporalMemoryBlock<float> Output
         {
-            get { return GetOutput(0); }
+            get { return GetOutput(0) as MyTemporalMemoryBlock<float>; }
             set { SetOutput(0, value); }
         }
 
-        public MyMemoryBlock<float> Delta { get; protected set; }
+        public virtual MyTemporalMemoryBlock<float> Delta { get; protected set; }
         #endregion
 
+        static public CUdeviceptr DetermineInput(MyAbstractLayer layer)
+        {
+            if(layer is MyGaussianHiddenLayer)
+                return (layer as MyGaussianHiddenLayer).NoisyInput.GetDevicePtr(layer.GPU);
+            else if (layer is MyAbstractWeightLayer)
+                return (layer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(layer.GPU);
+            else
+                return layer.Input.GetDevicePtr(layer.GPU);
+        }
+
         //parameterless constructor
-        public MyAbstractLayer() { }
+        public MyAbstractLayer()
+        {
+            PreviousConnectedLayers = new List<MyAbstractLayer>();
+            NextConnectedLayers = new List<MyAbstractLayer>();
+        }
 
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
@@ -91,12 +117,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public override void Validate(MyValidator validator)
         {
-            //            base.Validate(validator);
+            // base.Validate(validator);
             validator.AssertError(Neurons > 0, this, "Number of neurons should be > 0");
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }
 
-        //tasks
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
     }
