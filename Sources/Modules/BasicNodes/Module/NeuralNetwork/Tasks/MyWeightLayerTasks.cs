@@ -106,16 +106,16 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     [Description("ShareWeights"), MyTaskInfo(OneShot = false)]
     public class MyShareWeightsTask : MyTask<MyAbstractWeightLayer>
     {
-        [YAXSerializableField(DefaultValue = -1)]
-        [MyBrowsable, Category("\tLayer")]
-        public int ShareWeightsWithNodeId { get; set; }
+        [YAXSerializableField(DefaultValue = "")]
+        [MyBrowsable, Category("\tSharing weights")]
+        public String SourceNodeName { get; set; }
 
-        [YAXSerializableField(DefaultValue = 0.01f)]
-        [MyBrowsable, Category("\tLayer")]
-        public float ApproachWeightsRate { get; set; }
+        [YAXSerializableField(DefaultValue = 1.0f)]
+        [MyBrowsable, Category("\tSharing weights")]
+        public float ApproachRate { get; set; }
 
-        private int m_previousShareWeightsWithNodeId = -1;
-        private MyAbstractWeightLayer m_shareWeightsWithLayer = null;
+        private String m_previousSourceNodeName;
+        private MyAbstractWeightLayer m_sourceLayer;
         private MyCudaKernel m_interpolateKernel;
 
         public MyShareWeightsTask() { } //parameterless constructor
@@ -123,52 +123,72 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Init(int nGPU)
         {
             m_interpolateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel", "Interpolate");
+            m_previousSourceNodeName = "";
+            m_sourceLayer = null;
+        }
+
+        private void FindSourceLayer()
+        {
+            m_sourceLayer = null;
+
+            var matchingNodes = Owner.Owner.Network.GetChildNodesByName(SourceNodeName);
+
+            if (matchingNodes.Count == 0)
+            {
+                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node " + SourceNodeName + " because it was not found!");
+                return;
+            }
+
+            if (matchingNodes.Count > 1)
+            {
+                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node " + SourceNodeName + " because there are multiple nodes with this name!");
+                return;
+            }
+
+            var sourceLayer = matchingNodes[0] as MyAbstractWeightLayer;
+
+            if (sourceLayer == null)
+            {
+                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + SourceNodeName + " because it is not a weight layer!");
+                return;                    
+            }
+
+            if (sourceLayer.Weights.Count != Owner.Weights.Count || sourceLayer.Bias.Count != Owner.Bias.Count)
+            {
+                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + SourceNodeName + " because the sizes do not match!");
+                return;
+            }
+
+            m_previousSourceNodeName = SourceNodeName;
+            m_sourceLayer = sourceLayer;
+        }
+
+        private void CopySourceLayerWeights()
+        {
+            if (m_sourceLayer != null)
+            {
+                m_sourceLayer.Weights.CopyToMemoryBlock(Owner.Weights, 0, 0, Owner.Weights.Count);
+                m_sourceLayer.Bias.CopyToMemoryBlock(Owner.Bias, 0, 0, Owner.Bias.Count);
+            }
         }
 
         public override void Execute()
         {
-            if (ShareWeightsWithNodeId == -1)
-            {
+            if (SourceNodeName == "")
                 return;
-            }
 
-            if (ShareWeightsWithNodeId != m_previousShareWeightsWithNodeId)
+            if (SourceNodeName != m_previousSourceNodeName)
             {
-                m_shareWeightsWithLayer = null;
-
-                var fromNode = Owner.Owner.GetNodeById(ShareWeightsWithNodeId);
-                if (fromNode == null)
-                {
-                    MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + ShareWeightsWithNodeId + " because it was not found!");
-                    return;
-                }
-
-                if (!(fromNode is MyAbstractWeightLayer))
-                {
-                    MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + ShareWeightsWithNodeId + " because it is not a weight layer!");
-                    return;                    
-                }
-
-                MyAbstractWeightLayer fromLayer = (MyAbstractWeightLayer) fromNode;
-                if (fromLayer.Weights.Count != Owner.Weights.Count || fromLayer.Bias.Count != Owner.Bias.Count)
-                {
-                    MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + ShareWeightsWithNodeId + " because the sizes do not match!");
-                    return;
-                }
-
-                m_previousShareWeightsWithNodeId = ShareWeightsWithNodeId;
-                m_shareWeightsWithLayer = fromLayer;
-
-                m_shareWeightsWithLayer.Weights.CopyToMemoryBlock(Owner.Weights, 0, 0, Owner.Weights.Count);
-                m_shareWeightsWithLayer.Bias.CopyToMemoryBlock(Owner.Bias, 0, 0, Owner.Bias.Count);
+                FindSourceLayer();
+                CopySourceLayerWeights();
             }
 
-            if (m_shareWeightsWithLayer != null)
+            if (m_sourceLayer != null)
             {
                 m_interpolateKernel.SetupExecution(Owner.Weights.Count);
-                m_interpolateKernel.Run(Owner.Weights, m_shareWeightsWithLayer.Weights, Owner.Weights, ApproachWeightsRate, Owner.Weights.Count);
+                m_interpolateKernel.Run(Owner.Weights, m_sourceLayer.Weights, Owner.Weights, ApproachRate, Owner.Weights.Count);
                 m_interpolateKernel.SetupExecution(Owner.Bias.Count);
-                m_interpolateKernel.Run(Owner.Bias, m_shareWeightsWithLayer.Bias, Owner.Bias, ApproachWeightsRate, Owner.Bias.Count);
+                m_interpolateKernel.Run(Owner.Bias, m_sourceLayer.Bias, Owner.Bias, ApproachRate, Owner.Bias.Count);
             }
         }
     }
