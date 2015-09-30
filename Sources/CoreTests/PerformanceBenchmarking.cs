@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Platform.Core.Utils;
-using NUnit.Framework;
+using Xunit;
 
 namespace CoreTests
 {
-    class PerformanceBenchmarking
+    public class PerformanceBenchmarking
     {
         private class Parent
         {
@@ -27,8 +27,7 @@ namespace CoreTests
             }
         }
 
-        [Test]
-        [Ignore("Manual")]
+        [Fact, Trait("Category", "Manual")]
         public void TestIsAs()
         {
             var list = new List<Parent>();
@@ -69,8 +68,7 @@ namespace CoreTests
             Console.WriteLine(string.Format("is and as: {0} versus as and null-check: {1}", s1.ElapsedMilliseconds, s2.ElapsedMilliseconds));
         }
 
-        [Test]
-        [Ignore("Manual")]
+        [Fact, Trait("Category", "Manual")]
         public void EachWithIndexPerformanceTest()
         {
             var data = new[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
