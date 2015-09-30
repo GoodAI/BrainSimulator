@@ -29,7 +29,7 @@ namespace GoodAI.Modules.NeuralNetwork
                     MyAbstractLayer layer = Owner as MyAbstractLayer;
                     return layer.ParentNetwork.SequenceLength;
                 }
-                throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
+                throw new Exception("Temporal memory blocks can be used only inside nodes inherited from MyAbstractLayer");
             }
         }
         
@@ -55,7 +55,7 @@ namespace GoodAI.Modules.NeuralNetwork
                         return timeStep;
                     return SequenceLength - 1;
                 }
-                throw new Exception("TimeMemoryBlocks can be used only inside nodes inherited from MyAbstractLayer");
+                throw new Exception("Temporal memory blocks can be used only inside nodes inherited from MyAbstractLayer");
             }
         }
 
