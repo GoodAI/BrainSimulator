@@ -375,7 +375,7 @@ namespace GoodAI.Core.Nodes
 
                         m_kernel.Run(in0, in2, temp, (int)MyJoinOperation.Permutation, in2.Count);
                         m_kernel.Run(in1, temp, temp, (int)MyJoinOperation.Addition, in1.Count);
-                        m_dotKernel.Run(temp, in1.Count, temp, temp, in1.Count, 0);
+                        m_dotKernel.Run(temp, in1.Count, temp, temp, in1.Count, /* distributed: */ 0);
                         m_mapToIdcsKernel.Run(temp, temp.GetDevicePtr(Owner.GPU, in1.Count), in2, out0, in2.Count);
                         break;
 
@@ -385,12 +385,12 @@ namespace GoodAI.Core.Nodes
 
                     case MyJoinOperation.DistanceSquared:
                         m_kernel.Run(in0, in1, Owner.Temp, (int)MyJoinOperation.Subtraction, in0.Count, in1.Count);
-                        m_dotKernel.Run(out0, 0, Owner.Temp, Owner.Temp, Owner.Temp.Count, 0);
+                        m_dotKernel.Run(out0, 0, Owner.Temp, Owner.Temp, Owner.Temp.Count, /* distributed: */ 0);
                         break;
 
                     case MyJoinOperation.CosineDistance:
                     case MyJoinOperation.DotProduct:
-                        m_dotKernel.Run(out0, 0, in0, in1, in0.Count, 0);
+                        m_dotKernel.Run(out0, 0, in0, in1, in0.Count, /* distributed: */ 0);
                         break;
 
                     case MyJoinOperation.MatMultiplication:

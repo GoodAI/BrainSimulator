@@ -120,14 +120,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
-    <Compile Include="Common\MyLoopGroup.cs" />    <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />    <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
+    <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
+    <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyNegativeCorrelationEnsembleLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyOne2OneOutputLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyNegativeCorrelationEnsembleTasks.cs" />
-    <Compile Include="NeuralNetwork\Tasks\MyPretrainingTasks.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />

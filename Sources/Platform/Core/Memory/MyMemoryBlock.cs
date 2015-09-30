@@ -34,6 +34,7 @@ namespace GoodAI.Core.Memory
         public abstract bool SafeCopyToDevice();
         public abstract void SafeCopyToHost();
         public abstract CUdeviceptr GetDevicePtr(int GPU);
+        public abstract CUdeviceptr GetDevicePtr(int GPU, int offset);
         public abstract CUdeviceptr GetDevicePtr(int GPU, int offset, int timeStep);
         public abstract CUdeviceptr GetDevicePtr(MyWorkingNode callee);
         public abstract CUdeviceptr GetDevicePtr(MyAbstractObserver callee);
@@ -264,10 +265,15 @@ namespace GoodAI.Core.Memory
             return GetDevicePtr(GPU, 0);
         }
 
-        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int timestep = -1)
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset)
         {
             CudaDeviceVariable<T> rDeviceVar = GetDevice(GPU);
             return rDeviceVar != null ? rDeviceVar.DevicePointer + offset * rDeviceVar.TypeSize : default(CUdeviceptr);
+        }
+
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int timestep = -1)
+        {
+            return GetDevicePtr(GPU, offset);
         }
 
         public override CUdeviceptr GetDevicePtr(MyWorkingNode callee)
