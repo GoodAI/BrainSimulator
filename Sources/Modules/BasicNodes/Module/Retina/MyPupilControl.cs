@@ -240,12 +240,12 @@ namespace GoodAI.Modules.Retina
                         for (int j = 0; j < Owner.m_sumsPerItem; j++)
                         {
                             m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
-                                Owner.m_sumsPerItem * i + j, i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + j * Owner.AttentionMap.Count, 1, 0);
+                                Owner.m_sumsPerItem * i + j, i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + j * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
                         }
                     }
 
                     //sum all weights (denominator)
-                    m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, Owner.m_sumsPerItem * Owner.m_centroidsCount, 0, 1, 0);
+                    m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, Owner.m_sumsPerItem * Owner.m_centroidsCount, 0, 1, /* distributed: */ 0);
 
                     //evaluate new mean & stdDev for all centroids
                     m_finalize_kernel.SetupExecution(Owner.m_centroidsCount);
@@ -346,11 +346,11 @@ namespace GoodAI.Modules.Retina
                     {
                         m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
                                    c_n1i * Owner.m_sumsPerItem + k,
-                                   c_n1i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, 0);
+                                   c_n1i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
 
                         m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
                                    c_n2i * Owner.m_sumsPerItem + k,
-                                   c_n2i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, 0);
+                                   c_n2i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
                     }
                 }
 
@@ -427,7 +427,7 @@ namespace GoodAI.Modules.Retina
                             {
                                 m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
                                     (Owner.m_centroidsCount + cIndex) * Owner.m_sumsPerItem + k,
-                                    (Owner.m_centroidsCount + cIndex) * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, 0);
+                                    (Owner.m_centroidsCount + cIndex) * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
                             }
                         }
                         cIndex++;
@@ -563,13 +563,13 @@ namespace GoodAI.Modules.Retina
                 m_kernel.Run(Owner.AttentionMap, Owner.ReductionSources, m_imageWidth, m_imageHeight);
 
                 //sum all values needed for mean & stdDev
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 0, 0, 1, 0);
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 1, Owner.AttentionMap.Count, 1, 0);
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 2, 2 * Owner.AttentionMap.Count, 1, 0);
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 3, 3 * Owner.AttentionMap.Count, 1, 0);
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 0, 0, 1, /* distributed: */ 0);
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 1, Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 2, 2 * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 3, 3 * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
 
                 //sum all weights (denominator)
-                m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, 4, 0, 1, 0);
+                m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, 4, 0, 1, /* distributed: */ 0);
 
                 //evaluate mean & stdDev
                 m_finalize_kernel.Run(Owner.Statistics);

@@ -265,7 +265,7 @@ namespace GoodAI.Modules.VSA
             for (int i = 0; i < otherDim; i++)
             {
                 var seg = vectors.GetDevicePtr(GPU, i * leadingDim);
-                dotKernel.Run(temp, i, seg, seg, leadingDim, 0);
+                dotKernel.Run(temp, i, seg, seg, leadingDim, /* distributed: */ 0);
             }
 
             temp.SafeCopyToHost(0, otherDim);
@@ -607,7 +607,7 @@ namespace GoodAI.Modules.VSA
 
                 // Normalize the current vector
                 {
-                    dotKernel.Run(temp, 0, curr, curr, xDim, 0);
+                    dotKernel.Run(temp, 0, curr, curr, xDim, /* distributed: */ 0);
                     temp.SafeCopyToDevice(0, 1);
 
                     if (temp.Host[0] < 0.0000001f)
@@ -625,7 +625,7 @@ namespace GoodAI.Modules.VSA
                     var next = vectors.GetDevicePtr(GPU, j);
 
                     // Compute and subtract the projection onto the current vector
-                    dotKernel.Run(temp, xDim, curr, next, xDim, 0);
+                    dotKernel.Run(temp, xDim, curr, next, xDim, /* distributed: */ 0);
 
                     multKernel.Run(curr, temp, temp, (int)MyJoin.MyJoinOperation.Multiplication, xDim, 1);
                     multKernel.Run(next, temp, next, (int)MyJoin.MyJoinOperation.Subtraction, xDim, xDim);
