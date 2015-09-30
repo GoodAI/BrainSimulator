@@ -124,7 +124,6 @@
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyStackLayer.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
-    <Compile Include="Robotic\MyCuriosityProbe.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
