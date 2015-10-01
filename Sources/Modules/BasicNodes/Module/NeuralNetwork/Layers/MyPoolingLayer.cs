@@ -35,6 +35,60 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
 
 
+        [YAXSerializableField(DefaultValue = false)]
+        private bool m_autoInput = false;
+        [MyBrowsable, Category("Input image dimensions"), DisplayName("Automatic parameters")]
+        public bool AutomaticInput
+        {
+            get { return m_autoInput; }
+            set
+            {
+                m_autoInput = false;
+                if (value)
+                {
+                    if (InputConnections.Length <= 0)
+                    {
+                        MyLog.ERROR.WriteLine("No connected layers to layer " + this.Name + ". Please update memory blocks.");
+                        return;
+                    }
+                    if (Input.Owner is MyAbstractLayer)
+                    {
+                        MyAbstractLayer prevLayer = Input.Owner as MyAbstractLayer;
+
+                        if (prevLayer is MyConvolutionLayer)
+                        {
+                            InputWidth = ((MyConvolutionLayer)prevLayer).OutputWidth;
+                            InputHeight = ((MyConvolutionLayer)prevLayer).OutputHeight;
+                            Depth = ((MyConvolutionLayer)prevLayer).FilterCount;
+                            MyLog.INFO.WriteLine("Input parameters of layer " + this.Name + " were set succesfully.");
+                            return;
+                        }
+
+                        else if (prevLayer is MyPoolingLayer)
+                        {
+                            InputWidth = ((MyPoolingLayer)prevLayer).OutputWidth;
+                            InputHeight = ((MyPoolingLayer)prevLayer).OutputHeight;
+                            Depth = ((MyPoolingLayer)prevLayer).Depth;
+                            MyLog.INFO.WriteLine("Input parameters of layer " + this.Name + " were set succesfully.");
+                            return;
+                        }
+
+                        // assume input image
+                        if ((prevLayer is MyHiddenLayer) || (Input != null && Input.Count > 0))
+                        {
+                            MyLog.INFO.WriteLine("Layer " + this.Name +
+                                                 " cannot interpret input neuron count as image width, height and depth automatically.");
+                            return;
+                        }
+                    }
+
+                    MyLog.WARNING.WriteLine("Input parameters for layer " + this.Name +
+                                            " could not be set automatically.");
+                }
+            }
+        }
+
+
         [YAXSerializableField(DefaultValue = 1)]
         private int m_depth = 1;
         [MyBrowsable, Category("Input image dimensions")]
@@ -192,8 +246,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             base.Validate(validator);
 
-            if (PreviousLayer != null)
-                validator.AssertError(InputWidth * InputHeight * Depth == PreviousLayer.Neurons, this, "'Input width * input height * depth' must be equal to output size of the previous layer.");
+            if (PreviousTopologicalLayer != null)
+                validator.AssertError(InputWidth * InputHeight * Depth == PreviousTopologicalLayer.Neurons, this, "'Input width * input height * depth' must be equal to output size of the previous layer.");
 
             validator.AssertError((InputWidth - FilterWidth) % HorizontalStride == 0, this, "Filter does not fit the input image horizontally when striding.");
             
@@ -215,14 +269,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
-
         public void CreateTasks()
         {
             ForwardTask = new MyPoolingForwardTask();
             DeltaBackTask = new MyPoolingBackwardTask();
         }
     }
-
 
 //    public enum ActivationFunction
 //    {

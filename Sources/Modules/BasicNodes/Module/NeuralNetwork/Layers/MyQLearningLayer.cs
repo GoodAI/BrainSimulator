@@ -40,6 +40,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             get { return GetInput(2); }
         }
+
         public MyMemoryBlock<float> PreviousAction { get; protected set; }
         public MyMemoryBlock<float> PreviousInput { get; protected set; }
         public MyMemoryBlock<float> PreviousReward { get; protected set; }

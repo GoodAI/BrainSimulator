@@ -472,7 +472,7 @@ namespace GoodAI.Modules.VSA
                 Owner.Output.Fill(0);
             }
         }
-        
+
         /*
         [MyBrowsable, Category("Grid")]
         [YAXSerializableField(DefaultValue = 10)]
@@ -598,7 +598,7 @@ namespace GoodAI.Modules.VSA
                     return;
 
                 for (int i = 0; i < symbols.Length; i++)
-                    m_dotKernel.Run(Owner.Temp, i, symbols[i], symbols[i], symbolSize);
+                    m_dotKernel.Run(Owner.Temp, i, symbols[i], symbols[i], symbolSize, 0);
 
                 Owner.Temp.SafeCopyToHost(0, symbols.Length);
 
@@ -614,7 +614,7 @@ namespace GoodAI.Modules.VSA
 
                 //for (int i = 0; i < symbols.Length; i++)
                 //{
-                //    m_dotKernel.Run(Owner.Temp, i, symbols[i], symbols[i], symbolSize);
+                //    m_dotKernel.Run(Owner.Temp, i, symbols[i], symbols[i], symbolSize, 0);
                 //    Owner.Temp.SafeCopyToHost(0, symbols.Length);
                 //}
             }

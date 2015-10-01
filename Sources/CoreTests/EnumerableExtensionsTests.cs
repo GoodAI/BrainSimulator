@@ -1,24 +1,26 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Platform.Core.Utils;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Extensions;
 
 namespace CoreTests
 {
-    [TestFixture]
     public class EnumerableExtensionsTests
     {
-        private IEnumerable<ITester> TestCases()
+        public static TheoryData<ITester> TestCases = new TheoryData<ITester>()
         {
-            yield return new Tester<int>(new int[0]);
-            yield return new Tester<string>(new [] {"1", "@", "P"});
-        }
-        
-        [TestCaseSource("TestCases")]
+            new Tester<int>(new int[0]),
+            new Tester<string>(new [] {"1", "@", "P"}),
+            new Tester<StringBuilder>(new [] {new StringBuilder("a"), new StringBuilder("b"), new StringBuilder()})
+        };
+
+        [Theory, MemberData("TestCases")]
         public void EachWithIndexTest(ITester tester)
         {
             tester.TestEquality();
@@ -50,7 +52,12 @@ namespace CoreTests
                 var got = new List<Tuple<int, T>>();
                 data.EachWithIndex((arg1, i) => got.Add(new Tuple<int, T>(i, arg1)));
 
-                Assert.AreEqual(expected, got);
+                Assert.Equal(expected, got);
+            }
+
+            public override string ToString()
+            {
+                return "Tester " + m_data;
             }
         }
     }

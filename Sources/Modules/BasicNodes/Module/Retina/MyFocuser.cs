@@ -28,10 +28,17 @@ namespace GoodAI.Modules.Retina
 
         public MyMemoryBlock<float> TempPupilControl { get; private set; }
 
+        public int NumberPupilSamples;
+
         public override void UpdateMemoryBlocks()
         {
             OutputSize = OutputWidth * OutputWidth;
             Output.ColumnHint = OutputWidth;
+
+            NumberPupilSamples = 1;
+            if (PupilControl != null && PupilControl.Count > 3) // for multi input -> set how $ pupils samples from the count
+                NumberPupilSamples = PupilControl.Count / PupilControl.ColumnHint;
+            OutputSize *= NumberPupilSamples;
 
             TempPupilControl.Count = 3;
         }
@@ -42,7 +49,10 @@ namespace GoodAI.Modules.Retina
 
             if (PupilControl != null)
             {
-                validator.AssertError(PupilControl.Count > 2, this, "Not enough control values (at least 3 values needed)");                
+                validator.AssertError(PupilControl.Count > 2, this, "Not enough control values (at least 3 values needed)");
+
+                validator.AssertError((PupilControl.Count % 3) == 0, this, "Wrong pupil control input size, it has to be [x,y,s] or [x,y,s;x,y,s...]");
+                validator.AssertError((float)PupilControl.Count / (float)PupilControl.ColumnHint != 0, this, "If input is matrix, it has to be 3 columns and N rows, each row x,y,s");
             }
         }
 
@@ -67,18 +77,21 @@ namespace GoodAI.Modules.Retina
                 inputHeight = Owner.Input.Count / Owner.Input.ColumnHint;
 
                 outputWidth = Owner.Output.ColumnHint;
-                outputHeight = Owner.Output.Count / Owner.Output.ColumnHint; 
+                outputHeight = Owner.Output.Count / Owner.Output.ColumnHint / Owner.NumberPupilSamples;
 
-                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleSubImageKernel");
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleSubImageKernel_ForManyProposals");
                 m_kernel.SetupExecution(Owner.OutputSize);
+
             }
 
             public override void Execute()
             {
                 Owner.Output.Fill(SafeBounds_FillInValue);
                 if (Owner.Input != null)
-                    m_kernel.Run(Owner.Input, Owner.Output, Owner.PupilControl, SafeBounds ? 1 : 0, inputWidth,
-                        inputHeight, outputWidth, outputHeight);
+                {
+                    m_kernel.Run(Owner.Input, Owner.Output, Owner.PupilControl, SafeBounds ? 1 : 0,
+                        Owner.PupilControl.ColumnHint, inputWidth, inputHeight, outputWidth, outputHeight, Owner.NumberPupilSamples, Owner.Output.Count);
+                }
                 else
                     MyLog.ERROR.WriteLine("Owner.Input is null.");
             }
@@ -104,8 +117,15 @@ namespace GoodAI.Modules.Retina
 
             public override void Execute()
             {
-                Owner.Output.Fill(0);                
-                m_kernel.Run(Owner.Output, Owner.Input, Owner.PupilControl, outputWidth, outputHeight, inputWidth, inputHeight);                 
+                if (Owner.NumberPupilSamples > 1)
+                {
+                    MyLog.WARNING.WriteLine("MyFocuser:MyUnfocusTask deoes not support multiple pupils input!");
+                }
+                else
+                {
+                    Owner.Output.Fill(0);
+                    m_kernel.Run(Owner.Output, Owner.Input, Owner.PupilControl, outputWidth, outputHeight, inputWidth, inputHeight);
+                }
             }
         };
 

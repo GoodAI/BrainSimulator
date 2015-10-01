@@ -40,7 +40,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Cost,
                 Owner.Neurons,
                 Owner.ParentNetwork.BatchSize
-                );
+            );
 
             // IMPORTANT: Add regularization
             Owner.AddRegularization();
@@ -83,7 +83,43 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Cost,
                 Owner.Neurons,
                 Owner.ParentNetwork.BatchSize
-                );
+            );
+
+            // IMPORTANT: Add regularization
+            Owner.AddRegularization();
+        }
+    }
+
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>
+    ///     Loss function for comparing two images. 
+    /// </summary>
+    /// <description></description>
+    [Description("ImageLoss"), MyTaskInfo(OneShot = false)]
+    public class MyImageLossTask : MyAbstractLossTask<MyAbstractOutputLayer>
+    {
+        private MyCudaKernel m_lossKernel; // kernel
+        public override void Init(int nGPU)
+        {
+            m_lossKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\LossFunctions\ImageLoss", "ImageLossKernel");
+        }
+
+        public override void Execute() //Task execution
+        {
+            // reset delta
+            Owner.Delta.Fill(0);
+
+            // get output layer delta
+            m_lossKernel.SetupExecution(m_lossKernel.MAX_THREADS);
+            m_lossKernel.DynamicSharedMemory = m_lossKernel.BlockDimensions.x * sizeof(float);
+            m_lossKernel.Run(
+                Owner.Output, 
+                Owner.Target,
+                Owner.Delta,
+                Owner.Cost,
+                Owner.Neurons
+            );
 
             // IMPORTANT: Add regularization
             Owner.AddRegularization();

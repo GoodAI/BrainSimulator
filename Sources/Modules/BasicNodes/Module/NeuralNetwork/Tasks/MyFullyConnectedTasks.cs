@@ -1,4 +1,7 @@
 ﻿using GoodAI.Core;
+using GoodAI.Modules.NeuralNetwork.Group;
+using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.RBM;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Matrix;
@@ -8,8 +11,12 @@ using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaBlas;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -64,7 +71,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 		        dropout,
 		        Owner.Neurons,
 		        Owner.ParentNetwork.BatchSize
-                );
+            );
 
             if (Owner.ParentNetwork.L1 > 0) // don't take performance hit if L1 is not used
             {
@@ -150,18 +157,18 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-            // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
-            MyAbstractLayer nextLayer = Owner.NextLayer;
+            MyNode node = Owner.Input.Owner;
 
-            if (previousLayer != null)
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
+
+                // reset delta only if next is not Gaussian HACK.
+                // (Gaussian layer already reseted delta and filled with regularization deltas)
+                previousLayer.Delta.Fill(0);
+
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 // previousLayer.Delta = Transpose(Weights) x Delta
                 MyCublasFactory.Instance.Gemm(Operation.Transpose, Operation.NonTranspose,
@@ -180,7 +187,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     Owner.ParentNetwork.Dropout,
                     previousLayer.Neurons,
                     Owner.ParentNetwork.BatchSize
-                    );
+                );
             }
         }
     }

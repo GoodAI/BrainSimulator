@@ -9,8 +9,11 @@ using GoodAI.Modules.Matrix;
 using GoodAI.Modules.NeuralNetwork.Layers;
 using System;
 using System.ComponentModel;
+using System.Collections;
 using System.Linq;
 using YAXLib;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace GoodAI.Modules.NeuralNetwork.Group
 {
@@ -22,15 +25,18 @@ namespace GoodAI.Modules.NeuralNetwork.Group
     [Description("InitGroup"), MyTaskInfo(OneShot = true)]
     public class MyInitNNGroupTask : MyTask<MyNeuralNetworkGroup>
     {
-        //parameterless constructor
+        // parameterless constructor
         public MyInitNNGroupTask() { }
 
-        //Kernel initialization
+        // Kernel initialization
         public override void Init(int nGPU) { }
 
-        //Task execution
+        // Task execution
         public override void Execute()
         {
+            // timeStep is -1, because it is incremented at beginning of new timestep
+            Owner.TimeStep = -1;
+
             // disable GradientCheck by default - TODO: fix this somehow
             Owner.GradientCheck.Enabled = false;
 
@@ -39,42 +45,107 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
             // set next and previous layer
             MyAbstractLayer layer;
-            MyAbstractLayer lastLayer = null;
+            MyAbstractLayer lastTopologicalLayer = null;
             foreach (MyNode child in Owner.SortedChildren)
             {
                 if (child is MyAbstractLayer)
                 {
                     layer = child as MyAbstractLayer;
 
-                    if (lastLayer != null)
+                    if (lastTopologicalLayer != null)
                     {
-                        lastLayer.NextLayer = layer;
+                        lastTopologicalLayer.NextTopologicalLayer = layer;
                     }
 
-                    layer.NextLayer = null;
-                    layer.PreviousLayer = lastLayer;
-                    lastLayer = layer;
+                    layer.NextTopologicalLayer = null;
+                    layer.PreviousTopologicalLayer = lastTopologicalLayer;
+                    lastTopologicalLayer = layer;
+
+                    // collect all next and all previous conneted layers
+                    layer.PreviousConnectedLayers = new List<MyAbstractLayer>();
+                    layer.NextConnectedLayers = new List<MyAbstractLayer>();
+                    foreach (MyConnection inputConnection in child.InputConnections)
+                    {
+                        if (inputConnection != null && inputConnection.From is MyAbstractLayer)
+                        {
+                            MyAbstractLayer lastConnectedLayer = inputConnection.From as MyAbstractLayer;
+                            layer.PreviousConnectedLayers.Add(lastConnectedLayer);
+                            lastConnectedLayer.NextConnectedLayers.Add(layer);
+                        }
+                    }
                 }
             }
 
             // set first and last layer
-            layer = lastLayer;
-            Owner.FirstLayer = layer;
-            Owner.LastLayer = layer;
+            layer = lastTopologicalLayer;
+            Owner.FirstTopologicalLayer = layer;
+            Owner.LastTopologicalLayer = layer;
             while (layer != null)
             {
-                Owner.FirstLayer = layer;
-                layer = layer.PreviousLayer;
+                Owner.FirstTopologicalLayer = layer;
+                layer = layer.PreviousTopologicalLayer;
             }
 
             // count total number of weights
             Owner.TotalWeights = 0;
-            layer = Owner.FirstLayer;
+            layer = Owner.FirstTopologicalLayer;
             while (layer != null)
             {
                 if (layer is MyAbstractWeightLayer)
                     Owner.TotalWeights += (layer as MyAbstractWeightLayer).Weights.Count;
-                layer = layer.NextLayer;
+                layer = layer.NextTopologicalLayer;
+            }
+        }
+    }
+
+    [Description("IncrementTimeStep"), MyTaskInfo(OneShot = false)]
+    public class MyIncrementTimeStepTask : MyTask<MyNeuralNetworkGroup>
+    {
+        public MyIncrementTimeStepTask() { }
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute()
+        {
+            Owner.TimeStep++;
+        }
+    }
+
+    [Description("DecrementTimeStep"), MyTaskInfo(OneShot = false)]
+    public class MyDecrementTimeStepTask : MyTask<MyNeuralNetworkGroup>
+    {
+        public MyDecrementTimeStepTask() { }
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute()
+        {
+            Owner.TimeStep--;
+        }
+    }
+
+    [Description("RunTemporalBlocksMode"), MyTaskInfo(OneShot = false)]
+    public class MyRunTemporalBlocksModeTask : MyTask<MyNeuralNetworkGroup>
+    {
+        public override void Init(int nGPU)
+        {
+        }
+
+        public override void Execute()
+        {
+            foreach (MyNode child in Owner.SortedChildren)
+            {
+                if (child is MyAbstractLayer)
+                {
+                    foreach (PropertyInfo memBlockInfo in MyNodeInfo.Get(child.GetType()).OwnedMemoryBlocks)
+                    {
+                        Object memBlock = memBlockInfo.GetValue(child);
+                        if (memBlock is MyTemporalMemoryBlock<float>)
+                        {
+                            (memBlock as MyTemporalMemoryBlock<float>).RunMode();
+                        }
+                    }
+                }
             }
         }
     }
@@ -133,11 +204,12 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         public MySGDTask() { }
 
         // kernel
-        private MyCudaKernel m_SGDupdateKernel, m_convSGDupdateKernel;
+        private MyCudaKernel m_SGDupdateKernel, m_convSGDupdateKernel, m_partialSGDupdateKernel;
         public override void Init(int nGPU)
         {
             m_SGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "FullyConnectedSGDUpdateKernel");
             m_convSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Convolution\ConvolutionKernel", "ConvolutionSGDUpdateWeightsKernel");
+            m_partialSGDupdateKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\UpdateWeightsKernels", "PartialSGDUpdateKernel");
         }
 
         //Task execution - should be called with a parameter
@@ -174,9 +246,33 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             {
                 // Gaussian hidden layer just propagates delta, no weight updates
             }
+            else if (layer.Connection == ConnectionType.PARTIAL_UPDATE && layer is IPartialUpdateLayer)
+            {
+                // Update some but not all of the weights
+                IPartialUpdateLayer partialUpdateLayer = layer as IPartialUpdateLayer;
+
+                m_partialSGDupdateKernel.SetupExecution(layer.Weights.Count);
+                m_partialSGDupdateKernel.Run(
+                    layer.Input,
+                    layer.Delta,
+                    layer.Weights,
+                    layer.PreviousWeightDelta,
+                    layer.Bias,
+                    layer.PreviousBiasDelta,
+                    Owner.SGD.TrainingRate,
+                    Owner.SGD.Momentum,
+                    Owner.L1,
+                    Owner.L2,
+                    layer.DropoutMask,
+                    layer.Neurons,
+                    layer.Weights.Count,
+                    partialUpdateLayer.SuppressUpdatesAt(),
+                    partialUpdateLayer.SuppressUpdatesCount()
+                );
+            }
             else if (layer.Connection == ConnectionType.CONVOLUTION && layer is MyConvolutionLayer)
             {
-                MyConvolutionLayer convLayer = (MyConvolutionLayer)layer;
+                MyConvolutionLayer convLayer = (MyConvolutionLayer) layer;
                 m_convSGDupdateKernel.SetupExecution(convLayer.Weights.Count);
                 m_convSGDupdateKernel.Run(
                     Owner.SGD.TrainingRate, Owner.SGD.Momentum,
@@ -185,12 +281,12 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                     convLayer.Delta, convLayer.PreviousWeightDelta,
                     convLayer.PaddedImage,
                     convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding,
-                    (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding) *
+                    (convLayer.InputWidth + convLayer.ZeroPadding + convLayer.ZeroPadding)*
                     (convLayer.InputHeight + convLayer.ZeroPadding + convLayer.ZeroPadding),
                     convLayer.FilterWidth,
-                    convLayer.FilterWidth * convLayer.FilterHeight,
-                    convLayer.FilterWidth * convLayer.FilterHeight * convLayer.InputDepth,
-                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth * convLayer.OutputHeight,
+                    convLayer.FilterWidth*convLayer.FilterHeight,
+                    convLayer.FilterWidth*convLayer.FilterHeight*convLayer.InputDepth,
+                    convLayer.OutputWidth, convLayer.OutputHeight, convLayer.OutputWidth*convLayer.OutputHeight,
                     convLayer.HorizontalStride, convLayer.VerticalStride,
                     convLayer.L1Term, convLayer.L2Term,
                     Owner.BatchSize,
@@ -201,7 +297,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             else
             {
                 MyLog.ERROR.WriteLine("No method provided to SGD propagate a " + layer.Connection +
-                                      " connected MyAbstractWeightLayer in " + Owner);
+                                        " connected MyAbstractWeightLayer in " + Owner);
             }
         }
     }
@@ -710,7 +806,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 }
 
                 // loop through the layers
-                MyAbstractLayer layer = Owner.FirstLayer;
+                MyAbstractLayer layer = Owner.FirstTopologicalLayer;
                 while (layer != null)
                 {
                     // check for weights
@@ -786,7 +882,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                             break; // continue to next sample
                         }
                     }
-                    layer = layer.NextLayer;
+                    layer = layer.NextTopologicalLayer;
 
                     // catch unmatched dice-rolls
                     if (layer == null)

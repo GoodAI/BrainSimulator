@@ -146,23 +146,16 @@ extern "C"
    	__global__ void BilinearResampleSubImageKernel_ForManyProposals(const float *input, float *output, const float* subImageDefs, bool safeBounds,
 		int subImageDefsDim, int inputWidth, int inputHeight, int outputWidth, int outputHeight, int numberSubImages, int outputSize)
 	{
+		int id = blockDim.x * blockIdx.y * gridDim.x
+				+ blockDim.x * blockIdx.x
+				+ threadIdx.x;
 
-        int px = threadIdx.x;
-        int py = threadIdx.y;
-        int subim_id = blockIdx.x;
+        int px = id % outputWidth;  // line in the single output image
+        int subim_id = id / outputWidth / outputHeight;  // which image it is
+        int py = (id / outputWidth) % outputHeight;  // column in the single output image
 
-        //__shared__ float cache[6*6] ;  //--- it does not make a big difference :-(
-
-        if (blockDim.x*blockDim.y*gridDim.x != outputSize)
+        if (id<outputSize)
         {
-            //--- wrong kernel sizes!!!
-            return;
-        }
-
-        if ((px + py*outputWidth + subim_id*outputWidth*outputHeight)<outputSize) // double check!!
-        {
-
-		//---- copy of subimCode to resample image
 			float subImgCX = subImageDefs[0 + subim_id*subImageDefsDim]; // <-1, 1>
 			float subImgCY = subImageDefs[1 + subim_id*subImageDefsDim]; // <-1, 1>
 			float subImgDiameter = subImageDefs[2 + subim_id*subImageDefsDim]; // <0,1>
@@ -199,7 +192,7 @@ extern "C"
 				float yDist = (yRatio * py) - y;
  
 				//--- Points
-				float topLeft= input[(y + subImgY) * inputWidth + x];
+				float topLeft= input[(y + subImgY) * inputWidth + x + subImgX];
 				float topRight = input[(y + subImgY) * inputWidth + x + subImgX + 1];
 				float bottomLeft = input[(y + subImgY + 1) * inputWidth + x + subImgX];
 				float bottomRight = input[(y + subImgY + 1) * inputWidth + x + subImgX + 1 ]; 
@@ -211,17 +204,7 @@ extern "C"
 					bottomRight * xDist * yDist;
  
 				output[py * outputWidth + px + subim_id*outputWidth*outputHeight] = result;
-                //cache[py * outputWidth + px] = result;
 			}
-	    /*	//--- copy these results to the output matrix :D
-            __syncthreads();
-	    	if (px==0 && py==0){
-                for (int i=0 ; i<outputWidth*outputHeight ; i++)
-                {
-                    output[i + subim_id*outputWidth*outputHeight] = cache[i];
-                }
-            }
-         */
         }
 	}
 

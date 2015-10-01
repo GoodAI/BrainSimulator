@@ -12,7 +12,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     /// <meta>ph</meta>
     /// <status>Working</status>
     /// <summary>
-    /// Initialises the layer parameters randomly with mean 0 and stdDev: 1 / (sqrt(Input.Count + 1))
+    ///     Initialises the layer parameters with chosen parameters.
+    ///     It is recommended to use normal distribution with automatic standard deviation (1.0/sqrt(Input.Count)).
     /// <br></br>
     /// This gives a high certainty, that the neurons don't start out saturated.
     /// </summary>
@@ -20,10 +21,26 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     [Description("InitWeights"), MyTaskInfo(OneShot = true)]
     public class MyInitWeightsTask : MyTask<MyAbstractWeightLayer>
     {
-        private Random Rand = new Random();
 
-        public MyInitWeightsTask() { } //parameterless constructor
-        public override void Init(int nGPU) { } //Kernel initialization
+        private MyCudaKernel m_polynomialKernel;
+
+        public override void Init(int nGPU)
+        {
+            m_polynomialKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "PolynomialFunctionKernel");
+        }
+
+        private static Random Rand = new Random();
+
+        public enum RandomDistribution
+        {
+            Ones,
+            Default
+        }
+
+        //Choose distribution
+        [MyBrowsable, Category("\t\tParams")]
+        [YAXSerializableField(DefaultValue = RandomDistribution.Default)]
+        public RandomDistribution Distribution { get; set; }
 
         public override void Execute() //Task execution
         {
@@ -32,21 +49,35 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.PreviousWeightDelta.Fill(0);
             Owner.BiasInput.Fill(1.0f);
 
-            // set standard deviation
-            float stdDev = 0.01f;
-            if (Owner.Input != null)
-                stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
-                
+            // init weights
+            switch (Distribution)
+            {
+                case RandomDistribution.Ones:
+                    Owner.Weights.Fill(1.0f);
+                    Owner.Bias.Fill(1.0f);
+                    break;
 
-            // init random weights
-            for (int w = 0; w < Owner.Weights.Count; w++)
-                Owner.Weights.Host[w] = GetRandomGaussian(0.0f, stdDev);
-            Owner.Weights.SafeCopyToDevice(); // copy to device
+                case RandomDistribution.Default:
+                    float stdDev = 1.0f;
+                    float Mean = 0.0f;
+                    if (Owner.Input != null)
+                        stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
 
-            // init random biases
-            for (int b = 0; b < Owner.Bias.Count; b++)
-                Owner.Bias.Host[b] = GetRandomGaussian(0.0f, stdDev);
-            Owner.Bias.SafeCopyToDevice(); // copy to device
+                    // init random weights
+                    for (int w = 0; w < Owner.Weights.Count; w++)
+                        Owner.Weights.Host[w] = GetRandomGaussian(0.0f, stdDev);
+                    Owner.Weights.SafeCopyToDevice(); // copy to device
+
+                    // init random biases
+                    for (int b = 0; b < Owner.Bias.Count; b++)
+                        Owner.Bias.Host[b] = GetRandomGaussian(0.0f, stdDev);
+                    Owner.Bias.SafeCopyToDevice(); // copy to device
+                    break;
+
+                default:
+                    MyLog.WARNING.WriteLine("No initialization distribution set.");
+                    return;
+            }
         }
 
         private float GetRandomGaussian(float mean, float stdDev)
@@ -57,6 +88,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                          Math.Sin(2.0 * Math.PI * u2)); //random normal(0,1)
             return mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
         }
+
     }
 
     /// <author>GoodAI</author>

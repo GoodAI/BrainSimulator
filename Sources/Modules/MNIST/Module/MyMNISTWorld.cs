@@ -132,6 +132,10 @@ namespace MNIST
         [YAXSerializableField(DefaultValue = 50)]
         public int ExpositionTime { get; set; }
 
+        [MyBrowsable, Category("Params")]
+        [YAXSerializableField(DefaultValue = 0)]
+        public int ExpositionTimeOffset { get; set; }
+
         [MyBrowsable, Category("Params"), DisplayName("Send numbers")]
         [YAXSerializableField(DefaultValue = "All")]
         public string SendNumbers
@@ -159,6 +163,7 @@ namespace MNIST
         [YAXSerializableField(DefaultValue = false)]
         public bool SequenceOrdered { get; set; }
 
+
         [MyBrowsable, Category("Params"), DisplayName("Random order")]
         [YAXSerializableField(DefaultValue = false)]
         public bool RandomEnumerate { get; set; }
@@ -175,7 +180,7 @@ namespace MNIST
             Owner.MNISTManager.m_definedOrder = SequenceOrdered;
 
             //if ((SimulationStep <= ExpositionTime * Owner.ImagesCnt) && (SimulationStep % ExpositionTime == 0))
-            if (SimulationStep % ExpositionTime == 0)
+            if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
             {
                 MyMNISTImage im = Owner.MNISTManager.GetNextImage(m_numsToSend);
 

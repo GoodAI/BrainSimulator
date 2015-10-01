@@ -8,6 +8,7 @@
 #include <builtin_types.h>
 #include <vector_functions.h>
 #include <math.h>
+#include <cfloat>
 
 #include "..\Activation\ActivationFunction.cu"
 
@@ -105,10 +106,12 @@ extern "C"
 	}
 
 
-    __global__ void GaussianForwardSamplingKernel(
-		float* gaussianParamsInputPtr,
+	__global__ void GaussianForwardSamplingKernel(
+		ActivationFunctionEnum activationFunction,
+		float* means,
+		float* sigmas,
+		float* noisyInput,
 		float* outputPtr,
-		float* biasPtr,
 		float* randomNormalPtr,
 		int prevLayerSize,
 		int thisLayerSize
@@ -121,16 +124,102 @@ extern "C"
 
 		if (j < thisLayerSize)
 		{
-			float mu = gaussianParamsInputPtr[j];
-			float sigma = gaussianParamsInputPtr[j + prevLayerSize / 2];
-			float x = randomNormalPtr[j];
-				
-			// sample Gaussian from Uniform
-			//float t = expf(-pow((x - mu), 2) / powf(sigma, 2));
+			float mu = means[j], sigma = sigmas[j], x = randomNormalPtr[j];
 
-			// renormalize to <0, 1>
-			//outputPtr[j] = fminf(fmaxf(t, 0), 1);
-			outputPtr[j] = sigmoid(mu + x * sigma);
+			// input means after applying noise
+			noisyInput[j] = mu + x * sigma;
+
+			// squashing function applied to noisy input
+			outputPtr[j] = Evaluate(activationFunction, noisyInput[j]);
+		}
+	}
+
+	__global__ void GaussianMinMaxField(float* input, int inputCount, float* mins, float* maxes)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < inputCount)
+		{
+			mins[i] = fminf(mins[i], input[i]);
+			maxes[i] = fmaxf(maxes[i], input[i]);
+		}
+	}
+
+	__global__ void GaussianResetPriorStats(int inputCount, float* mins, float* maxes)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < inputCount)
+		{
+			mins[i] = FLT_MAX;
+			maxes[i] = FLT_MIN;
+		}
+	}
+
+	__global__ void GaussianSamplePrior(float* input, int inputCount, float* mins, float* maxes, float* randomUniform)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < inputCount)
+		{
+			float diff = maxes[i] - mins[i];
+			input[i] = randomUniform[i] * diff + mins[i];
+		}
+	}
+
+	__global__ void NegativeCorrelationForwardResetKernel(
+		float* outputPtr,
+		int thisLayerSize
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			outputPtr[j] = 0;
+		}
+	}
+
+	__global__ void NegativeCorrelationForwardSumKernel(
+		float* inputPtr,
+		float* outputPtr,
+		int thisLayerSize
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			outputPtr[j] += inputPtr[j];
+		}
+	}
+
+	__global__ void NegativeCorrelationForwardDivideKernel(
+		float* outputPtr,
+		int thisLayerSize,
+		int inputModelCount
+		)
+	{
+		// j: current layer neuron id
+		int j = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (j < thisLayerSize)
+		{
+			outputPtr[j] /= (float)inputModelCount;
 		}
 	}
 }

@@ -11,6 +11,9 @@
 
 #include "..\Activation\ActivationFunction.cu"
 
+// Negative correlation hyperparameter
+__constant__ float Lambda;
+
 extern "C"
 {
 	__global__ void FullyConnectedDeltaKernel(
@@ -86,10 +89,12 @@ extern "C"
 	}
 
 
-    __global__ void GaussianSamplingDeltaKernel(
-		float* inputPtr,
-		float* outputPtr,
-		float* prevDeltaPtr,
+	__global__ void GaussianSamplingDeltaKernel(
+		int useSigmaConstant,
+		ActivationFunctionEnum prevActFunc,
+		float* prevWeighedInputPtr,
+		float* meanDeltas,
+		float* sigmaDeltas,
 		float* thisDeltaPtr,
 		float* randomNormalPtr,
 		int thisLayerSize
@@ -102,8 +107,35 @@ extern "C"
 
 		if (i < thisLayerSize)
 		{
-			prevDeltaPtr[i] += thisDeltaPtr[i] * sigmoid_derivative(outputPtr[i]);
-			prevDeltaPtr[2 * i] += thisDeltaPtr[i] * randomNormalPtr[i] * sigmoid_derivative(outputPtr[i]);
+			// no extra term from transformation when taking derivative w.r.t mean: mean + randomNormal * sigma
+			meanDeltas[i] += thisDeltaPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]);
+
+			// if not using constant sigmas, then they are in second half
+			// randomNormal term is because there is one more transformation before squasing: mean + randomNormal * sigma
+			sigmaDeltas[i] += !useSigmaConstant * (thisDeltaPtr[i] * randomNormalPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]));
+		}
+	}
+
+	__global__ void NegativeCorrelationDeltaKernel(
+		ActivationFunctionEnum prevActFunc,
+		float* prevNeuronInput,
+		float* modelOutputPtr,
+		float* ensembleOutputPtr,
+		int thisLayerSize,
+		float* prevDeltaPtr,
+		float* thisDeltaPtr,
+		int inputModelCount
+		)
+	{
+		// i: prev layer neuron id
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < thisLayerSize)
+		{
+			thisDeltaPtr[i] -= EvaluateDerivative(prevActFunc, prevNeuronInput[i]) * Lambda * (modelOutputPtr[i] - ensembleOutputPtr[i]);
+			prevDeltaPtr[i] -= EvaluateDerivative(prevActFunc, prevNeuronInput[i]) * Lambda * (modelOutputPtr[i] - ensembleOutputPtr[i]);
 		}
 	}
 }

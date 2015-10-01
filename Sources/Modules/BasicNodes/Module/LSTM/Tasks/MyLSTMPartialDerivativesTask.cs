@@ -38,7 +38,7 @@ namespace GoodAI.Modules.LSTM.Tasks
 		        Owner.PreviousOutput.Count,
 		        Owner.CellsPerBlock,
                 Owner.CellWeightsRTRLPartials.Count
-                );
+            );
             
             m_gateWeightsRTRLPartialsKernel.Run(
                 Owner.Input,
@@ -56,7 +56,7 @@ namespace GoodAI.Modules.LSTM.Tasks
 		        Owner.PreviousOutput.Count,
 		        Owner.CellsPerBlock,
                 Owner.InputGateWeightsRTRLPartials.Count
-                );
+            );
         }
     }
 }

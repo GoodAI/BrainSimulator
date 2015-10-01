@@ -1,4 +1,5 @@
-﻿using CustomModels.NeuralNetwork.Tasks;
+﻿using System;
+using CustomModels.NeuralNetwork.Tasks;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
@@ -39,6 +40,62 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [YAXSerializableField(DefaultValue = 16)]
         [MyBrowsable, Category("Filter")]
         public int FilterCount { get; set; }
+
+
+        [YAXSerializableField(DefaultValue = false)]
+        private bool m_autoInput = false;
+        [MyBrowsable, Category("Input image dimensions"), DisplayName("Automatic parameters")]
+        public bool AutomaticInput
+        {
+            get { return m_autoInput; }
+            set
+            {
+                m_autoInput = false;
+                if (value)
+                {
+                    if (PreviousConnectedLayers.Count <= 0)
+                    {
+                        MyLog.ERROR.WriteLine("No connected layers to layer " + this.Name + ". Please update memory blocks.");
+                        return;
+                    }
+
+                    if (Input.Owner is MyAbstractLayer)
+                    {
+                        MyAbstractLayer prevLayer = Input.Owner as MyAbstractLayer;
+
+                        if (prevLayer is MyConvolutionLayer)
+                        {
+                            InputWidth = ((MyConvolutionLayer) prevLayer).OutputWidth;
+                            InputHeight = ((MyConvolutionLayer) prevLayer).OutputHeight;
+                            InputDepth = ((MyConvolutionLayer) prevLayer).FilterCount;
+                            MyLog.INFO.WriteLine("Input parameters of layer " + this.Name + " were set succesfully.");
+                            return;
+                        }
+
+                        else if (prevLayer is MyPoolingLayer)
+                        {
+                            InputWidth = ((MyPoolingLayer) prevLayer).OutputWidth;
+                            InputHeight = ((MyPoolingLayer) prevLayer).OutputHeight;
+                            InputDepth = ((MyPoolingLayer) prevLayer).Depth;
+                            MyLog.INFO.WriteLine("Input parameters of layer " + this.Name + " were set succesfully.");
+                            return;
+                        }
+
+                        // assume input image
+                        if ((prevLayer is MyHiddenLayer) || (Input != null && Input.Count > 0))
+                        {
+                            MyLog.INFO.WriteLine("Layer " + this.Name +
+                                                 " cannot interpret input neuron count as image width, height and depth automatically.");
+                            return;
+                        }
+                    }
+
+                    MyLog.WARNING.WriteLine("Input parameters for layer " + this.Name +
+                                            " could not be set automatically.");
+                }
+            }
+        }
+
 
         [YAXSerializableField(DefaultValue = 1)]
         private int m_inputDepth = 1;
@@ -85,6 +142,33 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 OutputHeight = SetOutputDimension(InputHeight, FilterHeight, VerticalStride, ZeroPadding);
             }
         }
+
+
+
+        [YAXSerializableField(DefaultValue = false)]
+        private bool m_autoOutput = false;
+        [MyBrowsable, Category("Output image dimensions"), DisplayName("Automatic zero padding")]
+        public bool AutomaticOutput
+        {
+            get { return m_autoOutput; }
+            set
+            {
+                m_autoOutput = false;
+                if (value)
+                {
+                    int currentOutSize = 1 + (int)Math.Ceiling( (InputWidth - FilterWidth) / (double)HorizontalStride);
+                    if (((InputWidth - currentOutSize) % 2) != 0)
+                        MyLog.WARNING.WriteLine("Zero padding of " + this.Name + " set automatically but filter will not cover the whole padded image when convolving.");
+                    else
+                    {
+                        MyLog.INFO.WriteLine("Output parameters of layer " + this.Name + " were set succesfully.");                        
+                    }
+                    ZeroPadding = (int)Math.Ceiling((InputWidth - currentOutSize) / (double)2);
+
+                }
+            }
+        }
+
 
 
         [YAXSerializableField(DefaultValue = 0)]
@@ -278,12 +362,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             return 1 + (zeroPadding * 2 + inputSize - filterSize) / stride;
         }
 
-
         public void CreateTasks()
         {
             ForwardTask = new MyConvolutionForwardTask();
             DeltaBackTask = new MyConvolutionBackwardTask();
         }
-
     }
 }

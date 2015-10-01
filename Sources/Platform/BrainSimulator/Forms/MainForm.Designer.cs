@@ -56,6 +56,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadUserNodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setGlobalDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearGlobalDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,7 +114,6 @@
             this.openNodeFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMemFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openMemFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.clearGlobalDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.mainToolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -230,6 +230,14 @@
             this.setGlobalDataFolderToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
             this.setGlobalDataFolderToolStripMenuItem.Text = "Set global data folder";
             this.setGlobalDataFolderToolStripMenuItem.Click += new System.EventHandler(this.setGlobalDataFolderToolStripMenuItem_Click);
+            // 
+            // clearGlobalDataFolderToolStripMenuItem
+            // 
+            this.clearGlobalDataFolderToolStripMenuItem.Name = "clearGlobalDataFolderToolStripMenuItem";
+            this.clearGlobalDataFolderToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.clearGlobalDataFolderToolStripMenuItem.Text = "Clear global data folder";
+            this.clearGlobalDataFolderToolStripMenuItem.Visible = false;
+            this.clearGlobalDataFolderToolStripMenuItem.Click += new System.EventHandler(this.clearGlobalDataFolderToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -714,6 +722,7 @@
             this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel.Location = new System.Drawing.Point(0, 47);
             this.dockPanel.Name = "dockPanel";
+            this.dockPanel.ShowDocumentIcon = true;
             this.dockPanel.Size = new System.Drawing.Size(1184, 593);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
@@ -807,14 +816,6 @@
             this.openMemFileDialog.DefaultExt = "state";
             this.openMemFileDialog.Filter = "Nework state files|*.state";
             this.openMemFileDialog.Title = "Open Network State...";
-            // 
-            // clearGlobalDataFolderToolStripMenuItem
-            // 
-            this.clearGlobalDataFolderToolStripMenuItem.Name = "clearGlobalDataFolderToolStripMenuItem";
-            this.clearGlobalDataFolderToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.clearGlobalDataFolderToolStripMenuItem.Text = "Clear global data folder";
-            this.clearGlobalDataFolderToolStripMenuItem.Visible = false;
-            this.clearGlobalDataFolderToolStripMenuItem.Click += new System.EventHandler(this.clearGlobalDataFolderToolStripMenuItem_Click);
             // 
             // MainForm
             // 

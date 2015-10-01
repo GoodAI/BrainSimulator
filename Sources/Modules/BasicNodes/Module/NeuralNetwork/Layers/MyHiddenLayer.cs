@@ -34,6 +34,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
                     // SGD allocations
                     Delta.Count = Neurons * ParentNetwork.BatchSize;
+                    Delta.Mode =  MyTemporalMemoryBlock<float>.ModeType.Cumulate;
                     PreviousWeightDelta.Count = Weights.Count; // momentum method
                     PreviousBiasDelta.Count = Neurons; // momentum method
 
@@ -72,9 +73,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
+
         // Tasks
         public MyFCUpdateWeightsTask UpdateWeights { get; protected set; }
-        public virtual void CreateTasks()
+
+        public void CreateTasks()
         {
             ForwardTask = new MyFCForwardTask();
             DeltaBackTask = new MyFCBackDeltaTask();

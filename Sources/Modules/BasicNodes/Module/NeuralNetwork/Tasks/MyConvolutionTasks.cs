@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
@@ -42,7 +43,7 @@ namespace CustomModels.NeuralNetwork.Tasks
                 Owner.HorizontalStride, Owner.VerticalStride,
                 Owner.OutputWidth, Owner.OutputWidth * Owner.OutputHeight,
                 Owner.Neurons
-                );
+            );
             MyLog.DEBUG.WriteLine("Pooling.");
         }
     }
@@ -70,21 +71,19 @@ namespace CustomModels.NeuralNetwork.Tasks
         public override void Execute() //Task execution
         {
             MyLog.DEBUG.WriteLine("Pooling backward.");
-
+            
             // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyNode node = Owner.Input.Owner;
 
-            if (previousLayer != null)
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
+
                 // reset delta
                 previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_kernel.SetupExecution(Owner.Neurons);
                 m_kernel.Run(
@@ -94,8 +93,9 @@ namespace CustomModels.NeuralNetwork.Tasks
                     prevInputPtr,
                     Owner.ActivatedNeurons,
                     Owner.Neurons
-                    );
+                );
             }
+
         }
     }
 
@@ -138,7 +138,7 @@ namespace CustomModels.NeuralNetwork.Tasks
                 Owner.InputWidth*Owner.InputHeight,
                 (Owner.InputWidth + Owner.ZeroPadding + Owner.ZeroPadding) * (Owner.InputHeight + Owner.ZeroPadding + Owner.ZeroPadding),
                 Owner.Input.Count
-                );
+            );
         }
     }
 
@@ -168,7 +168,6 @@ namespace CustomModels.NeuralNetwork.Tasks
 
             // use the input image as it is
             if (Owner.ZeroPadding <= 0)
-
                 m_kernel.Run(
                     (int)Owner.ActivationFunction,
                     Owner.Input,
@@ -232,19 +231,17 @@ namespace CustomModels.NeuralNetwork.Tasks
             MyLog.DEBUG.WriteLine("Convolution backward.");
 
             // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
+            MyNode node = Owner.Input.Owner;
 
-            if (previousLayer != null)
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
+
                 // reset delta
                 previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_kernel.SetupExecution(previousLayer.Neurons);
                 m_kernel.Run(
@@ -264,9 +261,7 @@ namespace CustomModels.NeuralNetwork.Tasks
                     Owner.OutputWidth, Owner.OutputHeight, Owner.OutputWidth * Owner.OutputHeight,
                     Owner.HorizontalStride, Owner.VerticalStride,
                     previousLayer.Neurons
-
-
-                    );
+                );
             }
         }
     }
