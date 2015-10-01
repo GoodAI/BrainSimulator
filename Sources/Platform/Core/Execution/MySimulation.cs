@@ -46,9 +46,7 @@ namespace GoodAI.Core.Execution
         public void OnStateChanged(object sender, MySimulationHandler.StateEventArgs args)
         {
             foreach (MyWorkingNode node in NodePartitioning.SelectMany(nodeList => nodeList))
-            {
                 node.OnSimulationStateChanged(args);
-            }
         }
 
         public MySimulation()

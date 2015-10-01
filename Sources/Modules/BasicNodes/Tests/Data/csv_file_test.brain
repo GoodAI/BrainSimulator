@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Name="test" xmlns:yaxlib="http://www.sinairv.com/yaxlib/">
+  <Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network">
+    <Children>
+      <MyCsvFileWriterNode LoadOnStart="False" SaveOnStop="False" Id="6" Name="Node_6" yaxlib:realtype="GoodAI.Modules.Common.MyCsvFileWriterNode">
+        <Structure>
+          <OutputDirectory>C:\</OutputDirectory>
+          <OutputFile>outputFile.csv</OutputFile>
+          <Headers>timestamp,label,data</Headers>
+          <InputValueWriteFormat>BinaryString</InputValueWriteFormat>
+          <IncludeTimeStep>True</IncludeTimeStep>
+          <IncludeLabel>True</IncludeLabel>
+          <ListSeparator>,</ListSeparator>
+          <InputSize>0</InputSize>
+          <InputWidth>1</InputWidth>
+          <InputHeight>0</InputHeight>
+        </Structure>
+        <WriteMethod>Overwrite</WriteMethod>
+        <DataFolder></DataFolder>
+        <Location X="331" Y="186" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="SpTask" yaxlib:realtype="GoodAI.Modules.Common.MyCsvFileWriterNode+MyWriterTask" />
+        </Tasks>
+      </MyCsvFileWriterNode>
+    </Children>
+    <LayoutProperties Zoom="1.189207">
+      <Translation X="0" Y="0" />
+    </LayoutProperties>
+    <GroupInputNodes>
+      <MyParentInput ParentInputIndex="0" Id="1" Name="Output">
+        <Location X="50" Y="100" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="1" Id="4" Name="RandomPool">
+        <Location X="50" Y="250" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="2" Id="5" Name="Label">
+        <Location X="50" Y="400" />
+      </MyParentInput>
+    </GroupInputNodes>
+    <GroupOutputNodes />
+    <DataFolder></DataFolder>
+    <Connections>
+      <Connection From="1" To="6" FromIndex="0" ToIndex="0" />
+      <Connection From="1" To="6" FromIndex="0" ToIndex="1" />
+    </Connections>
+    <Tasks />
+  </Network>
+  <World LoadOnStart="False" SaveOnStop="False" Id="3" Name="World" yaxlib:realtype="GoodAI.Modules.Testing.MyTestingWorld">
+    <IO>
+      <OutputSize>1</OutputSize>
+      <ColumnHint>1</ColumnHint>
+      <PatternCount>0</PatternCount>
+      <PatternGroups>1</PatternGroups>
+    </IO>
+    <DataFolder></DataFolder>
+    <Tasks>
+      <Task Enabled="True" PropertyName="GenerateInput" yaxlib:realtype="GoodAI.Modules.Testing.MyTestingWorld+MyCUDAGenerateInputTask">
+        <ExpositionTime>1</ExpositionTime>
+        <RandomOrder>False</RandomOrder>
+      </Task>
+    </Tasks>
+  </World>
+  <Observers />
+  <UsedModules>
+    <Module Name="GoodAI.BasicNodes.dll" Version="6" />
+    <Module Name="GoodAI.Platform.Core.dll" Version="9" />
+  </UsedModules>
+</Project>
