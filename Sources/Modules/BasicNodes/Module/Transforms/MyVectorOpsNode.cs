@@ -60,10 +60,6 @@ namespace GoodAI.Modules.Transforms
         [Description("Rotate vector in 2D")]
         public class MyRotateTask : MyTask<MyVectorOpsNode>
         {
-            [MyBrowsable, Category("Params")]
-            [YAXSerializableField(DefaultValue = 90)]
-            public int Degrees { get; set; }
-
             private MyVectorOps vecOps;
 
             public override void Init(int nGPU)
