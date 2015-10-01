@@ -20,19 +20,20 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public override int Neurons { get; set; }
 
         // Memory blocks
+        public virtual MyMemoryBlock<float> Target { get; protected set; }
+
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Cost
+        public virtual MyMemoryBlock<float> Cost
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
-        public virtual MyMemoryBlock<float> Target { get; protected set; }
-
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
             base.UpdateMemoryBlocks();
+
             Cost.Count = 1;
         }
 
@@ -40,7 +41,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyTaskGroup("LossFunctions")]
         public MySquaredLossTask SquaredLoss { get; protected set; }
         [MyTaskGroup("LossFunctions")]
-        public MyCrossEntropyLossTask CrossEntropy { get; protected set; }
+        public MyCrossEntropyLossTask CrossEntropyLoss { get; protected set; }
         // put more loss functions here according to: http://image.diku.dk/shark/sphinx_pages/build/html/rest_sources/tutorials/concepts/library_design/losses.html
         //AbsoluteLoss
         //SquaredLoss
@@ -75,7 +76,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 float L1Sum = 0.0f;
                 float L2Sum = 0.0f;
 
-                MyAbstractLayer layer = ParentNetwork.FirstLayer; // pointer to first layer
+                MyAbstractLayer layer = ParentNetwork.FirstTopologicalLayer; // pointer to first layer
                 while (layer != null)
                 {
                     if (layer is MyAbstractWeightLayer)
@@ -93,7 +94,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     }
 
                     // next layer
-                    layer = layer.NextLayer;
+                    layer = layer.NextTopologicalLayer;
                 }
 
                 // add sums to cost

@@ -262,6 +262,7 @@ namespace GoodAI.Core.Execution
                     catch (Exception ex)
                     {
                         MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
+                        m_simulationStoppedException = ex;
                         break;
                     }                 
 

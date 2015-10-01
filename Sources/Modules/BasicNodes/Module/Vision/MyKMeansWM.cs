@@ -322,7 +322,7 @@ namespace GoodAI.Modules.Vision
             private void NormalizeVector(MyMemoryBlock<float> Vec, int dim ,int id_start=0){
                 CUdeviceptr VecDevPtr = Vec.GetDevicePtr(0,id_start * dim);
 
-                m_dotKernel.Run(Owner.TempVal, 0, VecDevPtr, VecDevPtr, dim);
+                m_dotKernel.Run(Owner.TempVal, 0, VecDevPtr, VecDevPtr, dim, /* distributed: */ 0);
                 Owner.TempVal.SafeCopyToHost();
                 float length = (float)Math.Sqrt(Owner.TempVal.Host[0]);
 
@@ -535,12 +535,11 @@ namespace GoodAI.Modules.Observers
                 m_ker = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\KMeansWM", "FocuserInputObserver");
                 m_ker.SetupExecution(TextureWidth * TextureHeight);
 
-                // FocuserInputObserver(float* values, float* pupilControl, int id_pupil , int inputWidth, int inputHeight, unsigned int* pixels, float color)
-                m_ker.Run(Target.Image, Target.ClusCentersXY, 4, TextureWidth, TextureHeight, VBODevicePointer, 0.0f);
-                m_ker.Run(Target.Image, Target.ClusCentersXY, 3, TextureWidth, TextureHeight, VBODevicePointer, 0.1f);
-                m_ker.Run(Target.Image, Target.ClusCentersXY, 2, TextureWidth, TextureHeight, VBODevicePointer, 0.2f);
-                m_ker.Run(Target.Image, Target.ClusCentersXY, 1, TextureWidth, TextureHeight, VBODevicePointer, 0.3f);
-                m_ker.Run(Target.Image, Target.ClusCentersXY, 0, TextureWidth, TextureHeight, VBODevicePointer, 0.4f);                
+                m_ker.Run(Target.Image, Target.ClusCentersXY.GetDevicePtr(Target, 4 * Target.ClusCentersXY.ColumnHint), TextureWidth, TextureHeight, VBODevicePointer, 0.0f,0);
+                m_ker.Run(Target.Image, Target.ClusCentersXY.GetDevicePtr(Target, 3 * Target.ClusCentersXY.ColumnHint), TextureWidth, TextureHeight, VBODevicePointer, 0.1f,0);
+                m_ker.Run(Target.Image, Target.ClusCentersXY.GetDevicePtr(Target, 2 * Target.ClusCentersXY.ColumnHint), TextureWidth, TextureHeight, VBODevicePointer, 0.2f,0);
+                m_ker.Run(Target.Image, Target.ClusCentersXY.GetDevicePtr(Target, 1 * Target.ClusCentersXY.ColumnHint), TextureWidth, TextureHeight, VBODevicePointer, 0.3f,0);
+                m_ker.Run(Target.Image, Target.ClusCentersXY.GetDevicePtr(Target, 0 * Target.ClusCentersXY.ColumnHint), TextureWidth, TextureHeight, VBODevicePointer, 0.4f,0);
             }
         }
 

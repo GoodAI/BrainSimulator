@@ -27,14 +27,15 @@ namespace GoodAI.Core.Memory
         public bool Unmanaged { get; internal set; }
         public SizeT ExternalPointer { get; set; }
 
-        internal abstract void AllocateHost();
-        internal abstract void AllocateDevice();
-        internal abstract void FreeHost();
-        internal abstract void FreeDevice();
+        public abstract void AllocateHost();
+        public abstract void AllocateDevice();
+        public abstract void FreeHost();
+        public abstract void FreeDevice();
         public abstract bool SafeCopyToDevice();
         public abstract void SafeCopyToHost();
         public abstract CUdeviceptr GetDevicePtr(int GPU);
         public abstract CUdeviceptr GetDevicePtr(int GPU, int offset);
+        public abstract CUdeviceptr GetDevicePtr(int GPU, int offset, int timeStep);
         public abstract CUdeviceptr GetDevicePtr(MyWorkingNode callee);
         public abstract CUdeviceptr GetDevicePtr(MyAbstractObserver callee);
         public abstract CUdeviceptr GetDevicePtr(MyWorkingNode callee, int offset);
@@ -47,10 +48,10 @@ namespace GoodAI.Core.Memory
         public abstract void GetValueAt<T>(ref T value, int index);        
     }
 
-    public sealed class MyMemoryBlock<T> : MyAbstractMemoryBlock where T : struct
+    public class MyMemoryBlock<T> : MyAbstractMemoryBlock where T : struct
     {
-        private CudaDeviceVariable<T>[] Device { get; set; }
-        public T[] Host { get; private set; }
+        protected virtual CudaDeviceVariable<T>[] Device { get; set; }
+        public T[] Host { get; protected set; }
 
         public bool OnDevice
         {
@@ -68,7 +69,7 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        internal MyMemoryBlock()
+        public MyMemoryBlock()
         {
             Count = 0;
             ColumnHint = 1;
@@ -76,17 +77,23 @@ namespace GoodAI.Core.Memory
             MaxValueHint = float.PositiveInfinity;
         }
 
-        internal override void AllocateHost()
+        public override void AllocateHost()
         {
             Host = new T[Count];
         }
 
-        internal override void FreeHost()
+        public override void FreeHost()
         {
             Host = null;
         }
 
-        internal override void AllocateDevice()
+        public void AllocateMemory()
+        {
+            AllocateDevice();
+            AllocateHost();
+        }
+
+        public override void AllocateDevice()
         {
             if (Count > 0)
             {
@@ -118,7 +125,7 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        internal override void FreeDevice()
+        public override void FreeDevice()
         {
             if (OnDevice)
             {
@@ -157,7 +164,7 @@ namespace GoodAI.Core.Memory
             else return false;
         }
 
-        public bool SafeCopyToDevice(int offset, int length)
+        public virtual bool SafeCopyToDevice(int offset, int length)
         {
             if (!OnDevice)
             {
@@ -186,7 +193,7 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public void SafeCopyToHost(int offset, int length)
+        public virtual void SafeCopyToHost(int offset, int length)
         {
             if (!OnHost)
             {
@@ -200,19 +207,19 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public void CopyFromMemoryBlock(MyMemoryBlock<T> source, int srcOffset, int destOffset, int count)
+        public virtual void CopyFromMemoryBlock(MyMemoryBlock<T> source, int srcOffset, int destOffset, int count)
         {
             int size = Marshal.SizeOf(typeof(T));
             Device[Owner.GPU].CopyToDevice(source.GetDevice(Owner.GPU), srcOffset * size, destOffset * size, count * size);
         }
 
-        public void CopyToMemoryBlock(MyMemoryBlock<T> destination, int srcOffset, int destOffset, int count)
+        public virtual void CopyToMemoryBlock(MyMemoryBlock<T> destination, int srcOffset, int destOffset, int count)
         {
             int size = Marshal.SizeOf(typeof(T));
             destination.GetDevice(Owner.GPU).CopyToDevice(Device[Owner.GPU], srcOffset * size, destOffset * size, count * size);
         }
 
-        private void CopyToGPU(int nGPU)
+        protected void CopyToGPU(int nGPU)
         {
             if (Device[nGPU] != null)
             {
@@ -222,12 +229,12 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public CudaDeviceVariable<T> GetDevice(MyWorkingNode callee)
+        public virtual CudaDeviceVariable<T> GetDevice(MyWorkingNode callee)
         {
             return GetDevice(callee.GPU);
         }
 
-        private CudaDeviceVariable<T> GetDevice(int nGPU)
+        public virtual CudaDeviceVariable<T> GetDevice(int nGPU)
         {
             if (OnDevice)
             {
@@ -264,6 +271,11 @@ namespace GoodAI.Core.Memory
             return rDeviceVar != null ? rDeviceVar.DevicePointer + offset * rDeviceVar.TypeSize : default(CUdeviceptr);
         }
 
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int timestep)
+        {
+            return GetDevicePtr(GPU, offset);
+        }
+
         public override CUdeviceptr GetDevicePtr(MyWorkingNode callee)
         {
             return GetDevicePtr(callee, 0);
@@ -274,7 +286,8 @@ namespace GoodAI.Core.Memory
             return GetDevicePtr(callee.GPU, offset);
         }
 
-        public override CUdeviceptr GetDevicePtr(MyAbstractObserver callee) {
+        public override CUdeviceptr GetDevicePtr(MyAbstractObserver callee)
+        {
             return GetDevicePtr(callee, 0);
         }
 
@@ -303,22 +316,22 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public void Fill(float value)
+        public virtual void Fill(float value)
         {
             Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
 
-        public void Fill(int value)
+        public virtual void Fill(int value)
         {
             Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
 
-        public void Fill(uint value)
+        public virtual void Fill(uint value)
         {
             Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
 
-        public void Fill(bool value)
+        public virtual void Fill(bool value)
         {
             Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
@@ -341,7 +354,7 @@ namespace GoodAI.Core.Memory
             Buffer.BlockCopy(Host, 0, destBuffer, 0, size);
         }
 
-        public T GetValueAt(int index)
+        public virtual T GetValueAt(int index)
         {
             T value = new T();                
 
