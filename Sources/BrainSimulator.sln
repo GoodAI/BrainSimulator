@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
 EndProject
@@ -37,6 +37,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIProgram", "CLIProgram\CLIProgram.csproj", "{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIUnitsTests", "CLIUnitTests\CLIUnitsTests.csproj", "{99B243CD-7E7A-4A08-B8B4-42E52051F867}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalNodes", "Modules\InternalNodes\Module\InternalNodes.csproj", "{89A6291D-FBE8-418B-84A0-94C688168513}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InternalNodesCuda", "Modules\InternalNodes\Cuda\InternalNodesCuda.vcxproj", "{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,19 +121,37 @@ Global
 		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Debug|Any CPU (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Debug|Any CPU (x64 CUDA).Build.0 = Debug|Any CPU
 		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Release|Any CPU (skip CUDA).ActiveCfg = Release|Any CPU
+		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Release|Any CPU (skip CUDA).Build.0 = Release|Any CPU
 		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Release|Any CPU (x64 CUDA).ActiveCfg = Release|Any CPU
+		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Release|Any CPU (x64 CUDA).Build.0 = Release|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|Any CPU (skip CUDA).ActiveCfg = Debug|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|Any CPU (skip CUDA).Build.0 = Debug|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|Any CPU (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|Any CPU (x64 CUDA).Build.0 = Debug|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|Any CPU (skip CUDA).ActiveCfg = Release|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|Any CPU (skip CUDA).Build.0 = Release|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|Any CPU (x64 CUDA).ActiveCfg = Release|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|Any CPU (x64 CUDA).Build.0 = Release|Any CPU
 		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|Any CPU (skip CUDA).ActiveCfg = Debug|Any CPU
 		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|Any CPU (skip CUDA).Build.0 = Debug|Any CPU
 		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|Any CPU (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|Any CPU (x64 CUDA).Build.0 = Debug|Any CPU
 		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Release|Any CPU (skip CUDA).ActiveCfg = Release|Any CPU
 		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Release|Any CPU (x64 CUDA).ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|Any CPU (skip CUDA).ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|Any CPU (skip CUDA).Build.0 = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|Any CPU (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|Any CPU (x64 CUDA).Build.0 = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|Any CPU (skip CUDA).ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|Any CPU (skip CUDA).Build.0 = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|Any CPU (x64 CUDA).ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|Any CPU (x64 CUDA).Build.0 = Release|Any CPU
+		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Debug|Any CPU (skip CUDA).ActiveCfg = Debug|x64
+		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Debug|Any CPU (x64 CUDA).ActiveCfg = Debug|x64
+		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Debug|Any CPU (x64 CUDA).Build.0 = Debug|x64
+		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Release|Any CPU (skip CUDA).ActiveCfg = Release|x64
+		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Release|Any CPU (x64 CUDA).ActiveCfg = Release|x64
+		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Release|Any CPU (x64 CUDA).Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

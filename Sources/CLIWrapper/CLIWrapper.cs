@@ -454,7 +454,7 @@ namespace CLIWrapper
                     return;
                 }
 
-                /*MyValidator validator = ValidationView.Validator;
+                MyValidator validator = new MyValidator(); // ValidationView.Validator;
                 validator.Simulation = SimulationHandler.Simulation;
                 validator.ClearValidation();
 
@@ -462,8 +462,8 @@ namespace CLIWrapper
                 Project.Network.Validate(validator);
                 validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
 
-                ValidationView.UpdateListView();
-                validator.Simulation = null;*/
+                //ValidationView.UpdateListView();
+                validator.Simulation = null;
 
                 //if (validator.ValidationSucessfull)
                 if (!true)
