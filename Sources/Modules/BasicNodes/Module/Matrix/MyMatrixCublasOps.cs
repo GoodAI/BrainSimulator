@@ -55,7 +55,7 @@ namespace GoodAI.Modules.Matrix
             switch (operation)
             {
                 case MatOperation.Multiplication:  // vectors/matrices have to be always in the correct dimesions!
-                    if (BCount > 1 && ACount > 1 && BColumnHint == 1 && ACount / AColumnHint > 1 && BCount / BColumnHint == AColumnHint) //. A*vecB
+                    if (BCount > 1 && ACount >= 1 && BColumnHint == 1 && ACount / AColumnHint > 1 && BCount / BColumnHint == AColumnHint) //. A*vecB
                     {
                         MyCublasFactory.Instance.Gemv(Operation.Transpose,  // transpose beacuase it does Ax row wise if x is a row vector :D
                             AColumnHint, ACount / AColumnHint, 1.0f,
@@ -63,7 +63,7 @@ namespace GoodAI.Modules.Matrix
                             B, 1,
                             beta, Result, 1);
                     }
-                    else if (ACount > 1 && BCount > 1 && ACount / AColumnHint == 1 && BColumnHint > 1 && BCount / BColumnHint == AColumnHint)  // vecA*B
+                    else if (ACount >= 1 && BCount > 1 && ACount / AColumnHint == 1 && BColumnHint > 1 && BCount / BColumnHint == AColumnHint)  // vecA*B
                     {
                         MyCublasFactory.Instance.Gemv(Operation.NonTranspose,  // transpose beacuase it does Ax row wise if x is a row vector :D
                             BColumnHint, BCount / BColumnHint, 1.0f,
