@@ -41,8 +41,9 @@ extern "C"
 			+ threadIdx.x;
 
 		if (id<imageSize){
-			int val = values[id]*255;
-			pixels[id] = GET_RGBA(val,val,val,255);//GET_WHITE;
+            float fval = fminf(fmaxf(values[id], 0), 1);
+			int val = fval*255;
+			pixels[id] = GET_RGBA(val,val,val,255);
 		}
 	}
 

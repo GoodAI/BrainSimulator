@@ -1,12 +1,17 @@
 ﻿using GoodAI.Core;
-using GoodAI.Core.Task;
-using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
+using GoodAI.Modules.RBM;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Modules.NeuralNetwork.Tasks
 {
@@ -54,7 +59,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 dropout,
                 Owner.Input.Count,
                 Owner.Output.Count
-                );
+            );
 
             if (Owner.ParentNetwork.L1 > 0) // don't take performance hit if L1 is not used
             {
@@ -140,29 +145,18 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
         public override void Execute() //Task execution
         {
-            // pointer to previous layer
-            MyAbstractLayer previousLayer = Owner.PreviousLayer;
-            MyAbstractLayer nextLayer = Owner.NextLayer;
+            MyNode node = Owner.Input.Owner;
 
-            if (previousLayer != null)
+            if (node is MyAbstractLayer)
             {
+                MyAbstractLayer previousLayer = node as MyAbstractLayer;
 
-                if (
-                    // batch learning check - only reset if batch index is zero (we are starting a new batch)
-                    (Owner.ParentNetwork.NewBatch()) &&
-                    // reset delta only if next is not Gaussian HACK.
-                    // (Gaussian layer already reseted delta and filled with regularization deltas)
-                    nextLayer==null || !((nextLayer is MyGaussianHiddenLayer) && (nextLayer.DeltaBackTask as MyGaussianBackDeltaTask).Regularize)
-                )
-
-                    previousLayer.Delta.Fill(0);
+                // reset delta only if next is not Gaussian HACK.
+                // (Gaussian layer already reseted delta and filled with regularization deltas)
+                previousLayer.Delta.Fill(0);
 
                 // determine input to previous layer
-                CUdeviceptr prevInputPtr;
-                if (previousLayer is MyAbstractWeightLayer)
-                    prevInputPtr = (previousLayer as MyAbstractWeightLayer).NeuronInput.GetDevicePtr(previousLayer.GPU);
-                else
-                    prevInputPtr = previousLayer.Input.GetDevicePtr(previousLayer.GPU);
+                CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
 
                 m_deltaKernel.SetupExecution(previousLayer.Neurons);
                 m_deltaKernel.Run(
@@ -174,7 +168,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     Owner.ParentNetwork.Dropout,
                     previousLayer.Neurons,
                     Owner.Neurons
-                    );
+                );
             }
         }
     }

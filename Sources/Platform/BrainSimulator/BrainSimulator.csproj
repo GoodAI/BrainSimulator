@@ -88,7 +88,8 @@
       <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\Aga.Controls\Aga.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Graph">
+    <Reference Include="Graph, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\Graph\Graph.dll</HintPath>
     </Reference>
     <Reference Include="ManagedCuda, Version=6.5.25.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">

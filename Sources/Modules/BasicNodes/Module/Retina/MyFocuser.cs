@@ -28,7 +28,7 @@ namespace GoodAI.Modules.Retina
 
         public MyMemoryBlock<float> TempPupilControl { get; private set; }
 
-        int NumberPupilSamples;
+        public int NumberPupilSamples;
 
         public override void UpdateMemoryBlocks()
         {

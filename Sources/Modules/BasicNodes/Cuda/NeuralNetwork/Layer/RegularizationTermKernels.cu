@@ -8,6 +8,7 @@
 #include <builtin_types.h>
 #include <vector_functions.h>
 #include <math.h>
+#include "..\Activation\ActivationFunction.cu"
 
 // Gaussian regularization coefficient
 __constant__ float RegularizationCoefficient;
@@ -77,9 +78,10 @@ extern "C"
 	}
 
 	__global__ void GaussianRegularizationKernel(
-		float *inputPtr,
+		float* means,
+		float* sigmas,
 		int prevLayerSize,
-		float *regularizationPtr
+		float* regularizationPtr
 		)
 	{
 		extern __shared__ float partialSum[];
@@ -91,8 +93,8 @@ extern "C"
 		partialSum[tid] = 0;
 		while (idx < prevLayerSize / 2)
 		{
-			float mu_sq = pow(inputPtr[idx], 2);
-			float sigma_sq = pow(inputPtr[idx + prevLayerSize / 2], 2);
+			float mu_sq = pow(means[idx], 2);
+			float sigma_sq = pow(sigmas[idx], 2);
 			partialSum[tid] += mu_sq + sigma_sq - log(sigma_sq);
 			idx += blockSize;
 		}
@@ -113,41 +115,34 @@ extern "C"
 			*regularizationPtr = partialSum[0];
 	}
 
-    __global__ void GaussianRegularizationDeltaKernel(
-            float* prevLayerOutputPtr,
-            int prevLayerOutputCount,
-            float* prevLayerInputPtr,
-            int prevLayerInputCount,
-            float* prevLayerWeights,
-            float* prevPrevLayerDelta
-            )
-    {
-            // i: previous layer output (which is mu, sigma params)
-            int i = blockDim.x * blockIdx.y * gridDim.x     //rows preceeding current row in grid
-                    + blockDim.x * blockIdx.x                               //blocks preceeding current block
-                    + threadIdx.x;
- 
-            if (i < prevLayerOutputCount / 2)
-            {
-                    // first half are mu params
-                    for (int j = 0; j < prevLayerInputCount; j++)
-                    {
-                            float w = prevLayerWeights[j * prevLayerOutputCount];
-                            float x_sq = pow(prevLayerInputPtr[j], 2);
-                            prevPrevLayerDelta[j] += RegularizationCoefficient * w * x_sq;
-                    }
-            }
-            else if (i < prevLayerOutputCount)
-            {
-                    // second half are sigma params
-                    for (int j = 0; j < prevLayerInputCount; j++)
-                    {
-                            float w = prevLayerWeights[j * prevLayerOutputCount];
-                            float x_sq = pow(prevLayerInputPtr[j], 2);
-                            prevPrevLayerDelta[j] += RegularizationCoefficient * (w * x_sq - 1 / w);
-                    }
-            }
-    }
+	__global__ void GaussianRegularizationDeltaKernel(
+		int useSigmaConstant,
+		ActivationFunctionEnum prevActFunc,
+		float* prevWeighedInputPtr,
+		float* prevLayerInputPtr,
+		float* prevLayerWeights,
+		int prevLayerOutputCount,
+		float* meanDeltas,
+		float* sigmaDeltas
+		)
+	{
+		// i: previous layer output (which is mu, sigma params)
+		int weightId = blockDim.x * blockIdx.y * gridDim.x     //rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x                               //blocks preceeding current block
+			+ threadIdx.x;
+
+		int prevLayerId = weightId % prevLayerOutputCount;
+		int prevPrevLayerId = weightId / prevLayerOutputCount;
+
+		int isMean = prevLayerId < prevLayerOutputCount / 2 || useSigmaConstant;
+		int isSigma = prevLayerId >= prevLayerOutputCount / 2 && !useSigmaConstant;
+
+		float regularization = isMean * prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2)
+			+ isSigma * (prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2) - 1.0f / (0.00000001 + prevLayerWeights[weightId]));
+
+		meanDeltas[prevLayerId] += isMean * RegularizationCoefficient * regularization * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevLayerId]);
+		sigmaDeltas[prevLayerId] += isSigma * RegularizationCoefficient * regularization * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevLayerId]);
+	}
 
 	__global__ void DropoutMaskKernel(
 		float *dropoutMaskPtr,
