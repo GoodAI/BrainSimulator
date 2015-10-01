@@ -85,10 +85,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
-        public override bool SupportsBatchLearning()
-        {
-            return true;
-        }
+        public override bool SupportsBatchLearning { get { return true; } }
 
         public void CreateTasks()
         {

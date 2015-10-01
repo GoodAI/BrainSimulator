@@ -125,6 +125,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
 
-        public virtual bool SupportsBatchLearning() { return false; }
+        public virtual bool SupportsBatchLearning { get { return false; } }
     }
 }

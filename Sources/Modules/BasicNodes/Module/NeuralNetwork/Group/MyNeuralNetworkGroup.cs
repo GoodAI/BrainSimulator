@@ -139,7 +139,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 foreach (MyNode n in Children)
                 {
                     var layer = n as MyAbstractLayer;
-                    if (layer != null && !layer.SupportsBatchLearning())
+                    if (layer != null && !layer.SupportsBatchLearning)
                     {
                         validator.AssertError(false, layer, layer.Name + " does not suport batch-learning! Remove the layer or set BatchSize to 1");
                     }
