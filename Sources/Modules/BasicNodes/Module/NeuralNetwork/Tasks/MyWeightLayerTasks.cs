@@ -132,7 +132,9 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     /// <meta>kk</meta>
     /// <status>Working</status>
     /// <summary>
-    /// Approaches weights of another layer
+    /// First it copies the weights from source layer and then slowly updates them to track source weights according to: <br/>
+    /// new weights = ApproachRate * sourceLayerWeights + (1 - ApproachRate) * weights <br/>
+    /// Set ApproachRate to 1 to use the exact same weights as source layer.
     /// </summary>
     /// <description></description>
     [Description("ShareWeights"), MyTaskInfo(OneShot = false)]
