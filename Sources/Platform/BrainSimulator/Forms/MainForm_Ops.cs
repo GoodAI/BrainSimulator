@@ -32,6 +32,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private MyFlatOrdering m_topologyOps = new MyFlatOrdering();
 
+        private bool m_observersHidden = false;
+
         #region Project
 
         private MyProject m_project;
@@ -545,6 +547,25 @@ namespace GoodAI.BrainSimulator.Forms
             ObserverViews.ToList().ForEach(view => view.Close());
         }
 
+        private void ShowHideAllObservers(bool forceShow = false)
+        {
+            if (forceShow && !m_observersHidden) 
+            {  
+                return;
+            }
+
+            if (m_observersHidden || forceShow)
+            {
+                ObserverViews.ToList().ForEach(view => view.Show());
+                m_observersHidden = false;
+            } 
+            else            
+            {
+                ObserverViews.ToList().ForEach(view => view.Hide());
+                m_observersHidden = true;
+            }
+        }
+
         private void GraphLayoutForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             GraphViews.Remove((sender as GraphLayoutForm).Target);
@@ -699,6 +720,12 @@ namespace GoodAI.BrainSimulator.Forms
             ((ToolStripMenuItem)viewToolStripMenuItem.DropDownItems.Find(HelpView.Text, false).First()).ShortcutKeys = Keys.F1;
             viewToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
+            ToolStripMenuItem showHideObserversMenuItem = new ToolStripMenuItem("Show/Hide all observers");
+            showHideObserversMenuItem.ShortcutKeys = Keys.Control | Keys.H;
+            showHideObserversMenuItem.Click += showHideObserversMenuItem_Click;
+
+            viewToolStripMenuItem.DropDownItems.Add(showHideObserversMenuItem);
+
             ToolStripMenuItem resetViewsMenuItem = new ToolStripMenuItem("Reset Views Layout");
             resetViewsMenuItem.ShortcutKeys = Keys.Control | Keys.W;
             resetViewsMenuItem.Click += resetViewsMenuItem_Click;
@@ -809,6 +836,11 @@ namespace GoodAI.BrainSimulator.Forms
         {
             ResetViewsLayout();
         }
+
+        void showHideObserversMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHideAllObservers();
+        }        
 
         void timerItem_Click(object sender, EventArgs e)
         {
