@@ -7,7 +7,7 @@ using System;
 using System.ComponentModel;
 using YAXLib;
 
-namespace GoodAI.Modules.Motor
+namespace GoodAI.Modules.NeuralNetwork
 {
     /// <author>GoodAI</author>
     /// <meta>kk</meta>
