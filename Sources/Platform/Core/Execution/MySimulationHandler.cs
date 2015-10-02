@@ -218,8 +218,7 @@ namespace GoodAI.Core.Execution
 
         public void Dispose()
         {
-            if (State != SimulationState.STOPPED)
-                Finish();
+            Finish();
         }
 
         //NOT in UI thread
