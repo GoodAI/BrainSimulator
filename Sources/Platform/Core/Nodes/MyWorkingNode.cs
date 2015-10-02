@@ -26,15 +26,15 @@ namespace GoodAI.Core.Nodes
         #region Persistance
 
         [YAXSerializableField, YAXAttributeForClass]
-        [MyBrowsable, Category("\tPersistance"), ReadOnly(true)]
+        [MyBrowsable, Category("\t\tPersistance"), ReadOnly(true)]
         public bool LoadOnStart { get; set; }
 
         [YAXSerializableField, YAXAttributeForClass]
-        [MyBrowsable, Category("\tPersistance"), ReadOnly(true)]
+        [MyBrowsable, Category("\t\tPersistance"), ReadOnly(true)]
         public bool SaveOnStop { get; set; }
 
         [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
-        [MyBrowsable, Category("\tPersistance"), Editor]        
+        [MyBrowsable, Category("\t\tPersistance"), Editor]        
         public string DataFolder { get; set; }
         #endregion
 
