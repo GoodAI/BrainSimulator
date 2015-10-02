@@ -183,17 +183,16 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
             if (sourceLayer == null)
             {
-                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + SourceNodeName + " because it is not a weight layer!");
+                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node " + SourceNodeName + " because it is not a weight layer!");
                 return;                    
             }
 
             if (sourceLayer.Weights.Count != Owner.Weights.Count || sourceLayer.Bias.Count != Owner.Bias.Count)
             {
-                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node id " + SourceNodeName + " because the sizes do not match!");
+                MyLog.ERROR.WriteLine(Owner.Name + ": Cannot share weights with node " + SourceNodeName + " because the sizes do not match!");
                 return;
             }
 
-            m_previousSourceNodeName = SourceNodeName;
             m_sourceLayer = sourceLayer;
         }
 
@@ -215,6 +214,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             {
                 FindSourceLayer();
                 CopySourceLayerWeights();
+                m_previousSourceNodeName = SourceNodeName;
             }
 
             if (m_sourceLayer != null)
