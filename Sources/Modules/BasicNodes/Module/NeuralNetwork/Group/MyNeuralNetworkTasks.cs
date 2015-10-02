@@ -164,6 +164,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public void ComputeWeightGradientSum(MyAbstractWeightLayer layer)
         {
+            if (Owner.BatchSize == 1) // cuBLAS tends to be slower when BatchSize is 1, gradient is computed in update weights kernels
+                return;
+
             // WeightGradient = Delta x Transpose(Input)
             MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.Transpose,
                 layer.Neurons, layer.Input.Count / Owner.BatchSize, Owner.BatchSize, 1.0f,
@@ -226,6 +229,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 
                 m_SGDupdateKernel.SetupExecution(layer.Weights.Count);
                 m_SGDupdateKernel.Run(
+                    layer.Input,
+                    layer.Delta,
                     layer.WeightGradient,
                     layer.BiasGradient,
                     layer.Weights,
@@ -350,6 +355,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
                 m_RMSPropUpdateKernel.SetupExecution(layer.Weights.Count);
                 m_RMSPropUpdateKernel.Run(
+                    layer.Input,
+                    layer.Delta,
                     layer.WeightGradient,
                     layer.BiasGradient,
                     layer.Weights,
@@ -448,6 +455,8 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
                 m_adadeltaUpdateKernel.SetupExecution(layer.Weights.Count);
                 m_adadeltaUpdateKernel.Run(
+                    layer.Input,
+                    layer.Delta,
                     layer.WeightGradient,
                     layer.BiasGradient,
                     layer.Weights,
