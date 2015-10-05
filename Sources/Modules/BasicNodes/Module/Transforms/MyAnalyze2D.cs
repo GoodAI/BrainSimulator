@@ -125,8 +125,8 @@ namespace GoodAI.Modules.Transforms
 
                 if (SubtractGlobalFlow)
                 {
-                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, 0, 0, 1);
-                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, Owner.InputSize, 1, 1);
+                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, 0, 0, 1,0);
+                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, Owner.InputSize, 1, 1,0);
 
                     Owner.GlobalFlow.SafeCopyToHost();
 
