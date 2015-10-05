@@ -57,7 +57,7 @@ namespace GoodAI.Modules.Transforms
             Temp.Count = Temp.ColumnHint * Temp.ColumnHint;
         }
 
-        [Description("Rotate vector in 2D")]
+        [Description("Rotates 2D vector")]
         public class MyRotateTask : MyTask<MyVectorOpsNode>
         {
             private VectorOps vecOps;
