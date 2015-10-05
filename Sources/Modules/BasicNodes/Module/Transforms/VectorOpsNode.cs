@@ -60,16 +60,16 @@ namespace GoodAI.Modules.Transforms
         [Description("Rotate vector in 2D")]
         public class MyRotateTask : MyTask<MyVectorOpsNode>
         {
-            private MyVectorOps vecOps;
+            private VectorOps vecOps;
 
             public override void Init(int nGPU)
             {
-                vecOps = new MyVectorOps(Owner, MyVectorOps.VectorOperation.Rotate, Owner.Temp);
+                vecOps = new VectorOps(Owner, VectorOps.VectorOperation.Rotate, Owner.Temp);
             }
 
             public override void Execute()
             {
-                vecOps.Run(MyVectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
+                vecOps.Run(VectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
             }
         }
 
@@ -80,22 +80,22 @@ namespace GoodAI.Modules.Transforms
             [YAXSerializableField(DefaultValue = false)]
             public bool Directed { get; set; }
 
-            private MyVectorOps vec_ops;
+            private VectorOps vec_ops;
 
             public override void Init(int nGPU)
             {
-                vec_ops = new MyVectorOps(Owner, MyVectorOps.VectorOperation.Angle | MyVectorOps.VectorOperation.DirectedAngle, Owner.Temp);
+                vec_ops = new VectorOps(Owner, VectorOps.VectorOperation.Angle | VectorOps.VectorOperation.DirectedAngle, Owner.Temp);
             }
 
             public override void Execute()
             {
                 if (Directed)
                 {
-                    vec_ops.Run(MyVectorOps.VectorOperation.DirectedAngle, Owner.InputA, Owner.InputB, Owner.Output);
+                    vec_ops.Run(VectorOps.VectorOperation.DirectedAngle, Owner.InputA, Owner.InputB, Owner.Output);
                 }
                 else
                 {
-                    vec_ops.Run(MyVectorOps.VectorOperation.Angle, Owner.InputA, Owner.InputB, Owner.Output);
+                    vec_ops.Run(VectorOps.VectorOperation.Angle, Owner.InputA, Owner.InputB, Owner.Output);
                 }
             }
         }
