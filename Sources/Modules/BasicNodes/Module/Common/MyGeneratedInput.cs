@@ -110,6 +110,7 @@ namespace GoodAI.Modules.Common
             if (GenerateType == MyGenerateType.UserData)
             {
                 Output.Count = UserInput_parsed != null ? UserInput_parsed.Count : OutputSize;
+                OutputSize = Output.Count;
             }
         }
 
