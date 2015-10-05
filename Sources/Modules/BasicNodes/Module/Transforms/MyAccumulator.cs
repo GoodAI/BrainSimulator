@@ -91,8 +91,11 @@ namespace GoodAI.Modules.Transforms
             [YAXSerializableField(DefaultValue = 0f)]
             public float InitialValue { get; set; }
 
+            private bool firstRound;
+
             public override void Init(Int32 nGPU)
-            {                
+            {
+                firstRound = true;
             }
 
             public override void Execute()
@@ -102,7 +105,7 @@ namespace GoodAI.Modules.Transforms
                     Owner.DelayedInputs.CopyFromMemoryBlock(Owner.Input, 0, 0, Owner.OutputSize);
                 }
 
-                if (SimulationStep < Owner.DelayMemorySize)
+                if (firstRound)
                 {
                     if (UseFirstInput)
                     {
@@ -112,6 +115,7 @@ namespace GoodAI.Modules.Transforms
                     {
                         Owner.Output.Fill(InitialValue);
                     }
+                    firstRound = false;
                 }
                 else
                 {
