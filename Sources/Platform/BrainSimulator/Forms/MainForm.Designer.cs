@@ -429,7 +429,7 @@
             // openFileDialog
             // 
             this.openFileDialog.DefaultExt = "brain";
-            this.openFileDialog.Filter = "Project only|*.brain|Project with data|*.brainz";
+            this.openFileDialog.Filter = "Brain projects|*.brain;*.brainz|Project only|*.brain|Project with data|*.brainz";
             this.openFileDialog.Title = "Open Project...";
             // 
             // mainToolStrip
