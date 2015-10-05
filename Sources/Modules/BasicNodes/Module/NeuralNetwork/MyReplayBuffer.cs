@@ -27,7 +27,7 @@ namespace GoodAI.Modules.NeuralNetwork
     public class MyReplayBuffer : MyWorkingNode
     {
         [MyBrowsable, Category("Replay buffer")]
-        [YAXSerializableField(DefaultValue = 1)]
+        [YAXSerializableField(DefaultValue = 10000)]
         public int ReplayBufferSize { get; set; }
 
         [MyBrowsable, Category("Replay buffer")]
