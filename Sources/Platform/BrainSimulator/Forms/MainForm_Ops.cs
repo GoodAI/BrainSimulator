@@ -82,6 +82,7 @@ namespace GoodAI.BrainSimulator.Forms
                     
                     if (!Directory.Exists(tempStoragePath))
                     {
+                        MyLog.WARNING.WriteLine("No state data found, saving only zipped project file.");
                         Directory.CreateDirectory(tempStoragePath);
                     }
                     
