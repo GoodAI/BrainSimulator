@@ -238,28 +238,28 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void runToolButton_Click(object sender, EventArgs e)
         {
-            ShowHideAllObservers(true);
+            ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();            
             StartSimulation(false);            
         }
 
         private void stepOverToolButton_Click(object sender, EventArgs e)
         {
-            ShowHideAllObservers(true);
+            ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();
             StartSimulation(true);            
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)
         {
-            ShowHideAllObservers(true);
+            ShowHideAllObservers(forceShow: true);
             SimulationHandler.StopSimulation();
             SimulationHandler.Simulation.InDebugMode = false;
         }
 
         private void pauseToolButton_Click(object sender, EventArgs e)
         {
-            ShowHideAllObservers(true);
+            ShowHideAllObservers(forceShow: true);
             SimulationHandler.PauseSimulation();
         }
 
