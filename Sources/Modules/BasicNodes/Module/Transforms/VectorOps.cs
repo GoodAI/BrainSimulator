@@ -18,33 +18,33 @@ namespace GoodAI.BasicNodes.Transforms
             DirectedAngle = 1 << 3,
         }
 
-        private readonly MyWorkingNode caller;
-        private readonly VectorOperation operations;
-        private readonly MyMatrixAutoOps mat_operation;
-        private readonly MyMemoryBlock<float> temp;
+        private readonly MyWorkingNode m_caller;
+        private readonly VectorOperation m_operations;
+        private readonly MyMatrixAutoOps m_matOperation;
+        private readonly MyMemoryBlock<float> m_temp;
 
         public VectorOps(MyWorkingNode caller, VectorOperation operations, MyMemoryBlock<float> tempBlock)
         {
-            this.caller = caller;
-            this.operations = operations;
-            temp = tempBlock;
+            m_caller = caller;
+            m_operations = operations;
+            m_temp = tempBlock;
 
             MatOperation mat_ops = MatOperation.None;
 
-            if (this.operations.HasFlag(VectorOperation.Rotate))
+            if (m_operations.HasFlag(VectorOperation.Rotate))
                 mat_ops |= MatOperation.Multiplication;
 
-            if (this.operations.HasFlag(VectorOperation.Angle))
+            if (m_operations.HasFlag(VectorOperation.Angle))
                 mat_ops |= MatOperation.DotProd;
 
-            if (this.operations.HasFlag(VectorOperation.DirectedAngle))
+            if (m_operations.HasFlag(VectorOperation.DirectedAngle))
             {
                 mat_ops |= MatOperation.Multiplication | MatOperation.DotProd;
-                this.operations |= VectorOperation.Angle | VectorOperation.Rotate;
+                m_operations |= VectorOperation.Angle | VectorOperation.Rotate;
             }
                 
 
-            mat_operation = new MyMatrixAutoOps(caller, mat_ops);
+            m_matOperation = new MyMatrixAutoOps(caller, mat_ops);
         }
 
         public void Run(VectorOperation operation,
@@ -62,15 +62,15 @@ namespace GoodAI.BasicNodes.Transforms
                     b.SafeCopyToHost();
                     float rads = b.Host[0] * (float)Math.PI / 180;
                     float[] transform = { (float)Math.Cos(rads), -(float)Math.Sin(rads), (float)Math.Sin(rads), (float)Math.Cos(rads) };
-                    Array.Copy(transform, temp.Host, transform.Length);
-                    temp.SafeCopyToDevice();
-                    mat_operation.Run(MatOperation.Multiplication, temp, a, result);
+                    Array.Copy(transform, m_temp.Host, transform.Length);
+                    m_temp.SafeCopyToDevice();
+                    m_matOperation.Run(MatOperation.Multiplication, m_temp, a, result);
                 }
                 break;
 
                 case VectorOperation.Angle:
                 {
-                    mat_operation.Run(MatOperation.DotProd, a, b, result);
+                    m_matOperation.Run(MatOperation.DotProd, a, b, result);
                     result.SafeCopyToHost();
                     float dotProd = result.Host[0];
                     float angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
@@ -85,9 +85,9 @@ namespace GoodAI.BasicNodes.Transforms
                     result.Host[0] = -90;
                     result.SafeCopyToDevice();
                     Run(VectorOperation.Rotate, a, result, result);
-                    result.CopyToMemoryBlock(temp, 0, 0, result.Count);
+                    result.CopyToMemoryBlock(m_temp, 0, 0, result.Count);
 
-                    mat_operation.Run(MatOperation.DotProd, a, b, result);
+                    m_matOperation.Run(MatOperation.DotProd, a, b, result);
                     result.SafeCopyToHost();
                     float dotProd = result.Host[0];
                     float angle;
@@ -96,7 +96,7 @@ namespace GoodAI.BasicNodes.Transforms
                     else
                         angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
 
-                    mat_operation.Run(MatOperation.DotProd, temp, b, result);
+                    m_matOperation.Run(MatOperation.DotProd, m_temp, b, result);
                     result.SafeCopyToHost();
                     float perpDotProd = result.Host[0];
 
@@ -115,15 +115,15 @@ namespace GoodAI.BasicNodes.Transforms
             if (operation == VectorOperation.None)
                 return false;
 
-            if ((operation & operations) == 0)
+            if ((operation & m_operations) == 0)
             {
-                MyLog.WARNING.WriteLine("Trying to execute an uninitialized vector operation. Owner: " + caller.Name);
+                MyLog.WARNING.WriteLine("Trying to execute an uninitialized vector operation. Owner: " + m_caller.Name);
                 return false;
             }
 
             if (operation != VectorOperation.Rotate && sizeA != sizeB)
             {
-                MyLog.ERROR.WriteLine("Vectors have to be the same length for this operation. Owner: " + caller.Name);
+                MyLog.ERROR.WriteLine("Vectors have to be the same length for this operation. Owner: " + m_caller.Name);
                 return false;
             }
 
