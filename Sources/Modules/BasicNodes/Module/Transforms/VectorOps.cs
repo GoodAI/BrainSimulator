@@ -23,6 +23,16 @@ namespace GoodAI.BasicNodes.Transforms
         private readonly MyMatrixAutoOps m_matOperation;
         private readonly MyMemoryBlock<float> m_temp;
 
+        public static float DegreeToRadian(float angle)
+        {
+            return (float)Math.PI * angle / 180;
+        }
+
+        public static float RadianToDegree(float angle)
+        {
+            return angle * 180 / (float)Math.PI;
+        }
+
         public VectorOps(MyWorkingNode caller, VectorOperation operations, MyMemoryBlock<float> tempBlock)
         {
             m_caller = caller;
@@ -60,7 +70,7 @@ namespace GoodAI.BasicNodes.Transforms
                 case VectorOperation.Rotate:
                 {
                     b.SafeCopyToHost();
-                    float rads = b.Host[0] * (float)Math.PI / 180;
+                    float rads = DegreeToRadian(b.Host[0]);
                     float[] transform = { (float)Math.Cos(rads), -(float)Math.Sin(rads), (float)Math.Sin(rads), (float)Math.Cos(rads) };
                     Array.Copy(transform, m_temp.Host, transform.Length);
                     m_temp.SafeCopyToDevice();
@@ -73,7 +83,7 @@ namespace GoodAI.BasicNodes.Transforms
                     m_matOperation.Run(MatOperation.DotProd, a, b, result);
                     result.SafeCopyToHost();
                     float dotProd = result.Host[0];
-                    float angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
+                    float angle = RadianToDegree((float)Math.Acos(dotProd));
                     result.Fill(0);
                     result.Host[0] = angle;
                     result.SafeCopyToDevice();
@@ -94,7 +104,7 @@ namespace GoodAI.BasicNodes.Transforms
                     if (dotProd == 1)
                         angle = 0;
                     else
-                        angle = (float)Math.Acos(dotProd) * 180 / (float)Math.PI;
+                        angle = RadianToDegree((float)Math.Acos(dotProd));
 
                     m_matOperation.Run(MatOperation.DotProd, m_temp, b, result);
                     result.SafeCopyToHost();
