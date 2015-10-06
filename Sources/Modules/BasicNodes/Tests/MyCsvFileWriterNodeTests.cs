@@ -20,8 +20,6 @@ namespace BasicNodesTests
 {
     public class MyCsvFileWriterNodeTests
     {
-        //private static readonly string m_outputFileName = string.Format(@"csv_test_{0}.log", Guid.NewGuid().ToString().Substring(0, 10));
-        //private static readonly string m_outputPath = @"c:\" + m_outputFileName;
         private int m_openCount;
 
         private AutoResetEvent m_continueEvent = new AutoResetEvent(false);
