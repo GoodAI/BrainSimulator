@@ -35,6 +35,7 @@ namespace CoreTests
         {
             public MySimulationHandler.SimulationState PreviousState = MySimulationHandler.SimulationState.STOPPED;
             public MySimulationHandler.SimulationState CurrentState = MySimulationHandler.SimulationState.STOPPED;
+            public AutoResetEvent Event { get; set; }
 
             [MyInputBlock]
             public MyMemoryBlock<float> InputBlock { get; set; }
@@ -47,6 +48,8 @@ namespace CoreTests
             {
                 PreviousState = args.OldState;
                 CurrentState = args.NewState;
+                if (Event != null)
+                    Event.Set();
             }
 
             public TestingTask Task { get; set; }
@@ -77,6 +80,7 @@ namespace CoreTests
             project.CreateWorld(typeof(MyTestingWorld));
 
             var node = project.CreateNode<TestingNode>();
+            node.Event = new AutoResetEvent(false);
             project.Network.AddChild(node);
             var connection = new MyConnection(project.Network.GroupInputNodes[0], project.Network.Children[0]);
             connection.Connect();
@@ -87,22 +91,25 @@ namespace CoreTests
             handler.UpdateMemoryModel();
 
             handler.StartSimulation(oneStepOnly: false);
-            Thread.Sleep(100);
+            node.Event.WaitOne();
             Assert.Equal(MySimulationHandler.SimulationState.STOPPED, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.RUNNING, node.CurrentState);
 
             handler.PauseSimulation();
-            Thread.Sleep(100);
+            node.Event.WaitOne();
             Assert.Equal(MySimulationHandler.SimulationState.RUNNING, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.PAUSED, node.CurrentState);
 
             handler.StartSimulation(oneStepOnly: true);
-            Thread.Sleep(100);
+            node.Event.WaitOne();   // Here the sim goes from paused to RUNNING_STEP.
+            Assert.Equal(MySimulationHandler.SimulationState.PAUSED, node.PreviousState);
+            Assert.Equal(MySimulationHandler.SimulationState.RUNNING_STEP, node.CurrentState);
+            node.Event.WaitOne();   // Here it goes to PAUSED.
             Assert.Equal(MySimulationHandler.SimulationState.RUNNING_STEP, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.PAUSED, node.CurrentState);
 
             handler.StopSimulation();
-            Thread.Sleep(100);
+            node.Event.WaitOne();
             Assert.Equal(MySimulationHandler.SimulationState.PAUSED, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.STOPPED, node.CurrentState);
 
