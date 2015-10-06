@@ -34,6 +34,16 @@ namespace GoodAI.Modules.NeuralNetwork
         [YAXSerializableField(DefaultValue = 1)]
         public int BatchSize { get; set; }
 
+        [YAXSerializableField(DefaultValue = MyReplayBufferStorage.Host)]
+        [MyBrowsable, Category("Replay buffer")]
+        public MyReplayBufferStorage BufferStorage { get; set; }
+
+        public enum MyReplayBufferStorage
+        {
+            Host,
+            Device
+        }
+
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Sample { get { return GetInput(0); } }
 
@@ -63,30 +73,62 @@ namespace GoodAI.Modules.NeuralNetwork
         [Description("CreateBatch"), MyTaskInfo(OneShot = false)]
         public class MyCreateBatchTask : MyTask<MyReplayBuffer>
         {
+            [MyBrowsable, Category("Randomization")]
+            [YAXSerializableField(DefaultValue = 0)]
+            public int RandomSeed { get; set; }
+
             private int m_samplesCount;
             private Random m_rand;
 
             public override void Init(int nGPU)
             {
                 m_samplesCount = 0;
-                m_rand = new Random();
+
+                if (RandomSeed == 0)
+                    m_rand = new Random();
+                else
+                    m_rand = new Random(RandomSeed);
+            }
+
+            private void ReplayBufferCopy(MyMemoryBlock<float> source, MyMemoryBlock<float> destination, int sourceOffset, int destOffset, int count)
+            {
+                if (Owner.BufferStorage == MyReplayBufferStorage.Host)
+                {
+                    Buffer.BlockCopy(source.Host, sourceOffset * sizeof(float), destination.Host, destOffset * sizeof(float), count * sizeof(float));
+                }
+                else if (Owner.BufferStorage == MyReplayBufferStorage.Device)
+                {
+                    source.CopyToMemoryBlock(destination, sourceOffset, destOffset, count);
+                }
             }
 
             public override void Execute()
             {
                 int bufferIdx = m_samplesCount % Owner.ReplayBufferSize; // once the buffer is full, start rewriting old data from beginning
 
-                Owner.Sample.CopyToMemoryBlock(Owner.SampleReplayBuffer, 0, bufferIdx * Owner.Sample.Count, Owner.Sample.Count);
-                Owner.Target.CopyToMemoryBlock(Owner.TargetReplayBuffer, 0, bufferIdx * Owner.Target.Count, Owner.Target.Count);
+                if (Owner.BufferStorage == MyReplayBufferStorage.Host)
+                {
+                    Owner.Sample.SafeCopyToHost();
+                    Owner.Target.SafeCopyToHost();
+                }
 
+                ReplayBufferCopy(Owner.Sample, Owner.SampleReplayBuffer, 0, bufferIdx * Owner.Sample.Count, Owner.Sample.Count);
+                ReplayBufferCopy(Owner.Target, Owner.TargetReplayBuffer, 0, bufferIdx * Owner.Target.Count, Owner.Target.Count);
+                
                 m_samplesCount++;
                 
                 for (int batchIdx = 0; batchIdx < Owner.BatchSize; batchIdx++)
                 {
                     int randomBufferIdx = m_rand.Next(0, Math.Min(m_samplesCount, Owner.ReplayBufferSize)); // select a random sample from already filled part of replay buffer
 
-                    Owner.SampleReplayBuffer.CopyToMemoryBlock(Owner.SamplesBatch, randomBufferIdx * Owner.Sample.Count, batchIdx * Owner.Sample.Count, Owner.Sample.Count);
-                    Owner.TargetReplayBuffer.CopyToMemoryBlock(Owner.TargetsBatch, randomBufferIdx * Owner.Target.Count, batchIdx * Owner.Target.Count, Owner.Target.Count);
+                    ReplayBufferCopy(Owner.SampleReplayBuffer, Owner.SamplesBatch, randomBufferIdx * Owner.Sample.Count, batchIdx * Owner.Sample.Count, Owner.Sample.Count);
+                    ReplayBufferCopy(Owner.TargetReplayBuffer, Owner.TargetsBatch, randomBufferIdx * Owner.Target.Count, batchIdx * Owner.Target.Count, Owner.Target.Count);
+                }
+
+                if (Owner.BufferStorage == MyReplayBufferStorage.Host)
+                {
+                    Owner.SamplesBatch.SafeCopyToDevice();
+                    Owner.TargetsBatch.SafeCopyToDevice();
                 }
             }
         }
