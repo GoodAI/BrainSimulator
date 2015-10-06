@@ -31,7 +31,7 @@ namespace BasicNodesTests
         /// When the simulation is paused or stopped, the handle should be released so that the file can be modified.
         /// </summary>
         [Fact]
-        public void FileHandleReleaseTesoutputPathts()
+        public void FileCanBeReadWhenSimulationIsNotRunning()
         {
             string directory = Path.GetFullPath(@"Data\");
             const string fileName = "csv_file_test.brain";
@@ -84,18 +84,25 @@ namespace BasicNodesTests
                     File.Open(m_outputFileFullPath, FileMode.Open, FileAccess.ReadWrite);
                 });
 
+                // Every time we change simulation state, the StateChanged method gets notified.
+                // We're changing the state several times here and the StateChanged methods checks that
+                // the file that the Csv node uses is available for writing.
+
+                // First, go through start->pause->stop.
                 handler.PauseSimulation();
                 m_continueEvent.WaitOne();
 
                 handler.StopSimulation();
                 m_continueEvent.WaitOne();
 
+                // Now, try start->stop only.
                 handler.StartSimulation(oneStepOnly: false);
                 m_continueEvent.WaitOne();
 
                 handler.StopSimulation();
                 m_continueEvent.WaitOne();
 
+                // The file should have been successfully opened three times - every time the simulation was paused or stopped.
                 Assert.Equal(3, m_openCount);
             }
             finally
