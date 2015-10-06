@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DD234E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodesTests", "BasicNodesTests\BasicNodesTests.csproj", "{79A3C6F3-E403-488A-B1E9-AE3A146958F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -106,11 +108,18 @@ Global
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
+		{79A3C6F3-E403-488A-B1E9-AE3A146958F1} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 	EndGlobalSection
 EndGlobal
