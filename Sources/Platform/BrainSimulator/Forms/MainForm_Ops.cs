@@ -5,6 +5,7 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
+using GoodAI.Core.Project;
 using GoodAI.Core.Utils;
 using Graph;
 using System;
@@ -78,33 +79,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 string fileContent = GetSerializedProject(fileName);
 
-                if (fileName.EndsWith(".brainz"))
-                {
-                    String tempStoragePath = MyMemoryBlockSerializer.GetTempStorage(Project);
-                    
-                    if (!Directory.Exists(tempStoragePath))
-                    {
-                        MyLog.WARNING.WriteLine("No state data found, saving only zipped project file.");
-                        Directory.CreateDirectory(tempStoragePath);
-                    }
-                    
-                    TextWriter writer = new StreamWriter(tempStoragePath + "\\Project.brain");
-                    writer.Write(fileContent);
-                    writer.Close();
-
-                    if (File.Exists(fileName))
-                    {
-                        File.Delete(fileName);
-                    }
-
-                    ZipFile.CreateFromDirectory(tempStoragePath, fileName, CompressionLevel.Optimal , false);
-                }
-                else // We are saving just the project definition aka .brain file
-                {
-                    TextWriter writer = new StreamWriter(fileName);
-                    writer.Write(fileContent);
-                    writer.Close();
-                }
+                ProjectLoader.SaveProject(fileName, fileContent,
+                    MyMemoryBlockSerializer.GetTempStorage(Project));
 
                 m_savedProjectRepresentation = fileContent;
 
@@ -124,20 +100,8 @@ namespace GoodAI.BrainSimulator.Forms
             MyLog.INFO.WriteLine("Loading project: " + fileName);
             try
             {
-                String brainFileName = fileName;
-                if (fileName.EndsWith(".brainz"))
-                {
-                    String projectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
-                    if (Directory.Exists(MyMemoryBlockSerializer.GetTempStorage(projectName)))
-                    {
-                        Directory.Delete(MyMemoryBlockSerializer.GetTempStorage(projectName), true);
-                    }
-                    ZipFile.ExtractToDirectory(fileName, MyMemoryBlockSerializer.GetTempStorage(projectName));
-                    brainFileName = MyMemoryBlockSerializer.GetTempStorage(projectName) + "\\Project.brain";
-                }
-                TextReader reader = new StreamReader(brainFileName);
-                string content = reader.ReadToEnd();
-                reader.Close();
+                string content = ProjectLoader.LoadProject(fileName,
+                    MyMemoryBlockSerializer.GetTempStorage(Project));
 
                 Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
                 Project.Name = Path.GetFileNameWithoutExtension(fileName);
