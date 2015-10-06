@@ -20,11 +20,12 @@ namespace BasicNodesTests
 {
     public class MyCsvFileWriterNodeTests
     {
-        private static readonly string m_outputFileName = string.Format(@"csv_test_{0}.log", Guid.NewGuid().ToString().Substring(0, 10));
-        private static readonly string m_outputPath = @"c:\" + m_outputFileName;
+        //private static readonly string m_outputFileName = string.Format(@"csv_test_{0}.log", Guid.NewGuid().ToString().Substring(0, 10));
+        //private static readonly string m_outputPath = @"c:\" + m_outputFileName;
         private int m_openCount;
 
         private AutoResetEvent m_continueEvent = new AutoResetEvent(false);
+        private string m_outputFileFullPath;
 
         /// <summary>
         /// When the simulation is paused or stopped, the handle should be released so that the file can be modified.
@@ -34,12 +35,14 @@ namespace BasicNodesTests
         {
             string directory = Path.GetFullPath(@"Data\");
             const string fileName = "csv_file_test.brain";
+
+            m_outputFileFullPath = Path.GetTempFileName();
+            var outputFileName = Path.GetFileName(m_outputFileFullPath);
+            var outputFileDirectory = Path.GetDirectoryName(m_outputFileFullPath);
+
             string projectPath = directory + fileName;
 
             var simulation = new MyLocalSimulation();
-
-            /*MyConfiguration.SetupModuleSearchPath();
-            MyConfiguration.LoadModules();*/
 
             // TODO(HonzaS): This should not be required!
             // The referenced assemblies get loaded only if a Type is required here. But since the serializer
@@ -60,8 +63,12 @@ namespace BasicNodesTests
 
             // The CSV node
             MyNode node = project.Network.GetChildNodeById(6);
-            PropertyInfo property = node.GetType().GetProperty("OutputFile", BindingFlags.Instance | BindingFlags.Public);
-            property.SetValue(node, m_outputFileName);
+
+            PropertyInfo fileNameProperty = node.GetType().GetProperty("OutputFile", BindingFlags.Instance | BindingFlags.Public);
+            fileNameProperty.SetValue(node, outputFileName);
+
+            PropertyInfo directoryProperty = node.GetType().GetProperty("OutputDirectory", BindingFlags.Instance | BindingFlags.Public);
+            directoryProperty.SetValue(node, outputFileDirectory);
 
             handler.UpdateMemoryModel();
 
@@ -74,7 +81,7 @@ namespace BasicNodesTests
 
                 Assert.Throws<IOException>(() =>
                 {
-                    File.Open(m_outputPath, FileMode.Open, FileAccess.ReadWrite);
+                    File.Open(m_outputFileFullPath, FileMode.Open, FileAccess.ReadWrite);
                 });
 
                 handler.PauseSimulation();
@@ -94,8 +101,8 @@ namespace BasicNodesTests
             finally
             {
                 handler.Finish();
-                handler.Dispose();
-                File.Delete(m_outputPath);
+                File.Delete(m_outputFileFullPath);
+                m_outputFileFullPath = null;
             }
         }
 
@@ -108,7 +115,7 @@ namespace BasicNodesTests
 
         private void OpenFile()
         {
-            using(var file = File.Open(m_outputPath, FileMode.Open, FileAccess.ReadWrite))
+            using(var file = File.Open(m_outputFileFullPath, FileMode.Open, FileAccess.ReadWrite))
                 m_openCount++;
         }
     }
