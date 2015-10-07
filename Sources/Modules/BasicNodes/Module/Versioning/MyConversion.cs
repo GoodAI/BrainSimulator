@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 7; } }
+        public override int CurrentVersion { get { return 8; } }
 
 
         /// <summary>
@@ -244,6 +244,43 @@ namespace GoodAI.Modules.Versioning
             decrementTask.Add(new XAttribute(GetRealTypeAttributeName(), "GoodAI.Modules.NeuralNetwork.Group.MyDecrementTimeStepTask"));
             tasks.Add(decrementTask);
         }
+
+        /// <summary>
+        /// split focuser and unfocus :)
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static string Convert7To8(string xml)
+        {
+           XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            List<XElement> toRemove = new List<XElement>();
+
+            foreach (var mapper in document.Root.Descendants("MyFocuser"))
+            {
+                {
+                    foreach (var task in mapper.Descendants("Task"))
+                    {
+                        if (task.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.Retina.MyFocuser+MyUnfocusTask")
+                        {
+                            toRemove.Add(task);
+                        }
+
+                    }
+                }
+            }
+
+            foreach (var xElement in toRemove)
+            {
+                xElement.Remove();
+            }
+            return document.ToString();
+        }
+
+
 
         private static XName GetRealTypeAttributeName() 
         {
