@@ -98,6 +98,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             MyLog.INFO.WriteLine("--------------");
             MyLog.INFO.WriteLine("Loading project: " + fileName);
+
             try
             {
                 string content = ProjectLoader.LoadProject(fileName,
@@ -152,11 +153,18 @@ namespace GoodAI.BrainSimulator.Forms
         private bool ImportProject(string fileName, bool showObservers = false)
         {
             MyLog.INFO.WriteLine("Importing project: " + fileName);
+
             try
             {
-                TextReader reader = new StreamReader(fileName);
-                string content = reader.ReadToEnd();
-                reader.Close();
+                string dataStoragePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+                string content = ProjectLoader.LoadProject(fileName, dataStoragePath);
+
+                // data are not used yet, delete them to prevent littering the file system
+                // TODO(Premek): Also import (=copy) trained data from the dataStoragePath (?)
+                // https://app.asana.com/0/32893784542247/56397605644507
+                if (fileName.EndsWith(".brainz"))  // temp directory is only used for brainz
+                    Directory.Delete(dataStoragePath, recursive: true);
 
                 MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));                
                 
