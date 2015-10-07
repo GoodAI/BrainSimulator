@@ -198,8 +198,10 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 SaveProject(saveFileDialog.FileName);
             }
-
-            SaveProjectAs();  // ask for file name and then save the project
+            else
+            {
+                SaveProjectAs();  // ask for file name and then save the project
+            }
         }
 
         private void saveProjectAsToolStripMenuItem_Click(object sender, EventArgs e)
