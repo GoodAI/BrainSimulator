@@ -31,8 +31,6 @@ namespace GoodAI.BrainSimulator.Forms
         public MySimulationHandler SimulationHandler { get; private set; }
         public MyDocProvider Documentation { get; private set; } 
 
-        private MyFlatOrdering m_topologyOps = new MyFlatOrdering();
-
         private bool m_observersHidden = false;
 
         #region Project
@@ -55,8 +53,6 @@ namespace GoodAI.BrainSimulator.Forms
 
         private string m_savedProjectRepresentation = null;
 
-        //internal Uri ProjectLocation { get; private set; }
-
         private void CreateNewProject()
         {
             Project = new MyProject();
@@ -70,6 +66,13 @@ namespace GoodAI.BrainSimulator.Forms
 
             exportStateButton.Enabled = false;
             clearDataButton.Enabled = false;
+        }
+
+        private void CloseCurrentProjectWindows()
+        {
+            CloseAllGraphLayouts();
+            CloseAllTextEditors();
+            CloseAllObservers();
         }
 
         private void SaveProject(string fileName)
@@ -94,63 +97,63 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private bool OpenProject(string fileName)
+        // TODO(Premek): move this exception inside project loader
+        private class ProjectLoadingException : Exception
+        {
+            public ProjectLoadingException(string message, Exception innerException)
+                : base(message, innerException)
+            {}
+        }
+
+        private void OpenProject(string fileName)
         {
             MyLog.INFO.WriteLine("--------------");
             MyLog.INFO.WriteLine("Loading project: " + fileName);
 
+            string content;
+
             try
             {
-                string content = ProjectLoader.LoadProject(fileName,
+                content = ProjectLoader.LoadProject(fileName,
                     MyMemoryBlockSerializer.GetTempStorage(Project));
 
                 Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
                 Project.Name = Path.GetFileNameWithoutExtension(fileName);
-
-                Properties.Settings.Default.LastProject = fileName;
-                saveFileDialog.FileName = fileName;
-                m_savedProjectRepresentation = content;
-
-                CloseAllGraphLayouts();
-                CloseAllTextEditors();
-                CloseAllObservers();
-
-                CreateNetworkView();
-                OpenGraphLayout(Project.Network);
-
-                if (Project.World != null)
-                {
-                    SelectWorldInWorldList(Project.World);
-                }
-
-                if (Project.Observers != null)
-                {
-                    foreach (MyAbstractObserver observer in Project.Observers)
-                    {
-                        observer.RestoreTargetFromIdentifier(Project);
-
-                        if (observer.GenericTarget != null)
-                        {
-                            ShowObserverView(observer);
-                        }
-                    }
-                }
-                Project.Observers = null;
-
-                exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
-                clearDataButton.Enabled = exportStateButton.Enabled;
-
-                Text = TITLE_TEXT + " - " + Project.Name;
-                return true;
             }
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project loading failed: " + e.Message);
-                return false;
+                throw new ProjectLoadingException("Project loading failed.", e);
             }
+
+            Properties.Settings.Default.LastProject = fileName;
+            saveFileDialog.FileName = fileName;
+
+            m_savedProjectRepresentation = content;  // for "needs saving" detection
+
+            CloseCurrentProjectWindows();
+
+            CreateNetworkView();
+            OpenGraphLayout(Project.Network);
+
+            if (Project.World != null)
+            {
+                SelectWorldInWorldList(Project.World);
+            }
+
+            if (Project.Observers != null)
+            {
+                RestoreObservers(Project);
+            }
+            Project.Observers = null;
+
+            exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
+            clearDataButton.Enabled = exportStateButton.Enabled;
+
+            Text = TITLE_TEXT + " - " + Project.Name;
         }
 
-        private bool ImportProject(string fileName, bool showObservers = false)
+        private void ImportProject(string fileName, bool showObservers = false)
         {
             MyLog.INFO.WriteLine("Importing project: " + fileName);
 
@@ -177,15 +180,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (showObservers && importedProject.Observers != null)
                 {
-                    foreach (MyAbstractObserver observer in importedProject.Observers)
-                    {
-                        observer.RestoreTargetFromIdentifier(importedProject);
-
-                        if (observer.GenericTarget != null)
-                        {
-                            ShowObserverView(observer);
-                        }
-                    }
+                    RestoreObservers(importedProject);
                 }
 
                 Project.Network.AppendGroupContent(importedProject.Network);
@@ -200,15 +195,13 @@ namespace GoodAI.BrainSimulator.Forms
      
                 NetworkView.ReloadContent();
                 NetworkView.Desktop.ZoomToBounds();
-                
-                return true;
             }
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project import failed: " + e.Message);
-                return false;
             }
         }
+
         
         private bool IsProjectSaved(string fileName)
         {
@@ -381,6 +374,22 @@ namespace GoodAI.BrainSimulator.Forms
                 if (ov.Observer == observer)
                 {
                     ov.UpdateView(SimulationHandler.SimulationStep);
+                }
+            }
+        }
+
+        private void RestoreObservers(MyProject project)
+        {
+            if (project.Observers == null)
+                return;
+
+            foreach (MyAbstractObserver observer in project.Observers)
+            {
+                observer.RestoreTargetFromIdentifier(project);
+
+                if (observer.GenericTarget != null)
+                {
+                    ShowObserverView(observer);
                 }
             }
         }
@@ -677,7 +686,8 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNewProject();                 
             CreateNetworkView();
 
-            m_views = new List<DockContent>() { NetworkView, NodePropertyView, MemoryBlocksView, TaskView, TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
+            m_views = new List<DockContent>() { NetworkView, NodePropertyView, MemoryBlocksView, TaskView,
+                TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
 
             foreach (DockContent view in m_views)
             {
