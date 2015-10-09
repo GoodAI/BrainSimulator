@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="EnumerableExtensionsTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
+    <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="SimulationHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

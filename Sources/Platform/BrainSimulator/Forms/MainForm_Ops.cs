@@ -5,6 +5,7 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
+using GoodAI.Core.Project;
 using GoodAI.Core.Utils;
 using Graph;
 using System;
@@ -30,8 +31,6 @@ namespace GoodAI.BrainSimulator.Forms
         public MySimulationHandler SimulationHandler { get; private set; }
         public MyDocProvider Documentation { get; private set; } 
 
-        private MyFlatOrdering m_topologyOps = new MyFlatOrdering();
-
         private bool m_observersHidden = false;
 
         #region Project
@@ -54,8 +53,6 @@ namespace GoodAI.BrainSimulator.Forms
 
         private string m_savedProjectRepresentation = null;
 
-        //internal Uri ProjectLocation { get; private set; }
-
         private void CreateNewProject()
         {
             Project = new MyProject();
@@ -71,6 +68,13 @@ namespace GoodAI.BrainSimulator.Forms
             clearDataButton.Enabled = false;
         }
 
+        private void CloseCurrentProjectWindows()
+        {
+            CloseAllGraphLayouts();
+            CloseAllTextEditors();
+            CloseAllObservers();
+        }
+
         private void SaveProject(string fileName)
         {
             MyLog.INFO.WriteLine("Saving project: " + fileName);
@@ -78,33 +82,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 string fileContent = GetSerializedProject(fileName);
 
-                if (fileName.EndsWith(".brainz"))
-                {
-                    String tempStoragePath = MyMemoryBlockSerializer.GetTempStorage(Project);
-                    
-                    if (!Directory.Exists(tempStoragePath))
-                    {
-                        MyLog.WARNING.WriteLine("No state data found, saving only zipped project file.");
-                        Directory.CreateDirectory(tempStoragePath);
-                    }
-                    
-                    TextWriter writer = new StreamWriter(tempStoragePath + "\\Project.brain");
-                    writer.Write(fileContent);
-                    writer.Close();
-
-                    if (File.Exists(fileName))
-                    {
-                        File.Delete(fileName);
-                    }
-
-                    ZipFile.CreateFromDirectory(tempStoragePath, fileName, CompressionLevel.Optimal , false);
-                }
-                else // We are saving just the project definition aka .brain file
-                {
-                    TextWriter writer = new StreamWriter(fileName);
-                    writer.Write(fileContent);
-                    writer.Close();
-                }
+                ProjectLoader.SaveProject(fileName, fileContent,
+                    MyMemoryBlockSerializer.GetTempStorage(Project));
 
                 m_savedProjectRepresentation = fileContent;
 
@@ -118,81 +97,77 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private bool OpenProject(string fileName)
+        // TODO(Premek): move this exception inside project loader
+        private class ProjectLoadingException : Exception
+        {
+            public ProjectLoadingException(string message, Exception innerException)
+                : base(message, innerException)
+            {}
+        }
+
+        private void OpenProject(string fileName)
         {
             MyLog.INFO.WriteLine("--------------");
             MyLog.INFO.WriteLine("Loading project: " + fileName);
+
+            string content;
+
             try
             {
-                String brainFileName = fileName;
-                if (fileName.EndsWith(".brainz"))
-                {
-                    String projectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
-                    if (Directory.Exists(MyMemoryBlockSerializer.GetTempStorage(projectName)))
-                    {
-                        Directory.Delete(MyMemoryBlockSerializer.GetTempStorage(projectName), true);
-                    }
-                    ZipFile.ExtractToDirectory(fileName, MyMemoryBlockSerializer.GetTempStorage(projectName));
-                    brainFileName = MyMemoryBlockSerializer.GetTempStorage(projectName) + "\\Project.brain";
-                }
-                TextReader reader = new StreamReader(brainFileName);
-                string content = reader.ReadToEnd();
-                reader.Close();
+                content = ProjectLoader.LoadProject(fileName,
+                    MyMemoryBlockSerializer.GetTempStorage(Project));
 
                 Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
                 Project.Name = Path.GetFileNameWithoutExtension(fileName);
-
-                Properties.Settings.Default.LastProject = fileName;
-                saveFileDialog.FileName = fileName;
-                m_savedProjectRepresentation = content;
-
-                CloseAllGraphLayouts();
-                CloseAllTextEditors();
-                CloseAllObservers();
-
-                CreateNetworkView();
-                OpenGraphLayout(Project.Network);
-
-                if (Project.World != null)
-                {
-                    SelectWorldInWorldList(Project.World);
-                }
-
-                if (Project.Observers != null)
-                {
-                    foreach (MyAbstractObserver observer in Project.Observers)
-                    {
-                        observer.RestoreTargetFromIdentifier(Project);
-
-                        if (observer.GenericTarget != null)
-                        {
-                            ShowObserverView(observer);
-                        }
-                    }
-                }
-                Project.Observers = null;
-
-                exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
-                clearDataButton.Enabled = exportStateButton.Enabled;
-
-                Text = TITLE_TEXT + " - " + Project.Name;
-                return true;
             }
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project loading failed: " + e.Message);
-                return false;
+                throw new ProjectLoadingException("Project loading failed.", e);
             }
+
+            Properties.Settings.Default.LastProject = fileName;
+            saveFileDialog.FileName = fileName;
+
+            m_savedProjectRepresentation = content;  // for "needs saving" detection
+
+            CloseCurrentProjectWindows();
+
+            CreateNetworkView();
+            OpenGraphLayout(Project.Network);
+
+            if (Project.World != null)
+            {
+                SelectWorldInWorldList(Project.World);
+            }
+
+            if (Project.Observers != null)
+            {
+                RestoreObservers(Project);
+            }
+            Project.Observers = null;
+
+            exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
+            clearDataButton.Enabled = exportStateButton.Enabled;
+
+            Text = TITLE_TEXT + " - " + Project.Name;
         }
 
-        private bool ImportProject(string fileName, bool showObservers = false)
+        private void ImportProject(string fileName, bool showObservers = false)
         {
             MyLog.INFO.WriteLine("Importing project: " + fileName);
+
             try
             {
-                TextReader reader = new StreamReader(fileName);
-                string content = reader.ReadToEnd();
-                reader.Close();
+                string dataStoragePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+                string content = ProjectLoader.LoadProject(fileName, dataStoragePath);
+
+                // data are not used yet, delete them to prevent littering the file system
+                // TODO(Premek): Also import (=copy) trained data from the dataStoragePath (?)
+                // https://app.asana.com/0/32893784542247/56397605644507
+                if (fileName.EndsWith(".brainz"))  // temp directory is only used for brainz
+                    Directory.Delete(dataStoragePath, recursive: true);
 
                 MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));                
                 
@@ -205,15 +180,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (showObservers && importedProject.Observers != null)
                 {
-                    foreach (MyAbstractObserver observer in importedProject.Observers)
-                    {
-                        observer.RestoreTargetFromIdentifier(importedProject);
-
-                        if (observer.GenericTarget != null)
-                        {
-                            ShowObserverView(observer);
-                        }
-                    }
+                    RestoreObservers(importedProject);
                 }
 
                 Project.Network.AppendGroupContent(importedProject.Network);
@@ -228,15 +195,13 @@ namespace GoodAI.BrainSimulator.Forms
      
                 NetworkView.ReloadContent();
                 NetworkView.Desktop.ZoomToBounds();
-                
-                return true;
             }
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project import failed: " + e.Message);
-                return false;
             }
         }
+
         
         private bool IsProjectSaved(string fileName)
         {
@@ -409,6 +374,22 @@ namespace GoodAI.BrainSimulator.Forms
                 if (ov.Observer == observer)
                 {
                     ov.UpdateView(SimulationHandler.SimulationStep);
+                }
+            }
+        }
+
+        private void RestoreObservers(MyProject project)
+        {
+            if (project.Observers == null)
+                return;
+
+            foreach (MyAbstractObserver observer in project.Observers)
+            {
+                observer.RestoreTargetFromIdentifier(project);
+
+                if (observer.GenericTarget != null)
+                {
+                    ShowObserverView(observer);
                 }
             }
         }
@@ -705,7 +686,8 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNewProject();                 
             CreateNetworkView();
 
-            m_views = new List<DockContent>() { NetworkView, NodePropertyView, MemoryBlocksView, TaskView, TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
+            m_views = new List<DockContent>() { NetworkView, NodePropertyView, MemoryBlocksView, TaskView,
+                TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
 
             foreach (DockContent view in m_views)
             {

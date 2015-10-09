@@ -78,6 +78,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -112,6 +113,7 @@
     <Compile Include="Observers\MyShape.cs" />
     <Compile Include="Observers\MySpikeRasterObserver.cs" />
     <Compile Include="Observers\MyTextObserver.cs" />
+    <Compile Include="Project\ProjectLoader.cs" />
     <Compile Include="Transforms\MyReduction.cs" />
     <Compile Include="Utils\BidirHashtable.cs" />
     <Compile Include="Utils\MyPropertyChangedEventArgs.cs" />
