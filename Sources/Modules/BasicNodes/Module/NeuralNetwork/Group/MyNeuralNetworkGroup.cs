@@ -162,8 +162,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             BPTTSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
             BPTTSingleStep.AddRange(newPlan.Where(task => task is MyQLearningTask).ToList());
             BPTTSingleStep.AddRange(newPlan.Where(task => task is MyGradientCheckTask).ToList());
-            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyRestoreValuesTask).ToList());
-            BPTTSingleStep.AddRange(newPlan.Where(task => task is MySaveActionTask).ToList());
             BPTTSingleStep.Add(DecrementTimeStep);
 
             // backprop until unfolded (timestep=0)
@@ -189,9 +187,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(newPlan.Where(task => task is MyGradientCheckTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyQLearningTask).ToList().Contains);
-            newPlan.RemoveAll(newPlan.Where(task => task is MyRestoreValuesTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList().Contains);
-            newPlan.RemoveAll(newPlan.Where(task => task is MySaveActionTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyIncrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyDecrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);

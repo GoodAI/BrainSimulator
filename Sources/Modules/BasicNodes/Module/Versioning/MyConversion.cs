@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 8; } }
+        public override int CurrentVersion { get { return 9; } }
 
 
         /// <summary>
@@ -280,6 +280,36 @@ namespace GoodAI.Modules.Versioning
             return document.ToString();
         }
 
+        /// <summary>
+        /// QLearning tasks refactoring
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static string Convert8To9(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            List<XElement> toRemove = new List<XElement>();
+
+            foreach (var task in document.Root.Descendants("Task"))
+            {
+                if (task.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.NeuralNetwork.Tasks.MyRestoreValuesTask" ||
+                    task.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.NeuralNetwork.Tasks.MySaveActionTask")
+                {
+                    toRemove.Add(task);
+                }
+            }
+
+            foreach (var xElement in toRemove)
+            {
+                xElement.Remove();
+            }
+
+            return document.ToString();
+        }
 
 
         private static XName GetRealTypeAttributeName() 

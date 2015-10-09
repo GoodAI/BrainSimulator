@@ -90,48 +90,14 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
             // copy reward to previous value
             Owner.PreviousReward.CopyFromMemoryBlock(Owner.Reward, 0, 0, 1);
-        }
-    }
 
-    /// <author>GoodAI</author>
-    /// <meta>ph</meta>
-    /// <status>Working</status>
-    /// <summary>The QLearning task sets and updates the values from the previous timestep.
-    /// <br></br>
-    /// This restores the values to the current timestep.
-    /// </summary>
-    [Description("Restore values"), MyTaskInfo(OneShot = false)]
-    public class MyRestoreValuesTask : MyTask<MyQLearningLayer>
-    {
-        public MyRestoreValuesTask() { } //parameterless constructor
-
-        public override void Init(int nGPU) { }
-
-        public override void Execute() //Task execution
-        {
             // restore output values from host
             Owner.Output.SafeCopyToDevice();
 
             // restore input values from host
             Owner.ParentNetwork.FirstTopologicalLayer.Input.SafeCopyToDevice();
             Owner.PreviousInput.CopyFromMemoryBlock(Owner.ParentNetwork.FirstTopologicalLayer.Input, 0, 0, Owner.PreviousInput.Count);
-        }
-    }
 
-    /// <author>GoodAI</author>
-    /// <meta>ph</meta>
-    /// <status>Working</status>
-    /// <summary>Saves the action taken in the current timestep, to use in the QLearning algorithm in the next timestep
-    /// </summary>
-    [Description("Save action"), MyTaskInfo(OneShot = false)]
-    public class MySaveActionTask : MyTask<MyQLearningLayer>
-    {
-        public MySaveActionTask() { } //parameterless constructor
-
-        public override void Init(int nGPU) { }
-
-        public override void Execute() //Task execution
-        {
             // copy action to previous value
             Owner.PreviousAction.CopyFromMemoryBlock(Owner.Action, 0, 0, Owner.Neurons);
         }
