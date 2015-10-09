@@ -8,9 +8,14 @@
 
 #include "ColorScaleObserverSingle.cu"
 #include "../Common/Statistics.cu"
+#include "../Transforms/Transform2DKernels.cu"
+
+
+
 
 extern "C"  
-{		
+{
+
 	//kernel code
     // There is ,,Vision/KMeansWM.cu/FocuserInputObserver''   that defines part of this function as device and has some features as plotting multiple lines 
 	__global__ void FocuserInputObserver(float* values, float* pupilControl, int inputWidth, int inputHeight, unsigned int* pixels)
@@ -125,4 +130,105 @@ extern "C"
 			pixels[id] = hsva_to_uint_rgba(hue, saturation, value, 1.0f);
 		}
 	}
+
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    //                          RETINA STUFF
+    //------------------------------------------------------------------------------------------------------------------------
+
+    __global__ void RetinaObserver_Mask(unsigned int* pixels, int pixelsWidth, int pixelsHeight, float* retinaPtsDefs, int retinaPtsDefsSize, float* subImageDefs)
+    {
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+				+ blockDim.x*blockIdx.x				
+				+ threadIdx.x;
+        float x,y;        
+
+        int2 subImg;
+        int diameterPix;
+
+        EstimateParForSubsample( subImageDefs,  1,		pixelsWidth,  pixelsHeight,       subImg, diameterPix);
+
+        if (id < retinaPtsDefsSize)
+        {
+            x = subImg.x + retinaPtsDefs[id * 2];
+            y = subImg.y + retinaPtsDefs[id * 2 + 1];
+
+            if (x>0 && y>0 && x<pixelsWidth && y<pixelsHeight)
+                pixels[(int)x+(int)y*pixelsWidth] = GET_RGBA(0,255,0,255);
+        }
+    }
+
+
+    // next code should be improved:
+    //         - share memory for minDist
+    //         - template specialization to have it just once.  It does not work now :(
+
+    __global__ void RetinaObserver_UnMaskPatchFl(float* output2save, int pixelsWidth, int pixelsHeight, float* retinaPtsDefs, int retinaPtsDefsSize, float* retinaValues, float* subImageDefs)
+    {
+      int id_pxl = blockDim.x * blockIdx.y * gridDim.x
+		          + blockDim.x * blockIdx.x
+        	      + threadIdx.x;
+
+		int2 subImg;
+        int diameterPix;
+
+        int x = id_pxl % pixelsWidth;
+        int y = id_pxl / pixelsWidth;
+
+        EstimateParForSubsample( subImageDefs,  1, pixelsWidth,  pixelsHeight,  subImg, diameterPix );
+
+        if (id_pxl < pixelsWidth*pixelsHeight)
+        {
+            float minDist = 999999.9f;
+            int minIdx = 0;
+            for (int i = 0; i < retinaPtsDefsSize; i++)
+            {
+                float xr = subImg.x + retinaPtsDefs[i * 2];
+                float yr = subImg.y + retinaPtsDefs[i * 2 + 1];
+                float dist = (xr - x) * (xr - x) + (yr - y) * (yr - y);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    output2save[x+pixelsWidth*y] = fminf(fmaxf(retinaValues[i],0.0f),1.0f);
+                }
+            }
+        }
+    }
+
+    __global__ void RetinaObserver_UnMaskPatchVBO(unsigned int* pixels, int pixelsWidth, int pixelsHeight, float* retinaPtsDefs, int retinaPtsDefsSize,  float* retinaValues, float* subImageDefs)
+    {
+      int id_pxl = blockDim.x * blockIdx.y * gridDim.x
+		          + blockDim.x * blockIdx.x
+        	      + threadIdx.x;
+
+		int2 subImg;
+        int diameterPix;
+
+        int x = id_pxl % pixelsWidth;
+        int y = id_pxl / pixelsWidth;
+
+        EstimateParForSubsample( subImageDefs,  1, pixelsWidth,  pixelsHeight,  subImg, diameterPix );
+
+        if (id_pxl < pixelsWidth*pixelsHeight)
+        {
+            float minDist = 999999.9f;
+            int minIdx = 0;
+            for (int i = 0; i < retinaPtsDefsSize; i++)
+            {
+                float xr = subImg.x + retinaPtsDefs[i * 2];
+                float yr = subImg.y + retinaPtsDefs[i * 2 + 1];
+                float dist = (xr - x) * (xr - x) + (yr - y) * (yr - y);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    pixels[x+pixelsWidth*y] = hsva_to_uint_rgba(0.5f, 1.0f, fminf(fmaxf(retinaValues[i],0.0f),1.0f), 1.0f);
+                }
+            }
+        }
+    }
+
+
+
 }
+

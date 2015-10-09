@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using GoodAI.Core.Execution;
 using YAXLib;
 
 namespace GoodAI.Core.Nodes
@@ -26,15 +27,15 @@ namespace GoodAI.Core.Nodes
         #region Persistance
 
         [YAXSerializableField, YAXAttributeForClass]
-        [MyBrowsable, Category("\tPersistance"), ReadOnly(true)]
+        [MyBrowsable, Category("\t\tPersistance"), ReadOnly(true)]
         public bool LoadOnStart { get; set; }
 
         [YAXSerializableField, YAXAttributeForClass]
-        [MyBrowsable, Category("\tPersistance"), ReadOnly(true)]
+        [MyBrowsable, Category("\t\tPersistance"), ReadOnly(true)]
         public bool SaveOnStop { get; set; }
 
         [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
-        [MyBrowsable, Category("\tPersistance"), Editor]        
+        [MyBrowsable, Category("\t\tPersistance"), Editor]        
         public string DataFolder { get; set; }
         #endregion
 
@@ -259,6 +260,14 @@ namespace GoodAI.Core.Nodes
         }
 
         #endregion
+
+        /// <summary>
+        /// This allows the node implementations to react to the simulation's state.
+        /// This is useful for e.g. resource management.
+        /// </summary>
+        public virtual void OnSimulationStateChanged(MySimulationHandler.StateEventArgs args)
+        {
+        }
 
         internal protected MyWorkingNode()
         {

@@ -75,11 +75,7 @@ namespace GoodAI.Modules.Common
         {
             get
             {
-                if (GenerateType == MyGenerateType.Linear)
-                {
-                    return base.Description;
-                }
-                else if (GenerateType == MyGenerateType.UserData)
+                if (GenerateType == MyGenerateType.UserData)
                 {
                     if (UserInput.Length > 10)
                     {
@@ -92,9 +88,17 @@ namespace GoodAI.Modules.Common
                 {
                     return "SimulStep";
                 }
-                else
+                else if (GenerateType == MyGenerateType.SimulationStepFce)
                 {
                     return "SimulStepFce";
+                }
+                else if (GenerateType == MyGenerateType.Sine)
+                {
+                    return "Sine";
+                }
+                else
+                {
+                    return base.Description;
                 }
             }
         }
@@ -110,6 +114,7 @@ namespace GoodAI.Modules.Common
             if (GenerateType == MyGenerateType.UserData)
             {
                 Output.Count = UserInput_parsed != null ? UserInput_parsed.Count : OutputSize;
+                OutputSize = Output.Count;
             }
         }
 

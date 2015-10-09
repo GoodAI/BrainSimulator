@@ -34,9 +34,15 @@ namespace GoodAI.Core.Execution
             get { return m_simulation; }
             set
             {
-                if (m_simulation != null && !m_simulation.IsFinished)
-                    throw new InvalidOperationException("The simulation was not cleared. Call Finish() first.");
+                if (m_simulation != null)
+                {
+                    if (!m_simulation.IsFinished)
+                        throw new InvalidOperationException("The simulation was not cleared. Call Finish() first.");
+
+                    StateChanged -= m_simulation.OnStateChanged;
+                }
                 m_simulation = value;
+                StateChanged += m_simulation.OnStateChanged;
             }
         }
 
@@ -134,6 +140,7 @@ namespace GoodAI.Core.Execution
             SleepInterval = 0;
             m_speedMeasureInterval = 2000;
             AutosaveInterval = 10000;
+
             Simulation = simulation;
 
             m_worker = new BackgroundWorker
@@ -218,8 +225,7 @@ namespace GoodAI.Core.Execution
 
         public void Dispose()
         {
-            if (State != SimulationState.STOPPED)
-                Finish();
+            Finish();
         }
 
         //NOT in UI thread
@@ -306,9 +312,9 @@ namespace GoodAI.Core.Execution
             }
             else
             {
+                // This means we're either pausing, or this was a single simulation step.
                 MyLog.INFO.WriteLine("Paused.");
                 State = SimulationState.PAUSED;
-                Project.World.DoPause();
             }
         }
 
@@ -385,11 +391,13 @@ namespace GoodAI.Core.Execution
 
                 MyKernelFactory.Instance.RecoverContexts();
 
-                MyLog.INFO.WriteLine("Clearing simulation...");
-                Simulation.Clear();            
-
-                MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
+                // This needs to be set before Clear is called so that nodes can be notified about the state change.
                 State = SimulationState.STOPPED;
+
+                MyLog.INFO.WriteLine("Clearing simulation...");
+                // This will destroy the collection that holds the nodes, so it has to be the last thing.
+                Simulation.Clear();            
+                MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
 
                 if (SimulationStopped != null)
                 {

@@ -129,6 +129,9 @@
     <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyNegativeCorrelationEnsembleTasks.cs" />
+    <Compile Include="Observers\MyFocuserRetinaObservers.cs" />
+    <Compile Include="Retina\MyAbstractFocuser.cs" />
+    <Compile Include="Retina\MyUnfocuser.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
@@ -370,6 +373,8 @@
     <Content Include="res\gridworld5\taleObstacle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="res\observerUnfocus.png" />
+    <EmbeddedResource Include="res\observerUnfocus_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

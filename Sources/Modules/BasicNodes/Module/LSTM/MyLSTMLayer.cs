@@ -80,8 +80,8 @@ namespace GoodAI.Modules.LSTM
         [MyBrowsable, Category("\tLayer")]
         public int CellsPerBlock { get; set; }
 
-        public int CellInputSize { get { return Input.Count + Output.Count + 1; } }
-        public int GateInputSize { get { return Input.Count + Output.Count + CellsPerBlock + 1; } }
+        public int CellInputSize { get { return (Input!=null) ? (Input.Count + Output.Count + 1) : 1; } }
+        public int GateInputSize { get { return (Input!=null) ?( Input.Count + Output.Count + CellsPerBlock + 1) : 1; } }
 
         //Tasks
         protected MyLSTMInitLayerTask initLayerTask { get; set; }

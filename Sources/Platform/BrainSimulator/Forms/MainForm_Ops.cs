@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -30,6 +31,8 @@ namespace GoodAI.BrainSimulator.Forms
         public MyDocProvider Documentation { get; private set; } 
 
         private MyFlatOrdering m_topologyOps = new MyFlatOrdering();
+
+        private bool m_observersHidden = false;
 
         #region Project
 
@@ -75,9 +78,33 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 string fileContent = GetSerializedProject(fileName);
 
-                TextWriter writer = new StreamWriter(fileName);                
-                writer.Write(fileContent);
-                writer.Close();
+                if (fileName.EndsWith(".brainz"))
+                {
+                    String tempStoragePath = MyMemoryBlockSerializer.GetTempStorage(Project);
+                    
+                    if (!Directory.Exists(tempStoragePath))
+                    {
+                        MyLog.WARNING.WriteLine("No state data found, saving only zipped project file.");
+                        Directory.CreateDirectory(tempStoragePath);
+                    }
+                    
+                    TextWriter writer = new StreamWriter(tempStoragePath + "\\Project.brain");
+                    writer.Write(fileContent);
+                    writer.Close();
+
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
+
+                    ZipFile.CreateFromDirectory(tempStoragePath, fileName, CompressionLevel.Optimal , false);
+                }
+                else // We are saving just the project definition aka .brain file
+                {
+                    TextWriter writer = new StreamWriter(fileName);
+                    writer.Write(fileContent);
+                    writer.Close();
+                }
 
                 m_savedProjectRepresentation = fileContent;
 
@@ -97,12 +124,24 @@ namespace GoodAI.BrainSimulator.Forms
             MyLog.INFO.WriteLine("Loading project: " + fileName);
             try
             {
-                TextReader reader = new StreamReader(fileName);
+                String brainFileName = fileName;
+                if (fileName.EndsWith(".brainz"))
+                {
+                    String projectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
+                    if (Directory.Exists(MyMemoryBlockSerializer.GetTempStorage(projectName)))
+                    {
+                        Directory.Delete(MyMemoryBlockSerializer.GetTempStorage(projectName), true);
+                    }
+                    ZipFile.ExtractToDirectory(fileName, MyMemoryBlockSerializer.GetTempStorage(projectName));
+                    brainFileName = MyMemoryBlockSerializer.GetTempStorage(projectName) + "\\Project.brain";
+                }
+                TextReader reader = new StreamReader(brainFileName);
                 string content = reader.ReadToEnd();
                 reader.Close();
 
                 Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
-                
+                Project.Name = Path.GetFileNameWithoutExtension(fileName);
+
                 Properties.Settings.Default.LastProject = fileName;
                 saveFileDialog.FileName = fileName;
                 m_savedProjectRepresentation = content;
@@ -508,6 +547,25 @@ namespace GoodAI.BrainSimulator.Forms
             ObserverViews.ToList().ForEach(view => view.Close());
         }
 
+        private void ShowHideAllObservers(bool forceShow = false)
+        {
+            if (forceShow && !m_observersHidden) 
+            {  
+                return;
+            }
+
+            if (m_observersHidden || forceShow)
+            {
+                ObserverViews.ToList().ForEach(view => view.Show());
+                m_observersHidden = false;
+            } 
+            else            
+            {
+                ObserverViews.ToList().ForEach(view => view.Hide());
+                m_observersHidden = true;
+            }
+        }
+
         private void GraphLayoutForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             GraphViews.Remove((sender as GraphLayoutForm).Target);
@@ -662,6 +720,12 @@ namespace GoodAI.BrainSimulator.Forms
             ((ToolStripMenuItem)viewToolStripMenuItem.DropDownItems.Find(HelpView.Text, false).First()).ShortcutKeys = Keys.F1;
             viewToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
+            ToolStripMenuItem showHideObserversMenuItem = new ToolStripMenuItem("Show/Hide all observers");
+            showHideObserversMenuItem.ShortcutKeys = Keys.Control | Keys.H;
+            showHideObserversMenuItem.Click += showHideObserversMenuItem_Click;
+
+            viewToolStripMenuItem.DropDownItems.Add(showHideObserversMenuItem);
+
             ToolStripMenuItem resetViewsMenuItem = new ToolStripMenuItem("Reset Views Layout");
             resetViewsMenuItem.ShortcutKeys = Keys.Control | Keys.W;
             resetViewsMenuItem.Click += resetViewsMenuItem_Click;
@@ -772,6 +836,11 @@ namespace GoodAI.BrainSimulator.Forms
         {
             ResetViewsLayout();
         }
+
+        void showHideObserversMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHideAllObservers();
+        }        
 
         void timerItem_Click(object sender, EventArgs e)
         {

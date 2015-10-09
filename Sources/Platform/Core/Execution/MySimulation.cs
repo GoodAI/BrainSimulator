@@ -5,6 +5,7 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using GoodAI.Platform.Core.Utils;
 
 namespace GoodAI.Core.Execution
@@ -41,6 +42,12 @@ namespace GoodAI.Core.Execution
 
         protected bool m_errorOccured;
         protected Exception m_lastException;
+
+        public void OnStateChanged(object sender, MySimulationHandler.StateEventArgs args)
+        {
+            foreach (MyWorkingNode node in NodePartitioning.SelectMany(nodeList => nodeList))
+                node.OnSimulationStateChanged(args);
+        }
 
         public MySimulation()
         {

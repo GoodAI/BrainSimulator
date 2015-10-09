@@ -189,10 +189,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AskForFileNameAndSaveProject();
+            SaveProjectOrSaveAs();
         }
 
-        private void AskForFileNameAndSaveProject()
+        private void SaveProjectOrSaveAs()
         {
             if (saveFileDialog.FileName != string.Empty)
             {
@@ -200,15 +200,16 @@ namespace GoodAI.BrainSimulator.Forms
             }
             else
             {
-                if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    SaveProject(saveFileDialog.FileName);
-                    m_recentMenu.AddFile(saveFileDialog.FileName);
-                }
+                SaveProjectAs();  // ask for file name and then save the project
             }
         }
 
         private void saveProjectAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveProjectAs();
+        }
+
+        private void SaveProjectAs()
         {
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
@@ -239,24 +240,28 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void runToolButton_Click(object sender, EventArgs e)
         {
+            ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();            
             StartSimulation(false);            
         }
 
         private void stepOverToolButton_Click(object sender, EventArgs e)
         {
+            ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();
             StartSimulation(true);            
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)
         {
+            ShowHideAllObservers(forceShow: true);
             SimulationHandler.StopSimulation();
             SimulationHandler.Simulation.InDebugMode = false;
         }
 
         private void pauseToolButton_Click(object sender, EventArgs e)
-        {         
+        {
+            ShowHideAllObservers(forceShow: true);
             SimulationHandler.PauseSimulation();
         }
 
@@ -326,7 +331,7 @@ namespace GoodAI.BrainSimulator.Forms
                     return;
 
                 if (dialogResult == DialogResult.Yes)
-                    AskForFileNameAndSaveProject();
+                    SaveProjectOrSaveAs();
             }
 
             // When this is true, the event will just return next time it's called.

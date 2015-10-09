@@ -4,58 +4,46 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Transforms;
 using System.ComponentModel;
+using System;
 using YAXLib;
 
 namespace GoodAI.Modules.Retina
 {
     /// <author>GoodAI</author>
-    /// <meta>df</meta>
+    /// <meta>df/jk-retina</meta>
     ///<status>Working</status>
     ///<summary>Crops and resizes input image according to pupil control input.
     ///Pupil control input must contain position and size of focused area.</summary>
-    ///<description></description>
-    public class MyFocuser : MyTransform
+    ///<description>
+    ///<ul>
+    ///  <li>given a lcoation and image it returns patch there</li>
+    ///  <li>supports multiple patches at once</li>
+    ///  <li>optional retina-like format (http://papers.nips.cc/paper/4089-learning-to-combine-foveal-glimpses-with-a-third-order-boltzmann-machine.pdf)</li>
+    /// </ul>
+    /// </description>
+    public class MyFocuser : MyAbstractFocuser
     {
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 64)]
-        public int OutputWidth { get; set; }
 
-        [MyInputBlock(1)]
-        public MyMemoryBlock<float> PupilControl 
+
+        [MyTaskInfo(Disabled = true, OneShot = true), Description("InitRetina")]
+        public class MyFocuserInitRetinaTask : MyTask<MyAbstractFocuser>
         {
-            get { return GetInput(1); }
-        }
-
-        public MyMemoryBlock<float> TempPupilControl { get; private set; }
-
-        public int NumberPupilSamples;
-
-        public override void UpdateMemoryBlocks()
-        {
-            OutputSize = OutputWidth * OutputWidth;
-            Output.ColumnHint = OutputWidth;
-
-            NumberPupilSamples = 1;
-            if (PupilControl != null && PupilControl.Count > 3) // for multi input -> set how $ pupils samples from the count
-                NumberPupilSamples = PupilControl.Count / PupilControl.ColumnHint;
-            OutputSize *= NumberPupilSamples;
-
-            TempPupilControl.Count = 3;
-        }
-
-        public override void Validate(MyValidator validator)
-        {
-            base.Validate(validator);
-
-            if (PupilControl != null)
+            public override void Init(int nGPU)
             {
-                validator.AssertError(PupilControl.Count > 2, this, "Not enough control values (at least 3 values needed)");
+            }
 
-                validator.AssertError((PupilControl.Count % 3) == 0, this, "Wrong pupil control input size, it has to be [x,y,s] or [x,y,s;x,y,s...]");
-                validator.AssertError((float)PupilControl.Count / (float)PupilControl.ColumnHint != 0, this, "If input is matrix, it has to be 3 columns and N rows, each row x,y,s");
+            public override void Execute()
+            {
+                Owner.InitRetinaMasks();
             }
         }
+    
 
+        /// <summary>
+        /// Given the input and [x,y,scale] (<-1,1>,<-1,1>,<0,1>) the method returns part of the input image that is at that postion.
+        /// <br>
+        /// If the pupil input is in the form of [N x 3] it returns multiple patches.
+        /// </summary>
         [Description("Focus To Area")]
         public class MyFocuserTask : MyTask<MyFocuser>
         {
@@ -96,40 +84,73 @@ namespace GoodAI.Modules.Retina
                     MyLog.ERROR.WriteLine("Owner.Input is null.");
             }
         }
+        
 
-        public class MyUnfocusTask : MyTask<MyFocuser>
+
+        
+        /// <summary>
+        /// Same format as nortmal focuser but returns retina-like result (http://papers.nips.cc/paper/4089-learning-to-combine-foveal-glimpses-with-a-third-order-boltzmann-machine.pdf)
+        /// There is a mask at has high density closer to the center of the interest. Mask is sparse set it points whcih is the size of the output now. Each element of the output corresponds to the average value of pixels that are closest to the postion of that point.
+        /// </summary>
+        [MyTaskInfo(Disabled = true), Description("Retina Transform Focuser")]
+        public class MyRetinaTransform : MyTask<MyFocuser>
         {
-            private MyCudaKernel m_kernel;
 
-            private int inputWidth, inputHeight, outputWidth, outputHeight;
+            private MyCudaKernel m_kernel, m_kernelFirstValue;
+            private int inputWidth, inputHeight;
 
             public override void Init(int nGPU)
             {
+                m_kernelFirstValue = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "RetinaTransform_HaveAtLeastOneValueThere");
+                m_kernelFirstValue.SetupExecution(Owner.OutputSize);
+
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "RetinaTransform_FillRetinaAtomic");
+                m_kernel.SetupExecution(Owner.Input.Count);
+
                 inputWidth = Owner.Input.ColumnHint;
                 inputHeight = Owner.Input.Count / Owner.Input.ColumnHint;
-
-                outputWidth = Owner.Output.ColumnHint;
-                outputHeight = Owner.Output.Count / Owner.Output.ColumnHint;
-
-                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearAddSubImageKernel");
-                m_kernel.SetupExecution(Owner.Output.Count);
             }
 
             public override void Execute()
             {
                 if (Owner.NumberPupilSamples > 1)
                 {
-                    MyLog.WARNING.WriteLine("MyFocuser:MyUnfocusTask deoes not support multiple pupils input!");
+                    MyLog.WARNING.WriteLine("MyFocuser:MyRetinaTransform deoes not support multiple pupils input! (so far)");
                 }
                 else
                 {
+                    Owner.RetinaTempCumulateSize.Fill(0);
                     Owner.Output.Fill(0);
-                    m_kernel.Run(Owner.Output, Owner.Input, Owner.PupilControl, outputWidth, outputHeight, inputWidth, inputHeight);
+
+                    //--- add value for every pixel
+                    m_kernelFirstValue.Run(Owner.PupilControl, Owner.Input, inputWidth, inputHeight,
+                        Owner.Output, Owner.Output.Count,
+                        Owner.RetinaPtsDefsMask, Owner.RetinaPtsDefsMask.Count / 2, Owner.RetinaPtsDefsMask.ColumnHint,
+                        Owner.RetinaTempCumulateSize);
+
+                    //--- add all values (some are avoided, so previous kernel fixes that)
+                    m_kernel.Run(Owner.PupilControl, Owner.Input, inputWidth, inputHeight,
+                        Owner.Output, Owner.Output.Count,
+                        Owner.RetinaPtsDefsMask, Owner.RetinaPtsDefsMask.Count / 2, Owner.RetinaPtsDefsMask.ColumnHint,
+                        Owner.RetinaTempCumulateSize);
+
+                    //--- average computed values (so far unefficient)
+                    Owner.Output.SafeCopyToHost();
+                    Owner.RetinaTempCumulateSize.SafeCopyToHost();
+                    for (int i = 0; i < Owner.Output.Count; i++)
+                    {
+                        if (Owner.RetinaTempCumulateSize.Host[i] != 0)
+                        {
+                            Owner.Output.Host[i] /= Owner.RetinaTempCumulateSize.Host[i];
+                        }
+                    }
+                    Owner.Output.SafeCopyToDevice();
                 }
             }
-        };
+        }
 
+        public MyFocuserInitRetinaTask DoInitRetina { get; private set; }
         public MyFocuserTask DoTransform { get; private set; }
-        public MyUnfocusTask DoInverseTransform { get; private set; }
+        public MyRetinaTransform DoRetinaTransform { get; private set; }
     }
 }

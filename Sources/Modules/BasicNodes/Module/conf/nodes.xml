@@ -47,7 +47,13 @@
     <Node type="GoodAI.Modules.Retina.MyFocuser" CanBeAdded="true" BigIcon="observer_big.png" SmallIcon="observer.png">
       <Observer type="GoodAI.Modules.Observers.MyFocuserInputObserver" />
       <Observer type="GoodAI.Modules.Observers.MyFocuserObjectsObserver" />
+      <Observer type="GoodAI.Modules.Observers.MyFocuserRetinaShowPtsMask" />
+      <Observer type="GoodAI.Modules.Observers.MyFocuserRetinaShowPatchInImage" />
     </Node>
+    <Node type="GoodAI.Modules.Retina.MyUnfocuser" CanBeAdded="true" BigIcon="observerUnfocus_big.png" SmallIcon="observerUnfocus.png">
+      <Observer type="GoodAI.Modules.Observers.MyFocuserRetinaShowPtsMask" />
+    </Node>
+
 
     <Node type="GoodAI.Modules.NeuralGas.MyGrowingNeuralGasNode" CanBeAdded="true" BigIcon="association_big.png" SmallIcon="association.png">
       <Observer type="GoodAI.Modules.NeuralGas.My2DGasObserver" />
