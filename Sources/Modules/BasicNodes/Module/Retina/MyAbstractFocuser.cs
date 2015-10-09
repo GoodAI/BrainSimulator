@@ -76,13 +76,13 @@ namespace GoodAI.Modules.Retina
         // Init data for retina. It needs to be ran from the observer and other class too if node is only observing and not calculating...
         public void InitRetinaMasks()
         {
-            float ptsInCircle = (RetinaPtsDefsMask.Count/2) / RetinaCircles;
-            float alpha_step = 2.0f * (float)Math.PI / ptsInCircle;
+            float ptsInCircle  = (RetinaPtsDefsMask.Count/2) / RetinaCircles;
+            float alpha_step   = 2.0f * (float)Math.PI / ptsInCircle;
 
             int i = 0;
             RetinaPtsDefsMask.Host[i++] = 0f; // center of the circle ;-)
             RetinaPtsDefsMask.Host[i++] = 0f;
-            float radius = 1f; // one pixel radius
+            float radius = 1.5f; // one pixel radius
             float alpha_current = 0f;
             float alpha_start = 0f;
             while (true)
@@ -101,6 +101,13 @@ namespace GoodAI.Modules.Retina
                 }
                 if (i >= RetinaPtsDefsMask.Count)
                     break;
+            }
+
+            // Normalize sizes to the scale of one pixel
+            float norm_radius = 1/radius*0.8f;
+            for (i = 0; i < RetinaPtsDefsMask.Count; i++)
+            {
+                RetinaPtsDefsMask.Host[i] *= norm_radius;
             }
             RetinaPtsDefsMask.SafeCopyToDevice();
         }

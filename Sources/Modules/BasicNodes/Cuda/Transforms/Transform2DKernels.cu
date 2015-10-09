@@ -313,10 +313,10 @@ extern "C"
 		int inputWidth, int inputHeight,
         int2 & subImg, int & diameterPix)
     {
-    	diameterPix = (int)subImageDefs[2]; // <0,x> in pixels
+    	diameterPix = (int)( fminf( (float)inputWidth,(float)inputHeight ) * subImageDefs[2] ); // <0,1> 
 
-		subImg.x = (int)(inputWidth * (subImageDefs[0] + 1) * 0.5f);// - diameterPix / 2;
-		subImg.y = (int)(inputHeight * (subImageDefs[1] + 1) * 0.5f);// - diameterPix / 2;
+		subImg.x = (int)((float)inputWidth * (subImageDefs[0] + 1) * 0.5f) ;//- diameterPix / 2;
+		subImg.y = (int)((float)inputHeight * (subImageDefs[1] + 1) * 0.5f);// - diameterPix / 2;
 
 		int maxDiameter = min(inputWidth - 1, inputHeight - 1);
 
@@ -353,8 +353,8 @@ extern "C"
         if (id_retinaPoint<outputDataSize)
         {
             output[id_retinaPoint] = 0; // default value
-            int x_mask = retinaMask[id_retinaPoint*retinaMaskColHint];
-            int y_mask = retinaMask[id_retinaPoint*retinaMaskColHint+1];
+            float x_mask = (retinaMask[id_retinaPoint*retinaMaskColHint]*diameterPix);
+            float y_mask = (retinaMask[id_retinaPoint*retinaMaskColHint+1]*diameterPix);
 
             int x = subImg.x + x_mask;
             int y = subImg.y + y_mask;
@@ -394,8 +394,8 @@ extern "C"
             int minIdx = 1;
             for (int id_retinaPoint=0 ; id_retinaPoint<retinaDataSize ; id_retinaPoint++)
             {
-                int x_mask = retinaMask[id_retinaPoint*retinaMaskColHint];
-                int y_mask = retinaMask[id_retinaPoint*retinaMaskColHint+1];
+                float x_mask = (retinaMask[id_retinaPoint*retinaMaskColHint]*diameterPix);
+                float y_mask = (retinaMask[id_retinaPoint*retinaMaskColHint+1]*diameterPix);
 
                 x_mask += subImg.x;
                 y_mask += subImg.y;

@@ -146,13 +146,14 @@ extern "C"
 
         int2 subImg;
         int diameterPix;
+        bool  safeBounds = 0;
 
-        EstimateParForSubsample( subImageDefs,  1,		pixelsWidth,  pixelsHeight,       subImg, diameterPix);
+        EstimateParForSubsample( subImageDefs,  safeBounds,		pixelsWidth,  pixelsHeight,       subImg, diameterPix);
 
         if (id < retinaPtsDefsSize)
         {
-            x = subImg.x + retinaPtsDefs[id * 2];
-            y = subImg.y + retinaPtsDefs[id * 2 + 1];
+            x = (float)subImg.x + (retinaPtsDefs[id * 2]*diameterPix);
+            y = (float)subImg.y + (retinaPtsDefs[id * 2 + 1]*diameterPix);
 
             if (x>0 && y>0 && x<pixelsWidth && y<pixelsHeight)
                 pixels[(int)x+(int)y*pixelsWidth] = GET_RGBA(0,255,0,255);
@@ -172,11 +173,12 @@ extern "C"
 
 		int2 subImg;
         int diameterPix;
+        bool  safeBounds = 0;
 
         int x = id_pxl % pixelsWidth;
         int y = id_pxl / pixelsWidth;
 
-        EstimateParForSubsample( subImageDefs,  1, pixelsWidth,  pixelsHeight,  subImg, diameterPix );
+        EstimateParForSubsample( subImageDefs,  safeBounds, pixelsWidth,  pixelsHeight,  subImg, diameterPix );
 
         if (id_pxl < pixelsWidth*pixelsHeight)
         {
@@ -184,13 +186,13 @@ extern "C"
             int minIdx = 0;
             for (int i = 0; i < retinaPtsDefsSize; i++)
             {
-                float xr = subImg.x + retinaPtsDefs[i * 2];
-                float yr = subImg.y + retinaPtsDefs[i * 2 + 1];
+                float xr = subImg.x + retinaPtsDefs[i * 2]*(float)diameterPix;
+                float yr = subImg.y + retinaPtsDefs[i * 2 + 1]*(float)diameterPix;
                 float dist = (xr - x) * (xr - x) + (yr - y) * (yr - y);
                 if (dist < minDist)
                 {
                     minDist = dist;
-                    output2save[x+pixelsWidth*y] = fminf(fmaxf(retinaValues[i],0.0f),1.0f);
+                    output2save[id_pxl] = fminf(fmaxf(retinaValues[i],0.0f),1.0f);
                 }
             }
         }
@@ -204,11 +206,12 @@ extern "C"
 
 		int2 subImg;
         int diameterPix;
+        bool  safeBounds = 0;
 
         int x = id_pxl % pixelsWidth;
         int y = id_pxl / pixelsWidth;
 
-        EstimateParForSubsample( subImageDefs,  1, pixelsWidth,  pixelsHeight,  subImg, diameterPix );
+        EstimateParForSubsample( subImageDefs,  safeBounds, pixelsWidth,  pixelsHeight,  subImg, diameterPix );
 
         if (id_pxl < pixelsWidth*pixelsHeight)
         {
@@ -216,13 +219,13 @@ extern "C"
             int minIdx = 0;
             for (int i = 0; i < retinaPtsDefsSize; i++)
             {
-                float xr = subImg.x + retinaPtsDefs[i * 2];
-                float yr = subImg.y + retinaPtsDefs[i * 2 + 1];
+                float xr = subImg.x + retinaPtsDefs[i * 2]*(float)diameterPix;
+                float yr = subImg.y + retinaPtsDefs[i * 2 + 1]*(float)diameterPix;
                 float dist = (xr - x) * (xr - x) + (yr - y) * (yr - y);
                 if (dist < minDist)
                 {
                     minDist = dist;
-                    pixels[x+pixelsWidth*y] = hsva_to_uint_rgba(0.5f, 1.0f, fminf(fmaxf(retinaValues[i],0.0f),1.0f), 1.0f);
+                    pixels[id_pxl] = hsva_to_uint_rgba(0.5f, 1.0f, fminf(fmaxf(retinaValues[i],0.0f),1.0f), 1.0f);
                 }
             }
         }

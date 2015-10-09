@@ -111,10 +111,6 @@ namespace GoodAI.Modules.Retina
                 }
                 else
                 {
-                    if (SimulationStep == 0) // init mask
-                    {
-                        Owner.InitRetinaMasks();
-                    }
                     m_kernel.Run(Owner.Output, outputWidth, outputHeight, Owner.RetinaPtsDefsMask, Owner.RetinaPtsDefsMask.Count / 2, Owner.Input, Owner.PupilControl);
                 }
             }
