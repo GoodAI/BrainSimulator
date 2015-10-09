@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="MyCsvFileWriterNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VectorOpsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\csv_file_test.brain">
