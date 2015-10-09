@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
+using NDesk.Options;
 
 namespace CLITester
 {
@@ -14,8 +16,30 @@ namespace CLITester
     {
         static void Main(string[] args)
         {
+            // -clusterid $(Cluster) -processid $(Process) -brain Breakout.brain -factor 0.5
+
+            int clusterId = -1;
+            int processId = -1;
+            double discountFactor = 0.6;
+            string breakoutBrainFilePath = @"C:\Users\michal.vlasak\Desktop\Breakout.brain";
+            OptionSet options = new OptionSet()
+                .Add("clusterid=", v => clusterId = Int32.Parse(v))
+                .Add("processid=", v => processId = Int32.Parse(v))
+                .Add("factor=", v => discountFactor = Double.Parse(v, CultureInfo.InvariantCulture))
+                .Add("brain=", v => breakoutBrainFilePath = Path.GetFullPath(v));
+
+            try
+            {
+                options.Parse(Environment.GetCommandLineArgs().Skip(1));
+            }
+            catch (OptionException e)
+            {
+                MyLog.ERROR.WriteLine(e.Message);
+            }
+
             BSCLI CLI = new BSCLI(MyLogLevel.DEBUG);
-            CLI.OpenProject(@"C:\Users\michal.vlasak\Desktop\Breakout.brain");
+            StringBuilder result = new StringBuilder();
+            CLI.OpenProject(breakoutBrainFilePath);
             CLI.DumpNodes();
             for (int i = 0; i < 5; ++i )
             {
@@ -23,15 +47,24 @@ namespace CLITester
                 float[] data = CLI.GetValues(23, "Bias");
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
+                result.AppendFormat("{0}: {1}, {2}", i, data[0], data[1]);
                 CLI.Stop();
-                CLI.Set(23, typeof(MyQLearningTask), "DiscountFactor", 0.6);
+                CLI.Set(23, typeof(MyQLearningTask), "DiscountFactor", discountFactor);
                 CLI.Run(1000, 300);
                 data = CLI.GetValues(23, "Bias");
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
+                result.AppendFormat(" --- {0}, {1}", data[0], data[1]).AppendLine();
             }
+
+            if (clusterId >= 0 && processId >=0)
+            {
+                string resultFilePath = @"res." + processId.ToString() + "." + clusterId.ToString() + ".txt";
+                File.WriteAllText(resultFilePath, result.ToString());
+            }
+
             CLI.Quit();
-            Console.ReadLine();
+            //Console.ReadLine();
             return;
         }
     }
