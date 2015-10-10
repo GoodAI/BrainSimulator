@@ -59,7 +59,7 @@ namespace CLITester
 
             if (clusterId >= 0 && processId >=0)
             {
-                string resultFilePath = @"res." + processId.ToString() + "." + clusterId.ToString() + ".txt";
+                string resultFilePath = @"res." + clusterId.ToString() + "." + processId.ToString() + ".txt";
                 File.WriteAllText(resultFilePath, result.ToString());
             }
 
