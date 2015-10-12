@@ -16,7 +16,7 @@ namespace GoodAI.Modules.Common
     /// <status>Working</status>
     /// <summary>Generates numbers from chosen distribution</summary>
     /// <description>The <b>SingleOutputProperty</b> will generate random number to one random position only.</description>
-    public class MyRandomNode : MyWorkingNode
+    public class RandomNode : MyWorkingNode
     {
         //Only one of outputs should be active each time. Maybe generalize to arbitrary number?
         [MyBrowsable, Category("Params")]
@@ -77,19 +77,19 @@ namespace GoodAI.Modules.Common
         public MyMemoryBlock<float> RandomNumbers { get; private set; }
 
         [MyTaskGroup("RNG")]
-        public MyUniformRNGTask UniformRNG { get; private set; }
+        public UniformRNGTask UniformRNG { get; private set; }
         [MyTaskGroup("RNG")]
-        public MyNormalRNGTask NormalRNG { get; private set; }
+        public NormalRNGTask NormalRNG { get; private set; }
         [MyTaskGroup("RNG")]
-        public MyConstantRNGTask ConstantRNG { get; private set; }
+        public ConstantRNGTask ConstantRNG { get; private set; }
         [MyTaskGroup("RNG")]
-        public MyCombinationRNGTask CombinationRNG { get; private set; }
+        public CombinationRNGTask CombinationRNG { get; private set; }
 
         public Random m_rnd;
         public int NextPeriodChange;
         private MyCudaKernel m_setKernel;
 
-        public MyRandomNode()
+        public RandomNode()
         {
             m_rnd = new Random(DateTime.Now.Millisecond);
             m_setKernel = MyKernelFactory.Instance.Kernel(GPU, @"Common\SetAllButOneKernel");
@@ -155,7 +155,7 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    public class MyUniformRNGTask : MyTask<MyRandomNode>
+    public class UniformRNGTask : MyTask<RandomNode>
     {
         private MyCudaKernel m_polynomialKernel;
 
@@ -209,7 +209,7 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    public class MyNormalRNGTask : MyTask<MyRandomNode>
+    public class NormalRNGTask : MyTask<RandomNode>
     {
         //Mean for normal dist.
         [MyBrowsable, Category("Normal distribution")]
@@ -259,7 +259,7 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    public class MyConstantRNGTask : MyTask<MyRandomNode>
+    public class ConstantRNGTask : MyTask<RandomNode>
     {
         private MyCudaKernel m_kernel;
 
@@ -306,7 +306,7 @@ namespace GoodAI.Modules.Common
     /// <p><b>Period Parameters</b> let you control the period in which the new set of random values should be generated.
     /// Other configutarion options are connected to the selected distribution.</p>
     /// </summary>
-    public class MyCombinationRNGTask : MyTask<MyRandomNode>
+    public class CombinationRNGTask : MyTask<RandomNode>
     {
         //Minimal value
         [MyBrowsable, Category("Combinations"), DisplayName("M\tin")]

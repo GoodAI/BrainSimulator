@@ -138,7 +138,7 @@
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
     <Compile Include="Common\MyInverseTransformSampling.cs" />
-    <Compile Include="Common\MyRandomNode.cs" />
+    <Compile Include="Common\RandomNode.cs" />
     <Compile Include="Harm\MyAbstractDiscreteQLearningNode.cs" />
     <Compile Include="Harm\MyDecisionSpace.cs" />
     <Compile Include="Harm\MyDiscreteQLearning.cs" />

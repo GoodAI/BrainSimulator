@@ -159,10 +159,18 @@ namespace GoodAI.Modules.Versioning
         /// </summary>
         public static string Convert6To7(string xml)
         {
+            // remove My prefix from RandomNode
+            xml = xml.Replace("yaxlib:realtype=\"GoodAI.Modules.Common.MyRandomNode", "yaxlib:realtype=\"GoodAI.Modules.Common.RandomNode");
+
             XDocument document = XDocument.Parse(xml);
 
-            foreach (var node in document.Root.Descendants("MyRandomNode"))
+            foreach (XElement node in document.Root.Descendants("MyRandomNode"))
             {
+                // remove My prefix from RandomNode
+                node.Name = "RandomNode";
+                
+                //yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode
+                
                 XElement task = node.Descendants("Task").First();
 
                 // Move period parameters from task to node
@@ -188,7 +196,7 @@ namespace GoodAI.Modules.Versioning
                 else
                     uniformTask.SetAttributeValue("Enabled", "False");
                 uniformTask.SetAttributeValue("PropertyName", "UniformRNG");
-                uniformTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.MyUniformRNGTask");
+                uniformTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.UniformRNGTask");
 
                 string uniformMin = task.Descendants("MinValue").First().Value;
                 string uniformMax = task.Descendants("MaxValue").First().Value;
@@ -201,7 +209,7 @@ namespace GoodAI.Modules.Versioning
                 else
                     normalTask.SetAttributeValue("Enabled", "False");
                 normalTask.SetAttributeValue("PropertyName", "NormalRNG");
-                normalTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.MyNormalRNGTask");
+                normalTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.NormalRNGTask");
 
                 string normalMean = task.Descendants("Mean").First().Value;
                 string normalDev = task.Descendants("StdDev").First().Value;
@@ -214,7 +222,7 @@ namespace GoodAI.Modules.Versioning
                 else
                     constantTask.SetAttributeValue("Enabled", "False");
                 constantTask.SetAttributeValue("PropertyName", "ConstantRNG");
-                constantTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.MyConstantRNGTask");
+                constantTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.ConstantRNGTask");
 
                 string constantConstant = task.Descendants("Constant").First().Value;
                 constantTask.Add(new XElement("Constant", constantConstant));
@@ -225,7 +233,7 @@ namespace GoodAI.Modules.Versioning
                 else
                     combinationTask.SetAttributeValue("Enabled", "False");
                 combinationTask.SetAttributeValue("PropertyName", "CombinationRNG");
-                combinationTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.MyCombinationRNGTask");
+                combinationTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.CombinationRNGTask");
 
                 string combinationMin = task.Descendants("Min").First().Value;
                 string combinationMax = task.Descendants("Max").First().Value;

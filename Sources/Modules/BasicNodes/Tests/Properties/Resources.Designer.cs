@@ -83,14 +83,14 @@ namespace BasicNodesTests.Properties {
         ///   Looks up a localized string similar to &lt;Project Name=&quot;oldtest&quot; xmlns:yaxlib=&quot;http://www.sinairv.com/yaxlib/&quot;&gt;
         ///  &lt;Network Sequential=&quot;False&quot; LoadOnStart=&quot;False&quot; SaveOnStop=&quot;False&quot; Id=&quot;0&quot; Name=&quot;Network&quot;&gt;
         ///    &lt;Children&gt;
-        ///      &lt;MyRandomNode LoadOnStart=&quot;False&quot; SaveOnStop=&quot;False&quot; Id=&quot;6&quot; Name=&quot;Node_6&quot; yaxlib:realtype=&quot;GoodAI.Modules.Common.MyRandomNode&quot;&gt;
+        ///      &lt;RandomNode LoadOnStart=&quot;False&quot; SaveOnStop=&quot;False&quot; Id=&quot;6&quot; Name=&quot;Node_6&quot; yaxlib:realtype=&quot;GoodAI.Modules.Common.RandomNode&quot;&gt;
         ///        &lt;SingleOutput&gt;False&lt;/SingleOutput&gt;
         ///        &lt;IO&gt;
         ///          &lt;OutputSize&gt;1&lt;/OutputSize&gt;
         ///        &lt;/IO&gt;
         ///        &lt;ColumnHint&gt;1&lt;/ColumnHint&gt;
         ///        &lt;DataFolder&gt;&lt;/DataFolder&gt;
-        ///        &lt;Locat [rest of string was truncated]&quot;;.
+        ///        &lt;Location  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Convert6To7XMLResult {
             get {
