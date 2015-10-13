@@ -38,6 +38,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XmlFeedForwardNetCuda", "Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundWorld", "Modules\SoundWorld\Module\SoundWorld.csproj", "{A0084F22-B436-4068-8F18-EC182EE78927}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{F5B00C80-45C5-45C2-BAE8-D64C4DFBA9CE}"
+	ProjectSection(SolutionItems) = preProject
+		Installer\Tools\sign-installer.cmd = Installer\Tools\sign-installer.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
