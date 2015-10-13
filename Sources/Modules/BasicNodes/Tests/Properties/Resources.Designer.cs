@@ -73,9 +73,9 @@ namespace BasicNodesTests.Properties {
         ///        &lt;DataFolder&gt;&lt;/DataFolder&gt;
         ///        &lt;Locat [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Convert6To7XML {
+        internal static string Convert9To10XML {
             get {
-                return ResourceManager.GetString("Convert6To7XML", resourceCulture);
+                return ResourceManager.GetString("Convert9To10XML", resourceCulture);
             }
         }
         
@@ -92,9 +92,9 @@ namespace BasicNodesTests.Properties {
         ///        &lt;DataFolder&gt;&lt;/DataFolder&gt;
         ///        &lt;Location  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Convert6To7XMLResult {
+        internal static string Convert9To10XMLResult {
             get {
-                return ResourceManager.GetString("Convert6To7XMLResult", resourceCulture);
+                return ResourceManager.GetString("Convert9To10XMLResult", resourceCulture);
             }
         }
     }

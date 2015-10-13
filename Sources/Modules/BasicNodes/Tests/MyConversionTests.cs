@@ -10,11 +10,11 @@ namespace BasicNodesTests
     public class MyConversionTests
     {
         [Fact]
-        public void Convert6To7()
+        public void Convert9To10()
         {
-            string xml = BasicNodesTests.Properties.Resources.Convert6To7XML;
-            string expected = BasicNodesTests.Properties.Resources.Convert6To7XMLResult;
-            string result = GoodAI.Modules.Versioning.MyConversion.Convert6To7(xml);
+            string xml = BasicNodesTests.Properties.Resources.Convert9To10XML;
+            string expected = BasicNodesTests.Properties.Resources.Convert9To10XMLResult;
+            string result = GoodAI.Modules.Versioning.MyConversion.Convert9To10(xml);
 
             Assert.Equal(expected, result);
         }

@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Convert6To7XML" xml:space="preserve">
+  <data name="Convert9To10XML" xml:space="preserve">
     <value>&lt;Project Name="oldtest" xmlns:yaxlib="http://www.sinairv.com/yaxlib/"&gt;
   &lt;Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network"&gt;
     &lt;Children&gt;
@@ -311,13 +311,13 @@
   &lt;/World&gt;
   &lt;Observers /&gt;
   &lt;UsedModules&gt;
-    &lt;Module Name="GoodAI.BasicNodes.dll" Version="6" /&gt;
+    &lt;Module Name="GoodAI.BasicNodes.dll" Version="9" /&gt;
     &lt;Module Name="GoodAI.Platform.Core.dll" Version="9" /&gt;
   &lt;/UsedModules&gt;
 &lt;/Project&gt;</value>
-    <comment>Example XML file used for testing conversion from version 6 to version 7.</comment>
+    <comment>Example XML file used for testing conversion from version 9 to version 10.</comment>
   </data>
-  <data name="Convert6To7XMLResult" xml:space="preserve">
+  <data name="Convert9To10XMLResult" xml:space="preserve">
     <value>&lt;Project Name="oldtest" xmlns:yaxlib="http://www.sinairv.com/yaxlib/"&gt;
   &lt;Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network"&gt;
     &lt;Children&gt;
@@ -541,10 +541,10 @@
   &lt;/World&gt;
   &lt;Observers /&gt;
   &lt;UsedModules&gt;
-    &lt;Module Name="GoodAI.BasicNodes.dll" Version="6" /&gt;
+    &lt;Module Name="GoodAI.BasicNodes.dll" Version="9" /&gt;
     &lt;Module Name="GoodAI.Platform.Core.dll" Version="9" /&gt;
   &lt;/UsedModules&gt;
 &lt;/Project&gt;</value>
-    <comment>Correct result of converting Convert6To7XML string from version 6 to version 7.</comment>
+    <comment>Correct result of converting Convert9To10XML string from version 9 to version 10.</comment>
   </data>
 </root>
