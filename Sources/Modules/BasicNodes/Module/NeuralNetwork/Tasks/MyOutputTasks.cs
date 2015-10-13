@@ -26,8 +26,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         public override void Execute() //Task execution
         {
             // reset delta
-            if (Owner.ParentNetwork.NewBatch())
-                Owner.Delta.Fill(0);
+            Owner.Delta.Fill(0);
 
             // get output layer delta
             m_lossKernel.SetupExecution(m_lossKernel.MAX_THREADS);
@@ -39,7 +38,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Target,
                 Owner.Delta,
                 Owner.Cost,
-                Owner.Neurons
+                Owner.Neurons,
+                Owner.ParentNetwork.BatchSize
             );
 
             // IMPORTANT: Add regularization
@@ -69,8 +69,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         {
 
             // reset delta
-            if (Owner.ParentNetwork.NewBatch())
-                Owner.Delta.Fill(0);
+            Owner.Delta.Fill(0);
 
             // get output layer delta
             m_lossKernel.SetupExecution(m_lossKernel.MAX_THREADS);
@@ -82,7 +81,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Target,
                 Owner.Delta,
                 Owner.Cost,
-                Owner.Neurons
+                Owner.Neurons,
+                Owner.ParentNetwork.BatchSize
             );
 
             // IMPORTANT: Add regularization

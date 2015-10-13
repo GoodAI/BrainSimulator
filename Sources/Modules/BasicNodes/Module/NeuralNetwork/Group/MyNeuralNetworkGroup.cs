@@ -51,6 +51,10 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyBrowsable, Category("\tRegularization")]
         public float Dropout { get; set; }
 
+        [YAXSerializableField(DefaultValue = 1), YAXErrorIfMissed(YAXExceptionTypes.Ignore)]
+        [MyBrowsable, Category("\tBatchLearning")]
+        public int BatchSize { get; set; }
+
         //Memory Blocks
         public List<MyNode> SortedChildren;
         public MyAbstractLayer FirstTopologicalLayer;
@@ -129,6 +133,18 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             List<IMyExecutable> tasks = GetTasks(this);
             
             validator.AssertError(tasks.Find(task => task is IMyForwardTask) != null, this, "You need to have at least one forward task");
+
+            if (BatchSize > 1)
+            {
+                foreach (MyNode n in Children)
+                {
+                    var layer = n as MyAbstractLayer;
+                    if (layer != null && !layer.SupportsBatchLearning)
+                    {
+                        validator.AssertError(false, layer, layer.Name + " does not suport batch-learning! Remove the layer or set BatchSize to 1");
+                    }
+                }
+            }
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
@@ -252,20 +268,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 MyLog.ERROR.WriteLine("ERROR: GetError() called from " + stackTrace.GetFrame(1).GetMethod().Name + " needs an OutputLayer as the last layer.");
                 return 0.0f;
             }
-        }
-
-        // handles batch learning
-        // should be called after every backward pass
-        public void NextSample()
-        {
-            if (GetActiveBackpropTask() != null)
-                GetActiveBackpropTask().BatchIndex++;
-        }
-
-        // are we at the beginning of a new batch - should we reset deltas?
-        public bool NewBatch()
-        {
-            return (GetActiveBackpropTask() != null) && (GetActiveBackpropTask().BatchIndex == 0);
         }
     }
 }

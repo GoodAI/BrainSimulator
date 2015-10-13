@@ -29,13 +29,13 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 if (Input != null)
                 {
                     // parameter allocations
-                    Weights.Count = Neurons * Input.Count;
+                    Weights.Count = Neurons * Input.Count / ParentNetwork.BatchSize;
                     Bias.Count = Neurons;
 
                     // SGD allocations
-                    Delta.Count = Neurons;
+                    Delta.Count = Neurons * ParentNetwork.BatchSize;
                     Delta.Mode =  MyTemporalMemoryBlock<float>.ModeType.Cumulate;
-                    PreviousWeightDelta.Count = Neurons * Input.Count; // momentum method
+                    PreviousWeightDelta.Count = Weights.Count; // momentum method
                     PreviousBiasDelta.Count = Neurons; // momentum method
 
                     // RMSProp allocations
@@ -94,5 +94,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 return "Hidden layer";
             }
         }
+
+        public override bool SupportsBatchLearning { get { return true; } }
     }
 }

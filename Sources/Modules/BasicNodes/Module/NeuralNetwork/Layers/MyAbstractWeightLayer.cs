@@ -29,6 +29,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> L1Term { get; protected set; }
         public MyMemoryBlock<float> L2Term { get; protected set; }
 
+        // Batch-learning memory
+        public MyMemoryBlock<float> BiasInput { get; protected set; }
+        public MyMemoryBlock<float> BiasGradient { get; protected set; }
+        public MyMemoryBlock<float> WeightGradient { get; protected set; }
+
         // RMSProp memory
         public MyMemoryBlock<float> MeanSquareWeight { get; protected set; }
         public MyMemoryBlock<float> MeanSquareBias { get; protected set; }
@@ -68,18 +73,23 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public override void UpdateMemoryBlocks()
         {
             base.UpdateMemoryBlocks();
-            NeuronInput.Count = Neurons;
+            NeuronInput.Count = Neurons * ParentNetwork.BatchSize;
             if (Neurons % 2 == 0)
                 DropoutMask.Count = Neurons;
             else
                 DropoutMask.Count = Neurons + 1;
             L1Term.Count = 1;
             L2Term.Count = 1;
+
+            BiasInput.Count = ParentNetwork.BatchSize;
+            BiasGradient.Count = Bias.Count;
+            WeightGradient.Count = Weights.Count;
         }
 
         // Tasks
         public MyInitWeightsTask InitWeights { get; protected set; }
         public MyCreateDropoutMaskTask CreateDropoutMask { get; protected set; }
+        public MyShareWeightsTask ShareWeightsTask { get; protected set; }
 
         //parameterless constructor
         public MyAbstractWeightLayer() { }
