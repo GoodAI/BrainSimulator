@@ -54,12 +54,14 @@ namespace CLIWrapper
 
             var path = MyResources.GetEntryAssemblyPath();
 
-            MyConfiguration.SetupModuleSearchPath();
+            if (MyConfiguration.ModulesSearchPath.Count == 0)
+                MyConfiguration.SetupModuleSearchPath();
             MyConfiguration.ProcessCommandParams();
 
             try
             {
-                MyConfiguration.LoadModules();
+                if (MyConfiguration.Modules.Count == 0)
+                    MyConfiguration.LoadModules();
             }
             catch (Exception e)
             {
