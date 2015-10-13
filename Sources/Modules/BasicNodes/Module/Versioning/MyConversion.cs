@@ -312,21 +312,15 @@ namespace GoodAI.Modules.Versioning
         }
 
         /// <summary>
-        /// Convert RandomNode task to multiple mutually exclusive tasks
+        /// Convert MyRandomNode task to multiple mutually exclusive tasks
         /// Author: MV
         /// </summary>
         public static string Convert9To10(string xml)
         {
-            // remove My prefix from RandomNode
-            xml = xml.Replace("yaxlib:realtype=\"GoodAI.Modules.Common.MyRandomNode", "yaxlib:realtype=\"GoodAI.Modules.Common.RandomNode");
-
             XDocument document = XDocument.Parse(xml);
 
             foreach (XElement node in document.Root.Descendants("MyRandomNode"))
             {
-                // remove My prefix from RandomNode
-                node.Name = "RandomNode";
-
                 XElement task = node.Descendants("Task").First();
 
                 // Move period parameters from task to node

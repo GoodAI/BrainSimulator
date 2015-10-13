@@ -321,7 +321,7 @@
     <value>&lt;Project Name="oldtest" xmlns:yaxlib="http://www.sinairv.com/yaxlib/"&gt;
   &lt;Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network"&gt;
     &lt;Children&gt;
-      &lt;RandomNode LoadOnStart="False" SaveOnStop="False" Id="6" Name="Node_6" yaxlib:realtype="GoodAI.Modules.Common.RandomNode"&gt;
+      &lt;MyRandomNode LoadOnStart="False" SaveOnStop="False" Id="6" Name="Node_6" yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode"&gt;
         &lt;SingleOutput&gt;False&lt;/SingleOutput&gt;
         &lt;IO&gt;
           &lt;OutputSize&gt;1&lt;/OutputSize&gt;
@@ -351,8 +351,8 @@
         &lt;Period&gt;1&lt;/Period&gt;
         &lt;RandomPeriodMin&gt;1&lt;/RandomPeriodMin&gt;
         &lt;RandomPeriodMax&gt;10&lt;/RandomPeriodMax&gt;
-      &lt;/RandomNode&gt;
-      &lt;RandomNode LoadOnStart="False" SaveOnStop="False" Id="7" Name="Node_7" yaxlib:realtype="GoodAI.Modules.Common.RandomNode"&gt;
+      &lt;/MyRandomNode&gt;
+      &lt;MyRandomNode LoadOnStart="False" SaveOnStop="False" Id="7" Name="Node_7" yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode"&gt;
         &lt;SingleOutput&gt;True&lt;/SingleOutput&gt;
         &lt;IO&gt;
           &lt;OutputSize&gt;3&lt;/OutputSize&gt;
@@ -382,8 +382,8 @@
         &lt;Period&gt;1&lt;/Period&gt;
         &lt;RandomPeriodMin&gt;1&lt;/RandomPeriodMin&gt;
         &lt;RandomPeriodMax&gt;10&lt;/RandomPeriodMax&gt;
-      &lt;/RandomNode&gt;
-      &lt;RandomNode LoadOnStart="False" SaveOnStop="False" Id="8" Name="Node_8" yaxlib:realtype="GoodAI.Modules.Common.RandomNode"&gt;
+      &lt;/MyRandomNode&gt;
+      &lt;MyRandomNode LoadOnStart="False" SaveOnStop="False" Id="8" Name="Node_8" yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode"&gt;
         &lt;SingleOutput&gt;False&lt;/SingleOutput&gt;
         &lt;IO&gt;
           &lt;OutputSize&gt;1&lt;/OutputSize&gt;
@@ -413,8 +413,8 @@
         &lt;Period&gt;1&lt;/Period&gt;
         &lt;RandomPeriodMin&gt;1&lt;/RandomPeriodMin&gt;
         &lt;RandomPeriodMax&gt;10&lt;/RandomPeriodMax&gt;
-      &lt;/RandomNode&gt;
-      &lt;RandomNode LoadOnStart="False" SaveOnStop="False" Id="9" Name="Node_9" yaxlib:realtype="GoodAI.Modules.Common.RandomNode"&gt;
+      &lt;/MyRandomNode&gt;
+      &lt;MyRandomNode LoadOnStart="False" SaveOnStop="False" Id="9" Name="Node_9" yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode"&gt;
         &lt;SingleOutput&gt;False&lt;/SingleOutput&gt;
         &lt;IO&gt;
           &lt;OutputSize&gt;1&lt;/OutputSize&gt;
@@ -444,8 +444,8 @@
         &lt;Period&gt;12&lt;/Period&gt;
         &lt;RandomPeriodMin&gt;1&lt;/RandomPeriodMin&gt;
         &lt;RandomPeriodMax&gt;10&lt;/RandomPeriodMax&gt;
-      &lt;/RandomNode&gt;
-      &lt;RandomNode LoadOnStart="False" SaveOnStop="False" Id="10" Name="Node_10" yaxlib:realtype="GoodAI.Modules.Common.RandomNode"&gt;
+      &lt;/MyRandomNode&gt;
+      &lt;MyRandomNode LoadOnStart="False" SaveOnStop="False" Id="10" Name="Node_10" yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode"&gt;
         &lt;SingleOutput&gt;False&lt;/SingleOutput&gt;
         &lt;IO&gt;
           &lt;OutputSize&gt;10&lt;/OutputSize&gt;
@@ -475,8 +475,8 @@
         &lt;Period&gt;34&lt;/Period&gt;
         &lt;RandomPeriodMin&gt;10&lt;/RandomPeriodMin&gt;
         &lt;RandomPeriodMax&gt;100&lt;/RandomPeriodMax&gt;
-      &lt;/RandomNode&gt;
-      &lt;RandomNode LoadOnStart="False" SaveOnStop="False" Id="18" Name="Node_18" yaxlib:realtype="GoodAI.Modules.Common.RandomNode"&gt;
+      &lt;/MyRandomNode&gt;
+      &lt;MyRandomNode LoadOnStart="False" SaveOnStop="False" Id="18" Name="Node_18" yaxlib:realtype="GoodAI.Modules.Common.MyRandomNode"&gt;
         &lt;SingleOutput&gt;False&lt;/SingleOutput&gt;
         &lt;IO&gt;
           &lt;OutputSize&gt;1&lt;/OutputSize&gt;
@@ -506,7 +506,7 @@
         &lt;Period&gt;1&lt;/Period&gt;
         &lt;RandomPeriodMin&gt;1&lt;/RandomPeriodMin&gt;
         &lt;RandomPeriodMax&gt;10&lt;/RandomPeriodMax&gt;
-      &lt;/RandomNode&gt;
+      &lt;/MyRandomNode&gt;
     &lt;/Children&gt;
     &lt;GroupInputNodes&gt;
       &lt;MyParentInput ParentInputIndex="0" Id="1" Name="Output"&gt;

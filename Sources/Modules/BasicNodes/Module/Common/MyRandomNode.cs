@@ -16,7 +16,7 @@ namespace GoodAI.Modules.Common
     /// <status>Working</status>
     /// <summary>Generates numbers from chosen distribution</summary>
     /// <description>The <b>SingleOutputProperty</b> will generate random number to one random position only.</description>
-    public class RandomNode : MyWorkingNode
+    public class MyRandomNode : MyWorkingNode
     {
         //Only one of outputs should be active each time. Maybe generalize to arbitrary number?
         [MyBrowsable, Category("Params")]
@@ -89,7 +89,7 @@ namespace GoodAI.Modules.Common
         public int NextPeriodChange;
         private MyCudaKernel m_setKernel;
 
-        public RandomNode()
+        public MyRandomNode()
         {
             m_rnd = new Random(DateTime.Now.Millisecond);
             m_setKernel = MyKernelFactory.Instance.Kernel(GPU, @"Common\SetAllButOneKernel");
@@ -155,7 +155,7 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    public class UniformRNGTask : MyTask<RandomNode>
+    public class UniformRNGTask : MyTask<MyRandomNode>
     {
         private MyCudaKernel m_polynomialKernel;
 
@@ -209,7 +209,7 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    public class NormalRNGTask : MyTask<RandomNode>
+    public class NormalRNGTask : MyTask<MyRandomNode>
     {
         //Mean for normal dist.
         [MyBrowsable, Category("Normal distribution")]
@@ -259,7 +259,7 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    public class ConstantRNGTask : MyTask<RandomNode>
+    public class ConstantRNGTask : MyTask<MyRandomNode>
     {
         private MyCudaKernel m_kernel;
 
@@ -306,7 +306,7 @@ namespace GoodAI.Modules.Common
     /// <p><b>Period Parameters</b> let you control the period in which the new set of random values should be generated.
     /// Other configutarion options are connected to the selected distribution.</p>
     /// </summary>
-    public class CombinationRNGTask : MyTask<RandomNode>
+    public class CombinationRNGTask : MyTask<MyRandomNode>
     {
         //Minimal value
         [MyBrowsable, Category("Combinations"), DisplayName("M\tin")]
