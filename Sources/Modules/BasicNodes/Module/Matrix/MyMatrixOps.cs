@@ -43,7 +43,9 @@ namespace GoodAI.Modules.Matrix
 
         Copy = 1 << 21,
 
-        Transpose = 1 << 22
+        Transpose = 1 << 22,
+        
+        PermuteRows = 1 << 23
     }
 
 
