@@ -139,11 +139,12 @@ extern "C"
 		case EQUAL:
 		{
 			bool eq = true;
-			for (int i = 1; i < inputsCount; i++)
+			for (int i = 1; eq && (i < inputsCount); i++)
 			{
-				eq = (eq && out == inputs[i][threadId]);
+				eq = (eq && (out == inputs[i][threadId]));
 			}
-			out = eq ? 1 : 0;
+			out = (float)eq;
+			break;
 		}
 		default:
 			break;
@@ -209,7 +210,7 @@ extern "C"
 		}
 		case EQUAL:
 		{
-			output = (input1 == input2) ? 1 : 0;
+			output = (float)(input1 == input2);
 			break;
 		}
 		default:
