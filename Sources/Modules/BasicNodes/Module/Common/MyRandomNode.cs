@@ -96,6 +96,14 @@ namespace GoodAI.Modules.Common
             NextPeriodChange = 1;
         }
 
+        public override void OnSimulationStateChanged(Core.Execution.MySimulationHandler.StateEventArgs args)
+        {
+            base.OnSimulationStateChanged(args);
+
+            if (args.NewState == Core.Execution.MySimulationHandler.SimulationState.STOPPED)
+                NextPeriodChange = 1;
+        }
+
         public override void UpdateMemoryBlocks()
         {
             RandomNumbers.Count = Output.Count + 1;
