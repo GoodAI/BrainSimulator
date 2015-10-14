@@ -35,6 +35,14 @@ namespace GoodAI.Modules.LSTM
     /// </description>
     public class MyLSTMLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
+
+        [MyOutputBlock(1)]
+        public MyMemoryBlock<float> InnerCellStates
+        {
+            get { return GetOutput(1); }
+            set { SetOutput(1, value); }
+        }
+
         // Properties
         [ReadOnly(true)]
         public override int Neurons
@@ -251,6 +259,9 @@ namespace GoodAI.Modules.LSTM
                 ForgetGateWeights.Count++;
             if (OutputGateWeights.Count % 2 != 0)
                 OutputGateWeights.Count++;
+
+
+            InnerCellStates.Count = CellsPerBlock * MemoryBlocks;
         }
 
         public void CreateTasks()
