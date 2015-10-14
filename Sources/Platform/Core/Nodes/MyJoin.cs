@@ -68,7 +68,7 @@ namespace GoodAI.Core.Nodes
             Modulo,
             Division_int,
 
-            HammingDistance,
+            Equal,
             /// DON'T CHANGE ORDERING OF THESE!!!!
 
             AddToIdcs,
