@@ -112,8 +112,31 @@ extern "C"
 		}
 	}
 
+    __global__ void OFMapObserver (unsigned int* pixels, int imageSize, float* ofX, float* ofY){
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+			+ blockDim.x*blockIdx.x				
+			+ threadIdx.x;
+
+        float2 OF_value;
+        float OF_size;
+        float OF_angle;
+
+		if (id<imageSize){
+            OF_value.x = ofX[id];
+            OF_value.y = ofY[id];
+
+            OF_size = (OF_value.x+OF_value.y) * (OF_value.x+OF_value.y) / 1.41421356237f;  // normalized to be <0,1>
+            OF_angle = atan2(OF_value.x,OF_value.y)/2.0f/3.14159265f;  // normalized to be <0,1>
+            
+
+            pixels[id] = hsva_to_uint_rgba(OF_angle, 0.8f, OF_size, 1.0f);
+		}
+	}
+
 
 }
+
+
 
 
 /*
