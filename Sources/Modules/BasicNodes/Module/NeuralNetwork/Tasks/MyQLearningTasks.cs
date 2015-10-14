@@ -43,6 +43,8 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.Output.SafeCopyToHost();
             float maxValue = Owner.Output.Host.Max();
 
+            // copying reward to host must take place here - before network inputs backup happens - it would produce problems if in opposite order and net input and Reward being the same memblock
+            Owner.Reward.SafeCopyToHost();
             // backup network inputs in host memory
             Owner.ParentNetwork.FirstTopologicalLayer.Input.SafeCopyToHost();
 
@@ -56,7 +58,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.PreviousAction.SafeCopyToHost(); // manipulate at host
             Owner.PreviousReward.SafeCopyToHost(); // manipulate at host
             //float value = Owner.PreviousReward.Host[0] + maxValue;
-            Owner.Reward.SafeCopyToHost();
+            
             float normalize = 0;
             for (int a = 0; a < Owner.Neurons; a++)
                 normalize += Owner.PreviousAction.Host[a];
