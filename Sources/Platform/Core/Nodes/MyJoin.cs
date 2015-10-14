@@ -68,7 +68,7 @@ namespace GoodAI.Core.Nodes
             Modulo,
             Division_int,
 
-            HammingDistance,
+            Equal, // Warning: uses a strict equality comparison on floats
             /// DON'T CHANGE ORDERING OF THESE!!!!
 
             AddToIdcs,
