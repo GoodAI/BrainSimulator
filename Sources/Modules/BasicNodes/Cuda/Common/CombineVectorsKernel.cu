@@ -136,14 +136,14 @@ extern "C"
 			out = i_tmp[threadId];
 			break;
 
-		case EQUAL:
+		case EQUAL: // Warning: uses a strict equality comparison on floats
 		{
 			bool eq = true;
 			for (int i = 1; eq && (i < inputsCount); i++)
 			{
 				eq = (eq && (out == inputs[i][threadId]));
 			}
-			out = (float)eq;
+			out = eq ? 1.0f : 0.0f;
 			break;
 		}
 		default:
@@ -210,7 +210,7 @@ extern "C"
 		}
 		case EQUAL:
 		{
-			output = (float)(input1 == input2);
+			output = (input1 == input2) ? 1.0f : 0.0f;
 			break;
 		}
 		default:
