@@ -22,3 +22,23 @@ Again, `Operation/ObserverMode` property of most of observers switches between v
 Details are described in [Guides/Image Processing](../guides/improc.md).
 
 ![](../img/vision_ex_pong.PNG)
+
+
+---
+
+### Focuser
+Brain: [Vision/focuserRetina.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Vision/focuserRetina.brain)
+
+The brain file contains a simple example for cropping a part of the image. It shows the standart focuser that outputs a part of the image, given a position and scale.
+
+In addition, the `Focuser` has a mode to work as retina transformation ([it is a modification of the method in this paper](http://papers.nips.cc/paper/4089-learning-to-combine-foveal-glimpses-with-a-third-order-boltzmann-machine.pdf)). In this case of retina transform, there is a higher resolution towards the given position, while the resolution decreases when being distant to the center.
+
+![](../img/retinaFocuser_for_manual.png)
+
+
+---
+
+### Sequential Drawing
+Brain: [Vision/sequentialDrawing.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Vision/sequentialDrawing.brain)
+
+In this sample project, the network in the middle takes raw image. Then, it tries to output the reconstruction after several time-steps. The example is provided with a small number of faces, but it is very easy to use different architetecture of the module as well as more complicated pictures, datasets, and et cetera. More inspirations can be found at the [Marek's blog](http://blog.marekrosa.org/2015/09/another-goodai-milestone-attention_16.html).
