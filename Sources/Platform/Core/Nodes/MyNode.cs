@@ -15,11 +15,11 @@ namespace GoodAI.Core.Nodes
         
         public virtual bool Sequential { get; set; }        
 
-        [MyBrowsable, ReadOnly(true), Category("\tGeneral"), DisplayName("ID")]
+        [MyBrowsable, ReadOnly(true), Category("\t\tGeneral"), DisplayName("ID")]
         [YAXSerializableField, YAXAttributeForClass]
         public int Id { get; set; }
 
-        [MyBrowsable, Category("\tGeneral"), DisplayName("\tName")]
+        [MyBrowsable, Category("\t\tGeneral"), DisplayName("\tName")]
         [YAXSerializableField, YAXAttributeForClass]
         public string Name { get; set; }
 
@@ -33,7 +33,7 @@ namespace GoodAI.Core.Nodes
         public MyNodeGroup Parent { get; internal set; }
         public MyProject Owner { get; internal set; }
 
-        [MyBrowsable, Category("\tGeneral")]
+        [MyBrowsable, Category("\t\tGeneral")]
         public int TopologicalOrder { get; internal set; }        
 
         private void InitPropertiesDefault()
@@ -272,7 +272,7 @@ namespace GoodAI.Core.Nodes
 
         // When node is pinned to any particular GPU - contains an ID of that GPU, 
         //   otherwise contain -1     
-        [MyBrowsable, Category("\tGeneral"), ReadOnly(true)]
+        [MyBrowsable, Category("\t\tGeneral"), ReadOnly(true)]
         public Int32 GPU { get; set; }        
                
         public virtual void TransferToDevice() { }

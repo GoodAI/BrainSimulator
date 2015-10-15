@@ -143,7 +143,6 @@ namespace GoodAI.Core.Task
         public MyTask()
         {
             Enabled = true;            
-        }       
-
+        }
     }    
 }

@@ -28,7 +28,7 @@
 #define INV_PERM 10
 #define MODULO 11
 #define DIVISION_INT 12
-#define HAMMING_DIST 13
+#define EQUAL 13
 
 
 #define MAX_OPERANDS 20
@@ -136,7 +136,16 @@ extern "C"
 			out = i_tmp[threadId];
 			break;
 
-		case HAMMING_DIST: // hamming distance makes sense only for 2 vectors
+		case EQUAL: // Warning: uses a strict equality comparison on floats
+		{
+			bool eq = true;
+			for (int i = 1; eq && (i < inputsCount); i++)
+			{
+				eq = (eq && (out == inputs[i][threadId]));
+			}
+			out = eq ? 1.0f : 0.0f;
+			break;
+		}
 		default:
 			break;
 		}
@@ -199,9 +208,9 @@ extern "C"
 			output = __float2int_rz(input1 / input2);
 			break;
 		}
-		case HAMMING_DIST:
+		case EQUAL:
 		{
-			output = (input1 != input2) ? 1 : 0;
+			output = (input1 == input2) ? 1.0f : 0.0f;
 			break;
 		}
 		default:

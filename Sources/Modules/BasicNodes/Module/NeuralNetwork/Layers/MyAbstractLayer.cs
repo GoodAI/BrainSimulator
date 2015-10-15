@@ -110,9 +110,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = Neurons;
+            Output.Count = Neurons * ParentNetwork.BatchSize;
             Output.ColumnHint = OutputColumnHint;
-            Delta.Count = Neurons;
+            Delta.Count = Neurons * ParentNetwork.BatchSize;
         }
 
         public override void Validate(MyValidator validator)
@@ -124,5 +124,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public MyTask ForwardTask { get; protected set; }
         public MyTask DeltaBackTask { get; protected set; }
+
+        public virtual bool SupportsBatchLearning { get { return false; } }
     }
 }

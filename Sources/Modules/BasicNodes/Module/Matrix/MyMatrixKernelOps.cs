@@ -70,6 +70,10 @@ namespace GoodAI.Modules.Matrix
             {
                 OpersKerlsDictionary.Add(MatOperation.Transpose, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_transposeFromSVDnodeCOPY"));
             }
+            if ((operations & MatOperation.PermuteRows) > 0)
+            {
+                OpersKerlsDictionary.Add(MatOperation.PermuteRows, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_PermuteRows"));
+            }
             if (operations > 0 && OpersKerlsDictionary.Count == 0)
             {
                 MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to init kernel MatrixOps for undefined MatOperation");
@@ -182,7 +186,7 @@ namespace GoodAI.Modules.Matrix
 
         public static MatOperation AvailableOperations()
         {
-            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction | MatOperation.Transpose;
+            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction | MatOperation.Transpose | MatOperation.PermuteRows;
         }
 
 

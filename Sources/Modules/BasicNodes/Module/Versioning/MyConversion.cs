@@ -1,14 +1,14 @@
 ﻿using GoodAI.Core.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System;
 
 namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 7; } }
+        public override int CurrentVersion { get { return 10; } }
 
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace GoodAI.Modules.Versioning
                 if (groupTypeAttribute != null && groupTypeAttribute.Value.EndsWith(".MyNeuralNetworkGroup"))
                 {
                     Add6To7GroupTasks(neuralNetworkGroup);
-//                    RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
+                    //                    RewireLayerInputs(neuralNetworkGroup, document.Root.Descendants("Connection"));
                 }
             }
 
@@ -192,7 +192,7 @@ namespace GoodAI.Modules.Versioning
                 goniometricNode.Add(gonioParams);   // Type parameter in node is in "Params" section as well so this can be done
                 gonioParams.Remove();   // removes only "Params" element in task; the new one in Node is intact
             }
-            
+
             return document.ToString();
         }
 
@@ -245,7 +245,166 @@ namespace GoodAI.Modules.Versioning
             tasks.Add(decrementTask);
         }
 
-        private static XName GetRealTypeAttributeName() 
+        /// <summary>
+        /// split focuser and unfocus :)
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static string Convert7To8(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            List<XElement> toRemove = new List<XElement>();
+
+            foreach (var mapper in document.Root.Descendants("MyFocuser"))
+            {
+                {
+                    foreach (var task in mapper.Descendants("Task"))
+                    {
+                        if (task.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.Retina.MyFocuser+MyUnfocusTask")
+                        {
+                            toRemove.Add(task);
+                        }
+
+                    }
+                }
+            }
+
+            foreach (var xElement in toRemove)
+            {
+                xElement.Remove();
+            }
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// QLearning tasks refactoring
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static string Convert8To9(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            if (document.Root == null)
+                return xml;
+
+            List<XElement> toRemove = new List<XElement>();
+
+            foreach (var task in document.Root.Descendants("Task"))
+            {
+                if (task.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.NeuralNetwork.Tasks.MyRestoreValuesTask" ||
+                    task.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.NeuralNetwork.Tasks.MySaveActionTask")
+                {
+                    toRemove.Add(task);
+                }
+            }
+
+            foreach (var xElement in toRemove)
+            {
+                xElement.Remove();
+            }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert MyRandomNode task to multiple mutually exclusive tasks
+        /// Author: MV
+        /// </summary>
+        public static string Convert9To10(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyRandomNode"))
+            {
+                XElement task = node.Descendants("Task").First();
+
+                // Move period parameters from task to node
+                string randomPeriod = task.Descendants("RandomPeriod").First().Value;
+                string randomPeriodMin = task.Descendants("RandomPeriodMin").First().Value;
+                string randomPeriodMax = task.Descendants("RandomPeriodMax").First().Value;
+                string period = task.Descendants("Period").First().Value;
+
+                node.Add(new XElement("RandomPeriod", randomPeriod));
+                node.Add(new XElement("Period", period));
+                node.Add(new XElement("RandomPeriodMin", randomPeriodMin));
+                node.Add(new XElement("RandomPeriodMax", randomPeriodMax));
+
+                XName realtype = GetRealTypeAttributeName();
+
+                // Enable the correct task and transfer all task parameters
+                string distribution = task.Descendants("Distribution").First().Value;
+
+                XElement uniformTask = new XElement("Task");
+                if (distribution == "Uniform")
+                    uniformTask.SetAttributeValue("Enabled", "True");
+                else
+                    uniformTask.SetAttributeValue("Enabled", "False");
+                uniformTask.SetAttributeValue("PropertyName", "UniformRNG");
+                uniformTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.UniformRNGTask");
+
+                string uniformMin = task.Descendants("MinValue").First().Value;
+                string uniformMax = task.Descendants("MaxValue").First().Value;
+                uniformTask.Add(new XElement("MinValue", uniformMin));
+                uniformTask.Add(new XElement("MaxValue", uniformMax));
+
+                XElement normalTask = new XElement("Task");
+                if (distribution == "Normal")
+                    normalTask.SetAttributeValue("Enabled", "True");
+                else
+                    normalTask.SetAttributeValue("Enabled", "False");
+                normalTask.SetAttributeValue("PropertyName", "NormalRNG");
+                normalTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.NormalRNGTask");
+
+                string normalMean = task.Descendants("Mean").First().Value;
+                string normalDev = task.Descendants("StdDev").First().Value;
+                normalTask.Add(new XElement("Mean", normalMean));
+                normalTask.Add(new XElement("StdDev", normalDev));
+
+                XElement constantTask = new XElement("Task");
+                if (distribution == "Constant")
+                    constantTask.SetAttributeValue("Enabled", "True");
+                else
+                    constantTask.SetAttributeValue("Enabled", "False");
+                constantTask.SetAttributeValue("PropertyName", "ConstantRNG");
+                constantTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.ConstantRNGTask");
+
+                string constantConstant = task.Descendants("Constant").First().Value;
+                constantTask.Add(new XElement("Constant", constantConstant));
+
+                XElement combinationTask = new XElement("Task");
+                if (distribution == "Combination")
+                    combinationTask.SetAttributeValue("Enabled", "True");
+                else
+                    combinationTask.SetAttributeValue("Enabled", "False");
+                combinationTask.SetAttributeValue("PropertyName", "CombinationRNG");
+                combinationTask.SetAttributeValue(realtype, "GoodAI.Modules.Common.CombinationRNGTask");
+
+                string combinationMin = task.Descendants("Min").First().Value;
+                string combinationMax = task.Descendants("Max").First().Value;
+                string combinationUnique = task.Descendants("Unique").First().Value;
+                combinationTask.Add(new XElement("Min", combinationMin));
+                combinationTask.Add(new XElement("Max", combinationMax));
+                combinationTask.Add(new XElement("Unique", combinationUnique));
+
+                task.AddBeforeSelf(uniformTask);
+                task.AddBeforeSelf(normalTask);
+                task.AddBeforeSelf(constantTask);
+                task.AddBeforeSelf(combinationTask);
+
+                // Remove old task
+                task.Remove();
+            }
+
+            return document.ToString();
+        }
+
+
+        private static XName GetRealTypeAttributeName()
         {
             XNamespace yaxlib = "http://www.sinairv.com/yaxlib/";
             XName realtype = yaxlib + "realtype";

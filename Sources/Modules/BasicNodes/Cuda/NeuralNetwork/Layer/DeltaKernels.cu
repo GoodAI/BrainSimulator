@@ -47,6 +47,30 @@ extern "C"
 		}
 	}
 
+	__global__ void FullyConnectedDeltaBatchKernel(
+		ActivationFunctionEnum prevActFunc,
+		float *prevWeighedInputPtr,
+		float *prevDeltaPtr,
+		float dropout,
+		int prevLayerSize,
+		int batchSize
+		)
+	{
+		int threadId = blockDim.x * blockIdx.y * gridDim.x			//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (threadId < batchSize * prevLayerSize)
+		{
+			int prevNeuronId = threadId % prevLayerSize;
+			float sum = prevDeltaPtr[threadId];
+
+			sum /= 1.0f - dropout;
+			sum *= EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevNeuronId]);
+			prevDeltaPtr[threadId] = sum;
+		}
+	}
+
 	__global__ void OneToOneDeltaKernel(
 		ActivationFunctionEnum prevActFunc,
 		float *prevWeighedInputPtr,

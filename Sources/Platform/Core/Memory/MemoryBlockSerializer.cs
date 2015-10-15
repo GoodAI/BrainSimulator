@@ -10,9 +10,14 @@ namespace GoodAI.Core.Memory
     {        
         private byte[] buffer = new byte[8192];
 
-        private static string GetTempStorage(MyProject project)
+        public static string GetTempStorage(MyProject project)
         {
-            return Path.GetTempPath() +  "\\bs_temporal\\" + project.Name + ".statedata";
+            return GetTempStorage(project.Name);
+        }
+
+        public static string GetTempStorage(String projectName)
+        {
+            return Path.GetTempPath() + "\\bs_temporal\\" + projectName + ".statedata";
         }
 
         public static void ClearTempStorage(MyProject project)

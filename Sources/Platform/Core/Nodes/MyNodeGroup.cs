@@ -295,6 +295,24 @@ namespace GoodAI.Core.Nodes
             return null;
         }
 
+        public List<MyNode> GetChildNodesByName(String nodeName)
+        {
+            List<MyNode> nodes = new List<MyNode>();
+            foreach (MyNode child in Children)
+            {
+                if (child.Name == nodeName)
+                {
+                    nodes.Add(child);
+                }
+
+                if (child is MyNodeGroup)
+                {
+                    nodes.AddRange((child as MyNodeGroup).GetChildNodesByName(nodeName));
+                }
+            }
+            return nodes;
+        }
+
         public delegate void IteratorAction(MyNode node);
 
         public void Iterate(bool recursive, IteratorAction action)

@@ -93,8 +93,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     MyAbstractLayer prevLayer = connection.From as MyAbstractLayer;
 
                     // reset delta
-                    if (Owner.ParentNetwork.NewBatch())
-                        prevLayer.Delta.Fill(0); // do this after updating weights (batch learning)
+                    prevLayer.Delta.Fill(0);
 
                     // determine input to previous layer
                     CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(prevLayer);

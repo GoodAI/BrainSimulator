@@ -39,24 +39,10 @@ namespace GoodAI.BrainSimulator.Forms
             this.WindowState = FormWindowState.Maximized;
             statusStrip.BackColor = STATUS_BAR_BLUE;
 
-            if (!string.IsNullOrEmpty(MyConfiguration.OpenOnStartupProjectName))
-            {
-                if (!OpenProject(MyConfiguration.OpenOnStartupProjectName))
-                {
-                    OpenGraphLayout(Project.Network);
-                }            
-            }
-            else if (!string.IsNullOrEmpty(Properties.Settings.Default.LastProject))
-            {
-                if (!OpenProject(Properties.Settings.Default.LastProject))
-                {
-                    OpenGraphLayout(Project.Network);
-                }
-            }
-            else
+            if (!TryOpenStartupProject())
             {
                 OpenGraphLayout(Project.Network);
-            }            
+            }
 
             m_recentMenu = new MruStripMenuInline(fileToolStripMenuItem, recentFilesMenuItem , RecentFiles_Click, 5);
 
@@ -68,6 +54,36 @@ namespace GoodAI.BrainSimulator.Forms
                 recentFilesList.CopyTo(tmp, 0);
                 m_recentMenu.AddFiles(tmp);
             }
+        }
+
+        private bool TryOpenStartupProject()
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(MyConfiguration.OpenOnStartupProjectName))
+                {
+                    OpenProject(MyConfiguration.OpenOnStartupProjectName);
+                }
+                else if (!string.IsNullOrEmpty(Properties.Settings.Default.LastProject))
+                {
+                    OpenProject(Properties.Settings.Default.LastProject);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (ProjectLoadingException)  // already logged
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MyLog.ERROR.WriteLine("Error setting up startup project: " + ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         //TODO: this should be done by data binding but menu items cannot do that (add this support)
@@ -140,10 +156,25 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                saveFileDialog.FileName = openFileDialog.FileName;
-                OpenProject(openFileDialog.FileName);
-                m_recentMenu.AddFile(openFileDialog.FileName);
+                OpenProjectAndAddToRecentMenu(openFileDialog.FileName);
             }            
+        }
+
+        private void OpenProjectAndAddToRecentMenu(string fileName)
+        {
+            try
+            {
+                OpenProject(fileName);
+                m_recentMenu.AddFile(fileName);
+            }
+            catch (ProjectLoadingException)
+            {
+                // already logged
+            }
+            catch (Exception ex)
+            {
+                MyLog.ERROR.WriteLine("Error while opening a project:" + ex.Message);
+            }
         }
 
         private void nodeSettingsMenuItem_Click(object sender, EventArgs e)
@@ -189,10 +220,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AskForFileNameAndSaveProject();
+            SaveProjectOrSaveAs();
         }
 
-        private void AskForFileNameAndSaveProject()
+        private void SaveProjectOrSaveAs()
         {
             if (saveFileDialog.FileName != string.Empty)
             {
@@ -200,15 +231,16 @@ namespace GoodAI.BrainSimulator.Forms
             }
             else
             {
-                if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    SaveProject(saveFileDialog.FileName);
-                    m_recentMenu.AddFile(saveFileDialog.FileName);
-                }
+                SaveProjectAs();  // ask for file name and then save the project
             }
         }
 
         private void saveProjectAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveProjectAs();
+        }
+
+        private void SaveProjectAs()
         {
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
@@ -224,10 +256,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CloseAllGraphLayouts();
-            CloseAllTextEditors();
-            CloseAllObservers();
-
+            CloseCurrentProjectWindows();
             CreateNewProject();            
 
             CreateNetworkView();
@@ -239,24 +268,28 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void runToolButton_Click(object sender, EventArgs e)
         {
+            ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();            
             StartSimulation(false);            
         }
 
         private void stepOverToolButton_Click(object sender, EventArgs e)
         {
+            ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();
             StartSimulation(true);            
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)
         {
+            ShowHideAllObservers(forceShow: true);
             SimulationHandler.StopSimulation();
             SimulationHandler.Simulation.InDebugMode = false;
         }
 
         private void pauseToolButton_Click(object sender, EventArgs e)
-        {         
+        {
+            ShowHideAllObservers(forceShow: true);
             SimulationHandler.PauseSimulation();
         }
 
@@ -326,7 +359,7 @@ namespace GoodAI.BrainSimulator.Forms
                     return;
 
                 if (dialogResult == DialogResult.Yes)
-                    AskForFileNameAndSaveProject();
+                    SaveProjectOrSaveAs();
             }
 
             // When this is true, the event will just return next time it's called.
@@ -403,13 +436,10 @@ namespace GoodAI.BrainSimulator.Forms
             }            
         }
 
-        private void RecentFiles_Click(int number, string filename)
+        private void RecentFiles_Click(int number, string fileName)
         {
-            saveFileDialog.FileName = filename;
-            OpenProject(filename);
-            m_recentMenu.AddFile(saveFileDialog.FileName);
+            OpenProjectAndAddToRecentMenu(fileName);
         }
-
 
         private void setGlobalDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {

@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Windows.Forms.Design;
+using GoodAI.Core.Execution;
 using YAXLib;
 
 namespace GoodAI.Modules.Common
@@ -24,7 +25,7 @@ namespace GoodAI.Modules.Common
     /// "InputValueWriteFormat" and separated by the property "ListSeparator").
     /// One line corresponds to one data point.
     /// </description>
-    class MyCsvFileWriterNode:MyWorkingNode
+    public class MyCsvFileWriterNode : MyWorkingNode
     {
         public enum FileWriteMethod
         {
@@ -52,7 +53,17 @@ namespace GoodAI.Modules.Common
 
         [MyBrowsable, Category("\t Output")]
         [YAXSerializableField(DefaultValue = FileWriteMethod.Overwrite)]
-        public FileWriteMethod WriteMethod { get; set; }
+        public FileWriteMethod WriteMethod
+        {
+            get { return m_writeMethod; }
+            set
+            {
+                m_writeMethod = value;
+                // If this changed, we need to restart the appending logic. See OnSimulationStateChanged.
+                m_isAlreadyWriting = false;
+            }
+        }
+        private FileWriteMethod m_writeMethod;
 
         [MyBrowsable, Category("Content")]
         [YAXSerializableField, YAXElementFor("Structure")]
@@ -74,8 +85,8 @@ namespace GoodAI.Modules.Common
         [MyBrowsable, Category("Content")]
         [YAXSerializableField, YAXElementFor("Structure")]
         [EditorAttribute(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string ListSeparator 
-        { 
+        public string ListSeparator
+        {
             get { return listSeparator; }
             set
             {
@@ -86,6 +97,12 @@ namespace GoodAI.Modules.Common
             }
         }
         private string listSeparator;
+        protected StreamWriter Stream;
+
+        // If the writer is in overwrite mode, it must still append when the simulation is paused and resumed.
+        // This flag indicates that the file has been written into in this simulation run and therefore
+        // it has to be open in append mode again.
+        private bool m_isAlreadyWriting;
 
         [MyBrowsable, Category("Input")]
         [YAXSerializableField(DefaultValue = 1u), YAXElementFor("Structure")]
@@ -124,20 +141,62 @@ namespace GoodAI.Modules.Common
 
         public MyWriterTask SpTask { get; protected set; }
 
-        
-        
+        public override void OnSimulationStateChanged(MySimulationHandler.StateEventArgs args)
+        {
+            base.OnSimulationStateChanged(args);
+
+            if (args.NewState == MySimulationHandler.SimulationState.RUNNING ||
+                args.NewState == MySimulationHandler.SimulationState.RUNNING_STEP)
+            {
+                InitStream();
+            }
+            else
+            {
+                // Simulation stopped? => set the flag to false so that we use the selected writing mode when it starts again.
+                if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
+                    m_isAlreadyWriting = false;
+
+                CloseStream();
+            }
+        }
+
+        private void InitStream()
+        {
+            if (Stream != null)
+                return;
+
+            MyLog.DEBUG.WriteLine("Opening the CSV file handle");
+
+
+            // If the file was supposed to be overwritten, but that already happened in this simulation, append.
+            // Otherwise, it would overwrite the file after each "pause" or simulation restart.
+            // This is basically done to keep the original functionality even though we reopen the file now.
+            bool append = m_isAlreadyWriting || WriteMethod == FileWriteMethod.Append;
+            m_isAlreadyWriting = true;
+            Stream = new StreamWriter(OutputDirectory + '\\' + OutputFile, append);
+        }
+
+        private void CloseStream()
+        {
+            if (Stream == null)
+                return;
+
+            Stream.Close();
+            Stream = null;
+        }
+
+
         // TASKS -----------------------------------------------------------
         [Description("Write Row"), MyTaskInfo(OneShot = false)]
         public class MyWriterTask : MyTask<MyCsvFileWriterNode>
         {
-            StreamWriter m_stream;
             int m_step;
 
             public override void Init(int nGPU)
             {
-                bool append = (Owner.WriteMethod == FileWriteMethod.Append) ? true : false;
-                m_stream = new StreamWriter(Owner.OutputDirectory + '\\' + Owner.OutputFile, append);
                 m_step = 0;
+
+                Owner.InitStream();
 
                 // when appending, dont add the headers
                 if (!String.IsNullOrEmpty(Owner.Headers) && (Owner.WriteMethod == FileWriteMethod.Overwrite))
@@ -148,7 +207,7 @@ namespace GoodAI.Modules.Common
                         Owner.Headers.Remove(Owner.Headers.Length - 1);
                     }
                     sb.Append(Owner.Headers);
-                    m_stream.WriteLine(sb);
+                    Owner.Stream.WriteLine(sb);
                 }
             }
 
@@ -192,7 +251,7 @@ namespace GoodAI.Modules.Common
                             sb.Append(Owner.ListSeparator);
                         }
                     }
-                    m_stream.WriteLine(sb.ToString());
+                    Owner.Stream.WriteLine(sb.ToString());
                 }
                 m_step++;
             }

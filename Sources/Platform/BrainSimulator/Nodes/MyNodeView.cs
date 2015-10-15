@@ -46,9 +46,15 @@ namespace GoodAI.BrainSimulator.NodeView
 
             m_icon = nodeInfo.BigImage;
 
-            m_iconItem = new NodeImageItem(m_icon, 48, 48, false, false);
-            m_iconItem.Tag = 0;
-            m_descItem = new NodeLabelItem("");
+            m_iconItem = new NodeImageItem(m_icon, 48, 48, false, false)
+            {
+                IsPassive = true,
+                Tag = 0
+            };
+            m_descItem = new NodeLabelItem("")
+            {
+                IsPassive = true
+            };
 
             AddItem(m_iconItem);       
             AddItem(m_descItem);            
@@ -68,50 +74,35 @@ namespace GoodAI.BrainSimulator.NodeView
                 AddItem(signalItem);
             }
 
-            if (Node.InputBranches == 1)
+            InitIOBranches(Node.InputBranches, m_iconItem.Input, m_inputBranches, Node.GetInfo().InputBlocks, isInput: true);
+            InitIOBranches(Node.OutputBranches, m_iconItem.Output, m_outputBranches, Node.GetInfo().OutputBlocks, isInput: false);
+        }
+
+        private void InitIOBranches(int branchCount, NodeConnector connector, ICollection<NodeItem> branchList, IList<PropertyInfo> blocks, bool isInput)
+        {
+            if (branchCount == 1)
             {
-                m_iconItem.Input.Enabled = true;
-                m_inputBranches.Add(m_iconItem);
+                connector.Enabled = true;
+                branchList.Add(m_iconItem);
             }
             else
             {
-                for (int i = 0; i < Node.InputBranches; i++)
+                for (int i = 0; i < branchCount; i++)
                 {
                     string name = (i + 1) + "";
 
                     if (Node is MyWorkingNode)
                     {
-                        name = Node.GetInfo().InputBlocks[i].Name;
+                        name = blocks[i].Name;
                     }
 
-                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), true, false);
-                    branch.Tag = i;
-
-                    m_inputBranches.Add(branch);
-                    AddItem(branch);
-                } 
-            }
-
-            if (Node.OutputBranches == 1)
-            {
-                m_iconItem.Output.Enabled = true;
-                m_outputBranches.Add(m_iconItem);
-            }
-            else
-            {
-                for (int i = 0; i < Node.OutputBranches; i++)
-                {
-                    string name = (i + 1) + "";
-
-                    if (Node is MyWorkingNode)
+                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), isInput, !isInput)
                     {
-                        name = Node.GetInfo().OutputBlocks[i].Name;
-                    }
+                        Tag = i,
+                        IsPassive = true
+                    };
 
-                    NodeLabelItem branch = new NodeLabelItem(MyProject.ShortenMemoryBlockName(name), false, true);
-                    branch.Tag = i;
-
-                    m_outputBranches.Add(branch);
+                    branchList.Add(branch);
                     AddItem(branch);
                 }
             }

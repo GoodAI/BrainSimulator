@@ -112,8 +112,63 @@ extern "C"
 		}
 	}
 
+    __global__ void OFMapObserver (unsigned int* pixels, int imageSize, float* of){
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+			+ blockDim.x*blockIdx.x				
+			+ threadIdx.x;
+
+        float2 OF_value;
+        float OF_size;
+        float OF_angle;
+
+        float PI = 3.14159265f;
+
+        float h, s;
+
+		if (id<imageSize){
+            OF_value.x = of[id];
+            OF_value.y = of[id+imageSize];
+
+            OF_size  = (float) sqrt( (OF_value.x+OF_value.y) * (OF_value.x+OF_value.y) );  // normalized to be <0,1>
+            OF_angle = (float) atan2(OF_value.x,OF_value.y);  // <-PI;PI>
+            OF_angle = (OF_angle + PI)/2.0f;//(OF_angle+PI)/2.0f/PI;  // normalized to be <0,1>
+            
+
+            h = OF_angle;
+            s = OF_size/5.0f;
+
+            pixels[id] = hsva_to_uint_rgba(h, s, 1.0f, 1.0f);
+		}
+	}
+
+    __global__ void OFConvert2AngleSize (float*of, int imageSize){
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+			+ blockDim.x*blockIdx.x				
+			+ threadIdx.x;
+
+        float2 OF_value;
+        float OF_size;
+        float OF_angle;
+
+        float PI = 3.14159265f;
+
+		if (id<imageSize){
+            OF_value.x = of[id];
+            OF_value.y = of[id+imageSize];
+
+            OF_size = (float) sqrt( (OF_value.x+OF_value.y) * (OF_value.x+OF_value.y) );  // normalized to be <0,1>
+            OF_angle = (float) atan2(OF_value.x,OF_value.y);  // <-PI;PI>
+
+            of[id] = OF_angle;
+            of[id+imageSize] = OF_size;
+
+		}
+	}
+
 
 }
+
+
 
 
 /*

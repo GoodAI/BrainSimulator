@@ -1,12 +1,24 @@
 ## Neural Network examples
+
+
+### How to start
 [XOR gate](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Xor.brain) can be emulated by a feed forward Neural Network. This example shows the actual observed error.<br>
 ![](../img/XOR_flow.PNG)
 
 [MNIST database](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Mnist.brain) is a common testbed for Neural Networks. This example shows the moving average of the observed error.<br>
 ![](../img/MNIST_flow.PNG)
 
+
+### Going further
 [Breakout](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Breakout.brain) based on Q-learning, a type of reinforcement learning. This example includes a gate between learned and random outputs.
 ![](../img/Breakout_flow.PNG)
+
+[Variational AutoEncoder.](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/VariGauss.brain) Guassian sampling node is between the encoder and decoder. If the output of the encoder has size $N$, first $N/2$ elements represents the mean ($\mu$) and second $N/2$ the variance ($\sigma$) that is the parametrization of a Gaussian distribution. Sampling node just sample from the distribution and this sampling is further used as the input to the decoder. See [1] for more details. The slider (outside the Group) turns off the training and the Gaussian node randomly generates samples.
+
+![](../img/Vari_AutoEncoder_brain.PNG)
+
+
+### Recurrent Architectures
 
 [Recurrent network](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/RNN_sine.brain) predicting sine wave 20 steps ahead.
 
@@ -16,9 +28,13 @@
 
 ![](../img/LSTM_sine.PNG)
 
-[Variational AutoEncoder.](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/VariGauss.brain) Guassian sampling node is between the encoder and decoder. If the output of the encoder has size $N$, first $N/2$ elements represents the mean ($\mu$) and second $N/2$ the variance ($\sigma$) that is the parametrization of a Gaussian distribution. Sampling node just sample from the distribution and this sampling is further used as the input to the decoder. See [1] for more details. The slider (outside the Group) turns off the training and the Gaussian node randomly generates samples.
+[Back-propagation throgh time](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/BPTT_on_mnistSequences.brain) method tries to predict the next number in the MNIST dataset.
 
-![](../img/Vari_AutoEncoder_brain.PNG)
+![](../img/BPTT_mnist.PNG)
+The network gets part of one number (i.e. 3) in the time-step zero, then part of the next one (4) and then it has to predict 5, so the target is given only at time-step two. Most of the brain-file implements this architecture.
+
+
+### Text and Audio Processing
 
 [Learning Simple Text Sequence by LSTM](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/LSTM_text.brain)
 Learning a simple text sequence by LSTM neural network.
@@ -42,5 +58,7 @@ Two complete examples are provided for you. [One for presentation of usage of LP
 
 It is also possible to work with raw audio samples (Samples) or frequency spectrum (FFT) as shown in the [Sound_FFT](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Sound_FFT.brain) example.
 ![](../img/sound_example2.png)
+
+
 ### References
  [1] [Diederik P Kingma, Max Welling. Auto-Encoding Variational Bayes](http://arxiv.org/abs/1312.6114)

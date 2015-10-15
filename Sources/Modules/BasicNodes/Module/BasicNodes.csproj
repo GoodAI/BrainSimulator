@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="NeuralNetwork\MyReplayBuffer.cs" />
     <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyNegativeCorrelationEnsembleLayer.cs" />
@@ -129,6 +130,9 @@
     <Compile Include="NeuralNetwork\MyTemporalMemoryBlock.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyGaussianTasks.cs" />
     <Compile Include="NeuralNetwork\Tasks\MyNegativeCorrelationEnsembleTasks.cs" />
+    <Compile Include="Observers\MyFocuserRetinaObservers.cs" />
+    <Compile Include="Retina\MyAbstractFocuser.cs" />
+    <Compile Include="Retina\MyUnfocuser.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
@@ -261,6 +265,8 @@
     <Compile Include="Transforms\MyFilter2D.cs" />
     <Compile Include="Transforms\MyHash.cs" />
     <Compile Include="Transforms\MyResize2D.cs" />
+    <Compile Include="Transforms\VectorOps.cs" />
+    <Compile Include="Transforms\VectorOpsNode.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
     <Compile Include="VSA\Hashes\MyHashingMemory.cs" />
     <Compile Include="VSA\Hashes\MyHashMapper.cs" />
@@ -368,6 +374,8 @@
     <Content Include="res\gridworld5\taleObstacle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="res\observerUnfocus.png" />
+    <EmbeddedResource Include="res\observerUnfocus_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

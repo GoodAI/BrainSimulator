@@ -21,7 +21,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             newButton.Image = nodeInfo.SmallImage;
             newButton.Name = nodeInfo.NodeType.Name;
-            newButton.ToolTipText = nodeInfo.NodeType.Name.Substring(2);
+            newButton.ToolTipText =  MyProject.ShortenNodeTypeName(nodeInfo.NodeType);
             newButton.MouseDown += addNodeButton_MouseDown;
             newButton.Tag = nodeInfo.NodeType;
 
