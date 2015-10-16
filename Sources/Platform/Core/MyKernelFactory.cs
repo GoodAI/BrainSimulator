@@ -64,6 +64,29 @@ namespace GoodAI.Core
             m_kernel.Run(args);
         }
 
+        public void RunAsync(CudaStream stream, params object[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is MyAbstractMemoryBlock)
+                {
+                    args[i] = (args[i] as MyAbstractMemoryBlock).GetDevicePtr(m_GPU);
+                    if (((CUdeviceptr)args[i]).Pointer == 0)
+                    {
+                        // TODO(Premek): this is now handled in observers, should be also handled in the simulation
+                        throw new InvalidOperationException("Memory block resolved to null device ptr (not allocated on device?).");
+                    }
+                }
+            }
+
+            CUstream cuStream = CUstream.NullStream;
+            if (stream != null)
+            {
+                cuStream = stream.Stream;
+            }
+            m_kernel.RunAsync(cuStream, args);
+        }
+
         public void SetupExecution(int numOfParallelUnits)
         {
             if (numOfParallelUnits > MAX_THREADS)
