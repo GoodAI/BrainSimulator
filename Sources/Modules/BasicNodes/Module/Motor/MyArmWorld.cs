@@ -31,6 +31,7 @@ namespace GoodAI.Modules.Motor
     ///                 <li>MusclesInput: Torque to be applied by muscles on each joint, positive values rotate clockwise</li>
     ///                 <li>ResetInput: Optional, values other than zero reset arm to starting configuration</li>
     ///                 <li>VirtualMusclesLengthInput: Optional, visualises passed muscles lengths in VirtualOutput without affectng the "real" arm</li>
+    ///                 <li>HighlightPointInput: Optional, expects 2D position of a point to be highlighted in visual output</li>
     ///                 <li>VisualOutput: Visualisation of the arm in 2D world</li>
     ///                 <li>MusclesLengthOutput: Length of muscles pulling clockwise, from minimum of 0 to maximum of 1</li>
     ///                 <li>JointsPositionOutput: 2D position of all joints</li>
