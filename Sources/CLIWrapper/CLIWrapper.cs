@@ -2,6 +2,7 @@
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Project;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
@@ -51,6 +52,8 @@ namespace CLIWrapper
             SimulationHandler = new MyCLISimulationHandler();
             SimulationHandler.Simulation = new MyLocalSimulation();
             uid = 0;
+
+            Project = new MyProject();
 
             var path = MyResources.GetEntryAssemblyPath();
 
@@ -211,13 +214,15 @@ namespace CLIWrapper
         {
             MyLog.INFO.WriteLine("Loading project: " + fileName);
 
+            string content;
+
             try
             {
-                TextReader reader = new StreamReader(fileName);
-                string content = reader.ReadToEnd();
-                reader.Close();
+                content = ProjectLoader.LoadProject(fileName,
+                    MyMemoryBlockSerializer.GetTempStorage(Project));
 
                 Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
+                Project.Name = Path.GetFileNameWithoutExtension(fileName);
             }
             catch (Exception e)
             {
@@ -235,13 +240,11 @@ namespace CLIWrapper
             MyLog.INFO.WriteLine("Saving project: " + fileName);
             try
             {
-                Project.Name = Path.GetFileNameWithoutExtension(fileName);
-                string fileContent = Project.Serialize(Path.GetFileNameWithoutExtension(fileName));
+                Project.Name = Path.GetFileNameWithoutExtension(fileName);  // a little sideeffect (should be harmless)
 
-                TextWriter writer = new StreamWriter(fileName);
-                writer.Write(fileContent);
-                writer.Close();
-                Project.Observers = null;
+                string fileContent = Project.Serialize(Path.GetDirectoryName(fileName));
+                ProjectLoader.SaveProject(fileName, fileContent,
+                    MyMemoryBlockSerializer.GetTempStorage(Project));
             }
             catch (Exception e)
             {
