@@ -55,6 +55,10 @@ When one wants to use BPTT, the method is following:
 ![](img_examples/BPTT_observer.PNG)
 
 
+## Batch Learning
+
+Batch learning allows training of a network on multiple data samples - the batch at once, which often produces better results than online learning. To prevent the network from overfitting current data one can use replay buffer node that creates mini-batches from randomly selected data samples.
+
 ## References
 [[1] LSTM: A Search Space Odyssey](http://arxiv.org/pdf/1503.04069.pdf)
 

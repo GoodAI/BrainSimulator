@@ -34,6 +34,15 @@
 The network gets part of one number (i.e. 3) in the time-step zero, then part of the next one (4) and then it has to predict 5, so the target is given only at time-step two. Most of the brain-file implements this architecture.
 
 
+### Batch Learning and Weights Sharing
+[Neural network tries to create a model of an arm](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/model_batchlearning.brain), which means it has to predict the next state of the arm based on current state and action. The network is trained using batch learning with random mini-batches from replay buffer in order to reduce correlation between successive data samples and thus improving model's accuracy. To visualise how well the predictions are, there is another network which shares weights from the network trained using batch learning. This network is not learning, it only predicts the next state which is then visualised.
+
+![](../img/model_batchlearning.png)
+
+Because we don't want the network that is sharing weights to learn, UpdateWeights task is disabled in all layers. To share weights, set the task property SourceNodeName to the name of the layer you want to share weights from. This will make sure the weights are copied in every step. The weights can be also approached slowly using ApproachRate property lower than 1.
+
+![](../img/model_weightssharing.png)
+
 ### Text and Audio Processing
 
 [Learning Simple Text Sequence by LSTM](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/LSTM_text.brain)
