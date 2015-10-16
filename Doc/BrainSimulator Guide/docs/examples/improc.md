@@ -41,4 +41,7 @@ In addition, the `Focuser` has a mode to work as retina transformation ([it is a
 ### Sequential Drawing
 Brain: [Vision/sequentialDrawing.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Vision/sequentialDrawing.brain)
 
-In this sample project, the network in the middle takes raw image. Then, it tries to output the reconstruction after several time-steps. The example is provided with a small number of faces, but it is very easy to use different architetecture of the module as well as more complicated pictures, datasets, and et cetera. More inspirations can be found at the [Marek's blog](http://blog.marekrosa.org/2015/09/another-goodai-milestone-attention_16.html).
+In this sample project, the network in the middle takes raw image. Then, it gets the network's output until it gets the target and it can update. The example is provided with a small number of faces. It is easy to use different architecture of the module as well as more complicated pictures, datasets, and et cetera. More inspirations can be found at the [Marek's blog](http://blog.marekrosa.org/2015/09/another-goodai-milestone-attention_16.html).
+
+
+![](../img/DrawFaces.PNG)
