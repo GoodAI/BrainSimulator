@@ -104,6 +104,10 @@ For **Node and Task**, you can use the following annotations:
     - `Disabled=true` - Task will be disabled by default
 * `YAXSerializeAs("Text")` - this will be used for serialization to XML
 
+For **Tasks**, you can use the following annotations as well:
+
+* `Description("Text")` - used in node task list as a task's name (task's class name is used when not specified)
+
 For **Node and Task properties**, you can use the following annotations:
 
 * `MyBrowsable` - property will appear in UI
