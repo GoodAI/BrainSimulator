@@ -3,6 +3,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Matrix;
 using System;
+using System.Diagnostics;
 
 namespace GoodAI.BasicNodes.Transforms
 {
@@ -42,7 +43,10 @@ namespace GoodAI.BasicNodes.Transforms
             MatOperation mat_ops = MatOperation.None;
 
             if (m_operations.HasFlag(VectorOperation.Rotate))
+            {
+                Debug.Assert(tempBlock.Count >= 4, "Temporary memory block has to be large at least 4 items when using Rotate operation");
                 mat_ops |= MatOperation.Multiplication;
+            }
 
             if (m_operations.HasFlag(VectorOperation.Angle))
                 mat_ops |= MatOperation.DotProd;
