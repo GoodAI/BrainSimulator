@@ -2,6 +2,7 @@
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Tasks;
+using System;
 using System.ComponentModel;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
@@ -105,23 +106,31 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             public override void Execute() //Task execution
             {
+                Owner.Delta.SafeCopyToHost();
+
                 int deltaIdx = 0;
                 for (int b = 0; b < Owner.ParentNetwork.BatchSize; b++)
                 {
                     for (int i = 0; i < Owner.InputBranches; i++)
                     {
-                        MyMemoryBlock<float> input = Owner.GetInput(i);
                         MyAbstractLayer prevLayer = Owner.PreviousLayer[i];
+                        int singleInputSize = Owner.GetInput(i).Count / Owner.ParentNetwork.BatchSize;
+
                         if (prevLayer != null)
                         {
-                            int singleInputSize = input.Count / Owner.ParentNetwork.BatchSize;
-                            Owner.Delta.CopyToMemoryBlock(prevLayer.Delta, deltaIdx, b * singleInputSize, singleInputSize);
-                            Owner.Delta.SafeCopyToHost();
-                            prevLayer.Delta.SafeCopyToHost();
-
-                            deltaIdx += singleInputSize;
+                            //Owner.Delta.CopyToMemoryBlock(prevLayer.Delta, deltaIdx, b * singleInputSize, singleInputSize); //copy this on cpu instead, since it is faster most of the time
+                            Buffer.BlockCopy(Owner.Delta.Host, deltaIdx * sizeof(float), prevLayer.Delta.Host, b * singleInputSize * sizeof(float), singleInputSize * sizeof(float));
                         }
+
+                        deltaIdx += singleInputSize;
                     }
+                }
+
+                //copy previous layers' delta memory blocks to device memory
+                for (int i = 0; i < Owner.InputBranches; i++)
+                {
+                    if (Owner.PreviousLayer[i] != null)
+                        Owner.PreviousLayer[i].Delta.SafeCopyToDevice();
                 }
             }
         }
@@ -138,19 +147,27 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
             public override void Execute() //Task execution
             {
+                //copy input memory blocks to host memory
+                for (int i = 0; i < Owner.InputBranches; i++)
+                {
+                    Owner.GetInput(i).SafeCopyToHost();
+                }
+
                 int outputIdx = 0;
                 for (int b = 0; b < Owner.ParentNetwork.BatchSize; b++)
                 {
                     for (int i = 0; i < Owner.InputBranches; i++)
                     {
-                        MyMemoryBlock<float> input = Owner.GetInput(i);
-                        int singleInputSize = input.Count / Owner.ParentNetwork.BatchSize;
+                        int singleInputSize = Owner.GetInput(i).Count / Owner.ParentNetwork.BatchSize;
 
-                        input.CopyToMemoryBlock(Owner.Output, b * singleInputSize, outputIdx, singleInputSize);
+                        //input.CopyToMemoryBlock(Owner.Output, b * singleInputSize, outputIdx, singleInputSize); //copy this on cpu instead, since it is faster most of the time
+                        Buffer.BlockCopy(Owner.GetInput(i).Host, b * singleInputSize * sizeof(float), Owner.Output.Host, outputIdx * sizeof(float), singleInputSize * sizeof(float));
 
                         outputIdx += singleInputSize;
                     }
                 }
+
+                Owner.Output.SafeCopyToDevice();
             }
         }
     }
