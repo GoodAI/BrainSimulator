@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 10; } }
+        public override int CurrentVersion { get { return 11; } }
 
 
         /// <summary>
@@ -398,6 +398,35 @@ namespace GoodAI.Modules.Versioning
 
                 // Remove old task
                 task.Remove();
+            }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert MyRandomNode Period to dummy task so it can be changed runtime
+        /// Author: MV
+        /// </summary>
+        public static string Convert10To11(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyRandomNode"))
+            {
+                string randomPeriod = node.Descendants("RandomPeriod").First().Value;
+                string randomPeriodMin = node.Descendants("RandomPeriodMin").First().Value;
+                string randomPeriodMax = node.Descendants("RandomPeriodMax").First().Value;
+                string period = node.Descendants("Period").First().Value;
+
+                XElement periodTask = new XElement("Task");
+                periodTask.SetAttributeValue(GetRealTypeAttributeName(), "GoodAI.Modules.Common.PeriodRNGTask");
+                periodTask.SetAttributeValue("Enabled", "True");
+                periodTask.SetAttributeValue("PropertyName", "PeriodTask");
+                periodTask.Add(new XElement("RandomPeriod", randomPeriod));
+                periodTask.Add(new XElement("RandomPeriodMin", randomPeriodMin));
+                periodTask.Add(new XElement("RandomPeriodMax", randomPeriodMax));
+                periodTask.Add(new XElement("Period", period));
+                node.Descendants("Tasks").First().Add(periodTask);
             }
 
             return document.ToString();

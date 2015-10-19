@@ -53,29 +53,24 @@ namespace GoodAI.Modules.Common
             }
         }
 
-        //Period should be randomized?
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = false)]
-        public bool RandomPeriod { get; set; }
+        public int Period { 
+            get 
+            { 
+                return PeriodTask.Period;
+            }
+            set
+            {
+                PeriodTask.Period = value;
+            }
+        }
 
-        //How often produce new numbers? 1 = every step
-        //Also the first value for random period
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = 1)]
-        public int Period { get; set; }
-
-        //Minimum for random period - inclusive
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = 1)]
-        public int RandomPeriodMin { get; set; }
-
-        //Maximum for random period - inclusive
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = 10)]
-        public int RandomPeriodMax { get; set; }
+        public bool RandomPeriod { get { return PeriodTask.RandomPeriod; } }
+        public int RandomPeriodMin { get { return PeriodTask.RandomPeriodMin; } }
+        public int RandomPeriodMax { get { return PeriodTask.RandomPeriodMax; } }
 
         public MyMemoryBlock<float> RandomNumbers { get; private set; }
 
+        public PeriodRNGTask PeriodTask { get; private set; }
         [MyTaskGroup("RNG")]
         public UniformRNGTask UniformRNG { get; private set; }
         [MyTaskGroup("RNG")]
@@ -160,6 +155,37 @@ namespace GoodAI.Modules.Common
                 Period = m_rnd.Next(RandomPeriodMin, RandomPeriodMax + 1);
                 NextPeriodChange += Period;
             }
+        }
+    }
+
+    public class PeriodRNGTask: MyTask<MyRandomNode>
+    {
+        //Period should be randomized?
+        [MyBrowsable, Category("\tPeriod parameters")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool RandomPeriod { get; set; }
+
+        //How often produce new numbers? 1 = every step
+        //Also the first value for random period
+        [MyBrowsable, Category("\tPeriod parameters")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public int Period { get; set; }
+
+        //Minimum for random period - inclusive
+        [MyBrowsable, Category("\tPeriod parameters")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public int RandomPeriodMin { get; set; }
+
+        //Maximum for random period - inclusive
+        [MyBrowsable, Category("\tPeriod parameters")]
+        [YAXSerializableField(DefaultValue = 10)]
+        public int RandomPeriodMax { get; set; }
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute()
+        {
+            
         }
     }
 
