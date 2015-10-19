@@ -16,8 +16,8 @@ namespace GoodAI.Modules.Transforms
 {
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
-    /// <status> WIP </status>
-    /// <summary></summary>
+    /// <status>Working</status>
+    /// <summary>Performs 2D vectors operations. Supports rotation and computing an angle between vectors</summary>
     /// <description>
     /// </description>
     public class MyVectorOpsNode : MyWorkingNode
@@ -57,6 +57,9 @@ namespace GoodAI.Modules.Transforms
             Temp.Count = Temp.ColumnHint * Temp.ColumnHint;
         }
 
+        /// <summary>
+        /// Rotates 2D vector in first input by number of degrees specified in the first element of the second input
+        /// </summary>
         [Description("Rotates 2D vector")]
         public class MyRotateTask : MyTask<MyVectorOpsNode>
         {
@@ -73,10 +76,13 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
+        /// <summary>
+        /// Computes (un)directed angle between two 2D vectors
+        /// </summary>
         [Description("Angle between 2 vectors")]
         public class MyAngleTask : MyTask<MyVectorOpsNode>
         {
-            [MyBrowsable, Category("Params")]
+            [MyBrowsable, Category("Params"), Description("Computes directed angle if set to True")]
             [YAXSerializableField(DefaultValue = false)]
             public bool Directed { get; set; }
 

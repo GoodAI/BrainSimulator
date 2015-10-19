@@ -16,13 +16,13 @@ namespace GoodAI.Modules.Common
     /// <meta>mv</meta>
     /// <staus>Working</staus>
     /// <summary>
-    /// Group that is ran multiple iterations at one simulation step. 
+    /// Group that is ran multiple iterations during one simulation step. 
     /// </summary>
     /// <description></description>
     public class MyLoopGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         [YAXSerializableField(DefaultValue = 3)]
-        [MyBrowsable, Category("Iterations")]
+        [MyBrowsable, Category("Iterations"), Description("How many times per simulation step to loop the group")]
         public int Iterations { get; set; }
 
         public enum MyLoopOperation
@@ -31,7 +31,7 @@ namespace GoodAI.Modules.Common
             All
         }
 
-        [MyBrowsable, Category("Iterations")]
+        [MyBrowsable, Category("Iterations"), Description("Specifies mode of looping. Normal ignores OneShot tasks while ALL loops all tasks including OneShot tasks")]
         [YAXSerializableField(DefaultValue = MyLoopOperation.Normal)]
         public MyLoopOperation LoopType{ get; set; }
 
