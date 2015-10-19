@@ -165,6 +165,7 @@ namespace GoodAI.Modules.Common
 
 
     /// <summary>This task holds information about period. Period information is in the task, so it can be changed during runtime.</summary>
+    [Description("Period settings")]
     public class PeriodRNGTask: MyTask<MyRandomNode>
     {
         //Period should be randomized?
@@ -198,6 +199,7 @@ namespace GoodAI.Modules.Common
 
 
     /// <summary>Generates numbers from uniform distribution. Number will be in interval from MinValue to MaxValue.</summary>
+    [Description("Uniform")]
     public class UniformRNGTask : MyTask<MyRandomNode>
     {
         private MyCudaKernel m_polynomialKernel;
@@ -254,6 +256,7 @@ namespace GoodAI.Modules.Common
 
 
     /// <summary>Generates numbers from normal distribution with parameters specified by Mean and StdDev.</summary>
+    [Description("Normal")]
     public class NormalRNGTask : MyTask<MyRandomNode>
     {
         //Mean for normal dist.
@@ -306,6 +309,7 @@ namespace GoodAI.Modules.Common
 
 
     /// <summary>Generates constant number.</summary>
+    [Description("Constant")]
     public class ConstantRNGTask : MyTask<MyRandomNode>
     {
         private MyCudaKernel m_kernel;
@@ -349,6 +353,7 @@ namespace GoodAI.Modules.Common
     }
 
     /// <summary>Generates (possibly unique) integers between Min and Max where Min is inclusive and Max is exclusive.</summary>
+    [Description("Combination")]
     public class CombinationRNGTask : MyTask<MyRandomNode>
     {
         //Minimal value
