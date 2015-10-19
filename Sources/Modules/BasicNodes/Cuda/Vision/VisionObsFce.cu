@@ -61,83 +61,35 @@ extern "C"
 
 
 
-	__device__ float3 HSVtoRGB( float h , float s , float v )
-	{
-		float3 rgb;
-		//return hsv;
-		int i;
-		float f, p, q, t;
-		if( s == 0 ) {
-			// achromatic (grey)
-			rgb.x = rgb.y = rgb.z = v;
-			return;
-		}
-		h /= 60;			// sector 0 to 5
-		i = floor( h );
-		f = h - i;			// factorial part of h
-		p = v * ( 1 - s );
-		q = v * ( 1 - s * f );
-		t = v * ( 1 - s * ( 1 - f ) );
-		switch( i ) {
-		case 0:
-			rgb.x = v;
-			rgb.y = t;
-			rgb.z = p;
-			break;
-		case 1:
-			rgb.x = q;
-			rgb.y = v;
-			rgb.z = p;
-			break;
-		case 2:
-			rgb.x = p;
-			rgb.y = v;
-			rgb.z = t;
-			break;
-		case 3:
-			rgb.x = p;
-			rgb.y = q;
-			rgb.z = v;
-			break;
-		case 4:
-			rgb.x = t;
-			rgb.y= p;
-			rgb.z = v;
-			break;
-		default:		// case 5:
-			rgb.x = v;
-			rgb.y = p;
-			rgb.z = q;
-			break;
-		}
-	}
+    //---- optical flow functions
+
+
+    __device__ void OFConvertXY2AngleSize (float*of, int id, int imageSize, float& of_size, float& of_angle){
+        float2 OF_value;
+            
+        OF_value.x = of[id];
+        OF_value.y = of[id+imageSize];
+
+        of_size  = (float) sqrt( (OF_value.x+OF_value.y) * (OF_value.x+OF_value.y) );  // normalized to be <0,1>
+        of_angle = (float) atan2(OF_value.x,OF_value.y);  // <-PI;PI>
+    }
+
 
     __global__ void OFMapObserver (unsigned int* pixels, int imageSize, float* of){
 		int id = blockDim.x*blockIdx.y*gridDim.x	
 			+ blockDim.x*blockIdx.x				
 			+ threadIdx.x;
 
-        float2 OF_value;
         float OF_size;
         float OF_angle;
 
-        float PI = 3.14159265f;
-
-        float h, s;
-
 		if (id<imageSize){
-            OF_value.x = of[id];
-            OF_value.y = of[id+imageSize];
+            OFConvertXY2AngleSize(of,id,imageSize,OF_size,OF_angle);
 
-            OF_size  = (float) sqrt( (OF_value.x+OF_value.y) * (OF_value.x+OF_value.y) );  // normalized to be <0,1>
-            OF_angle = (float) atan2(OF_value.x,OF_value.y);  // <-PI;PI>
-            OF_angle = (OF_angle + PI)/2.0f;//(OF_angle+PI)/2.0f/PI;  // normalized to be <0,1>
-            
+            OF_size  = OF_size/5.0f; // 5.0f is normlaization -> needs to be fixed :(
+            OF_angle = (OF_angle + 3.14159265f)/2.0f; // normalized to be <0,1>
 
-            h = OF_angle;
-            s = OF_size/5.0f;
-
-            pixels[id] = hsva_to_uint_rgba(h, s, 1.0f, 1.0f);
+            pixels[id] = hsva_to_uint_rgba(OF_angle, OF_size, 1.0f, 1.0f);  // 5.0f is normlaization -> needs to be fixed :(
 		}
 	}
 
@@ -146,76 +98,36 @@ extern "C"
 			+ blockDim.x*blockIdx.x				
 			+ threadIdx.x;
 
-        float2 OF_value;
         float OF_size;
         float OF_angle;
 
-        float PI = 3.14159265f;
-
 		if (id<imageSize){
-            OF_value.x = of[id];
-            OF_value.y = of[id+imageSize];
-
-            OF_size = (float) sqrt( (OF_value.x+OF_value.y) * (OF_value.x+OF_value.y) );  // normalized to be <0,1>
-            OF_angle = (float) atan2(OF_value.x,OF_value.y);  // <-PI;PI>
+            OFConvertXY2AngleSize(of,id,imageSize,OF_size,OF_angle);
 
             of[id] = OF_angle;
             of[id+imageSize] = OF_size;
+		}
+	}
 
+    __global__ void OFConvert2AngleSizeFloatImage (float*of, int imageSize){
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+			+ blockDim.x*blockIdx.x				
+			+ threadIdx.x;
+
+        float OF_size;
+        float OF_angle;
+
+		if (id<imageSize){
+            OFConvertXY2AngleSize(of,id,imageSize,OF_size,OF_angle);
+
+            OF_size  = 1.0f-fmaxf(fminf(OF_size/8.0f,1.0f),0.0f); // 5.0f is normlaization -> needs to be fixed to proper number... 
+            OF_angle = (OF_angle + 3.14159265f)/2.0f; // normalized to be <0,1>
+
+            of[id] = hsva_to_float(OF_angle, OF_size, 1.0f);
+            of[id+imageSize] = 0.0f;
 		}
 	}
 
 
 }
-
-
-
-
-/*
-__device__ unsigned int hsva_to_uint_rgba(float h, float s, float v, float a) {
-	float r, g, b;	
-
-	float f = h * 6;
-	float hi = floorf(f);
-	f = f - hi;
-	float p = v * (1 - s);
-	float q = v * (1 - s * f);
-	float t = v * (1 - s * (1 - f));
-
-	if(hi == 0.0f || hi == 6.0f) {
-		r = v;
-		g = t;
-		b = p;
-	} else if(hi == 1.0f) {
-		r = q;
-		g = v;
-		b = p;
-	} else if(hi == 2.0f) {
-		r = p;
-		g = v;
-		b = t;
-	} else if(hi == 3.0f) {
-		r = p;
-		g = q;
-		b = v;
-	} else if(hi == 4.0f) {
-		r = t;
-		g = p;
-		b = v;
-	} else {
-		r = v;
-		g = p;
-		b = q;
-	}
-
-	unsigned char red = (unsigned char) (255.0f * r);
-	unsigned char green = (unsigned char) (255.0f * g);
-	unsigned char blue = (unsigned char) (255.0f * b);
-	unsigned char alpha = (unsigned char) (255.0f * a);	
-
-	return  (alpha << 24)  | (red << 16) | (green << 8) | blue;			
-}
-
-*/
-
 
