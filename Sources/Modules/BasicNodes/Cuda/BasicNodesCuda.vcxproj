@@ -54,6 +54,7 @@
     <CudaCompile Include="NeuralNetwork\Layer\RegularizationTermKernels.cu" />
     <CudaCompile Include="NeuralNetwork\Layer\UpdateWeightsKernels.cu" />
     <CudaCompile Include="NeuralNetwork\LossFunctions\CrossEntropyKernel.cu" />
+    <CudaCompile Include="NeuralNetwork\LossFunctions\CustomLossKernel.cu" />
     <CudaCompile Include="NeuralNetwork\LossFunctions\ImageLoss.cu" />
     <CudaCompile Include="NeuralNetwork\LossFunctions\SquaredLossKernel.cu" />
     <CudaCompile Include="NeuralNetwork\TemporalMemoryBlock.cu" />

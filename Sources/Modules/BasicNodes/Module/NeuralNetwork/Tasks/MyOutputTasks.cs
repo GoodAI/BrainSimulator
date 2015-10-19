@@ -126,4 +126,33 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
+    /// <meta>kk</meta>
+    /// <status>WIP</status>
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <description></description>
+    [Description("CustomLoss"), MyTaskInfo(OneShot = false)]
+    public class MyCustomLossTask : MyAbstractLossTask<MyAbstractOutputLayer>
+    {
+        private MyCudaKernel m_lossKernel; // kernel
+        public override void Init(int nGPU)
+        {
+            m_lossKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\LossFunctions\CustomLossKernel", "CustomLossKernel");
+            m_lossKernel.SetupExecution(Owner.Neurons * Owner.ParentNetwork.BatchSize);
+        }
+
+        public override void Execute() //Task execution
+        {
+            // get output layer delta
+            m_lossKernel.Run(
+                (int)Owner.ActivationFunction,
+                Owner.NeuronInput,
+                Owner.Target,
+                Owner.Delta,
+                Owner.Neurons,
+                Owner.ParentNetwork.BatchSize
+            );
+        }
+    }
 }
