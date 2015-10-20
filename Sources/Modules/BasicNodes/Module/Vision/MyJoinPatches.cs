@@ -112,6 +112,13 @@ namespace GoodAI.Modules.Vision
             set { SetOutput(3, value); }
         }
 
+        [MyOutputBlock(4)]
+        public MyMemoryBlock<float> AdjMatrix
+        {
+            get { return GetOutput(4); }
+            set { SetOutput(4, value); }
+        }
+
 
 
 
@@ -136,8 +143,6 @@ namespace GoodAI.Modules.Vision
 
         //------------------------------------------------------------------------------------------------------
         // :: DATA VARS  ::
-        public MyMemoryBlock<float> AdjMatrix { get; private set; }
-
         public MyMemoryBlock<float> Mask_new { get; private set; }
         public MyMemoryBlock<float> CentersSum { get; private set; }
 
@@ -187,6 +192,9 @@ namespace GoodAI.Modules.Vision
 
 
         public MyProcessImPatchBasTask Execute { get; private set; }
+        public MyCreateGraphTask CreateGraph { get; private set; }
+
+
         /// <summary>
         /// Execute joining patches into groups of objects.
         /// </summary>
@@ -389,9 +397,34 @@ namespace GoodAI.Modules.Vision
                 }
             }
 
-
-
         }
+
+
+        [Description("Create graph"), MyTaskInfo(Disabled = true, OneShot = false)]
+        public class MyCreateGraphTask : MyTask<MyJoinPatches>
+        {
+            private MyCudaKernel m_kernel, m_kernel_resetIm;
+
+            public override void Init(int nGPU)
+            {
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\JoinPatches", "FillAdjacencyMatrix");
+                m_kernel.SetupExecution(Owner.MaskCount);
+
+                m_kernel_resetIm = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "ResetImage");
+                m_kernel_resetIm.SetupExecution(Owner.PatchesNum * Owner.PatchesNum);
+            }
+
+
+
+            public override void Execute()
+            {
+                m_kernel_resetIm.Run(Owner.AdjMatrix, Owner.PatchesNum * Owner.PatchesNum);
+                m_kernel.Run(Owner.AdjMatrix, Owner.Mask, Owner.MaskCount, Owner.MaskCols, Owner.MaskRows, Owner.PatchesNum);
+            }
+        }
+
+
+
     }
 }
 
