@@ -33,6 +33,7 @@ namespace GoodAI.Modules.Matrix
 
         EuclidDist = 1 << 13,
 
+        Pow = 1 << 14,
         Exp = 1 << 15,
         Log = 1 << 16,
 

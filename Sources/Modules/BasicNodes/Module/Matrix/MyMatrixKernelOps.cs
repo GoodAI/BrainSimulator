@@ -62,6 +62,10 @@ namespace GoodAI.Modules.Matrix
             {
                 OpersKerlsDictionary.Add(MatOperation.Addition, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_Addition_naive"));
             }
+            if ((operations & MatOperation.Pow) > 0)
+            {
+                OpersKerlsDictionary.Add(MatOperation.Pow, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_Pow_naive"));
+            }
             if ((operations & MatOperation.Substraction) > 0)
             {
                 OpersKerlsDictionary.Add(MatOperation.Substraction, MyKernelFactory.Instance.Kernel(callee.GPU, @"Vision\Matrix", "Matrix_Substraction_naive"));
@@ -108,7 +112,7 @@ namespace GoodAI.Modules.Matrix
                     OpersKerlsDictionary[operation].SetupExecution(A.Count / A.ColumnHint);
                     OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint, B.Host[0]);
                 }
-                else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition | operation == MatOperation.Substraction)
+                else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition | operation == MatOperation.Substraction | operation == MatOperation.Pow)
                 {
                     if (A.Count >= B.Count)
                     {
@@ -164,7 +168,7 @@ namespace GoodAI.Modules.Matrix
                     OpersKerlsDictionary[operation].SetupExecution(A.Count / A.ColumnHint);
                     OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, Result, Result.Count, Result.ColumnHint, value);
                 }
-                else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition)
+                else if (operation == MatOperation.MultiplElemntWise | operation == MatOperation.Addition | operation == MatOperation.Pow)
                 {
                     OpersKerlsDictionary[operation].SetupExecution(A.Count);
                     OpersKerlsDictionary[operation].Run(A, A.Count, A.ColumnHint, A, 0, 0, Result, Result.Count, Result.ColumnHint, value);
@@ -186,7 +190,7 @@ namespace GoodAI.Modules.Matrix
 
         public static MatOperation AvailableOperations()
         {
-            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction | MatOperation.Transpose | MatOperation.PermuteRows;
+            return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Pow | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction | MatOperation.Transpose | MatOperation.PermuteRows;
         }
 
 
