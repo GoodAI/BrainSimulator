@@ -98,7 +98,7 @@ namespace GoodAI.Modules.Matrix
 
         public MyExecuteTask Execute { get; private set; }
         /// <summary>
-        /// paramter ,,Execute/params/DataInput0'' can be used for some operations when second input is not given. For example Addition, Multiplication, GetRow, GetCol...
+        /// parameter ,,Execute/params/DataInput0'' can be used for some operations when second input is not given. For example Addition, Multiplication, GetRow, GetCol...
         /// </summary>
         [Description("Execute")]
         public class MyExecuteTask : MyTask<MyMatrixNode>
