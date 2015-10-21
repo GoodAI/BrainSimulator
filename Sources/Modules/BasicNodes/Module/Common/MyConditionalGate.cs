@@ -19,7 +19,8 @@ namespace GoodAI.Modules.Common
     /// <description>
     /// If the iteration is lower than the parameter value, Input1 is copied to the Output. 
     /// Interation counter is increased each iteration and is reset at each time step. 
-    /// Can be used in the LoopGroup for conditional gating of two signals or for providing the current iteration number.
+    /// Can be used in the LoopGroup for conditional gating of two signals AND/OR for providing the current iteration number.
+    /// 
     /// </description>
     public class MyConditionalGate : MyWorkingNode
     {
@@ -92,6 +93,13 @@ namespace GoodAI.Modules.Common
 
         private int m_iteration;
 
+        /// <summary>
+        /// At each call, the Interation counter is increased by 1. The counter is reset at each change of SimulationStep.
+        /// 
+        /// <br>Note that use of this gate in multiple nested LoopGroups (and/or any group with custom task planning) can lead to unexpected behavior, 
+        /// since the Iteration coutner is reser only on -change- of simulation step.</br>
+        /// 
+        /// </summary>
         [Description("Count Iterations"), MyTaskInfo(Disabled = false, OneShot = false)]
         public class MyCountInterationsTask : MyTask<MyConditionalGate>
         {

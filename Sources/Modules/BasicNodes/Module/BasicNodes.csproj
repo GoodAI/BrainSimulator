@@ -307,6 +307,8 @@
     <EmbeddedResource Include="res\delayedcopy_big.png" />
     <EmbeddedResource Include="res\convolution.png" />
     <EmbeddedResource Include="res\convolution_big.png" />
+    <EmbeddedResource Include="res\gate.png" />
+    <EmbeddedResource Include="res\gate_big.png" />
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
