@@ -331,9 +331,16 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 m_errorOccured = true;
-                m_lastException = new MySimulationException(coreNumber, e.Message, e);
 
-                MyKernelFactory.Instance.MarkContextDead(coreNumber);
+                if (e is MySimulationException)
+                {
+                    m_lastException = e;
+                }
+                else
+                {
+                    m_lastException = new MySimulationException(coreNumber, e.Message, e);
+                    MyKernelFactory.Instance.MarkContextDead(coreNumber);
+                }
             }
         }
 
