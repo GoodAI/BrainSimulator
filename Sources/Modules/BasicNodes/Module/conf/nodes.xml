@@ -132,6 +132,6 @@
     <World type="GoodAI.Modules.GridWorld.MyGridWorld" />
     <World type="GoodAI.Modules.TicTacToe.MyTicTacToeWorld" />
     <World type="GoodAI.Modules.GameBoy.My2DAgentWorld" />
-    
+    <World type="HTSLmodule.Worlds.MyAnimationPredictionWorld" />
   </KnownWorlds>
 </Configuration>

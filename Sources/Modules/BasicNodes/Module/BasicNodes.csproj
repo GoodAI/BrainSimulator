@@ -268,6 +268,7 @@
     <Compile Include="Transforms\VectorOps.cs" />
     <Compile Include="Transforms\VectorOpsNode.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
+    <Compile Include="Vision\MyAnimationPredictionWorld.cs" />
     <Compile Include="VSA\Hashes\MyHashingMemory.cs" />
     <Compile Include="VSA\Hashes\MyHashMapper.cs" />
     <Compile Include="Vision\MyJoinPatches.cs" />
@@ -307,6 +308,57 @@
     <EmbeddedResource Include="res\delayedcopy_big.png" />
     <EmbeddedResource Include="res\convolution.png" />
     <EmbeddedResource Include="res\convolution_big.png" />
+    <Content Include="res\animationpredictionworld\SwitchTest_00000.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00001.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00002.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00003.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00004.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00005.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00006.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00007.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00008.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00009.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00010.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00011.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00012.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00013.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00014.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00015.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00016.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
