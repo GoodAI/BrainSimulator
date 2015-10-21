@@ -121,6 +121,10 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="Join\Distances\MyDistanceNode.cs" />
+    <Compile Include="Join\Distances\MyDistanceOps.cs" />
+    <Compile Include="Join\Stacking\MyStackingNode.cs" />
+    <Compile Include="Join\Stacking\MyStackingOps.cs" />
     <Compile Include="NeuralNetwork\MyReplayBuffer.cs" />
     <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
