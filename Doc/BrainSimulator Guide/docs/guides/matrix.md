@@ -41,6 +41,8 @@ The node always expects one input as a Memory Block (MB), **A**, and if second i
  | **Norm2**<br>  $ \Vert \mathbf A \Vert_2 $              | One MB |  Returns Norm2 of the input MB. |
  | **Normalize**<br>  $ \frac{1}{\Vert \mathbf A \Vert_2} \mathbf A$   | One MB |  Normalizes the input MB. |
  | **Exp, Log, Abs, Round, Floor, Ceil**                   | One MB |  Performs the desired operation on each element in the input MB. |
+ | **Pow**<br>                | Two MB  | Each input can be matrix, vector, or number. If matrix/vector is used as input, the node performs row/column/element-wise power operation. |
+ | **Pow**<br>               | One MB + `DataInput0`  | MB input that goes into first input can be matrix, vector, or number.  |
  |
 
 
