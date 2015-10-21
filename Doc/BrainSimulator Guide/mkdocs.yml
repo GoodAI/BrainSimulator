@@ -30,6 +30,7 @@ pages:
     - Motor Control: 'examples/motor.md'
     - Vector Symbolic Architecture: 'examples/binding.md'
     - Nupic Node: 'examples/nupic.md'
+    - Loop group: 'examples/loopgroup.md'
 
 - Changelog: 'changelog.md'
 markdown_extensions:
