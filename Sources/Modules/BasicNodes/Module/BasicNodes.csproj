@@ -121,6 +121,8 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="MastermindWorld\MyMastermindEngine.cs" />
+    <Compile Include="MastermindWorld\MyMastermindWorld.cs" />
     <Compile Include="NeuralNetwork\MyReplayBuffer.cs" />
     <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
@@ -376,6 +378,21 @@
     </Content>
     <EmbeddedResource Include="res\observerUnfocus.png" />
     <EmbeddedResource Include="res\observerUnfocus_big.png" />
+    <Content Include="res\mastermindworld\bull.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\circle_mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\circle_rim.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\cow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\miss.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
