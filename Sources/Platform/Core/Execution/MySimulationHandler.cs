@@ -377,11 +377,14 @@ namespace GoodAI.Core.Execution
 
         private void DoStop()
         {
-            if (m_closeCallback != null)
-                Simulation.Finish();
-
+            // TODO(HonzaS): This is hacky, it needs to be redone properly.
+            // 1) Stop the simulation if needed.
+            // 2) Set the state to STOPPED => notifies the nodes to clean up.
+            // 3) Clear everything else if we're quitting.
+            var stopping = false;
             if (State != SimulationState.STOPPED)
             {
+                stopping = true;
                 MyLog.INFO.WriteLine("Cleaning up world...");
                 Project.World.Cleanup();
 
@@ -393,10 +396,16 @@ namespace GoodAI.Core.Execution
 
                 // This needs to be set before Clear is called so that nodes can be notified about the state change.
                 State = SimulationState.STOPPED;
+            }
 
+            if (m_closeCallback != null)
+                Simulation.Finish();
+
+            if (stopping)
+            {
                 MyLog.INFO.WriteLine("Clearing simulation...");
                 // This will destroy the collection that holds the nodes, so it has to be the last thing.
-                Simulation.Clear();            
+                Simulation.Clear();
                 MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
 
                 if (SimulationStopped != null)
