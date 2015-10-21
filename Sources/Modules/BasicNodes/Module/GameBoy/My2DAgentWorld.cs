@@ -20,7 +20,9 @@ namespace GoodAI.Modules.GameBoy
     /// <meta>df</meta>
     /// <status>WIP</status>
     /// <summary>Simple 2D topview world with agent and target.</summary>
-    /// <description>Agent and target positions are available. Agent movement can be controlled.</description>
+    /// <description>Agent and target positions are available. Agent moves continuously in the 2D environment. 
+    /// Movement is controlled by 9 values (8 directions + no operation), which change velocity in the corresponding direction. 
+    /// The goal is to reach the target, if target is reached, the event signal is sent and goal is placed onto new randomly generated position.</description>
     public class My2DAgentWorld : MyWorld
     {
         public class MyGameObject
@@ -87,8 +89,8 @@ namespace GoodAI.Modules.GameBoy
 
             Bitmaps.Count = 0;
 
-            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld\agent.png");
-            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld\lightsOn.png");
+            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld3\agent.png");
+            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld3\lightsOn.png");
 
             AgentPosition.Count = 2;
             TargetPosition.Count = 2;
@@ -130,6 +132,9 @@ namespace GoodAI.Modules.GameBoy
         public MyUpdateTask UpdateTask { get; private set; }
         public MyRenderTask RenderGameTask { get; private set; }
 
+        /// <summary>
+        /// Initialize the simulation, load bitmaps.
+        /// </summary>
         [MyTaskInfo(OneShot = true)]
         public class MyInitTask : MyTask<My2DAgentWorld>
         {
@@ -166,7 +171,7 @@ namespace GoodAI.Modules.GameBoy
                 Owner.m_gameObjects = new List<MyGameObject>();
                 CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);
 
-                Bitmap bitmap = Owner.m_bitmapTable[@"res\gridworld\agent.png"];
+                Bitmap bitmap = Owner.m_bitmapTable[@"res\gridworld3\agent.png"];
 
                 MyGameObject agent = new MyGameObject()
                 {
@@ -175,7 +180,7 @@ namespace GoodAI.Modules.GameBoy
                 };
                 offset += FillWithChannelFromBitmap(bitmap, 0, Owner.Bitmaps.Host, offset);
 
-                bitmap = Owner.m_bitmapTable[@"res\gridworld\lightsOn.png"];
+                bitmap = Owner.m_bitmapTable[@"res\gridworld3\lightsOn.png"];
 
                 MyGameObject target = new MyGameObject()
                 {
@@ -193,6 +198,9 @@ namespace GoodAI.Modules.GameBoy
             }
         }
 
+        /// <summary>
+        /// Render the world to the visual output.
+        /// </summary>
         public class MyRenderTask : MyTask<My2DAgentWorld>
         {
             private MyCudaKernel m_kernel;
@@ -216,10 +224,14 @@ namespace GoodAI.Modules.GameBoy
             }
         }
 
+        /// <summary>
+        /// Update the world state, apply rules. REACH_TARGET: size of signal to be sent on the Event output if the target is reached.
+        /// </summary>
         public class MyUpdateTask : MyTask<My2DAgentWorld>
         {            
             [MyBrowsable, Category("Events")]
-            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure")]
+            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"), 
+            Description("This value is set to the Event output for one time step, if the target is reached.")]
             public float REACH_TARGET { get; set; }            
             
             private Random m_random = new Random();
