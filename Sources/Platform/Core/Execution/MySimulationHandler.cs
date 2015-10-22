@@ -246,11 +246,6 @@ namespace GoodAI.Core.Execution
                     MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
                     e.Cancel = true;
                 }
-
-                if (ProgressChanged != null)
-                {
-                    ProgressChanged(this, null);
-                }   
             }
             else if (State == SimulationState.RUNNING)
             {
@@ -306,6 +301,11 @@ namespace GoodAI.Core.Execution
         // NOT UI thread
         void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (ProgressChanged != null)
+            {
+                ProgressChanged(this, null);
+            }
+
             if (e.Cancelled && !doPause)
             {
                 DoStop();
