@@ -26,7 +26,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:cy="338.94266"
+     inkscape:cy="391.18673"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -42,8 +42,8 @@
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-center="true"
-     inkscape:zoom="8"
-     inkscape:cx="322.58195"
+     inkscape:zoom="4"
+     inkscape:cx="36.894978"
      inkscape:snap-bbox-midpoints="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -936,6 +936,77 @@
          style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
          d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
          id="path5432-3" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker10392-3"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path10394-4"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1"
+         transform="scale(-0.2,-0.2)" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-85"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-85-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-0-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-85-8"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-0-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-26" />
     </marker>
   </defs>
   <metadata
@@ -4829,6 +4900,46 @@
          id="path3989"
          style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker10392)"
          sodipodi:type="spiral" />
+    </g>
+    <g
+       id="g5138"
+       inkscape:export-filename="D:\GoodAI\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\loopgroup_big.png"
+       inkscape:export-xdpi="169.41176"
+       inkscape:export-ydpi="169.41176">
+      <rect
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:#0180b8;stroke-width:2;marker:none;enable-background:accumulate;stroke-opacity:1"
+         id="rect4362-0"
+         width="32"
+         height="32"
+         x="-32.176781"
+         y="604.42468"
+         rx="5"
+         ry="5"
+         inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\group_signal.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <rect
+         ry="4.3396935"
+         rx="5.0688605"
+         y="613.92572"
+         x="-25.300726"
+         height="15.622895"
+         width="18.247896"
+         id="rect4364-5"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;stroke:#ffffff;stroke-width:3.75210238;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate" />
+      <rect
+         y="610.69556"
+         x="-26.036825"
+         height="12.033634"
+         width="4.1586332"
+         id="rect5481-1"
+         style="opacity:1;fill:#0180b8;fill-opacity:1;stroke:#0180b8;stroke-width:4.09136677;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4511-8-8"
+         d="m -16.465421,613.90623 -2.895528,0.004"
+         style="fill:#0180b8;fill-opacity:1;stroke:#ffffff;stroke-width:4.30690384;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutS4-85-8)"
+         sodipodi:nodetypes="cc" />
     </g>
   </g>
   <g
