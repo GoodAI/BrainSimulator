@@ -105,7 +105,7 @@ namespace GoodAI.BasicNodes.Transforms
                     result.SafeCopyToHost();
                     float dotProd = result.Host[0];
                     float angle;
-                    if (dotProd == 1)
+                    if (Math.Abs(dotProd-1) < 1E-4)
                         angle = 0;
                     else
                         angle = RadianToDegree((float)Math.Acos(dotProd));
