@@ -313,6 +313,8 @@
     <EmbeddedResource Include="res\convolution_big.png" />
     <EmbeddedResource Include="res\gate.png" />
     <EmbeddedResource Include="res\gate_big.png" />
+    <EmbeddedResource Include="res\distance.png" />
+    <EmbeddedResource Include="res\distance_big.png" />
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -382,6 +384,8 @@
     </Content>
     <EmbeddedResource Include="res\observerUnfocus.png" />
     <EmbeddedResource Include="res\observerUnfocus_big.png" />
+    <EmbeddedResource Include="res\stacking.png" />
+    <EmbeddedResource Include="res\stacking_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
