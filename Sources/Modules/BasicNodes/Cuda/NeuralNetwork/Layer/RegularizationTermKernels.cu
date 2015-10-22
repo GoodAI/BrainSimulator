@@ -138,7 +138,7 @@ extern "C"
 		int isSigma = prevLayerId >= prevLayerOutputCount / 2 && !useSigmaConstant;
 
 		float regularization = isMean * prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2)
-			+ isSigma * (prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2) - 1.0f / (0.00000001 + prevLayerWeights[weightId]));
+			+ isSigma * (prevLayerWeights[weightId] * powf(prevLayerInputPtr[prevPrevLayerId], 2) - 1.0f / (prevLayerWeights[weightId]));
 
 		meanDeltas[prevLayerId] += isMean * RegularizationCoefficient * regularization * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevLayerId]);
 		sigmaDeltas[prevLayerId] += isSigma * RegularizationCoefficient * regularization * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevLayerId]);
