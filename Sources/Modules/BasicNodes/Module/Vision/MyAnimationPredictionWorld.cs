@@ -150,7 +150,7 @@ namespace HTSLmodule.Worlds
                 }
                 catch (ArgumentOutOfRangeException e)
                 {
-                    validator.AddWarning(this, "Loading defautl dataset, cause: "+ e.Message);
+                    validator.AddWarning(this, "Loading default dataset, cause: "+ e.Message);
                     UseDefaultBitmaps();
                 }
                 catch(IndexOutOfRangeException e)
