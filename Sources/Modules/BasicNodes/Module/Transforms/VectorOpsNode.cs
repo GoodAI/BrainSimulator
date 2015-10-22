@@ -23,13 +23,13 @@ namespace GoodAI.Modules.Transforms
     public class MyVectorOpsNode : MyWorkingNode
     {
         [MyInputBlock]
-        public MyMemoryBlock<float> InputA
+        public MyMemoryBlock<float> A
         {
             get { return GetInput(0); }
         }
 
         [MyInputBlock]
-        public MyMemoryBlock<float> InputB
+        public MyMemoryBlock<float> B
         {
             get { return GetInput(1); }
         }
@@ -50,11 +50,19 @@ namespace GoodAI.Modules.Transforms
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = InputA != null ? InputA.Count : 1;
-            Output.ColumnHint = InputA != null ? InputA.ColumnHint : 1;
+            Output.Count = A != null ? A.Count : 1;
+            Output.ColumnHint = A != null ? A.ColumnHint : 1;
 
             Temp.ColumnHint = Output.Count;
             Temp.Count = Temp.ColumnHint * Temp.ColumnHint;
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "VectorOps";
+            }
         }
 
         /// <summary>
@@ -72,7 +80,7 @@ namespace GoodAI.Modules.Transforms
 
             public override void Execute()
             {
-                m_vecOps.Run(VectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
+                m_vecOps.Run(VectorOps.VectorOperation.Rotate, Owner.A, Owner.B, Owner.Output);
             }
         }
 
@@ -97,11 +105,11 @@ namespace GoodAI.Modules.Transforms
             {
                 if (Directed)
                 {
-                    m_vecOps.Run(VectorOps.VectorOperation.DirectedAngle, Owner.InputA, Owner.InputB, Owner.Output);
+                    m_vecOps.Run(VectorOps.VectorOperation.DirectedAngle, Owner.A, Owner.B, Owner.Output);
                 }
                 else
                 {
-                    m_vecOps.Run(VectorOps.VectorOperation.Angle, Owner.InputA, Owner.InputB, Owner.Output);
+                    m_vecOps.Run(VectorOps.VectorOperation.Angle, Owner.A, Owner.B, Owner.Output);
                 }
             }
         }
