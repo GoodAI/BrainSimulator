@@ -116,10 +116,10 @@
     <Node type="GoodAI.Modules.Join.MyStackingNode" CanBeAdded="true" BigIcon="stacking_big.png" SmallIcon="stacking.png"/>
     <Node type="GoodAI.Modules.Join.MyDistanceNode" CanBeAdded="true" BigIcon="distance_big.png" SmallIcon="distance.png"/>
 
-    <Node type="GoodAI.Modules.LTM.MyTextObserverNode" CanBeAdded="true">
+    <Node type="GoodAI.Modules.LTM.MyTextObserverNode" CanBeAdded="true" BigIcon="textOutput_big.png" SmallIcon="textOutput.png">
       <Observer type="GoodAI.Modules.LTM.MyVectorTextObserver" />
     </Node>
-    <Node type="GoodAI.Modules.LTM.MyTextInputNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.LTM.MyTextInputNode" CanBeAdded="true" BigIcon="textInput_big.png" SmallIcon="textInput.png"/>
     
   </KnownNodes>
   <KnownWorlds>
@@ -141,6 +141,7 @@
     <World type="GoodAI.Modules.GridWorld.MyGridWorld" />
     <World type="GoodAI.Modules.TicTacToe.MyTicTacToeWorld" />
     <World type="GoodAI.Modules.GameBoy.My2DAgentWorld" />
+    <World type="HTSLmodule.Worlds.MyAnimationPredictionWorld" />
 
     <World type="GoodAI.Modules.MastermindWorld.MyMastermindWorld" CanBeAdded="true" />
     
