@@ -237,7 +237,7 @@ namespace GoodAI.Modules.MastermindWorld
             set { m_engineParams.CanRepeatColors = value; }
         } // checked at validation if the user input of hidden vector matches this setting
 
-        [MyBrowsable, Category("Start configuration")]
+        [MyBrowsable, Category("Start configuration"), Description("If true, the sequence of random hidden vectors repeats each time the simulation is restarted.")]
         [YAXSerializableField(DefaultValue = false)]
         public bool RepeatableHiddenVector
         {
