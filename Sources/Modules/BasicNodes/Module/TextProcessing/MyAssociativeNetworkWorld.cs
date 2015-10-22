@@ -78,16 +78,29 @@ namespace GoodAI.Modules.LTM
 
         #region Properties
 
+        private int m_readingFrequency = 1;
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 1), Description("New relation is read every ReadingFrequency ticks.")]
-        public int ReadingFrequency { get; set; }
+        public int ReadingFrequency
+        { 
+            get { return m_readingFrequency; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_readingFrequency = value;
+                }
+            }
+
+
+        }
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 20), Description("Maximum width of each element (maximum number of characters). If the element string is shorter, space characters will be added. If longer, it will be truncated.")]
         public int TextWidth { get; set; }
 
-        [MyBrowsable, Category("Params"), DefaultValue("concept 1, concept 2, relation, 0.5")]
-        [YAXSerializableField(DefaultValue = "concept 1, concept 2, relation, 0.5"), YAXElementFor("IO")]
+        [MyBrowsable, Category("Params"), DefaultValue("concept 1, concept 2, relation, 0.9")]
+        [YAXSerializableField(DefaultValue = "concept 1, concept 2, relation, 0.9"), YAXElementFor("IO")]
         public string UserText
         {
             get;
@@ -118,8 +131,6 @@ namespace GoodAI.Modules.LTM
         #endregion
 
         #region Variables
-
-       // protected int m_maxWordSize = 20;
 
         protected string m_text;
 
@@ -202,9 +213,9 @@ namespace GoodAI.Modules.LTM
                     Owner.ReadFinishedSignal.Drop();
                 }
 
-                if (SimulationStep % Owner.ReadingFrequency == 0)
+                if (SimulationStep % Owner.m_readingFrequency == 0)
                 {
-                    long id = SimulationStep / Owner.ReadingFrequency;
+                    long id = SimulationStep / Owner.m_readingFrequency;
 
                     if (Owner.m_parsedText == null)
                     {

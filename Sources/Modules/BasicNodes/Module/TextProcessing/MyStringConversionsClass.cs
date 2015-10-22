@@ -34,12 +34,13 @@ namespace GoodAI.Modules.LTM
         /// <returns></returns>
         public static char DigitIndexToString(float code)
         {
+           
             if (code == '~' - ' ' + 1)
                 return '\n';
 
             if (code < 0 || code + ' ' > '~')
             {
-                Console.WriteLine("Unrecognized code '" + code + "' for conversion to character.");
+                GoodAI.Core.Utils.MyLog.WARNING.WriteLine("Unrecognized code '" + code + "' for conversion to character.");
                 return ' ';
             }
 

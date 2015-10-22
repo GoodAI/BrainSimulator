@@ -71,7 +71,15 @@ namespace GoodAI.Modules.LTM
 
         public override void Validate(MyValidator validator)
         {
-           //no validation because input is not mandatory
+
+            //either there is no input, or the input shoud be a scalar
+            if (InputNumber != null)
+            {
+                validator.AssertWarning(InputNumber.Count == 1, this, "There should be no input or the input should be a scalar. (Using just the first element out of " + InputNumber.Count + ".)");
+            }
+           
+
+
         }
 
 
