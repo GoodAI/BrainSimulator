@@ -240,7 +240,7 @@ namespace CLIWrapper
             MyLog.INFO.WriteLine("Saving project: " + fileName);
             try
             {
-                Project.Name = Path.GetFileNameWithoutExtension(fileName);  // a little sideeffect (should be harmless)
+                //Project.Name = Path.GetFileNameWithoutExtension(fileName);  // a little sideeffect (should be harmless)
 
                 string fileContent = Project.Serialize(Path.GetDirectoryName(fileName));
                 ProjectLoader.SaveProject(fileName, fileContent,

@@ -41,6 +41,7 @@ namespace CLITester
             StringBuilder result = new StringBuilder();
             CLI.OpenProject(breakoutBrainFilePath);
             CLI.DumpNodes();
+            CLI.Save(23, true);
             for (int i = 0; i < 5; ++i )
             {
                 CLI.Run(1000, 100);
@@ -55,12 +56,15 @@ namespace CLITester
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
                 result.AppendFormat(" --- {0}, {1}", data[0], data[1]).AppendLine();
+                CLI.Stop();
             }
 
             if (clusterId >= 0 && processId >=0)
             {
                 string resultFilePath = @"res." + clusterId.ToString() + "." + processId.ToString() + ".txt";
                 File.WriteAllText(resultFilePath, result.ToString());
+                string brainzFilePath = @"state." + clusterId.ToString() + "." + processId.ToString() + ".brainz";
+                CLI.SaveProject(brainzFilePath);
             }
 
             CLI.Quit();
