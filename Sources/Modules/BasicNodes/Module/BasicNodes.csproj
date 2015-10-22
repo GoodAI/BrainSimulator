@@ -464,6 +464,8 @@
     <Content Include="res\mastermindworld\miss.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="res\loopgroup.png" />
+    <EmbeddedResource Include="res\loopgroup_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
