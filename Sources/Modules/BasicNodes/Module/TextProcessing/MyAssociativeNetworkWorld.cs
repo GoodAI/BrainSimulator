@@ -213,9 +213,9 @@ namespace GoodAI.Modules.LTM
                     Owner.ReadFinishedSignal.Drop();
                 }
 
-                if (SimulationStep % Owner.m_readingFrequency == 0)
+                if (SimulationStep % Owner.ReadingFrequency == 0)
                 {
-                    long id = SimulationStep / Owner.m_readingFrequency;
+                    long id = SimulationStep / Owner.ReadingFrequency;
 
                     if (Owner.m_parsedText == null)
                     {
