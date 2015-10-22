@@ -229,7 +229,6 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             m_samplingDeltaKernel.SetupExecution(Owner.Neurons);
 
             m_regularizationDeltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\RegularizationTermKernels", "GaussianRegularizationDeltaKernel");
-            m_regularizationDeltaKernel.SetConstantVariable<float>("RegularizationCoefficient", RegularizationCoefficient);
         }
 
         public override void Execute()
@@ -250,14 +249,20 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     CUdeviceptr meanDeltas = previousLayer.Delta.GetDevicePtr(Owner, 0);
                     // Set locations for sigma deltas
                     CUdeviceptr sigmaDeltas = previousLayer.Delta.GetDevicePtr(Owner, previousLayer.Delta.Count / 2);
-                    
                     // Determine input to previous layer
                     CUdeviceptr prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
+                    // set locations for sigmas (prev layer or constant
+                    CUdeviceptr sigmas;
+                    if (Owner.UseSigmaConstant)
+                        sigmas = Owner.SigmaConstants.GetDevicePtr(Owner);
+                    else
+                        sigmas = Owner.Input.GetDevicePtr(Owner, Owner.Input.Count / 2);
 
                     m_samplingDeltaKernel.Run(
                         Convert.ToInt32(Owner.UseSigmaConstant),
                         (int)previousLayer.ActivationFunction,
                         prevInputPtr,
+                        sigmas,
                         meanDeltas,
                         sigmaDeltas,
                         Owner.Delta,
@@ -273,6 +278,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                         // Try to regularize loss: mean^2 + sigma^2 - log(sigma^2)
                         // In other words regularize means to 0 and sigmas to 1
                         int weightCount = previousWeightLayer.Weights.Count;
+                        m_regularizationDeltaKernel.SetConstantVariable<float>("RegularizationCoefficient", RegularizationCoefficient);
                         m_regularizationDeltaKernel.SetupExecution(weightCount);
                         m_regularizationDeltaKernel.Run(
                             Convert.ToInt32(Owner.UseSigmaConstant),

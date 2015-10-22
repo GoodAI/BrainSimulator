@@ -14,11 +14,18 @@ namespace GoodAI.Modules.Common
 {
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
-    /// <staus>Working</staus>
+    /// <status>Working</status>
     /// <summary>
-    /// Group that is ran multiple iterations during one simulation step. 
+    /// Group that runs all Nodes inside multiple times per one simulation step. 
     /// </summary>
-    /// <description></description>
+    /// <description>
+    /// Run all Nodes inside multiple times per step.
+    /// <h3>Parameters</h3>
+    /// <ul>
+    ///     <li> <b>Iterations:</b> How many Iterations to run everything inside at one SimulationStep.</li>
+    ///     <li> <b>LoopType:</b> "Normal" mode will use the default plan, "All" means that LoopGroup will run OneShot tasks too.</li>
+    /// </ul>
+    /// </description>
     public class MyLoopGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         [YAXSerializableField(DefaultValue = 3)]

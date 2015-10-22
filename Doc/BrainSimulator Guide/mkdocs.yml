@@ -22,6 +22,7 @@ pages:
     - Restricted Boltzmann Machine: 'guides/rbm.md'
 
 - Examples:
+    - Worlds: 'examples/worlds.md'
     - Matrix Node: 'examples/matrix.md'
     - Neural Network: 'examples/neuralnetwork.md'
     - Discrete Q-Learning: 'examples/discreteqlearning.md'

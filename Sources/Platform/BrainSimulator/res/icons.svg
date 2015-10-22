@@ -26,7 +26,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:cy="273.1682"
+     inkscape:cy="418.68279"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -35,15 +35,15 @@
      inkscape:snap-object-midpoints="true"
      inkscape:snap-page="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1141"
-     inkscape:window-x="-8"
+     inkscape:window-height="1058"
+     inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-center="true"
-     inkscape:zoom="19.776893"
-     inkscape:cx="11.072102"
+     inkscape:zoom="8"
+     inkscape:cx="341.24181"
      inkscape:snap-bbox-midpoints="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -622,6 +622,20 @@
          style="stroke:#ffffff;stroke-width:1.0pt;fill:#ffffff;fill-rule:evenodd"
          d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
          id="path5432" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleInSA-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleInSA">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(-0.2,-0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path5432-3" />
     </marker>
   </defs>
   <metadata
@@ -4214,5 +4228,87 @@
        inkscape:export-filename="C:\Users\jan.machac\Desktop\pooling_big.png"
        inkscape:export-xdpi="180"
        inkscape:export-ydpi="180" />
+    <a
+       id="a3951"
+       transform="translate(32,-63.937473)" />
+    <g
+       id="g5032"
+       inkscape:export-filename="D:\GoodAI\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\stacking_big.png"
+       inkscape:export-xdpi="180"
+       inkscape:export-ydpi="180">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate"
+         id="rect4589-7"
+         width="32"
+         height="32"
+         x="320"
+         y="604.42468"
+         rx="5"
+         ry="5" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 348.24211,618.10387 -17.10088,-7.68445 0,0 0,0 -6.47061,5.59384 17.10088,7.68444 0,0 0,0 z"
+         id="path3934"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 324.69345,619.06266 17.10088,7.68444 0,0 0,0 6.47061,-5.59383"
+         id="path3934-9"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 324.78191,622.02217 17.10089,7.68444 0,0 0,0 6.4706,-5.59383"
+         id="path3934-9-2"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 324.78192,625.0355 17.10089,7.68445 0,0 0,0 6.4706,-5.59384"
+         id="path3934-9-2-4"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="path5030"
+         d="m 324.78191,622.02217 17.10089,7.68444 0,0 0,0 6.4706,-5.59383"
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g5085"
+       inkscape:export-filename="D:\GoodAI\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\distance.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate"
+         id="rect4589-7-6"
+         width="32"
+         height="32"
+         x="320"
+         y="636.48718"
+         rx="5"
+         ry="5" />
+      <circle
+         r="7.8125"
+         cy="652.48718"
+         cx="336"
+         id="path5081"
+         style="stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill:none" />
+      <ellipse
+         ry="0.75"
+         rx="0.68750042"
+         cy="652.48718"
+         cx="336"
+         id="path5083"
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" />
+    </g>
   </g>
 </svg>

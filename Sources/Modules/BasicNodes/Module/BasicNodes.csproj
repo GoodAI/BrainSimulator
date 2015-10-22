@@ -121,6 +121,10 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="Join\Distances\MyDistanceNode.cs" />
+    <Compile Include="Join\Distances\MyDistanceOps.cs" />
+    <Compile Include="Join\Stacking\MyStackingNode.cs" />
+    <Compile Include="Join\Stacking\MyStackingOps.cs" />
     <Compile Include="MastermindWorld\MyMastermindEngine.cs" />
     <Compile Include="MastermindWorld\MyMastermindWorld.cs" />
     <Compile Include="NeuralNetwork\MyReplayBuffer.cs" />
@@ -137,6 +141,11 @@
     <Compile Include="Retina\MyUnfocuser.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
+    <Compile Include="TextProcessing\MyAssociativeNetworkWorld.cs" />
+    <Compile Include="TextProcessing\MyStringConversionsClass.cs" />
+    <Compile Include="TextProcessing\MyTextInputNode.cs" />
+    <Compile Include="TextProcessing\MyTextObserverNode.cs" />
+    <Compile Include="TextProcessing\MyVectorTextObserver.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
@@ -309,6 +318,10 @@
     <EmbeddedResource Include="res\delayedcopy_big.png" />
     <EmbeddedResource Include="res\convolution.png" />
     <EmbeddedResource Include="res\convolution_big.png" />
+    <EmbeddedResource Include="res\gate.png" />
+    <EmbeddedResource Include="res\gate_big.png" />
+    <EmbeddedResource Include="res\distance.png" />
+    <EmbeddedResource Include="res\distance_big.png" />
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -378,6 +391,8 @@
     </Content>
     <EmbeddedResource Include="res\observerUnfocus.png" />
     <EmbeddedResource Include="res\observerUnfocus_big.png" />
+    <EmbeddedResource Include="res\stacking.png" />
+    <EmbeddedResource Include="res\stacking_big.png" />
     <Content Include="res\mastermindworld\bull.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
