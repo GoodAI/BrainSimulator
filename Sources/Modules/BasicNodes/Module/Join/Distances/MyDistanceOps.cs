@@ -33,22 +33,6 @@ namespace GoodAI.Modules.Join
         HammingSim = 1 << 8, // hamming distance mapped to range <0,1>, where most similar vectors have similarity 1.
     }
 
-    /*** complete list of operations that should be included and IMPLEMENTED! ***/
-#if false
-    public enum MatOperation
-    {
-        DotProd,
-        EuclidDist,
-
-        Cos,
-        Sin,
-        Tan,
-        Cotan,
-    }
-#endif
-
-
-
     public class MyDistanceOps
     {
         private readonly MyWorkingNode m_caller;
@@ -66,29 +50,33 @@ namespace GoodAI.Modules.Join
 
 
             if (operations.HasFlag(DistanceOperation.DotProd))
+            {
                 m_dotKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_DotProduct_f);
+            }
 
             if (operations.HasFlag(DistanceOperation.CosDist))
+            {
                 m_cosKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_Cosine_f);
+            }
 
             if (operations.HasFlag(DistanceOperation.EuclidDist) || operations.HasFlag(DistanceOperation.EuclidDistSquared))
             {
+                // EuclidDist computes EuclidDistSquared first, so keep them together:
                 m_operations |= DistanceOperation.EuclidDist | DistanceOperation.EuclidDistSquared;
                 m_dotKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_DotProduct_f);
             }
 
             if (operations.HasFlag(DistanceOperation.HammingDist))
             {
-                m_operations |= DistanceOperation.HammingDist;
                 m_reduceSumKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_Sum_f);
             }
             if (operations.HasFlag(DistanceOperation.HammingSim))
             {
-                m_operations |= DistanceOperation.HammingSim;
                 m_reduceSumKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_Sum_f);
             }
 
-            if (operations.HasFlag(DistanceOperation.EuclidDist) || operations.HasFlag(DistanceOperation.EuclidDistSquared) || operations.HasFlag(DistanceOperation.HammingDist) || operations.HasFlag(DistanceOperation.HammingSim))
+            if (operations.HasFlag(DistanceOperation.EuclidDist) || operations.HasFlag(DistanceOperation.EuclidDistSquared) || 
+                operations.HasFlag(DistanceOperation.HammingDist) || operations.HasFlag(DistanceOperation.HammingSim))
             {
                 m_combineVecsKernel = MyKernelFactory.Instance.Kernel(m_caller.GPU, @"Common\CombineVectorsKernel", "CombineTwoVectorsKernel");
             }
@@ -100,7 +88,7 @@ namespace GoodAI.Modules.Join
             CudaDeviceVariable<float> B, int sizeB,
             CudaDeviceVariable<float> result, int sizeRes)
         {
-            if (!Validate(operation))
+            if (!ValidateAtRun(operation))
                 return;
 
             switch (operation)
@@ -138,7 +126,8 @@ namespace GoodAI.Modules.Join
                     m_combineVecsKernel.SetupExecution(sizeA);
                     m_combineVecsKernel.Run(A.DevicePointer, B.DevicePointer, m_temp, (int)MyJoin.MyJoinOperation.Equal, sizeA);
                     m_reduceSumKernel.Run(result.DevicePointer, m_temp, m_temp.Count, 0, 0, 1, /*distributed = false*/0); // reduction to a single number
-                    // take the single number (number of different bits) and convert it to Hamming Similarity: a number in range <0,1> that says how much the vectors are similar
+                    // take the single number (number of different bits) and convert it to Hamming Similarity: 
+                    // a number in range <0,1> that says how much the vectors are similar
                     float fSim = 0;
                     result.CopyToHost(ref fSim);
                     fSim = fSim / m_temp.Count;
@@ -188,7 +177,7 @@ namespace GoodAI.Modules.Join
         }
 
         // can be called during simulation
-        public bool Validate(DistanceOperation operation)
+        public bool ValidateAtRun(DistanceOperation operation)
         {
             if (operation == DistanceOperation.None)
                 return false;
@@ -214,12 +203,12 @@ namespace GoodAI.Modules.Join
 
                 case DistanceOperation.DotProd:
                 case DistanceOperation.CosDist:
-                case DistanceOperation.HammingDist:
-                case DistanceOperation.HammingSim:
                     break;
 
                 case DistanceOperation.EuclidDist:
                 case DistanceOperation.EuclidDistSquared:
+                case DistanceOperation.HammingDist:
+                case DistanceOperation.HammingSim:
                     if (sizeA != sizeTemp)
                     {
                         errorOutput = "Invalid temp block size for the distance operation.";

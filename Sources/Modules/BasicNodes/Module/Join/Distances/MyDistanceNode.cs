@@ -98,6 +98,7 @@ namespace GoodAI.Modules.Join
         public MyExecuteTask Execute { get; private set; }
 
         /// <summary>
+        /// Computes the distance of the input vectors.
         /// </summary>
         [Description("Execute")]
         public class MyExecuteTask : MyTask<MyDistanceNode>

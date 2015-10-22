@@ -24,10 +24,10 @@ namespace GoodAI.Modules.Join
     /// </summary>
     /// <description>
     /// <ul>
-    /// <li><b>Concatenate:</b> Places each successive vector after the end of the previous vector.</li>
+    /// <li><b>Concatenate:</b> Places each successive input vector after the end of the previous input vector.</li>
     /// <li><b>Interweave:</b> Interprets input vectors as matrices (based on their ColumnHint) and concatenates the 
     ///     rows of the successive matrices. It concatenates the first rows of the matrices, then it concatenates the 
-    ///     second rows of the matrices etc. Inputs must have the same number of rows.</li>
+    ///     second rows of the matrices etc. Input vectors must have the same number of rows.</li>
     /// </ul>
     /// </description>
     public class MyStackingNode : MyWorkingNode, IMyVariableBranchViewNodeBase
@@ -43,6 +43,7 @@ namespace GoodAI.Modules.Join
 
         #endregion
 
+
         #region Properties
 
         [ReadOnly(false)]
@@ -53,25 +54,18 @@ namespace GoodAI.Modules.Join
             set { base.InputBranches = value; }
         }
 
-        [MyBrowsable, YAXSerializableField(DefaultValue = 0), YAXElementFor("IO")]
+        [MyBrowsable]
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("IO")]
         public int OutputColHint { get; set; }
 
         [MyBrowsable, Category("Behavior")]
         [YAXSerializableField(DefaultValue = MyStackingOperation.Concatenate), YAXElementFor("Behavior")]
         public MyStackingOperation Operation { get; set; }
 
-        public int OutputSize
-        {
-            get { return Output.Count; }
-            set { Output.Count = value; }
-        }
-
         #endregion
 
-
-        private int[] _offsets = new int[0];
-        private MyMemoryBlock<float>[] _inputBlocks;
-
+        // references to GetInput(i) for all i in <0,InputBranches)
+        private MyMemoryBlock<float>[] m_inputBlocks;
 
         public MyStackingNode()
         {
@@ -83,46 +77,39 @@ namespace GoodAI.Modules.Join
 
         public override void UpdateMemoryBlocks()
         {
-            if (_offsets.Length < InputBranches)
+            if (m_inputBlocks == null || m_inputBlocks.Length != InputBranches)
             {
-                _offsets = new int[InputBranches];
-                _inputBlocks = new MyMemoryBlock<float>[InputBranches];
+                m_inputBlocks = new MyMemoryBlock<float>[InputBranches];
             }
 
             int outputSize = 0;
             Output.ColumnHint = 1;
 
+            // initialize Output.ColumnHint, compute outputSize
             for (int i = 0; i < InputBranches; i++)
             {
                 MyMemoryBlock<float> ai = GetInput(i);
-                _inputBlocks[i] = ai;
+                m_inputBlocks[i] = ai;
 
                 if (ai == null)
                     continue;
 
-                _offsets[i] = outputSize;
                 outputSize += ai.Count;
 
+                // output will have the columnHint of the first vector that has columnHint > 1
                 if (Output.ColumnHint == 1 && ai.ColumnHint > 1)
                 {
                     Output.ColumnHint = ai.ColumnHint;
                 }
             }
 
+            // the auto-computed column hint may be overridden by the user:
             if (OutputColHint > 0)
             {
                 Output.ColumnHint = OutputColHint;
             }
 
-            OutputSize = outputSize;
-
-
-            switch (Operation)
-            {
-                case MyStackingOperation.Concatenate:
-                case MyStackingOperation.Interweave:
-                    break;
-            }
+            Output.Count = outputSize;
         }
 
         public override void Validate(MyValidator validator)
@@ -132,7 +119,7 @@ namespace GoodAI.Modules.Join
             if (validator.ValidationSucessfull)
             {
                 string errorOutput;
-                validator.AssertError(MyStackingOps.Validate(Operation,_inputBlocks, Output, out errorOutput), this, errorOutput);
+                validator.AssertError(MyStackingOps.Validate(Operation, m_inputBlocks, Output, out errorOutput), this, errorOutput);
             }
         }
 
@@ -159,7 +146,7 @@ namespace GoodAI.Modules.Join
 
             public override void Execute()
             {
-                _stackingOps.Run(Owner.Operation, Owner.Output, Owner._inputBlocks);
+                _stackingOps.Run(Owner.Operation, Owner.Output, Owner.m_inputBlocks);
             }
         }
     }

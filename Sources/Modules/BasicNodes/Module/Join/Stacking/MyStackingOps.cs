@@ -28,35 +28,23 @@ namespace GoodAI.Modules.Join
         Interweave = 1 << 2,
     }
 
-    /*** complete list of operations that should be included and IMPLEMENTED! ***/
-#if false
-    public enum MatOperation
-    {
-        Concatenate,
-        Interweave,
-    }
-#endif
-
-
     public class MyStackingOps
     {
-        private readonly MyWorkingNode _caller;
-        private readonly MyStackingOperation _operations;
-        private bool _forceInputChecking;
+        private readonly MyWorkingNode m_caller;
+        private readonly MyStackingOperation m_operations;
+        private bool m_forceInputChecking;
 
         public MyStackingOps(MyWorkingNode caller, MyStackingOperation operations, bool forceInputChecking = false)
         {
-            _caller = caller;
-            _operations = operations;
-            _forceInputChecking = forceInputChecking;
+            m_caller = caller;
+            m_operations = operations;
+            m_forceInputChecking = forceInputChecking;
         }
-
-
 
         public void Run(MyStackingOperation operation, MyMemoryBlock<float> output, params MyMemoryBlock<float>[] inputs)
         {
             if (inputs == null)
-                MyLog.WARNING.WriteLine("No inputs for stacking operation to run. Owner: " + _caller.Name);
+                MyLog.WARNING.WriteLine("No inputs for stacking operation to run on. Owner: " + m_caller.Name);
             else
                 Run(operation, output, inputs.AsEnumerable());
         }
@@ -65,15 +53,14 @@ namespace GoodAI.Modules.Join
         {
             if (inputs == null || !inputs.Any())
             {
-                MyLog.WARNING.WriteLine("No inputs for stacking operation to run. Owner: " + _caller.Name);
+                MyLog.WARNING.WriteLine("No inputs for stacking operation to run on. Owner: " + m_caller.Name);
                 return;
             }
 
             inputs = inputs.Where(a => a != null);
 
-            if (_forceInputChecking && !Validate(operation, inputs, output))
+            if (m_forceInputChecking && !ValidateAtRun(operation, inputs, output))
                 return;
-
 
             switch (operation)
             {
@@ -81,7 +68,7 @@ namespace GoodAI.Modules.Join
                     {
                         int resPtr = 0;
 
-                        foreach (var input in inputs)
+                        foreach (MyMemoryBlock<float> input in inputs)
                         {
                             output.CopyFromMemoryBlock(input, 0, resPtr, input.Count);
                             resPtr += input.Count;
@@ -93,23 +80,21 @@ namespace GoodAI.Modules.Join
                     {
                         int i = 0;
                         int resPtr = 0;
-                        var first = inputs.First();
+                        MyMemoryBlock<float> first = inputs.First();
                         int rows = first.Count / first.ColumnHint;
-
 
                         // Alter between copying the inputs, up to the last row
                         for (; i < rows - 1; i++)
                         {
-                            foreach (var input in inputs)
+                            foreach (MyMemoryBlock<float> input in inputs)
                             {
                                 output.CopyFromMemoryBlock(input, i * input.ColumnHint, resPtr, input.ColumnHint);
                                 resPtr += input.ColumnHint;
                             }
                         }
 
-
-                        // Copy the last rows
-                        foreach (var input in inputs)
+                        // Copy the last rows - they are not guaranteed to be input.ColumnHint wide!
+                        foreach (MyMemoryBlock<float> input in inputs)
                         {
                             int lastRowIdx = i * input.ColumnHint;
                             int lastRowSize = input.Count - lastRowIdx;
@@ -125,15 +110,14 @@ namespace GoodAI.Modules.Join
             }
         }
 
-
-        public bool Validate(MyStackingOperation operation, IEnumerable<MyMemoryBlock<float>> inputs, MyMemoryBlock<float> output)
+        public bool ValidateAtRun(MyStackingOperation operation, IEnumerable<MyMemoryBlock<float>> inputs, MyMemoryBlock<float> output)
         {
             if (operation == MyStackingOperation.None)
                 return false;
 
-            if ((operation & _operations) == 0)
+            if ((operation & m_operations) == 0)
             {
-                MyLog.WARNING.WriteLine("Trying to execute an uninitialized stacking operation. Owner: " + _caller.Name);
+                MyLog.WARNING.WriteLine("Trying to execute an uninitialized stacking operation. Owner: " + m_caller.Name);
                 return false;
             }
 
@@ -162,7 +146,7 @@ namespace GoodAI.Modules.Join
 
             if (!inputs.Any())
             {
-                errorOutput = "No inputs for stacking operation to run.";
+                errorOutput = "No inputs for stacking operation to run on.";
                 return false;
             }
 
@@ -171,11 +155,11 @@ namespace GoodAI.Modules.Join
             {
                 if (inputs.Any(a => a.ColumnHint == 0))
                 {
-                    errorOutput = "Invalid column hints. They must be non-negative.";
+                    errorOutput = "Invalid column hints. They must be positive.";
                     return false;
                 }
 
-                var first = inputs.First();
+                MyMemoryBlock<float> first = inputs.First();
                 int rows = first.Count / first.ColumnHint;
 
                 if (inputs.Any(a => a.Count / a.ColumnHint != rows))
