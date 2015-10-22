@@ -106,8 +106,8 @@ namespace GoodAI.Modules.Harm
                         names[i] = "A" + i;
                     }
                     Rds = new MyRootDecisionSpace(GlobalDataInput.Count, names, LearningParams);
-
                 }
+                CurrentStateOutput.Count = GlobalDataInput.Count;
             }
         }
 
@@ -184,6 +184,16 @@ namespace GoodAI.Modules.Harm
                 float[] inputs = this.RescaleAllInputs();   
                 
                 Owner.Rds.VarManager.MonitorAllInputValues(inputs, null);
+
+                int[] s_tt = Owner.Rds.VarManager.GetCurrentState();
+                if(s_tt.Count() != Owner.CurrentStateOutput.Count){
+                    MyLog.WARNING.WriteLine("Unexpected size of current state");
+                }else{
+                    for(int i=0; i<s_tt.Count(); i++){
+                        Owner.CurrentStateOutput.Host[i] = s_tt[i];
+                    }
+                    Owner.CurrentStateOutput.SafeCopyToDevice();
+                }
             }
 
             private float[] RescaleAllInputs()
