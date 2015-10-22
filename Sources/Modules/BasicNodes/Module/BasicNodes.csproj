@@ -139,6 +139,11 @@
     <Compile Include="Retina\MyUnfocuser.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
+    <Compile Include="TextProcessing\MyAssociativeNetworkWorld.cs" />
+    <Compile Include="TextProcessing\MyStringConversionsClass.cs" />
+    <Compile Include="TextProcessing\MyTextInputNode.cs" />
+    <Compile Include="TextProcessing\MyTextObserverNode.cs" />
+    <Compile Include="TextProcessing\MyVectorTextObserver.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
