@@ -443,6 +443,10 @@
     <EmbeddedResource Include="res\observerUnfocus_big.png" />
     <EmbeddedResource Include="res\stacking.png" />
     <EmbeddedResource Include="res\stacking_big.png" />
+    <EmbeddedResource Include="res\textInput.png" />
+    <EmbeddedResource Include="res\textInput_big.png" />
+    <EmbeddedResource Include="res\textOutput.png" />
+    <EmbeddedResource Include="res\textOutput_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
