@@ -87,7 +87,7 @@ namespace HTSLmodule.Worlds
         }
         private int m_numFrames;
 
-        [MyBrowsable, Category("File"), YAXSerializableField(DefaultValue = "path\\namePrefix_"),
+        [MyBrowsable, Category("File"), YAXSerializableField(DefaultValue = "userDefinedPath\\NamePrefix_"),
         Description("Path to files including the name prefix")]
         public String RootFileName { get; set; }
 
@@ -148,9 +148,19 @@ namespace HTSLmodule.Worlds
                 {
                     this.m_bitmaps = LoadBitmaps(NumFrames, RootFileName, Digits, Extension);
                 }
-                catch
+                catch (ArgumentOutOfRangeException e)
                 {
-                    validator.AddWarning(this, "Could not load given image set, loading the default one.");
+                    validator.AddWarning(this, "Loading defautl dataset, cause: "+ e.Message);
+                    UseDefaultBitmaps();
+                }
+                catch(IndexOutOfRangeException e)
+                {
+                    validator.AddWarning(this, "Loading the default dataset, cause: "+e.Message);
+                    UseDefaultBitmaps();
+                }
+                catch (Exception)
+                {
+                    validator.AddWarning(this, "Loading the default dataset, cause: could not read file(s)");
                     UseDefaultBitmaps();
                 }
             }
@@ -176,8 +186,7 @@ namespace HTSLmodule.Worlds
 
             if (numFrames >= Math.Pow(10, digits))
             {
-                MyLog.ERROR.WriteLine("Number of frames ("+numFrames+") will not fit in given number of digits ("+digits+")!");
-                throw new Exception();
+                throw new ArgumentOutOfRangeException("Number of frames (" + numFrames + ") will not fit in given number of digits (" + digits + ")!");
             }
 
             for (int i = 0; i < bitmaps.Length; i++)
@@ -187,8 +196,7 @@ namespace HTSLmodule.Worlds
 
                 if (bitmaps[i].Width != ImageWidth || bitmaps[i].Height != ImageHeight)
                 {
-                    MyLog.ERROR.WriteLine("Incorrect width or height of a given image");
-                    throw new Exception();
+                    throw new IndexOutOfRangeException("Incorrect width or height of a given image");
                 }
             }
             return bitmaps;
@@ -201,7 +209,7 @@ namespace HTSLmodule.Worlds
         [Description("Reload images."), MyTaskInfo(Disabled = true)]
         public class MyAnimationPredictionLoadTask : MyTask<MyAnimationPredictionWorld>
         {
-            [MyBrowsable, Category("File"), YAXSerializableField(DefaultValue = "absolute_path\namePrefix_"),
+            [MyBrowsable, Category("File"), YAXSerializableField(DefaultValue = "userDefinedPath\\NamePrefix_"),
             Description("Path to files with file name prefix")]
             public String RootFileName { get; set; }
 
@@ -247,9 +255,19 @@ namespace HTSLmodule.Worlds
                 {
                     Owner.m_bitmaps = Owner.LoadBitmaps(NumFrames, RootFileName, Digits, Extension);
                 }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    MyLog.WARNING.WriteLine("Reload images Task: leaving defautl dataset, cause: " + e.Message);
+                    
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    MyLog.WARNING.WriteLine("Reload images Task: leaving the default dataset, cause: " + e.Message);
+                    
+                }
                 catch (Exception)
                 {
-                    MyLog.ERROR.WriteLine("Reload images Task: Could not load your dataset (uisng the old one). Fix the name or uncheck the task.");
+                    MyLog.WARNING.WriteLine("Reload images Task: leaving the default dataset, cause: could not read file(s)");    
                 }
             }
         }
