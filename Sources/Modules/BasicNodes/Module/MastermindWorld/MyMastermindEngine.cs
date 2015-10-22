@@ -39,6 +39,7 @@ namespace GoodAI.Modules.MastermindWorld
         }
         public int[] HiddenVectorUserParsed;
         public bool CanRepeatColors;
+        public bool RepeatableHiddenVector;
     }
 
     /// <summary>
@@ -46,8 +47,6 @@ namespace GoodAI.Modules.MastermindWorld
     /// </summary>
     public sealed class MastermindWorldEngine
     {
-        private int[] m_hiddenVector;
-
         private MyWorldEngineParams m_params;
         private MyMastermindWorld m_world;
 
@@ -57,16 +56,10 @@ namespace GoodAI.Modules.MastermindWorld
         {
             m_params = pars;
             m_world = world;
-            m_rndGen = new Random(100); // make it deterministic - always start with the same seed
-        }
-
-        private void CopyHiddenVectorToGPU()
-        {
-            for (int i = 0; i < m_hiddenVector.Length; i++)
-            {
-                m_world.HiddenVectorOutput.Host[i] = m_hiddenVector[i];
-            }
-            m_world.HiddenVectorOutput.SafeCopyToDevice();
+            if (pars.RepeatableHiddenVector)
+                m_rndGen = new Random(100); // make it deterministic - always start with the same seed
+            else
+                m_rndGen = new Random();
         }
 
         /// <summary>
@@ -74,58 +67,49 @@ namespace GoodAI.Modules.MastermindWorld
         /// </summary>
         private void ResetHiddenVector()
         {
-            // set value of the hidden vector:
+            // (re)set value of the hidden vector:
             if (m_params.HiddenVectorUserParsed == null)
             {
                 // generate a random hidden vector
-                m_hiddenVector = new int[m_params.HiddenVectorLength];
                 if (m_params.CanRepeatColors)
                 {
-                    for (int i = 0; i < m_hiddenVector.Length; i++)
+                    for (int i = 0; i < m_params.HiddenVectorLength; i++)
                     {
-                        m_hiddenVector[i] = m_rndGen.Next(m_params.NumberOfColors);
+                        m_world.HiddenVectorOutput.Host[i] = m_rndGen.Next(m_params.NumberOfColors);
                     }
                 }
                 else // Cannot repeat colors
                 {
                     Debug.Assert(m_params.HiddenVectorLength <= m_params.NumberOfColors); // should be caught by validation
 
-                    int[] availableColors = new int[m_params.NumberOfColors];
-                    for (int i = 0; i < m_params.NumberOfColors; i++)
-                    {
-                        availableColors[i] = i;
-                    }
+                    // colors from 0 to m_params.NumberOfColors-1
+                    int[] availableColors = Enumerable.Range(0, m_params.NumberOfColors).ToArray(); 
 
-                    // random permutation 
+                    // random permutation of colors
                     // http://stackoverflow.com/questions/1287567/is-using-random-and-orderby-a-good-shuffle-algorithm
                     int[] availableColorsShuffled = availableColors.OrderBy(x => m_rndGen.Next()).ToArray();
 
-                    for (int i = 0; i < m_hiddenVector.Length; i++)
-                    {
-                        m_hiddenVector[i] = availableColorsShuffled[i];
-                    }
+                    // copy just the first k elements of the permutation:
+                    Array.Copy(availableColorsShuffled, m_world.HiddenVectorOutput.Host, m_params.HiddenVectorLength); 
                 }
             }
             else
             {
-                m_hiddenVector = m_params.HiddenVectorUserParsed;
+                Array.Copy(m_params.HiddenVectorUserParsed, m_world.HiddenVectorOutput.Host, m_params.HiddenVectorLength);
             }
-            CopyHiddenVectorToGPU();
+            m_world.HiddenVectorOutput.SafeCopyToDevice();
         }
 
         private void EraseGameBoard()
         {
             ResetHiddenVector();
 
-            // erase guesses
             m_world.GuessCountOutput.Fill(0.0f);
 
-            // erase guess and evaluation history
             m_world.GuessHistoryOutput.Fill(0.0f);
             m_world.GuessEvaluationHistoryOutput.Fill(0.0f);
 
             // erase visual output not necessary - done by RenderTask
-            // m_world.VisualOutput.Fill(0.0f);
         }
 
         /// <summary>
@@ -211,19 +195,16 @@ namespace GoodAI.Modules.MastermindWorld
         /// Adds the evaluation of the newest guess to the history of evaluations.
         /// </summary>
         /// <param name="oldGuessCount">the number of guesses and evaluations already stored in history.</param>
-        private void AddGuess(int oldGuessCount)
+        private void AddGuess(float[] guess, int oldGuessCount)
         {
             int guessesOutputOffset = m_params.HiddenVectorLength * oldGuessCount;
             m_world.GuessHistoryOutput.SafeCopyToHost(guessesOutputOffset, m_params.HiddenVectorLength);
-            for (int i = 0; i < m_params.HiddenVectorLength; i++)
-            {
-                m_world.GuessHistoryOutput.Host[i + guessesOutputOffset] = m_world.GuessInput.Host[i];
-            }
+            Array.Copy(guess, 0, m_world.GuessHistoryOutput.Host, guessesOutputOffset, guess.Length);
             m_world.GuessHistoryOutput.SafeCopyToDevice(guessesOutputOffset, m_params.HiddenVectorLength);
 
             int bulls = 0, cows = 0;
             int evaluationsOutputOffset = oldGuessCount * MyMastermindWorld.EVALUATION_ITEM_LENGTH;
-            GetEvaluation(m_world.GuessInput.Host, m_world.HiddenVectorOutput.Host, out bulls, out cows);
+            GetEvaluation(guess, m_world.HiddenVectorOutput.Host, out bulls, out cows);
             m_world.GuessEvaluationHistoryOutput.SafeCopyToHost(evaluationsOutputOffset, MyMastermindWorld.EVALUATION_ITEM_LENGTH);
             m_world.GuessEvaluationHistoryOutput.Host[evaluationsOutputOffset] = bulls;
             m_world.GuessEvaluationHistoryOutput.Host[evaluationsOutputOffset + 1] = cows;
@@ -235,14 +216,25 @@ namespace GoodAI.Modules.MastermindWorld
         /// </summary>
         public void Step()
         {
+            // 0) Get the guess.
+            float[] guess = new float[m_params.HiddenVectorLength];
+            if (m_world.GuessInput != null)
+            {
+                m_world.GuessInput.SafeCopyToHost();
+                Array.Copy(m_world.GuessInput.Host, guess, guess.Length);
+            }
+            else
+            {
+                Array.Clear(guess, 0, guess.Length);
+            }
+
             // 1) Check if the guess is the hidden vector. If it is, output a reward in the WorldEventOutput and reset 
             //    the game.
-            m_world.GuessInput.SafeCopyToHost();
             m_world.HiddenVectorOutput.SafeCopyToHost();
             bool equal = true;
-            for (int i = 0; i < m_world.GuessInput.Host.Length; i++ )
+            for (int i = 0; i < guess.Length; i++)
             {
-                equal = Math.Round(m_world.GuessInput.Host[i]) == Math.Round(m_world.HiddenVectorOutput.Host[i]);
+                equal = Math.Round(guess[i]) == Math.Round(m_world.HiddenVectorOutput.Host[i]);
                 if (!equal)
                     break;
             }
@@ -265,7 +257,7 @@ namespace GoodAI.Modules.MastermindWorld
             
             // 3) Otherwise add the guess to the history of the guesses. Compute an evaluation of the guess and add it
             //    to the history of evaluations.
-            AddGuess(oldGuessCount);
+            AddGuess(guess, oldGuessCount);
         }
         
     }

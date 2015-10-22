@@ -69,13 +69,16 @@ namespace GoodAI.Modules.MastermindWorld
     ///     <li><b>Number of guesses:</b> number <b>m</b> of guesses the agent can make before the game resets. By default, m=12.</li>
     ///     <li><b>Repeating colors:</b> when true, allows the same color to appear multiple times in the hidden vector.</li>
     ///     <li><b>Hidden vector:</b> the vector that the agent should guess. If empty, a random vector is generated for each game.</li>
+    ///     <li><b>Repeatable hidden vector:</b> when true, the random generator is re-set every time the simulation is stopped.
+    ///         This means that the sequence of randomly generated hidden vectors is repeatable.</li>
     /// </ul>
     /// 
     /// <h3>Inputs</h3>
     /// <ul>
     ///     <li><b>GuessInput:</b> vector G of k colors that the agent submits as a guess.</li>
     ///     <li><b>ActionInput:</b> a number (0 or 1) that indicates whether the current guess G is being confirmed by the agent. 
-    ///         This input allows the agent to think multiple computation steps about the correct guess, before providing it to the world.</li>
+    ///         This input allows the agent to think multiple computation steps about the correct guess, before providing it to the world.
+    ///         0 means a confirmation of the guess, 1 means the world will ignore the guess.</li>
     /// </ul>
     /// 
     /// <h3>Outputs</h3>
@@ -158,7 +161,7 @@ namespace GoodAI.Modules.MastermindWorld
 
         #endregion
 
-        private Dictionary<string, Bitmap> m_bitmapTable = new Dictionary<string, Bitmap>();
+        private Dictionary<MyMastermindWorld.TextureType, Bitmap> m_bitmapTable = new Dictionary<MyMastermindWorld.TextureType, Bitmap>();
         protected MastermindWorldEngine m_engine;
         protected MyWorldEngineParams m_engineParams = new MyWorldEngineParams();
 
@@ -234,6 +237,14 @@ namespace GoodAI.Modules.MastermindWorld
             set { m_engineParams.CanRepeatColors = value; }
         } // checked at validation if the user input of hidden vector matches this setting
 
+        [MyBrowsable, Category("Start configuration")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool RepeatableHiddenVector
+        {
+            get { return m_engineParams.RepeatableHiddenVector; }
+            set { m_engineParams.RepeatableHiddenVector = value; }
+        }
+
         #endregion
 
         #region Graphics parameters
@@ -257,8 +268,8 @@ namespace GoodAI.Modules.MastermindWorld
         /// </summary>
         public enum ActionInputKind
         {
-            NoAction = 0,
-            ConfirmGuess = 1
+            ConfirmGuess = 0,
+            NoAction = 1
         }
 
         /// <summary>
@@ -270,6 +281,24 @@ namespace GoodAI.Modules.MastermindWorld
             Cow = 1,
             Miss = 2
         }
+
+        public enum TextureType
+        {
+            CircleRim = 0,
+            CircleMask = 1,
+            Miss = 2,
+            Bull = 3,
+            Cow = 4
+        }
+
+        public MyMastermindWorld()
+        {
+            LoadBitmap(TextureType.CircleRim, textureSet + "circle_rim.png");
+            LoadBitmap(TextureType.CircleMask, textureSet + "circle_mask.png");
+            LoadBitmap(TextureType.Miss, textureSet + "miss.png");
+            LoadBitmap(TextureType.Bull, textureSet + "bull.png");
+            LoadBitmap(TextureType.Cow, textureSet + "cow.png");
+        }
         
         /// <summary>
         /// Called before the start of the simulation. The sizes of the memory blocks depend on the variables from
@@ -278,11 +307,11 @@ namespace GoodAI.Modules.MastermindWorld
         public override void UpdateMemoryBlocks()
         {
             Bitmaps.Count = 0;
-            Bitmaps.Count += LoadAndGetBitmapSize(textureSet + "circle_rim.png");
-            Bitmaps.Count += LoadAndGetBitmapSize(textureSet + "circle_mask.png");
-            Bitmaps.Count += LoadAndGetBitmapSize(textureSet + "miss.png");
-            Bitmaps.Count += LoadAndGetBitmapSize(textureSet + "bull.png");
-            Bitmaps.Count += LoadAndGetBitmapSize(textureSet + "cow.png");
+            Bitmaps.Count += GetBitmapSize(TextureType.CircleRim);
+            Bitmaps.Count += GetBitmapSize(TextureType.CircleMask);
+            Bitmaps.Count += GetBitmapSize(TextureType.Miss);
+            Bitmaps.Count += GetBitmapSize(TextureType.Bull);
+            Bitmaps.Count += GetBitmapSize(TextureType.Cow);
 
             HiddenVectorOutput.Count = HiddenVectorLength;
             HiddenVectorOutput.ColumnHint = HiddenVectorLength;
@@ -320,14 +349,14 @@ namespace GoodAI.Modules.MastermindWorld
         public void GetGraphicsParameters(out int evaluationSquareWidth, out int guessCircleWidth, out int evaluationWidth,
             out int evaluationsPerRow, out int guessWidth, out int rowWidth, out int rowHeight)
         {
-            evaluationSquareWidth = m_bitmapTable[textureSet + "bull.png"].Width;
-            guessCircleWidth = m_bitmapTable[textureSet + "circle_rim.png"].Width;
+            evaluationSquareWidth = m_bitmapTable[TextureType.Bull].Width;
+            guessCircleWidth = m_bitmapTable[TextureType.CircleRim].Width;
             evaluationsPerRow = (int)Math.Ceiling(HiddenVectorLength / 2.0); // evaluations come in two rows
 
             evaluationWidth = evaluationsPerRow * evaluationSquareWidth + (evaluationsPerRow - 1) * GFX_EVALUATION_SPACER;
             guessWidth = HiddenVectorLength * guessCircleWidth + (HiddenVectorLength - 1) * GFX_GUESS_SPACER;
             rowWidth = GFX_MAIN_SPACER + evaluationWidth + GFX_MAIN_SPACER + guessWidth + GFX_MAIN_SPACER;
-            rowHeight = m_bitmapTable[textureSet + "circle_rim.png"].Height + GFX_MAIN_SPACER;
+            rowHeight = m_bitmapTable[TextureType.CircleRim].Height + GFX_MAIN_SPACER;
         }
 
 
@@ -389,30 +418,40 @@ namespace GoodAI.Modules.MastermindWorld
         /// Implementation similar to MyGridWorld.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
-        public int LoadAndGetBitmapSize(string path)
+        protected void LoadBitmap(TextureType textureType, string path)
         {
-            if (!m_bitmapTable.ContainsKey(path))
+            if (!m_bitmapTable.ContainsKey(textureType))
             {
                 try
                 {
                     Bitmap bitmap = (Bitmap)Image.FromFile(MyResources.GetMyAssemblyPath() + "\\" + path, true);
-                    m_bitmapTable[path] = bitmap;
+                    m_bitmapTable[textureType] = bitmap;
 
                     if(bitmap.PixelFormat != PixelFormat.Format32bppArgb)
                     {
                         throw new ArgumentException("The specified image is not in the required RGBA format."); // note: alpha must not be premultiplied
                     }
-
-                    return bitmap.Width * bitmap.Height * SOURCE_VALUES_PER_PIXEL;
                 }
                 catch (Exception ex)
                 {
                     MyLog.WARNING.WriteLine(ex.Message);
-                    return 0;
                 }
             }
-            else return m_bitmapTable[path].Width * m_bitmapTable[path].Height * SOURCE_VALUES_PER_PIXEL;
+        }
+
+        /// <summary>
+        /// Returns the number of floats needed to represent the bitmap in a kernel.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        protected int GetBitmapSize(MyMastermindWorld.TextureType textureType)
+        {
+            if (!m_bitmapTable.ContainsKey(textureType))
+            {
+                MyLog.WARNING.WriteLine("No bitmap was loaded for texture {0}", textureType.ToString());
+                return 0;
+            }
+            else return m_bitmapTable[textureType].Width * m_bitmapTable[textureType].Height * SOURCE_VALUES_PER_PIXEL;
         }
 
         /// <summary>
@@ -503,16 +542,6 @@ namespace GoodAI.Modules.MastermindWorld
                 }
             }
 
-            // TODO: change so that world can run even when GuessInput and ActionInput are not connected.
-            if(GuessInput == null)
-            {
-                validator.AddError(this, "World's guess input must receive some data.");
-            }
-            if (ActionInput == null)
-            {
-                validator.AddError(this, "World's action input must receive some data.");
-            }
-
             if (GuessInput != null && HiddenVectorLength != GuessInput.Count)
             {
                 validator.AddError(this, "Number of elements in the GuessInput memory block must match HiddenVectorLength.");
@@ -539,11 +568,14 @@ namespace GoodAI.Modules.MastermindWorld
         public class MyCudaTexture // based on MyGridWorld.MyGraphicsPrototype
         {
             public int2 SizeInPixels;
-            public CUdeviceptr Bitmap;
+            public CUdeviceptr BitmapPtr;
         }
 
-        protected MyCudaTexture m_textureMiss, m_textureCow, m_textureBull;
-        protected MyCudaTexture m_textureCircleRim, m_textureCircleMask;
+        protected MyCudaTexture m_textureMiss = new MyCudaTexture(), 
+            m_textureCow = new MyCudaTexture(), 
+            m_textureBull = new MyCudaTexture(), 
+            m_textureCircleRim = new MyCudaTexture(), 
+            m_textureCircleMask = new MyCudaTexture();
 
         /// <summary>
         /// Initialize the world (load graphics, create engine).
@@ -562,49 +594,22 @@ namespace GoodAI.Modules.MastermindWorld
 
                 Owner.GenerateGuessColors();
 
-                // load bitmaps, remember them in texture variables
-                int offset = 0;
+                // load bitmaps to Bitmaps memory block; remember their offsets in Owner's texture variables
                 CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);
-
-                Bitmap bitmap = Owner.m_bitmapTable[Owner.textureSet + "circle_rim.png"];
-                Owner.m_textureCircleRim = new MyCudaTexture()
+                TextureType[] textureTypes = { TextureType.CircleRim, TextureType.CircleMask, TextureType.Miss, 
+                                                 TextureType.Cow, TextureType.Bull };
+                MyCudaTexture[] textures = { Owner.m_textureCircleRim, Owner.m_textureCircleMask, Owner.m_textureMiss, 
+                                               Owner.m_textureCow,  Owner.m_textureBull};
+                int offset = 0;
+                for (int i = 0; i < textures.Length; i++ )
                 {
-                    SizeInPixels = new int2(bitmap.Width, bitmap.Height),
-                    Bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset,
-                };
-                offset += MyMastermindWorld.FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);
+                    Bitmap bitmap = Owner.m_bitmapTable[textureTypes[i]];
 
-                bitmap = Owner.m_bitmapTable[Owner.textureSet + "circle_mask.png"];
-                Owner.m_textureCircleMask = new MyCudaTexture()
-                {
-                    SizeInPixels = new int2(bitmap.Width, bitmap.Height),
-                    Bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset,
-                };
-                offset += MyMastermindWorld.FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);
+                    textures[i].SizeInPixels = new int2(bitmap.Width, bitmap.Height);
+                    textures[i].BitmapPtr = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset;
 
-                bitmap = Owner.m_bitmapTable[Owner.textureSet + "miss.png"];
-                Owner.m_textureMiss = new MyCudaTexture()
-                {
-                    SizeInPixels = new int2(bitmap.Width, bitmap.Height),
-                    Bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset,
-                };
-                offset += MyMastermindWorld.FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);
-
-                bitmap = Owner.m_bitmapTable[Owner.textureSet + "cow.png"];
-                Owner.m_textureCow = new MyCudaTexture()
-                {
-                    SizeInPixels = new int2(bitmap.Width, bitmap.Height),
-                    Bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset,
-                };
-                offset += MyMastermindWorld.FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);
-
-                bitmap = Owner.m_bitmapTable[Owner.textureSet + "bull.png"];
-                Owner.m_textureBull = new MyCudaTexture()
-                {
-                    SizeInPixels = new int2(bitmap.Width, bitmap.Height),
-                    Bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset,
-                };
-                offset += MyMastermindWorld.FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);
+                    offset += FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);   
+                }
 
                 Owner.Bitmaps.SafeCopyToDevice();
             }
@@ -648,13 +653,13 @@ namespace GoodAI.Modules.MastermindWorld
                 // color
                 m_MaskedColorKernel.SetupExecution(textureCircleMask.SizeInPixels.x * textureCircleMask.SizeInPixels.y * TARGET_VALUES_PER_PIXEL);
                 m_MaskedColorKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
-                    textureCircleMask.Bitmap, textureCircleMask.SizeInPixels.x, textureCircleMask.SizeInPixels.y,
+                    textureCircleMask.BitmapPtr, textureCircleMask.SizeInPixels.x, textureCircleMask.SizeInPixels.y,
                     guessColor.R / 255.0f, guessColor.G / 255.0f, guessColor.B / 255.0f);
 
                 // circle rim 
                 m_RgbaTextureKernel.SetupExecution(textureCircleRim.SizeInPixels.x * textureCircleRim.SizeInPixels.y * TARGET_VALUES_PER_PIXEL);
                 m_RgbaTextureKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
-                    textureCircleRim.Bitmap, textureCircleRim.SizeInPixels.x, textureCircleRim.SizeInPixels.y);
+                    textureCircleRim.BitmapPtr, textureCircleRim.SizeInPixels.x, textureCircleRim.SizeInPixels.y);
             }
 
             /// <summary>
@@ -683,7 +688,7 @@ namespace GoodAI.Modules.MastermindWorld
 
                 m_RgbaTextureKernel.SetupExecution(texture.SizeInPixels.x * texture.SizeInPixels.y * TARGET_VALUES_PER_PIXEL);
                 m_RgbaTextureKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
-                    texture.Bitmap, texture.SizeInPixels.x, texture.SizeInPixels.y);
+                    texture.BitmapPtr, texture.SizeInPixels.x, texture.SizeInPixels.y);
             }
 
             
@@ -754,8 +759,12 @@ namespace GoodAI.Modules.MastermindWorld
         public class MyUpdateTask : MyTask<MyMastermindWorld>
         {
 
+            // use this variable to avoid interpreting unitialized data at the first step of the simulation as a guess
+            private bool m_firstStep;
+
             public override void Init(int nGPU)
             {
+                m_firstStep = true;
             }
 
             public override void Execute()
@@ -776,14 +785,20 @@ namespace GoodAI.Modules.MastermindWorld
             // get action with the max (utility) value
             protected ActionInputKind DecodeAction()
             {
+                if(m_firstStep)
+                {
+                    m_firstStep = false;
+                    return ActionInputKind.NoAction;
+                }
+
                 if(Owner.ActionInput == null || Owner.ActionInput.Count == 0)
                 {
-                    return ActionInputKind.NoAction;
+                    return ActionInputKind.ConfirmGuess;
                 }
 
                 Owner.ActionInput.SafeCopyToHost();
                 float fAct = Owner.ActionInput.Host[0];
-                if ((int)Math.Round(fAct) == 1)
+                if ((int)Math.Round(fAct) == 0)
                 {
                     return ActionInputKind.ConfirmGuess;
                 }
