@@ -417,6 +417,7 @@ namespace GoodAI.Modules.MastermindWorld
         /// Loads a bitmap from a file and stores it in a dictionary. Checks for ARGB color format (e.g. 32bit png). 
         /// Implementation similar to MyGridWorld.
         /// </summary>
+        /// <param name="textureType"></param>
         /// <param name="path"></param>
         protected void LoadBitmap(TextureType textureType, string path)
         {
@@ -442,7 +443,7 @@ namespace GoodAI.Modules.MastermindWorld
         /// <summary>
         /// Returns the number of floats needed to represent the bitmap in a kernel.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="textureType"></param>
         /// <returns></returns>
         protected int GetBitmapSize(MyMastermindWorld.TextureType textureType)
         {

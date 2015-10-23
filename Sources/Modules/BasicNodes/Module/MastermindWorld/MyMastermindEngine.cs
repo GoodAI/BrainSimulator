@@ -194,6 +194,7 @@ namespace GoodAI.Modules.MastermindWorld
         /// Adds the newest guess to the history of guesses.
         /// Adds the evaluation of the newest guess to the history of evaluations.
         /// </summary>
+        /// <param name="guess">the guess to add</param>
         /// <param name="oldGuessCount">the number of guesses and evaluations already stored in history.</param>
         private void AddGuess(float[] guess, int oldGuessCount)
         {

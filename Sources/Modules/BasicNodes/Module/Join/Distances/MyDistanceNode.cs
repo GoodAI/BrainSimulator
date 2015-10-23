@@ -41,13 +41,7 @@ namespace GoodAI.Modules.Join
             get { return GetInput(1); }
         }
 
-
-        [MyOutputBlock]
-        public MyMemoryBlock<float> Output
-        {
-            get { return GetOutput(0); }
-            set { SetOutput(0, value); }
-        }
+        // Output is inherited from MyTransform
 
         public MyMemoryBlock<float> Temp { get; set; }
 
