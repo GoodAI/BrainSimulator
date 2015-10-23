@@ -37,4 +37,22 @@ Second utilization of the `TextInputNode` is depicted in the second image. Three
 
 ![](../img/TextProcessing/TextNodes.PNG)
 
+### MastermindWorld
 
+This world is an environment for playing the [Mastermind](https://en.wikipedia.org/wiki/Mastermind_(board_game)) game.
+
+The simplest way to begin playing the Mastermind game is by choosing MasterminWorld as your current world and connecting a UserInput node to the GuessInput node of the world. 
+
+![](../img/Mastermind.png)
+
+Note that there is also an ActionInput node - if you send it a 0 as input, the world processes your guess. If you send it a 1, the world ignores your guess and waits until you again send 0 as input. This is useful when you have a brain to train and want it to think several steps before submitting a guess to the world.
+
+The game environment is configurable. The user can choose:
+ 
+  * the number of colors available to the game,
+  * the number of elements in the guessed vector,
+  * the number of guess attempts.
+ 
+ Apart from visual output, the world also provides a structured data output that contains the history of the guesses the agent has made so far and the history of evaluations of these guesses.
+ 
+ Note that the visual output uses colors. To visualize it properly, set the Coloring Method of the Visual block's observer to *RGB*.
