@@ -26,7 +26,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:cy="391.18673"
+     inkscape:cy="406.5302"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -42,8 +42,8 @@
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-center="true"
-     inkscape:zoom="4"
-     inkscape:cx="36.894978"
+     inkscape:zoom="8.5736697"
+     inkscape:cx="-22.367064"
      inkscape:snap-bbox-midpoints="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -1068,8 +1068,8 @@
        height="32"
        width="32"
        id="rect3889"
-       style="color:#000000;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+       style="color:#000000;fill:#20608e;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       inkscape:export-filename="C:\Users\jaroslav.vitku\Desktop\network_big.png"
        inkscape:export-xdpi="180"
        inkscape:export-ydpi="180" />
     <g
@@ -2381,41 +2381,41 @@
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\save_16xLG.png"
        xlink:href="save_16xLG.png"
-       inkscape:export-ydpi="45"
-       inkscape:export-xdpi="45"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\save_mb.png"
-       width="32"
-       height="32"
-       id="image3250"
+       y="636.36218"
        x="0"
-       y="636.36218" />
+       id="image3250"
+       height="32"
+       width="32"
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\save_mb.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
+    <image
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
+       xlink:href="Binary_16xMD.png"
+       y="644.36133"
+       x="6"
+       id="image3272"
+       height="31.999998"
+       width="31.999998" />
+    <image
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Open_6529.png"
+       xlink:href="Open_6529.png"
+       y="636.36218"
+       x="64"
+       id="image3283"
+       height="32"
+       width="32"
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\open_mb.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
        xlink:href="Binary_16xMD.png"
        width="31.999998"
        height="31.999998"
-       id="image3272"
-       x="6"
-       y="644.36133" />
-    <image
-       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Open_6529.png"
-       xlink:href="Open_6529.png"
-       inkscape:export-ydpi="45"
-       inkscape:export-xdpi="45"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\open_mb.png"
-       width="32"
-       height="32"
-       id="image3283"
-       x="64"
-       y="636.36218" />
-    <image
-       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
-       xlink:href="Binary_16xMD.png"
-       y="644.36133"
-       x="68"
        id="image3290"
-       height="31.999998"
-       width="31.999998" />
+       x="68"
+       y="644.36133" />
     <rect
        inkscape:export-ydpi="180"
        inkscape:export-xdpi="180"
@@ -2673,11 +2673,11 @@
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
        xlink:href="Binary_16xMD.png"
-       y="666.34705"
-       x="122"
-       id="image3277"
+       width="31.999998"
        height="31.999998"
-       width="31.999998" />
+       id="image3277"
+       x="122"
+       y="666.34705" />
     <g
        id="g3281"
        transform="translate(95.999998,0.0269172)">
@@ -3006,11 +3006,11 @@
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\timer_16xLG.png"
        xlink:href="timer_16xLG.png"
-       y="700.36218"
-       x="92"
-       id="image4265"
+       width="32"
        height="31.999998"
-       width="32" />
+       id="image4265"
+       x="92"
+       y="700.36218" />
     <g
        transform="matrix(1.0209645,0,0,1.0876623,67.685294,120.36777)"
        id="g4268"
@@ -3590,22 +3590,22 @@
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\save_16xLG.png"
        xlink:href="save_16xLG.png"
-       y="700.35535"
-       x="128.00842"
-       id="image3406"
-       height="32"
-       width="32"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\export_mb.png"
+       inkscape:export-ydpi="45"
        inkscape:export-xdpi="45"
-       inkscape:export-ydpi="45" />
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\export_mb.png"
+       width="32"
+       height="32"
+       id="image3406"
+       x="128.00842"
+       y="700.35535" />
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
        xlink:href="Binary_16xMD.png"
-       y="708.35449"
-       x="134.00841"
-       id="image3408"
+       width="31.999998"
        height="31.999998"
-       width="31.999998" />
+       id="image3408"
+       x="134.00841"
+       y="708.35449" />
     <image
        y="712.31439"
        x="127.96873"
@@ -3616,22 +3616,22 @@
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\save_16xLG.png"
        xlink:href="save_16xLG.png"
-       inkscape:export-ydpi="45"
-       inkscape:export-xdpi="45"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\clear_mb.png"
-       width="32"
-       height="32"
-       id="image3410"
+       y="732.38568"
        x="159.99788"
-       y="732.38568" />
+       id="image3410"
+       height="32"
+       width="32"
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\clear_mb.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
     <image
        sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
        xlink:href="Binary_16xMD.png"
-       width="31.999998"
-       height="31.999998"
-       id="image3412"
+       y="740.38483"
        x="165.99786"
-       y="740.38483" />
+       id="image3412"
+       height="31.999998"
+       width="31.999998" />
     <image
        y="742.36755"
        x="159.98601"
@@ -4901,46 +4901,40 @@
          style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker10392)"
          sodipodi:type="spiral" />
     </g>
-    <g
-       id="g5138"
-       inkscape:export-filename="D:\GoodAI\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\loopgroup_big.png"
+    <rect
+       inkscape:export-ydpi="169.41176"
        inkscape:export-xdpi="169.41176"
-       inkscape:export-ydpi="169.41176">
-      <rect
-         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:#0180b8;stroke-width:2;marker:none;enable-background:accumulate;stroke-opacity:1"
-         id="rect4362-0"
-         width="32"
-         height="32"
-         x="-32.176781"
-         y="604.42468"
-         rx="5"
-         ry="5"
-         inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\group_signal.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <rect
-         ry="4.3396935"
-         rx="5.0688605"
-         y="613.92572"
-         x="-25.300726"
-         height="15.622895"
-         width="18.247896"
-         id="rect4364-5"
-         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;stroke:#ffffff;stroke-width:3.75210238;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate" />
-      <rect
-         y="610.69556"
-         x="-26.036825"
-         height="12.033634"
-         width="4.1586332"
-         id="rect5481-1"
-         style="opacity:1;fill:#0180b8;fill-opacity:1;stroke:#0180b8;stroke-width:4.09136677;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path4511-8-8"
-         d="m -16.465421,613.90623 -2.895528,0.004"
-         style="fill:#0180b8;fill-opacity:1;stroke:#ffffff;stroke-width:4.30690384;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutS4-85-8)"
-         sodipodi:nodetypes="cc" />
-    </g>
+       inkscape:export-filename="C:\Users\jaroslav.vitku\Desktop\network_big.png"
+       ry="5"
+       rx="5"
+       y="604.42468"
+       x="-32.176781"
+       height="32"
+       width="32"
+       id="rect4362-0"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#20608e;fill-opacity:1;fill-rule:nonzero;stroke:#20608e;stroke-width:2;stroke-opacity:1;marker:none;enable-background:accumulate" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#20608e;fill-opacity:1;stroke:#ffffff;stroke-width:3.75210238;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4364-5"
+       width="18.247896"
+       height="15.622895"
+       x="-25.300726"
+       y="613.92572"
+       rx="5.0688605"
+       ry="4.3396935" />
+    <rect
+       style="opacity:1;fill:#20608e;fill-opacity:1;stroke:#20608e;stroke-width:4.09136677;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5481-1"
+       width="4.1586332"
+       height="12.033634"
+       x="-26.036825"
+       y="610.69556" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:#0180b8;fill-opacity:1;stroke:#ffffff;stroke-width:4.30690384;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutS4-85-8)"
+       d="m -16.465421,613.90623 -2.895528,0.004"
+       id="path4511-8-8"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      inkscape:groupmode="layer"
