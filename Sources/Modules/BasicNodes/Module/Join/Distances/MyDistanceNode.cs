@@ -25,21 +25,9 @@ namespace GoodAI.Modules.Join
     /// <description>
     /// To process more vectors at once, use MatrixNode (not all DistanceNode's operations are supported, though).
     /// </description>
-    public class MyDistanceNode : MyTransform
+    public class MyDistanceNode : MyTransform, IMyVariableBranchViewNodeBase
     {
         #region Memory blocks
-
-        [MyInputBlock(0)]
-        public MyMemoryBlock<float> A
-        {
-            get { return GetInput(0); }
-        }
-
-        [MyInputBlock(1)]
-        public MyMemoryBlock<float> B
-        {
-            get { return GetInput(1); }
-        }
 
         // Output is inherited from MyTransform
 
@@ -47,6 +35,13 @@ namespace GoodAI.Modules.Join
 
         #endregion
 
+        [ReadOnly(true)]
+        [YAXSerializableField, YAXElementFor("IO")]
+        public override int InputBranches
+        {
+            get { return base.InputBranches; }
+            set { base.InputBranches = value; }
+        }
 
         [MyBrowsable, Category("Behavior"), YAXSerializableField(DefaultValue = DistanceOperation.DotProd), YAXElementFor("Behavior")]
         public DistanceOperation Operation { get; set; }
@@ -62,8 +57,8 @@ namespace GoodAI.Modules.Join
                 case DistanceOperation.EuclidDistSquared:
                 case DistanceOperation.HammingDist:
                 case DistanceOperation.HammingSim:
-                    if (A != null)
-                        Temp.Count = A.Count;
+                    if (GetInput(0) != null)
+                        Temp.Count = GetInput(0).Count;
                     break;
 
                 default:
@@ -81,13 +76,18 @@ namespace GoodAI.Modules.Join
             if (validator.ValidationSucessfull)
             {
                 string errorOutput;
-                validator.AssertError(MyDistanceOps.Validate(Operation, A.Count, B.Count, Temp.Count, Output.Count, out errorOutput), this, errorOutput);
+                validator.AssertError(MyDistanceOps.Validate(Operation, GetInput(0).Count, GetInput(1).Count, Temp.Count, Output.Count, out errorOutput), this, errorOutput);
             }
         }
 
         public override string Description { get { return Operation.ToString(); } }
 
         #endregion
+
+        public MyDistanceNode()
+        {
+            InputBranches = 2;
+        }
 
 
         public MyExecuteTask Execute { get; private set; }
@@ -108,7 +108,7 @@ namespace GoodAI.Modules.Join
 
             public override void Execute()
             {
-                _distOperation.Run(Owner.Operation, Owner.A, Owner.B, Owner.Output);
+                _distOperation.Run(Owner.Operation, Owner.GetInput(0), Owner.GetInput(1), Owner.Output);
             }
         }
     }

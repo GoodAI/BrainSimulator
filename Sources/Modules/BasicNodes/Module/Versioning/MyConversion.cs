@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 11; } }
+        public override int CurrentVersion { get { return 12; } }
 
 
         /// <summary>
@@ -427,6 +427,28 @@ namespace GoodAI.Modules.Versioning
                 periodTask.Add(new XElement("RandomPeriodMax", randomPeriodMax));
                 periodTask.Add(new XElement("Period", period));
                 node.Descendants("Tasks").First().Add(periodTask);
+            }
+
+            return document.ToString();
+        }
+
+
+        /// <summary>
+        /// Convert MyDistanceNode's inputs from A,B to Input 1, Input 2 (required after the node was put into Transforms)
+        /// Author: MP
+        /// </summary>
+        public static string Convert11To12(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyDistanceNode"))
+            {
+                XElement IO = new XElement("IO");
+                XElement InputBranches = new XElement("InputBranches");
+                InputBranches.Value = "2";
+
+                IO.AddFirst(InputBranches);
+                node.AddFirst(IO);
             }
 
             return document.ToString();
