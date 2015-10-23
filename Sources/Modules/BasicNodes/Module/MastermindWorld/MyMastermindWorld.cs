@@ -617,7 +617,9 @@ namespace GoodAI.Modules.MastermindWorld
         }
 
         /// <summary>
-        /// Renders the visible area. Not needed for simulation.
+        /// Renders the visible area. Not needed for simulation.<br />
+        /// When using an observer to visualize the output, choose RGB as Coloring Method.
+        /// 
         /// </summary>
         public class MyRenderTask : MyTask<MyMastermindWorld>
         {
