@@ -56,3 +56,11 @@ The game environment is configurable. The user can choose:
  Apart from visual output, the world also provides a structured data output that contains the history of the guesses the agent has made so far and the history of evaluations of these guesses.
  
  Note that the visual output uses colors. To visualize it properly, set the Coloring Method of the Visual block's observer to *RGB*.
+
+### 2DAgentWorld
+
+Simple 2D world where the agent continually moves in 8 directions. The goal is to reach the target. Target is placed on a randomly generated position in the space. If the target is reached, the (reward) signal is set to output and new position of target is generated.
+
+![](../guides/img_examples/2DAgentWorld.png)
+ 
+
