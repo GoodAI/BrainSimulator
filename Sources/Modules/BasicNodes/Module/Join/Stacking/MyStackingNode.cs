@@ -30,7 +30,7 @@ namespace GoodAI.Modules.Join
     ///     second rows of the matrices etc. Input vectors must have the same number of rows.</li>
     /// </ul>
     /// </description>
-    public class MyStackingNode : MyWorkingNode, IMyVariableBranchViewNodeBase
+    public class MyStackingNode : MyTransform, IMyVariableBranchViewNodeBase
     {
         #region Memory blocks
 

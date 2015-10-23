@@ -11,6 +11,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using YAXLib;
+using GoodAI.Modules.Transforms;
 
 namespace GoodAI.Modules.Join
 {
@@ -24,7 +25,7 @@ namespace GoodAI.Modules.Join
     /// <description>
     /// To process more vectors at once, use MatrixNode (not all DistanceNode's operations are supported, though).
     /// </description>
-    public class MyDistanceNode : MyWorkingNode
+    public class MyDistanceNode : MyTransform
     {
         #region Memory blocks
 
