@@ -21,10 +21,10 @@ namespace GoodAI.Modules.MastermindWorld
     /// <author>GoodAI</author>
     /// <meta>mp</meta>
     /// <status>Working</status>
-    /// <summary> World for the <a href="https://en.wikipedia.org/wiki/Mastermind_(board_game)">Mastermind</a> game.</summary>
+    /// <summary> World for the Mastermind game.</summary>
     /// <description>
     /// <p>
-    /// World simulating the mastermind game (aka bulls and cows). <br />
+    /// World simulating the <a href="https://en.wikipedia.org/wiki/Mastermind_(board_game)">Mastermind</a> game (aka bulls and cows). <br />
     /// The game allows the agent to make at most m (typically, m = 12) guesses to find out 
     /// a hidden vector V of k colours. Typically, k is 4 or 5. A guess is a vector G of k colours. The same colours can repeat in one vector.<br />
     /// The agent wins if he correctly guesses the vector V (that is, G = V) before he runs out of guesses.<br />
