@@ -98,7 +98,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     /// Creates a dropout mask for the layer according to the Dropout property of the Neural Network Group
     /// </summary>
     /// <description></description>
-    [Description("DropoutMask"), MyTaskInfo(OneShot = false)]
+    [Description("DropoutMask"), MyTaskInfo(OneShot = false, Disabled = true)]
     public class MyCreateDropoutMaskTask : MyTask<MyAbstractWeightLayer>
     {
         public MyCreateDropoutMaskTask() { } //parameterless constructor
@@ -137,7 +137,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
     /// Set ApproachRate to 1 to use the exact same weights as source layer.
     /// </summary>
     /// <description></description>
-    [Description("ShareWeights"), MyTaskInfo(OneShot = false)]
+    [Description("ShareWeights"), MyTaskInfo(OneShot = false, Disabled = true)]
     public class MyShareWeightsTask : MyTask<MyAbstractWeightLayer>
     {
         [YAXSerializableField(DefaultValue = "")]
