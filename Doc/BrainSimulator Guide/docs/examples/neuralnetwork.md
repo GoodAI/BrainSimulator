@@ -35,7 +35,7 @@ The network gets part of one number (i.e. 3) in the time-step zero, then part of
 
 
 ### Batch Learning and Weights Sharing
-[Neural network tries to create a model of an arm](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/model_batchlearning.brain), which means it has to predict the next state of the arm based on current state and action. The network is trained using batch learning with random mini-batches from replay buffer in order to reduce correlation between successive data samples and thus improving model's accuracy. To visualise how well the predictions are, there is another network which shares weights from the network trained using batch learning. This network is not learning, it only predicts the next state which is then visualised.
+[Neural network tries to create a model of an arm](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Model_batchlearning.brain), which means it has to predict the next state of the arm based on current state and action. The network is trained using batch learning with random mini-batches from replay buffer in order to reduce correlation between successive data samples and thus improving model's accuracy. To visualise how well the predictions are, there is another network which shares weights from the network trained using batch learning. This network is not learning, it only predicts the next state which is then visualised.
 
 ![](../img/model_batchlearning.png)
 
