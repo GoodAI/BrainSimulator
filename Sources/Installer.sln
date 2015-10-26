@@ -9,10 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNIST", "Modules\MNIST\Modu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallerAction", "Installer\InstallerAction\InstallerAction.csproj", "{04AF2BAD-2E94-49B1-88CB-18EBEB2219F7}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB} = {3FCE570F-5623-4F2F-9AA5-641747EC7BFB}
 		{C8A4992F-F2CB-40E7-92AA-7D4239653517} = {C8A4992F-F2CB-40E7-92AA-7D4239653517}
 		{72423431-4A15-4E8D-B987-8E684BD730FE} = {72423431-4A15-4E8D-B987-8E684BD730FE}
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2} = {D2A13F94-2024-4E44-B25E-8ED038A59CE2}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
@@ -25,16 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "Modules\Basic
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "BrainSimInstaller", "Installer\BrainSimInstaller\BrainSimInstaller.vdproj", "{AD1E4348-A13A-4877-B764-A7944E70F4FE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2} = {D2A13F94-2024-4E44-B25E-8ED038A59CE2}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlFeedForwardNet", "Modules\XmlFeedForwardNet\Module\XmlFeedForwardNet.csproj", "{D2A13F94-2024-4E44-B25E-8ED038A59CE2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB} = {3FCE570F-5623-4F2F-9AA5-641747EC7BFB}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XmlFeedForwardNetCuda", "Modules\XmlFeedForwardNet\Cuda\XmlFeedForwardNetCuda.vcxproj", "{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundWorld", "Modules\SoundWorld\Module\SoundWorld.csproj", "{A0084F22-B436-4068-8F18-EC182EE78927}"
 EndProject
@@ -77,14 +65,6 @@ Global
 		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Debug|0 Default (x64 CUDA).Build.0 = Debug
 		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Release|0 Default (x64 CUDA).ActiveCfg = Release
 		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Release|0 Default (x64 CUDA).Build.0 = Release
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Debug|0 Default (x64 CUDA).Build.0 = Debug|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Release|0 Default (x64 CUDA).ActiveCfg = Release|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Release|0 Default (x64 CUDA).Build.0 = Release|x64
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
