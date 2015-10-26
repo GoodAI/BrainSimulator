@@ -231,7 +231,7 @@ namespace GoodAI.Modules.GameBoy
         /// <description>
         /// <h3>Parameters</h3>
         /// <ul>
-        ///     <li> <b>ReachTarget: </b>This value is set to the Event output for one time step, if the target is reached.</li>
+        ///     <li> <b>ReachTargetSignal: </b>This value is set to the Event output for one time step, if the target is reached.</li>
         ///     <li> <b>AgentVelocity: </b>How fast the agent moves.</li>
         ///     <li> <b>DeltaT: </b>Time shift at each simulation step.</li>
         ///     <li> <b>TargetRadius: </b>Radius in which the target is considered as reached.</li>
@@ -241,32 +241,88 @@ namespace GoodAI.Modules.GameBoy
         /// </description>
         /// </summary>
         public class MyUpdateTask : MyTask<My2DAgentWorld>
-        {            
+        {
+            #region parameters
+
             [MyBrowsable, Category("Events")]
             [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"), 
             Description("This value is set to the Event output for one time step, if the target is reached.")]
-            public float ReachTarget { get; set; }
+            public float ReachTargetSignal
+            {
+                get { return m_reachTarget; }
+                set { m_reachTarget = value; }
+            }
+            private float m_reachTarget;
 
             [MyBrowsable, Category("Events")]
             [YAXSerializableField(DefaultValue = 4.0f), YAXElementFor("Structure"),
             Description("How fast the agent moves.")]
-            public float AgentVelocity { get; set; }
+            public float AgentVelocity
+            {
+                get { return m_agentVelocity; }
+                set
+                {
+                    if (value > 0)
+                    {
+                        m_agentVelocity = value;
+                    }
+                }
+            }
+            private float m_agentVelocity;
+
 
             [MyBrowsable, Category("Events")]
             [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"),
             Description("Time shift at each simulation step.")]
-            public float DeltaT { get; set; }
+            public float DeltaT
+            {
+                get { return m_deltaT; }
+                set
+                {
+                    if (value > 0)
+                    {
+                        m_deltaT = value;
+                    }
+                }
+            }
+            private float m_deltaT;
+
 
             [MyBrowsable, Category("Events")]
             [YAXSerializableField(DefaultValue = 15.0f), YAXElementFor("Structure"),
             Description("Radius in which the target is considered as reached.")]
-            public float TargetRadius { get; set; }
+            public float TargetRadius
+            {
+                get { return m_targetRadius; }
+                set
+                {
+                    if (value > 0)
+                    {
+                        m_targetRadius = value;
+                    }
+                }
+            }
+            private float m_targetRadius;
+
 
             [MyBrowsable, Category("Events")]
             [YAXSerializableField(DefaultValue = 5), YAXElementFor("Structure"),
             Description("How many steps after reaching the target to wait before generating new target.")]
-            public int ResetCountouwnSteps { get; set; }            
-            
+            public int ResetCountouwnSteps
+            {
+                get { return m_resetCountdownSteps; }
+                set
+                {
+                    if (value >= 0)
+                    {
+                        m_resetCountdownSteps = value;
+                    }
+                }
+            }
+            private int m_resetCountdownSteps;
+
+            #endregion
+
             private Random m_random = new Random();
 
             public override void Init(int nGPU)
@@ -367,7 +423,7 @@ namespace GoodAI.Modules.GameBoy
 
                 if (relPos.x * relPos.x + relPos.y * relPos.y < TargetRadius * TargetRadius)                
                 {
-                    Owner.Event.Host[0] += ReachTarget;
+                    Owner.Event.Host[0] += ReachTargetSignal;
 
                     target.position.x = (Owner.DISPLAY_WIDTH - target.pixelSize.x) * (float)m_random.NextDouble();
                     target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * (float)m_random.NextDouble();
