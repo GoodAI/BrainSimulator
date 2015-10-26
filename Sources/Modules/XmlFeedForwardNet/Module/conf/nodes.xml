@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<Configuration RootNamespace="XmlFeedForwardNet">
-  <KnownNodes>
-    <Node type=" XmlFeedForwardNet.Networks.MyFeedForwardNode" CanBeAdded="true" BigIcon="network_big.png" SmallIcon="network.png" />
-    <Node type=" XmlFeedForwardNet.Networks.MyAutoencoderNode" CanBeAdded="true" />
-    <Node type=" XmlFeedForwardNet.Networks.MyDynamicFFNode" CanBeAdded="true" />
-  </KnownNodes>
-</Configuration>
