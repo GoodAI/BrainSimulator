@@ -159,6 +159,7 @@ namespace GoodAI.BrainSimulator.Forms
             newConnection.Connect();
 
             e.Connection.Tag = newConnection;
+            (e.Connection as MyNodeViewConnection).Backward = fromNode.TopologicalOrder > toNode.TopologicalOrder;
         }
 
         void OnConnectionRemoved(object sender, NodeConnectionEventArgs e)

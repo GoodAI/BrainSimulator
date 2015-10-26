@@ -22,5 +22,20 @@ namespace GoodAI.BrainSimulator.Nodes
                 
             }
         }
+
+        public bool Backward
+        {
+            get { return (state & RenderState.Backward) != 0; }
+            set {
+                if (value)
+                {
+                    state |= RenderState.Backward;
+                }
+                else
+                {
+                    state &= ~RenderState.Backward;
+                }
+            }
+        }
     }
 }
