@@ -498,11 +498,11 @@ namespace GoodAI.Modules.MastermindWorld
 
         private void ValidateRange(MyValidator validator, int value, int valueMin, int valueMax, string valueName)
         {
-            if(HiddenVectorLength > valueMax)
+            if (value > valueMax)
             {
                 validator.AddError(this, string.Format("{0} cannot be more than {1}.", valueMax));
             }
-            if(HiddenVectorLength < valueMin)
+            if (value < valueMin)
             {
                 validator.AddError(this, string.Format("{0} cannot be less than {1}.", valueMin));
             }
