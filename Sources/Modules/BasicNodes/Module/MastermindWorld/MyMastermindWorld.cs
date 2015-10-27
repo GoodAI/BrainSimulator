@@ -500,11 +500,11 @@ namespace GoodAI.Modules.MastermindWorld
         {
             if (value > valueMax)
             {
-                validator.AddError(this, string.Format("{0} cannot be more than {1}.", valueMax));
+                validator.AddError(this, string.Format("{0} cannot be more than {1}.", valueName, valueMax));
             }
             if (value < valueMin)
             {
-                validator.AddError(this, string.Format("{0} cannot be less than {1}.", valueMin));
+                validator.AddError(this, string.Format("{0} cannot be less than {1}.", valueName, valueMin));
             }
         }
 
