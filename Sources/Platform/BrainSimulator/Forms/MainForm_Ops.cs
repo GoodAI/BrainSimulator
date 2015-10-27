@@ -551,24 +551,38 @@ namespace GoodAI.BrainSimulator.Forms
             GraphViews.Remove((sender as GraphLayoutForm).Target);
         }
 
-        private void RestoreViewsLayout(string layoutFileName)
+        private bool TryRestoreViewsLayout(string layoutFileName)
         {
-                //TODO: change PersistString in WinFormsUI to be accessible publicly (or make our own DockContent common superclass for all forms)
-                Dictionary<string, DockContent> viewTable = new Dictionary<string, DockContent>();
+            if (!File.Exists(layoutFileName))
+                return false;
 
-                foreach (DockContent view in m_views)
+            //TODO: change PersistString in WinFormsUI to be accessible publicly (or make our own DockContent common superclass for all forms)
+            Dictionary<string, DockContent> viewTable = new Dictionary<string, DockContent>();
+
+            foreach (DockContent view in m_views)
+            {
+                if (!(view is GraphLayoutForm))
                 {
-                    if (!(view is GraphLayoutForm))
-                    {
-                        viewTable[view.GetType().ToString()] = view;
-                    }
+                    viewTable[view.GetType().ToString()] = view;
                 }
+            }
 
+            try
+            {
                 dockPanel.LoadFromXml(layoutFileName,
                     (string persistString) =>
                     {
                         return viewTable.ContainsKey(persistString) ? viewTable[persistString] : null;
-                    });            
+                    });
+            }
+            catch (Exception ex)
+            {
+                MyLog.WARNING.WriteLine("Unable to restore views layout (using default): " + ex.Message);
+
+                return false;
+            }
+
+            return true;
         }
 
         private void ResetViewsLayout()
