@@ -557,23 +557,13 @@ namespace GoodAI.BrainSimulator.Forms
                 return false;
 
             //TODO: change PersistString in WinFormsUI to be accessible publicly (or make our own DockContent common superclass for all forms)
-            Dictionary<string, DockContent> viewTable = new Dictionary<string, DockContent>();
-
-            foreach (DockContent view in m_views)
-            {
-                if (!(view is GraphLayoutForm))
-                {
-                    viewTable[view.GetType().ToString()] = view;
-                }
-            }
-
+            Dictionary<string, DockContent> viewTable = m_views.Where(view => !(view is GraphLayoutForm))
+                .ToDictionary(view => view.GetType().ToString(), view => view);
+            
             try
             {
                 dockPanel.LoadFromXml(layoutFileName,
-                    (string persistString) =>
-                    {
-                        return viewTable.ContainsKey(persistString) ? viewTable[persistString] : null;
-                    });
+                    persistString => (viewTable.ContainsKey(persistString) ? viewTable[persistString] : null));
             }
             catch (Exception ex)
             {
