@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{F5B00C80
 		Installer\Tools\sign-installer.cmd = Installer\Tools\sign-installer.cmd
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonModule", "Modules\PythonModule\Module\PythonModule.csproj", "{4A1DEA51-60CD-4358-9D52-465A3841E3B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -69,6 +71,8 @@ Global
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{4A1DEA51-60CD-4358-9D52-465A3841E3B1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{4A1DEA51-60CD-4358-9D52-465A3841E3B1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
