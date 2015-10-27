@@ -13,9 +13,16 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
     /// <author>GoodAI</author>
     /// <meta>mz</meta>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Convolutional layer.</summary>
-    /// <description></description>
+    /// <description>
+    /// Classic convolutional layer that performs convolution on image windows using its filters.\n
+    /// Great tutorial on filter and input dimensions is available here: http://cs231n.github.io/convolutional-networks/ \n \n
+    /// 
+    /// You can use AutomaticInput to determine parameters of the convolution. By default, it will try to preserve input dimensions on the output.
+    /// 
+    /// 
+    ///  </description>
     public class MyConvolutionLayer : MyAbstractWeightLayer, IMyCustomTaskFactory
     {
 
