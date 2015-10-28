@@ -374,6 +374,8 @@
     <Content Include="res\animationpredictionworld\SwitchTest_00016.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="res\csharp.png" />
+    <EmbeddedResource Include="res\csharp_big.png" />
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
