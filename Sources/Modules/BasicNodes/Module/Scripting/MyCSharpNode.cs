@@ -366,6 +366,22 @@ namespace GoodAI.Modules.Scripting
             }
         }
 
+        public MyTestDesignTask TestingTask { get; private set; }
+
+        [Description("Design time task name"), MyTaskInfo(DesignTime = true)]
+        public class MyTestDesignTask : MyTask<MyCSharpNode>
+        {
+            public override void Init(int nGPU)
+            {
+                //not executed at all
+            }
+
+            public override void Execute()
+            {
+                MyLog.INFO.WriteLine("Design time task task executed");
+            }
+        }
+
         #endregion
 
         #region ExampleCode

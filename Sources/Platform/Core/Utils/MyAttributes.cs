@@ -8,12 +8,14 @@ namespace GoodAI.Core.Utils
         public bool OneShot { get; set; }
         public int Order { get; set; }
         public bool Disabled { get; set; }
+        public bool DesignTime { get; set; }
 
         public MyTaskInfoAttribute()
         {
             OneShot = false;
             Order = 0;
             Disabled = false;
+            DesignTime = false;
         }
     }
 

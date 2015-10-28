@@ -35,6 +35,11 @@ namespace GoodAI.Core.Task
             get { return GetInfo().OneShot; }
         }
 
+        public bool DesignTime
+        {
+            get { return GetInfo().DesignTime; }
+        }
+
         public bool EnabledByDefault 
         {
             get { return !(GetInfo().Disabled); }
