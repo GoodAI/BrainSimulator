@@ -26,7 +26,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
     public class MyConvolutionLayer : MyAbstractWeightLayer, IMyCustomTaskFactory
     {
 
-        public MyPadImageTask PadImageTask { get; protected set; }
         public MyConvolutionInitLayerTask InitLayerTask { get; protected set; }
         public MyConvolutionUpdateWeights UpdateWeights { get; protected set; }
 
@@ -315,13 +314,10 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 //AdadeltaWeight.Count = Weights.Count;
                 //AdadeltaBias.Count = Bias.Count;
 
-                if (ZeroPadding > 0)
-                {
-                    PaddedImage.Count = InputDepth*(InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
-                    PaddedImage.ColumnHint = InputWidth + 2*ZeroPadding;
-                }
-                else
-                    PaddedImage.Count = 0;
+
+                PaddedImage.Count = InputDepth*(InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
+                PaddedImage.ColumnHint = InputWidth + 2*ZeroPadding;
+
 
                 // allocate memory scaling with input
                 if (Input != null)
@@ -334,6 +330,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
                     //AdadeltaWeight.ColumnHint = Weights.ColumnHint;
                     MeanSquareWeight.ColumnHint = Weights.ColumnHint;
+
+                    Output.ColumnHint = OutputWidth;
+                    NeuronInput.ColumnHint = OutputWidth;
                 }
 
                 if (Weights.Count % 2 != 0)
