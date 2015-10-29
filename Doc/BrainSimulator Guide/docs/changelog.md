@@ -1,9 +1,9 @@
 ### Brain Simulator 0.3.0
-*Early access release* (29/10/2015)
+*Early access release* (2015-10-29)
 
 #### New Features
  
-**AssociativeNetworkWorld**: serves for importing information about some objects / concepts and their relationship to each other into Brain Simulator. In particular, it works with this information in a textual form, such as "the mouse is small." Here, the words “mouse” and “small” represent the concepts and "is" represents the relation between them
+**AssociativeNetworkWorld**: serves for importing information about some objects / concepts and their relationship to each other into Brain Simulator. In particular, it works with this information in a textual form, such as "the mouse is small." Here, the words "mouse" and "small" represent the concepts and "is" represents the relation between them
  
 **CSharpNode and PythonNode**: allows internal scripting inside Brain Simulator. It is possible to program simple tasks right inside the Brain Simulator GUI (without the need to have Visual Studio)
  
@@ -15,7 +15,7 @@
  
 **Hiding Observers**: Instant hiding/showing of all observers with a single keyboard shortcut (Ctrl+H). It works even during simulation (without stopping the computation)
 
-**BPTT** (back-prob through time): The network performs the feed-forward step and “remembers” the output error deltas. Once the sequence is finished, it back-propagates the errors through time and jointly updates weights, taking into account what happens in every time step
+**BPTT** (back-prob through time): The network performs the feed-forward step and "remembers" the output error deltas. Once the sequence is finished, it back-propagates the errors through time and jointly updates weights, taking into account what happens in every time step
  
 **NN weight sharing**: allows use of the same connection weights in multiple neural networks. This is useful for training a network on one data set and testing it on another at the same time
  
@@ -53,7 +53,7 @@
 
 
 ### Brain Simulator 0.2.0
-*Early access release* (31/8/2015)
+*Early access release* (2015-08-31)
 
 #### New Features
 
@@ -77,7 +77,7 @@
 Same as in the release 0.1. Sorry.-)
 
 ### Brain Simulator 0.1
-*Early access release* (7/7/2015)
+*Early access release* (2015-07-07)
 
 #### Known Bugs
 
