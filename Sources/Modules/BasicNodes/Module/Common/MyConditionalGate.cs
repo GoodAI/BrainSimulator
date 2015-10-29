@@ -72,7 +72,7 @@ namespace GoodAI.Modules.Common
 
         public override void Validate(MyValidator validator)
         {
-            if (Input1 == null || Input2 == null)
+            if (ConditionalGateInputs.Enabled && (Input1 == null || Input2 == null))
             {
                 validator.AddWarning(this, "One of Inputs is not connected, will publish zeros instead");
                 return;
