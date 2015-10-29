@@ -41,6 +41,10 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         [MyBrowsable, Category("\t\tParams")]
         [YAXSerializableField(DefaultValue = RandomDistribution.Default)]
         public RandomDistribution Distribution { get; set; }
+        
+        [MyBrowsable, Category("\t\tParams")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public float Multiplier { get; set; }
 
         public override void Execute() //Task execution
         {
@@ -61,16 +65,20 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     float stdDev = 1.0f;
                     float Mean = 0.0f;
                     if (Owner.Input != null)
-                        stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count + 1);
+                        stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count / Owner.ParentNetwork.BatchSize + 1);
 
                     // init random weights
                     for (int w = 0; w < Owner.Weights.Count; w++)
-                        Owner.Weights.Host[w] = GetRandomGaussian(0.0f, stdDev);
+                    {
+                        Owner.Weights.Host[w] = Multiplier * GetRandomGaussian(0.0f, stdDev);
+                    }
                     Owner.Weights.SafeCopyToDevice(); // copy to device
 
                     // init random biases
                     for (int b = 0; b < Owner.Bias.Count; b++)
-                        Owner.Bias.Host[b] = GetRandomGaussian(0.0f, stdDev);
+                    {
+                        Owner.Bias.Host[b] = Multiplier * GetRandomGaussian(0.0f, stdDev);
+                    }
                     Owner.Bias.SafeCopyToDevice(); // copy to device
                     break;
 
