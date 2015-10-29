@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 12; } }
+        public override int CurrentVersion { get { return 13; } }
 
 
         /// <summary>
@@ -449,6 +449,34 @@ namespace GoodAI.Modules.Versioning
 
                 IO.AddFirst(InputBranches);
                 node.AddFirst(IO);
+            }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert (Min/Max)Index to Abs(Min/Max)Index
+        /// Author: JK
+        /// </summary>
+        public static string Convert12To13(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyMatrixNode"))
+            {
+                var behav = node.Element("Behavior");
+                if (behav != null)
+                {
+                    var oper = behav.Element("Operation");
+                    if (oper != null && oper.Value == "MinIndex")
+                    {
+                        oper.SetValue("AbsMinIndex");
+                    }
+                    if (oper != null && oper.Value == "MaxIndex")
+                    {
+                        oper.SetValue("AbsMaxIndex");
+                    }
+                }
             }
 
             return document.ToString();
