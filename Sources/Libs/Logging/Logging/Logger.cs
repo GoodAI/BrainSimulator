@@ -16,7 +16,7 @@ namespace GoodAI.Logging
         public static Logger Instance { get; private set; }
 
 #if DEBUG
-        public const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} <{SourceContext}> [{Level}] ({ThreadId}): {Message}{NewLine}{Exception}";
+        public const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} <{SourceContext:l}> [{Level}] ({ThreadId}): {Message}{NewLine}{Exception}";
         public const LogEventLevel DefaultDebugLevel = LogEventLevel.Debug;
 #else
         public const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}]: {Message}{NewLine}{Exception}";

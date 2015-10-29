@@ -44,7 +44,7 @@ namespace LoggingTests
                 configuration
                     .WriteTo.Sink(debugSink)
                     .WriteTo.Sink(infoSink, restrictedToMinimumLevel: LogEventLevel.Information)
-                    .WriteTo.TextWriter(writer, outputTemplate: Logger.DefaultConsoleTemplate);
+                    .WriteTo.TextWriter(writer, outputTemplate: Logger.DefaultOutputTemplate);
 
                 return configuration;
             });
