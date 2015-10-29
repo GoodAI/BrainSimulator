@@ -31,8 +31,8 @@ The node always expects one input as a Memory Block (MB), **A**, and if second i
  | **Substraction** <br> $\mathbf A -$ `DataInput0`         | One MB + `DataInput0`  | MB input that goes into $\mathbf A$ can be matrix, vector, or number.  |
  | **MultiplElemntWise**<br> $\mathbf A \circ \mathbf B$   | Two MB  | Element-wise product, each input can matrix, vector, or number. |
  | **DotProd**<br> $\mathbf A^{\mathsf T} \cdot \mathbf B$ | Two MB | Each input is a vector. This operation can be additionally performed by the **Multiplication** operation. |
- | **MinIndex**<br> $\underset{i}{\textrm{arg min}} ~\mathbf A_i$      | One MB |  Returns the index of the min value in the vector. |
- | **MaxIndex**<br> $\underset{i}{\textrm{arg max}} ~\mathbf A_i$      | One MB |  Returns the index of the max value in the vector. |
+ | **MinIndex**<br> $\underset{i}{\textrm{arg min}} ~\mathbf A_i$      | One MB |  Returns the index of the min value in the abs of vector. |
+ | **MaxIndex**<br> $\underset{i}{\textrm{arg max}} ~\mathbf A_i$      | One MB |  Returns the index of the max value in the abs of vector. |
  | **GetCol**<br> $ \mathbf A_{i,:}$                       | Two MB |  First MB input is matrix, second input is number that defines the column to get (first column has index 0). |
  | **GetCol**<br> $ \mathbf A_{i,:}$                       | One MB + `DataInput0` |  MB input is matrix,  `DataInput0` defines the column to get (first one has index 0). |
  | **GetRow**<br> $ \mathbf A_{:,i}$                       | Two MB |  First MB input is matrix, second input is number that defines the row to get (first row has index 0). |
