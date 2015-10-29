@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Task;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;
@@ -145,9 +146,36 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             // copy action to previous value
             Owner.PreviousAction.CopyFromMemoryBlock(Owner.Action, 0, 0, Owner.Neurons);
 
+           // Owner.ParentNetwork.DecrementTimeStep.Execute();
+
             Owner.ParentNetwork.GetError();
-            Owner.ParentNetwork.GetActiveBackpropTask().Execute(Owner);
-            ((MyRMSTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer);
+
+            //((MyAbstractLayer)Owner.ParentNetwork).DeltaBackTask.Execute();
+
+
+            Owner.DeltaBackTask.Execute();
+            Owner.UpdateWeights.Execute();
+            MyAbstractLayer layer = Owner;
+            while (layer.PreviousTopologicalLayer != null)
+            {
+                layer = layer.PreviousTopologicalLayer as MyAbstractLayer;
+                layer.DeltaBackTask.Execute();
+                ((MyHiddenLayer)layer).UpdateWeights.Execute();
+            }
+
+         //   Owner.ParentNetwork.IncrementTimeStep.Execute();
+
+            
+
+
+
+           // ((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer).DeltaBackTask.Execute();
+
+          //  Owner.ParentNetwork.IncrementTimeStep.Execute();
+            
+
+           // Owner.ParentNetwork.GetActiveBackpropTask().Execute(Owner);
+           // ((MyRMSTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer);
           //  ((MySGDTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer);
          //    ((MyRMSTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((GoodAI.Modules.LSTM.MyLSTMLayer)Owner.ParentNetwork.FirstTopologicalLayer);
 
