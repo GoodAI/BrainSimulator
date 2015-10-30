@@ -152,7 +152,6 @@ namespace GoodAI.BrainSimulator.Forms
             int xOffset = 0;
 
             MyTask task = e.Item.Tag as MyTask;
-            MyTaskInfoAttribute taskAttrib = task.GetType().GetCustomAttribute<MyTaskInfoAttribute>(false);            
 
             if (e.ColumnIndex == 0)
             {
