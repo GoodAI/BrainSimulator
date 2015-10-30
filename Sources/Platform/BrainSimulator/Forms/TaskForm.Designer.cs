@@ -30,7 +30,7 @@
         {
             this.listView = new GoodAI.BrainSimulator.Forms.TaskForm.MyListView();
             this.nameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.oneShotColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.flagsColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // listView
@@ -38,7 +38,7 @@
             this.listView.CheckBoxes = true;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.nameColumn,
-            this.oneShotColumn});
+            this.flagsColumn});
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
@@ -56,15 +56,19 @@
             this.listView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.listView_DrawSubItem);
             this.listView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listView_ItemChecked);
             this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
+            this.listView.Click += new System.EventHandler(this.listView_Click);
+            this.listView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView_MouseDown);
+            this.listView.MouseLeave += new System.EventHandler(this.listView_MouseLeave);
+            this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
             // 
             // nameColumn
             // 
             this.nameColumn.Text = "Name";
             this.nameColumn.Width = 200;
             // 
-            // oneShotColumn
+            // flagsColumn
             // 
-            this.oneShotColumn.Text = "OneShot";
+            this.flagsColumn.Text = "Flags";
             // 
             // TaskForm
             // 
@@ -81,6 +85,8 @@
             this.Name = "TaskForm";
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "Tasks";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TaskForm_FormClosed);
+            this.Load += new System.EventHandler(this.TaskForm_Load);
             this.ResumeLayout(false);
 
         }
@@ -88,7 +94,7 @@
         #endregion
 
         private System.Windows.Forms.ColumnHeader nameColumn;
-        private System.Windows.Forms.ColumnHeader oneShotColumn;
+        private System.Windows.Forms.ColumnHeader flagsColumn;
         private TaskForm.MyListView listView;
 
     }
