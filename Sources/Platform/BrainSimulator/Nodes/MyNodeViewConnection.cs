@@ -19,14 +19,15 @@ namespace GoodAI.BrainSimulator.Nodes
             }
             set
             {
-                
+
             }
         }
 
         public bool Backward
         {
             get { return (state & RenderState.Backward) != 0; }
-            set {
+            set
+            {
                 if (value)
                 {
                     state |= RenderState.Backward;

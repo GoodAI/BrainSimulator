@@ -368,8 +368,7 @@ namespace GoodAI.Core.Execution
         private static List<MyNode> OrderNetworkNodes(MyNetwork network)
         {
             IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
-            List<MyNode> orderedNodes = topoOps.EvaluateOrder(network);
-            return orderedNodes;
+            return topoOps.EvaluateOrder(network);
         }
 
         public void RefreshTopologicalOrder()
