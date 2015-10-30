@@ -36,7 +36,7 @@ namespace GoodAI.BrainSimulator.Forms
             Observer = observer;            
             observer.TriggerReset();
 
-            Text = MyProject.ShortenNodeTypeName(observer.GetType()) + ": " + observer.GetTargetName(declaredOwner);
+            Text = observer.GetTargetName(declaredOwner);
         }
 
         protected virtual void ObserverForm_Load(object sender, EventArgs e)
