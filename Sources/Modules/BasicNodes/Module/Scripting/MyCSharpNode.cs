@@ -190,7 +190,13 @@ namespace GoodAI.Modules.Scripting
             };
 
             parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
+            parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
+
+            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll");
+            if (openTKAssemblies.Count() > 0)
+                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
 
             CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
             Assembly compiledAssembly = null;
