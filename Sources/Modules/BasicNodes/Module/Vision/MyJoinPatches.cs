@@ -112,6 +112,13 @@ namespace GoodAI.Modules.Vision
             set { SetOutput(3, value); }
         }
 
+        [MyOutputBlock(4)]
+        public MyMemoryBlock<float> AdjMatrix
+        {
+            get { return GetOutput(4); }
+            set { SetOutput(4, value); }
+        }
+
 
 
 
@@ -136,8 +143,6 @@ namespace GoodAI.Modules.Vision
 
         //------------------------------------------------------------------------------------------------------
         // :: DATA VARS  ::
-        public MyMemoryBlock<float> AdjMatrix { get; private set; }
-
         public MyMemoryBlock<float> Mask_new { get; private set; }
         public MyMemoryBlock<float> CentersSum { get; private set; }
 
@@ -187,6 +192,9 @@ namespace GoodAI.Modules.Vision
 
 
         public MyProcessImPatchBasTask Execute { get; private set; }
+        public MyCreateGraphTask CreateGraph { get; private set; }
+
+
         /// <summary>
         /// Execute joining patches into groups of objects.
         /// </summary>
@@ -389,9 +397,34 @@ namespace GoodAI.Modules.Vision
                 }
             }
 
-
-
         }
+
+
+        [Description("Create graph"), MyTaskInfo(Disabled = true, OneShot = false)]
+        public class MyCreateGraphTask : MyTask<MyJoinPatches>
+        {
+            private MyCudaKernel m_kernel, m_kernel_resetIm;
+
+            public override void Init(int nGPU)
+            {
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\JoinPatches", "FillAdjacencyMatrix");
+                m_kernel.SetupExecution(Owner.MaskCount);
+
+                m_kernel_resetIm = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "ResetImage");
+                m_kernel_resetIm.SetupExecution(Owner.PatchesNum * Owner.PatchesNum);
+            }
+
+
+
+            public override void Execute()
+            {
+                m_kernel_resetIm.Run(Owner.AdjMatrix, Owner.PatchesNum * Owner.PatchesNum);
+                m_kernel.Run(Owner.AdjMatrix, Owner.Mask, Owner.MaskCount, Owner.MaskCols, Owner.MaskRows, Owner.PatchesNum);
+            }
+        }
+
+
+
     }
 }
 
@@ -420,9 +453,7 @@ namespace GoodAI.Modules.Observers
 {
     public class MyJoinPatchesObserver : MyNodeObserver<MyJoinPatches>
     {
-        MyCudaKernel m_kernel_drawEdges;
-        MyCudaKernel m_kernel_fillImWhite;
-        MyCudaKernel m_kernel_fillImFromIm;
+        MyCudaKernel m_kernel_drawEdges, m_kernel_fillImWhite, m_kernel_fillImFromIm, m_kernel_drawDesc;
         private CudaDeviceVariable<float> m_StringDeviceBuffer;
 
         public enum MyJoinPatObsMode
@@ -430,7 +461,8 @@ namespace GoodAI.Modules.Observers
             Mask,
             Graph,
             GraphWeights,
-            MaskId
+            MaskId,
+            Desc
         }
 
         [MyBrowsable, Category("Operation"), YAXSerializableField(DefaultValue = MyJoinPatObsMode.Mask)]
@@ -441,6 +473,7 @@ namespace GoodAI.Modules.Observers
             m_kernel_fillImWhite = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\JoinPatchesObs", "FillImWhite");
             m_kernel_fillImFromIm = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\JoinPatchesObs", "FillImByOtherIm");
             m_kernel_drawEdges = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\JoinPatchesObs", "Draw_edges");
+            m_kernel_drawDesc = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Vision\JoinPatchesObs", "FillImByEnergy");
 
         }
 
@@ -476,6 +509,21 @@ namespace GoodAI.Modules.Observers
                         MyDrawStringHelper.String2Index(i.ToString(), m_StringDeviceBuffer);
                         MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, x, y, (uint)Color.White.ToArgb(), (uint)Color.Black.ToArgb(), VBODevicePointer, TextureWidth, TextureHeight,0,i.ToString().Length);
                     }
+                    break;
+                case MyJoinPatObsMode.Desc:
+                    // find the max value
+                    Target.Desc.SafeCopyToHost();
+                    float maxValue = float.MinValue;
+                    float minValue = float.MaxValue;
+                    for (int i = 0; i < Target.Desc.Count; i++)
+                    {
+                        maxValue = (Target.Desc.Host[i] > maxValue) ? Target.Desc.Host[i] : maxValue;
+                        minValue = (Target.Desc.Host[i] < minValue) ? Target.Desc.Host[i] : minValue;
+                    }
+                    maxValue = maxValue - minValue;
+                    // draw first row in desc :)
+                    m_kernel_drawDesc.SetupExecution(Target.MaskCount);
+                    m_kernel_drawDesc.Run(VBODevicePointer, Target.Mask, TextureWidth * TextureHeight, Target.Desc, maxValue, minValue);
                     break;
             }
 

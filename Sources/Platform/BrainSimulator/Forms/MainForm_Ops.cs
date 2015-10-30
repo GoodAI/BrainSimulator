@@ -29,9 +29,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         public MyConfiguration Configuration { get; private set; }
         public MySimulationHandler SimulationHandler { get; private set; }
-        public MyDocProvider Documentation { get; private set; } 
-
-        private bool m_observersHidden = false;
+        public MyDocProvider Documentation { get; private set; }         
 
         #region Project
 
@@ -252,6 +250,7 @@ namespace GoodAI.BrainSimulator.Forms
         public DebugForm DebugView { get; private set; }
 
         protected List<DockContent> m_views;
+        protected ToolStripMenuItem showHideObserversMenuItem;
 
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
         public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
@@ -530,20 +529,20 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void ShowHideAllObservers(bool forceShow = false)
         {
-            if (forceShow && !m_observersHidden) 
+            if (forceShow && showHideObserversMenuItem.Checked) 
             {  
                 return;
             }
 
-            if (m_observersHidden || forceShow)
+            if (!showHideObserversMenuItem.Checked || forceShow)
             {
                 ObserverViews.ToList().ForEach(view => view.Show());
-                m_observersHidden = false;
+                showHideObserversMenuItem.Checked = true;
             } 
             else            
             {
                 ObserverViews.ToList().ForEach(view => view.Hide());
-                m_observersHidden = true;
+                showHideObserversMenuItem.Checked = false;
             }
         }
 
@@ -552,24 +551,28 @@ namespace GoodAI.BrainSimulator.Forms
             GraphViews.Remove((sender as GraphLayoutForm).Target);
         }
 
-        private void RestoreViewsLayout(string layoutFileName)
+        private bool TryRestoreViewsLayout(string layoutFileName)
         {
-                //TODO: change PersistString in WinFormsUI to be accessible publicly (or make our own DockContent common superclass for all forms)
-                Dictionary<string, DockContent> viewTable = new Dictionary<string, DockContent>();
+            if (!File.Exists(layoutFileName))
+                return false;
 
-                foreach (DockContent view in m_views)
-                {
-                    if (!(view is GraphLayoutForm))
-                    {
-                        viewTable[view.GetType().ToString()] = view;
-                    }
-                }
-
+            //TODO: change PersistString in WinFormsUI to be accessible publicly (or make our own DockContent common superclass for all forms)
+            Dictionary<string, DockContent> viewTable = m_views.Where(view => !(view is GraphLayoutForm))
+                .ToDictionary(view => view.GetType().ToString(), view => view);
+            
+            try
+            {
                 dockPanel.LoadFromXml(layoutFileName,
-                    (string persistString) =>
-                    {
-                        return viewTable.ContainsKey(persistString) ? viewTable[persistString] : null;
-                    });            
+                    persistString => (viewTable.ContainsKey(persistString) ? viewTable[persistString] : null));
+            }
+            catch (Exception ex)
+            {
+                MyLog.WARNING.WriteLine("Unable to restore views layout (using default): " + ex.Message);
+
+                return false;
+            }
+
+            return true;
         }
 
         private void ResetViewsLayout()
@@ -702,9 +705,10 @@ namespace GoodAI.BrainSimulator.Forms
             ((ToolStripMenuItem)viewToolStripMenuItem.DropDownItems.Find(HelpView.Text, false).First()).ShortcutKeys = Keys.F1;
             viewToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
-            ToolStripMenuItem showHideObserversMenuItem = new ToolStripMenuItem("Show/Hide all observers");
+            showHideObserversMenuItem = new ToolStripMenuItem("Show/Hide all observers");
             showHideObserversMenuItem.ShortcutKeys = Keys.Control | Keys.H;
             showHideObserversMenuItem.Click += showHideObserversMenuItem_Click;
+            showHideObserversMenuItem.Checked = true;
 
             viewToolStripMenuItem.DropDownItems.Add(showHideObserversMenuItem);
 
@@ -821,7 +825,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         void showHideObserversMenuItem_Click(object sender, EventArgs e)
         {
-            ShowHideAllObservers();
+            ShowHideAllObservers();            
         }        
 
         void timerItem_Click(object sender, EventArgs e)

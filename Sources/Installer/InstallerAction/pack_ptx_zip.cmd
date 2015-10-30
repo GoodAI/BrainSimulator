@@ -26,13 +26,7 @@ if exist %ZIPFILE% del %ZIPFILE%
 call %1\Tools\zip.exe -r %ZIPFILE% ptx
 
 
-rem *** XmlFeedForwardNet ***
+rem *** XmlFeedForwardNet (Obsolete! Just check it's deleted) ***
 
-cd %1..\..\Modules\XmlFeedForwardNet\Module\bin\%2
-echo %cd%
 set TARGETDIR=..\..\..\..\..\Installer\InstallerAction\bin\modules\GoodAI.XmlFeedForwardNet
-
-if not exist %TARGETDIR% mkdir %TARGETDIR%
-set ZIPFILE=%TARGETDIR%\ptx.zip
-if exist %ZIPFILE% del %ZIPFILE%
-call %1\Tools\zip.exe -r %ZIPFILE% ptx
+if exist %TARGETDIR% rmdir /S /Q %TARGETDIR%

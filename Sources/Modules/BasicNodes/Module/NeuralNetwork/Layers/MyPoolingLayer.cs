@@ -10,9 +10,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
     /// <author>GoodAI</author>
     /// <meta>mz</meta>
-    /// <status>WIP</status>
+    /// <status>Working</status>
     /// <summary>Pooling layer.</summary>
-    /// <description></description>
+    /// <description>Layer that performs max pooling. It takes max value of each input window and presents it to the output.</description>
     public class MyPoolingLayer : MyAbstractLayer, IMyCustomTaskFactory
     {
 

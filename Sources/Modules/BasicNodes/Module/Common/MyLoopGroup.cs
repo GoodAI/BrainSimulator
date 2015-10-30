@@ -14,15 +14,22 @@ namespace GoodAI.Modules.Common
 {
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
-    /// <staus>Working</staus>
+    /// <status>Working</status>
     /// <summary>
-    /// Group that is ran multiple iterations at one simulation step. 
+    /// Group that runs all Nodes inside multiple times per one simulation step. 
     /// </summary>
-    /// <description></description>
+    /// <description>
+    /// Run all Nodes inside multiple times per step.
+    /// <h3>Parameters</h3>
+    /// <ul>
+    ///     <li> <b>Iterations:</b> How many Iterations to run everything inside at one SimulationStep.</li>
+    ///     <li> <b>LoopType:</b> "Normal" mode will use the default plan, "All" means that LoopGroup will run OneShot tasks too.</li>
+    /// </ul>
+    /// </description>
     public class MyLoopGroup : MyNodeGroup, IMyCustomExecutionPlanner
     {
         [YAXSerializableField(DefaultValue = 3)]
-        [MyBrowsable, Category("Iterations")]
+        [MyBrowsable, Category("Iterations"), Description("How many times per simulation step to loop the group")]
         public int Iterations { get; set; }
 
         public enum MyLoopOperation
@@ -31,7 +38,7 @@ namespace GoodAI.Modules.Common
             All
         }
 
-        [MyBrowsable, Category("Iterations")]
+        [MyBrowsable, Category("Iterations"), Description("Specifies mode of looping. Normal ignores OneShot tasks while ALL loops all tasks including OneShot tasks")]
         [YAXSerializableField(DefaultValue = MyLoopOperation.Normal)]
         public MyLoopOperation LoopType{ get; set; }
 

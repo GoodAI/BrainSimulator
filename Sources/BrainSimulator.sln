@@ -15,10 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicNodesCuda", "Modules\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNIST", "Modules\MNIST\Module\MNIST.csproj", "{EDC96485-A8A9-414C-A7D9-65EC0B817732}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlFeedForwardNet", "Modules\XmlFeedForwardNet\Module\XmlFeedForwardNet.csproj", "{D2A13F94-2024-4E44-B25E-8ED038A59CE2}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XmlFeedForwardNetCuda", "Modules\XmlFeedForwardNet\Cuda\XmlFeedForwardNetCuda.vcxproj", "{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundWorld", "Modules\SoundWorld\Module\SoundWorld.csproj", "{A0084F22-B436-4068-8F18-EC182EE78927}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{772FEA22-0714-4097-9D81-8BE4D607E6E7}"
@@ -80,20 +76,6 @@ Global
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
-		{D2A13F94-2024-4E44-B25E-8ED038A59CE2}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Debug|0 Default (x64 CUDA).Build.0 = Debug|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Debug|1 Skip CUDA.ActiveCfg = Debug|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Release|0 Default (x64 CUDA).ActiveCfg = Release|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Release|0 Default (x64 CUDA).Build.0 = Release|x64
-		{3FCE570F-5623-4F2F-9AA5-641747EC7BFB}.Release|1 Skip CUDA.ActiveCfg = Release|x64
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
@@ -109,6 +91,7 @@ Global
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU

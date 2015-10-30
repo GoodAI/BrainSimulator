@@ -15,7 +15,7 @@ namespace GoodAI.Modules.Common
     /// <meta>mv</meta>
     /// <status>Working</status>
     /// <summary>Generates numbers from chosen distribution</summary>
-    /// <description>The <b>SingleOutputProperty</b> will generate random number to one random position only.</description>
+    /// <description>The <b>SingleOutput</b> property will set random number on one (random) element of Output mem. block only.</description>
     public class MyRandomNode : MyWorkingNode
     {
         //Only one of outputs should be active each time. Maybe generalize to arbitrary number?
@@ -53,29 +53,24 @@ namespace GoodAI.Modules.Common
             }
         }
 
-        //Period should be randomized?
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = false)]
-        public bool RandomPeriod { get; set; }
+        public int Period { 
+            get 
+            { 
+                return PeriodTask.Period;
+            }
+            set
+            {
+                PeriodTask.Period = value;
+            }
+        }
 
-        //How often produce new numbers? 1 = every step
-        //Also the first value for random period
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = 1)]
-        public int Period { get; set; }
-
-        //Minimum for random period - inclusive
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = 1)]
-        public int RandomPeriodMin { get; set; }
-
-        //Maximum for random period - inclusive
-        [MyBrowsable, Category("\tPeriod parameters")]
-        [YAXSerializableField(DefaultValue = 10)]
-        public int RandomPeriodMax { get; set; }
+        public bool RandomPeriod { get { return PeriodTask.RandomPeriod; } }
+        public int RandomPeriodMin { get { return PeriodTask.RandomPeriodMin; } }
+        public int RandomPeriodMax { get { return PeriodTask.RandomPeriodMax; } }
 
         public MyMemoryBlock<float> RandomNumbers { get; private set; }
 
+        public PeriodRNGTask PeriodTask { get; private set; }
         [MyTaskGroup("RNG")]
         public UniformRNGTask UniformRNG { get; private set; }
         [MyTaskGroup("RNG")]
@@ -122,6 +117,11 @@ namespace GoodAI.Modules.Common
         {
             validator.AssertError(RandomPeriodMin > 0, this, "RandomPeriodMin have to be greater than 0.");
             validator.AssertError(RandomPeriodMax > RandomPeriodMin, this, "RandomPeriodMax have to be greater than RandomPeriodMin");
+            if(CombinationRNG.Enabled)
+            {
+                validator.AssertError(CombinationRNG.Min < CombinationRNG.Max, this, "Min has to be smaller than Max for Combination task.");
+                validator.AssertError(Output.Count <= CombinationRNG.Max - CombinationRNG.Min, this, "Output is larger than Combination's task range.");
+            }
         }
 
         public override string Description
@@ -163,17 +163,54 @@ namespace GoodAI.Modules.Common
         }
     }
 
+
+    /// <summary>This task holds information about period. Period information is in the task, so it can be changed during runtime.</summary>
+    [Description("Period settings")]
+    public class PeriodRNGTask: MyTask<MyRandomNode>
+    {
+        //Period should be randomized?
+        [MyBrowsable, Category("\tPeriod parameters"), Description("Period will change randomly during simulation if set to True. RandomPeriodMin is a lower bound while RandomPeriodMax is an upper bound. First value is determined by Period parameter.")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool RandomPeriod { get; set; }
+
+        //How often produce new numbers? 1 = every step
+        //Also the first value for random period
+        [MyBrowsable, Category("\tPeriod parameters"), Description("Number of simulation steps after which the random numbers will be regenerated. Also first value of period when RandomPeriod is True")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public int Period { get; set; }
+
+        //Minimum for random period - inclusive
+        [MyBrowsable, Category("\tPeriod parameters"), Description("Lower bound for a random period when RandomPeriod is True")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public int RandomPeriodMin { get; set; }
+
+        //Maximum for random period - inclusive
+        [MyBrowsable, Category("\tPeriod parameters"), Description("Upper bound for a random period when RandomPeriod is True")]
+        [YAXSerializableField(DefaultValue = 10)]
+        public int RandomPeriodMax { get; set; }
+
+        public override void Init(int nGPU) { }
+
+        public override void Execute()
+        {
+            
+        }
+    }
+
+
+    /// <summary>Generates numbers from uniform distribution. Number will be in interval from MinValue to MaxValue.</summary>
+    [Description("Uniform")]
     public class UniformRNGTask : MyTask<MyRandomNode>
     {
         private MyCudaKernel m_polynomialKernel;
 
         //Minimal value
-        [MyBrowsable, Category("Uniform distribution"), DisplayName("M\tinValue")]
+        [MyBrowsable, Category("Uniform distribution"), DisplayName("M\tinValue"), Description("Lower bound for uniform distribution")]
         [YAXSerializableField(DefaultValue = 0f)]
         public float MinValue { get; set; }
 
         //Maximum value
-        [MyBrowsable, Category("Uniform distribution")]
+        [MyBrowsable, Category("Uniform distribution"), Description("Upper bound for uniform distribution")]
         [YAXSerializableField(DefaultValue = 1f)]
         public float MaxValue { get; set; }
 
@@ -217,15 +254,18 @@ namespace GoodAI.Modules.Common
         }
     }
 
+
+    /// <summary>Generates numbers from normal distribution with parameters specified by Mean and StdDev.</summary>
+    [Description("Normal")]
     public class NormalRNGTask : MyTask<MyRandomNode>
     {
         //Mean for normal dist.
-        [MyBrowsable, Category("Normal distribution")]
+        [MyBrowsable, Category("Normal distribution"), Description("Mean of the normal distribution")]
         [YAXSerializableField(DefaultValue = 0f)]
         public float Mean { get; set; }
 
         //StdDev for normal dist.
-        [MyBrowsable, Category("Normal distribution")]
+        [MyBrowsable, Category("Normal distribution"), Description("Standard deviation of the normal distribution")]
         [YAXSerializableField(DefaultValue = 1.0f)]
         public float StdDev { get; set; }
 
@@ -267,12 +307,15 @@ namespace GoodAI.Modules.Common
         }
     }
 
+
+    /// <summary>Generates constant number.</summary>
+    [Description("Constant")]
     public class ConstantRNGTask : MyTask<MyRandomNode>
     {
         private MyCudaKernel m_kernel;
 
         //Constant value
-        [MyBrowsable, Category("Constant distribution")]
+        [MyBrowsable, Category("Constant distribution"), Description("Which number to generate")]
         [YAXSerializableField(DefaultValue = 1f)]
         public float Constant { get; set; }
 
@@ -309,25 +352,22 @@ namespace GoodAI.Modules.Common
         }
     }
 
-    /// <summary>
-    /// This task will generate your random numbers.<br/>
-    /// <p><b>Period Parameters</b> let you control the period in which the new set of random values should be generated.
-    /// Other configutarion options are connected to the selected distribution.</p>
-    /// </summary>
+    /// <summary>Generates (possibly unique) integers between Min and Max where Min is inclusive and Max is exclusive.</summary>
+    [Description("Combination")]
     public class CombinationRNGTask : MyTask<MyRandomNode>
     {
         //Minimal value
-        [MyBrowsable, Category("Combinations"), DisplayName("M\tin")]
+        [MyBrowsable, Category("Combinations"), DisplayName("M\tin"), Description("Minimum (inclusive) number to be generated")]
         [YAXSerializableField(DefaultValue = 0)]
         public int Min { get; set; }
 
         //Maximum value
-        [MyBrowsable, Category("Combinations")]
+        [MyBrowsable, Category("Combinations"), Description("Maximum (exclusive) number to be generated.")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int Max { get; set; }
 
         //Maximum value
-        [MyBrowsable, Category("Combinations")]
+        [MyBrowsable, Category("Combinations"), Description("Numbers will be unique if set to True")]
         [YAXSerializableField(DefaultValue = true)]
         public bool Unique { get; set; }
 

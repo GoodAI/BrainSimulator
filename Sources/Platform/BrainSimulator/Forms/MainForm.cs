@@ -25,13 +25,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            FileInfo viewLayoutFile = new FileInfo(UserLayoutFileName);
-
-            if (viewLayoutFile.Exists)
-            {
-                RestoreViewsLayout(viewLayoutFile.FullName);
-            }
-            else
+            if (!TryRestoreViewsLayout(UserLayoutFileName))
             {
                 ResetViewsLayout();
             }

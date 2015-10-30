@@ -18,8 +18,8 @@ namespace GoodAI.Modules.Matrix
         MultiplElemntWise = 1 << 4,
         Substraction = 1 << 5,
 
-        MinIndex = 1 << 6,
-        MaxIndex = 1 << 7,
+        AbsMinIndex = 1 << 6,
+        AbsMaxIndex = 1 << 7,
 
         GetCol = 1 << 8,
         GetRow = 1 << 9,
@@ -33,6 +33,7 @@ namespace GoodAI.Modules.Matrix
 
         EuclidDist = 1 << 13,
 
+        Pow = 1 << 14,
         Exp = 1 << 15,
         Log = 1 << 16,
 
@@ -99,6 +100,11 @@ namespace GoodAI.Modules.Matrix
                 if (operation == MatOperation.DotProd)
                 {
                     Result.Count = Result.ColumnHint = 1;
+                }
+                else if (operation == MatOperation.AbsMinIndex || operation == MatOperation.AbsMaxIndex)
+                {
+                    Result.ColumnHint = 1;
+                    Result.Count = 1;
                 }
                 else if (operation == MatOperation.Multiplication)
                 {

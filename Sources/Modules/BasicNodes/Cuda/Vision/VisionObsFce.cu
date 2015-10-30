@@ -120,11 +120,11 @@ extern "C"
 		if (id<imageSize){
             OFConvertXY2AngleSize(of,id,imageSize,OF_size,OF_angle);
 
-            OF_size  = 1.0f-fmaxf(fminf(OF_size/8.0f,1.0f),0.0f); // 5.0f is normlaization -> needs to be fixed to proper number... 
+            OF_size  = OF_size/8.0f; // 5.0f is normlaization -> needs to be fixed to proper number... 
             OF_angle = (OF_angle + 3.14159265f)/2.0f; // normalized to be <0,1>
 
-            of[id] = hsva_to_float(OF_angle, OF_size, 1.0f);
-            of[id+imageSize] = 0.0f;
+            of[id] = 1-hsva_to_float(OF_angle, OF_size, 1.0f) ;
+            of[id+imageSize] = 0.0f;//1-hsva_to_float(OF_angle, OF_size/2.0f, 1.0f);
 		}
 	}
 

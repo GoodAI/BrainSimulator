@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 10; } }
+        public override int CurrentVersion { get { return 13; } }
 
 
         /// <summary>
@@ -398,6 +398,85 @@ namespace GoodAI.Modules.Versioning
 
                 // Remove old task
                 task.Remove();
+            }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert MyRandomNode Period to dummy task so it can be changed runtime
+        /// Author: MV
+        /// </summary>
+        public static string Convert10To11(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyRandomNode"))
+            {
+                string randomPeriod = node.Descendants("RandomPeriod").First().Value;
+                string randomPeriodMin = node.Descendants("RandomPeriodMin").First().Value;
+                string randomPeriodMax = node.Descendants("RandomPeriodMax").First().Value;
+                string period = node.Descendants("Period").First().Value;
+
+                XElement periodTask = new XElement("Task");
+                periodTask.SetAttributeValue(GetRealTypeAttributeName(), "GoodAI.Modules.Common.PeriodRNGTask");
+                periodTask.SetAttributeValue("Enabled", "True");
+                periodTask.SetAttributeValue("PropertyName", "PeriodTask");
+                periodTask.Add(new XElement("RandomPeriod", randomPeriod));
+                periodTask.Add(new XElement("RandomPeriodMin", randomPeriodMin));
+                periodTask.Add(new XElement("RandomPeriodMax", randomPeriodMax));
+                periodTask.Add(new XElement("Period", period));
+                node.Descendants("Tasks").First().Add(periodTask);
+            }
+
+            return document.ToString();
+        }
+
+
+        /// <summary>
+        /// Convert MyDistanceNode's inputs from A,B to Input 1, Input 2 (required after the node was put into Transforms)
+        /// Author: MP
+        /// </summary>
+        public static string Convert11To12(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyDistanceNode"))
+            {
+                XElement IO = new XElement("IO");
+                XElement InputBranches = new XElement("InputBranches");
+                InputBranches.Value = "2";
+
+                IO.AddFirst(InputBranches);
+                node.AddFirst(IO);
+            }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert (Min/Max)Index to Abs(Min/Max)Index
+        /// Author: JK
+        /// </summary>
+        public static string Convert12To13(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("MyMatrixNode"))
+            {
+                var behav = node.Element("Behavior");
+                if (behav != null)
+                {
+                    var oper = behav.Element("Operation");
+                    if (oper != null && oper.Value == "MinIndex")
+                    {
+                        oper.SetValue("AbsMinIndex");
+                    }
+                    if (oper != null && oper.Value == "MaxIndex")
+                    {
+                        oper.SetValue("AbsMaxIndex");
+                    }
+                }
             }
 
             return document.ToString();

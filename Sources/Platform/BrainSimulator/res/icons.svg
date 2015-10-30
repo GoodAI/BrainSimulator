@@ -26,7 +26,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:cy="273.1682"
+     inkscape:cy="406.5302"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -34,16 +34,16 @@
      inkscape:guide-bbox="true"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-page="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1141"
-     inkscape:window-x="-8"
+     inkscape:window-width="1200"
+     inkscape:window-height="1898"
+     inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-center="true"
-     inkscape:zoom="19.776893"
-     inkscape:cx="11.072102"
+     inkscape:zoom="8.5736697"
+     inkscape:cx="-22.367064"
      inkscape:snap-bbox-midpoints="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -235,16 +235,316 @@
        orientation="1,0"
        id="guide6518" />
     <sodipodi:guide
-       position="12.849204,300.80217"
-       orientation="0,1"
-       id="guide6601" />
-    <sodipodi:guide
        position="12.849204,300.80218"
        orientation="1,0"
        id="guide6603" />
   </sodipodi:namedview>
   <defs
      id="defs4">
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker10392"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path10394"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker10073"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path10075"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker9748"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path9750"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker9441"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path9443"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Sstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5001"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8841"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path8843"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8552"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path8554"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8269"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path8271"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="EmptyTriangleInM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="EmptyTriangleInM"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5125"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;fill:#ffffff;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1"
+         transform="scale(-0.4) translate(-4.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7724"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5107"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7459"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path7461"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4995"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker6950"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4983"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker6607"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path6609"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker6354"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path6356"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="Torso"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Torso"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <g
+         id="g5183"
+         transform="scale(0.7)"
+         style="stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1">
+        <path
+           id="path5185"
+           d="M -4.7792281,-3.2395420 C -2.4288541,-2.8736027 0.52103922,-1.3019943 0.25792722,0.38794346 C -0.0051877922,2.0778819 -2.2126741,2.6176539 -4.5630471,2.2517169 C -6.9134221,1.8857769 -8.5210350,0.75201414 -8.2579220,-0.93792336 C -7.9948090,-2.6278615 -7.1296041,-3.6054813 -4.7792281,-3.2395420 z "
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.25;stroke-opacity:1" />
+        <path
+           id="path5187"
+           d="M 4.4598789,0.088665736 C -2.5564571,-4.3783320 5.2248769,-3.9061806 -0.84829578,-8.7197331"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1" />
+        <path
+           id="path5189"
+           d="M 4.9298719,0.057520736 C -1.3872731,1.7494689 1.8027579,5.4782079 -4.9448731,7.5462725"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1" />
+        <rect
+           id="rect5191"
+           transform="matrix(0.527536,-0.849533,0.887668,0.460484,0,0)"
+           y="-1.7408575"
+           x="-10.391706"
+           height="2.7608147"
+           width="2.6366582"
+           style="fill-rule:evenodd;stroke-width:1pt;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1" />
+        <rect
+           id="rect5193"
+           transform="matrix(0.671205,-0.741272,0.790802,0.612072,0,0)"
+           y="-7.9629307"
+           x="4.9587269"
+           height="2.8614161"
+           width="2.7327356"
+           style="fill-rule:evenodd;stroke-width:1pt;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1" />
+        <path
+           id="path5195"
+           transform="matrix(0,-1.109517,1.109517,0,25.96648,19.71619)"
+           d="M 16.779951 -28.685045 A 0.60731727 0.60731727 0 1 0 15.565317,-28.685045 A 0.60731727 0.60731727 0 1 0 16.779951 -28.685045 z"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1" />
+        <path
+           id="path5197"
+           transform="matrix(0,-1.109517,1.109517,0,26.82450,16.99126)"
+           d="M 16.779951 -28.685045 A 0.60731727 0.60731727 0 1 0 15.565317,-28.685045 A 0.60731727 0.60731727 0 1 0 16.779951 -28.685045 z"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1" />
+      </g>
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5635"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5110"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(-0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4977"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4971"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
     <marker
        style="overflow:visible"
        id="TriangleInM"
@@ -623,6 +923,91 @@
          d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
          id="path5432" />
     </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleInSA-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleInSA">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(-0.2,-0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path5432-3" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInS"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker10392-3"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path10394-4"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1"
+         transform="scale(-0.2,-0.2)" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-85"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-85-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-0-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-85-8"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-0-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS4-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS4">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.2,0.2)"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path4730-26" />
+    </marker>
   </defs>
   <metadata
      id="metadata7">
@@ -632,7 +1017,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -683,8 +1068,8 @@
        height="32"
        width="32"
        id="rect3889"
-       style="color:#000000;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+       style="color:#000000;fill:#20608e;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       inkscape:export-filename="C:\Users\jaroslav.vitku\Desktop\network_big.png"
        inkscape:export-xdpi="180"
        inkscape:export-ydpi="180" />
     <g
@@ -1994,39 +2379,43 @@
          id="tspan4618-5"
          sodipodi:role="line">Ʃ</tspan></text>
     <image
-       inkscape:export-ydpi="45"
-       inkscape:export-xdpi="45"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\save_mb.png"
-       width="32"
-       height="32"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/save_16xLG.png"
-       id="image3250"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\save_16xLG.png"
+       xlink:href="save_16xLG.png"
+       y="636.36218"
        x="0"
-       y="636.36218" />
-    <image
-       width="31.999998"
-       height="31.999998"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/Binary_16xMD.png"
-       id="image3272"
-       x="6"
-       y="644.36133" />
-    <image
-       inkscape:export-ydpi="45"
-       inkscape:export-xdpi="45"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\open_mb.png"
-       width="32"
+       id="image3250"
        height="32"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/Open_6529.png"
-       id="image3283"
-       x="64"
-       y="636.36218" />
+       width="32"
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\save_mb.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
     <image
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
+       xlink:href="Binary_16xMD.png"
        y="644.36133"
-       x="68"
-       id="image3290"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/Binary_16xMD.png"
+       x="6"
+       id="image3272"
        height="31.999998"
        width="31.999998" />
+    <image
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Open_6529.png"
+       xlink:href="Open_6529.png"
+       y="636.36218"
+       x="64"
+       id="image3283"
+       height="32"
+       width="32"
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\open_mb.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
+    <image
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
+       xlink:href="Binary_16xMD.png"
+       width="31.999998"
+       height="31.999998"
+       id="image3290"
+       x="68"
+       y="644.36133" />
     <rect
        inkscape:export-ydpi="180"
        inkscape:export-xdpi="180"
@@ -2282,12 +2671,13 @@
          height="512" />
     </g>
     <image
-       y="666.34705"
-       x="122"
-       id="image3277"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/Binary_16xMD.png"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
+       xlink:href="Binary_16xMD.png"
+       width="31.999998"
        height="31.999998"
-       width="31.999998" />
+       id="image3277"
+       x="122"
+       y="666.34705" />
     <g
        id="g3281"
        transform="translate(95.999998,0.0269172)">
@@ -2614,12 +3004,13 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="czc" />
     <image
-       y="700.36218"
-       x="92"
-       id="image4265"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/timer_16xLG.png"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\timer_16xLG.png"
+       xlink:href="timer_16xLG.png"
+       width="32"
        height="31.999998"
-       width="32" />
+       id="image4265"
+       x="92"
+       y="700.36218" />
     <g
        transform="matrix(1.0209645,0,0,1.0876623,67.685294,120.36777)"
        id="g4268"
@@ -3197,22 +3588,24 @@
            sodipodi:role="line">x</tspan></text>
     </g>
     <image
-       y="700.35535"
-       x="128.00842"
-       id="image3406"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/save_16xLG.png"
-       height="32"
-       width="32"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\export_mb.png"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\save_16xLG.png"
+       xlink:href="save_16xLG.png"
+       inkscape:export-ydpi="45"
        inkscape:export-xdpi="45"
-       inkscape:export-ydpi="45" />
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\export_mb.png"
+       width="32"
+       height="32"
+       id="image3406"
+       x="128.00842"
+       y="700.35535" />
     <image
-       y="708.35449"
-       x="134.00841"
-       id="image3408"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/Binary_16xMD.png"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
+       xlink:href="Binary_16xMD.png"
+       width="31.999998"
        height="31.999998"
-       width="31.999998" />
+       id="image3408"
+       x="134.00841"
+       y="708.35449" />
     <image
        y="712.31439"
        x="127.96873"
@@ -3221,22 +3614,24 @@
        height="20"
        width="20" />
     <image
-       inkscape:export-ydpi="45"
-       inkscape:export-xdpi="45"
-       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\clear_mb.png"
-       width="32"
-       height="32"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/save_16xLG.png"
-       id="image3410"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\save_16xLG.png"
+       xlink:href="save_16xLG.png"
+       y="732.38568"
        x="159.99788"
-       y="732.38568" />
+       id="image3410"
+       height="32"
+       width="32"
+       inkscape:export-filename="D:\KeenSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\clear_mb.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
     <image
-       width="31.999998"
-       height="31.999998"
-       xlink:href="file:///D:/KeenSWH/AI/Projects/BrainSimulator/BrainSimulatorGUI/res/Binary_16xMD.png"
-       id="image3412"
+       sodipodi:absref="D:\GoodAI\BrainSimInternal\Sources\Platform\BrainSimulator\res\Binary_16xMD.png"
+       xlink:href="Binary_16xMD.png"
+       y="740.38483"
        x="165.99786"
-       y="740.38483" />
+       id="image3412"
+       height="31.999998"
+       width="31.999998" />
     <image
        y="742.36755"
        x="159.98601"
@@ -3844,36 +4239,36 @@
          d="M 303.625 134.90625 A 1.0043849 1.0043849 0 0 0 303.90625 136.90625 L 312 136.90625 L 312 134.90625 L 303.90625 134.90625 A 1.0000999 1.0000999 0 0 0 303.71875 134.90625 A 1.0043849 1.0043849 0 0 0 303.625 134.90625 z M 312 138.84375 L 303.625 143.03125 A 1.0043849 1.0043849 0 0 0 303.75 145.03125 L 312 149.15625 L 312 146.9375 L 308.125 145 L 312 145 L 312 143 L 308.125 143 L 312 141.0625 L 312 138.84375 z M 303.625 151.09375 A 1.0043849 1.0043849 0 0 0 303.90625 153.09375 L 312 153.09375 L 312 151.09375 L 303.90625 151.09375 A 1.0000999 1.0000999 0 0 0 303.71875 151.09375 A 1.0043849 1.0043849 0 0 0 303.625 151.09375 z "
          transform="translate(0,540.36218)"
          id="path3493" />
-      <path
+      <circle
          transform="matrix(1.171555,0,0,1.171555,297.06592,685.4281)"
-         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z"
-         sodipodi:ry="2.396893"
-         sodipodi:rx="2.396893"
-         sodipodi:cy="6"
-         sodipodi:cx="6"
          id="path3509"
          style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         sodipodi:type="arc" />
-      <path
          sodipodi:type="arc"
+         sodipodi:ry="2.396893"
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z" />
+      <circle
          style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          id="path3511"
-         sodipodi:cx="6"
-         sodipodi:cy="6"
-         sodipodi:rx="2.396893"
+         transform="matrix(1.171555,0,0,1.171555,297.06592,677.33285)"
+         sodipodi:type="arc"
          sodipodi:ry="2.396893"
-         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z"
-         transform="matrix(1.171555,0,0,1.171555,297.06592,677.33285)" />
-      <path
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z" />
+      <circle
          transform="matrix(1.171555,0,0,1.171555,297.06592,669.2376)"
-         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z"
-         sodipodi:ry="2.396893"
-         sodipodi:rx="2.396893"
-         sodipodi:cy="6"
-         sodipodi:cx="6"
          id="path3513"
          style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         sodipodi:type="arc" />
+         sodipodi:type="arc"
+         sodipodi:ry="2.396893"
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z" />
       <path
          style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
          d="M 303 134.90625 L 294.75 134.9375 L 294.75 136.9375 L 298.625 136.9375 L 294.75 138.875 L 294.75 141.09375 L 303.125 136.90625 C 303.62321 136.84005 304.03135 136.34535 304 135.84375 C 303.9687 135.34214 303 134.90625 303 134.90625 z M 294.75 142.90625 L 294.75 144.90625 L 302.84375 144.90625 C 303.36739 144.97996 303.9264 144.58614 304 144.0625 C 304.07364 143.53885 303.64866 142.97985 303.125 142.90625 C 303.0938 142.90525 303.06245 142.90525 303.03125 142.90625 C 302.96893 142.90025 302.90605 142.90025 302.84375 142.90625 L 294.75 142.90625 z M 294.75 146.84375 L 294.75 149.0625 L 298.625 151 L 294.75 151 L 294.75 153 L 303 153.03125 C 303 153.03125 303.9687 152.59536 304 152.09375 C 304.03135 151.59215 303.62321 151.09745 303.125 151.03125 L 294.75 146.84375 z "
@@ -3898,36 +4293,36 @@
          y="668.36218"
          rx="5"
          ry="5" />
-      <path
-         sodipodi:type="arc"
+      <circle
          style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          id="path3577"
-         sodipodi:cx="6"
-         sodipodi:cy="6"
-         sodipodi:rx="2.396893"
+         transform="matrix(1.171555,0,0,1.171555,301.06592,685.4281)"
+         sodipodi:type="arc"
          sodipodi:ry="2.396893"
-         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z"
-         transform="matrix(1.171555,0,0,1.171555,301.06592,685.4281)" />
-      <path
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z" />
+      <circle
          transform="matrix(1.171555,0,0,1.171555,301.06592,677.33285)"
-         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z"
-         sodipodi:ry="2.396893"
-         sodipodi:rx="2.396893"
-         sodipodi:cy="6"
-         sodipodi:cx="6"
          id="path3579"
          style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         sodipodi:type="arc" />
-      <path
          sodipodi:type="arc"
+         sodipodi:ry="2.396893"
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z" />
+      <circle
          style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          id="path3581"
-         sodipodi:cx="6"
-         sodipodi:cy="6"
-         sodipodi:rx="2.396893"
+         transform="matrix(1.171555,0,0,1.171555,301.06592,669.2376)"
+         sodipodi:type="arc"
          sodipodi:ry="2.396893"
-         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z"
-         transform="matrix(1.171555,0,0,1.171555,301.06592,669.2376)" />
+         sodipodi:rx="2.396893"
+         sodipodi:cy="6"
+         sodipodi:cx="6"
+         d="M 8.396893,6 A 2.396893,2.396893 0 0 1 6,8.396893 2.396893,2.396893 0 0 1 3.603107,6 2.396893,2.396893 0 0 1 6,3.603107 2.396893,2.396893 0 0 1 8.396893,6 Z" />
       <path
          inkscape:connector-curvature="0"
          id="path3583"
@@ -4214,5 +4609,342 @@
        inkscape:export-filename="C:\Users\jan.machac\Desktop\pooling_big.png"
        inkscape:export-xdpi="180"
        inkscape:export-ydpi="180" />
+    <a
+       id="a3951"
+       transform="translate(32,-63.937473)" />
+    <g
+       id="g5032"
+       inkscape:export-filename="D:\GoodAI\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\stacking_big.png"
+       inkscape:export-xdpi="180"
+       inkscape:export-ydpi="180">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate"
+         id="rect4589-7"
+         width="32"
+         height="32"
+         x="320"
+         y="604.42468"
+         rx="5"
+         ry="5" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 348.24211,618.10387 -17.10088,-7.68445 0,0 0,0 -6.47061,5.59384 17.10088,7.68444 0,0 0,0 z"
+         id="path3934"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 324.69345,619.06266 17.10088,7.68444 0,0 0,0 6.47061,-5.59383"
+         id="path3934-9"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 324.78191,622.02217 17.10089,7.68444 0,0 0,0 6.4706,-5.59383"
+         id="path3934-9-2"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 324.78192,625.0355 17.10089,7.68445 0,0 0,0 6.4706,-5.59384"
+         id="path3934-9-2-4"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="path5030"
+         d="m 324.78191,622.02217 17.10089,7.68444 0,0 0,0 6.4706,-5.59383"
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g5085"
+       inkscape:export-filename="D:\GoodAI\BrainSimInternal\Sources\Modules\BasicNodes\Module\res\distance.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\network_big.png"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate"
+         id="rect4589-7-6"
+         width="32"
+         height="32"
+         x="320"
+         y="636.48718"
+         rx="5"
+         ry="5" />
+      <circle
+         r="7.8125"
+         cy="652.48718"
+         cx="336"
+         id="path5081"
+         style="stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill:none" />
+      <ellipse
+         ry="0.75"
+         rx="0.68750042"
+         cy="652.48718"
+         cx="336"
+         id="path5083"
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="334.72668"
+       y="679.62854"
+       id="text4936"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4938"
+         x="334.72668"
+         y="679.62854" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="334.28473"
+       y="683.87115"
+       id="text4940"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4942"
+         x="334.28473"
+         y="683.87115" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="332.95892"
+       y="676.44653"
+       id="text4946"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4948"
+         x="332.95892"
+         y="676.44653" /></text>
+    <g
+       id="g4958"
+       inkscape:export-xdpi="180"
+       inkscape:export-ydpi="180">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\observer_big.png"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate"
+         id="rect3889-9-2"
+         width="32"
+         height="32"
+         x="320"
+         y="668.36218"
+         rx="5"
+         ry="5" />
+      <g
+         transform="matrix(0.37030976,0,0,0.37030976,197.93327,419.82098)"
+         id="g3949">
+        <g
+           transform="translate(296.09583,132.10517)"
+           style="stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none"
+           id="g3913-0">
+          <path
+             style="fill:none;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="M 38,16 C 43.833631,8.9168155 52.166369,8.9289321 58,16"
+             id="path3885-2"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cc"
+             transform="translate(0,540.36218)" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="path3887-3"
+             d="m 38,556.36218 c 5.833631,7.08319 14.166369,7.07107 20,0"
+             style="fill:none;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        </g>
+        <circle
+           r="3.1460655"
+           cy="688.46735"
+           cx="344.09583"
+           id="path3911-1"
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:4.30204916;marker:none;enable-background:accumulate" />
+      </g>
+      <rect
+         ry="4.9410167"
+         rx="3.8705618"
+         y="670.67804"
+         x="331.32126"
+         height="27.368315"
+         width="17.98259"
+         id="rect4932"
+         style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:1.01741076" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4950"
+         y="677.5072"
+         x="333.28558"
+         style="font-style:normal;font-weight:normal;font-size:2.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="677.5072"
+           x="333.28558"
+           id="tspan4952"
+           sodipodi:role="line">Beneficium </tspan><tspan
+           id="tspan4954"
+           y="680.6322"
+           x="333.28558"
+           sodipodi:role="line">beneficio </tspan><tspan
+           id="tspan4956"
+           y="683.7572"
+           x="333.28558"
+           sodipodi:role="line">provocatur</tspan></text>
+    </g>
+    <g
+       id="g5280"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         inkscape:export-ydpi="180"
+         inkscape:export-xdpi="180"
+         inkscape:export-filename="C:\Users\Dusan\Work\Keen\Graph-master\BrainDesigner\res\observer_big.png"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate"
+         id="rect3889-9-2-0"
+         width="32"
+         height="32"
+         x="320"
+         y="700.36218"
+         rx="5"
+         ry="5" />
+      <rect
+         ry="4.9410167"
+         rx="3.8705618"
+         y="702.67804"
+         x="331.32126"
+         height="27.368315"
+         width="17.98259"
+         id="rect4932-3"
+         style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:1.01741076" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4950-1"
+         y="709.5072"
+         x="333.28558"
+         style="font-style:normal;font-weight:normal;font-size:2.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="709.5072"
+           x="333.28558"
+           id="tspan4952-8"
+           sodipodi:role="line">Beneficium </tspan><tspan
+           id="tspan4954-3"
+           y="712.6322"
+           x="333.28558"
+           sodipodi:role="line">beneficio </tspan><tspan
+           id="tspan4956-8"
+           y="715.7572"
+           x="333.28558"
+           sodipodi:role="line">provocatur</tspan></text>
+      <g
+         transform="matrix(0.73541022,-0.07997537,0.10863475,0.99894638,9.2928607,27.509929)"
+         id="g5273">
+        <g
+           id="g5048">
+          <rect
+             y="703.24554"
+             x="322.81152"
+             height="21.178673"
+             width="5.2639036"
+             id="rect5032"
+             style="fill:#ffffff;fill-opacity:0;stroke:#ffffff;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path5034"
+             d="m 325.42142,703.44918 c 0,3.2409 0,6.48181 0,9.72272 0,0.79549 0,1.59099 0,2.38648 0,0.22097 0,0.44194 0,0.66291 0,0.10312 -0.008,0.20655 0,0.30936 0.007,0.0893 0.0361,0.17593 0.0442,0.26517 0.007,0.0734 0,0.14731 0,0.22097 0,0.2357 0,0.4714 0,0.70711 0,0.64818 0,1.29636 0,1.94454 0,1.60572 0,3.21144 0,4.81716"
+             style="fill:#000000;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.80000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        </g>
+        <path
+           style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:0.68003869;stroke-miterlimit:4;stroke-dasharray:none"
+           d="m 323.09556,724.43331 -0.269,0.3907 2.61591,3.78977 2.61787,-3.78977 -0.269,-0.3907 -4.69578,0 z"
+           id="rect5044-4-7"
+           inkscape:connector-curvature="0" />
+        <rect
+           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.59703439;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect5269"
+           width="0.99846077"
+           height="0.50497228"
+           x="324.94666"
+           y="727.24207" />
+      </g>
+    </g>
+    <g
+       id="g11169"
+       transform="translate(7.5625,-14.875)">
+      <rect
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="D:\KEENSWH\AI\Projects\BrainSimulator\BrainSimulatorGUI\res\threshold.png"
+         ry="5"
+         rx="5"
+         y="747.11218"
+         x="312.4375"
+         height="32"
+         width="32"
+         id="rect4509-1-1-0-0-8-1-8"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#0180b8;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;enable-background:accumulate" />
+      <path
+         d="m 326.87423,756.3626 c 4.05344,-1.1133 8.24149,1.51594 9.31118,5.51424 1.19546,4.46842 -1.70881,9.07126 -6.12141,10.22602 -3.5878,0.93891 -7.45258,-0.52406 -9.62409,-3.50605"
+         sodipodi:t0="0.76999998"
+         sodipodi:argument="-16.284897"
+         sodipodi:radius="9.3958101"
+         sodipodi:revolution="3"
+         sodipodi:expansion="0.99000001"
+         sodipodi:cy="763.4718"
+         sodipodi:cx="328.31491"
+         id="path3989"
+         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker10392)"
+         sodipodi:type="spiral" />
+    </g>
+    <rect
+       inkscape:export-ydpi="169.41176"
+       inkscape:export-xdpi="169.41176"
+       inkscape:export-filename="C:\Users\jaroslav.vitku\Desktop\network_big.png"
+       ry="5"
+       rx="5"
+       y="604.42468"
+       x="-32.176781"
+       height="32"
+       width="32"
+       id="rect4362-0"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#20608e;fill-opacity:1;fill-rule:nonzero;stroke:#20608e;stroke-width:2;stroke-opacity:1;marker:none;enable-background:accumulate" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#20608e;fill-opacity:1;stroke:#ffffff;stroke-width:3.75210238;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4364-5"
+       width="18.247896"
+       height="15.622895"
+       x="-25.300726"
+       y="613.92572"
+       rx="5.0688605"
+       ry="4.3396935" />
+    <rect
+       style="opacity:1;fill:#20608e;fill-opacity:1;stroke:#20608e;stroke-width:4.09136677;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5481-1"
+       width="4.1586332"
+       height="12.033634"
+       x="-26.036825"
+       y="610.69556" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:#0180b8;fill-opacity:1;stroke:#ffffff;stroke-width:4.30690384;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutS4-85-8)"
+       d="m -16.465421,613.90623 -2.895528,0.004"
+       id="path4511-8-8"
+       inkscape:connector-curvature="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     style="display:none">
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:0.68064839;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 323.08594,184.03125 -0.26953,0.39062 2.62109,3.78907 2.62305,-3.78907 -0.26953,-0.39062 -4.70508,0 z"
+       id="rect5044-4"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
