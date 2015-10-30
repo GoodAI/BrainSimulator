@@ -226,9 +226,8 @@ namespace GoodAI.BrainSimulator.Forms
             if (columnIndex == 1)
             {
                 MyTask task = hitTest.Item.Tag as MyTask;
-                MyTaskInfoAttribute taskAttrib = task.GetType().GetCustomAttribute<MyTaskInfoAttribute>(false);
 
-                if (m_mainForm.SimulationHandler.CanStart && task.Enabled && taskAttrib != null && taskAttrib.DesignTime)
+                if (m_mainForm.SimulationHandler.CanStart && task.Enabled && task.DesignTime)
                 {
                     task.Execute();
                 }
