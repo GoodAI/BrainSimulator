@@ -172,6 +172,10 @@ namespace GoodAI.Modules.GameBoy
         public MyUpdateTask UpdateTask { get; private set; }
         public MyRenderTask RenderGameTask { get; private set; }
 
+
+        /// <summary>
+        /// Initialises the game state and loads the resources.
+        /// </summary>
         [MyTaskInfo(OneShot = true)]
         public class MyInitTask : MyTask<MyCustomPongWorld>
         {
@@ -257,6 +261,9 @@ namespace GoodAI.Modules.GameBoy
             }
         }
 
+        /// <summary>
+        /// Renders the game to visual output.
+        /// </summary>
         public class MyRenderTask : MyTask<MyCustomPongWorld>
         {
             private MyCudaKernel m_kernel;
