@@ -2,6 +2,11 @@
 
 You can activate automatic data loading after the simulation is started and you can also enable automatic data saving just before the simulation is stopped. There are global (project scope) and local (node scope) switches for that. Global tools are on the main toolbar and local ones are in the node property window.
 
+##Easy saving of temporary data
+When you just want to save or load a project with its temporal data then use the .brainz file format so that the Brain Simulator takes all the trained data from the temporary storage folder of the current project and packs it to a zip file along with the project file. "Save data on stop" needs to be enabled for individual nodes or globally before any state data is saved. If there is no data in the temporary storage folder, only the project is saved in the zipped file.
+
+Then when you load the .brainz file the reverse process occurs and you get your project and temporary data back (if there is any...). 
+
 ## Data Loading
 Selected nodes will be loaded with available data after the first simulation step is done. In this step, only `OneShot` tasks are executed. Then, all persistable memory blocks will be overridden with loaded data.
 

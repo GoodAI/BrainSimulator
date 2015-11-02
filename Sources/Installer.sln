@@ -73,6 +73,7 @@ Global
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{4A1DEA51-60CD-4358-9D52-465A3841E3B1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{4A1DEA51-60CD-4358-9D52-465A3841E3B1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{4A1DEA51-60CD-4358-9D52-465A3841E3B1}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

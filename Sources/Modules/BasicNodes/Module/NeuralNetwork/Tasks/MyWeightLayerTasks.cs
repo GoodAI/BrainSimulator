@@ -46,6 +46,10 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         [YAXSerializableField(DefaultValue = 1)]
         public float Multiplier { get; set; }
 
+        [MyBrowsable, Category("\t\tParams")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public float MultiplierBias { get; set; }
+
         public override void Execute() //Task execution
         {
             // init vars to 0
@@ -77,7 +81,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                     // init random biases
                     for (int b = 0; b < Owner.Bias.Count; b++)
                     {
-                        Owner.Bias.Host[b] = Multiplier * GetRandomGaussian(0.0f, stdDev);
+                        Owner.Bias.Host[b] = MultiplierBias * GetRandomGaussian(0.0f, stdDev);
                     }
                     Owner.Bias.SafeCopyToDevice(); // copy to device
                     break;

@@ -328,8 +328,7 @@ namespace GoodAI.Core.Execution
         {            
             MyLog.INFO.WriteLine("Updating memory blocks...");
 
-            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
-            List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
+            List<MyNode> orderedNodes = OrderNetworkNodes(Project.Network);
 
             if (!orderedNodes.Any())
             {
@@ -364,6 +363,17 @@ namespace GoodAI.Core.Execution
             }
 
             return anyOutputChanged;                        
+        }
+
+        private static List<MyNode> OrderNetworkNodes(MyNetwork network)
+        {
+            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
+            return topoOps.EvaluateOrder(network);
+        }
+
+        public void RefreshTopologicalOrder()
+        {
+            OrderNetworkNodes(Project.Network);
         }
 
         private bool UpdateAndCheckChange(MyNode node)

@@ -252,9 +252,18 @@ namespace GoodAI.Core.Nodes
             {
                 MyTask task = taskProperty.GetValue(this) as MyTask;
 
-                if (task != null && !m_tasks.ContainsKey(taskProperty.Name))
+                if (task != null)
                 {
-                    m_tasks[taskProperty.Name] = task;
+                    if (!m_tasks.ContainsKey(taskProperty.Name))
+                    {
+                        m_tasks[taskProperty.Name] = task;
+                    }
+
+                    //enable all design time tasks regardless of if they were in brain file or not
+                    if (task.DesignTime)
+                    {
+                        task.Enabled = true;
+                    }                    
                 }
             }
         }

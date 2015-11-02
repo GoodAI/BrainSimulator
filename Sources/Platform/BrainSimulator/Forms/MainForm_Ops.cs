@@ -496,7 +496,16 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             graphForm.Show(dockPanel, DockState.Document);
+
+            RefreshConnections(graphForm);
+
             return graphForm;
+        }
+
+        public void RefreshConnections(GraphLayoutForm form)
+        {
+            SimulationHandler.RefreshTopologicalOrder();
+            form.RefreshConnections();
         }
 
         internal void CloseGraphLayout(MyNodeGroup target)

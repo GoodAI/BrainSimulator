@@ -65,6 +65,16 @@ extern "C"
 
 		if (idTextureRgb < 3) // 3 channels that we will write to
 		{
+			// the texture is in BGR format, we want RGB
+			switch (idTextureRgb)
+			{
+			case 0: // R
+				idTextureRgb = 2; //B
+				break;
+			case 2: // B
+				idTextureRgb = 0; // R
+				break;
+			}
 			// if the texture pixel offset by inputX, inputY, lies inside the target
 			if (idTextureX + inputX < targetWidth &&
 				idTextureX + inputX >= 0 &&

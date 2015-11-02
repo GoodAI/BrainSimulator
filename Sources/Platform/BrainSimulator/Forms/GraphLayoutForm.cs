@@ -159,6 +159,8 @@ namespace GoodAI.BrainSimulator.Forms
             newConnection.Connect();
 
             e.Connection.Tag = newConnection;
+
+            m_mainForm.RefreshConnections(this);
         }
 
         void OnConnectionRemoved(object sender, NodeConnectionEventArgs e)
@@ -169,6 +171,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 connToDelete.Disconnect();
             }
+
+            m_mainForm.RefreshConnections(this);
         }
 
         private void desktop_FocusChanged(object sender, ElementEventArgs e)
@@ -378,6 +382,18 @@ namespace GoodAI.BrainSimulator.Forms
         private void desktopContextMenuStrip_Opened(object sender, EventArgs e)
         {
             searchTextBox.Focus();
-        }        
+        }
+
+        public void RefreshConnections()
+        {
+            foreach (var connectionView in Desktop.Nodes.SelectMany(node => node.Connections))
+            {
+                var from = (connectionView.From.Node as MyNodeView).Node;
+                var to = (connectionView.To.Node as MyNodeView).Node;
+                var connection = (connectionView as MyNodeViewConnection);
+                // If order == 0, the node is likely an output.
+                connection.Backward = to.TopologicalOrder != 0 && from.TopologicalOrder >= to.TopologicalOrder;
+            }
+        }
     }      
 }

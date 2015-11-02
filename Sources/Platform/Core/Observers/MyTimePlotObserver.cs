@@ -919,11 +919,11 @@ namespace GoodAI.Core.Observers
         {
             if (declaredOwner == Target.Owner)
             {
-                return Target.Owner.Name + " - " + Target.Name;
+                return Target.Owner.Name + ": " + Target.Name;
             }
             else
             {
-                return declaredOwner.Name + " (" + Target.Owner.Name + ") - " + Target.Name;
+                return declaredOwner.Name + " (" + Target.Owner.Name + "): " + Target.Name;
             }
         }
 
