@@ -23,18 +23,18 @@ namespace GoodAI.Modules.VSA.Hashes
     ///     <li><h4>Simple:</h4></li>
     ///     <ul>
     ///         <li>Determinalistically randomizes bits in the output via <a href="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</a>.</li>
-    ///         <li>Modulates the output to the integer interval [0, <i>OutputBinCount</i>).</li>
+    ///         <li>Modulates the output to the integer interval <code>[0, <i>OutputBinCount</i>)</code>.</li>
     ///     </ul>
     /// 
     ///     <li><h4>Locality-sensitive</h4> (due to Datar-Immorlica-Indyk-Mirrokni’04):</li>
     ///     <ul>
-    ///         <li>Inputs should floating point numbers from [-1, 1].</li>
-    ///         <li>If <i>UseOffsets</i> is true, adds precomputed random values from [0, 2] to the corresponding inputs.</li>
+    ///         <li>Inputs should floating point numbers from <code>[-1, 1]</code>.</li>
+    ///         <li>If <i>UseOffsets</i> is true, adds precomputed random values from <code>[0, 2]</code> to the corresponding inputs.</li>
     ///         <li>Modulates the results by 2.</li>
-    ///         <li>Divides by 2/<i>InternalBinCount</i> and truncates to get the integer index of the bin.</li>
-    ///         <li>If <i>DoHashing</i> is true, hashes these values to [0, <i>OutputBinCount</i>) via Simple hashing.</li>
-    ///         <li>If <i>DoHashing</i> is false, hashes values to [0, <i>InternalBinCount</i>) and offsets them by i*<i>InternalBinCount</i>, where i is the value's indes in the vector.
-    ///             WARNING: This results in output index range in [0, <i>Input.Count</i> * <i>InternalBinCount</i>).</li>
+    ///         <li>Divides by <code>2/<i>InternalBinCount</i></code> and truncates to get the integer index of the bin.</li>
+    ///         <li>If <i>DoHashing</i> is true, hashes these values to <code>[0, <i>OutputBinCount</i>)</code> via Simple hashing.</li>
+    ///         <li>If <i>DoHashing</i> is false, hashes values to <code>[0, <i>InternalBinCount</i>)</code> and offsets them by <code>i*<i>InternalBinCount</i></code>, where <code>i</code> is the value's index in the vector.
+    ///             WARNING: This results in output index range in <code>[0, <i>Input.Count</i>*<i>InternalBinCount</i>)</code>.</li>
     ///     </ul>
     /// </ol>
     ///  
