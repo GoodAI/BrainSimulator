@@ -146,7 +146,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void ApplyCSharpRecipe()
         {
             //enable basic line numbering
-            scintilla.Margins[0].Width = 20;
+            scintilla.Margins[0].Width = 30;
 
             scintilla.Lexer = Lexer.Cpp;
             
