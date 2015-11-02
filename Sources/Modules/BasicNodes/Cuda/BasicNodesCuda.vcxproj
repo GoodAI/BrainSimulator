@@ -103,7 +103,7 @@
     <CudaCompile Include="Vision\VisionMath.cu" />
     <CudaCompile Include="Vision\VisionObsFce.cu" />
     <CudaCompile Include="VSA\MurmurHash3.cu" />
-    <CudaCompile Include="VSA\RandomMapper.cu" />
+    <CudaCompile Include="VSA\Mappers.cu" />
     <CudaCompile Include="VSA\SpatialCoder.cu" />
     <CudaCompile Include="VSA\SymbolicGrid.cu" />
   </ItemGroup>
