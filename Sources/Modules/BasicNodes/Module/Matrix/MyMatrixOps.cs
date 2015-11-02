@@ -136,6 +136,15 @@ namespace GoodAI.Modules.Matrix
                         Result.ColumnHint = A.Count / A.ColumnHint;
                     }
                 }
+                else if (operation == MatOperation.EuclidDist)
+                {
+                    if (B != null)
+                    {
+                        Result.Count = A.Count / A.ColumnHint;
+                        Result.ColumnHint = 1;
+                    }
+
+                }
             }
             return Result;
         }
@@ -176,6 +185,10 @@ namespace GoodAI.Modules.Matrix
                     is_it_correct |= A.Count == 1 || B.Count == 1;
                     is_it_correct |= (Math.Max(A.Count, B.Count) == Result.Count) && (Math.Max(A.ColumnHint, B.ColumnHint) == Result.ColumnHint);
                 }
+            }
+            else if (operation == MatOperation.EuclidDist)
+            {
+                is_it_correct = (A.ColumnHint == B.Count);
             }
             return is_it_correct;
 
