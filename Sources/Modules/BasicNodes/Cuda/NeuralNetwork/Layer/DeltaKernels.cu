@@ -62,11 +62,10 @@ extern "C"
 
 		if (threadId < batchSize * prevLayerSize)
 		{
-			int prevNeuronId = threadId % prevLayerSize;
 			float sum = prevDeltaPtr[threadId];
 
 			sum /= 1.0f - dropout;
-			sum *= EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevNeuronId]);
+			sum *= EvaluateDerivative(prevActFunc, prevWeighedInputPtr[threadId]);
 			prevDeltaPtr[threadId] = sum;
 		}
 	}
