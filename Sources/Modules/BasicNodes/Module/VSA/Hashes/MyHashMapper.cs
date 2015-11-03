@@ -11,11 +11,11 @@ using YAXLib;
 
 namespace GoodAI.Modules.VSA.Hashes
 {
-    ///<author>GoodAI</author>
-    ///<meta>mm</meta>
-    ///<status>working</status>
-    ///<summary>Constructs an index key for every element of the input. The range of the indices is [0, OutputBinCount).</summary>
-    ///<description>
+    /// <author>GoodAI</author>
+    /// <meta>mm</meta>
+    /// <status>working</status>
+    /// <summary>Constructs an index key for every element of the input. The range of the indices is [0, OutputBinCount).</summary>
+    /// <description>
     ///
     /// <h3> Features: </h3>
     /// Transforms each input value to an index depending on the mode:
