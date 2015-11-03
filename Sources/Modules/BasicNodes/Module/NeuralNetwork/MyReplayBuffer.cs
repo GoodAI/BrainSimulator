@@ -18,6 +18,7 @@ namespace GoodAI.Modules.NeuralNetwork
     ///         <ul>
     ///             <li>Sample: Sample to be stored in replay buffer</li>
     ///             <li>Target: Target associated with the sample to be stored in replay buffer</li>
+    ///             <li>StoreCondition: If condition is connected then replay buffer stores data only if condition[0] > 0. If condition is not connected then replay buffer stores data in each step.</li>
     ///             <li>SamplesBatch: Batch of samples randomly selected from replay buffer</li>
     ///             <li>TargetsBatch: Batch of targets associated with the samples batch</li>
     ///         </ul>
@@ -49,6 +50,9 @@ namespace GoodAI.Modules.NeuralNetwork
 
         [MyInputBlock(1)]
         public MyMemoryBlock<float> Target { get { return GetInput(1); } }
+
+        [MyInputBlock(2)]
+        public MyMemoryBlock<float> StoreCondition { get { return GetInput(2); } }
 
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> SamplesBatch
@@ -102,33 +106,57 @@ namespace GoodAI.Modules.NeuralNetwork
                 }
             }
 
+            public bool IsStoreRequired()
+            {
+                //is condition-pin set?
+                if (Owner.StoreCondition != null && Owner.StoreCondition.Count > 0)
+                {
+                    //if so then is it set to positive value?
+                    Owner.StoreCondition.SafeCopyToHost();
+                    if (Owner.StoreCondition.Host[0] <= 0.0f)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
             public override void Execute()
             {
-                int bufferIdx = m_samplesCount % Owner.ReplayBufferSize; // once the buffer is full, start rewriting old data from beginning
-
-                if (Owner.BufferStorage == MyReplayBufferStorage.Host)
+                //store part
+                if (IsStoreRequired())
                 {
-                    Owner.Sample.SafeCopyToHost();
-                    Owner.Target.SafeCopyToHost();
+                    int bufferIdx = m_samplesCount % Owner.ReplayBufferSize; // once the buffer is full, start rewriting old data from beginning
+
+                    if (Owner.BufferStorage == MyReplayBufferStorage.Host)
+                    {
+                        Owner.Sample.SafeCopyToHost();
+                        Owner.Target.SafeCopyToHost();
+                    }
+
+                    ReplayBufferCopy(Owner.Sample, Owner.SampleReplayBuffer, 0, bufferIdx * Owner.Sample.Count, Owner.Sample.Count);
+                    ReplayBufferCopy(Owner.Target, Owner.TargetReplayBuffer, 0, bufferIdx * Owner.Target.Count, Owner.Target.Count);
+
+                    m_samplesCount++;
                 }
 
-                ReplayBufferCopy(Owner.Sample, Owner.SampleReplayBuffer, 0, bufferIdx * Owner.Sample.Count, Owner.Sample.Count);
-                ReplayBufferCopy(Owner.Target, Owner.TargetReplayBuffer, 0, bufferIdx * Owner.Target.Count, Owner.Target.Count);
-                
-                m_samplesCount++;
-                
-                for (int batchIdx = 0; batchIdx < Owner.BatchSize; batchIdx++)
+                //minibatch part
+                if(m_samplesCount > 0)
                 {
-                    int randomBufferIdx = m_rand.Next(0, Math.Min(m_samplesCount, Owner.ReplayBufferSize)); // select a random sample from already filled part of replay buffer
+                    for (int batchIdx = 0; batchIdx < Owner.BatchSize; batchIdx++)
+                    {
+                        int randomBufferIdx = m_rand.Next(0, Math.Min(m_samplesCount, Owner.ReplayBufferSize)); // select a random sample from already filled part of replay buffer
 
-                    ReplayBufferCopy(Owner.SampleReplayBuffer, Owner.SamplesBatch, randomBufferIdx * Owner.Sample.Count, batchIdx * Owner.Sample.Count, Owner.Sample.Count);
-                    ReplayBufferCopy(Owner.TargetReplayBuffer, Owner.TargetsBatch, randomBufferIdx * Owner.Target.Count, batchIdx * Owner.Target.Count, Owner.Target.Count);
-                }
+                        ReplayBufferCopy(Owner.SampleReplayBuffer, Owner.SamplesBatch, randomBufferIdx * Owner.Sample.Count, batchIdx * Owner.Sample.Count, Owner.Sample.Count);
+                        ReplayBufferCopy(Owner.TargetReplayBuffer, Owner.TargetsBatch, randomBufferIdx * Owner.Target.Count, batchIdx * Owner.Target.Count, Owner.Target.Count);
+                    }
 
-                if (Owner.BufferStorage == MyReplayBufferStorage.Host)
-                {
-                    Owner.SamplesBatch.SafeCopyToDevice();
-                    Owner.TargetsBatch.SafeCopyToDevice();
+                    if (Owner.BufferStorage == MyReplayBufferStorage.Host)
+                    {
+                        Owner.SamplesBatch.SafeCopyToDevice();
+                        Owner.TargetsBatch.SafeCopyToDevice();
+                    }
                 }
             }
         }
@@ -144,5 +172,19 @@ namespace GoodAI.Modules.NeuralNetwork
                 TargetsBatch.Count = Target.Count * BatchSize;
             }
         }
+
+        public override void Validate(MyValidator validator)
+        {
+            if (Sample == null)
+            {
+                validator.AddError(this, "Missing input 'Sample'!");
+            }
+
+            if (Target == null)
+            {
+                validator.AddError(this, "Missing input 'Target'!");
+            }
+        }
+
     }
 }
