@@ -93,5 +93,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         //parameterless constructor
         public MyAbstractWeightLayer() { }
+
     }
 }
