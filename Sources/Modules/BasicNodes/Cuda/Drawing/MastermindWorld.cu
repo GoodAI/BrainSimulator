@@ -16,20 +16,20 @@ extern "C"
 	/*
 	Draws a background color into a 3-component image.
 	inputWidth & inputHeight: map dimensions in pixels
+	gridDim.y = 3, one for each color component
 	*/
 	__global__ void DrawRgbBackgroundKernel(float *target, int inputWidth, int inputHeight,
 		float r, float g, float b)
 	{
-		int id = blockDim.x * blockIdx.y * gridDim.x
-			+ blockDim.x * blockIdx.x
+		int id = blockDim.x * ( blockIdx.y * gridDim.x + blockIdx.x)
 			+ threadIdx.x;
 
 		int imagePixels = inputWidth * inputHeight; 
 
-		if (id < imagePixels * 3) // 3 for RGB 
+		if (id < 3*imagePixels) // 3 for RGB 
 		{
 			float color = 0.0f;
-			switch (id / imagePixels)
+			switch (blockIdx.y)
 			{
 			case 0:
 				color = r;
