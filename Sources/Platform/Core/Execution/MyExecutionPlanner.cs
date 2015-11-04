@@ -66,7 +66,7 @@ namespace GoodAI.Core.Execution
             {
                 MyTask task = node.GetTaskByPropertyName(taskName);
 
-                if (task != null && initPhase && task.OneShot || !initPhase && !task.OneShot)
+                if (task != null && !task.DesignTime && (initPhase && task.OneShot || !initPhase && !task.OneShot))
                 {
                     defaultPlanContent.Add(task);
                 }

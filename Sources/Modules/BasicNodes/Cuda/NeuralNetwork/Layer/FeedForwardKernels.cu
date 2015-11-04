@@ -127,7 +127,7 @@ extern "C"
 			float mu = means[j], sigma = sigmas[j], x = randomNormalPtr[j];
 
 			// input means after applying noise
-			noisyInput[j] = mu + x * sigma;
+			noisyInput[j] = mu + x * powf(sigma, 2);
 
 			// squashing function applied to noisy input
 			outputPtr[j] = Evaluate(activationFunction, noisyInput[j]);

@@ -428,7 +428,7 @@ namespace GoodAI.Modules.Harm
             }
             for (int i = 0; i < inputData.Length; i++)
             {
-                m_vars[i].RegisterValue(inputData[i], i, this);
+                m_vars[i].RegisterValue((int)inputData[i], i, this);
             }
             VarHistory.RegisterChanges();
         }

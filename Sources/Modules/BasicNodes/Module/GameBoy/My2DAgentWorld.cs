@@ -17,10 +17,13 @@ using YAXLib;
 namespace GoodAI.Modules.GameBoy
 {
     /// <author>GoodAI</author>
-    /// <meta>df</meta>
-    /// <status>WIP</status>
+    /// <meta>df,jv</meta>
+    /// <status>Working</status>
     /// <summary>Simple 2D topview world with agent and target.</summary>
-    /// <description>Agent and target positions are available. Agent movement can be controlled.</description>
+    /// <description>Agent and target positions are available. Agent moves continuously in the 2D environment. 
+    /// Movement is controlled by 9 values (8 directions + no operation), which change velocity in the corresponding direction. 
+    /// The goal is to reach the target, if target is reached, the event signal is sent and goal is placed onto new randomly generated position.
+    /// </description>
     public class My2DAgentWorld : MyWorld
     {
         public class MyGameObject
@@ -87,8 +90,8 @@ namespace GoodAI.Modules.GameBoy
 
             Bitmaps.Count = 0;
 
-            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld\agent.png");
-            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld\lightsOn.png");
+            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld3\agent.png");
+            Bitmaps.Count += LoadAndGetBitmapSize(@"res\gridworld3\lightsOn.png");
 
             AgentPosition.Count = 2;
             TargetPosition.Count = 2;
@@ -130,6 +133,9 @@ namespace GoodAI.Modules.GameBoy
         public MyUpdateTask UpdateTask { get; private set; }
         public MyRenderTask RenderGameTask { get; private set; }
 
+        /// <summary>
+        /// Initialize the simulation, load bitmaps.
+        /// </summary>
         [MyTaskInfo(OneShot = true)]
         public class MyInitTask : MyTask<My2DAgentWorld>
         {
@@ -166,7 +172,7 @@ namespace GoodAI.Modules.GameBoy
                 Owner.m_gameObjects = new List<MyGameObject>();
                 CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);
 
-                Bitmap bitmap = Owner.m_bitmapTable[@"res\gridworld\agent.png"];
+                Bitmap bitmap = Owner.m_bitmapTable[@"res\gridworld3\agent.png"];
 
                 MyGameObject agent = new MyGameObject()
                 {
@@ -175,7 +181,7 @@ namespace GoodAI.Modules.GameBoy
                 };
                 offset += FillWithChannelFromBitmap(bitmap, 0, Owner.Bitmaps.Host, offset);
 
-                bitmap = Owner.m_bitmapTable[@"res\gridworld\lightsOn.png"];
+                bitmap = Owner.m_bitmapTable[@"res\gridworld3\lightsOn.png"];
 
                 MyGameObject target = new MyGameObject()
                 {
@@ -193,6 +199,9 @@ namespace GoodAI.Modules.GameBoy
             }
         }
 
+        /// <summary>
+        /// Render the world to the visual output.
+        /// </summary>
         public class MyRenderTask : MyTask<My2DAgentWorld>
         {
             private MyCudaKernel m_kernel;
@@ -216,12 +225,104 @@ namespace GoodAI.Modules.GameBoy
             }
         }
 
+        /// <summary>
+        /// Receive agent's action, apply the world rules and publish new state.
+        /// 
+        /// <description>
+        /// <h3>Parameters</h3>
+        /// <ul>
+        ///     <li> <b>ReachTargetSignal: </b>This value is set to the Event output for one time step, if the target is reached.</li>
+        ///     <li> <b>AgentVelocity: </b>How fast the agent moves.</li>
+        ///     <li> <b>DeltaT: </b>Time shift at each simulation step.</li>
+        ///     <li> <b>TargetRadius: </b>Radius in which the target is considered as reached.</li>
+        ///     <li> <b>ResetCountouwnSteps: </b>How many steps after reaching the target to wait before generating new target.</li>
+        /// </ul>
+        /// 
+        /// </description>
+        /// </summary>
         public class MyUpdateTask : MyTask<My2DAgentWorld>
-        {            
+        {
+            #region parameters
+
             [MyBrowsable, Category("Events")]
-            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure")]
-            public float REACH_TARGET { get; set; }            
-            
+            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"), 
+            Description("This value is set to the Event output for one time step, if the target is reached.")]
+            public float ReachTargetSignal
+            {
+                get { return m_reachTarget; }
+                set { m_reachTarget = value; }
+            }
+            private float m_reachTarget;
+
+            [MyBrowsable, Category("Events")]
+            [YAXSerializableField(DefaultValue = 4.0f), YAXElementFor("Structure"),
+            Description("How fast the agent moves.")]
+            public float AgentVelocity
+            {
+                get { return m_agentVelocity; }
+                set
+                {
+                    if (value > 0)
+                    {
+                        m_agentVelocity = value;
+                    }
+                }
+            }
+            private float m_agentVelocity;
+
+
+            [MyBrowsable, Category("Events")]
+            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"),
+            Description("Time shift at each simulation step.")]
+            public float DeltaT
+            {
+                get { return m_deltaT; }
+                set
+                {
+                    if (value > 0)
+                    {
+                        m_deltaT = value;
+                    }
+                }
+            }
+            private float m_deltaT;
+
+
+            [MyBrowsable, Category("Events")]
+            [YAXSerializableField(DefaultValue = 15.0f), YAXElementFor("Structure"),
+            Description("Radius in which the target is considered as reached.")]
+            public float TargetRadius
+            {
+                get { return m_targetRadius; }
+                set
+                {
+                    if (value > 0)
+                    {
+                        m_targetRadius = value;
+                    }
+                }
+            }
+            private float m_targetRadius;
+
+
+            [MyBrowsable, Category("Events")]
+            [YAXSerializableField(DefaultValue = 5), YAXElementFor("Structure"),
+            Description("How many steps after reaching the target to wait before generating new target.")]
+            public int ResetCountouwnSteps
+            {
+                get { return m_resetCountdownSteps; }
+                set
+                {
+                    if (value >= 0)
+                    {
+                        m_resetCountdownSteps = value;
+                    }
+                }
+            }
+            private int m_resetCountdownSteps;
+
+            #endregion
+
             private Random m_random = new Random();
 
             public override void Init(int nGPU)
@@ -289,16 +390,11 @@ namespace GoodAI.Modules.GameBoy
                 target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * (float)m_random.NextDouble();
             }
 
-            private const float AGENT_VELOCITY = 4.0f;
-            private const float DELTA_T = 1.0f;
-            private const float TARGET_RADIUS = 15.0f;
-            private const int RESET_COUNTDOWN_STEPS = 5;
-
             private int m_resetCountDown;
 
             private void ResolveAgentEvents(MyGameObject agent, MyGameObject target)
             {
-                float2 futurePos = agent.position + agent.velocity * DELTA_T;
+                float2 futurePos = agent.position + agent.velocity * DeltaT;
 
                 //topSide
                 if (futurePos.y < 0 && agent.velocity.y < 0)
@@ -325,20 +421,20 @@ namespace GoodAI.Modules.GameBoy
                 //target
                 float2 relPos = agent.position - target.position;
 
-                if (relPos.x * relPos.x + relPos.y * relPos.y < TARGET_RADIUS * TARGET_RADIUS)                
+                if (relPos.x * relPos.x + relPos.y * relPos.y < TargetRadius * TargetRadius)                
                 {
-                    Owner.Event.Host[0] += REACH_TARGET;
+                    Owner.Event.Host[0] += ReachTargetSignal;
 
                     target.position.x = (Owner.DISPLAY_WIDTH - target.pixelSize.x) * (float)m_random.NextDouble();
                     target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * (float)m_random.NextDouble();
 
                     if (m_resetCountDown == 0)
                     {
-                        m_resetCountDown = RESET_COUNTDOWN_STEPS;
+                        m_resetCountDown = ResetCountouwnSteps;
                     }
                 }
 
-                agent.position = agent.position + agent.velocity * DELTA_T;                                
+                agent.position = agent.position + agent.velocity * DeltaT;                                
             }
 
             private void ApplyControl(MyGameObject agent)
@@ -360,20 +456,20 @@ namespace GoodAI.Modules.GameBoy
 
                 if (maxAction < 3)
                 {
-                    agent.velocity.y = -AGENT_VELOCITY;
+                    agent.velocity.y = -AgentVelocity;
                 }
                 else if (maxAction >= 6)
                 {
-                    agent.velocity.y = AGENT_VELOCITY;
+                    agent.velocity.y = AgentVelocity;
                 }
 
                 if (maxAction % 3 == 0)
                 {
-                    agent.velocity.x = -AGENT_VELOCITY;
+                    agent.velocity.x = -AgentVelocity;
                 }
                 else if (maxAction % 3 == 2)
                 {
-                    agent.velocity.x = AGENT_VELOCITY;
+                    agent.velocity.x = AgentVelocity;
                 }                               
             }            
         }

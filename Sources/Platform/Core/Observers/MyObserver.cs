@@ -440,7 +440,7 @@ namespace GoodAI.Core.Observers
         { 
             get 
             { 
-                return MyProject.ShortenNodeTypeName(GetType()) + ": " + TargetIdentifier; 
+                return TargetIdentifier + ": " + MyProject.ShortenNodeTypeName(GetType());
             } 
         }
 

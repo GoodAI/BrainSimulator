@@ -77,11 +77,18 @@ namespace GoodAI.Modules.Matrix
                     }
                     else if (ACount != 1 || BCount != 1)// A*B   matrix multiplication
                     {
+                        // Cublas is using fortran matrices.. thus tey have to be swapped such as described in: http://peterwittek.com/cublas-matrix-c-style.html
+                        int m = BColumnHint;
+                        int n = ACount / AColumnHint;
+                        int k = AColumnHint;
+                        int lda = BColumnHint;
+                        int ldb = AColumnHint;
+                        int ldc = ResultColumnHint;
                         MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.NonTranspose,
-                            ACount / AColumnHint, BColumnHint, AColumnHint, 1.0f,
-                            A, ACount / AColumnHint,
-                            B, BCount / BColumnHint,
-                            beta, Result, ResultColumnHint);
+                            m, n, k, 1.0f,
+                            B, lda,
+                            A, ldb,
+                            beta, Result, ldc);
                     }
                     break;
                 case MatOperation.DotProd:
@@ -136,11 +143,11 @@ namespace GoodAI.Modules.Matrix
             Result.Fill(.0f);
             switch (operation)
             {
-                case MatOperation.MinIndex:
+                case MatOperation.AbsMinIndex:
                     itmp = MyCublasFactory.Instance.Min(A.GetDevice(callee), 1);
                     Result.Fill((float)(itmp - 1));
                     break;
-                case MatOperation.MaxIndex:
+                case MatOperation.AbsMaxIndex:
                     itmp = MyCublasFactory.Instance.Max(A.GetDevice(callee), 1);
                     Result.Fill((float)(itmp - 1));
                     break;
@@ -198,7 +205,7 @@ namespace GoodAI.Modules.Matrix
 
         public static MatOperation AvailableOperations()
         {
-            return MatOperation.Multiplication | MatOperation.MinIndex | MatOperation.MaxIndex | MatOperation.DotProd | MatOperation.Norm2 | MatOperation.Normalize | MatOperation.Minus | MatOperation.Copy;
+            return MatOperation.Multiplication | MatOperation.AbsMinIndex | MatOperation.AbsMaxIndex | MatOperation.DotProd | MatOperation.Norm2 | MatOperation.Normalize | MatOperation.Minus | MatOperation.Copy;
         }
     }
 }

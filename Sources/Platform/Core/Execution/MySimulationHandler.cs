@@ -246,11 +246,6 @@ namespace GoodAI.Core.Execution
                     MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
                     e.Cancel = true;
                 }
-
-                if (ProgressChanged != null)
-                {
-                    ProgressChanged(this, null);
-                }   
             }
             else if (State == SimulationState.RUNNING)
             {
@@ -306,6 +301,11 @@ namespace GoodAI.Core.Execution
         // NOT UI thread
         void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (ProgressChanged != null)
+            {
+                ProgressChanged(this, null);
+            }
+
             if (e.Cancelled && !doPause)
             {
                 DoStop();
@@ -328,8 +328,7 @@ namespace GoodAI.Core.Execution
         {            
             MyLog.INFO.WriteLine("Updating memory blocks...");
 
-            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
-            List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
+            List<MyNode> orderedNodes = OrderNetworkNodes(Project.Network);
 
             if (!orderedNodes.Any())
             {
@@ -366,6 +365,17 @@ namespace GoodAI.Core.Execution
             return anyOutputChanged;                        
         }
 
+        private static List<MyNode> OrderNetworkNodes(MyNetwork network)
+        {
+            IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
+            return topoOps.EvaluateOrder(network);
+        }
+
+        public void RefreshTopologicalOrder()
+        {
+            OrderNetworkNodes(Project.Network);
+        }
+
         private bool UpdateAndCheckChange(MyNode node)
         {
             node.PushOutputBlockSizes();
@@ -377,11 +387,14 @@ namespace GoodAI.Core.Execution
 
         private void DoStop()
         {
-            if (m_closeCallback != null)
-                Simulation.Finish();
-
+            // TODO(HonzaS): This is hacky, it needs to be redone properly.
+            // 1) Stop the simulation if needed.
+            // 2) Set the state to STOPPED => notifies the nodes to clean up.
+            // 3) Clear everything else if we're quitting.
+            var stopping = false;
             if (State != SimulationState.STOPPED)
             {
+                stopping = true;
                 MyLog.INFO.WriteLine("Cleaning up world...");
                 Project.World.Cleanup();
 
@@ -393,10 +406,16 @@ namespace GoodAI.Core.Execution
 
                 // This needs to be set before Clear is called so that nodes can be notified about the state change.
                 State = SimulationState.STOPPED;
+            }
 
+            if (m_closeCallback != null)
+                Simulation.Finish();
+
+            if (stopping)
+            {
                 MyLog.INFO.WriteLine("Clearing simulation...");
                 // This will destroy the collection that holds the nodes, so it has to be the last thing.
-                Simulation.Clear();            
+                Simulation.Clear();
                 MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
 
                 if (SimulationStopped != null)

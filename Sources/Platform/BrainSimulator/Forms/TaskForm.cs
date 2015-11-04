@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using System;
 using System.Drawing;
 using System.Reflection;
@@ -53,7 +54,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                     if (task != null)
                     {
-                        ListViewItem item = new ListViewItem(new string[] { task.Name, task.OneShot.ToString() });
+                        ListViewItem item = new ListViewItem(new string[] { task.Name, task.OneShot ? "Init" : "" });
                         item.Checked = task.Enabled;
                         item.Tag = task;                        
                         listView.Items.Add(item);
@@ -99,9 +100,12 @@ namespace GoodAI.BrainSimulator.Forms
             if (!isUpdating)
             {
                 MyTask task = e.Item.Tag as MyTask;
-                task.Enabled = e.Item.Checked;
-                
-                UpdateTasksEnableState();
+
+                if (!task.DesignTime)
+                {
+                    task.Enabled = e.Item.Checked;
+                    UpdateTasksEnableState();
+                }
             }            
         }
 
@@ -147,24 +151,41 @@ namespace GoodAI.BrainSimulator.Forms
 
             int xOffset = 0;
 
+            MyTask task = e.Item.Tag as MyTask;
+
             if (e.ColumnIndex == 0)
             {
-                Point glyphPoint = new Point(4, e.Item.Position.Y + 2);
+                Point glyphPoint = new Point(4, e.Item.Position.Y + 2);            
 
-                MyTask task = e.Item.Tag as MyTask;
-
-                if (string.IsNullOrEmpty(task.TaskGroupName)) 
+                if (!string.IsNullOrEmpty(task.TaskGroupName)) 
+                {
+                    RadioButtonState state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
+                    RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
+                    xOffset = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;                    
+                }
+                else if (task.DesignTime)
+                {                                        
+                    xOffset = CheckBoxRenderer.GetGlyphSize(e.Graphics, CheckBoxState.UncheckedNormal).Width + 4;
+                }
+                else
                 {
                     CheckBoxState state = e.Item.Checked ? CheckBoxState.CheckedNormal : CheckBoxState.UncheckedNormal;
                     CheckBoxRenderer.DrawCheckBox(e.Graphics, glyphPoint, state);
                     xOffset = CheckBoxRenderer.GetGlyphSize(e.Graphics, state).Width + 4;    
                 }
-                else 
-                {
-                    RadioButtonState state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
-                    RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
-                    xOffset = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;
+            }
+            else if (e.ColumnIndex == 1 && task.DesignTime)
+            {                
+                PushButtonState buttonState = PushButtonState.Disabled;
+
+                if (m_mainForm.SimulationHandler.CanStart && task.Enabled)
+                {                    
+                    buttonState =
+                        m_lastHitTest != null && e.Item == m_lastHitTest.Item && e.SubItem == m_lastHitTest.SubItem ?
+                        PushButtonState.Pressed : PushButtonState.Normal;
                 }
+
+                ButtonRenderer.DrawButton(e.Graphics, e.Bounds, "Execute", listView.Font, false, buttonState);
             }
             
             //add a 2 pixel buffer the match default behavior
@@ -194,6 +215,59 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 DoubleBuffered = true;
             }
+        }
+
+        private void listView_Click(object sender, EventArgs e)
+        {
+            Point mousePos = listView.PointToClient(Control.MousePosition);
+            ListViewHitTestInfo hitTest = listView.HitTest(mousePos);
+            int columnIndex = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
+
+            if (columnIndex == 1)
+            {
+                MyTask task = hitTest.Item.Tag as MyTask;
+
+                if (m_mainForm.SimulationHandler.CanStart && task.Enabled && task.DesignTime)
+                {
+                    task.Execute();
+                }
+            }
+        }
+
+        private ListViewHitTestInfo m_lastHitTest;
+
+        private void listView_MouseDown(object sender, MouseEventArgs e)
+        {
+            Point mousePos = listView.PointToClient(Control.MousePosition);
+            m_lastHitTest = listView.HitTest(mousePos);
+            listView.Invalidate();
+        }
+
+        private void listView_MouseUp(object sender, MouseEventArgs e)
+        {
+            m_lastHitTest = null;
+            listView.Invalidate();
+        }
+
+        private void listView_MouseLeave(object sender, EventArgs e)
+        {
+            m_lastHitTest = null;
+            listView.Invalidate();
+        }
+
+        private void TaskForm_Load(object sender, EventArgs e)
+        {
+            m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
+        }
+
+        void SimulationHandler_StateChanged(object sender, Core.Execution.MySimulationHandler.StateEventArgs e)
+        {
+            listView.Invalidate();
+        }
+
+        private void TaskForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            m_mainForm.SimulationHandler.StateChanged -= SimulationHandler_StateChanged;
         }
     }
 }

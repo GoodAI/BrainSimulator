@@ -197,6 +197,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
             // remove group backprop tasks (they should be called from the individual layers)
             newPlan.RemoveAll(newPlan.Where(task => task is MyAbstractBackpropTask && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList().Contains);
+            //TODO - include dropout in the new version of planner
             newPlan.RemoveAll(newPlan.Where(task => task is MyCreateDropoutMaskTask).ToList().Contains);
             //newPlan.RemoveAll(newPlan.Where(task => task is IMyOutputDeltaTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is IMyDeltaTask).ToList().Contains);

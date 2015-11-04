@@ -22,8 +22,8 @@
 
     <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true" />    
     <Node type="GoodAI.Modules.Common.MyInverseTransformSampling" CanBeAdded="true" BigIcon="distribution_big.png" SmallIcon="distribution.png" />
-    <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" />
-    <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" BigIcon="loopgroup_big.png" SmallIcon="loopgroup.png" />
+    <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png" />
 
     <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png" />
     
@@ -111,12 +111,21 @@
 
   	<Node type="GoodAI.Modules.LSTM.MyLSTMLayer" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyStackLayer" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
-    <Node type="GoodAI.Modules.Scripting.MyCSharpNode" CanBeAdded="true" />    
+    <Node type="GoodAI.Modules.Scripting.MyCSharpNode" CanBeAdded="true" BigIcon="csharp_big.png" SmallIcon="csharp.png"/>
+
+    <Node type="GoodAI.Modules.Join.MyStackingNode" CanBeAdded="true" BigIcon="stacking_big.png" SmallIcon="stacking.png"/>
+    <Node type="GoodAI.Modules.Join.MyDistanceNode" CanBeAdded="true" BigIcon="distance_big.png" SmallIcon="distance.png"/>
+
+    <Node type="GoodAI.Modules.LTM.MyTextObserverNode" CanBeAdded="true" BigIcon="textOutput_big.png" SmallIcon="textOutput.png">
+      <Observer type="GoodAI.Modules.LTM.MyVectorTextObserver" />
+    </Node>
+    <Node type="GoodAI.Modules.LTM.MyTextInputNode" CanBeAdded="true" BigIcon="textInput_big.png" SmallIcon="textInput.png"/>
     
   </KnownNodes>
   <KnownWorlds>
     <World type="GoodAI.Modules.Motor.MyArmWorld" />
     <World type="GoodAI.Modules.TextProcessing.TextWorld" CanBeAdded="true"/>
+    <World type="GoodAI.Modules.LTM.MyAssociativeNetworkWorld" CanBeAdded="true"/>
     
     <World type="GoodAI.Modules.Motor.My3DManipulatorWorld" CanBeAdded="true">
       <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
@@ -132,6 +141,9 @@
     <World type="GoodAI.Modules.GridWorld.MyGridWorld" />
     <World type="GoodAI.Modules.TicTacToe.MyTicTacToeWorld" />
     <World type="GoodAI.Modules.GameBoy.My2DAgentWorld" />
+    <World type="HTSLmodule.Worlds.MyAnimationPredictionWorld" />
+
+    <World type="GoodAI.Modules.MastermindWorld.MyMastermindWorld" CanBeAdded="true" />
     
   </KnownWorlds>
 </Configuration>

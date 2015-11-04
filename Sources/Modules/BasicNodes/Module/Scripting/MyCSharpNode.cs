@@ -174,6 +174,9 @@ namespace GoodAI.Modules.Scripting
         internal MethodInfo ScriptInitMethod { get; private set; }
         internal MethodInfo ScriptExecuteMethod { get; private set; }
 
+        //internal MethodInfo ScriptOutputNameGetter { get; private set; }
+        //internal MethodInfo ScriptInputNameGetter { get; private set; }
+
         public override void Validate(MyValidator validator)
         {
             ScriptInitMethod = null;
@@ -187,7 +190,13 @@ namespace GoodAI.Modules.Scripting
             };
 
             parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
+            parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
+
+            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll");
+            if (openTKAssemblies.Count() > 0)
+                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
 
             CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
             Assembly compiledAssembly = null;
@@ -211,26 +220,46 @@ namespace GoodAI.Modules.Scripting
             {
                 try
                 {
-                    Type eclosingType = compiledAssembly.GetType("Runtime.Script");
-                    ScriptInitMethod = eclosingType.GetMethod("Init");
-                    validator.AssertError(ScriptInitMethod != null, this, "Init() method not found in compiled script");
-                }
-                catch (Exception e)
-                {
-                    validator.AddError(this, "Init() method retrieval failed: " + e.GetType().Name + ": " + e.Message);
-                }
+                    Type enclosingType = compiledAssembly.GetType("Runtime.Script");
 
-                try
-                {
-                    Type eclosingType = compiledAssembly.GetType("Runtime.Script");
-                    ScriptExecuteMethod = eclosingType.GetMethod("Execute");
+                    ScriptInitMethod = enclosingType.GetMethod("Init");
+                    validator.AssertError(ScriptInitMethod != null, this, "Init() method not found in compiled script");
+
+                    ScriptExecuteMethod = enclosingType.GetMethod("Execute");
                     validator.AssertError(ScriptExecuteMethod != null, this, "Execute() method not found in compiled script");
+
+                    /*
+                    ScriptInputNameGetter = enclosingType.GetMethod("GetInputName");
+
+                    if (!CheckNameGetterMethod(ScriptInputNameGetter)) 
+                    {
+                        validator.AddWarning(this, "\"string GetInputName(int)\" method not found in compiled script");
+                        ScriptInputNameGetter = null;
+                    }
+
+                    ScriptOutputNameGetter = enclosingType.GetMethod("GetOutputName");
+
+                    if (!CheckNameGetterMethod(ScriptOutputNameGetter))
+                    {
+                        validator.AddWarning(this, "\"string GetOutputName(int)\" method not found in compiled script");
+                        ScriptOutputNameGetter = null;
+                    }
+                    */
                 }
                 catch (Exception e)
                 {
-                    validator.AddError(this, "Execute() method retrieval failed: " + e.GetType().Name + ": " + e.Message);
-                }                
+                    validator.AddError(this, "Script analysis failed: " + e.GetType().Name + ": " + e.Message);
+                }                             
             }
+        }
+
+        private bool CheckNameGetterMethod(MethodInfo methodInfo)
+        {
+            if (methodInfo == null ||
+                methodInfo.ReturnParameter.ParameterType != typeof(string) ||
+                methodInfo.GetParameters().Length != 1 ||
+                methodInfo.GetParameters()[0].ParameterType != typeof(int)) return false;
+            else return true;
         }
 
         #endregion
@@ -256,7 +285,12 @@ namespace GoodAI.Modules.Scripting
                 {
                     for (int i = 0; i < Owner.InputBranches; i++)
                     {
-                        Owner.GetAbstractInput(i).SafeCopyToHost();
+                        MyAbstractMemoryBlock mb = Owner.GetAbstractInput(i);
+
+                        if (mb != null)
+                        {
+                            mb.SafeCopyToHost();
+                        }
                     }
 
                     try
@@ -270,7 +304,12 @@ namespace GoodAI.Modules.Scripting
 
                     for (int i = 0; i < Owner.OutputBranches; i++)
                     {
-                        Owner.GetAbstractOutput(i).SafeCopyToDevice();
+                        MyAbstractMemoryBlock mb = Owner.GetAbstractOutput(i);
+
+                        if (mb != null)
+                        {
+                            mb.SafeCopyToDevice();
+                        }
                     }
                 }
                 else
@@ -297,7 +336,12 @@ namespace GoodAI.Modules.Scripting
             {
                 for (int i = 0; i < Owner.InputBranches; i++)
                 {
-                    Owner.GetAbstractInput(i).SafeCopyToHost();
+                    MyAbstractMemoryBlock mb = Owner.GetAbstractInput(i);
+
+                    if (mb != null)
+                    {
+                        mb.SafeCopyToHost();
+                    }
                 }
 
                 if (Owner.ScriptExecuteMethod != null)
@@ -318,7 +362,12 @@ namespace GoodAI.Modules.Scripting
 
                 for (int i = 0; i < Owner.OutputBranches; i++)
                 {
-                    Owner.GetAbstractOutput(i).SafeCopyToDevice();
+                    MyAbstractMemoryBlock mb = Owner.GetAbstractOutput(i);
+
+                    if (mb != null)
+                    {
+                        mb.SafeCopyToDevice();
+                    }
                 }
             }
         }

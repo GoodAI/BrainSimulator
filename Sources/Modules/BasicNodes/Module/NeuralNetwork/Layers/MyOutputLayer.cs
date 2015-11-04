@@ -33,7 +33,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-            validator.AssertError(Target != null, this, "Target not defiend");
+            validator.AssertError(Target != null, this, "Target of output layer \"" + this.Name + "\" is not defined.");
         }
     }
 }

@@ -119,7 +119,9 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             // base.Validate(validator);
             validator.AssertError(Neurons > 0, this, "Number of neurons should be > 0");
+            validator.AssertError(Input != null, this, "Neural network node \"" + this.Name + "\" has no input.");
             validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
+
         }
 
         public MyTask ForwardTask { get; protected set; }

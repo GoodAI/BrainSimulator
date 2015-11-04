@@ -108,12 +108,13 @@ extern "C"
 
 
 
-	__global__  void FillImByEnergy (unsigned int * texture , float* mask , int size_im , float* energiesPerElement , float max_energy){
+	__global__  void FillImByEnergy (unsigned int * texture , float* mask , int size_im , float* energiesPerElement , float max_energy, float min_energy){
 		int idx = blockDim.x*blockIdx.y*gridDim.x	+ blockDim.x*blockIdx.x	+ threadIdx.x;
 		if (idx<size_im){
 			int id_element = mask[idx];
 			float energy   = energiesPerElement[id_element];
-			texture[idx]   = hsva_to_uint_rgba(1.0f, .0f, energy/max_energy, 1.0f);
+            float value    = max_energy!=0  ?  (energy-min_energy)/max_energy  :  (energy-min_energy);  
+			texture[idx]   = hsva_to_uint_rgba(1.0f, 0.0f, value, 1.0f);
 		}
 	}
 

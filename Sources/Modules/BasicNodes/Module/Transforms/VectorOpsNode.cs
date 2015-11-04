@@ -16,20 +16,20 @@ namespace GoodAI.Modules.Transforms
 {
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
-    /// <status> WIP </status>
-    /// <summary></summary>
+    /// <status>Working</status>
+    /// <summary>Performs 2D vectors operations. Supports rotation and computing an angle between vectors</summary>
     /// <description>
     /// </description>
     public class MyVectorOpsNode : MyWorkingNode
     {
         [MyInputBlock]
-        public MyMemoryBlock<float> InputA
+        public MyMemoryBlock<float> A
         {
             get { return GetInput(0); }
         }
 
         [MyInputBlock]
-        public MyMemoryBlock<float> InputB
+        public MyMemoryBlock<float> B
         {
             get { return GetInput(1); }
         }
@@ -50,13 +50,24 @@ namespace GoodAI.Modules.Transforms
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = InputA != null ? InputA.Count : 1;
-            Output.ColumnHint = InputA != null ? InputA.ColumnHint : 1;
+            Output.Count = A != null ? A.Count : 1;
+            Output.ColumnHint = A != null ? A.ColumnHint : 1;
 
             Temp.ColumnHint = Output.Count;
             Temp.Count = Temp.ColumnHint * Temp.ColumnHint;
         }
 
+        public override string Description
+        {
+            get
+            {
+                return "VectorOps";
+            }
+        }
+
+        /// <summary>
+        /// Rotates 2D vector in first input by number of degrees specified in the first element of the second input
+        /// </summary>
         [Description("Rotates 2D vector")]
         public class MyRotateTask : MyTask<MyVectorOpsNode>
         {
@@ -69,14 +80,17 @@ namespace GoodAI.Modules.Transforms
 
             public override void Execute()
             {
-                m_vecOps.Run(VectorOps.VectorOperation.Rotate, Owner.InputA, Owner.InputB, Owner.Output);
+                m_vecOps.Run(VectorOps.VectorOperation.Rotate, Owner.A, Owner.B, Owner.Output);
             }
         }
 
+        /// <summary>
+        /// Computes (un)directed angle between two 2D vectors
+        /// </summary>
         [Description("Angle between 2 vectors")]
         public class MyAngleTask : MyTask<MyVectorOpsNode>
         {
-            [MyBrowsable, Category("Params")]
+            [MyBrowsable, Category("Params"), Description("Computes directed angle if set to True")]
             [YAXSerializableField(DefaultValue = false)]
             public bool Directed { get; set; }
 
@@ -91,11 +105,11 @@ namespace GoodAI.Modules.Transforms
             {
                 if (Directed)
                 {
-                    m_vecOps.Run(VectorOps.VectorOperation.DirectedAngle, Owner.InputA, Owner.InputB, Owner.Output);
+                    m_vecOps.Run(VectorOps.VectorOperation.DirectedAngle, Owner.A, Owner.B, Owner.Output);
                 }
                 else
                 {
-                    m_vecOps.Run(VectorOps.VectorOperation.Angle, Owner.InputA, Owner.InputB, Owner.Output);
+                    m_vecOps.Run(VectorOps.VectorOperation.Angle, Owner.A, Owner.B, Owner.Output);
                 }
             }
         }

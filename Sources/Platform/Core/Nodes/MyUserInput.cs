@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
@@ -16,6 +17,8 @@ namespace GoodAI.Core.Nodes
     /// You can control bounds of your inputs with <b>MinValue</b> and <b>MaxValue</b> properties.</description>
     public class MyUserInput : MyWorkingNode
     {
+        private bool m_paused; 
+
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Output
         {
@@ -81,6 +84,11 @@ namespace GoodAI.Core.Nodes
             validator.AssertError(MinValue != MaxValue && MinValue < MaxValue, this, "Invalid MinValue and MaxValue combination");
         }
 
+        public override void OnSimulationStateChanged(MySimulationHandler.StateEventArgs args)
+        {
+            m_paused = args.NewState == MySimulationHandler.SimulationState.PAUSED;
+        }
+
         public void SetUserInput(int index, float value) 
         {
             if (ConvertToBinary)
@@ -92,6 +100,14 @@ namespace GoodAI.Core.Nodes
                 if (m_userInput != null && index < m_userInput.Length)
                 {
                     m_userInput[index] = value * (MaxValue - MinValue) + MinValue;
+                }
+            }
+
+            if (m_paused) 
+            {
+                if (GenerateInput != null && GenerateInput.Enabled)
+                {
+                    GenerateInput.Execute();
                 }
             }
         }

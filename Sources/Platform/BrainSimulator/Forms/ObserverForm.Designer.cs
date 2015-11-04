@@ -55,20 +55,19 @@
             // 
             // contextMenuStrip
             // 
-            this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(40, 40);
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.updateViewToolStripMenuItem,
             this.snapshotToolStripMenuItem,
             this.goToNodeToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(335, 142);
+            this.contextMenuStrip.Size = new System.Drawing.Size(160, 70);
             // 
             // updateViewToolStripMenuItem
             // 
             this.updateViewToolStripMenuItem.Enabled = false;
             this.updateViewToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.refresh_16xLG;
             this.updateViewToolStripMenuItem.Name = "updateViewToolStripMenuItem";
-            this.updateViewToolStripMenuItem.Size = new System.Drawing.Size(334, 46);
+            this.updateViewToolStripMenuItem.Size = new System.Drawing.Size(183, 46);
             this.updateViewToolStripMenuItem.Text = "Update View";
             this.updateViewToolStripMenuItem.Click += new System.EventHandler(this.updateViewToolStripMenuItem_Click);
             // 
@@ -77,14 +76,14 @@
             this.snapshotToolStripMenuItem.Enabled = false;
             this.snapshotToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Snapshot;
             this.snapshotToolStripMenuItem.Name = "snapshotToolStripMenuItem";
-            this.snapshotToolStripMenuItem.Size = new System.Drawing.Size(334, 46);
+            this.snapshotToolStripMenuItem.Size = new System.Drawing.Size(183, 46);
             this.snapshotToolStripMenuItem.Text = "Save Snapshot...";
             this.snapshotToolStripMenuItem.Click += new System.EventHandler(this.snapshotToolStripMenuItem_Click);
             // 
             // goToNodeToolStripMenuItem
             // 
             this.goToNodeToolStripMenuItem.Name = "goToNodeToolStripMenuItem";
-            this.goToNodeToolStripMenuItem.Size = new System.Drawing.Size(334, 46);
+            this.goToNodeToolStripMenuItem.Size = new System.Drawing.Size(183, 46);
             this.goToNodeToolStripMenuItem.Text = "Go to node";
             this.goToNodeToolStripMenuItem.Click += new System.EventHandler(this.goToNodeToolStripMenuItem_Click);
             // 
@@ -94,11 +93,11 @@
             this.peekLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.peekLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.peekLabel.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.peekLabel.Location = new System.Drawing.Point(271, 0);
+            this.peekLabel.Location = new System.Drawing.Point(292, 0);
             this.peekLabel.Margin = new System.Windows.Forms.Padding(3);
             this.peekLabel.Name = "peekLabel";
             this.peekLabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 1);
-            this.peekLabel.Size = new System.Drawing.Size(37, 41);
+            this.peekLabel.Size = new System.Drawing.Size(16, 18);
             this.peekLabel.TabIndex = 1;
             this.peekLabel.Text = "0";
             this.peekLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -106,7 +105,7 @@
             // 
             // ObserverForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(308, 262);
             this.Controls.Add(this.peekLabel);

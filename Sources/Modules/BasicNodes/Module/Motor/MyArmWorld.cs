@@ -31,6 +31,7 @@ namespace GoodAI.Modules.Motor
     ///                 <li>MusclesInput: Torque to be applied by muscles on each joint, positive values rotate clockwise</li>
     ///                 <li>ResetInput: Optional, values other than zero reset arm to starting configuration</li>
     ///                 <li>VirtualMusclesLengthInput: Optional, visualises passed muscles lengths in VirtualOutput without affectng the "real" arm</li>
+    ///                 <li>HighlightPointInput: Optional, expects 2D position of a point to be highlighted in visual output</li>
     ///                 <li>VisualOutput: Visualisation of the arm in 2D world</li>
     ///                 <li>MusclesLengthOutput: Length of muscles pulling clockwise, from minimum of 0 to maximum of 1</li>
     ///                 <li>JointsPositionOutput: 2D position of all joints</li>
@@ -79,6 +80,12 @@ namespace GoodAI.Modules.Motor
         public MyMemoryBlock<float> VirtualMusclesLengthInput
         {
             get { return GetInput(2); }
+        }
+
+        [MyInputBlock]
+        public MyMemoryBlock<float> HighlightPointInput
+        {
+            get { return GetInput(3); }
         }
 
 		public MyMemoryBlock<float> Reach { get; private set; }
@@ -303,6 +310,17 @@ namespace GoodAI.Modules.Motor
                         Owner.VisualOutput.Host[i] = 0.0f;
                     }
 
+                    if (Owner.HighlightPointInput != null && Owner.HighlightPointInput.Count >= 2)
+                    {
+                        Owner.HighlightPointInput.SafeCopyToHost();
+                        int highlightX = (int) Owner.HighlightPointInput.Host[0];
+                        int highlightY = (int) Owner.HighlightPointInput.Host[1];
+                        int highlightRadius = 10;
+
+                        DrawLine(highlightX + highlightRadius / 2, highlightY, highlightX - highlightRadius / 2, highlightY, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
+                        DrawLine(highlightX, highlightY + highlightRadius / 2, highlightX, highlightY - highlightRadius / 2, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
+                    }
+
                     //draw joints
                     for (int i = 0; i < Owner.JOINTS; i++)
                     {
@@ -347,7 +365,7 @@ namespace GoodAI.Modules.Motor
                     Owner.VirtualMusclesLengthInput.SafeCopyToHost();
                     float virtualRotation = 90; //sum of rotations of all previous joins to calculate real rotation
 
-                    Owner.VirtualJointPosition[0].X = Owner.WORLD_WIDTH - 64;
+                    Owner.VirtualJointPosition[0].X = 2 * Owner.WORLD_WIDTH / 3;;
                     Owner.VirtualJointPosition[0].Y = Owner.WORLD_HEIGHT / 2;
 
                     for (int i = 1; i < Owner.JOINTS + 1; i++)

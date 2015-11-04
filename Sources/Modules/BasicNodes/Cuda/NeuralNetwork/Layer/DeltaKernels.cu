@@ -62,11 +62,10 @@ extern "C"
 
 		if (threadId < batchSize * prevLayerSize)
 		{
-			int prevNeuronId = threadId % prevLayerSize;
 			float sum = prevDeltaPtr[threadId];
 
 			sum /= 1.0f - dropout;
-			sum *= EvaluateDerivative(prevActFunc, prevWeighedInputPtr[prevNeuronId]);
+			sum *= EvaluateDerivative(prevActFunc, prevWeighedInputPtr[threadId]);
 			prevDeltaPtr[threadId] = sum;
 		}
 	}
@@ -93,6 +92,7 @@ extern "C"
 		int useSigmaConstant,
 		ActivationFunctionEnum prevActFunc,
 		float* prevWeighedInputPtr,
+		float* sigmas,
 		float* meanDeltas,
 		float* sigmaDeltas,
 		float* thisDeltaPtr,
@@ -112,7 +112,7 @@ extern "C"
 
 			// if not using constant sigmas, then they are in second half
 			// randomNormal term is because there is one more transformation before squasing: mean + randomNormal * sigma
-			sigmaDeltas[i] += !useSigmaConstant * (thisDeltaPtr[i] * randomNormalPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]));
+			sigmaDeltas[i] += !useSigmaConstant * 2 * sigmas[i] * (thisDeltaPtr[i] * randomNormalPtr[i] * EvaluateDerivative(prevActFunc, prevWeighedInputPtr[i]));
 		}
 	}
 

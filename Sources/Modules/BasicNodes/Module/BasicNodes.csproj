@@ -99,7 +99,6 @@
     <Reference Include="OpenTK">
       <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -121,6 +120,12 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="Join\Distances\MyDistanceNode.cs" />
+    <Compile Include="Join\Distances\MyDistanceOps.cs" />
+    <Compile Include="Join\Stacking\MyStackingNode.cs" />
+    <Compile Include="Join\Stacking\MyStackingOps.cs" />
+    <Compile Include="MastermindWorld\MyMastermindEngine.cs" />
+    <Compile Include="MastermindWorld\MyMastermindWorld.cs" />
     <Compile Include="NeuralNetwork\MyReplayBuffer.cs" />
     <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
@@ -135,6 +140,11 @@
     <Compile Include="Retina\MyUnfocuser.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
+    <Compile Include="TextProcessing\MyAssociativeNetworkWorld.cs" />
+    <Compile Include="TextProcessing\MyStringConversionsClass.cs" />
+    <Compile Include="TextProcessing\MyTextInputNode.cs" />
+    <Compile Include="TextProcessing\MyTextObserverNode.cs" />
+    <Compile Include="TextProcessing\MyVectorTextObserver.cs" />
     <Compile Include="TextProcessing\TextWorld.cs" />
     <Compile Include="Transforms\My2DCropNode.cs" />
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
@@ -268,6 +278,7 @@
     <Compile Include="Transforms\VectorOps.cs" />
     <Compile Include="Transforms\VectorOpsNode.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
+    <Compile Include="Vision\MyAnimationPredictionWorld.cs" />
     <Compile Include="VSA\Hashes\MyHashingMemory.cs" />
     <Compile Include="VSA\Hashes\MyHashMapper.cs" />
     <Compile Include="Vision\MyJoinPatches.cs" />
@@ -307,6 +318,63 @@
     <EmbeddedResource Include="res\delayedcopy_big.png" />
     <EmbeddedResource Include="res\convolution.png" />
     <EmbeddedResource Include="res\convolution_big.png" />
+    <EmbeddedResource Include="res\gate.png" />
+    <EmbeddedResource Include="res\gate_big.png" />
+    <EmbeddedResource Include="res\distance.png" />
+    <EmbeddedResource Include="res\distance_big.png" />
+    <Content Include="res\animationpredictionworld\SwitchTest_00000.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00001.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00002.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00003.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00004.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00005.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00006.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00007.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00008.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00009.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00010.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00011.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00012.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00013.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00014.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00015.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\animationpredictionworld\SwitchTest_00016.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="res\csharp.png" />
+    <EmbeddedResource Include="res\csharp_big.png" />
     <Content Include="res\gridworld4\taleEmpty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -376,6 +444,29 @@
     </Content>
     <EmbeddedResource Include="res\observerUnfocus.png" />
     <EmbeddedResource Include="res\observerUnfocus_big.png" />
+    <EmbeddedResource Include="res\stacking.png" />
+    <EmbeddedResource Include="res\stacking_big.png" />
+    <EmbeddedResource Include="res\textInput.png" />
+    <EmbeddedResource Include="res\textInput_big.png" />
+    <EmbeddedResource Include="res\textOutput.png" />
+    <EmbeddedResource Include="res\textOutput_big.png" />
+    <Content Include="res\mastermindworld\bull.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\circle_mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\circle_rim.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\cow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\mastermindworld\miss.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="res\loopgroup.png" />
+    <EmbeddedResource Include="res\loopgroup_big.png" />
     <Content Include="res\tictactoeworld\taleO.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -37,6 +37,13 @@ namespace GoodAI.Modules.Harm
             set { SetOutput(0, value); }
         }
 
+        [MyOutputBlock(1)]
+        public MyMemoryBlock<float> CurrentStateOutput
+        {
+            get { return GetOutput(1); }
+            set { SetOutput(1, value); }
+        }
+
         [MyBrowsable, Category("IO"), DisplayName("Number of Primitive Actions"),
         Description("Number of primitive actions produced by the agent (e.g. 6 for the current gridworld, 3 for the breakout game)")]
         [YAXSerializableField(DefaultValue = 6)]
