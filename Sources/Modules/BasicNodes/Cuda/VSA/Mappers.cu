@@ -71,7 +71,7 @@ extern "C"
 		GetIndicesInternal(keys, output, keySize, outputSize, binSize, temp ^ seed);
 	}
 
-	__global__ void GetIndices_NoHashing(float* keys, float* output, int keySize, int outputSize, int internalBinCount, int binSize, int seed)
+	__global__ void GetIndices_NoHashing(float* keys, float* output, int keySize, int internalBinCount)
 	{
 		int threadId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
 			+ blockDim.x*blockIdx.x						//blocks preceeding current block
