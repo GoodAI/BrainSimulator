@@ -64,6 +64,7 @@ namespace CoreTests
         public void SerializesAndDeserializesCorrectly()
         {
             // TODO(HonzaS): Fix this when project creation/deserialization is unified.
+            // I.e. deserialized(serialized(PROJECT)) should equal PROJECT
             string tmpPath = Path.GetTempPath();
 
             MyConfiguration.LoadModules();
@@ -81,7 +82,6 @@ namespace CoreTests
 
             var compareLogic = new CompareLogic(new ComparisonConfig
             {
-                MembersToIgnore = new List<string> { "ReadOnly" },
                 MaxDifferences = 20
             });
             var result = compareLogic.Compare(project, deserializedProject);
