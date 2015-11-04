@@ -347,6 +347,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         //Validation rules
         public override void Validate(MyValidator validator)
         {
+            base.Validate(validator);
+
             validator.AssertError((InputHeight - FilterHeight + 2 * ZeroPadding) % VerticalStride == 0, this, "Filter doesn't fit vertically when striding.");
 
             validator.AssertError((InputWidth - FilterWidth + 2 * ZeroPadding) % HorizontalStride == 0, this, "Filter doesn't fit horizontally when striding.");

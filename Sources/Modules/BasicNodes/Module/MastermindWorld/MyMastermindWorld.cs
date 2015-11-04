@@ -627,24 +627,31 @@ namespace GoodAI.Modules.MastermindWorld
             private MyCudaKernel m_RgbaTextureKernel;
             private MyCudaKernel m_MaskedColorKernel;
             private MyCudaKernel m_RgbBackgroundKernel;
+            CudaStream[] m_streams = new CudaStream[5];
 
             public override void Init(int nGPU)
             {
                 m_RgbBackgroundKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawRgbBackgroundKernel");
 
-                m_RgbaTextureKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawRgbaTextureKernel");
+                m_RgbaTextureKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawRgbaTextureKernel2DBlock");
 
-                m_MaskedColorKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawMaskedColorKernel");
+                m_MaskedColorKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawMaskedColorKernel2DBlock");
+
+                for(int i = 0; i < m_streams.Length; i++)
+                {
+                    m_streams[i] = new CudaStream();
+                }
             }
 
             /// <summary>
             /// Draws a single element of a guess at the provided position
             /// </summary>
+            /// <param name="s">[async] stream that the kernels will execute in</param>
             /// <param name="guess">element of a guess to draw</param>
             /// <param name="position">the positiion (0,1,2,...) of the element inside the guess vector</param>
             /// <param name="xGroupOffset">X pixel offset of the first element of the guess vector</param>
             /// <param name="yGroupOffset">Y pixel offset of the first element of the guess vector</param>
-            private void DrawGuessAtPosition(float guess, int position, int xGroupOffset, int yGroupOffset)
+            private void DrawGuessAtPosition(CudaStream s, float guess, int position, int xGroupOffset, int yGroupOffset)
             {
                 MyCudaTexture textureCircleRim = Owner.m_textureCircleRim;
                 MyCudaTexture textureCircleMask = Owner.m_textureCircleMask;
@@ -654,21 +661,26 @@ namespace GoodAI.Modules.MastermindWorld
                 Color guessColor = Owner.GetGuessColor((int)Math.Round(guess));
 
                 // color
-                m_MaskedColorKernel.SetupExecution(textureCircleMask.SizeInPixels.x * textureCircleMask.SizeInPixels.y * TARGET_VALUES_PER_PIXEL);
-                m_MaskedColorKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
+                int yDiv = 10;
+                Debug.Assert(textureCircleMask.SizeInPixels.y % yDiv == 0);
+                m_MaskedColorKernel.SetupExecution(new dim3(textureCircleMask.SizeInPixels.x, yDiv, 1),
+                                                   new dim3(textureCircleMask.SizeInPixels.y / yDiv, TARGET_VALUES_PER_PIXEL));
+                m_MaskedColorKernel.RunAsync(s, Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
                     textureCircleMask.BitmapPtr, textureCircleMask.SizeInPixels.x, textureCircleMask.SizeInPixels.y,
                     guessColor.R / 255.0f, guessColor.G / 255.0f, guessColor.B / 255.0f);
 
                 // circle rim 
-                m_RgbaTextureKernel.SetupExecution(textureCircleRim.SizeInPixels.x * textureCircleRim.SizeInPixels.y * TARGET_VALUES_PER_PIXEL);
-                m_RgbaTextureKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
+                Debug.Assert(textureCircleRim.SizeInPixels.y % yDiv == 0);
+                m_RgbaTextureKernel.SetupExecution(new dim3(textureCircleRim.SizeInPixels.x, yDiv, 1),
+                                                   new dim3(textureCircleRim.SizeInPixels.y / yDiv, TARGET_VALUES_PER_PIXEL));
+                m_RgbaTextureKernel.RunAsync(s, Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
                     textureCircleRim.BitmapPtr, textureCircleRim.SizeInPixels.x, textureCircleRim.SizeInPixels.y);
             }
 
             /// <summary>
             /// Works just like DrawGuessAtPosition, only for evaluations.
             /// </summary>
-            private void DrawEvaluationAtPosition(MyMastermindWorld.EvaluationKind evaluation, int position, 
+            private void DrawEvaluationAtPosition(CudaStream s, MyMastermindWorld.EvaluationKind evaluation, int position, 
                 int xGroupOffset, int yGroupOffset, int evaluationsPerRow)
             {
                 MyCudaTexture texture;
@@ -689,8 +701,11 @@ namespace GoodAI.Modules.MastermindWorld
                 int xOffset = xGroupOffset + (position % evaluationsPerRow) * (GFX_EVALUATION_SPACER + texture.SizeInPixels.x);
                 int yOffset = yGroupOffset + (position / evaluationsPerRow) * (GFX_EVALUATION_SPACER + texture.SizeInPixels.y);
 
-                m_RgbaTextureKernel.SetupExecution(texture.SizeInPixels.x * texture.SizeInPixels.y * TARGET_VALUES_PER_PIXEL);
-                m_RgbaTextureKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
+                int yDiv = 10;
+                Debug.Assert(texture.SizeInPixels.y % yDiv == 0);
+                m_RgbaTextureKernel.SetupExecution(new dim3(texture.SizeInPixels.x, yDiv, 1),
+                                                   new dim3(texture.SizeInPixels.y / yDiv, TARGET_VALUES_PER_PIXEL));
+                m_RgbaTextureKernel.RunAsync(s, Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
                     texture.BitmapPtr, texture.SizeInPixels.x, texture.SizeInPixels.y);
             }
 
@@ -701,7 +716,14 @@ namespace GoodAI.Modules.MastermindWorld
             public override void Execute()
             {
                 // erease background
-                m_RgbBackgroundKernel.SetupExecution(Owner.VisualOutput.Count);
+                int blockDimX = Owner.VisualWidth;
+                int gridDimX = Owner.VisualHeight;
+                if (blockDimX > 1024)
+                {
+                    gridDimX *= (int)(Math.Ceiling(blockDimX / 1024.0));
+                    blockDimX = 1024;
+                }
+                m_RgbBackgroundKernel.SetupExecution(new dim3(blockDimX, 1, 1), new dim3(gridDimX, TARGET_VALUES_PER_PIXEL, 1));
                 m_RgbBackgroundKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, 0.9f, 0.9f, 0.9f);
 
                 // prepare data for rendering
@@ -717,6 +739,7 @@ namespace GoodAI.Modules.MastermindWorld
                 int xEvaluationGroupOffset = GFX_MAIN_SPACER;
                 int totalGuesses = (int)Math.Round(Owner.GuessCountOutput.Host[0]);
 
+                int iStreamIndex = 0;
                 // render at most NumberOfRenderedGuesses. The latest guesses have priority.
                 for (int iGuess = 0; iGuess < Math.Min(totalGuesses, Owner.m_engineParams.NumberOfRenderedGuesses); iGuess++)
                 {
@@ -729,7 +752,9 @@ namespace GoodAI.Modules.MastermindWorld
                     int yGuessGroupOffset = GFX_MAIN_SPACER + iGuess * (guessCircleWidth + GFX_MAIN_SPACER);
                     for (int iPosition = 0; iPosition < Owner.HiddenVectorLength; iPosition++)
                     {
-                        DrawGuessAtPosition(Owner.GuessHistoryOutput.Host[iGuessIndex*Owner.HiddenVectorLength + iPosition], 
+                        iStreamIndex++;
+                        DrawGuessAtPosition(m_streams[iStreamIndex % m_streams.Length], 
+                            Owner.GuessHistoryOutput.Host[iGuessIndex*Owner.HiddenVectorLength + iPosition], 
                             iPosition, xGuessGroupOffset, yGuessGroupOffset);
                     }
 
@@ -749,7 +774,9 @@ namespace GoodAI.Modules.MastermindWorld
                             ev = EvaluationKind.Cow;
                             cows --;
                         }
-                        DrawEvaluationAtPosition(ev, iPosition, xEvaluationGroupOffset, yEvaluationGroupOffset, 
+                        iStreamIndex++;
+                        DrawEvaluationAtPosition(m_streams[iStreamIndex % m_streams.Length], 
+                            ev, iPosition, xEvaluationGroupOffset, yEvaluationGroupOffset, 
                             evaluationsPerRow);
                     }
                 }

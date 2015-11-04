@@ -42,6 +42,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MySquaredLossTask SquaredLoss { get; protected set; }
         [MyTaskGroup("LossFunctions")]
         public MyCrossEntropyLossTask CrossEntropyLoss { get; protected set; }
+        [MyTaskGroup("LossFunctions")]
+        public MyCustomLossTask CustomLoss { get; protected set; }
         // put more loss functions here according to: http://image.diku.dk/shark/sphinx_pages/build/html/rest_sources/tutorials/concepts/library_design/losses.html
         //AbsoluteLoss
         //SquaredLoss
