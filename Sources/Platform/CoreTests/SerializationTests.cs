@@ -80,10 +80,9 @@ namespace CoreTests
             string serialized = project.Serialize(tmpPath);
             MyProject deserializedProject = MyProject.Deserialize(serialized, tmpPath);
 
-            var compareLogic = new CompareLogic(new ComparisonConfig
-            {
-                MaxDifferences = 20
-            });
+            // MaxDifferences = 20 - A magic number. It shows more than one difference in the log.
+            // There should eventually be zero differences, so this number can be arbitrary. Adjust as needed.
+            var compareLogic = new CompareLogic(new ComparisonConfig { MaxDifferences = 20 });
             var result = compareLogic.Compare(project, deserializedProject);
 
             m_output.WriteLine(result.DifferencesString);
