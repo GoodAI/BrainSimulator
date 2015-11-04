@@ -8,16 +8,14 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
-namespace CLIWrapper
+namespace GoodAI.Core.Execution
 {
-    public class BSCLI
+    public class MyProjectRunner
     {
         private static MyProject m_project;
         private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
@@ -47,7 +45,7 @@ namespace CLIWrapper
             }
         }
 
-        public BSCLI(MyLogLevel level = MyLogLevel.DEBUG)
+        public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
             SimulationHandler = new MyCLISimulationHandler();
             SimulationHandler.Simulation = new MyLocalSimulation();
