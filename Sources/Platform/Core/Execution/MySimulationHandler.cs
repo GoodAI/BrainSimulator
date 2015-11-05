@@ -101,6 +101,7 @@ namespace GoodAI.Core.Execution
 
         private SimulationState m_state;
         private Action m_closeCallback;
+        private uint m_lastProgressChangedStep;
 
         public SimulationState State    ///< State of the simulation
         { 
@@ -179,6 +180,8 @@ namespace GoodAI.Core.Execution
             {
                 MyLog.INFO.WriteLine("Resuming simulation...");
             }
+
+            m_lastProgressChangedStep = 0;
 
             State = oneStepOnly ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
 
@@ -288,6 +291,7 @@ namespace GoodAI.Core.Execution
 
                         if (ProgressChanged != null)
                         {
+                            m_lastProgressChangedStep = SimulationStep;
                             ProgressChanged(this, null);
                         }
                     }
@@ -303,7 +307,7 @@ namespace GoodAI.Core.Execution
         // NOT UI thread
         void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (ProgressChanged != null)
+            if (ProgressChanged != null && m_lastProgressChangedStep != SimulationStep)
             {
                 ProgressChanged(this, null);
             }
