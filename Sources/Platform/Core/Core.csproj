@@ -93,6 +93,7 @@
     <Compile Include="Configuration\MyModuleConfig.cs" />
     <Compile Include="Configuration\MyNodeConfig.cs" />
     <Compile Include="Execution\MyExecutionBlock.cs" />
+    <Compile Include="Execution\MyProjectRunner.cs" />
     <Compile Include="Execution\MySimulation.cs" />
     <Compile Include="Execution\MySimulationHandler.cs" />
     <Compile Include="Execution\MyExecutionPlanner.cs" />
