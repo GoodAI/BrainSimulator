@@ -12,15 +12,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Diagnostics;
 
 namespace GoodAI.Core.Execution
 {
     public class MyProjectRunner
     {
         private static MyProject m_project;
-        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
 
-        public static MyCLISimulationHandler SimulationHandler { get; private set; }
+        public static MySimulationHandler SimulationHandler { get; private set; }
+
+        public static List<Tuple<int, uint, MonitorFunc>> SimulationMonitors { get; private set; }
+        public static Hashtable MonitorResults;
+        public delegate float[] MonitorFunc(MySimulation simulation);
 
         /// <summary>
         /// Definition for filtering function
@@ -47,9 +51,15 @@ namespace GoodAI.Core.Execution
 
         public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
-            SimulationHandler = new MyCLISimulationHandler();
-            SimulationHandler.Simulation = new MyLocalSimulation();
+            MySimulation simulation = new MyLocalSimulation();
+            SimulationHandler = new MySimulationHandler(simulation);
             uid = 0;
+
+            SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+            SimulationHandler.StepPerformed += SimulationHandler_StepPerformed;
+
+            SimulationMonitors = new List<Tuple<int, uint, MonitorFunc>>();
+            MonitorResults = new Hashtable();
 
             Project = new MyProject();
 
@@ -196,11 +206,6 @@ namespace GoodAI.Core.Execution
         /// </summary>
         public void Quit()
         {
-            if (SimulationHandler.State != MyCLISimulationHandler.SimulationState.STOPPED)
-            {
-                SimulationHandler.StopSimulation();
-            }
-            while (SimulationHandler.State != MyCLISimulationHandler.SimulationState.STOPPED) { }
             SimulationHandler.Finish();
         }
 
@@ -312,15 +317,16 @@ namespace GoodAI.Core.Execution
         /// <returns>Id of result</returns>
         public int TrackValue(int id, int length, uint step = 10, int offset = 0, string memName = "Output")
         {
-            MyCLISimulationHandler.MonitorFunc valueMonitor = x =>
+            MonitorFunc valueMonitor = x =>
             {
                 float value = GetValues(id, memName)[offset];
                 float[] record = new float[2] { SimulationHandler.SimulationStep, value };
                 return record;
             };
 
-            Tuple<int, uint, MyCLISimulationHandler.MonitorFunc> rec = new Tuple<int, uint, MyCLISimulationHandler.MonitorFunc>(uid++, step, valueMonitor);
-            SimulationHandler.AddMonitor(rec);
+            Tuple<int, uint, MonitorFunc> rec = new Tuple<int, uint, MonitorFunc>(uid++, step, valueMonitor);
+            SimulationMonitors.Add(rec);
+            MonitorResults[rec.Item1] = new List<float[]>();
             MyLog.INFO.WriteLine(memName + "[" + offset + "]@" + id + "is now being tracked with ID " + (uid - 1));
             return uid - 1;
         }
@@ -331,7 +337,7 @@ namespace GoodAI.Core.Execution
         /// <returns>Results</returns>
         public Hashtable Results()
         {
-            return SimulationHandler.Results();
+            return MonitorResults;
         }
 
         /// <summary>
@@ -404,11 +410,24 @@ namespace GoodAI.Core.Execution
             MyLog.INFO.WriteLine("Results " + ids + " plotted to " + output);
         }
 
-        private bool UpdateAndCheckChange(MyNode node)
+        void SimulationHandler_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            node.PushOutputBlockSizes();
-            node.UpdateMemoryBlocks();
-            return node.AnyOutputSizeChanged();
+            if (SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
+            {
+                MyLog.INFO.WriteLine("[" + SimulationHandler.SimulationStep + "] Running at " + SimulationHandler.SimulationSpeed + "/s");
+            }
+        }
+
+        void SimulationHandler_StepPerformed(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            foreach (Tuple<int, uint, MonitorFunc> m in SimulationMonitors)
+            {
+                if (SimulationHandler.SimulationStep % m.Item2 == 0)
+                {
+                    float[] value = (float[])m.Item3(SimulationHandler.Simulation);
+                    (MonitorResults[m.Item1] as List<float[]>).Add(value);
+                }
+            }
         }
 
         /// <summary>
@@ -418,65 +437,33 @@ namespace GoodAI.Core.Execution
         /// <param name="logStep">Print info each x steps</param>
         public void Run(uint steps, uint logStep = 100)
         {
-            if (SimulationHandler.State == MyCLISimulationHandler.SimulationState.STOPPED)
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
-                MyLog.INFO.WriteLine("--------------");
-                MyLog.INFO.WriteLine("Updating memory blocks...");
-
-                IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
-                List<MyNode> orderedNodes = topoOps.EvaluateOrder(Project.Network);
-
-                if (!orderedNodes.Any())
+                if (SimulationHandler.UpdateMemoryModel())
                 {
+                    MyLog.ERROR.WriteLine("Simulation cannot be started! Memory model did not converge.");
                     return;
                 }
 
-                int attempts = 0;
-                bool anyOutputChanged = false;
-
-                try
-                {
-                    while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
-                    {
-                        attempts++;
-                        anyOutputChanged = false;
-
-                        anyOutputChanged |= UpdateAndCheckChange(Project.World);
-                        orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
-
-                        if (!anyOutputChanged)
-                        {
-                            MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
-                            break;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
-                    return;
-                }
-
-                MyValidator validator = new MyValidator(); // ValidationView.Validator;
+                MyValidator validator = new MyValidator();
                 validator.Simulation = SimulationHandler.Simulation;
                 validator.ClearValidation();
 
                 Project.World.ValidateWorld(validator);
                 Project.Network.Validate(validator);
-                validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
 
-                //ValidationView.UpdateListView();
                 validator.Simulation = null;
 
-                //if (validator.ValidationSucessfull)
-                if (!true)
+                if (!validator.ValidationSucessfull)
                 {
                     MyLog.ERROR.WriteLine("Simulation cannot be started! Validation failed.");
+                    return;
                 }
             }
             try
             {
-                SimulationHandler.StartSimulation(steps, logStep);
+                SimulationHandler.ReportIntervalSteps = logStep;
+                SimulationHandler.StartSimulation(true, steps);
             }
             catch (Exception e)
             {
@@ -487,6 +474,8 @@ namespace GoodAI.Core.Execution
         public void Stop()
         {
             SimulationHandler.StopSimulation();
+            SimulationMonitors.Clear();
+            MonitorResults.Clear();
             uid = 0;
         }
     }

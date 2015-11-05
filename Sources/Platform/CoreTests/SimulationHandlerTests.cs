@@ -90,7 +90,7 @@ namespace CoreTests
             handler.Project = project;
             handler.UpdateMemoryModel();
 
-            handler.StartSimulation(oneStepOnly: false);
+            handler.StartSimulation(multipleStepsOnly: false);
             node.Event.WaitOne();
             Assert.Equal(MySimulationHandler.SimulationState.STOPPED, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.RUNNING, node.CurrentState);
@@ -100,7 +100,7 @@ namespace CoreTests
             Assert.Equal(MySimulationHandler.SimulationState.RUNNING, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.PAUSED, node.CurrentState);
 
-            handler.StartSimulation(oneStepOnly: true);
+            handler.StartSimulation(multipleStepsOnly: true);
             node.Event.WaitOne();   // Here the sim goes from paused to RUNNING_STEP.
             Assert.Equal(MySimulationHandler.SimulationState.PAUSED, node.PreviousState);
             Assert.Equal(MySimulationHandler.SimulationState.RUNNING_STEP, node.CurrentState);

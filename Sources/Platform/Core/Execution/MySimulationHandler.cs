@@ -47,11 +47,13 @@ namespace GoodAI.Core.Execution
         }
 
         private readonly BackgroundWorker m_worker;
+        private readonly ManualResetEvent m_workedCompleted;
         private bool doPause = false;
 
         private Action closeCallback = null;
 
-        public int ReportInterval { get; set; } // How often should be speed of simulation reported
+        public uint ReportIntervalSteps { get; set; } // How often (in steps) should be speed of simulation reported in RUNNING_STEP state
+        public int ReportInterval { get; set; } // How often (in ms) should be speed of simulation reported in RUNNING state
         public int SleepInterval { get; set; }  // Amount of sleep (in ms) between two steps
 
         private bool m_autosaveEnabled;
@@ -99,6 +101,7 @@ namespace GoodAI.Core.Execution
         public float SimulationSpeed { get; private set; }
 
         private SimulationState m_state;
+        private uint m_stepsToPerform;
         private Action m_closeCallback;
 
         public SimulationState State    ///< State of the simulation
@@ -136,12 +139,16 @@ namespace GoodAI.Core.Execution
         public MySimulationHandler(MySimulation simulation)
         {            
             State = SimulationState.STOPPED;
+            SimulationSpeed = 0;
+            ReportIntervalSteps = 100;
             ReportInterval = 20;
             SleepInterval = 0;
             m_speedMeasureInterval = 2000;
             AutosaveInterval = 10000;
 
             Simulation = simulation;
+
+            m_workedCompleted = new ManualResetEvent(true);
 
             m_worker = new BackgroundWorker
             {
@@ -157,8 +164,9 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Starts simulation
         /// </summary>
-        /// <param name="oneStepOnly">Only one step of simulation is performed when true</param>
-        public void StartSimulation(bool oneStepOnly)
+        /// <param name="multipleStepsOnly">Only multiple steps of simulation are performed when true</param>
+        /// <param name="stepCount">How many steps of simulation shall be performed</param>
+        public void StartSimulation(bool multipleStepsOnly, uint stepCount = 1)
         {
             if (State == SimulationState.STOPPED)
             {
@@ -179,10 +187,12 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Resuming simulation...");
             }
 
-            State = oneStepOnly ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
+            State = multipleStepsOnly ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
+            m_stepsToPerform = stepCount;
 
             MyKernelFactory.Instance.SetCurrent(MyKernelFactory.Instance.DevCount - 1);
 
+            m_workedCompleted.Reset();
             m_worker.RunWorkerAsync();
         }
 
@@ -234,68 +244,92 @@ namespace GoodAI.Core.Execution
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "Background Simulation Thread";
 
-            if (State == SimulationState.RUNNING_STEP)
-            {
-                try
-                {
-                    Simulation.PerformStep(true);
-                }
-                catch (Exception ex)
-                {
-                    m_simulationStoppedException = ex;
-                    MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
-                    e.Cancel = true;
-                }
-            }
-            else if (State == SimulationState.RUNNING)
-            {
-                int start = Environment.TickCount;
-
-                int speedStart = Environment.TickCount;
-                uint speedStep = SimulationStep;
-
-                while (!m_worker.CancellationPending)
-                {
-                    try
-                    {
-                        Simulation.PerformStep(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
-                        m_simulationStoppedException = ex;
-                        break;
-                    }                 
-
-                    if (SleepInterval > 0)
-                    {
-                        Thread.Sleep(SleepInterval);
-                    }                                      
-
-                    if (Environment.TickCount - speedStart > m_speedMeasureInterval)
-                    {                                             
-                        SimulationSpeed = (SimulationStep - speedStep) * 1000.0f / m_speedMeasureInterval;
-
-                        speedStart = Environment.TickCount;
-                        speedStep = SimulationStep;
-                    }
-
-                    if (Environment.TickCount - start > ReportInterval)
-                    {
-                        start = Environment.TickCount;
-
-                        if (ProgressChanged != null)
-                        {
-                            ProgressChanged(this, null);
-                        }
-                    }
-                }
-                e.Cancel = true;
-            }
-            else
+            if (State != SimulationState.RUNNING_STEP && State != SimulationState.RUNNING)
             {
                 throw new IllegalStateException("Bad worker state: " + State);
             }
+
+            int reportStart = Environment.TickCount;
+            int speedStart = Environment.TickCount;
+            uint speedStep = SimulationStep;
+            uint performedSteps = 0;
+
+            while (true)
+            {
+                if (State == SimulationState.RUNNING_STEP)
+                {
+                    if (performedSteps >= m_stepsToPerform)
+                        break;
+                }
+                
+                if (m_worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+
+                try
+                {
+                    Simulation.PerformStep(false);
+                    ++performedSteps;
+                }
+                catch (Exception ex)
+                {
+                    MyLog.ERROR.WriteLine("Error occured during simulation: " + ex.Message);
+                    m_simulationStoppedException = ex;
+                    e.Cancel = true;
+                    break;
+                }                 
+
+                if (SleepInterval > 0)
+                {
+                    Thread.Sleep(SleepInterval);
+                }
+
+                bool measureSpeed = false;
+                bool reportProgress = false;
+                int measureInterval = m_speedMeasureInterval;
+                if (State == SimulationState.RUNNING_STEP)
+                {
+                    if (performedSteps % ReportIntervalSteps == 0)
+                    {
+                        measureSpeed = true;
+                        reportProgress = true;
+                        measureInterval = Environment.TickCount - speedStart;
+                    }
+                }
+                else
+                {
+                    if (Environment.TickCount - speedStart > m_speedMeasureInterval)
+                        measureSpeed = true;
+                    if (Environment.TickCount - reportStart > ReportInterval)
+                        reportProgress = true;
+                }
+
+                if (measureSpeed)
+                {                                             
+                    SimulationSpeed = (SimulationStep - speedStep) * 1000.0f / measureInterval;
+
+                    speedStart = Environment.TickCount;
+                    speedStep = SimulationStep;
+                }
+
+                if (reportProgress)
+                {
+                    reportStart = Environment.TickCount;
+
+                    if (ProgressChanged != null)
+                    {
+                        ProgressChanged(this, null);
+                    }
+                }
+
+                if (StepPerformed != null)
+                {
+                    StepPerformed(this, null);
+                }
+            }
+            
         }
 
         // NOT UI thread
@@ -316,6 +350,16 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Paused.");
                 State = SimulationState.PAUSED;
             }
+
+            m_workedCompleted.Set();
+        }
+
+        /// <summary>
+        /// Blocks until the requested number of simulation steps had been performed.
+        /// </summary>
+        public void WaitUntilStepsPerformed()
+        {
+            m_workedCompleted.WaitOne();
         }
 
         // TODO: throw an exception if the model doesn't converge. The return value is unintuitive.
@@ -463,9 +507,13 @@ namespace GoodAI.Core.Execution
         /// </summary>
         public event StateChangedHandler StateChanged;
         /// <summary>
-        /// Emmited each ReportInterval, or when only one step of simulation is ran
+        /// Emmited each ReportInterval/ReportIntervalSteps, or after the requested number of simulation steps had been performed
         /// </summary>
         public event ProgressChangedEventHandler ProgressChanged;
+        /// <summary>
+        /// Emmited after each simulation step
+        /// </summary>
+        public event ProgressChangedEventHandler StepPerformed;
     }
 
     [Serializable]

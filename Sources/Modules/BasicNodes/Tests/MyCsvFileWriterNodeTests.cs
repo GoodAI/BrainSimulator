@@ -74,7 +74,7 @@ namespace BasicNodesTests
 
             try
             {
-                handler.StartSimulation(oneStepOnly: false);
+                handler.StartSimulation(multipleStepsOnly: false);
                 m_continueEvent.WaitOne();
 
                 Assert.Throws<IOException>(() =>
@@ -94,7 +94,7 @@ namespace BasicNodesTests
                 m_continueEvent.WaitOne();
 
                 // Now, try start->stop only.
-                handler.StartSimulation(oneStepOnly: false);
+                handler.StartSimulation(multipleStepsOnly: false);
                 m_continueEvent.WaitOne();
 
                 handler.StopSimulation();
