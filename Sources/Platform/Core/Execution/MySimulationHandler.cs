@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using GoodAI.Core.Nodes;
+using System.Diagnostics;
 
 namespace GoodAI.Core.Execution
 {
@@ -249,7 +250,8 @@ namespace GoodAI.Core.Execution
             }
             else if (State == SimulationState.RUNNING)
             {
-                int start = Environment.TickCount;
+                Stopwatch progressUpdateStopWatch = Stopwatch.StartNew();
+                long start = progressUpdateStopWatch.ElapsedTicks;
 
                 int speedStart = Environment.TickCount;
                 uint speedStep = SimulationStep;
@@ -280,9 +282,9 @@ namespace GoodAI.Core.Execution
                         speedStep = SimulationStep;
                     }
 
-                    if (Environment.TickCount - start > ReportInterval)
+                    if ((progressUpdateStopWatch.ElapsedTicks - start) * 1000 / Stopwatch.Frequency >= ReportInterval)
                     {
-                        start = Environment.TickCount;
+                        start = progressUpdateStopWatch.ElapsedTicks;
 
                         if (ProgressChanged != null)
                         {
