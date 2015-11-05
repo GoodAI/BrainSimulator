@@ -69,7 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLIProgram.cs" />
+    <Compile Include="CoreRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,11 +77,11 @@
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Modules\BasicNodes\Module\BasicNodes.csproj">
+    <ProjectReference Include="..\..\Modules\BasicNodes\Module\BasicNodes.csproj">
       <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
       <Name>BasicNodes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platform\Core\Core.csproj">
+    <ProjectReference Include="..\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
