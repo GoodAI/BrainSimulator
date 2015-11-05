@@ -174,6 +174,7 @@ namespace GoodAI.SoundWorld
             Label.Count = '~' - ' ' + 1;
         }
 
+        /// <summary>Reads a sound input from SampleSound or custom source defined by user.</summary>
         [Description("Read sound inputs")]
         public class MyCUDAGenerateInputTask : MyTask<MySoundWorld>
         {
@@ -424,9 +425,7 @@ namespace GoodAI.SoundWorld
         }
     }
 
-    /// <summary>
-    /// Filter typu dolny priepust
-    /// </summary>
+    /// <summary>Widow functions for low pass filtering of sound input.</summary>
     public static class WindowFunction
     {
         public static float[] Hanning(float[] signal)

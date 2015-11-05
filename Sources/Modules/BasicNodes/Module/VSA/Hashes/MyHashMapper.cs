@@ -13,10 +13,38 @@ namespace GoodAI.Modules.VSA.Hashes
 {
     /// <author>GoodAI</author>
     /// <meta>mm</meta>
-    ///<status>WIP</status>
-    ///<summary>Constructs an index key for every element of the input. The range of the indices is [0, <seealso cref="MyHashMapperTask.InternalBinCount"/>).
-    /// You can optionally change the dimensionality of the input.</summary>
-    ///<description></description>
+    /// <status>working</status>
+    /// <summary>Constructs an index key for every element of the input. The range of the indices is [0, OutputBinCount).</summary>
+    /// <description>
+    ///
+    /// <h3> Features: </h3>
+    /// Transforms each input value to an index depending on the mode:
+    /// <ol>
+    ///     <li><h4>Simple:</h4></li>
+    ///     <ul>
+    ///         <li>Determinalistically randomizes bits in the output via <a href="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</a>.</li>
+    ///         <li>Modulates the output to the integer interval <code>[0, <i>OutputBinCount</i>)</code>.</li>
+    ///     </ul>
+    /// 
+    ///     <li><h4>Locality-sensitive</h4> (due to Datar-Immorlica-Indyk-Mirrokni’04):</li>
+    ///     <ul>
+    ///         <li>Inputs should floating point numbers from <code>[-1, 1]</code>.</li>
+    ///         <li>If <i>UseOffsets</i> is true, adds precomputed random values from <code>[0, 2]</code> to the corresponding inputs.</li>
+    ///         <li>Modulates the results by 2.</li>
+    ///         <li>Divides by <code>2/<i>InternalBinCount</i></code> and truncates to get the integer index of the bin.</li>
+    ///         <li>If <i>DoHashing</i> is true, hashes these values to <code>[0, <i>OutputBinCount</i>)</code> via Simple hashing.</li>
+    ///         <li>If <i>DoHashing</i> is false, hashes values to <code>[0, <i>InternalBinCount</i>)</code> and offsets them by <code>i*<i>InternalBinCount</i></code>, where <code>i</code> is the value's index in the vector.
+    ///             WARNING: This results in output index range in <code>[0, <i>Input.Count</i>*<i>InternalBinCount</i>)</code>.</li>
+    ///     </ul>
+    /// </ol>
+    ///  
+    /// <h3> Important notices: </h3>
+    /// <ul>
+    ///     <li>OutputBinCount must be a power of 2 for now.</li>
+    ///     <li>Consider using the RandomMapper node to change the dimensionality of the inputs (can be handy for more benevolent locality-sensitive hashing).</li>
+    ///     <li>Use the RandomMapper node first if you want the inputs' values to be connected -- slightly changing a single value will then affect all the output indices.</li>
+    /// </ul>
+    /// </description>
     public class MyHashMapper : MyRandomPool
     {
         [MyInputBlock(0)]
@@ -26,8 +54,6 @@ namespace GoodAI.Modules.VSA.Hashes
 
 
         int InputSize { get { return Input != null ? Input.Count : 0; } }
-
-        private Random random;
 
 
         #region MyRandomPool overrides
@@ -57,24 +83,15 @@ namespace GoodAI.Modules.VSA.Hashes
 
         #region Buffer generation
 
-        public static float[] GenerateOffsets(Random random, int vectorSize, float range)
+        float[] GenerateOffsets()
         {
-            Debug.Assert(random != null, "Missing the random object.");
-
-
-            var buffer = new float[vectorSize];
+            var random = new Random(Seed);
+            var buffer = new float[InputSize];
 
             for (int i = 0; i < buffer.Length; i++)
                 buffer[i] = (float)random.NextDouble() * 2;
 
             return buffer;
-        }
-
-        float[] GenerateOffsets()
-        {
-            random = random ?? new Random(Seed);
-
-            return GenerateOffsets(random, InputSize, 2);
         }
 
         #endregion
@@ -83,6 +100,9 @@ namespace GoodAI.Modules.VSA.Hashes
         public MyHashMapperTask HashTask { get; private set; }
 
 
+        /// <summary>
+        /// Performs the hash mapping.
+        /// </summary>
         [Description("Hash Input to indices")]
         public class MyHashMapperTask : MyTask<MyHashMapper>
         {
@@ -97,19 +117,25 @@ namespace GoodAI.Modules.VSA.Hashes
             [YAXSerializableField(DefaultValue = HashMapperMode.LocalitySensitive)]
             public HashMapperMode Mode { get; set; }
 
-            [MyBrowsable, Category("LSH")]
-            [YAXSerializableField(DefaultValue = 1024)]
-            public int InternalBinCount { get; set; }
-
-            [MyBrowsable, Category("LSH")]
+            [MyBrowsable, Category("General"), Description("WARNING: Must be a power of 2. The output indices will all fall in the interval [0, OutputBinCount).")]
             [YAXSerializableField(DefaultValue = 1024)]
             public int OutputBinCount { get; set; }
 
-            [MyBrowsable, Category("LSH")]
+
+            [MyBrowsable, Category("LSH"),
+            Description("The number of bins to which the input interval gets split." +
+                        "The values are scrambled to [0, OutputBinCount) after being assigned to a bin.")]
+            [YAXSerializableField(DefaultValue = 1024)]
+            public int InternalBinCount { get; set; }
+
+            [MyBrowsable, Category("LSH"), Description("Use random offset for each value before computing the target bin.")]
             [YAXSerializableField(DefaultValue = true)]
             public bool UseOffsets { get; set; }
 
-            [MyBrowsable, Category("LSH")]
+            [MyBrowsable, Category("LSH"),
+            Description("WARNING: If false, outputs indices in the interval [0, Input.Count * InternalBinCount)!." +
+                        "If false, designates disjunctive index intervals for every input element instead of random scrambling to [0, OutputBinCount)." +
+                        "This allows us to see the LSH properties more clearly.")]
             [YAXSerializableField(DefaultValue = true)]
             public bool DoHashing { get; set; }
 
@@ -142,10 +168,10 @@ namespace GoodAI.Modules.VSA.Hashes
                 _combineVectorsKernel = MyKernelFactory.Instance.Kernel(nGPU, @"common\CombineVectorsKernel", "CombineTwoVectorsKernelVarSize");
                 _combineVectorsKernel.SetupExecution(Owner.InputSize);
 
-                _hashKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\RandomMapper", "GetIndices_ImplicitSeed");
+                _hashKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\Mappers", "GetIndices_ImplicitSeed");
                 _hashKernel.SetupExecution(Owner.Output.Count);
 
-                _noHashKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\RandomMapper", "GetIndices_NoHashing");
+                _noHashKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\Mappers", "GetIndices_NoHashing");
                 _noHashKernel.SetupExecution(Owner.Output.Count);
             }
 
@@ -167,10 +193,10 @@ namespace GoodAI.Modules.VSA.Hashes
                         GetIndices(
                             Owner.Input.GetDevicePtr(Owner.GPU), Owner.Output.GetDevicePtr(Owner.GPU), Owner.Temp.GetDevicePtr(Owner.GPU), offsets,
                             Owner.InputSize, OutputBinCount, Owner.Seed,
-                            _combineVectorsKernel, _hashKernel, _noHashKernel, 
-                            DoHashing, InternalBinCount, OutputBinCount != InternalBinCount);
+                            _combineVectorsKernel, _hashKernel, _noHashKernel,
+                            DoHashing, InternalBinCount);
                         Owner.Output.SafeCopyToHost();
-                        
+
                         break;
 
                     default:
@@ -197,34 +223,34 @@ namespace GoodAI.Modules.VSA.Hashes
                 CUdeviceptr input, CUdeviceptr output, CUdeviceptr misc, CUdeviceptr? offsets,
                 int vectorSize, int outputBinCount, int seed,
                 MyCudaKernel combineVectorsKernel, MyCudaKernel hashKernel, MyCudaKernel noHashKernel,
-                bool doHashMapping, int internalBinCount, bool doScattering = true)
+                bool doHashMapping, int internalBinCount)
             {
                 Debug.Assert(vectorSize > 0, "Invalid vector size");
                 Debug.Assert(outputBinCount > 1, "Requires at least 2 output bins");
                 Debug.Assert(combineVectorsKernel != null && hashKernel != null, "Missing kernels");
 
 
-                // Values are in [-1,1] if they were normalized
+                // Values are in [-1, 1] if they were normalized
 
                 if (offsets != null)
                 {
-                    // Offset to [-1,3]
+                    // Offset to [-1, 3]
                     combineVectorsKernel.Run(input, offsets.Value, output, (int)MyJoin.MyJoinOperation.Addition, vectorSize, vectorSize);
                 }
 
-                // Modulate to [0,2]
+                // Modulate to [0, 2]
                 combineVectorsKernel.Run(output, misc, output, (int)MyJoin.MyJoinOperation.Modulo, vectorSize, 1);
-                
-                // Transform to integers in [0,BinSize-1]
+
+                // Transform to integers in [0, InternalBinCount - 1]
                 combineVectorsKernel.Run(output, misc + sizeof(float), output, (int)MyJoin.MyJoinOperation.Division_int, vectorSize, 1);
 
-                if (!doHashMapping)
-                {
-                    noHashKernel.Run(output, output, vectorSize, vectorSize, internalBinCount, outputBinCount, seed);
-                }
-                else if(doScattering)
+                if (doHashMapping)
                 {
                     hashKernel.Run(output, output, vectorSize, vectorSize, outputBinCount, seed);
+                }
+                else
+                {
+                    noHashKernel.Run(output, output, vectorSize, internalBinCount);
                 }
             }
         }

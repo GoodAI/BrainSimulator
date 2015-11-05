@@ -686,7 +686,7 @@ namespace GoodAI.Modules.VSA
                 m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel", "CombineTwoVectorsKernel");
                 m_kernel.m_kernel.SetupExecution(Owner.SymbolSize);
 
-                m_decodeKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\RandomMapper", "DecodeSignal");
+                m_decodeKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\Mappers", "DecodeSignal");
                 m_decodeKernel.m_kernel.SetupExecution(Owner.Steps * 4 + 2);
             }
 

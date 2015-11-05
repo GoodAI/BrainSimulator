@@ -172,7 +172,7 @@ namespace GoodAI.Modules.VSA
 
                 var dotKernel = MyReductionFactory.Kernel(Owner.GPU, MyReductionFactory.Mode.f_DotProduct_f);
                 var multKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"common\CombineVectorsKernel", "CombineTwoVectorsKernelVarSize");
-                var transposeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"VSA\RandomMapper", "Transpose");
+                var transposeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"VSA\Mappers", "Transpose");
 
                 int xDim, yDim;
                 AxisToNormalizeEnum axisToNormalize = AxisToNormalize;

@@ -50,9 +50,7 @@ namespace BasicNodesTests
             // explicitely (as a part of the BS testing framework).
             var csvNode = new MyCsvFileWriterNode();
 
-            MyProject project;
-            using (var reader = new StreamReader(new FileStream(projectPath, FileMode.Open, FileAccess.Read)))
-                project = MyProject.Deserialize(reader.ReadToEnd(), Path.GetDirectoryName(projectPath));
+            MyProject project = MyProject.Deserialize(File.ReadAllText(projectPath), Path.GetDirectoryName(projectPath));
 
             var handler = new MySimulationHandler(simulation)
             {

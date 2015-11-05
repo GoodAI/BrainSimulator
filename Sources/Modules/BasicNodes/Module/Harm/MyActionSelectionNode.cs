@@ -98,6 +98,11 @@ namespace GoodAI.Modules.Harm
         [YAXSerializableField(DefaultValue = 0.1f)]
         public float MinEpsilon { get; set; }
 
+        [MyBrowsable, DisplayName("Use1ofNCode"), Category("Output Format"),
+        Description("1ofN code: publish vector of zeros with one value of 1. If false, original value of utility will be preserved on a given position.")]
+        [YAXSerializableField(DefaultValue = true)]
+        public bool UseOneOfN { get; set; }
+
         [MyBrowsable, DisplayName("Selection Period"), Category("Action Selection Period"),
         Description("Select new action each N steps")]
         [YAXSerializableField(DefaultValue = 1)]
@@ -150,7 +155,15 @@ namespace GoodAI.Modules.Harm
                 Owner.MaxUtilInd.Host[0] = m_rnd.Next(Owner.UtilityInput.Count);
             }
             Owner.MaxUtilInd.SafeCopyToDevice();
-            m_setKernel.Run(Owner.Output, Owner.MaxUtilInd, Owner.UtilityInput.Count);
+            if (UseOneOfN)
+            {
+                m_setKernel.Run(Owner.Output, Owner.MaxUtilInd, Owner.UtilityInput.Count, 1.0f);
+            }
+            else
+            {
+                Owner.UtilityInput.SafeCopyToHost();
+                m_setKernel.Run(Owner.Output, Owner.MaxUtilInd, Owner.UtilityInput.Count, Owner.UtilityInput.Host[Owner.MaxUtilInd.Host[0]]);
+            }
         }
     }       
 }

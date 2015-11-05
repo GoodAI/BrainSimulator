@@ -194,8 +194,13 @@ namespace GoodAI.Core.Utils
 
         public static YAXSerializer GetSerializer()
         {
-            return new YAXSerializer(typeof(MyProject), 
-                YAXExceptionHandlingPolicies.DoNotThrow, YAXExceptionTypes.Error, YAXSerializationOptions.DontSerializeNullObjects);
+            return GetSerializer<MyProject>();
+        }
+
+        public static YAXSerializer GetSerializer<T>()
+        {
+            return new YAXSerializer(typeof(T),
+                YAXExceptionHandlingPolicies.DoNotThrow, YAXExceptionTypes.Error, YAXSerializationOptions.SerializeNullObjects);
         }
 
         public string Serialize(string projectPath)

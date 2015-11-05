@@ -12,9 +12,9 @@ namespace GoodAI.Modules.VSA.Hashes
 {
     /// <author>GoodAI</author>
     /// <meta>mm</meta>
-    ///<status>WIP</status>
-    ///<summary></summary>
-    ///<description></description>
+    /// <status>WIP</status>
+    /// <summary>A large vector -- memory -- that can be updated by adding a vector of values to specific indices.</summary>
+    /// <description></description>
     public class MyHashingMemory : MyWorkingNode
     {
         public enum AddToIndicesOperation
@@ -85,6 +85,9 @@ namespace GoodAI.Modules.VSA.Hashes
         public MyAddToIndicesTask AddTask { get; private set; }
 
 
+        /// <summary>
+        /// Randomly initializes the contents of the memory.
+        /// </summary>
         [Description("Randomize memory contents"), MyTaskInfo(OneShot = true, Disabled = true)]
         public class RandomInitTask : MyTask<MyHashingMemory>
         {
@@ -111,6 +114,9 @@ namespace GoodAI.Modules.VSA.Hashes
         }
 
 
+        /// <summary>
+        /// Performs the mapping to the memory.
+        /// </summary>
         [Description("Add Values to Indices")]
         public class MyAddToIndicesTask : MyTask<MyHashingMemory>
         {

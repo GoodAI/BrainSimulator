@@ -12,10 +12,13 @@ using YAXLib;
 namespace GoodAI.Modules.Testing
 {
     /// <author>GoodAI</author>
-    /// <meta>mv</meta>
-    /// <status>WIP</status>
+    /// <meta>mv,mm</meta>
+    /// <status>temporary</status>
     /// <summary>Converts data from KMeansWM to Symbol rep.</summary>
-    /// <description></description>
+    /// <description>
+    /// This is a temporary project-specific node hardly usable for more general purposes and will be removed with a future update.
+    /// Used in the Breakout-playing AI project.
+    /// </description>
     public class MyKWM2SymbolNode : MyCodeBookBase
     {
         [MyInputBlock(1)]
