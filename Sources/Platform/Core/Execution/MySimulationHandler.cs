@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using GoodAI.Core.Nodes;
+using System.Diagnostics;
 
 namespace GoodAI.Core.Execution
 {
@@ -100,6 +101,7 @@ namespace GoodAI.Core.Execution
 
         private SimulationState m_state;
         private Action m_closeCallback;
+        private uint m_lastProgressChangedStep;
 
         public SimulationState State    ///< State of the simulation
         { 
@@ -179,6 +181,8 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Resuming simulation...");
             }
 
+            m_lastProgressChangedStep = 0;
+
             State = oneStepOnly ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
 
             MyKernelFactory.Instance.SetCurrent(MyKernelFactory.Instance.DevCount - 1);
@@ -249,7 +253,8 @@ namespace GoodAI.Core.Execution
             }
             else if (State == SimulationState.RUNNING)
             {
-                int start = Environment.TickCount;
+                Stopwatch progressUpdateStopWatch = Stopwatch.StartNew();
+                long start = progressUpdateStopWatch.ElapsedTicks;
 
                 int speedStart = Environment.TickCount;
                 uint speedStep = SimulationStep;
@@ -280,12 +285,13 @@ namespace GoodAI.Core.Execution
                         speedStep = SimulationStep;
                     }
 
-                    if (Environment.TickCount - start > ReportInterval)
+                    if ((progressUpdateStopWatch.ElapsedTicks - start) * 1000 / Stopwatch.Frequency >= ReportInterval)
                     {
-                        start = Environment.TickCount;
+                        start = progressUpdateStopWatch.ElapsedTicks;
 
                         if (ProgressChanged != null)
                         {
+                            m_lastProgressChangedStep = SimulationStep;
                             ProgressChanged(this, null);
                         }
                     }
@@ -301,7 +307,7 @@ namespace GoodAI.Core.Execution
         // NOT UI thread
         void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (ProgressChanged != null)
+            if (ProgressChanged != null && m_lastProgressChangedStep != SimulationStep)
             {
                 ProgressChanged(this, null);
             }
