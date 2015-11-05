@@ -101,9 +101,7 @@ namespace GoodAI.Modules.Retina
 
               // Init data for retina. It needs to be ran from the observer and other class too if node is only observing and not calculating...
             public void InitRetinaGaussSamplingMasks()
-            {
-                if (Owner.RetinaPtsDefsMask.Host == null)
-                    Owner.RetinaPtsDefsMask.SafeCopyToHost();
+            {                  
                 float std = 0.12f; // standart deviation
 
                 MyRandomPool.GenerateRandomNormalVectors(Owner.RetinaPtsDefsMask.Host, new Random(123454321), Owner.RetinaPtsDefsMask.Count, 1, 0, std * std, false);  // seed has to be constat for everything & do not normalize.
