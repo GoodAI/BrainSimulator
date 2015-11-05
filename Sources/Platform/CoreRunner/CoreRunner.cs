@@ -18,10 +18,10 @@ namespace GoodAI.CoreRunner
         {
             // -clusterid $(Cluster) -processid $(Process) -brain Breakout.brain -factor 0.5
 
-            int clusterId = -1;
-            int processId = -1;
+            int clusterId = 0;
+            int processId = 0;
             double discountFactor = 0.6;
-            string breakoutBrainFilePath = @"C:\Users\michal.vlasak\Desktop\Breakout.brain";
+            string breakoutBrainFilePath = "";
             OptionSet options = new OptionSet()
                 .Add("clusterid=", v => clusterId = Int32.Parse(v))
                 .Add("processid=", v => processId = Int32.Parse(v))
@@ -37,45 +37,42 @@ namespace GoodAI.CoreRunner
                 MyLog.ERROR.WriteLine(e.Message);
             }
 
-            MyProjectRunner CLI = new MyProjectRunner(MyLogLevel.DEBUG);
+            MyProjectRunner runner = new MyProjectRunner(MyLogLevel.DEBUG);
             StringBuilder result = new StringBuilder();
-            CLI.OpenProject(breakoutBrainFilePath);
-            CLI.DumpNodes();
-            CLI.Save(23, true);
+            runner.OpenProject(breakoutBrainFilePath);
+            runner.DumpNodes();
+            runner.Save(23, true);
             for (int i = 0; i < 5; ++i )
             {
-                CLI.Run(1000, 100);
-                float[] data = CLI.GetValues(23, "Bias");
+                runner.Run(1000, 100);
+                float[] data = runner.GetValues(23, "Bias");
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
                 result.AppendFormat("{0}: {1}, {2}", i, data[0], data[1]);
-                CLI.Stop();
-                CLI.Set(23, typeof(MyQLearningTask), "DiscountFactor", discountFactor);
-                CLI.Run(1000, 300);
-                data = CLI.GetValues(23, "Bias");
+                runner.Stop();
+                runner.Set(23, typeof(MyQLearningTask), "DiscountFactor", discountFactor);
+                runner.Run(1000, 300);
+                data = runner.GetValues(23, "Bias");
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
                 result.AppendFormat(" --- {0}, {1}", data[0], data[1]).AppendLine();
-                CLI.Stop();
+                runner.Stop();
             }
 
-            if (clusterId >= 0 && processId >=0)
-            {
-                string resultFilePath = @"res." + clusterId.ToString() + "." + processId.ToString() + ".txt";
-                File.WriteAllText(resultFilePath, result.ToString());
-                string brainzFilePath = @"state." + clusterId.ToString() + "." + processId.ToString() + ".brainz";
-                CLI.SaveProject(brainzFilePath);
-            }
+            string resultFilePath = @"res." + clusterId.ToString() + "." + processId.ToString() + ".txt";
+            File.WriteAllText(resultFilePath, result.ToString());
+            string brainzFilePath = @"state." + clusterId.ToString() + "." + processId.ToString() + ".brainz";
+            runner.SaveProject(brainzFilePath);
 
-            CLI.Quit();
+            runner.Quit();
             return;
         }
     }
 }
 
-//# How to use BrainSimCLI
+//# How to use MyProjectRunner
 
-//BrainSimulatorCLI is an alternative to BrainSimulatorGUI - you can use it to operate with projects without using GUI. That is especially handy if you want to:
+//MyProjectRunner is an alternative to BrainSimulator GUI - you can use it to operate with projects without using GUI. That is especially handy if you want to:
 //* Edit 10s or 100s of nodes at once
 //* Try multiple values for one parameter and watch how it will affect results
 //* Run project for specific number of steps - then make some changes - run project again. And again
@@ -95,39 +92,39 @@ namespace GoodAI.CoreRunner
 
 //## Simple example:
 
-//BSCLI CLI = new BSCLI(MyLogLevel.DEBUG);
-//CLI.OpenProject(@"C:\Users\johndoe\Desktop\Breakout.brain");
-//CLI.DumpNodes();
-//CLI.Run(1000, 100);
-//float[] data = CLI.GetValues(24, "Output");
+//MyProjectRunner runner = new MyProjectRunner(MyLogLevel.DEBUG);
+//runner.OpenProject(@"C:\Users\johndoe\Desktop\Breakout.brain");
+//runner.DumpNodes();
+//runner.Run(1000, 100);
+//float[] data = runner.GetValues(24, "Output");
 //MyLog.INFO.WriteLine(data);
-//CLI.Quit();
+//runner.Quit();
 //Console.ReadLine();
 
 //## More advanced example.
 //Program tries different combinations of parameters for two nodes, computes average values for multiple runs, log results and saves them to file.
 //:
 
-//BSCLI CLI = new BSCLI(MyLogLevel.WARNING);
-//CLI.OpenProject(@"C:\Users\johndoe\Desktop\test.brain");
+//MyProjectRunner runner = new MyProjectRunner(MyLogLevel.WARNING);
+//runner.OpenProject(@"C:\Users\johndoe\Desktop\test.brain");
 //float iterations = 250;
 
 //List<Tuple<int, int, float, float>> results = new List<Tuple<int, int, float, float>>();
-//CLI.Set(6, "OutputSize", 32);
+//runner.Set(6, "OutputSize", 32);
 
 //for (int symbolSize = 512; symbolSize <= 8192; symbolSize *= 2)
 //{
 //   for (int binds = 20; binds <= 50; binds += 5)
 //   {
 //        float okSum = 0;
-//        CLI.Set(7, "Binds", binds);
-//        CLI.Set(7, "SymbolSize", symbolSize);
+//        runner.Set(7, "Binds", binds);
+//        runner.Set(7, "SymbolSize", symbolSize);
 //        for (int i = 0; i < iterations; ++i)
 //        {
-//            CLI.Run(1, 10);
-//            float okDot = CLI.GetValues(8)[0];
+//            runner.Run(1, 10);
+//            float okDot = runner.GetValues(8)[0];
 //            okSum += okDot;
-//            CLI.Stop();
+//            runner.Stop();
 //            if ((i + 1) % 10 == 0)
 //            {
 //                MyLog.WARNING.Write('.');
@@ -142,8 +139,4 @@ namespace GoodAI.CoreRunner
 
 //File.WriteAllLines(@"C:\Users\johndoe\Desktop\results.txt", results.Select(n => n.ToString().Substring(1, n.ToString().Length - 2)));
 
-//CLI.Quit();
-
-//## Example using all features
-//TODO
-
+//runner.Quit();
