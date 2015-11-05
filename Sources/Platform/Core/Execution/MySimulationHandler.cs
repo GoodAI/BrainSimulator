@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using GoodAI.Core.Nodes;
+using System.Diagnostics;
 
 namespace GoodAI.Core.Execution
 {
@@ -103,6 +104,7 @@ namespace GoodAI.Core.Execution
         private SimulationState m_state;
         private uint m_stepsToPerform;
         private Action m_closeCallback;
+        private uint m_lastProgressChangedStep;
 
         public SimulationState State    ///< State of the simulation
         { 
@@ -189,6 +191,7 @@ namespace GoodAI.Core.Execution
 
             State = multipleStepsOnly ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
             m_stepsToPerform = stepCount;
+            m_lastProgressChangedStep = 0;
 
             MyKernelFactory.Instance.SetCurrent(MyKernelFactory.Instance.DevCount - 1);
 
@@ -249,7 +252,8 @@ namespace GoodAI.Core.Execution
                 throw new IllegalStateException("Bad worker state: " + State);
             }
 
-            int reportStart = Environment.TickCount;
+            Stopwatch progressUpdateStopWatch = Stopwatch.StartNew();
+            long reportStart = progressUpdateStopWatch.ElapsedTicks;
             int speedStart = Environment.TickCount;
             uint speedStep = SimulationStep;
             uint performedSteps = 0;
@@ -302,7 +306,7 @@ namespace GoodAI.Core.Execution
                 {
                     if (Environment.TickCount - speedStart > m_speedMeasureInterval)
                         measureSpeed = true;
-                    if (Environment.TickCount - reportStart > ReportInterval)
+                    if ((progressUpdateStopWatch.ElapsedTicks - reportStart) * 1000 / Stopwatch.Frequency >= ReportInterval)
                         reportProgress = true;
                 }
 
@@ -316,10 +320,11 @@ namespace GoodAI.Core.Execution
 
                 if (reportProgress)
                 {
-                    reportStart = Environment.TickCount;
+                    reportStart = progressUpdateStopWatch.ElapsedTicks;
 
                     if (ProgressChanged != null)
                     {
+                        m_lastProgressChangedStep = SimulationStep;
                         ProgressChanged(this, null);
                     }
                 }
@@ -335,7 +340,7 @@ namespace GoodAI.Core.Execution
         // NOT UI thread
         void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (ProgressChanged != null)
+            if (ProgressChanged != null && m_lastProgressChangedStep != SimulationStep)
             {
                 ProgressChanged(this, null);
             }
