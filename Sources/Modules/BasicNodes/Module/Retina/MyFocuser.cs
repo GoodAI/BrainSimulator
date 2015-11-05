@@ -30,6 +30,7 @@ namespace GoodAI.Modules.Retina
         {
             public override void Init(int nGPU)
             {
+                Owner.RetinaCircles = Owner.OutputWidth;
             }
 
             public override void Execute()
@@ -69,7 +70,6 @@ namespace GoodAI.Modules.Retina
 
                 m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleSubImageKernel_ForManyProposals");
                 m_kernel.SetupExecution(Owner.OutputSize);
-
             }
 
             public override void Execute()

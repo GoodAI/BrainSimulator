@@ -40,6 +40,7 @@ namespace GoodAI.Modules.Retina
         {
             public override void Init(int nGPU)
             {
+                Owner.RetinaCircles = Owner.Input.ColumnHint;
             }
 
             public override void Execute()

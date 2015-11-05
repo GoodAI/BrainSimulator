@@ -22,10 +22,7 @@ namespace GoodAI.Modules.Retina
         [YAXSerializableField(DefaultValue = 64)]
         public int OutputWidth { get; set; }
 
-
-        [MyBrowsable, Category("RetinaTransform")]
-        [YAXSerializableField(DefaultValue = 4)]
-        public int RetinaCircles { get; set; }
+        public int RetinaCircles;
 
 
         [MyInputBlock(1)]
@@ -88,7 +85,7 @@ namespace GoodAI.Modules.Retina
             while (true)
             {
                 float chord = radius * 2 * (float)Math.Sin((alpha_step / 2));  // https://en.wikipedia.org/wiki/Chord_(geometry)
-                radius += chord * 0.8f;  // move radius to the next circle
+                radius += (float)Math.Pow(chord,0.8f);  // move radius to the next circle
                 alpha_start = (alpha_start == 0) ? alpha_step / 2 : 0; // always switch between zero and step/2
                 alpha_current = alpha_start;
                 while (true)
@@ -104,7 +101,7 @@ namespace GoodAI.Modules.Retina
             }
 
             // Normalize sizes to the scale of one pixel
-            float norm_radius = 1/radius*0.8f;
+            float norm_radius = 1/radius*0.9f; // norlamize to one pixel (so we can scale it then properly)
             for (i = 0; i < RetinaPtsDefsMask.Count; i++)
             {
                 RetinaPtsDefsMask.Host[i] *= norm_radius;
