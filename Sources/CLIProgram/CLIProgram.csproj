@@ -7,10 +7,25 @@
     <ProjectGuid>{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLITester</RootNamespace>
-    <AssemblyName>CLITester</AssemblyName>
+    <RootNamespace>GoodAI.CoreRunner</RootNamespace>
+    <AssemblyName>CoreRunner</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,12 +51,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-  <!-- MP: the reference to GoodAI.InternalNodes.dll is like this to allow debugging breakpoints placed in InternalNodes: -->
+    <!-- MP: the reference to GoodAI.InternalNodes.dll is like this to allow debugging breakpoints placed in InternalNodes: -->
     <Reference Include="GoodAI.InternalNodes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" Condition=" '$(Configuration)' == 'Debug' ">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Modules\InternalNodes\Module\bin\Release\GoodAI.InternalNodes.dll</HintPath>
     </Reference>
-	<Reference Include="GoodAI.InternalNodes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" Condition=" '$(Configuration)' == 'Release' ">
+    <Reference Include="GoodAI.InternalNodes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" Condition=" '$(Configuration)' == 'Release' ">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Modules\InternalNodes\Module\bin\Debug\GoodAI.InternalNodes.dll</HintPath>
     </Reference>
@@ -62,10 +77,6 @@
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLIWrapper\CLIWrapper.csproj">
-      <Project>{0e37a51b-fa28-42a1-adb3-0a7dba655d48}</Project>
-      <Name>CLIWrapper</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Modules\BasicNodes\Module\BasicNodes.csproj">
       <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
       <Name>BasicNodes</Name>
@@ -74,6 +85,23 @@
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

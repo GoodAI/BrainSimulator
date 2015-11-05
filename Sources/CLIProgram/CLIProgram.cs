@@ -1,18 +1,18 @@
-﻿using CLIWrapper;
+﻿using GoodAI.Modules.NeuralNetwork.Tasks;
 using GoodAI.Core.Utils;
-using GoodAI.Modules.NeuralNetwork.Tasks;
+using GoodAI.Core.Execution;
+using NDesk.Options;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
-using NDesk.Options;
 
-namespace CLITester
+namespace GoodAI.CoreRunner
 {
-    class CLIProgram
+    class Program
     {
         static void Main(string[] args)
         {
@@ -37,7 +37,7 @@ namespace CLITester
                 MyLog.ERROR.WriteLine(e.Message);
             }
 
-            BSCLI CLI = new BSCLI(MyLogLevel.DEBUG);
+            MyProjectRunner CLI = new MyProjectRunner(MyLogLevel.DEBUG);
             StringBuilder result = new StringBuilder();
             CLI.OpenProject(breakoutBrainFilePath);
             CLI.DumpNodes();
@@ -68,7 +68,6 @@ namespace CLITester
             }
 
             CLI.Quit();
-            //Console.ReadLine();
             return;
         }
     }
