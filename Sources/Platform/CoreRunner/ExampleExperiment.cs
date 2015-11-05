@@ -41,22 +41,21 @@ namespace GoodAI.CoreRunner
             StringBuilder result = new StringBuilder();
             runner.OpenProject(breakoutBrainFilePath);
             runner.DumpNodes();
-            runner.Save(23, true);
+            runner.SaveOnStop(23, true);
             for (int i = 0; i < 5; ++i)
             {
-                runner.Run(1000, 100);
+                runner.RunAndPause(1000, 100);
                 float[] data = runner.GetValues(23, "Bias");
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
                 result.AppendFormat("{0}: {1}, {2}", i, data[0], data[1]);
-                runner.Stop();
                 runner.Set(23, typeof(MyQLearningTask), "DiscountFactor", discountFactor);
-                runner.Run(1000, 300);
+                runner.RunAndPause(1000, 300);
                 data = runner.GetValues(23, "Bias");
                 MyLog.DEBUG.WriteLine(data[0]);
                 MyLog.DEBUG.WriteLine(data[1]);
                 result.AppendFormat(" --- {0}, {1}", data[0], data[1]).AppendLine();
-                runner.Stop();
+                runner.Reset();
             }
 
             string resultFilePath = @"res." + clusterId.ToString() + "." + processId.ToString() + ".txt";
@@ -64,7 +63,7 @@ namespace GoodAI.CoreRunner
             string brainzFilePath = @"state." + clusterId.ToString() + "." + processId.ToString() + ".brainz";
             runner.SaveProject(brainzFilePath);
 
-            runner.Quit();
+            runner.Shutdown();
             return;
         }
     }

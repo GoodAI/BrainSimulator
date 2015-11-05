@@ -28,7 +28,7 @@ That is especially handy if you want to:
 
 ## Current capabilities
 * Print info (DumpNodes)
-* Open/save/run projects (OpenProject, SaveProject, Run, Quit)
+* Open/save/run projects (OpenProject, SaveProject, RunAndPause, Shutdown)
 * Edit node and task parameters (Set)
 * Edit multiple nodes at once (Filter, GetNodesOfType)
 * Get or set memory block values (GetValues, SetValues)
@@ -39,11 +39,10 @@ That is especially handy if you want to:
     MyProjectRunner runner = new MyProjectRunner(MyLogLevel.DEBUG);
     runner.OpenProject(@"C:\Users\johndoe\Desktop\Breakout.brain");
     runner.DumpNodes();
-    runner.Run(1000, 100);
+    runner.RunAndPause(1000, 100);
     float[] data = runner.GetValues(24, "Output");
     MyLog.INFO.WriteLine(data);
-    runner.Quit();
-    Console.ReadLine();
+    runner.Shutdown();
 
 ## More advanced example
     
@@ -65,10 +64,10 @@ That is especially handy if you want to:
             runner.Set(7, "SymbolSize", symbolSize);
             for (int i = 0; i < iterations; ++i)
             {
-                runner.Run(1, 10);
+                runner.RunAndPause(1, 10);
                 float okDot = runner.GetValues(8)[0];
                 okSum += okDot;
-                runner.Stop();
+                runner.Reset();
                 if ((i + 1) % 10 == 0)
                 {
                     MyLog.WARNING.Write('.');
@@ -82,7 +81,7 @@ That is especially handy if you want to:
     }
 
     File.WriteAllLines(@"C:\Users\johndoe\Desktop\results.txt", results.Select(n => n.ToString().Substring(1, n.ToString().Length - 2)));
-    runner.Quit();
+    runner.Shutdown();
 */
 
 namespace GoodAI.Core.Execution
@@ -93,9 +92,10 @@ namespace GoodAI.Core.Execution
 
         public static MySimulationHandler SimulationHandler { get; private set; }
 
-        public static List<Tuple<int, uint, MonitorFunc>> SimulationMonitors { get; private set; }
-        public static Hashtable MonitorResults;
-        public delegate float[] MonitorFunc(MySimulation simulation);
+        private int m_resultIdCounter;
+        protected delegate float[] MonitorFunc(MySimulation simulation);
+        private static List<Tuple<int, uint, MonitorFunc>> m_monitors { get; set; }
+        private static Hashtable m_results;
 
         /// <summary>
         /// Definition for filtering function
@@ -103,8 +103,6 @@ namespace GoodAI.Core.Execution
         /// <param name="node">Node, which is being processed for filtering</param>
         /// <returns></returns>
         public delegate bool FilterFunc(MyNode node);
-
-        private int uid;
 
         public static MyProject Project
         {
@@ -124,13 +122,13 @@ namespace GoodAI.Core.Execution
         {
             MySimulation simulation = new MyLocalSimulation();
             SimulationHandler = new MySimulationHandler(simulation);
-            uid = 0;
+            m_resultIdCounter = 0;
 
             SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             SimulationHandler.StepPerformed += SimulationHandler_StepPerformed;
 
-            SimulationMonitors = new List<Tuple<int, uint, MonitorFunc>>();
-            MonitorResults = new Hashtable();
+            m_monitors = new List<Tuple<int, uint, MonitorFunc>>();
+            m_results = new Hashtable();
 
             Project = new MyProject();
 
@@ -164,34 +162,23 @@ namespace GoodAI.Core.Execution
         }
 
         /// <summary>
-        /// Not implemented yet
+        /// Filter all nodes in project recursively. Returns list of nodes, for which the filter function returned True.
         /// </summary>
-        public void DumpConnections()
-        {
-            throw new NotImplementedException();
-            /*foreach (MyConnectionProxy c in Project.Network.m_connections) { 
-            
-            }*/
-        }
-
-        /// <summary>
-        /// Filter all nodes in project recursively. Returns list of nodes, for which the filter function returned True
-        /// </summary>
-        /// <param name="userFunc">User-defined function for filtering</param>
-        /// <returns></returns>
-        public List<MyNode> Filter(FilterFunc userFunc)
+        /// <param name="filterFunc">User-defined function for filtering</param>
+        /// <returns>Node list</returns>
+        public List<MyNode> Filter(FilterFunc filterFunc)
         {
             List<MyNode> nodes = new List<MyNode>();
-            MyNodeGroup.IteratorAction a = x => { if (x.GetType() != typeof(MyNodeGroup) && userFunc(x)) { nodes.Add(x); } };
+            MyNodeGroup.IteratorAction a = x => { if (x.GetType() != typeof(MyNodeGroup) && filterFunc(x)) { nodes.Add(x); } };
             Project.Network.Iterate(true, a);
             return nodes;
         }
 
         /// <summary>
-        /// Returns list of nodes of given type. Uses Filter function
+        /// Returns list of nodes of given type
         /// </summary>
         /// <param name="type">Node type</param>
-        /// <returns></returns>
+        /// <returns>Node list</returns>
         public List<MyNode> GetNodesOfType(Type type)
         {
             // Comparing strings is a really really bad hack. But == comparison of GetType() (or typeof) and type or using Equals methods stopped working.
@@ -205,7 +192,7 @@ namespace GoodAI.Core.Execution
         /// </summary>
         /// <param name="node">Node</param>
         /// <param name="type">Type of task</param>
-        /// <returns></returns>
+        /// <returns>Task</returns>
         protected MyTask GetTaskByType(MyWorkingNode node, Type type)
         {
             foreach (PropertyInfo taskPropInfo in node.GetInfo().TaskOrder)
@@ -228,12 +215,12 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Returns float array of value from memory block of given node
         /// </summary>
-        /// <param name="id">Node ID</param>
+        /// <param name="nodeId">Node ID</param>
         /// <param name="blockName">Memory block name</param>
-        /// <returns></returns>
-        public float[] GetValues(int id, string blockName = "Output")
+        /// <returns>Retrieved values</returns>
+        public float[] GetValues(int nodeId, string blockName = "Output")
         {
-            MyMemoryBlock<float> block = GetMemBlock(id, blockName);
+            MyMemoryBlock<float> block = GetMemBlock(nodeId, blockName);
             block.SafeCopyToHost();
             return block.Host as float[];
         }
@@ -241,13 +228,13 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Set values of memory block
         /// </summary>
-        /// <param name="id">Node ID</param>
-        /// <param name="blockName">Name of memory block</param>
+        /// <param name="nodeId">Node ID</param>
         /// <param name="values">Values to be set</param>
-        public void SetValues(int id, float[] values, string blockName = "Input")
+        /// <param name="blockName">Name of memory block</param>
+        public void SetValues(int nodeId, float[] values, string blockName = "Input")
         {
-            MyLog.INFO.WriteLine("Setting values of " + blockName + "@" + id);
-            MyMemoryBlock<float> block = GetMemBlock(id, blockName);
+            MyLog.INFO.WriteLine("Setting values of " + blockName + "@" + nodeId);
+            MyMemoryBlock<float> block = GetMemBlock(nodeId, blockName);
             for (int i = 0; i < block.Count; ++i)
             {
                 block.Host[i] = values[i];
@@ -255,27 +242,27 @@ namespace GoodAI.Core.Execution
             block.SafeCopyToDevice();
         }
 
-        protected MyWorkingNode Get(int id)
+        protected MyWorkingNode GetNode(int nodeId)
         {
-            return Project.GetNodeById(id) as MyWorkingNode;
+            return Project.GetNodeById(nodeId) as MyWorkingNode;
         }
 
-        public void Save(int id, bool b)
+        public void SaveOnStop(int nodeId, bool shallSave)
         {
-            Get(id).SaveOnStop = b;
-            MyLog.INFO.WriteLine("Save@" + id + " set to " + b);
+            GetNode(nodeId).SaveOnStop = shallSave;
+            MyLog.INFO.WriteLine("Save@" + nodeId + " set to " + shallSave);
         }
 
-        public void Load(int id, bool b)
+        public void LoadOnStart(int nodeId, bool shallLoad)
         {
-            Get(id).LoadOnStart = b;
-            MyLog.INFO.WriteLine("Load@" + id + " set to " + b);
+            GetNode(nodeId).LoadOnStart = shallLoad;
+            MyLog.INFO.WriteLine("Load@" + nodeId + " set to " + shallLoad);
         }
 
         /// <summary>
-        /// Quits the simulation
+        /// Shutdown the runner and the underlaying simulation infrastructure
         /// </summary>
-        public void Quit()
+        public void Shutdown()
         {
             SimulationHandler.Finish();
         }
@@ -283,43 +270,40 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Loads project from file
         /// </summary>
-        /// <param name="fileName">Path to .brain file</param>
-        public void OpenProject(string fileName)
+        /// <param name="path">Path to .brain/.brainz file</param>
+        public void OpenProject(string path)
         {
-            MyLog.INFO.WriteLine("Loading project: " + fileName);
+            MyLog.INFO.WriteLine("Loading project: " + path);
 
             string content;
 
             try
             {
-                string newProjectName = Path.GetFileNameWithoutExtension(fileName);
+                string newProjectName = Path.GetFileNameWithoutExtension(path);
 
-                content = ProjectLoader.LoadProject(fileName,
+                content = ProjectLoader.LoadProject(path,
                     MyMemoryBlockSerializer.GetTempStorage(newProjectName));
 
-                Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
+                Project = MyProject.Deserialize(content, Path.GetDirectoryName(path));
                 Project.Name = newProjectName;
             }
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project loading failed: " + e.Message);
             }
-
         }
 
         /// <summary>
         /// Saves project to given path
         /// </summary>
-        /// <param name="fileName">Path for saving</param>
-        public void SaveProject(string fileName)
+        /// <param name="path">Path for saving .brain/.brainz file</param>
+        public void SaveProject(string path)
         {
-            MyLog.INFO.WriteLine("Saving project: " + fileName);
+            MyLog.INFO.WriteLine("Saving project: " + path);
             try
             {
-                //Project.Name = Path.GetFileNameWithoutExtension(fileName);  // a little sideeffect (should be harmless)
-
-                string fileContent = Project.Serialize(Path.GetDirectoryName(fileName));
-                ProjectLoader.SaveProject(fileName, fileContent,
+                string fileContent = Project.Serialize(Path.GetDirectoryName(path));
+                ProjectLoader.SaveProject(path, fileContent,
                     MyMemoryBlockSerializer.GetTempStorage(Project));
             }
             catch (Exception e)
@@ -328,12 +312,6 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        /// <summary>
-        /// Sets property of given object
-        /// </summary>
-        /// <param name="o">Object</param>
-        /// <param name="propName">Name of property</param>
-        /// <param name="value">Value of property</param>
         protected void setProperty(object o, string propName, object value)
         {
             MyLog.DEBUG.WriteLine("Setting property " + propName + "@" + o + " to " + value);
@@ -356,25 +334,25 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Sets property of given node. Support Enums
         /// </summary>
-        /// <param name="id">Node ID</param>
+        /// <param name="nodeId">Node ID</param>
         /// <param name="propName">Property name</param>
         /// <param name="value">Value to be set</param>
-        public void Set(int id, string propName, object value)
+        public void Set(int nodeId, string propName, object value)
         {
-            MyNode n = Project.GetNodeById(id);
+            MyNode n = Project.GetNodeById(nodeId);
             setProperty(n, propName, value);
         }
 
         /// <summary>
         /// Sets property of given task. Support Enums
         /// </summary>
-        /// <param name="id">Node ID</param>
+        /// <param name="nodeId">Node ID</param>
         /// <param name="taskType">Task type</param>
         /// <param name="propName">Property name</param>
         /// <param name="value">New property value</param>
-        public void Set(int id, Type taskType, string propName, object value)
+        public void Set(int nodeId, Type taskType, string propName, object value)
         {
-            MyWorkingNode node = (Project.GetNodeById(id) as MyWorkingNode);
+            MyWorkingNode node = (Project.GetNodeById(nodeId) as MyWorkingNode);
             MyTask task = GetTaskByType(node, taskType);
             setProperty(task, propName, value);
         }
@@ -382,81 +360,81 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Track a value
         /// </summary>
-        /// <param name="id">Node ID</param>
-        /// <param name="length">How many steps to track</param>
-        /// <param name="offset">Offset in given memory block</param>
-        /// <param name="memName">Memory block name</param>
-        /// <param name="step">Track value each x steps</param>
-        /// <returns>Id of result</returns>
-        public int TrackValue(int id, int length, uint step = 10, int offset = 0, string memName = "Output")
+        /// <param name="nodeId">Node ID</param>
+        /// <param name="blockName">Memory block name</param>
+        /// <param name="blockOffset">Offset in given memory block</param>
+        /// <param name="trackInterval">Track value each x steps</param>
+        /// <returns>Result ID</returns>
+        public int TrackValue(int nodeId, string blockName = "Output", int blockOffset = 0, uint trackInterval = 10)
         {
             MonitorFunc valueMonitor = x =>
             {
-                float value = GetValues(id, memName)[offset];
+                float value = GetValues(nodeId, blockName)[blockOffset];
                 float[] record = new float[2] { SimulationHandler.SimulationStep, value };
                 return record;
             };
 
-            Tuple<int, uint, MonitorFunc> rec = new Tuple<int, uint, MonitorFunc>(uid++, step, valueMonitor);
-            SimulationMonitors.Add(rec);
-            MonitorResults[rec.Item1] = new List<float[]>();
-            MyLog.INFO.WriteLine(memName + "[" + offset + "]@" + id + "is now being tracked with ID " + (uid - 1));
-            return uid - 1;
+            Tuple<int, uint, MonitorFunc> rec = new Tuple<int, uint, MonitorFunc>(m_resultIdCounter++, trackInterval, valueMonitor);
+            m_monitors.Add(rec);
+            m_results[rec.Item1] = new List<float[]>();
+            MyLog.INFO.WriteLine(blockName + "[" + blockOffset + "]@" + nodeId + "is now being tracked with ID " + (m_resultIdCounter - 1));
+            return m_resultIdCounter - 1;
         }
 
         /// <summary>
-        /// Returns hashtable with reults (list of float arrays)
+        /// Returns hashtable with results (list of float arrays)
         /// </summary>
         /// <returns>Results</returns>
         public Hashtable Results()
         {
-            return MonitorResults;
+            return m_results;
         }
 
         /// <summary>
-        /// Save results to a file
+        /// Save result to a file
         /// </summary>
-        /// <param name="id">ID of results</param>
-        /// <param name="output">Path to file in C# format, e.g. C:\path\to\file</param>
-        public void SaveResults(int id, string output)
+        /// <param name="resultId">Result ID</param>
+        /// <param name="outputPath">Path to file in C# format, e.g. C:\path\to\file</param>
+        public void SaveResults(int resultId, string outputPath)
         {
             string data = "";
-            foreach (float[] x in (Results()[id] as List<float[]>))
+            foreach (float[] x in (Results()[resultId] as List<float[]>))
             {
                 data += x[0] + " " + x[1] + "\r\n";
             }
 
-            System.IO.StreamWriter file = new System.IO.StreamWriter(output);
+            System.IO.StreamWriter file = new System.IO.StreamWriter(outputPath);
             file.WriteLine(data);
             file.Close();
-            MyLog.INFO.WriteLine("Results saved to " + output);
+            MyLog.INFO.WriteLine("Results saved to " + outputPath);
         }
 
         /// <summary>
         /// Plot results to a file
         /// </summary>
-        /// <param name="ids">IDs of results</param>
-        /// <param name="output">Path to file in gnuplot format, e.g. C:/path/to/file</param>
-        /// <param name="titles">Titles of the lines</param>
-        public void PlotResults(int[] ids, string output, string[] titles = null, int[] dims = null)
+        /// <param name="resultIds">IDs of results</param>
+        /// <param name="outputPath">Path to file in gnuplot format, e.g. C:/path/to/file</param>
+        /// <param name="lineTitles">Titles of the lines</param>
+        /// <param name="dimensionSizes">Sizes of plot dimensions</param>
+        public void PlotResults(int[] resultIds, string outputPath, string[] lineTitles = null, int[] dimensionSizes = null)
         {
             string data = "";
             string args = "-e \"set term png";
-            if (dims != null)
+            if (dimensionSizes != null)
             {
-                args += " size " + dims[0] + "," + dims[1];
+                args += " size " + dimensionSizes[0] + "," + dimensionSizes[1];
             }
-            args += "; set output '" + output + "'; plot";
-            for (int i = 0; i < ids.Length; ++i)
+            args += "; set output '" + outputPath + "'; plot";
+            for (int i = 0; i < resultIds.Length; ++i)
             {
                 args += "'-' using 1:2 ";
-                if (titles != null)
+                if (lineTitles != null)
                 {
-                    string title = titles[i];
+                    string title = lineTitles[i];
                     args += "title \\\"" + title + "\\\" ";
                 }
                 args += "smooth frequency";
-                if (i == ids.Length - 1)
+                if (i == resultIds.Length - 1)
                 {
                     args += ";";
                 }
@@ -465,7 +443,7 @@ namespace GoodAI.Core.Execution
                     args += ", ";
                 }
 
-                foreach (float[] x in (Results()[ids[i]] as List<float[]>))
+                foreach (float[] x in (Results()[resultIds[i]] as List<float[]>))
                 {
                     data += x[0] + " " + x[1] + "\n";
                 }
@@ -480,7 +458,7 @@ namespace GoodAI.Core.Execution
             p.StartInfo.Arguments = args;
             p.Start();
             p.StandardInput.WriteLine(data);
-            MyLog.INFO.WriteLine("Results " + ids + " plotted to " + output);
+            MyLog.INFO.WriteLine("Results " + resultIds + " plotted to " + outputPath);
         }
 
         void SimulationHandler_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -493,22 +471,24 @@ namespace GoodAI.Core.Execution
 
         void SimulationHandler_StepPerformed(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            foreach (Tuple<int, uint, MonitorFunc> m in SimulationMonitors)
+            foreach (Tuple<int, uint, MonitorFunc> m in m_monitors)
             {
                 if (SimulationHandler.SimulationStep % m.Item2 == 0)
                 {
                     float[] value = (float[])m.Item3(SimulationHandler.Simulation);
-                    (MonitorResults[m.Item1] as List<float[]>).Add(value);
+                    (m_results[m.Item1] as List<float[]>).Add(value);
                 }
             }
         }
 
         /// <summary>
-        /// Runs simulation for given number of steps
+        /// Runs simulation for a given number of steps. Simulation will be left in PAUSED state after
+        /// this function returns, allowing to inspect content of memory blocks and then perhaps
+        /// resume the simulation by calling this function again.
         /// </summary>
-        /// <param name="steps">Number of steps</param>
-        /// <param name="logStep">Print info each x steps</param>
-        public void Run(uint steps, uint logStep = 100)
+        /// <param name="stepCount">Number of steps to perform</param>
+        /// <param name="reportInterval">Step count between printing out simulation info (e.g. speed)</param>
+        public void RunAndPause(uint stepCount, uint reportInterval = 100)
         {
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
@@ -535,8 +515,8 @@ namespace GoodAI.Core.Execution
             }
             try
             {
-                SimulationHandler.ReportIntervalSteps = logStep;
-                SimulationHandler.StartSimulation(true, steps);
+                SimulationHandler.ReportIntervalSteps = reportInterval;
+                SimulationHandler.StartSimulation(true, stepCount);
                 SimulationHandler.WaitUntilStepsPerformed();
             }
             catch (Exception e)
@@ -545,12 +525,15 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        public void Stop()
+        /// <summary>
+        /// Stops the paused simulation and flushes memory
+        /// </summary>
+        public void Reset()
         {
             SimulationHandler.StopSimulation();
-            SimulationMonitors.Clear();
-            MonitorResults.Clear();
-            uid = 0;
+            m_monitors.Clear();
+            m_results.Clear();
+            m_resultIdCounter = 0;
         }
     }
 }
