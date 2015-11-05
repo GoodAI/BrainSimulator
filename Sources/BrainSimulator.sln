@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
 EndProject
@@ -31,10 +31,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodesTests", "Modules\BasicNodes\Tests\BasicNodesTests.csproj", "{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIProgram", "CLIProgram\CLIProgram.csproj", "{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIUnitsTests", "CLIUnitTests\CLIUnitsTests.csproj", "{99B243CD-7E7A-4A08-B8B4-42E52051F867}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIWrapper", "CLIWrapper\CLIWrapper.csproj", "{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,18 +103,6 @@ Global
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
-		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
-		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
-		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
-		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
-		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
-		{99B243CD-7E7A-4A08-B8B4-42E52051F867}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
-		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
-		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
-		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
-		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
-		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
-		{0E37A51B-FA28-42A1-ADB3-0A7DBA655D48}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
