@@ -329,7 +329,7 @@ namespace GoodAI.Modules.GameBoy
             public bool ForcePosition { get; set; }
 
             [MyBrowsable, Category("Force Position")]
-            [YAXSerializableField(DefaultValue = 0.5), YAXElementFor("Force Position"),
+            [YAXSerializableField(DefaultValue = 0.5f), YAXElementFor("Force Position"),
             Description("Forced X position of the reward")]
             public float XPosition {
                 get {
@@ -345,7 +345,7 @@ namespace GoodAI.Modules.GameBoy
             private float m_xPos;
 
             [MyBrowsable, Category("Force Position")]
-            [YAXSerializableField(DefaultValue = 0.5), YAXElementFor("Force Position"),
+            [YAXSerializableField(DefaultValue = 0.5f), YAXElementFor("Force Position"),
             Description("Forced Y position of the reward")]
             public float YPosition
             {
