@@ -144,24 +144,19 @@ namespace GoodAI.Modules.SparseCoding
                     for (int row = 0; row < numberOfRows; row++)
                     {
                         Owner.Output.Host[row] = 0;
-                        int slidingWindowMax = 0;
+                        float slidingWindowMax = 0;
                         int slidingWindowMaxPos = 0;
                         for (int slidingWindowPos = 0; slidingWindowPos < Owner.LENGTH - Owner.ON_BITS_LENGTH; slidingWindowPos++)
                         {
-                            int slidingWindowCurrent = 0;
+                            float slidingWindowCurrentSum = 0.0f;
 
-                            // integrate ower the sliding window
+                            // integrate over the sliding window
                             for (int i = 0; i < Owner.ON_BITS_LENGTH; i++)
                             {
-                                // check if the bit is 1, it is stored as a float value, 
-                                // lets consider value above 0.5 as an "on" bit
-                                if (Owner.Input.Host[row * Owner.LENGTH + slidingWindowPos + i] > 0.5)
+                                slidingWindowCurrentSum += Owner.Input.Host[row * Owner.LENGTH + slidingWindowPos + i];
+                                if (slidingWindowCurrentSum > slidingWindowMax)
                                 {
-                                    slidingWindowCurrent++;
-                                }
-                                if (slidingWindowCurrent > slidingWindowMax)
-                                {
-                                    slidingWindowMax = slidingWindowCurrent;
+                                    slidingWindowMax = slidingWindowCurrentSum;
                                     slidingWindowMaxPos = slidingWindowPos;
                                 }
                             }

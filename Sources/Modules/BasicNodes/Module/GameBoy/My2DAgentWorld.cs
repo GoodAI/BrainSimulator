@@ -59,14 +59,14 @@ namespace GoodAI.Modules.GameBoy
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
-        }        
+        }
 
         [MyOutputBlock(3)]
         public MyMemoryBlock<float> TargetPosition
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
-        }        
+        }
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 160)]
@@ -81,7 +81,7 @@ namespace GoodAI.Modules.GameBoy
         private Dictionary<string, Bitmap> m_bitmapTable = new Dictionary<string, Bitmap>();
         private string m_errorMessage;
 
-        private List<MyGameObject> m_gameObjects;                       
+        private List<MyGameObject> m_gameObjects;
 
         public override void UpdateMemoryBlocks()
         {
@@ -96,7 +96,7 @@ namespace GoodAI.Modules.GameBoy
             AgentPosition.Count = 2;
             TargetPosition.Count = 2;
 
-            Event.Count = 1;            
+            Event.Count = 1;
         }
 
         public override void Validate(MyValidator validator)
@@ -189,7 +189,7 @@ namespace GoodAI.Modules.GameBoy
                     bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset
                 };
                 offset += FillWithChannelFromBitmap(bitmap, 0, Owner.Bitmaps.Host, offset);
-              
+
                 Owner.m_gameObjects.Add(agent);
                 Owner.m_gameObjects.Add(target);
 
@@ -208,13 +208,13 @@ namespace GoodAI.Modules.GameBoy
 
             public override void Init(int nGPU)
             {
-                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "DrawSpriteKernel");                
+                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "DrawSpriteKernel");
             }
 
             public override void Execute()
             {
                 Owner.Visual.Fill(1.0f);
-                
+
                 for (int i = 0; i < Owner.m_gameObjects.Count; i++)
                 {
                     MyGameObject g = Owner.m_gameObjects[i];
@@ -236,6 +236,7 @@ namespace GoodAI.Modules.GameBoy
         ///     <li> <b>DeltaT: </b>Time shift at each simulation step.</li>
         ///     <li> <b>TargetRadius: </b>Radius in which the target is considered as reached.</li>
         ///     <li> <b>ResetCountouwnSteps: </b>How many steps after reaching the target to wait before generating new target.</li>
+        ///     <li> <b>ForcePosition: </b>After reaching the target, new position is generated. If true, position is forced to be constant.</li>
         /// </ul>
         /// 
         /// </description>
@@ -245,7 +246,7 @@ namespace GoodAI.Modules.GameBoy
             #region parameters
 
             [MyBrowsable, Category("Events")]
-            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"), 
+            [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Structure"),
             Description("This value is set to the Event output for one time step, if the target is reached.")]
             public float ReachTargetSignal
             {
@@ -321,21 +322,65 @@ namespace GoodAI.Modules.GameBoy
             }
             private int m_resetCountdownSteps;
 
+
+            [MyBrowsable, Category("Force Position")]
+            [YAXSerializableField(DefaultValue = false), YAXElementFor("Force Position"),
+            Description("Force position to a given coordinates?.")]
+            public bool ForcePosition { get; set; }
+
+            [MyBrowsable, Category("Force Position")]
+            [YAXSerializableField(DefaultValue = 0.5f), YAXElementFor("Force Position"),
+            Description("Forced X position of the reward")]
+            public float XPosition {
+                get {
+                    return m_xPos;
+                }
+                set{
+                    if (value >= 0 && value <= 1)
+                    {
+                        m_xPos = value;
+                    }
+                }
+            }
+            private float m_xPos;
+
+            [MyBrowsable, Category("Force Position")]
+            [YAXSerializableField(DefaultValue = 0.5f), YAXElementFor("Force Position"),
+            Description("Forced Y position of the reward")]
+            public float YPosition
+            {
+                get
+                {
+                    return m_yPos;
+                }
+                set
+                {
+                    if (value >= 0 && value <= 1)
+                    {
+                        m_yPos = value;
+                    }
+                }
+            }
+            private float m_yPos;
+
             #endregion
 
             private Random m_random = new Random();
 
             public override void Init(int nGPU)
             {
-
             }
 
             public override void Execute()
             {
+                MyGameObject target = Owner.m_gameObjects[1];
+                if (ForcePosition)
+                {
+                    SetTargetPosition(target);
+                }
                 Owner.Event.Host[0] = 0;
 
                 MyGameObject agent = Owner.m_gameObjects[0];
-                MyGameObject target = Owner.m_gameObjects[1];
 
                 Owner.Controls.SafeCopyToHost();
 
@@ -351,7 +396,7 @@ namespace GoodAI.Modules.GameBoy
                 }
 
                 ApplyControl(agent);
-                ResolveAgentEvents(agent, target);                
+                ResolveAgentEvents(agent, target);
 
                 Owner.AgentPosition.Host[0] = agent.position.x + agent.pixelSize.x * 0.5f;
                 Owner.AgentPosition.Host[1] = agent.position.y + agent.pixelSize.y * 0.5f;
@@ -368,7 +413,7 @@ namespace GoodAI.Modules.GameBoy
             public void ResetGame()
             {
                 ResetAgent();
-                ResetTarget();           
+                ResetTarget();
             }
 
             private void ResetAgent()
@@ -385,9 +430,7 @@ namespace GoodAI.Modules.GameBoy
             private void ResetTarget()
             {
                 MyGameObject target = Owner.m_gameObjects[1];
-
-                target.position.x = (Owner.DISPLAY_WIDTH - target.pixelSize.x) * (float)m_random.NextDouble();
-                target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * (float)m_random.NextDouble();
+                SetTargetPosition(target);
             }
 
             private int m_resetCountDown;
@@ -421,20 +464,32 @@ namespace GoodAI.Modules.GameBoy
                 //target
                 float2 relPos = agent.position - target.position;
 
-                if (relPos.x * relPos.x + relPos.y * relPos.y < TargetRadius * TargetRadius)                
+                if (relPos.x * relPos.x + relPos.y * relPos.y < TargetRadius * TargetRadius)
                 {
                     Owner.Event.Host[0] += ReachTargetSignal;
-
-                    target.position.x = (Owner.DISPLAY_WIDTH - target.pixelSize.x) * (float)m_random.NextDouble();
-                    target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * (float)m_random.NextDouble();
-
+                    SetTargetPosition(target);
+                    
                     if (m_resetCountDown == 0)
                     {
                         m_resetCountDown = ResetCountouwnSteps;
                     }
                 }
 
-                agent.position = agent.position + agent.velocity * DeltaT;                                
+                agent.position = agent.position + agent.velocity * DeltaT;
+            }
+
+            private void SetTargetPosition(MyGameObject target)
+            {
+                if (ForcePosition)
+                {
+                    target.position.x = (Owner.DISPLAY_WIDTH - target.pixelSize.x) * XPosition;
+                    target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * YPosition;
+                }
+                else
+                {
+                    target.position.x = (Owner.DISPLAY_WIDTH - target.pixelSize.x) * (float)m_random.NextDouble();
+                    target.position.y = (Owner.DISPLAY_HEIGHT - target.pixelSize.y) * (float)m_random.NextDouble();
+                }
             }
 
             private void ApplyControl(MyGameObject agent)
@@ -470,8 +525,8 @@ namespace GoodAI.Modules.GameBoy
                 else if (maxAction % 3 == 2)
                 {
                     agent.velocity.x = AgentVelocity;
-                }                               
-            }            
+                }
+            }
         }
     }
 }

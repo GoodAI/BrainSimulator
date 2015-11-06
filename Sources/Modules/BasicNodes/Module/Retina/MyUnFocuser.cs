@@ -36,18 +36,15 @@ namespace GoodAI.Modules.Retina
 
 
         [MyTaskInfo(Disabled = true, OneShot = true), Description("InitRetina")]
-        public class MyUnfocuseInitRetinaTask : MyTask<MyAbstractFocuser>
+        public class MyUnfocuseInitRetinaTask : MyAbstractInitRetinaTask
         {
             public override void Init(int nGPU)
             {
                 Owner.RetinaCircles = Owner.Input.ColumnHint;
             }
-
-            public override void Execute()
-            {
-                Owner.InitRetinaMasks();
-            }
         }
+
+
     
         /// <summary>
         /// given tha patch and location it fit it inot a image, this is similar to canvas.

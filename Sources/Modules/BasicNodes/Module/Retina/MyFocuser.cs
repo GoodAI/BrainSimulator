@@ -26,17 +26,13 @@ namespace GoodAI.Modules.Retina
 
 
         [MyTaskInfo(Disabled = true, OneShot = true), Description("InitRetina")]
-        public class MyFocuserInitRetinaTask : MyTask<MyAbstractFocuser>
+        public class MyFocuserInitRetinaTask : MyAbstractInitRetinaTask
         {
             public override void Init(int nGPU)
             {
                 Owner.RetinaCircles = Owner.OutputWidth;
             }
 
-            public override void Execute()
-            {
-                Owner.InitRetinaMasks();
-            }
         }
     
 

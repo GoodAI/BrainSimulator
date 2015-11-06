@@ -6,6 +6,7 @@ using GoodAI.Modules.Transforms;
 using System.ComponentModel;
 using System;
 using YAXLib;
+using GoodAI.Modules.VSA;
 
 namespace GoodAI.Modules.Retina
 {
@@ -67,46 +68,85 @@ namespace GoodAI.Modules.Retina
             }
         }
 
-        
 
-
-        // Init data for retina. It needs to be ran from the observer and other class too if node is only observing and not calculating...
-        public void InitRetinaMasks()
+        [MyTaskInfo(Disabled = true, OneShot = true), Description("InitRetina")]
+        abstract public class MyAbstractInitRetinaTask : MyTask<MyAbstractFocuser>
         {
-            float ptsInCircle  = (RetinaPtsDefsMask.Count/2) / RetinaCircles;
-            float alpha_step   = 2.0f * (float)Math.PI / ptsInCircle;
-
-            int i = 0;
-            RetinaPtsDefsMask.Host[i++] = 0f; // center of the circle ;-)
-            RetinaPtsDefsMask.Host[i++] = 0f;
-            float radius = 1.5f; // one pixel radius
-            float alpha_current = 0f;
-            float alpha_start = 0f;
-            while (true)
+            public enum MyRetinaInitMode
             {
-                float chord = radius * 2 * (float)Math.Sin((alpha_step / 2));  // https://en.wikipedia.org/wiki/Chord_(geometry)
-                radius += (float)Math.Pow(chord,0.8f);  // move radius to the next circle
-                alpha_start = (alpha_start == 0) ? alpha_step / 2 : 0; // always switch between zero and step/2
-                alpha_current = alpha_start;
-                while (true)
+                Circles,
+                GaussSampling
+            }
+
+            [MyBrowsable, Category("Params")]
+            [YAXSerializableField(DefaultValue = MyRetinaInitMode.Circles)]
+            public MyRetinaInitMode RetinaInitMode { get; set; }
+
+            public override void Execute()
+            {
+                switch (RetinaInitMode)
                 {
-                    RetinaPtsDefsMask.Host[i++] = radius * (float)Math.Cos(alpha_current);
-                    RetinaPtsDefsMask.Host[i++] = radius * (float)Math.Sin(alpha_current);
-                    alpha_current += alpha_step;
-                    if (alpha_current >= 2 * Math.PI || i >= RetinaPtsDefsMask.Count)
+                    case MyRetinaInitMode.Circles:
+                        InitRetinaCirclesMasks();
+                        break;
+                    case MyRetinaInitMode.GaussSampling:
+                        InitRetinaGaussSamplingMasks();
+                        break;
+                    default:
                         break;
                 }
-                if (i >= RetinaPtsDefsMask.Count)
-                    break;
+                
             }
 
-            // Normalize sizes to the scale of one pixel
-            float norm_radius = 1/radius*0.9f; // norlamize to one pixel (so we can scale it then properly)
-            for (i = 0; i < RetinaPtsDefsMask.Count; i++)
-            {
-                RetinaPtsDefsMask.Host[i] *= norm_radius;
+
+              // Init data for retina. It needs to be ran from the observer and other class too if node is only observing and not calculating...
+            public void InitRetinaGaussSamplingMasks()
+            {                  
+                float std = 0.12f; // standart deviation
+
+                MyRandomPool.GenerateRandomNormalVectors(Owner.RetinaPtsDefsMask.Host, new Random(123454321), Owner.RetinaPtsDefsMask.Count, 1, 0, std * std, false);  // seed has to be constat for everything & do not normalize.
+                Owner.RetinaPtsDefsMask.SafeCopyToDevice();
+
             }
-            RetinaPtsDefsMask.SafeCopyToDevice();
+
+            // Init data for retina. It needs to be ran from the observer and other class too if node is only observing and not calculating...
+            public void InitRetinaCirclesMasks()
+            {
+                float ptsInCircle = (Owner.RetinaPtsDefsMask.Count / 2) / Owner.RetinaCircles;
+                float alpha_step = 2.0f * (float)Math.PI / ptsInCircle;
+
+                int i = 0;
+                Owner.RetinaPtsDefsMask.Host[i++] = 0f; // center of the circle ;-)
+                Owner.RetinaPtsDefsMask.Host[i++] = 0f;
+                float radius = 1.5f; // one pixel radius
+                float alpha_current = 0f;
+                float alpha_start = 0f;
+                while (true)
+                {
+                    float chord = radius * 2 * (float)Math.Sin((alpha_step / 2));  // https://en.wikipedia.org/wiki/Chord_(geometry)
+                    radius += (float)Math.Pow(chord, 0.8f);  // move radius to the next circle
+                    alpha_start = (alpha_start == 0) ? alpha_step / 2 : 0; // always switch between zero and step/2
+                    alpha_current = alpha_start;
+                    while (true)
+                    {
+                        Owner.RetinaPtsDefsMask.Host[i++] = radius * (float)Math.Cos(alpha_current);
+                        Owner.RetinaPtsDefsMask.Host[i++] = radius * (float)Math.Sin(alpha_current);
+                        alpha_current += alpha_step;
+                        if (alpha_current >= 2 * Math.PI || i >= Owner.RetinaPtsDefsMask.Count)
+                            break;
+                    }
+                    if (i >= Owner.RetinaPtsDefsMask.Count)
+                        break;
+                }
+
+                // Normalize sizes to the scale of one pixel
+                float norm_radius = 1 / radius * 0.9f; // norlamize to one pixel (so we can scale it then properly)
+                for (i = 0; i < Owner.RetinaPtsDefsMask.Count; i++)
+                {
+                    Owner.RetinaPtsDefsMask.Host[i] *= norm_radius;
+                }
+                Owner.RetinaPtsDefsMask.SafeCopyToDevice();
+            }
         }
 
 
