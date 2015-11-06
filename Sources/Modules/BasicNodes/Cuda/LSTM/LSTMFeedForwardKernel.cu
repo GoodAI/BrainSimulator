@@ -245,6 +245,7 @@ extern "C"
 	__global__ void LSTMFeedForwardKernel(
 		ActivationFunctionEnum inputActivationFunction,
 		ActivationFunctionEnum gateActivationFunction,
+		ActivationFunctionEnum activationFunction,
 		float *input,
 		float *output,
 		float *previousOutput,
@@ -363,7 +364,7 @@ extern "C"
 			// step 4: calculate output of all memory block's cells
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				output[cellId] = outputGateActivation * cellStates[cellId];
+				output[cellId] = outputGateActivation * Evaluate(activationFunction, cellStates[cellId]);
 			}
 		}
 	}

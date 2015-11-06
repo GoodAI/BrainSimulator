@@ -84,6 +84,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                     m_feedForwardKernel.Run(
                         (int)Owner.InputActivationFunction,
                         (int)Owner.GateActivationFunction,
+                        (int)Owner.ActivationFunction,
                         Owner.Input,
                         Owner.Output,
                         Owner.PreviousOutput,
