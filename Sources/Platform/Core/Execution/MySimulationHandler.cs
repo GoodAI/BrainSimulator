@@ -274,7 +274,7 @@ namespace GoodAI.Core.Execution
 
                 try
                 {
-                    Simulation.PerformStep(false);
+                    Simulation.PerformStep(State == SimulationState.RUNNING_STEP);
                     ++performedSteps;
                 }
                 catch (Exception ex)
