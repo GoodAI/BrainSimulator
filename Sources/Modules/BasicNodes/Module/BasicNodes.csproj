@@ -79,10 +79,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BEPUphysics">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\BEPUphysics\BEPUphysics.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\BEPU\BEPUphysics.dll</HintPath>
     </Reference>
     <Reference Include="BEPUutilities">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\BEPUphysics\BEPUutilities.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\BEPU\BEPUutilities.dll</HintPath>
     </Reference>
     <Reference Include="CudaBitmapSource, Version=7.0.27.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBitmapSource.dll</HintPath>
@@ -138,9 +138,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="YAXLib">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
@@ -328,13 +325,19 @@
     <Compile Include="VSA\MyTransformLearningNode.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+      <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
+      <Name>YAXLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>

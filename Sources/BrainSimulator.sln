@@ -3,8 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517} = {C8A4992F-F2CB-40E7-92AA-7D4239653517}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1C4D174-C948-4D18-A125-F6855EF55683} = {F1C4D174-C948-4D18-A125-F6855EF55683}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "Modules\BasicNodes\Module\BasicNodes.csproj", "{C8A4992F-F2CB-40E7-92AA-7D4239653517}"
 	ProjectSection(ProjectDependencies) = postProject
