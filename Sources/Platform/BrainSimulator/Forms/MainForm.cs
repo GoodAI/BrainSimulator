@@ -264,14 +264,14 @@ namespace GoodAI.BrainSimulator.Forms
         {
             ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();            
-            StartSimulation(false);            
+            StartSimulation();            
         }
 
         private void stepOverToolButton_Click(object sender, EventArgs e)
         {
             ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();
-            StartSimulation(true);            
+            StartSimulationStep();
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)
@@ -569,19 +569,19 @@ namespace GoodAI.BrainSimulator.Forms
         private void debugToolButton_Click(object sender, EventArgs e)
         {            
             SimulationHandler.Simulation.InDebugMode = true;
-            StartSimulation(true);
+            StartSimulationStep();
 
             OpenFloatingOrActivate(DebugView);        
         }
 
         private void stepIntoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartSimulation(true);
+            StartSimulationStep();
         }
 
         private void stepOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartSimulation(true);
+            StartSimulationStep();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

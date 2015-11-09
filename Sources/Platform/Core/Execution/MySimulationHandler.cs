@@ -162,14 +162,23 @@ namespace GoodAI.Core.Execution
             m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
         }
 
+        /// <summary>
+        /// Starts simulation.
+        /// </summary>
+        public void StartSimulation()
+        {
+            StartSimulation(stepCount: 0);
+        }
+
         //UI thread
         /// <summary>
-        /// Starts simulation
+        /// Starts simulation for specified number of steps.
         /// </summary>
-        /// <param name="multipleStepsOnly">Only multiple steps of simulation are performed when true</param>
-        /// <param name="stepCount">How many steps of simulation shall be performed</param>
-        public void StartSimulation(bool multipleStepsOnly, uint stepCount = 1)
+        /// <param name="stepCount">How many steps of simulation shall be performed (0 means unlimited).</param>
+        public void StartSimulation(uint stepCount)
         {
+            bool doFixedNumberOfSteps = (stepCount > 0);
+
             if (State == SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("Scheduling...");                
@@ -189,7 +198,7 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Resuming simulation...");
             }
 
-            State = multipleStepsOnly ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
+            State = doFixedNumberOfSteps ? SimulationState.RUNNING_STEP : SimulationState.RUNNING;
             m_stepsToPerform = stepCount;
             m_lastProgressChangedStep = 0;
 

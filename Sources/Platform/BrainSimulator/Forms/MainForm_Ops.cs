@@ -879,8 +879,20 @@ namespace GoodAI.BrainSimulator.Forms
                      
         #region Simulation               
 
+        /// <summary>
+        /// Shorthand for StartSimulation(stepCount: 1)
+        /// </summary>
+        private void StartSimulationStep()
+        {
+            StartSimulation(stepCount: 1);
+        }
+
         // TODO: move all bits related to simulation out of here and into SimulationHandler, leave only the GUI-specific things.
-        private void StartSimulation(bool oneStepOnly) 
+        /// <summary>
+        /// Starts simulation.
+        /// </summary>
+        /// <param name="stepCount">Number of simulation steps to run, 0 means unlimited.</param>
+        private void StartSimulation(uint stepCount = 0)
         {            
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
@@ -910,7 +922,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     try
                     {
-                        SimulationHandler.StartSimulation(oneStepOnly);                        
+                        SimulationHandler.StartSimulation(stepCount);
                     }
                     catch (Exception e)
                     {
@@ -927,7 +939,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 try
                 {
-                    SimulationHandler.StartSimulation(oneStepOnly);
+                    SimulationHandler.StartSimulation(stepCount);
                 }
                 catch (Exception e)
                 {
@@ -972,7 +984,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             if (wasRunning && resume)
             {
-                SimulationHandler.StartSimulation(false);
+                SimulationHandler.StartSimulation();
             }
         }
 

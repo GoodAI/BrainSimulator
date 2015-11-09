@@ -516,7 +516,7 @@ namespace GoodAI.Core.Execution
             try
             {
                 SimulationHandler.ReportIntervalSteps = reportInterval;
-                SimulationHandler.StartSimulation(true, stepCount);
+                SimulationHandler.StartSimulation(stepCount);
                 SimulationHandler.WaitUntilStepsPerformed();
             }
             catch (Exception e)
