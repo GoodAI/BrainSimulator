@@ -56,7 +56,8 @@ namespace GoodAI.Modules.GridWorld
     /// 
     /// <h3>Inputs</h3>
     /// <ul>
-    ///     <li> <b>Action:</b> Vector indicating the selected action. The index of maximum value is evaluated as a selected action.</li>
+    ///     <li> <b>Action:</b> Vector indicating the selected action. The index of maximum value is evaluated as a selected action. 
+    ///     Actions are in the following order: NOOP,LEFT,RIGHT,UP,DOWN,PRESS.</li>
     /// </ul>
     /// 
     /// <h3>Parameters</h3>
