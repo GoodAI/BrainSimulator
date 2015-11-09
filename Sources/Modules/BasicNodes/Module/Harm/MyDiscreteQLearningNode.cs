@@ -325,14 +325,14 @@ namespace GoodAI.Modules.Harm
         /// Updates the <b>RewardStats</b> values = {Total Reward/Step, Total Reward}.
         /// </summary>
         [Description("Visualize learned data"), MyTaskInfo(OneShot = false)]
-        public class MyActionUtilsVisualization : MyTask<MyDiscreteQLearningNode>
+        public class MyActionUtilsVisualization : MyActionUtilsVisualization<MyDiscreteQLearningNode>
         {
             float[,] values;
             int[,] labelIndexes;
 
             public override void Init(int nGPU)
             {
-                values = new float[2, 2];       // dummy arrays for testing
+                values = new float[2, 2];       // dummy arrays for testing, TODO delete
                 labelIndexes = new int[,] { };
 
                 Owner.RewardStats.SafeCopyToHost();
@@ -362,7 +362,7 @@ namespace GoodAI.Modules.Harm
             /// <param name="XVarIndex">global index of state variable in the VariableManager</param>
             /// <param name="YVarIndex">the same: y axis</param>
             /// <param name="showRealtimeUtilities">show current utilities (scaled by the current motivation)</param>
-            public void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
+            public override void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
                 int XVarIndex, int YVarIndex, bool showRealtimeUtilities)
             {
                 if (XVarIndex >= Owner.Rds.VarManager.MAX_VARIABLES)

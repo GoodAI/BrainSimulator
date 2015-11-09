@@ -1,39 +1,35 @@
-﻿using GoodAI.Core;
+﻿using BEPUutilities;
+using GoodAI.Core;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
-using GoodAI.Modules.Harm;
 using ManagedCuda;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using YAXLib;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
-namespace GoodAI.Modules.Observers
+namespace GoodAI.BasicNodes.Harm.Obsrvers
 {
     /// <author>GoodAI</author>
     /// <meta>df,jv</meta>
     /// <status>Working</status>
     /// <summary>
-    /// Observes valdata stored in the QMatrix.
+    /// Observes some policy which maps states to actions.
     /// </summary>
-    /// <typeparam name="T">Node which uses DiscreteQLearnin to be observed</typeparam>
-    public abstract class MyAbstractQLearningObserver<T> : MyNodeObserver<T> where T : MyAbstractDiscreteQLearningNode
+    /// <typeparam name="T">Node which uses some policy</typeparam>
+    public abstract class AbstractPolicyLearnerObserver<T> : MyNodeObserver<T> where T : AbstractPolicyLearnerNode
     {
-        [MyBrowsable, Category("Mode"),
-        Description("Set a reasonable value for good color scaling.")]
-        [YAXSerializableField(DefaultValue = 0.003f)]
-        public float MaxQValue { get; set; }
-
-        [MyBrowsable, Category("Mode"),
-        Description("Observe utility colors which are already scaled by the current motivation.")]
-        [YAXSerializableField(DefaultValue = true)]
-        public bool ShowCurrentMotivations { get; set; }
 
         [YAXSerializableField(DefaultValue = 0)]
         private int m_xAxisVariableIndex;
 
-        [MyBrowsable, Category("Q Selection"),
+        [MyBrowsable, Category("Dimension Selection"),
         Description("Index of variable to be displayed on the X axis")]
         [YAXSerializableField(DefaultValue = 0)]
         public int XAxisVariableIndex
@@ -49,7 +45,7 @@ namespace GoodAI.Modules.Observers
         [YAXSerializableField(DefaultValue = 1)]
         private int m_yVariableIndex;
 
-        [MyBrowsable, Category("Q Selection"),
+        [MyBrowsable, Category("Dimension Selection"),
         Description("Index of variable to be displayed on the Y axis")]
         [YAXSerializableField(DefaultValue = 1)]
         public int YAxisVariableIndex
@@ -61,6 +57,14 @@ namespace GoodAI.Modules.Observers
                 TriggerReset();
             }
         }
+
+        [MyBrowsable, Category("Mode"),
+        Description("Set a reasonable value for good color scaling.")]
+        [YAXSerializableField(DefaultValue = 0.003f)]
+        public float MaxUtilityValue { get; set; }
+
+
+        
 
         // if the user attempts to draw a memory block that is too big, do not swhow it (out of memory error)
         public static readonly int QMATRIX_MAX_SIZE = 50000;
@@ -79,13 +83,22 @@ namespace GoodAI.Modules.Observers
         protected CudaDeviceVariable<int> m_actionIndices;
         protected CudaDeviceVariable<uint> m_actionLabels;
 
-        public MyAbstractQLearningObserver()
+        public AbstractPolicyLearnerObserver()
         {
             m_kernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Harm\MatrixQLearningKernel", "createTexture");
             m_vertexKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Harm\MatrixQLearningKernel", "crate3Dplot");
             m_setKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Common\SetKernel");
 
             TriggerReset();
+        }
+        
+        protected bool SizeChanged()
+        {
+            bool changed = prevSx != m_qMatrix.GetLength(0) || prevSy != m_qMatrix.GetLength(1);
+
+            prevSx = m_qMatrix.GetLength(0);
+            prevSy = m_qMatrix.GetLength(1);
+            return changed;
         }
 
         /// <summary>
@@ -95,8 +108,8 @@ namespace GoodAI.Modules.Observers
         protected bool MatrixSizeOK()
         {
             int size = m_qMatrix.GetLength(0) * m_qMatrix.GetLength(1);
-            bool bothZero = m_qMatrix.GetLength(0) == 0 && m_qMatrix.GetLength(1) == 0; 
- 
+            bool bothZero = m_qMatrix.GetLength(0) == 0 && m_qMatrix.GetLength(1) == 0;
+
             if (size >= QMATRIX_MAX_SIZE)
             {
                 if (SizeChanged())
@@ -109,14 +122,7 @@ namespace GoodAI.Modules.Observers
             return size < QMATRIX_MAX_SIZE && !bothZero;
         }
 
-        private bool SizeChanged()
-        {
-            bool changed = prevSx != m_qMatrix.GetLength(0) || prevSy != m_qMatrix.GetLength(1);
 
-            prevSx = m_qMatrix.GetLength(0);
-            prevSy = m_qMatrix.GetLength(1);
-            return changed;
-        }
 
         protected void DrawDataToGpu()
         {
@@ -148,7 +154,7 @@ namespace GoodAI.Modules.Observers
                     VertexDataSize = m_qMatrix.Length * 20 * 3;
                     VertexDataSize += m_qMatrix.Length * 4 * 2;
 
-                    Vector3 translation = new Vector3(-m_qMatrix.GetLength(0) * 0.05f, 0, -m_qMatrix.GetLength(1) * 0.05f);
+                    OpenTK.Vector3 translation = new OpenTK.Vector3(-m_qMatrix.GetLength(0) * 0.05f, 0, -m_qMatrix.GetLength(1) * 0.05f);
 
                     //top side, textured
                     Shapes.Add(new MyBufferedPrimitive(PrimitiveType.Quads, m_qMatrix.Length * 4, MyVertexAttrib.Position | MyVertexAttrib.TexCoord)

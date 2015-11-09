@@ -120,6 +120,8 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
+    <Compile Include="Harm\AbstractPolicyLearnerNode.cs" />
+    <Compile Include="Harm\Obsrvers\AbstractPolicyLearnerObserver.cs" />
     <Compile Include="Join\Distances\MyDistanceNode.cs" />
     <Compile Include="Join\Distances\MyDistanceOps.cs" />
     <Compile Include="Join\Stacking\MyStackingNode.cs" />
@@ -157,9 +159,9 @@
     <Compile Include="Harm\MyHierarchyMaintainer.cs" />
     <Compile Include="Harm\MyHistoryRecorder.cs" />
     <Compile Include="Harm\MyDiscreteHarmNode.cs" />
-    <Compile Include="Harm\MyAbstractQLearningObserver.cs" />
-    <Compile Include="Harm\MyQLearningObserver.cs" />
-    <Compile Include="Harm\MySRPObserver.cs" />
+    <Compile Include="Harm\Obsrvers\MyAbstractQLearningObserver.cs" />
+    <Compile Include="Harm\Obsrvers\MyQLearningObserver.cs" />
+    <Compile Include="Harm\Obsrvers\MySRPObserver.cs" />
     <Compile Include="Harm\MyRootDecisionSpace.cs" />
     <Compile Include="Harm\MyStochasticReturnPredictor.cs" />
     <Compile Include="LSTM\MyLSTMLayer.cs" />

@@ -47,12 +47,12 @@ namespace GoodAI.Modules.Observers
             if (m_qMatrix != null)
             {
                 m_kernel.SetupExecution(TextureWidth * TextureHeight);
-                m_kernel.Run(m_plotValues.DevicePointer, m_actionIndices.DevicePointer, m_actionLabels.DevicePointer, numOfActions, LABEL_PIXEL_WIDTH, LABEL_PIXEL_WIDTH, 0f, MaxQValue, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), VBODevicePointer);
+                m_kernel.Run(m_plotValues.DevicePointer, m_actionIndices.DevicePointer, m_actionLabels.DevicePointer, numOfActions, LABEL_PIXEL_WIDTH, LABEL_PIXEL_WIDTH, 0f, MaxUtilityValue, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), VBODevicePointer);
 
                 if (ViewMode == ViewMethod.Orbit_3D)
                 {
                     m_vertexKernel.SetupExecution(m_qMatrix.Length);
-                    m_vertexKernel.Run(m_plotValues.DevicePointer, 0.1f, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), MaxQValue, VertexVBODevicePointer);
+                    m_vertexKernel.Run(m_plotValues.DevicePointer, 0.1f, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), MaxUtilityValue, VertexVBODevicePointer);
                 }
             }
 

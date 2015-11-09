@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.BasicNodes.Harm;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using System.ComponentModel;
@@ -16,7 +17,7 @@ namespace GoodAI.Modules.Harm
     /// <description>
     /// Parent of nodes that use discrete QLearning memory, which can be observed by the MyQMatrixObserver
     /// </description>
-    public abstract class MyAbstractDiscreteQLearningNode : MyWorkingNode
+    public abstract class MyAbstractDiscreteQLearningNode : AbstractPolicyLearnerNode
     {
         [MyInputBlock(0)]
         public MyMemoryBlock<float> GlobalDataInput
