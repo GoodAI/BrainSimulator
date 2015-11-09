@@ -27,54 +27,15 @@ namespace CoreTests
             }
         }
 
-        [Fact, Trait("Category", "Manual")]
-        public void TestIsAs()
-        {
-            var list = new List<Parent>();
-            for (int i = 0; i < 10000000; i++)
-            {
-                list.Add(i % 2 == 0 ? new Parent() : new Child());
-            }
-
-            var s1 = Stopwatch.StartNew();
-            foreach (var item in list)
-            {
-                if (item is Child)
-                {
-                    (item as Child).Bar();
-                }
-                else
-                {
-                    item.Foo();
-                }
-            }
-            s1.Stop();
-
-            var s2 = Stopwatch.StartNew();
-            foreach (var item in list)
-            {
-                var childItem = item as Child;
-                if (childItem != null)
-                {
-                    childItem.Bar();
-                }
-                else
-                {
-                    item.Foo();
-                }
-            }
-            s2.Stop();
-
-            Console.WriteLine(string.Format("is and as: {0} versus as and null-check: {1}", s1.ElapsedMilliseconds, s2.ElapsedMilliseconds));
-        }
-
-        [Fact, Trait("Category", "Manual")]
+        // [Fact, Trait("Category", "Manual")] NOTE: just a performance test, uncomment when needed
         public void EachWithIndexPerformanceTest()
         {
+            const int IterationCount = 1000000;  // increase for greater precision
+
             var data = new[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
             var s1 = Stopwatch.StartNew();
-            for (int i = 0; i < 10000000; i++)
+            for (int i = 0; i < IterationCount; i++)
             {
                 int res = 0;
                 for (int j = 0; j < data.Length; j++)
@@ -87,7 +48,7 @@ namespace CoreTests
             s1.Stop();
 
             var s2 = Stopwatch.StartNew();
-            for (int i = 0; i < 10000000; i++)
+            for (int i = 0; i < IterationCount; i++)
             {
                 int res = 0;
                 int j = 0;
@@ -101,7 +62,7 @@ namespace CoreTests
             s2.Stop();
 
             var s3 = Stopwatch.StartNew();
-            for (int i = 0; i < 10000000; i++)
+            for (int i = 0; i < IterationCount; i++)
             {
                 int res = 0;
                 data.EachWithIndex((i1, i2) =>
