@@ -404,6 +404,7 @@ namespace GoodAI.Modules.GridWorld
         {
         }
 
+        public MyResetAgentTask ResetAgentTask { get; private set; }
         public MyInitTask InitGameTask { get; private set; }
         public MyUpdateTask UpdateTask { get; private set; }
         public MyRenderTask RenderGameTask { get; private set; }
@@ -851,6 +852,60 @@ namespace GoodAI.Modules.GridWorld
                 Owner.Engine.GetParams().ForceLightSwitches = ForceLightSwitches;
                 Owner.Engine.GetParams().ViewLimit = Owner.EgocentricViewLimit;
                 Owner.Engine.GetParams().LimitFieldOfView = LimitFieldOfView;
+            }
+        }
+
+        /// <summary>
+        /// Resets the agent position in the world to the specified [x,y] coordinates.
+        /// </summary>
+        [MyTaskInfo(DesignTime = true)]
+        public class MyResetAgentTask : MyTask<MyGridWorld>
+        {
+            private int m_positionX = 0;
+            [MyBrowsable, Category("Position")]
+            [YAXSerializableField(DefaultValue = 0)]
+            public int PositionX
+            {
+                get
+                {
+                    return m_positionX;
+                }
+                set
+                {
+                    if (Owner != null && Owner.World != null && value >= 0 && value < Owner.World.GetWidth())
+                    {
+                        m_positionX = value;
+                    }
+                }
+            }
+
+            private int m_positionY = 0;
+            [MyBrowsable, Category("Position")]
+            [YAXSerializableField(DefaultValue = 0)]
+            public int PositionY
+            {
+                get
+                {
+                    return m_positionY;
+                }
+                set
+                {
+                    if (Owner != null && Owner.World != null && value >= 0 && value < Owner.World.GetHeight())
+                    {
+                        m_positionY = value;
+                    }
+                }
+            }
+
+            public override void Init(int nGPU)
+            {
+
+            }
+
+            public override void Execute()
+            {
+                MyLog.INFO.WriteLine("Agent reset to position: [" + PositionX + "," + PositionY + "].");
+                Owner.World.GetAgent().setPosition(new int2(PositionX, PositionY));
             }
         }
     }
