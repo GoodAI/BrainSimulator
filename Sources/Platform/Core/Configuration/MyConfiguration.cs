@@ -18,6 +18,8 @@ namespace GoodAI.Core.Configuration
         public static Dictionary<Type, MyNodeConfig> KnownNodes { get; private set; }
         public static Dictionary<Type, MyWorldConfig> KnownWorlds { get; private set; }
 
+        public static Dictionary<string, MyCategoryConfig> KnownCategories { get; private set; }
+
         public static List<MyModuleConfig> Modules { get; private set; }
         public static Dictionary<Assembly, MyModuleConfig> AssemblyLookup { get; private set; }
 
@@ -31,6 +33,7 @@ namespace GoodAI.Core.Configuration
             GlobalPTXFolder = MyResources.GetEntryAssemblyPath() + @"\modules\GoodAI.BasicNodes\ptx\";
             KnownNodes = new Dictionary<Type, MyNodeConfig>();
             KnownWorlds = new Dictionary<Type, MyWorldConfig>();
+            KnownCategories = new Dictionary<string, MyCategoryConfig>();
             Modules = new List<MyModuleConfig>();
 
             ModulesSearchPath = new List<string>();
@@ -137,6 +140,14 @@ namespace GoodAI.Core.Configuration
                         {
                             KnownWorlds[wc.NodeType] = wc;
                         }
+                    }
+                }
+
+                if (moduleConfig.CategoryList != null)
+                {
+                    foreach (MyCategoryConfig categoryConfig in moduleConfig.CategoryList)
+                    {
+                        KnownCategories[categoryConfig.Name] = categoryConfig;
                     }
                 }
 

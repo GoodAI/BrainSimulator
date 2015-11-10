@@ -19,7 +19,6 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class GraphLayoutForm : DockContent
     {
         private MainForm m_mainForm;
-        private ToolStripDropDownButton transformMenu;
 
         public MyNodeGroup Target { get; private set; } 
 
@@ -52,15 +51,8 @@ namespace GoodAI.BrainSimulator.Forms
             return newMenu;
         }
 
-        public void InitToolBar()
+        public CategorySortingHat CategorizeEnabledNodes()
         {
-            toolStrip1.Items.Clear();
-                        
-            transformMenu = CreateToolStripMenu("transformMenu", Properties.Resources.function_category);
-            transformMenu.Tag = typeof(MyTransform);
-
-            toolStrip1.Items.Add(transformMenu);
-
             HashSet<string> enabledNodes = new HashSet<string>();
 
             if (Properties.Settings.Default.ToolBarNodes != null)
@@ -71,22 +63,47 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }
 
-            foreach (MyNodeConfig nodeInfo in MyConfiguration.KnownNodes.Values)
-            {
-                bool isTransform =
-                    typeof(MyTransform).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyFork).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyJoin).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyGateInput).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyDataGate).IsAssignableFrom(nodeInfo.NodeType);
+            var categorizer = new CategorySortingHat();
 
-                if (nodeInfo.CanBeAdded && (enabledNodes.Contains(nodeInfo.NodeType.Name) || nodeInfo.IsBasicNode))
+            foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
+            {
+                if (nodeConfig.CanBeAdded && (enabledNodes.Contains(nodeConfig.NodeType.Name) || nodeConfig.IsBasicNode))
                 {
-                    AddNodeButton(nodeInfo, isTransform);
+                    categorizer.AddNodeAndCategory(nodeConfig);
                 }
             }
 
-            toolStrip1.Items.Add(new ToolStripSeparator());
+            return categorizer;
+        }
+
+        public void InitToolBar()
+        {
+            nodesToolStrip.Items.Clear();
+
+            var categorizer = CategorizeEnabledNodes();
+
+            foreach (var category in categorizer.Categories)
+            {
+                var toolbarDropDown = CreateToolStripMenu(category.Name, category.SmallImage);
+                toolbarDropDown.Tag = category.Name;  // TODO(Premek): pass target drop down in a UiTag attribute
+
+                nodesToolStrip.Items.Add(toolbarDropDown);
+            }
+
+            foreach (MyNodeConfig nodeConfig in categorizer.Nodes)
+            {
+                /* TODO(P): categorize this in the XML
+                    bool isTransform =
+                        typeof(MyTransform).IsAssignableFrom(nodeConfig.NodeType) ||
+                        typeof(MyFork).IsAssignableFrom(nodeConfig.NodeType) ||
+                        typeof(MyJoin).IsAssignableFrom(nodeConfig.NodeType) ||
+                        typeof(MyGateInput).IsAssignableFrom(nodeConfig.NodeType) ||
+                        typeof(MyDataGate).IsAssignableFrom(nodeConfig.NodeType);
+                 */
+                AddNodeButtonToCategoryMenu(nodeConfig);
+            }
+
+            nodesToolStrip.Items.Add(new ToolStripSeparator());
         }
  
         private void GraphLayoutForm_Load(object sender, EventArgs e)
@@ -318,7 +335,7 @@ namespace GoodAI.BrainSimulator.Forms
             worldButtonPanel.BackColor = SystemColors.Control;
             groupButtonPanel.BackColor = SystemColors.Control;
 
-            transformMenu.DropDown.Hide();            
+            //transformMenu.DropDown.Hide();  //TODO(P)          
         }
 
         public void ReloadContent()

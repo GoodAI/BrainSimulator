@@ -19,6 +19,9 @@ namespace GoodAI.Core.Configuration
         [YAXSerializeAs("KnownWorlds"), YAXErrorIfMissed(YAXExceptionTypes.Warning)]
         public List<MyWorldConfig> WorldConfigList = null;
 
+        [YAXSerializeAs("Categories"), YAXErrorIfMissed(YAXExceptionTypes.Warning)]
+        public List<MyCategoryConfig> CategoryList = null;
+
         [YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
         public string RootNamespace
         {
@@ -78,6 +81,7 @@ namespace GoodAI.Core.Configuration
 
             moduleConfig.FinalizeNodeConfigs<MyNodeConfig>(moduleConfig.NodeConfigList);
             moduleConfig.FinalizeNodeConfigs<MyWorldConfig>(moduleConfig.WorldConfigList);
+            moduleConfig.FinalizeCategoriesConfig();
 
             return moduleConfig;
         }
@@ -97,6 +101,17 @@ namespace GoodAI.Core.Configuration
                         MyLog.ERROR.WriteLine("Node type loading failed: " + e.Message);
                     }
                 }
+            }
+        }
+
+        private void FinalizeCategoriesConfig()
+        {
+            if (CategoryList == null)
+                return;
+
+            foreach (MyCategoryConfig categoryConfig in CategoryList)
+            {
+                categoryConfig.InitIcons(Assembly);
             }
         }
 

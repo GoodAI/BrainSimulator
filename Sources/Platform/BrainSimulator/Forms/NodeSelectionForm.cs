@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Configuration;
+﻿using GoodAI.BrainSimulator.Nodes;
+using GoodAI.Core.Configuration;
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,14 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+
 namespace GoodAI.BrainSimulator.Forms
 {    
     public partial class NodeSelectionForm : Form
     {
         private MainForm m_mainForm;
+
+        private List<ListViewItem> m_nodeListItems = new List<ListViewItem>(100);
 
         public NodeSelectionForm(MainForm mainForm)
         {
@@ -34,16 +38,16 @@ namespace GoodAI.BrainSimulator.Forms
         {
             Properties.Settings.Default.ToolBarNodes = new StringCollection();
 
-            foreach(ListViewItem item in nodeListView.Items) 
+            foreach(ListViewItem item in m_nodeListItems) 
             {
-                if (item.Checked && item.Tag is MyNodeConfig)
+                if (item.Checked && (item.Tag is MyNodeConfig))
                 {
                     Properties.Settings.Default.ToolBarNodes.Add((item.Tag as MyNodeConfig).NodeType.Name);
                 }
             }            
         }
 
-        private void PopulateNodeListView()
+        private void GenerateNodeList()
         {
             HashSet<string> enabledNodes = new HashSet<string>();
 
@@ -57,27 +61,29 @@ namespace GoodAI.BrainSimulator.Forms
 
             Dictionary<string, List<MyNodeConfig>> knownNodes = new Dictionary<string, List<MyNodeConfig>>();
 
-            foreach (MyNodeConfig nc in MyConfiguration.KnownNodes.Values)
+            foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
             {
-                if (!nc.IsBasicNode && nc.CanBeAdded)
+                if (!nodeConfig.IsBasicNode && nodeConfig.CanBeAdded)
                 {
-                    if (!knownNodes.ContainsKey(nc.NodeType.Namespace)) 
+                    if (!knownNodes.ContainsKey(nodeConfig.NodeType.Namespace)) 
                     {
-                        knownNodes[nc.NodeType.Namespace] = new List<MyNodeConfig>();
+                        knownNodes[nodeConfig.NodeType.Namespace] = new List<MyNodeConfig>();
                     }
-                    knownNodes[nc.NodeType.Namespace].Add(nc);
+                    knownNodes[nodeConfig.NodeType.Namespace].Add(nodeConfig);
                 }
             }
 
             knownNodes["Worlds"] = new List<MyNodeConfig>();
 
-            foreach (MyNodeConfig nc in MyConfiguration.KnownWorlds.Values)
+            foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownWorlds.Values)
             {
-                if (!nc.IsBasicNode)
+                if (!nodeConfig.IsBasicNode)
                 {
-                    knownNodes["Worlds"].Add(nc);
+                    knownNodes["Worlds"].Add(nodeConfig);
                 }
             }
+
+            var categorizer = new CategorySortingHat();
 
             int i = 0;
 
@@ -89,20 +95,16 @@ namespace GoodAI.BrainSimulator.Forms
             List<string> moduleNameSpaces = knownNodes.Keys.ToList().OrderBy(x => x).ToList();
 
             foreach (string nameSpace in moduleNameSpaces) 
-            {                
+            {             
                 ListViewGroup group = new ListViewGroup(nameSpace, nameSpace.Replace("BrainSimulator.", ""));
                 nodeListView.Groups.Add(group);
 
-                // TODO: move
-                var categoryItem = new ListViewItem(new string[1] { nameSpace });
-
-                nodeFilterList.Items.Add(categoryItem);
-
-                List<MyNodeConfig> nodesInGroup =  knownNodes[nameSpace].OrderBy(x => x.NodeType.Name).ToList();;
-                int row = 0;
+                List<MyNodeConfig> nodesInGroup = knownNodes[nameSpace].OrderBy(x => x.NodeType.Name).ToList(); ;
 
                 foreach (MyNodeConfig nodeConfig in nodesInGroup) 
                 {
+                    categorizer.AddNodeAndCategory(nodeConfig);
+
                     string author;
                     string status;
                     string summary;
@@ -134,11 +136,6 @@ namespace GoodAI.BrainSimulator.Forms
 
                     ListViewItem item = new ListViewItem(
                         new string[4] { MyProject.ShortenNodeTypeName(nodeConfig.NodeType), author, status, summary });
-
-                    if (row % 2 == 1)
-                    {
-                        item.BackColor = Color.FromArgb(245, 245, 245);
-                    }                    
                     
                     item.Tag = nodeConfig;
                     item.Group = group;
@@ -175,9 +172,53 @@ namespace GoodAI.BrainSimulator.Forms
                         item.ImageIndex = 1;
                     }
 
-                    nodeListView.Items.Add(item);
-                    row++;
+                    m_nodeListItems.Add(item);
                 }
+            }
+
+            PopulateCategoryListView(categorizer);
+        }
+
+        private void PopulateCategoryListView(CategorySortingHat categorizer)
+        {
+            foreach (var category in categorizer.Categories)
+            {
+                filterImageList.Images.Add(GeneratePaddedIcon(category.SmallImage));
+
+                var categoryItem = new ListViewItem(new string[1] { category.Name })
+                {
+                    Tag = category.Name,  // TODO(Premek): consider tagging with NodeCategory object
+                    ImageIndex = filterImageList.Images.Count - 1
+                };
+
+                filterList.Items.Add(categoryItem);
+            }
+        }
+
+        private void PopulateNodeListView(string categoryName)
+        {
+            if (string.IsNullOrEmpty(categoryName))
+                return;
+
+            nodeListView.Items.Clear();
+
+            int row = 0;
+
+            foreach (var item in m_nodeListItems)
+            {
+                var nodeConfig = item.Tag as MyNodeConfig;
+                if (nodeConfig == null)
+                    continue;
+
+                if (CategorySortingHat.DetectCategoryName(nodeConfig) != categoryName)
+                    continue;
+
+                if (row++ % 2 == 1)
+                {
+                    item.BackColor = Color.FromArgb(245, 245, 245);
+                }
+
+                nodeListView.Items.Add(item);
             }
 
             nodeListView.GridLines = true;
@@ -194,7 +235,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void NodeSelectionForm_Load(object sender, EventArgs e)
         {                      
-            PopulateNodeListView();            
+            GenerateNodeList();
+
+            if (filterList.Items.Count > 0)
+                filterList.Items[0].Selected = true;
         }
 
         private Image GeneratePaddedIcon(Image icon)
@@ -310,6 +354,14 @@ namespace GoodAI.BrainSimulator.Forms
                 base.OnHandleCreated(e);
                 UpdateCue();
             }
+        }
+
+        private void nodeFilterList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (filterList.SelectedItems.Count == 0)
+                return;
+
+            PopulateNodeListView(filterList.SelectedItems[0].Tag as string);
         }
     }
 }
