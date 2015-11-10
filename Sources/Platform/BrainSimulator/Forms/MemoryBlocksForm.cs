@@ -162,6 +162,11 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MyTimePlotObserver));
         }
 
+        private void addHostPlotButton_Click(object sender, EventArgs e)
+        {
+            //m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostTimePlotObserver));
+        }
+
         private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             addObserverButton_Click(sender, e);
