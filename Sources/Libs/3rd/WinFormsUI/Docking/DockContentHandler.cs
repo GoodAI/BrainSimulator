@@ -119,9 +119,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                     return;
 
                 m_closeButton = value;
-                if (Pane != null)
-                    if (Pane.ActiveContent.DockHandler == this)
-                        Pane.RefreshChanges();
+                // Pane.ActiveContent is null if the window is hidden.
+                if (Pane == null || Pane.ActiveContent == null)
+                    return;
+
+                if (Pane.ActiveContent.DockHandler == this)
+                    Pane.RefreshChanges();
             }
         }
 
