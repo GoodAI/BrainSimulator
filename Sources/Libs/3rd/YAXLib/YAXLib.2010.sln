@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLib", "YAXLib\YAXLib.csproj", "{F1C4D174-C948-4D18-A125-F6855EF55683}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApplication", "DemoApplication\DemoApplication.csproj", "{40A6C570-2CC0-44BF-8A2A-FD41CE598C41}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1C4D174-C948-4D18-A125-F6855EF55683} = {F1C4D174-C948-4D18-A125-F6855EF55683}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLibTests", "YAXLibTests\YAXLibTests.csproj", "{049216C5-A27E-4687-A0DB-87B9AD896DEB}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = YAXLib.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A6C570-2CC0-44BF-8A2A-FD41CE598C41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A6C570-2CC0-44BF-8A2A-FD41CE598C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A6C570-2CC0-44BF-8A2A-FD41CE598C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A6C570-2CC0-44BF-8A2A-FD41CE598C41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{049216C5-A27E-4687-A0DB-87B9AD896DEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{049216C5-A27E-4687-A0DB-87B9AD896DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{049216C5-A27E-4687-A0DB-87B9AD896DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{049216C5-A27E-4687-A0DB-87B9AD896DEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		CodeStyleEnforcer_RulesLocation = 0
+		CodeStyleEnforcer_Active = -1
+	EndGlobalSection
+EndGlobal

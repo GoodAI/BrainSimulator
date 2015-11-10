@@ -79,25 +79,50 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BEPUphysics">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\BEPUphysics\BEPUphysics.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\BEPU\BEPUphysics.dll</HintPath>
     </Reference>
     <Reference Include="BEPUutilities">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\BEPUphysics\BEPUutilities.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\BEPU\BEPUutilities.dll</HintPath>
     </Reference>
-    <Reference Include="CudaBlas">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaBlas.dll</HintPath>
+    <Reference Include="CudaBitmapSource, Version=7.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBitmapSource.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CudaFFT">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
+    <Reference Include="CudaBlas, Version=7.0.27.0, Culture=neutral, PublicKeyToken=539d54d12e99fedb, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBlas.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CudaRand">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaRand.dll</HintPath>
+    <Reference Include="CudaFFT, Version=7.0.27.0, Culture=neutral, PublicKeyToken=f066edfa1acb2f23, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaFFT.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="ManagedCuda">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\ManagedCuda.dll</HintPath>
+    <Reference Include="CudaRand, Version=7.0.27.0, Culture=neutral, PublicKeyToken=fe981579f4e9a066, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaRand.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.dll</HintPath>
+    <Reference Include="CudaSolve, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaSolve.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaSparse, Version=7.0.27.0, Culture=neutral, PublicKeyToken=f65ee2ae6b331585, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaSparse.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ManagedCuda, Version=7.0.27.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\ManagedCuda.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPP, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\NPP.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NVRTC, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\NVRTC.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -113,9 +138,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="YAXLib">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
@@ -303,12 +325,19 @@
     <Compile Include="VSA\MyTransformLearningNode.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+      <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
+      <Name>YAXLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>

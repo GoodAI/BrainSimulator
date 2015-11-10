@@ -11,6 +11,8 @@
     <AssemblyName>GoodAI.SoundWorld</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,12 +35,41 @@
     <DocumentationFile>conf\doc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CudaFFT">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
+    <Reference Include="CudaBitmapSource, Version=7.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBitmapSource.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaBlas, Version=7.0.27.0, Culture=neutral, PublicKeyToken=539d54d12e99fedb, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBlas.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaFFT, Version=7.0.27.0, Culture=neutral, PublicKeyToken=f066edfa1acb2f23, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaFFT.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaRand, Version=7.0.27.0, Culture=neutral, PublicKeyToken=fe981579f4e9a066, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaRand.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaSolve, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaSolve.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaSparse, Version=7.0.27.0, Culture=neutral, PublicKeyToken=f65ee2ae6b331585, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaSparse.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ManagedCuda, Version=7.0.27.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\ManagedCuda.dll</HintPath>
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\ManagedCuda.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPP, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\NPP.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NVRTC, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\NVRTC.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,9 +81,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="YAXLib">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features\LPC.cs" />
@@ -85,9 +113,14 @@
     <Content Include="res\Digits_en.wav" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+      <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
+      <Name>YAXLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
@@ -97,6 +130,13 @@
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

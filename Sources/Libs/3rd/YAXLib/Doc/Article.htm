@@ -1,0 +1,1490 @@
+<!--
+HTML for article "Yet Another XML Serialization Library for the .NET Framework" by Sina Iravanian
+URL: http://www.codeproject.com/KB/XML/yaxlib.aspx
+Copyright 2009 by Sina Iravanian
+All formatting, additions and alterations Copyright © CodeProject, 1999-2010
+-->
+
+<!-- Start Article -->
+<span id="ArticleContent">
+<ul class="download">
+<li><a href="http://www.codeproject.com/KB/XML/yaxlib/YAXLib-src-2.0.zip">Download source code -107.12 KB</a></li>
+<li><a href="http://yaxlib.codeplex.com/SourceControl/list/changesets" title="Click on Latest Version/Download link on right of the page" target="_blank">Download the most recent version of YAXLib (Recommended)</a></li></ul>
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#intro">Introduction</a></li>
+
+<li><a href="#whyuse">Why Use YAXLib</a></li>
+
+<li><a href="#tutorial">A Tutorial of YAXLib Usage</a></li>
+
+<ul>
+<li><a href="#h3basicusage">Basic Usage and Formatting</a></li>
+
+<li><a href="#h3formatcol">Serializing Objects of Collection Classes</a></li>
+
+<li><a href="#h3dic">Serializing Objects of Type Dictionary</a></li>
+
+<li><a href="#h3nested">Serializing Nested Objects</a></li>
+
+<li><a href="#h3xmlcomment">Adding XML Comments</a></li>
+</ul>
+
+<li><a href="#deser">Deserialization and Error Handling Schemes</a></li>
+
+<li><a href="#field">Choosing the Fields to be Serialized</a></li>
+
+<li><a href="#enums">Defining Aliases for Enum Members</a></li>
+
+<li><a href="#multidimarrays">Serializing Multi-dimensional Arrays</a></li>
+
+<li><a href="#refiface">Serializing Objects Through a Reference to Their Base Class or Interface</a></li>
+
+<li><a href="#nullref">Preserving Null-References Identity</a></li>
+
+<li><a href="#formatting">Formatting Data Items</a></li>
+
+<li><a href="#multistagedes">Multi-Stage Deserialization</a></li>
+
+<li><a href="#defconst">The Problem with Classes without a Default Constructor</a></li>
+
+<li><a href="#selfref">The Problem with Self-Referential Classes</a></li>
+
+<li><a href="#attribs">YAXLib Attributes</a></li>
+
+<li><a href="#exceptions">YAXLib Exception Classes</a></li>
+
+<li><a href="#notuse">When Not to Use YAXLib</a></li>
+
+<li><a href="#history">History</a></li>
+</ul>
+
+<h2><a name="intro"></a>Introduction</h2>
+
+<p>In this article, an XML serialization library is presented which is
+referred to hereafter as YAXLib. The .NET Framework has several
+serialization capabilities, specially <a title="MSDN: XmlSerializer class" href="http://msdn.microsoft.com/en-us/library/system.xml.serialization.xmlserializer.aspx"><code>XmlSerializer</code></a>, which is widely used by developers to serialize objects to XML and deserialize later. My problems with the <code>XmlSerializer</code> class of the .NET framework were:</p>
+
+<ul>
+<li>The developer is not free to choose the structure of the generated XML.</li>
+
+<li>It does not support serializing some collection classes (e.g., <code>Dictionary&lt;,&gt;</code>) or properties of type <code>IEnumerable&lt;&gt;</code>.</li>
+
+<li>When deserializing, it fails when some fields are not present,
+making it unsuitable for storing configuration files, which might be
+edited later by human users.</li>
+</ul>
+
+<h2><a name="whyuse"></a>Why Use YAXLib</h2>
+
+<p>The features of YAXLib that solve the above problems are:</p>
+
+<ul>
+<li>The user can decide on the structure of the XML file. A property
+can be a child element, or attribute for another property, or an
+element that has no corresponding property in the class.</li>
+
+<li>The collection classes can be serialized as a comma-separated (or
+any other separator) list of data items. Also, there are special
+formatting capabilities designed for objects of type <code>Dictionary&lt;,&gt;</code>, so that the developer has full control on the appearance of the generated XML.</li>
+
+<li>It supports serialization and deserialization of all the generic collection classes within <code>System.Collections.Generic</code> namespace (namely <code>Dictionary</code>, <code>HashSet</code>, <code>LinkedList</code>, <code>List</code>, <code>Queue</code>, <code>SortedDictionary</code>, <code>SortedList</code>, and <code>Stack</code>) and all the non-generic collection classes within <code>System.Collections</code> namespace (namely <code>ArrayList</code>, <code>BitArray</code>, <code>Hashtable</code>, <code>Queue</code>, <code>SortedList</code>, and <code>Stack</code>).
+The non-generic collection classes could contain objects of
+heterogeneous types. Also it supports serialization and deserialization
+of single-dimensional, multi-dimensional, and jagged arrays.</li>
+
+<li>It supports serializing and deserializing objects and collection of
+items, through a reference to their base class, or interface.</li>
+
+<li>It supports <a href="#multistagedes">multi-stage deserialization</a>.</li>
+
+<li>The developer can provide XML comments within the XML output.</li>
+
+<li>When it comes to deserialization, the developer can choose what
+happens when data related to some property is not present in the XML
+file. This situation can be regarded as an error so the library throws
+some exception or logs it as an error, or it can be regarded as a
+warning and some predefined default value specified by the developer is
+assigned to the absent property. Also, the developer may choose to
+ignore this problem, so that the related exception is neither thrown
+nor logged. See the section <a href="#nullref">Preserving Null-References Identity</a> to see when ignoring absent data might be useful.</li>
+
+<li>The developer can choose the error-handling policy. For data
+sensitive applications, the developer can choose that on any
+exceptional situation, the library should throw and log exceptions. For
+other situations (e.g., storing config files in a flexible way), the
+developer can choose to treat exceptional situations as warnings and
+only log them, and let the rest of the process go on.</li>
+</ul>
+
+<h2><a name="tutorial"></a>A Tutorial of YAXLib Usage</h2>
+
+<h3><a name="h3basicusage"></a>Basic Usage and Formatting</h3>
+
+<p>Let's see a very simple example, and then incrementally improve it
+to reflect different aspects of YAXLib. To start, we define a simple <code>Warehouse</code> class:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    public string Name { get; set; }
+    public string Address { get; set; }
+    public double Area { get; set; }
+}</pre>
+
+<p>The following code snippet illustrates what is needed to serialize an object of the <code>Warehouse</code> class:</p>
+
+<pre lang="cs">// First create an instance of the Warehouse class
+Warehouse w = new Warehouse()
+{
+    Name = "Foo Warehousing Ltd.",
+    Address = "No. 10, Some Ave., Some City, Some Country",
+    Area = 120000.50 // square meters
+};
+
+// Now serialize the instance
+YAXSerializer serializer = new YAXSerializer(typeof(Warehouse));
+string someString = serializer.Serialize(w);</pre>
+
+<p>After executing the above code, the variable <code>someS<code></code>tring</code> will contain:</p>
+
+<pre lang="xml">&lt;Warehouse&gt;
+   &lt;Name&gt;Foo Warehousing Ltd.&lt;/Name&gt;
+   &lt;Address&gt;No. 10, Some Ave., Some City, Some Country&lt;/Address&gt;
+   &lt;Area&gt;120000.5&lt;/Area&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>Note that there are other overloads of the <code>Serialize</code> method that accept instances of <code>XmlWriter</code> and <code>TextWriter</code>. So far, the result is much alike that of the <code>XmlSerializer</code> class of the .NET Framework. Let's make some modifications. We want the <code>Name</code> property to be serialized as an attribute for the <code>Warehouse</code> base element; also, we want the <code>Address</code> property to be the <code>value</code> attribute for an element named <code>Location</code>, and <code>Area</code> be the <code>value</code> attribute for an element named <code>Area</code>. We modify the <code>Warehouse</code> class by adding proper attributes to its properties:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("value")]
+    [YAXAttributeFor("Location")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("value")]
+    [YAXAttributeFor("Area")]
+    public double Area { get; set; }
+}</pre>
+
+<p>With the above modifications, our object will be serialized as:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+   &lt;Location value="No. 10, Some Ave., Some City, Some Country" /&gt;
+   &lt;Area value="120000.5" /&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>Make special attention to the combination of the <code>YAXSerializeAs</code> and <code>YAXAttributeFor</code> attributes for the last two properties. The <code>YAXSerializeAs</code> attribute specifies a new name (alias) for the property to be shown in the XML file, but the <code>YAXAttributeFor</code>
+attribute states that the property should be serialized as an attribute
+for the element whose name is provided in the parameter. The
+corresponding attribute for creating elements is <code>YAXElementFor</code>. Note the usage of the <code>YAXElementFor</code> attribute for the <code>Area</code> property in the following example:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+}</pre>
+
+<p>And, the form of its XML serialization output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+&lt;/Warehouse&gt;</pre>
+
+<h3><a name="h3formatcol"></a>Serializing Objects of Collection Classes</h3>
+
+<p>Now, let's define an enumeration of all possible items that can be
+stored in a warehouse, in general, and then specify the subset of items
+that is stored in our hypothetical warehouse. The <code>PossibleItems enum</code> is the mentioned enumeration, and the <code>Items</code> array is the mentioned subset, as defined in the following code snippet:</p>
+
+<pre lang="cs">public enum PossibleItems
+{
+    Item1, Item2, Item3, Item4, Item5, Item6,
+    Item7, Item8, Item9, Item10, Item11, Item12
+}
+
+public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    public PossibleItems[] Items { get; set; }
+}</pre>
+
+<p>We modify the instance creation code as follows, while the serialization code remains intact as before:</p>
+
+<pre lang="cs">Warehouse w = new Warehouse()
+{
+    Name = "Foo Warehousing Ltd.",
+    Address = "No. 10, Some Ave., Some City, Some Country",
+    Area = 120000.50, // square meters
+    Items = new PossibleItems[] { PossibleItems.Item3, PossibleItems.Item6,
+                                  PossibleItems.Item9, PossibleItems.Item12 }
+};</pre>
+
+<p>The XML generated by the serialization is:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;Items&gt;
+    &lt;PossibleItems&gt;Item3&lt;/PossibleItems&gt;
+    &lt;PossibleItems&gt;Item6&lt;/PossibleItems&gt;
+    &lt;PossibleItems&gt;Item9&lt;/PossibleItems&gt;
+    &lt;PossibleItems&gt;Item12&lt;/PossibleItems&gt;
+  &lt;/Items&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>But, we are not satisfied with the result, so let's change the <code>Items</code> element name to <code>StoreableItems</code>, and change each child element name from <code>PossibleItems</code> to <code>Item</code>. Here are the modifications made to the <code>Warehouse</code> class:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Recursive,
+                   EachElementName="Item")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+}</pre>
+
+<p>And, here's the XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;
+    &lt;Item&gt;Item3&lt;/Item&gt;
+    &lt;Item&gt;Item6&lt;/Item&gt;
+    &lt;Item&gt;Item9&lt;/Item&gt;
+    &lt;Item&gt;Item12&lt;/Item&gt;
+  &lt;/StoreableItems&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>How about serializing the array as a comma separated list of items? Modify the <code>Warehouse</code> class as:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially,
+                   SeparateBy=", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+}</pre>
+
+<p>and view the corresponding XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>The latter two examples need more explanation of the <code>YAXCollection</code>
+attribute. The first parameter passed to this attribute is the type of
+serialization of the collection classes, and there are three of them
+defined in the library: one is called <code>Recursive</code>, another is <code>RecursiveWithNoContainingElement</code> and the third one is <code>Serially</code>. By <code>Recursive</code>, we mean that every member of the collection object is serialized as a child element of the collection itself. If <code>Recursive</code> is selected, then the developer may choose to rename each child element name by providing the <code>EachElementName</code> named parameter of the attribute. The second type of serialization of the collection classes is <code>RecursiveWithNoContainingElement</code>, which operates just like <code>Recursive</code>
+except that collection itself does not have a separate element for
+itself. All the collection items will be serialized as if they are
+members of the containing class. Finally the third type of
+serialization of the collection classes is called <code>Serially</code>,
+and by which we mean that child elements of the collection object are
+serialized in only one element, all separated by some delimiter
+specified by the <code>SeparateBy</code> named parameter.</p>
+
+<p>Also, you can set the <code>IsWhiteSpaceSeparator</code> named parameter to <code lang="cs">false</code>, so that white-space characters within the members themselves are not considered as separators. As an example, see the <code>PathsExample</code> class in the demo application.</p>
+
+<h3><a name="h3dic"></a>Serializing Objects of Type Dictionary</h3>
+
+<p>Let's improve our example a little more by adding a dictionary of, say, <code>PossibleItem</code>s, and their quantity, as stored in our hypothetical warehouse.</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially,
+                   SeparateBy=", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+
+    public Dictionary&lt;PossibleItems, int&gt; ItemQuantitiesDic { get; set; }
+}</pre>
+
+<p>We instantiate an object as follows:</p>
+
+<pre lang="cs">Dictionary&lt;PossibleItems,int&gt; dicItems =
+                 new Dictionary&lt;PossibleItems,int&gt;();
+dicItems.Add(PossibleItems.Item3, 10);
+dicItems.Add(PossibleItems.Item6, 120);
+dicItems.Add(PossibleItems.Item9, 600);
+dicItems.Add(PossibleItems.Item12, 25);
+
+Warehouse w = new Warehouse()
+{
+    Name = "Foo Warehousing Ltd.",
+    Address = "No. 10, Some Ave., Some City, Some Country",
+    Area = 120000.50, // square meters
+    Items = new PossibleItems[] { PossibleItems.Item3,
+                                  PossibleItems.Item6,
+                                  PossibleItems.Item9,
+                                  PossibleItems.Item12 },
+    ItemQuantitiesDic = dicItems
+};</pre>
+
+<p>Here's the XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantitiesDic&gt;
+    &lt;KeyValuePairOfPossibleItemsInt32&gt;
+      &lt;Key&gt;Item3&lt;/Key&gt;
+      &lt;Value&gt;10&lt;/Value&gt;
+    &lt;/KeyValuePairOfPossibleItemsInt32&gt;
+    &lt;KeyValuePairOfPossibleItemsInt32&gt;
+      &lt;Key&gt;Item6&lt;/Key&gt;
+      &lt;Value&gt;120&lt;/Value&gt;
+    &lt;/KeyValuePairOfPossibleItemsInt32&gt;
+    &lt;KeyValuePairOfPossibleItemsInt32&gt;
+      &lt;Key&gt;Item9&lt;/Key&gt;
+      &lt;Value&gt;600&lt;/Value&gt;
+    &lt;/KeyValuePairOfPossibleItemsInt32&gt;
+    &lt;KeyValuePairOfPossibleItemsInt32&gt;
+      &lt;Key&gt;Item12&lt;/Key&gt;
+      &lt;Value&gt;25&lt;/Value&gt;
+    &lt;/KeyValuePairOfPossibleItemsInt32&gt;
+  &lt;/ItemQuantitiesDic&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>We can still improve the output by renaming the incomprehensible element names, e.g., renaming <code>ItemQuantitiesDic</code> to simply <code>ItemQuantities</code>, and <code>KeyValuePairOfPossibleItemsInt32</code> (which is the friendly name of <code>KeyValuePair&lt;PossibleItems, Int32&gt;</code>) to, say, <code>ItemInfo</code>. These (simple) changes are possible with the <code>YAXCollection</code> attribute, but we want to introduce the <code>YAXDictionary</code> attribute, which provides more formatting options. So, we add proper attributes to the definition of <code>ItemQuantitiesDic</code>, as follows:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass()]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially, SeparateBy=", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+
+    //[YAXCollection(YAXCollectionSerializationTypes.Recursive,
+    //               EachElementName = "ItemInfo")]
+    [YAXDictionary(EachPairName="ItemInfo")]
+    [YAXSerializeAs("ItemQuantities")]
+    public Dictionary&lt;PossibleItems, int&gt; ItemQuantitiesDic { get; set; }
+}</pre>
+
+<p>And, here's the XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantities&gt;
+    &lt;ItemInfo&gt;
+      &lt;Key&gt;Item3&lt;/Key&gt;
+      &lt;Value&gt;10&lt;/Value&gt;
+    &lt;/ItemInfo&gt;
+    &lt;ItemInfo&gt;
+      &lt;Key&gt;Item6&lt;/Key&gt;
+      &lt;Value&gt;120&lt;/Value&gt;
+    &lt;/ItemInfo&gt;
+    &lt;ItemInfo&gt;
+      &lt;Key&gt;Item9&lt;/Key&gt;
+      &lt;Value&gt;600&lt;/Value&gt;
+    &lt;/ItemInfo&gt;
+    &lt;ItemInfo&gt;
+      &lt;Key&gt;Item12&lt;/Key&gt;
+      &lt;Value&gt;25&lt;/Value&gt;
+    &lt;/ItemInfo&gt;
+  &lt;/ItemQuantities&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>How about making it more human-readable? For example, let's rename <code>Key</code> to <code>Item</code> and <code>Value</code> to, say, <code>Count</code>. Also, the result seems less complex if we make both the <code>Key</code> and <code>Value</code> parts attributes of the parent <code>ItemInfo</code> element. To accomplish this, make the following changes to the class definition:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially, SeparateBy = ", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+
+    [YAXDictionary(EachPairName="ItemInfo", KeyName="Item", ValueName="Count",
+                   SerializeKeyAs=YAXNodeTypes.Attribute,
+                   SerializeValueAs=YAXNodeTypes.Attribute)]
+    [YAXSerializeAs("ItemQuantities")]
+    public Dictionary&lt;PossibleItems, int&gt; ItemQuantitiesDic { get; set; }
+}</pre>
+
+<p>Here's the XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantities&gt;
+    &lt;ItemInfo Item="Item3" Count="10" /&gt;
+    &lt;ItemInfo Item="Item6" Count="120" /&gt;
+    &lt;ItemInfo Item="Item9" Count="600" /&gt;
+    &lt;ItemInfo Item="Item12" Count="25" /&gt;
+  &lt;/ItemQuantities&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>It now seems more readable and less complicated. The <code>YAXDictionary</code> attribute needs more explanation. This attribute can receive seven parameters:</p>
+
+<ul>
+<li><code>EachPairName</code>: defines an alias for the element containing the key-value pair.</li>
+
+<li><code>KeyName</code>: defines an alias for the <code>Key</code> element/attribute.</li>
+
+<li><code>ValueName</code>: defines an alias for the <code>Value</code> element/attribute.</li>
+
+<li><code>SerializeKeyAs</code>: specifies whether the key-part should be serialized as an attribute of its containing element, or as its child element.</li>
+
+<li><code>SerializeValueAs</code>: specifies whether the value-part should be serialized as an attribute of its containing element, or as its child element.</li>
+
+<li><code>KeyFormatString</code>: defines a format string, by which the <em>key</em> data will be serialized.</li>
+
+<li><code>ValueFormatString</code>: defines a format string, by which the <em>value</em> data will be serialized.</li>
+</ul>
+
+<p>It is also possible to use both <code>YAXDictionary</code> and <code>YAXCollection</code> attributes together to produce better results. For example, consider that you want the <code>ItemInfo</code> elements of the previous example be serialized without the containing element <code>ItemQuantities</code>. For this purpose, you can add a <code>YAXCollection</code> attribute with its serialization type set to <code>RecursiveWithNoContainingElement</code>, as the following code snippet depicts:</p>
+
+<pre lang="cs">public class Warehouse
+{
+    [YAXAttributeForClass]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially, SeparateBy = ", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.RecursiveWithNoContainingElement)]
+    [YAXDictionary(EachPairName="ItemInfo", KeyName="Item", ValueName="Count",
+                   SerializeKeyAs=YAXNodeTypes.Attribute,
+                   SerializeValueAs=YAXNodeTypes.Attribute)]
+    [YAXSerializeAs("ItemQuantities")]
+    public Dictionary&lt;PossibleItems, int&gt; ItemQuantitiesDic { get; set; }
+}</pre>
+
+<p>Here's the XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemInfo Item="Item3" Count="10" /&gt;
+  &lt;ItemInfo Item="Item6" Count="120" /&gt;
+  &lt;ItemInfo Item="Item9" Count="600" /&gt;
+  &lt;ItemInfo Item="Item12" Count="25" /&gt;
+&lt;/Warehouse&gt;</pre>
+
+<h3><a name="h3nested"></a>Serializing Nested Objects</h3>
+
+<p>As another improvement, let's see how nested objects are serialized. We define a <code>Person</code> class and add an <code>Owner</code> property of type <code>Person</code> to our hypothetical warehouse.</p>
+
+<pre lang="cs">public class Person
+{
+    public string SSN { get; set; }
+    public string Name { get; set; }
+    public string Family { get; set; }
+    public int Age { get; set; }
+}
+
+public class Warehouse
+{
+    [YAXAttributeForClass]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially, SeparateBy = ", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+
+    [YAXDictionary(EachPairName = "ItemInfo", KeyName = "Item", ValueName = "Count",
+                   SerializeKeyAs = YAXNodeTypes.Attribute,
+                   SerializeValueAs = YAXNodeTypes.Attribute)]
+    [YAXSerializeAs("ItemQuantities")]
+    public Dictionary&lt;PossibleItems, int&gt; ItemQuantitiesDic { get; set; }
+
+    public Person Owner { get; set; }
+}</pre>
+
+<p>And, create an instance as follows:</p>
+
+<pre lang="cs">Dictionary&lt;PossibleItems,int&gt; dicItems =
+                 new Dictionary&lt;PossibleItems,int&gt;();
+dicItems.Add(PossibleItems.Item3, 10);
+dicItems.Add(PossibleItems.Item6, 120);
+dicItems.Add(PossibleItems.Item9, 600);
+dicItems.Add(PossibleItems.Item12, 25);
+
+Warehouse w = new Warehouse()
+{
+    Name = "Foo Warehousing Ltd.",
+    Address = "No. 10, Some Ave., Some City, Some Country",
+    Area = 120000.50, // square meters
+    Items = new PossibleItems[] { PossibleItems.Item3, PossibleItems.Item6,
+                                  PossibleItems.Item9, PossibleItems.Item12 },
+    ItemQuantitiesDic = dicItems,
+    Owner = new Person() { SSN = "123456789", Name = "John",
+                                 Family = "Doe", Age = 50 }
+};</pre>
+
+<p>Here is the XML output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantities&gt;
+    &lt;ItemInfo Item="Item3" Count="10" /&gt;
+    &lt;ItemInfo Item="Item6" Count="120" /&gt;
+    &lt;ItemInfo Item="Item9" Count="600" /&gt;
+    &lt;ItemInfo Item="Item12" Count="25" /&gt;
+  &lt;/ItemQuantities&gt;
+  &lt;Owner&gt;
+    &lt;SSN&gt;123456789&lt;/SSN&gt;
+    &lt;Name&gt;John&lt;/Name&gt;
+    &lt;Family&gt;Doe&lt;/Family&gt;
+    &lt;Age&gt;50&lt;/Age&gt;
+  &lt;/Owner&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>Again, we add more formatting attributes to both of the classes. For example, we change the <code>Person</code> class as follows:</p>
+
+<pre lang="cs">public class Person
+{
+    [YAXAttributeForClass()]
+    public string SSN { get; set; }
+
+    [YAXAttributeFor("Identification")]
+    public string Name { get; set; }
+
+    [YAXAttributeFor("Identification")]
+    public string Family { get; set; }
+
+    public int Age { get; set; }
+}</pre>
+
+<p>The above modification produces the following output:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantities&gt;
+    &lt;ItemInfo Item="Item3" Count="10" /&gt;
+    &lt;ItemInfo Item="Item6" Count="120" /&gt;
+    &lt;ItemInfo Item="Item9" Count="600" /&gt;
+    &lt;ItemInfo Item="Item12" Count="25" /&gt;
+  &lt;/ItemQuantities&gt;
+  &lt;Owner SSN="123456789"&gt;
+    &lt;Identification Name="John" Family="Doe" /&gt;
+    &lt;Age&gt;50&lt;/Age&gt;
+  &lt;/Owner&gt;
+&lt;/Warehouse&gt;</pre>
+
+<p>How about making the owner's SSN appear as an attribute of the <code>Warehouse</code> itself? It is possible in YAXLib to specify serialization addresses as is popular in file systems. For example, you can use <code>YAXAttributeFor</code> in the following styles:</p>
+
+<pre lang="cs">[YAXAttributeFor("Identification")]
+[YAXAttributeFor("./Identification")]
+[YAXAttributeFor("../Identification")]
+[YAXAttributeFor("../../Identification")]
+[YAXAttributeFor("SomeTag/SomeOtherTag/AndSo")]
+</pre>
+
+<p>We want SSN to appear as an attribute for its parent, so we set its serialization location as follows:</p>
+
+<pre lang="cs">public class Person
+{
+    //[YAXAttributeForClass()]
+    [YAXAttributeFor("..")]
+    [YAXSerializeAs("OwnerSSN")]
+    public string SSN { get; set; }
+
+    [YAXAttributeFor("Identification")]
+    public string Name { get; set; }
+
+    [YAXAttributeFor("Identification")]
+    public string Family { get; set; }
+
+    public int Age { get; set; }
+}</pre>
+
+<p>The XML result is:</p>
+
+<pre lang="xml">&lt;Warehouse Name="Foo Warehousing Ltd." OwnerSSN="123456789"&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantities&gt;
+    &lt;ItemInfo Item="Item3" Count="10" /&gt;
+    &lt;ItemInfo Item="Item6" Count="120" /&gt;
+    &lt;ItemInfo Item="Item9" Count="600" /&gt;
+    &lt;ItemInfo Item="Item12" Count="25" /&gt;
+  &lt;/ItemQuantities&gt;
+  &lt;Owner&gt;
+    &lt;Identification Name="John" Family="Doe" /&gt;
+    &lt;Age&gt;50&lt;/Age&gt;
+  &lt;/Owner&gt;
+&lt;/Warehouse&gt;</pre>
+
+<h3><a name="h3xmlcomment"></a>Adding XML Comments</h3>
+
+<p>Since one of the main goals of YAXLib is enhancing human
+readability, it seems useful to have some means of inserting XML
+comments in the generated XML. You can use the <code>YAXComment</code> attribute to add comments to serialized objects. For example, see the modified version of our warehouse below:</p>
+
+<pre lang="cs">[YAXComment("General information about a warehouse")]
+public class Warehouse
+{
+    [YAXAttributeForClass]
+    public string Name { get; set; }
+
+    [YAXSerializeAs("address")]
+    [YAXAttributeFor("SiteInfo")]
+    public string Address { get; set; }
+
+    [YAXSerializeAs("SurfaceArea")]
+    [YAXElementFor("SiteInfo")]
+    public double Area { get; set; }
+
+    [YAXCollection(YAXCollectionSerializationTypes.Serially, SeparateBy = ", ")]
+    [YAXSerializeAs("StoreableItems")]
+    public PossibleItems[] Items { get; set; }
+
+    [YAXDictionary(EachPairName = "ItemInfo", KeyName = "Item", ValueName = "Count",
+                   SerializeKeyAs = YAXNodeTypes.Attribute,
+                   SerializeValueAs = YAXNodeTypes.Attribute)]
+    [YAXSerializeAs("ItemQuantities")]
+    public Dictionary&lt;PossibleItems, int&gt; ItemQuantitiesDic { get; set; }
+
+    [YAXComment("All the fields are mandatory, please fill all of them")]
+    public Person Owner { get; set; }
+}</pre>
+
+<p>and the generated XML:</p>
+
+<pre lang="xml">&lt;!-- General information about a warehouse --&gt;
+&lt;Warehouse Name="Foo Warehousing Ltd."&gt;
+  &lt;SiteInfo address="No. 10, Some Ave., Some City, Some Country"&gt;
+    &lt;SurfaceArea&gt;120000.5&lt;/SurfaceArea&gt;
+  &lt;/SiteInfo&gt;
+  &lt;StoreableItems&gt;Item3, Item6, Item9, Item12&lt;/StoreableItems&gt;
+  &lt;ItemQuantities&gt;
+    &lt;ItemInfo Item="Item3" Count="10" /&gt;
+    &lt;ItemInfo Item="Item6" Count="120" /&gt;
+    &lt;ItemInfo Item="Item9" Count="600" /&gt;
+    &lt;ItemInfo Item="Item12" Count="25" /&gt;
+  &lt;/ItemQuantities&gt;
+  &lt;!-- All the fields are mandatory, please fill all of them --&gt;
+  &lt;Owner SSN="123456789"&gt;
+    &lt;Identification Name="John" Family="Doe" /&gt;
+    &lt;Age&gt;50&lt;/Age&gt;
+  &lt;/Owner&gt;
+&lt;/Warehouse&gt;</pre>
+
+<h2><a name="deser"></a>Deserialization and Error Handling Schemes</h2>
+
+<p>Assume that we successfully serialized an object of our hypothetical
+warehouse into XML, and stored it into some file. In order to
+deserialize the XML back into an object, use the <code>Deserialize</code> method in the following style:</p>
+
+<pre lang="cs">YAXSerializer ser = new YAXSerializer(typeof(Warehouse));
+try
+{
+    object o = ser.Deserialize(someStringContainingXML);
+    if (o != null)
+        // means that the XML input has been deserialized successfully
+    else
+        // the XML input cannot be deserialized successfully
+}
+catch
+{
+}</pre>
+
+<p>It is generally inconvenient to have the content of the XML stored
+in some string variable as in the example above. For this reason, there
+are overloads of the <code>Deserialize</code> method that accept instances of <code>XmlReader</code> or <code>TextReader</code> as a parameter. Also, there is another method called <code>DeserializeFromFile</code> which accepts the path to the XML input file as a parameter.</p>
+
+<p>No matter which method is used, always use the above style for deserialization; i.e., put the deserialization method within a <code lang="cs">try</code> block, and always compare the result with <code lang="cs">null</code>.</p>
+
+<p>The developer cannot assume that the deserialization process always
+succeeds, especially if the XML file has been edited by a human user.
+The problems that may occur are a mal-formed XML file, missing elements
+or attributes for which a property exists, and several others. To get a
+better view of different problems which might happen in YAXLib, see the
+section: <a href="#exceptions">YAXLib Exception Classes</a>. To give the developer more control on handling errors, there are some extra features added to YAXLib.</p>
+
+<p>One feature is the <code>ParsingErrors</code> property of the <code>YAXSerializer</code> class. This property is a reference to a collection of <code>YAXException</code>s
+that has happened during deserialization or serialization but has not
+been thrown. Actually, this collection serves as the logger of the
+library (we later discuss what is meant by not thrown exceptions). The
+developer may choose later to loop through the exceptions, or simply
+call the overloaded <code>ToString()</code> method to print the list of exceptions in a neat format (this is what is done in the demo application).</p>
+
+<p>Another feature is enabling developers to choose the exception handling policy of the library. This is done by providing the <code>YAXExceptionHandlingPolicies</code> parameter of the constructor of <code>YAXSerializer</code>. This is an <code lang="cs">enum</code> with three possible values:</p>
+
+<ul class="enum">
+<li><code>ThrowWarningsAndErrors</code>: Throws an exception at the
+time a problem (labelled as warning or error) occurs. In this case, the
+deserialization process cannot continue and the operation fails. This
+is the default policy, if not specified otherwise by the developer.</li>
+
+<li><code>ThrowErrorsOnly</code>: Only throws exceptions corresponding
+to those labelled as error, and only logs those that are labelled as
+warning, which might be accessed later by the <code>ParsingErrors</code> property.</li>
+
+<li><code>DoNotThrow</code>: Logs all kinds of exceptions (either labelled as warning or error), and does not throw any of them. The <code>YAXCannotSerializeSelfReferentialTypes</code> and <code>YAXObjectTypeMismatch</code>
+are two exceptions of this rule, but note that both of these exception
+classes happen only at serialization time, not during deserialization.</li>
+</ul>
+
+<p>The third parameter of the constructor of the <code>YAXSerializer</code> class specifies the default exception type (<code>Warning</code> or <code>Error</code>) for all exceptions that may happen (the default is <code>Error</code>). We can alter this behavior for a special property of the class we want to serialize, by using the <code>YAXErrorIfMissed</code>
+attribute. This attribute also lets the developer to pick a default
+value for the property, which is used if the data corresponding to that
+property is missing in the input XML. As an example, consider the <code>ProgrammingLanguage</code> class below:</p>
+
+<pre lang="cs">public class ProgrammingLanguage
+{
+    public string LanguageName { get; set; }
+    public bool IsCaseSensitive { get; set; }
+}</pre>
+
+<p>We require that the <code>LanguageName</code> property be mandatory, but the <code>IsCaseSensitive</code> property be optional. If the value corresponding to the <code>IsCaseSensitive</code> property is missing in the XML, then we consider it as <code lang="cs">true</code>. For this purpose, we add attributes to the class definition, as shown below:</p>
+
+<pre lang="cs">public class ProgrammingLanguage
+{
+    [YAXErrorIfMissed(YAXExceptionTypes.Error)]
+    public string LanguageName { get; set; }
+
+    [YAXErrorIfMissed(YAXExceptionTypes.Warning, DefaultValue=true)]
+    public bool IsCaseSensitive { get; set; }
+}</pre>
+
+<p>As seen in the above code snippet, we treat the absence of <code>LanguageName</code> as an error, but we treat the absence of <code>IsCaseSensitive</code> as a warning, and if this happens, we assign the default value of <code lang="cs">true</code> to this property. Consequently, we use the <code>ThrowErrorsOnly</code>
+exception handling policy, and treat all other exceptions as warnings.
+The code below illustrates this while assuming that the input XML is
+stored in the string variable <code>inputXML</code>.</p>
+
+<pre lang="cs">YAXSerializer serializer = new YAXSerializer(typeof(ProgrammingLanguage),
+    YAXExceptionHandlingPolicies.ThrowErrorsOnly,
+    YAXExceptionTypes.Warning);
+object deserializedObject = null;
+try
+{
+    deserializedObject = serializer.Deserialize(inputXML);
+
+    if (serializer.ParsingErrors.ContainsAnyError)
+    {
+        Console.WriteLine
+	("Succeeded to deserialize, but these problems also happened:");
+        Console.WriteLine(serializer.ParsingErrors.ToString());
+    }
+}
+catch (YAXException ex)
+{
+    Console.WriteLine("Failed to deserialize input, this is the error occurred:");
+    Console.WriteLine(ex.ToString());
+}</pre>
+
+<p>If the input XML is in the following format, then the deserialization finishes successfully:</p>
+
+<pre lang="xml">&lt;ProgrammingLanguage&gt;
+  &lt;LanguageName&gt;C#&lt;/LanguageName&gt;
+  &lt;IsCaseSensitive&gt;true&lt;/IsCaseSensitive&gt;
+&lt;/ProgrammingLanguage&gt;</pre>
+
+<p>The following XML input leads to a warning which will be stored in the <code>ParsingErrors</code> collection, but the value of <code>IsCaseSensitive</code> will be set to <code lang="cs">true</code>.</p>
+
+<pre lang="xml">&lt;ProgrammingLanguage&gt;
+  &lt;LanguageName&gt;C#&lt;/LanguageName&gt;
+  &lt;!-- &lt;IsCaseSensitive&gt;true&lt;/IsCaseSensitive&gt; --&gt;
+&lt;/ProgrammingLanguage&gt;</pre>
+
+<p>But, the following XML input leads to an exception being thrown, and therefore, the deserialization process fails.</p>
+
+<pre lang="xml">&lt;ProgrammingLanguage&gt;
+  &lt;!-- &lt;LanguageName&gt;C#&lt;/LanguageName&gt; --&gt;
+  &lt;IsCaseSensitive&gt;true&lt;/IsCaseSensitive&gt;
+&lt;/ProgrammingLanguage&gt;</pre>
+
+<h2><a name="field"></a>Choosing the Fields to be Serialized</h2>
+
+<p>By default, YAXLib serializes only <code>public </code>properties of the type that is specified. This behavior can be changed for any user-defined class through the <code>YAXSerializableType</code>
+attribute. This attribute is applicable to classes and structures only
+and sets some serialization options related to that special type. Note
+that existence of an attribute named <code>YAXSerializableType</code> does <em>not</em>
+mean that the types that do not make use of this attribute are not
+serializable. In YAXLib, all types are merely serializable. This
+attribute helps us only in setting and overriding serialization options.</p>
+
+<p>The <code>YAXSerializableType</code> attribute has two named properties: </p>
+
+<ul class="property">
+<li><code>FieldsToSerialize</code>: Through this property, you can choose the type of members to be serialized. The default behavior is that <code>public </code>properties are chosen to be serialized. There are three possible options. <code>PublicPropertiesOnly</code> makes the serializer serialize only the <code>public </code>properties (the default). <code>AllFields</code> serializes <code>public </code>and non-public properties and member variables. In order not to serialize some members, attribute them with <code>YAXDontSerialize</code> attribute. The third option is <code>AttributedFieldsOnly</code>, which serializes only the members (<code>public </code>or non-public properties or member variables) attributed as <code>YAXSerializableField</code>.</li>
+
+<li><code>Options</code>: Through this property, you can choose whether or not to serialize <code>null </code>references. The default behavior, if not set otherwise by the serializer itself, is to serialize <code>null </code>references. Through this property, this behavior can be overloaded. There are two possible options that can be set: <code>SerializeNullObjects</code> which makes the serializer serialize all references including <code>null</code> references (the default) and <code>DontSerializeNullObjects</code> which makes the serializer not serialize <code>null</code> references. Setting the latter option will cause missing properties to be retrieved as <code>null</code>. For a discussion on what are the benefits of not serializing <code>null</code> objects, see the section <a name="nullref">Preserving Null-References Identity</a>.</li>
+</ul>
+
+<h2><a name="enums"></a>Defining Aliases for Enum Members</h2>
+
+<p>YAXLib enables you to define alias for <code>enum </code>values through the <code>YAXEnum</code> attribute. For example, consider that we have an <code>enum </code>of seasons defined as:</p>
+
+<pre lang="cs">public enum Seasons
+{
+    First, Second, Third, Fourth
+}</pre>
+
+<p>Without applying any attributes to our <code>enum</code>, its members will be serialized as <code>First</code>, <code>Second</code>, and so on. But if we change our <code>enum </code>in the following way:</p>
+
+<pre lang="cs">public enum Seasons
+{
+    [YAXEnum("Spring")]
+    First,
+
+    [YAXEnum("Summer")]
+    Second,
+
+    [YAXEnum(" Autumn or fall ")]
+    Third,
+
+    [YAXEnum("Winter")]
+    Fourth
+}</pre>
+
+<p>and define and instantiate the <code>SeasonsSample</code> class:</p>
+
+<pre lang="cs">public class SeasonsSample
+{
+    public Seasons[] ColdSeasons { get; set; }
+}
+
+...
+
+SeasonsSample sample = new SeasonsSample()
+{
+    ColdSeasons = new Seasons[] { Seasons.Third, Seasons.Fourth }
+};</pre>
+
+<p>The result of serialization of the <code>sample</code> object will be:</p>
+
+<pre lang="xml">&lt;SeasonsSample&gt;
+  &lt;ColdSeasons&gt;
+    &lt;Seasons&gt;Autumn or fall&lt;/Seasons&gt;
+    &lt;Seasons&gt;Winter&lt;/Seasons&gt;
+  &lt;/ColdSeasons&gt;
+&lt;/SeasonsSample&gt;</pre>
+
+<p>Since white space characters are valid in <code>enum </code>aliases, special care should be taken when a collection of <code>enum</code>s
+is serialized serially. Since space character is used by default as a
+separator in such collections, it is recommended that other characters
+be used as separator instead of space. Also <code>enum </code>members which are logically <em>or</em>ed together are separated from each other by comma. Therefore selecting comma as a separator is <em>not</em> a wise decision either. The following code shows how to solve this problem, by selecting semicolon as separator:</p>
+
+<pre lang="cs">public class SeasonsSample
+{
+    [YAXCollection(YAXCollectionSerializationTypes.Serially, 
+		IsWhiteSpaceSeparator=false, SeparateBy=";")]
+    public Seasons[] ColdSeasons { get; set; }
+}</pre>
+
+<p>The XML result which is unambiguously deserializable will be:</p>
+
+<pre lang="xml">&lt;SeasonsSample&gt;
+  &lt;ColdSeasons&gt;Autumn or fall;Winter&lt;/ColdSeasons&gt;
+&lt;/SeasonsSample&gt;</pre>
+
+<h2><a name="multidimarrays"></a>Serializing Multi-dimensional Arrays</h2>
+
+<p>YAXLib is capable of serializing and deserializing multi-dimensional
+and jagged arrays. For this reason, the serializer generates some
+meta-data about the dimensions of the array to guide the
+deserialization process. For example, consider the following class:</p>
+
+<pre lang="cs">public class MultiDimArrays
+{
+    public int[,] TheSquareMatrix { get; set; }
+
+    public int[][] TheTriangularMatrix { get; set; }
+
+    public static MultiDimArrays GetSampleInstance()
+    {
+        int[,] matrix = new int[3, 3];
+        for (int i = 0; i &lt; matrix.GetLength(0); i++)
+            for (int j = 0; j &lt; matrix.GetLength(1); j++)
+                matrix[i, j] = i + j + 1;
+
+        MultiDimArrays obj = new MultiDimArrays()
+        {
+            TheSquareMatrix = matrix,
+            TheTriangularMatrix = new int[3][] 
+		{new int[] {1}, new int[] {1,2}, new int[] {1,2,3}}
+        };
+
+        return obj;
+    }
+}</pre>
+
+<p>Serializing the object gained from the <code>GetSampleInstance static</code> method yields the following XML result:</p>
+
+<pre lang="xml">&lt;MultiDimArrays xmlns:yaxlib="http://www.sinairv.com/yaxlib/"&gt;
+  &lt;TheSquareMatrix yaxlib:dims="3,3"&gt;
+    &lt;Int32&gt;1&lt;/Int32&gt;
+    &lt;Int32&gt;2&lt;/Int32&gt;
+    &lt;Int32&gt;3&lt;/Int32&gt;
+    &lt;Int32&gt;2&lt;/Int32&gt;
+    &lt;Int32&gt;3&lt;/Int32&gt;
+    &lt;Int32&gt;4&lt;/Int32&gt;
+    &lt;Int32&gt;3&lt;/Int32&gt;
+    &lt;Int32&gt;4&lt;/Int32&gt;
+    &lt;Int32&gt;5&lt;/Int32&gt;
+  &lt;/TheSquareMatrix&gt;
+  &lt;TheTriangularMatrix&gt;
+    &lt;Array1OfInt32&gt;
+      &lt;Int32&gt;1&lt;/Int32&gt;
+    &lt;/Array1OfInt32&gt;
+    &lt;Array1OfInt32&gt;
+      &lt;Int32&gt;1&lt;/Int32&gt;
+      &lt;Int32&gt;2&lt;/Int32&gt;
+    &lt;/Array1OfInt32&gt;
+    &lt;Array1OfInt32&gt;
+      &lt;Int32&gt;1&lt;/Int32&gt;
+      &lt;Int32&gt;2&lt;/Int32&gt;
+      &lt;Int32&gt;3&lt;/Int32&gt;
+    &lt;/Array1OfInt32&gt;
+  &lt;/TheTriangularMatrix&gt;
+&lt;/MultiDimArrays&gt;</pre>
+
+<p>The above XML is successfully deserialized into an object with
+arrays with same dimensions. The only special thing to notice about the
+above XML result is the <code>yaxlib:dims</code> attribute of the <code>TheSquareMatrix</code> element. This attribute provides the needed meta-data to deserialize the matrix successfully.</p>
+
+<h2><a name="refiface"></a>Serializing Objects Through a Reference to Their Base-Class or Interface</h2>
+
+<p>Consider that you hold a collection of objects through a reference
+to their common interface or base-class and you need to serialize them
+in a way that their real type could be successfully determined during
+deserialization. This is what happens when you use a non-generic
+collection class, e.g., <code>ArrayList</code> is merely a list of <code>object</code>s.
+Successful serialization and deserialization of these kind of objects
+are possible in YAXLib, since it serializes meta-data to aid loading
+the real type of object in deserialization time. For example, consider
+the following class:</p>
+
+<pre lang="cs">public class BaseClassRefSample
+{
+    public IEnumerable RefToIEnumerable1 { get; set; }
+    public IEnumerable RefToIEnumerable2 { get; set; }
+
+    public List&lt;object&gt; ListOfObjects { get; set; }
+
+    public static BaseClassRefSample GetSampleInstance()
+    {
+        int[] someIntArray = new int[] { 1, 2, 3 };
+        string[] someStrArray = new string[] { "Hi", "Hello" };
+
+        List&lt;object&gt; lst = new List&lt;object&gt;();
+        lst.Add(7); // adding an integer
+        lst.Add(3.14); // adding a double
+        lst.Add("Congrats"); // adding a string
+        lst.Add(StringSplitOptions.RemoveEmptyEntries); // adding some enum member
+
+        return new BaseClassRefSample()
+        {
+            RefToIEnumerable1 = someIntArray,
+            RefToIEnumerable2 = someStrArray,
+            ListOfObjects = lst
+        };
+    }
+}</pre>
+
+<p>The above class has three members. Two members are references to an <code>IEnumerable</code> instance. In the <code>GetSampleInstance</code>
+method, the first reference is referred to an array of integers, and
+the second one is assigned to an array of strings. So two properties of
+similar appearance are referring to two different type of objects. The
+third property is a list of <code>object</code>s which is filled with an integer, a double number, a string, and an enum member. The XML result is the following:</p>
+
+<pre lang="xml">&lt;FreeSample xmlns:yaxlib="http://www.sinairv.com/yaxlib/"&gt;
+  &lt;RefToIEnumerable1 yaxlib:realtype="System.Int32[]"&gt;
+    &lt;Int32&gt;1&lt;/Int32&gt;
+    &lt;Int32&gt;2&lt;/Int32&gt;
+    &lt;Int32&gt;3&lt;/Int32&gt;
+  &lt;/RefToIEnumerable1&gt;
+  &lt;RefToIEnumerable2 yaxlib:realtype="System.String[]"&gt;
+    &lt;String&gt;Hi&lt;/String&gt;
+    &lt;String&gt;Hello&lt;/String&gt;
+  &lt;/RefToIEnumerable2&gt;
+  &lt;ListOfObjects&gt;
+    &lt;Object yaxlib:realtype="System.Int32"&gt;7&lt;/Object&gt;
+    &lt;Object yaxlib:realtype="System.Double"&gt;3.14&lt;/Object&gt;
+    &lt;Object yaxlib:realtype="System.String"&gt;Congrats&lt;/Object&gt;
+    &lt;Object yaxlib:realtype="System.StringSplitOptions"&gt;RemoveEmptyEntries&lt;/Object&gt;
+  &lt;/ListOfObjects&gt;
+&lt;/FreeSample&gt;</pre>
+
+<p>Note the use of <code>yaxlib:realtype</code> attributes that
+generates meta-data about the real type of the specified references.
+Through these meta-data, the deserializer will be able to load true
+underlying types and assign values to them.</p>
+
+<h2><a name="nullref"></a>Preserving Null-References Identity</h2>
+
+<p>One of the primary objectives of a serialization library should be
+that the object before serialization must be member-wise equal to the
+object deserialized. This is violated sometimes if some of the object's
+properties are <code lang="cs">null</code>. For example, consider the following class containing only a <code>List&lt;&gt;</code>:</p>
+
+<pre lang="cs">public class CollectionOfItems
+{
+    public List&lt;int&gt; TheCollection { get; set; }
+}</pre>
+
+<p>And also, consider the following two <em>unequal</em> objects, namely <code>obj1</code> and <code>obj2</code>:</p>
+
+<pre lang="cs">CollectionOfItems obj1 = new CollectionOfItems()
+{
+    TheCollection = new List&lt;int&gt;()
+};
+
+CollectionOfItems obj2 = new CollectionOfItems()
+{
+    TheCollection = null
+};</pre>
+
+<p>As seen in the above code snippet, <code>obj1</code> contains a non-null but empty <code>List&lt;&gt;</code>, whereas the corresponding property in <code>obj2</code> is <code lang="cs">null</code>. Now, the problem is that, they both produce the same XML output:</p>
+
+<pre lang="xml">&lt;CollectionOfItems&gt;
+  &lt;TheCollection /&gt;
+&lt;/CollectionOfItems&gt;</pre>
+
+<p>One solution is to prevent the serialization of <code lang="cs">null</code>
+properties. Of course, this solution is not recommended if the
+structure of the XML output is important or it is going to be validated
+with some schema.</p>
+
+<p>To accomplish this, the developer might specify the serialization options through the <code>YAXSerializationOptions</code> enumeration. Currently, this enumeration has only two members:</p>
+
+<ul class="enum">
+<li><code>DontSerializeNullObjects</code> which prevents serializing <code lang="cs">null</code> properties</li>
+
+<li><code>SerializeNullObjects</code> which serializes all properties (the default)</li>
+</ul>
+
+<p>If the developer sets the serialization option to <code>DontSerializeNullObjects</code> through the constructor of <code>YAXSerializer</code>, then we will see that the generated XML of <code>obj1</code> and <code>obj2</code>
+of the example above are different. More importantly, the objects
+before serialization and after deserialization are equal. This is the
+XML generated for <code>obj2</code> with the option <code>DontSerializeNullObjects</code> set:</p>
+
+<pre lang="xml">&lt;CollectionOfItems /&gt;</pre>
+
+<h2><a name="formatting"></a>Formatting Data Items</h2>
+
+<p>YAXLib provides the <code>YAXFormat</code> attribute with which
+developers can specify format strings for properties to be serialized.
+For example, if you want to serialize a <code lang="cs">double</code> variable with only three digits of precision after floating point, then you can use the <code>F03</code> format string, through the <code>YAXFormat</code> attribute.</p>
+
+<p>This attributes also applies to collections of items, but it does not work for objects of type <code>Dictionary</code>. Instead, you can use the <code>YAXDictionary</code> attribute, and specify the <code>KeyFormatString</code> and <code>ValueFormatString</code> parameters.</p>
+
+<p>If the format string is not supported in the .NET Framework, then an exception of type <code>YAXInvalidFormatProvided</code> is thrown/logged.</p>
+
+<p>Special care should be taken while using format strings. Some data
+types can be serialized successfully with some format strings, but they
+might not be deserialized later. For example, one might accidentally
+use the <code>F03G</code> format string for type <code lang="cs">double</code>.</p>
+
+<p>As an example of the formatting capabilities of YAXLib, see the following class definition:</p>
+
+<pre lang="cs">public class FormattingExample
+{
+    public DateTime CreationDate { get; set; }
+    public DateTime ModificationDate { get; set; }
+    public double PI { get; set; }
+    public List&lt;double&gt; NaturalExp { get; set; }
+    public Dictionary&lt;double, double&gt; SomeLogarithmExample { get; set; }
+}</pre>
+
+<p>Here's the code to create an instance of this class:</p>
+
+<pre lang="cs">List&lt;double&gt; lstNE = new List&lt;double&gt;();
+for (int i = 1; i &lt;= 4; ++i)
+    lstNE.Add(Math.Exp(i));
+
+Dictionary&lt;double, double&gt; dicLog = new Dictionary&lt;double, double&gt;();
+for (double d = 1.5; d &lt;= 10; d *= 2)
+    dicLog.Add(d, Math.Log(d));
+
+return new FormattingExample()
+{
+    CreationDate = new DateTime(2007, 3, 14),
+    ModificationDate = DateTime.Now,
+    PI = Math.PI,
+    NaturalExp = lstNE,
+    SomeLogarithmExample = dicLog
+};</pre>
+
+<p>And, this is the XML output for our instance:</p>
+
+<pre lang="xml">&lt;FormattingExample&gt;
+  &lt;CreationDate&gt;2007-03-14T00:00:00&lt;/CreationDate&gt;
+  &lt;ModificationDate&gt;2009-04-13T17:40:11.56+04:30&lt;/ModificationDate&gt;
+  &lt;PI&gt;3.1415926535897931&lt;/PI&gt;
+  &lt;NaturalExp&gt;
+    &lt;Double&gt;2.7182818284590451&lt;/Double&gt;
+    &lt;Double&gt;7.38905609893065&lt;/Double&gt;
+    &lt;Double&gt;20.085536923187668&lt;/Double&gt;
+    &lt;Double&gt;54.598150033144236&lt;/Double&gt;
+  &lt;/NaturalExp&gt;
+  &lt;SomeLogarithmExample&gt;
+    &lt;KeyValuePairOfDoubleDouble&gt;
+      &lt;Key&gt;1.5&lt;/Key&gt;
+      &lt;Value&gt;0.40546510810816438&lt;/Value&gt;
+    &lt;/KeyValuePairOfDoubleDouble&gt;
+    &lt;KeyValuePairOfDoubleDouble&gt;
+      &lt;Key&gt;3&lt;/Key&gt;
+      &lt;Value&gt;1.0986122886681098&lt;/Value&gt;
+    &lt;/KeyValuePairOfDoubleDouble&gt;
+    &lt;KeyValuePairOfDoubleDouble&gt;
+      &lt;Key&gt;6&lt;/Key&gt;
+      &lt;Value&gt;1.791759469228055&lt;/Value&gt;
+    &lt;/KeyValuePairOfDoubleDouble&gt;
+  &lt;/SomeLogarithmExample&gt;
+&lt;/FormattingExample&gt;</pre>
+
+<p>Now, let's add some formatting to the data items of our class definition.</p>
+
+<pre lang="cs">public class FormattingExample
+{
+    [YAXFormat("D")]
+    public DateTime CreationDate { get; set; }
+
+    [YAXFormat("d")]
+    public DateTime ModificationDate { get; set; }
+
+    [YAXFormat("F05")]
+    public double PI { get; set; }
+
+    [YAXFormat("F03")]
+    public List&lt;double&gt; NaturalExp { get; set; }
+
+    [YAXDictionary(KeyFormatString="F02", ValueFormatString="F05")]
+    public Dictionary&lt;double, double&gt; SomeLogarithmExample { get; set; }
+}</pre>
+
+<p>The result of XML serialization would be:</p>
+
+<pre lang="xml">&lt;FormattingExample&gt;
+  &lt;CreationDate&gt;Wednesday, March 14, 2007&lt;/CreationDate&gt;
+  &lt;ModificationDate&gt;4/13/2009&lt;/ModificationDate&gt;
+  &lt;PI&gt;3.14159&lt;/PI&gt;
+  &lt;NaturalExp&gt;
+    &lt;Double&gt;2.718&lt;/Double&gt;
+    &lt;Double&gt;7.389&lt;/Double&gt;
+    &lt;Double&gt;20.086&lt;/Double&gt;
+    &lt;Double&gt;54.598&lt;/Double&gt;
+  &lt;/NaturalExp&gt;
+  &lt;SomeLogarithmExample&gt;
+    &lt;KeyValuePairOfDoubleDouble&gt;
+      &lt;Key&gt;1.50&lt;/Key&gt;
+      &lt;Value&gt;0.40547&lt;/Value&gt;
+    &lt;/KeyValuePairOfDoubleDouble&gt;
+    &lt;KeyValuePairOfDoubleDouble&gt;
+      &lt;Key&gt;3.00&lt;/Key&gt;
+      &lt;Value&gt;1.09861&lt;/Value&gt;
+    &lt;/KeyValuePairOfDoubleDouble&gt;
+    &lt;KeyValuePairOfDoubleDouble&gt;
+      &lt;Key&gt;6.00&lt;/Key&gt;
+      &lt;Value&gt;1.79176&lt;/Value&gt;
+    &lt;/KeyValuePairOfDoubleDouble&gt;
+  &lt;/SomeLogarithmExample&gt;
+&lt;/FormattingExample&gt;</pre>
+
+<h2><a name="multistagedes"></a>Multi-Stage Deserialization</h2>
+
+<p>Some applications require multi-stage deserialization, in that later
+deserialized values override previous ones. An example of this
+technique can be observed in ASP.NET applications in which the values
+in <em>web.conf</em> file in each directory override those settings
+previously defined in upper level directories. This technique can be
+accomplished using YAXLib through <code>SetDeserializationBaseObject </code>method. The steps are as follows:</p>
+
+<ol>
+<li>Deserialize the top-level XML file into an object, say <code>obj</code>.</li>
+
+<li>Through the call <code>yaxSerializer.SetDeserializationBaseObject(obj)</code>, set the resulting object as the deserializer's base object for the next stage of deserialization. </li>
+
+<li>Deserialize the next stage XML file into the same object, <code>obj</code>.</li>
+
+<li>If there's any stages (XML files) remaining, go back to step 2.</li>
+</ol>
+
+<h2><a name="defconst"></a>The Problem with Classes without a Default Constructor</h2>
+
+<p>YAXLib needs that the classes used with it do have a default
+constructor. But, there are many classes already defined in the .NET
+Framework that do not have a default constructor (e.g., the <code>System.Drawing.Color struct</code>). To overcome this problem, we can create properties of some other types (e.g., <code lang="cs">string</code>) in which the <code lang="cs">get</code> and <code lang="cs">set</code> methods convert between the two types (e.g., convert <code lang="cs">string</code> to <code>Color</code> and vice versa). Here's an example that uses a property of type <code lang="cs">string</code> instead of a property of type <code>Color</code>:</p>
+
+<pre lang="cs">public class ColorExample
+{
+    private Color m_color = Color.Blue;
+
+    public string TheColor
+    {
+        get
+        {
+            return String.Format("#{0:X}", m_color.ToArgb());
+        }
+
+        set
+        {
+            m_color = Color.White;
+
+            value = value.Trim();
+            if (value.StartsWith("#")) // remove leading # if any
+                value = value.Substring(1);
+
+            int n;
+            if (Int32.TryParse(value,
+                System.Globalization.NumberStyles.HexNumber, null, out n))
+            {
+                m_color = Color.FromArgb(n);
+            }
+        }
+    }
+}</pre>
+
+<p>Here is the XML generated by serializing an object of the above class:</p>
+
+<pre lang="xml">&lt;SelfReferentialExample&gt;
+  &lt;TheColor&gt;#FF0000FF&lt;/TheColor&gt;
+&lt;/SelfReferentialExample&gt;</pre>
+
+<h2><a name="selfref"></a>The Problem with Self-Referential Classes</h2>
+
+<p>Self-referential classes are those that have a property of the same
+type as the class itself. Self-referential classes cannot be
+serialized, because they lead to infinite recursion, and hence
+stack-overflow. The <code>YAXCannotSerializeSelfReferentialTypes</code>
+exception is thrown if such classes are encountered during the
+serialization process. This is one of the few YAXLib exception classes
+that cannot be turned off even if the exception-handling policy is set
+to <code>DoNotThrow</code>. So, it is recommended that you always put your serialization code within <code lang="cs">try</code> blocks. To overcome this problem, the same technique for solving <a href="#defconst">The Problem with Classes without a Default Constructor</a> can be used.</p>
+
+<h2><a name="attribs"></a>YAXLib Attributes</h2>
+
+<p>In this section, we list and describe all attribute classes provided
+in the YAXLib library. Note that in the descriptions that follow, by
+the term <em>field</em>, we mean member variable which could be either <code>public </code>or non-public.</p>
+
+<ul>
+<li><strong><code>YAXSerializeAs</code></strong>: Defines an alias for
+the field, property, class, or struct under which it will be
+serialized. This attribute is applicable to fields, properties,
+classes, and structs.</li>
+
+<li><strong><code>YAXDontSerialize</code></strong>: Prevents serialization of some field or property. This attribute is applicable to fields and properties.</li>
+
+<li><strong><code>YAXAttributeForClass</code></strong>: Makes a
+property to appear as an attribute for the enclosing class (i.e., the
+parent element), if possible. This attribute is applicable to fields
+and properties.</li>
+
+<li><strong><code>YAXAttributeFor</code></strong>: Makes a field or
+property to appear as an attribute for another element, if possible.
+This attribute is applicable to fields and properties.</li>
+
+<li><strong><code>YAXElementFor</code></strong>: Makes a property or
+field to appear as a child element for another element. This attribute
+is applicable to fields and properties.</li>
+
+<li><strong><code>YAXCollection</code></strong>: Controls the
+serialization of collection instances. This attribute is applicable to
+fields and properties. For more details and examples, see the section: <a href="#h3formatcol">Serializing Objects of Collection Classes</a>.</li>
+
+<li><strong><code>YAXDictionary</code></strong>: Controls the serialization of objects of type <code>Dictionary</code>. This attribute is applicable to fields and properties.</li>
+
+<li><strong><code>YAXFormat</code></strong>: Specifies the format string provided for serializing data. The format string is the parameter passed to the <code>ToString</code>
+method. If this attribute is applied to collection classes, the format,
+therefore, is applied to the collection members. This attribute is
+applicable to fields and properties.</li>
+
+<li><strong><code>YAXEnum</code></strong>: Specifies an alias for an enum member. This attribute is applicable to <code>enum </code>members.</li>
+
+<li><strong><code>YAXSerializableType</code></strong>: Sets or overrides default serialization behaviors. This attribute is optional and is applicable to classes and structures. </li>
+
+<li><strong><code>YAXSerializableField</code></strong>: Add this attribute to properties or fields which you wish to be serialized, when the enclosing class uses the <code>YAXSerializableType</code> attribute in which <code>FieldsToSerialize</code> has been set to <code>AttributedFieldsOnly</code>. This attribute is applicable to fields and properties.</li>
+
+<li><strong><code>YAXErrorIfMissed</code></strong>: Specifies the
+behavior of the deserialization method if the element/attribute
+corresponding to this property is missing in the XML input. This
+attribute is applicable to fields and properties.</li>
+
+<li><strong><code>YAXNotCollection</code></strong>: Specifies that a particular class, or a particular property or variable type, that is driven from <code>IEnumerable</code> should not be treated as a collection class/object. This attribute is applicable to fields, properties, classes, and structs.</li>
+
+<li><strong><code>YAXComment</code></strong>: Creates a comment node
+per each line of the comment string provided. This attribute is
+applicable to classes, structures, fields, and properties.</li>
+</ul>
+
+<h2><a name="exceptions"></a>YAXLib Exception Classes</h2>
+
+<p>In this section, we list and describe all exception classes which
+might be thrown or logged as error by YAXLib. Note that all the
+exception classes in YAXLib are derived from the <code>YAXException</code> class.</p>
+
+<ul>
+<li>Exceptions raised during serialization</li>
+
+<ul>
+<li><strong><code>YAXBadLocationException</code></strong>: Raised when the location of serialization specified cannot be created or cannot be read from.</li>
+
+<li><strong><code>YAXAttributeAlreadyExistsException</code></strong>: Raised when trying to serialize an attribute where another attribute with the same name already exists.</li>
+
+<li><strong><code>YAXCannotSerializeSelfReferentialTypes</code></strong>: Raised when trying to serialize self-referential types. This exception cannot be turned off.</li>
+
+<li><strong><code>YAXObjectTypeMismatch</code></strong>: Raised when
+the object provided for serialization is not of the type provided for
+the serializer. This exception cannot be turned off.</li>
+
+<li><strong><code>YAXInvalidFormatProvided</code></strong>: Raised when an object cannot be formatted with the format string provided.</li>
+</ul>
+
+<li>Exceptions raised during deserialization</li>
+
+<ul>
+<li><strong><code>YAXAttributeMissingException</code></strong>: Raised when the attribute corresponding to some property is not present in the given XML file.</li>
+
+<li><strong><code>YAXElementMissingException</code></strong>: Raised when the element corresponding to some property is not present in the given XML file.</li>
+
+<li><strong><code>YAXBadlyFormedInput</code></strong>: Raised when the value provided for some property in the XML input cannot be converted to the type of the property.</li>
+
+<li><strong><code>YAXPropertyCannotBeAssignedTo</code></strong>: Raised when the value provided for some property in the XML input cannot be assigned to the property.</li>
+
+<li><strong><code>YAXCannotAddObjectToCollection</code></strong>: Raised when some member of the collection in the input XML cannot be added to a collection object.</li>
+
+<li><strong><code>YAXDefaultValueCannotBeAssigned</code></strong>: Raised when the default value specified by the <code>YAXErrorIfMissedAttribute</code> could not be assigned to the property.</li>
+
+<li><strong><code>YAXBadlyFormedXML</code></strong>: Raised when the XML input does not follow standard XML formatting rules.</li>
+</ul>
+</ul>
+
+<h2><a name="notuse"></a>When Not to Use YAXLib</h2>
+
+<p>The emphasis of YAXLib on the structure and formatting of the
+generated XML output and ignoring the deserialization errors as far as
+possible (of course, as specified by the developer) shows that it is
+more suitable for communication between a program and human users. If
+your sole purpose is just to store the internal status of some object
+to be loaded later, and it is <em>not</em> going to be edited by a human user later, and your objects do not use collection classes such as <code>Dictionary&lt;,&gt;</code>, then it might be better to use the <code>XmlSerializer</code> class of the .NET Framework, because your code would be more portable.</p>
+
+<h2>History</h2>
+
+<ul><li><strong>May 17, 2010</strong>: YAXLib is now hosted on <a href="http://yaxlib.codeplex.com" target="_blank">CodePlex</a>.</li>
+<li><strong>April 16, 2010</strong>: YAXLib 2.0, with a lot more features</li>
+
+<li><strong>December 22, 2009</strong>: Some bug-fixes, and adding a
+download link to an SVN repository so that every bug-fix does not
+require an update to the CodeProject article</li>
+
+<li><strong>April 13, 2009</strong>: YAXLib 1.1</li>
+
+<li><strong>March 13, 2009</strong>: First version</li>
+</ul>
+
+<p>For more detailed information, see the change-log file.</p>
+
+</span>
+<!-- End Article -->

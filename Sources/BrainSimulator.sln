@@ -3,8 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517} = {C8A4992F-F2CB-40E7-92AA-7D4239653517}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1C4D174-C948-4D18-A125-F6855EF55683} = {F1C4D174-C948-4D18-A125-F6855EF55683}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "Modules\BasicNodes\Module\BasicNodes.csproj", "{C8A4992F-F2CB-40E7-92AA-7D4239653517}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -31,6 +37,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodesTests", "Modules\BasicNodes\Tests\BasicNodesTests.csproj", "{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreRunner", "Platform\CoreRunner\CoreRunner.csproj", "{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{D1D0B4A9-9F7F-452D-872A-05FFFBFA40C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graph", "Libs\3rd\Graph\Graph.csproj", "{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsUI", "Libs\3rd\WinFormsUI\WinFormsUI.csproj", "{C75532C4-765B-418E-B09B-46D36B2ABDB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLib", "Libs\3rd\YAXLib\YAXLib\YAXLib.csproj", "{F1C4D174-C948-4D18-A125-F6855EF55683}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLibTests", "Libs\3rd\YAXLib\YAXLibTests\YAXLibTests.csproj", "{4F012F71-C259-481B-A112-EC24D3AF24AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +111,7 @@ Global
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
@@ -104,6 +121,37 @@ Global
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{4F012F71-C259-481B-A112-EC24D3AF24AC}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{4F012F71-C259-481B-A112-EC24D3AF24AC}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{4F012F71-C259-481B-A112-EC24D3AF24AC}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{4F012F71-C259-481B-A112-EC24D3AF24AC}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{4F012F71-C259-481B-A112-EC24D3AF24AC}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{4F012F71-C259-481B-A112-EC24D3AF24AC}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,5 +159,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 		{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC} = {D1D0B4A9-9F7F-452D-872A-05FFFBFA40C6}
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1} = {D1D0B4A9-9F7F-452D-872A-05FFFBFA40C6}
+		{F1C4D174-C948-4D18-A125-F6855EF55683} = {D1D0B4A9-9F7F-452D-872A-05FFFBFA40C6}
+		{4F012F71-C259-481B-A112-EC24D3AF24AC} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 	EndGlobalSection
 EndGlobal
