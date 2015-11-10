@@ -86,32 +86,32 @@ namespace GoodAI.BrainSimulator.Forms
             nodeImageList.Images.Add(GeneratePaddedIcon(Properties.Resources.world));
             i++;
 
-            List<string> nmspaces = knownNodes.Keys.ToList().OrderBy(x => x).ToList();
+            List<string> moduleNameSpaces = knownNodes.Keys.ToList().OrderBy(x => x).ToList();
 
-            foreach (string nmspace in nmspaces) 
+            foreach (string nameSpace in moduleNameSpaces) 
             {                
-                ListViewGroup group = new ListViewGroup(nmspace, nmspace.Replace("BrainSimulator.", ""));
+                ListViewGroup group = new ListViewGroup(nameSpace, nameSpace.Replace("BrainSimulator.", ""));
                 nodeListView.Groups.Add(group);
 
                 // TODO: move
-                var categoryItem = new ListViewItem(new string[1] { nmspace });
+                var categoryItem = new ListViewItem(new string[1] { nameSpace });
 
                 nodeFilterList.Items.Add(categoryItem);
 
-                List<MyNodeConfig> nodesInGroup =  knownNodes[nmspace].OrderBy(x => x.NodeType.Name).ToList();;
+                List<MyNodeConfig> nodesInGroup =  knownNodes[nameSpace].OrderBy(x => x.NodeType.Name).ToList();;
                 int row = 0;
 
-                foreach (MyNodeConfig nc in nodesInGroup) 
+                foreach (MyNodeConfig nodeConfig in nodesInGroup) 
                 {
                     string author;
                     string status;
                     string summary;
 
-                    bool complete = m_mainForm.Documentation.HasAuthor(nc.NodeType, out author);
-                    complete &= m_mainForm.Documentation.HasStatus(nc.NodeType, out status);
-                    complete &= m_mainForm.Documentation.HasSummary(nc.NodeType, out summary);
+                    bool complete = m_mainForm.Documentation.HasAuthor(nodeConfig.NodeType, out author);
+                    complete &= m_mainForm.Documentation.HasStatus(nodeConfig.NodeType, out status);
+                    complete &= m_mainForm.Documentation.HasSummary(nodeConfig.NodeType, out summary);
 
-                    MyObsoleteAttribute obsolete = nc.NodeType.GetCustomAttribute<MyObsoleteAttribute>(true);
+                    MyObsoleteAttribute obsolete = nodeConfig.NodeType.GetCustomAttribute<MyObsoleteAttribute>(true);
 
                     if (obsolete != null)
                     {
@@ -133,19 +133,19 @@ namespace GoodAI.BrainSimulator.Forms
                     }                    
 
                     ListViewItem item = new ListViewItem(
-                        new string[4] { MyProject.ShortenNodeTypeName(nc.NodeType), author, status, summary });
+                        new string[4] { MyProject.ShortenNodeTypeName(nodeConfig.NodeType), author, status, summary });
 
                     if (row % 2 == 1)
                     {
                         item.BackColor = Color.FromArgb(245, 245, 245);
                     }                    
                     
-                    item.Tag = nc;
+                    item.Tag = nodeConfig;
                     item.Group = group;
-                    item.Checked = enabledNodes.Contains(nc.NodeType.Name);
+                    item.Checked = enabledNodes.Contains(nodeConfig.NodeType.Name);
 
                     // forbid to remove currently selected world
-                    if (nc.NodeType == m_mainForm.Project.World.GetType())
+                    if (nodeConfig.NodeType == m_mainForm.Project.World.GetType())
                     {
                         item.BackColor = Color.FromArgb(150, 200, 240);  // (light gray-blue)
                         item.ToolTipText = "This world is being used by the current project (can't be deselected).";
@@ -164,10 +164,10 @@ namespace GoodAI.BrainSimulator.Forms
                         }
                     }
 
-                    if (nmspace != "Worlds")
+                    if (nameSpace != "Worlds")
                     {
                         item.ImageIndex = i;
-                        nodeImageList.Images.Add(GeneratePaddedIcon(nc.SmallImage));
+                        nodeImageList.Images.Add(GeneratePaddedIcon(nodeConfig.SmallImage));
                         i++;
                     }
                     else
