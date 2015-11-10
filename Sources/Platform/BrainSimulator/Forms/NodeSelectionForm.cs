@@ -93,6 +93,11 @@ namespace GoodAI.BrainSimulator.Forms
                 ListViewGroup group = new ListViewGroup(nmspace, nmspace.Replace("BrainSimulator.", ""));
                 nodeListView.Groups.Add(group);
 
+                // TODO: move
+                var categoryItem = new ListViewItem(new string[1] { nmspace });
+
+                nodeFilterList.Items.Add(categoryItem);
+
                 List<MyNodeConfig> nodesInGroup =  knownNodes[nmspace].OrderBy(x => x.NodeType.Name).ToList();;
                 int row = 0;
 

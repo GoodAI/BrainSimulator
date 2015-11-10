@@ -39,6 +39,13 @@
             this.statusColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.summaryColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.searchTextBox = new GoodAI.BrainSimulator.Forms.NodeSelectionForm.CueTextBox();
+            this.nodesSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.nodeFilterList = new System.Windows.Forms.ListView();
+            this.categoryHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            ((System.ComponentModel.ISupportInitialize)(this.nodesSplitContainer)).BeginInit();
+            this.nodesSplitContainer.Panel1.SuspendLayout();
+            this.nodesSplitContainer.Panel2.SuspendLayout();
+            this.nodesSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // nodeImageList
@@ -50,7 +57,7 @@
             // acceptButton
             // 
             this.acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.acceptButton.Location = new System.Drawing.Point(894, 676);
+            this.acceptButton.Location = new System.Drawing.Point(1149, 681);
             this.acceptButton.Name = "acceptButton";
             this.acceptButton.Size = new System.Drawing.Size(75, 23);
             this.acceptButton.TabIndex = 2;
@@ -71,7 +78,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(6, 676);
+            this.cancelButton.Location = new System.Drawing.Point(6, 681);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 3;
@@ -92,16 +99,17 @@
             this.summaryColumn});
             this.nodeListView.FullRowSelect = true;
             this.nodeListView.GridLines = true;
-            this.nodeListView.Location = new System.Drawing.Point(9, 39);
+            this.nodeListView.Location = new System.Drawing.Point(0, 0);
+            this.nodeListView.Margin = new System.Windows.Forms.Padding(0);
             this.nodeListView.MultiSelect = false;
             this.nodeListView.Name = "nodeListView";
             this.nodeListView.OwnerDraw = true;
             this.nodeListView.ShowItemToolTips = true;
-            this.nodeListView.Size = new System.Drawing.Size(960, 631);
+            this.nodeListView.Size = new System.Drawing.Size(939, 640);
             this.nodeListView.SmallImageList = this.nodeImageList;
             this.nodeListView.TabIndex = 1;
             this.nodeListView.UseCompatibleStateImageBehavior = false;
-            this.nodeListView.View = System.Windows.Forms.View.Details;
+            this.nodeListView.View = System.Windows.Forms.View.List;
             this.nodeListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.nodeListView_DrawColumnHeader);
             this.nodeListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.nodeListView_DrawItem);
             this.nodeListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.nodeListView_DrawSubItem);
@@ -131,11 +139,54 @@
             // 
             this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.searchTextBox.Cue = "Search...";
-            this.searchTextBox.Location = new System.Drawing.Point(689, 13);
+            this.searchTextBox.Location = new System.Drawing.Point(944, 9);
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.Size = new System.Drawing.Size(279, 20);
             this.searchTextBox.TabIndex = 0;
             this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
+            // 
+            // nodesSplitContainer
+            // 
+            this.nodesSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nodesSplitContainer.Location = new System.Drawing.Point(6, 32);
+            this.nodesSplitContainer.Name = "nodesSplitContainer";
+            // 
+            // nodesSplitContainer.Panel1
+            // 
+            this.nodesSplitContainer.Panel1.Controls.Add(this.nodeFilterList);
+            // 
+            // nodesSplitContainer.Panel2
+            // 
+            this.nodesSplitContainer.Panel2.Controls.Add(this.nodeListView);
+            this.nodesSplitContainer.Size = new System.Drawing.Size(1218, 643);
+            this.nodesSplitContainer.SplitterDistance = 273;
+            this.nodesSplitContainer.TabIndex = 5;
+            // 
+            // nodeFilterList
+            // 
+            this.nodeFilterList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nodeFilterList.BackColor = System.Drawing.SystemColors.Menu;
+            this.nodeFilterList.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.nodeFilterList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.categoryHeader});
+            this.nodeFilterList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.nodeFilterList.Location = new System.Drawing.Point(0, 0);
+            this.nodeFilterList.Margin = new System.Windows.Forms.Padding(0);
+            this.nodeFilterList.MultiSelect = false;
+            this.nodeFilterList.Name = "nodeFilterList";
+            this.nodeFilterList.Size = new System.Drawing.Size(272, 640);
+            this.nodeFilterList.TabIndex = 0;
+            this.nodeFilterList.UseCompatibleStateImageBehavior = false;
+            this.nodeFilterList.View = System.Windows.Forms.View.Details;
+            // 
+            // categoryHeader
+            // 
+            this.categoryHeader.Text = "Category";
+            this.categoryHeader.Width = 250;
             // 
             // NodeSelectionForm
             // 
@@ -143,9 +194,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(976, 702);
+            this.ClientSize = new System.Drawing.Size(1231, 707);
+            this.Controls.Add(this.nodesSplitContainer);
             this.Controls.Add(this.searchTextBox);
-            this.Controls.Add(this.nodeListView);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.acceptButton);
@@ -153,6 +204,10 @@
             this.Name = "NodeSelectionForm";
             this.Text = "Configure Node Selection";
             this.Load += new System.EventHandler(this.NodeSelectionForm_Load);
+            this.nodesSplitContainer.Panel1.ResumeLayout(false);
+            this.nodesSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nodesSplitContainer)).EndInit();
+            this.nodesSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -170,5 +225,8 @@
         private System.Windows.Forms.ColumnHeader statusColumn;
         private NodeSelectionForm.MyListView nodeListView;
         private NodeSelectionForm.CueTextBox searchTextBox;
+        private System.Windows.Forms.SplitContainer nodesSplitContainer;
+        private System.Windows.Forms.ListView nodeFilterList;
+        private System.Windows.Forms.ColumnHeader categoryHeader;
     }
 }
