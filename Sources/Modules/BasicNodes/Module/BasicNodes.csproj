@@ -144,8 +144,8 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
-    <Compile Include="Harm\AbstractPolicyLearnerNode.cs" />
-    <Compile Include="Harm\Obsrvers\AbstractPolicyLearnerObserver.cs" />
+    <Compile Include="DiscreteRL\AbstractPolicyLearnerNode.cs" />
+    <Compile Include="DiscreteRL\Obsrvers\AbstractPolicyLearnerObserver.cs" />
     <Compile Include="Join\Distances\MyDistanceNode.cs" />
     <Compile Include="Join\Distances\MyDistanceOps.cs" />
     <Compile Include="Join\Stacking\MyStackingNode.cs" />
@@ -176,18 +176,18 @@
     <Compile Include="Common\MyCsvFileWriterNode.cs" />
     <Compile Include="Common\MyInverseTransformSampling.cs" />
     <Compile Include="Common\MyRandomNode.cs" />
-    <Compile Include="Harm\MyAbstractDiscreteQLearningNode.cs" />
-    <Compile Include="Harm\MyDecisionSpace.cs" />
-    <Compile Include="Harm\MyDiscreteQLearning.cs" />
-    <Compile Include="Harm\MyHarmComponents.cs" />
-    <Compile Include="Harm\MyHierarchyMaintainer.cs" />
-    <Compile Include="Harm\MyHistoryRecorder.cs" />
-    <Compile Include="Harm\MyDiscreteHarmNode.cs" />
-    <Compile Include="Harm\Obsrvers\MyAbstractQLearningObserver.cs" />
-    <Compile Include="Harm\Obsrvers\MyQLearningObserver.cs" />
-    <Compile Include="Harm\Obsrvers\MySRPObserver.cs" />
-    <Compile Include="Harm\MyRootDecisionSpace.cs" />
-    <Compile Include="Harm\MyStochasticReturnPredictor.cs" />
+    <Compile Include="DiscreteRL\MyAbstractDiscreteQLearningNode.cs" />
+    <Compile Include="DiscreteRL\Misc\MyDecisionSpace.cs" />
+    <Compile Include="DiscreteRL\Misc\MyDiscreteQLearning.cs" />
+    <Compile Include="DiscreteRL\Misc\MyHarmComponents.cs" />
+    <Compile Include="DiscreteRL\Misc\MyHierarchyMaintainer.cs" />
+    <Compile Include="DiscreteRL\Misc\MyHistoryRecorder.cs" />
+    <Compile Include="DiscreteRL\MyDiscreteHarmNode.cs" />
+    <Compile Include="DiscreteRL\Obsrvers\MyAbstractQLearningObserver.cs" />
+    <Compile Include="DiscreteRL\Obsrvers\MyQLearningObserver.cs" />
+    <Compile Include="DiscreteRL\Obsrvers\MySRPObserver.cs" />
+    <Compile Include="DiscreteRL\Misc\MyRootDecisionSpace.cs" />
+    <Compile Include="DiscreteRL\Misc\MyStochasticReturnPredictor.cs" />
     <Compile Include="LSTM\MyLSTMLayer.cs" />
     <Compile Include="LSTM\Tasks\MyLSTMDeltaTask.cs" />
     <Compile Include="LSTM\Tasks\MyLSTMUpdateWeightsTask.cs" />
@@ -262,11 +262,11 @@
     <Compile Include="GridWorld\MyGridWorldEngine.cs" />
     <Compile Include="GridWorld\MyWorldParser.cs" />
     <Compile Include="GridWorld\MyGridWorld.cs" />
-    <Compile Include="Harm\MyDimensions.cs" />
-    <Compile Include="Harm\MyDetectChangeNode.cs" />
-    <Compile Include="Harm\MyDiscreteQLearningNode.cs" />
-    <Compile Include="Harm\MyActionSelectionNode.cs" />
-    <Compile Include="Harm\MyDiscreteQSAMemory.cs" />
+    <Compile Include="DiscreteRL\Misc\MyDimensions.cs" />
+    <Compile Include="DiscreteRL\MyDetectChangeNode.cs" />
+    <Compile Include="DiscreteRL\MyDiscreteQLearningNode.cs" />
+    <Compile Include="DiscreteRL\MyActionSelectionNode.cs" />
+    <Compile Include="DiscreteRL\Misc\MyDiscreteQSAMemory.cs" />
     <Compile Include="Matrix\MyMatrixCPUOps.cs" />
     <Compile Include="Matrix\MyDataDistNode.cs" />
     <Compile Include="Matrix\MyMatrixAutoOps.cs" />
@@ -713,6 +713,9 @@
     <Content Include="res\pong\paddle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DiscreteRL\Tasks\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

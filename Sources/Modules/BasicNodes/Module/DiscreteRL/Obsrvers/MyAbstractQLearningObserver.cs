@@ -1,19 +1,33 @@
-﻿using GoodAI.Core.Observers.Helper;
+﻿using GoodAI.BasicNodes.Harm.Obsrvers;
+using GoodAI.Core;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Observers.Helper;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.Harm;
 using ManagedCuda;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using YAXLib;
 
 namespace GoodAI.Modules.Observers
 {
-
     /// <author>GoodAI</author>
-    /// <meta>jv</meta>
+    /// <meta>df,jv</meta>
     /// <status>Working</status>
     /// <summary>
-    /// Observes only flat QLearning node.
+    /// Observes valdata stored in the QMatrix.
     /// </summary>
-    public class MyQLearningObserver : MyAbstractQLearningObserver<MyDiscreteQLearningNode>
+    /// <typeparam name="T">Node which uses DiscreteQLearnin to be observed</typeparam>
+    public abstract class MyAbstractQLearningObserver<T> : AbstractPolicyLearnerObserver<T> where T : MyAbstractDiscreteQLearningNode
     {
+        [MyBrowsable, Category("Mode"),
+        Description("Observe utility colors which are already scaled by the current motivation.")]
+        [YAXSerializableField(DefaultValue = true)]
+        public bool ShowCurrentMotivations { get; set; }
+
         protected override void Execute()
         {
 
@@ -30,7 +44,7 @@ namespace GoodAI.Modules.Observers
             }
 
             float[,] lastQMatrix = m_qMatrix;
-            Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
+            Target.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
 
             if (lastQMatrix != m_qMatrix)
             {
@@ -69,7 +83,7 @@ namespace GoodAI.Modules.Observers
 
                 numOfActions = actions.Count;
             }
-            Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
+            Target.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
 
             if (MatrixSizeOK())
             {

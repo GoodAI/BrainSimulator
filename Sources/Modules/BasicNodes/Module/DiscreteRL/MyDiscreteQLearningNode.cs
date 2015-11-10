@@ -70,7 +70,7 @@ namespace GoodAI.Modules.Harm
         public bool SumRewards { get; set; }
 
         // First element is rewards/step, the second is total no of rewards received
-        public MyMemoryBlock<float> RewardStats{ get; private set; }
+        public MyMemoryBlock<float> RewardStats { get; private set; }
 
         public MyQSAMemory Memory { get; private set; }
         public MyDiscreteQLearning LearningAlgorithm { get; private set; }
@@ -84,7 +84,7 @@ namespace GoodAI.Modules.Harm
             LearningParams = new MyModuleParams();
             Memory = new MyQSAMemory(GlobalDataInput.Count, NoActions);
             LearningAlgorithm = new MyDiscreteQLearning(LearningParams, Memory);
-                
+
             if (GlobalDataInput != null)
             {
                 if (NoActions == 6)
@@ -109,6 +109,23 @@ namespace GoodAI.Modules.Harm
                 }
                 CurrentStateOutput.Count = GlobalDataInput.Count;
             }
+        }
+
+
+        /// <summary>
+        /// Method creates 2D array of max action utilities and max action labels over across selected dimensions.
+        /// The values in the memory are automatically scaled into the interval 0,1. Realtime values are multiplied by motivations.
+        /// </summary>
+        /// <param name="values">array passed by reference for storing utilities of best action</param>
+        /// <param name="labelIndexes">array of the same size for best action indexes</param>
+        /// <param name="XVarIndex">global index of state variable in the VariableManager</param>
+        /// <param name="YVarIndex">the same: y axis</param>
+        /// <param name="showRealtimeUtilities">show current utilities (scaled by the current motivation)</param>
+        /// <param name="policyNumber">not used here, this RL learns only one policy</param>
+        public override void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
+            int XVarIndex, int YVarIndex, bool showRealtimeUtilities = false, int policyNumber = 0)
+        {
+            Vis.ReadTwoDimensions(ref values, ref labelIndexes, XVarIndex, YVarIndex, showRealtimeUtilities);
         }
 
         public int DecodeExecutedAction()
@@ -151,7 +168,7 @@ namespace GoodAI.Modules.Harm
             {
                 validator.AddWarning(this, "Only one reward should be on the input");
             }
-            if (MotivationInput !=null && MotivationInput.Count != 1)
+            if (MotivationInput != null && MotivationInput.Count != 1)
             {
                 validator.AddWarning(this, "Dimension of MotivationInput should be 1");
             }
@@ -181,15 +198,19 @@ namespace GoodAI.Modules.Harm
 
             public override void Execute()
             {
-                float[] inputs = this.RescaleAllInputs();   
-                
+                float[] inputs = this.RescaleAllInputs();
+
                 Owner.Rds.VarManager.MonitorAllInputValues(inputs, null);
 
                 int[] s_tt = Owner.Rds.VarManager.GetCurrentState();
-                if(s_tt.Count() != Owner.CurrentStateOutput.Count){
+                if (s_tt.Count() != Owner.CurrentStateOutput.Count)
+                {
                     MyLog.WARNING.WriteLine("Unexpected size of current state");
-                }else{
-                    for(int i=0; i<s_tt.Count(); i++){
+                }
+                else
+                {
+                    for (int i = 0; i < s_tt.Count(); i++)
+                    {
                         Owner.CurrentStateOutput.Host[i] = s_tt[i];
                     }
                     Owner.CurrentStateOutput.SafeCopyToDevice();
@@ -218,7 +239,7 @@ namespace GoodAI.Modules.Harm
                 return inputs;
             }
         }
-        
+
         /// <summary>
         /// Updates the values of the Q(s,a) matrix by means of Q-Learning with eligibility trace.
         /// 
@@ -269,7 +290,7 @@ namespace GoodAI.Modules.Harm
             {
                 UpdateParams();
                 Owner.RewardInput.SafeCopyToHost();
-                
+
                 int a_t = Owner.DecodeExecutedAction();                     // previously executed action
                 int[] s_tt = Owner.Rds.VarManager.GetCurrentState();        // current state s_t'                
                 float r_t = Owner.GetCurrentReward() * RewardScale;         // current reward
@@ -300,11 +321,11 @@ namespace GoodAI.Modules.Harm
 
             public override void Execute()
             {
-                
+
                 int[] states = Owner.Rds.VarManager.GetCurrentState();
 
                 float[] utils = Owner.LearningAlgorithm.ReadUtils(states);
-                
+
                 if (utils.Length != Owner.UtilityOutput.Count)
                 {
                     MyLog.ERROR.WriteLine("Current utility values have different dims. that no. of actions");
@@ -325,7 +346,7 @@ namespace GoodAI.Modules.Harm
         /// Updates the <b>RewardStats</b> values = {Total Reward/Step, Total Reward}.
         /// </summary>
         [Description("Visualize learned data"), MyTaskInfo(OneShot = false)]
-        public class MyActionUtilsVisualization : MyActionUtilsVisualization<MyDiscreteQLearningNode>
+        public class MyActionUtilsVisualization : MyTask<MyDiscreteQLearningNode>
         {
             float[,] values;
             int[,] labelIndexes;
@@ -362,7 +383,7 @@ namespace GoodAI.Modules.Harm
             /// <param name="XVarIndex">global index of state variable in the VariableManager</param>
             /// <param name="YVarIndex">the same: y axis</param>
             /// <param name="showRealtimeUtilities">show current utilities (scaled by the current motivation)</param>
-            public override void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
+            public void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
                 int XVarIndex, int YVarIndex, bool showRealtimeUtilities)
             {
                 if (XVarIndex >= Owner.Rds.VarManager.MAX_VARIABLES)
@@ -385,7 +406,7 @@ namespace GoodAI.Modules.Harm
                 int[] sizes = mem.GetStateSizes();              // size of the matrix
                 int[] indexes = Owner.Rds.VarManager.GetCurrentState();
 
-                int[] actionGlobalIndexes = mem.GetGlobalActionIndexes();  
+                int[] actionGlobalIndexes = mem.GetGlobalActionIndexes();
 
                 MyVariable varX = Owner.Rds.VarManager.GetVarNo(XVarIndex);
                 MyVariable varY = Owner.Rds.VarManager.GetVarNo(YVarIndex);
@@ -464,6 +485,6 @@ namespace GoodAI.Modules.Harm
                     }
                 }
             }
-        } 
+        }
     }
 }
