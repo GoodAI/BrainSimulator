@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using GoodAI.Platform.Core.Observers;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -164,7 +165,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void addHostPlotButton_Click(object sender, EventArgs e)
         {
-            //m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostTimePlotObserver));
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostTimePlotObserver));
         }
 
         private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
