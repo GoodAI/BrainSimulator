@@ -4,6 +4,7 @@ using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using YAXLib;
 using OpenTK.Graphics.OpenGL;
@@ -398,7 +399,7 @@ namespace GoodAI.Core.Observers
 
         #endregion // Colors
 
-        private double[,] m_valuesHistory;
+        private double[] m_valuesHistory;
 
         private bool m_isDirty;
         private int m_currentRealTimeStep;
@@ -418,11 +419,10 @@ namespace GoodAI.Core.Observers
 
         // Used by SCALE method
         private int m_scaleFactor;
-        private double[] m_scaleAverage;
-        private int m_scaleAverageWeight;
-        private int m_nbValuesSaved;
         private Bitmap m_bitmap;
         private int m_currentBufferPosition;
+        private SolidBrush m_backgroundBrush;
+        private int m_samplingCounter;
 
         public HostTimePlotObserver() //constructor with node parameter
         {
@@ -479,9 +479,7 @@ namespace GoodAI.Core.Observers
             }
 
             // Allocate the history
-            int historySize = m_plotAreaWidth * Count;
-            m_valuesHistory = new double[Count, historySize];
-
+            m_valuesHistory = new double[Count];
         }
 
 
@@ -494,9 +492,13 @@ namespace GoodAI.Core.Observers
             m_isDirty = true;
             m_currentRealTimeStep = 0;
             m_currentSamplingTimeStep = 0;
+
             m_currentCursorPosition = 0;
 
-            m_scaleAverage = new double[Count];
+            m_backgroundBrush = new SolidBrush(m_colorBackground);
+
+            m_samplingCounter = 0;
+            m_scaleFactor = 1;
 
             UpdateHistoryBuffer();
 
@@ -598,6 +600,7 @@ namespace GoodAI.Core.Observers
                 {
                     DrawBackground(graphics);
                     DrawCoordinates(graphics);
+                    //DrawScaledHistoryX(graphics, (int) (m_boundMax-m_boundMin), m_plotAreaWidth);
                 }
 
                 PlotValues(graphics, DisplayMethod);
@@ -626,9 +629,6 @@ namespace GoodAI.Core.Observers
                     DrawCycle(graphics);
                     break;
             }
-
-            for(int i = 0; i < Count; i++)
-                m_valuesHistory[i, m_currentBufferPosition] = GetCurrentValue(i);
         }
 
         private double GetCurrentValue(int i)
@@ -639,6 +639,7 @@ namespace GoodAI.Core.Observers
 
         private Color GetCurveColor(int i)
         {
+            // TODO(HonzaS): Refactoring, see the TODO near the definition of m_colorCurve1.
             Color color;
             switch (i)
             {
@@ -698,7 +699,7 @@ namespace GoodAI.Core.Observers
 
                 double currentValue = GetCurrentValue(curveIndex);
 
-                double lastValue = m_valuesHistory[curveIndex, Math.Abs((m_currentSamplingTimeStep-1) % m_observerWidth)];
+                double lastValue = m_valuesHistory[curveIndex];
 
                 int y = ValueToScale(currentValue);
                 int lastY = ValueToScale(lastValue);
@@ -707,77 +708,74 @@ namespace GoodAI.Core.Observers
 
                 // Cursor
                 graphics.FillRectangle(cursorBrush, x+1, m_plotAreaOffsetY, 1, m_plotAreaHeight);
+
+                m_valuesHistory[curveIndex] = currentValue;
             }
         }
 
         private void DrawScale(Graphics graphics)
         {
-            m_currentCursorPosition++;
+            m_samplingCounter++;
+            if (m_samplingCounter >= m_scaleFactor)
+            {
+                m_samplingCounter = 0;
+                m_currentCursorPosition++;
+            }
+
             if (m_currentCursorPosition >= m_plotAreaWidth)
             {
                 m_currentCursorPosition = m_plotAreaWidth/2;
-                ShrinkHistoricalValues();
                 m_scaleFactor *= 2;
-                RedrawHistory();
+                DrawScaledHistoryX(graphics, m_plotAreaWidth/2);
             }
 
-            int x = m_currentCursorPosition + m_plotAreaOffsetX;
-
-            // TODO finish this
-            //int newAverageWeight = m_scaleAverageWeight + 1;
-            //for (int c = 0; c < Count; c++)
-            //{
-            //    var currentValue = GetCurrentValue(c);
-            //    m_scaleAverage[c] = m_scaleAverage[c] * m_scaleAverageWeight / newAverageWeight + currentValue / newAverageWeight;
-            //}
-
-            //m_scaleAverageWeight = newAverageWeight;
-            //if (m_scaleAverageWeight == m_scaleFactor)
-            //{
-            //    // Write the average to the history, and reset the accumulator
-            //    m_scaleAverageWeight = 0;
-            //    for (int c = 0; c < Count; c++)
-            //    {
-                    
-            //    }
-            //}
-
-            var cursorBrush = new SolidBrush(Color.Gray);
-            var backgroundBrush = new SolidBrush(m_colorBackground);
-
-            graphics.FillRectangle(backgroundBrush, x, m_plotAreaOffsetY, 1, m_plotAreaHeight);
-
-            for (int curveIndex = 0; curveIndex < Count; curveIndex++)
+            if (m_samplingCounter == 0)
             {
-                var brush = new SolidBrush(GetCurveColor(curveIndex));
+                int x = m_currentCursorPosition + m_plotAreaOffsetX;
 
-                double currentValue = GetCurrentValue(curveIndex);
-                double lastValue = m_valuesHistory[curveIndex, Math.Abs((m_currentSamplingTimeStep - 1)%m_observerWidth)];
+                var cursorBrush = new SolidBrush(Color.Gray);
 
-                int y = ValueToScale(currentValue);
-                int lastY = ValueToScale(lastValue);
+                graphics.FillRectangle(m_backgroundBrush, x, m_plotAreaOffsetY, 1, m_plotAreaHeight);
 
-                graphics.FillRectangle(brush, x, Math.Min(y, lastY), 1, Math.Abs(y - lastY));
-
-                // Cursor
-                graphics.FillRectangle(cursorBrush, x+1, m_plotAreaOffsetY, 1, m_plotAreaHeight);
-            }
-        }
-
-        private void ShrinkHistoricalValues()
-        {
-            for (int i = 0; i < Count; i++)
-            {
-                // TODO: finish this.
-                for (int j = 0; j < m_plotAreaWidth; j++)
+                for (int curveIndex = 0; curveIndex < Count; curveIndex++)
                 {
+                    var brush = new SolidBrush(GetCurveColor(curveIndex));
+
+                    double currentValue = GetCurrentValue(curveIndex);
+                    double lastValue = m_valuesHistory[curveIndex];
+
+                    int y = ValueToScale(currentValue);
+                    int lastY = ValueToScale(lastValue);
+
+                    graphics.FillRectangle(brush, x, Math.Min(y, lastY), 1, Math.Abs(y - lastY));
+
+                    // Cursor
+                    graphics.FillRectangle(cursorBrush, x+1, m_plotAreaOffsetY, 1, m_plotAreaHeight);
+
+                    m_valuesHistory[curveIndex] = currentValue;
                 }
             }
         }
 
-        private void RedrawHistory()
+        private void DrawScaledHistoryX(Graphics graphics, int width)
         {
-            // TODO: finish this.
+            Bitmap targetBitmap = new Bitmap(width, m_plotAreaHeight);
+
+            Rectangle sourceArea = new Rectangle(m_plotAreaOffsetX, m_plotAreaOffsetY, m_plotAreaWidth, m_plotAreaHeight);
+            Rectangle targetArea = new Rectangle(0, 0, width, m_plotAreaHeight);
+
+            using (var scalingGraphics = Graphics.FromImage(targetBitmap))
+            {
+                scalingGraphics.CompositingMode = CompositingMode.SourceCopy;
+                scalingGraphics.CompositingQuality = CompositingQuality.HighQuality;
+                scalingGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                scalingGraphics.SmoothingMode = SmoothingMode.HighQuality;
+                scalingGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                scalingGraphics.DrawImage(m_bitmap, targetArea, sourceArea, GraphicsUnit.Pixel);
+            }
+
+            graphics.FillRectangle(m_backgroundBrush, sourceArea);
+            graphics.DrawImage(targetBitmap, new Rectangle(m_plotAreaOffsetX, m_plotAreaOffsetY, width, m_plotAreaHeight));
         }
 
         private void DisplayPlot()
