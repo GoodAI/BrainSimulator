@@ -420,7 +420,6 @@ namespace GoodAI.Core.Observers
         // Used by SCALE method
         private int m_scaleFactor;
         private Bitmap m_bitmap;
-        private int m_currentBufferPosition;
         private SolidBrush m_backgroundBrush;
         private int m_samplingCounter;
 
@@ -527,9 +526,10 @@ namespace GoodAI.Core.Observers
 
             Target.SafeCopyToHost();
 
-            m_currentBufferPosition = m_currentSamplingTimeStep%m_observerWidth;
-
             bool mustBeUpdated = false;
+
+            var oldValueMin = m_plotCurrentValueMin;
+            var oldValueMax = m_plotCurrentValueMax;
 
             if (BoundPolicy == MyBoundPolicy.AUTO)
             {
@@ -589,8 +589,6 @@ namespace GoodAI.Core.Observers
                 m_plotCurrentValueMax = BoundMax;
             }
 
-            //MyLog.DEBUG.WriteLine("min " + m_plotCurrentValueMin + " max " + m_plotCurrentValueMax);
-
             if (m_isDirty)
                 mustBeUpdated = true;
 
@@ -599,8 +597,11 @@ namespace GoodAI.Core.Observers
                 if (mustBeUpdated)
                 {
                     DrawBackground(graphics);
+
+                    if (BoundPolicy == MyBoundPolicy.AUTO && oldValueMin > 0 && oldValueMax > 0)
+                        DrawScaledHistoryY(graphics, oldValueMin, oldValueMax);
+
                     DrawCoordinates(graphics);
-                    //DrawScaledHistoryX(graphics, (int) (m_boundMax-m_boundMin), m_plotAreaWidth);
                 }
 
                 PlotValues(graphics, DisplayMethod);
@@ -776,6 +777,31 @@ namespace GoodAI.Core.Observers
 
             graphics.FillRectangle(m_backgroundBrush, sourceArea);
             graphics.DrawImage(targetBitmap, new Rectangle(m_plotAreaOffsetX, m_plotAreaOffsetY, width, m_plotAreaHeight));
+        }
+
+        private void DrawScaledHistoryY(Graphics graphics, double oldValueMin, double oldValueMax)
+        {
+            int newHeight = (int) ((oldValueMax - oldValueMin) / (m_plotCurrentValueMax - m_plotCurrentValueMin) * m_plotAreaHeight);
+            Bitmap targetBitmap = new Bitmap(m_plotAreaWidth, newHeight);
+
+            Rectangle sourceArea = new Rectangle(m_plotAreaOffsetX, m_plotAreaOffsetY, m_plotAreaWidth, m_plotAreaHeight);
+            Rectangle targetArea = new Rectangle(0, 0, m_plotAreaWidth, newHeight);
+
+            using (var scalingGraphics = Graphics.FromImage(targetBitmap))
+            {
+                scalingGraphics.CompositingMode = CompositingMode.SourceCopy;
+                scalingGraphics.CompositingQuality = CompositingQuality.HighQuality;
+                scalingGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                scalingGraphics.SmoothingMode = SmoothingMode.HighQuality;
+                scalingGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                scalingGraphics.DrawImage(m_bitmap, targetArea, sourceArea, GraphicsUnit.Pixel);
+            }
+
+            graphics.FillRectangle(m_backgroundBrush, sourceArea);
+
+            int heightOffset = (int) (m_plotAreaOffsetY + (m_plotCurrentValueMax - oldValueMax) / (m_plotCurrentValueMax - m_plotCurrentValueMin) * m_plotAreaHeight);
+
+            graphics.DrawImage(targetBitmap, new Rectangle(m_plotAreaOffsetX, heightOffset, m_plotAreaWidth, newHeight));
         }
 
         private void DisplayPlot()
