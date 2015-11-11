@@ -138,6 +138,7 @@
     </World>
 
     <World type="GoodAI.Modules.GameBoy.MyCustomPongWorld" />
+    <World type="GoodAI.Modules.GameBoy.MyTwoPlayerPongWorld" />
     <World type="GoodAI.Modules.GridWorld.MyGridWorld" />
     <World type="GoodAI.Modules.TicTacToe.MyTicTacToeWorld" />
     <World type="GoodAI.Modules.GameBoy.My2DAgentWorld" />

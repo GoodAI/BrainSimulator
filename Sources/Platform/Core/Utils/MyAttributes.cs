@@ -30,6 +30,11 @@ namespace GoodAI.Core.Utils
         public string Name { get; private set; }        
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public class SuppressTaskAttribute : Attribute
+    {
+    }
+
     [AttributeUsage(AttributeTargets.Class)]
     public class MyNodeInfoAttribute : Attribute
     {
@@ -86,5 +91,13 @@ namespace GoodAI.Core.Utils
     public class MyUnmanagedAttribute : Attribute { }    
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class MyBrowsableAttribute : Attribute { }
+    public class MyBrowsableAttribute : Attribute 
+    {
+        public bool Browsable { get; protected set; }
+
+        public MyBrowsableAttribute(bool browsable = true)
+        {
+            Browsable = browsable;
+        }
+    }
 }
