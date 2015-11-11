@@ -87,7 +87,7 @@ namespace GoodAI.Modules.Harm
             LearningParams = new MyModuleParams();
 
             if (GlobalDataInput != null)
-            {   
+            {
                 if (NoActions == 6)
                 {
                     MyLog.DEBUG.WriteLine("6 actions set by the user, will use action names for gridworld");
@@ -138,14 +138,16 @@ namespace GoodAI.Modules.Harm
         /// <param name="XVarIndex">global index of state variable in the VariableManager</param>
         /// <param name="YVarIndex">the same: y axis</param>
         /// <param name="showRealtimeUtilities">show current utilities (scaled by the current motivation)</param>
-        /// <param name="strategyNumber">optinal parameter. In case that the agent has more strategies, you can choose which one to read from.</param>
+        /// <param name="policyNumber">optinal parameter. In case that the agent has more strategies, you can choose which one to read from.</param>
         public override void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
-            int XVarIndex, int YVarIndex, bool showRealtimeUtilities, int strategyNumber = 0)
+            int XVarIndex, int YVarIndex, bool showRealtimeUtilities = false, int policyNumber = 0)
         {
-            MyStochasticReturnPredictor predictor = Vis.GetPredictorNo(strategyNumber);
+            MyStochasticReturnPredictor predictor = Vis.GetPredictorNo(policyNumber);
 
             Vis.ReadTwoDimensions(ref values, ref labelIndexes, predictor, XVarIndex, YVarIndex, showRealtimeUtilities);
         }
+
+
 
         public MyPostSimulationStepTask PostSimStep { get; private set; }
         public MyVariableUpdateTask StateSpaceUpdate { get; private set; }
@@ -399,7 +401,7 @@ namespace GoodAI.Modules.Harm
             public float OnlineHistoryForgettingRate { get; set; }
 
             [MyBrowsable, Category("Online Variable Removing"),
-            Description("After receiving the reward, the all variables in the DS are checked how often they changed in the history."+ 
+            Description("After receiving the reward, the all variables in the DS are checked how often they changed in the history." +
             "If the value is under this threshold, variable will be removed from the DS")]
             [YAXSerializableField(DefaultValue = 0.001f)]
             public float OnlineVariableRemovingThreshold { get; set; }
@@ -456,7 +458,7 @@ namespace GoodAI.Modules.Harm
             public float MotivationChange { get; set; }
 
             [MyBrowsable, Category("Action Selection"),
-            Description("Choose only one action in each SRP and propagate only value "+
+            Description("Choose only one action in each SRP and propagate only value " +
                 "of one selected action? (if disabled, all action utilities propagate to childs")]
             [YAXSerializableField(DefaultValue = false)]
             public bool UseHierarchicalASM { get; set; }
@@ -466,7 +468,7 @@ namespace GoodAI.Modules.Harm
             [YAXSerializableField(DefaultValue = 0.1f)]
             public float MinEpsilon { get; set; }
 
-            [MyBrowsable, Category("Action Selection"), 
+            [MyBrowsable, Category("Action Selection"),
             Description("Scale utilities by motivations when propagating down to childs of SRPs?")]
             [YAXSerializableField(DefaultValue = true)]
             public bool PropagateUtilitiesInHierarchy { get; set; }

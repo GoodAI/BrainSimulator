@@ -1,7 +1,9 @@
-﻿using GoodAI.BasicNodes.Harm;
+﻿using GoodAI.BasicNodes.DiscreteRL.Observers;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using YAXLib;
 
@@ -17,7 +19,7 @@ namespace GoodAI.Modules.Harm
     /// <description>
     /// Parent of nodes that use discrete QLearning memory, which can be observed by the MyQMatrixObserver
     /// </description>
-    public abstract class MyAbstractDiscreteQLearningNode : AbstractPolicyLearnerNode
+    public abstract class MyAbstractDiscreteQLearningNode : MyWorkingNode, IDiscretePolicyObservable
     {
         [MyInputBlock(0)]
         public MyMemoryBlock<float> GlobalDataInput
@@ -59,6 +61,16 @@ namespace GoodAI.Modules.Harm
 
         public override void UpdateMemoryBlocks()
         {
+        }
+
+        public abstract void ReadTwoDimensions(ref float[,] values, ref int[,] labelIndexes,
+            int XVarIndex, int YVarIndex, bool showRealtimeUtilities = false, int policyNumber = 0);
+
+        public List<String> GetActionLabels()
+        {
+            List<String> tmp = new List<String>();
+            Rds.ActionManager.Actions.ForEach(item => tmp.Add(item.GetLabel()));
+            return tmp;
         }
     }
 }

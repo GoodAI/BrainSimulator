@@ -1,5 +1,8 @@
-﻿using GoodAI.Core.Observers.Helper;
+﻿using GoodAI.BasicNodes.DiscreteRL.Observers;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers.Helper;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.DiscreteRL.Observers;
 using GoodAI.Modules.Harm;
 using ManagedCuda;
 using System;
@@ -7,7 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using YAXLib;
 
-namespace GoodAI.Modules.Observers
+namespace GoodAI.Modules.DiscreteRL.Observers
 {
 
     /// <author>GoodAI</author>
@@ -16,7 +19,7 @@ namespace GoodAI.Modules.Observers
     /// <summary>
     /// Observers SRPs (Stochastic Return Predictors) in the HARM (each one has name, own motivation, promoted variable etc..).
     /// </summary>
-    public class MySRPObserver : MyAbstractQLearningObserver<MyDiscreteHarmNode>
+    public class DiscreteSRPObserver : DiscretePolicyObserver<MyDiscreteHarmNode>
     {
         [MyBrowsable, Category("Mode"),
         Description("Show names of variables that are controlled by this strategy, together with the current motivation"),
@@ -59,7 +62,7 @@ namespace GoodAI.Modules.Observers
             float[,] lastQMatrix = m_qMatrix;
 
             MyStochasticReturnPredictor srp = null;
-
+            
             if (AbstractActionIndex < Target.Rds.VarManager.MAX_VARIABLES)
             {
                 srp = (MyStochasticReturnPredictor)Target.Vis.GetPredictorNo(AbstractActionIndex);
@@ -67,7 +70,10 @@ namespace GoodAI.Modules.Observers
 
             if (srp != null)
             {
-                Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
+                // TODO 
+                Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ApplyInnerScaling);
+            
+                //Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
             }
 
             if (lastQMatrix != m_qMatrix)
@@ -99,7 +105,7 @@ namespace GoodAI.Modules.Observers
             m_StringDeviceBuffer = new CudaDeviceVariable<float>(1000);
             m_StringDeviceBuffer.Memset(0);
 
-            List<MyMotivatedAction> actions = Target.Rds.ActionManager.Actions;
+            List<String> actions = Target.GetActionLabels();
 
             if (numOfActions < actions.Count)
             {
@@ -113,8 +119,8 @@ namespace GoodAI.Modules.Observers
 
                 for (int i = 0; i < actions.Count; i++)
                 {
-                    MyDrawStringHelper.String2Index(actions[i].GetLabel(), m_StringDeviceBuffer);
-                    MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH, 0, actions[i].GetLabel().Length);
+                    MyDrawStringHelper.String2Index(actions[i], m_StringDeviceBuffer);
+                    MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH, 0, actions[i].Length);
                 }
 
                 numOfActions = actions.Count;
@@ -135,7 +141,7 @@ namespace GoodAI.Modules.Observers
             }
             else
             {
-                Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
+                Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ApplyInnerScaling);
                 if (MatrixSizeOK())
                 {
                     DrawDataToGpu();

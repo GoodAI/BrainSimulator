@@ -8,7 +8,7 @@ namespace GoodAI.Modules.Versioning
 {
     public class MyConversion : MyBaseConversion
     {
-        public override int CurrentVersion { get { return 13; } }
+        public override int CurrentVersion { get { return 14; } }
 
 
         /// <summary>
@@ -92,8 +92,8 @@ namespace GoodAI.Modules.Versioning
         {
             string result = xml;
 
-            result = result.Replace("yaxlib:realtype=\"BrainSimulator.Nodes", "yaxlib:realtype=\"GoodAI.Core.Nodes");            
-            
+            result = result.Replace("yaxlib:realtype=\"BrainSimulator.Nodes", "yaxlib:realtype=\"GoodAI.Core.Nodes");
+
             result = result.Replace("yaxlib:realtype=\"BrainSimulator.Observers.MyHistogramObserver", "yaxlib:realtype=\"GoodAI.Core.Observers.MyHistogramObserver");
             result = result.Replace("yaxlib:realtype=\"BrainSimulator.Observers.MyMatrixObserver", "yaxlib:realtype=\"GoodAI.Core.Observers.MyMatrixObserver");
             result = result.Replace("yaxlib:realtype=\"BrainSimulator.Observers.MyMemoryBlockObserver", "yaxlib:realtype=\"GoodAI.Core.Observers.MyMemoryBlockObserver");
@@ -114,7 +114,7 @@ namespace GoodAI.Modules.Versioning
             string result = xml;
 
             result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRandomNode", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRandomNode");
-            result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRNGTask", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRNGTask");             
+            result = result.Replace("yaxlib:realtype=\"GoodAI.Modules.Testing.MyRNGTask", "yaxlib:realtype=\"GoodAI.Modules.Common.MyRNGTask");
 
             return result;
         }
@@ -475,6 +475,40 @@ namespace GoodAI.Modules.Versioning
                     if (oper != null && oper.Value == "MaxIndex")
                     {
                         oper.SetValue("AbsMaxIndex");
+                    }
+                }
+            }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Convert Observer names for DiscreteQLearning and Harm
+        /// Author: JV,PD
+        /// </summary>
+        public static string Convert13To14(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            foreach (XElement node in document.Root.Descendants("NodeObserver"))
+            {
+
+                if (node.Attribute(GetRealTypeAttributeName()) != null)
+                {
+
+                    if (node.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.Observers.MyQLearningObserver")
+                    {
+                        node.SetAttributeValue(GetRealTypeAttributeName(), "GoodAI.Modules.DiscreteRL.Observers.DiscreteQLearningObserver");
+                    }
+                    if (node.Attribute(GetRealTypeAttributeName()).Value == "GoodAI.Modules.Observers.MySRPObserver")
+                    {
+                        node.SetAttributeValue(GetRealTypeAttributeName(), "GoodAI.Modules.DiscreteRL.Observers.DiscreteSRPObserver");
+                    }
+
+                    var oper = node.Element("ShowCurrentMotivations");
+                    if (oper != null)
+                    {
+                        oper.Name = "ApplyInnerScaling";
                     }
                 }
             }

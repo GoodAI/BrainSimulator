@@ -2,6 +2,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using YAXLib;

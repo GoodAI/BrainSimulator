@@ -144,8 +144,10 @@
   <ItemGroup>
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
-    <Compile Include="DiscreteRL\AbstractPolicyLearnerNode.cs" />
-    <Compile Include="DiscreteRL\Obsrvers\AbstractPolicyLearnerObserver.cs" />
+    <Compile Include="DiscreteRL\Observers\DiscretePolicyObserver.cs" />
+    <Compile Include="DiscreteRL\Observers\IDiscretePolicyObservable.cs" />
+    <Compile Include="DiscreteRL\Observers\IDiscreteSRPObservable.cs" />
+    <Compile Include="DiscreteRL\Observers\DiscreteQLearningObserver.cs" />
     <Compile Include="Join\Distances\MyDistanceNode.cs" />
     <Compile Include="Join\Distances\MyDistanceOps.cs" />
     <Compile Include="Join\Stacking\MyStackingNode.cs" />
@@ -183,9 +185,7 @@
     <Compile Include="DiscreteRL\Misc\MyHierarchyMaintainer.cs" />
     <Compile Include="DiscreteRL\Misc\MyHistoryRecorder.cs" />
     <Compile Include="DiscreteRL\MyDiscreteHarmNode.cs" />
-    <Compile Include="DiscreteRL\Obsrvers\MyAbstractQLearningObserver.cs" />
-    <Compile Include="DiscreteRL\Obsrvers\MyQLearningObserver.cs" />
-    <Compile Include="DiscreteRL\Obsrvers\MySRPObserver.cs" />
+    <Compile Include="DiscreteRL\Observers\DiscreteSRPObserver.cs" />
     <Compile Include="DiscreteRL\Misc\MyRootDecisionSpace.cs" />
     <Compile Include="DiscreteRL\Misc\MyStochasticReturnPredictor.cs" />
     <Compile Include="LSTM\MyLSTMLayer.cs" />
@@ -714,9 +714,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DiscreteRL\Tasks\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>
