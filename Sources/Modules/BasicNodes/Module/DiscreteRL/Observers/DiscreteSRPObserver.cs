@@ -63,17 +63,11 @@ namespace GoodAI.Modules.DiscreteRL.Observers
 
             MyStochasticReturnPredictor srp = null;
             
-            if (AbstractActionIndex < Target.Rds.VarManager.MAX_VARIABLES)
-            {
-                srp = (MyStochasticReturnPredictor)Target.Vis.GetPredictorNo(AbstractActionIndex);
-            }
-
+            srp = (MyStochasticReturnPredictor)Target.Vis.GetPredictorNo(AbstractActionIndex);
+            
             if (srp != null)
             {
-                // TODO 
-                Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ApplyInnerScaling);
-            
-                //Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ShowCurrentMotivations);
+                Target.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, XAxisVariableIndex, YAxisVariableIndex, ApplyInnerScaling, AbstractActionIndex);
             }
 
             if (lastQMatrix != m_qMatrix)
@@ -127,12 +121,9 @@ namespace GoodAI.Modules.DiscreteRL.Observers
             }
 
             MyStochasticReturnPredictor srp = null;
-
-            if (AbstractActionIndex < Target.Rds.VarManager.MAX_VARIABLES)
-            {
-                srp = (MyStochasticReturnPredictor)Target.Vis.GetPredictorNo(AbstractActionIndex);
-            }
-
+            
+            srp = (MyStochasticReturnPredictor)Target.Vis.GetPredictorNo(AbstractActionIndex);
+            
             if (srp == null)
             {
                 m_qMatrix = null;
@@ -141,7 +132,8 @@ namespace GoodAI.Modules.DiscreteRL.Observers
             }
             else
             {
-                Target.Vis.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, srp, XAxisVariableIndex, YAxisVariableIndex, ApplyInnerScaling);
+                Target.ReadTwoDimensions(ref m_qMatrix, ref m_qMatrixActions, XAxisVariableIndex, YAxisVariableIndex, ApplyInnerScaling, AbstractActionIndex);
+                
                 if (MatrixSizeOK())
                 {
                     DrawDataToGpu();

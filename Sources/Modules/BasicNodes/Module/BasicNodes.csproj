@@ -145,8 +145,8 @@
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
     <Compile Include="DiscreteRL\Observers\DiscretePolicyObserver.cs" />
-    <Compile Include="DiscreteRL\Observers\IDiscretePolicyObservable.cs" />
-    <Compile Include="DiscreteRL\Observers\IDiscreteSRPObservable.cs" />
+    <Compile Include="DiscreteRL\Interfaces\IDiscretePolicyObservable.cs" />
+    <Compile Include="DiscreteRL\Interfaces\IDiscreteSRPObservable.cs" />
     <Compile Include="DiscreteRL\Observers\DiscreteQLearningObserver.cs" />
     <Compile Include="Join\Distances\MyDistanceNode.cs" />
     <Compile Include="Join\Distances\MyDistanceOps.cs" />
