@@ -276,6 +276,7 @@ namespace GoodAI.Core.Observers
 
         #region CurveColors
 
+        // TODO(HonzaS): Can this be done in a better way? Watch out for serialization.
         [YAXSerializableField]
         private Color m_colorBackground = Color.White;
         [YAXSerializableField]
@@ -545,7 +546,6 @@ namespace GoodAI.Core.Observers
                             // Cant decide bounds
                             return;
                         }
-                        // First value
 
                         m_plotCurrentValueMax = value + 0.01f;
                         m_plotCurrentValueMin = value - 0.01f;
@@ -667,8 +667,6 @@ namespace GoodAI.Core.Observers
             return color;
         }
 
-        private double PlotCurrentValueRange { get { return m_plotCurrentValueMax - m_plotCurrentValueMin; } }
-
         private int ValueToScale(double value)
         {
             double range = m_plotCurrentValueMax - m_plotCurrentValueMin;
@@ -725,6 +723,7 @@ namespace GoodAI.Core.Observers
 
             int x = m_currentCursorPosition + m_plotAreaOffsetX;
 
+            // TODO finish this
             //int newAverageWeight = m_scaleAverageWeight + 1;
             //for (int c = 0; c < Count; c++)
             //{
@@ -778,6 +777,7 @@ namespace GoodAI.Core.Observers
 
         private void RedrawHistory()
         {
+            // TODO: finish this.
         }
 
         private void DisplayPlot()
@@ -816,157 +816,35 @@ namespace GoodAI.Core.Observers
             graphics.FillRectangle(new SolidBrush(m_colorBackground), 0, 0, m_bitmap.Width, m_bitmap.Height);
         }
 
-        private void RunMethodScaleAddValue(float[] newValue, ref bool newDataToDraw, ref bool mustBeUpdated)
-        {
-            int newAverageWeight = m_scaleAverageWeight + 1;
-            for (int c = 0; c < Count; c++)
-                m_scaleAverage[c] = m_scaleAverage[c] * m_scaleAverageWeight / newAverageWeight + newValue[Offset + c] / newAverageWeight;
-            m_scaleAverageWeight = newAverageWeight;
-            if (m_scaleAverageWeight == m_scaleFactor)
-            {
-                // Write the average to the history, and reset the accumulator
-                m_scaleAverageWeight = 0;
-                int historyIndex = m_nbValuesSaved / m_scaleFactor;
-                for (int c = 0; c < Count; c++)
-                {
-                    //m_valuesHistory[historyIndex * Count + c] = m_scaleAverage[c];
-                    m_scaleAverage[c] = 0;
-                    newDataToDraw = true;
-                }
-
-                // If the history is full, we have to downscale
-                if (historyIndex == m_valuesHistory.Length / Count - 1)
-                {
-                    m_scaleFactor *= 2;
-                    int size = Count * m_valuesHistory.Length / 2;
-                    mustBeUpdated = true;
-                }
-            }
-
-            m_nbValuesSaved++;
-        }
-
-
-        private void RunMethodScale(bool mustBeUpdated)
-        {
-            bool newDataToDraw = false;
-
-            Target.SafeCopyToHost();
-
-            RunMethodScaleAddValue(Target.Host, ref newDataToDraw, ref mustBeUpdated);
-
-
-            if (mustBeUpdated)
-            {
-                // Draw curves
-                int nbColumnsToDraw = m_nbValuesSaved / m_scaleFactor;
-                //m_scaleKernel.SetupExecution(nbColumnsToDraw * m_plotAreaHeight);
-                //m_scaleKernel.Run(
-                //    VBODevicePointer,
-                //    0,
-                //    nbColumnsToDraw,
-                //    m_valuesHistory.DevicePointer
-                //    );
-            }
-            else if (newDataToDraw)
-            {
-                // Draw the last columns
-                //m_scaleKernel.SetupExecution(m_plotAreaHeight);
-                int columnStart = (m_currentSamplingTimeStep / m_scaleFactor);
-
-                //m_scaleKernel.Run(
-                //    VBODevicePointer,
-                //    columnStart,
-                //    1,
-                //    m_valuesHistory.DevicePointer
-                //    );
-            }
-            else
-            {
-                // Nothing to output here
-            }
-        }
-
-
-        private void RunMethodScroll(bool mustBeUpdated)
-        {
-            int currentColumn = m_currentSamplingTimeStep % m_plotAreaWidth;
-
-            // No timestep was skipped, no need to interpolate
-            //m_valuesHistory.CopyToDevice(Target.GetDevicePtr(this), Offset * sizeof(float), currentColumn * Count * sizeof(float), Count * sizeof(float));
-
-            if (mustBeUpdated)
-            {
-                // Draw curves
-                int nbColumsToDraw;
-                if (m_currentSamplingTimeStep >= m_plotAreaWidth)
-                    nbColumsToDraw = m_plotAreaWidth;
-                else
-                    nbColumsToDraw = m_currentSamplingTimeStep + 1;
-                //m_scrollKernel.SetupExecution(nbColumsToDraw * m_plotAreaHeight);
-
-                //m_scrollKernel.Run(
-                //    VBODevicePointer,
-                //    (true ? 1 : 0), // Render everything
-                //    m_currentSamplingTimeStep,
-                //    m_valuesHistory.DevicePointer
-                //    );
-            }
-            else
-            {
-                if (m_currentSamplingTimeStep >= m_plotAreaWidth)
-                {
-                    // Shift all the pixels one pixel to the left
-                }
-
-                // Draw only the needed columns
-                //m_scrollKernel.SetupExecution(m_plotAreaHeight);
-
-                //m_scrollKernel.Run(
-                //    VBODevicePointer,
-                //    (false ? 1 : 0), // Render only 1 column
-                //    m_currentSamplingTimeStep,
-                //    m_valuesHistory.DevicePointer
-                //    );
-            }
-        }
-
         public override string GetTargetName(MyNode declaredOwner)
         {
             if (declaredOwner == Target.Owner)
-            {
                 return Target.Owner.Name + ": " + Target.Name;
-            }
-            else
-            {
-                return declaredOwner.Name + " (" + Target.Owner.Name + "): " + Target.Name;
-            }
+
+            return declaredOwner.Name + " (" + Target.Owner.Name + "): " + Target.Name;
         }
 
         protected override string CreateTargetIdentifier()
         {
             if (Target != null)
-            {
                 return Target.Owner.Id + "#" + Target.Name;
-            }
-            else return String.Empty;
+            else
+                return String.Empty;
         }
 
         public override void RestoreTargetFromIdentifier(MyProject project)
         {
-            if (TargetIdentifier != null)
-            {
-                string[] split = TargetIdentifier.Split('#');
-                if (split.Length == 2)
-                {
-                    MyWorkingNode node = (MyWorkingNode)project.GetNodeById(int.Parse(split[0]));
+            if (TargetIdentifier == null)
+                return;
 
-                    if (node != null)
-                    {
-                        Target = (MyMemoryBlock<float>)MyMemoryManager.Instance.GetMemoryBlockByName(node, split[1]);
-                    }
-                }
-            }
+            string[] split = TargetIdentifier.Split('#');
+            if (split.Length != 2)
+                return;
+
+            MyWorkingNode node = (MyWorkingNode)project.GetNodeById(int.Parse(split[0]));
+
+            if (node != null)
+                Target = (MyMemoryBlock<float>)MyMemoryManager.Instance.GetMemoryBlockByName(node, split[1]);
         }
     }
 }
