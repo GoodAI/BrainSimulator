@@ -18,7 +18,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using GoodAI.Platform.Core.Observers;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
