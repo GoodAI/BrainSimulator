@@ -20,7 +20,7 @@ namespace GoodAI.Modules.LTM
 {
 
     /// <author>GoodAI</author>
-    /// <meta>pd</meta>
+    /// <meta>pd,vkl</meta>
     /// <status>working</status>
     /// <summary>
     ///    Custom observer for visualizing words - works on MyTextObserverNode.
@@ -289,8 +289,15 @@ namespace GoodAI.Modules.LTM
 
                 for (int j = 0; j < numberOfColumns; j++)
                 {
-
-                    m_deviceBuffer[i * m_cols + j + WeightsStringLength] = Target.Data.Host[indexes[i] * Target.Data.ColumnHint + j];
+                    if (Target.Encoding == MyStringConversionsClass.StringEncodings.DigitIndexes)
+                    {
+                        m_deviceBuffer[i * m_cols + j + WeightsStringLength] = Target.Data.Host[indexes[i] * Target.Data.ColumnHint + j];
+                    }
+                    else
+                    {
+                        m_deviceBuffer[i * m_cols + j + WeightsStringLength] = MyStringConversionsClass.UvscCodingToDigitIndexes(
+                            Target.Data.Host[indexes[i] * Target.Data.ColumnHint + j]);
+                    }
                 }
 
                 MyDrawStringHelper.DrawStringFromGPUMem(m_deviceBuffer, 0, i * (MyDrawStringHelper.CharacterHeight + 1), 0, ComputeColor(Target.Weights.Host[i]), VBODevicePointer, TextureWidth, TextureHeight, i * m_cols, m_cols);

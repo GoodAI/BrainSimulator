@@ -21,7 +21,7 @@ using YAXLib;
 namespace GoodAI.Modules.LTM
 {
     /// <author>GoodAI</author>
-    /// <meta>pd,os</meta>
+    /// <meta>pd,os,vkl</meta>
     /// <status>working</status>
     /// <summary>
     ///    Node for visualizing vectors as words.
@@ -55,7 +55,10 @@ namespace GoodAI.Modules.LTM
 
         public MyWriteToFileTask WriteFile { get; private set; }
 
-
+        [Description("Use ASCII-based Digit Index encoding (default) or Uppercase Vowel-Space-Consonant encoding")]
+        [MyBrowsable, Category("Encoding")]
+        [YAXSerializableField(DefaultValue = MyStringConversionsClass.StringEncodings.DigitIndexes)]
+        public MyStringConversionsClass.StringEncodings Encoding { get; set; }
 
         public override void UpdateMemoryBlocks()
         {
@@ -144,19 +147,25 @@ namespace GoodAI.Modules.LTM
                     MyLog.DEBUG.WriteLine("Weights Length: " + Owner.Weights.Host.Length);
                 }
 
-                int consecutiveZeros = 0;
+                int consecutiveSpaces = 0;
+                int spaceChar;
+
+                if (Owner.Encoding == MyStringConversionsClass.StringEncodings.UVSC)
+                    spaceChar = MyStringConversionsClass.UvscCodingToDigitIndexes(' ');
+                else
+                    spaceChar = MyStringConversionsClass.StringToDigitIndexes(' ');
 
                 StringBuilder sb = new StringBuilder();
 
                 for (int z = 0; z < Owner.Data.Host.Length; z++)
                 {
-                    if (Owner.Data.Host[z] == 0)
+                    if (Owner.Data.Host[z] == spaceChar)
                     {
-                        consecutiveZeros++;
+                        consecutiveSpaces++;
                         //end the writing prematurely if there is an empty line (for printing long buffers filled with just a few lines)
-                        if (consecutiveZeros > Owner.Data.ColumnHint)
+                        if (consecutiveSpaces > Owner.Data.ColumnHint)
                         {
-                            if (z % Owner.Data.ColumnHint == 0)
+                            if (z % Owner.Data.ColumnHint == spaceChar)
                             {
                                 break;
                             }
@@ -164,10 +173,13 @@ namespace GoodAI.Modules.LTM
                     }
                     else
                     {
-                        consecutiveZeros = 0;
+                        consecutiveSpaces = 0;
                     }
 
-                    sb.Append(MyStringConversionsClass.DigitIndexToString(Owner.Data.Host[z]));
+                    if (Owner.Encoding == MyStringConversionsClass.StringEncodings.DigitIndexes)
+                        sb.Append(MyStringConversionsClass.DigitIndexToString(Owner.Data.Host[z]));
+                    else
+                        sb.Append(MyStringConversionsClass.UvscCodingToString(Owner.Data.Host[z]));
                 }
 
 
@@ -179,6 +191,8 @@ namespace GoodAI.Modules.LTM
 
                 for (int j = 0; j < ReturnData.Length; j += VectorLength)
                 {
+                    sbSplit.Append(Math.Round(Owner.Weights.Host[j / VectorLength], 2) + " "); //Round the weight to 2 decimals places
+
                     for (int n = 0; n < NumberOfVectors; n++)
                     {
                         current = ReturnData.Substring(((j) + (n * (SplitRange))), SplitRange); //Divide chunk depending on the number of vectors
@@ -192,8 +206,7 @@ namespace GoodAI.Modules.LTM
                             sbSplit.Append(",");
                         }
                     }
-
-                    //ReturnDataSplit += Math.Round(Owner.Weights.Host[j], 2); //Round the weight to 2 decimals places
+                    
                     sbSplit.Append(Environment.NewLine);
                 }
 

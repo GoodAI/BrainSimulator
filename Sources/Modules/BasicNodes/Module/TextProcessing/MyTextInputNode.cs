@@ -13,7 +13,7 @@ using YAXLib;
 namespace GoodAI.Modules.LTM
 {
     /// <author>GoodAI</author>
-    /// <meta>pd</meta>
+    /// <meta>pd,vkl</meta>
     /// <status>working</status>
     /// <summary> Node for inputing a line of text. </summary>
     /// <description>
@@ -98,9 +98,22 @@ namespace GoodAI.Modules.LTM
             [MyBrowsable, Category("Params")]
             [YAXSerializableField(DefaultValue = false), DefaultValue(false), Description("Enables automatic conversion to capital letters.")]
             public bool ConvertToUpperCase { get; set; }
+            
+            [Description("Use ASCII-based Digit Index encoding (default) or Uppercase Vowel-Space-Consonant encoding")]
+            [MyBrowsable, Category("Encoding")]
+            [YAXSerializableField(DefaultValue = MyStringConversionsClass.StringEncodings.DigitIndexes)]
+            public MyStringConversionsClass.StringEncodings Encoding { get; set; }
 
-           
+            [Description("Fill TextWidth capacity with repeats of the word")]
+            [MyBrowsable, Category("Encoding")]
+            [YAXSerializableField(DefaultValue = false)]
+            public bool RepeatWord { get; set; }
 
+            [Description("Stretch word to fill TextWidth")]
+            [MyBrowsable, Category("Encoding")]
+            [YAXSerializableField(DefaultValue = false)]
+            public bool StretchWord { get; set; }
+            
             public override void Init(int nGPU)
             {
                 
@@ -131,11 +144,27 @@ namespace GoodAI.Modules.LTM
                     MyLog.DEBUG.WriteLine("text: " + padded);
                 }
 
+                if (RepeatWord)
+                {
+                    padded = MyStringConversionsClass.RepeatWord(padded, Owner.TextWidth);
+                }
+
+                if (StretchWord)
+                {
+                    padded = MyStringConversionsClass.StretchWord(padded, Owner.TextWidth);
+                }
+
                 
                 for (int i = 0; i < Owner.TextWidth; i++)
                 {
-                 
-                    Owner.Output.Host[i] = MyStringConversionsClass.StringToDigitIndexes(padded[i]);
+                    if (Encoding == MyStringConversionsClass.StringEncodings.DigitIndexes)
+                    {
+                        Owner.Output.Host[i] = MyStringConversionsClass.StringToDigitIndexes(padded[i]);
+                    }
+                    else
+                    {
+                        Owner.Output.Host[i] = MyStringConversionsClass.StringToUvscCoding(padded[i]);
+                    }
                 }
 
                 Owner.Output.SafeCopyToDevice();
