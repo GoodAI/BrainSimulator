@@ -67,7 +67,7 @@ namespace GoodAI.Modules.DiscreteRL.Observers
         [YAXSerializableField(DefaultValue = 0.003f)]
         public float MaxUtilityValue { get; set; }
 
-        private float m_minUtilityValue = 0.0f;
+        protected float m_minUtilityValue = 0.0f;
 
         [MyBrowsable, Category("Mode"),
         Description("Observe utility colors which are already scaled by the current motivation.")]
