@@ -42,7 +42,15 @@
             this.addHistogramObserver = new System.Windows.Forms.ToolStripButton();
             this.addTextObserver = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.addSpectrumObserver = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.dimenstionsLabel = new System.Windows.Forms.Label();
+            this.dimensionsTextBox = new System.Windows.Forms.TextBox();
             this.toolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+            this.splitContainer.Panel1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
+            this.splitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView
@@ -55,12 +63,12 @@
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
             this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(0, 25);
+            this.listView.Location = new System.Drawing.Point(0, 0);
             this.listView.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(367, 106);
+            this.listView.Size = new System.Drawing.Size(285, 266);
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -70,7 +78,7 @@
             // nameColumn
             // 
             this.nameColumn.Text = "Name";
-            this.nameColumn.Width = 100;
+            this.nameColumn.Width = 80;
             // 
             // sizeColumn
             // 
@@ -80,6 +88,7 @@
             // typeColumn
             // 
             this.typeColumn.Text = "Type";
+            this.typeColumn.Width = 55;
             // 
             // toolStrip
             // 
@@ -99,9 +108,9 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
-            this.toolStrip.Size = new System.Drawing.Size(367, 25);
+            this.toolStrip.Size = new System.Drawing.Size(285, 25);
             this.toolStrip.TabIndex = 1;
-            this.toolStrip.Text = "toolStrip1";
+            this.toolStrip.Text = "toolStrip";
             // 
             // addObserverButton
             // 
@@ -195,13 +204,57 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // addSpectrumObserver
+            // 
+            this.addSpectrumObserver.Name = "addSpectrumObserver";
+            this.addSpectrumObserver.Size = new System.Drawing.Size(23, 22);
+            // 
+            // splitContainer
+            // 
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer.IsSplitterFixed = true;
+            this.splitContainer.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer.Name = "splitContainer";
+            this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer.Panel1
+            // 
+            this.splitContainer.Panel1.Controls.Add(this.listView);
+            // 
+            // splitContainer.Panel2
+            // 
+            this.splitContainer.Panel2.Controls.Add(this.dimensionsTextBox);
+            this.splitContainer.Panel2.Controls.Add(this.dimenstionsLabel);
+            this.splitContainer.Size = new System.Drawing.Size(285, 300);
+            this.splitContainer.SplitterDistance = 266;
+            this.splitContainer.TabIndex = 2;
+            // 
+            // dimenstionsLabel
+            // 
+            this.dimenstionsLabel.AutoSize = true;
+            this.dimenstionsLabel.Location = new System.Drawing.Point(3, 5);
+            this.dimenstionsLabel.Name = "dimenstionsLabel";
+            this.dimenstionsLabel.Size = new System.Drawing.Size(64, 13);
+            this.dimenstionsLabel.TabIndex = 0;
+            this.dimenstionsLabel.Text = "Dimensions:";
+            // 
+            // dimensionsTextBox
+            // 
+            this.dimensionsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dimensionsTextBox.Location = new System.Drawing.Point(70, 2);
+            this.dimensionsTextBox.MaxLength = 100;
+            this.dimensionsTextBox.Name = "dimensionsTextBox";
+            this.dimensionsTextBox.Size = new System.Drawing.Size(212, 20);
+            this.dimensionsTextBox.TabIndex = 1;
             // 
             // MemoryBlocksForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(367, 131);
-            this.Controls.Add(this.listView);
+            this.ClientSize = new System.Drawing.Size(285, 325);
+            this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.toolStrip);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
@@ -210,6 +263,11 @@
             this.Text = "Memory Blocks";
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
+            this.splitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+            this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -231,6 +289,9 @@
         private System.Windows.Forms.ToolStripButton addHostPlotObserver;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-
+        private System.Windows.Forms.ToolStripButton addSpectrumObserver;
+        private System.Windows.Forms.SplitContainer splitContainer;
+        private System.Windows.Forms.Label dimenstionsLabel;
+        private System.Windows.Forms.TextBox dimensionsTextBox;
     }
 }

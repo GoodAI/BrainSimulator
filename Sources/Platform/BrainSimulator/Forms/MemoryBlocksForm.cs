@@ -40,6 +40,7 @@ namespace GoodAI.BrainSimulator.Forms
         {            
             listView.Items.Clear();
             toolStrip.Enabled = false;
+            splitContainer.Panel2Collapsed = true;
 
             if (Target != null)
             {
@@ -150,6 +151,8 @@ namespace GoodAI.BrainSimulator.Forms
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
             toolStrip.Enabled = listView.SelectedItems.Count > 0;
+
+            splitContainer.Panel2Collapsed = !(listView.SelectedItems.Count == 1);
         }
 
         private void addObserverButton_Click(object sender, EventArgs e)
