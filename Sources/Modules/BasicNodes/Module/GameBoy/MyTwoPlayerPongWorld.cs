@@ -43,7 +43,7 @@ namespace GoodAI.Modules.GameBoy
     /// 
     /// PaddlePos, Event and BinaryEvent outputs are present twice, once for each of the players (A,B)<br />
     /// </description>
-    public class MyTwoPlayerPongWorld : MyCustomPongWorld
+    public class MyTwoPlayerPongWorld : MyCustomPongWorld, IMyCustomTaskFactory
     {
         // the override (of Controls) is needed to avoid errors during validation 
         // that otherwise occur when an input is not connected to Controls or ControlsB
@@ -111,13 +111,11 @@ namespace GoodAI.Modules.GameBoy
             }
         }
 
-        [SuppressTask]
-        public override MyInitTask InitGameTask { get { return InitTwoPlayerGameTask; } protected set { } }
-        [SuppressTask]
-        public override MyUpdateTask UpdateTask { get { return UpdateTwoPlayerGameTask; } protected set { } }
-
-        public MyInitTwoPlayerTask InitTwoPlayerGameTask { get; protected set; }
-        public MyUpdateTwoPlayerTask UpdateTwoPlayerGameTask { get; protected set; }
+        public virtual void CreateTasks() // overrides default behaviour, which would create new InitGameTask() and new UpdateTask().
+        {
+            InitGameTask = new MyInitTwoPlayerTask();
+            UpdateTask = new MyUpdateTwoPlayerTask();
+        }
 
         /// <summary>
         /// Loads textures, prepares game objects.

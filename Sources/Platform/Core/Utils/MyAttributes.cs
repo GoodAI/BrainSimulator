@@ -30,11 +30,6 @@ namespace GoodAI.Core.Utils
         public string Name { get; private set; }        
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class SuppressTaskAttribute : Attribute
-    {
-    }
-
     [AttributeUsage(AttributeTargets.Class)]
     public class MyNodeInfoAttribute : Attribute
     {

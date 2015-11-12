@@ -58,12 +58,6 @@ namespace GoodAI.Core.Nodes
 
                 foreach (PropertyInfo pInfo in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
                 {
-                    IEnumerable<SuppressTaskAttribute> suppressTask = pInfo.GetCustomAttributes<SuppressTaskAttribute>();
-                    if (suppressTask.Count() > 0)
-                    {
-                        continue;
-                    }
-
                     if (typeof(MyTask).IsAssignableFrom(pInfo.PropertyType))
                     {
                         nodeInfo.KnownTasks.Add(pInfo.Name, pInfo);
