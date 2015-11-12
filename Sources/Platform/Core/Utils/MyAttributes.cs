@@ -86,5 +86,13 @@ namespace GoodAI.Core.Utils
     public class MyUnmanagedAttribute : Attribute { }    
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class MyBrowsableAttribute : Attribute { }
+    public class MyBrowsableAttribute : Attribute 
+    {
+        public bool Browsable { get; protected set; }
+
+        public MyBrowsableAttribute(bool browsable = true)
+        {
+            Browsable = browsable;
+        }
+    }
 }

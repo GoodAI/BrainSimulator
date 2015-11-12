@@ -148,6 +148,7 @@
     <Compile Include="DiscreteRL\Interfaces\IDiscretePolicyObservable.cs" />
     <Compile Include="DiscreteRL\Interfaces\IDiscreteSRPObservable.cs" />
     <Compile Include="DiscreteRL\Observers\DiscreteQLearningObserver.cs" />
+    <Compile Include="GameBoy\MyTwoPlayerPongWorld.cs" />
     <Compile Include="Join\Distances\MyDistanceNode.cs" />
     <Compile Include="Join\Distances\MyDistanceOps.cs" />
     <Compile Include="Join\Stacking\MyStackingNode.cs" />
