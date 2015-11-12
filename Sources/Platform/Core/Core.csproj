@@ -127,7 +127,9 @@
     <Compile Include="Execution\MyExecutionPlanner.cs" />
     <Compile Include="Execution\MyPartitionStrategy.cs" />
     <Compile Include="Execution\MyTaskExecutor.cs" />
+    <Compile Include="Memory\MemBlockAttribute.cs" />
     <Compile Include="Memory\MemoryBlockSerializer.cs" />
+    <Compile Include="Memory\TensorDimensions.cs" />
     <Compile Include="Nodes\MyScriptableNode.cs" />
     <Compile Include="Nodes\MyConditionalGroup.cs" />
     <Compile Include="Nodes\MyDataGate.cs" />

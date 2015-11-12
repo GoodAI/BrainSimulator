@@ -248,6 +248,7 @@
             this.dimensionsTextBox.Name = "dimensionsTextBox";
             this.dimensionsTextBox.Size = new System.Drawing.Size(212, 20);
             this.dimensionsTextBox.TabIndex = 1;
+            this.dimensionsTextBox.TextChanged += new System.EventHandler(this.dimensionsTextBox_TextChanged);
             // 
             // MemoryBlocksForm
             // 

@@ -1,0 +1,12 @@
+<DictionaryTest>
+  <Dict>
+    <Item>
+      <Key>foo</Key>
+      <Value>1</Value>
+    </Item>
+    <Item>
+      <Key>bar</Key>
+      <Value>2</Value>
+    </Item>
+  </Dict>
+</DictionaryTest>

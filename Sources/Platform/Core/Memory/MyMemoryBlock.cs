@@ -17,6 +17,7 @@ namespace GoodAI.Core.Memory
         //TODO: Find if MyWorkingNode is possible here
         public MyNode Owner { get; set; }
         public int ColumnHint { get; set; }
+        public TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
                         
@@ -75,6 +76,7 @@ namespace GoodAI.Core.Memory
             ColumnHint = 1;
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;
+            Dims = new TensorDimensions();
         }
 
         public override void AllocateHost()

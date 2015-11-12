@@ -152,7 +152,17 @@ namespace GoodAI.BrainSimulator.Forms
         {
             toolStrip.Enabled = listView.SelectedItems.Count > 0;
 
-            splitContainer.Panel2Collapsed = !(listView.SelectedItems.Count == 1);
+            bool oneItemSelected = (listView.SelectedItems.Count == 1);
+            splitContainer.Panel2Collapsed = !oneItemSelected;
+
+            if (oneItemSelected)
+            {
+                var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+                if (block != null)
+                {
+                    dimensionsTextBox.Text = block.Dims.ToString();
+                }
+            }
         }
 
         private void addObserverButton_Click(object sender, EventArgs e)
@@ -198,6 +208,18 @@ namespace GoodAI.BrainSimulator.Forms
         private void addTextObserver_Click(object sender, EventArgs e)
         {
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MyTextObserver));
+        }
+
+        private void dimensionsTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count <= 0)
+                return;
+
+            var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+            if (block == null)
+                return;
+
+            block.Dims.Set(new List<int>() {1, 2, 3});
         }
     }
 }
