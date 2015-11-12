@@ -197,6 +197,8 @@ namespace GoodAI.Core.Observers
                 for (int x = 0; x < XLength; x++) {
                 {
                     int index = (YStart + y)*m_columnCount + (XStart + x);
+                    if (index >= Target.Count)
+                        break;
 
                     var drawX = x*m_cellWidth + m_frameMarginPx/2;
                     var drawY = y*m_cellHeight + m_frameMarginPx/2;
