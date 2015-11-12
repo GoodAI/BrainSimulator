@@ -14,6 +14,11 @@ namespace GoodAI.Modules.LTM
         public enum StringEncodings { DigitIndexes, UVSC }
 
         /// <summary>
+        /// Different ways to make sure that a word takes up all the space it can
+        /// </summary>
+        public enum PaddingSchemes { None, Repeat, Stretch }
+
+        /// <summary>
         /// Converts char to index in ASCII table. Inverse function to DigitIndexToString().
         /// </summary>
         /// <param name="str">Input char.</param>

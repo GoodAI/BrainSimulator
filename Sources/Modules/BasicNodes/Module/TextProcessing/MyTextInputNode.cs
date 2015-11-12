@@ -104,15 +104,10 @@ namespace GoodAI.Modules.LTM
             [YAXSerializableField(DefaultValue = MyStringConversionsClass.StringEncodings.DigitIndexes)]
             public MyStringConversionsClass.StringEncodings Encoding { get; set; }
 
-            [Description("Fill TextWidth capacity with repeats of the word")]
+            [Description("How should the input be padded?")]
             [MyBrowsable, Category("Encoding")]
-            [YAXSerializableField(DefaultValue = false)]
-            public bool RepeatWord { get; set; }
-
-            [Description("Stretch word to fill TextWidth")]
-            [MyBrowsable, Category("Encoding")]
-            [YAXSerializableField(DefaultValue = false)]
-            public bool StretchWord { get; set; }
+            [YAXSerializableField(DefaultValue = MyStringConversionsClass.PaddingSchemes.None)]
+            public MyStringConversionsClass.PaddingSchemes Padding { get; set; }
             
             public override void Init(int nGPU)
             {
@@ -141,15 +136,14 @@ namespace GoodAI.Modules.LTM
                 if (ConvertToUpperCase)
                 {
                     padded = padded.ToUpper();
-                    MyLog.DEBUG.WriteLine("text: " + padded);
+                    //MyLog.DEBUG.WriteLine("text: " + padded);
                 }
 
-                if (RepeatWord)
+                if (Padding == MyStringConversionsClass.PaddingSchemes.Repeat)
                 {
                     padded = MyStringConversionsClass.RepeatWord(padded, Owner.TextWidth);
                 }
-
-                if (StretchWord)
+                else if (Padding == MyStringConversionsClass.PaddingSchemes.Stretch)
                 {
                     padded = MyStringConversionsClass.StretchWord(padded, Owner.TextWidth);
                 }
