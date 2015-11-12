@@ -95,6 +95,7 @@
             this.nodeListView.MultiSelect = false;
             this.nodeListView.Name = "nodeListView";
             this.nodeListView.OwnerDraw = true;
+            this.nodeListView.ShowGroups = false;
             this.nodeListView.ShowItemToolTips = true;
             this.nodeListView.Size = new System.Drawing.Size(785, 589);
             this.nodeListView.SmallImageList = this.nodeImageList;
