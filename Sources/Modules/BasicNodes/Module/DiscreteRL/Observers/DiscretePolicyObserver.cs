@@ -67,6 +67,8 @@ namespace GoodAI.Modules.DiscreteRL.Observers
         [YAXSerializableField(DefaultValue = 0.003f)]
         public float MaxUtilityValue { get; set; }
 
+        private float m_minUtilityValue = 0.0f;
+
         [MyBrowsable, Category("Mode"),
         Description("Observe utility colors which are already scaled by the current motivation.")]
         [YAXSerializableField(DefaultValue = true)]
@@ -105,12 +107,17 @@ namespace GoodAI.Modules.DiscreteRL.Observers
             if (m_qMatrix != null && MatrixSizeOK())
             {
                 m_kernel.SetupExecution(TextureWidth * TextureHeight);
-                m_kernel.Run(m_plotValues.DevicePointer, m_actionIndices.DevicePointer, m_actionLabels.DevicePointer, numOfActions, LABEL_PIXEL_WIDTH, LABEL_PIXEL_WIDTH, 0f, MaxUtilityValue, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), VBODevicePointer);
+                m_kernel.Run(
+                    m_plotValues.DevicePointer, m_actionIndices.DevicePointer, m_actionLabels.DevicePointer,
+                    numOfActions, LABEL_PIXEL_WIDTH, LABEL_PIXEL_WIDTH, m_minUtilityValue, MaxUtilityValue, 
+                    m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), VBODevicePointer);
 
                 if (ViewMode == ViewMethod.Orbit_3D)
                 {
                     m_vertexKernel.SetupExecution(m_qMatrix.Length);
-                    m_vertexKernel.Run(m_plotValues.DevicePointer, 0.1f, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1), MaxUtilityValue, VertexVBODevicePointer);
+                    m_vertexKernel.Run(
+                        m_plotValues.DevicePointer, 0.1f, m_qMatrix.GetLength(0), m_qMatrix.GetLength(1),
+                        MaxUtilityValue, VertexVBODevicePointer);
                 }
             }
 
@@ -151,7 +158,9 @@ namespace GoodAI.Modules.DiscreteRL.Observers
                 for (int i = 0; i < actions.Count; i++)
                 {
                     MyDrawStringHelper.String2Index(actions[i], m_StringDeviceBuffer);
-                    MyDrawStringHelper.DrawStringFromGPUMem(m_StringDeviceBuffer, i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH, 0, actions[i].Length);
+                    MyDrawStringHelper.DrawStringFromGPUMem(
+                        m_StringDeviceBuffer, i * LABEL_PIXEL_WIDTH + 5, 8, 0, 0xFFFFFFFF, 
+                        m_actionLabels.DevicePointer, LABEL_PIXEL_WIDTH * actions.Count, LABEL_PIXEL_WIDTH, 0, actions[i].Length);
                 }
 
                 numOfActions = actions.Count;

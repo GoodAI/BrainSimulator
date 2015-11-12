@@ -88,7 +88,9 @@ extern "C"
 		}
 	}
 
-	__global__ void createTexture(float* plotValues, int* actionIndices, unsigned int* actionLabels, int numOfActions, int patchWidth, int patchHeight, 
+	__global__ void createTexture(
+		float* plotValues, int* actionIndices, unsigned int* actionLabels, int numOfActions, 
+		int patchWidth, int patchHeight, 
 		float minValue, float maxValue, int itemsX, int itemsY, unsigned int* pixels) 
 	{
 		int threadId = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
@@ -106,11 +108,12 @@ extern "C"
 		int pixY = threadId / textureWidth % patchHeight;
 
 		int actionIndex = actionIndices[patchX * itemsY + (itemsY - patchY - 1)];
-		unsigned int noActionFlag = actionIndex > 0 ? 0xFFFFFFFF : 0;
+		// if the utility value is zero, there is no action (marged by black/zeros)
+		unsigned int noActionFlag = (plotValues[patchX * itemsY + (itemsY - patchY - 1)] != 0) ? 0xFFFFFFFF : 0;
 
 		if (threadId < size) 
 		{						
-			pixels[threadId] = float_to_uint_rgba(plotValues[patchX * itemsY + (itemsY - patchY - 1)], 2, 2, minValue, maxValue);								
+			pixels[threadId] = float_to_uint_rgba(plotValues[patchX * itemsY + (itemsY - patchY - 1)], 2, 2, minValue, maxValue);	
 			pixels[threadId] &= noActionFlag;
 			pixels[threadId] |= actionLabels[pixY * numOfActions * patchWidth + actionIndex * patchWidth + pixX];
 		}		
