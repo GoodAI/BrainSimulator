@@ -605,7 +605,7 @@ namespace GoodAI.Core.Observers
                 PlotValues(graphics, DisplayMethod);
             }
 
-            DisplayPlot();
+            DisplayBitmap();
 
             m_isDirty = false;
             if (newValueIsAvailable)
@@ -797,7 +797,7 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        private void DisplayPlot()
+        private void DisplayBitmap()
         {
             BitmapData bitmapData = m_bitmap.LockBits(new Rectangle(0, 0, m_bitmap.Width, m_bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppRgb);
 
