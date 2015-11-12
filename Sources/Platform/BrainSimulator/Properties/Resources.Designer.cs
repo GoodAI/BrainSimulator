@@ -278,6 +278,16 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap matrix_host {
+            get {
+                object obj = ResourceManager.GetObject("matrix_host", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Open_6529 {
             get {
                 object obj = ResourceManager.GetObject("Open_6529", resourceCulture);

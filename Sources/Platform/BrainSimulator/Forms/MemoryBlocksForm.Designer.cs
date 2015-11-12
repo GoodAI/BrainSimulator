@@ -36,6 +36,7 @@
             this.addObserverButton = new System.Windows.Forms.ToolStripButton();
             this.addPlotButton = new System.Windows.Forms.ToolStripButton();
             this.addHostPlotObserver = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.addMatrixObserver = new System.Windows.Forms.ToolStripButton();
             this.addSpikeObserver = new System.Windows.Forms.ToolStripButton();
             this.addHistogramObserver = new System.Windows.Forms.ToolStripButton();
@@ -88,6 +89,7 @@
             this.addObserverButton,
             this.addPlotButton,
             this.addHostPlotObserver,
+            this.toolStripButton2,
             this.addMatrixObserver,
             this.addSpikeObserver,
             this.addHistogramObserver,
@@ -132,16 +134,27 @@
             this.addHostPlotObserver.Text = "Add Plot Observer to Block (new)";
             this.addHostPlotObserver.Click += new System.EventHandler(this.addHostPlotButton_Click);
             // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = global::GoodAI.BrainSimulator.Properties.Resources.matrix;
+            this.toolStripButton2.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Text = "Add Matrix Observer to Block";
+            this.toolStripButton2.Click += new System.EventHandler(this.addMatrixObserver_Click);
+            // 
             // addMatrixObserver
             // 
             this.addMatrixObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addMatrixObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.matrix;
+            this.addMatrixObserver.Image = global::GoodAI.BrainSimulator.Properties.Resources.matrix_host;
             this.addMatrixObserver.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.addMatrixObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addMatrixObserver.Name = "addMatrixObserver";
             this.addMatrixObserver.Size = new System.Drawing.Size(23, 22);
             this.addMatrixObserver.Text = "Add Matrix Observer to Block";
-            this.addMatrixObserver.Click += new System.EventHandler(this.addMatrixObserver_Click);
+            this.addMatrixObserver.Click += new System.EventHandler(this.addHostMatrixObserver_Click);
             // 
             // addSpikeObserver
             // 
@@ -209,6 +222,7 @@
         private System.Windows.Forms.ToolStripButton addHistogramObserver;
         private System.Windows.Forms.ToolStripButton addTextObserver;
         private System.Windows.Forms.ToolStripButton addHostPlotObserver;
+        private System.Windows.Forms.ToolStripButton toolStripButton2;
 
     }
 }

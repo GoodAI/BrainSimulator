@@ -485,6 +485,7 @@
     <Content Include="res\link_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\matrix1.png" />
     <Content Include="res\matrixNode.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

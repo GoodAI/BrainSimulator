@@ -177,6 +177,11 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MyMatrixObserver));
         }
 
+        private void addHostMatrixObserver_Click(object sender, EventArgs e)
+        {
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostMatrixObserver));
+        }
+
         private void addSpikeObserver_Click(object sender, EventArgs e)
         {
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MySpikeRasterObserver));
