@@ -296,6 +296,7 @@ namespace GoodAI.Core.Observers
         private Color m_colorCurve6 = Color.Cyan;
         [YAXSerializableField]
         private Color m_colorCurveExtra = Color.Black;
+        [YAXSerializableField]
 
         [MyBrowsable, Category("\tVisualization")]
         [Description("Background color")]
@@ -422,6 +423,8 @@ namespace GoodAI.Core.Observers
         private Bitmap m_bitmap;
         private SolidBrush m_backgroundBrush;
         private int m_samplingCounter;
+        private SolidBrush m_textBrush;
+        private SolidBrush m_cursorBrush;
 
         public HostTimePlotObserver() //constructor with node parameter
         {
@@ -434,6 +437,9 @@ namespace GoodAI.Core.Observers
             Count = 1;
 
             TargetChanged += MyTimePlotObserver_TargetChanged;
+            m_textBrush = new SolidBrush(m_colorFont);
+            m_textBrush = new SolidBrush(m_colorFont);
+            m_cursorBrush = new SolidBrush(Color.Gray);
         }
 
         void MyTimePlotObserver_TargetChanged(object sender, PropertyChangedEventArgs e)
@@ -681,7 +687,6 @@ namespace GoodAI.Core.Observers
 
         private void DrawCycle(Graphics graphics)
         {
-            var cursorBrush = new SolidBrush(Color.Gray);
             var backgroundBrush = new SolidBrush(m_colorBackground);
 
             m_currentCursorPosition++;
@@ -707,7 +712,7 @@ namespace GoodAI.Core.Observers
                 graphics.FillRectangle(brush, 0, 400, m_bitmap.Width, 1);
 
                 // Cursor
-                graphics.FillRectangle(cursorBrush, x+1, m_plotAreaOffsetY, 1, m_plotAreaHeight);
+                graphics.FillRectangle(m_cursorBrush, x+1, m_plotAreaOffsetY, 1, m_plotAreaHeight);
 
                 m_valuesHistory[curveIndex] = currentValue;
             }
@@ -807,13 +812,13 @@ namespace GoodAI.Core.Observers
             m_bitmap.UnlockBits(bitmapData);
         }
 
-        private void DrawCoordinates(Graphics graphics, bool redraw=false)
+        private void DrawCoordinates(Graphics graphics)
         {
             // Redraw the background
             graphics.FillRectangle(m_backgroundBrush, 0, 0, m_plotAreaOffsetX, m_plotAreaHeight);
+            graphics.FillRectangle(m_cursorBrush, m_plotAreaOffsetX-2, 0, 1, m_plotAreaHeight);
 
-            var coordinatesFont = new Font(FontFamily.GenericSansSerif, 10f);
-            var textBrush = new SolidBrush(m_colorFont);
+            var axisFont = new Font(FontFamily.GenericMonospace, 14);
 
             // Ordinates
             double range = m_plotCurrentValueMax - m_plotCurrentValueMin;
@@ -825,9 +830,10 @@ namespace GoodAI.Core.Observers
             {
                 double value = firstOrdinate + n * unit;
                 string valueStr = string.Format("{0,8:N" + displayPrecision + "}", value);
-                int y = ValueToScale(value) - coordinatesFont.Height/2;
+                int y = ValueToScale(value);
 
-                graphics.DrawString(valueStr, coordinatesFont, textBrush, 0, y);
+                graphics.DrawString(valueStr, axisFont, m_textBrush, 0, y - axisFont.Height/2);
+                graphics.FillRectangle(m_cursorBrush, m_plotAreaOffsetX-4, y, 4, 1);
             }
         }
 
