@@ -203,16 +203,32 @@ namespace GoodAI.Core.Observers
                     var drawX = x*m_cellWidth + m_frameMarginPx/2;
                     var drawY = y*m_cellHeight + m_frameMarginPx/2;
 
-                    float value = 0f;
-                    Target.GetValueAt(ref value, index);
-                    DrawCellContent(graphics, value, drawX, drawY);
+                    double doubleValue = 0d;
+                    if (m_valueType == typeof (int))
+                    {
+                        int value = 0;
+                        Target.GetValueAt(ref value, index);
+                        doubleValue = Convert.ToDouble(value);
+                    }
+                    else if (m_valueType == typeof (float))
+                    {
+                        float value = 0f;
+                        Target.GetValueAt(ref value, index);
+                        doubleValue = Convert.ToDouble(value);
+                    }
+                    else if (m_valueType == typeof (double))
+                    {
+                        Target.GetValueAt(ref doubleValue, index);
+                    }
+
+                    DrawCellContent(graphics, doubleValue, drawX, drawY);
                 }
             }
         }
 
-        private void DrawCellContent(Graphics graphics, float value, int drawX, int drawY)
+        private void DrawCellContent(Graphics graphics, double value, int drawX, int drawY)
         {
-            if (value >= 100000)
+            if (value >= 0)
             {
                 graphics.DrawString(string.Format("{0:E" + DecimalCount + "}", value), m_font, m_textBrush, drawX, drawY);
             }
