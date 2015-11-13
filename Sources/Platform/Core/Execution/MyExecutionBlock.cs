@@ -45,31 +45,6 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        public IMyExecutable FirstChild
-        {
-            get
-            {
-                return m_children.Length > 0 ? m_children[0] : null;
-            }
-        }
-
-        public bool IsDone
-        {
-            get
-            {
-                if (m_childIterator >= m_children.Length)
-                    return true;
-
-                var childBlock = CurrentChild as MyExecutionBlock;
-                if (childBlock != null)
-                    return childBlock.IsDone;
-
-                // There is a child but it's not a block, so it can't be done (has to be executed).
-                return false;
-            }
-        }
-
-
         /// All children elements
         public IMyExecutable[] Children
         {
