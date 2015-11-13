@@ -3,6 +3,7 @@ using Aga.Controls.Tree.NodeControls;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Task;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,8 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private MainForm m_mainForm;        
         private MyExecutionPlan[] m_executionPlan;
+
+        private readonly ISet<IMyExecutable> m_breakpoints = new HashSet<IMyExecutable>();
 
         private MyDebugNode CreateDebugNode(IMyExecutable executable)
         {
@@ -46,18 +49,33 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }
 
+            result.BreakpointStateChanged += OnBreakpointStateChanged;
+
             return result;
+        }
+
+        private void OnBreakpointStateChanged(object sender, MyDebugNode.BreakpointEventArgs args)
+        {
+            if (args.Node.Breakpoint)
+                m_breakpoints.Add(args.Node.Executable);
+            else
+                m_breakpoints.Remove(args.Node.Executable);
         }
 
         private void UpdateDebugListView()
         {
+            // Clean up the event handlers.
+            foreach (var node in debugTreeView.AllNodes)
+            {
+                var debugNode = node.Tag as MyDebugNode;
+                debugNode.BreakpointStateChanged -= OnBreakpointStateChanged;
+            }
+
             m_executionPlan = m_mainForm.SimulationHandler.Simulation.ExecutionPlan;
 
             if (m_executionPlan != null)
             {
                 TreeModel treeModel = new TreeModel();
-
-                // TODO(HonzaS): refresh breakpoints?
 
                 for (int i = 0; i < 1; i++)
                 {
@@ -67,6 +85,12 @@ namespace GoodAI.BrainSimulator.Forms
 
                 debugTreeView.Model = treeModel;
                 debugTreeView.ExpandAll();
+            }
+
+            foreach (var node in debugTreeView.AllNodes)
+            {
+                var debugNode = node.Tag as MyDebugNode;
+                debugNode.Breakpoint = m_breakpoints.Contains(debugNode.Executable);
             }
         }
 
@@ -139,6 +163,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void AlterBackground(DrawEventArgs e)
         {
+            var nodeData = e.Node.Tag as MyDebugNode;
+            if (nodeData != null && nodeData.Breakpoint)
+            {
+                e.BackgroundBrush = Brushes.IndianRed;
+            }
+
             if (e.Node == m_selectedNodeView && m_selectedNodeView != debugTreeView.SelectedNode)
             {
                 e.BackgroundBrush = Brushes.Gold;
@@ -208,11 +238,39 @@ namespace GoodAI.BrainSimulator.Forms
         }        
     }
 
-    public class MyDebugNode : Node
+    public class MyDebugNode : Node, IDisposable
     {
+        public class BreakpointEventArgs : EventArgs
+        {
+            public MyDebugNode Node { get; set; }
+
+            public BreakpointEventArgs(MyDebugNode node)
+            {
+                Node = node;
+            }
+        }
+
+        public delegate void BreakpointStateChangedEvent(object sender, BreakpointEventArgs args);
+
+        public event BreakpointStateChangedEvent BreakpointStateChanged;
         //public virtual bool Checked { get { return false; } }
         public virtual Image Icon { get; protected set; }
         public string OwnerName { get; protected set; }
+
+        private bool m_breakpoint;
+        public bool Breakpoint
+        {
+            get
+            {
+                return m_breakpoint;
+            }
+            set
+            {
+                m_breakpoint = value;
+                if (BreakpointStateChanged != null)
+                    BreakpointStateChanged(this, new BreakpointEventArgs(this));
+            }
+        }
 
         public IMyExecutable Executable { get; private set; }
 
@@ -231,7 +289,12 @@ namespace GoodAI.BrainSimulator.Forms
             else
             {
                 Icon = Properties.Resources.gear_16xLG;                
-            }                       
+            }
+        }
+
+        public void Dispose()
+        {
+            BreakpointStateChanged = null;
         }
     }
 
