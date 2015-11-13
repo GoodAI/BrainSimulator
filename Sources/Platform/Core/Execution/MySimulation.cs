@@ -23,22 +23,26 @@ namespace GoodAI.Core.Execution
         public string GlobalDataFolder { get; set; }
 
         public bool InDebugMode { get; set; }
-        public ExecutionStepMode DebugStepMode { get; set; }
+        // Specifies the block that the simulation should stop at.
+        protected MyExecutionBlock m_stopDebugAt;
+
+        public delegate void DebugTargetEncounteredHandler(object sender, EventArgs args);
+        public event DebugTargetEncounteredHandler DebugTargetReached;
+
+        protected void EmitDebugTargetEncountered()
+        {
+            if (DebugTargetReached != null)
+                DebugTargetReached(this, EventArgs.Empty);
+        }
 
         public MyExecutionBlock[] CurrentDebuggedBlocks { get; internal set; }
-
-        public enum ExecutionStepMode
-        {
-            STEP_OVER,
-            STEP_INTO,
-            STEP_OUT
-        }
 
         public IMyExecutionPlanner ExecutionPlanner { get; set; }
         public IMyPartitionStrategy PartitioningStrategy { get; set; }
 
         public MyExecutionPlan[] ExecutionPlan { get; protected set; }
         public List<MyWorkingNode>[] NodePartitioning { get; protected set; }
+
 
         protected bool m_errorOccured;
         protected Exception m_lastException;
@@ -71,6 +75,10 @@ namespace GoodAI.Core.Execution
         public abstract void AllocateMemory();
         public abstract void PerformStep(bool stepByStepRun);
         public abstract void FreeMemory();
+
+        public abstract void StepOver();
+        public abstract void StepInto();
+        public abstract void StepOut();
 
         public virtual void Clear()
         {
@@ -312,8 +320,10 @@ namespace GoodAI.Core.Execution
                         m_debugStepComplete = false;
                     }
 
-
                     CurrentDebuggedBlocks[coreNumber] = currentBlock;
+
+                    if (currentBlock == m_stopDebugAt)
+                        EmitDebugTargetEncountered();
                 }
                 else //not in debug mode
                 {
@@ -362,6 +372,21 @@ namespace GoodAI.Core.Execution
                     node.Cleanup();
                 }
             });
+        }
+
+        public override void StepOver()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void StepInto()
+        {
+            CurrentDebuggedBlocks[0]
+        }
+
+        public override void StepOut()
+        {
+            throw new NotImplementedException();
         }
 
         protected override void DoFinish()

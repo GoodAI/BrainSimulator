@@ -57,6 +57,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 TreeModel treeModel = new TreeModel();
 
+                // TODO(HonzaS): refresh breakpoints?
+
                 for (int i = 0; i < 1; i++)
                 {
                     treeModel.Nodes.Add(CreateDebugNode(m_executionPlan[i].InitStepPlan));
@@ -80,15 +82,15 @@ namespace GoodAI.BrainSimulator.Forms
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
-            MySimulationHandler simulatinHandler = sender as MySimulationHandler;
+            MySimulationHandler simulationHandler = sender as MySimulationHandler;
 
-            runToolButton.Enabled = simulatinHandler.CanStart;
-            stepInButton.Enabled = simulatinHandler.CanStepInto;
-            stepOutButton.Enabled = simulatinHandler.CanStepOut;
-            stepOverButton.Enabled = simulatinHandler.CanStepOver;
-            pauseToolButton.Enabled = simulatinHandler.CanPause;
+            runToolButton.Enabled = simulationHandler.CanStart;
+            stepInButton.Enabled = simulationHandler.CanStepInto;
+            stepOutButton.Enabled = simulationHandler.CanStepOut;
+            stepOverButton.Enabled = simulationHandler.CanStepOver;
+            pauseToolButton.Enabled = simulationHandler.CanPause;
 
-            if (e.NewState == MySimulationHandler.SimulationState.PAUSED && simulatinHandler.Simulation.InDebugMode)
+            if (e.NewState == MySimulationHandler.SimulationState.PAUSED && simulationHandler.Simulation.InDebugMode)
             {
                 noDebugLabel.Visible = false;
                 toolStrip.Enabled = true;                                               
@@ -98,7 +100,7 @@ namespace GoodAI.BrainSimulator.Forms
                     UpdateDebugListView();
                 }
 
-                MyExecutionBlock currentBlock = simulatinHandler.Simulation.CurrentDebuggedBlocks[0];
+                MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
                 m_selectedNodeView = null;
 
                 if (currentBlock != null && currentBlock.CurrentChild != null)
@@ -132,16 +134,10 @@ namespace GoodAI.BrainSimulator.Forms
         private void nodeTextBox1_DrawText(object sender, DrawEventArgs e)
         {
             AlterText(e);
-            AlterBackgroud(e);         
+            AlterBackground(e);         
         }
 
-        private void nodeTextBox2_DrawText(object sender, DrawEventArgs e)
-        {
-            AlterText(e);
-            AlterBackgroud(e);
-        }
-
-        private void AlterBackgroud(DrawEventArgs e)
+        private void AlterBackground(DrawEventArgs e)
         {
             if (e.Node == m_selectedNodeView && m_selectedNodeView != debugTreeView.SelectedNode)
             {

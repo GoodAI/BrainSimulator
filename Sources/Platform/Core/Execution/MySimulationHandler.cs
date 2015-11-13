@@ -41,6 +41,7 @@ namespace GoodAI.Core.Execution
                         throw new InvalidOperationException("The simulation was not cleared. Call Finish() first.");
 
                     StateChanged -= m_simulation.OnStateChanged;
+                    m_simulation.DebugTargetReached += OnDebugTargetReached;
                 }
                 m_simulation = value;
                 StateChanged += m_simulation.OnStateChanged;
@@ -227,6 +228,11 @@ namespace GoodAI.Core.Execution
         {            
             doPause = true;
             m_worker.CancelAsync();
+        }
+
+        private void OnDebugTargetReached(object sender, EventArgs args)
+        {
+            PauseSimulation();
         }
 
         /// <summary>
