@@ -266,8 +266,8 @@ namespace GoodAI.Core.Observers
 
         private void SetupTextureSize()
         {
-            // Max digits before the dot + the exponential part for higher numbers + margin
-            int charactersPerNumber = 5 + 4 + m_characterMargin;
+            // Max digits before the dot + margin
+            int charactersPerNumber = 5 + m_characterMargin;
 
             if (DecimalCount != 0)
                 charactersPerNumber += DecimalCount + 1; // The decimals plus the dot
