@@ -143,6 +143,15 @@ namespace GoodAI.Core.Execution
                 NodePartitioning[i] = new List<MyWorkingNode>(indexTable[i]);
             });
         }
+
+        public void CleanBreakpoints()
+        {
+            var orphanedExecutables = new HashSet<IMyExecutable>(Breakpoints);
+            ExecutionPlan[0].StandardStepPlan.Iterate(true, executable => orphanedExecutables.Remove(executable));
+
+            foreach (var executable in orphanedExecutables)
+                Breakpoints.Remove(executable);
+        }
     }
 
     public class MyLocalSimulation : MySimulation
