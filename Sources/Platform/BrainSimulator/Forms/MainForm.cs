@@ -267,13 +267,10 @@ namespace GoodAI.BrainSimulator.Forms
             StartSimulation();            
         }
 
-        private void stepOverToolButton_Click(object sender, EventArgs e)
+        private void SetupDebugViews()
         {
             ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();
-
-            SimulationHandler.Simulation.StepOver();
-            StartSimulation();
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)
@@ -576,14 +573,36 @@ namespace GoodAI.BrainSimulator.Forms
             OpenFloatingOrActivate(DebugView);        
         }
 
+        private void stepOverToolButton_Click(object sender, EventArgs e)
+        {
+            SetupDebugViews();
+
+            SimulationHandler.Simulation.StepOver();
+            if (SimulationHandler.Simulation.InDebugMode)
+            {
+                // In debug mode, the simulation always runs - it is stopped internally by what is set in StepOver
+                // and similar methods.
+                StartSimulation();
+            }
+            else
+            {
+                StartSimulationStep();
+            }
+
+        }
+
         private void stepIntoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetupDebugViews();
+
             SimulationHandler.Simulation.StepInto();
             StartSimulation();
         }
 
         private void stepOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetupDebugViews();
+
             SimulationHandler.Simulation.StepOut();
             StartSimulation();
         }

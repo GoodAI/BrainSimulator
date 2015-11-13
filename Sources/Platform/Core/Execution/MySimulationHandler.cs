@@ -41,9 +41,10 @@ namespace GoodAI.Core.Execution
                         throw new InvalidOperationException("The simulation was not cleared. Call Finish() first.");
 
                     StateChanged -= m_simulation.OnStateChanged;
-                    m_simulation.DebugTargetReached += OnDebugTargetReached;
                 }
                 m_simulation = value;
+
+                m_simulation.DebugTargetReached += OnDebugTargetReached;
                 StateChanged += m_simulation.OnStateChanged;
             }
         }
