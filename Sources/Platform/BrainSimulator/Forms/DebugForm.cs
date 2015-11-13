@@ -16,7 +16,6 @@ namespace GoodAI.BrainSimulator.Forms
         private MainForm m_mainForm;        
         private MyExecutionPlan[] m_executionPlan;
 
-        private readonly ISet<IMyExecutable> m_breakpoints = new HashSet<IMyExecutable>();
 
         private MyDebugNode CreateDebugNode(IMyExecutable executable)
         {
@@ -57,9 +56,9 @@ namespace GoodAI.BrainSimulator.Forms
         private void OnBreakpointStateChanged(object sender, MyDebugNode.BreakpointEventArgs args)
         {
             if (args.Node.Breakpoint)
-                m_breakpoints.Add(args.Node.Executable);
+                m_mainForm.Breakpoints.Add(args.Node.Executable);
             else
-                m_breakpoints.Remove(args.Node.Executable);
+                m_mainForm.Breakpoints.Remove(args.Node.Executable);
         }
 
         private void UpdateDebugListView()
@@ -90,7 +89,7 @@ namespace GoodAI.BrainSimulator.Forms
             foreach (var node in debugTreeView.AllNodes)
             {
                 var debugNode = node.Tag as MyDebugNode;
-                debugNode.Breakpoint = m_breakpoints.Contains(debugNode.Executable);
+                debugNode.Breakpoint = m_mainForm.Breakpoints.Contains(debugNode.Executable);
             }
         }
 

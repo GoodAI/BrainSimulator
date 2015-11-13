@@ -5,11 +5,13 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using GoodAI.Core.Task;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -22,6 +24,17 @@ namespace GoodAI.BrainSimulator.Forms
 
         private MruStripMenuInline m_recentMenu;
         private bool m_isClosing = false;
+
+        public ISet<IMyExecutable> Breakpoints
+        {
+            get
+            {
+                if (SimulationHandler != null && SimulationHandler.Simulation != null)
+                    return SimulationHandler.Simulation.Breakpoints;
+
+                return null;
+            }
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {

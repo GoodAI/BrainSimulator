@@ -10,15 +10,16 @@ using GoodAI.Platform.Core.Utils;
 
 namespace GoodAI.Core.Execution
 {
+    public enum DebugStepMode
+    {
+        None,
+        StepInto,
+        StepOver,
+        StepOut
+    }
+
     public abstract class MySimulation
     {
-        public enum DebugStepMode
-        {
-            None,
-            StepInto,
-            StepOver,
-            StepOut
-        }
 
         public uint SimulationStep { get; protected set; }
 
@@ -32,16 +33,16 @@ namespace GoodAI.Core.Execution
 
         public bool InDebugMode { get; set; }
         // Specifies the block that the simulation should stop at.
-        protected IMyExecutable m_stopDebugAt;
-        protected DebugStepMode m_debugStepMode = DebugStepMode.None;
-        protected MyExecutionBlock m_stopWhenTouchedBlock;
+        public readonly ISet<IMyExecutable> Breakpoints = new HashSet<IMyExecutable>();
+        protected DebugStepMode DebugStepMode = DebugStepMode.None;
+        protected MyExecutionBlock StopWhenTouchedBlock;
 
         public delegate void DebugTargetEncounteredHandler(object sender, EventArgs args);
         public event DebugTargetEncounteredHandler DebugTargetReached;
 
         protected void EmitDebugTargetReached()
         {
-            m_debugStepMode = DebugStepMode.None;
+            DebugStepMode = DebugStepMode.None;
             if (DebugTargetReached != null)
                 DebugTargetReached(this, EventArgs.Empty);
         }
@@ -318,7 +319,7 @@ namespace GoodAI.Core.Execution
                     {
                         currentBlock.SimulationStep = SimulationStep;
                         currentBlock = currentBlock.ExecuteStep();
-                        if (m_stopWhenTouchedBlock != null && currentBlock == m_stopWhenTouchedBlock)
+                        if (StopWhenTouchedBlock != null && currentBlock == StopWhenTouchedBlock)
                             leavingTargetBlock = true;
                     }
                     while (currentBlock != null && currentBlock.CurrentChild == null);
@@ -336,21 +337,21 @@ namespace GoodAI.Core.Execution
 
                     CurrentDebuggedBlocks[coreNumber] = currentBlock;
 
-                    if (m_debugStepMode != DebugStepMode.None)
+                    if (DebugStepMode != DebugStepMode.None)
                     {
                         // A step into/over/out is performed.
                         if (leavingTargetBlock)
                             // The target block is being left or the sim step is over - step over/out is finished.
                             EmitDebugTargetReached();
 
-                        if (m_debugStepMode == DebugStepMode.StepInto)
+                        if (DebugStepMode == DebugStepMode.StepInto)
                         {
                             // Step into == one step of the simulation.
                             EmitDebugTargetReached();
                         }
                     }
 
-                    if (currentBlock == m_stopDebugAt || currentBlock.CurrentChild == m_stopDebugAt)
+                    if (Breakpoints.Contains(currentBlock.CurrentChild))
                         // A breakpoint has been reached.
                         EmitDebugTargetReached();
                 }
@@ -414,15 +415,15 @@ namespace GoodAI.Core.Execution
                 var currentChildBlock = currentBlock.CurrentChild as MyExecutionBlock;
                 if (currentChildBlock != null)
                 {
-                    m_stopWhenTouchedBlock = currentBlock;
-                    m_debugStepMode = DebugStepMode.StepOver;
+                    StopWhenTouchedBlock = currentBlock;
+                    DebugStepMode = DebugStepMode.StepOver;
                     return;
                 }
             }
 
             // If the current child is not a block, run for one step.
             // The sim will execute the task and move onto the next.
-            m_debugStepMode = DebugStepMode.StepInto;
+            DebugStepMode = DebugStepMode.StepInto;
         }
 
         public override void StepOut()
@@ -431,16 +432,16 @@ namespace GoodAI.Core.Execution
             if (currentBlock != null)
             {
                 // This is equivalent to calling StepOver on this node's parent node.
-                m_stopWhenTouchedBlock = currentBlock.Parent;
+                StopWhenTouchedBlock = currentBlock.Parent;
 
                 // Set this so that the loops knows it should stop when it hits the end of the plan.
-                m_debugStepMode = DebugStepMode.StepOut;
+                DebugStepMode = DebugStepMode.StepOut;
             }
         }
 
         public override void StepInto()
         {
-            m_debugStepMode = DebugStepMode.StepInto;
+            DebugStepMode = DebugStepMode.StepInto;
         }
 
         private MyExecutionBlock GetNextExecutable(MyExecutionBlock executionBlock)
