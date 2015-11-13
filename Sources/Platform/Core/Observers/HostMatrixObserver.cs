@@ -228,7 +228,7 @@ namespace GoodAI.Core.Observers
 
         private void DrawCellContent(Graphics graphics, double value, int drawX, int drawY)
         {
-            if (value >= 0)
+            if (value >= 100000)
             {
                 graphics.DrawString(string.Format("{0:E" + DecimalCount + "}", value), m_font, m_textBrush, drawX, drawY);
             }
@@ -272,7 +272,7 @@ namespace GoodAI.Core.Observers
             if (DecimalCount != 0)
                 charactersPerNumber += DecimalCount + 1; // The decimals plus the dot
 
-            int charactersPerLine = charactersPerNumber*m_columnCount - m_characterMargin;
+            int charactersPerLine = charactersPerNumber*XLength - m_characterMargin;
 
             // Only used for font size checking. The correct bitmap is constructed later.
             m_bitmap = new Bitmap(1, 1);
@@ -291,7 +291,7 @@ namespace GoodAI.Core.Observers
             m_cellHeight = fontHeight;
 
             TextureWidth = fontWidth*charactersPerLine + m_frameMarginPx;
-            TextureHeight = fontHeight*m_rowCount + m_frameMarginPx;
+            TextureHeight = fontHeight*YLength + m_frameMarginPx;
         }
 
         private static RectangleF MeasureDisplayStringWidth(Graphics graphics, string text, Font font)
@@ -312,15 +312,8 @@ namespace GoodAI.Core.Observers
         private void SetupDimensions()
         {
             m_nbValues = Target.Count;
-            if (m_columnCount > 0)
-            {
-                m_rowCount = (int) Math.Ceiling((float) (m_nbValues)/m_columnCount);
-                m_xStart = 0;
-                m_yStart = 0;
-                m_xLength = 0;
-                m_yLength = 0;
-            }
-            else
+
+            if (m_columnCount <= 0)
             {
                 if (Target.ColumnHint > 0)
                 {
@@ -333,6 +326,8 @@ namespace GoodAI.Core.Observers
                     m_rowCount = 1;
                 }
             }
+
+            m_rowCount = (int) Math.Ceiling((float) (m_nbValues)/m_columnCount);
 
             if (m_xLength == 0)
                 m_xLength = m_columnCount;
