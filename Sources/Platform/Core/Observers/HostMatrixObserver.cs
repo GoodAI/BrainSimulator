@@ -47,7 +47,7 @@ namespace GoodAI.Core.Observers
 
         [YAXSerializableField(DefaultValue = 0)] protected int m_xStart = 0;
 
-        [MyBrowsable, Category("Crop"), Description("Starting column")]
+        [MyBrowsable, Category("Crop"), Description("Starting column"), DisplayName("\tXStart")]
         public int XStart
         {
             get { return m_xStart; }
@@ -89,7 +89,7 @@ namespace GoodAI.Core.Observers
 
         [YAXSerializableField(DefaultValue = 0)] protected int m_yStart = 0;
 
-        [MyBrowsable, Category("Crop"), Description("Starting column")]
+        [MyBrowsable, Category("Crop"), Description("Starting column"), DisplayName("\tYStart")]
         public int YStart
         {
             get { return m_yStart; }
