@@ -169,17 +169,27 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void profilerTimeValue_DrawText(object sender, DrawEventArgs e)
         {
-            var parentTreeNode = e.Node.Parent.Tag as MyDebugNode;
-            if (parentTreeNode != null)
+            var parentTreeNode = e.Node.Parent;
+            var parentDebugNode = parentTreeNode.Tag as MyDebugNode;
+            if (parentDebugNode != null)
             {
-                var parentBlock = parentTreeNode.Executable as MyExecutionBlock;
+                var parentBlock = parentDebugNode.Executable as MyExecutionBlock;
                 if (parentBlock != null)
                 {
-                    var treeNode = e.Node.Tag as MyDebugNode;
+                    var debugNode = e.Node.Tag as MyDebugNode;
                     TimeSpan profilingTime;
-                    if (parentBlock.ProfilingInfo.TryGetValue(treeNode.Executable, out profilingTime))
+                    if (parentBlock.ProfilingInfo.TryGetValue(debugNode.Executable, out profilingTime))
                     {
-                        treeNode.ProfilerTime = profilingTime;
+                        debugNode.ProfilerTime = profilingTime;
+                    }
+
+                    TreeNodeAdv selectedTreeNode = GetSelectedTreeNode();
+                    if (selectedTreeNode == null)
+                        return;
+
+                    if (parentTreeNode == selectedTreeNode)
+                    {
+                        e.BackgroundBrush = new SolidBrush(debugNode.BackgroundColor);
                     }
                 }
             }
@@ -263,12 +273,40 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void debugTreeView_SelectionChanged(object sender, EventArgs e)
         {
-            if (MyExecutionBlock.IsProfiling)
-            {
-                var selectedNode = debugTreeView.SelectedNode;
+            // Color the value according to profiling times.
+            if (!MyExecutionBlock.IsProfiling)
+                return;
 
+            TreeNodeAdv selectedTreeNode = GetSelectedTreeNode();
+            if (selectedTreeNode == null)
+                return;
+
+            // Calculate total time of the individual components.
+            double totalTime = selectedTreeNode.Children
+                .Select(child => child.Tag as MyDebugNode)
+                .Where(childDebugNode => childDebugNode != null && childDebugNode.ProfilerTime != null)
+                .Sum(childDebugNode => childDebugNode.ProfilerTime.Value.TotalMilliseconds);
+
+            // Calculate the colors of the children nodes.
+            foreach (MyDebugNode debugNodeChild in selectedTreeNode.Children
+                .Select(child => child.Tag as MyDebugNode)
+                .Where(debugNode => debugNode != null && debugNode.ProfilerTime != null))
+            {
+                var saturation = (int) (255 * debugNodeChild.ProfilerTime.Value.TotalMilliseconds/totalTime);
+                // ~ 1% filter.
+                if (saturation > 3)
+                    debugNodeChild.BackgroundColor = Color.FromArgb(saturation, 255, 0, 0);
             }
-        }        
+        }
+
+        private TreeNodeAdv GetSelectedTreeNode()
+        {
+            TreeNodeAdv selectedTreeNode = debugTreeView.SelectedNode;
+
+            if (selectedTreeNode == null)
+                selectedTreeNode = debugTreeView.AllNodes.FirstOrDefault(node => node.ToString().StartsWith("Simulation"));
+            return selectedTreeNode;
+        }
     }
 
     public class MyDebugNode : Node, IDisposable
@@ -318,10 +356,14 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        public Color BackgroundColor { get; set; }
+
         public IMyExecutable Executable { get; private set; }
 
         public MyDebugNode(IMyExecutable executable): base(executable.Name)
         {
+            BackgroundColor = Color.White;
+
             Executable = executable;
 
             if (Executable is MyIncomingSignalTask)
