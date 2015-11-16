@@ -85,7 +85,7 @@
             this.debugTreeView.RowHeight = 19;
             this.debugTreeView.SelectedNode = null;
             this.debugTreeView.ShowNodeToolTips = true;
-            this.debugTreeView.Size = new System.Drawing.Size(623, 820);
+            this.debugTreeView.Size = new System.Drawing.Size(648, 820);
             this.debugTreeView.TabIndex = 2;
             this.debugTreeView.Text = "Scheduled Tasks";
             this.debugTreeView.UseColumns = true;
@@ -123,6 +123,7 @@
             this.profilerTime.Header = "Profiling Time";
             this.profilerTime.SortOrder = System.Windows.Forms.SortOrder.None;
             this.profilerTime.TooltipText = "";
+            this.profilerTime.Width = 70;
             // 
             // checkEnabled
             // 
@@ -187,7 +188,7 @@
             this.noDebugLabel});
             this.toolStrip.Location = new System.Drawing.Point(3, 3);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(623, 25);
+            this.toolStrip.Size = new System.Drawing.Size(648, 25);
             this.toolStrip.TabIndex = 3;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -309,7 +310,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(629, 851);
+            this.ClientSize = new System.Drawing.Size(654, 851);
             this.Controls.Add(this.debugTreeView);
             this.Controls.Add(this.toolStrip);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
