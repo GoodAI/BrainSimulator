@@ -705,5 +705,10 @@ namespace GoodAI.BrainSimulator.Forms
         {
             return unchecked((short)(((uint)GetIntUnchecked(value)) >> 16));
         }
+
+        private void profileToolButton_CheckedChanged(object sender, EventArgs e)
+        {
+            MyExecutionBlock.IsProfiling = profileToolButton.Checked;
+        }
     }
 }

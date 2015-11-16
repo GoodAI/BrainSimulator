@@ -89,6 +89,8 @@
             this.pauseToolButton = new System.Windows.Forms.ToolStripButton();
             this.stepOverToolButton = new System.Windows.Forms.ToolStripButton();
             this.debugToolButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.profileToolButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.timerToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
             this.observerTimerToolButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -447,6 +449,8 @@
             this.pauseToolButton,
             this.stepOverToolButton,
             this.debugToolButton,
+            this.toolStripSeparator10,
+            this.profileToolButton,
             this.toolStripSeparator7,
             this.timerToolStripSplitButton,
             this.observerTimerToolButton,
@@ -563,6 +567,21 @@
             this.debugToolButton.Size = new System.Drawing.Size(23, 20);
             this.debugToolButton.Text = "Debug Simulation";
             this.debugToolButton.Click += new System.EventHandler(this.debugToolButton_Click);
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 23);
+            // 
+            // profileToolButton
+            // 
+            this.profileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.profileToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Information_16xLG_color;
+            this.profileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.profileToolButton.Name = "profileToolButton";
+            this.profileToolButton.Size = new System.Drawing.Size(23, 20);
+            this.profileToolButton.Text = "toolStripButton1";
+            this.profileToolButton.CheckedChanged += new System.EventHandler(this.profileToolButton_CheckedChanged);
             // 
             // toolStripSeparator7
             // 
@@ -917,6 +936,8 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setGlobalDataFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearGlobalDataFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripButton profileToolButton;
     }
 }
 
