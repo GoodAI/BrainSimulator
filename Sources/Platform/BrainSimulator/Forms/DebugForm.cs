@@ -114,24 +114,30 @@ namespace GoodAI.BrainSimulator.Forms
             stepOverButton.Enabled = simulationHandler.CanStepOver;
             pauseToolButton.Enabled = simulationHandler.CanPause;
 
-            if (e.NewState == MySimulationHandler.SimulationState.PAUSED && simulationHandler.Simulation.InDebugMode)
+            if (e.NewState == MySimulationHandler.SimulationState.RUNNING)
             {
-                noDebugLabel.Visible = false;
-                toolStrip.Enabled = true;                                               
-
                 if (m_executionPlan == null)
-                {
                     UpdateDebugListView();
+            }
+            else if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
+            {
+                if (m_executionPlan == null)
+                    UpdateDebugListView();
+
+                if (simulationHandler.Simulation.InDebugMode)
+                {
+                    toolStrip.Enabled = true;                                               
+                    noDebugLabel.Visible = false;
+
+                    MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
+                    m_selectedNodeView = null;
+
+                    if (currentBlock != null && currentBlock.CurrentChild != null)
+                    {                
+                        m_selectedNodeView = debugTreeView.AllNodes.FirstOrDefault(node => (node.Tag is MyDebugNode && (node.Tag as MyDebugNode).Executable == currentBlock.CurrentChild));
+                        
+                    };
                 }
-
-                MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
-                m_selectedNodeView = null;
-
-                if (currentBlock != null && currentBlock.CurrentChild != null)
-                {                
-                    m_selectedNodeView = debugTreeView.AllNodes.FirstOrDefault(node => (node.Tag is MyDebugNode && (node.Tag as MyDebugNode).Executable == currentBlock.CurrentChild));
-                    
-                };
 
                 debugTreeView.Invalidate();                
                 //debugTreeView.Invoke((MethodInvoker)(() => debugTreeView.SelectedNode = m_selectedNodeView));
@@ -253,6 +259,15 @@ namespace GoodAI.BrainSimulator.Forms
         private void stepOutButton_Click(object sender, EventArgs e)
         {
             m_mainForm.stepOutToolStripMenuItem.PerformClick();
+        }
+
+        private void debugTreeView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (MyExecutionBlock.IsProfiling)
+            {
+                var selectedNode = debugTreeView.SelectedNode;
+
+            }
         }        
     }
 

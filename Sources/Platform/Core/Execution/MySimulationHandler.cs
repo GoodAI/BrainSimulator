@@ -205,7 +205,7 @@ namespace GoodAI.Core.Execution
             m_lastProgressChangedStep = 0;
 
             // Clean up breakpoints.
-            Simulation.CleanBreakpoints();
+            Simulation.CleanTemporaryBlockData();
 
             MyKernelFactory.Instance.SetCurrent(MyKernelFactory.Instance.DevCount - 1);
 

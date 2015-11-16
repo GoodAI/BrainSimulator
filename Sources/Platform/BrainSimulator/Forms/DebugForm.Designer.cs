@@ -89,6 +89,7 @@
             this.debugTreeView.TabIndex = 2;
             this.debugTreeView.Text = "Scheduled Tasks";
             this.debugTreeView.UseColumns = true;
+            this.debugTreeView.SelectionChanged += new System.EventHandler(this.debugTreeView_SelectionChanged);
             // 
             // taskName
             // 

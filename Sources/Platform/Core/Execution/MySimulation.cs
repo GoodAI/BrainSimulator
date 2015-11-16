@@ -144,13 +144,35 @@ namespace GoodAI.Core.Execution
             });
         }
 
-        public void CleanBreakpoints()
+        public void CleanTemporaryBlockData()
+        {
+            CleanBreakpoints();
+            CleanProfilingTimes();
+        }
+
+        private void CleanBreakpoints()
         {
             var orphanedExecutables = new HashSet<IMyExecutable>(Breakpoints);
             ExecutionPlan[0].StandardStepPlan.Iterate(true, executable => orphanedExecutables.Remove(executable));
 
             foreach (var executable in orphanedExecutables)
                 Breakpoints.Remove(executable);
+        }
+
+        private void CleanProfilingTimes()
+        {
+            CleanExecutionBlockProfilingTimes(ExecutionPlan[0].InitStepPlan);
+            CleanExecutionBlockProfilingTimes(ExecutionPlan[0].StandardStepPlan);
+        }
+
+        private void CleanExecutionBlockProfilingTimes(MyExecutionBlock plan)
+        {
+            plan.Iterate(true, executable =>
+            {
+                var executableBlock = executable as MyExecutionBlock;
+                if (executableBlock != null)
+                    executableBlock.CleanProfilingTimes();
+            });
         }
     }
 

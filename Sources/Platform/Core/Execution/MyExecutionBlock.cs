@@ -90,6 +90,10 @@ namespace GoodAI.Core.Execution
                 {
                     childList.Reset();
 
+                    // Profiling an inner block.
+                    if (IsProfiling)
+                        m_profilingStopwatch.Restart();
+
                     return childList;
                 }
                 else
@@ -109,8 +113,23 @@ namespace GoodAI.Core.Execution
             }
             else
             {
+                // Control goes back to parent, en its measurement of this block.
+                if (IsProfiling && Parent != null)
+                    Parent.EndChildBlockMeasuring(this);
+
                 return Parent;
             }
+        }
+
+        private void EndChildBlockMeasuring(MyExecutionBlock childBlock)
+        {
+            m_profilingStopwatch.Stop();
+            ProfilingInfo[childBlock] = m_profilingStopwatch.Elapsed;
+        }
+
+        public void CleanProfilingTimes()
+        {
+            
         }
 
         /// Go back to first element of MyExecutionBlock
