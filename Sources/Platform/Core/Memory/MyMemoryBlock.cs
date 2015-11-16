@@ -11,7 +11,7 @@ namespace GoodAI.Core.Memory
 {
     public abstract class MyAbstractMemoryBlock
     {            
-        public int Count { get; set; }        
+        public abstract int Count { get; set; }
         public string Name { get; set; }
 
         //TODO: Find if MyWorkingNode is possible here
@@ -54,6 +54,17 @@ namespace GoodAI.Core.Memory
         protected virtual CudaDeviceVariable<T>[] Device { get; set; }
         public T[] Host { get; protected set; }
 
+        public override int Count
+        {
+            get { return m_count; }
+            set
+            {
+                m_count = value;
+                Dims.Size = m_count;
+            }
+        }
+        private int m_count = 0;
+
         public bool OnDevice
         {
             get
@@ -72,11 +83,11 @@ namespace GoodAI.Core.Memory
 
         public MyMemoryBlock()
         {
-            Count = 0;
+            Dims = new TensorDimensions();
+
             ColumnHint = 1;
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;
-            Dims = new TensorDimensions();
         }
 
         public override void AllocateHost()

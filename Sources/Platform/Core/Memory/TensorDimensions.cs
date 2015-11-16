@@ -15,6 +15,8 @@ namespace GoodAI.Core.Memory
         [YAXCollection(YAXCollectionSerializationTypes.Recursive, EachElementName = "Dim")]
         private List<int> m_customDimensions = new List<int>();
 
+        private int m_computedDimension = -1;
+
         public TensorDimensions()
         {
             IsCustom = false;
@@ -22,9 +24,18 @@ namespace GoodAI.Core.Memory
 
         public readonly int MaxDimensions = 10;
 
-        public int Size { get; private set; }
+        public int Size
+        {
+            get { return m_size; }
+            set
+            {
+                m_size = value;
+                UpdateComputedDimension();
+            }
+        }
+        private int m_size;
 
-        // an indexer
+        // TODO: an indexer?
         
         public int Count
         {
@@ -34,6 +45,36 @@ namespace GoodAI.Core.Memory
         internal override void ApplyAttribute(MyAbstractMemoryBlock memoryBlock)
         {
             memoryBlock.Dims = this;
+        }
+
+        public override string ToString()
+        {
+            return PrintSource();
+        }
+
+        public string PrintSource()
+        {
+            return string.Join(", ", m_customDimensions.Select(item =>
+                (item == -1) ? "_" : item.ToString()
+                ));
+        }
+
+        public string PrintResult()
+        {
+            return string.Join("×", m_customDimensions.Select(item =>
+                {
+                    if (item == -1)
+                    {
+                        return "(" + ((m_computedDimension == -1)
+                                ? "?"
+                                : m_computedDimension.ToString())
+                            + ")";
+                    }
+                    else
+                    {
+                        return item.ToString();
+                    }
+                }));
         }
 
         public void Set(IEnumerable<int> customDimenstions)
@@ -99,11 +140,39 @@ namespace GoodAI.Core.Memory
                 newDimensions.Insert(0, -1);
 
             m_customDimensions = newDimensions;
+
+            UpdateComputedDimension();
         }
 
-        public override string ToString()  // TODO: remove
+        private void UpdateComputedDimension()
         {
-            return string.Join(", ",  m_customDimensions);
+            m_computedDimension = ComputeDimension(m_size);
+        }
+
+        private int ComputeDimension(int size)
+        {
+            if (size == 0)
+                return -1;  // don't return dimension size 0
+
+            if (m_customDimensions.Count == 0)
+                return size;
+
+            int product = 1;
+            m_customDimensions.ForEach(item =>
+                {
+                    if (item != -1)
+                        product *= item;
+                });
+
+            if (product < 1)
+                return -1;
+
+            var computedDimension = size / product;
+
+            if (computedDimension * product != size)  // unable to compute integer division
+                return -1;
+
+            return computedDimension;
         }
     }
 }

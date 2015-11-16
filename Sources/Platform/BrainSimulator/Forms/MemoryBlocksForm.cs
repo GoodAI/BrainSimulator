@@ -167,7 +167,7 @@ namespace GoodAI.BrainSimulator.Forms
             var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
             if (block != null)
             {
-                dimensionsTextBox.Text = block.Dims.ToString();
+                dimensionsTextBox.Text = block.Dims.PrintResult();
             }
         }
 
@@ -221,12 +221,17 @@ namespace GoodAI.BrainSimulator.Forms
             // TODO(P): remove?
         }
 
-        private void SetMemBlockDimensions()
+        private MyAbstractMemoryBlock TryGetSelectedMemoryBlock()
         {
             if (listView.SelectedItems.Count <= 0)
-                return;
+                return null;
 
-            var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+            return listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+        }
+
+        private void SetMemBlockDimensions()
+        {
+            var block = TryGetSelectedMemoryBlock();
             if (block == null)
                 return;
 
@@ -247,6 +252,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (!m_escapePressed)
                 SetMemBlockDimensions();
+
+            ShowCurrentBlockDimensions();
         }
 
         private void dimensionsTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -268,7 +275,15 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             listView.Focus();
-            ShowCurrentBlockDimensions();
+        }
+
+        private void dimensionsTextBox_Enter(object sender, EventArgs e)
+        {
+            var block = TryGetSelectedMemoryBlock();
+            if (block == null)
+                return;
+
+            dimensionsTextBox.Text = block.Dims.PrintSource();
         }
     }
 }

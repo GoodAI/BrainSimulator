@@ -240,6 +240,7 @@
             this.dimensionsTextBox.Name = "dimensionsTextBox";
             this.dimensionsTextBox.Size = new System.Drawing.Size(212, 20);
             this.dimensionsTextBox.TabIndex = 1;
+            this.dimensionsTextBox.Enter += new System.EventHandler(this.dimensionsTextBox_Enter);
             this.dimensionsTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dimensionsTextBox_KeyPress);
             this.dimensionsTextBox.Leave += new System.EventHandler(this.dimensionsTextBox_Leave);
             // 
