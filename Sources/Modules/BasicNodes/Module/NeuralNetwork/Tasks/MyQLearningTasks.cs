@@ -49,152 +49,42 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 Owner.Output.FillAll(0);
             }
 
-
-            Owner.Action.SafeCopyToHost();
-            Owner.PreviousAction.SafeCopyToHost();
-
-
-           // SHOULD NOT BE HERE, because Owner.Action is the action vector computed in this step, not the previous one... Owner.PreviousAction.CopyFromMemoryBlock(Owner.Action, 0, 0, Owner.Neurons);
-            Owner.PreviousReward.CopyFromMemoryBlock(Owner.Reward, 0, 0, 1);
-            Owner.PreviousAction.SafeCopyToHost(); // manipulate at host
-            Owner.PreviousReward.SafeCopyToHost(); // manipulate at host
-
-
-            // backup outputs in host memory and find the best possible value
+            Owner.ParentNetwork.FirstTopologicalLayer.Input.CopyToMemoryBlock(Owner.TempInput, 0, 0, Owner.ParentNetwork.FirstTopologicalLayer.Input.Count);
             Owner.Output.SafeCopyToHost();
+            Owner.Action.SafeCopyToHost();
+            Owner.Reward.SafeCopyToHost();
+            Owner.Target.SafeCopyToHost();
+            Owner.PreviousOutput.SafeCopyToHost();
 
+            float reward = Owner.Reward.Host[0];
+            float gamma = DiscountFactor;
 
-            float maxValue = Owner.Output.Host.Max();
-
-            // copying reward to host must take place here - before network inputs backup happens - it would produce problems if in opposite order and net input and Reward being the same memblock
-           // Owner.Reward.SafeCopyToHost();  //PD
-            // backup network inputs in host memory
-            Owner.ParentNetwork.FirstTopologicalLayer.Input.SafeCopyToHost();
-
-            // do a forward pass with the previous inputs
-            Owner.ParentNetwork.FirstTopologicalLayer.Input.CopyFromMemoryBlock(Owner.PreviousInput, 0, 0, Owner.PreviousInput.Count);
-            Owner.ParentNetwork.FeedForward();
-
-            // set the target: q(s(t-1), a) -> reward(t-1) + q(s(t), maxarg(a)) * discountfactor // TODO: consider reward(t-1) vs reward(t) :: reward(t-1) is correct, but reward(t) works better with our implementation of breakout
-            Owner.Target.CopyFromMemoryBlock(Owner.Output, 0, 0, Owner.Neurons);
-            Owner.Target.SafeCopyToHost(); // manipulate at host
-            
-            //find action which was chosen in previous step
-            int chosenAction = 0;
-            float maxReward = float.MinValue;
-            for (int a = 0; a < Owner.Neurons; a++)
+            for (int i = 0; i < Owner.Output.Count; ++i)
             {
-                if (Owner.PreviousAction.Host[a] > maxReward)
+                float target;
+                if (Owner.Action.Host[i] > 0.5)
+                    target = reward + gamma * Owner.Output.Host.Max();
+                else
+                    target = Owner.PreviousOutput.Host[i];
+
+                if (BindTarget)
                 {
-                    chosenAction = a;
-                    maxReward = Owner.PreviousAction.Host[a];
+                    if (target > BindUpper)
+                        target = BindUpper;
+                    else if (target < BindLower)
+                        target = BindLower;
                 }
-                
+
+                Owner.Target.Host[i] = target;
             }
+            Owner.Target.SafeCopyToDevice();
 
-            //float normalize = 0;
-            //for (int a = 0; a < Owner.Neurons; a++)
-            //    normalize += Owner.PreviousAction.Host[a];
-            //if (normalize > 0)
-            //{
-            //    for (int a = 0; a < Owner.Neurons; a++)
-            //        Owner.PreviousAction.Host[a] /= normalize;
-            //}
-            //else
-            //{
-            //    for (int a = 0; a < Owner.Neurons; a++)
-            //        Owner.PreviousAction.Host[a] = 1.0f / Owner.Neurons;
-            //}
-
-                                          //prev reward + discount factor * expected reward
-            float target = (Owner.PreviousReward.Host[0] + DiscountFactor * maxValue);  
-            if (BindTarget)
-            {
-                if (target > BindUpper)
-                    target = BindUpper;
-                else if (target < BindLower)
-                    target = BindLower;
-            }
-            Owner.Target.Host[chosenAction] = target;
-
-            
-
-            //for (int a = 0; a < Owner.Neurons; a++)
-            //{
-            //    float target;
-            //    //float target = Owner.PreviousAction.Host[a] * (value * DiscountFactor) + (1 - Owner.PreviousAction.Host[a]) * Owner.Target.Host[a];
-            //    target = Owner.PreviousAction.Host[a] * (Owner.Reward.Host[0] + maxValue * DiscountFactor) + (1 - Owner.PreviousAction.Host[a]) * Owner.Target.Host[a];
-            //    MyLog.DEBUG.WriteLine("target: " + target);
-
-            //    //  target = (Owner.Reward.Host[0] + maxValue * DiscountFactor) + alpha * Owner.Target.Host[a];
-
-            //    if (BindTarget)
-            //    {
-            //        if (target > BindUpper)
-            //            target = BindUpper;
-            //        else if (target < BindLower)
-            //            target = BindLower;
-            //    }
-            //    Owner.Target.Host[a] = target;
-            //}
-
-            Owner.Target.SafeCopyToDevice(); // back to device
-
-            // copy reward to previous value
-           // Owner.PreviousReward.CopyFromMemoryBlock(Owner.Reward, 0, 0, 1);
-
-            // copy action to previous value
-            Owner.PreviousAction.CopyFromMemoryBlock(Owner.Action, 0, 0, Owner.Neurons);
-
-           // Owner.ParentNetwork.DecrementTimeStep.Execute();
-
-            Owner.ParentNetwork.GetError();
-
-            //((MyAbstractLayer)Owner.ParentNetwork).DeltaBackTask.Execute();
+            Owner.Output.CopyToMemoryBlock(Owner.PreviousOutput, 0, 0, Owner.Output.Count);
 
 
-            Owner.DeltaBackTask.Execute();
-            Owner.UpdateWeights.Execute();
-            MyAbstractLayer layer = Owner;
-            while (layer.PreviousTopologicalLayer != null)
-            {
-                layer = layer.PreviousTopologicalLayer as MyAbstractLayer;
-                layer.DeltaBackTask.Execute();
-                ((MyHiddenLayer)layer).UpdateWeights.Execute();
-            }
-
-         //   Owner.ParentNetwork.IncrementTimeStep.Execute();
-
-            
-
-
-
-           // ((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer).DeltaBackTask.Execute();
-
-          //  Owner.ParentNetwork.IncrementTimeStep.Execute();
-            
-
-           // Owner.ParentNetwork.GetActiveBackpropTask().Execute(Owner);
-           // ((MyRMSTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer);
-          //  ((MySGDTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((MyAbstractWeightLayer)Owner.ParentNetwork.FirstTopologicalLayer);
-         //    ((MyRMSTask)Owner.ParentNetwork.GetActiveBackpropTask()).Execute((GoodAI.Modules.LSTM.MyLSTMLayer)Owner.ParentNetwork.FirstTopologicalLayer);
-
-          // ((GoodAI.Modules.LSTM.MyLSTMLayer)Owner.ParentNetwork.FirstTopologicalLayer).
-            //GoodAI.Modules.LSTM.Tasks.MyLSTMPartialDerivativesTask t;
-            //t.Execute();
-
-         //   Owner.ParentNetwork.GetActiveBackpropTask().Execute(Owner.ParentNetwork.FirstTopologicalLayer);
-          //  ((GoodAI.Modules.LSTM.MyLSTMLayer)Owner.ParentNetwork.FirstTopologicalLayer)
-          //      MyLSTMUpdateWeightsTask().
-
-
-            // restore output values from host
-            Owner.Output.SafeCopyToDevice();
-
-            // restore input values from host
-            Owner.ParentNetwork.FirstTopologicalLayer.Input.SafeCopyToDevice();
-            Owner.PreviousInput.CopyFromMemoryBlock(Owner.ParentNetwork.FirstTopologicalLayer.Input, 0, 0, Owner.PreviousInput.Count);
-
+            Owner.PreviousInput.CopyToMemoryBlock(Owner.ParentNetwork.FirstTopologicalLayer.Input, 0, 0, Owner.PreviousInput.Count);
+            Owner.TempInput.CopyToMemoryBlock(Owner.PreviousInput, 0, 0, Owner.TempInput.Count);
+            Owner.ParentNetwork.FeedForward();
         }
     }
 }
