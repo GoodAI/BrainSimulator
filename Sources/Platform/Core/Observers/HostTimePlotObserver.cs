@@ -463,6 +463,9 @@ namespace GoodAI.Core.Observers
                 }
                 else
                     m_boundMax = Target.MaxValueHint;
+
+                m_plotCurrentValueMin = m_boundMin;
+                m_plotCurrentValueMax = m_boundMax;
             }
 
             if (!m_manualBoundHaveBeenSet)
