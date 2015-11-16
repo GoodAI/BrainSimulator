@@ -33,6 +33,18 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        public IMyExecutable NextChild
+        {
+            get
+            {
+                int nextIndex = m_childIterator + 1;
+                if (nextIndex < m_children.Length)
+                    return m_children[nextIndex];
+
+                return null;
+            }
+        }
+
         /// All children elements
         public IMyExecutable[] Children
         {
@@ -64,9 +76,9 @@ namespace GoodAI.Core.Execution
                 IMyExecutable currentChild = m_children[m_childIterator];
                 m_childIterator++;
 
-                if (currentChild is MyExecutionBlock)
+                var childList = currentChild as MyExecutionBlock;
+                if (childList != null)
                 {
-                    MyExecutionBlock childList = currentChild as MyExecutionBlock;
                     childList.Reset();
 
                     return childList;

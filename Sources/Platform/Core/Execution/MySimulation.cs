@@ -10,8 +10,17 @@ using GoodAI.Platform.Core.Utils;
 
 namespace GoodAI.Core.Execution
 {
+    public enum DebugStepMode
+    {
+        None,
+        StepInto,
+        StepOver,
+        StepOut
+    }
+
     public abstract class MySimulation
     {
+
         public uint SimulationStep { get; protected set; }
 
         public bool LoadAllNodesData { get; set; }
@@ -23,22 +32,29 @@ namespace GoodAI.Core.Execution
         public string GlobalDataFolder { get; set; }
 
         public bool InDebugMode { get; set; }
-        public ExecutionStepMode DebugStepMode { get; set; }
+        // Specifies the block that the simulation should stop at.
+        public readonly ISet<IMyExecutable> Breakpoints = new HashSet<IMyExecutable>();
+        protected DebugStepMode DebugStepMode = DebugStepMode.None;
+        protected MyExecutionBlock StopWhenTouchedBlock;
+
+        public delegate void DebugTargetEncounteredHandler(object sender, EventArgs args);
+        public event DebugTargetEncounteredHandler DebugTargetReached;
+
+        protected void EmitDebugTargetReached()
+        {
+            DebugStepMode = DebugStepMode.None;
+            if (DebugTargetReached != null)
+                DebugTargetReached(this, EventArgs.Empty);
+        }
 
         public MyExecutionBlock[] CurrentDebuggedBlocks { get; internal set; }
-
-        public enum ExecutionStepMode
-        {
-            STEP_OVER,
-            STEP_INTO,
-            STEP_OUT
-        }
 
         public IMyExecutionPlanner ExecutionPlanner { get; set; }
         public IMyPartitionStrategy PartitioningStrategy { get; set; }
 
         public MyExecutionPlan[] ExecutionPlan { get; protected set; }
         public List<MyWorkingNode>[] NodePartitioning { get; protected set; }
+
 
         protected bool m_errorOccured;
         protected Exception m_lastException;
@@ -71,6 +87,10 @@ namespace GoodAI.Core.Execution
         public abstract void AllocateMemory();
         public abstract void PerformStep(bool stepByStepRun);
         public abstract void FreeMemory();
+
+        public abstract void StepOver();
+        public abstract void StepInto();
+        public abstract void StepOut();
 
         public virtual void Clear()
         {
@@ -123,12 +143,22 @@ namespace GoodAI.Core.Execution
                 NodePartitioning[i] = new List<MyWorkingNode>(indexTable[i]);
             });
         }
+
+        public void CleanBreakpoints()
+        {
+            var orphanedExecutables = new HashSet<IMyExecutable>(Breakpoints);
+            ExecutionPlan[0].StandardStepPlan.Iterate(true, executable => orphanedExecutables.Remove(executable));
+
+            foreach (var executable in orphanedExecutables)
+                Breakpoints.Remove(executable);
+        }
     }
 
     public class MyLocalSimulation : MySimulation
     {
         private MyThreadPool m_threadPool;
         protected bool m_debugStepComplete;
+
 
         public MyLocalSimulation()
         {
@@ -292,13 +322,14 @@ namespace GoodAI.Core.Execution
                         m_debugStepComplete = false;
                     }
 
-                    MyExecutionBlock lastBlock = null;
+                    bool leavingTargetBlock = false;
 
                     do
                     {
-                        lastBlock = currentBlock;
                         currentBlock.SimulationStep = SimulationStep;
                         currentBlock = currentBlock.ExecuteStep();
+                        if (StopWhenTouchedBlock != null && currentBlock == StopWhenTouchedBlock)
+                            leavingTargetBlock = true;
                     }
                     while (currentBlock != null && currentBlock.CurrentChild == null);
 
@@ -306,14 +337,32 @@ namespace GoodAI.Core.Execution
                     {
                         ExecutionPlan[coreNumber].StandardStepPlan.Reset();
                         currentBlock = ExecutionPlan[coreNumber].StandardStepPlan;
+                        leavingTargetBlock = true;
                     }
                     else
                     {
                         m_debugStepComplete = false;
                     }
 
-
                     CurrentDebuggedBlocks[coreNumber] = currentBlock;
+
+                    if (DebugStepMode != DebugStepMode.None)
+                    {
+                        // A step into/over/out is performed.
+                        if (leavingTargetBlock)
+                            // The target block is being left or the sim step is over - step over/out is finished.
+                            EmitDebugTargetReached();
+
+                        if (DebugStepMode == DebugStepMode.StepInto)
+                        {
+                            // Step into == one step of the simulation.
+                            EmitDebugTargetReached();
+                        }
+                    }
+
+                    if (Breakpoints.Contains(currentBlock.CurrentChild))
+                        // A breakpoint has been reached.
+                        EmitDebugTargetReached();
                 }
                 else //not in debug mode
                 {
@@ -362,6 +411,58 @@ namespace GoodAI.Core.Execution
                     node.Cleanup();
                 }
             });
+        }
+
+        public override void StepOver()
+        {
+            // HonzaS: Using 0 because the plan will be unified with StarPU anyway.
+            MyExecutionBlock currentBlock = CurrentDebuggedBlocks[0];
+            if (currentBlock != null)
+            {
+                // If the current child is a block, pause the simulation when it's next sibling is requested.
+                // That happens by visiting this node again.
+                var currentChildBlock = currentBlock.CurrentChild as MyExecutionBlock;
+                if (currentChildBlock != null)
+                {
+                    StopWhenTouchedBlock = currentBlock;
+                    DebugStepMode = DebugStepMode.StepOver;
+                    return;
+                }
+            }
+
+            // If the current child is not a block, run for one step.
+            // The sim will execute the task and move onto the next.
+            DebugStepMode = DebugStepMode.StepInto;
+        }
+
+        public override void StepOut()
+        {
+            MyExecutionBlock currentBlock = CurrentDebuggedBlocks[0];
+            if (currentBlock != null)
+            {
+                // This is equivalent to calling StepOver on this node's parent node.
+                StopWhenTouchedBlock = currentBlock.Parent;
+
+                // Set this so that the loops knows it should stop when it hits the end of the plan.
+                DebugStepMode = DebugStepMode.StepOut;
+            }
+        }
+
+        public override void StepInto()
+        {
+            DebugStepMode = DebugStepMode.StepInto;
+        }
+
+        private MyExecutionBlock GetNextExecutable(MyExecutionBlock executionBlock)
+        {
+            if (executionBlock.NextChild != null)
+                return executionBlock;
+
+            if (executionBlock.Parent != null)
+                return GetNextExecutable(executionBlock.Parent);
+
+            // This is the root and it doesn't have a "next" node.
+            return null;
         }
 
         protected override void DoFinish()

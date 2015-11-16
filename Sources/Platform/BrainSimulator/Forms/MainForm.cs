@@ -5,11 +5,13 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using GoodAI.Core.Task;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -22,6 +24,17 @@ namespace GoodAI.BrainSimulator.Forms
 
         private MruStripMenuInline m_recentMenu;
         private bool m_isClosing = false;
+
+        public ISet<IMyExecutable> Breakpoints
+        {
+            get
+            {
+                if (SimulationHandler != null && SimulationHandler.Simulation != null)
+                    return SimulationHandler.Simulation.Breakpoints;
+
+                return null;
+            }
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -267,11 +280,10 @@ namespace GoodAI.BrainSimulator.Forms
             StartSimulation();            
         }
 
-        private void stepOverToolButton_Click(object sender, EventArgs e)
+        private void SetupDebugViews()
         {
             ShowHideAllObservers(forceShow: true);
             ConsoleView.Activate();
-            StartSimulationStep();
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)
@@ -574,14 +586,38 @@ namespace GoodAI.BrainSimulator.Forms
             OpenFloatingOrActivate(DebugView);        
         }
 
+        private void stepOverToolButton_Click(object sender, EventArgs e)
+        {
+            SetupDebugViews();
+
+            SimulationHandler.Simulation.StepOver();
+            if (SimulationHandler.Simulation.InDebugMode)
+            {
+                // In debug mode, the simulation always runs - it is stopped internally by what is set in StepOver
+                // and similar methods.
+                StartSimulation();
+            }
+            else
+            {
+                StartSimulationStep();
+            }
+
+        }
+
         private void stepIntoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartSimulationStep();
+            SetupDebugViews();
+
+            SimulationHandler.Simulation.StepInto();
+            StartSimulation();
         }
 
         private void stepOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartSimulationStep();
+            SetupDebugViews();
+
+            SimulationHandler.Simulation.StepOut();
+            StartSimulation();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

@@ -43,6 +43,8 @@ namespace GoodAI.Core.Execution
                     StateChanged -= m_simulation.OnStateChanged;
                 }
                 m_simulation = value;
+
+                m_simulation.DebugTargetReached += OnDebugTargetReached;
                 StateChanged += m_simulation.OnStateChanged;
             }
         }
@@ -202,6 +204,9 @@ namespace GoodAI.Core.Execution
             m_stepsToPerform = stepCount;
             m_lastProgressChangedStep = 0;
 
+            // Clean up breakpoints.
+            Simulation.CleanBreakpoints();
+
             MyKernelFactory.Instance.SetCurrent(MyKernelFactory.Instance.DevCount - 1);
 
             m_workedCompleted.Reset();
@@ -227,6 +232,11 @@ namespace GoodAI.Core.Execution
         {            
             doPause = true;
             m_worker.CancelAsync();
+        }
+
+        private void OnDebugTargetReached(object sender, EventArgs args)
+        {
+            PauseSimulation();
         }
 
         /// <summary>

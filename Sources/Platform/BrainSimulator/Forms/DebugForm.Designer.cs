@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.debugTreeView = new Aga.Controls.Tree.TreeViewAdv();
-            this.treeColumn2 = new Aga.Controls.Tree.TreeColumn();
-            this.treeColumn3 = new Aga.Controls.Tree.TreeColumn();
-            this.treeColumn1 = new Aga.Controls.Tree.TreeColumn();
-            this.nodeCheckBox1 = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
-            this.nodeStateIcon1 = new Aga.Controls.Tree.NodeControls.NodeStateIcon();
+            this.taskName = new Aga.Controls.Tree.TreeColumn();
+            this.taskType = new Aga.Controls.Tree.TreeColumn();
+            this.enabled = new Aga.Controls.Tree.TreeColumn();
+            this.breakpoint = new Aga.Controls.Tree.TreeColumn();
+            this.checkEnabled = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
+            this.stateIcon = new Aga.Controls.Tree.NodeControls.NodeStateIcon();
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.nodeTextBox2 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -48,6 +49,7 @@
             this.stepOutButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.noDebugLabel = new System.Windows.Forms.ToolStripLabel();
+            this.breakpointCheckBox = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,9 +58,10 @@
             this.debugTreeView.AllowColumnReorder = true;
             this.debugTreeView.BackColor = System.Drawing.SystemColors.Window;
             this.debugTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.debugTreeView.Columns.Add(this.treeColumn2);
-            this.debugTreeView.Columns.Add(this.treeColumn3);
-            this.debugTreeView.Columns.Add(this.treeColumn1);
+            this.debugTreeView.Columns.Add(this.taskName);
+            this.debugTreeView.Columns.Add(this.taskType);
+            this.debugTreeView.Columns.Add(this.enabled);
+            this.debugTreeView.Columns.Add(this.breakpoint);
             this.debugTreeView.DefaultToolTipProvider = null;
             this.debugTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugTreeView.DragDropMarkColor = System.Drawing.Color.Black;
@@ -70,10 +73,11 @@
             this.debugTreeView.Location = new System.Drawing.Point(3, 28);
             this.debugTreeView.Model = null;
             this.debugTreeView.Name = "debugTreeView";
-            this.debugTreeView.NodeControls.Add(this.nodeCheckBox1);
-            this.debugTreeView.NodeControls.Add(this.nodeStateIcon1);
+            this.debugTreeView.NodeControls.Add(this.checkEnabled);
+            this.debugTreeView.NodeControls.Add(this.stateIcon);
             this.debugTreeView.NodeControls.Add(this.nodeTextBox1);
             this.debugTreeView.NodeControls.Add(this.nodeTextBox2);
+            this.debugTreeView.NodeControls.Add(this.breakpointCheckBox);
             this.debugTreeView.RowHeight = 19;
             this.debugTreeView.SelectedNode = null;
             this.debugTreeView.ShowNodeToolTips = true;
@@ -82,47 +86,54 @@
             this.debugTreeView.Text = "Scheduled Tasks";
             this.debugTreeView.UseColumns = true;
             // 
-            // treeColumn2
+            // taskName
             // 
-            this.treeColumn2.Header = "Task Name";
-            this.treeColumn2.SortOrder = System.Windows.Forms.SortOrder.None;
-            this.treeColumn2.TooltipText = null;
-            this.treeColumn2.Width = 250;
+            this.taskName.Header = "Task Name";
+            this.taskName.SortOrder = System.Windows.Forms.SortOrder.None;
+            this.taskName.TooltipText = null;
+            this.taskName.Width = 250;
             // 
-            // treeColumn3
+            // taskType
             // 
-            this.treeColumn3.Header = "Task Type";
-            this.treeColumn3.SortOrder = System.Windows.Forms.SortOrder.None;
-            this.treeColumn3.TooltipText = null;
-            this.treeColumn3.Width = 200;
+            this.taskType.Header = "Task Type";
+            this.taskType.SortOrder = System.Windows.Forms.SortOrder.None;
+            this.taskType.TooltipText = null;
+            this.taskType.Width = 200;
             // 
-            // treeColumn1
+            // enabled
             // 
-            this.treeColumn1.Header = "Enabled";
-            this.treeColumn1.SortOrder = System.Windows.Forms.SortOrder.None;
-            this.treeColumn1.TooltipText = null;
-            this.treeColumn1.Width = 60;
+            this.enabled.Header = "Enabled";
+            this.enabled.SortOrder = System.Windows.Forms.SortOrder.None;
+            this.enabled.TooltipText = null;
+            this.enabled.Width = 60;
             // 
-            // nodeCheckBox1
+            // breakpoint
             // 
-            this.nodeCheckBox1.DataPropertyName = "Checked";
-            this.nodeCheckBox1.LeftMargin = 20;
-            this.nodeCheckBox1.ParentColumn = this.treeColumn1;
-            this.nodeCheckBox1.IsVisibleValueNeeded += new System.EventHandler<Aga.Controls.Tree.NodeControls.NodeControlValueEventArgs>(this.nodeCheckBox1_IsVisibleValueNeeded);
+            this.breakpoint.Header = "Breakpoint";
+            this.breakpoint.SortOrder = System.Windows.Forms.SortOrder.None;
+            this.breakpoint.TooltipText = null;
+            this.breakpoint.Width = 25;
             // 
-            // nodeStateIcon1
+            // checkEnabled
             // 
-            this.nodeStateIcon1.DataPropertyName = "Icon";
-            this.nodeStateIcon1.LeftMargin = 1;
-            this.nodeStateIcon1.ParentColumn = this.treeColumn2;
-            this.nodeStateIcon1.ScaleMode = Aga.Controls.Tree.ImageScaleMode.Clip;
+            this.checkEnabled.DataPropertyName = "Checked";
+            this.checkEnabled.LeftMargin = 20;
+            this.checkEnabled.ParentColumn = this.enabled;
+            this.checkEnabled.IsVisibleValueNeeded += new System.EventHandler<Aga.Controls.Tree.NodeControls.NodeControlValueEventArgs>(this.nodeCheckBox1_IsVisibleValueNeeded);
+            // 
+            // stateIcon
+            // 
+            this.stateIcon.DataPropertyName = "Icon";
+            this.stateIcon.LeftMargin = 1;
+            this.stateIcon.ParentColumn = this.taskName;
+            this.stateIcon.ScaleMode = Aga.Controls.Tree.ImageScaleMode.Clip;
             // 
             // nodeTextBox1
             // 
             this.nodeTextBox1.DataPropertyName = "Text";
             this.nodeTextBox1.IncrementalSearchEnabled = true;
             this.nodeTextBox1.LeftMargin = 3;
-            this.nodeTextBox1.ParentColumn = this.treeColumn2;
+            this.nodeTextBox1.ParentColumn = this.taskName;
             this.nodeTextBox1.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawEventArgs>(this.nodeTextBox1_DrawText);
             // 
             // nodeTextBox2
@@ -130,7 +141,7 @@
             this.nodeTextBox2.DataPropertyName = "OwnerName";
             this.nodeTextBox2.IncrementalSearchEnabled = true;
             this.nodeTextBox2.LeftMargin = 3;
-            this.nodeTextBox2.ParentColumn = this.treeColumn3;
+            this.nodeTextBox2.ParentColumn = this.taskType;
             this.nodeTextBox2.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawEventArgs>(this.nodeTextBox1_DrawText);
             // 
             // toolStrip
@@ -269,6 +280,13 @@
             this.noDebugLabel.Size = new System.Drawing.Size(110, 22);
             this.noDebugLabel.Text = "Debugging Inactive";
             // 
+            // breakpointCheckBox
+            // 
+            this.breakpointCheckBox.DataPropertyName = "Breakpoint";
+            this.breakpointCheckBox.EditEnabled = true;
+            this.breakpointCheckBox.LeftMargin = 0;
+            this.breakpointCheckBox.ParentColumn = this.breakpoint;
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -295,12 +313,12 @@
         #endregion
 
         private Aga.Controls.Tree.TreeViewAdv debugTreeView;
-        private Aga.Controls.Tree.NodeControls.NodeStateIcon nodeStateIcon1;
+        private Aga.Controls.Tree.NodeControls.NodeStateIcon stateIcon;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
-        public Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
-        private Aga.Controls.Tree.TreeColumn treeColumn2;
-        private Aga.Controls.Tree.TreeColumn treeColumn3;
-        private Aga.Controls.Tree.TreeColumn treeColumn1;
+        public Aga.Controls.Tree.NodeControls.NodeCheckBox checkEnabled;
+        private Aga.Controls.Tree.TreeColumn taskName;
+        private Aga.Controls.Tree.TreeColumn taskType;
+        private Aga.Controls.Tree.TreeColumn enabled;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox2;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton showDisabledTasksButton;
@@ -314,6 +332,8 @@
         public System.Windows.Forms.ToolStripButton pauseToolButton;
         public System.Windows.Forms.ToolStripButton stopToolButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private Aga.Controls.Tree.TreeColumn breakpoint;
+        private Aga.Controls.Tree.NodeControls.NodeCheckBox breakpointCheckBox;
 
     }
 }
