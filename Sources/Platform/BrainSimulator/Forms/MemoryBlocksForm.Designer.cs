@@ -34,18 +34,18 @@
             this.typeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.addObserverButton = new System.Windows.Forms.ToolStripButton();
-            this.addPlotButton = new System.Windows.Forms.ToolStripButton();
             this.addHostPlotObserver = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.addMatrixObserver = new System.Windows.Forms.ToolStripButton();
             this.addSpikeObserver = new System.Windows.Forms.ToolStripButton();
             this.addHistogramObserver = new System.Windows.Forms.ToolStripButton();
             this.addTextObserver = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.addPlotButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.addSpectrumObserver = new System.Windows.Forms.ToolStripButton();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.dimenstionsLabel = new System.Windows.Forms.Label();
             this.dimensionsTextBox = new System.Windows.Forms.TextBox();
+            this.dimenstionsLabel = new System.Windows.Forms.Label();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -123,17 +123,6 @@
             this.addObserverButton.Text = "Add Observer to Block";
             this.addObserverButton.Click += new System.EventHandler(this.addObserverButton_Click);
             // 
-            // addPlotButton
-            // 
-            this.addPlotButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addPlotButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_plot;
-            this.addPlotButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.addPlotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addPlotButton.Name = "addPlotButton";
-            this.addPlotButton.Size = new System.Drawing.Size(23, 22);
-            this.addPlotButton.Text = "Add Plot Observer to Block (computes on GPU)";
-            this.addPlotButton.Click += new System.EventHandler(this.addPlotButton_Click);
-            // 
             // addHostPlotObserver
             // 
             this.addHostPlotObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -144,17 +133,6 @@
             this.addHostPlotObserver.Size = new System.Drawing.Size(23, 22);
             this.addHostPlotObserver.Text = "Add Plot Observer to Block";
             this.addHostPlotObserver.Click += new System.EventHandler(this.addHostPlotButton_Click);
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = global::GoodAI.BrainSimulator.Properties.Resources.matrix;
-            this.toolStripButton2.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "Add Matrix Observer to Block (computes on GPU)";
-            this.toolStripButton2.Click += new System.EventHandler(this.addMatrixObserver_Click);
             // 
             // addMatrixObserver
             // 
@@ -204,6 +182,29 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // addPlotButton
+            // 
+            this.addPlotButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addPlotButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.add_plot;
+            this.addPlotButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.addPlotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addPlotButton.Name = "addPlotButton";
+            this.addPlotButton.Size = new System.Drawing.Size(23, 22);
+            this.addPlotButton.Text = "Add Plot Observer to Block (computes on GPU)";
+            this.addPlotButton.Click += new System.EventHandler(this.addPlotButton_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = global::GoodAI.BrainSimulator.Properties.Resources.matrix;
+            this.toolStripButton2.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Text = "Add Matrix Observer to Block (computes on GPU)";
+            this.toolStripButton2.Click += new System.EventHandler(this.addMatrixObserver_Click);
+            // 
             // addSpectrumObserver
             // 
             this.addSpectrumObserver.Name = "addSpectrumObserver";
@@ -230,15 +231,6 @@
             this.splitContainer.SplitterDistance = 266;
             this.splitContainer.TabIndex = 2;
             // 
-            // dimenstionsLabel
-            // 
-            this.dimenstionsLabel.AutoSize = true;
-            this.dimenstionsLabel.Location = new System.Drawing.Point(3, 5);
-            this.dimenstionsLabel.Name = "dimenstionsLabel";
-            this.dimenstionsLabel.Size = new System.Drawing.Size(64, 13);
-            this.dimenstionsLabel.TabIndex = 0;
-            this.dimenstionsLabel.Text = "Dimensions:";
-            // 
             // dimensionsTextBox
             // 
             this.dimensionsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -249,6 +241,16 @@
             this.dimensionsTextBox.Size = new System.Drawing.Size(212, 20);
             this.dimensionsTextBox.TabIndex = 1;
             this.dimensionsTextBox.TextChanged += new System.EventHandler(this.dimensionsTextBox_TextChanged);
+            this.dimensionsTextBox.Leave += new System.EventHandler(this.dimensionsTextBox_Leave);
+            // 
+            // dimenstionsLabel
+            // 
+            this.dimenstionsLabel.AutoSize = true;
+            this.dimenstionsLabel.Location = new System.Drawing.Point(3, 5);
+            this.dimenstionsLabel.Name = "dimenstionsLabel";
+            this.dimenstionsLabel.Size = new System.Drawing.Size(64, 13);
+            this.dimenstionsLabel.TabIndex = 0;
+            this.dimenstionsLabel.Text = "Dimensions:";
             // 
             // MemoryBlocksForm
             // 

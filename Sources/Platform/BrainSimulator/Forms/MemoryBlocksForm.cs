@@ -212,6 +212,11 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dimensionsTextBox_TextChanged(object sender, EventArgs e)
         {
+            // TODO(P): remove?
+        }
+
+        private void SetMemBlockDimensions()
+        {
             if (listView.SelectedItems.Count <= 0)
                 return;
 
@@ -219,7 +224,22 @@ namespace GoodAI.BrainSimulator.Forms
             if (block == null)
                 return;
 
-            block.Dims.Set(new List<int>() {1, 2, 3});
+            if (string.IsNullOrEmpty(dimensionsTextBox.Text))
+                return;
+
+            try
+            {
+                block.Dims.Parse(dimensionsTextBox.Text);
+            }
+            catch (FormatException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void dimensionsTextBox_Leave(object sender, EventArgs e)
+        {
+            SetMemBlockDimensions();
         }
     }
 }

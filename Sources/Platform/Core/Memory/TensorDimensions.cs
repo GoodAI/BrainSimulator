@@ -17,8 +17,10 @@ namespace GoodAI.Core.Memory
 
         public TensorDimensions()
         {
-            IsDefault = true;
+            IsCustom = false;
         }
+
+        public readonly int MaxDimensions = 10;
 
         public int Size { get; private set; }
 
@@ -34,12 +36,69 @@ namespace GoodAI.Core.Memory
             memoryBlock.Dims = this;
         }
 
-        public void Set(List<int> customDimenstions)
+        public void Set(IEnumerable<int> customDimenstions)
         {
-            // TODO: validate, ...
-            m_customDimensions = customDimenstions;
+            InnerSet(customDimenstions);
+            
+            IsCustom = true;
+        }
 
-            IsDefault = false;
+        public void Parse(string text)
+        {
+            var textItems = text.Split(new char[] {',', ';' });
+
+            var dimensions = textItems.Select(item =>
+            {
+                int result;
+
+                if (item.Trim() == "_")
+                {
+                    result = -1;  // computed dimension
+                }
+                else if (!int.TryParse(item.Trim(), out result))
+                {
+                    throw new FormatException(string.Format("Dimension '{0}' is not an integer.", item));
+                }
+
+                return result;
+            });
+
+            Set(dimensions);
+        }
+
+        private void InnerSet(IEnumerable<int> dimensions)
+        {
+            var newDimensions = new List<int>();
+
+            bool foundComputedDimension = false;
+            int count = 0;
+
+            foreach (var item in dimensions)
+            {
+                if ((item < -1) || (item == 0))
+                    throw new FormatException(string.Format("Number {0} is not a valid dimension.", item));
+
+                if (item == -1)
+                {
+                    if (foundComputedDimension)
+                        throw new FormatException(
+                            string.Format("Multiple computed dimensions not allowed (item #{0}).", count + 1));
+
+                    foundComputedDimension = true;
+                }
+                
+                count++;
+                if (count > MaxDimensions)
+                    throw new FormatException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
+
+                newDimensions.Add(item);
+            }
+
+            // UX: when no computed dimension was given, let it be the first one
+            if (!foundComputedDimension)
+                newDimensions.Insert(0, -1);
+
+            m_customDimensions = newDimensions;
         }
 
         public override string ToString()  // TODO: remove

@@ -202,7 +202,7 @@ namespace GoodAI.Core.Memory
         private void AddAttribute(MyAbstractMemoryBlock memoryBlock, MemBlockAttribute attr,
             IDictionary<string, MemBlockAttribute> attributes)
         {
-            if (!attr.IsDefault)
+            if (attr.IsCustom)
             {
                 attributes.Add(GetUniqueName(memoryBlock), attr);
             }
