@@ -141,6 +141,7 @@ namespace GoodAI.Core.Observers
         private int m_characterMarginTopPx;
         private Brush m_backgroundBrush;
         private Brush m_textBrush;
+        private Brush m_negativeTextBrush;
         private int m_cellWidth;
         private int m_cellHeight;
         private Type m_valueType;
@@ -232,7 +233,8 @@ namespace GoodAI.Core.Observers
                 ? "{0:E" + DecimalCount + "}"
                 : "{0:F" + DecimalCount + "}";
 
-            graphics.DrawString(string.Format(template, value), m_font, m_textBrush, drawX, drawY);
+            Brush brush = value >= 0 ? m_textBrush : m_negativeTextBrush;
+            graphics.DrawString(string.Format(template, value), m_font, brush, drawX, drawY);
         }
 
         private void DisplayBitmap()
@@ -254,6 +256,7 @@ namespace GoodAI.Core.Observers
             m_font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
             m_backgroundBrush = new SolidBrush(Color.White);
             m_textBrush = new SolidBrush(Color.Black);
+            m_negativeTextBrush = new SolidBrush(Color.Red);
 
             SetupDimensions();
             SetupTextureSize();
