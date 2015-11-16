@@ -359,6 +359,9 @@ namespace GoodAI.BrainSimulator.Forms
                     int py = (int)pixelPos.y;
                     int index = py * Observer.TextureWidth + px;
 
+                    if (index >= mbObserver.Target.Count)
+                        return;
+
                     float result = float.NaN;
 
                     mbObserver.Target.GetValueAt(ref result, index);

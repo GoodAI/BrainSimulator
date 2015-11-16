@@ -358,7 +358,7 @@ namespace GoodAI.Core.Memory
         {
             T value = new T();                
 
-            if (OnDevice)
+            if (OnDevice && index < Count)
             {            
                 Device[Owner.GPU].CopyToHost(ref value, index * Marshal.SizeOf(typeof(T)));            
             }
