@@ -289,7 +289,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void CreateAndShowObserverView(MyAbstractMemoryBlock memoryBlock, MyNode declaredOwner, Type mbObserverType)
         {
-            bool isPlot = mbObserverType == typeof(MyTimePlotObserver);
+            bool isPlot = mbObserverType == typeof(MyTimePlotObserver) || mbObserverType == typeof(HostTimePlotObserver);
 
             if (isPlot && !(memoryBlock is MyMemoryBlock<float>))
             {
@@ -299,14 +299,18 @@ namespace GoodAI.BrainSimulator.Forms
 
             try
             {
-                MyAbstractObserver observer;
+                MyAbstractObserver observer = null;
 
                 if (isPlot)
                 {
-                    MyTimePlotObserver plotObserver = new MyTimePlotObserver();
-                    plotObserver.Target = (MyMemoryBlock<float>)memoryBlock;
-
-                    observer = plotObserver;
+                    if (mbObserverType == typeof (MyTimePlotObserver))
+                    {
+                        observer = new MyTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
+                    }
+                    else if (mbObserverType == typeof (HostTimePlotObserver))
+                    {
+                        observer = new HostTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
+                    }
                 }
                 else
                 {
@@ -315,6 +319,9 @@ namespace GoodAI.BrainSimulator.Forms
 
                     observer = memObserver;
                 }
+
+                if (observer == null)
+                    throw new InvalidOperationException("No observer was initialized");
 
                 ObserverForm newView = new ObserverForm(this, observer, declaredOwner);
                 ObserverViews.Add(newView);
@@ -338,6 +345,10 @@ namespace GoodAI.BrainSimulator.Forms
             else if (observer is MyTimePlotObserver)
             {
                 owner = (observer as MyTimePlotObserver).Target.Owner;
+            }
+            else if (observer is HostTimePlotObserver)
+            {
+                owner = (observer as HostTimePlotObserver).Target.Owner;
             }
             else
             {

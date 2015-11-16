@@ -318,6 +318,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\add_observer.png" />
+    <None Include="res\add_plot1.png" />
     <Content Include="res\add_text_observer.png" />
     <Content Include="res\anaglyph.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -484,6 +485,7 @@
     <Content Include="res\link_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\matrix1.png" />
     <Content Include="res\matrixNode.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
