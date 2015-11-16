@@ -15,6 +15,7 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private MainForm m_mainForm;
         private MyNode m_target;
+        private bool m_escapePressed;
 
         public MemoryBlocksForm(MainForm mainForm)
         {
@@ -155,13 +156,18 @@ namespace GoodAI.BrainSimulator.Forms
             bool oneItemSelected = (listView.SelectedItems.Count == 1);
             splitContainer.Panel2Collapsed = !oneItemSelected;
 
-            if (oneItemSelected)
+            ShowCurrentBlockDimensions();
+        }
+
+        private void ShowCurrentBlockDimensions()
+        {
+            if (listView.SelectedItems.Count < 1)
+                return;
+
+            var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+            if (block != null)
             {
-                var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
-                if (block != null)
-                {
-                    dimensionsTextBox.Text = block.Dims.ToString();
-                }
+                dimensionsTextBox.Text = block.Dims.ToString();
             }
         }
 
@@ -239,7 +245,30 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dimensionsTextBox_Leave(object sender, EventArgs e)
         {
-            SetMemBlockDimensions();
+            if (!m_escapePressed)
+                SetMemBlockDimensions();
+        }
+
+        private void dimensionsTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            m_escapePressed = false;
+
+            if (e.KeyChar == (char)13)  // Enter
+            {
+                SetMemBlockDimensions();
+                listView.Focus();
+            }
+            else if (e.KeyChar == (char)27)  // Esc
+            {
+                m_escapePressed = true;
+            }
+            else
+            {
+                return;  // only handle Enter and Esc
+            }
+
+            listView.Focus();
+            ShowCurrentBlockDimensions();
         }
     }
 }
