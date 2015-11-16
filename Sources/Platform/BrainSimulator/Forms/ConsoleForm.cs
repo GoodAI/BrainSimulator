@@ -75,6 +75,9 @@ namespace GoodAI.BrainSimulator.Forms
                     for (int i = 0; i < m_builders.Length; i++)
                     {
                         string text = m_builders[i].ToString();
+                        if (string.IsNullOrEmpty(text))
+                            return;
+
                         m_builders[i].Clear();
 
                         if (m_consoleForm.InvokeRequired)
