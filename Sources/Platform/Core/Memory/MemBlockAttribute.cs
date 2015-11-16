@@ -17,5 +17,10 @@ namespace GoodAI.Core.Memory
         public bool IsCustom { get; protected set; }
 
         internal abstract void ApplyAttribute(MyAbstractMemoryBlock myAbstractMemoryBlock);
+
+        internal virtual void FinalizeDeserialization()
+        {
+            IsCustom = true;  // make sure to be marked as having non-default value
+        }
     }
 }

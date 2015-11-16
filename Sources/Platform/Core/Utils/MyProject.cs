@@ -198,6 +198,10 @@ namespace GoodAI.Core.Utils
 
         private void ApplyMemBlockAttributes()
         {
+            // make sure to be marked as having non-default value
+            foreach (var attribute in MemoryBlockAttributes.Values)
+                attribute.FinalizeDeserialization();
+
             MyMemoryManager.Instance.ApplyMemBlockAttributes(MemoryBlockAttributes);
         }
        

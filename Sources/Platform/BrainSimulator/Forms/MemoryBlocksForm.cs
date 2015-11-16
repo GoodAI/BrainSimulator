@@ -15,7 +15,7 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private MainForm m_mainForm;
         private MyNode m_target;
-        private bool m_escapePressed;
+        private bool m_escapeOrEnterPressed;
 
         public MemoryBlocksForm(MainForm mainForm)
         {
@@ -121,14 +121,11 @@ namespace GoodAI.BrainSimulator.Forms
                 typeStr = block.GetType().GetGenericArguments()[0].Name;
             }
 
-            string size = block.Count.ToString();
+            string sizeStr = block.Dims.IsCustom
+                ? block.Dims.PrintResult(printTotalSize: true)
+                : block.Count.ToString();
 
-            if (block.ColumnHint > 0 && block.ColumnHint <= block.Count)
-            {
-                size = block.ColumnHint + "x" + (block.Count / block.ColumnHint) + " (" + block.Count.ToString() + ")";
-            }
-
-            ListViewItem item = new ListViewItem(new string[] { name, size, typeStr });
+            ListViewItem item = new ListViewItem(new string[] { name, sizeStr, typeStr });
             item.Tag = block;
 
             if (owned)
@@ -244,13 +241,13 @@ namespace GoodAI.BrainSimulator.Forms
             }
             catch (FormatException ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message);  // TODO(P): Show in a bubble under the textbox, don't show pop-up.
             }
         }
 
         private void dimensionsTextBox_Leave(object sender, EventArgs e)
         {
-            if (!m_escapePressed)
+            if (!m_escapeOrEnterPressed)
                 SetMemBlockDimensions();
 
             ShowCurrentBlockDimensions();
@@ -258,22 +255,22 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dimensionsTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            m_escapePressed = false;
+            m_escapeOrEnterPressed = false;
 
             if (e.KeyChar == (char)13)  // Enter
             {
                 SetMemBlockDimensions();
-                listView.Focus();
             }
             else if (e.KeyChar == (char)27)  // Esc
             {
-                m_escapePressed = true;
+                // all escape handling is also relevant for Enter
             }
             else
             {
                 return;  // only handle Enter and Esc
             }
 
+            m_escapeOrEnterPressed = true;
             listView.Focus();
         }
 

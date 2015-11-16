@@ -35,7 +35,16 @@ namespace GoodAI.Core.Memory
         }
         private int m_size;
 
-        // TODO: an indexer?
+        public int this[int index]
+        {
+            get
+            {
+                if (index >= m_customDimensions.Count)
+                    return -1;  // or throw out of range exception?
+
+                return (m_customDimensions[index] != -1) ? m_customDimensions[index] : m_computedDimension;
+            }
+        }
         
         public int Count
         {
@@ -59,7 +68,7 @@ namespace GoodAI.Core.Memory
                 ));
         }
 
-        public string PrintResult()
+        public string PrintResult(bool printTotalSize = false)
         {
             return string.Join("×", m_customDimensions.Select(item =>
                 {
@@ -74,7 +83,7 @@ namespace GoodAI.Core.Memory
                     {
                         return item.ToString();
                     }
-                }));
+                })) + (printTotalSize ? string.Format(" [{0}]", Size) : "");
         }
 
         public void Set(IEnumerable<int> customDimenstions)
@@ -82,6 +91,19 @@ namespace GoodAI.Core.Memory
             InnerSet(customDimenstions);
             
             IsCustom = true;
+        }
+        
+        /// <summary>
+        /// Sets new value but treats it as default (that is not saved to the project). Use for backward compatibility.
+        /// </summary>
+        public void SetDefault(IEnumerable<int> dimensions)
+        {
+            if (IsCustom)
+                return;
+
+            InnerSet(dimensions);
+
+            IsCustom = false;  // treat new value as default
         }
 
         public void Parse(string text)
@@ -112,7 +134,6 @@ namespace GoodAI.Core.Memory
             var newDimensions = new List<int>();
 
             bool foundComputedDimension = false;
-            int count = 0;
 
             foreach (var item in dimensions)
             {
@@ -122,21 +143,20 @@ namespace GoodAI.Core.Memory
                 if (item == -1)
                 {
                     if (foundComputedDimension)
-                        throw new FormatException(
-                            string.Format("Multiple computed dimensions not allowed (item #{0}).", count + 1));
+                        throw new FormatException(string.Format(
+                            "Multiple computed dimensions not allowed (item #{0}).", newDimensions.Count + 1));
 
                     foundComputedDimension = true;
                 }
-                
-                count++;
-                if (count > MaxDimensions)
-                    throw new FormatException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
 
                 newDimensions.Add(item);
+
+                if (newDimensions.Count > MaxDimensions)
+                    throw new FormatException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
             }
 
             // UX: when no computed dimension was given, let it be the first one
-            if (!foundComputedDimension)
+            if ((newDimensions.Count > 0) && !foundComputedDimension)
                 newDimensions.Insert(0, -1);
 
             m_customDimensions = newDimensions;

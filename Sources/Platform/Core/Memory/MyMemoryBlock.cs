@@ -5,6 +5,7 @@ using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace GoodAI.Core.Memory
@@ -16,7 +17,7 @@ namespace GoodAI.Core.Memory
 
         //TODO: Find if MyWorkingNode is possible here
         public MyNode Owner { get; set; }
-        public int ColumnHint { get; set; }
+        public abstract int ColumnHint { get; set; }
         public TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
@@ -65,6 +66,20 @@ namespace GoodAI.Core.Memory
         }
         private int m_count = 0;
 
+        public override int ColumnHint
+        {
+            get
+            {
+                return (Dims.Count >= 2) ? Dims[1] : 1;
+            }
+            set
+            {
+                // propagate value to Dims, but not for the default value 1
+                if (value > 1)
+                    Dims.SetDefault(new List<int> { -1, value });
+            }
+        }
+
         public bool OnDevice
         {
             get
@@ -85,7 +100,6 @@ namespace GoodAI.Core.Memory
         {
             Dims = new TensorDimensions();
 
-            ColumnHint = 1;
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;
         }
