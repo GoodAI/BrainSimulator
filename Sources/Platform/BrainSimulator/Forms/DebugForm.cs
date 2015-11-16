@@ -153,7 +153,9 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     this.Hide();
                 }
-            }            
+            }
+
+            breakpointCheckBox.EditEnabled = simulationHandler.Simulation.InDebugMode;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

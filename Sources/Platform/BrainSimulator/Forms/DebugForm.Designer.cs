@@ -353,9 +353,9 @@
         public System.Windows.Forms.ToolStripButton stopToolButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private Aga.Controls.Tree.TreeColumn breakpoint;
-        private Aga.Controls.Tree.NodeControls.NodeCheckBox breakpointCheckBox;
         private Aga.Controls.Tree.TreeColumn profilerTime;
         private Aga.Controls.Tree.NodeControls.NodeTextBox profilerTimeValue;
+        public Aga.Controls.Tree.NodeControls.NodeCheckBox breakpointCheckBox;
 
     }
 }
