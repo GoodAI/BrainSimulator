@@ -41,6 +41,7 @@
             this.addSpikeObserver = new System.Windows.Forms.ToolStripButton();
             this.addHistogramObserver = new System.Windows.Forms.ToolStripButton();
             this.addTextObserver = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,13 +88,14 @@
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(40, 40);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addObserverButton,
-            this.addPlotButton,
             this.addHostPlotObserver,
-            this.toolStripButton2,
             this.addMatrixObserver,
             this.addSpikeObserver,
             this.addHistogramObserver,
-            this.addTextObserver});
+            this.addTextObserver,
+            this.toolStripSeparator1,
+            this.addPlotButton,
+            this.toolStripButton2});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
@@ -120,7 +122,7 @@
             this.addPlotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addPlotButton.Name = "addPlotButton";
             this.addPlotButton.Size = new System.Drawing.Size(23, 22);
-            this.addPlotButton.Text = "Add Plot Observer to Block";
+            this.addPlotButton.Text = "Add Plot Observer to Block (computes on GPU)";
             this.addPlotButton.Click += new System.EventHandler(this.addPlotButton_Click);
             // 
             // addHostPlotObserver
@@ -131,7 +133,7 @@
             this.addHostPlotObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addHostPlotObserver.Name = "addHostPlotObserver";
             this.addHostPlotObserver.Size = new System.Drawing.Size(23, 22);
-            this.addHostPlotObserver.Text = "Add Plot Observer to Block (new)";
+            this.addHostPlotObserver.Text = "Add Plot Observer to Block";
             this.addHostPlotObserver.Click += new System.EventHandler(this.addHostPlotButton_Click);
             // 
             // toolStripButton2
@@ -142,7 +144,7 @@
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "Add Matrix Observer to Block";
+            this.toolStripButton2.Text = "Add Matrix Observer to Block (computes on GPU)";
             this.toolStripButton2.Click += new System.EventHandler(this.addMatrixObserver_Click);
             // 
             // addMatrixObserver
@@ -189,6 +191,11 @@
             this.addTextObserver.Text = "Add Text Observer";
             this.addTextObserver.Click += new System.EventHandler(this.addTextObserver_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // MemoryBlocksForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -223,6 +230,7 @@
         private System.Windows.Forms.ToolStripButton addTextObserver;
         private System.Windows.Forms.ToolStripButton addHostPlotObserver;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 
     }
 }

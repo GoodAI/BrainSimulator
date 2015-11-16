@@ -228,14 +228,11 @@ namespace GoodAI.Core.Observers
 
         private void DrawCellContent(Graphics graphics, double value, int drawX, int drawY)
         {
-            if (value >= 100000)
-            {
-                graphics.DrawString(string.Format("{0:E" + DecimalCount + "}", value), m_font, m_textBrush, drawX, drawY);
-            }
-            else
-            {
-                graphics.DrawString(string.Format("{0:F" + DecimalCount + "}", value), m_font, m_textBrush, drawX, drawY);
-            }
+            string template = Math.Abs(value) >= 100000
+                ? "{0:E" + DecimalCount + "}"
+                : "{0:F" + DecimalCount + "}";
+
+            graphics.DrawString(string.Format(template, value), m_font, m_textBrush, drawX, drawY);
         }
 
         private void DisplayBitmap()

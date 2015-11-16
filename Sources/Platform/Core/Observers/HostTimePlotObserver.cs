@@ -775,6 +775,9 @@ namespace GoodAI.Core.Observers
         private void DrawScaledHistory(Graphics graphics, int newWidth, double oldValueMin, double oldValueMax)
         {
             int newHeight = (int) ((oldValueMax - oldValueMin) / (m_plotCurrentValueMax - m_plotCurrentValueMin) * m_plotAreaHeight);
+            if (newHeight <= 0)
+                return;
+
             Bitmap targetBitmap = new Bitmap(newWidth, newHeight);
 
             Rectangle sourceArea = new Rectangle(m_plotAreaOffsetX, m_plotAreaOffsetY, m_plotAreaWidth, m_plotAreaHeight);
@@ -829,10 +832,13 @@ namespace GoodAI.Core.Observers
             for (int n = 0; firstOrdinate + n * unit < m_plotCurrentValueMax; n++)
             {
                 double value = firstOrdinate + n * unit;
-                string valueStr = string.Format("{0,8:N" + displayPrecision + "}", value);
                 int y = ValueToScale(value);
 
-                graphics.DrawString(valueStr, axisFont, m_textBrush, 0, y - axisFont.Height/2);
+                string template = Math.Abs(value) >= 100000
+                    ? "{0:E" + displayPrecision + "}"
+                    : "{0:F" + displayPrecision + "}";
+
+                graphics.DrawString(string.Format(template, value), axisFont, m_textBrush, 0, y - axisFont.Height/2);
                 graphics.FillRectangle(m_cursorBrush, m_plotAreaOffsetX-4, y, 4, 1);
             }
         }
