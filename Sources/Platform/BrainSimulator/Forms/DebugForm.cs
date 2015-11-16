@@ -13,7 +13,7 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class DebugForm : DockContent
     {
-        private MainForm m_mainForm;        
+        private readonly MainForm m_mainForm;        
         private MyExecutionPlan[] m_executionPlan;
 
 
@@ -22,7 +22,7 @@ namespace GoodAI.BrainSimulator.Forms
             MyDebugNode result;
 
             if (executable is MyTask)
-            {                
+            {
                 result = new MyDebugTaskNode(executable as MyTask);
             }
             else
@@ -30,9 +30,10 @@ namespace GoodAI.BrainSimulator.Forms
                 result = new MyDebugNode(executable);
             }
 
-            if (executable is MyExecutionBlock)
+            var executableBlock = executable as MyExecutionBlock;
+            if (executableBlock != null)
             {
-                foreach (IMyExecutable child in (executable as MyExecutionBlock).Children)
+                foreach (IMyExecutable child in executableBlock.Children)
                 {
                     if (child is MySignalTask)
                     {
@@ -44,7 +45,7 @@ namespace GoodAI.BrainSimulator.Forms
                     else if (showDisabledTasksButton.Checked || child.Enabled)
                     {
                         result.Nodes.Add(CreateDebugNode(child));
-                    }                    
+                    }
                 }
             }
 
@@ -160,6 +161,24 @@ namespace GoodAI.BrainSimulator.Forms
             AlterBackground(e);         
         }
 
+        private void profilerTimeValue_DrawText(object sender, DrawEventArgs e)
+        {
+            var parentTreeNode = e.Node.Parent.Tag as MyDebugNode;
+            if (parentTreeNode != null)
+            {
+                var parentBlock = parentTreeNode.Executable as MyExecutionBlock;
+                if (parentBlock != null)
+                {
+                    var treeNode = e.Node.Tag as MyDebugNode;
+                    TimeSpan profilingTime;
+                    if (parentBlock.ProfilingInfo.TryGetValue(treeNode.Executable, out profilingTime))
+                    {
+                        treeNode.ProfilerTime = profilingTime;
+                    }
+                }
+            }
+        }
+
         private void AlterBackground(DrawEventArgs e)
         {
             var nodeData = e.Node.Tag as MyDebugNode;
@@ -268,6 +287,19 @@ namespace GoodAI.BrainSimulator.Forms
                 m_breakpoint = value;
                 if (BreakpointStateChanged != null)
                     BreakpointStateChanged(this, new BreakpointEventArgs(this));
+            }
+        }
+
+        public TimeSpan? ProfilerTime { get; set; }
+
+        public string ProfilerTimeFormatted
+        {
+            get
+            {
+                if (ProfilerTime.HasValue)
+                    return string.Format("{0}ms", ProfilerTime.Value.TotalMilliseconds);
+                else
+                    return string.Empty;
             }
         }
 

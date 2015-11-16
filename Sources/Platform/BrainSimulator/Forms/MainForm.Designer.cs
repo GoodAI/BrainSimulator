@@ -575,6 +575,7 @@
             // 
             // profileToolButton
             // 
+            this.profileToolButton.CheckOnClick = true;
             this.profileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.profileToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Information_16xLG_color;
             this.profileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
