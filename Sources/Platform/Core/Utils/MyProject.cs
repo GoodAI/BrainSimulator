@@ -198,6 +198,9 @@ namespace GoodAI.Core.Utils
 
         private void ApplyMemBlockAttributes()
         {
+            if (MemoryBlockAttributes == null)  // attributes are not mandatory
+                return;
+
             // make sure to be marked as having non-default value
             foreach (var attribute in MemoryBlockAttributes.Values)
                 attribute.FinalizeDeserialization();

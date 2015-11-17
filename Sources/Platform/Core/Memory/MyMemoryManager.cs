@@ -293,6 +293,9 @@ namespace GoodAI.Core.Memory
 
         public void ApplyMemBlockAttributes(IDictionary<string, MemBlockAttribute> attributes)
         {
+            if (attributes == null || attributes.Count == 0)
+                return;
+
             var memBlocks = CollectMemoryBlocks();
 
             foreach (var pair in attributes)

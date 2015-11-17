@@ -122,11 +122,7 @@ namespace GoodAI.BrainSimulator.Forms
                 typeStr = block.GetType().GetGenericArguments()[0].Name;
             }
 
-            string sizeStr = block.Dims.IsCustom
-                ? block.Dims.PrintResult(printTotalSize: true)
-                : block.Count.ToString();
-
-            ListViewItem item = new ListViewItem(new string[] { name, sizeStr, typeStr });
+            ListViewItem item = new ListViewItem(new string[] { name, PrintBlockSize(block), typeStr });
             item.Tag = block;
 
             if (owned)
@@ -145,6 +141,16 @@ namespace GoodAI.BrainSimulator.Forms
             item.SubItems[2].ForeColor = item.ForeColor;            
 
             listView.Items.Add(item);
+        }
+
+        private static string PrintBlockSize(MyAbstractMemoryBlock block)
+        {
+            if (block == null)
+                return "?";
+
+            return block.Dims.IsCustom
+                ? block.Dims.PrintResult(printTotalSize: true)
+                : block.Count.ToString();
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
@@ -228,6 +234,15 @@ namespace GoodAI.BrainSimulator.Forms
             return listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
         }
 
+        private void UpdateSizeInfoForSelectedMemoryBlock()
+        {
+            if (listView.SelectedItems.Count <= 0)
+                return;
+
+            listView.SelectedItems[0].SubItems[1].Text =
+                PrintBlockSize(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock);
+        }
+
         private bool TrySetMemBlockDimensions()
         {
             var block = TryGetSelectedMemoryBlock();
@@ -247,6 +262,7 @@ namespace GoodAI.BrainSimulator.Forms
                 return false;
             }
 
+            UpdateSizeInfoForSelectedMemoryBlock();
             ShowOrHideErrorInfo("");
             return true;
         }
