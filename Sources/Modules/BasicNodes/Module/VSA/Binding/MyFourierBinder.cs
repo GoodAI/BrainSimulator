@@ -5,6 +5,7 @@ using GoodAI.Modules.Transforms;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaFFT;
 using System;
+using ManagedCuda;
 
 namespace GoodAI.Modules.VSA
 {
@@ -24,12 +25,18 @@ namespace GoodAI.Modules.VSA
         private int m_secondFFTOffset;
         private int m_tempOffset;
 
+        CudaStream m_stream;
+
 
         public MyFourierBinder(MyWorkingNode owner, int inputSize, MyMemoryBlock<float> tempBlock)
             : base(owner, inputSize, tempBlock)
         {
+            m_stream = new CudaStream();
+
             m_fft = new CudaFFTPlan1D(inputSize, cufftType.R2C, 1);
+            m_fft.SetStream(m_stream.Stream);
             m_ifft = new CudaFFTPlan1D(inputSize, cufftType.C2R, 1);
+            m_ifft.SetStream(m_stream.Stream);
 
             m_mulkernel = MyKernelFactory.Instance.Kernel(owner.GPU, @"Common\CombineVectorsKernel", "MulComplexElementWise");
             m_mulkernel.SetupExecution(inputSize + 1);
@@ -61,10 +68,8 @@ namespace GoodAI.Modules.VSA
 
         public override void Bind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs)
         {
-            if (otherInputs == null)
-            {
-                otherInputs = new CUdeviceptr[] { firstInput };
-            }
+            otherInputs = otherInputs ?? new[] { firstInput };
+
             m_fft.Exec(firstInput, m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset));
 
             int count = otherInputs.Length == 1 ? otherInputs.Length : otherInputs.Length - 1;
@@ -73,7 +78,8 @@ namespace GoodAI.Modules.VSA
             {
                 CUdeviceptr start = otherInputs[i];
                 m_fft.Exec(start, m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset));
-                m_mulkernel.Run(
+                m_mulkernel.RunAsync(
+                    m_stream,
                     m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset),
                     m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset),
                     m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset), m_inputSize + 1);
@@ -85,10 +91,8 @@ namespace GoodAI.Modules.VSA
 
         public override void Unbind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs)
         {
-            if (otherInputs == null)
-            {
-                otherInputs = new CUdeviceptr[] { firstInput };
-            }
+            otherInputs = otherInputs ?? new[] { firstInput };
+
             m_fft.Exec(firstInput, m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset));
 
             int count = otherInputs.Length == 1 ? otherInputs.Length : otherInputs.Length - 1;
@@ -96,13 +100,14 @@ namespace GoodAI.Modules.VSA
             for (int i = 0; i < count; ++i)
             {
                 CUdeviceptr start = otherInputs[i];
-                m_involutionKernel.Run(start, m_tempBlock.GetDevicePtr(m_owner, m_tempOffset), m_inputSize);
+                m_involutionKernel.RunAsync(m_stream, start, m_tempBlock.GetDevicePtr(m_owner, m_tempOffset), m_inputSize);
                 m_fft.Exec(m_tempBlock.GetDevicePtr(m_owner, m_tempOffset), m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset));
 
                 if (ExactQuery)
-                    m_inversionKernel.Run(m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset), m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset), m_inputSize);
-              
-                m_mulkernel.Run(
+                    m_inversionKernel.RunAsync(m_stream, m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset), m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset), m_inputSize);
+
+                m_mulkernel.RunAsync(
+                    m_stream,
                     m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset),
                     m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset),
                     m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset), m_inputSize + 1);
@@ -120,7 +125,7 @@ namespace GoodAI.Modules.VSA
 
             if (NormalizeOutput)
             {
-                m_dotKernel.Run(m_tempBlock, 0, output, output, m_inputSize, /* distributed: */ 0);
+                m_dotKernel.RunAsync(m_stream, m_tempBlock, 0, output, output, m_inputSize, /* distributed: */ 0);
                 m_tempBlock.SafeCopyToHost(0, 1);
 
                 if (m_tempBlock.Host[0] > 0.000001f)

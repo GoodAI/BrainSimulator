@@ -7,6 +7,7 @@ using ManagedCuda.BasicTypes;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using ManagedCuda;
 using YAXLib;
 
 namespace GoodAI.Modules.VSA.Hashes
@@ -144,6 +145,8 @@ namespace GoodAI.Modules.VSA.Hashes
             private MyCudaKernel _hashKernel;
             private MyCudaKernel _noHashKernel;
 
+            CudaStream m_stream;
+
             public override void Init(int nGPU)
             {
                 switch (Mode)
@@ -173,6 +176,8 @@ namespace GoodAI.Modules.VSA.Hashes
 
                 _noHashKernel = MyKernelFactory.Instance.Kernel(nGPU, @"VSA\Mappers", "GetIndices_NoHashing");
                 _noHashKernel.SetupExecution(Owner.Output.Count);
+
+                m_stream = new CudaStream();
             }
 
             public override void Execute()
@@ -184,7 +189,6 @@ namespace GoodAI.Modules.VSA.Hashes
                         break;
 
                     case HashMapperMode.LocalitySensitive:
-
                         CUdeviceptr? offsets = null;
 
                         if (UseOffsets)
@@ -194,9 +198,8 @@ namespace GoodAI.Modules.VSA.Hashes
                             Owner.Input.GetDevicePtr(Owner.GPU), Owner.Output.GetDevicePtr(Owner.GPU), Owner.Temp.GetDevicePtr(Owner.GPU), offsets,
                             Owner.InputSize, OutputBinCount, Owner.Seed,
                             _combineVectorsKernel, _hashKernel, _noHashKernel,
-                            DoHashing, InternalBinCount);
+                            DoHashing, InternalBinCount, m_stream);
                         Owner.Output.SafeCopyToHost();
-
                         break;
 
                     default:
@@ -223,7 +226,8 @@ namespace GoodAI.Modules.VSA.Hashes
                 CUdeviceptr input, CUdeviceptr output, CUdeviceptr misc, CUdeviceptr? offsets,
                 int vectorSize, int outputBinCount, int seed,
                 MyCudaKernel combineVectorsKernel, MyCudaKernel hashKernel, MyCudaKernel noHashKernel,
-                bool doHashMapping, int internalBinCount)
+                bool doHashMapping, int internalBinCount,
+                CudaStream stream)
             {
                 Debug.Assert(vectorSize > 0, "Invalid vector size");
                 Debug.Assert(outputBinCount > 1, "Requires at least 2 output bins");
@@ -235,22 +239,22 @@ namespace GoodAI.Modules.VSA.Hashes
                 if (offsets != null)
                 {
                     // Offset to [-1, 3]
-                    combineVectorsKernel.Run(input, offsets.Value, output, (int)MyJoin.MyJoinOperation.Addition, vectorSize, vectorSize);
+                    combineVectorsKernel.RunAsync(stream, input, offsets.Value, output, (int)MyJoin.MyJoinOperation.Addition, vectorSize, vectorSize);
                 }
 
                 // Modulate to [0, 2]
-                combineVectorsKernel.Run(output, misc, output, (int)MyJoin.MyJoinOperation.Modulo, vectorSize, 1);
+                combineVectorsKernel.RunAsync(stream, output, misc, output, (int)MyJoin.MyJoinOperation.Modulo, vectorSize, 1);
 
                 // Transform to integers in [0, InternalBinCount - 1]
-                combineVectorsKernel.Run(output, misc + sizeof(float), output, (int)MyJoin.MyJoinOperation.Division_int, vectorSize, 1);
+                combineVectorsKernel.RunAsync(stream, output, misc + sizeof(float), output, (int)MyJoin.MyJoinOperation.Division_int, vectorSize, 1);
 
                 if (doHashMapping)
                 {
-                    hashKernel.Run(output, output, vectorSize, vectorSize, outputBinCount, seed);
+                    hashKernel.RunAsync(stream, output, output, vectorSize, vectorSize, outputBinCount, seed);
                 }
                 else
                 {
-                    noHashKernel.Run(output, output, vectorSize, internalBinCount);
+                    noHashKernel.RunAsync(stream, output, output, vectorSize, internalBinCount);
                 }
             }
         }
