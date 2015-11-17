@@ -221,11 +221,6 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MyTextObserver));
         }
 
-        private void dimensionsTextBox_TextChanged(object sender, EventArgs e)
-        {
-            // TODO(P): remove?
-        }
-
         private MyAbstractMemoryBlock TryGetSelectedMemoryBlock()
         {
             if (listView.SelectedItems.Count <= 0)
