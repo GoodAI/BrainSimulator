@@ -84,7 +84,11 @@ namespace GoodAI.Modules.NeuralNetwork
             private int m_samplesCount;
             private Random m_rand;
 
-            public override void Init(int nGPU)
+            [MyBrowsable, Category("Behaviour")]
+            [YAXSerializableField(DefaultValue = false), YAXElementFor("Behaviour")]
+            public bool ClearData { set; get; }
+
+            private void Reset()
             {
                 m_samplesCount = 0;
 
@@ -92,6 +96,11 @@ namespace GoodAI.Modules.NeuralNetwork
                     m_rand = new Random();
                 else
                     m_rand = new Random(RandomSeed);
+            }
+
+            public override void Init(int nGPU)
+            {
+                Reset();
             }
 
             private void ReplayBufferCopy(MyMemoryBlock<float> source, MyMemoryBlock<float> destination, int sourceOffset, int destOffset, int count)
@@ -124,6 +133,12 @@ namespace GoodAI.Modules.NeuralNetwork
 
             public override void Execute()
             {
+                if(ClearData)
+                {
+                    Reset();
+
+                    ClearData = false;
+                }
                 //store part
                 if (IsStoreRequired())
                 {
