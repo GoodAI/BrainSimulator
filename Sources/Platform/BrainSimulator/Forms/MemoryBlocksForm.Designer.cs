@@ -46,6 +46,7 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.dimensionsTextBox = new System.Windows.Forms.TextBox();
             this.dimenstionsLabel = new System.Windows.Forms.Label();
+            this.errorInfoLabel = new System.Windows.Forms.Label();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -68,7 +69,7 @@
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(285, 266);
+            this.listView.Size = new System.Drawing.Size(285, 254);
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -225,10 +226,12 @@
             // 
             // splitContainer.Panel2
             // 
+            this.splitContainer.Panel2.Controls.Add(this.errorInfoLabel);
             this.splitContainer.Panel2.Controls.Add(this.dimensionsTextBox);
             this.splitContainer.Panel2.Controls.Add(this.dimenstionsLabel);
+            this.splitContainer.Panel2MinSize = 30;
             this.splitContainer.Size = new System.Drawing.Size(285, 300);
-            this.splitContainer.SplitterDistance = 266;
+            this.splitContainer.SplitterDistance = 254;
             this.splitContainer.TabIndex = 2;
             // 
             // dimensionsTextBox
@@ -252,6 +255,17 @@
             this.dimenstionsLabel.Size = new System.Drawing.Size(64, 13);
             this.dimenstionsLabel.TabIndex = 0;
             this.dimenstionsLabel.Text = "Dimensions:";
+            // 
+            // errorInfoLabel
+            // 
+            this.errorInfoLabel.AutoSize = true;
+            this.errorInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.errorInfoLabel.ForeColor = System.Drawing.Color.Firebrick;
+            this.errorInfoLabel.Location = new System.Drawing.Point(67, 23);
+            this.errorInfoLabel.Name = "errorInfoLabel";
+            this.errorInfoLabel.Size = new System.Drawing.Size(163, 13);
+            this.errorInfoLabel.TabIndex = 2;
+            this.errorInfoLabel.Text = "Error info: Something went wrong";
             // 
             // MemoryBlocksForm
             // 
@@ -297,5 +311,6 @@
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Label dimenstionsLabel;
         private System.Windows.Forms.TextBox dimensionsTextBox;
+        private System.Windows.Forms.Label errorInfoLabel;
     }
 }

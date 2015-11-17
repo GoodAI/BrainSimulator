@@ -16,6 +16,7 @@ namespace GoodAI.BrainSimulator.Forms
         private MainForm m_mainForm;
         private MyNode m_target;
         private bool m_escapeOrEnterPressed;
+        private bool m_errorInfoShown = true;
 
         public MemoryBlocksForm(MainForm mainForm)
         {
@@ -165,6 +166,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (block != null)
             {
                 dimensionsTextBox.Text = block.Dims.PrintResult();
+                ShowOrHideErrorInfo("");
             }
         }
 
@@ -226,14 +228,14 @@ namespace GoodAI.BrainSimulator.Forms
             return listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
         }
 
-        private void SetMemBlockDimensions()
+        private bool TrySetMemBlockDimensions()
         {
             var block = TryGetSelectedMemoryBlock();
             if (block == null)
-                return;
+                return false;
 
             if (string.IsNullOrEmpty(dimensionsTextBox.Text))
-                return;
+                return false;
 
             try
             {
@@ -241,14 +243,40 @@ namespace GoodAI.BrainSimulator.Forms
             }
             catch (FormatException ex)
             {
-                MessageBox.Show(ex.Message);  // TODO(P): Show in a bubble under the textbox, don't show pop-up.
+                ShowOrHideErrorInfo(ex.Message);  // UX: Even better would be to show a bubble under the textbox.
+                return false;
             }
+
+            ShowOrHideErrorInfo("");
+            return true;
+        }
+
+        private void ShowOrHideErrorInfo(string info)
+        {
+            bool showInfo = !string.IsNullOrEmpty(info);
+
+            int infoHeight = errorInfoLabel.Height + 1;
+
+            if (showInfo && !m_errorInfoShown)
+            {
+                splitContainer.SplitterDistance -= infoHeight;
+            }
+            else if (!showInfo && m_errorInfoShown)
+            {
+                splitContainer.SplitterDistance += infoHeight;
+            }
+
+            errorInfoLabel.Text = info;
+            m_errorInfoShown = showInfo;
         }
 
         private void dimensionsTextBox_Leave(object sender, EventArgs e)
         {
-            if (!m_escapeOrEnterPressed)
-                SetMemBlockDimensions();
+            if (!m_escapeOrEnterPressed)  // (Esc) => Don't set, (Enter) => Already tried.
+            {
+                if (!TrySetMemBlockDimensions())
+                    return;
+            }
 
             ShowCurrentBlockDimensions();
         }
@@ -257,20 +285,18 @@ namespace GoodAI.BrainSimulator.Forms
         {
             m_escapeOrEnterPressed = false;
 
+            if ((e.KeyChar != (char)13) && (e.KeyChar != (char)27))  // only handle Enter and Esc
+                return;  
+
+            e.Handled = true;  // prevent "Ding" sound when pressing Enter or Esc
+            m_escapeOrEnterPressed = true;
+
             if (e.KeyChar == (char)13)  // Enter
             {
-                SetMemBlockDimensions();
-            }
-            else if (e.KeyChar == (char)27)  // Esc
-            {
-                // all escape handling is also relevant for Enter
-            }
-            else
-            {
-                return;  // only handle Enter and Esc
+                if (!TrySetMemBlockDimensions())
+                    return;
             }
 
-            m_escapeOrEnterPressed = true;
             listView.Focus();
         }
 
