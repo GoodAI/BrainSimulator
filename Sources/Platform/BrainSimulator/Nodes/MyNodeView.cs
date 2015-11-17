@@ -30,7 +30,6 @@ namespace GoodAI.BrainSimulator.NodeView
         protected NodeImageItem m_iconItem;
         protected NodeLabelItem m_descItem;
 
-        public MyNodeConfig NodeInfo { get; private set; }
         protected Image m_icon;        
 
         protected List<NodeItem> m_inputBranches = new List<NodeItem>();
@@ -40,13 +39,12 @@ namespace GoodAI.BrainSimulator.NodeView
 
         public GraphControl Owner { get; set; }
 
-        protected MyNodeView(MyNodeConfig nodeInfo, GraphControl owner) 
+        protected MyNodeView(MyNodeConfig nodeConfig, GraphControl owner) 
             : base("")
         {
-            NodeInfo = nodeInfo;
             Owner = owner;
 
-            m_icon = nodeInfo.BigImage;
+            m_icon = nodeConfig.BigImage;
 
             m_iconItem = new NodeImageItem(m_icon, 48, 48, false, false)
             {
