@@ -44,9 +44,9 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.addSpectrumObserver = new System.Windows.Forms.ToolStripButton();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.errorInfoLabel = new System.Windows.Forms.Label();
             this.dimensionsTextBox = new System.Windows.Forms.TextBox();
             this.dimenstionsLabel = new System.Windows.Forms.Label();
-            this.errorInfoLabel = new System.Windows.Forms.Label();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -234,6 +234,17 @@
             this.splitContainer.SplitterDistance = 254;
             this.splitContainer.TabIndex = 2;
             // 
+            // errorInfoLabel
+            // 
+            this.errorInfoLabel.AutoSize = true;
+            this.errorInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.errorInfoLabel.ForeColor = System.Drawing.Color.Firebrick;
+            this.errorInfoLabel.Location = new System.Drawing.Point(67, 23);
+            this.errorInfoLabel.Name = "errorInfoLabel";
+            this.errorInfoLabel.Size = new System.Drawing.Size(163, 13);
+            this.errorInfoLabel.TabIndex = 2;
+            this.errorInfoLabel.Text = "Error info: Something went wrong";
+            // 
             // dimensionsTextBox
             // 
             this.dimensionsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -255,17 +266,6 @@
             this.dimenstionsLabel.Size = new System.Drawing.Size(64, 13);
             this.dimenstionsLabel.TabIndex = 0;
             this.dimenstionsLabel.Text = "Dimensions:";
-            // 
-            // errorInfoLabel
-            // 
-            this.errorInfoLabel.AutoSize = true;
-            this.errorInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.errorInfoLabel.ForeColor = System.Drawing.Color.Firebrick;
-            this.errorInfoLabel.Location = new System.Drawing.Point(67, 23);
-            this.errorInfoLabel.Name = "errorInfoLabel";
-            this.errorInfoLabel.Size = new System.Drawing.Size(163, 13);
-            this.errorInfoLabel.TabIndex = 2;
-            this.errorInfoLabel.Text = "Error info: Something went wrong";
             // 
             // MemoryBlocksForm
             // 

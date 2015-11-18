@@ -24,7 +24,7 @@ namespace GoodAI.Core.Memory
             IsCustom = false;
         }
 
-        public readonly int MaxDimensions = 10;
+        protected readonly int MaxDimensions = 100;  // ought to be enough for everybody
 
         public int Size
         {
@@ -42,7 +42,8 @@ namespace GoodAI.Core.Memory
             get
             {
                 if (index >= m_customDimensions.Count)
-                    return -1;  // or throw out of range exception?
+                    throw new IndexOutOfRangeException(string.Format(
+                        "Index {0} is greater than max index {1}.", index, m_customDimensions.Count - 1));
 
                 return (m_customDimensions[index] != -1) ? m_customDimensions[index] : m_computedDimension;
             }
@@ -72,6 +73,9 @@ namespace GoodAI.Core.Memory
 
         public string PrintResult(bool printTotalSize = false)
         {
+            if (m_customDimensions.Count == 0)
+                return m_size.ToString();
+
             return string.Join("×", m_customDimensions.Select(item =>
                 {
                     if (item == -1)
@@ -92,7 +96,7 @@ namespace GoodAI.Core.Memory
         {
             InnerSet(customDimenstions);
             
-            IsCustom = true;
+            IsCustom = (m_customDimensions.Count > 0);  // No need to save "empty" value.
         }
         
         /// <summary>
@@ -110,6 +114,12 @@ namespace GoodAI.Core.Memory
 
         public void Parse(string text)
         {
+            if (text.Trim() == string.Empty)
+            {
+                Set(new List<int>());
+                return;
+            }
+
             var textItems = text.Split(new char[] {',', ';' });
 
             var dimensions = textItems.Select(item =>
@@ -160,6 +170,10 @@ namespace GoodAI.Core.Memory
             // UX: when no computed dimension was given, let it be the first one
             if ((newDimensions.Count > 0) && !foundComputedDimension)
                 newDimensions.Insert(0, -1);
+
+            // got only the computed dimension, it is equivalent to empty setup
+            if (foundComputedDimension && (newDimensions.Count == 1))
+                newDimensions.Clear();
 
             m_customDimensions = newDimensions;
 

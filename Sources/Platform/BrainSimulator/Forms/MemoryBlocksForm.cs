@@ -145,12 +145,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private static string PrintBlockSize(MyAbstractMemoryBlock block)
         {
-            if (block == null)
-                return "?";
-
-            return block.Dims.IsCustom
-                ? block.Dims.PrintResult(printTotalSize: true)
-                : block.Count.ToString();
+            return (block != null) ? block.Dims.PrintResult(printTotalSize: true) : "?";
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
@@ -244,9 +239,6 @@ namespace GoodAI.BrainSimulator.Forms
             if (block == null)
                 return false;
 
-            if (string.IsNullOrEmpty(dimensionsTextBox.Text))
-                return false;
-
             try
             {
                 block.Dims.Parse(dimensionsTextBox.Text);
@@ -296,13 +288,13 @@ namespace GoodAI.BrainSimulator.Forms
         {
             m_escapeOrEnterPressed = false;
 
-            if ((e.KeyChar != (char)13) && (e.KeyChar != (char)27))  // only handle Enter and Esc
-                return;  
+            if ((e.KeyChar != (char)Keys.Enter) && (e.KeyChar != (char)Keys.Escape))  // only handle Enter and Esc
+                return;
 
             e.Handled = true;  // prevent "Ding" sound when pressing Enter or Esc
             m_escapeOrEnterPressed = true;
 
-            if (e.KeyChar == (char)13)  // Enter
+            if (e.KeyChar == (char)Keys.Enter)
             {
                 if (!TrySetMemBlockDimensions())
                     return;
