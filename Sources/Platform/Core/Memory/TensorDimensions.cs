@@ -82,7 +82,7 @@ namespace GoodAI.Core.Memory
                 ));
         }
 
-        public string Print(bool printTotalSize = false)
+        public string Print(bool printTotalSize = false, bool indicateComputedDim = false)
         {
             if (m_customDimensions.Count == 0)
                 return m_size.ToString();
@@ -91,16 +91,18 @@ namespace GoodAI.Core.Memory
                 {
                     if (item == -1)
                     {
-                        return "(" + ((m_computedDimension == -1)
-                                ? "?"
-                                : m_computedDimension.ToString())
-                            + ")";
+                        return string.Format((indicateComputedDim ? "({0})" : "{0}"), PrintComputedDim());
                     }
                     else
                     {
                         return item.ToString();
                     }
                 })) + (printTotalSize ? string.Format(" [{0}]", Size) : "");
+        }
+
+        private string PrintComputedDim()
+        {
+            return (m_computedDimension == -1) ? "?" : m_computedDimension.ToString();
         }
 
         public void Set(IEnumerable<int> customDimenstions, bool autoAddComputedDim = false)

@@ -145,7 +145,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private static string PrintBlockSize(MyAbstractMemoryBlock block)
         {
-            return (block != null) ? block.Dims.Print(printTotalSize: true) : "?";
+            return (block != null)
+                ? block.Dims.Print(printTotalSize: true, indicateComputedDim: true)
+                : "?";
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
@@ -166,7 +168,7 @@ namespace GoodAI.BrainSimulator.Forms
             var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
             if (block != null)
             {
-                dimensionsTextBox.Text = block.Dims.Print();
+                dimensionsTextBox.Text = block.Dims.Print(indicateComputedDim: true);
                 ShowOrHideErrorInfo("");
             }
         }
