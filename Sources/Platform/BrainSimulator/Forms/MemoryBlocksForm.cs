@@ -15,6 +15,8 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private MainForm m_mainForm;
         private MyNode m_target;
+        private bool m_escapeOrEnterPressed;
+        private bool m_errorInfoShown = true;
 
         public MemoryBlocksForm(MainForm mainForm)
         {
@@ -40,6 +42,7 @@ namespace GoodAI.BrainSimulator.Forms
         {            
             listView.Items.Clear();
             toolStrip.Enabled = false;
+            splitContainer.Panel2Collapsed = true;
 
             if (Target != null)
             {
@@ -119,14 +122,7 @@ namespace GoodAI.BrainSimulator.Forms
                 typeStr = block.GetType().GetGenericArguments()[0].Name;
             }
 
-            string size = block.Count.ToString();
-
-            if (block.ColumnHint > 0 && block.ColumnHint <= block.Count)
-            {
-                size = block.ColumnHint + "x" + (block.Count / block.ColumnHint) + " (" + block.Count.ToString() + ")";
-            }
-
-            ListViewItem item = new ListViewItem(new string[] { name, size, typeStr });
+            ListViewItem item = new ListViewItem(new string[] { name, PrintBlockSize(block), typeStr });
             item.Tag = block;
 
             if (owned)
@@ -147,9 +143,32 @@ namespace GoodAI.BrainSimulator.Forms
             listView.Items.Add(item);
         }
 
+        private static string PrintBlockSize(MyAbstractMemoryBlock block)
+        {
+            return (block != null) ? block.Dims.Print(printTotalSize: true) : "?";
+        }
+
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
             toolStrip.Enabled = listView.SelectedItems.Count > 0;
+
+            bool oneItemSelected = (listView.SelectedItems.Count == 1);
+            splitContainer.Panel2Collapsed = !oneItemSelected;
+
+            ShowCurrentBlockDimensions();
+        }
+
+        private void ShowCurrentBlockDimensions()
+        {
+            if (listView.SelectedItems.Count < 1)
+                return;
+
+            var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+            if (block != null)
+            {
+                dimensionsTextBox.Text = block.Dims.Print();
+                ShowOrHideErrorInfo("");
+            }
         }
 
         private void addObserverButton_Click(object sender, EventArgs e)
@@ -195,6 +214,102 @@ namespace GoodAI.BrainSimulator.Forms
         private void addTextObserver_Click(object sender, EventArgs e)
         {
             m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MyTextObserver));
+        }
+
+        private MyAbstractMemoryBlock TryGetSelectedMemoryBlock()
+        {
+            if (listView.SelectedItems.Count <= 0)
+                return null;
+
+            return listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
+        }
+
+        private void UpdateSizeInfoForSelectedMemoryBlock()
+        {
+            if (listView.SelectedItems.Count <= 0)
+                return;
+
+            listView.SelectedItems[0].SubItems[1].Text =
+                PrintBlockSize(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock);
+        }
+
+        private bool TrySetMemBlockDimensions()
+        {
+            var block = TryGetSelectedMemoryBlock();
+            if (block == null)
+                return false;
+
+            try
+            {
+                block.Dims.Parse(dimensionsTextBox.Text);
+            }
+            catch (FormatException ex)
+            {
+                ShowOrHideErrorInfo(ex.Message);  // UX: Even better would be to show a bubble under the textbox.
+                return false;
+            }
+
+            UpdateSizeInfoForSelectedMemoryBlock();
+            ShowOrHideErrorInfo("");
+            return true;
+        }
+
+        private void ShowOrHideErrorInfo(string info)
+        {
+            bool showInfo = !string.IsNullOrEmpty(info);
+
+            int infoHeight = errorInfoLabel.Height + 1;
+
+            if (showInfo && !m_errorInfoShown)
+            {
+                splitContainer.SplitterDistance -= infoHeight;
+            }
+            else if (!showInfo && m_errorInfoShown)
+            {
+                splitContainer.SplitterDistance += infoHeight;
+            }
+
+            errorInfoLabel.Text = info;
+            m_errorInfoShown = showInfo;
+        }
+
+        private void dimensionsTextBox_Leave(object sender, EventArgs e)
+        {
+            if (!m_escapeOrEnterPressed)  // (Esc) => Don't set, (Enter) => Already tried.
+            {
+                if (!TrySetMemBlockDimensions())
+                    return;
+            }
+
+            ShowCurrentBlockDimensions();
+        }
+
+        private void dimensionsTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            m_escapeOrEnterPressed = false;
+
+            if ((e.KeyChar != (char)Keys.Enter) && (e.KeyChar != (char)Keys.Escape))  // only handle Enter and Esc
+                return;
+
+            e.Handled = true;  // prevent "Ding" sound when pressing Enter or Esc
+            m_escapeOrEnterPressed = true;
+
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                if (!TrySetMemBlockDimensions())
+                    return;
+            }
+
+            listView.Focus();
+        }
+
+        private void dimensionsTextBox_Enter(object sender, EventArgs e)
+        {
+            var block = TryGetSelectedMemoryBlock();
+            if (block == null)
+                return;
+
+            dimensionsTextBox.Text = block.Dims.PrintSource();
         }
     }
 }

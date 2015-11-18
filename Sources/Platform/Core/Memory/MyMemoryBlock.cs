@@ -5,18 +5,20 @@ using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace GoodAI.Core.Memory
 {
     public abstract class MyAbstractMemoryBlock
     {            
-        public int Count { get; set; }        
+        public abstract int Count { get; set; }
         public string Name { get; set; }
 
         //TODO: Find if MyWorkingNode is possible here
         public MyNode Owner { get; set; }
-        public int ColumnHint { get; set; }
+        public abstract int ColumnHint { get; set; }
+        public TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
                         
@@ -53,6 +55,31 @@ namespace GoodAI.Core.Memory
         protected virtual CudaDeviceVariable<T>[] Device { get; set; }
         public T[] Host { get; protected set; }
 
+        public override int Count
+        {
+            get { return m_count; }
+            set
+            {
+                m_count = value;
+                Dims.Size = m_count;
+            }
+        }
+        private int m_count = 0;
+
+        public override int ColumnHint
+        {
+            get
+            {
+                return (Dims.Count >= 2) ? Dims[1] : 1;
+            }
+            set
+            {
+                // propagate value to Dims, but not for the default value 1
+                if (value > 1)
+                    Dims.SetDefault(new List<int> { -1, value });
+            }
+        }
+
         public bool OnDevice
         {
             get
@@ -71,8 +98,8 @@ namespace GoodAI.Core.Memory
 
         public MyMemoryBlock()
         {
-            Count = 0;
-            ColumnHint = 1;
+            Dims = new TensorDimensions();
+
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;
         }

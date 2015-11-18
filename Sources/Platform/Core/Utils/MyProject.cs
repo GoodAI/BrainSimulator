@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core.Configuration;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
 using System;
@@ -185,6 +186,30 @@ namespace GoodAI.Core.Utils
 
         #endregion
 
+        #region Memory Block Attributes
+
+        [YAXSerializableField, YAXDictionary(EachPairName = "Item")]
+        protected Dictionary<string, MemBlockAttribute> MemoryBlockAttributes;
+ 
+        private void CollectMemBlockAttributes()
+        {
+            MemoryBlockAttributes = MyMemoryManager.Instance.CollectMemBlockAttributes();
+        }
+
+        private void ApplyMemBlockAttributes()
+        {
+            if (MemoryBlockAttributes == null)  // attributes are not mandatory
+                return;
+
+            // make sure to be marked as having non-default value
+            foreach (var attribute in MemoryBlockAttributes.Values)
+                attribute.FinalizeDeserialization();
+
+            MyMemoryManager.Instance.ApplyMemBlockAttributes(MemoryBlockAttributes);
+        }
+       
+        #endregion
+
         #region Serialization & Versioning
 
         [YAXSerializableField, YAXSerializeAs("UsedModules")]
@@ -212,6 +237,7 @@ namespace GoodAI.Core.Utils
             
             Network.PrepareConnections();
             UsedModules = ScanForUsedModules();
+            CollectMemBlockAttributes();
 
             StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + System.Environment.NewLine);
             MyPathSerializer.ReferencePath = projectPath;  // needed for conversion of absolute paths to relative ones
@@ -306,6 +332,8 @@ namespace GoodAI.Core.Utils
             {
                 throw new YAXException("Cannot deserialize project.");
             }
+
+            loadedProject.ApplyMemBlockAttributes();
 
             loadedProject.World.FinalizeTasksDeserialization();
             loadedProject.m_nodeCounter = loadedProject.Network.UpdateAfterDeserialization(0, loadedProject);

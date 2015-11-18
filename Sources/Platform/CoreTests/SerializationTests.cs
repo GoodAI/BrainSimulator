@@ -128,5 +128,33 @@ namespace CoreTests
 
             Assert.NotNull(deserialized);
         }
+
+        [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
+        class DictionaryTest
+        {
+            [YAXSerializableField, YAXDictionary(EachPairName = "Item")]
+            public Dictionary<string, int> Dict { get; set; }
+
+            public DictionaryTest()
+            {
+                Dict = new Dictionary<string, int>();
+            }
+        }
+
+        [Fact]
+        public void SerializesDictionary()
+        {
+            var serializer = MyProject.GetSerializer<DictionaryTest>();
+
+            var dictTest = new DictionaryTest();
+            dictTest.Dict.Add("foo", 1);
+            dictTest.Dict.Add("bar", 2);
+
+            var content = serializer.Serialize(dictTest);
+            
+            //File.WriteAllText(@"Data\serializes_dict.txt", content);
+
+            Assert.Equal(File.ReadAllText(@"Data\serializes_dict.txt"), content);
+        }
     }
 }

@@ -3,6 +3,7 @@ using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace GoodAI.Core.Memory
 {
@@ -69,6 +70,11 @@ namespace GoodAI.Core.Memory
         public static string GetFileName(MyAbstractMemoryBlock memoryBlock)
         {
             return memoryBlock.Name + ".mb";
+        }
+
+        public static string GetUniqueName(MyAbstractMemoryBlock memoryBlock)
+        {
+            return memoryBlock.Owner.Id.ToString() + "#" + memoryBlock.Name;
         }
 
         public static bool TempDataExists(MyProject project)
@@ -182,6 +188,24 @@ namespace GoodAI.Core.Memory
             {
                 MyLog.WARNING.WriteLine("Memory block saving failed (" + memoryBlock.Owner.Name + "." + memoryBlock.Name + "): " + e.Message);
             } 
+        }
+
+        public void CollectAttributes(MyAbstractMemoryBlock memoryBlock,
+            IDictionary<string, MemBlockAttribute> attributes)
+        {
+            if (memoryBlock == null)
+                return;
+
+            AddAttribute(memoryBlock, memoryBlock.Dims, attributes);
+        }
+
+        private void AddAttribute(MyAbstractMemoryBlock memoryBlock, MemBlockAttribute attr,
+            IDictionary<string, MemBlockAttribute> attributes)
+        {
+            if (attr.IsCustom)
+            {
+                attributes.Add(GetUniqueName(memoryBlock), attr);
+            }
         }
     }
 }
