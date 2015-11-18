@@ -240,6 +240,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         public NodePropertyForm NodePropertyView { get; private set; }
         public MemoryBlocksForm MemoryBlocksView { get; private set; }
+
+        public DashboardPropertyForm DashboardPropertyView { get; private set; }
         
         public TaskForm TaskView { get; private set; }
         public TaskPropertyForm TaskPropertyView { get; private set; }
@@ -691,6 +693,9 @@ namespace GoodAI.BrainSimulator.Forms
             }
             
             NodePropertyView = new NodePropertyForm(this);
+
+            DashboardPropertyView = new DashboardPropertyForm(this);
+
             MemoryBlocksView = new MemoryBlocksForm(this);
 
             TaskView = new TaskForm(this);
@@ -711,7 +716,7 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNewProject();                 
             CreateNetworkView();
 
-            m_views = new List<DockContent>() { NetworkView, NodePropertyView, MemoryBlocksView, TaskView,
+            m_views = new List<DockContent>() { NetworkView, DashboardPropertyView, NodePropertyView, MemoryBlocksView, TaskView,
                 TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
 
             foreach (DockContent view in m_views)

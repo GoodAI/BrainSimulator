@@ -83,6 +83,9 @@
     <ApplicationIcon>brainSim.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdamsLair.WinForms">
+      <HintPath>..\..\Libs\3rd\WinForms\obj\Debug\AdamsLair.WinForms.dll</HintPath>
+    </Reference>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\Aga.Controls\Aga.Controls.dll</HintPath>
@@ -106,6 +109,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -167,6 +171,12 @@
     </Compile>
     <Compile Include="Forms\ObserverForm.Designer.cs">
       <DependentUpon>ObserverForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DashboardPropertyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DashboardPropertyForm.Designer.cs">
+      <DependentUpon>DashboardPropertyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TaskPropertyForm.cs">
       <SubType>Form</SubType>
@@ -261,6 +271,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ObserverForm.resx">
       <DependentUpon>ObserverForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DashboardPropertyForm.resx">
+      <DependentUpon>DashboardPropertyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TaskPropertyForm.resx">
       <DependentUpon>TaskPropertyForm.cs</DependentUpon>
