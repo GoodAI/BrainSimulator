@@ -76,7 +76,7 @@ namespace GoodAI.Modules.VSA.Hashes
             Output.Count = InputSize;
             Output.ColumnHint = ColumnHint;
 
-            Temp.Count = InputSize;
+            Temp.Count = Math.Max(2, InputSize);
             Temp.ColumnHint = ColumnHint;
         }
 
