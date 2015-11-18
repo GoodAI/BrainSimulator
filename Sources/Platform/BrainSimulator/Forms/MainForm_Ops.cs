@@ -18,6 +18,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using GoodAI.Core.Task;
+using GoodAI.Platform.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -147,6 +149,9 @@ namespace GoodAI.BrainSimulator.Forms
             }
             Project.Observers = null;
 
+            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
+            RestoreDashboard(Project);
+            
             exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
             clearDataButton.Enabled = exportStateButton.Enabled;
 
@@ -406,6 +411,14 @@ namespace GoodAI.BrainSimulator.Forms
                     ShowObserverView(observer);
                 }
             }
+        }
+
+        private void RestoreDashboard(MyProject project)
+        {
+            if (project.Dashboard == null)
+                project.Dashboard = new Dashboard();
+
+            project.Dashboard.RestoreFromIds(project);
         }
 
         public void UpdateObservers()
@@ -1181,5 +1194,35 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         #endregion
+
+        public void DashboardPropertyToggle(object target, string propertyName)
+        {
+            var node = target as MyNode;
+            if (node != null)
+            {
+                Project.Dashboard.Properties.Add(new DashboardNodeProperty
+                {
+                    Node = node,
+                    Property = node.GetType().GetProperty(propertyName)
+                });
+
+                return;
+            }
+
+            var task = target as MyTask;
+            if (task != null)
+            {
+                Project.Dashboard.Properties.Add(new DashboardTaskProperty
+                {
+                    Node = task.GenericOwner,
+                    Task = task,
+                    Property = task.GetType().GetProperty(propertyName)
+                });
+
+                return;
+            }
+
+            throw new InvalidOperationException("Invalid property owner provided");
+        }
     }
 }

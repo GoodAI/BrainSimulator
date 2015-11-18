@@ -248,5 +248,29 @@ namespace GoodAI.BrainSimulator.Forms
         {
             (Target as MyAbstractObserver).AutosaveSnapshop = snapshotButton.Checked;
         }
+
+        private void dashboardButton_CheckedChanged(object sender, EventArgs e)
+        {
+            m_mainForm.DashboardPropertyToggle(Target, propertyGrid.SelectedGridItem.PropertyDescriptor.Name);
+        }
+
+        private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            if (e.NewSelection != null && Target is MyNode)
+            {
+                PropertyDescriptor descriptor = e.NewSelection.PropertyDescriptor;
+                if (descriptor != null)
+                {
+                    // A real property has been selected.
+                    // TODO(HonzaS): Check if the selected item is already in the dashboard and set the "checked" flag.
+                    dashboardButton.Enabled = true;
+                }
+            }
+            else
+            {
+                dashboardButton.Enabled = false;
+                dashboardButton.Checked = false;
+            }
+        }
     }
 }

@@ -110,6 +110,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Reflection" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -120,6 +121,9 @@
     <Compile Include="Configuration\MyBaseConversion.cs" />
     <Compile Include="Configuration\MyModuleConfig.cs" />
     <Compile Include="Configuration\MyNodeConfig.cs" />
+    <Compile Include="Dashboard\Dashboard.cs" />
+    <Compile Include="Dashboard\ProxyProperty.cs" />
+    <Compile Include="Dashboard\ProxyPropertyDescriptor.cs" />
     <Compile Include="Execution\MyExecutionBlock.cs" />
     <Compile Include="Execution\MyProjectRunner.cs" />
     <Compile Include="Execution\MySimulation.cs" />

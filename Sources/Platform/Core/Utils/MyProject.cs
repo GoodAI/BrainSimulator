@@ -5,6 +5,7 @@ using GoodAI.Core.Observers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using GoodAI.Platform.Core.Dashboard;
 using YAXLib;
 
 namespace GoodAI.Core.Utils
@@ -207,7 +208,14 @@ namespace GoodAI.Core.Utils
 
             MyMemoryManager.Instance.ApplyMemBlockAttributes(MemoryBlockAttributes);
         }
+
+        #endregion
        
+        #region Dashboard
+
+        [YAXSerializableField]
+        public Dashboard Dashboard { get; set; }
+
         #endregion
 
         #region Serialization & Versioning
