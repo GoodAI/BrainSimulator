@@ -208,13 +208,28 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(newPlan.Where(task => task is MyIncrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyDecrementTimeStepTask).ToList().Contains);
             newPlan.RemoveAll(newPlan.Where(task => task is MyRunTemporalBlocksModeTask).ToList().Contains);
-            
-            selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
-            newPlan.RemoveAll(selected.Contains);
-    
+
+            //selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
+            //newPlan.RemoveAll(selected.Contains);
+
             // after FF add deltaoutput and bptt if needed, then increpement one step :)
             newPlan.Insert(0, IncrementTimeStep);
-            newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
+            selected = newPlan.Where(task => task is MyQLearningTask).ToList();
+            if (selected.Count > 0)
+            {
+                newPlan.RemoveAll(selected.Contains);
+                newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
+
+                selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
+                newPlan.RemoveAll(selected.Contains);
+                newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 2, selected.Reverse<IMyExecutable>());
+            }
+            else
+            {
+                selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
+                newPlan.RemoveAll(selected.Contains);
+                newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
+            }
             newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
 
             // return new plan as MyExecutionBlock
