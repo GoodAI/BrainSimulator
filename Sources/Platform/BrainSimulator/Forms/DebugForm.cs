@@ -163,7 +163,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void AlterBackground(DrawEventArgs e)
         {
             var nodeData = e.Node.Tag as MyDebugNode;
-            if (nodeData != null && nodeData.Breakpoint)
+            if (nodeData != null && nodeData.Breakpoint && e.Node != debugTreeView.SelectedNode)
             {
                 e.BackgroundBrush = Brushes.IndianRed;
             }
