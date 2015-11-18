@@ -17,6 +17,8 @@ namespace GoodAI.Core.Memory
 
         private int m_computedDimension = -1;
 
+        private const string ComputedDimLiteral = "*";
+
         public TensorDimensions()
         {
             IsCustom = false;
@@ -64,7 +66,7 @@ namespace GoodAI.Core.Memory
         public string PrintSource()
         {
             return string.Join(", ", m_customDimensions.Select(item =>
-                (item == -1) ? "_" : item.ToString()
+                (item == -1) ? ComputedDimLiteral : item.ToString()
                 ));
         }
 
@@ -114,7 +116,7 @@ namespace GoodAI.Core.Memory
             {
                 int result;
 
-                if (item.Trim() == "_")
+                if ((item.Trim() == ComputedDimLiteral) || (item.Trim() == "_"))
                 {
                     result = -1;  // computed dimension
                 }
