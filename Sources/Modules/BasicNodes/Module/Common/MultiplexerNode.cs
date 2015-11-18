@@ -117,48 +117,98 @@ namespace GoodAI.Modules.Common
             [YAXSerializableField(DefaultValue = false), Description("If True, Node will use the pattern forever. If False, pattern is applied only once and then output is filled with 0s")]
             public bool Rotate { get; set; }
 
+            private string m_pattern;
             [MyBrowsable, Category("Parameters")]
             [YAXSerializableField(DefaultValue = "1000,100,1000"), Description("Comma-separated list of ints. Defines, how the node will route input signals.")]
-            public string Pattern { get; set; }
+            public string Pattern
+            {
+                get
+                {
+                    return m_pattern;
+                }
+                set
+                {
+                    m_pattern = value;
+
+                    m_signals = Array.ConvertAll(Pattern.Split(','), int.Parse);
+                    m_absSignals = Array.ConvertAll(m_signals, Math.Abs);
+                    m_mod = m_absSignals.Sum();
+
+                    UpdateTransitions();
+                }
+            }
+
+            private int[] m_signals;
+            private int[] m_absSignals;
+            private int m_mod;
+
+            private int[] m_outputs;
+            private int[] m_transitions;
+            private int m_idx;
+            private int m_lastIdx;
+
+            private void UpdateTransitions()
+            {
+                if (Owner == null)
+                    return;
+                int states = m_absSignals.Where(x => x > 0).Count();
+                m_outputs = new int[states];
+                m_transitions = new int[states];
+
+                int idx = 0;
+                int outputIdx = 0;
+                for (int i = 0; i < m_signals.Length; ++i)
+                {
+                    int signal = m_signals[i];
+                    if (signal < 0)
+                    {
+                        m_outputs[idx] = -1;
+                        m_transitions[idx] = Math.Abs(signal);
+                        if (idx > 0)
+                            m_transitions[idx] += m_transitions[idx - 1];
+                        idx++;
+                    }
+                    else if (signal == 0)
+                    {
+                        outputIdx = (outputIdx + 1) % Owner.InputBranches;
+                    }
+                    else
+                    {
+                        m_outputs[idx] = outputIdx % Owner.InputBranches;
+                        m_transitions[idx] = Math.Abs(signal);
+                        if (idx > 0)
+                            m_transitions[idx] += m_transitions[idx - 1];
+                        outputIdx++;
+                        idx++;
+                    }
+                }
+                m_transitions[m_transitions.Length - 1] = 0;    //last transition happens when phase is 0 again
+            }
 
             public override void Init(int nGPU)
             {
+                UpdateTransitions();
+                m_idx = 0;
+                m_lastIdx = -1;
             }
 
             public override void Execute()
             {
-                int[] signals = Array.ConvertAll(Pattern.Split(','), int.Parse);
-                int[] abs = Array.ConvertAll(signals, Math.Abs);
-
-                int mod = abs.Sum();
-                if (!Rotate && SimulationStep >= mod)
+                if (!Rotate && SimulationStep >= m_mod)
                 {
                     Owner.Output.Fill(0);
                     return;
                 }
-                int phase = (int)(SimulationStep % mod);
 
-                int cnt = 0;
-                for (int i = 0; i < signals.Length; i++)
-                {
-                    if (phase >= cnt && phase < cnt + abs[i])
-                    {
-                        if (signals[i] < 0)
-                        {
-                            Owner.Output.Fill(0);
-                        }
-                        else
-                        {
-                            //get negative numbers preceeding this number
-                            int[] skipping = signals.Take(i).Where(x => x < 0).ToArray();
-                            //skip idle phases from counting input index
-                            int idx = (i - skipping.Length) % Owner.InputBranches;
+                int phase = (int)(SimulationStep % m_mod);
+                if (m_transitions[m_idx] == phase)
+                    m_idx = (m_idx + 1) % m_transitions.Length;
 
-                            Owner.GetInput(idx).CopyToMemoryBlock(Owner.Output, 0, 0, Owner.GetInput(idx).Count);
-                        }
-                    }
-                    cnt += abs[i];
-                }
+                if (m_outputs[m_idx] == -1)
+                    Owner.Output.Fill(0);
+                else
+                    if (m_idx != m_lastIdx)
+                        Owner.GetInput(m_outputs[m_idx]).CopyToMemoryBlock(Owner.Output, 0, 0, Owner.GetInput(m_outputs[m_idx]).Count);
             }
         }
     }
