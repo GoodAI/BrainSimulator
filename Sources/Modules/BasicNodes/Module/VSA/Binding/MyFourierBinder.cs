@@ -140,6 +140,10 @@ namespace GoodAI.Modules.VSA
             {
                 m_normalKernel.Run(0, 0, factor, 0, output, output, m_inputSize);
             }
+            else
+            {
+                m_stream.Synchronize();
+            }
         }
     }
 }
