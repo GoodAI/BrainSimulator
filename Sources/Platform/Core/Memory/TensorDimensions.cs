@@ -82,7 +82,7 @@ namespace GoodAI.Core.Memory
                 ));
         }
 
-        public string PrintResult(bool printTotalSize = false)
+        public string Print(bool printTotalSize = false)
         {
             if (m_customDimensions.Count == 0)
                 return m_size.ToString();
