@@ -29,7 +29,7 @@ Details are described in [Guides/Image Processing](../guides/improc.md).
 ### Focuser
 Brain: [Vision/focuserRetina.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/Vision/focuserRetina.brain)
 
-The brain file contains a simple example for cropping a part of the image. It shows the standart focuser that outputs a part of the image, given a position and scale.
+The brain file contains a simple example for cropping a part of the image. It shows the standard focuser that outputs a part of the image, given a position and scale.
 
 In addition, the `Focuser` has a mode to work as retina transformation ([it is a modification of the method in this paper](http://papers.nips.cc/paper/4089-learning-to-combine-foveal-glimpses-with-a-third-order-boltzmann-machine.pdf)). In this case of retina transform, there is a higher resolution towards the given position, while the resolution decreases when being distant to the center.
 
