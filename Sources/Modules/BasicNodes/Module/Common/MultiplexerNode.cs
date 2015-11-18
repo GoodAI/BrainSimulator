@@ -100,10 +100,14 @@ namespace GoodAI.Modules.Common
         /// 
         /// <br>After that, 0 will be set as output or pattern will be applied again (according to Rotate param). </br>
         /// 
-        /// <br>You can enter negative numbers too - they define, for how long output will be filled with 0. So -1000,500,200,-300,-100,500 is valid pattern too. 
-        /// Pattern can be longer than number of inputs. 
-        /// E.g. pattern -200,1000,-200,-200,0,1000,300,400,-200,600 with 3 inputs will route inputs: none, 1, none, 3, 1, 2, 3. 
-        /// While pattern which is shorter, will triger only the starting inputs. 
+        /// <br>You can enter negative numbers too - they define, for how long output will be filled with 0. So -1000,500,200,-300,-100,500 is valid pattern too. </br>
+        /// 
+        /// <br>You can enter zero as well - that means that you want to skip whichever input should be that number for. Therefore 100,0,50 will output only first and third input</br>
+        /// 
+        /// <br>Pattern can be longer than number of inputs. 
+        /// E.g. pattern -200,1000,-200,-200,0,1000,300,400,-200,600 with 3 inputs will route inputs: none, 1, none, 3, 1, 2, 3.</br>
+        /// 
+        /// <br>While pattern which is shorter, will triger only the starting inputs. 
         /// E.g. pattern -200,1000,100 with 3 inputs will give you only the first two into output.</br>
         /// </summary>
         [Description("Route inputs")]
