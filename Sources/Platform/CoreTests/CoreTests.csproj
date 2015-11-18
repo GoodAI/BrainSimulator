@@ -73,6 +73,7 @@
     <Compile Include="SerializationTests.cs" />
     <Compile Include="SimulationHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TensorDimensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

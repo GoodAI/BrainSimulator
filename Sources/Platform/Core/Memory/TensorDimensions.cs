@@ -22,6 +22,12 @@ namespace GoodAI.Core.Memory
         public TensorDimensions()
         {
             IsCustom = false;
+            CanBeComputed = false;
+        }
+
+        public TensorDimensions(params int[] dimensions)
+        {
+            Set(dimensions);
         }
 
         protected readonly int MaxDimensions = 100;  // ought to be enough for everybody
@@ -41,6 +47,9 @@ namespace GoodAI.Core.Memory
         {
             get
             {
+                if (m_customDimensions.Count == 0)
+                    return m_size;
+
                 if (index >= m_customDimensions.Count)
                     throw new IndexOutOfRangeException(string.Format(
                         "Index {0} is greater than max index {1}.", index, m_customDimensions.Count - 1));
@@ -51,8 +60,10 @@ namespace GoodAI.Core.Memory
         
         public int Count
         {
-            get { return m_customDimensions.Count; }
+            get { return Math.Max(m_customDimensions.Count, 1); }  // we always have at least one dimension
         }
+
+        public bool CanBeComputed { get; protected set; }
 
         internal override void ApplyAttribute(MyAbstractMemoryBlock memoryBlock)
         {
@@ -92,9 +103,9 @@ namespace GoodAI.Core.Memory
                 })) + (printTotalSize ? string.Format(" [{0}]", Size) : "");
         }
 
-        public void Set(IEnumerable<int> customDimenstions)
+        public void Set(IEnumerable<int> customDimenstions, bool autoAddComputedDim = false)
         {
-            InnerSet(customDimenstions);
+            InnerSet(customDimenstions, autoAddComputedDim);
             
             IsCustom = (m_customDimensions.Count > 0);  // No need to save "empty" value.
         }
@@ -102,12 +113,12 @@ namespace GoodAI.Core.Memory
         /// <summary>
         /// Sets new value but treats it as default (that is not saved to the project). Use for backward compatibility.
         /// </summary>
-        public void SetDefault(IEnumerable<int> dimensions)
+        public void SetDefault(IEnumerable<int> dimensions, bool autoAddComputedDim = false)
         {
             if (IsCustom)
                 return;
 
-            InnerSet(dimensions);
+            InnerSet(dimensions, autoAddComputedDim);
 
             IsCustom = false;  // treat new value as default
         }
@@ -138,10 +149,10 @@ namespace GoodAI.Core.Memory
                 return result;
             });
 
-            Set(dimensions);
+            Set(dimensions, autoAddComputedDim: true);
         }
 
-        private void InnerSet(IEnumerable<int> dimensions)
+        private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim)
         {
             var newDimensions = new List<int>();
 
@@ -168,7 +179,7 @@ namespace GoodAI.Core.Memory
             }
 
             // UX: when no computed dimension was given, let it be the first one
-            if ((newDimensions.Count > 0) && !foundComputedDimension)
+            if (autoAddComputedDim && (newDimensions.Count > 0) && !foundComputedDimension)
                 newDimensions.Insert(0, -1);
 
             // got only the computed dimension, it is equivalent to empty setup
@@ -182,16 +193,18 @@ namespace GoodAI.Core.Memory
 
         private void UpdateComputedDimension()
         {
-            m_computedDimension = ComputeDimension(m_size);
+            m_computedDimension = ComputeDimension();
+
+            CanBeComputed = (m_computedDimension != -1);
         }
 
-        private int ComputeDimension(int size)
+        private int ComputeDimension()
         {
-            if (size == 0)
+            if (m_size == 0)
                 return -1;  // don't return dimension size 0
 
             if (m_customDimensions.Count == 0)
-                return size;
+                return m_size;
 
             int product = 1;
             m_customDimensions.ForEach(item =>
@@ -203,9 +216,9 @@ namespace GoodAI.Core.Memory
             if (product < 1)
                 return -1;
 
-            var computedDimension = size / product;
+            var computedDimension = m_size / product;
 
-            if (computedDimension * product != size)  // unable to compute integer division
+            if (computedDimension * product != m_size)  // unable to compute integer division
                 return -1;
 
             return computedDimension;
