@@ -577,11 +577,11 @@
             // 
             this.profileToolButton.CheckOnClick = true;
             this.profileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.profileToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Information_16xLG_color;
+            this.profileToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.performance;
             this.profileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.profileToolButton.Name = "profileToolButton";
             this.profileToolButton.Size = new System.Drawing.Size(23, 20);
-            this.profileToolButton.Text = "toolStripButton1";
+            this.profileToolButton.Text = "Enable/Disable Profiling";
             this.profileToolButton.CheckedChanged += new System.EventHandler(this.profileToolButton_CheckedChanged);
             // 
             // toolStripSeparator7

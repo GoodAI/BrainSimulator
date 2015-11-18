@@ -322,7 +322,7 @@
             this.HideOnClose = true;
             this.Name = "DebugForm";
             this.Padding = new System.Windows.Forms.Padding(3);
-            this.Text = "Debugging";
+            this.Text = "Debugging / Profiling";
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
