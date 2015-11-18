@@ -94,13 +94,17 @@ namespace GoodAI.Modules.Common
         }
 
         /// <summary>
-        /// <br>Eeach number defines, for how long the given input will be copied to output. </br>
+        /// <br>Each number defines, for how long the given input will be copied to output. </br>
         /// 
         /// <br>E.g. - if you enter: 500,200,500 then for the first 500 steps, Input 1 will be copied into output, for next 200 steps Input 2 will be copied into output and then Input 3 will be copied into output for another 500 steps.</br>
         /// 
         /// <br>After that, 0 will be set as output or pattern will be applied again (according to Rotate param). </br>
         /// 
-        /// <br>You can enter negative numbers too - they define, for how long output will be filled with 0. So -1000,500,200,-300,-100,500 is valid pattern too. Pattern can be longer than number of inputs. E.g. pattern -200,1000,-200,-200,0,1000,300,400,-200,600 with 3 inputs will route inputs: none, 1, none, 3, 1, 2, 3. While pattern which is shorter, will triger only the starting inputs. E.g. pattern -200,1000,100 with 3 inputs will give you only the first two into output.</br>
+        /// <br>You can enter negative numbers too - they define, for how long output will be filled with 0. So -1000,500,200,-300,-100,500 is valid pattern too. 
+        /// Pattern can be longer than number of inputs. 
+        /// E.g. pattern -200,1000,-200,-200,0,1000,300,400,-200,600 with 3 inputs will route inputs: none, 1, none, 3, 1, 2, 3. 
+        /// While pattern which is shorter, will triger only the starting inputs. 
+        /// E.g. pattern -200,1000,100 with 3 inputs will give you only the first two into output.</br>
         /// </summary>
         [Description("Route inputs")]
         public class RoutingTask : MyTask<MultiplexerNode>
