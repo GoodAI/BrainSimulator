@@ -178,21 +178,22 @@ namespace GoodAI.BrainSimulator.Forms
                 var parentBlock = parentDebugNode.Executable as MyExecutionBlock;
                 if (parentBlock != null)
                 {
+                    // The parent node contains an executable block.
                     var debugNode = e.Node.Tag as MyDebugNode;
+
+                    // Fill the time property in the view model.
                     TimeSpan profilingTime;
                     if (parentBlock.ProfilingInfo.TryGetValue(debugNode.Executable, out profilingTime))
-                    {
                         debugNode.ProfilerTime = profilingTime;
-                    }
 
                     TreeNodeAdv selectedTreeNode = GetSelectedTreeNode();
                     if (selectedTreeNode == null)
                         return;
 
+                    // If the this node should be colored according to the time it took, use the pre-calculated color
+                    // in the draw event.
                     if (parentTreeNode == selectedTreeNode)
-                    {
                         e.BackgroundBrush = new SolidBrush(debugNode.BackgroundColor);
-                    }
                 }
             }
         }
@@ -283,16 +284,17 @@ namespace GoodAI.BrainSimulator.Forms
             if (selectedTreeNode == null)
                 return;
 
-            // Calculate total time of the individual components.
-            double totalTime = selectedTreeNode.Children
+            // Get the relevant children of the current node.
+            var children = selectedTreeNode.Children
                 .Select(child => child.Tag as MyDebugNode)
                 .Where(childDebugNode => childDebugNode != null && childDebugNode.ProfilerTime != null)
-                .Sum(childDebugNode => childDebugNode.ProfilerTime.Value.TotalMilliseconds);
+                .ToList();
+
+            // Calculate total time of the individual components.
+            double totalTime = children.Sum(childDebugNode => childDebugNode.ProfilerTime.Value.TotalMilliseconds);
 
             // Calculate the colors of the children nodes.
-            foreach (MyDebugNode debugNodeChild in selectedTreeNode.Children
-                .Select(child => child.Tag as MyDebugNode)
-                .Where(debugNode => debugNode != null && debugNode.ProfilerTime != null))
+            foreach (MyDebugNode debugNodeChild in children)
             {
                 var saturation = (int) (255 * debugNodeChild.ProfilerTime.Value.TotalMilliseconds/totalTime);
                 // ~ 1% filter.

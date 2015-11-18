@@ -121,7 +121,12 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        private void EndChildBlockMeasuring(MyExecutionBlock childBlock)
+        private void EndChildBlockMeasuring(MyExecutionBlock block)
+        {
+            EndMeasuring(block);
+        }
+
+        private void EndMeasuring(IMyExecutable childBlock)
         {
             m_profilingStopwatch.Stop();
             ProfilingInfo[childBlock] = m_profilingStopwatch.Elapsed;
@@ -166,8 +171,7 @@ namespace GoodAI.Core.Execution
             }
             finally 
             {
-                m_profilingStopwatch.Stop();
-                ProfilingInfo[child] = m_profilingStopwatch.Elapsed;
+                EndMeasuring(child);
             }
         }
 
