@@ -142,6 +142,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\MultiplexerNode.cs" />
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
     <Compile Include="DiscreteRL\Observers\DiscretePolicyObserver.cs" />
