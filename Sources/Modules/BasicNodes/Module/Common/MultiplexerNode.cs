@@ -128,13 +128,20 @@ namespace GoodAI.Modules.Common
                 }
                 set
                 {
-                    m_pattern = value;
+                    try
+                    {
+                        m_signals = Array.ConvertAll(value.Split(','), int.Parse);
+                        m_absSignals = Array.ConvertAll(m_signals, Math.Abs);
+                        m_mod = m_absSignals.Sum();
 
-                    m_signals = Array.ConvertAll(Pattern.Split(','), int.Parse);
-                    m_absSignals = Array.ConvertAll(m_signals, Math.Abs);
-                    m_mod = m_absSignals.Sum();
+                        m_pattern = value;
 
-                    UpdateTransitions();
+                        UpdateTransitions();
+                    }
+                    catch (FormatException e)
+                    {
+                        MyLog.ERROR.WriteLine(Owner.Id + ">" + e.Message);
+                    }
                 }
             }
 
@@ -142,14 +149,14 @@ namespace GoodAI.Modules.Common
             private int[] m_absSignals;
             private int m_mod;
 
-            private int[] m_outputs;
-            private int[] m_transitions;
+            private int[] m_outputs;    //which input to copy to output in given phase
+            private int[] m_transitions;    //when to change the phase
             private int m_idx;
             private int m_lastIdx;
 
             private void UpdateTransitions()
             {
-                if (Owner == null)
+                if (Owner == null)  // Owner is null during deserialization
                     return;
                 int states = m_absSignals.Where(x => x > 0).Count();
                 m_outputs = new int[states];
@@ -160,27 +167,26 @@ namespace GoodAI.Modules.Common
                 for (int i = 0; i < m_signals.Length; ++i)
                 {
                     int signal = m_signals[i];
-                    if (signal < 0)
-                    {
-                        m_outputs[idx] = -1;
-                        m_transitions[idx] = Math.Abs(signal);
-                        if (idx > 0)
-                            m_transitions[idx] += m_transitions[idx - 1];
-                        idx++;
-                    }
-                    else if (signal == 0)
+
+                    if (signal == 0)    // zero - skip this input
                     {
                         outputIdx = (outputIdx + 1) % Owner.InputBranches;
+                        continue;
                     }
+
+                    if (signal < 0) // signal negative -> set -1 as input branch index -> interpret it as "fill with zeros" later
+                        m_outputs[idx] = -1;
                     else
                     {
                         m_outputs[idx] = outputIdx % Owner.InputBranches;
-                        m_transitions[idx] = Math.Abs(signal);
-                        if (idx > 0)
-                            m_transitions[idx] += m_transitions[idx - 1];
                         outputIdx++;
-                        idx++;
                     }
+
+                    m_transitions[idx] = Math.Abs(signal);  //set the length of exposition
+
+                    if (idx > 0)
+                        m_transitions[idx] += m_transitions[idx - 1];   //add all previous expositions if not on first element
+                    idx++;
                 }
                 m_transitions[m_transitions.Length - 1] = 0;    //last transition happens when phase is 0 again
             }
@@ -194,21 +200,27 @@ namespace GoodAI.Modules.Common
 
             public override void Execute()
             {
+                if (SimulationStep == 0)
+                    Owner.Output.Fill(0);
+
                 if (!Rotate && SimulationStep >= m_mod)
                 {
-                    Owner.Output.Fill(0);
+                    if (m_lastIdx != 1)
+                        Owner.Output.Fill(0);
                     return;
                 }
 
                 int phase = (int)(SimulationStep % m_mod);
-                if (m_transitions[m_idx] == phase)
+                if (phase == m_transitions[m_idx])
                     m_idx = (m_idx + 1) % m_transitions.Length;
 
                 if (m_outputs[m_idx] == -1)
                     Owner.Output.Fill(0);
-                else
-                    if (m_idx != m_lastIdx)
-                        Owner.GetInput(m_outputs[m_idx]).CopyToMemoryBlock(Owner.Output, 0, 0, Owner.GetInput(m_outputs[m_idx]).Count);
+                else if (m_idx != m_lastIdx)
+                {
+                    Owner.GetInput(m_outputs[m_idx]).CopyToMemoryBlock(Owner.Output, 0, 0, Owner.GetInput(m_outputs[m_idx]).Count);
+                    m_lastIdx = m_idx;
+                }
             }
         }
     }
