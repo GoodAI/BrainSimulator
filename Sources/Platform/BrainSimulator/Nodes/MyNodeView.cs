@@ -22,6 +22,8 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 m_node = value;                
                 InitBranches();
+
+                m_node.NodeUpdated += OnNodeUpdated;
             }
         }
 
@@ -106,6 +108,11 @@ namespace GoodAI.BrainSimulator.NodeView
                     AddItem(branch);
                 }
             }
+        }
+
+        private void OnNodeUpdated(object node, EventArgs e)
+        {
+            UpdateView();
         }
 
         public virtual void UpdateView()
