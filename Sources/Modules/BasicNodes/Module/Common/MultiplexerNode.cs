@@ -205,8 +205,11 @@ namespace GoodAI.Modules.Common
 
                 if (!Rotate && SimulationStep >= m_mod)
                 {
-                    if (m_lastIdx != 1)
+                    if (m_lastIdx != -1)
+                    {
                         Owner.Output.Fill(0);
+                        m_lastIdx = -1;
+                    }
                     return;
                 }
 
