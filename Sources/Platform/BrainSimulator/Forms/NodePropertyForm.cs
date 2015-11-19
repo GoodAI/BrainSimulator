@@ -281,5 +281,10 @@ namespace GoodAI.BrainSimulator.Forms
                 DisableDashboardButton();
             }
         }
+
+        public void RefreshGrid()
+        {
+            propertyGrid.Refresh();
+        }
     }
 }

@@ -18,6 +18,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Task;
 using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
@@ -419,6 +420,8 @@ namespace GoodAI.BrainSimulator.Forms
                 project.Dashboard = new Dashboard();
 
             project.Dashboard.RestoreFromIds(project);
+
+            DashboardPropertyView.Target = new DashboardViewModel(project.Dashboard);
         }
 
         public void UpdateObservers()
@@ -714,6 +717,9 @@ namespace GoodAI.BrainSimulator.Forms
             TaskView = new TaskForm(this);
             TaskPropertyView = new TaskPropertyForm(this);
 
+            // Link the Task and Node property views to the dashboard's PropertyChanged.
+            DashboardPropertyView.PropertyValueChanged += RefreshPropertyViews;
+
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
             TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
 
@@ -797,6 +803,12 @@ namespace GoodAI.BrainSimulator.Forms
             autosaveTextBox_Validating(this, new CancelEventArgs());
 
             autosaveButton.Checked = Properties.Settings.Default.AutosaveEnabled;
+        }
+
+        private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)
+        {
+            NodePropertyView.RefreshGrid();
+            TaskPropertyView.RefreshGrid();
         }
 
         public void PopulateWorldList()

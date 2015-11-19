@@ -37,5 +37,10 @@ namespace GoodAI.BrainSimulator.Forms
                 graphView.Desktop.Invalidate();
             }
         }
+
+        public void RefreshGrid()
+        {
+            propertyGrid.Refresh();
+        }
     }
 }

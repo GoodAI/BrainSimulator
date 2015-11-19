@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Core.Dashboard;
 
 namespace GoodAI.BrainSimulator.DashboardUtils
 {
-    public class DashboardViewModel : ICustomTypeDescriptor
+    public class DashboardViewModel : ICustomTypeDescriptor, INotifyPropertyChanged
     {
         private readonly Dashboard m_dashboard;
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { m_dashboard.PropertyChanged += value; }
+            remove { m_dashboard.PropertyChanged -= value; }
+        }
 
         public DashboardViewModel(Dashboard dashboard)
         {

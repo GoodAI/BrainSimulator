@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,8 +17,10 @@ using YAXLib;
 namespace GoodAI.Core.Dashboard
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class Dashboard
+    public class Dashboard : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         [YAXSerializableField]
         public IList<DashboardProperty> Properties { get; set; }
 
@@ -42,39 +45,51 @@ namespace GoodAI.Core.Dashboard
             if (Contains(target, propertyName))
                 return;
 
+            DashboardProperty property = null;
+
             var node = target as MyNode;
             if (node != null)
             {
-                Properties.Add(new DashboardNodeProperty
+                property = new DashboardNodeProperty
                 {
                     Node = node,
                     Property = node.GetType().GetProperty(propertyName)
-                });
-
-                return;
+                };
             }
-
-            var task = target as MyTask;
-            if (task != null)
+            else
             {
-                Properties.Add(new DashboardTaskProperty
+                var task = target as MyTask;
+                if (task != null)
                 {
-                    Node = task.GenericOwner,
-                    Task = task,
-                    Property = task.GetType().GetProperty(propertyName)
-                });
-
-                return;
+                    property = new DashboardTaskProperty
+                    {
+                        Node = task.GenericOwner,
+                        Task = task,
+                        Property = task.GetType().GetProperty(propertyName)
+                    };
+                }
             }
 
-            throw new InvalidOperationException("Invalid property owner provided");
+            if (property == null)
+                throw new InvalidOperationException("Invalid property owner provided");
+
+            Properties.Add(property);
+            OnPropertiesChanged("Properties");
         }
 
         public void Remove(object target, string propertyName)
         {
-            var propertiesToRemove = Properties.Where(property => property.Equals(target, propertyName)).ToList();
-            foreach (DashboardProperty dashboardProperty in propertiesToRemove)
-                Properties.Remove(dashboardProperty);
+            var property = Properties.FirstOrDefault(p => p.Equals(target, propertyName));
+            if (property != null && Properties.Remove(property))
+            {
+                OnPropertiesChanged("Properties");
+            }
+        }
+
+        protected virtual void OnPropertiesChanged(string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
