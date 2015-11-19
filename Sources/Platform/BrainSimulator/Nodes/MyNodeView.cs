@@ -30,7 +30,10 @@ namespace GoodAI.BrainSimulator.NodeView
 
         protected NodeImageItem m_iconItem;
         protected NodeLabelItem m_descItem;
-        protected NodeLabelItem m_statusBar;
+
+        private MyStatusBarItem m_statusBar;
+        private MyStatusBarItem.IconSubitem m_loadSubitem;
+        private MyStatusBarItem.IconSubitem m_saveSubitem;
 
         protected Image m_icon;        
 
@@ -76,11 +79,12 @@ namespace GoodAI.BrainSimulator.NodeView
                 AddItem(signalItem);
             }
 
-            InitIOBranches(Node.InputBranches, m_iconItem.Input, m_inputBranches, Node.GetInfo().InputBlocks, isInput: true);
-            InitIOBranches(Node.OutputBranches, m_iconItem.Output, m_outputBranches, Node.GetInfo().OutputBlocks, isInput: false);
+            InitIoBranches(Node.InputBranches, m_iconItem.Input, m_inputBranches, nodeInfo.InputBlocks, isInput: true);
+            InitIoBranches(Node.OutputBranches, m_iconItem.Output, m_outputBranches, nodeInfo.OutputBlocks, isInput: false);
         }
 
-        private void InitIOBranches(int branchCount, NodeConnector connector, ICollection<NodeItem> branchList, IList<PropertyInfo> blocks, bool isInput)
+        private void InitIoBranches(int branchCount, NodeConnector connector, ICollection<NodeItem> branchList,
+            IList<PropertyInfo> blocks, bool isInput)
         {
             if (branchCount == 1)
             {
@@ -117,14 +121,26 @@ namespace GoodAI.BrainSimulator.NodeView
 
         private void InitStatusBar()
         {
-            m_statusBar = new NodeLabelItem(Node.TopologicalOrder.ToString()) { IsPassive = true };
+            m_statusBar = new MyStatusBarItem();
+
+            m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb);
+            m_saveSubitem = m_statusBar.AddIcon(Properties.Resources.save_mb);
+
+            UpdateStatusBar();
             
             AddItem(m_statusBar, orderKey: 1000);  // keep it at the bottom
         }
 
         private void UpdateStatusBar()
         {
-            m_statusBar.Text = Node.TopologicalOrder.ToString();
+            m_statusBar.TextItem = Node.TopologicalOrder.ToString();
+
+            var workingNode = Node as MyWorkingNode;
+            if (workingNode == null)
+                return;
+
+            m_loadSubitem.Enabled = workingNode.LoadOnStart;
+            m_saveSubitem.Enabled = workingNode.SaveOnStop;
         }
 
         public virtual void UpdateView()

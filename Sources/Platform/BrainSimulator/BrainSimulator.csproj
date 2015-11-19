@@ -207,6 +207,7 @@
     <Compile Include="Nodes\MyNodeLabelItem.cs" />
     <Compile Include="Nodes\MyNodeView.cs" />
     <Compile Include="Nodes\MyNodeViewConnection.cs" />
+    <Compile Include="Nodes\MyStatusBarItem.cs" />
     <Compile Include="Nodes\MyUserInputView.cs" />
     <Compile Include="Nodes\MyVariableBranchView.cs" />
     <Compile Include="Program.cs" />
