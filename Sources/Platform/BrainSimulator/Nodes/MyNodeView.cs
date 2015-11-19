@@ -22,6 +22,7 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 m_node = value;                
                 InitBranches();
+                InitStatusBar();  // TODO(P): consider moving elsewhere
 
                 m_node.NodeUpdated += OnNodeUpdated;
             }
@@ -29,6 +30,7 @@ namespace GoodAI.BrainSimulator.NodeView
 
         protected NodeImageItem m_iconItem;
         protected NodeLabelItem m_descItem;
+        protected NodeLabelItem m_statusBar;
 
         protected Image m_icon;        
 
@@ -113,18 +115,32 @@ namespace GoodAI.BrainSimulator.NodeView
             UpdateView();
         }
 
+        private void InitStatusBar()
+        {
+            m_statusBar = new NodeLabelItem(Node.TopologicalOrder.ToString()) { IsPassive = true };
+            
+            AddItem(m_statusBar);
+        }
+
+        private void UpdateStatusBar()
+        {
+            m_statusBar.Text = Node.TopologicalOrder.ToString();
+        }
+
         public virtual void UpdateView()
         {
-            if (Node != null)
-            {
-                Title = Node.Name;
-                m_descItem.Text = Node.Description;
+            if (Node == null)
+                return;
 
-                if (Node.Location != null)
-                {
-                    Location = new PointF(Node.Location.X, Node.Location.Y);
-                }
+            Title = Node.Name;
+            m_descItem.Text = Node.Description;
+
+            if (Node.Location != null)
+            {
+                Location = new PointF(Node.Location.X, Node.Location.Y);
             }
+
+            UpdateStatusBar();
         }           
 
         public override void OnEndDrag()
