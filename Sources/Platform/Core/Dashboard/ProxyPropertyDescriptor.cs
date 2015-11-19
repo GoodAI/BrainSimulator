@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoodAI.Platform.Core.Dashboard
+namespace GoodAI.Core.Dashboard
 {
-    class ProxyPropertyDescriptor : PropertyDescriptor
+    public class ProxyPropertyDescriptor : PropertyDescriptor
     {
         private readonly ProxyProperty m_property;
         public ProxyPropertyDescriptor(ref ProxyProperty property, Attribute[] attrs)

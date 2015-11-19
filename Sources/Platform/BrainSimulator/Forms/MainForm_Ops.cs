@@ -19,7 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using GoodAI.Core.Task;
-using GoodAI.Platform.Core.Dashboard;
+using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 

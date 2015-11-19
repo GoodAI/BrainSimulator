@@ -83,9 +83,6 @@
     <ApplicationIcon>brainSim.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdamsLair.WinForms">
-      <HintPath>..\..\Libs\3rd\WinForms\obj\Debug\AdamsLair.WinForms.dll</HintPath>
-    </Reference>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\Aga.Controls\Aga.Controls.dll</HintPath>
@@ -121,6 +118,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dashboard\DashboardViewModel.cs" />
     <Compile Include="Forms\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>

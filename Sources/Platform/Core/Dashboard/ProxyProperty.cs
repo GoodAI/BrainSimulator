@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoodAI.Platform.Core.Dashboard
+namespace GoodAI.Core.Dashboard
 {
     public class ProxyProperty
     {

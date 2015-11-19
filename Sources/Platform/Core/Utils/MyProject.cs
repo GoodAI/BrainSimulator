@@ -5,7 +5,6 @@ using GoodAI.Core.Observers;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using GoodAI.Platform.Core.Dashboard;
 using YAXLib;
 
 namespace GoodAI.Core.Utils
@@ -214,7 +213,7 @@ namespace GoodAI.Core.Utils
         #region Dashboard
 
         [YAXSerializableField]
-        public Dashboard Dashboard { get; set; }
+        public Dashboard.Dashboard Dashboard { get; set; }
 
         #endregion
 
