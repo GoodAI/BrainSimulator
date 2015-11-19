@@ -28,52 +28,52 @@ using System.Drawing;
 
 namespace Graph
 {
-	public sealed class NodeItemEventArgs : EventArgs
-	{
-		public NodeItemEventArgs(NodeItem item) { Item = item; }
-		public NodeItem Item { get; private set; }
-	}
+    public sealed class NodeItemEventArgs : EventArgs
+    {
+        public NodeItemEventArgs(NodeItem item) { Item = item; }
+        public NodeItem Item { get; private set; }
+    }
 
-	public abstract class NodeItem : IElement
-	{
-		public NodeItem()
-		{
-			this.Input		= new NodeInputConnector(this, false);
-			this.Output		= new NodeOutputConnector(this, false);
-		}
+    public abstract class NodeItem : IElement
+    {
+        public NodeItem()
+        {
+            this.Input = new NodeInputConnector(this, false);
+            this.Output = new NodeOutputConnector(this, false);
+        }
 
-		public NodeItem(bool enableInput, bool enableOutput)
-		{
-			this.Input		= new NodeInputConnector(this, enableInput);
-			this.Output		= new NodeOutputConnector(this, enableOutput);
-		}
+        public NodeItem(bool enableInput, bool enableOutput)
+        {
+            this.Input = new NodeInputConnector(this, enableInput);
+            this.Output = new NodeOutputConnector(this, enableOutput);
+        }
 
-		public Node					Node			{ get; internal set; }
-		public object				Tag				{ get; set; }
+        public Node Node { get; internal set; }
+        public object Tag { get; set; }
 
-		public NodeConnector		Input			{ get; private set; }
-		public NodeConnector		Output			{ get; private set; }
+        public NodeConnector Input { get; private set; }
+        public NodeConnector Output { get; private set; }
 
-        public Brush                BackgroundBrush { get { return background; } set { background = value; } }
+        public Brush BackgroundBrush { get { return background; } set { background = value; } }
 
-		internal RectangleF			bounds;
-		internal RenderState		state			= RenderState.None;
+        internal RectangleF bounds;
+        internal RenderState state = RenderState.None;
 
-        internal Brush              background                   = Brushes.LightGray;
+        internal Brush background = Brushes.LightGray;
 
         /// <summary>
         /// If this is true, any mouse events on it will be handled as if the parent Node was targeted.
         /// </summary>
-	    public bool IsPassive { get; set; }
+        public bool IsPassive { get; set; }
 
-		public virtual bool			OnClick()					 { return false; }
-		public virtual bool			OnDoubleClick()				 { return false; }
-		public virtual bool			OnStartDrag(PointF location, out PointF original_location) { original_location = Point.Empty; return false; }
-		public virtual bool			OnDrag(PointF location)		 { return false; }		
-		public virtual bool			OnEndDrag() 				 { return false; }
-		internal abstract SizeF		Measure(Graphics context);
-		internal abstract void		Render(Graphics graphics, SizeF minimumSize, PointF position);
+        public virtual bool OnClick() { return false; }
+        public virtual bool OnDoubleClick() { return false; }
+        public virtual bool OnStartDrag(PointF location, out PointF original_location) { original_location = Point.Empty; return false; }
+        public virtual bool OnDrag(PointF location) { return false; }
+        public virtual bool OnEndDrag() { return false; }
+        internal abstract SizeF Measure(Graphics context);
+        internal abstract void Render(Graphics graphics, SizeF minimumSize, PointF position);
 
-		public ElementType ElementType { get { return ElementType.NodeItem; } }
-	}
+        public ElementType ElementType { get { return ElementType.NodeItem; } }
+    }
 }
