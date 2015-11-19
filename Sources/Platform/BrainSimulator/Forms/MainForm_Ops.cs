@@ -1195,34 +1195,17 @@ namespace GoodAI.BrainSimulator.Forms
 
         #endregion
 
-        public void DashboardPropertyToggle(object target, string propertyName)
+        public bool CheckDashboardContains(object target, string propertyName)
         {
-            var node = target as MyNode;
-            if (node != null)
-            {
-                Project.Dashboard.Properties.Add(new DashboardNodeProperty
-                {
-                    Node = node,
-                    Property = node.GetType().GetProperty(propertyName)
-                });
+            return Project.Dashboard.Contains(target, propertyName);
+        }
 
-                return;
-            }
-
-            var task = target as MyTask;
-            if (task != null)
-            {
-                Project.Dashboard.Properties.Add(new DashboardTaskProperty
-                {
-                    Node = task.GenericOwner,
-                    Task = task,
-                    Property = task.GetType().GetProperty(propertyName)
-                });
-
-                return;
-            }
-
-            throw new InvalidOperationException("Invalid property owner provided");
+        public void DashboardPropertyToggle(object target, string propertyName, bool active)
+        {
+            if (active)
+                Project.Dashboard.Add(target, propertyName);
+            else
+                Project.Dashboard.Remove(target, propertyName);
         }
     }
 }

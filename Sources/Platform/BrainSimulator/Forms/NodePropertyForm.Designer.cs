@@ -41,8 +41,8 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.snapshotButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.dashboardButton = new System.Windows.Forms.ToolStripButton();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.dashboardButton = new System.Windows.Forms.ToolStripButton();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -201,6 +201,10 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 23);
             // 
+            // folderBrowserDialog
+            // 
+            this.folderBrowserDialog.ShowNewFolderButton = false;
+            // 
             // dashboardButton
             // 
             this.dashboardButton.CheckOnClick = true;
@@ -213,10 +217,6 @@
             this.dashboardButton.Size = new System.Drawing.Size(23, 20);
             this.dashboardButton.Text = "Show in Dashboard";
             this.dashboardButton.CheckedChanged += new System.EventHandler(this.dashboardButton_CheckedChanged);
-            // 
-            // folderBrowserDialog
-            // 
-            this.folderBrowserDialog.ShowNewFolderButton = false;
             // 
             // NodePropertyForm
             // 

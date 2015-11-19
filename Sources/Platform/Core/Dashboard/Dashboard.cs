@@ -134,10 +134,55 @@ namespace GoodAI.Platform.Core.Dashboard
             Properties = new List<DashboardProperty>();
         }
 
+        public bool Contains(object node, string propertyName)
+        {
+            return Properties.Any(property => property.Equals(node, propertyName));
+        }
+
         public void RestoreFromIds(MyProject project)
         {
             foreach (var property in Properties)
                 property.RestoreFromId(project);
+        }
+
+        public void Add(object target, string propertyName)
+        {
+            if (Contains(target, propertyName))
+                return;
+
+            var node = target as MyNode;
+            if (node != null)
+            {
+                Properties.Add(new DashboardNodeProperty
+                {
+                    Node = node,
+                    Property = node.GetType().GetProperty(propertyName)
+                });
+
+                return;
+            }
+
+            var task = target as MyTask;
+            if (task != null)
+            {
+                Properties.Add(new DashboardTaskProperty
+                {
+                    Node = task.GenericOwner,
+                    Task = task,
+                    Property = task.GetType().GetProperty(propertyName)
+                });
+
+                return;
+            }
+
+            throw new InvalidOperationException("Invalid property owner provided");
+        }
+
+        public void Remove(object target, string propertyName)
+        {
+            var propertiesToRemove = Properties.Where(property => property.Equals(target, propertyName)).ToList();
+            foreach (DashboardProperty dashboardProperty in propertiesToRemove)
+                Properties.Remove(dashboardProperty);
         }
     }
 
@@ -166,6 +211,8 @@ namespace GoodAI.Platform.Core.Dashboard
         protected abstract void InitPropertyId();
 
         public abstract void RestoreFromId(MyProject project);
+
+        public abstract bool Equals(object owner, string propertyName);
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
@@ -175,7 +222,8 @@ namespace GoodAI.Platform.Core.Dashboard
 
         public override ProxyProperty Proxy
         {
-            get {
+            get
+            {
                 return new ProxyProperty(Node, Property)
                 {
                     Name = Property.Name,
@@ -210,6 +258,11 @@ namespace GoodAI.Platform.Core.Dashboard
 
             if (Property == null)
                 throw new SerializationException("A dashboard property was not found on the node.");
+        }
+
+        public override bool Equals(object owner, string propertyName)
+        {
+            return owner == Node && Property.Name == propertyName;
         }
     }
 
@@ -266,6 +319,11 @@ namespace GoodAI.Platform.Core.Dashboard
 
             if (Property == null)
                 throw new SerializationException("A task dashboard property was not found on the task.");
+        }
+
+        public override bool Equals(object owner, string propertyName)
+        {
+            return owner == Task && Property.Name == propertyName;
         }
     }
 }
