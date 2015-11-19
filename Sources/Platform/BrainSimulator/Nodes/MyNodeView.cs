@@ -119,7 +119,7 @@ namespace GoodAI.BrainSimulator.NodeView
         {
             m_statusBar = new NodeLabelItem(Node.TopologicalOrder.ToString()) { IsPassive = true };
             
-            AddItem(m_statusBar);
+            AddItem(m_statusBar, orderKey: 1000);  // keep it at the bottom
         }
 
         private void UpdateStatusBar()

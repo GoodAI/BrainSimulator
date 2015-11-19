@@ -119,6 +119,8 @@ namespace Graph
 
         internal bool shown = true;
 
+        protected int currentOrderKey = 0;
+
         public virtual void OnEndDrag() { }
 
         public Node(string title, Image image = null)
@@ -128,14 +130,20 @@ namespace Graph
             titleItem.Icon = image;
         }
 
-        public void AddItem(NodeItem item)
+        public void AddItem(NodeItem item, int orderKey = -1)
         {
             if (nodeItems.Contains(item))
                 return;
+
             if (item.Node != null)
                 item.Node.RemoveItem(item);
-            nodeItems.Add(item);
+
+            item.OrderKey = (orderKey >= 0) ? orderKey : currentOrderKey++;
             item.Node = this;
+
+            nodeItems.Add(item);
+
+            nodeItems.Sort((a, b) => a.OrderKey.CompareTo(b.OrderKey));
         }
 
         public void RemoveItem(NodeItem item)
