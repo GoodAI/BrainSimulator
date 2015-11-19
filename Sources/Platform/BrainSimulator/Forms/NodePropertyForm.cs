@@ -110,7 +110,6 @@ namespace GoodAI.BrainSimulator.Forms
         private void DisableDashboardButton()
         {
             dashboardButton.Enabled = false;
-            dashboardButton.Checked = false;
         }
 
         private void UpdateTitleAndButtons()
