@@ -131,24 +131,32 @@ namespace GoodAI.Core.Dashboard
         {
             get
             {
-                string displayName = PropertyInfo.Name;
-
-                var displayAttr = PropertyInfo.GetCustomAttribute<DisplayNameAttribute>();
-                if (displayAttr != null)
-                    displayName = displayAttr.DisplayName;
-
-                string description = string.Empty;
-                var descriptionAttr = PropertyInfo.GetCustomAttribute<DescriptionAttribute>();
-                if (descriptionAttr != null)
-                    description = descriptionAttr.Description;
-
                 return new ProxyProperty(Node, PropertyInfo)
                 {
-                    Name = displayName,
-                    Description = description,
+                    Name = GetDisplayName(),
+                    Description = GetDescription(),
                     Category = Node.Name
                 };
             }
+        }
+
+        protected string GetDescription()
+        {
+            string description = string.Empty;
+            var descriptionAttr = PropertyInfo.GetCustomAttribute<DescriptionAttribute>();
+            if (descriptionAttr != null)
+                description = descriptionAttr.Description;
+            return description;
+        }
+
+        protected string GetDisplayName()
+        {
+            string displayName = PropertyInfo.Name;
+
+            var displayAttr = PropertyInfo.GetCustomAttribute<DisplayNameAttribute>();
+            if (displayAttr != null)
+                displayName = displayAttr.DisplayName;
+            return displayName;
         }
 
         protected override void InitPropertyId()
@@ -197,7 +205,8 @@ namespace GoodAI.Core.Dashboard
             {
                 return new ProxyProperty(Task, PropertyInfo)
                 {
-                    Name = Task.Name + Separator + PropertyInfo.Name,
+                    Name = Task.Name + Separator + GetDisplayName(),
+                    Description = GetDescription(),
                     Category = Task.GenericOwner.Name
                 };
             }
