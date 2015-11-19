@@ -36,8 +36,19 @@ namespace GoodAI.Core.Dashboard
 
         public void RestoreFromIds(MyProject project)
         {
-            foreach (var property in Properties)
-                property.RestoreFromId(project);
+            foreach (var property in Properties.ToList())
+            {
+                try
+                {
+                    property.RestoreFromId(project);
+                }
+                catch
+                {
+                    Properties.Remove(property);
+                    MyLog.WARNING.WriteLine("A property with identifier \"{0}\" could not be deserialized.",
+                        property.PropertyId);
+                }
+            }
         }
 
         public void Add(object target, string propertyName)
@@ -96,7 +107,7 @@ namespace GoodAI.Core.Dashboard
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public abstract class DashboardProperty
     {
-        public const string Separator = "#";
+        public const string SerializationSeparator = "#";
 
         private string m_propertyId;
         public PropertyInfo PropertyInfo { get; set; }
@@ -178,12 +189,12 @@ namespace GoodAI.Core.Dashboard
 
         protected override void InitPropertyId()
         {
-            PropertyId = string.Join(Separator, Node.Id, PropertyInfo.Name);
+            PropertyId = string.Join(SerializationSeparator, Node.Id, PropertyInfo.Name);
         }
 
         public override void RestoreFromId(MyProject project)
         {
-            string[] idSplit = PropertyId.Split(Separator.ToCharArray());
+            string[] idSplit = PropertyId.Split(SerializationSeparator.ToCharArray());
 
             var success = false;
 
@@ -220,18 +231,18 @@ namespace GoodAI.Core.Dashboard
         {
             return new ProxyProperty(Task, PropertyInfo)
             {
-                Name = Task.Name + Separator + GetDisplayName(),
+                Name = Task.Name + "." + GetDisplayName(),
             };
         }
 
         protected override void InitPropertyId()
         {
-            PropertyId = string.Join(Separator, Node.Id, Task.Name, PropertyInfo.Name);
+            PropertyId = string.Join(SerializationSeparator, Node.Id, Task.PropertyName, PropertyInfo.Name);
         }
 
         public override void RestoreFromId(MyProject project)
         {
-            string[] idSplit = PropertyId.Split(Separator.ToCharArray());
+            string[] idSplit = PropertyId.Split(SerializationSeparator.ToCharArray());
 
             var success = false;
 

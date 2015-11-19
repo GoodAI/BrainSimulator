@@ -263,14 +263,14 @@ namespace GoodAI.BrainSimulator.Forms
                 dashboardButton.Checked);
         }
 
-        private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
-        {
-            RefreshDashboardButton();
-        }
-
         public void RefreshGrid()
         {
             propertyGrid.Refresh();
+        }
+
+        private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            RefreshDashboardButton();
         }
 
         private void propertyGrid_Enter(object sender, EventArgs e)

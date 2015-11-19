@@ -42,5 +42,42 @@ namespace GoodAI.BrainSimulator.Forms
         {
             propertyGrid.Refresh();
         }
+
+        private void dashboardButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (propertyGrid.SelectedGridItem.PropertyDescriptor == null)
+                return;
+
+            m_mainForm.DashboardPropertyToggle(Target, propertyGrid.SelectedGridItem.PropertyDescriptor.Name,
+                dashboardButton.Checked);
+        }
+
+        private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            RefreshDashboardButton();
+        }
+
+        private void propertyGrid_Enter(object sender, System.EventArgs e)
+        {
+            RefreshDashboardButton();
+        }
+
+        private void RefreshDashboardButton()
+        {
+            if (ActiveControl == propertyGrid && propertyGrid.SelectedGridItem != null && Target is MyTask)
+            {
+                PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
+                if (descriptor == null)
+                    return;
+
+                // A real property has been selected.
+                dashboardButton.Enabled = true;
+                dashboardButton.Checked = m_mainForm.CheckDashboardContains(Target, descriptor.Name);
+            }
+            else
+            {
+                dashboardButton.Enabled = false;
+            }
+        }
     }
 }

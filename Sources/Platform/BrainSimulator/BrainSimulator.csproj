@@ -547,6 +547,7 @@
     <Content Include="res\ProcImPatchBasic_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\pushpin_16xMD.png" />
     <Content Include="res\qagent.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

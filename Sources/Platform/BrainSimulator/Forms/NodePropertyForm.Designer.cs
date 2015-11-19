@@ -207,7 +207,7 @@
             this.dashboardButton.CheckOnClick = true;
             this.dashboardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.dashboardButton.Enabled = false;
-            this.dashboardButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StatusAnnotations_Warning_16xMD;
+            this.dashboardButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.pushpin_16xMD;
             this.dashboardButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.dashboardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dashboardButton.Name = "dashboardButton";
