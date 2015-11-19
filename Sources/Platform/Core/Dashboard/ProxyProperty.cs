@@ -9,8 +9,8 @@ namespace GoodAI.Core.Dashboard
 {
     public class ProxyProperty
     {
-        private object Owner { get; set; }
-        private PropertyInfo PropertyInfo { get; set; }
+        public object Owner { get; private set; }
+        public PropertyInfo PropertyInfo { get; private set; }
 
         public ProxyProperty(object owner, PropertyInfo propertyInfo)
         {

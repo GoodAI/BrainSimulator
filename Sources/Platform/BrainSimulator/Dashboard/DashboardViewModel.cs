@@ -24,6 +24,11 @@ namespace GoodAI.BrainSimulator.DashboardUtils
             m_dashboard = dashboard;
         }
 
+        public void RemoveProperty(object owner, string propertyName)
+        {
+            m_dashboard.Remove(owner, propertyName);
+        }
+
         #region "TypeDescriptor Implementation"
         /// <summary>
         /// Get Class Name

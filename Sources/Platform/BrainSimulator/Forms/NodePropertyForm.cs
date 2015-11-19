@@ -266,9 +266,24 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
         {
-            if (e.NewSelection != null && Target is MyNode)
+            RefreshDashboardButton();
+        }
+
+        public void RefreshGrid()
+        {
+            propertyGrid.Refresh();
+        }
+
+        private void propertyGrid_Enter(object sender, EventArgs e)
+        {
+            RefreshDashboardButton();
+        }
+
+        private void RefreshDashboardButton()
+        {
+            if (ActiveControl == propertyGrid && propertyGrid.SelectedGridItem != null && Target is MyNode)
             {
-                PropertyDescriptor descriptor = e.NewSelection.PropertyDescriptor;
+                PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
                 if (descriptor == null)
                     return;
 
@@ -280,11 +295,6 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 DisableDashboardButton();
             }
-        }
-
-        public void RefreshGrid()
-        {
-            propertyGrid.Refresh();
         }
     }
 }

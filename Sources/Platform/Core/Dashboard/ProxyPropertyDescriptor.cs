@@ -9,11 +9,11 @@ namespace GoodAI.Core.Dashboard
 {
     public class ProxyPropertyDescriptor : PropertyDescriptor
     {
-        private readonly ProxyProperty m_property;
+        public ProxyProperty Property { get; private set; }
         public ProxyPropertyDescriptor(ref ProxyProperty property, Attribute[] attrs)
             : base(property.Name, attrs)
         {
-            m_property = property;
+            Property = property;
         }
 
         #region PropertyDescriptor specific
@@ -30,27 +30,27 @@ namespace GoodAI.Core.Dashboard
 
         public override object GetValue(object component)
         {
-            return m_property.Value;
+            return Property.Value;
         }
 
         public override string Description
         {
-            get { return m_property.Name; }
+            get { return Property.Name; }
         }
 
         public override string Category
         {
-            get { return m_property.Category; }
+            get { return Property.Category; }
         }
 
         public override string DisplayName
         {
-            get { return m_property.Name; }
+            get { return Property.Name; }
         }
 
         public override bool IsReadOnly
         {
-            get { return m_property.ReadOnly; }
+            get { return Property.ReadOnly; }
         }
 
         public override void ResetValue(object component)
@@ -65,12 +65,12 @@ namespace GoodAI.Core.Dashboard
 
         public override void SetValue(object component, object value)
         {
-            m_property.Value = value;
+            Property.Value = value;
         }
 
         public override Type PropertyType
         {
-            get { return m_property.Value.GetType(); }
+            get { return Property.Value.GetType(); }
         }
 
         #endregion
