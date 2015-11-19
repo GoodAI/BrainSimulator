@@ -32,7 +32,9 @@ namespace GoodAI.BrainSimulator.Forms
                 propertyGrid.SelectedObject = value;
 
                 if (!(value is MyNode))
-                    DisableDashboardButton();
+                {
+                    dashboardButton.Enabled = false;
+                }
 
                 UpdateTitleAndButtons();                    
                 UpdateObserverList();                
@@ -105,11 +107,6 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 m_mainForm.UpdateObserverView(Target as MyAbstractObserver);
             }
-        }
-
-        private void DisableDashboardButton()
-        {
-            dashboardButton.Enabled = false;
         }
 
         private void UpdateTitleAndButtons()
@@ -259,6 +256,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dashboardButton_CheckedChanged(object sender, EventArgs e)
         {
+            if (propertyGrid.SelectedGridItem.PropertyDescriptor == null)
+                return;
+
             m_mainForm.DashboardPropertyToggle(Target, propertyGrid.SelectedGridItem.PropertyDescriptor.Name,
                 dashboardButton.Checked);
         }
@@ -292,7 +292,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
             else
             {
-                DisableDashboardButton();
+                dashboardButton.Enabled = false;
             }
         }
     }

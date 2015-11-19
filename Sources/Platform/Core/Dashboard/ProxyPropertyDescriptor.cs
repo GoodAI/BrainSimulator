@@ -16,6 +16,8 @@ namespace GoodAI.Core.Dashboard
             Property = property;
         }
 
+        public bool TemporarilyReadOnly { get; set; }
+
         #region PropertyDescriptor specific
 
         public override bool CanResetValue(object component)
@@ -50,7 +52,7 @@ namespace GoodAI.Core.Dashboard
 
         public override bool IsReadOnly
         {
-            get { return Property.ReadOnly; }
+            get { return Property.ReadOnly || TemporarilyReadOnly; }
         }
 
         public override void ResetValue(object component)

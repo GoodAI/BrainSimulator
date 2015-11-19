@@ -127,17 +127,25 @@ namespace GoodAI.Core.Dashboard
     {
         public MyNode Node { get; set; }
 
-        public override ProxyProperty Proxy
+        public sealed override ProxyProperty Proxy
         {
             get
             {
-                return new ProxyProperty(Node, PropertyInfo)
-                {
-                    Name = GetDisplayName(),
-                    Description = GetDescription(),
-                    Category = Node.Name
-                };
+                var proxy = GetProxyBase();
+                proxy.Description = GetDescription();
+                proxy.Category = Node.Name;
+                proxy.ReadOnly = IsReadonly();
+
+                return proxy;
             }
+        }
+
+        protected virtual ProxyProperty GetProxyBase()
+        {
+            return new ProxyProperty(Node, PropertyInfo)
+            {
+                Name = GetDisplayName(),
+            };
         }
 
         protected string GetDescription()
@@ -147,6 +155,15 @@ namespace GoodAI.Core.Dashboard
             if (descriptionAttr != null)
                 description = descriptionAttr.Description;
             return description;
+        }
+
+        protected bool IsReadonly()
+        {
+            var descriptionAttr = PropertyInfo.GetCustomAttribute<ReadOnlyAttribute>();
+            if (descriptionAttr != null)
+                return descriptionAttr.IsReadOnly;
+
+            return false;
         }
 
         protected string GetDisplayName()
@@ -199,17 +216,12 @@ namespace GoodAI.Core.Dashboard
         public MyTask Task { get; set; }
 
         // Task properties are grouped together with node properties.
-        public override ProxyProperty Proxy
+        protected override ProxyProperty GetProxyBase()
         {
-            get
+            return new ProxyProperty(Task, PropertyInfo)
             {
-                return new ProxyProperty(Task, PropertyInfo)
-                {
-                    Name = Task.Name + Separator + GetDisplayName(),
-                    Description = GetDescription(),
-                    Category = Task.GenericOwner.Name
-                };
-            }
+                Name = Task.Name + Separator + GetDisplayName(),
+            };
         }
 
         protected override void InitPropertyId()
