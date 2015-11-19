@@ -146,7 +146,7 @@ namespace GoodAI.Modules.SparseCoding
                         Owner.Output.Host[row] = 0;
                         float slidingWindowMax = 0;
                         int slidingWindowMaxPos = 0;
-                        for (int slidingWindowPos = 0; slidingWindowPos < Owner.LENGTH - Owner.ON_BITS_LENGTH; slidingWindowPos++)
+                        for (int slidingWindowPos = 0; slidingWindowPos < Owner.LENGTH - Owner.ON_BITS_LENGTH + 1; slidingWindowPos++)
                         {
                             float slidingWindowCurrentSum = 0.0f;
 
