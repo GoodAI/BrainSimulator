@@ -35,7 +35,7 @@ namespace GoodAI.Core.Dashboard
 
         public override string Description
         {
-            get { return Property.Name; }
+            get { return Property.Description; }
         }
 
         public override string Category

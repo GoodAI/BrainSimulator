@@ -20,6 +20,7 @@ namespace GoodAI.Core.Dashboard
         }
 
         public virtual string Name { get; set; }
+        public virtual string Description { get; set; }
 
         public bool ReadOnly { get; set; }
         public bool Visible { get; set; }

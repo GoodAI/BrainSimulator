@@ -53,7 +53,7 @@ namespace GoodAI.Core.Dashboard
                 property = new DashboardNodeProperty
                 {
                     Node = node,
-                    Property = node.GetType().GetProperty(propertyName)
+                    PropertyInfo = node.GetType().GetProperty(propertyName)
                 };
             }
             else
@@ -65,7 +65,7 @@ namespace GoodAI.Core.Dashboard
                     {
                         Node = task.GenericOwner,
                         Task = task,
-                        Property = task.GetType().GetProperty(propertyName)
+                        PropertyInfo = task.GetType().GetProperty(propertyName)
                     };
                 }
             }
@@ -99,7 +99,7 @@ namespace GoodAI.Core.Dashboard
         public const string Separator = "#";
 
         private string m_propertyId;
-        public PropertyInfo Property { get; set; }
+        public PropertyInfo PropertyInfo { get; set; }
 
         public abstract ProxyProperty Proxy { get; }
 
@@ -131,9 +131,21 @@ namespace GoodAI.Core.Dashboard
         {
             get
             {
-                return new ProxyProperty(Node, Property)
+                string displayName = PropertyInfo.Name;
+
+                var displayAttr = PropertyInfo.GetCustomAttribute<DisplayNameAttribute>();
+                if (displayAttr != null)
+                    displayName = displayAttr.DisplayName;
+
+                string description = string.Empty;
+                var descriptionAttr = PropertyInfo.GetCustomAttribute<DescriptionAttribute>();
+                if (descriptionAttr != null)
+                    description = descriptionAttr.Description;
+
+                return new ProxyProperty(Node, PropertyInfo)
                 {
-                    Name = Property.Name,
+                    Name = displayName,
+                    Description = description,
                     Category = Node.Name
                 };
             }
@@ -141,7 +153,7 @@ namespace GoodAI.Core.Dashboard
 
         protected override void InitPropertyId()
         {
-            PropertyId = string.Join(Separator, Node.Id, Property.Name);
+            PropertyId = string.Join(Separator, Node.Id, PropertyInfo.Name);
         }
 
         public override void RestoreFromId(MyProject project)
@@ -161,15 +173,15 @@ namespace GoodAI.Core.Dashboard
             if (!success)
                 throw new SerializationException("A dashboard property target node was not found.");
 
-            Property = Node.GetType().GetProperty(idSplit[1]);
+            PropertyInfo = Node.GetType().GetProperty(idSplit[1]);
 
-            if (Property == null)
+            if (PropertyInfo == null)
                 throw new SerializationException("A dashboard property was not found on the node.");
         }
 
         public override bool Equals(object owner, string propertyName)
         {
-            return owner == Node && Property.Name == propertyName;
+            return owner == Node && PropertyInfo.Name == propertyName;
         }
     }
 
@@ -183,9 +195,9 @@ namespace GoodAI.Core.Dashboard
         {
             get
             {
-                return new ProxyProperty(Task, Property)
+                return new ProxyProperty(Task, PropertyInfo)
                 {
-                    Name = Task.Name + Separator + Property.Name,
+                    Name = Task.Name + Separator + PropertyInfo.Name,
                     Category = Task.GenericOwner.Name
                 };
             }
@@ -193,7 +205,7 @@ namespace GoodAI.Core.Dashboard
 
         protected override void InitPropertyId()
         {
-            PropertyId = string.Join(Separator, Node.Id, Task.Name, Property.Name);
+            PropertyId = string.Join(Separator, Node.Id, Task.Name, PropertyInfo.Name);
         }
 
         public override void RestoreFromId(MyProject project)
@@ -222,15 +234,15 @@ namespace GoodAI.Core.Dashboard
             if (Task == null)
                 throw new SerializationException("A task dashboard property did not find the target task.");
 
-            Property = Task.GetType().GetProperty(idSplit[2]);
+            PropertyInfo = Task.GetType().GetProperty(idSplit[2]);
 
-            if (Property == null)
+            if (PropertyInfo == null)
                 throw new SerializationException("A task dashboard property was not found on the task.");
         }
 
         public override bool Equals(object owner, string propertyName)
         {
-            return owner == Task && Property.Name == propertyName;
+            return owner == Task && PropertyInfo.Name == propertyName;
         }
     }
 }
