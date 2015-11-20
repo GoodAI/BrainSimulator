@@ -145,6 +145,10 @@ namespace GoodAI.Modules.Common
                 }
             }
 
+            [MyBrowsable, Category("Parameters")]
+            [YAXSerializableField(DefaultValue = false), Description("Will copy lastly copied input instead of zeros if set to True.")]
+            public bool CopyLast { get; set; }
+
             private int[] m_signals;
             private int[] m_absSignals;
             private int m_mod;
@@ -152,7 +156,6 @@ namespace GoodAI.Modules.Common
             private int[] m_outputs;    //which input to copy to output in given phase
             private int[] m_transitions;    //when to change the phase
             private int m_idx;
-            private int m_lastIdx;
 
             private void UpdateTransitions()
             {
@@ -195,7 +198,6 @@ namespace GoodAI.Modules.Common
             {
                 UpdateTransitions();
                 m_idx = 0;
-                m_lastIdx = -1;
             }
 
             public override void Execute()
@@ -205,11 +207,10 @@ namespace GoodAI.Modules.Common
 
                 if (!Rotate && SimulationStep >= m_mod)
                 {
-                    if (m_lastIdx != -1)
-                    {
+                    if (CopyLast)
+                        Owner.GetInput(m_outputs[m_idx]).CopyToMemoryBlock(Owner.Output, 0, 0, Owner.GetInput(m_outputs[m_idx]).Count);
+                    else
                         Owner.Output.Fill(0);
-                        m_lastIdx = -1;
-                    }
                     return;
                 }
 
@@ -219,11 +220,8 @@ namespace GoodAI.Modules.Common
 
                 if (m_outputs[m_idx] == -1)
                     Owner.Output.Fill(0);
-                else if (m_idx != m_lastIdx)
-                {
+                else
                     Owner.GetInput(m_outputs[m_idx]).CopyToMemoryBlock(Owner.Output, 0, 0, Owner.GetInput(m_outputs[m_idx]).Count);
-                    m_lastIdx = m_idx;
-                }
             }
         }
     }
