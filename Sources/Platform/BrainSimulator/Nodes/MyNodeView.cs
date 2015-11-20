@@ -20,10 +20,9 @@ namespace GoodAI.BrainSimulator.NodeView
             get { return m_node; }
             internal set
             {
-                m_node = value;                
-                InitBranches();
-                InitStatusBar();  // TODO(P): consider moving elsewhere
+                m_node = value;
 
+                InitView();
                 m_node.NodeUpdated += OnNodeUpdated;
             }
         }
@@ -63,7 +62,13 @@ namespace GoodAI.BrainSimulator.NodeView
 
             AddItem(m_iconItem);       
             AddItem(m_descItem);            
-        }        
+        }
+
+        protected virtual void InitView()
+        {
+            InitBranches();
+            InitStatusBar();
+        }
         
         protected virtual void InitBranches()
         {
