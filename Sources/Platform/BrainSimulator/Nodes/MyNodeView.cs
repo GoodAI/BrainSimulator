@@ -123,8 +123,8 @@ namespace GoodAI.BrainSimulator.NodeView
         {
             m_statusBar = new MyStatusBarItem();
 
-            m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb);
-            m_saveSubitem = m_statusBar.AddIcon(Properties.Resources.save_mb);
+            m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb_12);
+            m_saveSubitem = m_statusBar.AddIcon(Properties.Resources.save_mb_12);
 
             UpdateStatusBar();
             

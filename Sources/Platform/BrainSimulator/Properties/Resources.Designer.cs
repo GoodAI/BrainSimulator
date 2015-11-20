@@ -308,6 +308,16 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap open_mb_12 {
+            get {
+                object obj = ResourceManager.GetObject("open_mb_12", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap performance {
             get {
                 object obj = ResourceManager.GetObject("performance", resourceCulture);
@@ -361,6 +371,16 @@ namespace GoodAI.BrainSimulator.Properties {
         internal static System.Drawing.Bitmap save_mb {
             get {
                 object obj = ResourceManager.GetObject("save_mb", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap save_mb_12 {
+            get {
+                object obj = ResourceManager.GetObject("save_mb_12", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

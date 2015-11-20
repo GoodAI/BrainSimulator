@@ -507,6 +507,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\open_mb.png" />
+    <Content Include="res\open_mb_12.png" />
     <Content Include="res\placeCells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -572,6 +573,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\save_mb.png" />
+    <Content Include="res\save_mb_12.png" />
     <Content Include="res\Seg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

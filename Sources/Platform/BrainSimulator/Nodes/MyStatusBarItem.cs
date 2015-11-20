@@ -28,7 +28,7 @@ namespace GoodAI.BrainSimulator.Nodes
             IsPassive = true;
 
             IconSubitems = new List<IconSubitem>();
-            IconSize = new SizeF(16.0f, 16.0f);
+            IconSize = new SizeF(12.0f, 12.0f);
         }
 
         public string TextItem { get; set; }
