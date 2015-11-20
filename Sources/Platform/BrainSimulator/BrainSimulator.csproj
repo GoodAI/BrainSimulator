@@ -207,6 +207,7 @@
     <Compile Include="Nodes\MyNodeLabelItem.cs" />
     <Compile Include="Nodes\MyNodeView.cs" />
     <Compile Include="Nodes\MyNodeViewConnection.cs" />
+    <Compile Include="Nodes\MyStatusBarItem.cs" />
     <Compile Include="Nodes\MyUserInputView.cs" />
     <Compile Include="Nodes\MyVariableBranchView.cs" />
     <Compile Include="Program.cs" />
@@ -506,6 +507,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\open_mb.png" />
+    <Content Include="res\open_mb_12.png" />
     <Content Include="res\placeCells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -571,6 +573,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\save_mb.png" />
+    <Content Include="res\save_mb_12.png" />
     <Content Include="res\Seg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

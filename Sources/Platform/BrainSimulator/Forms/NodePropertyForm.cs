@@ -15,7 +15,7 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class NodePropertyForm : DockContent
     {
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
 
         public bool CanEdit
         {
@@ -184,6 +184,22 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.CreateAndShowObserverView(Target as MyWorkingNode, (sender as ToolStripMenuItem).Tag as Type);
         }
 
+        private void RefreshNode(MyWorkingNode node)
+        {
+            node.Updated();
+
+            propertyGrid.Refresh();
+            InvalidateGraphLayouts();
+        }
+
+        private void InvalidateGraphLayouts()
+        {
+            foreach (GraphLayoutForm graphLayoutForm in m_mainForm.GraphViews.Values)
+            {
+                graphLayoutForm.Desktop.Invalidate();
+            }
+        }
+
         private void saveDataNodeButton_Click(object sender, EventArgs e)
         {
             /*
@@ -194,20 +210,24 @@ namespace GoodAI.BrainSimulator.Forms
             }       
             */
 
-            if (Target is MyWorkingNode) 
-            {
-                (Target as MyWorkingNode).SaveOnStop = saveNodeDataButton.Checked;
-                propertyGrid.Refresh();
-            }
+            MyWorkingNode node = Target as MyWorkingNode;
+            if (node == null)
+                return;
+
+            node.SaveOnStop = saveNodeDataButton.Checked;
+                
+            RefreshNode(node);
         }
 
         private void loadNodeDataButton_Click(object sender, EventArgs e)
         {
-            if (Target is MyWorkingNode)
-            {
-                (Target as MyWorkingNode).LoadOnStart = loadNodeDataButton.Checked;
-                propertyGrid.Refresh();
-            }
+            MyWorkingNode node = Target as MyWorkingNode;
+            if (node == null)
+                return;
+
+            node.LoadOnStart = loadNodeDataButton.Checked;
+
+            RefreshNode(node);
         }
 
         private void helpButton_Click(object sender, EventArgs e)

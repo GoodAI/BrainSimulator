@@ -384,16 +384,34 @@ namespace GoodAI.BrainSimulator.Forms
             searchTextBox.Focus();
         }
 
-        public void RefreshConnections()
+        public void RefreshGraph()
         {
-            foreach (var connectionView in Desktop.Nodes.SelectMany(node => node.Connections))
+            foreach (Node grahpNode in Desktop.Nodes)
             {
-                var from = (connectionView.From.Node as MyNodeView).Node;
-                var to = (connectionView.To.Node as MyNodeView).Node;
-                var connection = (connectionView as MyNodeViewConnection);
-                // If order == 0, the node is likely an output.
-                connection.Backward = to.TopologicalOrder != 0 && from.TopologicalOrder >= to.TopologicalOrder;
+                var nodeView = grahpNode as MyNodeView;
+                if (nodeView == null)
+                    continue;
+
+                // refresh node
+                nodeView.UpdateView();
+
+                // refresh connections
+                foreach (NodeConnection connectionView in grahpNode.Connections)
+                {
+                    RefreshConnectionView(connectionView);
+                }
             }
+
+        }
+
+        private static void RefreshConnectionView(NodeConnection connection)
+        {
+            var from = (connection.From.Node as MyNodeView).Node;
+            var to = (connection.To.Node as MyNodeView).Node;
+            var connectionView = (connection as MyNodeViewConnection);
+
+            // If order == 0, the node is likely an output.
+            connectionView.Backward = to.TopologicalOrder != 0 && @from.TopologicalOrder >= to.TopologicalOrder;
         }
     }      
 }

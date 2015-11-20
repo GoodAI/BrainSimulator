@@ -107,6 +107,20 @@ namespace GoodAI.Core.Nodes
 
         #endregion       
 
+        #region Events
+
+        public event EventHandler NodeUpdated;
+
+        public void Updated()
+        {
+            if (NodeUpdated != null)
+            {
+                NodeUpdated(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
         #region Node inputs
 
         public MyConnection[] InputConnections { get; protected set; }        

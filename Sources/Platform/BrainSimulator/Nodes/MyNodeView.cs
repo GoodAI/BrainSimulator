@@ -20,15 +20,20 @@ namespace GoodAI.BrainSimulator.NodeView
             get { return m_node; }
             internal set
             {
-                m_node = value;                
-                InitBranches();
+                m_node = value;
+
+                InitView();
+                m_node.NodeUpdated += OnNodeUpdated;
             }
         }
 
         protected NodeImageItem m_iconItem;
         protected NodeLabelItem m_descItem;
 
-        public MyNodeConfig NodeInfo { get; private set; }
+        private MyStatusBarItem m_statusBar;
+        private MyStatusBarItem.IconSubitem m_loadSubitem;
+        private MyStatusBarItem.IconSubitem m_saveSubitem;
+
         protected Image m_icon;        
 
         protected List<NodeItem> m_inputBranches = new List<NodeItem>();
@@ -38,13 +43,12 @@ namespace GoodAI.BrainSimulator.NodeView
 
         public GraphControl Owner { get; set; }
 
-        protected MyNodeView(MyNodeConfig nodeInfo, GraphControl owner) 
+        protected MyNodeView(MyNodeConfig nodeConfig, GraphControl owner) 
             : base("")
         {
-            NodeInfo = nodeInfo;
             Owner = owner;
 
-            m_icon = nodeInfo.BigImage;
+            m_icon = nodeConfig.BigImage;
 
             m_iconItem = new NodeImageItem(m_icon, 48, 48, false, false)
             {
@@ -58,7 +62,13 @@ namespace GoodAI.BrainSimulator.NodeView
 
             AddItem(m_iconItem);       
             AddItem(m_descItem);            
-        }        
+        }
+
+        protected virtual void InitView()
+        {
+            InitBranches();
+            InitStatusBar();
+        }
         
         protected virtual void InitBranches()
         {
@@ -74,11 +84,12 @@ namespace GoodAI.BrainSimulator.NodeView
                 AddItem(signalItem);
             }
 
-            InitIOBranches(Node.InputBranches, m_iconItem.Input, m_inputBranches, Node.GetInfo().InputBlocks, isInput: true);
-            InitIOBranches(Node.OutputBranches, m_iconItem.Output, m_outputBranches, Node.GetInfo().OutputBlocks, isInput: false);
+            InitIoBranches(Node.InputBranches, m_iconItem.Input, m_inputBranches, nodeInfo.InputBlocks, isInput: true);
+            InitIoBranches(Node.OutputBranches, m_iconItem.Output, m_outputBranches, nodeInfo.OutputBlocks, isInput: false);
         }
 
-        private void InitIOBranches(int branchCount, NodeConnector connector, ICollection<NodeItem> branchList, IList<PropertyInfo> blocks, bool isInput)
+        private void InitIoBranches(int branchCount, NodeConnector connector, ICollection<NodeItem> branchList,
+            IList<PropertyInfo> blocks, bool isInput)
         {
             if (branchCount == 1)
             {
@@ -108,18 +119,49 @@ namespace GoodAI.BrainSimulator.NodeView
             }
         }
 
+        private void OnNodeUpdated(object node, EventArgs e)
+        {
+            UpdateView();
+        }
+
+        private void InitStatusBar()
+        {
+            m_statusBar = new MyStatusBarItem();
+
+            m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb_12);
+            m_saveSubitem = m_statusBar.AddIcon(Properties.Resources.save_mb_12);
+
+            UpdateStatusBar();
+            
+            AddItem(m_statusBar, orderKey: 1000);  // keep it at the bottom
+        }
+
+        private void UpdateStatusBar()
+        {
+            m_statusBar.TextItem = Node.TopologicalOrder.ToString();
+
+            var workingNode = Node as MyWorkingNode;
+            if (workingNode == null)
+                return;
+
+            m_loadSubitem.Enabled = workingNode.LoadOnStart;
+            m_saveSubitem.Enabled = workingNode.SaveOnStop;
+        }
+
         public virtual void UpdateView()
         {
-            if (Node != null)
-            {
-                Title = Node.Name;
-                m_descItem.Text = Node.Description;
+            if (Node == null)
+                return;
 
-                if (Node.Location != null)
-                {
-                    Location = new PointF(Node.Location.X, Node.Location.Y);
-                }
+            Title = Node.Name;
+            m_descItem.Text = Node.Description;
+
+            if (Node.Location != null)
+            {
+                Location = new PointF(Node.Location.X, Node.Location.Y);
             }
+
+            UpdateStatusBar();
         }           
 
         public override void OnEndDrag()
