@@ -51,9 +51,10 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyBrowsable, Category("\tRegularization")]
         public float Dropout { get; set; }
 
+        private int batchSize = 1;
         [YAXSerializableField(DefaultValue = 1), YAXErrorIfMissed(YAXExceptionTypes.Ignore)]
         [MyBrowsable, Category("\tBatchLearning")]
-        public int BatchSize { get; set; }
+        public int BatchSize { get { return batchSize; } set { if (value >= 1) batchSize = value; } }
 
         //Memory Blocks
         public List<MyNode> SortedChildren;
