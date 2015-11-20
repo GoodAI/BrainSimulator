@@ -50,8 +50,17 @@ namespace GoodAI.BrainSimulator.Nodes
 
         internal override SizeF Measure(Graphics context)
         {
-            // TODO: more sensible values
-            return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
+            var size = new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
+
+            var textSize = DrawOrMeasureTextItem(context, PointF.Empty, size, justMeasure: true);
+
+            var iconSubitemsSize = (IconSubitems.Count == 0)
+                ? SizeF.Empty
+                : new SizeF(IconSubitems.Count() * (IconSize.Width + PaddingF), IconSize.Height);
+
+            return new SizeF(
+                Math.Max(GraphConstants.MinimumItemWidth, textSize.Width + iconSubitemsSize.Width),
+                Math.Max(Math.Max(GraphConstants.MinimumItemHeight, textSize.Height), iconSubitemsSize.Height));
         }
 
         internal override void Render(Graphics graphics, SizeF minimumSize, PointF position)
@@ -62,7 +71,7 @@ namespace GoodAI.BrainSimulator.Nodes
 
             DrawIconSubitems(graphics, position);
 
-            DrawTextItem(graphics, position, size);
+            DrawOrMeasureTextItem(graphics, position, size);
         }
 
         private void DrawIconSubitems(Graphics graphics, PointF position)
@@ -78,13 +87,28 @@ namespace GoodAI.BrainSimulator.Nodes
             }
         }
 
-        private void DrawTextItem(Graphics graphics, PointF position, SizeF size)
+        private SizeF DrawOrMeasureTextItem(Graphics graphics, PointF position, SizeF size, bool justMeasure = false)
         {
             var font = new Font(SystemFonts.MenuFont.FontFamily, SystemFonts.MenuFont.Size - 2.0f);
+            var text = TextItem;
+            var format = GraphConstants.RightMeasureTextStringFormat;
 
-            graphics.DrawString(TextItem, font, Brushes.Black,
-                new RectangleF(position, size),
-                GraphConstants.RightTextStringFormat);
+            return DrawOrMeasureString(graphics, text, font, position, size, format, justMeasure);
+        }
+
+        // TODO(Premek): Move to up to the library (or to a different lib).
+        private static SizeF DrawOrMeasureString(Graphics graphics, string text, Font font, PointF position, SizeF size,
+            StringFormat format, bool measure = false)
+        {
+            if (measure)
+            {
+                return graphics.MeasureString(text, font, size, format);
+            }
+            else
+            {
+                graphics.DrawString(text, font, Brushes.Black, new RectangleF(position, size), format);
+                return SizeF.Empty;
+            }
         }
     }
 }
