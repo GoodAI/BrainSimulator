@@ -74,11 +74,6 @@ namespace GoodAI.Modules.LSTM.Tasks
             Owner.InputGateActivationDerivatives.FillAll(0);
             Owner.ForgetGateActivationDerivatives.FillAll(0);
             Owner.OutputGateActivationDerivatives.FillAll(0);
-
-            Owner.CellInputWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
-            Owner.OutputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
-            Owner.InputGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
-            Owner.ForgetGateWeightGradient.Mode = MyTemporalMemoryBlock<float>.ModeType.Cumulate;
         }
     }
 }

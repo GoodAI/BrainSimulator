@@ -10,6 +10,7 @@ using System.ComponentModel;
 using YAXLib;
 using System;
 using GoodAI.Modules.LSTM.Tasks;
+using GoodAI.Core.Task;
 
 namespace GoodAI.Modules.LSTM
 {
@@ -41,6 +42,19 @@ namespace GoodAI.Modules.LSTM
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
+        }
+
+        bool m_isTransformingInput = false;
+
+        //[MyInputBlock(0)]
+        public override MyMemoryBlock<float> Input
+        {
+            get {
+                if(m_isTransformingInput)
+                    return TemporalInput;
+                else
+                    return GetInput(0);
+            }
         }
 
         // Properties
@@ -90,6 +104,7 @@ namespace GoodAI.Modules.LSTM
 
         //Tasks
         protected MyLSTMInitLayerTask initLayerTask { get; set; }
+        protected MyTransformInputToTemporalTask inputToTemporalTask { get; set; }
         protected MyLSTMPartialDerivativesTask partialDerivativesTask { get; set; }
         protected MyLSTMUpdateWeightsTask updateWeightsTask { get; set; }
 
@@ -99,6 +114,8 @@ namespace GoodAI.Modules.LSTM
 
         // Memory blocks
         public virtual MyMemoryBlock<float> Temporary { get; set; }
+
+        public virtual MyTemporalMemoryBlock<float> TemporalInput { get; protected set; }
 
         public virtual MyTemporalMemoryBlock<float> CellStates { get; set; }
         public virtual MyMemoryBlock<float> PreviousCellStates { get; set; }
@@ -185,6 +202,8 @@ namespace GoodAI.Modules.LSTM
             if (Input == null)
                 return;
 
+            TemporalInput.Count = Input.Count;
+
             Temporary.Count = MemoryBlocks * GateInputSize;
 
             CellStates.Count = MemoryBlocks * CellsPerBlock;
@@ -263,6 +282,7 @@ namespace GoodAI.Modules.LSTM
 
         public void CreateTasks()
         {
+            inputToTemporalTask = new MyTransformInputToTemporalTask();
             ForwardTask = new MyLSTMFeedForwardTask();
             DeltaBackTask = new MyLSTMDeltaTask();
         }
@@ -273,6 +293,20 @@ namespace GoodAI.Modules.LSTM
             if (ParentNetwork == null)
             {
                 validator.AddError(this, "LSTM layer needs to be in a neural network group");
+            }
+            if(LearningTasks == LearningTasksType.BPTT)
+            {
+                if(!inputToTemporalTask.Enabled)
+                {
+                    validator.AddError(this, "BPTT requires Transform Input Task to be enabled");
+                }
+            }
+            else if (LearningTasks == LearningTasksType.RTRL)
+            {
+                if (inputToTemporalTask.Enabled)
+                {
+                    validator.AddError(this, "RTRL requires Transform Input Task to be disabled");
+                }
             }
         }
 
@@ -305,5 +339,29 @@ namespace GoodAI.Modules.LSTM
             System.Console.WriteLine("");
         }
 
+        public override void Cleanup()
+        {
+            // stop transforming input
+            m_isTransformingInput = false;
+        }
+
+        /// <summary>Transform input memory block to a Temporal memory block <br />
+        /// </summary>
+        [Description("Transform Input"), MyTaskInfo(OneShot = false)]
+        public class MyTransformInputToTemporalTask : MyTask<MyLSTMLayer>
+        {
+            public override void Init(int nGPU)
+            {
+            }
+
+            public override void Execute()
+            {
+                Owner.m_isTransformingInput = true;
+
+                Owner.TemporalInput.CopyFromMemoryBlock(Owner.GetInput(0), 0, 0, Owner.GetInput(0).Count);
+            }
+        }
+
     }
+
 }

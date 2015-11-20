@@ -188,8 +188,10 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
             // bptt architecture
             BPTTAllSteps.Add(BPTTLoop);
+            BPTTAllSteps.Add(IncrementTimeStep);
             BPTTAllSteps.Add(RunTemporalBlocksMode);
             BPTTAllSteps.AddRange(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList());
+            BPTTAllSteps.Add(DecrementTimeStep);
 
             // if current time is time for bbp, do it
             MyExecutionBlock BPTTExecuteBPTTIfTimeCountReachedSequenceLength = new MyIfBlock(() => TimeStep == SequenceLength-1,
