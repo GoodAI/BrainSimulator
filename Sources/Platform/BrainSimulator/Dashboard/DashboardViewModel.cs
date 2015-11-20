@@ -116,9 +116,7 @@ namespace GoodAI.BrainSimulator.DashboardUtils
 
         public PropertyDescriptorCollection GetProperties()
         {
-
             return TypeDescriptor.GetProperties(this, true);
-
         }
 
         public object GetPropertyOwner(PropertyDescriptor pd)

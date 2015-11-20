@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Dashboard;
+using GoodAI.Core.Nodes;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -16,6 +17,7 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class DashboardPropertyForm : DockContent
     {
         private MainForm m_mainForm;
+        private bool m_canEditNodeProperties;
 
         public event PropertyValueChangedEventHandler PropertyValueChanged
         {
@@ -39,6 +41,25 @@ namespace GoodAI.BrainSimulator.Forms
 
                 propertyGrid.SelectedObject = value;
                 value.PropertyChanged += OnTargetPropertiesChanged;
+            }
+        }
+
+        public bool CanEditNodeProperties
+        {
+            get { return m_canEditNodeProperties; }
+            set
+            {
+                m_canEditNodeProperties = value;
+                foreach (var propertyDescriptor in Target.GetProperties(new Attribute[0]))
+                {
+                    var proxyPropertyDescriptor = propertyDescriptor as ProxyPropertyDescriptor;
+                    if (proxyPropertyDescriptor.Property.Owner is MyNode)
+                    {
+                        proxyPropertyDescriptor.Property.ReadOnly = !value;
+                    }
+                }
+
+                propertyGrid.Refresh();
             }
         }
 

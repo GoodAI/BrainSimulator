@@ -138,16 +138,20 @@ namespace GoodAI.Core.Dashboard
     {
         public MyNode Node { get; set; }
 
+        private ProxyProperty m_proxy;
         public sealed override ProxyProperty Proxy
         {
             get
             {
-                var proxy = GetProxyBase();
-                proxy.Description = GetDescription();
-                proxy.Category = Node.Name;
-                proxy.ReadOnly = IsReadonly();
+                if (m_proxy == null)
+                {
+                    m_proxy = GetProxyBase();
+                    m_proxy.Description = GetDescription();
+                    m_proxy.Category = Node.Name;
+                    m_proxy.ReadOnly = IsReadonly();
+                }
 
-                return proxy;
+                return m_proxy;
             }
         }
 
