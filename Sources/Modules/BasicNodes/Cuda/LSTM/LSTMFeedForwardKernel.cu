@@ -364,7 +364,7 @@ extern "C"
 			// step 4: calculate output of all memory block's cells
 			for (int cellId = memoryBlockId * cellsPerBlock; cellId < (memoryBlockId + 1) * cellsPerBlock; cellId++)
 			{
-				output[cellId] = outputGateActivation * Evaluate(activationFunction, cellStates[cellId]);
+				output[cellId] = outputGateActivation * cellStates[cellId]; //Evaluate(activationFunction, cellStates[cellId]);
 			}
 		}
 	}

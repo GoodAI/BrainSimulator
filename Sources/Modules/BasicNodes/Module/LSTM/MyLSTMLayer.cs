@@ -68,9 +68,9 @@ namespace GoodAI.Modules.LSTM
         [MyBrowsable, Category("\tLayer"), ReadOnly(true)]
         public ActivationFunctionType GateActivationFunction { get; set; }
 
-        [YAXSerializableField(DefaultValue = ActivationFunctionType.TANH)]
-        [MyBrowsable, Category("\tLayer")]
-        public override ActivationFunctionType ActivationFunction { get; set; }
+        [YAXSerializableField(DefaultValue = ActivationFunctionType.NO_ACTIVATION)]
+        [MyBrowsable, Category("\tLayer"), ReadOnly(true)]
+        public override ActivationFunctionType ActivationFunction { get { return ActivationFunctionType.NO_ACTIVATION; } set { } }
 
         public override ConnectionType Connection
         {
