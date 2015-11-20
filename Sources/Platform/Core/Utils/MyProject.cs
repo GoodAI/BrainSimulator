@@ -215,6 +215,9 @@ namespace GoodAI.Core.Utils
         [YAXSerializableField]
         public Dashboard.Dashboard Dashboard { get; set; }
 
+        [YAXSerializableField]
+        public Dashboard.GroupDashboard GroupedDashboard { get; set; }
+
         #endregion
 
         #region Serialization & Versioning

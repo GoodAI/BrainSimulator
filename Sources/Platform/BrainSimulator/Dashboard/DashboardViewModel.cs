@@ -9,24 +9,27 @@ using GoodAI.Core.Dashboard;
 
 namespace GoodAI.BrainSimulator.DashboardUtils
 {
-    public class DashboardViewModel : ICustomTypeDescriptor, INotifyPropertyChanged
+    public class DashboardViewModelBase<TDashboard, TProperty> : ICustomTypeDescriptor, INotifyPropertyChanged
+        where TDashboard : DashboardBase<TProperty>
+        where TProperty : DashboardProperty
     {
-        private readonly Dashboard m_dashboard;
+        protected readonly TDashboard Dashboard;
 
         public event PropertyChangedEventHandler PropertyChanged
         {
-            add { m_dashboard.PropertyChanged += value; }
-            remove { m_dashboard.PropertyChanged -= value; }
+            add { Dashboard.PropertyChanged += value; }
+            remove { Dashboard.PropertyChanged -= value; }
         }
 
-        public DashboardViewModel(Dashboard dashboard)
+        public DashboardViewModelBase(TDashboard dashboard)
         {
-            m_dashboard = dashboard;
+            Dashboard = dashboard;
         }
 
         public void RemoveProperty(ProxyPropertyBase proxy)
         {
-            m_dashboard.Remove(proxy.SourceProperty);
+            var proxyWithSource = proxy as ProxyPropertyBase<TProperty>;
+            Dashboard.Remove(proxyWithSource.SourceProperty);
         }
 
         #region "TypeDescriptor Implementation"
@@ -107,11 +110,12 @@ namespace GoodAI.BrainSimulator.DashboardUtils
         public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
         {
             return new PropertyDescriptorCollection(
-                m_dashboard.Properties.Select(property =>
-                {
-                    var proxy = property.Proxy;
-                    return new ProxyPropertyDescriptor(ref proxy, attributes);
-                }).Cast<PropertyDescriptor>().ToArray());
+                Dashboard.Properties
+                    .Select(property => property.Proxy)
+                    .Where(proxy => proxy.Visible)
+                    .Select(proxy => new ProxyPropertyDescriptor(ref proxy, attributes))
+                    .Cast<PropertyDescriptor>()
+                    .ToArray());
         }
 
         public PropertyDescriptorCollection GetProperties()
@@ -124,5 +128,24 @@ namespace GoodAI.BrainSimulator.DashboardUtils
             return this;
         }
         #endregion
+    }
+
+    public class DashboardViewModel : DashboardViewModelBase<Dashboard, DashboardNodeProperty>
+    {
+        public DashboardViewModel(Dashboard dashboard) : base(dashboard)
+        {
+        }
+    }
+
+    public class GroupedDashboardViewModel : DashboardViewModelBase<GroupDashboard, DashboardPropertyGroup>
+    {
+        public GroupedDashboardViewModel(GroupDashboard dashboard) : base(dashboard)
+        {
+        }
+
+        public void AddGroupedProperty()
+        {
+            Dashboard.AddGroupedProperty();
+        }
     }
 }

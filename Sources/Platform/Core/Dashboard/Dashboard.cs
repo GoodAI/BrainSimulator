@@ -17,16 +17,16 @@ using YAXLib;
 namespace GoodAI.Core.Dashboard
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class Dashboard : INotifyPropertyChanged
+    public class DashboardBase<TProperty> : INotifyPropertyChanged where TProperty : DashboardProperty
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         [YAXSerializableField]
-        public IList<DashboardProperty> Properties { get; set; }
+        public IList<TProperty> Properties { get; set; }
 
-        public Dashboard()
+        public DashboardBase()
         {
-            Properties = new List<DashboardProperty>();
+            Properties = new List<TProperty>();
         }
 
         public bool Contains(object target, string propertyName)
@@ -53,6 +53,33 @@ namespace GoodAI.Core.Dashboard
             }
         }
 
+        public void Remove(TProperty property)
+        {
+            if (Properties.Remove(property))
+                OnPropertiesChanged("Properties");
+        }
+
+        public void Remove(object target, string propertyName)
+        {
+            var property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+
+            if (property == null)
+                return;
+
+            if (Properties.Remove(property))
+                OnPropertiesChanged("Properties");
+        }
+
+        protected void OnPropertiesChanged(string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
+    public class Dashboard : DashboardBase<DashboardNodeProperty>
+    {
         public void Add(object target, string propertyName)
         {
             if (Contains(target, propertyName))
@@ -92,28 +119,29 @@ namespace GoodAI.Core.Dashboard
             Properties.Add(property);
             OnPropertiesChanged("Properties");
         }
+    }
 
-        public void Remove(DashboardProperty property)
+    [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
+    public sealed class GroupDashboard : DashboardBase<DashboardPropertyGroup>
+    {
+        private static int m_nextId = 1;
+        private static int GetNextId()
         {
-            if (Properties.Remove(property))
-                OnPropertiesChanged("Properties");
+            return m_nextId++;
         }
 
-        public void Remove(object target, string propertyName)
+        public void AddGroupedProperty()
         {
-            var property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+            var name = "Group " + GetNextId();
+            // TODO(HonzaS): Use a temporary set for efficiency?
+            while (Properties.Any(property => property.PropertyName == name))
+                name = "Group " + GetNextId();
 
-            if (property == null)
-                return;
-
-            if (Properties.Remove(property))
-                OnPropertiesChanged("Properties");
-        }
-
-        protected virtual void OnPropertiesChanged(string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            Properties.Add(new DashboardPropertyGroup
+            {
+                Name = name
+            });
+            OnPropertiesChanged("Properties");
         }
     }
 }

@@ -18,6 +18,7 @@ namespace GoodAI.Core.Dashboard
 
         #region PropertyDescriptor specific
 
+
         public override bool CanResetValue(object component)
         {
             return false;
@@ -70,7 +71,10 @@ namespace GoodAI.Core.Dashboard
 
         public override Type PropertyType
         {
-            get { return Property.Value.GetType(); }
+            get
+            {
+                return Property.Value == null ? typeof (string) : Property.Value.GetType();
+            }
         }
 
         #endregion

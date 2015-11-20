@@ -39,8 +39,8 @@
             this.editGroupButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addToGroupButton = new System.Windows.Forms.ToolStripButton();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.removeFromGroupButton = new System.Windows.Forms.ToolStripButton();
+            this.propertyGridGrouped = new System.Windows.Forms.PropertyGrid();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -108,7 +108,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip2);
-            this.splitContainer1.Panel2.Controls.Add(this.propertyGrid1);
+            this.splitContainer1.Panel2.Controls.Add(this.propertyGridGrouped);
             this.splitContainer1.Size = new System.Drawing.Size(428, 561);
             this.splitContainer1.SplitterDistance = 227;
             this.splitContainer1.TabIndex = 2;
@@ -141,6 +141,7 @@
             this.addGroupButton.Size = new System.Drawing.Size(23, 22);
             this.addGroupButton.Text = "Add a group";
             this.addGroupButton.ToolTipText = "Add a new property group";
+            this.addGroupButton.Click += new System.EventHandler(this.addGroupButton_Click);
             // 
             // removeGroupButton
             // 
@@ -151,6 +152,7 @@
             this.removeGroupButton.Size = new System.Drawing.Size(23, 22);
             this.removeGroupButton.Text = "Remove group";
             this.removeGroupButton.ToolTipText = "Remove selected property group";
+            this.removeGroupButton.Click += new System.EventHandler(this.removeGroupButton_Click);
             // 
             // editGroupButton
             // 
@@ -161,6 +163,7 @@
             this.editGroupButton.Size = new System.Drawing.Size(23, 22);
             this.editGroupButton.Text = "Edit group";
             this.editGroupButton.ToolTipText = "Edit the name of the selected group name";
+            this.editGroupButton.Click += new System.EventHandler(this.editGroupButton_Click);
             // 
             // toolStripSeparator1
             // 
@@ -176,17 +179,7 @@
             this.addToGroupButton.Size = new System.Drawing.Size(23, 22);
             this.addToGroupButton.Text = "Add to group";
             this.addToGroupButton.ToolTipText = "Add the selected property from top into the selected group in the bottom";
-            // 
-            // propertyGrid1
-            // 
-            this.propertyGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGrid1.Location = new System.Drawing.Point(3, 28);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(422, 299);
-            this.propertyGrid1.TabIndex = 0;
-            this.propertyGrid1.ToolbarVisible = false;
+            this.addToGroupButton.Click += new System.EventHandler(this.addToGroupButton_Click);
             // 
             // removeFromGroupButton
             // 
@@ -197,6 +190,20 @@
             this.removeFromGroupButton.Size = new System.Drawing.Size(23, 22);
             this.removeFromGroupButton.Text = "Remove from group";
             this.removeFromGroupButton.ToolTipText = "Remove the selected property from its group";
+            this.removeFromGroupButton.Click += new System.EventHandler(this.removeFromGroupButton_Click);
+            // 
+            // propertyGridGrouped
+            // 
+            this.propertyGridGrouped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGridGrouped.Location = new System.Drawing.Point(3, 28);
+            this.propertyGridGrouped.Name = "propertyGridGrouped";
+            this.propertyGridGrouped.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
+            this.propertyGridGrouped.Size = new System.Drawing.Size(422, 299);
+            this.propertyGridGrouped.TabIndex = 0;
+            this.propertyGridGrouped.ToolbarVisible = false;
+            this.propertyGridGrouped.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridGrouped_SelectedGridItemChanged);
             // 
             // DashboardPropertyForm
             // 
@@ -230,7 +237,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton removeButton;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
+        private System.Windows.Forms.PropertyGrid propertyGridGrouped;
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripButton addGroupButton;
         private System.Windows.Forms.ToolStripButton removeGroupButton;

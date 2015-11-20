@@ -420,9 +420,15 @@ namespace GoodAI.BrainSimulator.Forms
             if (project.Dashboard == null)
                 project.Dashboard = new Dashboard();
 
-            project.Dashboard.RestoreFromIds(project);
+            if (project.GroupedDashboard == null)
+                project.GroupedDashboard = new GroupDashboard();
 
-            DashboardPropertyView.UpdateDashboard(project.Dashboard);
+            // The order is important - the normal dashboard properties must be set up
+            // before they're added to groups.
+            project.Dashboard.RestoreFromIds(project);
+            project.GroupedDashboard.RestoreFromIds(project);
+
+            DashboardPropertyView.UpdateDashboards(project.Dashboard, project.GroupedDashboard);
         }
 
         public void UpdateObservers()

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,6 +29,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             m_mainForm = mainForm;
             InitializeComponent();
+            DisableGroupButtons();
         }
 
         private DashboardViewModel DashboardViewModel
@@ -36,16 +38,30 @@ namespace GoodAI.BrainSimulator.Forms
             set
             {
                 if (DashboardViewModel != null)
-                    DashboardViewModel.PropertyChanged -= OnTargetPropertiesChanged;
+                    DashboardViewModel.PropertyChanged -= OnDashboardPropertiesChanged;
 
                 propertyGrid.SelectedObject = value;
-                value.PropertyChanged += OnTargetPropertiesChanged;
+                value.PropertyChanged += OnDashboardPropertiesChanged;
             }
         }
 
-        public void UpdateDashboard(Dashboard dashboard)
+        private GroupedDashboardViewModel GroupedDashboardViewModel
+        {
+            get { return propertyGridGrouped.SelectedObject as GroupedDashboardViewModel; }
+            set
+            {
+                if (GroupedDashboardViewModel != null)
+                    GroupedDashboardViewModel.PropertyChanged -= OnGroupedDashboardPropertiesChanged;
+
+                propertyGridGrouped.SelectedObject = value;
+                value.PropertyChanged += OnGroupedDashboardPropertiesChanged;
+            }
+        }
+
+        public void UpdateDashboards(Dashboard dashboard, GroupDashboard groupedDashboard)
         {
             DashboardViewModel = new DashboardViewModel(dashboard);
+            GroupedDashboardViewModel = new GroupedDashboardViewModel(groupedDashboard);
         }
 
         public bool CanEditNodeProperties
@@ -70,10 +86,24 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private void OnTargetPropertiesChanged(object sender, EventArgs args)
+        private void OnDashboardPropertiesChanged(object sender, EventArgs args)
         {
             removeButton.Enabled = false;
             propertyGrid.Refresh();
+        }
+
+        private void OnGroupedDashboardPropertiesChanged(object sender, EventArgs args)
+        {
+            DisableGroupButtons();
+            propertyGridGrouped.Refresh();
+        }
+
+        private void DisableGroupButtons()
+        {
+            removeGroupButton.Enabled = false;
+            editGroupButton.Enabled = false;
+            addToGroupButton.Enabled = false;
+            removeFromGroupButton.Enabled = false;
         }
 
         private void removeButton_Click(object sender, EventArgs e)
@@ -87,10 +117,86 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
         {
+            if (GroupedDashboardViewModel == null)
+                return;
+
             if (e.NewSelection != null)
             {
                 removeButton.Enabled = true;
             }
+        }
+
+        private void addGroupButton_Click(object sender, EventArgs e)
+        {
+            GroupedDashboardViewModel.AddGroupedProperty();
+        }
+
+        private void removeGroupButton_Click(object sender, EventArgs e)
+        {
+            var descriptor = propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
+            if (descriptor == null)
+                throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
+
+            GroupedDashboardViewModel.RemoveProperty(descriptor.Property);
+
+            // TODO enable items on top
+        }
+
+        private void editGroupButton_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void addToGroupButton_Click(object sender, EventArgs e)
+        {
+            var selectedPropertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
+            if (selectedPropertyDescriptor == null)
+                return;
+
+            var selectedGroupDescriptor = propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
+            if (selectedGroupDescriptor == null)
+                return;
+
+            var propertyProxy = selectedPropertyDescriptor.Property as SingleProxyProperty;
+            if (propertyProxy == null)
+                return;
+
+            var groupPropertyProxy = selectedGroupDescriptor.Property as ProxyPropertyGroup;
+            if (groupPropertyProxy == null)
+                return;
+
+            var property = propertyProxy.SourceProperty;
+            var groupProperty = groupPropertyProxy.SourceProperty;
+
+            //try
+            //{
+                groupProperty.CheckType(property);
+            //}
+            //catch (InvalidOperationException exception)
+            //{
+            //    // TODO(HonzaS): display an error.
+            //}
+
+            groupProperty.Add(property);
+
+            propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
+        }
+
+        private void removeFromGroupButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void propertyGridGrouped_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            if (e.NewSelection != null)
+            {
+                removeGroupButton.Enabled = true;
+                editGroupButton.Enabled = true;
+                addToGroupButton.Enabled = true;
+                removeFromGroupButton.Enabled = true;
+            }
+            propertyGrid.Refresh();
         }
     }
 }
