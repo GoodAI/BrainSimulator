@@ -28,11 +28,17 @@ namespace GoodAI.Modules.RBM
     /// <br/>
     /// <p>Use RBMFilterObserver (upper right by default) to see weights.</p>
     /// </description>
-    public class MyRBMLayer : MyHiddenLayer
+    public class MyRBMLayer : MyOutputLayer
     {
 
         public MyRBMInitLayerTask RBMInitLayerTask { get; protected set; }
         public MyRBMRandomWeightsTask RBMRandomWeightsTask { get; protected set; }
+
+
+        [YAXSerializableField(DefaultValue = 1)]
+        [MyBrowsable, Category("\tLayer")]
+        [ReadOnly(false)]
+        public override int Neurons { get; set; }
 
 
         [YAXSerializableField(DefaultValue = false)]
@@ -54,12 +60,6 @@ namespace GoodAI.Modules.RBM
         }
 
         // Memory blocks
-
-        [MyInputBlock(1)]
-        public MyMemoryBlock<float> Target
-        {
-            get { return GetInput(1); }
-        }
 
         public MyMemoryBlock<float> PreviousOutput { get; protected set; }
         public MyMemoryBlock<float> RBMWeightPositive { get; protected set; }
@@ -97,6 +97,7 @@ namespace GoodAI.Modules.RBM
                     Filter.ColumnHint = (int)Math.Sqrt((double)Input.Count);
                     
                     RBMWeightPositive.Count = Neurons * Input.Count;
+                    Weights.Count += Weights.Count%2;
                 }
                 if (Target != null)
                 {
@@ -107,7 +108,10 @@ namespace GoodAI.Modules.RBM
 
         public override void Validate(MyValidator validator)
         {
-            base.Validate(validator);
+            //base.Validate(validator);
+            validator.AssertError(Neurons > 0, this, "Number of neurons should be > 0");
+            validator.AssertError(Input != null, this, "Neural network node \"" + this.Name + "\" has no input.");
+            validator.AssertWarning(Connection != ConnectionType.NOT_SET, this, "ConnectionType not set for " + this);
         }
 
         #region Kernels
