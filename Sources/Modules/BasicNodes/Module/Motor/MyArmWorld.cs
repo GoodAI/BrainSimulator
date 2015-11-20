@@ -313,12 +313,16 @@ namespace GoodAI.Modules.Motor
                     if (Owner.HighlightPointInput != null && Owner.HighlightPointInput.Count >= 2)
                     {
                         Owner.HighlightPointInput.SafeCopyToHost();
-                        int highlightX = (int) Owner.HighlightPointInput.Host[0];
-                        int highlightY = (int) Owner.HighlightPointInput.Host[1];
-                        int highlightRadius = 10;
 
-                        DrawLine(highlightX + highlightRadius / 2, highlightY, highlightX - highlightRadius / 2, highlightY, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
-                        DrawLine(highlightX, highlightY + highlightRadius / 2, highlightX, highlightY - highlightRadius / 2, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
+                        for (int i = 0; i + 2 <= Owner.HighlightPointInput.Count; i += 2)
+                        {
+                            int highlightX = (int)Owner.HighlightPointInput.Host[i+0];
+                            int highlightY = (int)Owner.HighlightPointInput.Host[i+1];
+                            int highlightRadius = 10;
+
+                            DrawLine(highlightX + highlightRadius / 2, highlightY, highlightX - highlightRadius / 2, highlightY, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
+                            DrawLine(highlightX, highlightY + highlightRadius / 2, highlightX, highlightY - highlightRadius / 2, Owner.VisualOutput.Host, Owner.WORLD_WIDTH, Owner.WORLD_HEIGHT);
+                        }
                     }
 
                     //draw joints
