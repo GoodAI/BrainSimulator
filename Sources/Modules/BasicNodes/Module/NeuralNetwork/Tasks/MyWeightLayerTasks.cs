@@ -205,6 +205,11 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
                 return;
             }
 
+            if (sourceLayer.ActivationFunction != Owner.ActivationFunction)
+            {
+                MyLog.WARNING.WriteLine(Owner.Name + ": Sharing weights with node " + SourceNodeName + " but have a different activation function!");
+            }
+
             m_sourceLayer = sourceLayer;
         }
 
