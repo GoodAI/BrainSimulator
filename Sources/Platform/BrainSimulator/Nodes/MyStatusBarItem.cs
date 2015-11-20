@@ -52,7 +52,7 @@ namespace GoodAI.BrainSimulator.Nodes
         {
             var size = new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 
-            var textSize = DrawOrMeasureTextItem(context, PointF.Empty, size, justMeasure: true);
+            var textSize = DrawTextItem(context, PointF.Empty, size, justMeasure: true);
 
             var iconSubitemsSize = (IconSubitems.Count == 0)
                 ? SizeF.Empty
@@ -71,7 +71,7 @@ namespace GoodAI.BrainSimulator.Nodes
 
             DrawIconSubitems(graphics, position);
 
-            DrawOrMeasureTextItem(graphics, position, size);
+            DrawTextItem(graphics, position, size);
         }
 
         private void DrawIconSubitems(Graphics graphics, PointF position)
@@ -87,7 +87,7 @@ namespace GoodAI.BrainSimulator.Nodes
             }
         }
 
-        private SizeF DrawOrMeasureTextItem(Graphics graphics, PointF position, SizeF size, bool justMeasure = false)
+        private SizeF DrawTextItem(Graphics graphics, PointF position, SizeF size, bool justMeasure = false)
         {
             var font = new Font(SystemFonts.MenuFont.FontFamily, SystemFonts.MenuFont.Size - 2.0f);
             var text = TextItem;
@@ -98,7 +98,7 @@ namespace GoodAI.BrainSimulator.Nodes
 
         // TODO(Premek): Move to up to the library (or to a different lib).
         private static SizeF DrawOrMeasureString(Graphics graphics, string text, Font font, PointF position, SizeF size,
-            StringFormat format, bool measure = false)
+            StringFormat format, bool measure)
         {
             if (measure)
             {
