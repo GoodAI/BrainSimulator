@@ -32,7 +32,7 @@ namespace Graph
 	public static class GraphConstants
 	{
 		public const int MinimumItemWidth		= 64;
-		public const int MinimumItemHeight		= 16;
+		public const int MinimumItemHeight		= 12;
 		public const int TitleHeight			= 12;
 		public const int ItemSpacing			= 3;
 		public const int TopHeight				= 4;
