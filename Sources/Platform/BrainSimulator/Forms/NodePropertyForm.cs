@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -259,8 +260,10 @@ namespace GoodAI.BrainSimulator.Forms
             if (propertyGrid.SelectedGridItem.PropertyDescriptor == null)
                 return;
 
-            m_mainForm.DashboardPropertyToggle(Target, propertyGrid.SelectedGridItem.PropertyDescriptor.Name,
-                dashboardButton.Checked);
+            PropertyDescriptor propertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
+
+            if (propertyDescriptor != null)
+                m_mainForm.DashboardPropertyToggle(Target, propertyDescriptor.Name, dashboardButton.Checked);
         }
 
         public void RefreshGrid()
@@ -285,6 +288,12 @@ namespace GoodAI.BrainSimulator.Forms
                 PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
                 if (descriptor == null)
                     return;
+
+                if (descriptor.IsReadOnly)
+                {
+                    dashboardButton.Enabled = false;
+                    return;
+                }
 
                 // A real property has been selected.
                 dashboardButton.Enabled = true;

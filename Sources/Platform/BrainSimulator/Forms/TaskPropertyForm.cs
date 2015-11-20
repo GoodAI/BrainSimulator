@@ -3,6 +3,7 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System.ComponentModel;
 using System.Windows.Forms;
+using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -45,11 +46,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dashboardButton_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (propertyGrid.SelectedGridItem.PropertyDescriptor == null)
-                return;
+            PropertyDescriptor propertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
 
-            m_mainForm.DashboardPropertyToggle(Target, propertyGrid.SelectedGridItem.PropertyDescriptor.Name,
-                dashboardButton.Checked);
+            if (propertyDescriptor != null)
+                m_mainForm.DashboardPropertyToggle(Target, propertyDescriptor.Name, dashboardButton.Checked);
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
@@ -69,6 +69,12 @@ namespace GoodAI.BrainSimulator.Forms
                 PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
                 if (descriptor == null)
                     return;
+
+                if (descriptor.IsReadOnly)
+                {
+                    dashboardButton.Enabled = false;
+                    return;
+                }
 
                 // A real property has been selected.
                 dashboardButton.Enabled = true;

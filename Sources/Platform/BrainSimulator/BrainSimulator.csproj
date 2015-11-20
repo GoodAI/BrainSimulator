@@ -330,6 +330,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="res\action_Cancel_16xMD.png" />
+    <None Include="res\action_add_16xMD.png" />
     <Content Include="res\add_observer.png" />
     <None Include="res\add_plot1.png" />
     <Content Include="res\add_text_observer.png" />
@@ -339,6 +340,8 @@
     <Content Include="res\anaglyph_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\arrow_Down_16xLG.png" />
+    <None Include="res\arrow_Up_16xLG.png" />
     <Content Include="res\asm.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -520,6 +523,7 @@
     </Content>
     <Content Include="res\open_mb.png" />
     <Content Include="res\open_mb_12.png" />
+    <Content Include="res\pencil_003_16xMD.png" />
     <Content Include="res\placeCells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -646,6 +650,7 @@
     <Content Include="res\svd_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\Symbols_Blocked_16xLG.png" />
     <Content Include="res\tasks_disabled.png" />
     <Content Include="res\text_16xMD.ico" />
     <Content Include="res\threshold.png">

@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Task;
 using GoodAI.Core.Dashboard;
+using GoodAI.Platform.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -421,7 +422,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             project.Dashboard.RestoreFromIds(project);
 
-            DashboardPropertyView.Target = new DashboardViewModel(project.Dashboard);
+            DashboardPropertyView.UpdateDashboard(project.Dashboard);
         }
 
         public void UpdateObservers()

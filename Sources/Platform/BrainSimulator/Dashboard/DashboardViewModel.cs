@@ -24,9 +24,9 @@ namespace GoodAI.BrainSimulator.DashboardUtils
             m_dashboard = dashboard;
         }
 
-        public void RemoveProperty(object owner, string propertyName)
+        public void RemoveProperty(ProxyPropertyBase proxy)
         {
-            m_dashboard.Remove(owner, propertyName);
+            m_dashboard.Remove(proxy.SourceProperty);
         }
 
         #region "TypeDescriptor Implementation"

@@ -30,29 +30,39 @@ namespace GoodAI.BrainSimulator.Forms
             InitializeComponent();
         }
 
-        public DashboardViewModel Target
+        private DashboardViewModel DashboardViewModel
         {
-            private get { return propertyGrid.SelectedObject as DashboardViewModel; }
+            get { return propertyGrid.SelectedObject as DashboardViewModel; }
             set
             {
-                if (Target != null)
-                    Target.PropertyChanged -= OnTargetPropertiesChanged;
+                if (DashboardViewModel != null)
+                    DashboardViewModel.PropertyChanged -= OnTargetPropertiesChanged;
 
                 propertyGrid.SelectedObject = value;
                 value.PropertyChanged += OnTargetPropertiesChanged;
             }
         }
 
+        public void UpdateDashboard(Dashboard dashboard)
+        {
+            DashboardViewModel = new DashboardViewModel(dashboard);
+        }
+
         public bool CanEditNodeProperties
         {
             set
             {
-                foreach (var propertyDescriptor in Target.GetProperties(new Attribute[0]))
+                foreach (var propertyDescriptor in DashboardViewModel.GetProperties(new Attribute[0]))
                 {
                     var proxyPropertyDescriptor = propertyDescriptor as ProxyPropertyDescriptor;
-                    if (proxyPropertyDescriptor.Property.Owner is MyNode)
+                    var property = proxyPropertyDescriptor.Property as SingleProxyProperty;
+                    if (property != null && property.Target is MyNode)
                     {
                         proxyPropertyDescriptor.Property.ReadOnly = !value;
+                    }
+                    else
+                    {
+                        // TODO(HonzaS): Finish this.
                     }
                 }
 
@@ -72,7 +82,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (descriptor == null)
                 throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
 
-            Target.RemoveProperty(descriptor.Property.Owner, descriptor.Property.PropertyInfo.Name);
+            DashboardViewModel.RemoveProperty(descriptor.Property);
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)

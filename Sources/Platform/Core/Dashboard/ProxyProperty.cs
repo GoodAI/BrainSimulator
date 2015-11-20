@@ -7,30 +7,63 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Core.Dashboard
 {
-    public sealed class ProxyProperty
+    public abstract class ProxyPropertyBase
     {
-        public object Owner { get; private set; }
-        public PropertyInfo PropertyInfo { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public bool ReadOnly { get; set; }
+        public bool Visible { get; set; }
 
-        public ProxyProperty(object owner, PropertyInfo propertyInfo)
+        public string Category { get; set; }
+        public abstract object Value { get; set; }
+
+        public DashboardProperty SourceProperty { get; private set; }
+
+        public ProxyPropertyBase(DashboardProperty sourceProperty)
         {
-            Owner = owner;
+            SourceProperty = sourceProperty;
+        }
+    }
+
+    public sealed class SingleProxyProperty : ProxyPropertyBase
+    {
+        public PropertyInfo PropertyInfo { get; private set; }
+        public object Target { get; protected set; }
+
+        public SingleProxyProperty(DashboardProperty sourceProperty, object target, PropertyInfo propertyInfo)
+            : base(sourceProperty)
+        {
+            Target = target;
             PropertyInfo = propertyInfo;
             Visible = true;
         }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        public bool ReadOnly { get; set; }
-        public bool Visible { get; set; }
-
-        public object Value
+        public override object Value
         {
-            get { return PropertyInfo.GetValue(Owner); }
-            set { PropertyInfo.SetValue(Owner, value); }
+            get { return PropertyInfo.GetValue(Target); }
+            set { PropertyInfo.SetValue(Target, value); }
+        }
+    }
+
+    public sealed class GroupedProxyProperty : ProxyPropertyBase
+    {
+        private object m_value;
+
+        public GroupedProxyProperty(DashboardGroupedProperty sourceProperty) : base(sourceProperty)
+        {
         }
 
-        public string Category { get; set; }
+        public override object Value
+        {
+            get { return m_value; }
+            set
+            {
+                m_value = value;
+                foreach (var property in (SourceProperty as DashboardGroupedProperty).GroupedProperties)
+                {
+                    property.Proxy.Value = value;
+                }
+            }
+        }
     }
 }

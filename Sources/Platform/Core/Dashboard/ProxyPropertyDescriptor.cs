@@ -9,8 +9,8 @@ namespace GoodAI.Core.Dashboard
 {
     public class ProxyPropertyDescriptor : PropertyDescriptor
     {
-        public ProxyProperty Property { get; private set; }
-        public ProxyPropertyDescriptor(ref ProxyProperty property, Attribute[] attrs)
+        public ProxyPropertyBase Property { get; private set; }
+        public ProxyPropertyDescriptor(ref ProxyPropertyBase property, Attribute[] attrs)
             : base(property.Name, attrs)
         {
             Property = property;
