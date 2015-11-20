@@ -13,7 +13,7 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class DebugForm : DockContent
     {
-        private MainForm m_mainForm;        
+        private readonly MainForm m_mainForm;        
         private MyExecutionPlan[] m_executionPlan;
 
 
@@ -22,7 +22,7 @@ namespace GoodAI.BrainSimulator.Forms
             MyDebugNode result;
 
             if (executable is MyTask)
-            {                
+            {
                 result = new MyDebugTaskNode(executable as MyTask);
             }
             else
@@ -30,9 +30,10 @@ namespace GoodAI.BrainSimulator.Forms
                 result = new MyDebugNode(executable);
             }
 
-            if (executable is MyExecutionBlock)
+            var executableBlock = executable as MyExecutionBlock;
+            if (executableBlock != null)
             {
-                foreach (IMyExecutable child in (executable as MyExecutionBlock).Children)
+                foreach (IMyExecutable child in executableBlock.Children)
                 {
                     if (child is MySignalTask)
                     {
@@ -44,7 +45,7 @@ namespace GoodAI.BrainSimulator.Forms
                     else if (showDisabledTasksButton.Checked || child.Enabled)
                     {
                         result.Nodes.Add(CreateDebugNode(child));
-                    }                    
+                    }
                 }
             }
 
@@ -113,24 +114,30 @@ namespace GoodAI.BrainSimulator.Forms
             stepOverButton.Enabled = simulationHandler.CanStepOver;
             pauseToolButton.Enabled = simulationHandler.CanPause;
 
-            if (e.NewState == MySimulationHandler.SimulationState.PAUSED && simulationHandler.Simulation.InDebugMode)
+            if (e.NewState == MySimulationHandler.SimulationState.RUNNING)
             {
-                noDebugLabel.Visible = false;
-                toolStrip.Enabled = true;                                               
-
                 if (m_executionPlan == null)
-                {
                     UpdateDebugListView();
+            }
+            else if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
+            {
+                if (m_executionPlan == null)
+                    UpdateDebugListView();
+
+                if (simulationHandler.Simulation.InDebugMode)
+                {
+                    toolStrip.Enabled = true;                                               
+                    noDebugLabel.Visible = false;
+
+                    MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
+                    m_selectedNodeView = null;
+
+                    if (currentBlock != null && currentBlock.CurrentChild != null)
+                    {                
+                        m_selectedNodeView = debugTreeView.AllNodes.FirstOrDefault(node => (node.Tag is MyDebugNode && (node.Tag as MyDebugNode).Executable == currentBlock.CurrentChild));
+                        
+                    };
                 }
-
-                MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
-                m_selectedNodeView = null;
-
-                if (currentBlock != null && currentBlock.CurrentChild != null)
-                {                
-                    m_selectedNodeView = debugTreeView.AllNodes.FirstOrDefault(node => (node.Tag is MyDebugNode && (node.Tag as MyDebugNode).Executable == currentBlock.CurrentChild));
-                    
-                };
 
                 debugTreeView.Invalidate();                
                 //debugTreeView.Invoke((MethodInvoker)(() => debugTreeView.SelectedNode = m_selectedNodeView));
@@ -146,7 +153,9 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     this.Hide();
                 }
-            }            
+            }
+
+            breakpointCheckBox.EditEnabled = simulationHandler.Simulation.InDebugMode;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -158,6 +167,35 @@ namespace GoodAI.BrainSimulator.Forms
         {
             AlterText(e);
             AlterBackground(e);         
+        }
+
+        private void profilerTimeValue_DrawText(object sender, DrawEventArgs e)
+        {
+            var parentTreeNode = e.Node.Parent;
+            var parentDebugNode = parentTreeNode.Tag as MyDebugNode;
+            if (parentDebugNode != null)
+            {
+                var parentBlock = parentDebugNode.Executable as MyExecutionBlock;
+                if (parentBlock != null)
+                {
+                    // The parent node contains an executable block.
+                    var debugNode = e.Node.Tag as MyDebugNode;
+
+                    // Fill the time property in the view model.
+                    TimeSpan profilingTime;
+                    if (parentBlock.ProfilingInfo.TryGetValue(debugNode.Executable, out profilingTime))
+                        debugNode.ProfilerTime = profilingTime;
+
+                    TreeNodeAdv selectedTreeNode = GetSelectedTreeNode();
+                    if (selectedTreeNode == null)
+                        return;
+
+                    // If the this node should be colored according to the time it took, use the pre-calculated color
+                    // in the draw event.
+                    if (parentTreeNode == selectedTreeNode)
+                        e.BackgroundBrush = new SolidBrush(debugNode.BackgroundColor);
+                }
+            }
         }
 
         private void AlterBackground(DrawEventArgs e)
@@ -234,7 +272,45 @@ namespace GoodAI.BrainSimulator.Forms
         private void stepOutButton_Click(object sender, EventArgs e)
         {
             m_mainForm.stepOutToolStripMenuItem.PerformClick();
-        }        
+        }
+
+        private void debugTreeView_SelectionChanged(object sender, EventArgs e)
+        {
+            // Color the value according to profiling times.
+            if (!MyExecutionBlock.IsProfiling)
+                return;
+
+            TreeNodeAdv selectedTreeNode = GetSelectedTreeNode();
+            if (selectedTreeNode == null)
+                return;
+
+            // Get the relevant children of the current node.
+            var children = selectedTreeNode.Children
+                .Select(child => child.Tag as MyDebugNode)
+                .Where(childDebugNode => childDebugNode != null && childDebugNode.ProfilerTime != null)
+                .ToList();
+
+            // Calculate total time of the individual components.
+            double totalTime = children.Sum(childDebugNode => childDebugNode.ProfilerTime.Value.TotalMilliseconds);
+
+            // Calculate the colors of the children nodes.
+            foreach (MyDebugNode debugNodeChild in children)
+            {
+                var saturation = (int) (255 * debugNodeChild.ProfilerTime.Value.TotalMilliseconds/totalTime);
+                // ~ 1% filter.
+                if (saturation > 3)
+                    debugNodeChild.BackgroundColor = Color.FromArgb(saturation, 255, 0, 0);
+            }
+        }
+
+        private TreeNodeAdv GetSelectedTreeNode()
+        {
+            TreeNodeAdv selectedTreeNode = debugTreeView.SelectedNode;
+
+            if (selectedTreeNode == null)
+                selectedTreeNode = debugTreeView.AllNodes.FirstOrDefault(node => node.ToString().StartsWith("Simulation"));
+            return selectedTreeNode;
+        }
     }
 
     public class MyDebugNode : Node, IDisposable
@@ -271,10 +347,27 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        public TimeSpan? ProfilerTime { get; set; }
+
+        public string ProfilerTimeFormatted
+        {
+            get
+            {
+                if (ProfilerTime.HasValue)
+                    return string.Format("{0}ms", ProfilerTime.Value.TotalMilliseconds);
+                else
+                    return string.Empty;
+            }
+        }
+
+        public Color BackgroundColor { get; set; }
+
         public IMyExecutable Executable { get; private set; }
 
         public MyDebugNode(IMyExecutable executable): base(executable.Name)
         {
+            BackgroundColor = Color.White;
+
             Executable = executable;
 
             if (Executable is MyIncomingSignalTask)

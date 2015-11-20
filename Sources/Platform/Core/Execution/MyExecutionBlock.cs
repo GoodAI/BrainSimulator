@@ -2,12 +2,16 @@
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GoodAI.Core.Execution
 {   
     /// Container for multiple IMyExecutable objects
     public class MyExecutionBlock : IMyExecutable
     {
+        public static bool IsProfiling { get; set; }
+
         public bool Enabled { get { return true; } }        
         public uint SimulationStep { get; set; }
         public virtual string Name { get; set; }
@@ -16,6 +20,9 @@ namespace GoodAI.Core.Execution
 
         protected IMyExecutable[] m_children;
         protected int m_childIterator = 0;
+
+        public readonly IDictionary<IMyExecutable, TimeSpan> ProfilingInfo;
+        private readonly Stopwatch m_profilingStopwatch = new Stopwatch();
 
         /// Element which is to be run next
         public IMyExecutable CurrentChild
@@ -57,6 +64,8 @@ namespace GoodAI.Core.Execution
         /// <param name="children">List of elements</param>
         public MyExecutionBlock(params IMyExecutable[] children)
         {
+            ProfilingInfo = new Dictionary<IMyExecutable, TimeSpan>();
+
             m_children = children;
 
             for (int i = 0; i < m_children.Length; i++)
@@ -81,6 +90,10 @@ namespace GoodAI.Core.Execution
                 {
                     childList.Reset();
 
+                    // Profiling an inner block.
+                    if (IsProfiling)
+                        m_profilingStopwatch.Restart();
+
                     return childList;
                 }
                 else
@@ -89,15 +102,39 @@ namespace GoodAI.Core.Execution
                     {
                         MyLog.DEBUG.WriteLine("Executing: " + currentChild.Name);
                         currentChild.SimulationStep = SimulationStep;
-                        currentChild.Execute();
+
+                        if (IsProfiling)
+                            ProfilingExecute(currentChild);
+                        else
+                            currentChild.Execute();
                     }
                     return this;
                 }
             }
             else
             {
+                // Control goes back to parent, en its measurement of this block.
+                if (IsProfiling && Parent != null)
+                    Parent.EndChildBlockMeasuring(this);
+
                 return Parent;
             }
+        }
+
+        private void EndChildBlockMeasuring(MyExecutionBlock block)
+        {
+            EndMeasuring(block);
+        }
+
+        private void EndMeasuring(IMyExecutable childBlock)
+        {
+            m_profilingStopwatch.Stop();
+            ProfilingInfo[childBlock] = m_profilingStopwatch.Elapsed;
+        }
+
+        public void CleanProfilingTimes()
+        {
+            
         }
 
         /// Go back to first element of MyExecutionBlock
@@ -116,8 +153,25 @@ namespace GoodAI.Core.Execution
                 if (child.Enabled)
                 {
                     child.SimulationStep = SimulationStep;
-                    child.Execute();
+
+                    if (IsProfiling)
+                        ProfilingExecute(child);
+                    else
+                        child.Execute();
                 }
+            }
+        }
+
+        private void ProfilingExecute(IMyExecutable child)
+        {
+            m_profilingStopwatch.Restart();
+            try
+            {
+                child.Execute();
+            }
+            finally 
+            {
+                EndMeasuring(child);
             }
         }
 

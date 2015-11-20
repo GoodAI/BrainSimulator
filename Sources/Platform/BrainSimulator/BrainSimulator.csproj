@@ -434,6 +434,7 @@
     <Content Include="res\gate_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\graph_highPerformanceComputingChart_5170_16xLG.png" />
     <Content Include="res\group_signal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
