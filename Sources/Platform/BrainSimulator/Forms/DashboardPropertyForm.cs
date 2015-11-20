@@ -17,7 +17,6 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class DashboardPropertyForm : DockContent
     {
         private MainForm m_mainForm;
-        private bool m_canEditNodeProperties;
 
         public event PropertyValueChangedEventHandler PropertyValueChanged
         {
@@ -46,10 +45,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         public bool CanEditNodeProperties
         {
-            get { return m_canEditNodeProperties; }
             set
             {
-                m_canEditNodeProperties = value;
                 foreach (var propertyDescriptor in Target.GetProperties(new Attribute[0]))
                 {
                     var proxyPropertyDescriptor = propertyDescriptor as ProxyPropertyDescriptor;
