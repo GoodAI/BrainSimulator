@@ -290,6 +290,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project loading failed: " + e.Message);
+                throw;
             }
         }
 
@@ -309,6 +310,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project saving failed: " + e.Message);
+                throw;
             }
         }
 
