@@ -118,6 +118,11 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        public uint SimulationStep
+        {
+            get { return SimulationHandler.SimulationStep; }
+        }
+
         public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
             MySimulation simulation = new MyLocalSimulation();
@@ -314,7 +319,7 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        protected void setProperty(object o, string propName, object value)
+        protected void SetProperty(object o, string propName, object value)
         {
             MyLog.DEBUG.WriteLine("Setting property " + propName + "@" + o + " to " + value);
             PropertyInfo pInfo = o.GetType().GetProperty(propName);
@@ -342,7 +347,7 @@ namespace GoodAI.Core.Execution
         public void Set(int nodeId, string propName, object value)
         {
             MyNode n = Project.GetNodeById(nodeId);
-            setProperty(n, propName, value);
+            SetProperty(n, propName, value);
         }
 
         /// <summary>
@@ -356,7 +361,7 @@ namespace GoodAI.Core.Execution
         {
             MyWorkingNode node = (Project.GetNodeById(nodeId) as MyWorkingNode);
             MyTask task = GetTaskByType(node, taskType);
-            setProperty(task, propName, value);
+            SetProperty(task, propName, value);
         }
 
         /// <summary>
@@ -530,7 +535,7 @@ namespace GoodAI.Core.Execution
         /// <summary>
         /// Stops the paused simulation and flushes memory
         /// </summary>
-        public void Reset()
+        public void Reset()  // TODO(Premek): rename to Stop
         {
             SimulationHandler.StopSimulation();
             m_monitors.Clear();
