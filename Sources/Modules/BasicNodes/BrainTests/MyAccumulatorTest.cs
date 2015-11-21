@@ -16,5 +16,15 @@ namespace GoodAI.Modules.Tests
             MaxStepCount = 10;
             InspectInterval = 2;
         }
+
+        public override bool ShouldStop(IBrainScan b)
+        {
+            return b.GetValues(7)[0] > 5;
+        }
+
+        public override void Check(IBrainScan b)
+        {
+            Brassert.Fail();
+        }
     }
 }

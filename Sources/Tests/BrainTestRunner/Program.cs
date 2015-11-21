@@ -6,8 +6,6 @@ namespace GoodAI.Tests.BrainTestRunner
     {
         static void Main(string[] args)
         {
-            //AssertExperiment.Run(args);
-
             var testRunner = new TestRunner();
 
             testRunner.Run();

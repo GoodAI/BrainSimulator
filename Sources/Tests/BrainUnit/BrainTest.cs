@@ -31,9 +31,11 @@ namespace GoodAI.Testing.BrainUnit
         public BrainTest()
         { }
 
-        public virtual bool ShouldStop()
+        public virtual bool ShouldStop(IBrainScan b)
         {
             return false;
         }
+
+        public abstract void Check(IBrainScan b);
     }
 }

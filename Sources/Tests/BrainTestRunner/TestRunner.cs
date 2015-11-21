@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Execution;
+﻿using GoodAI.Core.Utils;
+using GoodAI.Core.Execution;
 using GoodAI.Modules.Tests;
 using GoodAI.Testing.BrainUnit;
 using System;
@@ -21,7 +22,23 @@ namespace GoodAI.Tests.BrainTestRunner
         {
             var test = new MyAccumulatorTest();
 
-            RunTest(test);
+            try
+            {
+                RunTest(test);
+            }
+            // TODO: make a report
+            catch (InvalidTestExc e)
+            {
+                MyLog.ERROR.WriteLine("Invalid test ({0}): {1}", test.GetType(), e.Message);
+            }
+            catch (BrassertFailedExc e)
+            {
+                MyLog.ERROR.WriteLine("Test FAILED ({0}): {1}", test.GetType(), e.Message);
+            }
+            catch (Exception e)
+            {
+                MyLog.ERROR.WriteLine("Test crash ({0}): {1}", test.GetType(), e.Message);
+            }
         }
 
         private void RunTest(BrainTest test)
@@ -33,14 +50,26 @@ namespace GoodAI.Tests.BrainTestRunner
             projectRunner.OpenProject(Path.GetFullPath(test.BrainFileName));
             projectRunner.DumpNodes();
 
-            do
-            {
-                projectRunner.RunAndPause(GetIterationStepCount(test));
-            }
-            while (projectRunner.SimulationStep < test.MaxStepCount);
+            var brainScan = new BrainScan(projectRunner);
 
-            projectRunner.Reset();  // TODO(Premek): rename to Stop
-            projectRunner.Shutdown();
+            try
+            {
+                do
+                {
+                    projectRunner.RunAndPause(GetIterationStepCount(test));
+
+                    if (test.ShouldStop(brainScan))  // TODO(Premek): consider tolerating ShouldStop exceptions (?)
+                        break;
+                }
+                while (projectRunner.SimulationStep < test.MaxStepCount);
+
+                test.Check(brainScan);
+            }
+            finally
+            {
+                projectRunner.Reset();  // TODO(Premek): rename to Stop
+                projectRunner.Shutdown();
+            }
         }
 
         private void CheckTest(BrainTest test)
