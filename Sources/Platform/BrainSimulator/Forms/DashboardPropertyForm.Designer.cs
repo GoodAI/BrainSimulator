@@ -39,7 +39,6 @@
             this.editGroupButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addToGroupButton = new System.Windows.Forms.ToolStripButton();
-            this.removeFromGroupButton = new System.Windows.Forms.ToolStripButton();
             this.propertyGridGrouped = new System.Windows.Forms.PropertyGrid();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -54,6 +53,7 @@
             this.propertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGrid.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.propertyGrid.Location = new System.Drawing.Point(3, 25);
             this.propertyGrid.Margin = new System.Windows.Forms.Padding(0);
             this.propertyGrid.Name = "propertyGrid";
@@ -124,8 +124,7 @@
             this.removeGroupButton,
             this.editGroupButton,
             this.toolStripSeparator1,
-            this.addToGroupButton,
-            this.removeFromGroupButton});
+            this.addToGroupButton});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(425, 25);
@@ -181,22 +180,12 @@
             this.addToGroupButton.ToolTipText = "Add the selected property from top into the selected group in the bottom";
             this.addToGroupButton.Click += new System.EventHandler(this.addToGroupButton_Click);
             // 
-            // removeFromGroupButton
-            // 
-            this.removeFromGroupButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.removeFromGroupButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.arrow_Up_16xLG;
-            this.removeFromGroupButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.removeFromGroupButton.Name = "removeFromGroupButton";
-            this.removeFromGroupButton.Size = new System.Drawing.Size(23, 22);
-            this.removeFromGroupButton.Text = "Remove from group";
-            this.removeFromGroupButton.ToolTipText = "Remove the selected property from its group";
-            this.removeFromGroupButton.Click += new System.EventHandler(this.removeFromGroupButton_Click);
-            // 
             // propertyGridGrouped
             // 
             this.propertyGridGrouped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGridGrouped.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.propertyGridGrouped.Location = new System.Drawing.Point(3, 28);
             this.propertyGridGrouped.Name = "propertyGridGrouped";
             this.propertyGridGrouped.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
@@ -244,7 +233,6 @@
         private System.Windows.Forms.ToolStripButton editGroupButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton addToGroupButton;
-        private System.Windows.Forms.ToolStripButton removeFromGroupButton;
 
 
 

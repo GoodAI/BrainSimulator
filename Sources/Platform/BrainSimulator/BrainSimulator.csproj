@@ -176,6 +176,12 @@
     <Compile Include="Forms\DashboardPropertyForm.Designer.cs">
       <DependentUpon>DashboardPropertyForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DashboardGroupNameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DashboardGroupNameDialog.Designer.cs">
+      <DependentUpon>DashboardGroupNameDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TaskPropertyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -251,6 +257,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConsoleForm.resx">
       <DependentUpon>ConsoleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DashboardGroupNameDialog.resx">
+      <DependentUpon>DashboardGroupNameDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>

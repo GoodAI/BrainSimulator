@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Core.Dashboard
 {
-    public class ProxyPropertyDescriptor : PropertyDescriptor
+    public abstract class ProxyPropertyDescriptorBase<TProxy, TProperty> : PropertyDescriptor
+        where TProxy : ProxyPropertyBase<TProperty>
+        where TProperty : DashboardProperty
     {
-        public ProxyPropertyBase Property { get; private set; }
-        public ProxyPropertyDescriptor(ref ProxyPropertyBase property, Attribute[] attrs)
+        public TProxy Property { get; private set; }
+        public ProxyPropertyDescriptorBase(ref TProxy property, Attribute[] attrs)
             : base(property.Name, attrs)
         {
             Property = property;
@@ -78,5 +80,21 @@ namespace GoodAI.Core.Dashboard
         }
 
         #endregion
+    }
+
+    public sealed class ProxyPropertyDescriptor :
+        ProxyPropertyDescriptorBase<SingleProxyProperty, DashboardNodeProperty>
+    {
+        public ProxyPropertyDescriptor(ref SingleProxyProperty property, Attribute[] attrs) : base(ref property, attrs)
+        {
+        }
+    }
+
+    public sealed class ProxyPropertyGroupDescriptor :
+        ProxyPropertyDescriptorBase<ProxyPropertyGroup, DashboardPropertyGroup>
+    {
+        public ProxyPropertyGroupDescriptor(ref ProxyPropertyGroup property, Attribute[] attrs) : base(ref property, attrs)
+        {
+        }
     }
 }

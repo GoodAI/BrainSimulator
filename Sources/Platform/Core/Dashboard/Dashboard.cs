@@ -139,7 +139,7 @@ namespace GoodAI.Core.Dashboard
 
             Properties.Add(new DashboardPropertyGroup
             {
-                Name = name
+                PropertyName = name
             });
             OnPropertiesChanged("Properties");
         }

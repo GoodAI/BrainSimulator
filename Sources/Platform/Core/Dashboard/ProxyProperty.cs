@@ -9,20 +9,20 @@ namespace GoodAI.Core.Dashboard
 {
     public abstract class ProxyPropertyBase
     {
-        public string Name { get; set; }
+        public abstract string Name { get; }
 
         public virtual string FullName { get { return Name; } }
 
         public virtual string Description { get; set; }
         public bool ReadOnly { get; set; }
-        public virtual bool Visible { get; set; }
+        public virtual bool IsVisible { get; set; }
 
         public string Category { get; set; }
         public abstract object Value { get; set; }
 
         public ProxyPropertyBase()
         {
-            Visible = true;
+            IsVisible = true;
         }
     }
 
@@ -34,6 +34,10 @@ namespace GoodAI.Core.Dashboard
         {
             SourceProperty = sourceProperty;
         }
+
+        public override string Name {
+            get { return SourceProperty.DisplayName; }
+        }
     }
 
     public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeProperty>
@@ -41,7 +45,7 @@ namespace GoodAI.Core.Dashboard
         public PropertyInfo PropertyInfo { get; private set; }
         public object Target { get; protected set; }
 
-        public override bool Visible
+        public override bool IsVisible
         {
             get { return SourceProperty.Group == null; }
         }
