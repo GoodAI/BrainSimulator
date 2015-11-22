@@ -24,6 +24,11 @@ namespace GoodAI.Core.Dashboard
         {
             IsVisible = true;
         }
+
+        public override string ToString()
+        {
+            return FullName.Replace("\t", "");
+        }
     }
 
     public abstract class ProxyPropertyBase<TSource> : ProxyPropertyBase where TSource : DashboardProperty

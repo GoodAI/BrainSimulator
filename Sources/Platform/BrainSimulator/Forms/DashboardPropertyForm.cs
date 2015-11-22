@@ -174,12 +174,12 @@ namespace GoodAI.BrainSimulator.Forms
 
             propertyGrid.Refresh();
             propertyGridGrouped.Refresh();
-            memberList.Refresh();
+            memberListBox.Refresh();
         }
 
         private void propertyGridGrouped_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
         {
-            memberList.Clear();
+            memberListBox.Items.Clear();
             if (e.NewSelection != null)
             {
                 removeGroupButton.Enabled = true;
@@ -196,23 +196,24 @@ namespace GoodAI.BrainSimulator.Forms
         {
             foreach (var proxy in groupDescriptor.Proxy.GetGroupMembers())
             {
-                memberList.Items.Add(new ListViewItem
-                {
-                    Tag = proxy,
-                    Text = proxy.FullName
-                });
+                //memberList.Items.Add(new ListViewItem
+                //{
+                //    Tag = proxy,
+                //    Text = proxy.FullName,
+                //    Name = proxy.FullName
+                //});
+                memberListBox.Items.Add(proxy);
             }
         }
 
         private void removeFromGroupButton_Click(object sender, EventArgs e)
         {
-            foreach (var item in memberList.SelectedItems.Cast<ListViewItem>())
+            foreach (var proxy in memberListBox.SelectedItems.Cast<SingleProxyProperty>())
             {
-                var proxy = item.Tag as SingleProxyProperty;
                 proxy.SourceProperty.Group.Remove(proxy.SourceProperty);
             }
 
-            memberList.Refresh();
+            memberListBox.Refresh();
             propertyGrid.Refresh();
             propertyGridGrouped.Refresh();
         }
