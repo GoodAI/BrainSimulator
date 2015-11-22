@@ -11,11 +11,11 @@ namespace GoodAI.Core.Dashboard
         where TProxy : ProxyPropertyBase<TProperty>
         where TProperty : DashboardProperty
     {
-        public TProxy Property { get; private set; }
-        public ProxyPropertyDescriptorBase(ref TProxy property, Attribute[] attrs)
-            : base(property.Name, attrs)
+        public TProxy Proxy { get; private set; }
+        public ProxyPropertyDescriptorBase(ref TProxy proxy, Attribute[] attrs)
+            : base(proxy.Name, attrs)
         {
-            Property = property;
+            Proxy = proxy;
         }
 
         #region PropertyDescriptor specific
@@ -33,27 +33,27 @@ namespace GoodAI.Core.Dashboard
 
         public override object GetValue(object component)
         {
-            return Property.Value;
+            return Proxy.Value;
         }
 
         public override string Description
         {
-            get { return Property.Description; }
+            get { return Proxy.Description; }
         }
 
         public override string Category
         {
-            get { return Property.Category; }
+            get { return Proxy.Category; }
         }
 
         public override string DisplayName
         {
-            get { return Property.Name; }
+            get { return Proxy.Name; }
         }
 
         public override bool IsReadOnly
         {
-            get { return Property.ReadOnly; }
+            get { return Proxy.ReadOnly; }
         }
 
         public override void ResetValue(object component)
@@ -68,14 +68,14 @@ namespace GoodAI.Core.Dashboard
 
         public override void SetValue(object component, object value)
         {
-            Property.Value = value;
+            Proxy.Value = value;
         }
 
         public override Type PropertyType
         {
             get
             {
-                return Property.Value == null ? typeof (string) : Property.Value.GetType();
+                return Proxy.Value == null ? typeof (string) : Proxy.Value.GetType();
             }
         }
 
@@ -85,7 +85,7 @@ namespace GoodAI.Core.Dashboard
     public sealed class ProxyPropertyDescriptor :
         ProxyPropertyDescriptorBase<SingleProxyProperty, DashboardNodeProperty>
     {
-        public ProxyPropertyDescriptor(ref SingleProxyProperty property, Attribute[] attrs) : base(ref property, attrs)
+        public ProxyPropertyDescriptor(ref SingleProxyProperty proxy, Attribute[] attrs) : base(ref proxy, attrs)
         {
         }
     }
@@ -93,7 +93,7 @@ namespace GoodAI.Core.Dashboard
     public sealed class ProxyPropertyGroupDescriptor :
         ProxyPropertyDescriptorBase<ProxyPropertyGroup, DashboardPropertyGroup>
     {
-        public ProxyPropertyGroupDescriptor(ref ProxyPropertyGroup property, Attribute[] attrs) : base(ref property, attrs)
+        public ProxyPropertyGroupDescriptor(ref ProxyPropertyGroup proxy, Attribute[] attrs) : base(ref proxy, attrs)
         {
         }
     }

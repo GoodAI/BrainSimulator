@@ -112,7 +112,7 @@ namespace GoodAI.BrainSimulator.DashboardUtils
         {
             return new PropertyDescriptorCollection(
                 Dashboard.Properties
-                    .Where(property => property.Proxy.IsVisible)
+                    .Where(property => property.GenericProxy.IsVisible)
                     .Select(property => GetDescriptor(property, attributes))
                     .ToArray());
         }
@@ -139,7 +139,7 @@ namespace GoodAI.BrainSimulator.DashboardUtils
 
         protected override PropertyDescriptor GetDescriptor(DashboardNodeProperty property, Attribute[] attributes)
         {
-            var proxy = property.Proxy as SingleProxyProperty;
+            var proxy = property.GenericProxy as SingleProxyProperty;
             return new ProxyPropertyDescriptor(ref proxy, attributes);
         }
     }
@@ -157,7 +157,7 @@ namespace GoodAI.BrainSimulator.DashboardUtils
 
         protected override PropertyDescriptor GetDescriptor(DashboardPropertyGroup property, Attribute[] attributes)
         {
-            var proxy = property.Proxy as ProxyPropertyGroup;
+            var proxy = property.GenericProxy as ProxyPropertyGroup;
             return new ProxyPropertyGroupDescriptor(ref proxy, attributes);
         }
 

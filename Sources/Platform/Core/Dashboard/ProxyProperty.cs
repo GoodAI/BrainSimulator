@@ -77,20 +77,25 @@ namespace GoodAI.Core.Dashboard
             get
             {
                 var groupedProperties = SourceProperty.GroupedProperties;
-                return groupedProperties.Any() ? groupedProperties.First().Proxy.Value : null;
+                return groupedProperties.Any() ? groupedProperties.First().GenericProxy.Value : null;
             }
             set
             {
                 foreach (var property in SourceProperty.GroupedProperties)
                 {
-                    property.Proxy.Value = value;
+                    property.GenericProxy.Value = value;
                 }
             }
         }
 
         public override string Description
         {
-            get { return string.Join(", ", SourceProperty.GroupedProperties.Select(property => property.Proxy.FullName)); }
+            get { return string.Join(", ", SourceProperty.GroupedProperties.Select(property => property.GenericProxy.FullName)); }
+        }
+
+        public IEnumerable<SingleProxyProperty> GetGroupMembers()
+        {
+            return SourceProperty.GroupedProperties.Select(member => member.Proxy);
         }
     }
 }

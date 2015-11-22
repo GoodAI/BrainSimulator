@@ -21,7 +21,7 @@ namespace GoodAI.Core.Dashboard
 
         private string m_propertyId;
 
-        public abstract ProxyPropertyBase Proxy { get; }
+        public abstract ProxyPropertyBase GenericProxy { get; }
         public abstract object Target { get; }
         public abstract string PropertyName { get; set; }
         public abstract string DisplayName { get; }
@@ -67,7 +67,7 @@ namespace GoodAI.Core.Dashboard
         public string GroupId { get; internal set; }
 
         private SingleProxyProperty m_proxy;
-        public sealed override ProxyPropertyBase Proxy
+        public sealed override ProxyPropertyBase GenericProxy
         {
             get
             {
@@ -81,6 +81,8 @@ namespace GoodAI.Core.Dashboard
                 return m_proxy;
             }
         }
+
+        public SingleProxyProperty Proxy { get { return GenericProxy as SingleProxyProperty; } }
 
         public override string PropertyName
         {
@@ -236,7 +238,7 @@ namespace GoodAI.Core.Dashboard
 
         private ProxyPropertyBase m_proxy;
 
-        public override ProxyPropertyBase Proxy
+        public override ProxyPropertyBase GenericProxy
         {
             get
             {
@@ -246,6 +248,8 @@ namespace GoodAI.Core.Dashboard
                 return m_proxy;
             }
         }
+
+        public ProxyPropertyGroup Proxy { get { return GenericProxy as ProxyPropertyGroup; } }
 
         public override object Target
         {
@@ -257,7 +261,7 @@ namespace GoodAI.Core.Dashboard
 
         public override string DisplayName
         {
-            get { return PropertyName; }
+            get { return PropertyName + string.Format(" ({0})", GroupedProperties.Count); }
         }
 
         protected override string GeneratePropertyId()
@@ -290,23 +294,20 @@ namespace GoodAI.Core.Dashboard
 
         public void Add(DashboardNodeProperty property)
         {
+            CheckType(property);
+
             if (GroupedProperties.Contains(property))
                 return;
 
             GroupedProperties.Add(property);
             property.Group = this;
-            property.Proxy.Value = GroupedProperties.First().Proxy.Value;
+            property.GenericProxy.Value = GroupedProperties.First().GenericProxy.Value;
         }
 
         public void Remove(DashboardNodeProperty property)
         {
             GroupedProperties.Remove(property);
             property.Group = null;
-        }
-
-        public bool Contains(DashboardNodeProperty property)
-        {
-            return GroupedProperties.Contains(property);
         }
 
         public void Clear()
