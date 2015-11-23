@@ -325,6 +325,7 @@ namespace GoodAI.Core.Execution
                         MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
                     }
                 };
+
                 SimulationStep++;
             }
         }

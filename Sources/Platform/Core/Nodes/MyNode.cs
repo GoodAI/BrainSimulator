@@ -58,6 +58,7 @@ namespace GoodAI.Core.Nodes
                 mb.Persistable = pInfo.GetCustomAttribute<MyPersistableAttribute>(true) != null;
                 mb.Unmanaged = pInfo.GetCustomAttribute<MyUnmanagedAttribute>(true) != null;
                 mb.IsOutput = pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null;
+                mb.IsDynamic = pInfo.GetCustomAttribute<DynamicBlockAttribute>(true) != null;
 
                 pInfo.SetValue(this, mb);
             }
