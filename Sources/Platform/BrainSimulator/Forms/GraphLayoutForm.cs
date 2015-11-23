@@ -151,12 +151,20 @@ namespace GoodAI.BrainSimulator.Forms
             int fromIndex = (int)e.Connection.From.Item.Tag;
             int toIndex = (int)e.Connection.To.Item.Tag;
 
-            MyConnection newConnection = new MyConnection(fromNode, toNode, fromIndex, toIndex);
-            newConnection.Connect();
+            if (toNode.AcceptsConnection(fromNode, fromIndex, toIndex))
+            {
+                MyConnection newConnection = new MyConnection(fromNode, toNode, fromIndex, toIndex);
+                newConnection.Connect();
 
-            e.Connection.Tag = newConnection;
+                e.Connection.Tag = newConnection;
 
-            m_mainForm.RefreshConnections(this);
+                m_mainForm.RefreshConnections(this);
+            }
+            else
+            {
+                // Make the graph library drop the connection.
+                e.Cancel = true;
+            }
         }
 
         void OnConnectionRemoved(object sender, NodeConnectionEventArgs e)

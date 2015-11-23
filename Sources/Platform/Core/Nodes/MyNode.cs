@@ -292,5 +292,20 @@ namespace GoodAI.Core.Nodes
                
         public virtual void TransferToDevice() { }
         public virtual void TransferToHost() { }
+
+        public bool AcceptsConnection(MyNode fromNode, int fromIndex, int toIndex)
+        {
+            MyAbstractMemoryBlock outputBlock = fromNode.GetAbstractOutput(fromIndex);
+
+            if (outputBlock.IsDynamic)
+            {
+                PropertyInfo inputBlock = GetInfo().InputBlocks[toIndex];
+                var dynamicAttribute = inputBlock.GetCustomAttribute<DynamicBlockAttribute>();
+                if (dynamicAttribute == null)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }
