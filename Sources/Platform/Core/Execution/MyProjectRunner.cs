@@ -332,7 +332,7 @@ namespace GoodAI.Core.Execution
         }
 
         /// <summary>
-        /// Sets property of given node. Support Enums
+        /// Sets property of given node. Support Enums - enter enum value as a string
         /// </summary>
         /// <param name="nodeId">Node ID</param>
         /// <param name="propName">Property name</param>
