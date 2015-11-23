@@ -117,11 +117,18 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
         {
+            ClearError();
+
             if (GroupedDashboardViewModel == null)
                 return;
 
             if (e.NewSelection != null)
                 removeButton.Enabled = true;
+        }
+
+        private void ClearError()
+        {
+            errorText.Text = "";
         }
 
         private void addGroupButton_Click(object sender, EventArgs e)
@@ -139,8 +146,11 @@ namespace GoodAI.BrainSimulator.Forms
 
         private ProxyPropertyGroupDescriptor GetCurrentGroupDescriptor()
         {
-            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
-            
+            var descriptor =
+                propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyGroupDescriptor;
+            if (descriptor == null)
+                throw new InvalidOperationException("The group property grid contained an invalid descriptor.");
+
             return descriptor;
         }
 
@@ -167,19 +177,23 @@ namespace GoodAI.BrainSimulator.Forms
             try
             {
                 groupProperty.Add(property);
+
+                propertyGrid.Refresh();
+                propertyGridGrouped.Refresh();
+                memberListBox.Refresh();
             }
             catch (InvalidOperationException)
             {
-                // TODO(HonzaS): display an error.
+                errorText.Text = string.Format("Cannot add a {0} property to a {1} group",
+                    selectedPropertyDescriptor.PropertyType.Name,
+                    selectedGroupDescriptor.PropertyType.Name);
             }
-
-            propertyGrid.Refresh();
-            propertyGridGrouped.Refresh();
-            memberListBox.Refresh();
         }
 
         private void propertyGridGrouped_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
         {
+            ClearError();
+
             memberListBox.Items.Clear();
             if (e.NewSelection != null)
             {
@@ -207,6 +221,11 @@ namespace GoodAI.BrainSimulator.Forms
             memberListBox.Refresh();
             propertyGrid.Refresh();
             propertyGridGrouped.Refresh();
+        }
+
+        private void membersLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

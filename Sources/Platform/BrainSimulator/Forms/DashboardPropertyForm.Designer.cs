@@ -33,6 +33,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.removeButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.globalLabel = new System.Windows.Forms.Label();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.groupedLabel = new System.Windows.Forms.Label();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.addGroupButton = new System.Windows.Forms.ToolStripButton();
             this.removeGroupButton = new System.Windows.Forms.ToolStripButton();
@@ -40,23 +43,21 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addToGroupButton = new System.Windows.Forms.ToolStripButton();
             this.propertyGridGrouped = new System.Windows.Forms.PropertyGrid();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.globalLabel = new System.Windows.Forms.Label();
-            this.groupedLabel = new System.Windows.Forms.Label();
+            this.memberListBox = new System.Windows.Forms.ListBox();
             this.membersLabel = new System.Windows.Forms.Label();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.removeFromGroupButton = new System.Windows.Forms.ToolStripButton();
-            this.memberListBox = new System.Windows.Forms.ListBox();
+            this.errorText = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.toolStrip2.SuspendLayout();
             this.toolStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -126,6 +127,51 @@
             this.splitContainer1.Size = new System.Drawing.Size(428, 658);
             this.splitContainer1.SplitterDistance = 266;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // globalLabel
+            // 
+            this.globalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.globalLabel.AutoSize = true;
+            this.globalLabel.Location = new System.Drawing.Point(338, 4);
+            this.globalLabel.Name = "globalLabel";
+            this.globalLabel.Size = new System.Drawing.Size(87, 13);
+            this.globalLabel.TabIndex = 2;
+            this.globalLabel.Text = "Global Properties";
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(0, -1);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.errorText);
+            this.splitContainer2.Panel1.Controls.Add(this.groupedLabel);
+            this.splitContainer2.Panel1.Controls.Add(this.toolStrip2);
+            this.splitContainer2.Panel1.Controls.Add(this.propertyGridGrouped);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.memberListBox);
+            this.splitContainer2.Panel2.Controls.Add(this.membersLabel);
+            this.splitContainer2.Panel2.Controls.Add(this.toolStrip3);
+            this.splitContainer2.Size = new System.Drawing.Size(428, 389);
+            this.splitContainer2.SplitterDistance = 194;
+            this.splitContainer2.TabIndex = 2;
+            // 
+            // groupedLabel
+            // 
+            this.groupedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupedLabel.AutoSize = true;
+            this.groupedLabel.Location = new System.Drawing.Point(384, 6);
+            this.groupedLabel.Name = "groupedLabel";
+            this.groupedLabel.Size = new System.Drawing.Size(41, 13);
+            this.groupedLabel.TabIndex = 2;
+            this.groupedLabel.Text = "Groups";
             // 
             // toolStrip2
             // 
@@ -209,59 +255,27 @@
             this.propertyGridGrouped.ToolbarVisible = false;
             this.propertyGridGrouped.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridGrouped_SelectedGridItemChanged);
             // 
-            // splitContainer2
+            // memberListBox
             // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.memberListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(0, -1);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.groupedLabel);
-            this.splitContainer2.Panel1.Controls.Add(this.toolStrip2);
-            this.splitContainer2.Panel1.Controls.Add(this.propertyGridGrouped);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.memberListBox);
-            this.splitContainer2.Panel2.Controls.Add(this.membersLabel);
-            this.splitContainer2.Panel2.Controls.Add(this.toolStrip3);
-            this.splitContainer2.Size = new System.Drawing.Size(428, 389);
-            this.splitContainer2.SplitterDistance = 194;
-            this.splitContainer2.TabIndex = 2;
-            // 
-            // globalLabel
-            // 
-            this.globalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.globalLabel.AutoSize = true;
-            this.globalLabel.Location = new System.Drawing.Point(338, 7);
-            this.globalLabel.Name = "globalLabel";
-            this.globalLabel.Size = new System.Drawing.Size(87, 13);
-            this.globalLabel.TabIndex = 2;
-            this.globalLabel.Text = "Global Properties";
-            // 
-            // groupedLabel
-            // 
-            this.groupedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupedLabel.AutoSize = true;
-            this.groupedLabel.Location = new System.Drawing.Point(384, 8);
-            this.groupedLabel.Name = "groupedLabel";
-            this.groupedLabel.Size = new System.Drawing.Size(41, 13);
-            this.groupedLabel.TabIndex = 2;
-            this.groupedLabel.Text = "Groups";
+            this.memberListBox.FormattingEnabled = true;
+            this.memberListBox.Location = new System.Drawing.Point(3, 28);
+            this.memberListBox.Name = "memberListBox";
+            this.memberListBox.Size = new System.Drawing.Size(422, 160);
+            this.memberListBox.TabIndex = 3;
             // 
             // membersLabel
             // 
             this.membersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.membersLabel.AutoSize = true;
-            this.membersLabel.Location = new System.Drawing.Point(344, 4);
+            this.membersLabel.Location = new System.Drawing.Point(344, 6);
             this.membersLabel.Name = "membersLabel";
             this.membersLabel.Size = new System.Drawing.Size(81, 13);
             this.membersLabel.TabIndex = 1;
             this.membersLabel.Text = "Group members";
+            this.membersLabel.Click += new System.EventHandler(this.membersLabel_Click);
             // 
             // toolStrip3
             // 
@@ -273,7 +287,7 @@
             this.removeFromGroupButton});
             this.toolStrip3.Location = new System.Drawing.Point(3, 0);
             this.toolStrip3.Name = "toolStrip3";
-            this.toolStrip3.Size = new System.Drawing.Size(422, 25);
+            this.toolStrip3.Size = new System.Drawing.Size(425, 25);
             this.toolStrip3.TabIndex = 2;
             this.toolStrip3.Text = "toolStrip3";
             // 
@@ -288,16 +302,15 @@
             this.removeFromGroupButton.ToolTipText = "Remove the selected member property from the group";
             this.removeFromGroupButton.Click += new System.EventHandler(this.removeFromGroupButton_Click);
             // 
-            // memberListBox
+            // errorText
             // 
-            this.memberListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.memberListBox.FormattingEnabled = true;
-            this.memberListBox.Location = new System.Drawing.Point(3, 28);
-            this.memberListBox.Name = "memberListBox";
-            this.memberListBox.Size = new System.Drawing.Size(422, 160);
-            this.memberListBox.TabIndex = 3;
+            this.errorText.AutoSize = true;
+            this.errorText.ForeColor = System.Drawing.Color.Firebrick;
+            this.errorText.Location = new System.Drawing.Point(135, 6);
+            this.errorText.Name = "errorText";
+            this.errorText.Size = new System.Drawing.Size(35, 13);
+            this.errorText.TabIndex = 3;
+            this.errorText.Text = "label1";
             // 
             // DashboardPropertyForm
             // 
@@ -320,14 +333,14 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
             this.ResumeLayout(false);
@@ -355,6 +368,7 @@
         private System.Windows.Forms.ToolStrip toolStrip3;
         private System.Windows.Forms.ToolStripButton removeFromGroupButton;
         private System.Windows.Forms.ListBox memberListBox;
+        private System.Windows.Forms.Label errorText;
 
 
 
