@@ -195,15 +195,7 @@ namespace GoodAI.BrainSimulator.Forms
             node.Updated();
 
             propertyGrid.Refresh();
-            InvalidateGraphLayouts();
-        }
-
-        private void InvalidateGraphLayouts()
-        {
-            foreach (GraphLayoutForm graphLayoutForm in m_mainForm.GraphViews.Values)
-            {
-                graphLayoutForm.Desktop.Invalidate();
-            }
+            m_mainForm.InvalidateGraphLayouts();
         }
 
         private void saveDataNodeButton_Click(object sender, EventArgs e)

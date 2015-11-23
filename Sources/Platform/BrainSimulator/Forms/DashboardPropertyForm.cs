@@ -18,7 +18,7 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class DashboardPropertyForm : DockContent
     {
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
 
         public event PropertyValueChangedEventHandler PropertyValueChanged
         {
@@ -39,6 +39,31 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm = mainForm;
             InitializeComponent();
             DisableGroupButtons();
+
+            propertyGrid.PropertyValueChanged += OnPropertyValueChanged;
+            propertyGridGrouped.PropertyValueChanged += OnGroupPropertyValueChanged;
+        }
+
+        private void OnGroupPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
+            foreach (MyNode node in descriptor.Proxy.SourceProperty.GroupedProperties.Select(member => member.Node))
+                RefreshNode(node);
+        }
+
+        private void OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
+            MyNode node = descriptor.Proxy.SourceProperty.Node;
+            RefreshNode(node);
+        }
+
+        private void RefreshNode(MyNode node)
+        {
+            node.Updated();
+
+            propertyGrid.Refresh();
+            m_mainForm.InvalidateGraphLayouts();
         }
 
         private DashboardViewModel DashboardViewModel
@@ -120,9 +145,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-            var descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
-            if (descriptor == null)
-                throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
+            ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
 
             DashboardViewModel.RemoveProperty(descriptor.Proxy);
         }
@@ -154,6 +177,14 @@ namespace GoodAI.BrainSimulator.Forms
 
             GroupedDashboardViewModel.RemoveProperty(descriptor.Proxy);
             propertyGrid.Refresh();
+        }
+
+        private ProxyPropertyDescriptor GetCurrentPropertyDescriptor()
+        {
+            var descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
+            if (descriptor == null)
+                throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
+            return descriptor;
         }
 
         private ProxyPropertyGroupDescriptor GetCurrentGroupDescriptor()

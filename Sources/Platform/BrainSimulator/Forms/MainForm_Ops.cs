@@ -1228,5 +1228,11 @@ namespace GoodAI.BrainSimulator.Forms
             else
                 Project.Dashboard.Remove(target, propertyName);
         }
+
+        public void InvalidateGraphLayouts()
+        {
+            foreach (GraphLayoutForm graphLayoutForm in GraphViews.Values)
+                graphLayoutForm.Desktop.Invalidate();
+        }
     }
 }
