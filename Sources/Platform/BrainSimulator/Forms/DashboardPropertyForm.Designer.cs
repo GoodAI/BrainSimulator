@@ -275,7 +275,6 @@
             this.membersLabel.Size = new System.Drawing.Size(81, 13);
             this.membersLabel.TabIndex = 1;
             this.membersLabel.Text = "Group members";
-            this.membersLabel.Click += new System.EventHandler(this.membersLabel_Click);
             // 
             // toolStrip3
             // 

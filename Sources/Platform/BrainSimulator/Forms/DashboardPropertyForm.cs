@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Dashboard;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -21,8 +22,16 @@ namespace GoodAI.BrainSimulator.Forms
 
         public event PropertyValueChangedEventHandler PropertyValueChanged
         {
-            add { propertyGrid.PropertyValueChanged += value; }
-            remove { propertyGrid.PropertyValueChanged -= value; }
+            add
+            {
+                propertyGrid.PropertyValueChanged += value;
+                propertyGridGrouped.PropertyValueChanged += value;
+            }
+            remove
+            {
+                propertyGrid.PropertyValueChanged -= value;
+                propertyGridGrouped.PropertyValueChanged -= value;
+            }
         }
 
         public DashboardPropertyForm(MainForm mainForm)
@@ -64,25 +73,28 @@ namespace GoodAI.BrainSimulator.Forms
             GroupedDashboardViewModel = new GroupedDashboardViewModel(groupedDashboard);
         }
 
-        public bool CanEditNodeProperties
+        private bool CanEditNodeProperties
         {
             set
             {
-                foreach (var propertyDescriptor in DashboardViewModel.GetProperties(new Attribute[0]))
+                foreach (SingleProxyProperty propertyProxy in DashboardViewModel.GetProperties(new Attribute[0])
+                    .Cast<ProxyPropertyDescriptor>()
+                    .Select(descriptor => descriptor.Proxy)
+                    .Where(proxy => proxy.Target is MyNode))
                 {
-                    var proxyPropertyDescriptor = propertyDescriptor as ProxyPropertyDescriptor;
-                    var property = proxyPropertyDescriptor.Proxy as SingleProxyProperty;
-                    if (property != null && property.Target is MyNode)
-                    {
-                        proxyPropertyDescriptor.Proxy.ReadOnly = !value;
-                    }
-                    else
-                    {
-                        // TODO(HonzaS): Finish this.
-                    }
+                    propertyProxy.ReadOnly = !value;
+                }
+
+                foreach (ProxyPropertyGroup groupProxy in GroupedDashboardViewModel.GetProperties(new Attribute[0])
+                    .Cast<ProxyPropertyGroupDescriptor>()
+                    .Select(descriptor => descriptor.Proxy)
+                    .Where(proxy => proxy.SourceProperty.GroupedProperties.Any(property => property.Target is MyNode)))
+                {
+                    groupProxy.ReadOnly = !value;
                 }
 
                 propertyGrid.Refresh();
+                propertyGridGrouped.Refresh();
             }
         }
 
@@ -223,9 +235,9 @@ namespace GoodAI.BrainSimulator.Forms
             propertyGridGrouped.Refresh();
         }
 
-        private void membersLabel_Click(object sender, EventArgs e)
+        public void OnSimulationStateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
-
+            CanEditNodeProperties = e.NewState == MySimulationHandler.SimulationState.STOPPED;
         }
     }
 }

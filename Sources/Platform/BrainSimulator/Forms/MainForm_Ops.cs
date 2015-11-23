@@ -719,6 +719,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             DashboardPropertyView = new DashboardPropertyForm(this);
 
+            SimulationHandler.StateChanged += DashboardPropertyView.OnSimulationStateChanged;
+
             MemoryBlocksView = new MemoryBlocksForm(this);
 
             TaskView = new TaskForm(this);

@@ -157,9 +157,6 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 statusStrip.BackColor = STATUS_BAR_BLUE_BUILDING;
             }
-
-            DashboardPropertyView.CanEditNodeProperties = SimulationHandler.State ==
-                                                          MySimulationHandler.SimulationState.STOPPED;
         }    
 
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
