@@ -23,7 +23,7 @@ namespace GoodAI.BrainSimulator.Tests
             var nodeConfig = new MyNodeConfig();
             nodeConfig.NodeType = typeof(TestType);
 
-            Assert.Equal("GoodAI.BrainSimulator", CategorySortingHat.DetectCategoryName(nodeConfig));
+            Assert.Equal("(GoodAI.BrainSimulator)", CategorySortingHat.DetectCategoryName(nodeConfig));
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace GoodAI.BrainSimulator.Tests
             var nodeConfig = new MyNodeConfig();
             nodeConfig.NodeType = typeof(FoobarType);
 
-            Assert.Equal("Foo", CategorySortingHat.DetectCategoryName(nodeConfig));
+            Assert.Equal("(Foo)", CategorySortingHat.DetectCategoryName(nodeConfig));
         }
     }
 }

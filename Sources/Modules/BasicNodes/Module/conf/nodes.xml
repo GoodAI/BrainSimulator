@@ -33,6 +33,7 @@
     </Node>
     
     <Node type="GoodAI.Modules.Common.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png">
+      <Label>Input &amp; Output</Label>
       <Label>Input</Label>
     </Node>
     
@@ -46,9 +47,11 @@
     </Node>
 
     <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true">
+      <Label>Input &amp; Output</Label>
       <Label>Output</Label>
     </Node>
     <Node type="GoodAI.Modules.Common.MyInverseTransformSampling" CanBeAdded="true" BigIcon="distribution_big.png" SmallIcon="distribution.png">
+      <Label>Input &amp; Output</Label>
       <Label>Input</Label>
     </Node>
     <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" BigIcon="loopgroup_big.png" SmallIcon="loopgroup.png">
@@ -84,6 +87,7 @@
     </Node>
 
     <Node type="GoodAI.Modules.Common.MyGenerateInput" CanBeAdded="true" BigIcon="numGenerator_big.png" SmallIcon="numGenerator.png">
+      <Label>Input &amp; Output</Label>
       <Label>Input</Label>
     </Node>
 
@@ -235,9 +239,11 @@
 
     <Node type="GoodAI.Modules.LTM.MyTextObserverNode" CanBeAdded="true" BigIcon="textOutput_big.png" SmallIcon="textOutput.png">
       <Observer type="GoodAI.Modules.LTM.MyVectorTextObserver" />
+      <Label>Input &amp; Output</Label>
       <Label>Output</Label>
     </Node>
     <Node type="GoodAI.Modules.LTM.MyTextInputNode" CanBeAdded="true" BigIcon="textInput_big.png" SmallIcon="textInput.png">
+      <Label>Input &amp; Output</Label>
       <Label>Input</Label>
     </Node>
     
@@ -286,6 +292,14 @@
     
   </KnownWorlds>
   <Categories>
-    <Category Name="Memory" SmallIcon="lstm.png"></Category>
+    <Category Name="Dataflow" SmallIcon="loopgroup.png"></Category>
+    <Category Name="Input &amp; Output" SmallIcon="random.png"></Category>
+    <Category Name="Math" SmallIcon="distance.png"></Category>
+    <Category Name="Neural Networks" SmallIcon="network.png"></Category>
+    <Category Name="Reinforcement Learning" SmallIcon="reward.png"></Category>
+    <Category Name="Scripting" SmallIcon="csharp.png"></Category>
+    <Category Name="Symbolic ML" SmallIcon="book.png"></Category>
+    <Category Name="Transformations" SmallIcon="transform.png"></Category>
+    <Category Name="Vision" SmallIcon="observer.png"></Category>
   </Categories>
 </Configuration>

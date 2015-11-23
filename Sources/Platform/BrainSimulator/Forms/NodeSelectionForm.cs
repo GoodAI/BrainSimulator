@@ -184,7 +184,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void PopulateCategoryListView(CategorySortingHat categorizer)
         {
-            foreach (var category in categorizer.Categories)
+            foreach (NodeCategory category in categorizer.SortedCategories)
             {
                 filterImageList.Images.Add(GeneratePaddedIcon(category.SmallImage));
 
@@ -423,6 +423,11 @@ namespace GoodAI.BrainSimulator.Forms
         private void searchTextBox_Enter(object sender, EventArgs e)
         {
             ShowRelevantNodes(searchMode: true);
+        }
+
+        private void NodeSelectionForm_Shown(object sender, EventArgs e)
+        {
+            searchTextBox.Focus();  // let user type immediately
         }
     }
 }

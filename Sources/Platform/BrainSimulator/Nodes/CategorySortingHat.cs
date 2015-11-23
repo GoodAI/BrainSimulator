@@ -9,13 +9,25 @@ namespace GoodAI.BrainSimulator.Nodes
 {
     public class CategorySortingHat  // TODO: make internal
     {
-        private ISet<NodeCategory> m_categories = new HashSet<NodeCategory>();
+        private readonly ISet<NodeCategory> m_categories = new HashSet<NodeCategory>();
 
-        private IList<MyNodeConfig> m_nodes = new List<MyNodeConfig>(100);
+        private readonly IList<MyNodeConfig> m_nodes = new List<MyNodeConfig>(100);
 
         internal IEnumerable<NodeCategory> Categories
         {
             get { return m_categories; }
+        }
+
+        internal IEnumerable<NodeCategory> SortedCategories
+        {
+            get
+            {
+                // HACK: force detected categories to the bottom
+                return m_categories.OrderBy(category => category.Name.StartsWith("(")
+                   ? "z" + category.Name
+                   : "a" + category.Name);
+            }
+
         }
 
         public IEnumerable<MyNodeConfig> Nodes
@@ -27,17 +39,24 @@ namespace GoodAI.BrainSimulator.Nodes
         {
             string categoryName;
 
-            if (nodeConfig.Labels != null && nodeConfig.Labels.Count > 0)
+            if (nodeConfig is MyWorldConfig)
+            {
+                categoryName = "Worlds";
+            }
+            else if (nodeConfig.Labels != null && nodeConfig.Labels.Count > 0)
             {
                 categoryName = nodeConfig.Labels[0];
             }
             else  // Fallback when there are no labels
             {
                 string nameSpace = nodeConfig.NodeType.Namespace;
-                
-                if (nameSpace.StartsWith("GoodAI.Modules."))  // TODO: consider using whenever namespace level >= 3
+                if (string.IsNullOrEmpty(nameSpace))
                 {
-                    categoryName = nameSpace.Split(new char[] { '.' })[2];  // take the third namespace level
+                    categoryName = "unknown";
+                }
+                else if (nameSpace.StartsWith("GoodAI.Modules."))  // TODO: consider using whenever namespace level >= 3
+                {
+                    categoryName = nameSpace.Split('.')[2];  // take the third namespace level
                 }
                 else if (nameSpace.LastIndexOf('.') > 0)
                 { 
@@ -47,6 +66,8 @@ namespace GoodAI.BrainSimulator.Nodes
                 {
                     categoryName = nameSpace;
                 }
+
+                categoryName = string.Format("({0})", categoryName);  // indicate namespace-derived category
             }
 
             return categoryName;

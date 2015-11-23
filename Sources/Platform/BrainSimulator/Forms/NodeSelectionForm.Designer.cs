@@ -207,6 +207,7 @@
             this.Name = "NodeSelectionForm";
             this.Text = "Configure Node Selection";
             this.Load += new System.EventHandler(this.NodeSelectionForm_Load);
+            this.Shown += new System.EventHandler(this.NodeSelectionForm_Shown);
             this.nodesSplitContainer.Panel1.ResumeLayout(false);
             this.nodesSplitContainer.Panel1.PerformLayout();
             this.nodesSplitContainer.Panel2.ResumeLayout(false);
