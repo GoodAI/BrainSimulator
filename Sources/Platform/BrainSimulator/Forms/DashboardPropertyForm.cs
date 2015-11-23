@@ -58,7 +58,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        public void UpdateDashboards(Dashboard dashboard, GroupDashboard groupedDashboard)
+        public void SetDashboards(Dashboard dashboard, GroupDashboard groupedDashboard)
         {
             DashboardViewModel = new DashboardViewModel(dashboard);
             GroupedDashboardViewModel = new GroupedDashboardViewModel(groupedDashboard);
@@ -121,9 +121,7 @@ namespace GoodAI.BrainSimulator.Forms
                 return;
 
             if (e.NewSelection != null)
-            {
                 removeButton.Enabled = true;
-            }
         }
 
         private void addGroupButton_Click(object sender, EventArgs e)
@@ -133,19 +131,22 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void removeGroupButton_Click(object sender, EventArgs e)
         {
-            var descriptor = propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyGroupDescriptor;
-            if (descriptor == null)
-                throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
+            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
 
             GroupedDashboardViewModel.RemoveProperty(descriptor.Proxy);
             propertyGrid.Refresh();
         }
 
+        private ProxyPropertyGroupDescriptor GetCurrentGroupDescriptor()
+        {
+            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
+            
+            return descriptor;
+        }
+
         private void editGroupButton_Click(object sender, EventArgs e)
         {
-            var descriptor = propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyGroupDescriptor;
-            if (descriptor == null)
-                throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
+            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
 
             var dialog = new DashboardGroupNameDialog(propertyGridGrouped, descriptor.Proxy.SourceProperty);
             dialog.ShowDialog();
@@ -158,16 +159,16 @@ namespace GoodAI.BrainSimulator.Forms
             if (selectedPropertyDescriptor == null)
                 return;
 
-            var property = selectedPropertyDescriptor.Proxy.SourceProperty;
+            DashboardNodeProperty property = selectedPropertyDescriptor.Proxy.SourceProperty;
 
-            var selectedGroupDescriptor = propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyGroupDescriptor;
-            var groupProperty = selectedGroupDescriptor.Proxy.SourceProperty;
+            ProxyPropertyGroupDescriptor selectedGroupDescriptor = GetCurrentGroupDescriptor();
+            DashboardPropertyGroup groupProperty = selectedGroupDescriptor.Proxy.SourceProperty;
 
             try
             {
                 groupProperty.Add(property);
             }
-            catch (InvalidOperationException exception)
+            catch (InvalidOperationException)
             {
                 // TODO(HonzaS): display an error.
             }
@@ -195,23 +196,13 @@ namespace GoodAI.BrainSimulator.Forms
         private void LoadGroupedProperties(ProxyPropertyGroupDescriptor groupDescriptor)
         {
             foreach (var proxy in groupDescriptor.Proxy.GetGroupMembers())
-            {
-                //memberList.Items.Add(new ListViewItem
-                //{
-                //    Tag = proxy,
-                //    Text = proxy.FullName,
-                //    Name = proxy.FullName
-                //});
                 memberListBox.Items.Add(proxy);
-            }
         }
 
         private void removeFromGroupButton_Click(object sender, EventArgs e)
         {
             foreach (var proxy in memberListBox.SelectedItems.Cast<SingleProxyProperty>())
-            {
                 proxy.SourceProperty.Group.Remove(proxy.SourceProperty);
-            }
 
             memberListBox.Refresh();
             propertyGrid.Refresh();

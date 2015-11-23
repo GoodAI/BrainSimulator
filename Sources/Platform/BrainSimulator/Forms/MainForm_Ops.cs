@@ -428,7 +428,7 @@ namespace GoodAI.BrainSimulator.Forms
             project.Dashboard.RestoreFromIds(project);
             project.GroupedDashboard.RestoreFromIds(project);
 
-            DashboardPropertyView.UpdateDashboards(project.Dashboard, project.GroupedDashboard);
+            DashboardPropertyView.SetDashboards(project.Dashboard, project.GroupedDashboard);
         }
 
         public void UpdateObservers()

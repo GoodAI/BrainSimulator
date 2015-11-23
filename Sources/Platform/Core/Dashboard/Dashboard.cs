@@ -29,13 +29,6 @@ namespace GoodAI.Core.Dashboard
             Properties = new List<TProperty>();
         }
 
-        public bool Contains(object target, string propertyName)
-        {
-            return
-                Properties.Select(property => property)
-                    .Any(property => property.Target == target && property.PropertyName == propertyName);
-        }
-
         public void RestoreFromIds(MyProject project)
         {
             foreach (var property in Properties.ToList())
@@ -55,17 +48,6 @@ namespace GoodAI.Core.Dashboard
 
         public void Remove(TProperty property)
         {
-            if (Properties.Remove(property))
-                OnPropertiesChanged("Properties");
-        }
-
-        public void Remove(object target, string propertyName)
-        {
-            var property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
-
-            if (property == null)
-                return;
-
             if (Properties.Remove(property))
                 OnPropertiesChanged("Properties");
         }
@@ -113,11 +95,29 @@ namespace GoodAI.Core.Dashboard
             if (property == null)
                 throw new InvalidOperationException("Invalid property owner provided");
 
-            if (property.IsReadonly())
+            if (property.IsReadonly)
                 throw new InvalidOperationException("Readonly properties are not supported");
 
             Properties.Add(property);
             OnPropertiesChanged("Properties");
+        }
+
+        public bool Contains(object target, string propertyName)
+        {
+            return
+                Properties.Select(property => property)
+                    .Any(property => property.Target == target && property.PropertyName == propertyName);
+        }
+
+        public void Remove(object target, string propertyName)
+        {
+            var property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+
+            if (property == null)
+                return;
+
+            if (Properties.Remove(property))
+                OnPropertiesChanged("Properties");
         }
     }
 
@@ -130,7 +130,7 @@ namespace GoodAI.Core.Dashboard
             return m_nextId++;
         }
 
-        public void AddGroupedProperty()
+        public void Add()
         {
             var name = "Group " + GetNextId();
             // TODO(HonzaS): Use a temporary set for efficiency?

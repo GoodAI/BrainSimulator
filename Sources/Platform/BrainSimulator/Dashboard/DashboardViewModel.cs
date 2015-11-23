@@ -27,10 +27,9 @@ namespace GoodAI.BrainSimulator.DashboardUtils
             Dashboard = dashboard;
         }
 
-        public virtual void RemoveProperty(ProxyPropertyBase proxy)
+        public virtual void RemoveProperty(ProxyPropertyBase<TProperty> proxy)
         {
-            var proxyWithSource = proxy as ProxyPropertyBase<TProperty>;
-            Dashboard.Remove(proxyWithSource.SourceProperty);
+            Dashboard.Remove(proxy.SourceProperty);
         }
 
         #region "TypeDescriptor Implementation"
@@ -139,7 +138,7 @@ namespace GoodAI.BrainSimulator.DashboardUtils
 
         protected override PropertyDescriptor GetDescriptor(DashboardNodeProperty property, Attribute[] attributes)
         {
-            var proxy = property.GenericProxy as SingleProxyProperty;
+            SingleProxyProperty proxy = property.Proxy;
             return new ProxyPropertyDescriptor(ref proxy, attributes);
         }
     }
@@ -152,22 +151,19 @@ namespace GoodAI.BrainSimulator.DashboardUtils
 
         public void AddGroupedProperty()
         {
-            Dashboard.AddGroupedProperty();
+            Dashboard.Add();
         }
 
         protected override PropertyDescriptor GetDescriptor(DashboardPropertyGroup property, Attribute[] attributes)
         {
-            var proxy = property.GenericProxy as ProxyPropertyGroup;
+            ProxyPropertyGroup proxy = property.Proxy;
             return new ProxyPropertyGroupDescriptor(ref proxy, attributes);
         }
 
-        public override void RemoveProperty(ProxyPropertyBase proxy)
+        public override void RemoveProperty(ProxyPropertyBase<DashboardPropertyGroup> proxy)
         {
             base.RemoveProperty(proxy);
-
-            var groupProxy = proxy as ProxyPropertyGroup;
-            if (groupProxy != null)
-                groupProxy.SourceProperty.Clear();
+            proxy.SourceProperty.Clear();
         }
     }
 }
