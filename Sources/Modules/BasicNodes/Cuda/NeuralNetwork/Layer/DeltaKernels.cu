@@ -138,4 +138,20 @@ extern "C"
 			prevDeltaPtr[i] -= EvaluateDerivative(prevActFunc, prevNeuronInput[i]) * Lambda * (modelOutputPtr[i] - ensembleOutputPtr[i]);
 		}
 	}
+
+	__global__ void PreActivationFunctionDeltaKernel(
+		ActivationFunctionEnum actFunc,
+		float *inputPtr,
+		float *deltaPtr,
+		int layerSize,
+		int batchSize
+		)
+	{
+		int i = blockDim.x * blockIdx.y * gridDim.x	//rows preceeding current row in grid
+			+ blockDim.x * blockIdx.x				//blocks preceeding current block
+			+ threadIdx.x;
+
+		if (i < layerSize * batchSize)
+			deltaPtr[i] *= EvaluateDerivative(actFunc, inputPtr[i]);
+	}
 }

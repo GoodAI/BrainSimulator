@@ -1,9 +1,11 @@
-﻿using GoodAI.Core.Memory;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.NeuralNetwork.Tasks;
 using System;
 using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.NeuralNetwork.Layers
 {
@@ -32,7 +34,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         public override ConnectionType Connection
         {
-            get { return ConnectionType.FULLY_CONNECTED; }
+            get { return ConnectionType.ONE_TO_ONE; }
+        }
+
+        [YAXSerializableField(DefaultValue = ActivationFunctionType.NO_ACTIVATION)]
+        [MyBrowsable, Category("\tLayer"), ReadOnly(true)]
+        public override ActivationFunctionType ActivationFunction
+        {
+            get { return ActivationFunctionType.NO_ACTIVATION; }
+            set { }
         }
         
         public MyStackLayer()
@@ -102,7 +112,12 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             public MyStackBackDeltaTask() { } //parameterless constructor
 
-            public override void Init(int nGPU) { }
+            private MyCudaKernel m_deltaKernel; // kernel
+
+            public override void Init(int nGPU)
+            {
+                m_deltaKernel = MyKernelFactory.Instance.Kernel(nGPU, @"NeuralNetwork\Layer\DeltaKernels", "PreActivationFunctionDeltaKernel");
+            }
 
             public override void Execute() //Task execution
             {
@@ -126,11 +141,22 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                     }
                 }
 
-                //copy previous layers' delta memory blocks to device memory
+                //copy previous layers' delta memory blocks to device memory and backpropagate through activation function of previous layer
                 for (int i = 0; i < Owner.InputBranches; i++)
                 {
                     if (Owner.PreviousLayer[i] != null)
+                    {
                         Owner.PreviousLayer[i].Delta.SafeCopyToDevice();
+
+                        m_deltaKernel.SetupExecution(Owner.PreviousLayer[i].Neurons * Owner.ParentNetwork.BatchSize);
+                        m_deltaKernel.Run(
+                            (int)Owner.PreviousLayer[i].ActivationFunction,
+                            MyAbstractLayer.DetermineInput(Owner.PreviousLayer[i]),
+                            Owner.PreviousLayer[i].Delta,
+                            Owner.Neurons,
+                            Owner.ParentNetwork.BatchSize
+                        );
+                    }
                 }
             }
         }
