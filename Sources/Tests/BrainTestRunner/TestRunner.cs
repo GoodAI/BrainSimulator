@@ -8,46 +8,74 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit.Sdk;
 
 namespace GoodAI.Tests.BrainTestRunner
 {
-    internal class InvalidTestExc : Exception
+    internal class InvalidTestException : Exception
     {
-        public InvalidTestExc(string message) : base(message) { }
+        public InvalidTestException(string message) : base(message) { }
     }
 
     internal class TestRunner
     {
+        private readonly TestReporter m_reporter;
+        private readonly MyProjectRunner m_projectRunner;
+
+        private readonly string DefaultBrainFilePath = @"../../../BrainTests/Brains/";
+
+        public TestRunner(TestReporter reporter)
+        {
+            m_reporter = reporter;
+            m_projectRunner = new MyProjectRunner(MyLogLevel.ERROR);
+        }
+
         public void Run()
         {
             var test = new MyAccumulatorTest();
 
+            EvaluateTest(test);
+            EvaluateTest(new MyFailingAccumulatorTest());
+            EvaluateTest(test);
+
+            m_reporter.Conclude();
+
+            m_projectRunner.Shutdown();
+        }
+
+        private void EvaluateTest(BrainTest test)
+        {
             try
             {
-                RunTest(test);
+                CheckTest(test);
+
+                m_reporter.StartTest(test);
+                
+                RunTest(test, m_projectRunner);
+
+                m_reporter.AddPass(test);
             }
-            // TODO: make a report
-            catch (InvalidTestExc e)
+            catch (InvalidTestException e)
             {
-                MyLog.ERROR.WriteLine("Invalid test ({0}): {1}", test.GetType(), e.Message);
+                m_reporter.AddInvalidTest(test, e);
             }
-            catch (BrassertFailedExc e)
+            catch (BrassertFailedException e)
             {
-                MyLog.ERROR.WriteLine("Test FAILED ({0}): {1}", test.GetType(), e.Message);
+                m_reporter.AddFail(test, e);
+            }
+            catch (XunitException e) // TODO: handle specificly AssertActualExpectedException
+            {
+                m_reporter.AddFail(test, e);
             }
             catch (Exception e)
             {
-                MyLog.ERROR.WriteLine("Test crash ({0}): {1}", test.GetType(), e.Message);
+                m_reporter.AddCrash(test, e);
             }
         }
 
-        private void RunTest(BrainTest test)
+        private void RunTest(BrainTest test, MyProjectRunner projectRunner)
         {
-            var projectRunner = new MyProjectRunner();
-
-            CheckTest(test);
-
-            projectRunner.OpenProject(Path.GetFullPath(test.BrainFileName));
+            projectRunner.OpenProject(FindBrainFile(test));
             projectRunner.DumpNodes();
 
             var brainScan = new BrainScan(projectRunner);
@@ -68,27 +96,48 @@ namespace GoodAI.Tests.BrainTestRunner
             finally
             {
                 projectRunner.Reset();  // TODO(Premek): rename to Stop
-                projectRunner.Shutdown();
             }
         }
 
         private void CheckTest(BrainTest test)
         {
             if (string.IsNullOrEmpty(test.BrainFileName))
-                throw new InvalidTestExc("Missing brain file name in the test.");
+                throw new InvalidTestException("Missing brain file name in the test.");
 
-            if (!File.Exists(Path.GetFullPath(test.BrainFileName)))
-                throw new InvalidTestExc("Brain file not found.");
+            FindBrainFile(test);  // ignore result for now
 
             if (test.MaxStepCount < 1)
-                throw new InvalidTestExc("Invalid MaxStepCount: " + test.MaxStepCount);
+                throw new InvalidTestException("Invalid MaxStepCount: " + test.MaxStepCount);
+        }
+
+        private string FindBrainFile(BrainTest test)
+        {
+            string brainFileName = test.BrainFileName;
+
+            if (Path.IsPathRooted(brainFileName))
+            {
+                if (!File.Exists(brainFileName))
+                    throw new InvalidTestException("Brain file not found: " + brainFileName);
+                
+                return brainFileName;
+            }
+
+            string defaultPath = Path.GetFullPath(Path.Combine(DefaultBrainFilePath, brainFileName));
+            if (File.Exists(defaultPath))
+                return defaultPath;
+
+            // try also relative path
+            if (File.Exists(Path.GetFullPath(brainFileName)))
+                return Path.GetFullPath(brainFileName);
+
+            throw new InvalidTestException("Brain file not found: " + defaultPath);  // complain about the default path
         }
 
         private uint GetIterationStepCount(BrainTest test)
         {
             var inspectInterval = test.InspectInterval;
             if (inspectInterval < 1)
-                throw new InvalidTestExc("Invalid inspect interval: " + inspectInterval);
+                throw new InvalidTestException("Invalid inspect interval: " + inspectInterval);
 
             return (uint)inspectInterval;
         }

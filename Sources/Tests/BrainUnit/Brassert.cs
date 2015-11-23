@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Testing.BrainUnit
 {
-    public class BrassertFailedExc : Exception
+    public class BrassertFailedException : Exception
     {
-        public BrassertFailedExc(string message) : base(message) { }
+        public BrassertFailedException(string message) : base(message) { }
     }
 
     public static class Brassert
     {
         public static void Fail(string message = "")
         {
-            throw new BrassertFailedExc(message);
+            throw new BrassertFailedException(message);
         }
 
         public static void True(bool condition, string message = "")
         {
             if (!condition)
-                throw new BrassertFailedExc(message);
+                throw new BrassertFailedException(message);
         }
     }
 }

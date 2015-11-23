@@ -2,11 +2,13 @@
 
 namespace GoodAI.Tests.BrainTestRunner
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            var testRunner = new TestRunner();
+            var reporter = new TestReporter();
+
+            var testRunner = new TestRunner(reporter);
 
             testRunner.Run();
         }
