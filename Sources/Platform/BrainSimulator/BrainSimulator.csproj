@@ -683,6 +683,7 @@
     <Content Include="res\v1_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\view_16xLG.png" />
     <Content Include="res\VWM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

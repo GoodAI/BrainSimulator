@@ -125,8 +125,14 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void OnDashboardPropertiesChanged(object sender, EventArgs args)
         {
-            removeButton.Enabled = false;
+            SetPropertyGridButtonsEnabled(false);
             propertyGrid.Refresh();
+        }
+
+        private void SetPropertyGridButtonsEnabled(bool enabled)
+        {
+            removeButton.Enabled = enabled;
+            goToNodeButton.Enabled = enabled;
         }
 
         private void OnGroupedDashboardPropertiesChanged(object sender, EventArgs args)
@@ -137,10 +143,15 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void DisableGroupButtons()
         {
-            removeGroupButton.Enabled = false;
-            editGroupButton.Enabled = false;
-            addToGroupButton.Enabled = false;
-            removeFromGroupButton.Enabled = false;
+            SetPropertyGridGroupedButtonsEnabled(false);
+        }
+
+        private void SetPropertyGridGroupedButtonsEnabled(bool enabled)
+        {
+            removeGroupButton.Enabled = enabled;
+            editGroupButton.Enabled = enabled;
+            addToGroupButton.Enabled = enabled;
+            removeFromGroupButton.Enabled = enabled;
         }
 
         private void removeButton_Click(object sender, EventArgs e)
@@ -158,7 +169,7 @@ namespace GoodAI.BrainSimulator.Forms
                 return;
 
             if (e.NewSelection != null)
-                removeButton.Enabled = true;
+                SetPropertyGridButtonsEnabled(true);
         }
 
         private void ClearError()
@@ -222,6 +233,7 @@ namespace GoodAI.BrainSimulator.Forms
                 groupProperty.Add(property);
 
                 propertyGrid.Refresh();
+                SetPropertyGridButtonsEnabled(false);
                 propertyGridGrouped.Refresh();
                 memberListBox.Refresh();
             }
@@ -240,10 +252,7 @@ namespace GoodAI.BrainSimulator.Forms
             memberListBox.Items.Clear();
             if (e.NewSelection != null)
             {
-                removeGroupButton.Enabled = true;
-                editGroupButton.Enabled = true;
-                addToGroupButton.Enabled = true;
-                removeFromGroupButton.Enabled = true;
+                SetPropertyGridGroupedButtonsEnabled(true);
 
                 LoadGroupedProperties(e.NewSelection.PropertyDescriptor as ProxyPropertyGroupDescriptor);
             }
@@ -269,6 +278,23 @@ namespace GoodAI.BrainSimulator.Forms
         public void OnSimulationStateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
             CanEditNodeProperties = e.NewState == MySimulationHandler.SimulationState.STOPPED;
+        }
+
+        private void goToNodeButton_Click(object sender, EventArgs e)
+        {
+            ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
+            MyNode targetNode = descriptor.Proxy.SourceProperty.Node;
+
+            if (targetNode is MyWorld)
+            {
+                GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(targetNode.Owner.Network);
+                graphForm.worldButton_Click(sender, EventArgs.Empty);
+            }
+            else
+            {
+                GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(targetNode.Parent);
+                graphForm.SelectNodeView(targetNode);
+            }
         }
     }
 }

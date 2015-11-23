@@ -29,12 +29,14 @@
         private void InitializeComponent()
         {
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.directorySearcher1 = new System.DirectoryServices.DirectorySearcher();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.removeButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.goToNodeButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.globalLabel = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.errorText = new System.Windows.Forms.Label();
             this.groupedLabel = new System.Windows.Forms.Label();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.addGroupButton = new System.Windows.Forms.ToolStripButton();
@@ -47,7 +49,6 @@
             this.membersLabel = new System.Windows.Forms.Label();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.removeFromGroupButton = new System.Windows.Forms.ToolStripButton();
-            this.errorText = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -75,12 +76,6 @@
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGrid_SelectedGridItemChanged);
             // 
-            // directorySearcher1
-            // 
-            this.directorySearcher1.ClientTimeout = System.TimeSpan.Parse("-00:00:01");
-            this.directorySearcher1.ServerPageTimeLimit = System.TimeSpan.Parse("-00:00:01");
-            this.directorySearcher1.ServerTimeLimit = System.TimeSpan.Parse("-00:00:01");
-            // 
             // toolStrip1
             // 
             this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -88,7 +83,9 @@
             this.toolStrip1.AutoSize = false;
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeButton});
+            this.removeButton,
+            this.toolStripSeparator2,
+            this.goToNodeButton});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(425, 25);
@@ -98,6 +95,7 @@
             // removeButton
             // 
             this.removeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.removeButton.Enabled = false;
             this.removeButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.action_Cancel_16xMD;
             this.removeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.removeButton.Name = "removeButton";
@@ -105,6 +103,22 @@
             this.removeButton.Text = "Remove the property";
             this.removeButton.ToolTipText = "Remove the property from the dashboard";
             this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // goToNodeButton
+            // 
+            this.goToNodeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.goToNodeButton.Enabled = false;
+            this.goToNodeButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.view_16xLG;
+            this.goToNodeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.goToNodeButton.Name = "goToNodeButton";
+            this.goToNodeButton.Size = new System.Drawing.Size(23, 22);
+            this.goToNodeButton.Text = "Go to Node";
+            this.goToNodeButton.Click += new System.EventHandler(this.goToNodeButton_Click);
             // 
             // splitContainer1
             // 
@@ -163,6 +177,16 @@
             this.splitContainer2.SplitterDistance = 194;
             this.splitContainer2.TabIndex = 2;
             // 
+            // errorText
+            // 
+            this.errorText.AutoSize = true;
+            this.errorText.ForeColor = System.Drawing.Color.Firebrick;
+            this.errorText.Location = new System.Drawing.Point(135, 6);
+            this.errorText.Name = "errorText";
+            this.errorText.Size = new System.Drawing.Size(35, 13);
+            this.errorText.TabIndex = 3;
+            this.errorText.Text = "label1";
+            // 
             // groupedLabel
             // 
             this.groupedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -205,6 +229,7 @@
             // removeGroupButton
             // 
             this.removeGroupButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.removeGroupButton.Enabled = false;
             this.removeGroupButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.action_Cancel_16xMD;
             this.removeGroupButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.removeGroupButton.Name = "removeGroupButton";
@@ -216,6 +241,7 @@
             // editGroupButton
             // 
             this.editGroupButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.editGroupButton.Enabled = false;
             this.editGroupButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.pencil_003_16xMD;
             this.editGroupButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.editGroupButton.Name = "editGroupButton";
@@ -232,6 +258,7 @@
             // addToGroupButton
             // 
             this.addToGroupButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addToGroupButton.Enabled = false;
             this.addToGroupButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.arrow_Down_16xLG;
             this.addToGroupButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addToGroupButton.Name = "addToGroupButton";
@@ -293,6 +320,7 @@
             // removeFromGroupButton
             // 
             this.removeFromGroupButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.removeFromGroupButton.Enabled = false;
             this.removeFromGroupButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.arrow_Up_16xLG;
             this.removeFromGroupButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.removeFromGroupButton.Name = "removeFromGroupButton";
@@ -300,16 +328,6 @@
             this.removeFromGroupButton.Text = "Remove from group";
             this.removeFromGroupButton.ToolTipText = "Remove the selected member property from the group";
             this.removeFromGroupButton.Click += new System.EventHandler(this.removeFromGroupButton_Click);
-            // 
-            // errorText
-            // 
-            this.errorText.AutoSize = true;
-            this.errorText.ForeColor = System.Drawing.Color.Firebrick;
-            this.errorText.Location = new System.Drawing.Point(135, 6);
-            this.errorText.Name = "errorText";
-            this.errorText.Size = new System.Drawing.Size(35, 13);
-            this.errorText.TabIndex = 3;
-            this.errorText.Text = "label1";
             // 
             // DashboardPropertyForm
             // 
@@ -348,7 +366,6 @@
 
         #endregion
 
-        private System.DirectoryServices.DirectorySearcher directorySearcher1;
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton removeButton;
@@ -368,6 +385,8 @@
         private System.Windows.Forms.ToolStripButton removeFromGroupButton;
         private System.Windows.Forms.ListBox memberListBox;
         private System.Windows.Forms.Label errorText;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton goToNodeButton;
 
 
 
