@@ -87,13 +87,13 @@ namespace GoodAI.Core.Dashboard
             get
             {
                 var groupedProperties = SourceProperty.GroupedProperties;
-                return groupedProperties.Any() ? groupedProperties.First().GenericProxy.Value : null;
+                return groupedProperties.Any() ? groupedProperties.First().Proxy.Value : null;
             }
             set
             {
                 foreach (var property in SourceProperty.GroupedProperties)
                 {
-                    property.GenericProxy.Value = value;
+                    property.Proxy.Value = value;
                 }
             }
         }

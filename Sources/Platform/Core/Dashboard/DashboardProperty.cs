@@ -301,7 +301,7 @@ namespace GoodAI.Core.Dashboard
 
             GroupedProperties.Add(property);
             property.Group = this;
-            property.GenericProxy.Value = GroupedProperties.First().GenericProxy.Value;
+            property.Proxy.Value = GroupedProperties.First().Proxy.Value;
         }
 
         public void Remove(DashboardNodeProperty property)

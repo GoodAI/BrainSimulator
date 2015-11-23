@@ -21,7 +21,6 @@ using System.Windows.Forms;
 using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Task;
 using GoodAI.Core.Dashboard;
-using GoodAI.Platform.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
