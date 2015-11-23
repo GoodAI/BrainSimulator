@@ -153,7 +153,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                             (int)Owner.PreviousLayer[i].ActivationFunction,
                             MyAbstractLayer.DetermineInput(Owner.PreviousLayer[i]),
                             Owner.PreviousLayer[i].Delta,
-                            Owner.Neurons,
+                            Owner.PreviousLayer[i].Neurons,
                             Owner.ParentNetwork.BatchSize
                         );
                     }
