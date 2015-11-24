@@ -8,8 +8,16 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
-    public partial class TaskPropertyForm : DockContent
+    public partial class TaskPropertyForm : DockContent, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private MainForm m_mainForm;
 
         public MyTask Target
@@ -27,6 +35,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            OnPropertyChanged(e.ChangedItem.PropertyDescriptor.Name);
+
             //TODO: rewrite this, no need to loop all, just topmost
             foreach (GraphLayoutForm graphView in m_mainForm.GraphViews.Values)
             {

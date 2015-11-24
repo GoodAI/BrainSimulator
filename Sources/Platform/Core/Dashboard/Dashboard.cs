@@ -119,6 +119,11 @@ namespace GoodAI.Core.Dashboard
             if (Properties.Remove(property))
                 OnPropertiesChanged("Properties");
         }
+
+        public DashboardNodeProperty Get(object target, string propertyName)
+        {
+            return Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+        }
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]

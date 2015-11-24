@@ -8,14 +8,23 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
-    public partial class NodePropertyForm : DockContent
+    public partial class NodePropertyForm : DockContent, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private readonly MainForm m_mainForm;
 
         public bool CanEdit
@@ -51,6 +60,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            OnPropertyChanged(e.ChangedItem.PropertyDescriptor.Name);
+
             MyNodeView nodeView = null;
 
             foreach(GraphLayoutForm graphView in m_mainForm.GraphViews.Values) {

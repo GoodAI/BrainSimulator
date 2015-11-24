@@ -12,6 +12,7 @@ using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Dashboard;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -296,6 +297,50 @@ namespace GoodAI.BrainSimulator.Forms
                 GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(targetNode.Parent);
                 graphForm.SelectNodeView(targetNode);
             }
+        }
+
+        public void OnPropertyExternallyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // If the property is grouped, replace its value by whatever is set in the group.
+
+            propertyGrid.Refresh();
+            object target;
+            var nodeSender = sender as NodePropertyForm;
+            if (nodeSender != null)
+            {
+                target = nodeSender.Target;
+            }
+            else
+            {
+                var taskSender = sender as TaskPropertyForm;
+                target = taskSender.Target;
+            }
+
+            PreserverGroupValue(e.PropertyName, target);
+
+            propertyGrid.Refresh();
+        }
+
+        private void PreserverGroupValue(string propertyName, object target)
+        {
+            DashboardNodeProperty property = DashboardViewModel.GetProperty(target, propertyName);
+            if (property == null)
+                return;
+
+            DashboardPropertyGroup group = property.Group;
+            if (group == null)
+                return;
+
+            object valueOfGroupMembers = @group.GroupedProperties
+                .Select(member => member.Proxy.Value)
+                .FirstOrDefault(value => !value.Equals(property.Proxy.Value));
+
+            if (valueOfGroupMembers == null)
+                return;
+            
+            MyLog.WARNING.WriteLine("Trying to change a group property {0}. Value reverted to {1}.", propertyName,
+                valueOfGroupMembers);
+            property.Proxy.Value = valueOfGroupMembers;
         }
     }
 }

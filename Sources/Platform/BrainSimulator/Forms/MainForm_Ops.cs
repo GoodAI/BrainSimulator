@@ -728,6 +728,10 @@ namespace GoodAI.BrainSimulator.Forms
             // Link the Task and Node property views to the dashboard's PropertyChanged.
             DashboardPropertyView.PropertyValueChanged += RefreshPropertyViews;
 
+            // Link the Node and Task property views' PropertyChanged to the dashboard so that it can refresh etc.
+            NodePropertyView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
+            TaskPropertyView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
+
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
             TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
 

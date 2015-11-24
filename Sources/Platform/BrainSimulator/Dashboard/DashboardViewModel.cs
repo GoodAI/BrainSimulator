@@ -141,6 +141,11 @@ namespace GoodAI.BrainSimulator.DashboardUtils
             SingleProxyProperty proxy = property.Proxy;
             return new ProxyPropertyDescriptor(ref proxy, attributes);
         }
+
+        public DashboardNodeProperty GetProperty(object target, string propertyName)
+        {
+            return Dashboard.Get(target, propertyName);
+        }
     }
 
     public class GroupedDashboardViewModel : DashboardViewModelBase<GroupDashboard, DashboardPropertyGroup>
