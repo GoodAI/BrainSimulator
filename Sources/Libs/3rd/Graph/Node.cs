@@ -96,6 +96,7 @@ namespace Graph
         public PointF Location { get; set; }
         public object Tag { get; set; }
         public Brush BackgroundBrush { get { return background; } set { background = value; } }
+        public bool HasStatusBar { get; set; }
 
         public SizeF ItemSize { get { return new SizeF(itemsBounds.Width, itemsBounds.Height); } }
 

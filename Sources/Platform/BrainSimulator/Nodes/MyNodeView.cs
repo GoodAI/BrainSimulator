@@ -126,6 +126,8 @@ namespace GoodAI.BrainSimulator.NodeView
 
         private void InitStatusBar()
         {
+            this.HasStatusBar = true;
+
             m_statusBar = new MyStatusBarItem();
 
             m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb_12);
