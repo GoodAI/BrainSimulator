@@ -1217,6 +1217,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         public bool CheckDashboardContains(object target, string propertyName)
         {
+            if (Project.Dashboard == null)
+                return false;
             return Project.Dashboard.Contains(target, propertyName);
         }
 
