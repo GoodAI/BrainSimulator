@@ -188,6 +188,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             GroupedDashboardViewModel.RemoveProperty(descriptor.Proxy);
             propertyGrid.Refresh();
+            memberListBox.Items.Clear();
         }
 
         private ProxyPropertyDescriptor GetCurrentPropertyDescriptor()
