@@ -226,7 +226,7 @@ namespace GoodAI.Core.Memory
             // Both the host and the device have enough memory for the reallocation.
 
             // Copy the host data.
-            Array.Copy(Host, newHostMemory, Count);
+            Array.Copy(Host, newHostMemory, Math.Min(newCount, Count));
 
             // Copy the device data.
             newDeviceMemory.CopyToDevice(Device[Owner.GPU]);
