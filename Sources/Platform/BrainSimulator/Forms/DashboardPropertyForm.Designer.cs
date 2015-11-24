@@ -49,6 +49,8 @@
             this.membersLabel = new System.Windows.Forms.Label();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.removeFromGroupButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.goToNodeFromMemberButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -309,7 +311,9 @@
             this.toolStrip3.AutoSize = false;
             this.toolStrip3.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeFromGroupButton});
+            this.removeFromGroupButton,
+            this.toolStripSeparator3,
+            this.goToNodeFromMemberButton});
             this.toolStrip3.Location = new System.Drawing.Point(3, 0);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.Size = new System.Drawing.Size(425, 25);
@@ -327,6 +331,21 @@
             this.removeFromGroupButton.Text = "Remove from group";
             this.removeFromGroupButton.ToolTipText = "Remove the selected member property from the group";
             this.removeFromGroupButton.Click += new System.EventHandler(this.removeFromGroupButton_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // goToNodeFromMemberButton
+            // 
+            this.goToNodeFromMemberButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.goToNodeFromMemberButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.view_16xLG;
+            this.goToNodeFromMemberButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.goToNodeFromMemberButton.Name = "goToNodeFromMemberButton";
+            this.goToNodeFromMemberButton.Size = new System.Drawing.Size(23, 22);
+            this.goToNodeFromMemberButton.Text = "Go to Node";
+            this.goToNodeFromMemberButton.Click += new System.EventHandler(this.goToNodeFromMemberButton_Click);
             // 
             // DashboardPropertyForm
             // 
@@ -387,6 +406,8 @@
         private System.Windows.Forms.Label errorText;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton goToNodeButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton goToNodeFromMemberButton;
 
 
 

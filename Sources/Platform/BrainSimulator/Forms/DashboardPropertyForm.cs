@@ -284,8 +284,13 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void goToNodeButton_Click(object sender, EventArgs e)
         {
-            ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
-            MyNode targetNode = descriptor.Proxy.SourceProperty.Node;
+            SingleProxyProperty proxy = GetCurrentPropertyDescriptor().Proxy;
+            GoToNode(sender, proxy);
+        }
+
+        private void GoToNode(object sender, SingleProxyProperty proxy)
+        {
+            MyNode targetNode = proxy.SourceProperty.Node;
 
             if (targetNode is MyWorld)
             {
@@ -297,6 +302,13 @@ namespace GoodAI.BrainSimulator.Forms
                 GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(targetNode.Parent);
                 graphForm.SelectNodeView(targetNode);
             }
+        }
+
+        private void goToNodeFromMemberButton_Click(object sender, EventArgs e)
+        {
+            SingleProxyProperty proxy = memberListBox.SelectedItems.Cast<SingleProxyProperty>().FirstOrDefault();
+            if (proxy != null)
+                GoToNode(sender, proxy);
         }
 
         public void OnPropertyExternallyChanged(object sender, PropertyChangedEventArgs e)
