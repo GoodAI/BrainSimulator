@@ -534,6 +534,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Simulation cannot be started! Exception occured: " + e.Message);
+                throw;
             }
         }
 
