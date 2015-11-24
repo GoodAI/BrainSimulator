@@ -4,6 +4,7 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Task;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -100,6 +101,12 @@ namespace GoodAI.BrainSimulator.Forms
             InitializeComponent();
 
             m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
+            m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+        }
+
+        private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            debugTreeView.Invalidate();
         }
 
         TreeNodeAdv m_selectedNodeView = null;
