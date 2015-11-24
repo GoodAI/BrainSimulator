@@ -49,6 +49,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLibTests", "Libs\3rd\YAXLib\YAXLibTests\YAXLibTests.csproj", "{4F012F71-C259-481B-A112-EC24D3AF24AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainTestRunner", "Tests\BrainTestRunner\BrainTestRunner.csproj", "{8C1728EC-DB23-44DC-B89F-39CE612FEDB0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C60CE33A-E25A-47C2-A539-C9FC29BB0D8B} = {C60CE33A-E25A-47C2-A539-C9FC29BB0D8B}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrainTests", "BrainTests", "{F02EB44B-6AA6-436B-932D-CF29622CA44A}"
 EndProject

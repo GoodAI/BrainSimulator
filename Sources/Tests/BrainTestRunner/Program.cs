@@ -6,9 +6,7 @@ namespace GoodAI.Tests.BrainTestRunner
     {
         public static void Main(string[] args)
         {
-            var reporter = new TestReporter();
-
-            var testRunner = new TestRunner(reporter);
+            var testRunner = new TestRunner(new TestDiscoverer(), new TestReporter());
 
             testRunner.Run();
         }

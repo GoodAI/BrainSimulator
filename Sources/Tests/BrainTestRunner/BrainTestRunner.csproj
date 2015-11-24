@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestDiscoverer.cs" />
     <Compile Include="TestReporter.cs" />
     <Compile Include="TestRunner.cs" />
   </ItemGroup>

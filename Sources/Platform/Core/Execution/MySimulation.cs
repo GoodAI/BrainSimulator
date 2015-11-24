@@ -74,7 +74,7 @@ namespace GoodAI.Core.Execution
 
         public virtual void Init()
         {
-            SimulationStep = 0;
+            ResetSimulationStep();
 
             for (int i = 0; i < CurrentDebuggedBlocks.Length; i++)
             {
@@ -82,6 +82,11 @@ namespace GoodAI.Core.Execution
             }
 
             IsFinished = false;
+        }
+
+        public void ResetSimulationStep()
+        {
+            SimulationStep = 0;
         }
 
         public abstract void AllocateMemory();

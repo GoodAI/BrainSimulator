@@ -19,24 +19,31 @@ namespace GoodAI.Tests.BrainTestRunner
 
     internal class TestRunner
     {
+        private readonly TestDiscoverer m_discoverer;
         private readonly TestReporter m_reporter;
         private readonly MyProjectRunner m_projectRunner;
 
         private readonly string DefaultBrainFilePath = @"../../../BrainTests/Brains/";
 
-        public TestRunner(TestReporter reporter)
+        public TestRunner(TestDiscoverer discoverer, TestReporter reporter)
         {
+            m_discoverer = discoverer;
             m_reporter = reporter;
             m_projectRunner = new MyProjectRunner(MyLogLevel.ERROR);
         }
 
         public void Run()
         {
-            var test = new MyAccumulatorTest();
+            //var accumulatorTest = new AccumulatorCanCountToTen();
 
-            EvaluateTest(test);
-            EvaluateTest(new MyFailingAccumulatorTest());
-            EvaluateTest(test);
+            //EvaluateTest(accumulatorTest);
+            //EvaluateTest(new StopConditionAccumulatorTest());
+            //EvaluateTest(accumulatorTest);
+
+            foreach (BrainTest test in m_discoverer.FindTests())
+            {
+                EvaluateTest(test);
+            }
 
             m_reporter.Conclude();
 
@@ -47,7 +54,7 @@ namespace GoodAI.Tests.BrainTestRunner
         {
             try
             {
-                CheckTest(test);
+                ValidateTest(test);
 
                 m_reporter.StartTest(test);
                 
@@ -84,9 +91,9 @@ namespace GoodAI.Tests.BrainTestRunner
             {
                 do
                 {
-                    projectRunner.RunAndPause(GetIterationStepCount(test));
+                    projectRunner.RunAndPause(GetIterationStepCount(test, projectRunner.SimulationStep));
 
-                    if (test.ShouldStop(brainScan))  // TODO(Premek): consider tolerating ShouldStop exceptions (?)
+                    if (ShouldStop(test, brainScan))
                         break;
                 }
                 while (projectRunner.SimulationStep < test.MaxStepCount);
@@ -95,11 +102,25 @@ namespace GoodAI.Tests.BrainTestRunner
             }
             finally
             {
-                projectRunner.Reset();  // TODO(Premek): rename to Stop
+                projectRunner.Reset();
             }
         }
 
-        private void CheckTest(BrainTest test)
+        private static bool ShouldStop(BrainTest test, IBrainScan brainScan)
+        {
+            try
+            {
+                if (test.ShouldStop(brainScan))
+                    return true;
+            }
+            // tolerate assert failues in ShouldStop
+            catch (XunitException) { } 
+            catch (BrassertFailedException) { }
+
+            return false;
+        }
+
+        private void ValidateTest(BrainTest test)
         {
             if (string.IsNullOrEmpty(test.BrainFileName))
                 throw new InvalidTestException("Missing brain file name in the test.");
@@ -133,13 +154,13 @@ namespace GoodAI.Tests.BrainTestRunner
             throw new InvalidTestException("Brain file not found: " + defaultPath);  // complain about the default path
         }
 
-        private uint GetIterationStepCount(BrainTest test)
+        private static uint GetIterationStepCount(BrainTest test, uint simulationStep)
         {
-            var inspectInterval = test.InspectInterval;
+            int inspectInterval = test.InspectInterval;
             if (inspectInterval < 1)
                 throw new InvalidTestException("Invalid inspect interval: " + inspectInterval);
 
-            return (uint)inspectInterval;
+            return (uint)Math.Min(inspectInterval, test.MaxStepCount - simulationStep);   // limit to remaining steps
         }
     }
 }
