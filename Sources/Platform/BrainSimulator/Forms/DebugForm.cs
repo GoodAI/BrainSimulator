@@ -14,6 +14,9 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class DebugForm : DockContent
     {
+        internal static readonly double ProfilingThreshold = 0.05;
+        internal static readonly double MinimalSaturation = 0.15;
+
         private readonly MainForm m_mainForm;        
         private MyExecutionPlan[] m_executionPlan;
 
@@ -110,6 +113,8 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         TreeNodeAdv m_selectedNodeView = null;
+        private static readonly Color ProfilingColorAboveThreshold = Color.FromArgb(255, 255, 0, 0);
+        private static readonly Color ProfilingColorBelowThreshold = Color.FromArgb(255, 0, 255, 0);
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
@@ -303,11 +308,29 @@ namespace GoodAI.BrainSimulator.Forms
             // Calculate the colors of the children nodes.
             foreach (MyDebugNode debugNodeChild in children)
             {
-                var saturation = (int) (255 * debugNodeChild.ProfilerTime.Value.TotalMilliseconds/totalTime);
-                // ~ 1% filter.
-                if (saturation > 3)
-                    debugNodeChild.BackgroundColor = Color.FromArgb(saturation, 255, 0, 0);
+                double factor = debugNodeChild.ProfilerTime.Value.TotalMilliseconds/totalTime;
+
+                Color baseColor;
+                if (factor > ProfilingThreshold)
+                {
+                    baseColor = ProfilingColorAboveThreshold;
+                }
+                else
+                {
+                    baseColor = ProfilingColorBelowThreshold;
+                    factor = ProfilingThreshold;
+                }
+
+                factor = ScaleSaturation(factor, MinimalSaturation);
+
+                var saturation = (int) (255 * factor);
+                debugNodeChild.BackgroundColor = Color.FromArgb(saturation, baseColor.R, baseColor.G, baseColor.B);
             }
+        }
+
+        private double ScaleSaturation(double factor, double minimalSaturation)
+        {
+            return minimalSaturation + factor - (factor*minimalSaturation);
         }
 
         private TreeNodeAdv GetSelectedTreeNode()
