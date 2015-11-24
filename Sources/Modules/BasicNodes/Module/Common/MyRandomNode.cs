@@ -154,11 +154,11 @@ namespace GoodAI.Modules.Common
         
         public void UpdatePeriod(MyTask caller)
         {
-            if (RandomPeriod && (caller.SimulationStep == NextPeriodChange))
+            if (RandomPeriod && (caller.SimulationStep >= NextPeriodChange))
             {
                 //+1 for inclusive interval
                 Period = m_rnd.Next(RandomPeriodMin, RandomPeriodMax + 1);
-                NextPeriodChange += Period;
+                NextPeriodChange = (int)caller.SimulationStep + Period;
             }
         }
     }
