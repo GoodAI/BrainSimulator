@@ -25,11 +25,12 @@ namespace GoodAI.Testing.BrainUnit
                 m_inspectInterval = value;
             }
         }
-
         private int m_inspectInterval = -1;
 
-        public BrainTest()
-        { }
+        public virtual string Name
+        {
+            get { return GetType().Name; }
+        }
 
         public virtual bool ShouldStop(IBrainScan b)
         {

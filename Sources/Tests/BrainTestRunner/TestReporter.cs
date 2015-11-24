@@ -80,12 +80,7 @@ namespace GoodAI.Tests.BrainTestRunner
             Console.Write(" {0, -10} ", what);
             Console.ResetColor();
 
-            Console.WriteLine("{0}{1}", GetTestName(test), string.IsNullOrEmpty(message) ? "" : ": " + message);
-        }
-
-        private static string GetTestName(BrainTest test)
-        {
-            return test.GetType().ToString();
+            Console.WriteLine("{0}{1}", test.Name, string.IsNullOrEmpty(message) ? "" : ": " + message);
         }
     }
 }

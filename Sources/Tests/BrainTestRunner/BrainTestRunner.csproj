@@ -82,6 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrainUnitNodeTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestDiscoverer.cs" />
@@ -97,10 +98,6 @@
     <ProjectReference Include="..\..\Modules\BasicNodes\BrainTests\BasicBrainTests.csproj">
       <Project>{c60ce33a-e25a-47c2-a539-c9fc29bb0d8b}</Project>
       <Name>BasicBrainTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\BasicNodes\Module\BasicNodes.csproj">
-      <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
-      <Name>BasicNodes</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Platform\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
