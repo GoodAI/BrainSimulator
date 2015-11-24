@@ -183,9 +183,8 @@
             this.errorText.ForeColor = System.Drawing.Color.Firebrick;
             this.errorText.Location = new System.Drawing.Point(135, 6);
             this.errorText.Name = "errorText";
-            this.errorText.Size = new System.Drawing.Size(35, 13);
+            this.errorText.Size = new System.Drawing.Size(0, 13);
             this.errorText.TabIndex = 3;
-            this.errorText.Text = "label1";
             // 
             // groupedLabel
             // 
@@ -341,6 +340,7 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.HideOnClose = true;
             this.Name = "DashboardPropertyForm";
             this.Text = "Dashboard Properties";
             this.toolStrip1.ResumeLayout(false);
