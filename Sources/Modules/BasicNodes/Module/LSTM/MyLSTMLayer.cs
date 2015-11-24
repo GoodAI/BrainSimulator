@@ -23,7 +23,22 @@ namespace GoodAI.Modules.LSTM
     ///              <ul>
     ///                 <li>InputActivationFunction: Activation function applied to cell input</li>
     ///                 <li>GateActivationFunction: Activation function applied to gate input. Read-only, all gates use sigmoid activation function</li>
-    ///                 <li>ActivationFunction: Activation function applied to cell output</li>
+    ///                 <li>ActivationFunction: Activation function applied to cell output. 
+    ///                 Read-only, NO_ACTIVATION is used because after multiplication by output gate's activation, no more activation function is applied.</li>
+    ///                 <li>LearningTasks: Either RTRL (Real-time recurrent learning) or BPTT (Back-propagation through time). 
+    ///                 <ul>
+    ///                 <li><b>RTRL</b> is able to adapt to any sequence length. It sometimes suffers from an exponential explosion of the values of its
+    ///                 inner cell states. This negatively affects the outputs of the LSTM node. To avoid the explosion, set the CLIP_CELL_STATE value
+    ///                 of the RTRL's Feed forward task to a value around 1. For your convenience, there is also a similar parameter CLIP_GRADIENT in
+    ///                 Update weights task.</li>
+    ///                 <li><b>BPTT</b> expects a predefined sequence length. It requires that the neural group's parameter
+    ///                 <b>Temporal/SequenceLength</b> be set to the length of the sequence that should be learned. BPTT uses temporal memory blocks. 
+    ///                 Because of that, BPTT requires that the task
+    ///                 "Transform Input" be enabled and that neural group node's RunTemporalBlocksMode, IncrementTimeStep and DecrementTimeStep tasks be enabled.<br />
+    ///                 Note that when you use BPTT, some memory block observers provide meaningful data only when their Temporal/TimeStep parameter is set to -1.
+    ///                 </li>
+    ///                 </ul>
+    ///                 </li>
     ///                 <li>CellsPerBlock: Number of cells in each LSTM memory block</li>
     ///                 <li>MemoryBlocks: Number of LSTM memory blocks in the layer</li>
     ///                 <li>Neurons: Read-only number of cells in the layer calculated as MemoryBlocks * CellsPerBlock</li>
