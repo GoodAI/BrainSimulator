@@ -434,15 +434,28 @@ namespace Graph
                     float centerY;
                     using (var path = GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
                     {
-                        using (var brush = new SolidBrush(GetArrowLineColor(connection.state | RenderState.Connected)))
+                        Color arrowLineColor = GetArrowLineColor(connection.state | RenderState.Connected);
+
+                        if ((connection.state & RenderState.Marked) != 0)
                         {
-                            graphics.FillPath(brush, path);
+                            Color glowColorBase = Color.Ivory;
+                            Color glowColor = Color.FromArgb(
+                                (int) (glowColorBase.A * 0.5),
+                                glowColorBase.R,
+                                glowColorBase.G,
+                                glowColorBase.B);
+                            // Draw a glow.
+                            var pen = new Pen(new SolidBrush(glowColor), 4.0f);
+                            graphics.DrawPath(pen, path);
                         }
+
+                        Brush brush = new SolidBrush(arrowLineColor);
+
+                        graphics.FillPath(brush, path);
                         connection.bounds = path.GetBounds();
                     }
 
-                    if (showLabels &&
-                        !string.IsNullOrWhiteSpace(connection.Name))
+                    if (showLabels && !string.IsNullOrWhiteSpace(connection.Name))
                     {
                         var center = new PointF(centerX, centerY);
                         RenderLabel(graphics, connection, center, connection.state);

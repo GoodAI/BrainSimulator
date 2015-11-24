@@ -417,6 +417,9 @@ namespace GoodAI.BrainSimulator.Forms
 
             // If order == 0, the node is likely an output.
             connectionView.Backward = to.TopologicalOrder != 0 && @from.TopologicalOrder >= to.TopologicalOrder;
+
+            // If order == 0, the node is likely an output.
+            connectionView.Dynamic = from.GetAbstractOutput((int) connection.From.Item.Tag).IsDynamic;
         }
     }      
 }
