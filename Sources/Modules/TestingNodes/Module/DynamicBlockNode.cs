@@ -97,7 +97,7 @@ namespace GoodAI.Modules.TestingNodes.DynamicBlocks
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = Input.Count;
+            Output.Count = Input != null ? Input.Count : 0;
         }
     }
 
