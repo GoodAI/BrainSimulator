@@ -440,6 +440,7 @@
     <Content Include="res\filter_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\folder_Closed_16xLG.png" />
     <Content Include="res\fork.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -512,6 +513,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="res\matrix1.png" />
+    <None Include="res\list_16xLG.png" />
     <Content Include="res\matrixNode.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

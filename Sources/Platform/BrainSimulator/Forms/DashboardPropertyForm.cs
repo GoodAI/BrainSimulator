@@ -354,5 +354,26 @@ namespace GoodAI.BrainSimulator.Forms
                 valueOfGroupMembers);
             property.Proxy.Value = valueOfGroupMembers;
         }
+
+        private void showGroupsButton_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowHideGroups();
+        }
+
+        private void showMembersButton_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowHideGroups();
+        }
+
+        private void ShowHideGroups()
+        {
+            splitContainerProperties.Panel2Collapsed = !(showGroupsButton.Checked || showMembersButton.Checked);
+
+            if (splitContainerProperties.Panel2Collapsed)
+                return;
+
+            splitContainerGroups.Panel1Collapsed = !showGroupsButton.Checked;
+            splitContainerGroups.Panel2Collapsed = !showMembersButton.Checked;
+        }
     }
 }
