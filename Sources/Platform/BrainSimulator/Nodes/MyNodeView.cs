@@ -203,7 +203,24 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 return InputBranchChangeNeeded || OutputBranchChangeNeeded;
             }
-        }      
+        }
+
+        public Color BackgroundColor
+        {
+            get
+            {
+                return (background as SolidBrush).Color;
+            }
+            set
+            {
+                background = new SolidBrush(value);
+            }
+        }
+
+        public void SetDefaultBackground()
+        {
+            BackgroundColor = Color.LightGray;
+        }
 
         public static MyNodeView CreateNodeView(Type nodeType, GraphControl owner)
         {
