@@ -61,6 +61,18 @@ namespace GoodAI.Modules.Motor
             get { return GetInput(1); }
         }
 
+        [MyInputBlock(2)]
+        public MyMemoryBlock<float> Limits
+        {
+            get { return GetInput(2); }
+        }
+
+        [MyInputBlock(3)]
+        public MyMemoryBlock<float> Reset
+        {
+            get { return GetInput(3); }
+        }
+
         [MyOutputBlock(1)]
         public MyMemoryBlock<float> PoleRotation
         {
@@ -85,7 +97,17 @@ namespace GoodAI.Modules.Motor
         public override void Validate(MyValidator validator)
         {
             //base.Validate(validator);
-            validator.AssertError(Controls != null, this, "No input available"); 
+            validator.AssertError(Controls != null, this, "No input available");
+
+            if (Limits != null)
+            {
+                validator.AssertError(Limits.Count == 3, this, "Limit vector must be of a size 3 or nothing!");
+            }
+
+            if (Reset != null)
+            {
+                validator.AssertError(Reset.Count == 1, this, "Reset vector must be of a size 1 or nothing!");
+            }
 
             if (Controls != null)
             {
@@ -115,7 +137,7 @@ namespace GoodAI.Modules.Motor
         }
 
         public My3DWorldTask WorldTask { get; set; }
-        
+
         /// <summary>Simulates the 3D world</summary>
         [Description("Simulate 3D world")]
         public class My3DWorldTask : MyTask<My3DPendulumWorld>
@@ -129,6 +151,11 @@ namespace GoodAI.Modules.Motor
 
             public override void Init(int nGPU)
             {
+                CreateWorld();
+            }
+
+            private void CreateWorld()
+            {
                 //Robot arm scene
                 Owner.Space = new Space();
                 Owner.Space.ForceUpdater.Gravity = new Vector3(0, -Owner.GRAVITY, 0);
@@ -138,30 +165,34 @@ namespace GoodAI.Modules.Motor
                 var armBase = new Box(new Vector3(0, 0.25f, 0), 1, 0.5f, 1);
                 Owner.Space.Add(armBase);
 
-                var lowerArm = new Box(armBase.Position + new Vector3(0, armBase.Height/2 + 0.75f, 0), 0.5f, 1.5f, 0.5f, 1f);
+                var lowerArm = new Box(armBase.Position + new Vector3(0, armBase.Height / 2 + 0.75f, 0), 0.5f, 1.5f, 0.5f, 1f);
                 Owner.Space.Add(lowerArm);
 
-                var upperArm = new Box(lowerArm.Position + new Vector3(0, lowerArm.Height/2 + 1, 0), 0.25f, 2, 0.25f, 0.1f);
+                var upperArm = new Box(lowerArm.Position + new Vector3(0, lowerArm.Height / 2 + 1, 0), 0.25f, 2, 0.25f, 0.1f);
                 Owner.Space.Add(upperArm);
 
-                pole = new Cylinder(upperArm.Position + new Vector3(0, upperArm.Height/2 + 2, 0), 4, 0.0625f, 0.01f);
+                pole = new Cylinder(upperArm.Position + new Vector3(0, upperArm.Height / 2 + 2, 0), 4, 0.0625f, 0.01f);
                 Owner.Space.Add(pole);
 
                 sphere = new Sphere(pole.Position + new Vector3(0, pole.Height / 2, 0), 0.25f, 0.001f);
                 Owner.Space.Add(sphere);
 
                 //Lower arm to base joint
-                shoulder = new RevoluteJoint(armBase, lowerArm, armBase.Position + new Vector3(0, armBase.Height/2, 0), Vector3.Forward);
+                shoulder = new RevoluteJoint(armBase, lowerArm, armBase.Position + new Vector3(0, armBase.Height / 2, 0), Vector3.Forward);
                 shoulder.Motor.IsActive = true;
                 shoulder.Motor.Settings.Mode = Owner.MOTOR_MODE;
                 shoulder.Motor.Settings.MaximumForce = 25;
                 shoulder.Limit.IsActive = true;
-                shoulder.Limit.MinimumAngle = -MathHelper.Pi / 3.0f;
-                shoulder.Limit.MaximumAngle = MathHelper.Pi / 3.0f;
+
+                float[] limits = GetLimits();
+
+                shoulder.Limit.MinimumAngle = -MathHelper.Pi * limits[2];
+                shoulder.Limit.MaximumAngle = MathHelper.Pi * limits[2];
+                shoulder.Limit.Bounciness = 0.0f;
                 Owner.Space.Add(shoulder);
 
                 //Upper arm to lower arm joint
-                elbow = new RevoluteJoint(lowerArm, upperArm, lowerArm.Position + new Vector3(0, lowerArm.Height/2, 0), Vector3.Left);
+                elbow = new RevoluteJoint(lowerArm, upperArm, lowerArm.Position + new Vector3(0, lowerArm.Height / 2, 0), Vector3.Left);
                 elbow.Motor.IsActive = true;
                 if (Owner.ELBOW_FIXED)
                     elbow.Motor.Settings.Mode = MotorMode.Servomechanism;
@@ -169,8 +200,10 @@ namespace GoodAI.Modules.Motor
                     elbow.Motor.Settings.Mode = Owner.MOTOR_MODE;
                 elbow.Motor.Settings.MaximumForce = 2500;
                 elbow.Limit.IsActive = true;
-                elbow.Limit.MinimumAngle = -MathHelper.Pi / 3.0f;
-                elbow.Limit.MaximumAngle = MathHelper.Pi / 3.0f;
+
+                elbow.Limit.MinimumAngle = -MathHelper.Pi * limits[1];
+                elbow.Limit.MaximumAngle = MathHelper.Pi * limits[1];
+                elbow.Limit.Bounciness = 0.0f;
                 Owner.Space.Add(elbow);
 
                 if (Owner.POLE_DOF == 1)
@@ -181,8 +214,9 @@ namespace GoodAI.Modules.Motor
                     wrist.Motor.Settings.Mode = Owner.MOTOR_MODE;
                     wrist.Motor.Settings.MaximumForce = 2500;
                     wrist.Limit.IsActive = true;
-                    wrist.Limit.MinimumAngle = -MathHelper.Pi / 2.0f;
-                    wrist.Limit.MaximumAngle = MathHelper.Pi / 2.0f;
+                    wrist.Limit.MinimumAngle = -MathHelper.Pi * limits[0];
+                    wrist.Limit.MaximumAngle = -MathHelper.Pi * limits[0];
+                    wrist.Limit.Bounciness = 0.0f;
                     Owner.Space.Add(wrist);
                 }
                 else
@@ -196,6 +230,7 @@ namespace GoodAI.Modules.Motor
                 norotation.Limit.IsActive = true;
                 norotation.Limit.MinimumAngle = 0.0f;
                 norotation.Limit.MaximumAngle = 0.0f;
+
                 Owner.Space.Add(norotation);
 
                 CollisionRules.AddRule(armBase, lowerArm, CollisionRule.NoBroadPhase);
@@ -206,59 +241,85 @@ namespace GoodAI.Modules.Motor
 
             public override void Execute()
             {
-                float dt = Owner.Space.TimeStepSettings.TimeStepDuration;
-                float deadZone = 0.0f;
-
-                //Pass controls 
-                Owner.Controls.SafeCopyToHost();
-
-                //shoulder
-                if (Owner.MOTOR_MODE == MotorMode.Servomechanism)
+                if (Owner.Reset != null)
                 {
-                    if (Owner.Controls.Host[0] < -deadZone)
+                    Owner.Reset.SafeCopyToHost();
+                }
+
+                if (Owner.Reset != null && Owner.Reset.Host[0] > 0.0f)
+                {
+                    CreateWorld();
+                }
+                else
+                {
+
+                    float dt = Owner.Space.TimeStepSettings.TimeStepDuration;
+                    float deadZone = 0.0f;
+
+                    //Pass controls 
+                    Owner.Controls.SafeCopyToHost();
+                    float[] limits = GetLimits();
+
+                    shoulder.Limit.MinimumAngle = -MathHelper.Pi * limits[2];
+                    shoulder.Limit.MaximumAngle = MathHelper.Pi * limits[2];
+
+                    elbow.Limit.MinimumAngle = -MathHelper.Pi * limits[1];
+                    elbow.Limit.MaximumAngle = MathHelper.Pi * limits[1];
+
+                    if (wrist != null)
                     {
-                        shoulder.Motor.Settings.Servo.Goal = MathHelper.Min(shoulder.Motor.Settings.Servo.Goal - Owner.Controls.Host[0] * 0.5f * dt, shoulder.Limit.MaximumAngle);
+                        wrist.Limit.MinimumAngle = -MathHelper.Pi * limits[0];
+                        wrist.Limit.MaximumAngle = MathHelper.Pi * limits[0];
                     }
-                    else if (Owner.Controls.Host[0] > deadZone)
+
+                    //shoulder
+                    if (Owner.MOTOR_MODE == MotorMode.Servomechanism)
                     {
-                        shoulder.Motor.Settings.Servo.Goal = MathHelper.Max(shoulder.Motor.Settings.Servo.Goal - Owner.Controls.Host[0] * 0.5f * dt, shoulder.Limit.MinimumAngle);
+                        if (Owner.Controls.Host[0] < -deadZone)
+                        {
+                            shoulder.Motor.Settings.Servo.Goal = MathHelper.Min(shoulder.Motor.Settings.Servo.Goal - Owner.Controls.Host[0] * 0.5f * dt, shoulder.Limit.MaximumAngle);
+                        }
+                        else if (Owner.Controls.Host[0] > deadZone)
+                        {
+                            shoulder.Motor.Settings.Servo.Goal = MathHelper.Max(shoulder.Motor.Settings.Servo.Goal - Owner.Controls.Host[0] * 0.5f * dt, shoulder.Limit.MinimumAngle);
+                        }
                     }
-                }
-                else if (Owner.MOTOR_MODE == MotorMode.VelocityMotor)
-                {
-                    shoulder.Motor.Settings.VelocityMotor.GoalVelocity = Owner.Controls.Host[0];
-                }
-                //elbow
-                if (Owner.MOTOR_MODE == MotorMode.Servomechanism)
-                {
-                    if (Owner.Controls.Host[1] < -deadZone)
+                    else if (Owner.MOTOR_MODE == MotorMode.VelocityMotor)
                     {
-                        elbow.Motor.Settings.Servo.Goal = MathHelper.Min(elbow.Motor.Settings.Servo.Goal - Owner.Controls.Host[1] * 0.5f * dt, elbow.Limit.MaximumAngle);
+                        shoulder.Motor.Settings.VelocityMotor.GoalVelocity = Owner.Controls.Host[0];
                     }
-                    else if (Owner.Controls.Host[1] > deadZone)
+                    //elbow
+                    if (Owner.MOTOR_MODE == MotorMode.Servomechanism)
                     {
-                        elbow.Motor.Settings.Servo.Goal = MathHelper.Max(elbow.Motor.Settings.Servo.Goal - Owner.Controls.Host[1] * 0.5f * dt, elbow.Limit.MinimumAngle);
+                        if (Owner.Controls.Host[1] < -deadZone)
+                        {
+                            elbow.Motor.Settings.Servo.Goal = MathHelper.Min(elbow.Motor.Settings.Servo.Goal - Owner.Controls.Host[1] * 0.5f * dt, elbow.Limit.MaximumAngle);
+                        }
+                        else if (Owner.Controls.Host[1] > deadZone)
+                        {
+                            elbow.Motor.Settings.Servo.Goal = MathHelper.Max(elbow.Motor.Settings.Servo.Goal - Owner.Controls.Host[1] * 0.5f * dt, elbow.Limit.MinimumAngle);
+                        }
                     }
-                }
-                else if (Owner.MOTOR_MODE == MotorMode.VelocityMotor)
-                {
-                    if (Owner.ELBOW_FIXED)
-                        elbow.Motor.Settings.Servo.Goal = 0;
-                    else
-                        elbow.Motor.Settings.VelocityMotor.GoalVelocity = Owner.Controls.Host[1];
+                    else if (Owner.MOTOR_MODE == MotorMode.VelocityMotor)
+                    {
+                        if (Owner.ELBOW_FIXED)
+                            elbow.Motor.Settings.Servo.Goal = 0;
+                        else
+                            elbow.Motor.Settings.VelocityMotor.GoalVelocity = Owner.Controls.Host[1];
+                    }
+
+                    //Pushing the sphere with outside force
+                    if (Owner.SpherePush != null && Owner.SpherePush.Count >= 3)
+                    {
+                        Owner.SpherePush.SafeCopyToHost();
+
+                        sphere.LinearVelocity = sphere.LinearVelocity + new Vector3(Owner.SpherePush.Host[0], Owner.SpherePush.Host[1], Owner.SpherePush.Host[2]);
+                    }
+
+                    //Update world simulation
+                    Owner.Space.Update();
                 }
 
-                //Pushing the sphere with outside force
-                if (Owner.SpherePush != null && Owner.SpherePush.Count >= 3)
-                {
-                    Owner.SpherePush.SafeCopyToHost();
-
-                    sphere.LinearVelocity = sphere.LinearVelocity + new Vector3(Owner.SpherePush.Host[0], Owner.SpherePush.Host[1], Owner.SpherePush.Host[2]);
-                }
-                
-
-                //Update world simulation
-                Owner.Space.Update();
 
                 /*
                 //Get feedback
@@ -302,6 +363,21 @@ namespace GoodAI.Modules.Motor
                 Owner.Joints.SafeCopyToDevice();
                 Owner.PoleRotation.SafeCopyToDevice();
                 Owner.SpherePosition.SafeCopyToDevice();
+            }
+
+            private float[] GetLimits()
+            {
+                float[] limits;
+                if (Owner.Limits != null)
+                {
+                    Owner.Limits.SafeCopyToHost();
+                    limits = Owner.Limits.Host;
+                }
+                else
+                {
+                    limits = new float[] { 0.33f, 0.33f, 0.33f };
+                }
+                return limits;
             }
         }
     }
