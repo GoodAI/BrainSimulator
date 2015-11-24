@@ -183,6 +183,9 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 0.0f, layer.BiasGradient.GetDevice(layer), layer.Neurons
                 );
         }
+
+        [YAXSerializableField(DefaultValue = false), MyBrowsable, Description("Overrides layers' UpdateWeights checking if and only if set to TRUE. No effect if set to FALSE.")]
+        public bool DisableLearning { get; set; }
     }
 
     /// <author>GoodAI</author>
@@ -432,7 +435,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [YAXSerializableField(DefaultValue = 0.95f)]
         [MyBrowsable, Category("\tHyperParameters")]
         public float Ro { get; set; }
-
 
         //Kernel initialization
         private MyCudaKernel m_adadeltaUpdateKernel, m_convAdadeltaUpdateKernel;

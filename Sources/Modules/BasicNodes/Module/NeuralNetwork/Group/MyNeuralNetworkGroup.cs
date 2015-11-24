@@ -56,6 +56,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         [MyBrowsable, Category("\tBatchLearning")]
         public int BatchSize { get { return batchSize; } set { if (value >= 1) batchSize = value; } }
 
+
         //Memory Blocks
         public List<MyNode> SortedChildren;
         public MyAbstractLayer FirstTopologicalLayer;
@@ -185,11 +186,22 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 BPTTSingleStep.ToArray()
             );
 
+
+            // if learning is globally disabled, removed update weights tasks
+            MyExecutionBlock UpdateWeightsIfNotDisabled = new MyIfBlock(() => GetActiveBackpropTask() != null && GetActiveBackpropTask().DisableLearning == false,
+                newPlan.Where(task => task is IMyUpdateWeightsTask).ToArray()
+            );
+            if (GetActiveBackpropTask() != null && GetActiveBackpropTask().DisableLearning)
+            {
+                MyLog.WARNING.WriteLine("Learning is globally disabled for the network " + this.Name + " in the " + GetActiveBackpropTask().Name + " backprop task.");
+            }
+
+
             // bptt architecture
             BPTTAllSteps.Add(BPTTLoop);
             BPTTAllSteps.Add(IncrementTimeStep);
             BPTTAllSteps.Add(RunTemporalBlocksMode);
-            BPTTAllSteps.AddRange(newPlan.Where(task => task is IMyUpdateWeightsTask).ToList());
+            BPTTAllSteps.Add(UpdateWeightsIfNotDisabled);
             BPTTAllSteps.Add(DecrementTimeStep);
 
             // if current time is time for bbp, do it
@@ -213,7 +225,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             //selected = newPlan.Where(task => task is IMyOutputDeltaTask).ToList();
             //newPlan.RemoveAll(selected.Contains);
 
-            // after FF add deltaoutput and bptt if needed, then increpement one step :)
+            // after FF add deltaoutput and bptt if needed, then increment one step :)
             newPlan.Insert(0, IncrementTimeStep);
             selected = newPlan.Where(task => task is MyQLearningTask).ToList();
             if (selected.Count > 0)
@@ -231,6 +243,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 newPlan.RemoveAll(selected.Contains);
                 newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
             }
+
             newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
 
             // return new plan as MyExecutionBlock
