@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="3250859D-4526-46E1-9F53-5C710B40CD67" Name="Brain Simulator" Language="1033" Version="0.4.0" Manufacturer="GoodAI" UpgradeCode="9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="Brain Simulator" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="ProductShortcuts" />
+		</Feature>
+  
+    <Icon Id="BrainSimulator.exe" SourceFile="$(var.BrainSimulator.TargetPath)" />
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+				<Directory Id="INSTALLFOLDER" Name="Brain Simulator" />
+			</Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="Brain Simulator" />
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id='MainExecutable' Guid='*' Win64='yes'>
+        <File Id='BrainSimulatorEXE' Name='BrainSimulator.exe' DiskId='1' Source='$(var.BrainSimulator.TargetPath)' KeyPath='yes'>
+          <Shortcut Id="startmenuBrainSimulator" Directory="ProgramMenuDir" Name="Brain Simulator" WorkingDirectory='INSTALLDIR' Icon="BrainSimulator.exe" IconIndex="0" Advertise="yes" />
+          <Shortcut Id="desktopSimulator" Directory="DesktopFolder" Name="Brain Simulator" WorkingDirectory='INSTALLDIR' Icon="BrainSimulator.exe" IconIndex="0" Advertise="yes" />
+        </File>
+      </Component>
+
+      <Component Id='AgaControlsLib' Guid='*' Win64='yes'>
+        <File Id='AgaControlsDLL' Name='Aga.Controls.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\Aga.Controls.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='CudaRandLib' Guid='*' Win64='yes'>
+        <File Id='CudaRandDLL' Name='CudaRand.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaRand.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='ManagedCudaLib' Guid='*' Win64='yes'>
+        <File Id='ManagedCudaDLL' Name='ManagedCuda.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\ManagedCuda.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='OpenTKLib' Guid='*' Win64='yes'>
+        <File Id='OpenTKDLL' Name='OpenTK.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\OpenTK.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='OpenTKGLControlLib' Guid='*' Win64='yes'>
+        <File Id='OpenTKGLControlDLL' Name='OpenTK.GLControl.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\OpenTK.GLControl.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='ScintillaNETLib' Guid='*' Win64='yes'>
+        <File Id='ScintillaNETDLL' Name='ScintillaNET.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\ScintillaNET.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='GraphLib' Guid='*' Win64='yes'>
+        <File Id='GraphDLL' Name='Graph.dll' DiskId='1' Source='$(var.Graph.TargetPath)' KeyPath='yes' />
+      </Component>
+
+      <Component Id='YAXLib' Guid='*' Win64='yes'>
+        <File Id='YAXLibDLL' Name='YAXLib.dll' DiskId='1' Source='$(var.YAXLib.TargetPath)' KeyPath='yes' />
+      </Component>
+
+      <Component Id='WinFormsUILib' Guid='*' Win64='yes'>
+        <File Id='WinFormsUIDLL' Name='WeifenLuo.WinFormsUI.Docking.dll' DiskId='1' Source='$(var.WinFormsUI.TargetPath)' KeyPath='yes' />
+      </Component>
+
+		</ComponentGroup>
+    <ComponentGroup Id="ProductShortcuts" Directory="ProgramMenuDir">
+      <Component Id="ProgramMenuDir" Guid="*">
+        <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+        <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+      </Component>
+    </ComponentGroup>
+	</Fragment>
+</Wix>

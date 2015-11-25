@@ -1,0 +1,12 @@
+ProductCode	3250859D-4526-46E1-9F53-5C710B40CD67
+
+0.3
+UpgradeCode	9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A
+
+
+
+www.goodai.com
+English (United States)
+Brain Simulator
+Brain Simulator Installer
+0.3.0
