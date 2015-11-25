@@ -22,9 +22,21 @@ namespace GoodAI.Tests.BrainTestRunner
 
         public IEnumerable<BrainTest> FindTests()
         {
-            var originalLogLevel = MyLog.Level;
+            MyLogLevel originalLogLevel = MyLog.Level;
             MyLog.Level = MyLogLevel.INFO;
 
+            try
+            {
+                return InnerFindTest();
+            }
+            finally
+            {
+                MyLog.Level = originalLogLevel;
+            }
+        }
+
+        private List<BrainTest> InnerFindTest()
+        {
             var testList = new List<BrainTest>();
 
             foreach (string testAssemblyFullPath in FindTestAssemblies())
@@ -36,16 +48,14 @@ namespace GoodAI.Tests.BrainTestRunner
                     Assembly assembly = Assembly.LoadFrom(testAssemblyFullPath);
 
                     testList.AddRange(assembly.GetTypes()
-                        .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(BrainTest)))
-                        .Select(type => (BrainTest)Activator.CreateInstance(type)).ToList());
+                        .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof (BrainTest)))
+                        .Select(type => (BrainTest) Activator.CreateInstance(type)).ToList());
                 }
                 catch (Exception e)
                 {
-                   MyLog.ERROR.WriteLine("Error loading tests from assembly '{0}': {1}", testAssemblyFullPath, e.Message); 
+                    MyLog.ERROR.WriteLine("Error loading tests from assembly '{0}': {1}", testAssemblyFullPath, e.Message);
                 }
             }
-
-            MyLog.Level = originalLogLevel;
 
             return testList;
         }
