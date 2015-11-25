@@ -34,12 +34,6 @@ namespace GoodAI.Tests.BrainTestRunner
 
         public void Run()
         {
-            //var accumulatorTest = new AccumulatorCanCountToTen();
-
-            //EvaluateTest(accumulatorTest);
-            //EvaluateTest(new StopConditionAccumulatorTest());
-            //EvaluateTest(accumulatorTest);
-
             foreach (BrainTest test in m_discoverer.FindTests())
             {
                 EvaluateTest(test);
@@ -113,7 +107,7 @@ namespace GoodAI.Tests.BrainTestRunner
                 if (test.ShouldStop(brainScan))
                     return true;
             }
-            // tolerate assert failues in ShouldStop
+            // assert failues in ShouldStop mean "don't stop yet" (allow to use same asserts as in Check())
             catch (XunitException) { } 
             catch (BrassertFailedException) { }
 
