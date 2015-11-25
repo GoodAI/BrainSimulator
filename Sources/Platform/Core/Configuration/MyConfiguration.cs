@@ -75,32 +75,34 @@ namespace GoodAI.Core.Configuration
             }
         }
 
-        public static void LoadModules()
+        public static List<FileInfo> ListModules()
         {
-            MyLog.INFO.WriteLine("Loading system modules...");
-
-            AddModuleFromAssembly(new FileInfo(MyResources.GetEntryAssemblyPath() + "\\" + CORE_MODULE_NAME), true);                     
-
-            MyLog.INFO.WriteLine("Loading custom modules...");
+            var moduleList = new List<FileInfo>();
 
             foreach (string modulePath in ModulesSearchPath)
             {
-                FileInfo info = new FileInfo(modulePath);
+                var dirInfo = new FileInfo(modulePath);
+                if ((dirInfo.Attributes & FileAttributes.Directory) <= 0)
+                    continue;
 
-                if ((info.Attributes & FileAttributes.Directory) > 0)
-                {
-                    info = new FileInfo(Path.Combine(info.FullName, info.Name + ".dll"));
-                }
+                var fileInfo = new FileInfo(Path.Combine(dirInfo.FullName, dirInfo.Name + ".dll"));
+                if (!fileInfo.Exists)
+                    MyLog.WARNING.WriteLine("Module assembly not found: " + fileInfo);
 
-                if (info.Exists)
-                {
-                    AddModuleFromAssembly(info);
-                }
-                else
-                {
-                    MyLog.ERROR.WriteLine("Module assembly not found: " + info);
-                }
+                moduleList.Add(fileInfo);
             }
+
+            return moduleList;
+        }
+
+        public static void LoadModules()
+        {
+            MyLog.INFO.WriteLine("Loading system modules...");
+            AddModuleFromAssembly(
+                new FileInfo(Path.Combine(MyResources.GetEntryAssemblyPath(), CORE_MODULE_NAME)), basicNode: true);
+
+            MyLog.INFO.WriteLine("Loading custom modules...");
+            ListModules().ForEach(moduleFileInfo => AddModuleFromAssembly(moduleFileInfo));
         }
 
         private static void AddModuleFromAssembly(FileInfo file, bool basicNode = false)
