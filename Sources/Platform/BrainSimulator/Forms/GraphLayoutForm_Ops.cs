@@ -54,65 +54,55 @@ namespace GoodAI.BrainSimulator.Forms
             if (targetMenuButton == null)
                 return;
 
-            ToolStripItem newButton = new ToolStripMenuItem();
-            ToolStripItemCollection items = targetMenuButton.DropDownItems;
+            ToolStripItem newButton = new ToolStripMenuItem()
+            {
+                Text = MyProject.ShortenNodeTypeName(nodeConfig.NodeType),
+                DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
+            };
 
+            ToolStripItemCollection targetItems = targetMenuButton.DropDownItems;
+
+            InnerAddNodeButtonOrMenuItem(newButton, nodeConfig, targetItems, addSeparators: true);
+        }
+
+        private void AddNodeButton(MyNodeConfig nodeConfig)
+        {
+            var newButton = new ToolStripButton
+            {
+                ToolTipText = MyProject.ShortenNodeTypeName(nodeConfig.NodeType),
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+
+            newButton.MouseUp += newButton_MouseUp;
+
+            ToolStripItemCollection targetItems = nodesToolStrip.Items;
+
+            InnerAddNodeButtonOrMenuItem(newButton, nodeConfig, targetItems);
+        }
+
+        private void InnerAddNodeButtonOrMenuItem(ToolStripItem newButton, MyNodeConfig nodeConfig,
+            ToolStripItemCollection targetItems, bool addSeparators = false)
+        {
             newButton.Image = nodeConfig.SmallImage;
             newButton.Name = nodeConfig.NodeType.Name;
-            newButton.Text = MyProject.ShortenNodeTypeName(nodeConfig.NodeType);
             newButton.MouseDown += addNodeButton_MouseDown;
             newButton.Tag = nodeConfig.NodeType;
 
-            newButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            newButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            newButton.ImageScaling = ToolStripItemImageScaling.None;
             newButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 
-            if (items.Count > 0 && (items[items.Count - 1].Tag as Type).Namespace != nodeConfig.NodeType.Namespace)
+            // separate buttons for nodes from different namespaces
+            if (addSeparators && (targetItems.Count > 0))
             {
-                items.Add(new ToolStripSeparator());
+                var nodeType = targetItems[targetItems.Count - 1].Tag as Type;
+                if ((nodeType != null) && (nodeType.Namespace != nodeConfig.NodeType.Namespace))
+                {
+                    targetItems.Add(new ToolStripSeparator());
+                }
             }
 
-            items.Add(newButton);
+            targetItems.Add(newButton);
         }
-
-
-        // TODO(P): delete/reuse this func
-        /*
-        private void AddNodeButton(MyNodeConfig nodeInfo, bool isTransform)
-        {            
-            ToolStripItem newButton = isTransform ? new ToolStripMenuItem() : newButton = new ToolStripButton();
-            ToolStripItemCollection items;
-
-            newButton.Image = nodeInfo.SmallImage;
-            newButton.Name = nodeInfo.NodeType.Name;
-            newButton.ToolTipText =  MyProject.ShortenNodeTypeName(nodeInfo.NodeType);
-            newButton.MouseDown += addNodeButton_MouseDown;
-            newButton.Tag = nodeInfo.NodeType;
-
-            newButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            newButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            newButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-
-            if (isTransform)
-            {
-                newButton.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
-                newButton.Text = newButton.ToolTipText;
-                // items = transformMenu.DropDownItems;  // TODO(P)
-                return;
-            }
-            else
-            {
-                items = nodesToolStrip.Items;
-                newButton.MouseUp += newButton_MouseUp;          
-            }
-
-            if (items.Count > 0 && (items[items.Count - 1].Tag as Type).Namespace != nodeInfo.NodeType.Namespace)
-            {
-                items.Add(new ToolStripSeparator());
-            }
-            items.Add(newButton);
-        }
-        */
 
         void newButton_MouseUp(object sender, MouseEventArgs e)
         {
@@ -126,11 +116,15 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void RemoveNodeButton(ToolStripItem nodeButton)
         {
-            StringCollection toolBarNodes = Properties.Settings.Default.ToolBarNodes;
-            string typeName = (nodeButton.Tag as Type).Name;
-            if (toolBarNodes != null && toolBarNodes.Contains(typeName))
+            StringCollection quickToolBarNodes = Properties.Settings.Default.QuickToolBarNodes;
+            if ((quickToolBarNodes == null) || !(nodeButton.Tag is Type))
+                return;
+
+            string typeName = ((Type) nodeButton.Tag).Name;
+
+            if (quickToolBarNodes.Contains(typeName))
             {
-                toolBarNodes.Remove(typeName);
+                quickToolBarNodes.Remove(typeName);
                 nodesToolStrip.Items.Remove(nodeButton);
             }
         }

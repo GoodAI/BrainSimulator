@@ -56,18 +56,21 @@ namespace GoodAI.BrainSimulator.Forms
             ((System.ComponentModel.ISupportInitialize)(this.groupButton)).BeginInit();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // nodesToolStrip
             // 
+            this.nodesToolStrip.AllowDrop = true;
             this.nodesToolStrip.AutoSize = false;
             this.nodesToolStrip.BackColor = System.Drawing.SystemColors.ControlLight;
             this.nodesToolStrip.Dock = System.Windows.Forms.DockStyle.Left;
             this.nodesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.nodesToolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.nodesToolStrip.Location = new System.Drawing.Point(0, 0);
-            this.nodesToolStrip.Name = "toolStrip1";
+            this.nodesToolStrip.Name = "nodesToolStrip";
             this.nodesToolStrip.Size = new System.Drawing.Size(41, 455);
             this.nodesToolStrip.TabIndex = 0;
             this.nodesToolStrip.Text = "toolStrip1";
+            this.nodesToolStrip.DragDrop += new System.Windows.Forms.DragEventHandler(this.nodesToolStrip_DragDrop);
+            this.nodesToolStrip.DragEnter += new System.Windows.Forms.DragEventHandler(this.nodesToolStrip_DragEnter);
             // 
             // worldButtonPanel
             // 

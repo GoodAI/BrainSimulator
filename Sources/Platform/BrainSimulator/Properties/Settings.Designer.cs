@@ -149,5 +149,16 @@ namespace GoodAI.BrainSimulator.Properties {
                 this["ShouldUpgradeSettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection QuickToolBarNodes {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["QuickToolBarNodes"]));
+            }
+            set {
+                this["QuickToolBarNodes"] = value;
+            }
+        }
     }
 }

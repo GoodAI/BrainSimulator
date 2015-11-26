@@ -27,6 +27,8 @@ namespace GoodAI.BrainSimulator.NodeView
             }
         }
 
+        public MyNodeConfig Config { get; private set; }
+
         protected NodeImageItem m_iconItem;
         protected NodeLabelItem m_descItem;
 
@@ -47,6 +49,8 @@ namespace GoodAI.BrainSimulator.NodeView
             : base("")
         {
             Owner = owner;
+
+            Config = nodeConfig;
 
             m_icon = nodeConfig.BigImage;
 
