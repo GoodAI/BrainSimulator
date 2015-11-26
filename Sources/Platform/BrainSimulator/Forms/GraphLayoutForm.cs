@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.Core.Memory;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -151,12 +152,20 @@ namespace GoodAI.BrainSimulator.Forms
             int fromIndex = (int)e.Connection.From.Item.Tag;
             int toIndex = (int)e.Connection.To.Item.Tag;
 
-            MyConnection newConnection = new MyConnection(fromNode, toNode, fromIndex, toIndex);
-            newConnection.Connect();
+            if (toNode.AcceptsConnection(fromNode, fromIndex, toIndex))
+            {
+                MyConnection newConnection = new MyConnection(fromNode, toNode, fromIndex, toIndex);
+                newConnection.Connect();
 
-            e.Connection.Tag = newConnection;
+                e.Connection.Tag = newConnection;
 
-            m_mainForm.RefreshConnections(this);
+                m_mainForm.RefreshConnections(this);
+            }
+            else
+            {
+                // Make the graph library drop the connection.
+                e.Cancel = true;
+            }
         }
 
         void OnConnectionRemoved(object sender, NodeConnectionEventArgs e)
@@ -409,6 +418,13 @@ namespace GoodAI.BrainSimulator.Forms
 
             // If order == 0, the node is likely an output.
             connectionView.Backward = to.TopologicalOrder != 0 && @from.TopologicalOrder >= to.TopologicalOrder;
+
+            // If order == 0, the node is likely an output.
+            MyAbstractMemoryBlock output = from.GetAbstractOutput((int) connection.From.Item.Tag);
+            if (output != null)
+                connectionView.Dynamic = output.IsDynamic;
+            else
+                connectionView.Dynamic = false;
         }
     }      
 }

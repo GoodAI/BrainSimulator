@@ -17,5 +17,27 @@ namespace GoodAI.Platform.Core.Utils
                 i++;
             }
         }
+
+        public class Indexed<T>
+        {
+            public T Item { get; set; }
+            public int Index { get; set; }
+
+            public Indexed(T item, int index)
+            {
+                Item = item;
+                Index = index;
+            }
+        }
+
+        public static IEnumerable<Indexed<T>> WithIndex<T>(this IEnumerable<T> input)
+        {
+            var i = 0;
+            foreach (T item in input)
+            {
+                yield return new Indexed<T>(item, i);
+                i++;
+            }
+        }
     }
 }

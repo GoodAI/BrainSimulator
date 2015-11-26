@@ -2,7 +2,9 @@
 using GoodAI.Core.Signals;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using YAXLib;
 
@@ -58,6 +60,7 @@ namespace GoodAI.Core.Nodes
                 mb.Persistable = pInfo.GetCustomAttribute<MyPersistableAttribute>(true) != null;
                 mb.Unmanaged = pInfo.GetCustomAttribute<MyUnmanagedAttribute>(true) != null;
                 mb.IsOutput = pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null;
+                mb.IsDynamic = pInfo.GetCustomAttribute<DynamicBlockAttribute>(true) != null;
 
                 pInfo.SetValue(this, mb);
             }
@@ -291,5 +294,20 @@ namespace GoodAI.Core.Nodes
                
         public virtual void TransferToDevice() { }
         public virtual void TransferToHost() { }
+
+        public virtual bool AcceptsConnection(MyNode fromNode, int fromIndex, int toIndex)
+        {
+            MyAbstractMemoryBlock outputBlock = fromNode.GetAbstractOutput(fromIndex);
+
+            if (outputBlock != null && outputBlock.IsDynamic)
+            {
+                PropertyInfo inputBlock = GetInfo().InputBlocks[toIndex];
+                var dynamicAttribute = inputBlock.GetCustomAttribute<DynamicBlockAttribute>();
+                if (dynamicAttribute == null)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

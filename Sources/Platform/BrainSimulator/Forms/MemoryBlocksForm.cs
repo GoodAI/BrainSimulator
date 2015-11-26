@@ -13,7 +13,7 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class MemoryBlocksForm : DockContent
     {
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
         private MyNode m_target;
         private bool m_escapeOrEnterPressed;
         private bool m_errorInfoShown = true;
@@ -121,6 +121,9 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 typeStr = block.GetType().GetGenericArguments()[0].Name;
             }
+
+            if (block.IsDynamic)
+                name += " (dynamic)";
 
             ListViewItem item = new ListViewItem(new string[] { name, PrintBlockSize(block), typeStr });
             item.Tag = block;
