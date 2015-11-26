@@ -884,5 +884,9 @@ namespace GoodAI.Core.Observers
             if (node != null)
                 Target = (MyMemoryBlock<float>)MyMemoryManager.Instance.GetMemoryBlockByName(node, split[1]);
         }
+
+        protected override void OnCountChanged()
+        {
+        }
     }
 }
