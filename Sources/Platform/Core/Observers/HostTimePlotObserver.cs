@@ -12,7 +12,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Core.Observers
 {
-    public class HostTimePlotObserver : MyObserver<MyMemoryBlock<float>>
+    public class HostTimePlotObserver : MyAbstractMemoryBlockObserver
     {
         private const int MaxCurveCount = 50;
 
@@ -550,7 +550,8 @@ namespace GoodAI.Core.Observers
 
                 for (int c = 0; c < Count; c++)
                 {
-                    double value = Target.Host[c * Stride + Offset];
+                    double value = 0.0;
+                    Target.GetValueAt(ref value, c * Stride + Offset);
                     if (m_isDirty)
                     {
                         if (double.IsNaN(value))
@@ -641,7 +642,9 @@ namespace GoodAI.Core.Observers
 
         private double GetCurrentValue(int i)
         {
-            double currentValue = Target.Host[i*Stride + Offset];
+            //double currentValue = Target.Host[i*Stride + Offset];
+            double currentValue = 0.0;
+            Target.GetValueAt(ref currentValue, i * Stride + Offset);
             return currentValue;
         }
 
