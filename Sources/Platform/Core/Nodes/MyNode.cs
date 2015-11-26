@@ -2,7 +2,9 @@
 using GoodAI.Core.Signals;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using YAXLib;
 
@@ -293,11 +295,11 @@ namespace GoodAI.Core.Nodes
         public virtual void TransferToDevice() { }
         public virtual void TransferToHost() { }
 
-        public bool AcceptsConnection(MyNode fromNode, int fromIndex, int toIndex)
+        public virtual bool AcceptsConnection(MyNode fromNode, int fromIndex, int toIndex)
         {
             MyAbstractMemoryBlock outputBlock = fromNode.GetAbstractOutput(fromIndex);
 
-            if (outputBlock.IsDynamic)
+            if (outputBlock != null && outputBlock.IsDynamic)
             {
                 PropertyInfo inputBlock = GetInfo().InputBlocks[toIndex];
                 var dynamicAttribute = inputBlock.GetCustomAttribute<DynamicBlockAttribute>();

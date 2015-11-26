@@ -3,6 +3,8 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using GoodAI.Platform.Core.Utils;
 using YAXLib;
 
 namespace GoodAI.Core.Nodes
@@ -349,6 +351,32 @@ namespace GoodAI.Core.Nodes
                     Iterate(childNode as MyNodeGroup, recursive, includeIONodes, action);
                 }
             }
-        }     
+        }
+
+        public override bool AcceptsConnection(MyNode fromNode, int fromIndex, int toIndex)
+        {
+            MyParentInput groupInput = GroupInputNodes[toIndex];
+
+            // Find all nodes connected to the input and check that they all accept the connection.
+            // If the input is not connected to anything, it'll accept all connections.
+            return Children.Union(GroupOutputNodes).All(child => child.InputConnections
+                .Where(connection => connection != null && connection.From == groupInput)
+                .WithIndex()
+                .All(connection => child.AcceptsConnection(fromNode, fromIndex, connection.Index)));
+        }
+
+        public IEnumerable<MyConnection> GetConnections(MyOutput output)
+        {
+            if (Parent == null)
+                return null;
+
+            // Among the siblings of this node group, find connections that originate in the given output.
+            int fromIndex = Array.IndexOf(GroupOutputNodes, output);
+            if (fromIndex < 0)
+                return null;
+
+            return Parent.Children.SelectMany(sibling => sibling.InputConnections
+                .Where(connection => connection != null && connection.From == this && connection.FromIndex == fromIndex));
+        }
     }
 }

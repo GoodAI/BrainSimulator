@@ -542,7 +542,22 @@ namespace GoodAI.BrainSimulator.Forms
         public void RefreshConnections(GraphLayoutForm form)
         {
             SimulationHandler.RefreshTopologicalOrder();
-            form.RefreshGraph();
+
+            // Refresh the forms of the form's target parents as well.
+            // The connection types might have changed for group outputs.
+            var nodesToRefresh = new List<MyNode>();
+            var target = form.Target;
+            while (target != null)
+            {
+                nodesToRefresh.Add(target);
+                target = target.Parent;
+            }
+
+            foreach (var graph in GraphViews)
+            {
+                if (nodesToRefresh.Contains(graph.Key))
+                    graph.Value.RefreshGraph();
+            }
         }
 
         internal void CloseGraphLayout(MyNodeGroup target)

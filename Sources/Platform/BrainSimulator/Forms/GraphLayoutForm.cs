@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.Core.Memory;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -419,7 +420,11 @@ namespace GoodAI.BrainSimulator.Forms
             connectionView.Backward = to.TopologicalOrder != 0 && @from.TopologicalOrder >= to.TopologicalOrder;
 
             // If order == 0, the node is likely an output.
-            connectionView.Dynamic = from.GetAbstractOutput((int) connection.From.Item.Tag).IsDynamic;
+            MyAbstractMemoryBlock output = from.GetAbstractOutput((int) connection.From.Item.Tag);
+            if (output != null)
+                connectionView.Dynamic = output.IsDynamic;
+            else
+                connectionView.Dynamic = false;
         }
     }      
 }
