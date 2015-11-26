@@ -268,6 +268,12 @@
   <data name="matrix_host" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\res\matrix1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="action_Cancel_16xMD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\action_Cancel_16xMD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pushpin_16xMD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\pushpin_16xMD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="performance" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\res\graph_highPerformanceComputingChart_5170_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -276,5 +282,29 @@
   </data>
   <data name="save_mb_12" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\res\save_mb_12.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_add_16xMD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\action_add_16xMD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Symbols_Blocked_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\Symbols_Blocked_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_Down_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\arrow_Down_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_Up_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\arrow_Up_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pencil_003_16xMD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\pencil_003_16xMD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="view_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\view_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="folder_Closed_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\folder_Closed_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="list_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\list_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

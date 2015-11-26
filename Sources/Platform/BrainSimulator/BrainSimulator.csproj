@@ -106,6 +106,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -117,6 +118,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dashboard\DashboardViewModel.cs" />
     <Compile Include="Forms\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +169,18 @@
     </Compile>
     <Compile Include="Forms\ObserverForm.Designer.cs">
       <DependentUpon>ObserverForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DashboardPropertyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DashboardPropertyForm.Designer.cs">
+      <DependentUpon>DashboardPropertyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DashboardGroupNameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DashboardGroupNameDialog.Designer.cs">
+      <DependentUpon>DashboardGroupNameDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TaskPropertyForm.cs">
       <SubType>Form</SubType>
@@ -244,6 +258,9 @@
     <EmbeddedResource Include="Forms\ConsoleForm.resx">
       <DependentUpon>ConsoleForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DashboardGroupNameDialog.resx">
+      <DependentUpon>DashboardGroupNameDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -261,6 +278,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ObserverForm.resx">
       <DependentUpon>ObserverForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DashboardPropertyForm.resx">
+      <DependentUpon>DashboardPropertyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TaskPropertyForm.resx">
       <DependentUpon>TaskPropertyForm.cs</DependentUpon>
@@ -318,6 +338,8 @@
     <Content Include="res\abs_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\action_Cancel_16xMD.png" />
+    <None Include="res\action_add_16xMD.png" />
     <Content Include="res\add_observer.png" />
     <None Include="res\add_plot1.png" />
     <Content Include="res\add_text_observer.png" />
@@ -327,6 +349,8 @@
     <Content Include="res\anaglyph_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\arrow_Down_16xLG.png" />
+    <None Include="res\arrow_Up_16xLG.png" />
     <Content Include="res\asm.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -416,6 +440,7 @@
     <Content Include="res\filter_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\folder_Closed_16xLG.png" />
     <Content Include="res\fork.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -488,6 +513,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="res\matrix1.png" />
+    <None Include="res\list_16xLG.png" />
     <Content Include="res\matrixNode.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -508,6 +534,7 @@
     </Content>
     <Content Include="res\open_mb.png" />
     <Content Include="res\open_mb_12.png" />
+    <Content Include="res\pencil_003_16xMD.png" />
     <Content Include="res\placeCells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -535,6 +562,7 @@
     <Content Include="res\ProcImPatchBasic_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\pushpin_16xMD.png" />
     <Content Include="res\qagent.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -633,6 +661,7 @@
     <Content Include="res\svd_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\Symbols_Blocked_16xLG.png" />
     <Content Include="res\tasks_disabled.png" />
     <Content Include="res\text_16xMD.ico" />
     <Content Include="res\threshold.png">
@@ -656,6 +685,7 @@
     <Content Include="res\v1_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\view_16xLG.png" />
     <Content Include="res\VWM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

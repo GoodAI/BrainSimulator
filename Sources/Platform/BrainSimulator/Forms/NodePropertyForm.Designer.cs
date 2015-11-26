@@ -40,6 +40,8 @@
             this.clearDataButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.snapshotButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.dashboardButton = new System.Windows.Forms.ToolStripButton();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -56,6 +58,8 @@
             this.propertyGrid.TabIndex = 8;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.propertyGrid.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGrid_SelectedGridItemChanged);
+            this.propertyGrid.Enter += new System.EventHandler(this.propertyGrid_Enter);
             // 
             // nodeNameTextBox
             // 
@@ -101,7 +105,9 @@
             this.saveNodeDataButton,
             this.clearDataButton,
             this.toolStripSeparator2,
-            this.snapshotButton});
+            this.snapshotButton,
+            this.toolStripSeparator3,
+            this.dashboardButton});
             this.toolStrip1.Location = new System.Drawing.Point(3, 30);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(236, 23);
@@ -191,6 +197,24 @@
             this.snapshotButton.Text = "Autosave Snapshot";
             this.snapshotButton.Click += new System.EventHandler(this.snapshotButton_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 23);
+            // 
+            // dashboardButton
+            // 
+            this.dashboardButton.CheckOnClick = true;
+            this.dashboardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.dashboardButton.Enabled = false;
+            this.dashboardButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.pushpin_16xMD;
+            this.dashboardButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.dashboardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.dashboardButton.Name = "dashboardButton";
+            this.dashboardButton.Size = new System.Drawing.Size(23, 20);
+            this.dashboardButton.Text = "Show in Dashboard";
+            this.dashboardButton.CheckedChanged += new System.EventHandler(this.dashboardButton_CheckedChanged);
+            // 
             // folderBrowserDialog
             // 
             this.folderBrowserDialog.ShowNewFolderButton = false;
@@ -234,6 +258,8 @@
         private System.Windows.Forms.ToolStripButton clearDataButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton snapshotButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton dashboardButton;
 
     }
 }

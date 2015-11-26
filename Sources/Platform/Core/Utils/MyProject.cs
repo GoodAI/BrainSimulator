@@ -207,7 +207,17 @@ namespace GoodAI.Core.Utils
 
             MyMemoryManager.Instance.ApplyMemBlockAttributes(MemoryBlockAttributes);
         }
+
+        #endregion
        
+        #region Dashboard
+
+        [YAXSerializableField]
+        public Dashboard.Dashboard Dashboard { get; set; }
+
+        [YAXSerializableField]
+        public Dashboard.GroupDashboard GroupedDashboard { get; set; }
+
         #endregion
 
         #region Serialization & Versioning
