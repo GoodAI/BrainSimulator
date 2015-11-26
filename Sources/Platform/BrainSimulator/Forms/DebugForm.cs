@@ -8,15 +8,13 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
     public partial class DebugForm : DockContent
     {
-        internal static readonly double ProfilingThreshold = 0.05;
-        internal static readonly double MinimalSaturation = 0.15;
-
         private readonly MainForm m_mainForm;        
         private MyExecutionPlan[] m_executionPlan;
 
@@ -113,8 +111,6 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         TreeNodeAdv m_selectedNodeView = null;
-        private static readonly Color ProfilingColorAboveThreshold = Color.FromArgb(255, 255, 0, 0);
-        private static readonly Color ProfilingColorBelowThreshold = Color.FromArgb(255, 0, 255, 0);
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
@@ -297,7 +293,7 @@ namespace GoodAI.BrainSimulator.Forms
                 return;
 
             // Get the relevant children of the current node.
-            var children = selectedTreeNode.Children
+            List<MyDebugNode> children = selectedTreeNode.Children
                 .Select(child => child.Tag as MyDebugNode)
                 .Where(childDebugNode => childDebugNode != null && childDebugNode.ProfilerTime != null)
                 .ToList();
@@ -310,27 +306,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 double factor = debugNodeChild.ProfilerTime.Value.TotalMilliseconds/totalTime;
 
-                Color baseColor;
-                if (factor > ProfilingThreshold)
-                {
-                    baseColor = ProfilingColorAboveThreshold;
-                }
-                else
-                {
-                    baseColor = ProfilingColorBelowThreshold;
-                    factor = ProfilingThreshold;
-                }
-
-                factor = ScaleSaturation(factor, MinimalSaturation);
-
-                var saturation = (int) (255 * factor);
-                debugNodeChild.BackgroundColor = Color.FromArgb(saturation, baseColor.R, baseColor.G, baseColor.B);
+                debugNodeChild.BackgroundColor = Profiling.ItemColor(factor);
             }
-        }
-
-        private double ScaleSaturation(double factor, double minimalSaturation)
-        {
-            return minimalSaturation + factor - (factor*minimalSaturation);
         }
 
         private TreeNodeAdv GetSelectedTreeNode()

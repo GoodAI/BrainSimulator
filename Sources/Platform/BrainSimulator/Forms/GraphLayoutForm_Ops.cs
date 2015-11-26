@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Task;
 
@@ -214,8 +215,7 @@ namespace GoodAI.BrainSimulator.Forms
                     // Calculate and assign the color to the node.
                     double factor = profiling.Value.TotalMilliseconds/sum;
 
-                    int saturation = 255 - (int) (255*factor);
-                    nodeView.BackgroundColor = Color.FromArgb(255, 255, saturation, saturation);
+                    nodeView.BackgroundColor = Profiling.ItemColor(factor); 
                 }
             }
             else if (m_wasProfiling)
