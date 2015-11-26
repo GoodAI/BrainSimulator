@@ -105,18 +105,14 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
             SimulationHandler_StateChanged(this, 
                 new MySimulationHandler.StateEventArgs(m_mainForm.SimulationHandler.State, m_mainForm.SimulationHandler.State));
+            
+            m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
         }
 
         void Desktop_PanZoomPerformed(object sender, GraphControl.PanZoomEventArgs e)
         {
             StoreLayoutProperties();
         }        
-
-        void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
-        {
-            toolStrip1.Enabled = e.NewState == MySimulationHandler.SimulationState.STOPPED;
-            updateModelButton.Enabled = toolStrip1.Enabled;
-        }
 
         private void addNodeButton_MouseDown(object sender, MouseEventArgs e)
         {
@@ -281,6 +277,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void GraphLayoutForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             m_mainForm.SimulationHandler.StateChanged -= SimulationHandler_StateChanged;
+            m_mainForm.SimulationHandler.ProgressChanged -= SimulationHandler_ProgressChanged;
         }
 
         private void GraphLayoutForm_Enter(object sender, EventArgs e)

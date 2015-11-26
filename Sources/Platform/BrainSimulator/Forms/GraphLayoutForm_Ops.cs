@@ -7,13 +7,20 @@ using Graph;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.Utils;
+using GoodAI.Core.Execution;
+using GoodAI.Core.Task;
 
 namespace GoodAI.BrainSimulator.Forms
 {
     public partial class GraphLayoutForm
     {
+        private bool m_wasProfiling;
+
         private void AddNodeButton(MyNodeConfig nodeInfo, bool isTransform)
         {            
             ToolStripItem newButton = isTransform ? new ToolStripMenuItem() : newButton = new ToolStripButton();
@@ -126,6 +133,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 RestoreConnections(node, nodeViewTable);
             }         
+
+            RefreshProfiling();
         }
 
         private void RestoreConnections(MyNode node, Dictionary<MyNode, MyNodeView> nodeViewTable) 
@@ -163,6 +172,65 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 Desktop.FocusElement = nodeView;
             }
+        }
+
+        void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
+        {
+            toolStrip1.Enabled = e.NewState == MySimulationHandler.SimulationState.STOPPED;
+            updateModelButton.Enabled = toolStrip1.Enabled;
+
+            if (e.NewState == MySimulationHandler.SimulationState.STOPPED)
+                ResetNodeColours();
+        }
+
+        private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            RefreshProfiling();
+        }
+
+        private void RefreshProfiling()
+        {
+            if (MyExecutionBlock.IsProfiling)
+            {
+                m_wasProfiling = true;
+
+                IDictionary<IMyExecutable, TimeSpan> profilingInfo = Target.ExecutionBlock.ProfilingInfo;
+
+                // Maps IMyExecutable to an object that holds both node and its view.
+                Dictionary<IMyExecutable, MyNodeView> nodes = Desktop.Nodes.Cast<MyNodeView>()
+                    .Select(view => new {View = view, Node = view.Node as MyWorkingNode})
+                    .Where(nodeInfo => nodeInfo.Node != null)
+                    .ToDictionary(nodeInfo => nodeInfo.Node.ExecutionBlock as IMyExecutable, nodeInfo => nodeInfo.View);
+
+                // The total duration of the displayed nodes.
+                double sum = profilingInfo.Values.Sum(value => value.TotalMilliseconds);
+
+                foreach (KeyValuePair<IMyExecutable, TimeSpan> profiling in profilingInfo)
+                {
+                    // Find the node that corresponds to the executable.
+                    MyNodeView nodeView;
+                    if (!nodes.TryGetValue(profiling.Key, out nodeView))
+                        continue;
+
+                    // Calculate and assign the color to the node.
+                    double factor = profiling.Value.TotalMilliseconds/sum;
+
+                    nodeView.BackgroundColor = Profiling.ItemColor(factor); 
+                }
+            }
+            else if (m_wasProfiling)
+            {
+                m_wasProfiling = false;
+                ResetNodeColours();
+            }
+        }
+
+        private void ResetNodeColours()
+        {
+            foreach (var node in Desktop.Nodes.Cast<MyNodeView>())
+                node.SetDefaultBackground();
+
+            Desktop.Invalidate();
         }
     }
 }
