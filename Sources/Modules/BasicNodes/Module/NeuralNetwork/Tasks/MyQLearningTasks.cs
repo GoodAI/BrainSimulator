@@ -88,6 +88,16 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
         }
     }
 
+    /// <summary>Batched Q-Learning. Minibatches must be created from (S_t, S_{t+1}, A_t, R_{t+1}) tuples. 
+    /// <ul>
+    /// <li>S_t is state of the world in current state</li>
+    /// <li>S_{t+1} is the next state</li>
+    /// <li>A_t is the action agent did in S_t</li>
+    /// <li>R_{t+1} is the reward obtained in next state</li>
+    /// </ul> <br />
+    /// Input of the network is then S_now, S_t minibatch and S_{t+1} minibatch stacked together. S_now is current world state.<br />
+    /// BatchSize of NN group has to be set to 2 * X + 1 where X is BatchSize set at ReplayBuffer node.
+    /// </summary>
     [Description("Batched QLearning"), MyTaskInfo(OneShot = false)]
     public class MyQLearningBatchTask : MyTask<MyQLearningLayer>
     {
