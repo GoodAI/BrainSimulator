@@ -7,17 +7,29 @@
 		<MediaTemplate />
 
 		<Feature Id="ProductFeature" Title="Brain Simulator" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="CoreBinaries" />
+			<ComponentGroupRef Id="CudaBinaries" />
 			<ComponentGroupRef Id="ProductShortcuts" />
 		</Feature>
   
     <Icon Id="BrainSimulator.exe" SourceFile="$(var.BrainSimulator.TargetPath)" />
+
+    <WixVariable Id="CudaBinariesSourceDirectory" Value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\"/>
 	</Product>
 
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFiles64Folder">
-				<Directory Id="INSTALLFOLDER" Name="Brain Simulator" />
+        <Directory Id="GoodAI" Name="GoodAI">
+          <Directory Id="INSTALLFOLDER" Name="Brain Simulator">
+            <Directory Id="ModulesDirectory" Name="modules">
+              <Directory Id="BasicNodesDirectory" Name="GoodAI.BasicNodes" />
+              <Directory Id="MNISTDirectory" Name="GoodAI.MNIST" />
+              <Directory Id="PythonModuleDirectory" Name="GoodAI.PythonModule" />
+              <Directory Id="SoundWorldDirectory" Name="GoodAI.SoundWorld" />
+            </Directory>
+          </Directory>
+        </Directory>
 			</Directory>
 
       <Directory Id="ProgramMenuFolder" Name="Programs">
@@ -29,7 +41,7 @@
 	</Fragment>
 
 	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+		<ComponentGroup Id="CoreBinaries" Directory="INSTALLFOLDER">
       <Component Id='MainExecutable' Guid='*' Win64='yes'>
         <File Id='BrainSimulatorEXE' Name='BrainSimulator.exe' DiskId='1' Source='$(var.BrainSimulator.TargetPath)' KeyPath='yes'>
           <Shortcut Id="startmenuBrainSimulator" Directory="ProgramMenuDir" Name="Brain Simulator" WorkingDirectory='INSTALLDIR' Icon="BrainSimulator.exe" IconIndex="0" Advertise="yes" />
@@ -41,8 +53,8 @@
         <File Id='AgaControlsDLL' Name='Aga.Controls.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\Aga.Controls.dll' KeyPath='yes' />
       </Component>
 
-      <Component Id='CudaRandLib' Guid='*' Win64='yes'>
-        <File Id='CudaRandDLL' Name='CudaRand.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaRand.dll' KeyPath='yes' />
+      <Component Id='ManagedCudaRandLib' Guid='*' Win64='yes'>
+        <File Id='ManagedCudaRandDLL' Name='CudaRand.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaRand.dll' KeyPath='yes' />
       </Component>
 
       <Component Id='ManagedCudaLib' Guid='*' Win64='yes'>
@@ -73,6 +85,23 @@
         <File Id='WinFormsUIDLL' Name='WeifenLuo.WinFormsUI.Docking.dll' DiskId='1' Source='$(var.WinFormsUI.TargetPath)' KeyPath='yes' />
       </Component>
 
+      <Component Id='BasicNodesLib' Guid='*' Win64='yes'>
+        <File Id='BasicNodesDLL' Name='GoodAI.BasicNodes.dll' DiskId='1' Source='$(var.BasicNodes.TargetPath)' KeyPath='yes' />
+      </Component>
+		</ComponentGroup>
+    <ComponentGroup Id="CudaBinaries" Directory="INSTALLFOLDER">
+      <Component Id='CudaRuntimeLib' Guid='*' Win64='yes'>
+        <File Id='cudartDLL' Name='cudart64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cudart64_70.dll' KeyPath='yes' />
+      </Component>
+      <Component Id='CudaBlasLib' Guid='*' Win64='yes'>
+        <File Id='cublasDLL' Name='cublas64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cublas64_70.dll' KeyPath='yes' />
+      </Component>
+      <Component Id='CudaFFTLib' Guid='*' Win64='yes'>
+        <File Id='cufftDLL' Name='cufft64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cufft64_70.dll' KeyPath='yes' />
+      </Component>
+      <Component Id='CudaRandLib' Guid='*' Win64='yes'>
+        <File Id='curandDLL' Name='curand64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\curand64_70.dll' KeyPath='yes' />
+      </Component>
 		</ComponentGroup>
     <ComponentGroup Id="ProductShortcuts" Directory="ProgramMenuDir">
       <Component Id="ProgramMenuDir" Guid="*">
