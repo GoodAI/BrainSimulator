@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
 using YAXLib;
 
 namespace GoodAI.Core.Observers
@@ -116,6 +117,7 @@ namespace GoodAI.Core.Observers
 
             try
             {
+                PrepareExecution();
                 Execute();
             }
             finally
@@ -131,6 +133,8 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
+
+        protected virtual void PrepareExecution() { }
 
         #endregion
 
