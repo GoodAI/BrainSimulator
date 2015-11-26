@@ -50,9 +50,12 @@ namespace GoodAI.BrainSimulator.Nodes
         {
             get
             {
-                return (m_config != null)
-                    ? m_config.SmallImage
-                    : Properties.Resources.function_category; 
+                if (m_config == null)
+                {
+                    return (Name == "Worlds") ? Resources.world : Resources.keypad;
+                }
+
+                return m_config.SmallImage;
             }
         }
     }

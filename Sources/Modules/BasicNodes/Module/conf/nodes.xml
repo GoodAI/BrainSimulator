@@ -25,11 +25,11 @@
     </Node>
 
     <Node type="GoodAI.Core.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png">
-      <Label>Dataflow</Label>
+      <Label>Control &amp; Dataflow</Label>
     </Node>
 
     <Node type="GoodAI.Modules.Common.MultiplexerNode" CanBeAdded="true">
-      <Label>Dataflow</Label>
+      <Label>Control &amp; Dataflow</Label>
     </Node>
     
     <Node type="GoodAI.Modules.Common.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png">
@@ -55,10 +55,10 @@
       <Label>Input</Label>
     </Node>
     <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" BigIcon="loopgroup_big.png" SmallIcon="loopgroup.png">
-      <Label>Dataflow</Label>
+      <Label>Control &amp; Dataflow</Label>
     </Node>
     <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png">
-      <Label>Dataflow</Label>
+      <Label>Control &amp; Dataflow</Label>
     </Node>
 
     <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png">
@@ -292,14 +292,14 @@
     
   </KnownWorlds>
   <Categories>
-    <Category Name="Dataflow" SmallIcon="loopgroup.png"></Category>
+    <Category Name="Control &amp; Dataflow" SmallIcon="loopgroup.png"></Category>
     <Category Name="Input &amp; Output" SmallIcon="random.png"></Category>
     <Category Name="Math" SmallIcon="distance.png"></Category>
     <Category Name="Neural Networks" SmallIcon="network.png"></Category>
     <Category Name="Reinforcement Learning" SmallIcon="reward.png"></Category>
     <Category Name="Scripting" SmallIcon="csharp.png"></Category>
     <Category Name="Symbolic ML" SmallIcon="book.png"></Category>
-    <Category Name="Transformations" SmallIcon="transform.png"></Category>
+    <!--<Category Name="Transformations" SmallIcon="function.png"></Category>-->
     <Category Name="Vision" SmallIcon="observer.png"></Category>
   </Categories>
 </Configuration>

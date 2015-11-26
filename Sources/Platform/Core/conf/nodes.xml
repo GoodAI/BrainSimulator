@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration RootNamespace="GoodAI.Core">
   <KnownNodes>    
-    <Node type="GoodAI.Core.Nodes.MyNodeGroup" CanBeAdded="true" BigIcon="group_big.png" SmallIcon="group.png"/>
-    <Node type="GoodAI.Core.Nodes.MyConditionalGroup" CanBeAdded="true" BigIcon="group_signal_big.png" SmallIcon="group_signal.png"/>
-    <Node type="GoodAI.Core.Nodes.MyUserInput" CanBeAdded="true" BigIcon="sliders_big.png" SmallIcon="sliders.png"/>
+    <Node type="GoodAI.Core.Nodes.MyNodeGroup" CanBeAdded="true" BigIcon="group_big.png" SmallIcon="group.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
+    <Node type="GoodAI.Core.Nodes.MyConditionalGroup" CanBeAdded="true" BigIcon="group_signal_big.png" SmallIcon="group_signal.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
+    <Node type="GoodAI.Core.Nodes.MyUserInput" CanBeAdded="true" BigIcon="sliders_big.png" SmallIcon="sliders.png">
+      <Label>Input &amp; Output</Label>
+      <Label>Input</Label>
+    </Node>
             
-    <Node type="GoodAI.Modules.Transforms.MyAbsoluteValue" CanBeAdded="true" BigIcon="abs_big.png" SmallIcon="abs.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyReduction" CanBeAdded="true" BigIcon="reduce_big.png" SmallIcon="reduce.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyGoniometricFunction" CanBeAdded="true" BigIcon="sine_big.png" SmallIcon="sine.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyPolynomialFunction" CanBeAdded="true" BigIcon="linear_big.png" SmallIcon="linear.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyLowHighFilter" CanBeAdded="true" BigIcon="ceil_floor_big.png" SmallIcon="ceil_floor.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyThreshold" CanBeAdded="true" BigIcon="threshold_big.png" SmallIcon="threshold.png"/>        
+    <Node type="GoodAI.Modules.Transforms.MyAbsoluteValue" CanBeAdded="true" BigIcon="abs_big.png" SmallIcon="abs.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyReduction" CanBeAdded="true" BigIcon="reduce_big.png" SmallIcon="reduce.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyGoniometricFunction" CanBeAdded="true" BigIcon="sine_big.png" SmallIcon="sine.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyPolynomialFunction" CanBeAdded="true" BigIcon="linear_big.png" SmallIcon="linear.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyLowHighFilter" CanBeAdded="true" BigIcon="ceil_floor_big.png" SmallIcon="ceil_floor.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyThreshold" CanBeAdded="true" BigIcon="threshold_big.png" SmallIcon="threshold.png">
+      <Label>Transformations</Label>
+    </Node>
     
     <Node type="GoodAI.Core.Nodes.MyJoin" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png">
+      <Label>Control &amp; Dataflow</Label>
       <Label>Math</Label>
     </Node>
     <Node type="GoodAI.Core.Nodes.MyFork" CanBeAdded="true" BigIcon="fork_big.png" SmallIcon="fork.png">
-      <Label>Dataflow</Label>
+      <Label>Control &amp; Dataflow</Label>
     </Node>
-    <Node type="GoodAI.Core.Nodes.MyGateInput" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png"/>
-    <Node type="GoodAI.Core.Nodes.MyDataGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png"/>
+    <Node type="GoodAI.Core.Nodes.MyGateInput" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
+    <Node type="GoodAI.Core.Nodes.MyDataGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
 
     <Node type="GoodAI.Core.Nodes.MyParentInput" CanBeAdded="false" BigIcon="input_big.png" SmallIcon="input.png"/>
     <Node type="GoodAI.Core.Nodes.MyOutput" CanBeAdded="false" BigIcon="output_big.png" SmallIcon="output.png"/>          
@@ -27,4 +51,7 @@
   <KnownWorlds>
     <World type="GoodAI.Modules.Testing.MyTestingWorld"/>
   </KnownWorlds>
+  <Categories>
+    <Category Name="Transformations" SmallIcon="function.png"></Category>
+  </Categories>
 </Configuration>
