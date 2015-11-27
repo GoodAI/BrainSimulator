@@ -4,14 +4,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 12.0.31101.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNIST", "Modules\MNIST\Module\MNIST.csproj", "{EDC96485-A8A9-414C-A7D9-65EC0B817732}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallerAction", "Installer\InstallerAction\InstallerAction.csproj", "{04AF2BAD-2E94-49B1-88CB-18EBEB2219F7}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A0084F22-B436-4068-8F18-EC182EE78927} = {A0084F22-B436-4068-8F18-EC182EE78927}
 		{C8A4992F-F2CB-40E7-92AA-7D4239653517} = {C8A4992F-F2CB-40E7-92AA-7D4239653517}
 		{72423431-4A15-4E8D-B987-8E684BD730FE} = {72423431-4A15-4E8D-B987-8E684BD730FE}
+		{4A1DEA51-60CD-4358-9D52-465A3841E3B1} = {4A1DEA51-60CD-4358-9D52-465A3841E3B1}
+		{EDC96485-A8A9-414C-A7D9-65EC0B817732} = {EDC96485-A8A9-414C-A7D9-65EC0B817732}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNIST", "Modules\MNIST\Module\MNIST.csproj", "{EDC96485-A8A9-414C-A7D9-65EC0B817732}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
 EndProject
@@ -21,8 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "Modules\Basic
 	ProjectSection(ProjectDependencies) = postProject
 		{72423431-4A15-4E8D-B987-8E684BD730FE} = {72423431-4A15-4E8D-B987-8E684BD730FE}
 	EndProjectSection
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "BrainSimInstaller", "Installer\BrainSimInstaller\BrainSimInstaller.vdproj", "{AD1E4348-A13A-4877-B764-A7944E70F4FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundWorld", "Modules\SoundWorld\Module\SoundWorld.csproj", "{A0084F22-B436-4068-8F18-EC182EE78927}"
 EndProject
@@ -41,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsUI", "Libs\3rd\WinF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLib", "Libs\3rd\YAXLib\YAXLib\YAXLib.csproj", "{F1C4D174-C948-4D18-A125-F6855EF55683}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{7847A2B9-5527-41BC-911C-7D5B0FB103B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -55,10 +56,6 @@ Global
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
-		{04AF2BAD-2E94-49B1-88CB-18EBEB2219F7}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
-		{04AF2BAD-2E94-49B1-88CB-18EBEB2219F7}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
-		{04AF2BAD-2E94-49B1-88CB-18EBEB2219F7}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
-		{04AF2BAD-2E94-49B1-88CB-18EBEB2219F7}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
@@ -71,10 +68,6 @@ Global
 		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
-		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug
-		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Debug|0 Default (x64 CUDA).Build.0 = Debug
-		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Release|0 Default (x64 CUDA).ActiveCfg = Release
-		{AD1E4348-A13A-4877-B764-A7944E70F4FE}.Release|0 Default (x64 CUDA).Build.0 = Release
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
@@ -86,12 +79,19 @@ Global
 		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{C75532C4-765B-418E-B09B-46D36B2ABDB1}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{F1C4D174-C948-4D18-A125-F6855EF55683}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{7847A2B9-5527-41BC-911C-7D5B0FB103B1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|x86
+		{7847A2B9-5527-41BC-911C-7D5B0FB103B1}.Debug|0 Default (x64 CUDA).Build.0 = Debug|x86
+		{7847A2B9-5527-41BC-911C-7D5B0FB103B1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|x86
+		{7847A2B9-5527-41BC-911C-7D5B0FB103B1}.Release|0 Default (x64 CUDA).Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
