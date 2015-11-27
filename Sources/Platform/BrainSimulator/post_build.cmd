@@ -4,4 +4,4 @@ rem Creating the modules directory...
 mkdir %2%3modules
 
 mkdir %2%3Licenses
-xcopy /y /s %2..\..\..\BinaryLibs\GoodAiPlatformLibs\Licenses\*.* %2%3\Licenses
+xcopy /y /s %2..\..\..\Licenses\*.* %2%3\Licenses
