@@ -17,7 +17,16 @@
     <Icon Id="BrainSimulator.exe" SourceFile="$(var.BrainSimulator.TargetPath)" />
 
     <WixVariable Id="CudaBinariesSourceDirectory" Value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\"/>
-    <WixVariable Id="ModulesSourceDirectory" Value="$(var.BrainSimulator.TargetDir)\modules"/>
+    <WixVariable Id="ModulesSourceDirectory" Value="$(var.BrainSimulator.TargetDir)modules"/>
+
+    <WixVariable Id="WixUILicenseRtf" Value="Resources\EULA.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="Resources\brainSim_installBanner_owl.bmp" />
+
+    <!-- This is needed by the UI, see http://stackoverflow.com/questions/24437801/wix-installer-failing-error-code-2819 -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="WixUI_ErrorProgressText" />
 	</Product>
 
 	<Fragment>
