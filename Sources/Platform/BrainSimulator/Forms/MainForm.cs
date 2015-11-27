@@ -53,6 +53,9 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_recentMenu = new MruStripMenuInline(fileToolStripMenuItem, recentFilesMenuItem , RecentFiles_Click, 5);
 
+            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
+            RestoreDashboard(Project);
+
             StringCollection recentFilesList = Properties.Settings.Default.RecentFilesList;
 
             if (recentFilesList != null)
