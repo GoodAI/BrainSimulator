@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="3250859D-4526-46E1-9F53-5C710B40CD67" Name="Brain Simulator" Language="1033" Version="0.4.0" Manufacturer="GoodAI" UpgradeCode="9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A">
+	<Product Id="11751B75-233E-494B-8157-A83DD55D7831" Name="Brain Simulator" Language="1033" Version="!(bind.FileVersion.BrainSimulatorEXE)" Manufacturer="GoodAI" UpgradeCode="9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
