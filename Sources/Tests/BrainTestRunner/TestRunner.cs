@@ -92,12 +92,15 @@ namespace GoodAI.Tests.BrainTestRunner
         private static void RunTest(BrainTest test, MyProjectRunner projectRunner)
         {
             var brainScan = new BrainScan(projectRunner);
+            var step = new StepChecker();
 
             try
             {
                 do
                 {
                     projectRunner.RunAndPause(GetIterationStepCount(test, projectRunner.SimulationStep));
+
+                    step.AssertIncreased(projectRunner.SimulationStep);
 
                     if (ShouldStop(test, brainScan))
                         break;
@@ -167,6 +170,19 @@ namespace GoodAI.Tests.BrainTestRunner
                 throw new InvalidTestException("Invalid inspect interval: " + inspectInterval);
 
             return (uint)Math.Min(inspectInterval, test.MaxStepCount - simulationStep);   // limit to remaining steps
+        }
+
+        private class StepChecker
+        {
+            private uint m_stepBefore = 0;
+
+            public void AssertIncreased(uint step)
+            {
+                if (step == m_stepBefore)
+                    throw new InvalidOperationException("Step did not increase: simulation step canceled?");
+
+                m_stepBefore = step;
+            }
         }
     }
 }
