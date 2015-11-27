@@ -25,6 +25,8 @@
   <ItemGroup>
     <Compile Include="BrainSimulator.wxs" />
     <Compile Include="HarvestedModules.wxs" />
+    <Compile Include="UI_InstallDirDlg.wxs" />
+    <Compile Include="UI_InstallDir.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources" />
