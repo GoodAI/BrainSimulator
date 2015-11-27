@@ -21,9 +21,13 @@
 
     <WixVariable Id="WixUILicenseRtf" Value="Resources\EULA.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="Resources\brainSim_installBanner_owl.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Resources\brainSim_installBanner_splash.bmp" />
 
     <!-- This is needed by the UI, see http://stackoverflow.com/questions/24437801/wix-installer-failing-error-code-2819 -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- The installer icon. -->
+    <Property Id="ARPPRODUCTICON" Value="BrainSimulator.exe" />
 
     <UIRef Id="WixUI_InstallDir" />
     <UIRef Id="WixUI_ErrorProgressText" />

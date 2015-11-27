@@ -34,6 +34,7 @@
     <Content Include="Harvest.cmd" />
     <Content Include="HeatFilter.xslt" />
     <Content Include="Resources\brainSim_installBanner_owl.bmp" />
+    <Content Include="Resources\brainSim_installBanner_splash.bmp" />
     <Content Include="Resources\EULA.rtf" />
   </ItemGroup>
   <ItemGroup>
