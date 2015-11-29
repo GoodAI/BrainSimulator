@@ -23,3 +23,4 @@ doc.xml
 /Sources/Modules/SeMeIntegrationModule
 /Sources/packages
 Sources/Modules/EmguNodes/
+*.DotSettings
