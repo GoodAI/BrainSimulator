@@ -137,5 +137,17 @@ namespace GoodAI.BrainSimulator.Properties {
                 return ((string)(this["HelpUrl"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShouldUpgradeSettings {
+            get {
+                return ((bool)(this["ShouldUpgradeSettings"]));
+            }
+            set {
+                this["ShouldUpgradeSettings"] = value;
+            }
+        }
     }
 }

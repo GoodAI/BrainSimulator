@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.Properties;
 using GoodAI.Core.Task;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -38,6 +39,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            UpgradeUserSettings();
+
             if (!TryRestoreViewsLayout(UserLayoutFileName))
             {
                 ResetViewsLayout();
@@ -63,6 +66,27 @@ namespace GoodAI.BrainSimulator.Forms
                 string[] tmp = new string[recentFilesList.Count];
                 recentFilesList.CopyTo(tmp, 0);
                 m_recentMenu.AddFiles(tmp);
+            }
+        }
+
+        private static void UpgradeUserSettings()
+        {
+            Settings settings = Properties.Settings.Default;
+
+            if (!settings.ShouldUpgradeSettings)
+                return;
+
+            try
+            {
+                settings.Upgrade();
+                settings.ShouldUpgradeSettings = false;
+                settings.Save();
+
+                MyLog.INFO.WriteLine("Settings upgraded.");
+            }
+            catch (Exception e)
+            {
+                MyLog.ERROR.WriteLine("Error upgrading settings: " + e.Message);
             }
         }
 

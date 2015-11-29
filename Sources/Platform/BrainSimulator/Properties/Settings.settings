@@ -32,5 +32,8 @@
     <Setting Name="HelpUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://docs.goodai.com/brainsimulator/</Value>
     </Setting>
+    <Setting Name="ShouldUpgradeSettings" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
