@@ -113,8 +113,26 @@
     <Node type="GoodAI.Modules.Motor.MyRecurrentNetwork" CanBeAdded="true">
       <Label>Neural Networks</Label>
     </Node>
-    
-    
+    <Node type="GoodAI.Modules.Motor.My3DPendulumWorld" CanBeAdded="true">
+      <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Motor.MyArmWorld" CanBeAdded="true">
+          <Label>Motoric</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Motor.My3DManipulatorWorld" CanBeAdded="true">
+      <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Motor.My3DPendulumWorld" CanBeAdded="true">
+      <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Motor.My3DBipedalRobotWorld" CanBeAdded="true">
+      <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
+    </Node>
+
     <Node type="GoodAI.Modules.Motor.MyPIDController" CanBeAdded="true">
       <Label>Motoric</Label>
     </Node>
@@ -268,7 +286,10 @@
       <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
       <Label>Motoric</Label>
     </World>
-
+    <World type="GoodAI.Modules.GeneticWorld.MyGeneticTrainingWorld" >
+      <Label>Motoric</Label>
+    </World>
+    
     <World type="GoodAI.Modules.GameBoy.MyCustomPongWorld">
       <Label>Reinforcement Learning</Label>
     </World>

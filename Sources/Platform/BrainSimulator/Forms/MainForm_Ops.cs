@@ -49,6 +49,7 @@ namespace GoodAI.BrainSimulator.Forms
                 }
                 m_project = value;
                 SimulationHandler.Project = value;
+                m_project.SimulationHandler = SimulationHandler;
             }
         }
 
