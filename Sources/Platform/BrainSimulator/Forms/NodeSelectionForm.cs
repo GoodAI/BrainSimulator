@@ -39,18 +39,15 @@ namespace GoodAI.BrainSimulator.Forms
         {
             Properties.Settings.Default.ToolBarNodes = new StringCollection();
 
-            foreach (var item in m_nodeInfoItems)
+            foreach (UiNodeInfo item in m_nodeInfoItems.Where(item => item.ListViewItem.Checked))
             {
-                if (item.ListViewItem.Checked)
-                {
-                    Properties.Settings.Default.ToolBarNodes.Add(item.Config.NodeType.Name);
-                }
-            }            
+                Properties.Settings.Default.ToolBarNodes.Add(item.Config.NodeType.Name);
+            }
         }
 
         private void GenerateNodeList()
         {
-            HashSet<string> enabledNodes = new HashSet<string>();
+            var enabledNodes = new HashSet<string>();
 
             if (Properties.Settings.Default.ToolBarNodes != null)
             {
@@ -60,28 +57,28 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }
 
-            Dictionary<string, List<MyNodeConfig>> knownNodes = new Dictionary<string, List<MyNodeConfig>>();
+            var knownNodes = new Dictionary<string, List<MyNodeConfig>>();
 
             foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
             {
-                if (!nodeConfig.IsBasicNode && nodeConfig.CanBeAdded)
+                if (nodeConfig.IsBasicNode || !nodeConfig.CanBeAdded || (nodeConfig.NodeType == null))
+                    continue;
+
+                string nameSpace = nodeConfig.NodeType.Namespace ?? "(unknown)";
+                if (!knownNodes.ContainsKey(nameSpace)) 
                 {
-                    if (!knownNodes.ContainsKey(nodeConfig.NodeType.Namespace)) 
-                    {
-                        knownNodes[nodeConfig.NodeType.Namespace] = new List<MyNodeConfig>();
-                    }
-                    knownNodes[nodeConfig.NodeType.Namespace].Add(nodeConfig);
+                    knownNodes[nameSpace] = new List<MyNodeConfig>();
                 }
+
+                knownNodes[nameSpace].Add(nodeConfig);
             }
 
             knownNodes["Worlds"] = new List<MyNodeConfig>();
 
-            foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownWorlds.Values)
+            foreach (MyWorldConfig nodeConfig in MyConfiguration.KnownWorlds.Values
+                .Where(nodeConfig => !nodeConfig.IsBasicNode))
             {
-                if (!nodeConfig.IsBasicNode)
-                {
-                    knownNodes["Worlds"].Add(nodeConfig);
-                }
+                knownNodes["Worlds"].Add(nodeConfig);
             }
 
             var categorizer = new CategorySortingHat();
@@ -106,39 +103,10 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     categorizer.AddNodeAndCategory(nodeConfig);
 
-                    string author;
-                    string status;
-                    string summary;
-                    string labels = "";
-
-                    bool complete = m_mainForm.Documentation.HasAuthor(nodeConfig.NodeType, out author);
-                    complete &= m_mainForm.Documentation.HasStatus(nodeConfig.NodeType, out status);
-                    complete &= m_mainForm.Documentation.HasSummary(nodeConfig.NodeType, out summary);
-
                     MyObsoleteAttribute obsolete = nodeConfig.NodeType.GetCustomAttribute<MyObsoleteAttribute>(true);
 
-                    if (obsolete != null)
-                    {
-                        status = "Obsolete";
-                        summary = "Replaced by: " + MyProject.ShortenNodeTypeName(obsolete.ReplacedBy);
-                    }
-                    else if (!complete)
-                    {
-                        summary = "INCOMPLETE DOCUMENTATION! " + summary;
-                    }
-
-                    if ((nodeConfig.Labels != null) && (nodeConfig.Labels.Count > 0))
-                    {
-                        labels = EscapeAmpersands(string.Join(" ", nodeConfig.Labels.Select(label => "#" + label)));
-                    }
-
-                    author = EscapeAmpersands(author);
-                    status = EscapeAmpersands(status);
-                    summary = EscapeAmpersands(summary); 
-
-                    string nodeName = MyProject.ShortenNodeTypeName(nodeConfig.NodeType);
-
-                    var subitems = new string[] {nodeName, author, status, summary, labels};
+                    bool complete;
+                    string[] subitems = ProduceSubitemTexts(nodeConfig, obsolete, out complete);
 
                     ListViewItem item = new ListViewItem(subitems)
                     {
@@ -183,6 +151,41 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             PopulateCategoryListView(categorizer);
+        }
+
+        private string[] ProduceSubitemTexts(MyNodeConfig nodeConfig, MyObsoleteAttribute obsolete, out bool complete)
+        {
+            string author;
+            string status;
+            string summary;
+            string labels = "";
+
+            complete = m_mainForm.Documentation.HasAuthor(nodeConfig.NodeType, out author);
+            complete &= m_mainForm.Documentation.HasStatus(nodeConfig.NodeType, out status);
+            complete &= m_mainForm.Documentation.HasSummary(nodeConfig.NodeType, out summary);
+
+            if (obsolete != null)
+            {
+                status = "Obsolete";
+                summary = "Replaced by: " + MyProject.ShortenNodeTypeName(obsolete.ReplacedBy);
+            }
+            else if (!complete)
+            {
+                summary = "INCOMPLETE DOCUMENTATION! " + summary;
+            }
+
+            if ((nodeConfig.Labels != null) && (nodeConfig.Labels.Count > 0))
+            {
+                labels = EscapeAmpersands(string.Join(" ", nodeConfig.Labels.Select(label => "#" + label)));
+            }
+
+            author = EscapeAmpersands(author);
+            status = EscapeAmpersands(status);
+            summary = EscapeAmpersands(summary);
+
+            string nodeName = MyProject.ShortenNodeTypeName(nodeConfig.NodeType);
+
+            return new string[] {nodeName, author, status, summary, labels};
         }
 
         private static string EscapeAmpersands(string text)
