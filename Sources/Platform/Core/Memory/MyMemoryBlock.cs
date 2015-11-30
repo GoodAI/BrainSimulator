@@ -194,6 +194,12 @@ namespace GoodAI.Core.Memory
             MyLog.DEBUG.WriteLine("Reallocating {0} from {1} to {2}", typeof (T), Count*Marshal.SizeOf(typeof (T)),
                 newCount*Marshal.SizeOf(typeof (T)));
 
+            int oldCount = Count;
+            Count = newCount;
+
+            if (oldCount == 0)
+                AllocateDevice();
+
             // Make sure that both the host and device have enough memory. Allocate first.
             // If one of the allocations fails, return (moving out of scope will get rid of any allocated memory).
 
@@ -226,7 +232,7 @@ namespace GoodAI.Core.Memory
             // Both the host and the device have enough memory for the reallocation.
 
             // Copy the host data.
-            Array.Copy(Host, newHostMemory, Math.Min(newCount, Count));
+            Array.Copy(Host, newHostMemory, Math.Min(newCount, oldCount));
 
             // Copy the device data.
             newDeviceMemory.CopyToDevice(Device[Owner.GPU]);
@@ -238,8 +244,6 @@ namespace GoodAI.Core.Memory
             MyLog.DEBUG.WriteLine("Disposing device memory in Reallocate()");
             Device[Owner.GPU].Dispose();
             Device[Owner.GPU] = newDeviceMemory;
-
-            Count = newCount;
 
             return true;
         }
