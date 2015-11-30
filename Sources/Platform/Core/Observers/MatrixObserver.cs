@@ -45,6 +45,19 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        [YAXSerializableField(DefaultValue = false)] protected bool m_crop = false;
+
+        [MyBrowsable, Category("Crop"), Description("Enable cropping"), DisplayName("\tCropping")]
+        public bool Crop
+        {
+            get { return m_crop; }
+            set
+            {
+                m_crop = value;
+                TriggerReset();
+            }
+        }
+
         [YAXSerializableField(DefaultValue = 0)] protected int m_xStart = 0;
 
         [MyBrowsable, Category("Crop"), Description("Starting column"), DisplayName("\tXStart")]
@@ -329,6 +342,13 @@ namespace GoodAI.Core.Observers
 
             m_rowCount = (int) Math.Ceiling((float) (m_nbValues)/m_columnCount);
 
+            // If cropping is turned off, automatically adjust to the whole matrix.
+            if (!Crop)
+            {
+                m_xLength = m_columnCount;
+                m_yLength = m_rowCount;
+            }
+            
             if (m_xLength == 0)
                 m_xLength = m_columnCount;
             if (m_yLength == 0)
