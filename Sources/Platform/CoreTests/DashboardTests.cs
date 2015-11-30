@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using GoodAI.Core.Dashboard;
 using GoodAI.Core.Nodes;
@@ -101,6 +103,7 @@ namespace CoreTests
             proxy.Value = testName;
 
             Assert.Equal(testName, node.Name);
+            Assert.Equal(testName, proxy.Value);
         }
 
         [Fact]
@@ -132,6 +135,7 @@ namespace CoreTests
 
             Assert.Equal(testName, node.Name);
             Assert.Equal(testName, node2.Name);
+            Assert.Equal(testName, group.Proxy.Value);
         }
 
         /// <summary>
@@ -160,6 +164,85 @@ namespace CoreTests
 
             var property3 = new DashboardPropertyGroup();
             Assert.Equal(property3.Proxy, property3.Proxy);
+        }
+
+        [Fact]
+        public void DescriptorHasCorrectType()
+        {
+            var node = new Node();
+
+            var property = new DashboardNodeProperty()
+            {
+                Node = node,
+                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
+            };
+
+            var proxy = property.Proxy;
+            var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
+
+            Assert.Equal(descriptor.PropertyType, typeof(string));
+        }
+
+        [Fact]
+        public void GroupDescriptorHasCorrectType()
+        {
+            var node = new Node();
+
+            var property = new DashboardNodeProperty()
+            {
+                Node = node,
+                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
+            };
+
+            var group = new DashboardPropertyGroup();
+            group.Add(property);
+
+            var proxy = group.Proxy;
+            var descriptor = new ProxyPropertyGroupDescriptor(ref proxy, new Attribute[0]);
+
+            Assert.Equal(descriptor.PropertyType, typeof(string));
+        }
+
+        [Fact]
+        public void DashboardFiresUpdateEvents()
+        {
+            var node = new Node();
+
+            var flag = new AutoResetEvent(false);
+
+            var dashboard = new Dashboard();
+            dashboard.PropertyChanged += (sender, args) => flag.Set();
+
+            dashboard.Add(node, "Name");
+
+            if (!flag.WaitOne(1000))
+                Assert.True(false, "Event not fired");
+
+            dashboard.Remove(node, "Name");
+
+            if (!flag.WaitOne(1000))
+                Assert.True(false, "Event not fired");
+        }
+
+        [Fact]
+        public void GroupDashboardFiresUpdateEvents()
+        {
+            var node = new Node();
+
+            var flag = new AutoResetEvent(false);
+
+            var groupDashboard = new GroupDashboard();
+            groupDashboard.PropertyChanged += (sender, args) => flag.Set();
+
+            groupDashboard.Add();
+
+            if (!flag.WaitOne(1000))
+                Assert.True(false, "Event not fired");
+
+            groupDashboard.Remove(groupDashboard.Properties[0]);
+
+            if (!flag.WaitOne(1000))
+                Assert.True(false, "Event not fired");
         }
 
         [Fact]
