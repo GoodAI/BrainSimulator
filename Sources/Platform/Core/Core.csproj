@@ -128,8 +128,8 @@
     <Compile Include="Nodes\MyTestingWorld.cs" />
     <Compile Include="Nodes\MyUserInput.cs" />
     <Compile Include="Nodes\IMyVariableBranchViewNodeBase.cs" />
-    <Compile Include="Observers\HostMatrixObserver.cs" />
-    <Compile Include="Observers\HostTimePlotObserver.cs" />
+    <Compile Include="Observers\MatrixObserver.cs" />
+    <Compile Include="Observers\TimePlotObserver.cs" />
     <Compile Include="Observers\MyMemoryBlockEditor.cs" />
     <Compile Include="Observers\MyHistogramObserver.cs" />
     <Compile Include="Observers\MyShape.cs" />

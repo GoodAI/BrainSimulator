@@ -20,6 +20,8 @@ namespace GoodAI.Core.Dashboard
         public virtual string Category { get; set; }
         public abstract object Value { get; set; }
 
+        public abstract Type Type { get; }
+
         protected ProxyPropertyBase()
         {
             IsVisible = true;
@@ -68,6 +70,11 @@ namespace GoodAI.Core.Dashboard
             set { PropertyInfo.SetValue(Target, value); }
         }
 
+        public override Type Type
+        {
+            get { return PropertyInfo.PropertyType; }
+        }
+
         public override string FullName { get { return SourceProperty.Node.Name + "." + Name; } }
 
         public override string Category
@@ -106,6 +113,18 @@ namespace GoodAI.Core.Dashboard
         public IEnumerable<SingleProxyProperty> GetGroupMembers()
         {
             return SourceProperty.GroupedProperties.Select(member => member.Proxy);
+        }
+
+        public override Type Type
+        {
+            get
+            {
+                var groupedProperties = SourceProperty.GroupedProperties;
+                if (groupedProperties.Any())
+                    return groupedProperties.First().Proxy.Type;
+
+                return typeof (object);
+            }
         }
     }
 }

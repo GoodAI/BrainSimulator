@@ -301,6 +301,10 @@ namespace GoodAI.Core.Nodes
 
             if (outputBlock != null && outputBlock.IsDynamic)
             {
+                // TODO(HonzaS): Enable this later when variable count of dynamic memblocks is supported.
+                if (toIndex >= GetInfo().InputBlocks.Count)
+                    return false;
+
                 PropertyInfo inputBlock = GetInfo().InputBlocks[toIndex];
                 var dynamicAttribute = inputBlock.GetCustomAttribute<DynamicBlockAttribute>();
                 if (dynamicAttribute == null)
