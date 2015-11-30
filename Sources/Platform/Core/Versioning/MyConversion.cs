@@ -10,7 +10,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 9; }
+            get { return 10; }
         }
 
         public static string Convert1To2(string xml)
@@ -164,6 +164,19 @@ namespace GoodAI.Core.Versioning
             string result = xml;
 
             result = result.Replace(".MyControllerNode", ".MyPIDController");
+
+            return result;
+        }
+
+        /// <summary>
+        /// HostMatrix and HostTimePlot observers removed to Matrix* and TimePlot*
+        /// </summary>        
+        public static string Convert9To10(string xml)
+        {
+            string result = xml;
+
+            result = result.Replace("HostMatrixObserver", "MatrixObserver");
+            result = result.Replace("HostTimePlotObserver", "TimePlotObserver");
 
             return result;
         }

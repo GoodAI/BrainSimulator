@@ -13,7 +13,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Core.Observers
 {
-    public class HostMatrixObserver : MyAbstractMemoryBlockObserver
+    public class MatrixObserver : MyAbstractMemoryBlockObserver
     {
         [YAXSerializableField] private int m_decimalCount;
 
@@ -41,6 +41,19 @@ namespace GoodAI.Core.Observers
                     return;
 
                 m_columnCount = value;
+                TriggerReset();
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = false)] protected bool m_crop = false;
+
+        [MyBrowsable, Category("Crop"), Description("Enable cropping"), DisplayName("\tCropping")]
+        public bool Crop
+        {
+            get { return m_crop; }
+            set
+            {
+                m_crop = value;
                 TriggerReset();
             }
         }
@@ -146,7 +159,7 @@ namespace GoodAI.Core.Observers
         private int m_cellHeight;
         private Type m_valueType;
 
-        public HostMatrixObserver() //constructor with node parameter
+        public MatrixObserver() //constructor with node parameter
         {
             DecimalCount = 2;
             TargetChanged += MyMatrixObserver_TargetChanged;
@@ -329,6 +342,13 @@ namespace GoodAI.Core.Observers
 
             m_rowCount = (int) Math.Ceiling((float) (m_nbValues)/m_columnCount);
 
+            // If cropping is turned off, automatically adjust to the whole matrix.
+            if (!Crop)
+            {
+                m_xLength = m_columnCount;
+                m_yLength = m_rowCount;
+            }
+            
             if (m_xLength == 0)
                 m_xLength = m_columnCount;
             if (m_yLength == 0)
