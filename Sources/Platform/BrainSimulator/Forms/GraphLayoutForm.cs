@@ -8,10 +8,12 @@ using GoodAI.Modules.Transforms;
 using Graph;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GoodAI.Core.Memory;
+using GoodAI.BrainSimulator.Properties;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -19,7 +21,6 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class GraphLayoutForm : DockContent
     {
         private MainForm m_mainForm;
-        private ToolStripDropDownButton transformMenu;
 
         public MyNodeGroup Target { get; private set; } 
 
@@ -40,8 +41,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             ToolStripDropDownButton newMenu = new ToolStripDropDownButton();
 
-            newMenu.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            newMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            newMenu.Alignment = ToolStripItemAlignment.Right;
+            newMenu.DisplayStyle = ToolStripItemDisplayStyle.Image;
             newMenu.ImageAlign = ContentAlignment.MiddleRight;
             newMenu.Image = menuIcon;
             newMenu.Name = menuName;
@@ -52,15 +53,8 @@ namespace GoodAI.BrainSimulator.Forms
             return newMenu;
         }
 
-        public void InitToolBar()
+        public CategorySortingHat CategorizeEnabledNodes()
         {
-            toolStrip1.Items.Clear();
-                        
-            transformMenu = CreateToolStripMenu("transformMenu", Properties.Resources.function_category);
-            transformMenu.Tag = typeof(MyTransform);
-
-            toolStrip1.Items.Add(transformMenu);
-
             HashSet<string> enabledNodes = new HashSet<string>();
 
             if (Properties.Settings.Default.ToolBarNodes != null)
@@ -71,22 +65,57 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }
 
-            foreach (MyNodeConfig nodeInfo in MyConfiguration.KnownNodes.Values)
-            {
-                bool isTransform =
-                    typeof(MyTransform).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyFork).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyJoin).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyGateInput).IsAssignableFrom(nodeInfo.NodeType) ||
-                    typeof(MyDataGate).IsAssignableFrom(nodeInfo.NodeType);
+            var categorizer = new CategorySortingHat();
 
-                if (nodeInfo.CanBeAdded && (enabledNodes.Contains(nodeInfo.NodeType.Name) || nodeInfo.IsBasicNode))
+            foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
+            {
+                if (nodeConfig.CanBeAdded && (enabledNodes.Contains(nodeConfig.NodeType.Name) || nodeConfig.IsBasicNode))
                 {
-                    AddNodeButton(nodeInfo, isTransform);
+                    categorizer.AddNodeAndCategory(nodeConfig);
                 }
             }
 
-            toolStrip1.Items.Add(new ToolStripSeparator());
+            return categorizer;
+        }
+
+        public void InitToolBar()
+        {
+            nodesToolStrip.Items.Clear();
+
+            CategorySortingHat categorizer = CategorizeEnabledNodes();
+
+            foreach (NodeCategory category in categorizer.SortedCategories.Reverse())  // drop downs are added from the bottom
+            {
+                ToolStripDropDownButton toolbarDropDown = CreateToolStripMenu(category.Name, category.SmallImage);
+                toolbarDropDown.Tag = category.Name;  // TODO(Premek): pass target drop down in a UiTag attribute
+                toolbarDropDown.ToolTipText = category.Name;
+
+                nodesToolStrip.Items.Add(toolbarDropDown);
+            }
+
+            foreach (MyNodeConfig nodeConfig in categorizer.Nodes)
+            {
+                AddNodeButtonToCategoryMenu(nodeConfig);
+            }
+
+            nodesToolStrip.Items.Add(new ToolStripSeparator());
+
+            InitQuickToolBar(categorizer);
+        }
+
+        private void InitQuickToolBar(CategorySortingHat categorizer)
+        {
+            Settings settings = Settings.Default;
+            if (settings.QuickToolBarNodes == null)
+            {
+                settings.QuickToolBarNodes = new StringCollection();
+            }
+
+            foreach (MyNodeConfig nodeConfig in categorizer.Nodes)
+            {
+                if (settings.QuickToolBarNodes.Contains(nodeConfig.NodeType.Name))
+                    AddNodeButton(nodeConfig);
+            }
         }
  
         private void GraphLayoutForm_Load(object sender, EventArgs e)
@@ -117,30 +146,34 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void addNodeButton_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            Type nodeType = (sender as ToolStripItem).Tag as Type;
+
+            MyNodeView newNodeView = MyNodeView.CreateNodeView(nodeType, Desktop);
+
+            var dataObject = new DataObject();
+            dataObject.SetData(typeof(MyNodeView), newNodeView);  // required to get derived types from GetData
+
+            DragDropEffects result = DoDragDrop(dataObject, DragDropEffects.Copy);
+            if (result == DragDropEffects.Copy)
             {
-                Type nodeType = (sender as ToolStripItem).Tag as Type;
+                MyNode newNode = m_mainForm.Project.CreateNode(nodeType);
+                Target.AddChild(newNode);
 
-                MyNodeView newNodeView = MyNodeView.CreateNodeView(nodeType, Desktop);
-                DragDropEffects result = DoDragDrop(newNodeView, DragDropEffects.Copy);
+                // TODO: Change to all transforms
 
-                if (result == DragDropEffects.Copy)
+                if (newNode is MyWorkingNode)
                 {
-                    MyNode newNode = m_mainForm.Project.CreateNode(nodeType);
-                    Target.AddChild(newNode);
-
-                    // TODO: Change to all transforms
-
-                    if (newNode is MyWorkingNode)
-                    {
-                        (newNode as MyWorkingNode).EnableDefaultTasks();
-                    }
-
-                    newNodeView.Node = newNode;
-                    newNodeView.UpdateView();
-                    newNodeView.OnEndDrag();
-                    GraphLayoutForm_Enter(sender, EventArgs.Empty);
+                    (newNode as MyWorkingNode).EnableDefaultTasks();
                 }
+
+                newNodeView.Node = newNode;
+                newNodeView.UpdateView();
+                newNodeView.OnEndDrag();
+
+                EnterGraphLayout();
             }
         }
 
@@ -290,7 +323,12 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         private void GraphLayoutForm_Enter(object sender, EventArgs e)
-        {            
+        {
+            EnterGraphLayout();
+        }
+
+        private void EnterGraphLayout()
+        {
             if (Desktop.FocusElement is MyNodeView)
             {
                 MyNode node = (Desktop.FocusElement as MyNodeView).Node;
@@ -318,7 +356,15 @@ namespace GoodAI.BrainSimulator.Forms
             worldButtonPanel.BackColor = SystemColors.Control;
             groupButtonPanel.BackColor = SystemColors.Control;
 
-            transformMenu.DropDown.Hide();            
+            HideDropDownMenus();
+        }
+
+        private void HideDropDownMenus()
+        {
+            foreach (var dropDownButton in nodesToolStrip.Items.OfType<ToolStripDropDownButton>())
+            {
+                dropDownButton.DropDown.Hide();
+            }
         }
 
         public void ReloadContent()
@@ -425,6 +471,54 @@ namespace GoodAI.BrainSimulator.Forms
                 connectionView.Dynamic = output.IsDynamic;
             else
                 connectionView.Dynamic = false;
+        }
+
+        private void nodesToolStrip_DragEnter(object sender, DragEventArgs e)
+        {
+            if (CanAcceptNode(e.Data))
+                e.Effect |= DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void nodesToolStrip_DragDrop(object sender, DragEventArgs e)
+        {
+            MyNodeConfig nodeConfig;
+            if (!CanAcceptNode(e.Data, out nodeConfig))
+                return;
+
+            AddQuickToolBarItem(nodeConfig);
+
+            e.Effect = DragDropEffects.None;  // prevent creation of the actual node
+        }
+
+        private void AddQuickToolBarItem(MyNodeConfig nodeConfig)
+        {
+            AddNodeButton(nodeConfig);
+
+            Settings.Default.QuickToolBarNodes.Add(nodeConfig.NodeType.Name);
+        }
+
+        private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig) 
+        {
+            nodeConfig = GetNodeConfigFromDropData(data);
+            if (nodeConfig == null)
+                return false;
+
+            return !Settings.Default.QuickToolBarNodes.Contains(nodeConfig.NodeType.Name);
+        }
+
+        private static bool CanAcceptNode(IDataObject data)
+        {
+            MyNodeConfig ignoredConfig;
+            return CanAcceptNode(data, out ignoredConfig);
+        }
+
+        private static MyNodeConfig GetNodeConfigFromDropData(IDataObject data)
+        {
+            var nodeView = data.GetData(typeof (MyNodeView)) as MyNodeView;
+
+            return (nodeView == null) ? null : nodeView.Config;
         }
     }      
 }

@@ -2,150 +2,304 @@
 <Configuration RootNamespace="GoodAI.Modules">  
   <KnownNodes>
 
-    <Node type="GoodAI.Modules.Transforms.MyFilter2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyAnalyze2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyResize2D" CanBeAdded="true" BigIcon="imagescale_big.png" SmallIcon="imagescale.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="delayedcopy_big.png" SmallIcon="delayedcopy.png"/>
-    <Node type="GoodAI.Modules.Transforms.MyHash" CanBeAdded="true" BigIcon="hash_big.png" SmallIcon="hash.png"/>
-    <Node type="GoodAI.Modules.Transforms.My2DCropNode" CanBeAdded="true" BigIcon="crop2d_big.png" SmallIcon="crop2d.png" />
-    <Node type="GoodAI.Modules.Transforms.MyVectorOpsNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.Transforms.MyFilter2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png">
+      <Label>Vision</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyAnalyze2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png">
+      <Label>Vision</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyResize2D" CanBeAdded="true" BigIcon="imagescale_big.png" SmallIcon="imagescale.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="delayedcopy_big.png" SmallIcon="delayedcopy.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyHash" CanBeAdded="true" BigIcon="hash_big.png" SmallIcon="hash.png">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.My2DCropNode" CanBeAdded="true" BigIcon="crop2d_big.png" SmallIcon="crop2d.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Transforms.MyVectorOpsNode" CanBeAdded="true">
+      <Label>Math</Label>
+    </Node>
 
-    <Node type="GoodAI.Core.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png" />
+    <Node type="GoodAI.Core.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.Common.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png" />
-    <Node type="GoodAI.Modules.Common.MultiplexerNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.Common.MultiplexerNode" CanBeAdded="true">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
+    
+    <Node type="GoodAI.Modules.Common.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png">
+      <Label>Input &amp; Output</Label>
+      <Label>Input</Label>
+    </Node>
     
     <Node type="GoodAI.Modules.Retina.MyPupilControl" CanBeAdded="true" BigIcon="observer_big.png" SmallIcon="observer.png">
       <Observer type="GoodAI.Modules.Observers.MyPupilControlObserver" />
+      <Label>Vision</Label>
     </Node>
     
-    <Node type="GoodAI.Modules.SparseCoding.MyScalarToSDRNode" CanBeAdded="true" />
+    <Node type="GoodAI.Modules.SparseCoding.MyScalarToSDRNode" CanBeAdded="true">
+      <Label>Transformations</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true" />    
-    <Node type="GoodAI.Modules.Common.MyInverseTransformSampling" CanBeAdded="true" BigIcon="distribution_big.png" SmallIcon="distribution.png" />
-    <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" BigIcon="loopgroup_big.png" SmallIcon="loopgroup.png" />
-    <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png" />
+    <Node type="GoodAI.Modules.Common.MyCsvFileWriterNode" CanBeAdded="true">
+      <Label>Input &amp; Output</Label>
+      <Label>Output</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Common.MyInverseTransformSampling" CanBeAdded="true" BigIcon="distribution_big.png" SmallIcon="distribution.png">
+      <Label>Input &amp; Output</Label>
+      <Label>Input</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Common.MyLoopGroup" CanBeAdded="true" BigIcon="loopgroup_big.png" SmallIcon="loopgroup.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png" />
+    <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png">
+      <Label>Math</Label>
+    </Node>
     
     <Node type="GoodAI.Modules.Vision.MySegment" CanBeAdded="true" BigIcon="Seg_big.png" SmallIcon="Seg.png">
       <Observer type="GoodAI.Modules.Observers.MySegmentObserver" />
+      <Label>Vision</Label>
     </Node>
     <Node type="GoodAI.Modules.Vision.MyJoinPatches" CanBeAdded="true" BigIcon="ProcImPatchBasic_big.png" SmallIcon="ProcImPatchBasic.png">
       <Observer type="GoodAI.Modules.Observers.MyJoinPatchesObserver" />
+      <Label>Vision</Label>
     </Node>
     <Node type="GoodAI.Modules.Vision.MySaccade" CanBeAdded="true" BigIcon="Saccad_big.png" SmallIcon="Saccad.png">
       <Observer type="GoodAI.Modules.Observers.MySaccadeObserver" />
+      <Label>Vision</Label>
     </Node>
     <Node type="GoodAI.Modules.Vision.MyKMeansWM" CanBeAdded="true" BigIcon="VWM_big.png" SmallIcon="VWM.png">
       <Observer type="GoodAI.Modules.Observers.MyKMeansWMObserver" />
+      <Label>Vision</Label>
     </Node>    
 
-    <Node type="GoodAI.Modules.Testing.MyKWM2SymbolNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.Testing.MyKWM2SymbolNode" CanBeAdded="true">
+      <Label>Symbolic ML</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.Common.MyGenerateInput" CanBeAdded="true" BigIcon="numGenerator_big.png" SmallIcon="numGenerator.png" />
+    <Node type="GoodAI.Modules.Common.MyGenerateInput" CanBeAdded="true" BigIcon="numGenerator_big.png" SmallIcon="numGenerator.png">
+      <Label>Input &amp; Output</Label>
+      <Label>Input</Label>
+    </Node>
 
     <Node type="GoodAI.Modules.Retina.MyFocuser" CanBeAdded="true" BigIcon="observer_big.png" SmallIcon="observer.png">
       <Observer type="GoodAI.Modules.Observers.MyFocuserInputObserver" />
       <Observer type="GoodAI.Modules.Observers.MyFocuserObjectsObserver" />
       <Observer type="GoodAI.Modules.Observers.MyFocuserRetinaShowPtsMask" />
       <Observer type="GoodAI.Modules.Observers.MyFocuserRetinaShowPatchInImage" />
+      <Label>Vision</Label>
     </Node>
     <Node type="GoodAI.Modules.Retina.MyUnfocuser" CanBeAdded="true" BigIcon="observerUnfocus_big.png" SmallIcon="observerUnfocus.png">
       <Observer type="GoodAI.Modules.Observers.MyFocuserRetinaShowPtsMask" />
+      <Label>Vision</Label>
     </Node>
 
 
     <Node type="GoodAI.Modules.NeuralGas.MyGrowingNeuralGasNode" CanBeAdded="true" BigIcon="association_big.png" SmallIcon="association.png">
       <Observer type="GoodAI.Modules.NeuralGas.My2DGasObserver" />
       <Observer type="GoodAI.Modules.NeuralGas.MyFBAObserver" />
+      <Label>Neural Networks</Label>
     </Node>
 
-    <Node type="GoodAI.Modules.Motor.MyRecurrentNetwork" CanBeAdded="true" />
-    <Node type="GoodAI.Modules.Motor.MyPIDController" CanBeAdded="true" />
-    <Node type="GoodAI.Modules.Motor.MySequenceRecorderNode" CanBeAdded="true" />
-    <Node type="GoodAI.Modules.Motor.MyJacobianTransposeControl" CanBeAdded="true" />
+    <Node type="GoodAI.Modules.Motor.MyRecurrentNetwork" CanBeAdded="true">
+      <Label>Neural Networks</Label>
+    </Node>
     
-    <Node type="GoodAI.Modules.VSA.MyBindingNode" CanBeAdded="true" BigIcon="link_big.png" SmallIcon="link.png" />
-    <Node type="GoodAI.Modules.VSA.MyCodeBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png" />
-    <Node type="GoodAI.Modules.VSA.MyCombinationBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png" />
-    <Node type="GoodAI.Modules.VSA.MyRandomMapper" CanBeAdded="true" BigIcon="norm_big.png" SmallIcon="norm.png" />
-    <Node type="GoodAI.Modules.VSA.MySymbolicGrid" CanBeAdded="true" />
-    <Node type="GoodAI.Modules.VSA.MySpatialCoder" CanBeAdded="true" BigIcon="spatial_coder_big.png" SmallIcon="spatial_coder.png" />
+    
+    <Node type="GoodAI.Modules.Motor.MyPIDController" CanBeAdded="true">
+      <Label>Motoric</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Motor.MySequenceRecorderNode" CanBeAdded="true">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Motor.MyJacobianTransposeControl" CanBeAdded="true">
+      <Label>Motoric</Label>
+    </Node>
+    
+    <Node type="GoodAI.Modules.VSA.MyBindingNode" CanBeAdded="true" BigIcon="link_big.png" SmallIcon="link.png">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.MyCodeBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.MyCombinationBook" CanBeAdded="true" BigIcon="book_big.png" SmallIcon="book.png">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.MyRandomMapper" CanBeAdded="true" BigIcon="norm_big.png" SmallIcon="norm.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.MySymbolicGrid" CanBeAdded="true">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.MySpatialCoder" CanBeAdded="true" BigIcon="spatial_coder_big.png" SmallIcon="spatial_coder.png">
+      <Label>Symbolic ML</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.VSA.Hashes.MyHashMapper" CanBeAdded="true"/>
-    <Node type="GoodAI.Modules.VSA.Hashes.MyHashingMemory" CanBeAdded="true"/>
-    <Node type="GoodAI.Modules.VSA.MyTransformLearningNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.VSA.Hashes.MyHashMapper" CanBeAdded="true">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.Hashes.MyHashingMemory" CanBeAdded="true">
+      <Label>Symbolic ML</Label>
+    </Node>
+    <Node type="GoodAI.Modules.VSA.MyTransformLearningNode" CanBeAdded="true">
+      <Label>Symbolic ML</Label>
+    </Node>
     
     <Node type="GoodAI.Modules.Harm.MyDiscreteQLearningNode" CanBeAdded="true" BigIcon="qagent_big.png" SmallIcon="qagent.png">
       <Observer type="GoodAI.Modules.DiscreteRL.Observers.DiscreteQLearningObserver"/>
+      <Label>Reinforcement Learning</Label>
     </Node>
     
     <Node type="GoodAI.Modules.Harm.MyDiscreteHarmNode" CanBeAdded="true" BigIcon="harm_big.png" SmallIcon="harm.png"> 
       <Observer type="GoodAI.Modules.DiscreteRL.Observers.DiscreteSRPObserver"/>
+      <Label>Reinforcement Learning</Label>
     </Node>
 
-    <Node type="GoodAI.Modules.Harm.MyActionSelectionNode" CanBeAdded="true" BigIcon="asm_big.png" SmallIcon="asm.png" />
-    <Node type="GoodAI.Modules.Harm.MyDetectChangesNode" CanBeAdded="true" BigIcon="reward_big.png" SmallIcon="reward.png" />
-    <Node type="GoodAI.Modules.TicTacToe.MyTicTacToePlayerNode" CanBeAdded="true" BigIcon="confusion_matrix_big.png" SmallIcon="confusion_matrix.png" />
+    <Node type="GoodAI.Modules.Harm.MyActionSelectionNode" CanBeAdded="true" BigIcon="asm_big.png" SmallIcon="asm.png">
+      <Label>Reinforcement Learning</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Harm.MyDetectChangesNode" CanBeAdded="true" BigIcon="reward_big.png" SmallIcon="reward.png">
+      <Label>Reinforcement Learning</Label>
+    </Node>
+    <Node type="GoodAI.Modules.TicTacToe.MyTicTacToePlayerNode" CanBeAdded="true" BigIcon="confusion_matrix_big.png" SmallIcon="confusion_matrix.png">
+      <Label>Other</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.NeuralNetwork.Group.MyNeuralNetworkGroup" CanBeAdded="true" BigIcon="network_big.png" SmallIcon="network.png" />
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyHiddenLayer" CanBeAdded="true" BigIcon="hidden_layer_big.png" SmallIcon="hidden_layer.png"/>
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true" BigIcon="output_layer_big.png" SmallIcon="output_layer.png"/>
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyQLearningLayer" CanBeAdded="true" BigIcon="qagent_big.png" SmallIcon="qagent.png"/>
+    <Node type="GoodAI.Modules.NeuralNetwork.Group.MyNeuralNetworkGroup" CanBeAdded="true" BigIcon="network_big.png" SmallIcon="network.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyHiddenLayer" CanBeAdded="true" BigIcon="hidden_layer_big.png" SmallIcon="hidden_layer.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputLayer" CanBeAdded="true" BigIcon="output_layer_big.png" SmallIcon="output_layer.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyQLearningLayer" CanBeAdded="true" BigIcon="qagent_big.png" SmallIcon="qagent.png">
+      <Label>Neural Networks</Label>
+    </Node>
 
-    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyPoolingLayer" BigIcon="pooling_big.png" SmallIcon="pooling.png"/>
-    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyConvolutionLayer" BigIcon="convolution_big.png" SmallIcon="convolution.png"/>
+    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyPoolingLayer" BigIcon="pooling_big.png" SmallIcon="pooling.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node CanBeAdded="true" type="GoodAI.Modules.NeuralNetwork.Layers.MyConvolutionLayer" BigIcon="convolution_big.png" SmallIcon="convolution.png">
+      <Label>Neural Networks</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyGaussianHiddenLayer" CanBeAdded="true" BigIcon="variGauss_layer_big.png" SmallIcon="variGauss_layer.png" />
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputOne2OneLayer" CanBeAdded="true" BigIcon="one2one_layer_big.png" SmallIcon="one2one_layer.png" />
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyGaussianHiddenLayer" CanBeAdded="true" BigIcon="variGauss_layer_big.png" SmallIcon="variGauss_layer.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyOutputOne2OneLayer" CanBeAdded="true" BigIcon="one2one_layer_big.png" SmallIcon="one2one_layer.png">
+      <Label>Neural Networks</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyNegativeCorrelationEnsembleLayer" CanBeAdded="true" />
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyNegativeCorrelationEnsembleLayer" CanBeAdded="true">
+      <Label>Neural Networks</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.NeuralNetwork.MyReplayBuffer" CanBeAdded="true" />
+    <Node type="GoodAI.Modules.NeuralNetwork.MyReplayBuffer" CanBeAdded="true">
+      <Label>Neural Networks</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.RBM.MyRBMGroup" CanBeAdded="true" BigIcon="network_RBM_big.png" SmallIcon="network_RBM.png"/>
-    <Node type="GoodAI.Modules.RBM.MyRBMInputLayer" CanBeAdded="true" BigIcon="input_RBM_layer_big.png" SmallIcon="input_RBM_layer.png"/>
+    <Node type="GoodAI.Modules.RBM.MyRBMGroup" CanBeAdded="true" BigIcon="network_RBM_big.png" SmallIcon="network_RBM.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.RBM.MyRBMInputLayer" CanBeAdded="true" BigIcon="input_RBM_layer_big.png" SmallIcon="input_RBM_layer.png">
+      <Label>Neural Networks</Label>
+    </Node>
     <Node type="GoodAI.Modules.RBM.MyRBMLayer" CanBeAdded="true" BigIcon="hidden_RBM_layer_big.png" SmallIcon="hidden_RBM_layer.png">
       <Observer type="GoodAI.Modules.Observers.MyRBMFilterObserver" />
+      <Label>Neural Networks</Label>
     </Node>
 
-  	<Node type="GoodAI.Modules.LSTM.MyLSTMLayer" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png"/>
-    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyStackLayer" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png"/>
-    <Node type="GoodAI.Modules.Scripting.MyCSharpNode" CanBeAdded="true" BigIcon="csharp_big.png" SmallIcon="csharp.png"/>
+    <Node type="GoodAI.Modules.LSTM.MyLSTMLayer" CanBeAdded="true" BigIcon="lstm_big.png" SmallIcon="lstm.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyStackLayer" CanBeAdded="true" BigIcon="join_big.png" SmallIcon="join.png">
+      <Label>Neural Networks</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Scripting.MyCSharpNode" CanBeAdded="true" BigIcon="csharp_big.png" SmallIcon="csharp.png">
+      <Label>Scripting</Label>
+    </Node>
 
-    <Node type="GoodAI.Modules.Join.MyStackingNode" CanBeAdded="true" BigIcon="stacking_big.png" SmallIcon="stacking.png"/>
-    <Node type="GoodAI.Modules.Join.MyDistanceNode" CanBeAdded="true" BigIcon="distance_big.png" SmallIcon="distance.png"/>
+    <Node type="GoodAI.Modules.Join.MyStackingNode" CanBeAdded="true" BigIcon="stacking_big.png" SmallIcon="stacking.png">
+      <Label>Transformations</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Join.MyDistanceNode" CanBeAdded="true" BigIcon="distance_big.png" SmallIcon="distance.png">
+      <Label>Math</Label>
+    </Node>
 
     <Node type="GoodAI.Modules.LTM.MyTextObserverNode" CanBeAdded="true" BigIcon="textOutput_big.png" SmallIcon="textOutput.png">
       <Observer type="GoodAI.Modules.LTM.MyVectorTextObserver" />
+      <Label>Input &amp; Output</Label>
+      <Label>Output</Label>
     </Node>
-    <Node type="GoodAI.Modules.LTM.MyTextInputNode" CanBeAdded="true" BigIcon="textInput_big.png" SmallIcon="textInput.png"/>
+    <Node type="GoodAI.Modules.LTM.MyTextInputNode" CanBeAdded="true" BigIcon="textInput_big.png" SmallIcon="textInput.png">
+      <Label>Input &amp; Output</Label>
+      <Label>Input</Label>
+    </Node>
     
   </KnownNodes>
   <KnownWorlds>
     <World type="GoodAI.Modules.Motor.MyArmWorld" />
-    <World type="GoodAI.Modules.TextProcessing.TextWorld" CanBeAdded="true"/>
-    <World type="GoodAI.Modules.LTM.MyAssociativeNetworkWorld" CanBeAdded="true"/>
+    <World type="GoodAI.Modules.TextProcessing.TextWorld" CanBeAdded="true">
+    </World>
+    <World type="GoodAI.Modules.LTM.MyAssociativeNetworkWorld" CanBeAdded="true">
+      <Label>Neural Networks</Label>
+    </World>
     
     <World type="GoodAI.Modules.Motor.My3DManipulatorWorld" CanBeAdded="true">
       <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
     </World>
     <World type="GoodAI.Modules.Motor.My3DPendulumWorld" CanBeAdded="true">
       <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
     </World>
     <World type="GoodAI.Modules.Motor.My3DBipedalRobotWorld" CanBeAdded="true">
       <Observer type="GoodAI.Modules.Motor.My3DWorldObserver" />
+      <Label>Motoric</Label>
     </World>
 
-    <World type="GoodAI.Modules.GameBoy.MyCustomPongWorld" />
-    <World type="GoodAI.Modules.GameBoy.MyTwoPlayerPongWorld" />
-    <World type="GoodAI.Modules.GridWorld.MyGridWorld" />
-    <World type="GoodAI.Modules.TicTacToe.MyTicTacToeWorld" />
-    <World type="GoodAI.Modules.GameBoy.My2DAgentWorld" />
-    <World type="HTSLmodule.Worlds.MyAnimationPredictionWorld" />
+    <World type="GoodAI.Modules.GameBoy.MyCustomPongWorld">
+      <Label>Reinforcement Learning</Label>
+    </World>
+    <World type="GoodAI.Modules.GameBoy.MyTwoPlayerPongWorld">
+      <Label>Reinforcement Learning</Label>
+    </World>
+    <World type="GoodAI.Modules.GridWorld.MyGridWorld">
+      <Label>Reinforcement Learning</Label>
+    </World>
+    <World type="GoodAI.Modules.TicTacToe.MyTicTacToeWorld">
+    </World>
+    <World type="GoodAI.Modules.GameBoy.My2DAgentWorld">
+      <Label>Reinforcement Learning</Label>
+    </World>
+    <World type="HTSLmodule.Worlds.MyAnimationPredictionWorld">
+      <Label>Neural Networks</Label>
+    </World>
 
-    <World type="GoodAI.Modules.MastermindWorld.MyMastermindWorld" CanBeAdded="true" />
+    <World type="GoodAI.Modules.MastermindWorld.MyMastermindWorld" CanBeAdded="true">
+    </World>
     
   </KnownWorlds>
+  <Categories>
+    <Category Name="Control &amp; Dataflow" SmallIcon="loopgroup.png"></Category>
+    <Category Name="Input &amp; Output" SmallIcon="random.png"></Category>
+    <Category Name="Math" SmallIcon="distance.png"></Category>
+    <Category Name="Neural Networks" SmallIcon="network.png"></Category>
+    <Category Name="Reinforcement Learning" SmallIcon="reward.png"></Category>
+    <Category Name="Scripting" SmallIcon="csharp.png"></Category>
+    <Category Name="Symbolic ML" SmallIcon="book.png"></Category>
+    <!--<Category Name="Transformations" SmallIcon="function.png"></Category>-->
+    <Category Name="Vision" SmallIcon="observer.png"></Category>
+  </Categories>
 </Configuration>

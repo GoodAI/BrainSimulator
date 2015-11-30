@@ -37,6 +37,9 @@ namespace GoodAI.Core.Configuration
         [YAXCollection(YAXCollectionSerializationTypes.RecursiveWithNoContainingElement, EachElementName = "Observer")]
         internal List<MyObserverConfig> m_observerInfoList = null;
 
+        [YAXCollection(YAXCollectionSerializationTypes.RecursiveWithNoContainingElement, EachElementName = "Label")]
+        public List<string> Labels { get; protected set; }
+
         [YAXDontSerialize]
         public Dictionary<Type, MyObserverConfig> KnownObservers { get; private set; }
 
@@ -63,7 +66,14 @@ namespace GoodAI.Core.Configuration
             return MyProject.ShortenNodeTypeName(NodeType);
         }
 
-        private static Image GenerateDefaultImage(Type nodeType, bool bigIcon)
+        protected static Image GenerateDefaultImage(Type nodeType, bool bigIcon)
+        {
+            string typeName = MyProject.ShortenNodeTypeName(nodeType);
+
+            return GenerateDefaultImage(typeName, bigIcon);
+        }
+
+        internal static Image GenerateDefaultImage(string typeName, bool bigIcon)
         {
             string back_fileName = bigIcon ? @"plain_big.png" : @"plain.png";
             float x = 0;
@@ -71,7 +81,6 @@ namespace GoodAI.Core.Configuration
             float size = bigIcon ? 36 : 17;
 
             string label = "";
-            string typeName = MyProject.ShortenNodeTypeName(nodeType);
 
             for (int i = 0; i < typeName.Length; i++)
             {
@@ -115,7 +124,6 @@ namespace GoodAI.Core.Configuration
             {
                 SmallImage = GenerateDefaultImage(NodeType, false);
             }
-
         }
 
         internal void AddObservers(Assembly assembly)
@@ -170,6 +178,38 @@ namespace GoodAI.Core.Configuration
         public override string ToString()
         {
             return ObserverType.Name;
+        }
+    }
+
+    [YAXSerializeAs("Category"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
+    public class MyCategoryConfig
+    {
+        [YAXAttributeForClass, YAXErrorIfMissed(YAXExceptionTypes.Error)]
+        public string Name { get; private set; }
+
+        // TODO(Premek): put to a common ancestor
+        [YAXAttributeForClass, YAXErrorIfMissed(YAXExceptionTypes.Warning)]
+        public string SmallIcon { get; set; }
+
+        [YAXDontSerialize]
+        public Image SmallImage { get; private set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        internal void InitIcons(Assembly assembly)
+        {
+            if (!String.IsNullOrEmpty(SmallIcon))
+            {
+                SmallImage = MyResources.GetImageFromAssembly(assembly, SmallIcon);
+            }
+
+            if (SmallImage == null)
+            {
+                SmallImage = MyNodeConfig.GenerateDefaultImage(Name, false);
+            }
         }
     }
 }

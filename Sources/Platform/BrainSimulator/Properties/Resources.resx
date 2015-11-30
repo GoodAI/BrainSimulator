@@ -307,4 +307,7 @@
   <data name="list_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\res\list_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="keypad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\keypad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
