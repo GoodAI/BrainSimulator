@@ -109,6 +109,7 @@ namespace GoodAI.BrainSimulator.Forms
                     string author;
                     string status;
                     string summary;
+                    string labels = "";
 
                     bool complete = m_mainForm.Documentation.HasAuthor(nodeConfig.NodeType, out author);
                     complete &= m_mainForm.Documentation.HasStatus(nodeConfig.NodeType, out status);
@@ -121,27 +122,30 @@ namespace GoodAI.BrainSimulator.Forms
                         status = "Obsolete";
                         summary = "Replaced by: " + MyProject.ShortenNodeTypeName(obsolete.ReplacedBy);
                     }
-                    else
+                    else if (!complete)
                     {
-                        if (!complete)
-                        {
-                            summary = "INCOMPLETE DOCUMENTATION! " + summary;
-                        }
-                        else
-                        {
-                            author = author.Replace("&", "&&");
-                            status = status.Replace("&", "&&");
-                            summary = summary.Replace("&", "&&");                            
-                        }
-                    }                    
+                        summary = "INCOMPLETE DOCUMENTATION! " + summary;
+                    }
+
+                    if ((nodeConfig.Labels != null) && (nodeConfig.Labels.Count > 0))
+                    {
+                        labels = EscapeAmpersands(string.Join(" ", nodeConfig.Labels.Select(label => "#" + label)));
+                    }
+
+                    author = EscapeAmpersands(author);
+                    status = EscapeAmpersands(status);
+                    summary = EscapeAmpersands(summary); 
 
                     string nodeName = MyProject.ShortenNodeTypeName(nodeConfig.NodeType);
 
-                    ListViewItem item = new ListViewItem(new string[4] { nodeName, author, status, summary });
-                    
-                    item.Tag = nodeConfig;
-                    item.Group = group;
-                    item.Checked = enabledNodes.Contains(nodeConfig.NodeType.Name);
+                    var subitems = new string[] {nodeName, author, status, summary, labels};
+
+                    ListViewItem item = new ListViewItem(subitems)
+                    {
+                        Tag = nodeConfig,
+                        Group = @group,
+                        Checked = enabledNodes.Contains(nodeConfig.NodeType.Name)
+                    };
 
                     // forbid to remove currently selected world
                     if (nodeConfig.NodeType == m_mainForm.Project.World.GetType())
@@ -174,12 +178,19 @@ namespace GoodAI.BrainSimulator.Forms
                         item.ImageIndex = 1;
                     }
 
-                    m_nodeInfoItems.Add(new UiNodeInfo(item, nodeConfig,
-                        string.Format("{0}#{1}#{2}#{3}", nodeName, author, status, summary)));
+                    m_nodeInfoItems.Add(new UiNodeInfo(item, nodeConfig, string.Join("|", subitems)));
                 }
             }
 
             PopulateCategoryListView(categorizer);
+        }
+
+        private static string EscapeAmpersands(string text)
+        {
+            if (text != null)
+                text = text.Replace("&", "&&");
+
+            return text;
         }
 
         private void PopulateCategoryListView(CategorySortingHat categorizer)
@@ -436,6 +447,8 @@ namespace GoodAI.BrainSimulator.Forms
         private void NodeSelectionForm_Shown(object sender, EventArgs e)
         {
             searchTextBox.Focus();  // let user type immediately
+
+            AdjustSelectAllCheckBoxPosition();
         }
 
         private void selectAllCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -444,6 +457,18 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 item.Checked = selectAllCheckBox.Checked;
             }
+        }
+
+        private void AdjustSelectAllCheckBoxPosition()
+        {
+            // a little hack, but the most reliable way I've found
+            selectAllCheckBox.Left =
+                nodesSplitContainer.Left + nodesSplitContainer.Panel1.Width + nodesSplitContainer.SplitterWidth;
+        }
+
+        private void nodesSplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            AdjustSelectAllCheckBoxPosition();
         }
     }
 }
