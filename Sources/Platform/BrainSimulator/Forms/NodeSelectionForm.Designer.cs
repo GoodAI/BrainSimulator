@@ -42,6 +42,7 @@
             this.filterList = new System.Windows.Forms.ListView();
             this.categoryHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.filterImageList = new System.Windows.Forms.ImageList(this.components);
+            this.selectAllCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nodesSplitContainer)).BeginInit();
             this.nodesSplitContainer.Panel1.SuspendLayout();
             this.nodesSplitContainer.Panel2.SuspendLayout();
@@ -193,6 +194,17 @@
             this.filterImageList.ImageSize = new System.Drawing.Size(36, 32);
             this.filterImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // selectAllCheckBox
+            // 
+            this.selectAllCheckBox.AutoSize = true;
+            this.selectAllCheckBox.Location = new System.Drawing.Point(262, 600);
+            this.selectAllCheckBox.Name = "selectAllCheckBox";
+            this.selectAllCheckBox.Size = new System.Drawing.Size(69, 17);
+            this.selectAllCheckBox.TabIndex = 6;
+            this.selectAllCheckBox.Text = "Select all";
+            this.selectAllCheckBox.UseVisualStyleBackColor = true;
+            this.selectAllCheckBox.CheckedChanged += new System.EventHandler(this.selectAllCheckBox_CheckedChanged);
+            // 
             // NodeSelectionForm
             // 
             this.AcceptButton = this.acceptButton;
@@ -200,6 +212,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(1053, 631);
+            this.Controls.Add(this.selectAllCheckBox);
             this.Controls.Add(this.nodesSplitContainer);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.acceptButton);
@@ -214,6 +227,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nodesSplitContainer)).EndInit();
             this.nodesSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -232,5 +246,6 @@
         private System.Windows.Forms.ListView filterList;
         private System.Windows.Forms.ColumnHeader categoryHeader;
         private System.Windows.Forms.ImageList filterImageList;
+        private System.Windows.Forms.CheckBox selectAllCheckBox;
     }
 }

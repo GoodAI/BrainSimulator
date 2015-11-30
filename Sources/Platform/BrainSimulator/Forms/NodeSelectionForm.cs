@@ -229,14 +229,22 @@ namespace GoodAI.BrainSimulator.Forms
             nodeListView.Items.Clear();
 
             int row = 0;
+            bool allSelected = true;
+
             foreach (var item in items)
             {
                 item.BackColor = (row++ % 2 == 1) ? Color.FromArgb(245, 245, 245) : SystemColors.Window;
 
                 nodeListView.Items.Add(item);
+
+                if (!item.Checked)
+                    allSelected = false;
             }
 
             nodeListView.GridLines = true;
+
+            selectAllCheckBox.Enabled = (row > 0);  // avoid multiple enumeration
+            selectAllCheckBox.Checked = (row > 0) && allSelected;
         }
 
         private void ShowNodesFromSelectedCategory()
@@ -428,6 +436,14 @@ namespace GoodAI.BrainSimulator.Forms
         private void NodeSelectionForm_Shown(object sender, EventArgs e)
         {
             searchTextBox.Focus();  // let user type immediately
+        }
+
+        private void selectAllCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in nodeListView.Items)
+            {
+                item.Checked = selectAllCheckBox.Checked;
+            }
         }
     }
 }
