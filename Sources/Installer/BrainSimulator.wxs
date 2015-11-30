@@ -60,6 +60,50 @@
 		<ComponentGroup Id="CoreBinaries" Directory="INSTALLFOLDER">
       <Component Id='BrainSimulatorEXE' Guid='*'>
         <File Id='BrainSimulatorEXE' Name='BrainSimulator.exe' DiskId='1' Source='$(var.BrainSimulator.TargetPath)' KeyPath='yes'/>
+
+        <!-- Capabilities keys for Vista/7 "Set Program Access and Defaults" -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities" Name="ApplicationDescription" Value="Brain Simulator" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities" Name="ApplicationIcon" Value="[INSTALLFOLDER]BrainSimulator.exe,0" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities" Name="ApplicationName" Value="Brain Simulator" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities\DefaultIcon" Value="[INSTALLFOLDER]BrainSimulator.exe,1" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities\FileAssociations" Name=".brain" Value="BrainSimulator.BrainFile" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities\FileAssociations" Name=".brainz" Value="BrainSimulator.BrainFileWithData" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities\MIMEAssociations" Name="application/brain" Value="MyApp.Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities\MIMEAssociations" Name="application/brainz" Value="MyApp.Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\GoodAI\Brain Simulator\Capabilities\shell\Open\command" Value="&quot;[APPLICATIONFOLDER]BrainSimulator.exe&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\RegisteredApplications" Name="BrainSimulator" Value="SOFTWARE\GoodAI\Brain Simulator\Capabilities" Type="string" />
+
+        <!-- App Paths to support Start,Run -> "myapp" -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\BrainSimulator.exe" Value="[!BrainSimulatorEXE]" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\BrainSimulator.exe" Name="Path" Value="[INSTALLFOLDER]" Type="string" />
+
+        <!-- Extend to the "open with" list + Win7 jump menu pinning  -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Applications\BrainSimulator.exe\SupportedTypes" Name=".brain" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Applications\BrainSimulator.exe\SupportedTypes" Name=".brainz" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Applications\BrainSimulator.exe\shell\open" Name="FriendlyAppName" Value="Brain Simulator" Type="string" />
+
+        <!-- MyApp.Document ProgID -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\BrainSimulator.BrainFile" Name="FriendlyTypeName" Value="Brain Simulator brain file" Type="string" />
+        <ProgId Id="BrainSimulator.BrainFile" Description="Brain Simulator brain file" Icon="BrainSimulator.exe" Advertise="yes">
+            <Extension Id="brain">
+                <Verb Id="open" Command="Open in Brain Simulator" Argument="&quot;%1&quot;" />
+                <MIME Advertise="yes" ContentType="application/brain" Default="yes" />
+            </Extension>
+        </ProgId>
+
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\BrainSimulator.BrainFileWithData" Name="FriendlyTypeName" Value="Brain Simulator brain file and trained data" Type="string" />
+        <ProgId Id="BrainSimulator.BrainFileWithData" Description="Brain Simulator brain file and trained data" Icon="BrainSimulator.exe" Advertise="yes">
+            <Extension Id="brainz">
+                <Verb Id="open" Command="Open in Brain Simulator" Argument="&quot;%1&quot;" />
+                <MIME Advertise="yes" ContentType="application/brainz" Default="yes" />
+            </Extension>
+        </ProgId>
+
+        <!-- Optional: add an 'Edit with XYZ' to 'right click' even when not associated -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\.brain\shell\edit.MyApp.exe" Value="Open in Brain Simulator" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\.brain\shell\edit.MyApp.exe\command" Value="&quot;[INSTALLFOLDER]BrainSimulator.exe&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\.brainz\shell\edit.MyApp.exe" Value="Open in Brain Simulator" Type="string" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\.brainz\shell\edit.MyApp.exe\command" Value="&quot;[INSTALLFOLDER]BrainSimulator.exe&quot; &quot;%1&quot;" Type="string" />
       </Component>
 
       <Component Id='AgaControlsLib' Guid='*'>

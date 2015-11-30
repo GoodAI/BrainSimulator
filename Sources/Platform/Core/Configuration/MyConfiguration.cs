@@ -69,7 +69,13 @@ namespace GoodAI.Core.Configuration
                 extraParams = options.Parse(Environment.GetCommandLineArgs().Skip(1));
                 if (extraParams.Count > 0)
                 {
-                    OpenOnStartupProjectName = Path.ChangeExtension(extraParams[0], ".brain");
+                    string brainFile = extraParams[0];
+                    string extension = Path.GetExtension(brainFile);
+
+                    if (extension != ".brain" && extension != ".brainz")
+                        brainFile = Path.ChangeExtension(brainFile, ".brain");
+
+                    OpenOnStartupProjectName = brainFile;
                 }
             }
             catch (OptionException e)
