@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DashboardTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
