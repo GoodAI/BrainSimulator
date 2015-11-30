@@ -12,7 +12,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Core.Observers
 {
-    public class HostTimePlotObserver : MyAbstractMemoryBlockObserver
+    public class TimePlotObserver : MyAbstractMemoryBlockObserver
     {
         private const int MaxCurveCount = 50;
 
@@ -426,7 +426,7 @@ namespace GoodAI.Core.Observers
         private SolidBrush m_textBrush;
         private SolidBrush m_cursorBrush;
 
-        public HostTimePlotObserver() //constructor with node parameter
+        public TimePlotObserver() //constructor with node parameter
         {
             TextureWidth = 800;
             TextureHeight = 400;

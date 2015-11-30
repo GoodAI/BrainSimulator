@@ -13,7 +13,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Core.Observers
 {
-    public class HostMatrixObserver : MyAbstractMemoryBlockObserver
+    public class MatrixObserver : MyAbstractMemoryBlockObserver
     {
         [YAXSerializableField] private int m_decimalCount;
 
@@ -146,7 +146,7 @@ namespace GoodAI.Core.Observers
         private int m_cellHeight;
         private Type m_valueType;
 
-        public HostMatrixObserver() //constructor with node parameter
+        public MatrixObserver() //constructor with node parameter
         {
             DecimalCount = 2;
             TargetChanged += MyMatrixObserver_TargetChanged;

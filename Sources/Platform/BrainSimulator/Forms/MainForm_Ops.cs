@@ -297,7 +297,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void CreateAndShowObserverView(MyAbstractMemoryBlock memoryBlock, MyNode declaredOwner, Type mbObserverType)
         {
-            bool isPlot = mbObserverType == typeof(MyTimePlotObserver) || mbObserverType == typeof(HostTimePlotObserver);
+            bool isPlot = mbObserverType == typeof(MyTimePlotObserver) || mbObserverType == typeof(TimePlotObserver);
 
             if (isPlot && !(memoryBlock is MyMemoryBlock<float>))
             {
@@ -315,9 +315,9 @@ namespace GoodAI.BrainSimulator.Forms
                     {
                         observer = new MyTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
                     }
-                    else if (mbObserverType == typeof (HostTimePlotObserver))
+                    else if (mbObserverType == typeof (TimePlotObserver))
                     {
-                        observer = new HostTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
+                        observer = new TimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
                     }
                 }
                 else
@@ -354,9 +354,9 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 owner = (observer as MyTimePlotObserver).Target.Owner;
             }
-            else if (observer is HostTimePlotObserver)
+            else if (observer is TimePlotObserver)
             {
-                owner = (observer as HostTimePlotObserver).Target.Owner;
+                owner = (observer as TimePlotObserver).Target.Owner;
             }
             else
             {

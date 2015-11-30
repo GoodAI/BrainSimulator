@@ -188,7 +188,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void addHostPlotButton_Click(object sender, EventArgs e)
         {
-            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostTimePlotObserver));
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(TimePlotObserver));
         }
 
         private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -203,7 +203,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void addHostMatrixObserver_Click(object sender, EventArgs e)
         {
-            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostMatrixObserver));
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MatrixObserver));
         }
 
         private void addSpikeObserver_Click(object sender, EventArgs e)
