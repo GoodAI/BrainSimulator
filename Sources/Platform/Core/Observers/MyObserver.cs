@@ -126,10 +126,26 @@ namespace GoodAI.Core.Observers
                 {
                     m_cudaTextureSource.UnMap();
                 }
+                else if (m_cudaTextureVar != null)
+                {
+                    GL.BindBuffer(BufferTarget.PixelUnpackBuffer, m_textureVBO);
+                    var ptr = GL.MapBuffer(BufferTarget.PixelUnpackBuffer, BufferAccess.WriteOnly);
+                    m_cudaTextureVar.CopyToHost(ptr);
+                    GL.UnmapBuffer(BufferTarget.PixelUnpackBuffer);
+                    GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+                }
 
                 if (m_cudaVertexSource != null)
                 {
                     m_cudaVertexSource.UnMap();
+                }
+                else if (m_cudaVertexVar != null)
+                {
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, m_vertexVBO);
+                    var ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.WriteOnly);
+                    m_cudaVertexVar.CopyToHost(ptr);
+                    GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
                 }
             }
         }
@@ -273,7 +289,8 @@ namespace GoodAI.Core.Observers
         public uint TextureVBO { get { return m_textureVBO; } }
 
         private CudaOpenGLBufferInteropResource m_cudaTextureSource;
-        protected CUdeviceptr VBODevicePointer { get { return m_cudaTextureSource.GetMappedPointer<uint>().DevicePointer; } }
+        private CudaDeviceVariable<uint> m_cudaTextureVar;
+        protected CUdeviceptr VBODevicePointer { get { return (m_cudaTextureSource != null) ? m_cudaTextureSource.GetMappedPointer<uint>().DevicePointer : m_cudaTextureVar.DevicePointer; } }
 
         private void CreateTextureVBO()
         {
@@ -291,8 +308,14 @@ namespace GoodAI.Core.Observers
                     GL.BufferData(BufferTarget.PixelUnpackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.DynamicCopy);  // use data instead of IntPtr.Zero if needed
                     GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
-                    m_cudaTextureSource = new CudaOpenGLBufferInteropResource(m_textureVBO, CUGraphicsRegisterFlags.None); //.WriteDiscard);  // Write only by CUDA
-
+                    try
+                    {
+                        m_cudaTextureSource = new CudaOpenGLBufferInteropResource(m_textureVBO, CUGraphicsRegisterFlags.None); //.WriteDiscard);  // Write only by CUDA
+                    }
+                    catch (CudaException e)
+                    {
+                        m_cudaTextureVar = new CudaDeviceVariable<uint>(TextureSize);
+                    }
                     // Enable Texturing
                     GL.Enable(EnableCap.Texture2D);
                     // Generate a texture ID
@@ -329,6 +352,18 @@ namespace GoodAI.Core.Observers
                 m_texture_id = 0;
 
                 m_cudaTextureSource = null;
+            }
+            else if (m_cudaTextureVar != null)
+            {
+                m_cudaTextureVar.Dispose();
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+                GL.DeleteBuffers(1, ref m_textureVBO);
+
+                GL.DeleteTextures(1, ref m_texture_id);
+                m_textureVBO = 0;
+                m_texture_id = 0;
+
+                m_cudaTextureVar = null;
             }
         }
 
@@ -381,8 +416,9 @@ namespace GoodAI.Core.Observers
         public uint VertexVBO { get { return m_vertexVBO; } }
 
         private CudaOpenGLBufferInteropResource m_cudaVertexSource;
-        protected CUdeviceptr VertexVBODevicePointer { get { return m_cudaVertexSource.GetMappedPointer<uint>().DevicePointer; } }
-
+        private CudaDeviceVariable<float> m_cudaVertexVar;
+        protected CUdeviceptr VertexVBODevicePointer { get { return (m_cudaVertexSource != null) ? m_cudaVertexSource.GetMappedPointer<uint>().DevicePointer : m_cudaVertexVar.DevicePointer; } }
+        
         private void CreateVertexVBO()
         {
             if (Initialized)
@@ -397,7 +433,14 @@ namespace GoodAI.Core.Observers
                 GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.DynamicCopy);  // use data instead of IntPtr.Zero if needed
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
-                m_cudaVertexSource = new CudaOpenGLBufferInteropResource(m_vertexVBO, CUGraphicsRegisterFlags.None);                
+                try
+                {
+                    m_cudaVertexSource = new CudaOpenGLBufferInteropResource(m_vertexVBO, CUGraphicsRegisterFlags.None);
+                }
+                catch (CudaException e)
+                {
+                    m_cudaVertexVar = new CudaDeviceVariable<float>(VertexDataSize);
+                }
             }
         }
 
@@ -411,7 +454,17 @@ namespace GoodAI.Core.Observers
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
                 GL.DeleteBuffers(1, ref m_vertexVBO);
                 
-                m_vertexVBO = 0;                
+                m_vertexVBO = 0;
+                m_cudaVertexSource = null;
+            }
+            else if (m_cudaVertexVar != null)
+            {
+                m_cudaVertexVar.Dispose();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                GL.DeleteBuffers(1, ref m_vertexVBO);
+
+                m_vertexVBO = 0;
+                m_cudaVertexVar = null;
             }
         }
 
