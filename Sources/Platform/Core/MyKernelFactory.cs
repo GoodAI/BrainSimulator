@@ -44,7 +44,7 @@ namespace GoodAI.Core
         {
             m_GPU = GPU;
             m_kernel = new CudaKernel(kernelName, module, cuda);
-            MAX_THREADS = cuda.GetDeviceInfo().MaxThreadsPerBlock; //TODO: maybe move to KernelFactory
+            MAX_THREADS = m_kernel.MaxThreadsPerBlock;
         }
 
         public void Run(params object[] args)
