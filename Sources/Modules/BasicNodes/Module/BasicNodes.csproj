@@ -80,11 +80,11 @@
   <ItemGroup>
     <Reference Include="BEPUphysics, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31f6a8732a21de19, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\BEPUphysics\BEPUphysics.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\BEPUphysics\BEPUphysics.dll</HintPath>
     </Reference>
     <Reference Include="BEPUutilities, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31f6a8732a21de19, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\BEPUphysics\BEPUutilities.dll</HintPath>
+      <HintPath>..\..\..\..\BinaryLibs\BEPUphysics\BEPUutilities.dll</HintPath>
     </Reference>
     <Reference Include="CudaBlas, Version=7.5.7.0, Culture=neutral, PublicKeyToken=539d54d12e99fedb, processorArchitecture=AMD64">
       <HintPath>..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaBlas.dll</HintPath>
@@ -121,9 +121,6 @@
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenTK.GLControl">
-      <HintPath>..\..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
