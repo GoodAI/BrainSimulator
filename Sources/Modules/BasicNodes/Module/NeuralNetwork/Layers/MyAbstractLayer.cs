@@ -46,10 +46,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyBrowsable, Category("\tLayer"), DisplayName("\tNeurons")]
         public virtual int Neurons { get; set; }
 
-        [YAXSerializableField(DefaultValue = 1)]
-        [MyBrowsable, Category("Misc")]
-        public int OutputColumnHint { get; set; }
-
         // The preceding layer in the topological ordering
         public MyAbstractLayer PreviousTopologicalLayer { get; set; }
         // The succeeding layer in the topological ordering
@@ -111,7 +107,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public override void UpdateMemoryBlocks()
         {
             Output.Count = Neurons * ParentNetwork.BatchSize;
-            Output.ColumnHint = OutputColumnHint;
             Delta.Count = Neurons * ParentNetwork.BatchSize;
         }
 
