@@ -41,7 +41,7 @@ namespace GoodAI.Modules.Retina
         public override void UpdateMemoryBlocks()
         {
             OutputSize = OutputWidth * OutputWidth;
-            Output.ColumnHint = OutputWidth;
+            Output.Dims = new TensorDimensions(OutputWidth, OutputWidth);
 
             NumberPupilSamples = 1;
             if (PupilControl != null && PupilControl.Count > 3) // for multi input -> set how $ pupils samples from the count
