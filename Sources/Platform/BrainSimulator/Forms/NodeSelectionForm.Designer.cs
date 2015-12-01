@@ -37,6 +37,7 @@
             this.authorcolumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.summaryColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.labelsColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.searchTextBox = new GoodAI.BrainSimulator.Forms.NodeSelectionForm.CueTextBox();
             this.nodesSplitContainer = new System.Windows.Forms.SplitContainer();
             this.filterList = new System.Windows.Forms.ListView();
@@ -58,7 +59,7 @@
             // acceptButton
             // 
             this.acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.acceptButton.Location = new System.Drawing.Point(932, 605);
+            this.acceptButton.Location = new System.Drawing.Point(940, 605);
             this.acceptButton.Name = "acceptButton";
             this.acceptButton.Size = new System.Drawing.Size(116, 23);
             this.acceptButton.TabIndex = 2;
@@ -70,7 +71,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(810, 605);
+            this.cancelButton.Location = new System.Drawing.Point(818, 605);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(116, 23);
             this.cancelButton.TabIndex = 3;
@@ -88,7 +89,8 @@
             this.nameColumn,
             this.authorcolumn,
             this.statusColumn,
-            this.summaryColumn});
+            this.summaryColumn,
+            this.labelsColumn});
             this.nodeListView.FullRowSelect = true;
             this.nodeListView.GridLines = true;
             this.nodeListView.Location = new System.Drawing.Point(0, 0);
@@ -98,7 +100,7 @@
             this.nodeListView.OwnerDraw = true;
             this.nodeListView.ShowGroups = false;
             this.nodeListView.ShowItemToolTips = true;
-            this.nodeListView.Size = new System.Drawing.Size(785, 589);
+            this.nodeListView.Size = new System.Drawing.Size(806, 589);
             this.nodeListView.SmallImageList = this.nodeImageList;
             this.nodeListView.TabIndex = 1;
             this.nodeListView.UseCompatibleStateImageBehavior = false;
@@ -110,22 +112,27 @@
             // nameColumn
             // 
             this.nameColumn.Text = "Name";
-            this.nameColumn.Width = 220;
+            this.nameColumn.Width = 210;
             // 
             // authorcolumn
             // 
             this.authorcolumn.Text = "Author";
-            this.authorcolumn.Width = 110;
+            this.authorcolumn.Width = 100;
             // 
             // statusColumn
             // 
             this.statusColumn.Text = "Status";
-            this.statusColumn.Width = 150;
+            this.statusColumn.Width = 100;
             // 
             // summaryColumn
             // 
             this.summaryColumn.Text = "Summary";
             this.summaryColumn.Width = 400;
+            // 
+            // labelsColumn
+            // 
+            this.labelsColumn.Text = "Labels";
+            this.labelsColumn.Width = 160;
             // 
             // searchTextBox
             // 
@@ -135,7 +142,7 @@
             this.searchTextBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.searchTextBox.Location = new System.Drawing.Point(3, 0);
             this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.Size = new System.Drawing.Size(248, 20);
+            this.searchTextBox.Size = new System.Drawing.Size(237, 20);
             this.searchTextBox.TabIndex = 0;
             this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
             this.searchTextBox.Enter += new System.EventHandler(this.searchTextBox_Enter);
@@ -145,6 +152,7 @@
             this.nodesSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.nodesSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.nodesSplitContainer.Location = new System.Drawing.Point(4, 7);
             this.nodesSplitContainer.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.nodesSplitContainer.Name = "nodesSplitContainer";
@@ -157,9 +165,10 @@
             // nodesSplitContainer.Panel2
             // 
             this.nodesSplitContainer.Panel2.Controls.Add(this.nodeListView);
-            this.nodesSplitContainer.Size = new System.Drawing.Size(1045, 592);
-            this.nodesSplitContainer.SplitterDistance = 254;
+            this.nodesSplitContainer.Size = new System.Drawing.Size(1053, 592);
+            this.nodesSplitContainer.SplitterDistance = 243;
             this.nodesSplitContainer.TabIndex = 5;
+            this.nodesSplitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.nodesSplitContainer_SplitterMoved);
             // 
             // filterList
             // 
@@ -175,7 +184,7 @@
             this.filterList.Margin = new System.Windows.Forms.Padding(0);
             this.filterList.MultiSelect = false;
             this.filterList.Name = "filterList";
-            this.filterList.Size = new System.Drawing.Size(253, 563);
+            this.filterList.Size = new System.Drawing.Size(240, 563);
             this.filterList.SmallImageList = this.filterImageList;
             this.filterList.TabIndex = 0;
             this.filterList.UseCompatibleStateImageBehavior = false;
@@ -186,7 +195,7 @@
             // categoryHeader
             // 
             this.categoryHeader.Text = "Category";
-            this.categoryHeader.Width = 200;
+            this.categoryHeader.Width = 220;
             // 
             // filterImageList
             // 
@@ -197,7 +206,7 @@
             // selectAllCheckBox
             // 
             this.selectAllCheckBox.AutoSize = true;
-            this.selectAllCheckBox.Location = new System.Drawing.Point(262, 600);
+            this.selectAllCheckBox.Location = new System.Drawing.Point(251, 599);
             this.selectAllCheckBox.Name = "selectAllCheckBox";
             this.selectAllCheckBox.Size = new System.Drawing.Size(69, 17);
             this.selectAllCheckBox.TabIndex = 6;
@@ -211,7 +220,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(1053, 631);
+            this.ClientSize = new System.Drawing.Size(1061, 631);
             this.Controls.Add(this.selectAllCheckBox);
             this.Controls.Add(this.nodesSplitContainer);
             this.Controls.Add(this.cancelButton);
@@ -247,5 +256,6 @@
         private System.Windows.Forms.ColumnHeader categoryHeader;
         private System.Windows.Forms.ImageList filterImageList;
         private System.Windows.Forms.CheckBox selectAllCheckBox;
+        private System.Windows.Forms.ColumnHeader labelsColumn;
     }
 }
