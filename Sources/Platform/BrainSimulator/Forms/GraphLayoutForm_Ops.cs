@@ -255,10 +255,30 @@ namespace GoodAI.BrainSimulator.Forms
                     .Where(nodeInfo => nodeInfo.Node != null)
                     .ToDictionary(nodeInfo => nodeInfo.Node.ExecutionBlock as IMyExecutable, nodeInfo => nodeInfo.View);
 
+                var profilingInfoWithTasks = new Dictionary<IMyExecutable, TimeSpan>();
+                foreach (KeyValuePair<IMyExecutable, TimeSpan> profiling in profilingInfo)
+                {
+                    var task = profiling.Key as MyTask;
+                    if (task != null)
+                    {
+                        // Tasks belong to a node, their time should be added to the node's.
+                        MyWorkingNode node = task.GenericOwner;
+                        if (profilingInfoWithTasks.ContainsKey(node.ExecutionBlock))
+                            profilingInfoWithTasks[node.ExecutionBlock] =
+                                profilingInfoWithTasks[node.ExecutionBlock].Add(profiling.Value);
+                        else
+                            profilingInfoWithTasks[node.ExecutionBlock] = profiling.Value;
+                    }
+                    else
+                    {
+                        profilingInfoWithTasks[profiling.Key] = profiling.Value;
+                    }
+                }
+
                 // The total duration of the displayed nodes.
                 double sum = profilingInfo.Values.Sum(value => value.TotalMilliseconds);
 
-                foreach (KeyValuePair<IMyExecutable, TimeSpan> profiling in profilingInfo)
+                foreach (KeyValuePair<IMyExecutable, TimeSpan> profiling in profilingInfoWithTasks)
                 {
                     // Find the node that corresponds to the executable.
                     MyNodeView nodeView;

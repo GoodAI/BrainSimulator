@@ -134,7 +134,6 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (simulationHandler.Simulation.InDebugMode)
                 {
-                    toolStrip.Enabled = true;                                               
                     noDebugLabel.Visible = false;
 
                     MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
@@ -155,7 +154,6 @@ namespace GoodAI.BrainSimulator.Forms
                 m_executionPlan = null;
                 debugTreeView.Model = null;
                 noDebugLabel.Visible = true;
-                toolStrip.Enabled = false;
 
                 if (this.IsFloat)
                 {
@@ -317,6 +315,16 @@ namespace GoodAI.BrainSimulator.Forms
             if (selectedTreeNode == null)
                 selectedTreeNode = debugTreeView.AllNodes.FirstOrDefault(node => node.ToString().StartsWith("Simulation"));
             return selectedTreeNode;
+        }
+
+        private void collapseAllButton_Click(object sender, EventArgs e)
+        {
+            debugTreeView.CollapseAll();
+        }
+
+        private void expandAllButton_Click(object sender, EventArgs e)
+        {
+            debugTreeView.ExpandAll();
         }
     }
 

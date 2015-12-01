@@ -51,6 +51,9 @@
             this.stepOverButton = new System.Windows.Forms.ToolStripButton();
             this.stepOutButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.collapseAllButton = new System.Windows.Forms.ToolStripButton();
+            this.expandAllButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.noDebugLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -173,7 +176,6 @@
             // 
             // toolStrip
             // 
-            this.toolStrip.Enabled = false;
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showSignalsButton,
@@ -186,6 +188,9 @@
             this.stepOverButton,
             this.stepOutButton,
             this.toolStripSeparator1,
+            this.collapseAllButton,
+            this.expandAllButton,
+            this.toolStripSeparator3,
             this.noDebugLabel});
             this.toolStrip.Location = new System.Drawing.Point(3, 3);
             this.toolStrip.Name = "toolStrip";
@@ -266,6 +271,7 @@
             // stepInButton
             // 
             this.stepInButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stepInButton.Enabled = false;
             this.stepInButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.StepIn;
             this.stepInButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepInButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -288,6 +294,7 @@
             // stepOutButton
             // 
             this.stepOutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stepOutButton.Enabled = false;
             this.stepOutButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Stepout;
             this.stepOutButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepOutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -300,6 +307,33 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // collapseAllButton
+            // 
+            this.collapseAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.collapseAllButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.collapse;
+            this.collapseAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.collapseAllButton.Name = "collapseAllButton";
+            this.collapseAllButton.Size = new System.Drawing.Size(23, 22);
+            this.collapseAllButton.Text = "Collapse all";
+            this.collapseAllButton.ToolTipText = "Collapse all tree nodes";
+            this.collapseAllButton.Click += new System.EventHandler(this.collapseAllButton_Click);
+            // 
+            // expandAllButton
+            // 
+            this.expandAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.expandAllButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.expand;
+            this.expandAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.expandAllButton.Name = "expandAllButton";
+            this.expandAllButton.Size = new System.Drawing.Size(23, 22);
+            this.expandAllButton.Text = "Expand all";
+            this.expandAllButton.ToolTipText = "Expand all tree nodes";
+            this.expandAllButton.Click += new System.EventHandler(this.expandAllButton_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // noDebugLabel
             // 
@@ -356,6 +390,9 @@
         private Aga.Controls.Tree.TreeColumn profilerTime;
         private Aga.Controls.Tree.NodeControls.NodeTextBox profilerTimeValue;
         public Aga.Controls.Tree.NodeControls.NodeCheckBox breakpointCheckBox;
+        private System.Windows.Forms.ToolStripButton collapseAllButton;
+        private System.Windows.Forms.ToolStripButton expandAllButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 
     }
 }

@@ -336,6 +336,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="brainSim.ico" />
+    <None Include="Resources\expand.bmp" />
+    <None Include="Resources\expand.png" />
+    <None Include="Resources\expand.ico" />
     <Content Include="res\abs.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -391,6 +394,7 @@
     </Content>
     <Content Include="res\add_plot.png" />
     <Content Include="res\clear_mb.png" />
+    <None Include="res\collapse.png" />
     <Content Include="res\comparaisonnode.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -436,6 +440,7 @@
     <Content Include="res\evolfixedweightnetwork_big.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="res\expand.png" />
     <Content Include="res\export_mb.png" />
     <Content Include="res\F1Help_7644.png" />
     <Content Include="res\filter.png">
