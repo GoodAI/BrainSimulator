@@ -14,6 +14,10 @@
 
     <Node type="GoodAI.Modules.Common.MyRandomNode" CanBeAdded="true" BigIcon="random_big.png" SmallIcon="random.png" />
     <Node type="GoodAI.Modules.Common.MultiplexerNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.Common.MyStatisticsNode" CanBeAdded="true"/>
+    <Node type="GoodAI.Modules.Common.MyBoxPlotNode" CanBeAdded="true">
+      <Observer type="GoodAI.Modules.Common.MyBoxPlotObserver" />
+    </Node>
     
     <Node type="GoodAI.Modules.Retina.MyPupilControl" CanBeAdded="true" BigIcon="observer_big.png" SmallIcon="observer.png">
       <Observer type="GoodAI.Modules.Observers.MyPupilControlObserver" />
