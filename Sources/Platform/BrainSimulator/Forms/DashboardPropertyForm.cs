@@ -13,6 +13,7 @@ using GoodAI.Core.Dashboard;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using Graph;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -374,6 +375,23 @@ namespace GoodAI.BrainSimulator.Forms
 
             splitContainerGroups.Panel1Collapsed = !showGroupsButton.Checked;
             splitContainerGroups.Panel2Collapsed = !showMembersButton.Checked;
+        }
+
+        public void RemovePropertiesOfNode(MyNode node)
+        {
+            // First try to remove the property from a group.
+            RemovePropertiesOfNode(node, GroupedDashboardViewModel);
+            RemovePropertiesOfNode(node, DashboardViewModel);
+
+            propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
+        }
+
+        private void RemovePropertiesOfNode<TDashboard, TProperty>(MyNode node, DashboardViewModelBase<TDashboard, TProperty> model)
+            where TDashboard : DashboardBase<TProperty>
+            where TProperty : DashboardProperty
+        {
+            model.RemovePropertyOf(node);
         }
     }
 }

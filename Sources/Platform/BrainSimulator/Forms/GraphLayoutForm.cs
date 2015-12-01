@@ -308,6 +308,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             m_mainForm.CloseObservers(node);
+            m_mainForm.RemoveFromDashboard(node);
         }
 
         public void worldButton_Click(object sender, EventArgs e)

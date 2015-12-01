@@ -477,6 +477,11 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        public void RemoveFromDashboard(MyNode node)
+        {
+            DashboardPropertyView.RemovePropertiesOfNode(node);
+        }
+
         public void RemoveObserverView(ObserverForm view)
         {
             ObserverViews.Remove(view);
