@@ -1,5 +1,4 @@
-﻿using BEPUutilities;
-using GoodAI.Core;
+﻿using GoodAI.Core;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
 using ManagedCuda;
