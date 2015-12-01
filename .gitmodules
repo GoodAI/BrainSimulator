@@ -1,4 +1,0 @@
-[submodule "BinaryLibs/GoodAiPlatformLibs"]
-	path = BinaryLibs/GoodAiPlatformLibs
-	url = https://github.com/GoodAI/GoodAiPlatformLibs.git
-	branch = master
