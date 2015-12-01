@@ -34,6 +34,7 @@ We tried to keep the UI as simple as possible, you can see the basic controls of
 * **Save Project As..., CTRL+SHIFT+S** - save project with dialog
 * List of recently opened projects
 * **Load User Nodes** - load nodes from custom XML file
+* **Set global data folder** - choose a custom location where global data will be saved
 * **Quit** - quits Brain Simulator
 
 #### Edit
@@ -51,13 +52,18 @@ It should be mentioned, that nodes are stored as XML text in a clipboard. Thanks
 * **Pause, F7** - pauses the simulation
 * **Stop, F8** - stops the simulation
 * **Step Over, F10** - runs the simulation for 1 step
+* **Step Into, F11** - in debug mode, steps into the current execution block
+* **Step Out, Shift+F11** - in debug mode, steps out of the current execution block
 
 #### View
 ![View](img/menu-view.png)
 
-* **Network, Node Properties, Tasks, Task Properties, Console, Validation** - Opens various Brain Simulator windows (9, 7, 3, 4, 16, 17)
+* **Network, Node Properties, Memory Blocks, Tasks, Task Properties, Console, Validation** - Opens various Brain Simulator windows (9, 7, 3, 4, 16, 17)
+* **Dashboard Properties** - opens the [dashboard](ui.md#dashboard)
 * **Node help, F1** - opens documentation for currently selected node
-* **Configure node selection..., CTRL+L** - opens configuration window, where you can choose which nodes should be visible in Nodes toolstrip (15) and which Worlds in Simulation controls (2)
+* **Debugging / Profiling** - opens the window with debugging and profiling information
+* **Reset Views Layout, Ctrl+W** - Discards any custom window layout settings in Brain Simulator 
+* **Configure node selection..., Ctrl+L** - opens configuration window, where you can choose which nodes should be visible in Nodes toolstrip (15) and which Worlds in Simulation controls (2)
 
 #### Tools
 ![Tools](img/menu-tools.png)
@@ -65,7 +71,7 @@ It should be mentioned, that nodes are stored as XML text in a clipboard. Thanks
 * **Update Memory Blocks, F4** - updates all memory blocks (this is automatically done when starting the simulation)
 
 #### Help
-![Help](img/menu-help.png)
+![Help](img/menu-guide.png)
 
 * **Guide..., CTRL+F1** - opens this documentation page
 
@@ -77,6 +83,8 @@ Some of these are just shortcuts for menu items. Left to right:
 * **New/Open/Save Project**
 * **Run/Stop/Pause Simulation**
 * **Step Over**
+* **Start debugging**
+* **Enable profiling** - starts collecting information about the various tasks' execution duration and shows the results in the **Debugging / Profiling** window as well as the main graph view of the model
 * **Sleep Interval** - after each simulation step, Brain Simulator sleeps for X ms; used for slowing down the simulation
 * **Report Interval** - observers are rendered each X ms
 *  **Global Load on Start** - toggle; all nodes that have their own persistence data files with the state load them on start of the simulation
@@ -105,6 +113,7 @@ Left to right:
 * **Load Data on Startup** - toggle; loads node's specific state data on the simulation start
 * **Save Data on Stop** - toggle; saves node's specific state data on the simulation stop
 * **Autosave Snapshot** - save observer snapshot (as .PNG) to %userprofile%\Documents\bs_snapshots
+* **Pin to Dashboard** - Pin the selected property to the Dashboard Properties
 * **Help, F1** - opens the documentation for the selected node
 
 ### <a name="workspace-controls">Workspace Controls</a>
@@ -124,6 +133,21 @@ Left to right:
 * **Current simulation step**
 * **Speed of simulation** - in steps per second
 
+### Dashboard
+![Dashboard Properties](img/dashboard.png)
+
+The dashboard is opened from the View menu. Task and node properties can be pinned to the dashboard, which allows for easy property manipulation from one place in the UI. Once pinned, the properties appear in the top property grid of the dashboard, grouped by node name. Task properties will display the name of the task as a prefix.
+
+You can create groups for properties in the second window. The groups can have arbitrary name and properties can be added into them as long as they have the same type. The type of the group is set once the first property is added and is displayed next to its name together with the count of grouped properties. The list of properties in the selected group is in the bottommost part of the dashboard, from where the properties can be removed back into the non-grouped part of the dashboard. If you change the value of a property, all its member properties will have their values changed.
+
+### Debugging / Profiling
+![Debugging / Profiling](img/debug.png)
+
+In this window, you can see the execution plan of your simulation. In **debug** mode, you can **step over, into and out** of single executables. You can also set breakpoints in **debug** mode. The simulation will then always run only up to the first encountered breakpoint.
+
+Only **step over** will be available in normal mode and it will perform one step of the whole simulation.
+
+If you turn on the **profiling** feature, you'll see times of the individual executables. When you select any non-leaf node of the execution tree, you'll see its direct siblings colored in either various shades of red according to the portions of time they take from the total time of the node, or in light green for those that take less than 5%.
 
 ### Node Group
 Node group serves for joining multiple nodes into one topological object, which looks like just one node in the workspace. You can change number of I/O connections of the node group in its node parameters window (7).
