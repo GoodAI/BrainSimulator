@@ -18,6 +18,8 @@ namespace GoodAI.Core.Configuration
         public static Dictionary<Type, MyNodeConfig> KnownNodes { get; private set; }
         public static Dictionary<Type, MyWorldConfig> KnownWorlds { get; private set; }
 
+        public static Dictionary<string, MyCategoryConfig> KnownCategories { get; private set; }
+
         public static List<MyModuleConfig> Modules { get; private set; }
         public static Dictionary<Assembly, MyModuleConfig> AssemblyLookup { get; private set; }
 
@@ -31,6 +33,7 @@ namespace GoodAI.Core.Configuration
             GlobalPTXFolder = MyResources.GetEntryAssemblyPath() + @"\modules\GoodAI.BasicNodes\ptx\";
             KnownNodes = new Dictionary<Type, MyNodeConfig>();
             KnownWorlds = new Dictionary<Type, MyWorldConfig>();
+            KnownCategories = new Dictionary<string, MyCategoryConfig>();
             Modules = new List<MyModuleConfig>();
 
             ModulesSearchPath = new List<string>();
@@ -66,7 +69,13 @@ namespace GoodAI.Core.Configuration
                 extraParams = options.Parse(Environment.GetCommandLineArgs().Skip(1));
                 if (extraParams.Count > 0)
                 {
-                    OpenOnStartupProjectName = Path.ChangeExtension(extraParams[0], ".brain");
+                    string brainFile = extraParams[0];
+                    string extension = Path.GetExtension(brainFile);
+
+                    if (extension != ".brain" && extension != ".brainz")
+                        brainFile = Path.ChangeExtension(brainFile, ".brain");
+
+                    OpenOnStartupProjectName = brainFile;
                 }
             }
             catch (OptionException e)
@@ -75,32 +84,34 @@ namespace GoodAI.Core.Configuration
             }
         }
 
-        public static void LoadModules()
+        public static List<FileInfo> ListModules()
         {
-            MyLog.INFO.WriteLine("Loading system modules...");
-
-            AddModuleFromAssembly(new FileInfo(MyResources.GetEntryAssemblyPath() + "\\" + CORE_MODULE_NAME), true);                     
-
-            MyLog.INFO.WriteLine("Loading custom modules...");
+            var moduleList = new List<FileInfo>();
 
             foreach (string modulePath in ModulesSearchPath)
             {
-                FileInfo info = new FileInfo(modulePath);
+                var dirInfo = new FileInfo(modulePath);
+                if ((dirInfo.Attributes & FileAttributes.Directory) <= 0)
+                    continue;
 
-                if ((info.Attributes & FileAttributes.Directory) > 0)
-                {
-                    info = new FileInfo(Path.Combine(info.FullName, info.Name + ".dll"));
-                }
+                var fileInfo = new FileInfo(Path.Combine(dirInfo.FullName, dirInfo.Name + ".dll"));
+                if (!fileInfo.Exists)
+                    MyLog.WARNING.WriteLine("Module assembly not found: " + fileInfo);
 
-                if (info.Exists)
-                {
-                    AddModuleFromAssembly(info);
-                }
-                else
-                {
-                    MyLog.ERROR.WriteLine("Module assembly not found: " + info);
-                }
+                moduleList.Add(fileInfo);
             }
+
+            return moduleList;
+        }
+
+        public static void LoadModules()
+        {
+            MyLog.INFO.WriteLine("Loading system modules...");
+            AddModuleFromAssembly(
+                new FileInfo(Path.Combine(MyResources.GetEntryAssemblyPath(), CORE_MODULE_NAME)), basicNode: true);
+
+            MyLog.INFO.WriteLine("Loading custom modules...");
+            ListModules().ForEach(moduleFileInfo => AddModuleFromAssembly(moduleFileInfo));
         }
 
         private static void AddModuleFromAssembly(FileInfo file, bool basicNode = false)
@@ -135,6 +146,14 @@ namespace GoodAI.Core.Configuration
                         {
                             KnownWorlds[wc.NodeType] = wc;
                         }
+                    }
+                }
+
+                if (moduleConfig.CategoryList != null)
+                {
+                    foreach (MyCategoryConfig categoryConfig in moduleConfig.CategoryList)
+                    {
+                        KnownCategories[categoryConfig.Name] = categoryConfig;
                     }
                 }
 

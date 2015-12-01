@@ -66,50 +66,35 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CudaBitmapSource, Version=7.0.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBitmapSource.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CudaBlas, Version=7.0.27.0, Culture=neutral, PublicKeyToken=539d54d12e99fedb, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaBlas.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaBlas.dll</HintPath>
     </Reference>
     <Reference Include="CudaFFT, Version=7.0.27.0, Culture=neutral, PublicKeyToken=f066edfa1acb2f23, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaFFT.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaFFT.dll</HintPath>
     </Reference>
     <Reference Include="CudaRand, Version=7.0.27.0, Culture=neutral, PublicKeyToken=fe981579f4e9a066, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaRand.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CudaSolve, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaSolve.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CudaSparse, Version=7.0.27.0, Culture=neutral, PublicKeyToken=f65ee2ae6b331585, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\CudaSparse.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\CudaRand.dll</HintPath>
     </Reference>
     <Reference Include="ManagedCuda, Version=7.0.27.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\ManagedCuda.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\ManagedCuda.dll</HintPath>
     </Reference>
     <Reference Include="NPP, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\NPP.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NVRTC, Version=7.0.27.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ManagedCuda-70-x64.7.0.27\lib\net45\x64\NVRTC.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\ManagedCuda\NPP.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BinaryLibs\GoodAiPlatformLibs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Reflection" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -120,6 +105,10 @@
     <Compile Include="Configuration\MyBaseConversion.cs" />
     <Compile Include="Configuration\MyModuleConfig.cs" />
     <Compile Include="Configuration\MyNodeConfig.cs" />
+    <Compile Include="Dashboard\Dashboard.cs" />
+    <Compile Include="Dashboard\DashboardProperty.cs" />
+    <Compile Include="Dashboard\ProxyProperty.cs" />
+    <Compile Include="Dashboard\ProxyPropertyDescriptor.cs" />
     <Compile Include="Execution\MyExecutionBlock.cs" />
     <Compile Include="Execution\MyProjectRunner.cs" />
     <Compile Include="Execution\MySimulation.cs" />
@@ -139,8 +128,8 @@
     <Compile Include="Nodes\MyTestingWorld.cs" />
     <Compile Include="Nodes\MyUserInput.cs" />
     <Compile Include="Nodes\IMyVariableBranchViewNodeBase.cs" />
-    <Compile Include="Observers\HostMatrixObserver.cs" />
-    <Compile Include="Observers\HostTimePlotObserver.cs" />
+    <Compile Include="Observers\MatrixObserver.cs" />
+    <Compile Include="Observers\TimePlotObserver.cs" />
     <Compile Include="Observers\MyMemoryBlockEditor.cs" />
     <Compile Include="Observers\MyHistogramObserver.cs" />
     <Compile Include="Observers\MyShape.cs" />
@@ -197,7 +186,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\nodes.xml">
@@ -259,6 +247,9 @@
       <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
       <Name>YAXLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\function.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

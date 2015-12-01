@@ -27,6 +27,8 @@ namespace GoodAI.BrainSimulator.NodeView
             }
         }
 
+        public MyNodeConfig Config { get; private set; }
+
         protected NodeImageItem m_iconItem;
         protected NodeLabelItem m_descItem;
 
@@ -47,6 +49,8 @@ namespace GoodAI.BrainSimulator.NodeView
             : base("")
         {
             Owner = owner;
+
+            Config = nodeConfig;
 
             m_icon = nodeConfig.BigImage;
 
@@ -126,6 +130,8 @@ namespace GoodAI.BrainSimulator.NodeView
 
         private void InitStatusBar()
         {
+            this.HasStatusBar = true;
+
             m_statusBar = new MyStatusBarItem();
 
             m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb_12);
@@ -201,7 +207,24 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 return InputBranchChangeNeeded || OutputBranchChangeNeeded;
             }
-        }      
+        }
+
+        public Color BackgroundColor
+        {
+            get
+            {
+                return (background as SolidBrush).Color;
+            }
+            set
+            {
+                background = new SolidBrush(value);
+            }
+        }
+
+        public void SetDefaultBackground()
+        {
+            BackgroundColor = Color.LightGray;
+        }
 
         public static MyNodeView CreateNodeView(Type nodeType, GraphControl owner)
         {

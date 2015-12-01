@@ -32,7 +32,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.components = new System.ComponentModel.Container();
             Graph.Compatibility.AlwaysCompatible alwaysCompatible1 = new Graph.Compatibility.AlwaysCompatible();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GraphLayoutForm));
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.nodesToolStrip = new System.Windows.Forms.ToolStrip();
             this.worldButtonPanel = new System.Windows.Forms.Panel();
             this.worldButton = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -56,18 +56,21 @@ namespace GoodAI.BrainSimulator.Forms
             ((System.ComponentModel.ISupportInitialize)(this.groupButton)).BeginInit();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // nodesToolStrip
             // 
-            this.toolStrip1.AutoSize = false;
-            this.toolStrip1.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(41, 455);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
+            this.nodesToolStrip.AllowDrop = true;
+            this.nodesToolStrip.AutoSize = false;
+            this.nodesToolStrip.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.nodesToolStrip.Dock = System.Windows.Forms.DockStyle.Left;
+            this.nodesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.nodesToolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.nodesToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.nodesToolStrip.Name = "nodesToolStrip";
+            this.nodesToolStrip.Size = new System.Drawing.Size(41, 455);
+            this.nodesToolStrip.TabIndex = 0;
+            this.nodesToolStrip.Text = "toolStrip1";
+            this.nodesToolStrip.DragDrop += new System.Windows.Forms.DragEventHandler(this.nodesToolStrip_DragDrop);
+            this.nodesToolStrip.DragEnter += new System.Windows.Forms.DragEventHandler(this.nodesToolStrip_DragEnter);
             // 
             // worldButtonPanel
             // 
@@ -228,7 +231,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.Controls.Add(this.topToolStrip);
             this.Controls.Add(this.worldButtonPanel);
             this.Controls.Add(this.Desktop);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.nodesToolStrip);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -255,7 +258,7 @@ namespace GoodAI.BrainSimulator.Forms
         #endregion
 
         public Graph.GraphControl Desktop;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip nodesToolStrip;
         private System.Windows.Forms.Panel worldButtonPanel;
         private System.Windows.Forms.PictureBox worldButton;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;

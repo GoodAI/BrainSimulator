@@ -95,4 +95,7 @@ namespace GoodAI.Core.Utils
             Browsable = browsable;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class DynamicBlockAttribute : Attribute { }
 }

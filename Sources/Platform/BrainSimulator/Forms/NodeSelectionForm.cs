@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Configuration;
+﻿using GoodAI.BrainSimulator.Nodes;
+using GoodAI.Core.Configuration;
 using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class NodeSelectionForm : Form
     {
         private MainForm m_mainForm;
+
+        private List<UiNodeInfo> m_nodeInfoItems = new List<UiNodeInfo>(100);
+
+        private string m_lastShownFilterName = string.Empty;
 
         public NodeSelectionForm(MainForm mainForm)
         {
@@ -34,18 +39,15 @@ namespace GoodAI.BrainSimulator.Forms
         {
             Properties.Settings.Default.ToolBarNodes = new StringCollection();
 
-            foreach(ListViewItem item in nodeListView.Items) 
+            foreach (UiNodeInfo item in m_nodeInfoItems.Where(item => item.ListViewItem.Checked))
             {
-                if (item.Checked && item.Tag is MyNodeConfig)
-                {
-                    Properties.Settings.Default.ToolBarNodes.Add((item.Tag as MyNodeConfig).NodeType.Name);
-                }
-            }            
+                Properties.Settings.Default.ToolBarNodes.Add(item.Config.NodeType.Name);
+            }
         }
 
-        private void PopulateNodeListView()
+        private void GenerateNodeList()
         {
-            HashSet<string> enabledNodes = new HashSet<string>();
+            var enabledNodes = new HashSet<string>();
 
             if (Properties.Settings.Default.ToolBarNodes != null)
             {
@@ -55,29 +57,31 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }
 
-            Dictionary<string, List<MyNodeConfig>> knownNodes = new Dictionary<string, List<MyNodeConfig>>();
+            var knownNodes = new Dictionary<string, List<MyNodeConfig>>();
 
-            foreach (MyNodeConfig nc in MyConfiguration.KnownNodes.Values)
+            foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
             {
-                if (!nc.IsBasicNode && nc.CanBeAdded)
+                if (nodeConfig.IsBasicNode || !nodeConfig.CanBeAdded || (nodeConfig.NodeType == null))
+                    continue;
+
+                string nameSpace = nodeConfig.NodeType.Namespace ?? "(unknown)";
+                if (!knownNodes.ContainsKey(nameSpace)) 
                 {
-                    if (!knownNodes.ContainsKey(nc.NodeType.Namespace)) 
-                    {
-                        knownNodes[nc.NodeType.Namespace] = new List<MyNodeConfig>();
-                    }
-                    knownNodes[nc.NodeType.Namespace].Add(nc);
+                    knownNodes[nameSpace] = new List<MyNodeConfig>();
                 }
+
+                knownNodes[nameSpace].Add(nodeConfig);
             }
 
             knownNodes["Worlds"] = new List<MyNodeConfig>();
 
-            foreach (MyNodeConfig nc in MyConfiguration.KnownWorlds.Values)
+            foreach (MyWorldConfig nodeConfig in MyConfiguration.KnownWorlds.Values
+                .Where(nodeConfig => !nodeConfig.IsBasicNode))
             {
-                if (!nc.IsBasicNode)
-                {
-                    knownNodes["Worlds"].Add(nc);
-                }
+                knownNodes["Worlds"].Add(nodeConfig);
             }
+
+            var categorizer = new CategorySortingHat();
 
             int i = 0;
 
@@ -86,61 +90,33 @@ namespace GoodAI.BrainSimulator.Forms
             nodeImageList.Images.Add(GeneratePaddedIcon(Properties.Resources.world));
             i++;
 
-            List<string> nmspaces = knownNodes.Keys.ToList().OrderBy(x => x).ToList();
+            List<string> moduleNameSpaces = knownNodes.Keys.ToList().OrderBy(x => x).ToList();
 
-            foreach (string nmspace in nmspaces) 
-            {                
-                ListViewGroup group = new ListViewGroup(nmspace, nmspace.Replace("BrainSimulator.", ""));
+            foreach (string nameSpace in moduleNameSpaces) 
+            {             
+                ListViewGroup group = new ListViewGroup(nameSpace, nameSpace.Replace("BrainSimulator.", ""));
                 nodeListView.Groups.Add(group);
 
-                List<MyNodeConfig> nodesInGroup =  knownNodes[nmspace].OrderBy(x => x.NodeType.Name).ToList();;
-                int row = 0;
+                List<MyNodeConfig> nodesInGroup = knownNodes[nameSpace].OrderBy(x => x.NodeType.Name).ToList(); ;
 
-                foreach (MyNodeConfig nc in nodesInGroup) 
+                foreach (MyNodeConfig nodeConfig in nodesInGroup) 
                 {
-                    string author;
-                    string status;
-                    string summary;
+                    categorizer.AddNodeAndCategory(nodeConfig);
 
-                    bool complete = m_mainForm.Documentation.HasAuthor(nc.NodeType, out author);
-                    complete &= m_mainForm.Documentation.HasStatus(nc.NodeType, out status);
-                    complete &= m_mainForm.Documentation.HasSummary(nc.NodeType, out summary);
+                    MyObsoleteAttribute obsolete = nodeConfig.NodeType.GetCustomAttribute<MyObsoleteAttribute>(true);
 
-                    MyObsoleteAttribute obsolete = nc.NodeType.GetCustomAttribute<MyObsoleteAttribute>(true);
+                    bool complete;
+                    string[] subitems = ProduceSubitemTexts(nodeConfig, obsolete, out complete);
 
-                    if (obsolete != null)
+                    ListViewItem item = new ListViewItem(subitems)
                     {
-                        status = "Obsolete";
-                        summary = "Replaced by: " + MyProject.ShortenNodeTypeName(obsolete.ReplacedBy);
-                    }
-                    else
-                    {
-                        if (!complete)
-                        {
-                            summary = "INCOMPLETE DOCUMENTATION! " + summary;
-                        }
-                        else
-                        {
-                            author = author.Replace("&", "&&");
-                            status = status.Replace("&", "&&");
-                            summary = summary.Replace("&", "&&");                            
-                        }
-                    }                    
-
-                    ListViewItem item = new ListViewItem(
-                        new string[4] { MyProject.ShortenNodeTypeName(nc.NodeType), author, status, summary });
-
-                    if (row % 2 == 1)
-                    {
-                        item.BackColor = Color.FromArgb(245, 245, 245);
-                    }                    
-                    
-                    item.Tag = nc;
-                    item.Group = group;
-                    item.Checked = enabledNodes.Contains(nc.NodeType.Name);
+                        Tag = nodeConfig,
+                        Group = @group,
+                        Checked = enabledNodes.Contains(nodeConfig.NodeType.Name)
+                    };
 
                     // forbid to remove currently selected world
-                    if (nc.NodeType == m_mainForm.Project.World.GetType())
+                    if (nodeConfig.NodeType == m_mainForm.Project.World.GetType())
                     {
                         item.BackColor = Color.FromArgb(150, 200, 240);  // (light gray-blue)
                         item.ToolTipText = "This world is being used by the current project (can't be deselected).";
@@ -159,10 +135,10 @@ namespace GoodAI.BrainSimulator.Forms
                         }
                     }
 
-                    if (nmspace != "Worlds")
+                    if (nameSpace != "Worlds")
                     {
                         item.ImageIndex = i;
-                        nodeImageList.Images.Add(GeneratePaddedIcon(nc.SmallImage));
+                        nodeImageList.Images.Add(GeneratePaddedIcon(nodeConfig.SmallImage));
                         i++;
                     }
                     else
@@ -170,14 +146,171 @@ namespace GoodAI.BrainSimulator.Forms
                         item.ImageIndex = 1;
                     }
 
-                    nodeListView.Items.Add(item);
-                    row++;
+                    m_nodeInfoItems.Add(new UiNodeInfo(item, nodeConfig, string.Join("|", subitems)));
                 }
             }
 
-            nodeListView.GridLines = true;
+            PopulateCategoryListView(categorizer);
         }
-        
+
+        private string[] ProduceSubitemTexts(MyNodeConfig nodeConfig, MyObsoleteAttribute obsolete, out bool complete)
+        {
+            string author;
+            string status;
+            string summary;
+            string labels = "";
+
+            complete = m_mainForm.Documentation.HasAuthor(nodeConfig.NodeType, out author);
+            complete &= m_mainForm.Documentation.HasStatus(nodeConfig.NodeType, out status);
+            complete &= m_mainForm.Documentation.HasSummary(nodeConfig.NodeType, out summary);
+
+            if (obsolete != null)
+            {
+                status = "Obsolete";
+                summary = "Replaced by: " + MyProject.ShortenNodeTypeName(obsolete.ReplacedBy);
+            }
+            else if (!complete)
+            {
+                summary = "INCOMPLETE DOCUMENTATION! " + summary;
+            }
+
+            if ((nodeConfig.Labels != null) && (nodeConfig.Labels.Count > 0))
+            {
+                labels = EscapeAmpersands(string.Join(" ", nodeConfig.Labels.Select(label => "#" + label)));
+            }
+
+            author = EscapeAmpersands(author);
+            status = EscapeAmpersands(status);
+            summary = EscapeAmpersands(summary);
+
+            string nodeName = MyProject.ShortenNodeTypeName(nodeConfig.NodeType);
+
+            return new string[] {nodeName, author, status, summary, labels};
+        }
+
+        private static string EscapeAmpersands(string text)
+        {
+            if (text != null)
+                text = text.Replace("&", "&&");
+
+            return text;
+        }
+
+        private void PopulateCategoryListView(CategorySortingHat categorizer)
+        {
+            foreach (NodeCategory category in categorizer.SortedCategories)
+            {
+                filterImageList.Images.Add(GeneratePaddedIcon(category.SmallImage));
+
+                var categoryItem = new ListViewItem(new string[1] { category.Name })
+                {
+                    Tag = category.Name,  // TODO(Premek): consider tagging with NodeCategory object
+                    ImageIndex = filterImageList.Images.Count - 1
+                };
+
+                filterList.Items.Add(categoryItem);
+            }
+        }
+
+        private void PopulateNodeListViewByCategory(string categoryName)
+        {
+            if (string.IsNullOrEmpty(categoryName))
+                return;
+
+            PopulateNodeListView(m_nodeInfoItems
+                .Where(item => CategorySortingHat.DetectCategoryName(item.Config) == categoryName)
+                .Select(item => item.ListViewItem));
+        }
+
+        private void PopulateNodeListViewBySearch(string phrase)
+        {
+            if (string.IsNullOrEmpty(phrase))
+                return;
+
+            string newSearchFilter = "#%#%# search: " + phrase;
+            if (m_lastShownFilterName == newSearchFilter)
+                return;
+
+            m_lastShownFilterName = newSearchFilter;
+
+            PopulateNodeListView(m_nodeInfoItems
+                .Where(item => item.Matches(phrase))
+                .Select(item => item.ListViewItem));
+        }
+
+        private void PopulateNodeListView(IEnumerable<ListViewItem> items)
+        {
+            nodeListView.Items.Clear();
+
+            int row = 0;
+            bool allSelected = true;
+
+            foreach (var item in items)
+            {
+                item.BackColor = (row++ % 2 == 1) ? Color.FromArgb(245, 245, 245) : SystemColors.Window;
+
+                nodeListView.Items.Add(item);
+
+                if (!item.Checked)
+                    allSelected = false;
+            }
+
+            nodeListView.GridLines = true;
+
+            selectAllCheckBox.Enabled = (row > 0);  // avoid multiple enumeration
+            selectAllCheckBox.Checked = (row > 0) && allSelected;
+        }
+
+        private void ShowNodesFromSelectedCategory()
+        {
+            if (filterList.SelectedItems.Count == 0)
+                return;
+
+            string categoryName = filterList.SelectedItems[0].Tag as string;
+
+            if (categoryName == m_lastShownFilterName)
+                return;
+
+            PopulateNodeListViewByCategory(categoryName);
+            m_lastShownFilterName = categoryName;
+        }
+
+        private void ShowRelevantNodes(bool searchMode)
+        {
+            const int minSearchCharacters = 2;
+
+            if (searchMode && (searchTextBox.Text.Length >= minSearchCharacters))
+            {
+                // indicate search is active
+                searchTextBox.ForeColor = SystemColors.WindowText;
+                searchTextBox.BackColor = SystemColors.Window;
+                // TODO(Premek): also unselect category
+                
+                PopulateNodeListViewBySearch(searchTextBox.Text);
+            }
+            else  // category mode
+            {
+                // indicate that search is inactive now
+                if (searchMode)  // search, but too few characters
+                {
+                    searchTextBox.ForeColor = Color.Red;
+                    searchTextBox.BackColor = SystemColors.Window;
+                }
+                else if (searchTextBox.Text.Length >= minSearchCharacters)  // enouch characters, but category mode
+                {
+                    searchTextBox.ForeColor = SystemColors.InactiveCaptionText;
+                    searchTextBox.BackColor = Color.FromArgb(248, 251, 255);
+                }
+                else  // search too short -- look inviting
+                {
+                    searchTextBox.ForeColor = Color.Blue;
+                    searchTextBox.BackColor = SystemColors.Window;
+                }
+
+                ShowNodesFromSelectedCategory();
+            }
+        }
+
         private void nodeListView_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             // make sure that the world currently in use stays selected (the list view item's checkbox can't be disabled)
@@ -189,7 +322,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void NodeSelectionForm_Load(object sender, EventArgs e)
         {                      
-            PopulateNodeListView();            
+            GenerateNodeList();
+
+            if (filterList.Items.Count > 0)
+                filterList.Items[0].Selected = true;
         }
 
         private Image GeneratePaddedIcon(Image icon)
@@ -210,11 +346,6 @@ namespace GoodAI.BrainSimulator.Forms
         private void nodeListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {           
             e.DrawDefault = true;
-        }
-
-        private void nodeListView_DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-                        
         }
 
         private static readonly Brush HL_BRUSH = new SolidBrush(SystemColors.Highlight);
@@ -243,17 +374,6 @@ namespace GoodAI.BrainSimulator.Forms
             else
             {
                 e.DrawDefault = true;       
-            }
-        }
-
-        private void searchTextBox_TextChanged(object sender, EventArgs e)
-        {
-            ListViewItem item = nodeListView.FindItemWithText(searchTextBox.Text, true, 0, true);
-
-            if (item != null)
-            {
-                item.Selected = true;
-                item.EnsureVisible();
             }
         }
 
@@ -305,6 +425,53 @@ namespace GoodAI.BrainSimulator.Forms
                 base.OnHandleCreated(e);
                 UpdateCue();
             }
+        }
+
+        private void nodeFilterList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            ShowRelevantNodes(searchMode: false);
+        }
+
+        private void filterList_Enter(object sender, EventArgs e)
+        {
+            ShowRelevantNodes(searchMode: false);
+        }
+
+        private void searchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            ShowRelevantNodes(searchMode: true);
+        }
+
+        private void searchTextBox_Enter(object sender, EventArgs e)
+        {
+            ShowRelevantNodes(searchMode: true);
+        }
+
+        private void NodeSelectionForm_Shown(object sender, EventArgs e)
+        {
+            searchTextBox.Focus();  // let user type immediately
+
+            AdjustSelectAllCheckBoxPosition();
+        }
+
+        private void selectAllCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in nodeListView.Items)
+            {
+                item.Checked = selectAllCheckBox.Checked;
+            }
+        }
+
+        private void AdjustSelectAllCheckBoxPosition()
+        {
+            // a little hack, but the most reliable way I've found
+            selectAllCheckBox.Left =
+                nodesSplitContainer.Left + nodesSplitContainer.Panel1.Width + nodesSplitContainer.SplitterWidth;
+        }
+
+        private void nodesSplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            AdjustSelectAllCheckBoxPosition();
         }
     }
 }

@@ -6,13 +6,15 @@ using ManagedCuda.BasicTypes;
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace GoodAI.Core.Memory
 {
     public abstract class MyAbstractMemoryBlock
-    {            
+    {
         public abstract int Count { get; set; }
+
         public string Name { get; set; }
 
         //TODO: Find if MyWorkingNode is possible here
@@ -25,6 +27,7 @@ namespace GoodAI.Core.Memory
         public bool Persistable { get; internal set; }
         public bool Shared { get; protected set; }
         public bool IsOutput { get; internal set; }
+        public bool IsDynamic { get; internal set; }
 
         public bool Unmanaged { get; internal set; }
         public SizeT ExternalPointer { get; set; }
@@ -33,6 +36,9 @@ namespace GoodAI.Core.Memory
         public abstract void AllocateDevice();
         public abstract void FreeHost();
         public abstract void FreeDevice();
+
+        public abstract bool Reallocate(int newCount);
+
         public abstract bool SafeCopyToDevice();
         public abstract void SafeCopyToHost();
         public abstract CUdeviceptr GetDevicePtr(int GPU);
@@ -47,7 +53,7 @@ namespace GoodAI.Core.Memory
         public abstract void GetBytes(byte[] destBuffer);
         public abstract void Fill(byte[] srcBuffer);
 
-        public abstract void GetValueAt<T>(ref T value, int index);        
+        public abstract void GetValueAt<T>(ref T value, int index);
     }
 
     public class MyMemoryBlock<T> : MyAbstractMemoryBlock where T : struct
@@ -55,6 +61,7 @@ namespace GoodAI.Core.Memory
         protected virtual CudaDeviceVariable<T>[] Device { get; set; }
         public T[] Host { get; protected set; }
 
+        private int m_count = 0;
         public override int Count
         {
             get { return m_count; }
@@ -64,7 +71,6 @@ namespace GoodAI.Core.Memory
                 Dims.Size = m_count;
             }
         }
-        private int m_count = 0;
 
         public override int ColumnHint
         {
@@ -174,6 +180,72 @@ namespace GoodAI.Core.Memory
                 Device = null;
                 Shared = false;
             }
+        }
+
+        public override bool Reallocate(int newCount)
+        {
+            if (!IsDynamic)
+            {
+                MyLog.ERROR.WriteLine(
+                    "Cannot reallocate a static memory block. Use the DynamicAttribute to mark a memory block as dynamic.");
+                throw new InvalidOperationException("Cannot reallocate non-dynamic memory block.");
+            }
+
+            MyLog.DEBUG.WriteLine("Reallocating {0} from {1} to {2}", typeof (T), Count*Marshal.SizeOf(typeof (T)),
+                newCount*Marshal.SizeOf(typeof (T)));
+
+            int oldCount = Count;
+            Count = newCount;
+
+            if (oldCount == 0)
+                AllocateDevice();
+
+            // Make sure that both the host and device have enough memory. Allocate first.
+            // If one of the allocations fails, return (moving out of scope will get rid of any allocated memory).
+
+            T[] newHostMemory;
+            CudaDeviceVariable<T> newDeviceMemory;
+            try
+            {
+                newHostMemory = new T[newCount];
+            }
+            catch
+            {
+                //MyLog.WARNING.WriteLine("Could not reallocate host memory.");
+                return false;
+            }
+
+            try
+            {
+                newDeviceMemory = new CudaDeviceVariable<T>(
+                    MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
+                        newCount*Marshal.SizeOf(typeof (T))));
+
+                newDeviceMemory.Memset(BitConverter.ToUInt32(BitConverter.GetBytes(0), 0));
+            }
+            catch
+            {
+                //MyLog.WARNING.WriteLine("Could not reallocate device memory.");
+                return false;
+            }
+
+            // Both the host and the device have enough memory for the reallocation.
+
+            // Copy the host data.
+            Array.Copy(Host, newHostMemory, Math.Min(newCount, oldCount));
+
+            // Copy the device data.
+            newDeviceMemory.CopyToDevice(Device[Owner.GPU]);
+
+            // This will get rid of the original host memory.
+            Host = newHostMemory;
+
+            // Explicit dispose so that if there's a reference anywhere, we'll find out.
+            MyLog.DEBUG.WriteLine("Disposing device memory in Reallocate()");
+            Device[Owner.GPU].Dispose();
+            Device[Owner.GPU] = newDeviceMemory;
+
+            return true;
         }
 
         public override bool SafeCopyToDevice()

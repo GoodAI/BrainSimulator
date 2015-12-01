@@ -27,6 +27,8 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         [MyBrowsable, Category("\tLayer")]
         public int Actions { get; set; }
 
+        public int StateSize;
+
         #region Memory blocks
         // Memory blocks
         [MyInputBlock(1)]
@@ -44,6 +46,11 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyMemoryBlock<float> PreviousInput { get; protected set; }
         public MyMemoryBlock<float> PreviousOutput { get; protected set; }
         public MyMemoryBlock<float> TempInput { get; protected set; }
+
+        public MyMemoryBlock<float> S0Output { get; protected set; }
+        public MyMemoryBlock<float> S1Output { get; protected set; }
+        public MyMemoryBlock<float> SnowOutput { get; protected set; }
+
         public override MyMemoryBlock<float> Target { get; protected set; }
         #endregion
 
@@ -59,14 +66,26 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             while (firstLayer.Input != null && firstLayer.Input.Owner is MyAbstractLayer)
                 firstLayer = firstLayer.Input.Owner as MyAbstractLayer;
 
-            Target.Count = Neurons;
+            Target.Count = Neurons * ParentNetwork.BatchSize;
             if (firstLayer.Input != null)
                 PreviousInput.Count = TempInput.Count = firstLayer.Input.Count;
             PreviousOutput.Count = Output.Count;
+
+            if (ParentNetwork.BatchSize >= 3)
+            {
+                StateSize = Output.Count / ParentNetwork.BatchSize;
+
+                S0Output.Count = (ParentNetwork.BatchSize - 1) / 2 * StateSize;
+                S1Output.Count = (ParentNetwork.BatchSize - 1) / 2 * StateSize;
+                SnowOutput.Count = StateSize;
+            }
         }
 
         // Tasks
+        [MyTaskGroup("QLearning")]
         public MyQLearningTask QLearning { get; protected set; }
+        [MyTaskGroup("QLearning")]
+        public MyQLearningBatchTask QLearningBatch { get; protected set; }
 
         // description
         public override string Description
@@ -81,8 +100,17 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-            validator.AssertError(Action.Count == Neurons, this, "Number of neurons need to correspond with number of actions (action size)");
-            validator.AssertError(Reward.Count == 1, this, "Reward needs to be a single floating point number (cannot be an array)");
+            if (QLearning.Enabled)
+            {
+                validator.AssertError(Action.Count == Neurons, this, "Number of neurons need to correspond with number of actions (action size)");
+                validator.AssertError(Reward.Count == 1, this, "Reward needs to be a single floating point number (cannot be an array)");
+            } 
+            else if (QLearningBatch.Enabled)
+            {
+                validator.AssertError(ParentNetwork.BatchSize >= 3, this, "BatchSize needs to be >= 3");
+                validator.AssertError(Reward.Count == (ParentNetwork.BatchSize - 1) / 2, this, "Reward size must be equal to (BatchSize - 1) / 2");
+                validator.AssertError(Action.Count == (ParentNetwork.BatchSize - 1) / 2 * Actions, this, "Action size must be equal to (BatchSize - 1) / 2 * Actions");
+            }
         }
     }
 }

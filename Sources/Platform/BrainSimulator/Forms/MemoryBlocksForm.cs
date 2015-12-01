@@ -13,7 +13,7 @@ namespace GoodAI.BrainSimulator.Forms
 {
     public partial class MemoryBlocksForm : DockContent
     {
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
         private MyNode m_target;
         private bool m_escapeOrEnterPressed;
         private bool m_errorInfoShown = true;
@@ -122,6 +122,9 @@ namespace GoodAI.BrainSimulator.Forms
                 typeStr = block.GetType().GetGenericArguments()[0].Name;
             }
 
+            if (block.IsDynamic)
+                name += " (dynamic)";
+
             ListViewItem item = new ListViewItem(new string[] { name, PrintBlockSize(block), typeStr });
             item.Tag = block;
 
@@ -185,7 +188,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void addHostPlotButton_Click(object sender, EventArgs e)
         {
-            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostTimePlotObserver));
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(TimePlotObserver));
         }
 
         private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -200,7 +203,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void addHostMatrixObserver_Click(object sender, EventArgs e)
         {
-            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(HostMatrixObserver));
+            m_mainForm.CreateAndShowObserverView(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock, Target, typeof(MatrixObserver));
         }
 
         private void addSpikeObserver_Click(object sender, EventArgs e)

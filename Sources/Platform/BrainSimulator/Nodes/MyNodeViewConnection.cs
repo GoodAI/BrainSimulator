@@ -42,5 +42,21 @@ namespace GoodAI.BrainSimulator.Nodes
                 }
             }
         }
+
+        public bool Dynamic
+        {
+            get { return (state & RenderState.Marked) != 0; }
+            set
+            {
+                if (value)
+                {
+                    state |= RenderState.Marked;
+                }
+                else
+                {
+                    state &= ~RenderState.Marked;
+                }
+            }
+        }
     }
 }

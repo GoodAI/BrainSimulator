@@ -257,6 +257,22 @@ namespace Graph
             node.itemsBounds = new RectangleF(left, top, right - left, bottom - top);
         }
 
+        static Brush ResolveNodeBrush(Node node, Brush baseBrush)
+        {
+            if ((node.state & (RenderState.Dragging | RenderState.Focus)) != 0)
+            {
+                return Brushes.DarkOrange;
+            }
+            else if ((node.state & RenderState.Hover) != 0)
+            {
+                return Brushes.LightSteelBlue;
+            }
+            else
+            {
+                return baseBrush;
+            }
+        }
+
         static void Render(Graphics graphics, Node node)
         {
             if (!node.shown)
@@ -276,23 +292,29 @@ namespace Graph
             using (var path = new GraphicsPath(FillMode.Winding))
             {
                 path.AddArc(left, top, cornerSize, cornerSize, 180, 90);
-                path.AddArc(right - cornerSize, top, cornerSize, cornerSize, 270, 90);
+                path.AddArc(right - cornerSize, top, cornerSize, cornerSize, 270, 90);                                
 
                 path.AddArc(right - cornerSize, bottom - cornerSize, cornerSize, cornerSize, 0, 90);
                 path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
                 path.CloseFigure();
 
-                if ((node.state & (RenderState.Dragging | RenderState.Focus)) != 0)
+                graphics.FillPath(ResolveNodeBrush(node, node.background), path);
+
+                if (node.HasStatusBar)
                 {
-                    graphics.FillPath(Brushes.DarkOrange, path);
-                } else
-                if ((node.state & RenderState.Hover) != 0)
-                {
-                    graphics.FillPath(Brushes.LightSteelBlue, path);
-                } else
-                {
-                    graphics.FillPath(node.background, path);
+                    using (var pathBottomStatus = new GraphicsPath(FillMode.Winding))
+                    {
+                        pathBottomStatus.AddLine(left, bottom - GraphConstants.StatusBarHeight, right, bottom - GraphConstants.StatusBarHeight);
+
+                        pathBottomStatus.AddArc(right - cornerSize, bottom - cornerSize, cornerSize, cornerSize, 0, 90);
+                        pathBottomStatus.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
+                        pathBottomStatus.CloseFigure();
+
+                        graphics.FillPath(ResolveNodeBrush(node, new SolidBrush(Color.FromArgb(190, 194, 200))), 
+                            pathBottomStatus);
+                    }
                 }
+
                 graphics.DrawPath(BorderPen, path);
             }
             /*
@@ -412,15 +434,28 @@ namespace Graph
                     float centerY;
                     using (var path = GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
                     {
-                        using (var brush = new SolidBrush(GetArrowLineColor(connection.state | RenderState.Connected)))
+                        Color arrowLineColor = GetArrowLineColor(connection.state | RenderState.Connected);
+
+                        if ((connection.state & RenderState.Marked) != 0)
                         {
-                            graphics.FillPath(brush, path);
+                            Color glowColorBase = Color.Ivory;
+                            Color glowColor = Color.FromArgb(
+                                (int) (glowColorBase.A * 0.5),
+                                glowColorBase.R,
+                                glowColorBase.G,
+                                glowColorBase.B);
+                            // Draw a glow.
+                            var pen = new Pen(new SolidBrush(glowColor), 4.0f);
+                            graphics.DrawPath(pen, path);
                         }
+
+                        Brush brush = new SolidBrush(arrowLineColor);
+
+                        graphics.FillPath(brush, path);
                         connection.bounds = path.GetBounds();
                     }
 
-                    if (showLabels &&
-                        !string.IsNullOrWhiteSpace(connection.Name))
+                    if (showLabels && !string.IsNullOrWhiteSpace(connection.Name))
                     {
                         var center = new PointF(centerX, centerY);
                         RenderLabel(graphics, connection, center, connection.state);

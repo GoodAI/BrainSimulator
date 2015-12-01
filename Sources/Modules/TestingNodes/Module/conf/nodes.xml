@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration RootNamespace="GoodAI.Modules">  
+  <KnownNodes>
+    <Node type="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicOutputNode" CanBeAdded="true">
+      <Label>Testing</Label>
+    </Node>
+    <Node type="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicInputNode" CanBeAdded="true">
+      <Label>Testing</Label>
+    </Node>
+  </KnownNodes>
+</Configuration>

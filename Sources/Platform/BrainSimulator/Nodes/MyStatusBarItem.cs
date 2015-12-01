@@ -69,6 +69,7 @@ namespace GoodAI.BrainSimulator.Nodes
             size.Width = Math.Max(minimumSize.Width, size.Width);
             size.Height = Math.Max(minimumSize.Height, size.Height);
 
+            position.Y += 4;
             DrawIconSubitems(graphics, position);
 
             DrawTextItem(graphics, position, size);
@@ -89,7 +90,7 @@ namespace GoodAI.BrainSimulator.Nodes
 
         private SizeF DrawTextItem(Graphics graphics, PointF position, SizeF size, bool justMeasure = false)
         {
-            var font = new Font(SystemFonts.MenuFont.FontFamily, SystemFonts.MenuFont.Size - 2.0f);
+            var font = new Font(SystemFonts.MenuFont.FontFamily, SystemFonts.MenuFont.Size - 2.0f, FontStyle.Bold);
             var text = TextItem;
             var format = GraphConstants.RightMeasureTextStringFormat;
 
@@ -106,7 +107,7 @@ namespace GoodAI.BrainSimulator.Nodes
             }
             else
             {
-                graphics.DrawString(text, font, Brushes.Black, new RectangleF(position, size), format);
+                graphics.DrawString(text, font, Brushes.DimGray, new RectangleF(position, size), format);
                 return SizeF.Empty;
             }
         }

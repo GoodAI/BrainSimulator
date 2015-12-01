@@ -116,6 +116,9 @@ namespace GoodAI.Core.Execution
                 resultPlan.Name += " (group)";
             }
 
+            // TODO(HonzaS): Rethink this. It's only used in profiling results.
+            node.ExecutionBlock = resultPlan;
+
             return resultPlan;
         }
     }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Name="accumulator-test" xmlns:yaxlib="http://www.sinairv.com/yaxlib/">
+  <Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network">
+    <Children>
+      <MyUserInput LoadOnStart="False" SaveOnStop="False" Id="6" Name="Node_6" yaxlib:realtype="GoodAI.Core.Nodes.MyUserInput">
+        <IO>
+          <OutputSize>1</OutputSize>
+        </IO>
+        <ColumnHint>1</ColumnHint>
+        <MinValue>0</MinValue>
+        <MaxValue>1</MaxValue>
+        <UserInputStr>1</UserInputStr>
+        <ConvertToBinary>False</ConvertToBinary>
+        <DataFolder></DataFolder>
+        <Location X="264" Y="127" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="GenerateInput" yaxlib:realtype="GoodAI.Core.Nodes.MyUserInput+MyTransferTask" />
+        </Tasks>
+      </MyUserInput>
+      <Accumulator LoadOnStart="False" SaveOnStop="False" Id="7" Name="Node_7" yaxlib:realtype="GoodAI.Modules.Transforms.MyAccumulator">
+        <DelayMemorySize>1</DelayMemorySize>
+        <DataFolder></DataFolder>
+        <Location X="451" Y="250" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="ApproachValue" yaxlib:realtype="GoodAI.Modules.Transforms.MyAccumulator+MyApproachValueTask">
+            <ApproachMethod>Geometric</ApproachMethod>
+            <Factor>1</Factor>
+            <Delta>0.1</Delta>
+            <Target>0</Target>
+          </Task>
+          <Task Enabled="False" PropertyName="ShiftData" yaxlib:realtype="GoodAI.Modules.Transforms.MyAccumulator+MyShiftDataTask">
+            <UseFirstInput>True</UseFirstInput>
+            <InitialValue>0</InitialValue>
+          </Task>
+          <Task Enabled="False" PropertyName="CopyInput" yaxlib:realtype="GoodAI.Modules.Transforms.MyAccumulator+MyQuantizedCopyTask">
+            <TimePeriod>10</TimePeriod>
+            <TimeOffset>0</TimeOffset>
+          </Task>
+        </Tasks>
+      </Accumulator>
+    </Children>
+    <LayoutProperties Zoom="1">
+      <Translation X="99.5" Y="105.2487" />
+    </LayoutProperties>
+    <GroupInputNodes>
+      <MyParentInput ParentInputIndex="0" Id="1" Name="Output">
+        <Location X="50" Y="100" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="1" Id="4" Name="RandomPool">
+        <Location X="50" Y="250" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="2" Id="5" Name="Label">
+        <Location X="50" Y="400" />
+      </MyParentInput>
+    </GroupInputNodes>
+    <GroupOutputNodes />
+    <DataFolder></DataFolder>
+    <Location />
+    <Connections>
+      <Connection From="6" To="7" FromIndex="0" ToIndex="0" />
+    </Connections>
+    <Tasks />
+  </Network>
+  <World LoadOnStart="False" SaveOnStop="False" Id="3" Name="World" yaxlib:realtype="GoodAI.Modules.Testing.MyTestingWorld">
+    <IO>
+      <OutputSize>1</OutputSize>
+      <ColumnHint>1</ColumnHint>
+      <PatternCount>0</PatternCount>
+      <PatternGroups>1</PatternGroups>
+    </IO>
+    <DataFolder></DataFolder>
+    <Location />
+    <Tasks>
+      <Task Enabled="True" PropertyName="GenerateInput" yaxlib:realtype="GoodAI.Modules.Testing.MyTestingWorld+MyCUDAGenerateInputTask">
+        <ExpositionTime>1</ExpositionTime>
+        <RandomOrder>False</RandomOrder>
+      </Task>
+    </Tasks>
+  </World>
+  <Observers />
+  <MemoryBlockAttributes />
+  <UsedModules>
+    <Module Name="GoodAI.Platform.Core.dll" Version="9" />
+    <Module Name="GoodAI.BasicNodes.dll" Version="14" />
+  </UsedModules>
+</Project>

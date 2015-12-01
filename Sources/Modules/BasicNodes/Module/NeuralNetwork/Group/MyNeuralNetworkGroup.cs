@@ -227,7 +227,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
             // after FF add deltaoutput and bptt if needed, then increment one step :)
             newPlan.Insert(0, IncrementTimeStep);
-            selected = newPlan.Where(task => task is MyQLearningTask).ToList();
+            selected = newPlan.Where(task => task is MyQLearningTask || task is MyQLearningBatchTask).ToList();
             if (selected.Count > 0)
             {
                 newPlan.RemoveAll(selected.Contains);

@@ -29,23 +29,54 @@
         private void InitializeComponent()
         {
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.dashboardButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // propertyGrid
             // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(3, 3);
+            this.propertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGrid.Location = new System.Drawing.Point(3, 31);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(236, 647);
+            this.propertyGrid.Size = new System.Drawing.Size(236, 619);
             this.propertyGrid.TabIndex = 8;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.propertyGrid.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGrid_SelectedGridItemChanged);
+            this.propertyGrid.Enter += new System.EventHandler(this.propertyGrid_Enter);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dashboardButton});
+            this.toolStrip1.Location = new System.Drawing.Point(3, 3);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(236, 25);
+            this.toolStrip1.TabIndex = 9;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // dashboardButton
+            // 
+            this.dashboardButton.CheckOnClick = true;
+            this.dashboardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.dashboardButton.Enabled = false;
+            this.dashboardButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.pushpin_16xMD;
+            this.dashboardButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.dashboardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.dashboardButton.Name = "dashboardButton";
+            this.dashboardButton.Size = new System.Drawing.Size(23, 22);
+            this.dashboardButton.Text = "Show in Dashboard";
+            this.dashboardButton.CheckedChanged += new System.EventHandler(this.dashboardButton_CheckedChanged);
             // 
             // TaskPropertyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(242, 653);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.propertyGrid);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
@@ -56,13 +87,18 @@
             this.Name = "TaskPropertyForm";
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "Task Properties";
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.PropertyGrid propertyGrid;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton dashboardButton;
 
     }
 }

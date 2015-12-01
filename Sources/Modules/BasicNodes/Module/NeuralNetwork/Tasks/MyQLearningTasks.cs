@@ -59,7 +59,7 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             float reward = Owner.Reward.Host[0];
             float gamma = DiscountFactor;
 
-            for (int i = 0; i < Owner.Output.Count; ++i)
+            for (int i = 0; i < Owner.Action.Count; ++i)
             {
                 float target;
                 if (Owner.Action.Host[i] > 0.5)
@@ -85,6 +85,80 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
             Owner.PreviousInput.CopyToMemoryBlock(Owner.ParentNetwork.FirstTopologicalLayer.Input, 0, 0, Owner.PreviousInput.Count);
             Owner.TempInput.CopyToMemoryBlock(Owner.PreviousInput, 0, 0, Owner.TempInput.Count);
             Owner.ParentNetwork.FeedForward();
+        }
+    }
+
+    /// <summary>Batched Q-Learning. Minibatches must be created from (S_t, S_{t+1}, A_t, R_{t+1}) tuples. 
+    /// <ul>
+    /// <li>S_t is state of the world in current state</li>
+    /// <li>S_{t+1} is the next state</li>
+    /// <li>A_t is the action agent did in S_t</li>
+    /// <li>R_{t+1} is the reward obtained in next state</li>
+    /// </ul> <br />
+    /// Input of the network is then S_now, S_t minibatch and S_{t+1} minibatch stacked together. S_now is current world state.<br />
+    /// BatchSize of NN group has to be set to 2 * X + 1 where X is BatchSize set at ReplayBuffer node.
+    /// </summary>
+    [Description("Batched QLearning"), MyTaskInfo(OneShot = false)]
+    public class MyQLearningBatchTask : MyTask<MyQLearningLayer>
+    {
+        // properties
+        [YAXSerializableField(DefaultValue = 0.99f)]
+        [MyBrowsable, Category("\tHyperParameters")]
+        public float DiscountFactor { get; set; }
+
+        public MyQLearningBatchTask() { } //parameterless constructor
+
+        public override void Init(int nGPU)
+        {
+
+        }
+
+        public override void Execute() //Task execution
+        {
+            if (SimulationStep == 0)
+            {
+                Owner.Output.FillAll(0);
+            }
+
+            Owner.Output.SafeCopyToHost();
+
+            Owner.Output.CopyToMemoryBlock(Owner.SnowOutput, 0, 0, Owner.SnowOutput.Count);
+            Owner.Output.CopyToMemoryBlock(Owner.S0Output, Owner.SnowOutput.Count, 0, Owner.S0Output.Count);
+            Owner.Output.CopyToMemoryBlock(Owner.S1Output, Owner.SnowOutput.Count + Owner.S0Output.Count, 0, Owner.S1Output.Count);
+
+            Owner.Action.SafeCopyToHost();
+            Owner.S1Output.SafeCopyToHost();
+            Owner.Reward.SafeCopyToHost();
+
+            // do not set target for current state
+            for (int i = 0; i < Owner.SnowOutput.Count; i++)
+            {
+                Owner.Target.Host[i] = float.NaN;
+            }
+
+            // set target for s0 states
+
+            for (int b = 0; b < (Owner.ParentNetwork.BatchSize - 1) / 2; b++)
+            {
+                for (int i = 0; i < Owner.Actions; ++i)
+                {
+                    float target;
+                    if (Owner.Action.Host[b * Owner.Actions + i] > 0.5)
+                        target = Owner.Reward.Host[b] + DiscountFactor * Owner.S1Output.Host.Skip(b * Owner.Actions).Take(Owner.Actions).Max();
+                    else
+                        target = float.NaN;
+
+                    Owner.Target.Host[Owner.SnowOutput.Count + b * Owner.Actions + i] = target;
+                }
+            }
+
+            // do not set target for s1 states
+            for (int i = Owner.SnowOutput.Count + Owner.S0Output.Count; i < Owner.Output.Count; i++)
+            {
+                Owner.Target.Host[i] = float.NaN;
+            }
+
+            Owner.Target.SafeCopyToDevice();
         }
     }
 }

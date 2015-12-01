@@ -72,7 +72,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                 {
                     m_updateGateWeightsKernel.Run(
                         Owner.Input,
-                        Owner.Output.GetTimeShiftedBlock(-1),
+                        Owner.PreviousOutput,
                         Owner.CellStates,
                         Owner.CellStateErrors,
                         Owner.OutputGateDeltas,
@@ -101,7 +101,7 @@ namespace GoodAI.Modules.LSTM.Tasks
 
                     m_updateCellWeightsKernel.Run(
                         Owner.Input,
-                        Owner.Output.GetTimeShiftedBlock(-1),
+                        Owner.PreviousOutput,
                         Owner.CellStateErrors,
                         Owner.CellInputWeights,
                         Owner.CellInputWeightDeltas,

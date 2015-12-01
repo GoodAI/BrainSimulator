@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
+using GoodAI.Core.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +17,9 @@ namespace GoodAI.Core.Utils
         public string Name { get; set; }
 
         [YAXSerializableField, YAXSerializeAs("Observers")]
-        public List<MyAbstractObserver> Observers;               
+        public List<MyAbstractObserver> Observers;
+
+        public MySimulationHandler SimulationHandler { get; set; }
 
         public void Dispose()
         {
@@ -207,7 +210,17 @@ namespace GoodAI.Core.Utils
 
             MyMemoryManager.Instance.ApplyMemBlockAttributes(MemoryBlockAttributes);
         }
+
+        #endregion
        
+        #region Dashboard
+
+        [YAXSerializableField]
+        public Dashboard.Dashboard Dashboard { get; set; }
+
+        [YAXSerializableField]
+        public Dashboard.GroupDashboard GroupedDashboard { get; set; }
+
         #endregion
 
         #region Serialization & Versioning

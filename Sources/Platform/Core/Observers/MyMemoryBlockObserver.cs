@@ -192,6 +192,6 @@ namespace GoodAI.Core.Observers
             {
                 base.SetDefaultTextureDimensions(pixelCount);
             }
-        }        
+        }
     }
 }

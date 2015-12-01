@@ -63,6 +63,26 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap action_add_16xMD {
+            get {
+                object obj = ResourceManager.GetObject("action_add_16xMD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap action_Cancel_16xMD {
+            get {
+                object obj = ResourceManager.GetObject("action_Cancel_16xMD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap add_observer {
             get {
                 object obj = ResourceManager.GetObject("add_observer", resourceCulture);
@@ -106,6 +126,26 @@ namespace GoodAI.BrainSimulator.Properties {
         internal static System.Drawing.Bitmap AddNewItem_6273 {
             get {
                 object obj = ResourceManager.GetObject("AddNewItem_6273", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_Down_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("arrow_Down_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_Up_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("arrow_Up_16xLG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -176,6 +216,16 @@ namespace GoodAI.BrainSimulator.Properties {
         internal static System.Drawing.Bitmap F1Help_7644 {
             get {
                 object obj = ResourceManager.GetObject("F1Help_7644", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder_Closed_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("folder_Closed_16xLG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -268,6 +318,26 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap keypad {
+            get {
+                object obj = ResourceManager.GetObject("keypad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap list_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("list_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap matrix {
             get {
                 object obj = ResourceManager.GetObject("matrix", resourceCulture);
@@ -318,6 +388,16 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap pencil_003_16xMD {
+            get {
+                object obj = ResourceManager.GetObject("pencil_003_16xMD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap performance {
             get {
                 object obj = ResourceManager.GetObject("performance", resourceCulture);
@@ -331,6 +411,16 @@ namespace GoodAI.BrainSimulator.Properties {
         internal static System.Drawing.Bitmap properties_16xLG {
             get {
                 object obj = ResourceManager.GetObject("properties_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pushpin_16xMD {
+            get {
+                object obj = ResourceManager.GetObject("pushpin_16xMD", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -568,6 +658,16 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Symbols_Blocked_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("Symbols_Blocked_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap tasks_disabled {
             get {
                 object obj = ResourceManager.GetObject("tasks_disabled", resourceCulture);
@@ -591,6 +691,16 @@ namespace GoodAI.BrainSimulator.Properties {
         internal static System.Drawing.Bitmap timer_observer {
             get {
                 object obj = ResourceManager.GetObject("timer_observer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap view_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("view_16xLG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

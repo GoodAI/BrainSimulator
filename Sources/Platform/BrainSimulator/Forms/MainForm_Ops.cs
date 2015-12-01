@@ -18,6 +18,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.DashboardUtils;
+using GoodAI.Core.Task;
+using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -46,6 +49,7 @@ namespace GoodAI.BrainSimulator.Forms
                 }
                 m_project = value;
                 SimulationHandler.Project = value;
+                m_project.SimulationHandler = SimulationHandler;
             }
         }
 
@@ -147,6 +151,9 @@ namespace GoodAI.BrainSimulator.Forms
             }
             Project.Observers = null;
 
+            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
+            RestoreDashboard(Project);
+            
             exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
             clearDataButton.Enabled = exportStateButton.Enabled;
 
@@ -240,6 +247,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         public NodePropertyForm NodePropertyView { get; private set; }
         public MemoryBlocksForm MemoryBlocksView { get; private set; }
+
+        public DashboardPropertyForm DashboardPropertyView { get; private set; }
         
         public TaskForm TaskView { get; private set; }
         public TaskPropertyForm TaskPropertyView { get; private set; }
@@ -289,7 +298,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void CreateAndShowObserverView(MyAbstractMemoryBlock memoryBlock, MyNode declaredOwner, Type mbObserverType)
         {
-            bool isPlot = mbObserverType == typeof(MyTimePlotObserver) || mbObserverType == typeof(HostTimePlotObserver);
+            bool isPlot = mbObserverType == typeof(MyTimePlotObserver) || mbObserverType == typeof(TimePlotObserver);
 
             if (isPlot && !(memoryBlock is MyMemoryBlock<float>))
             {
@@ -307,9 +316,9 @@ namespace GoodAI.BrainSimulator.Forms
                     {
                         observer = new MyTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
                     }
-                    else if (mbObserverType == typeof (HostTimePlotObserver))
+                    else if (mbObserverType == typeof (TimePlotObserver))
                     {
-                        observer = new HostTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
+                        observer = new TimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
                     }
                 }
                 else
@@ -346,9 +355,9 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 owner = (observer as MyTimePlotObserver).Target.Owner;
             }
-            else if (observer is HostTimePlotObserver)
+            else if (observer is TimePlotObserver)
             {
-                owner = (observer as HostTimePlotObserver).Target.Owner;
+                owner = (observer as TimePlotObserver).Target.Owner;
             }
             else
             {
@@ -404,6 +413,22 @@ namespace GoodAI.BrainSimulator.Forms
                     ShowObserverView(observer);
                 }
             }
+        }
+
+        private void RestoreDashboard(MyProject project)
+        {
+            if (project.Dashboard == null)
+                project.Dashboard = new Dashboard();
+
+            if (project.GroupedDashboard == null)
+                project.GroupedDashboard = new GroupDashboard();
+
+            // The order is important - the normal dashboard properties must be set up
+            // before they're added to groups.
+            project.Dashboard.RestoreFromIds(project);
+            project.GroupedDashboard.RestoreFromIds(project);
+
+            DashboardPropertyView.SetDashboards(project.Dashboard, project.GroupedDashboard);
         }
 
         public void UpdateObservers()
@@ -518,7 +543,22 @@ namespace GoodAI.BrainSimulator.Forms
         public void RefreshConnections(GraphLayoutForm form)
         {
             SimulationHandler.RefreshTopologicalOrder();
-            form.RefreshGraph();
+
+            // Refresh the forms of the form's target parents as well.
+            // The connection types might have changed for group outputs.
+            var nodesToRefresh = new List<MyNode>();
+            var target = form.Target;
+            while (target != null)
+            {
+                nodesToRefresh.Add(target);
+                target = target.Parent;
+            }
+
+            foreach (var graph in GraphViews)
+            {
+                if (nodesToRefresh.Contains(graph.Key))
+                    graph.Value.RefreshGraph();
+            }
         }
 
         internal void CloseGraphLayout(MyNodeGroup target)
@@ -691,10 +731,22 @@ namespace GoodAI.BrainSimulator.Forms
             }
             
             NodePropertyView = new NodePropertyForm(this);
+
+            DashboardPropertyView = new DashboardPropertyForm(this);
+
+            SimulationHandler.StateChanged += DashboardPropertyView.OnSimulationStateChanged;
+
             MemoryBlocksView = new MemoryBlocksForm(this);
 
             TaskView = new TaskForm(this);
             TaskPropertyView = new TaskPropertyForm(this);
+
+            // Link the Task and Node property views to the dashboard's PropertyChanged.
+            DashboardPropertyView.PropertyValueChanged += RefreshPropertyViews;
+
+            // Link the Node and Task property views' PropertyChanged to the dashboard so that it can refresh etc.
+            NodePropertyView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
+            TaskPropertyView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
 
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
             TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
@@ -711,7 +763,7 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNewProject();                 
             CreateNetworkView();
 
-            m_views = new List<DockContent>() { NetworkView, NodePropertyView, MemoryBlocksView, TaskView,
+            m_views = new List<DockContent>() { NetworkView, DashboardPropertyView, NodePropertyView, MemoryBlocksView, TaskView,
                 TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
 
             foreach (DockContent view in m_views)
@@ -779,6 +831,12 @@ namespace GoodAI.BrainSimulator.Forms
             autosaveTextBox_Validating(this, new CancelEventArgs());
 
             autosaveButton.Checked = Properties.Settings.Default.AutosaveEnabled;
+        }
+
+        private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)
+        {
+            NodePropertyView.RefreshGrid();
+            TaskPropertyView.RefreshGrid();
         }
 
         public void PopulateWorldList()
@@ -1176,5 +1234,26 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         #endregion
+
+        public bool CheckDashboardContains(object target, string propertyName)
+        {
+            if (Project.Dashboard == null)
+                return false;
+            return Project.Dashboard.Contains(target, propertyName);
+        }
+
+        public void DashboardPropertyToggle(object target, string propertyName, bool active)
+        {
+            if (active)
+                Project.Dashboard.Add(target, propertyName);
+            else
+                Project.Dashboard.Remove(target, propertyName);
+        }
+
+        public void InvalidateGraphLayouts()
+        {
+            foreach (GraphLayoutForm graphLayoutForm in GraphViews.Values)
+                graphLayoutForm.Desktop.Invalidate();
+        }
     }
 }

@@ -8,13 +8,23 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
-    public partial class NodePropertyForm : DockContent
+    public partial class NodePropertyForm : DockContent, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private readonly MainForm m_mainForm;
 
         public bool CanEdit
@@ -31,6 +41,11 @@ namespace GoodAI.BrainSimulator.Forms
             set { 
                 propertyGrid.SelectedObject = value;
 
+                if (!(value is MyNode))
+                {
+                    dashboardButton.Enabled = false;
+                }
+
                 UpdateTitleAndButtons();                    
                 UpdateObserverList();                
             }
@@ -45,6 +60,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            OnPropertyChanged(e.ChangedItem.PropertyDescriptor.Name);
+
             MyNodeView nodeView = null;
 
             foreach(GraphLayoutForm graphView in m_mainForm.GraphViews.Values) {
@@ -189,15 +206,7 @@ namespace GoodAI.BrainSimulator.Forms
             node.Updated();
 
             propertyGrid.Refresh();
-            InvalidateGraphLayouts();
-        }
-
-        private void InvalidateGraphLayouts()
-        {
-            foreach (GraphLayoutForm graphLayoutForm in m_mainForm.GraphViews.Values)
-            {
-                graphLayoutForm.Desktop.Invalidate();
-            }
+            m_mainForm.InvalidateGraphLayouts();
         }
 
         private void saveDataNodeButton_Click(object sender, EventArgs e)
@@ -247,6 +256,56 @@ namespace GoodAI.BrainSimulator.Forms
         private void snapshotButton_Click(object sender, EventArgs e)
         {
             (Target as MyAbstractObserver).AutosaveSnapshop = snapshotButton.Checked;
+        }
+
+        private void dashboardButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (propertyGrid.SelectedGridItem.PropertyDescriptor == null)
+                return;
+
+            PropertyDescriptor propertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
+
+            if (propertyDescriptor != null)
+                m_mainForm.DashboardPropertyToggle(Target, propertyDescriptor.Name, dashboardButton.Checked);
+        }
+
+        public void RefreshGrid()
+        {
+            propertyGrid.Refresh();
+        }
+
+        private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            RefreshDashboardButton();
+        }
+
+        private void propertyGrid_Enter(object sender, EventArgs e)
+        {
+            RefreshDashboardButton();
+        }
+
+        private void RefreshDashboardButton()
+        {
+            if (ActiveControl == propertyGrid && propertyGrid.SelectedGridItem != null && Target is MyNode)
+            {
+                PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
+                if (descriptor == null)
+                    return;
+
+                if (descriptor.IsReadOnly)
+                {
+                    dashboardButton.Enabled = false;
+                    return;
+                }
+
+                // A real property has been selected.
+                dashboardButton.Enabled = true;
+                dashboardButton.Checked = m_mainForm.CheckDashboardContains(Target, descriptor.Name);
+            }
+            else
+            {
+                dashboardButton.Enabled = false;
+            }
         }
     }
 }

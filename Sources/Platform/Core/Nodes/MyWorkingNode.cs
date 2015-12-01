@@ -270,6 +270,8 @@ namespace GoodAI.Core.Nodes
 
         #endregion
 
+        public MyExecutionBlock ExecutionBlock { get; set; }
+
         /// <summary>
         /// This allows the node implementations to react to the simulation's state.
         /// This is useful for e.g. resource management.

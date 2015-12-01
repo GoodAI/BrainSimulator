@@ -118,6 +118,11 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        public uint SimulationStep
+        {
+            get { return SimulationHandler.SimulationStep; }
+        }
+
         public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
             MySimulation simulation = new MyLocalSimulation();
@@ -290,6 +295,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project loading failed: " + e.Message);
+                throw;
             }
         }
 
@@ -309,10 +315,11 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Project saving failed: " + e.Message);
+                throw;
             }
         }
 
-        protected void setProperty(object o, string propName, object value)
+        protected void SetProperty(object o, string propName, object value)
         {
             MyLog.DEBUG.WriteLine("Setting property " + propName + "@" + o + " to " + value);
             PropertyInfo pInfo = o.GetType().GetProperty(propName);
@@ -340,7 +347,7 @@ namespace GoodAI.Core.Execution
         public void Set(int nodeId, string propName, object value)
         {
             MyNode n = Project.GetNodeById(nodeId);
-            setProperty(n, propName, value);
+            SetProperty(n, propName, value);
         }
 
         /// <summary>
@@ -354,7 +361,7 @@ namespace GoodAI.Core.Execution
         {
             MyWorkingNode node = (Project.GetNodeById(nodeId) as MyWorkingNode);
             MyTask task = GetTaskByType(node, taskType);
-            setProperty(task, propName, value);
+            SetProperty(task, propName, value);
         }
 
         /// <summary>
@@ -490,6 +497,10 @@ namespace GoodAI.Core.Execution
         /// <param name="reportInterval">Step count between printing out simulation info (e.g. speed)</param>
         public void RunAndPause(uint stepCount, uint reportInterval = 100)
         {
+            if (stepCount == 0)
+                throw new ArgumentException("Zero step count not allowed.", "stepCount");  // would run forever
+            // TODO(Premek): Add a check that that simulation is not finished
+
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
                 if (SimulationHandler.UpdateMemoryModel())
@@ -513,6 +524,7 @@ namespace GoodAI.Core.Execution
                     return;
                 }
             }
+
             try
             {
                 SimulationHandler.ReportIntervalSteps = reportInterval;
@@ -522,6 +534,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Simulation cannot be started! Exception occured: " + e.Message);
+                throw;
             }
         }
 
@@ -531,6 +544,7 @@ namespace GoodAI.Core.Execution
         public void Reset()
         {
             SimulationHandler.StopSimulation();
+            SimulationHandler.Simulation.ResetSimulationStep();  // reset simulation step back to 0
             m_monitors.Clear();
             m_results.Clear();
             m_resultIdCounter = 0;
