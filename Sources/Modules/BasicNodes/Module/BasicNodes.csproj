@@ -130,11 +130,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\MultiplexerNode.cs" />
-    <Compile Include="Common\MyBoxPlotNode.cs" />
-    <Compile Include="Common\MyBoxPlotObserver.cs" />
+    <Compile Include="Common\BoxPlotNode.cs" />
+    <Compile Include="Common\BoxPlotObserver.cs" />
     <Compile Include="Common\MyConditionalGate.cs" />
     <Compile Include="Common\MyLoopGroup.cs" />
-    <Compile Include="Common\MyStatisticsNode.cs" />
+    <Compile Include="Common\StatisticsNode.cs" />
     <Compile Include="DiscreteRL\Observers\DiscretePolicyObserver.cs" />
     <Compile Include="DiscreteRL\Interfaces\IDiscretePolicyObservable.cs" />
     <Compile Include="DiscreteRL\Interfaces\IDiscreteSRPObservable.cs" />

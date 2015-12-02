@@ -23,12 +23,9 @@ namespace GoodAI.Modules.Common
     /// <li>Take data for every element from time-collecting window: CalculateFor = <b>AllElements</b>; WindowLength = <b>X</b> >= 3</li>
     /// </ul>
     /// </description>
-    public class MyBoxPlotNode : MyWorkingNode
+    public class BoxPlotNode : MyWorkingNode
     {
         #region inputs
-        [MyBrowsable, Category("Input interface")]
-        [YAXSerializableField(DefaultValue = 1), YAXElementFor("Structure")]
-        public int INPUT_SIZE { get; private set; }
 
         [MyBrowsable, Category("History")]
         [YAXSerializableField(DefaultValue = 1), YAXElementFor("History")]
@@ -68,15 +65,15 @@ namespace GoodAI.Modules.Common
         {
             if (Input == null) return;
 
-            INPUT_SIZE = Input == null ? 1 : Input.Count;
-            int InputRowN = INPUT_SIZE / Input.ColumnHint;
-            int InputColumnN = Input.ColumnHint;
+            int inputSize = Input == null ? 1 : Input.Count;
+            int inputRowN = inputSize / Input.ColumnHint;
+            int inputColumnN = Input.ColumnHint;
 
-            if (CalculateFor == CalculateForEnum.AllElements) { Output.Count = 5 * INPUT_SIZE; Temp.Count = WindowLength; }
-            else if (CalculateFor == CalculateForEnum.Rows) { Output.Count = 5 * InputColumnN; Temp.Count = InputRowN; }
-            else if (CalculateFor == CalculateForEnum.Columns) { Output.Count = InputRowN * 5; Temp.Count = InputColumnN; }
-            else if (CalculateFor == CalculateForEnum.WholeMatrix) { Output.Count = 5; Temp.Count = INPUT_SIZE; }
-            Window.Count = INPUT_SIZE * WindowLength;
+            if (CalculateFor == CalculateForEnum.AllElements) { Output.Count = 5 * inputSize; Temp.Count = WindowLength; }
+            else if (CalculateFor == CalculateForEnum.Rows) { Output.Count = 5 * inputColumnN; Temp.Count = inputRowN; }
+            else if (CalculateFor == CalculateForEnum.Columns) { Output.Count = inputRowN * 5; Temp.Count = inputColumnN; }
+            else if (CalculateFor == CalculateForEnum.WholeMatrix) { Output.Count = 5; Temp.Count = inputSize; }
+            Window.Count = inputSize * WindowLength;
             Output.ColumnHint = 5;
             OutputRowsN = Output.Count / Output.ColumnHint;
             OutputColumnsN = Output.ColumnHint;
@@ -86,7 +83,7 @@ namespace GoodAI.Modules.Common
         {
             validator.AssertError(!(BoxPlot.Enabled && WindowLength != 1 && CalculateFor != CalculateForEnum.AllElements), this,
                 "BoxPlot with WindowLength other than 1 can be used with CalculateFor = 'AllElements' option only");
-            validator.AssertError(!(BoxPlot.Enabled && CalculateFor == CalculateForEnum.WholeMatrix && INPUT_SIZE < 5), this,
+            validator.AssertError(!(BoxPlot.Enabled && CalculateFor == CalculateForEnum.WholeMatrix && Input.Count < 5), this,
                 "BoxPlot recieves too small input to get reasonable output");
         }
 
@@ -101,29 +98,27 @@ namespace GoodAI.Modules.Common
 
         /// <summary>Returns 5-tuple (Min, FirstQuartile, Median, ThirdQuartile, Max).</summary>
         [Description("BoxPlot")]
-        public class BoxPlotTask : MyTask<MyBoxPlotNode>
+        public class BoxPlotTask : MyTask<BoxPlotNode>
         {
-            private int WindowIdx { get; set; }
-            private int Base { get; set; }
-            private int ColumnsN, RowsN, ElementsN, OutputRowsN;
+            private int windowIdx { get; set; }
+            private int elementsCount { get; set; }
+            private int columnsN, rowsN, elementsN, outputRowsN;
             MyCudaKernel m_sumKernel;
             private readonly int HOST_DEVICE_THRSHD = 1 << 13;
 
             private bool firstExec;
+
             public override void Init(int nGPU)
             {
                 firstExec = true;
 
-                WindowIdx = 0;
-                Base = 0;
-                ColumnsN = Owner.Input.ColumnHint;
-                RowsN = Owner.INPUT_SIZE / Owner.Input.ColumnHint;
-                ColumnsN = Owner.Input.ColumnHint;
-                ElementsN = Owner.INPUT_SIZE;
+                windowIdx = 0;
+                elementsCount = 0;
+                elementsN = Owner.Input.Count;
+                columnsN = Owner.Input.ColumnHint;
+                rowsN = elementsN / columnsN;
                 //m_sumKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
                 Owner.Window.SafeCopyToHost();
-
-
             }
 
             public override void Execute()
@@ -141,10 +136,10 @@ namespace GoodAI.Modules.Common
                 switch (Owner.CalculateFor)
                 {
                     case CalculateForEnum.AllElements:
-                        for (int i = 0; i < ElementsN; i++)
+                        for (int i = 0; i < elementsN; i++)
                         {
                             int WindowStartIdx = i * Owner.WindowLength;
-                            Owner.Window.Host[WindowStartIdx + WindowIdx] = Owner.Input.Host[i];
+                            Owner.Window.Host[WindowStartIdx + windowIdx] = Owner.Input.Host[i];
                             // Owner.Window.SafeCopyToDevice(); // optimize!
 
                             // activate for GPU-sorting
@@ -155,14 +150,14 @@ namespace GoodAI.Modules.Common
                             Array.Copy(Owner.Window.Host, WindowStartIdx, Owner.Temp.Host, 0, Owner.WindowLength);
 
                             Sort(Owner.Temp);
-                            if (Base < 3) continue;
-                            inputAssignment(i, Owner.Temp.Host, Base);
+                            if (elementsCount < 3) continue;
+                            inputAssignment(i, Owner.Temp.Host, elementsCount);
                         }
                         break;
                     case CalculateForEnum.Columns:
-                        for (int i = 0; i < RowsN; i++)
+                        for (int i = 0; i < rowsN; i++)
                         {
-                            Array.Copy(Owner.Input.Host, i * ColumnsN, Owner.Temp.Host, 0, ColumnsN);
+                            Array.Copy(Owner.Input.Host, i * columnsN, Owner.Temp.Host, 0, columnsN);
 
                             Sort(Owner.Temp);
                             inputAssignment(i, Owner.Temp.Host);
@@ -170,131 +165,131 @@ namespace GoodAI.Modules.Common
                         break;
 
                     case CalculateForEnum.Rows:
-                        for (int i = 0; i < ColumnsN; i++)
+                        for (int i = 0; i < columnsN; i++)
                         {
-                            for (int j = 0; j < RowsN; j++)
+                            for (int j = 0; j < rowsN; j++)
                             {
-                                Owner.Temp.Host[j] = Owner.Input.Host[i * RowsN + j];
+                                Owner.Temp.Host[j] = Owner.Input.Host[i * rowsN + j];
                             }
                             Sort(Owner.Temp);
                             inputAssignment(i, Owner.Temp.Host);
                         }
                         break;
                     case CalculateForEnum.WholeMatrix:
-                        Array.Copy(Owner.Input.Host, Owner.Temp.Host, ElementsN);
+                        Array.Copy(Owner.Input.Host, Owner.Temp.Host, elementsN);
 
                         Sort(Owner.Temp);
                         inputAssignment(0, Owner.Temp.Host);
                         break;
                 }
-                WindowIdx++;
-                WindowIdx %= Owner.WindowLength;
-                if (Base < Owner.WindowLength - 1) Base++;
+                windowIdx++;
+                windowIdx %= Owner.WindowLength;
+                if (elementsCount < Owner.WindowLength - 1) elementsCount++;
 
                 Owner.Window.SafeCopyToDevice();
                 Owner.Output.SafeCopyToDevice();
             }
 
-            private void inputAssignment(int Idx, float[] SortedInput)
+            private void inputAssignment(int idx, float[] sortedInput)
             {
-                Owner.Output.Host[Idx * 5 + 0] = getMin(SortedInput);
-                Owner.Output.Host[Idx * 5 + 1] = getFirstQuartile(SortedInput);
-                Owner.Output.Host[Idx * 5 + 2] = getMedian(SortedInput);
-                Owner.Output.Host[Idx * 5 + 3] = getThirdQuartile(SortedInput);
-                Owner.Output.Host[Idx * 5 + 4] = getMax(SortedInput);
+                Owner.Output.Host[idx * 5 + 0] = getMin(sortedInput);
+                Owner.Output.Host[idx * 5 + 1] = getFirstQuartile(sortedInput);
+                Owner.Output.Host[idx * 5 + 2] = getMedian(sortedInput);
+                Owner.Output.Host[idx * 5 + 3] = getThirdQuartile(sortedInput);
+                Owner.Output.Host[idx * 5 + 4] = getMax(sortedInput);
             }
 
             // for base < SortedInput.lenght()
-            private void inputAssignment(int Idx, float[] SortedInput, int Base)
+            private void inputAssignment(int idx, float[] sortedInput, int elementsCount)
             {
-                int MinIdx = SortedInput.Length - Base - 1;
-                int MaxIdx = SortedInput.Length - 1;
-                if (Base == 0) return;
-                else if (Base == 1)
+                int MinIdx = sortedInput.Length - elementsCount - 1;
+                int MaxIdx = sortedInput.Length - 1;
+                if (elementsCount == 0) return;
+                else if (elementsCount == 1)
                 {
                     for (int i = 0; i < 5; i++ )
                     {
-                        Owner.Output.Host[Idx * 5 + i] = SortedInput[0];
+                        Owner.Output.Host[idx * 5 + i] = sortedInput[0];
                     }
                     return;
                 }
                 
-                Owner.Output.Host[Idx * 5 + 0] = SortedInput[MinIdx];
-                Owner.Output.Host[Idx * 5 + 1] = getFirstQuartile(SortedInput, MinIdx, MaxIdx);
-                Owner.Output.Host[Idx * 5 + 2] = getMedian(SortedInput, MinIdx, MaxIdx);
-                Owner.Output.Host[Idx * 5 + 3] = getThirdQuartile(SortedInput, MinIdx, MaxIdx);
-                Owner.Output.Host[Idx * 5 + 4] = getMax(SortedInput);
+                Owner.Output.Host[idx * 5 + 0] = sortedInput[MinIdx];
+                Owner.Output.Host[idx * 5 + 1] = getFirstQuartile(sortedInput, MinIdx, MaxIdx);
+                Owner.Output.Host[idx * 5 + 2] = getMedian(sortedInput, MinIdx, MaxIdx);
+                Owner.Output.Host[idx * 5 + 3] = getThirdQuartile(sortedInput, MinIdx, MaxIdx);
+                Owner.Output.Host[idx * 5 + 4] = getMax(sortedInput);
             }
 
-            private float getFirstQuartile(float[] SortedInput)
+            private float getFirstQuartile(float[] sortedInput)
             {
-                if (SortedInput.Length % 2 == 1)
+                if (sortedInput.Length % 2 == 1)
                 {
-                    return getMedian(SortedInput, 0, SortedInput.Length / 2);
+                    return getMedian(sortedInput, 0, sortedInput.Length / 2);
                 }
-                return getMedian(SortedInput, 0, SortedInput.Length / 2 - 1);
+                return getMedian(sortedInput, 0, sortedInput.Length / 2 - 1);
             }
 
-            private float getFirstQuartile(float[] SortedInput, int MinIdx, int MaxIdx)
+            private float getFirstQuartile(float[] sortedInput, int minIdx, int maxIdx)
             {
-                int length = (MaxIdx - MinIdx);
+                int length = (maxIdx - minIdx);
                 if (length % 2 == 1)
                 {
-                    return getMedian(SortedInput, MinIdx, MinIdx + length / 2);
+                    return getMedian(sortedInput, minIdx, minIdx + length / 2);
                 }
-                return getMedian(SortedInput, MinIdx, MinIdx + length / 2 - 1);
+                return getMedian(sortedInput, minIdx, minIdx + length / 2 - 1);
             }
 
-            private float getThirdQuartile(float[] SortedInput)
+            private float getThirdQuartile(float[] sortedInput)
             {
-                if (SortedInput.Length % 2 == 1)
+                if (sortedInput.Length % 2 == 1)
                 {
-                    return getMedian(SortedInput, SortedInput.Length / 2, SortedInput.Length - 1);
+                    return getMedian(sortedInput, sortedInput.Length / 2, sortedInput.Length - 1);
                 }
-                return getMedian(SortedInput, SortedInput.Length / 2 - 1, SortedInput.Length - 1);
+                return getMedian(sortedInput, sortedInput.Length / 2 - 1, sortedInput.Length - 1);
             }
 
-            private float getThirdQuartile(float[] SortedInput, int MinIdx, int MaxIdx)
+            private float getThirdQuartile(float[] sortedInput, int minIdx, int maxIdx)
             {
-                int length = (MaxIdx - MinIdx);
-                return getMedian(SortedInput, MinIdx + length / 2, MinIdx + length - 1);
+                int length = (maxIdx - minIdx);
+                return getMedian(sortedInput, minIdx + length / 2, minIdx + length - 1);
             }
 
-            private float getMedian(float[] SortedInput)
+            private float getMedian(float[] sortedInput)
             {
-                return getMedian(SortedInput, 0, SortedInput.Length - 1);
+                return getMedian(sortedInput, 0, sortedInput.Length - 1);
             }
 
-            private float getMedian(float[] SortedInput, int MinIdx, int MaxIdx)
+            private float getMedian(float[] sortedInput, int minIdx, int maxIdx)
             {
-                int Length = MaxIdx - MinIdx + 1;
+                int length = maxIdx - minIdx + 1;
 
-                if (Length == 0) return float.NaN;
-                if (Length == 1) return SortedInput[MinIdx];
+                if (length == 0) return float.NaN;
+                if (length == 1) return sortedInput[minIdx];
 
-                if (Length % 2 == 1)
+                if (length % 2 == 1)
                 {
-                    int MidIdx = MinIdx + Length / 2;
-                    return SortedInput[MidIdx];
+                    int MidIdx = minIdx + length / 2;
+                    return sortedInput[MidIdx];
                 }
-                int MidIdx0 = MinIdx + Length / 2;
+                int MidIdx0 = minIdx + length / 2;
                 int MidIdx1 = MidIdx0 - 1;
-                return (SortedInput[MidIdx0] + SortedInput[MidIdx1]) / 2;
+                return (sortedInput[MidIdx0] + sortedInput[MidIdx1]) / 2;
             }
 
-            private float getMin(float[] SortedOutput)
+            private float getMin(float[] sortedOutput)
             {
-                return SortedOutput[0];
+                return sortedOutput[0];
             }
 
-            private float getMax(float[] SortedOutput)
+            private float getMax(float[] sortedOutput)
             {
-                return SortedOutput[SortedOutput.Length - 1];
+                return sortedOutput[sortedOutput.Length - 1];
             }
 
-            private void Sort(MyMemoryBlock<float> MMB)
+            private void Sort(MyMemoryBlock<float> values)
             {
-                Array.Sort(MMB.Host);
+                Array.Sort(values.Host);
                 // use THRUST library insead
             }
 
