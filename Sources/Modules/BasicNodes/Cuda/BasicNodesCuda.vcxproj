@@ -24,6 +24,7 @@
     <CudaCompile Include="Common\CombineVectorsKernel.cu" />
     <CudaCompile Include="Common\ConvolutionSingle.cu" />
     <CudaCompile Include="Common\CopyRectangleKernel.cu" />
+    <CudaCompile Include="Common\DrawBoxPlotKernel.cu" />
     <CudaCompile Include="Common\Reduction\Reduction.cu" />
     <CudaCompile Include="Common\SetAllButOneKernel.cu" />
     <CudaCompile Include="Common\SetKernel.cu" />

@@ -60,6 +60,14 @@
     <Node type="GoodAI.Modules.Common.MyConditionalGate" CanBeAdded="true" BigIcon="gate_big.png" SmallIcon="gate.png">
       <Label>Control &amp; Dataflow</Label>
     </Node>
+    
+    <Node type="GoodAI.Modules.Common.StatisticsNode" CanBeAdded="true">
+      <Label>Math</Label>
+    </Node>
+    <Node type="GoodAI.Modules.Common.BoxPlotNode" CanBeAdded="true">
+      <Observer type="GoodAI.Modules.Common.BoxPlotObserver" />
+      <Label>Math</Label>
+    </Node>
 
     <Node type="GoodAI.Modules.Matrix.MyMatrixNode" CanBeAdded="true" BigIcon="keypad_big.png" SmallIcon="keypad.png">
       <Label>Math</Label>
