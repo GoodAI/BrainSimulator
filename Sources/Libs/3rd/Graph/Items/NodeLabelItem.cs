@@ -69,13 +69,14 @@ namespace Graph.Items
 
 		internal override SizeF Measure(Graphics graphics)
 		{
-			const float MinTextHeight = 16.0f;  // HACK: MeasureString does not work for unicode characters like "⊕"
+			// HACK: MeasureString does not work for unicode characters like "⊕", increase min. height
+			float minTextHeight = Math.Max(16.0f, GraphConstants.MinimumItemHeight); 
 
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
 				if (this.textSize.IsEmpty)
 				{
-					var size = new SizeF(GraphConstants.MinimumItemWidth, MinTextHeight);
+					var size = new SizeF(GraphConstants.MinimumItemWidth, minTextHeight);
 
 					this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GetTextFormat());
 
