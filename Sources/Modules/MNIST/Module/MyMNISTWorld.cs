@@ -53,12 +53,12 @@ namespace MNIST
         public override void UpdateMemoryBlocks()
         {
             //MNIST images are 28 * 28 pixels
-            Bitmap.Count = 784; //28 * 28
-            Bitmap.ColumnHint = 28;
+            Bitmap.Count = 28 * 28; // 784
+            Bitmap.Dims = new TensorDimensions(28, 28);
             if (Binary)
             {
                 Label.Count = 10;
-                Label.ColumnHint = 10;
+                Label.Dims = new TensorDimensions(10);
                 Label.MaxValueHint = Label.MinValueHint = 1;
             }
             else

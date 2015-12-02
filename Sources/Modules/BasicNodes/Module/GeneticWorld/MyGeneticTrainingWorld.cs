@@ -69,10 +69,6 @@ namespace GoodAI.Modules.GeneticWorld
             get { return GetInput(1); }
         }
 
-        [YAXSerializableField(DefaultValue = true)]
-        [MyBrowsable, Category("WorldParams"), Description("If FALSE, disables all genetic training methods.")]
-        public bool TrainGenetically { get; set; }
-
         [YAXSerializableField(DefaultValue = 10)]
         [MyBrowsable, Category("WorldParams"), Description("Size of the population to be evolved.")]
         public int PopulationSize { get; set; }
@@ -105,8 +101,8 @@ namespace GoodAI.Modules.GeneticWorld
 
         public override void Validate(MyValidator validator)
         {
-            validator.AssertError(Fitness == null, this, "Requires fitness input.");
-            validator.AssertError(SwitchMember == null, this, "There must be a signal to change tested members. Otherwise infinite loops will occur.");
+            validator.AssertError(Fitness != null, this, "Requires fitness input.");
+            validator.AssertError(SwitchMember != null, this, "There must be a signal to change tested members. Otherwise infinite loops will occur.");
         }
 
         /// <author>GoodAI</author>
@@ -177,9 +173,7 @@ namespace GoodAI.Modules.GeneticWorld
             {
                 currentGen = 0;
                 m_weights = 0;
-                // If not genetically training. Return
-                if (!Owner.TrainGenetically)
-                    return;
+
 
                 // Load the relevant kernels
                 m_coeffGenKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Genetic\CosyneGenetics", "generateCoefficients");
@@ -204,7 +198,7 @@ namespace GoodAI.Modules.GeneticWorld
                     if (n is MyNeuralNetworkGroup)
                     {
                         nn = n as MyNeuralNetworkGroup;
-                        MyLog.INFO.Write("Evolving the layers of node: " + nn.Name);
+                        MyLog.INFO.WriteLine("Evolving the layers of node: " + nn.Name);
                         break;
                     }
                 }
@@ -221,8 +215,6 @@ namespace GoodAI.Modules.GeneticWorld
 
                 // Get the relevant execution plan
                 m_executionPlan = Owner.Owner.SimulationHandler.Simulation.ExecutionPlan[0];
-
-
 
                 #region MemoryBlocks
                 // Initialise the population
@@ -328,10 +320,13 @@ namespace GoodAI.Modules.GeneticWorld
 
 
                 //Disable Backprop tasks in Network
-                if (!nn.GetActiveBackpropTask().DisableLearning)
+                if (nn.GetActiveBackpropTask() != null)
                 {
-                    MyLog.WARNING.WriteLine("Disabling backprop learning for Neural Network");
-                    nn.GetActiveBackpropTask().DisableLearning = true;
+                    if (!nn.GetActiveBackpropTask().DisableLearning)
+                    {
+                        MyLog.WARNING.WriteLine("Disabling backprop learning for Neural Network");
+                        nn.GetActiveBackpropTask().DisableLearning = true;
+                    }
                 }
             }
 
@@ -340,15 +335,12 @@ namespace GoodAI.Modules.GeneticWorld
             {
                 currentGen++;
                 // If not genetically training. Return
-                if (!Owner.TrainGenetically)
-                    return;
 
                 //Get first population member from the network
                 getFFWeights(population[0]);
-                population[0].SafeCopyToHost();
+                population[0].SafeCopyToDevice();
                 if (!DirectEvolution)
-                {
-
+                {               
                     MyCublasFactory.Instance.Gemm(Operation.NonTranspose, Operation.NonTranspose,
                               arr_size, arr_size, arr_size, 1.0f,
                               multiplier.GetDevice(Owner), arr_size,
@@ -414,7 +406,6 @@ namespace GoodAI.Modules.GeneticWorld
                 determineFitnesses();
                 chromosomePop.SafeCopyToHost();
 
-
                 #region Sort Chromosomes
                 //sort the chromosomes and populations by fitness 
                 //bubble sort, can be improved
@@ -448,7 +439,6 @@ namespace GoodAI.Modules.GeneticWorld
                                 population[i - 1].Host[x] = population[i].Host[x];
                                 population[i].Host[x] = tmpfit;
                             }
-
                         }
                     }
                     len = newlen;
@@ -469,7 +459,7 @@ namespace GoodAI.Modules.GeneticWorld
 
                 // Best candidate to write to the network is the top of the population list
                 MyLog.INFO.WriteLine("Fitness of selected network is: " + fitnesses.Host[0]);
-                if (fitnesses.Host[0] > Owner.TargetFitness)
+                if (fitnesses.Host[0] >= Owner.TargetFitness)
                 {
                     MyLog.INFO.WriteLine("Found satisfying network, halting...");
                     Owner.Owner.SimulationHandler.PauseSimulation();
