@@ -5,6 +5,7 @@ using GoodAI.Modules.Transforms;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaFFT;
 using System;
+using System.Collections.Generic;
 using ManagedCuda;
 
 namespace GoodAI.Modules.VSA
@@ -66,18 +67,13 @@ namespace GoodAI.Modules.VSA
         }
 
 
-        public override void Bind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs)
+        public override void Bind(CUdeviceptr firstInput, IEnumerable<CUdeviceptr> otherInputs, CUdeviceptr output)
         {
-            otherInputs = otherInputs ?? new[] { firstInput };
-
             m_fft.Exec(firstInput, m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset));
 
-            int count = otherInputs.Length == 1 ? otherInputs.Length : otherInputs.Length - 1;
-
-            for (int i = 0; i < count; ++i)
+            foreach (var input in otherInputs)
             {
-                CUdeviceptr start = otherInputs[i];
-                m_fft.Exec(start, m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset));
+                m_fft.Exec(input, m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset));
                 m_mulkernel.RunAsync(
                     m_stream,
                     m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset),
@@ -85,22 +81,16 @@ namespace GoodAI.Modules.VSA
                     m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset), m_inputSize + 1);
             }
 
-            CUdeviceptr output = otherInputs[otherInputs.Length - 1];
             FinishBinding(output);
         }
 
-        public override void Unbind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs)
+        public override void Unbind(CUdeviceptr firstInput, IEnumerable<CUdeviceptr> otherInputs, CUdeviceptr output)
         {
-            otherInputs = otherInputs ?? new[] { firstInput };
-
             m_fft.Exec(firstInput, m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset));
 
-            int count = otherInputs.Length == 1 ? otherInputs.Length : otherInputs.Length - 1;
-
-            for (int i = 0; i < count; ++i)
+            foreach (var input in otherInputs)
             {
-                CUdeviceptr start = otherInputs[i];
-                m_involutionKernel.RunAsync(m_stream, start, m_tempBlock.GetDevicePtr(m_owner, m_tempOffset), m_inputSize);
+                m_involutionKernel.RunAsync(m_stream, input, m_tempBlock.GetDevicePtr(m_owner, m_tempOffset), m_inputSize);
                 m_fft.Exec(m_tempBlock.GetDevicePtr(m_owner, m_tempOffset), m_tempBlock.GetDevicePtr(m_owner, m_firstFFTOffset));
 
                 if (ExactQuery)
@@ -113,7 +103,6 @@ namespace GoodAI.Modules.VSA
                     m_tempBlock.GetDevicePtr(m_owner, m_secondFFTOffset), m_inputSize + 1);
             }
 
-            CUdeviceptr output = otherInputs[otherInputs.Length - 1];
             FinishBinding(output);
         }
 
