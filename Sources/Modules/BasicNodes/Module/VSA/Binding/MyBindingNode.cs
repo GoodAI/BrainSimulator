@@ -69,7 +69,7 @@ namespace GoodAI.Modules.VSA
             base.Validate(validator);
             if (FirstInput != null && SecondInput != null)
             {
-                validator.AssertError(FirstInput.Count == SecondInput.Count, this, "Operand sizes differ!");
+                validator.AssertError(SecondInput.Count % FirstInput.Count == 0, this, "Operand sizes differ!");
             }
         }
 
