@@ -56,26 +56,28 @@ namespace Graph.Items
 		}
 		#endregion
 
-	    private SizeF textSize;
+		private SizeF textSize;
+
+		private StringFormat GetTextFormat()
+		{
+			return (this.Input.Enabled == this.Output.Enabled)
+				? GraphConstants.CenterMeasureTextStringFormat
+				: (this.Input.Enabled
+					? GraphConstants.LeftMeasureTextStringFormat
+					: GraphConstants.RightMeasureTextStringFormat);
+		}
 
 		internal override SizeF Measure(Graphics graphics)
 		{
-            const float MinTextHeight = 16.0f;  // HACK: MeasureString does not work for unicode characters like "⊕"
+			const float MinTextHeight = 16.0f;  // HACK: MeasureString does not work for unicode characters like "⊕"
 
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
 				if (this.textSize.IsEmpty)
 				{
-                    var size = new SizeF(GraphConstants.MinimumItemWidth, MinTextHeight);
+					var size = new SizeF(GraphConstants.MinimumItemWidth, MinTextHeight);
 
-					if (this.Input.Enabled != this.Output.Enabled)
-					{
-						if (this.Input.Enabled)
-							this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
-						else
-							this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
-					} else
-						this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+					this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GetTextFormat());
 
 					this.textSize.Width  = Math.Max(size.Width, this.textSize.Width);
 					this.textSize.Height = Math.Max(size.Height, this.textSize.Height);
@@ -83,7 +85,7 @@ namespace Graph.Items
 
 				return this.textSize;
 			}
-            else
+			else
 			{
 				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 			}
@@ -95,14 +97,7 @@ namespace Graph.Items
 			size.Width  = Math.Max(minimumSize.Width, size.Width);
 			size.Height = Math.Max(minimumSize.Height, size.Height);
 
-			if (this.Input.Enabled != this.Output.Enabled)
-			{
-				if (this.Input.Enabled)
-                    graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.DarkSlateGray, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
-				else
-                    graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.DarkSlateGray, new RectangleF(location, size), GraphConstants.RightTextStringFormat);
-			} else
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.CenterTextStringFormat);
+			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.DarkSlateGray, new RectangleF(location, size), GetTextFormat());
 		}
 	}
 }
