@@ -30,7 +30,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DD234EF1-5B73-4712-8BA5-8EF290E4D7DD}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodesTests", "Modules\BasicNodes\Tests\BasicNodesTests.csproj", "{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}"
