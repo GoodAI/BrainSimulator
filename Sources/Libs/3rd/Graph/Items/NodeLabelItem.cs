@@ -49,37 +49,41 @@ namespace Graph.Items
 			{
 				if (internalText == value)
 					return;
+
 				internalText = value;
-				TextSize = Size.Empty;
+				textSize = Size.Empty;
 			}
 		}
 		#endregion
 
-		internal SizeF TextSize;
-
+	    private SizeF textSize;
 
 		internal override SizeF Measure(Graphics graphics)
 		{
+            const float MinTextHeight = 16.0f;  // HACK: MeasureString does not work for unicode characters like "⊕"
+
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
-				if (this.TextSize.IsEmpty)
+				if (this.textSize.IsEmpty)
 				{
-					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
+                    var size = new SizeF(GraphConstants.MinimumItemWidth, MinTextHeight);
 
 					if (this.Input.Enabled != this.Output.Enabled)
 					{
 						if (this.Input.Enabled)
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+							this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
 						else
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
+							this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
 					} else
-						this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+						this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
 
-					this.TextSize.Width  = Math.Max(size.Width, this.TextSize.Width);
-					this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
+					this.textSize.Width  = Math.Max(size.Width, this.textSize.Width);
+					this.textSize.Height = Math.Max(size.Height, this.textSize.Height);
 				}
-				return this.TextSize;
-			} else
+
+				return this.textSize;
+			}
+            else
 			{
 				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 			}
