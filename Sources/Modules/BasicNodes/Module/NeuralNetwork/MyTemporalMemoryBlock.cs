@@ -20,16 +20,48 @@ namespace GoodAI.Modules.NeuralNetwork
 {
     public class MyTemporalMemoryBlock<T> : MyMemoryBlock<T> where T : struct
     {
+        public override MyNode Owner
+        {
+            get { return m_owner; }
+            set
+            {
+                if ((value != null) && !(value is MyAbstractLayer))
+                {
+                    throw new InvalidOperationException(
+                        "Temporal memory blocks can be used only inside nodes inherited from MyAbstractLayer");
+                }
+
+                m_owner = value;
+            }
+        }
+        private MyNode m_owner;
+
+        private MyNeuralNetworkGroup ParentNetwork
+        {
+            get
+            {
+                if (Owner == null)
+                    throw new NullReferenceException("Owner not set.");
+
+                var layer = Owner as MyAbstractLayer;
+                if (layer == null)
+                    throw new InvalidOperationException("Owner is not a MyAbstractLayer");
+
+                MyNeuralNetworkGroup parentNetwork = layer.ParentNetwork;
+                if (parentNetwork == null)
+                {
+                    throw new NullReferenceException("Owner.ParentNetwork not set.");
+                }
+
+                return parentNetwork;
+            }
+        }
+
         public int SequenceLength
         {
             get
             {
-                if (Owner is MyAbstractLayer)
-                {
-                    MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    return layer.ParentNetwork.SequenceLength;
-                }
-                throw new Exception("Temporal memory blocks can be used only inside nodes inherited from MyAbstractLayer");
+                return ParentNetwork.SequenceLength;
             }
         }
         
@@ -47,15 +79,11 @@ namespace GoodAI.Modules.NeuralNetwork
         {
             get
             {
-                if (Owner is MyAbstractLayer)
-                {
-                    MyAbstractLayer layer = Owner as MyAbstractLayer;
-                    int timeStep = layer.ParentNetwork.TimeStep;
-                    if (0 <= timeStep && timeStep < SequenceLength)
-                        return timeStep;
-                    return SequenceLength - 1;
-                }
-                throw new Exception("Temporal memory blocks can be used only inside nodes inherited from MyAbstractLayer");
+                int timeStep = ParentNetwork.TimeStep;
+                if (0 <= timeStep && timeStep < SequenceLength)
+                    return timeStep;
+
+                return SequenceLength - 1;
             }
         }
 
@@ -75,17 +103,17 @@ namespace GoodAI.Modules.NeuralNetwork
             Cumulate,
             Copy
         }
-        private ModeType mode;
+
         public ModeType Mode
         {
             get
             {
-                return mode;
+                return m_mode;
             }
             set
             {
-                mode = value;
-                switch (mode)
+                m_mode = value;
+                switch (m_mode)
                 {
                     case ModeType.None:
                         modeKernel = null;
@@ -100,6 +128,7 @@ namespace GoodAI.Modules.NeuralNetwork
                 modeKernel.SetupExecution(Count);
             }
         }
+        private ModeType m_mode;
 
         public void RunMode()
         {

@@ -18,7 +18,7 @@ namespace GoodAI.Core.Memory
         public string Name { get; set; }
 
         //TODO: Find if MyWorkingNode is possible here
-        public MyNode Owner { get; set; }
+        public virtual MyNode Owner { get; set; }
         public abstract int ColumnHint { get; set; }
         public TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }

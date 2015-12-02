@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Memory;
+﻿using System;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
@@ -56,6 +57,19 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         // layers in which this layer feeds connections
         public List<MyAbstractLayer> NextConnectedLayers { get; set; }
 
+        public override MyNodeGroup Parent
+        {
+            get { return m_parent; }
+            set
+            {
+                if ((value != null) && !(value is MyNeuralNetworkGroup))
+                    throw new InvalidOperationException("A layer must be added into a NeuralNetworkGroup.");
+
+                m_parent = value;
+            }
+        }
+        private MyNodeGroup m_parent;
+ 
         public MyNeuralNetworkGroup ParentNetwork
         {
             get { return Parent as MyNeuralNetworkGroup; }

@@ -4,7 +4,6 @@ using GoodAI.Core;
 using GoodAI.Core.Configuration;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
-using GoodAI.Modules.Transforms;
 using Graph;
 using System;
 using System.Collections.Generic;
@@ -14,13 +13,14 @@ using System.Linq;
 using System.Windows.Forms;
 using GoodAI.Core.Memory;
 using GoodAI.BrainSimulator.Properties;
+using GoodAI.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
     public partial class GraphLayoutForm : DockContent
     {
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
 
         public MyNodeGroup Target { get; private set; } 
 
@@ -157,23 +157,41 @@ namespace GoodAI.BrainSimulator.Forms
             dataObject.SetData(typeof(MyNodeView), newNodeView);  // required to get derived types from GetData
 
             DragDropEffects result = DoDragDrop(dataObject, DragDropEffects.Copy);
-            if (result == DragDropEffects.Copy)
+            if (result != DragDropEffects.Copy)
+                return;
+
+            MyNode newNode = m_mainForm.Project.CreateNode(nodeType);
+            if (!TryAddChildNode(newNode))
             {
-                MyNode newNode = m_mainForm.Project.CreateNode(nodeType);
+                m_mainForm.Project.Network.RemoveChild(newNode);
+                Desktop.RemoveNode(newNodeView);
+                return;
+            }
+
+            // TODO: Change to all transforms
+            if (newNode is MyWorkingNode)
+            {
+                (newNode as MyWorkingNode).EnableDefaultTasks();
+            }
+
+            newNodeView.Node = newNode;
+            newNodeView.UpdateView();
+            newNodeView.OnEndDrag();
+
+            EnterGraphLayout();
+        }
+
+        private bool TryAddChildNode(MyNode newNode)
+        {
+            try
+            {
                 Target.AddChild(newNode);
-
-                // TODO: Change to all transforms
-
-                if (newNode is MyWorkingNode)
-                {
-                    (newNode as MyWorkingNode).EnableDefaultTasks();
-                }
-
-                newNodeView.Node = newNode;
-                newNodeView.UpdateView();
-                newNodeView.OnEndDrag();
-
-                EnterGraphLayout();
+                return true;
+            }
+            catch (Exception e)
+            {
+                MyLog.ERROR.WriteLine("Failed to add node: " + e.Message);
+                return false;
             }
         }
 

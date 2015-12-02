@@ -31,8 +31,9 @@ namespace GoodAI.Core.Nodes
                 
         [YAXSerializableField]
         public MyLocation Location { get; set; }
-        
-        public MyNodeGroup Parent { get; internal set; }
+
+        public virtual MyNodeGroup Parent { get; set; }
+
         public MyProject Owner { get; internal set; }
 
         [MyBrowsable, Category("\t\tGeneral")]
