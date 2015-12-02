@@ -416,7 +416,7 @@ namespace GoodAI.Modules.Common
                 MaxMinFunction mmf;
                 if (ChooseValue == MaxMin.Max) mmf = Enumerable.Max;
                 else if (ChooseValue == MaxMin.Min) mmf = Enumerable.Min;
-                else if (ChooseValue == MaxMin.Min) mmf = Median;
+                else if (ChooseValue == MaxMin.Median) mmf = Median;
                 else { Debug.Assert(false, "Unknow parameter in StatisticsNode, ModeTask, ChooseValue"); return; }
 
                 Owner.Input.SafeCopyToHost();
