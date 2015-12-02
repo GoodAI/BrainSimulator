@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using GoodAI.Core.Dashboard;
 
 namespace GoodAI.BrainSimulator.DashboardUtils
@@ -128,6 +123,11 @@ namespace GoodAI.BrainSimulator.DashboardUtils
         #endregion
 
         protected abstract PropertyDescriptor GetDescriptor(TProperty property, Attribute[] attributes);
+
+        public void RemovePropertyOf(object owner)
+        {
+            Dashboard.RemoveAll(owner);
+        }
     }
 
     public class DashboardViewModel : DashboardViewModelBase<Dashboard, DashboardNodeProperty>

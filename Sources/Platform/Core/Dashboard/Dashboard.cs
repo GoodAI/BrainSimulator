@@ -17,7 +17,7 @@ using YAXLib;
 namespace GoodAI.Core.Dashboard
 {
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class DashboardBase<TProperty> : INotifyPropertyChanged where TProperty : DashboardProperty
+    public abstract class DashboardBase<TProperty> : INotifyPropertyChanged where TProperty : DashboardProperty
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,6 +51,8 @@ namespace GoodAI.Core.Dashboard
             if (Properties.Remove(property))
                 OnPropertiesChanged("Properties");
         }
+
+        public abstract void RemoveAll(object target);
 
         protected void OnPropertiesChanged(string propertyName = null)
         {
@@ -124,6 +126,18 @@ namespace GoodAI.Core.Dashboard
         {
             return Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
         }
+
+        public override void RemoveAll(object target)
+        {
+            List<DashboardNodeProperty> toBeRemoved = Properties.Where(property => property.Node == target).ToList();
+            foreach (DashboardNodeProperty property in toBeRemoved)
+            {
+                if (property.Group != null)
+                    property.Group.Remove(property);
+
+                Properties.Remove(property);
+            }
+        }
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
@@ -147,6 +161,11 @@ namespace GoodAI.Core.Dashboard
                 PropertyName = name
             });
             OnPropertiesChanged("Properties");
+        }
+
+        public override void RemoveAll(object target)
+        {
+            // No need to do anything, the property will remove itself.
         }
     }
 }
