@@ -105,7 +105,7 @@ namespace GoodAI.Modules.TestingNodes
         #region inputs
         [ReadOnly(false)]
         [YAXSerializableField, YAXElementFor("IO")]
-        public override sealed int InputBranches
+        public sealed override int InputBranches
         {
             get { return base.InputBranches; }
             set
@@ -118,12 +118,10 @@ namespace GoodAI.Modules.TestingNodes
 
         #region Compilation
 
-        internal MethodInfo ScriptInitMethod { get; private set; }
-        internal MethodInfo ScriptCheckMethod { get; private set; }
+        private MethodInfo ScriptCheckMethod { get; set; }
 
         public override void Validate(MyValidator validator)
         {
-            ScriptInitMethod = null;
             ScriptCheckMethod = null;
 
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
