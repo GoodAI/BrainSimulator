@@ -42,14 +42,14 @@
         <MaxStepCount>1</MaxStepCount>
         <IO>
           <InputBranches>1</InputBranches>
-          <OutputBranchesSpec>1,1</OutputBranchesSpec>
         </IO>
         <DataFolder></DataFolder>
-        <Location X="382" Y="338" />
+        <Location X="466" Y="321" />
         <m_script>using System;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Nodes;
 using GoodAI.Modules.TestingNodes;
+using Xunit;
 
 namespace Runtime
 {
@@ -57,9 +57,8 @@ namespace Runtime
     {
         public static void Check(BrainUnitNode owner)
         {
-            MyLog.DEBUG.WriteLine("Execute called");
-            
             float[] input = owner.GetInput(0).Host;
+            Assert.True(false, "jou");
         }
     }
 }</m_script>

@@ -61,8 +61,6 @@ namespace GoodAI.Modules.TestingNodes
         [YAXSerializableField(DefaultValue = 1)]
         public int MaxStepCount { get; set; }
 
-        public bool IsUnderTest { get; private set; }
-
         public void Check()
         {
             CopyInputBlocksToHost();
@@ -133,16 +131,20 @@ namespace GoodAI.Modules.TestingNodes
             {
                 GenerateInMemory = false,
                 GenerateExecutable = false,
+                
             };
 
             parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
             parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
+            parameters.ReferencedAssemblies.Add("System.Runtime.dll"); //for LINQ support
+            // TODO: load the xunit dll in Brain Simulator UI from the module directory.
+            parameters.ReferencedAssemblies.Add("xunit.assert.dll");
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
-            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll");
-            if (openTKAssemblies.Count() > 0)
-                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
+            //Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            //IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "xunit.assert.dll");
+            //if (openTKAssemblies.Count() > 0)
+            //    parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
 
             CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
             Assembly compiledAssembly = null;
@@ -184,6 +186,7 @@ namespace GoodAI.Modules.TestingNodes
 using GoodAI.Core.Utils;
 using GoodAI.Core.Nodes;
 using GoodAI.Modules.TestingNodes;
+using Xunit;
 
 namespace Runtime
 {
@@ -191,9 +194,8 @@ namespace Runtime
     {
         public static void Check(BrainUnitNode owner)
         {
-            MyLog.DEBUG.WriteLine(""Check called"");
-            
             float[] input = owner.GetInput(0).Host;
+            Assert.True(false, ""jou"");
         }
     }
 }";
