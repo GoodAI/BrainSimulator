@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Name="brain-unit-test" xmlns:yaxlib="http://www.sinairv.com/yaxlib/">
+  <Observers />
   <Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network">
     <Children>
       <MyUserInput LoadOnStart="False" SaveOnStop="False" Id="6" Name="Node_6" yaxlib:realtype="GoodAI.Core.Nodes.MyUserInput">
@@ -39,12 +40,13 @@
         </Tasks>
       </Accumulator>
       <BrainUnitNode LoadOnStart="False" SaveOnStop="False" Id="8" Name="Node_8" yaxlib:realtype="GoodAI.Modules.TestingNodes.BrainUnitNode">
-        <MaxStepCount>1</MaxStepCount>
+        <MaxStepCount>100</MaxStepCount>
+        <InspectInterval>0</InspectInterval>
         <IO>
           <InputBranches>1</InputBranches>
         </IO>
         <DataFolder></DataFolder>
-        <Location X="466" Y="321" />
+        <Location X="422" Y="362" />
         <m_script>using System;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Nodes;
@@ -55,6 +57,11 @@ namespace Runtime
 {
     public class Script
     {
+        public static bool ShouldStop(BrainUnitNode owner)
+        {
+            return true;
+        }
+        
         public static void Check(BrainUnitNode owner)
         {
             float[] input = owner.GetInput(0).Host;
@@ -105,15 +112,14 @@ namespace Runtime
     </Tasks>
   </World>
   <Dashboard>
-    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardNodeProperty, GoodAI.Platform.Core, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null]]" />
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardNodePropertyBase, GoodAI.Platform.Core, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null]]" />
   </Dashboard>
   <GroupedDashboard>
-    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardPropertyGroup, GoodAI.Platform.Core, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null]]" />
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardPropertyGroup, GoodAI.Platform.Core, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null]]" />
   </GroupedDashboard>
-  <Observers />
   <MemoryBlockAttributes />
   <UsedModules>
-    <Module Name="GoodAI.Platform.Core.dll" Version="10" />
+    <Module Name="GoodAI.Platform.Core.dll" Version="11" />
     <Module Name="GoodAI.BasicNodes.dll" Version="14" />
     <Module Name="GoodAI.TestingNodes.dll" Version="1" />
   </UsedModules>

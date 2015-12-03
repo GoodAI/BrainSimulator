@@ -110,6 +110,8 @@ namespace GoodAI.Tests.BrainTestRunner
             }
             finally
             {
+                //MyLog.WARNING.WriteLine("  simulation step: {0}", projectRunner.SimulationStep);  // TODO(Premek): pass simulation step to the reporter
+
                 projectRunner.Reset();
             }
         }

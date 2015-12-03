@@ -30,21 +30,31 @@ namespace GoodAI.Tests.BrainTestRunner
             }
         }
 
+        public override bool ShouldStop(IBrainScan b)
+        {
+            return (bool) InvokeNodeMethod("ShouldStop");
+        }
+
         public override void Check(IBrainScan b)
+        {
+            InvokeNodeMethod("Check");
+        }
+
+        private object InvokeNodeMethod(string name)
         {
             if (m_brainUnitNode == null)
                 throw new InvalidOperationException("Test not initialized, BrainUnitNode instance not set.");
 
-            MethodInfo checkMethod = m_brainUnitNode.GetType().GetMethod("Check");
+            MethodInfo checkMethod = m_brainUnitNode.GetType().GetMethod(name);
 
             try
             {
-                checkMethod.Invoke(m_brainUnitNode, new object[0]);
+                return checkMethod.Invoke(m_brainUnitNode, new object[0]);
             }
             catch (TargetInvocationException e)
             {
                 Exception innerException = e.InnerException ?? e;
-                throw innerException;
+                throw innerException;  // TODO: recover the original stack trace (or at least file and line)
             }
         }
 
@@ -61,8 +71,10 @@ namespace GoodAI.Tests.BrainTestRunner
                 m_brainUnitNode = brainUnitNodes[0];
 
                 PropertyInfo maxStepCountProperty = m_brainUnitNode.GetType().GetProperty("MaxStepCount", typeof(int));
-
-                MaxStepCount = (int)maxStepCountProperty.GetValue(m_brainUnitNode);
+                MaxStepCount = (int) maxStepCountProperty.GetValue(m_brainUnitNode);
+                
+                PropertyInfo inspectIntervalProperty = m_brainUnitNode.GetType().GetProperty("InspectInterval", typeof(int));
+                InspectInterval = (int) inspectIntervalProperty.GetValue(m_brainUnitNode);
             }
             catch (Exception e)
             {

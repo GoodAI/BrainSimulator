@@ -25,6 +25,8 @@ namespace GoodAI.Modules.TestingNodes
     /// </description>    
     public class BrainUnitNode : MyScriptableNode, IMyVariableBranchViewNodeBase
     {
+        private int m_inspectInterval;
+
         public BrainUnitNode()
         {
             InputBranches = 1;
@@ -57,34 +59,63 @@ namespace GoodAI.Modules.TestingNodes
 
         #region Brain Unit
 
-        [MyBrowsable, Category("BrainUnit")]
+        [MyBrowsable, Category("BrainUnit"), Description("Stop simulation after this step count and call Check().")]
         [YAXSerializableField(DefaultValue = 1)]
         public int MaxStepCount { get; set; }
 
+        [MyBrowsable, Category("BrainUnit"), Description("How often to call ShouldStop(), 0 means automatic.")]
+        [YAXSerializableField(DefaultValue = 0)]
+        public int InspectInterval
+        {
+            get { return m_inspectInterval; }
+            set
+            {
+                if (value < 0)
+                    value = 0;
+
+                m_inspectInterval = value;
+            }
+        }
+
+        public bool ShouldStop()
+        {
+            if (ScriptShouldStopMethod == null)
+                return false;
+
+            return (bool) InvokeScriptMethod(ScriptShouldStopMethod);
+        }
+
         public void Check()
         {
-            CopyInputBlocksToHost();
-
             if (ScriptCheckMethod == null)
             {
                 MyLog.WARNING.WriteLine(Name + ": No Check() method available");
                 return;
             }
 
+            InvokeScriptMethod(ScriptCheckMethod);
+        }
+
+        private object InvokeScriptMethod(MethodInfo method)
+        {
+            CopyInputBlocksToHost();
+
             try
             {
-                ScriptCheckMethod.Invoke(null, new object[] {this});
+                return method.Invoke(null, new object[] { this });
             }
             catch (TargetInvocationException e)
             {
                 Exception innerException = e.InnerException ?? e;
-                MyLog.DEBUG.WriteLine("Exception occurred inside the Check(): " + innerException.Message);
+                MyLog.DEBUG.WriteLine("Exception occurred inside {0}: {1}", method.Name, innerException.Message);
                 throw innerException; // allow to catch assert failures
             }
             catch (Exception e)
             {
-                MyLog.WARNING.WriteLine("Script Check() call failed: " + e.GetType().Name + ": " + e.Message);
+                MyLog.ERROR.WriteLine("Script method {0} call failed: {1}", method.Name, e.Message);
             }
+
+            return null;
         }
 
         private void CopyInputBlocksToHost()
@@ -119,10 +150,12 @@ namespace GoodAI.Modules.TestingNodes
         #region Compilation
 
         private MethodInfo ScriptCheckMethod { get; set; }
+        private MethodInfo ScriptShouldStopMethod { get; set; }
 
         public override void Validate(MyValidator validator)
         {
             ScriptCheckMethod = null;
+            ScriptShouldStopMethod = null;
 
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters()
@@ -145,7 +178,6 @@ namespace GoodAI.Modules.TestingNodes
             //    parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
 
             CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
-            Assembly compiledAssembly = null;
 
             if (results.Errors.HasErrors)
             {
@@ -155,28 +187,30 @@ namespace GoodAI.Modules.TestingNodes
                 {
                     message += "Line " + error.Line + ": " + error.ErrorText + "\n";
                 }
+
                 validator.AddError(this, "Errors in compiled script:\n" + message);
+                return;
             }
-            else
+            else if (results.CompiledAssembly == null)
             {
-                compiledAssembly = results.CompiledAssembly;
+                validator.AddError(this, "Compiled assembly is null.");
+                return;
             }
 
-            if (compiledAssembly != null)
+            try
             {
-                try
-                {
-                    Type enclosingType = compiledAssembly.GetType("Runtime.Script");
+                Type enclosingType = results.CompiledAssembly.GetType("Runtime.Script");
 
-                    ScriptCheckMethod = enclosingType.GetMethod("Check");
-                    validator.AssertError(ScriptCheckMethod != null, this, "Check() method not found in compiled script");
-                }
-                catch (Exception e)
-                {
-                    validator.AddError(this, "Script analysis failed: " + e.GetType().Name + ": " + e.Message);
-                }
+                ScriptCheckMethod = enclosingType.GetMethod("Check");
+                validator.AssertError(ScriptCheckMethod != null, this, "Check() method not found in compiled script");
+
+                ScriptShouldStopMethod = enclosingType.GetMethod("ShouldStop");  // optional, don't check for null
             }
-        }
+            catch (Exception e)
+            {
+                validator.AddError(this, "Script analysis failed: " + e.GetType().Name + ": " + e.Message);
+            }
+    }
         #endregion
 
         #region ExampleCode
@@ -190,10 +224,17 @@ namespace Runtime
 {
     public class Script
     {
+        public static bool ShouldStop(BrainUnitNode owner)
+        {
+            return false;
+        }
+
         public static void Check(BrainUnitNode owner)
         {
             float[] input = owner.GetInput(0).Host;
-            Assert.True(false, ""jou"");
+
+            // use Xunit asserts
+            //Assert.True(false, ""user message"");
         }
     }
 }";

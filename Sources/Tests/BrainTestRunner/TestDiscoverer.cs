@@ -45,7 +45,9 @@ namespace GoodAI.Tests.BrainTestRunner
                 MyLog.Level = originalLogLevel;
             }
 
-            return string.IsNullOrEmpty(m_filter) ? testList : testList.Where(test => test.Name.ToLower().Contains(m_filter));
+            return string.IsNullOrEmpty(m_filter)
+                ? testList
+                : testList.Where(test => test.Name.ToLower().Contains(m_filter));
         }
 
         /// <summary>
