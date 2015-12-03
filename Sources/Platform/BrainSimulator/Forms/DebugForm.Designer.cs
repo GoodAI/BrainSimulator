@@ -149,7 +149,7 @@
             this.nodeTextBox1.IncrementalSearchEnabled = true;
             this.nodeTextBox1.LeftMargin = 3;
             this.nodeTextBox1.ParentColumn = this.taskName;
-            this.nodeTextBox1.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawEventArgs>(this.nodeTextBox1_DrawText);
+            this.nodeTextBox1.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawTextEventArgs>(this.nodeTextBox1_DrawText);
             // 
             // nodeTextBox2
             // 
@@ -157,7 +157,7 @@
             this.nodeTextBox2.IncrementalSearchEnabled = true;
             this.nodeTextBox2.LeftMargin = 3;
             this.nodeTextBox2.ParentColumn = this.taskType;
-            this.nodeTextBox2.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawEventArgs>(this.nodeTextBox1_DrawText);
+            this.nodeTextBox2.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawTextEventArgs>(this.nodeTextBox1_DrawText);
             // 
             // breakpointCheckBox
             // 
@@ -172,7 +172,7 @@
             this.profilerTimeValue.IncrementalSearchEnabled = true;
             this.profilerTimeValue.LeftMargin = 3;
             this.profilerTimeValue.ParentColumn = this.profilerTime;
-            this.profilerTimeValue.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawEventArgs>(this.profilerTimeValue_DrawText);
+            this.profilerTimeValue.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawTextEventArgs>(this.profilerTimeValue_DrawText);
             // 
             // toolStrip
             // 

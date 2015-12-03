@@ -1,6 +1,4 @@
-﻿using Aga.Controls.Tree;
-using Aga.Controls.Tree.NodeControls;
-using GoodAI.Core.Execution;
+﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Task;
 using System;
 using System.Collections.Generic;
@@ -8,6 +6,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Aga.Controls.Tree;
+using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -169,13 +169,13 @@ namespace GoodAI.BrainSimulator.Forms
             return m_mainForm.PerformMainMenuClick(keyData);
         }
 
-        private void nodeTextBox1_DrawText(object sender, DrawEventArgs e)
+        private void nodeTextBox1_DrawText(object sender, DrawTextEventArgs e)
         {
             AlterText(e);
             AlterBackground(e);         
         }
 
-        private void profilerTimeValue_DrawText(object sender, DrawEventArgs e)
+        private void profilerTimeValue_DrawText(object sender, DrawTextEventArgs e)
         {
             var parentTreeNode = e.Node.Parent;
             var parentDebugNode = parentTreeNode.Tag as MyDebugNode;
@@ -204,7 +204,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private void AlterBackground(DrawEventArgs e)
+        private void AlterBackground(DrawTextEventArgs e)
         {
             var nodeData = e.Node.Tag as MyDebugNode;
             if (nodeData != null && nodeData.Breakpoint && e.Node != debugTreeView.SelectedNode)
@@ -218,7 +218,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private static void AlterText(DrawEventArgs e)
+        private static void AlterText(DrawTextEventArgs e)
         {
             if (e.Node.Tag is MyDebugNode)
             {

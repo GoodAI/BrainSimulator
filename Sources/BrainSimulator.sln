@@ -30,8 +30,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DD234EF1-5B73-4712-8BA5-8EF290E4D7DD}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodesTests", "Modules\BasicNodes\Tests\BasicNodesTests.csproj", "{C72FCA86-AFA8-408B-9EFD-07C2C89CA2BB}"
@@ -59,6 +57,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicBrainTests", "Modules\BasicNodes\BrainTests\BasicBrainTests.csproj", "{C60CE33A-E25A-47C2-A539-C9FC29BB0D8B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainUnit", "Tests\BrainUnit\BrainUnit.csproj", "{6FCC90DF-5301-4580-9B86-8A596CF9C9D9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulatorTests", "Platform\BrainSimulatorTests\BrainSimulatorTests.csproj", "{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingNodes", "Modules\TestingNodes\Module\TestingNodes.csproj", "{31919B86-921F-4C36-A4F9-3A7BC37928A0}"
@@ -185,17 +184,17 @@ Global
 		{6FCC90DF-5301-4580-9B86-8A596CF9C9D9}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{6FCC90DF-5301-4580-9B86-8A596CF9C9D9}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{6FCC90DF-5301-4580-9B86-8A596CF9C9D9}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
-		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
-		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
-		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
-		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
-		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,7 +210,7 @@ Global
 		{F02EB44B-6AA6-436B-932D-CF29622CA44A} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 		{C60CE33A-E25A-47C2-A539-C9FC29BB0D8B} = {F02EB44B-6AA6-436B-932D-CF29622CA44A}
 		{6FCC90DF-5301-4580-9B86-8A596CF9C9D9} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
-		{31919B86-921F-4C36-A4F9-3A7BC37928A0} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 		{D61AD988-0D31-49E6-A9E6-0A796C79EDC9} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
+		{31919B86-921F-4C36-A4F9-3A7BC37928A0} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 	EndGlobalSection
 EndGlobal

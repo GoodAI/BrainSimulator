@@ -16,7 +16,7 @@
   
     <Icon Id="BrainSimulator.exe" SourceFile="$(var.BrainSimulator.TargetPath)" />
 
-    <WixVariable Id="CudaBinariesSourceDirectory" Value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\"/>
+    <WixVariable Id="CudaBinariesSourceDirectory" Value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\"/>
     <WixVariable Id="ModulesSourceDirectory" Value="$(var.BrainSimulator.TargetDir)modules"/>
 
     <WixVariable Id="WixUILicenseRtf" Value="Resources\EULA.rtf" />
@@ -166,16 +166,16 @@
     </ComponentGroup>
     <ComponentGroup Id="CudaBinaries" Directory="INSTALLFOLDER">
       <Component Id='CudaRuntimeLib' Guid='*'>
-        <File Id='cudartDLL' Name='cudart64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cudart64_70.dll' KeyPath='yes' />
+        <File Id='cudartDLL' Name='cudart64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cudart64_75.dll' KeyPath='yes' />
       </Component>
       <Component Id='CudaBlasLib' Guid='*'>
-        <File Id='cublasDLL' Name='cublas64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cublas64_70.dll' KeyPath='yes' />
+        <File Id='cublasDLL' Name='cublas64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cublas64_75.dll' KeyPath='yes' />
       </Component>
       <Component Id='CudaFFTLib' Guid='*'>
-        <File Id='cufftDLL' Name='cufft64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cufft64_70.dll' KeyPath='yes' />
+        <File Id='cufftDLL' Name='cufft64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\cufft64_75.dll' KeyPath='yes' />
       </Component>
       <Component Id='CudaRandLib' Guid='*'>
-        <File Id='curandDLL' Name='curand64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\curand64_70.dll' KeyPath='yes' />
+        <File Id='curandDLL' Name='curand64_70.dll' DiskId='1' Source='!(wix.CudaBinariesSourceDirectory)\curand64_75.dll' KeyPath='yes' />
       </Component>
 		</ComponentGroup>
     <ComponentGroup Id="ThirdLicenses" Directory="LicensesDirectory">
