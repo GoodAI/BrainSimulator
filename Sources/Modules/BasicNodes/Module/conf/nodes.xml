@@ -318,6 +318,8 @@
 
     <World type="GoodAI.Modules.MastermindWorld.MyMastermindWorld" CanBeAdded="true">
     </World>
+    <World type="GoodAI.Modules.TetrisWorld.TetrisWorld" CanBeAdded="true">
+    </World>
     
   </KnownWorlds>
   <Categories>
