@@ -96,16 +96,15 @@ namespace GoodAI.Tests.BrainTestRunner
 
             try
             {
-                do
+                while (true)
                 {
                     projectRunner.RunAndPause(GetIterationStepCount(test, projectRunner.SimulationStep));
 
                     step.AssertIncreased(projectRunner.SimulationStep);
 
-                    if (ShouldStop(test, brainScan))
+                    if ((projectRunner.SimulationStep >= test.MaxStepCount) || ShouldStop(test, brainScan))
                         break;
                 }
-                while (projectRunner.SimulationStep < test.MaxStepCount);
 
                 test.Check(brainScan);
             }
