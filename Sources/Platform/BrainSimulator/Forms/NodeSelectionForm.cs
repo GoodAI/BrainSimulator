@@ -61,7 +61,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
             {
-                if (nodeConfig.IsBasicNode || !nodeConfig.CanBeAdded || (nodeConfig.NodeType == null))
+                if (!nodeConfig.CanBeAdded || (nodeConfig.NodeType == null))
                     continue;
 
                 string nameSpace = nodeConfig.NodeType.Namespace ?? "(unknown)";
@@ -75,8 +75,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             knownNodes["Worlds"] = new List<MyNodeConfig>();
 
-            foreach (MyWorldConfig nodeConfig in MyConfiguration.KnownWorlds.Values
-                .Where(nodeConfig => !nodeConfig.IsBasicNode))
+            foreach (MyWorldConfig nodeConfig in MyConfiguration.KnownWorlds.Values)
             {
                 knownNodes["Worlds"].Add(nodeConfig);
             }
