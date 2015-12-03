@@ -13,8 +13,11 @@ namespace GoodAI.Tests.BrainTestRunner
 {
     internal class TestDiscoverer
     {
-        public TestDiscoverer()
+        private readonly string m_filter;
+
+        public TestDiscoverer(string filter)
         {
+            m_filter = filter != null ? filter.ToLower() : null;
             TestBinDirectory = Directory.GetCurrentDirectory();
 
             BrainUnitNodeTestsDirectory =
@@ -42,7 +45,7 @@ namespace GoodAI.Tests.BrainTestRunner
                 MyLog.Level = originalLogLevel;
             }
 
-            return testList;
+            return string.IsNullOrEmpty(m_filter) ? testList : testList.Where(test => test.Name.ToLower().Contains(m_filter));
         }
 
         /// <summary>

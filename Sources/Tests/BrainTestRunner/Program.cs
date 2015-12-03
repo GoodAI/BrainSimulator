@@ -1,12 +1,30 @@
 ﻿using System;
+using CommandLine;
+using CommandLine.Text;
 
 namespace GoodAI.Tests.BrainTestRunner
 {
+    class Options
+    {
+        [Option('f', "filter", Required = false, HelpText = "A partial name of the tests that should be run.")]
+        public string Filter { get; set; }
+
+        [HelpOption]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this, (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
+        }
+    }
+
     internal static class Program
     {
         public static void Main(string[] args)
         {
-            var testRunner = new TestRunner(new TestDiscoverer(), new TestReporter());
+            var options = new Options();
+            if (!Parser.Default.ParseArguments(args, options))
+                Console.WriteLine(options.GetUsage());
+
+            var testRunner = new TestRunner(new TestDiscoverer(options.Filter), new TestReporter());
 
             testRunner.Run();
         }
