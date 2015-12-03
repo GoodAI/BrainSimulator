@@ -68,7 +68,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             foreach (MyNodeConfig nodeConfig in MyConfiguration.KnownNodes.Values)
             {
-                if (nodeConfig.CanBeAdded && (enabledNodes.Contains(nodeConfig.NodeType.Name) || nodeConfig.IsBasicNode))
+                if (nodeConfig.CanBeAdded && (enabledNodes.Contains(nodeConfig.NodeType.Name)))
                 {
                     categorizer.AddNodeAndCategory(nodeConfig);
                 }
