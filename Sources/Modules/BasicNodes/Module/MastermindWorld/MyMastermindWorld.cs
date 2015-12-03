@@ -631,11 +631,11 @@ namespace GoodAI.Modules.MastermindWorld
 
             public override void Init(int nGPU)
             {
-                m_RgbBackgroundKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawRgbBackgroundKernel");
+                m_RgbBackgroundKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbBackgroundKernel");
 
-                m_RgbaTextureKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawRgbaTextureKernel2DBlock");
+                m_RgbaTextureKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbaTextureKernel2DBlock");
 
-                m_MaskedColorKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawMaskedColorKernel2DBlock");
+                m_MaskedColorKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawMaskedColorKernel2DBlock");
 
                 for(int i = 0; i < m_streams.Length; i++)
                 {

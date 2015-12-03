@@ -31,7 +31,7 @@
     <CudaCompile Include="Common\Statistics.cu" />
     <CudaCompile Include="Drawing\CustomPong.cu" />
     <CudaCompile Include="Drawing\GridWorld.cu" />
-    <CudaCompile Include="Drawing\MastermindWorld.cu" />
+    <CudaCompile Include="Drawing\RgbaDrawing.cu" />
     <CudaCompile Include="Genetic\CosyneGenetics.cu" />
     <CudaCompile Include="GrowingNeuralGas\ClearCanvasKernel.cu" />
     <CudaCompile Include="GrowingNeuralGas\Draw2DConnectionKernel.cu" />
