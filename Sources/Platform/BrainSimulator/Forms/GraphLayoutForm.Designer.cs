@@ -1,4 +1,6 @@
-﻿using GoodAI.BrainSimulator.Utils;
+﻿using System.Windows.Forms;
+using GoodAI.BrainSimulator.Nodes;
+using GoodAI.BrainSimulator.Utils;
 namespace GoodAI.BrainSimulator.Forms
 {
     partial class GraphLayoutForm
@@ -58,6 +60,8 @@ namespace GoodAI.BrainSimulator.Forms
             // 
             // nodesToolStrip
             // 
+            this.nodesToolStrip.RenderMode = ToolStripRenderMode.Professional;
+            this.nodesToolStrip.Renderer = new NodeToolStripRenderer();
             this.nodesToolStrip.AllowDrop = true;
             this.nodesToolStrip.AutoSize = false;
             this.nodesToolStrip.BackColor = System.Drawing.SystemColors.ControlLight;

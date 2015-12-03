@@ -46,7 +46,6 @@ namespace GoodAI.BrainSimulator.Forms
             newMenu.ImageAlign = ContentAlignment.MiddleRight;
             newMenu.Image = menuIcon;
             newMenu.Name = menuName;
-            newMenu.ShowDropDownArrow = false;            
             newMenu.AutoSize = false;
             newMenu.ImageScaling = ToolStripItemImageScaling.None;
             newMenu.Size = new System.Drawing.Size(46, 36);            
