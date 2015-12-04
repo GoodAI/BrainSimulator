@@ -23,6 +23,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+
+            // TODO: Undo
         }
 
         private readonly MainForm m_mainForm;

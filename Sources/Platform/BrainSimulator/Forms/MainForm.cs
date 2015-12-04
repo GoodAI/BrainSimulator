@@ -63,6 +63,8 @@ namespace GoodAI.BrainSimulator.Forms
             // TODO(HonzaS): This is not UI-specific, move project loading out of here.
             RestoreDashboard(Project);
 
+            // TODO: Undo
+
             StringCollection recentFilesList = Properties.Settings.Default.RecentFilesList;
 
             if (recentFilesList != null)
@@ -354,6 +356,8 @@ namespace GoodAI.BrainSimulator.Forms
                         graphView.Desktop.Invalidate();                        
                         graphView.worldButton_Click(sender, e);                     
                     }
+
+                    // TODO: Undo
                 }
             }
         }

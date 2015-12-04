@@ -19,7 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.DashboardUtils;
-using GoodAI.BrainSimulator.UserSettings;
+using GoodAI.BrainSimulator.Properties;
 using GoodAI.Core.Task;
 using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
@@ -34,6 +34,8 @@ namespace GoodAI.BrainSimulator.Forms
         public MyConfiguration Configuration { get; private set; }
         public MySimulationHandler SimulationHandler { get; private set; }
         public MyDocProvider Documentation { get; private set; }         
+
+        public UndoManager UndoManager { get; set; }
 
         #region Project
 
@@ -69,6 +71,16 @@ namespace GoodAI.BrainSimulator.Forms
 
             exportStateButton.Enabled = false;
             clearDataButton.Enabled = false;
+
+            UndoManager.Reset(GetProjectState(GetSerializedProject(saveFileDialog.FileName)));
+        }
+
+        private ProjectState GetProjectState(string serializedProject)
+        {
+            return new ProjectState
+            {
+                SerializedProject = serializedProject
+            };
         }
 
         private void CloseCurrentProjectWindows()
@@ -129,6 +141,8 @@ namespace GoodAI.BrainSimulator.Forms
                 }
 
                 Project.Name = newProjectName;
+
+                UndoManager.Reset(GetProjectState(content));
             }
             catch (Exception e)
             {
@@ -208,6 +222,9 @@ namespace GoodAI.BrainSimulator.Forms
      
                 NetworkView.ReloadContent();
                 NetworkView.Desktop.ZoomToBounds();
+
+                // TODO: Undo
+                // Reset stack.
             }
             catch (Exception e)
             {
@@ -237,6 +254,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private string GetSerializedProject(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                fileName = Path.GetTempFileName();
+
             Project.Observers = new List<MyAbstractObserver>();  // potential sideffect
             ObserverViews.ForEach(ov => { ov.StoreWindowInfo(); Project.Observers.Add(ov.Observer); });
 
@@ -293,6 +313,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 ObserverForm newView = new ObserverForm(this, observer, node);
                 ObserverViews.Add(newView);
+                // TODO: Undo
 
                 newView.Show(dockPanel, DockState.Float);
             }
@@ -340,6 +361,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 ObserverForm newView = new ObserverForm(this, observer, declaredOwner);
                 ObserverViews.Add(newView);
+                // TODO: Undo
 
                 newView.Show(dockPanel, DockState.Float);
             }
@@ -372,6 +394,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             ObserverForm newView = new ObserverForm(this, observer, owner);
             ObserverViews.Add(newView);
+            // TODO: Undo
 
             newView.Show(dockPanel, DockState.Float);
             newView.FloatPane.FloatWindow.Size = new Size((int)observer.WindowSize.Width, (int)observer.WindowSize.Height);
@@ -491,6 +514,7 @@ namespace GoodAI.BrainSimulator.Forms
         public void RemoveObserverView(ObserverForm view)
         {
             ObserverViews.Remove(view);
+            // TODO: Undo
         }
 
         public TextEditForm OpenTextEditor(MyScriptableNode target)
@@ -734,6 +758,8 @@ namespace GoodAI.BrainSimulator.Forms
                 Environment.Exit(1);
             }
 
+            UndoManager = new UndoManager(Settings.Default.UndoHistorySize);
+
             Documentation = new MyDocProvider();
 
             foreach (MyModuleConfig module in MyConfiguration.Modules)
@@ -842,6 +868,22 @@ namespace GoodAI.BrainSimulator.Forms
             autosaveTextBox_Validating(this, new CancelEventArgs());
 
             autosaveButton.Checked = Properties.Settings.Default.AutosaveEnabled;
+        }
+
+        public void ProjectStateChanged(string reason)
+        {
+            MyLog.DEBUG.WriteLine("State changed: {0}", reason);
+            SaveCurrentState();
+        }
+
+        private void SaveCurrentState()
+        {
+            UndoManager.SaveState(GetProjectState(GetSerializedProject(GetCurrentFileName())));
+        }
+
+        private string GetCurrentFileName()
+        {
+            return string.IsNullOrEmpty(saveFileDialog.FileName) ? "" : Path.GetDirectoryName(saveFileDialog.FileName);
         }
 
         private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)
@@ -1237,6 +1279,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                     //select pasted nodes
                     activeLayout.Desktop.FocusElement = new NodeSelection(pastedNodeViews);
+
+                    // TODO: Undo
                 }
                 catch (Exception e)
                 {

@@ -102,6 +102,8 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             targetItems.Add(newButton);
+
+            // TODO: Undo
         }
 
         void newButton_MouseUp(object sender, MouseEventArgs e)
@@ -126,6 +128,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 quickToolBarNodes.Remove(typeName);
                 nodesToolStrip.Items.Remove(nodeButton);
+
+                // TODO: Undo
             }
         }
 

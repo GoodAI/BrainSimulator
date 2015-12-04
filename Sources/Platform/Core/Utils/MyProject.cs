@@ -53,14 +53,14 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public N CreateNode<N>() where N : MyNode, new()
+        public TNode CreateNode<TNode>() where TNode : MyNode, new()
         {
-            return (N)CreateNode(typeof(N));
+            return (TNode)CreateNode(typeof(TNode));
         }        
 
         public MyNode CreateNode(Type nodeType)
         {
-            MyNode newNode = Activator.CreateInstance(nodeType) as MyNode;
+            var newNode = Activator.CreateInstance(nodeType) as MyNode;
             newNode.Owner = this;
             newNode.Init();
 

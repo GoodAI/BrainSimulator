@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using GoodAI.Core.Memory;
 using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -56,9 +57,9 @@ namespace GoodAI.BrainSimulator.Forms
         {
             HashSet<string> enabledNodes = new HashSet<string>();
 
-            if (Properties.Settings.Default.ToolBarNodes != null)
+            if (Settings.Default.ToolBarNodes != null)
             {
-                foreach (string nodeTypeName in Properties.Settings.Default.ToolBarNodes)
+                foreach (string nodeTypeName in Settings.Default.ToolBarNodes)
                 {
                     enabledNodes.Add(nodeTypeName);
                 }
@@ -185,6 +186,7 @@ namespace GoodAI.BrainSimulator.Forms
             try
             {
                 Target.AddChild(newNode);
+                OnProjectStateChanged("Node added");
                 return true;
             }
             catch (Exception e)
@@ -192,6 +194,11 @@ namespace GoodAI.BrainSimulator.Forms
                 MyLog.ERROR.WriteLine("Failed to add node: " + e.Message);
                 return false;
             }
+        }
+
+        private void OnProjectStateChanged(string reason)
+        {
+            m_mainForm.ProjectStateChanged(reason);
         }
 
         void OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
@@ -209,6 +216,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                 e.Connection.Tag = newConnection;
 
+                // TODO: Undo
+
                 m_mainForm.RefreshConnections(this);
             }
             else
@@ -225,6 +234,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (connToDelete != null)
             {
                 connToDelete.Disconnect();
+                // TODO: Undo
             }
 
             m_mainForm.RefreshConnections(this);
@@ -292,11 +302,10 @@ namespace GoodAI.BrainSimulator.Forms
         private void Desktop_NodeRemoved(object sender, NodeEventArgs e)
         {
             MyNode node = (e.Node as MyNodeView).Node;
-            if (node != null)
-            {
-                Target.RemoveChild(node);
-            }
+            if (node == null)
+                return;
 
+            Target.RemoveChild(node);
             if (node is MyNodeGroup)
             {
                 m_mainForm.CloseGraphLayout(node as MyNodeGroup);                            
@@ -308,6 +317,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_mainForm.CloseObservers(node);
             m_mainForm.RemoveFromDashboard(node);
+
+            // TODO: Undo
         }
 
         public void worldButton_Click(object sender, EventArgs e)
@@ -456,9 +467,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void RefreshGraph()
         {
-            foreach (Node grahpNode in Desktop.Nodes)
+            foreach (Node graphNode in Desktop.Nodes)
             {
-                var nodeView = grahpNode as MyNodeView;
+                var nodeView = graphNode as MyNodeView;
                 if (nodeView == null)
                     continue;
 
@@ -466,7 +477,7 @@ namespace GoodAI.BrainSimulator.Forms
                 nodeView.UpdateView();
 
                 // refresh connections
-                foreach (NodeConnection connectionView in grahpNode.Connections)
+                foreach (NodeConnection connectionView in graphNode.Connections)
                 {
                     RefreshConnectionView(connectionView);
                 }
@@ -515,6 +526,8 @@ namespace GoodAI.BrainSimulator.Forms
             AddNodeButton(nodeConfig);
 
             Settings.Default.QuickToolBarNodes.Add(nodeConfig.NodeType.Name);
+
+            // TODO: Undo
         }
 
         private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig) 

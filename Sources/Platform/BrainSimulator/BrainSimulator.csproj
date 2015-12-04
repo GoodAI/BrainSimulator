@@ -286,6 +286,7 @@
     <Compile Include="Utils\MyIconAttribute.cs" />
     <Compile Include="Utils\MyRenderUtils.cs" />
     <Compile Include="Utils\Profiling.cs" />
+    <Compile Include="Utils\UndoManager.cs" />
     <EmbeddedResource Include="Forms\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>

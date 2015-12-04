@@ -164,6 +164,8 @@ namespace GoodAI.BrainSimulator.Forms
             ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
 
             DashboardViewModel.RemoveProperty(descriptor.Proxy);
+
+            // TODO: Undo
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
@@ -185,6 +187,8 @@ namespace GoodAI.BrainSimulator.Forms
         private void addGroupButton_Click(object sender, EventArgs e)
         {
             GroupedDashboardViewModel.AddGroupedProperty();
+
+            // TODO: Undo
         }
 
         private void removeGroupButton_Click(object sender, EventArgs e)
@@ -194,6 +198,8 @@ namespace GoodAI.BrainSimulator.Forms
             GroupedDashboardViewModel.RemoveProperty(descriptor.Proxy);
             propertyGrid.Refresh();
             memberListBox.Items.Clear();
+
+            // TODO: Undo
         }
 
         private ProxyPropertyDescriptor GetCurrentPropertyDescriptor()
