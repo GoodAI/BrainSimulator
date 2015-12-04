@@ -110,7 +110,7 @@ namespace GoodAI.Modules.Testing
                     var shape1 = Owner.Input.GetDevicePtr(Owner.GPU, i * Owner.ClusterSize);
 
                     m_binder.Bind(shape1, positionSymbol, interResult);
-                    m_binder.Bind(space1, interResult);
+                    m_binder.Bind(space1, interResult, interResult);
 
                     m_addKernel.Run(Owner.Output, Owner.InterResult, Owner.Output, 0, Owner.Output.Count);
 
@@ -126,8 +126,8 @@ namespace GoodAI.Modules.Testing
                         var space2 = SpatialEncode(x1 - x2, y1 - y2);
 
                         m_binder.Unbind(shape1, shape2, interResult);
-                        m_binder.Bind(positionSymbol, interResult);
-                        m_binder.Bind(space2, interResult);
+                        m_binder.Bind(positionSymbol, interResult, interResult);
+                        m_binder.Bind(space2, interResult, interResult);
 
                         m_addKernel.Run(Owner.Output, Owner.InterResult, Owner.Output, 0, Owner.Output.Count);
 
@@ -135,8 +135,8 @@ namespace GoodAI.Modules.Testing
                         space2 = SpatialEncode(x2 - x1, y2 - y1);
 
                         m_binder.Unbind(shape2, shape1, interResult);
-                        m_binder.Bind(positionSymbol, interResult);
-                        m_binder.Bind(space2, interResult);
+                        m_binder.Bind(positionSymbol, interResult, interResult);
+                        m_binder.Bind(space2, interResult, interResult);
 
                         m_addKernel.Run(Owner.Output, Owner.InterResult, Owner.Output, 0, Owner.Output.Count);
                     }

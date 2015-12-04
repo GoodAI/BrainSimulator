@@ -2,6 +2,7 @@
 using GoodAI.Core.Nodes;
 using ManagedCuda.BasicTypes;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoodAI.Modules.VSA
 {
@@ -26,66 +27,45 @@ namespace GoodAI.Modules.VSA
         }
 
 
-        protected CUdeviceptr[] GetTempArray(int length)
+        public abstract void Bind(CUdeviceptr firstInput, IEnumerable<CUdeviceptr> otherInputs, CUdeviceptr output);
+
+        public virtual void Bind(CUdeviceptr firstInput, CUdeviceptr otherInput, CUdeviceptr output)
         {
-            CUdeviceptr[] temp;
-
-            tempArrays.TryGetValue(length, out temp);
-            if (temp == null)
-            {
-                temp = new CUdeviceptr[length];
-                tempArrays.Add(length, temp);
-            }
-
-            return temp;
+            Bind(firstInput, Enumerable.Repeat(otherInput, 1), output);
         }
-
-
-        public abstract void Bind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs);
 
         public virtual void Bind(MyMemoryBlock<float> firstInput, MyMemoryBlock<float> secondInput, MyMemoryBlock<float> output)
         {
-            Bind(firstInput.GetDevicePtr(m_owner), secondInput.GetDevicePtr(m_owner), output.GetDevicePtr(m_owner));
+            int nrInputs = secondInput.Count / m_inputSize;
+
+            var vecs = nrInputs > 1
+                // Concatenate pointers to the individual vectors
+                ? Enumerable.Range(0, nrInputs).Select(i => secondInput.GetDevicePtr(m_owner) + i * m_inputSize * sizeof(float))
+                // Use only a singe pointer
+                : Enumerable.Repeat(secondInput.GetDevicePtr(m_owner), 1);
+
+            Bind(firstInput.GetDevicePtr(m_owner), vecs, output.GetDevicePtr(m_owner));
         }
 
-        public virtual void Bind(MyMemoryBlock<float> inputs, MyMemoryBlock<float> output)
+
+        public abstract void Unbind(CUdeviceptr firstInput, IEnumerable<CUdeviceptr> otherInputs, CUdeviceptr output);
+
+        public virtual void Unbind(CUdeviceptr firstInput, CUdeviceptr otherInput, CUdeviceptr output)
         {
-            int nrInputs = inputs.Count / m_inputSize;
-            CUdeviceptr start = inputs.GetDevicePtr(m_owner);
-            CUdeviceptr[] arr = GetTempArray(nrInputs); //-1 to skip the first +1 to include output
-            for (int i = 0; i < nrInputs - 1; ++i)
-            {
-                arr[i] = start + (i + 1) * m_inputSize * sizeof(float);
-            }
-
-            arr[nrInputs - 1] = output.GetDevicePtr(m_owner);
-
-            Bind(start, arr);
+            Unbind(firstInput, Enumerable.Repeat(otherInput, 1), output);
         }
-
-
-        public abstract void Unbind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs);
 
         public virtual void Unbind(MyMemoryBlock<float> firstInput, MyMemoryBlock<float> secondInput, MyMemoryBlock<float> output)
         {
-            Unbind(firstInput.GetDevicePtr(m_owner), secondInput.GetDevicePtr(m_owner), output.GetDevicePtr(m_owner));
-        }
+            int nrInputs = secondInput.Count / m_inputSize;
 
-        public virtual void UnbindMultiple(MyMemoryBlock<float> firstInput, MyMemoryBlock<float> otherInputs, MyMemoryBlock<float> output)
-        {
-            int nrInputs = otherInputs.Count / m_inputSize;
-            CUdeviceptr firstPtr = firstInput.GetDevicePtr(m_owner);
-            CUdeviceptr start = otherInputs.GetDevicePtr(m_owner);
-            CUdeviceptr[] arr = GetTempArray(nrInputs + 1);//+1 for output
+            var vecs = nrInputs > 1
+                // Concatenate pointers to the individual vectors
+                ? Enumerable.Range(0, nrInputs).Select(i => secondInput.GetDevicePtr(m_owner) + i * m_inputSize * sizeof(float))
+                // Use only a singe pointer
+                : Enumerable.Repeat(secondInput.GetDevicePtr(m_owner), 1);
 
-            for (int i = 0; i <= nrInputs; ++i)
-            {
-                arr[i] = start + i * m_inputSize * sizeof(float);
-            }
-
-            arr[nrInputs] = output.GetDevicePtr(m_owner);
-
-            Unbind(firstPtr, arr);
+            Unbind(firstInput.GetDevicePtr(m_owner), vecs, output.GetDevicePtr(m_owner));
         }
     }
 }

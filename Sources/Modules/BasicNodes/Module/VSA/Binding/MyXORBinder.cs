@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GoodAI.Core;
 using GoodAI.Core.Nodes;
 using ManagedCuda.BasicTypes;
@@ -17,22 +19,26 @@ namespace GoodAI.Modules.VSA
             m_XORKernel.SetupExecution(inputSize);
         }
 
-
-        public override void Bind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs)
+        public override void Bind(CUdeviceptr firstInput, IEnumerable<CUdeviceptr> otherInputs, CUdeviceptr output)
         {
             if (otherInputs == null)
-                otherInputs = new CUdeviceptr[] { firstInput };
+                throw new ArgumentNullException("otherInputs");
 
-            var output = otherInputs[otherInputs.Length - 1];
-            m_XORKernel.Run(firstInput, otherInputs[0], output, (int)MyJoin.MyJoinOperation.XOR, m_inputSize);
 
-            for (int i = 1; i < otherInputs.Length - 1; ++i)
-                m_XORKernel.Run(otherInputs[i], output, output, (int)MyJoin.MyJoinOperation.XOR, m_inputSize);
+            var second = otherInputs.FirstOrDefault();
+
+            if (second == null)
+                throw new ArgumentException("Nothing to bind with...");
+
+            m_XORKernel.Run(firstInput, second, output, (int)MyJoin.MyJoinOperation.XOR, m_inputSize);
+
+            foreach (var input in otherInputs.Skip(1)) // Exclude the second input
+                m_XORKernel.Run(input, output, output, (int)MyJoin.MyJoinOperation.XOR, m_inputSize);
         }
 
-        public override void Unbind(CUdeviceptr firstInput, params CUdeviceptr[] otherInputs)
+        public override void Unbind(CUdeviceptr firstInput, IEnumerable<CUdeviceptr> otherInputs, CUdeviceptr output)
         {
-            Bind(firstInput, otherInputs);
+            Bind(firstInput, otherInputs, output);
         }
     }
 }
