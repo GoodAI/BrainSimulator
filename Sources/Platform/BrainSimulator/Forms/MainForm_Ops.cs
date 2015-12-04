@@ -82,11 +82,12 @@ namespace GoodAI.BrainSimulator.Forms
             UndoManager.SaveState(GetProjectState(content, filePath));
         }
 
-        private ProjectState GetProjectState(string serializedProject, string filePath)
+        private ProjectState GetProjectState(string serializedProject, string filePath, string action = null)
         {
             return new ProjectState(serializedProject)
             {
-                ProjectPath = filePath
+                ProjectPath = filePath,
+                Action = action
             };
         }
 

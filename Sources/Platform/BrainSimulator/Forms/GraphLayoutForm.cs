@@ -217,9 +217,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                 e.Connection.Tag = newConnection;
 
-                // TODO: Undo
-
                 m_mainForm.RefreshConnections(this);
+                m_mainForm.ProjectStateChanged("Connection added");
             }
             else
             {
@@ -235,7 +234,8 @@ namespace GoodAI.BrainSimulator.Forms
             if (connToDelete != null)
             {
                 connToDelete.Disconnect();
-                // TODO: Undo
+
+                m_mainForm.ProjectStateChanged("Connection removed");
             }
 
             m_mainForm.RefreshConnections(this);
@@ -319,7 +319,7 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.CloseObservers(node);
             m_mainForm.RemoveFromDashboard(node);
 
-            // TODO: Undo
+            m_mainForm.ProjectStateChanged("Node removed");
         }
 
         public void worldButton_Click(object sender, EventArgs e)
@@ -551,6 +551,11 @@ namespace GoodAI.BrainSimulator.Forms
             var nodeView = data.GetData(typeof (MyNodeView)) as MyNodeView;
 
             return (nodeView == null) ? null : nodeView.Config;
+        }
+
+        private void Desktop_PositionChanged(object sender, PositionChangedEventArgs e)
+        {
+            m_mainForm.ProjectStateChanged("Node(s) moved");
         }
     }      
 }

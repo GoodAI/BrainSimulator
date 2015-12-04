@@ -11,6 +11,7 @@ namespace GoodAI.BrainSimulator.Utils
     {
         public string SerializedProject { get; private set; }
         public string ProjectPath { get; set; }
+        public string Action { get; set; }
 
         public ProjectState(string serializedProject)
         {

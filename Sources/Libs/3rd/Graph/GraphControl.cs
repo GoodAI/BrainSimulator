@@ -57,6 +57,8 @@ namespace Graph
 		public event EventHandler<AcceptNodeConnectionEventArgs>	ConnectionRemoving;
 		public event EventHandler<NodeConnectionEventArgs>			ConnectionRemoved;
 
+		public event EventHandler<PositionChangedEventArgs>			PositionChanged;
+
 		#region Grid
 		public bool		ShowGrid					= true;
 		public float	internalSmallGridStep		= 16.0f;
@@ -1858,6 +1860,9 @@ namespace Graph
 						nodeItem.OnEndDrag();
 					DragElement = null;
 					needRedraw = true;
+
+				    if (PositionChanged != null)
+				        PositionChanged(this, new PositionChangedEventArgs(DragElement));
 				}
 
 				dragging = false;

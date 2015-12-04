@@ -61,6 +61,16 @@ namespace Graph
         public Point Position { get; private set; }
     }
 
+    public sealed class PositionChangedEventArgs : EventArgs
+    {
+        public object Target { get; private set; }
+
+        public PositionChangedEventArgs(object target)
+        {
+            Target = target;
+        }
+    }
+
     public class Node : IElement
     {
         public string Title { get { return titleItem.Title; } set { titleItem.Title = value; } }
