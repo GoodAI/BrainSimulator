@@ -68,7 +68,6 @@
     <Compile Include="VectorOpsTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Data\csv_file_test.brain">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
