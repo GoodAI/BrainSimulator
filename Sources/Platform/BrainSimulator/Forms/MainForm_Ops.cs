@@ -72,14 +72,21 @@ namespace GoodAI.BrainSimulator.Forms
             exportStateButton.Enabled = false;
             clearDataButton.Enabled = false;
 
-            UndoManager.Reset(GetProjectState(GetSerializedProject(saveFileDialog.FileName)));
+            UndoManager.Clear();
+            SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName);
+            RefreshUndoRedoButtons();
         }
 
-        private ProjectState GetProjectState(string serializedProject)
+        private void SaveState(string content, string filePath)
         {
-            return new ProjectState
+            UndoManager.SaveState(GetProjectState(content, filePath));
+        }
+
+        private ProjectState GetProjectState(string serializedProject, string filePath)
+        {
+            return new ProjectState(serializedProject)
             {
-                SerializedProject = serializedProject
+                ProjectPath = filePath
             };
         }
 
@@ -142,7 +149,9 @@ namespace GoodAI.BrainSimulator.Forms
 
                 Project.Name = newProjectName;
 
-                UndoManager.Reset(GetProjectState(content));
+                UndoManager.Clear();
+                UndoManager.SaveState(GetProjectState(content, fileName));
+                RefreshUndoRedoButtons();
             }
             catch (Exception e)
             {
@@ -878,7 +887,56 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void SaveCurrentState()
         {
-            UndoManager.SaveState(GetProjectState(GetSerializedProject(GetCurrentFileName())));
+            UndoManager.SaveState(GetProjectState(GetSerializedProject(GetCurrentFileName()), GetCurrentFileName()));
+            RefreshUndoRedoButtons();
+        }
+
+        private void RefreshUndoRedoButtons()
+        {
+            undoButton.Enabled = UndoManager.CanUndo();
+            redoButton.Enabled = UndoManager.CanRedo();
+        }
+
+        private void Undo()
+        {
+            LoadState(UndoManager.Undo());
+            RefreshUndoRedoButtons();
+        }
+
+        private void Redo()
+        {
+            LoadState(UndoManager.Redo());
+            RefreshUndoRedoButtons();
+        }
+
+        private void LoadState(ProjectState targetState)
+        {
+            if (targetState == null)
+                return;
+
+            string content;
+            content = targetState.SerializedProject;
+
+            Project = MyProject.Deserialize(content, Path.GetDirectoryName(targetState.ProjectPath));
+
+            CloseCurrentProjectWindows();
+
+            CreateNetworkView();
+            OpenGraphLayout(Project.Network);
+
+            if (Project.World != null)
+            {
+                SelectWorldInWorldList(Project.World);
+            }
+
+            if (Project.Observers != null)
+            {
+                RestoreObservers(Project);
+            }
+            Project.Observers = null;
+
+            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
+            RestoreDashboard(Project);
         }
 
         private string GetCurrentFileName()

@@ -392,6 +392,8 @@
     </Content>
     <None Include="res\arrow_Down_16xLG.png" />
     <None Include="res\arrow_Up_16xLG.png" />
+    <None Include="res\Arrow_RedoRetry_16xLG.png" />
+    <None Include="res\Arrow_UndoRevertRestore_16xLG.png" />
     <Content Include="res\asm.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

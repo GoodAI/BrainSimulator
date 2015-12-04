@@ -179,6 +179,8 @@ namespace GoodAI.BrainSimulator.Forms
             newNodeView.OnEndDrag();
 
             EnterGraphLayout();
+
+            OnProjectStateChanged("Node added");
         }
 
         private bool TryAddChildNode(MyNode newNode)
@@ -186,7 +188,6 @@ namespace GoodAI.BrainSimulator.Forms
             try
             {
                 Target.AddChild(newNode);
-                OnProjectStateChanged("Node added");
                 return true;
             }
             catch (Exception e)

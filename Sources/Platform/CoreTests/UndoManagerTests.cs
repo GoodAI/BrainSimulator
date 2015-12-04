@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.BrainSimulator.Utils;
@@ -13,15 +14,17 @@ namespace CoreTests
         [Fact]
         public void Undoes()
         {
-            var steps = new[] { "a", "b", "c" }.Select(s => new ProjectState { SerializedProject = s }).ToList();
+            var steps = new[] { "a", "b" }.Select(s => new ProjectState(s)).ToList();
 
             var manager = new UndoManager(5);
 
             foreach (ProjectState step in steps)
                 manager.SaveState(step);
 
+            manager.SaveState(new ProjectState("c"));
+
             var result = new List<ProjectState>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 result.Add(manager.Undo());
 
             result.Reverse();
@@ -32,18 +35,20 @@ namespace CoreTests
         [Fact]
         public void Redoes()
         {
-            var steps = new[] { "a", "b", "c" }.Select(s => new ProjectState { SerializedProject = s }).ToList();
+            var steps = new[] { "b", "c" }.Select(s => new ProjectState(s)).ToList();
 
             var manager = new UndoManager(5);
+
+            manager.SaveState(new ProjectState("a"));
 
             foreach (ProjectState step in steps)
                 manager.SaveState(step);
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 manager.Undo();
 
             var result = new List<ProjectState>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 result.Add(manager.Redo());
 
             Assert.Equal(steps, result);
@@ -53,7 +58,7 @@ namespace CoreTests
         public void ReturnsNullWhenOutOfItems()
         {
             var manager = new UndoManager(3);
-            manager.SaveState(new ProjectState());
+            manager.SaveState(new ProjectState(""));
 
             manager.Undo();
             Assert.Null(manager.Undo());
@@ -69,7 +74,7 @@ namespace CoreTests
             var manager = new UndoManager(size);
 
             for (int i = 0; i < size * 2; i++)
-                manager.SaveState(new ProjectState());
+                manager.SaveState(new ProjectState(""));
 
             uint counter = 0;
             while (manager.Undo() != null)
@@ -82,9 +87,37 @@ namespace CoreTests
         public void WorksWithZeroCapacity()
         {
             var manager = new UndoManager(0);
-            manager.SaveState(new ProjectState());
+            manager.SaveState(new ProjectState(""));
             Assert.Null(manager.Undo());
             Assert.Null(manager.Redo());
+        }
+
+        [Fact]
+        public void IndicatesUndoPossible()
+        {
+            var manager = new UndoManager(5);
+            manager.SaveState(new ProjectState(""));
+            Assert.False(manager.CanUndo());
+
+            manager.SaveState(new ProjectState(""));
+            Assert.True(manager.CanUndo());
+
+            manager.Undo();
+            Assert.False(manager.CanUndo());
+        }
+
+        [Fact]
+        public void IndicatesRedoPossible()
+        {
+            var manager = new UndoManager(5);
+            manager.SaveState(new ProjectState(""));
+            Assert.False(manager.CanRedo());
+
+            manager.SaveState(new ProjectState(""));
+            Assert.False(manager.CanRedo());
+            manager.Undo();
+
+            Assert.True(manager.CanRedo());
         }
     }
 }

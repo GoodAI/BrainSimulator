@@ -745,5 +745,15 @@ namespace GoodAI.BrainSimulator.Forms
         {
             MyExecutionBlock.IsProfiling = profileToolButton.Checked;
         }
+
+        private void undoButton_Click(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void redoButton_Click(object sender, EventArgs e)
+        {
+            Redo();
+        }
     }
 }

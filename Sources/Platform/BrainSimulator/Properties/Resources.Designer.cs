@@ -143,6 +143,26 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Arrow_RedoRetry_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_RedoRetry_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Arrow_UndoRevertRestore_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_UndoRevertRestore_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrow_Up_16xLG {
             get {
                 object obj = ResourceManager.GetObject("arrow_Up_16xLG", resourceCulture);

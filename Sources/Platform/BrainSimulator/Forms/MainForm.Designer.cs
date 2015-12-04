@@ -84,6 +84,9 @@
             this.openProjectToolButton = new System.Windows.Forms.ToolStripButton();
             this.saveProjectToolButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.undoButton = new System.Windows.Forms.ToolStripButton();
+            this.redoButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolButton = new System.Windows.Forms.ToolStripButton();
             this.stopToolButton = new System.Windows.Forms.ToolStripButton();
             this.pauseToolButton = new System.Windows.Forms.ToolStripButton();
@@ -444,6 +447,9 @@
             this.openProjectToolButton,
             this.saveProjectToolButton,
             this.toolStripSeparator1,
+            this.undoButton,
+            this.redoButton,
+            this.toolStripSeparator11,
             this.runToolButton,
             this.stopToolButton,
             this.pauseToolButton,
@@ -511,6 +517,34 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 23);
+            // 
+            // undoButton
+            // 
+            this.undoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.undoButton.Enabled = false;
+            this.undoButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_UndoRevertRestore_16xLG;
+            this.undoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.undoButton.Name = "undoButton";
+            this.undoButton.Size = new System.Drawing.Size(23, 20);
+            this.undoButton.Text = "Undo";
+            this.undoButton.Click += new System.EventHandler(this.undoButton_Click);
+            // 
+            // redoButton
+            // 
+            this.redoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.redoButton.Enabled = false;
+            this.redoButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_RedoRetry_16xLG;
+            this.redoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.redoButton.Name = "redoButton";
+            this.redoButton.Size = new System.Drawing.Size(23, 20);
+            this.redoButton.Text = "Redo";
+            this.redoButton.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
+            this.redoButton.Click += new System.EventHandler(this.redoButton_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 23);
             // 
             // runToolButton
             // 
@@ -939,6 +973,9 @@
         private System.Windows.Forms.ToolStripMenuItem clearGlobalDataFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripButton profileToolButton;
+        private System.Windows.Forms.ToolStripButton undoButton;
+        private System.Windows.Forms.ToolStripButton redoButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
     }
 }
 
