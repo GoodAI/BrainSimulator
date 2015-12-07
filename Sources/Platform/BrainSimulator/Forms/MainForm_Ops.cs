@@ -131,9 +131,9 @@ namespace GoodAI.BrainSimulator.Forms
                 using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
                 {
                     Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
+                    Project.Restore();
                     backup.Forget();
                 }
-
                 Project.Name = newProjectName;
 
                 UndoManager.Clear();
@@ -165,19 +165,13 @@ namespace GoodAI.BrainSimulator.Forms
                 SelectWorldInWorldList(Project.World);
             }
 
-            if (Project.Observers != null)
-            {
-                RestoreObservers(Project);
-            }
-            Project.Observers = null;
-
-            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
-            RestoreDashboard(Project);
-            
             exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
             clearDataButton.Enabled = exportStateButton.Enabled;
 
             Text = TITLE_TEXT + " - " + Project.Name;
+
+            RestoreObserverForms();
+            RestoreDashboardForm();
         }
 
         private void ImportProject(string fileName, bool showObservers = false)
@@ -206,9 +200,7 @@ namespace GoodAI.BrainSimulator.Forms
                 }
 
                 if (showObservers && importedProject.Observers != null)
-                {
-                    RestoreObservers(importedProject);
-                }
+                    importedProject.RestoreObservers();
 
                 Project.Network.AppendGroupContent(importedProject.Network);
 
@@ -223,8 +215,10 @@ namespace GoodAI.BrainSimulator.Forms
                 NetworkView.ReloadContent();
                 NetworkView.Desktop.ZoomToBounds();
 
+                if (showObservers && importedProject.Observers != null)
+                    RestoreObserverForms(importedProject);
+
                 // TODO: Undo
-                // Reset stack.
             }
             catch (Exception e)
             {
@@ -373,26 +367,27 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void ShowObserverView(MyAbstractObserver observer)
         {
-            MyNode owner = null;
+            MyNode owner;
 
-            if (observer is MyAbstractMemoryBlockObserver)
+            var blockObserver = observer as MyAbstractMemoryBlockObserver;
+            if (blockObserver != null)
             {
-                owner = (observer as MyAbstractMemoryBlockObserver).Target.Owner;
-            }
-            else if (observer is MyTimePlotObserver)
-            {
-                owner = (observer as MyTimePlotObserver).Target.Owner;
-            }
-            else if (observer is TimePlotObserver)
-            {
-                owner = (observer as TimePlotObserver).Target.Owner;
+                owner = blockObserver.Target.Owner;
             }
             else
             {
-                owner = observer.GenericTarget as MyNode;
+                var plotObserver = observer as MyTimePlotObserver;
+                if (plotObserver != null)
+                {
+                    owner = plotObserver.Target.Owner;
+                }
+                else
+                {
+                    owner = observer.GenericTarget as MyNode;
+                }
             }
 
-            ObserverForm newView = new ObserverForm(this, observer, owner);
+            var newView = new ObserverForm(this, observer, owner);
             ObserverViews.Add(newView);
             // TODO: Undo
 
@@ -426,38 +421,6 @@ namespace GoodAI.BrainSimulator.Forms
                     ov.UpdateView(SimulationHandler.SimulationStep);
                 }
             }
-        }
-
-        private void RestoreObservers(MyProject project)
-        {
-            if (project.Observers == null)
-                return;
-
-            foreach (MyAbstractObserver observer in project.Observers)
-            {
-                observer.RestoreTargetFromIdentifier(project);
-
-                if (observer.GenericTarget != null)
-                {
-                    ShowObserverView(observer);
-                }
-            }
-        }
-
-        private void RestoreDashboard(MyProject project)
-        {
-            if (project.Dashboard == null)
-                project.Dashboard = new Dashboard();
-
-            if (project.GroupedDashboard == null)
-                project.GroupedDashboard = new GroupDashboard();
-
-            // The order is important - the normal dashboard properties must be set up
-            // before they're added to groups.
-            project.Dashboard.RestoreFromIds(project);
-            project.GroupedDashboard.RestoreFromIds(project);
-
-            DashboardPropertyView.SetDashboards(project.Dashboard, project.GroupedDashboard);
         }
 
         public void UpdateObservers()
@@ -906,16 +869,14 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void Undo()
         {
-            LoadState(UndoManager.Undo());
-            RefreshUndoRedoButtons();
-            DebugUndoManager();
+            if (UndoManager.CanUndo())
+                LoadState(UndoManager.Undo());
         }
 
         private void Redo()
         {
-            LoadState(UndoManager.Redo());
-            RefreshUndoRedoButtons();
-            DebugUndoManager();
+            if (UndoManager.CanRedo())
+                LoadState(UndoManager.Redo());
         }
 
         private void LoadState(ProjectState targetState)
@@ -927,25 +888,50 @@ namespace GoodAI.BrainSimulator.Forms
             content = targetState.SerializedProject;
 
             Project = MyProject.Deserialize(content, Path.GetDirectoryName(targetState.ProjectPath));
+            Project.Restore();
 
+            // UI updates
             CloseCurrentProjectWindows();
 
             CreateNetworkView();
             OpenGraphLayout(Project.Network);
 
+            RestoreObserverForms();
+            RestoreDashboardForm();
+
             if (Project.World != null)
             {
                 SelectWorldInWorldList(Project.World);
             }
+            RefreshUndoRedoButtons();
+            DebugUndoManager();
+        }
 
-            if (Project.Observers != null)
+        private void RestoreObserverForms(MyProject project = null)
+        {
+            if (project == null)
+                project = Project;
+
+            Dictionary<string, ObserverForm> currentObservers = ObserverViews.ToDictionary(view => view.Observer.Id);
+            // Only add those observers that are not already present.
+            foreach (MyAbstractObserver observer in project.Observers.Where(observer => observer.GenericTarget != null))
             {
-                RestoreObservers(Project);
+                if (!currentObservers.ContainsKey(observer.Id))
+                    ShowObserverView(observer);
+                else
+                    currentObservers.Remove(observer.Id);
             }
-            Project.Observers = null;
 
-            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
-            RestoreDashboard(Project);
+            // Remove observers that should not exist.
+            foreach (var observerToBeRemoved in currentObservers.Values)
+                ObserverViews.Remove(observerToBeRemoved);
+
+            project.Observers = null;
+        }
+
+        private void RestoreDashboardForm()
+        {
+            DashboardPropertyView.SetDashboards(Project.Dashboard, Project.GroupedDashboard);
         }
 
         private string GetCurrentFileName()

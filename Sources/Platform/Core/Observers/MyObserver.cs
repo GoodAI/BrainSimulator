@@ -16,6 +16,9 @@ namespace GoodAI.Core.Observers
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public abstract class MyAbstractObserver : IDisposable, IValidatable
     {
+        [YAXSerializableField]
+        public string Id { get; set; }
+
         #region Core stuff
 
         private bool m_userResetNeeded = false;
@@ -56,6 +59,9 @@ namespace GoodAI.Core.Observers
         {
             KeepRatio = true;
             Shapes = new List<MyShape>();
+
+            // This will be overwritten during deserialization.
+            Id = Guid.NewGuid().ToString();
         }
 
         public virtual void Dispose()

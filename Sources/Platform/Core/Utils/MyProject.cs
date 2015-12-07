@@ -6,6 +6,7 @@ using GoodAI.Core.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using GoodAI.Core.Dashboard;
 using YAXLib;
 
 namespace GoodAI.Core.Utils
@@ -511,5 +512,34 @@ namespace GoodAI.Core.Utils
         }
 
         #endregion
+
+        public void Restore()
+        {
+            RestoreObservers();
+            RestoreDashboard();
+        }
+
+        private void RestoreDashboard()
+        {
+            if (Dashboard == null)
+                Dashboard = new Dashboard.Dashboard();
+
+            if (GroupedDashboard == null)
+                GroupedDashboard = new GroupDashboard();
+
+            // The order is important - the normal dashboard properties must be set up
+            // before they're added to groups.
+            Dashboard.RestoreFromIds(this);
+            GroupedDashboard.RestoreFromIds(this);
+        }
+
+        public void RestoreObservers()
+        {
+            if (Observers == null)
+                return;
+
+            foreach (MyAbstractObserver observer in Observers)
+                observer.RestoreTargetFromIdentifier(this);
+        }
     }
 }

@@ -527,7 +527,7 @@
             this.undoButton.Name = "undoButton";
             this.undoButton.Size = new System.Drawing.Size(23, 20);
             this.undoButton.Text = "Undo";
-            this.undoButton.Click += new System.EventHandler(this.undoButton_Click);
+            this.undoButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.undoButton_MouseUp);
             // 
             // redoButton
             // 
@@ -539,7 +539,7 @@
             this.redoButton.Size = new System.Drawing.Size(23, 20);
             this.redoButton.Text = "Redo";
             this.redoButton.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
-            this.redoButton.Click += new System.EventHandler(this.redoButton_Click);
+            this.redoButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.redoButton_MouseUp);
             // 
             // toolStripSeparator11
             // 
