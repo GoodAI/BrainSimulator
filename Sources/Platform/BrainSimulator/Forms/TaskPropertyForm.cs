@@ -17,7 +17,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 
-            // TODO: Undo
+            m_mainForm.ProjectStateChanged(string.Format("Task property value changed: {0}", propertyName));
         }
 
         private MainForm m_mainForm;

@@ -70,10 +70,10 @@ namespace GoodAI.Core.Dashboard
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public class Dashboard : DashboardBase<DashboardNodeProperty>
     {
-        public void Add(object target, string propertyName)
+        public bool Add(object target, string propertyName)
         {
             if (Contains(target, propertyName))
-                return;
+                return false;
 
             DashboardNodeProperty property = null;
 
@@ -108,6 +108,8 @@ namespace GoodAI.Core.Dashboard
 
             Properties.Add(property);
             OnPropertiesChanged("Properties");
+
+            return true;
         }
 
         public bool Contains(object target, string propertyName)
@@ -117,14 +119,23 @@ namespace GoodAI.Core.Dashboard
                     .Any(property => property.Target == target && property.PropertyName == propertyName);
         }
 
-        public void Remove(object target, string propertyName)
+        public bool Remove(object target, string propertyName)
         {
             DashboardNodeProperty property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
 
             if (property == null)
-                return;
+                return false;
 
-            Remove(property);
+            if (Properties.Remove(property))
+            {
+                if (property.Group != null)
+                    property.Group.Remove(property);
+
+                OnPropertiesChanged("Properties");
+                return true;
+            }
+
+            return false;
         }
 
         public DashboardNodeProperty Get(object target, string propertyName)

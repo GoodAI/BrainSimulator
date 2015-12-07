@@ -17,8 +17,13 @@ namespace GoodAI.Core.Utils
         [YAXSerializableField, YAXAttributeForClass]
         public string Name { get; set; }
 
-        [YAXSerializableField, YAXSerializeAs("Observers")]
-        public List<MyAbstractObserver> Observers;
+        [YAXSerializableField]
+        [YAXSerializeAs("Observers")]
+        public List<MyAbstractObserver> Observers
+        {
+            get { return m_observers; }
+            set { m_observers = value; }
+        }
 
         public MySimulationHandler SimulationHandler { get; set; }
 
@@ -228,6 +233,8 @@ namespace GoodAI.Core.Utils
 
         [YAXSerializableField, YAXSerializeAs("UsedModules")]
         internal List<MyUsedModuleInfo> UsedModules;
+
+        private List<MyAbstractObserver> m_observers;
 
         public bool ReadOnly { get; internal set; }
 

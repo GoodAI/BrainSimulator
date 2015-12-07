@@ -1353,10 +1353,20 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void DashboardPropertyToggle(object target, string propertyName, bool active)
         {
+            string action = null;
             if (active)
-                Project.Dashboard.Add(target, propertyName);
+            {
+                if (Project.Dashboard.Add(target, propertyName))
+                    action = "Dashboard property added";
+            }
             else
-                Project.Dashboard.Remove(target, propertyName);
+            {
+                if (Project.Dashboard.Remove(target, propertyName))
+                    action = "Dashboard property removed";
+            }
+
+            if (action != null)
+                ProjectStateChanged(action + ": " + propertyName);
         }
 
         public void InvalidateGraphLayouts()

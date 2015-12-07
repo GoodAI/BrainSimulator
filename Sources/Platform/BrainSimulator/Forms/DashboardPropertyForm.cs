@@ -131,7 +131,12 @@ namespace GoodAI.BrainSimulator.Forms
         private void OnDashboardPropertiesChanged(object sender, EventArgs args)
         {
             SetPropertyGridButtonsEnabled(false);
+<<<<<<< HEAD
             RefreshAll();
+=======
+            propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
+>>>>>>> Dashboard properties undoable, fixed property removal
         }
 
         private void SetPropertyGridButtonsEnabled(bool enabled)
@@ -165,7 +170,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             DashboardViewModel.RemoveProperty(descriptor.Proxy);
 
-            // TODO: Undo
+            m_mainForm.ProjectStateChanged(string.Format("Dashboard property removed: {0}", descriptor.Name));
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
@@ -188,7 +193,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             GroupedDashboardViewModel.AddGroupedProperty();
 
-            // TODO: Undo
+            m_mainForm.ProjectStateChanged("Dashboard property group added");
         }
 
         private void removeGroupButton_Click(object sender, EventArgs e)
@@ -199,7 +204,7 @@ namespace GoodAI.BrainSimulator.Forms
             propertyGrid.Refresh();
             memberListBox.Items.Clear();
 
-            // TODO: Undo
+            m_mainForm.ProjectStateChanged(string.Format("Dashboard property group removed: {0}", descriptor.Name));
         }
 
         private ProxyPropertyDescriptor GetCurrentPropertyDescriptor()
@@ -245,7 +250,15 @@ namespace GoodAI.BrainSimulator.Forms
                 groupProperty.Add(property);
 
                 SetPropertyGridButtonsEnabled(false);
+<<<<<<< HEAD
                 RefreshAll();
+=======
+                propertyGridGrouped.Refresh();
+                memberListBox.Refresh();
+
+                m_mainForm.ProjectStateChanged(string.Format("Dashboard property {0} added to group: {1}",
+                    property.DisplayName, groupProperty.DisplayName));
+>>>>>>> Dashboard properties undoable, fixed property removal
             }
             catch (InvalidOperationException)
             {
@@ -280,7 +293,16 @@ namespace GoodAI.BrainSimulator.Forms
             foreach (var proxy in memberListBox.SelectedItems.Cast<SingleProxyProperty>())
                 proxy.SourceProperty.Group.Remove(proxy.SourceProperty);
 
+<<<<<<< HEAD
             RefreshAll();
+=======
+            m_mainForm.ProjectStateChanged(string.Format("Dashboard property removed from group: {0}",
+                GetCurrentGroupDescriptor().Name));
+
+            memberListBox.Refresh();
+            propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
+>>>>>>> Dashboard properties undoable, fixed property removal
         }
 
         public void OnSimulationStateChanged(object sender, MySimulationHandler.StateEventArgs e)
@@ -337,6 +359,7 @@ namespace GoodAI.BrainSimulator.Forms
             PreserveGroupValue(e.PropertyName, target);
 
             propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
         }
 
         private void PreserveGroupValue(string propertyName, object target)
