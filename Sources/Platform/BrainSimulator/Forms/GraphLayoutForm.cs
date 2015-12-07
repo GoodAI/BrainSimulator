@@ -296,12 +296,17 @@ namespace GoodAI.BrainSimulator.Forms
         {
             e.Cancel = TestIfInsideSimulation();
 
+            // Suppress state saving - connections will get removed which would generate multiple steps.
+            m_mainForm.SuppressStateSaving = true;
+
             MyNodeView nodeView = e.Node as MyNodeView;
             e.Cancel |= nodeView.Node is MyParentInput || nodeView.Node is MyOutput;
         }
 
         private void Desktop_NodeRemoved(object sender, NodeEventArgs e)
         {
+            // End state saving suppression, we'll need to save one state after the node is removed.
+            m_mainForm.SuppressStateSaving = false;
             MyNode node = (e.Node as MyNodeView).Node;
             if (node == null)
                 return;

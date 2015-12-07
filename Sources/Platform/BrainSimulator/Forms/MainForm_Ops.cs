@@ -284,7 +284,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected List<DockContent> m_views;
         protected ToolStripMenuItem showHideObserversMenuItem;
-        public bool SuppressStateSaving { get; private set; }
+        public bool SuppressStateSaving { get; set; }
 
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
         public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
