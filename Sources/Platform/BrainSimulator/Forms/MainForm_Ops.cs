@@ -865,10 +865,23 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void SaveState(string content, string filePath, string action)
         {
+            int selectedNodeId = -1;
+            string selectedObserverId = null;
+
+            var selectedNode = NodePropertyView.Target as MyNode;
+            if (selectedNode != null)
+                selectedNodeId = selectedNode.Id;
+
+            var selectedObserver = NodePropertyView.Target as MyAbstractObserver;
+            if (selectedObserver != null)
+                selectedObserverId = selectedObserver.Id;
+
             UndoManager.SaveState(new ProjectState(content)
             {
                 ProjectPath = filePath,
-                Action = action
+                Action = action,
+                SelectedNode = selectedNodeId,
+                SelectedObserver = selectedObserverId
             });
         }
 
@@ -915,6 +928,14 @@ namespace GoodAI.BrainSimulator.Forms
                 SelectWorldInWorldList(Project.World);
             }
             RefreshUndoRedoButtons();
+
+            foreach (GraphLayoutForm graph in GraphViews.Values)
+                graph.SelectNodeView(targetState.SelectedNode);
+
+            foreach (ObserverForm observerView in ObserverViews
+                .Where(observerView => observerView.Observer.Id == targetState.SelectedObserver))
+                    observerView.SelectOverNode();
+
             //DebugUndoManager();
         }
 

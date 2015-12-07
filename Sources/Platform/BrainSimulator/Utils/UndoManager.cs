@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 
 namespace GoodAI.BrainSimulator.Utils
@@ -12,6 +13,8 @@ namespace GoodAI.BrainSimulator.Utils
         public string SerializedProject { get; private set; }
         public string ProjectPath { get; set; }
         public string Action { get; set; }
+        public string SelectedObserver { get; set; }
+        public int SelectedNode { get; set; }
 
         public ProjectState(string serializedProject)
         {

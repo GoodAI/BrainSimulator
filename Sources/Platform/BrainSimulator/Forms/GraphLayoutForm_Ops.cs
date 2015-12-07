@@ -226,9 +226,15 @@ namespace GoodAI.BrainSimulator.Forms
             Node nodeView = Desktop.Nodes.First(nw => (nw as MyNodeView).Node == node);
 
             if (nodeView != null)
-            {
                 Desktop.FocusElement = nodeView;
-            }
+        }
+
+        public void SelectNodeView(int nodeId)
+        {
+            Node nodeView = Desktop.Nodes.FirstOrDefault(nw => (nw as MyNodeView).Node.Id == nodeId);
+
+            if (nodeView != null)
+                Desktop.FocusElement = nodeView;
         }
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
