@@ -130,13 +130,7 @@ namespace GoodAI.BrainSimulator.Forms
                 content = ProjectLoader.LoadProject(fileName,
                     MyMemoryBlockSerializer.GetTempStorage(newProjectName));
 
-                using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
-                {
-                    Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
-                    Project.Restore();
-                    backup.Forget();
-                }
-                Project.Name = newProjectName;
+                LoadSerializedContent(content, fileName, newProjectName);
 
                 UndoManager.Clear();
                 UndoManager.SaveState(new ProjectState(content)
@@ -157,23 +151,10 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_savedProjectRepresentation = content;  // for "needs saving" detection
 
-            CloseCurrentProjectWindows();
-
-            CreateNetworkView();
-            OpenGraphLayout(Project.Network);
-
-            if (Project.World != null)
-            {
-                SelectWorldInWorldList(Project.World);
-            }
-
             exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
             clearDataButton.Enabled = exportStateButton.Enabled;
 
             Text = TITLE_TEXT + " - " + Project.Name;
-
-            RestoreObserverForms();
-            RestoreDashboardForm();
         }
 
         private void ImportProject(string fileName, bool showObservers = false)
@@ -192,7 +173,8 @@ namespace GoodAI.BrainSimulator.Forms
                 if (fileName.EndsWith(".brainz"))  // temp directory is only used for brainz
                     Directory.Delete(dataStoragePath, recursive: true);
 
-                MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));                
+                // Do not restore links here - that would automatically restore observers and dashboard.
+                MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName), restoreLinks: false);
                 
                 //offset all imported nodes
                 float maxY = NetworkView.Desktop.GetContentBounds().Bottom;                               
@@ -908,11 +890,29 @@ namespace GoodAI.BrainSimulator.Forms
             if (targetState == null)
                 return;
 
-            string content;
-            content = targetState.SerializedProject;
+            LoadSerializedContent(targetState.SerializedProject, targetState.ProjectPath);
 
-            Project = MyProject.Deserialize(content, Path.GetDirectoryName(targetState.ProjectPath));
-            Project.Restore();
+            foreach (GraphLayoutForm graph in GraphViews.Values)
+                graph.SelectNodeView(targetState.SelectedNode);
+
+            foreach (ObserverForm observerView in ObserverViews
+                .Where(observerView => observerView.Observer.Id == targetState.SelectedObserver))
+                observerView.SelectOverNode();
+
+            //DebugUndoManager();
+        }
+
+        private void LoadSerializedContent(string content, string projectPath, string projectName = null)
+        {
+            using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
+            {
+                Project = MyProject.Deserialize(content, Path.GetDirectoryName(projectPath));
+                Project.Restore();
+                backup.Forget();
+            }
+
+            if (projectName != null)
+                Project.Name = projectName;
 
             // UI updates
             CloseCurrentProjectWindows();
@@ -924,19 +924,9 @@ namespace GoodAI.BrainSimulator.Forms
             RestoreDashboardForm();
 
             if (Project.World != null)
-            {
                 SelectWorldInWorldList(Project.World);
-            }
+
             RefreshUndoRedoButtons();
-
-            foreach (GraphLayoutForm graph in GraphViews.Values)
-                graph.SelectNodeView(targetState.SelectedNode);
-
-            foreach (ObserverForm observerView in ObserverViews
-                .Where(observerView => observerView.Observer.Id == targetState.SelectedObserver))
-                    observerView.SelectOverNode();
-
-            //DebugUndoManager();
         }
 
         private void RestoreObserverForms(MyProject project = null)

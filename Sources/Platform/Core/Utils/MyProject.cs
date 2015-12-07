@@ -335,7 +335,7 @@ namespace GoodAI.Core.Utils
             return convertedXml;
         }        
 
-        public static MyProject Deserialize(string xml, string projectPath)
+        public static MyProject Deserialize(string xml, string projectPath, bool restoreLinks = true)
         {            
             xml = MyBaseConversion.ConvertOldFileVersioning(xml);
             xml = MyBaseConversion.ConvertOldModuleNames(xml);
@@ -367,6 +367,9 @@ namespace GoodAI.Core.Utils
             loadedProject.m_nodeCounter++;
 
             loadedProject.ConnectWorld();            
+
+            if (restoreLinks)
+                loadedProject.Restore();
 
             return loadedProject;
         }
