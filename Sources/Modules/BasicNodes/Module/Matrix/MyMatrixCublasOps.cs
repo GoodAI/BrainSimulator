@@ -92,6 +92,13 @@ namespace GoodAI.Modules.Matrix
                     }
                     break;
                 case MatOperation.DotProd:
+
+                    if (ACount != BCount || ResultCount != 1)
+                    {
+                        MyLog.Writer.WriteLine(MyLogLevel.ERROR, callee.Name + ": Inconsistent vector dimensions for MyMatrixCublasOps.");
+                        break;
+                    }
+
                     MyCublasFactory.Instance.Gemv(Operation.Transpose,  // transpose beacuase it does Ax row wise if x is a row vector :D
                        ACount, 1, 1.0f,
                        A, ACount,
