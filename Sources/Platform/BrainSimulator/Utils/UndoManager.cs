@@ -44,10 +44,7 @@ namespace GoodAI.BrainSimulator.Utils
     /// </summary>
     public class UndoManager
     {
-
-        public uint HistorySize { get; private set; }
-
-        // TODO: Change state from string to a structure (the selected node will be also stored etc.)
+        private uint HistorySize { get; set; }
 
         // The history. m_undoStates. First() is the oldest item in the history. Last() is the current project state.
         private readonly LinkedList<ProjectState> m_undoStates = new LinkedList<ProjectState>();
