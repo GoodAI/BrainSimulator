@@ -22,6 +22,7 @@ using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.BrainSimulator.Properties;
 using GoodAI.Core.Task;
 using GoodAI.Core.Dashboard;
+using GoodAI.Platform.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -174,7 +175,8 @@ namespace GoodAI.BrainSimulator.Forms
                     Directory.Delete(dataStoragePath, recursive: true);
 
                 // Do not restore links here - that would automatically restore observers and dashboard.
-                MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName), restoreLinks: false);
+                MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName),
+                    restoreLinks: false);
                 
                 //offset all imported nodes
                 float maxY = NetworkView.Desktop.GetContentBounds().Bottom;                               
@@ -858,13 +860,20 @@ namespace GoodAI.BrainSimulator.Forms
             if (selectedObserver != null)
                 selectedObserverId = selectedObserver.Id;
 
-            UndoManager.SaveState(new ProjectState(content)
+            var projectState = new ProjectState(content)
             {
                 ProjectPath = filePath,
                 Action = action,
                 SelectedNode = selectedNodeId,
                 SelectedObserver = selectedObserverId
-            });
+            };
+
+            projectState.GraphPanes.AddRange(GraphViews.Select(view => view.Value.Target.Id));
+            var activeGraphView = GraphViews.WithIndex().FirstOrDefault(view => view.Item.Value == dockPanel.ActiveDocument);
+            if (activeGraphView != null)
+                projectState.SelectedGraphView = activeGraphView.Index;
+
+            UndoManager.SaveState(projectState);
         }
 
         private void RefreshUndoRedoButtons()
@@ -892,12 +901,21 @@ namespace GoodAI.BrainSimulator.Forms
 
             LoadSerializedContent(targetState.SerializedProject, targetState.ProjectPath);
 
+            // Open graph views
+            foreach (MyNodeGroup nodeGroup in
+                    targetState.GraphPanes.Select(nodeId => Project.GetNodeById(nodeId)).OfType<MyNodeGroup>())
+                OpenGraphLayout(nodeGroup);
+
+            // Select active graph view
+            if (targetState.SelectedGraphView < dockPanel.DocumentsCount)
+                (dockPanel.DocumentsToArray()[targetState.SelectedGraphView] as GraphLayoutForm).Activate();
+
             foreach (GraphLayoutForm graph in GraphViews.Values)
                 graph.SelectNodeView(targetState.SelectedNode);
 
             foreach (ObserverForm observerView in ObserverViews
                 .Where(observerView => observerView.Observer.Id == targetState.SelectedObserver))
-                observerView.SelectOverNode();
+                observerView.FocusWindow();
 
             //DebugUndoManager();
         }

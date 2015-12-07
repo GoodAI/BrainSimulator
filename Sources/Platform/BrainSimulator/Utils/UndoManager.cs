@@ -13,11 +13,15 @@ namespace GoodAI.BrainSimulator.Utils
         public string SerializedProject { get; private set; }
         public string ProjectPath { get; set; }
         public string Action { get; set; }
+        public List<int> GraphPanes { get; private set; }
+        public int SelectedGraphView { get; set; }
         public string SelectedObserver { get; set; }
         public int SelectedNode { get; set; }
 
         public ProjectState(string serializedProject)
         {
+            GraphPanes = new List<int>();
+
             if (serializedProject == null)
                 throw new ArgumentNullException("serializedProject");
 

@@ -62,10 +62,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         void ObserverForm_Activated(object sender, EventArgs e)
         {
-            SelectOverNode();
+            FocusWindow();
         }
 
-        public void SelectOverNode()
+        public void FocusWindow()
         {
             foreach (GraphLayoutForm graphView in m_mainForm.GraphViews.Values)
             {

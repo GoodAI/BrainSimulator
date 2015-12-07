@@ -1723,13 +1723,13 @@ namespace Graph
 			if (!dragging)
 				return;
 
+		    var transformedLocation = new PointF();
 		    try
 			{
-                Point currentLocation;
-                PointF transformed_location;
-                if (abortDrag)
+			    Point currentLocation;
+			    if (abortDrag)
                 {
-                    transformed_location = originalLocation;
+                    transformedLocation = originalLocation;
 
                     var points = new PointF[] { originalLocation };
                     transformation.TransformPoints(points);
@@ -1740,7 +1740,7 @@ namespace Graph
 
                     var points = new PointF[] { currentLocation };
                     inverse_transformation.TransformPoints(points);
-                    transformed_location = points[0];
+                    transformedLocation = points[0];
                 }
 
 				switch (command)
@@ -1860,7 +1860,7 @@ namespace Graph
 					DragElement = null;
 					needRedraw = true;
 
-				    if (PositionChanged != null && e.Location != originalLocation)
+				    if (PositionChanged != null && transformedLocation != originalLocation)
 				        PositionChanged(this, new PositionChangedEventArgs(DragElement));
 				}
 
