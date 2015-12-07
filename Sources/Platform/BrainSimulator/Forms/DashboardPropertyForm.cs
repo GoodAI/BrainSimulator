@@ -44,6 +44,8 @@ namespace GoodAI.BrainSimulator.Forms
             ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
             foreach (MyNode node in descriptor.Proxy.SourceProperty.GroupedProperties.Select(member => member.Node))
                 RefreshNode(node);
+
+            RefreshAll();
         }
 
         private void OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
@@ -51,6 +53,15 @@ namespace GoodAI.BrainSimulator.Forms
             ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
             MyNode node = descriptor.Proxy.SourceProperty.Node;
             RefreshNode(node);
+
+            RefreshAll();
+        }
+
+        private void RefreshAll()
+        {
+            propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
+            memberListBox.Refresh();
         }
 
         private void RefreshNode(MyNode node)
@@ -113,15 +124,14 @@ namespace GoodAI.BrainSimulator.Forms
                     groupProxy.ReadOnly = !value;
                 }
 
-                propertyGrid.Refresh();
-                propertyGridGrouped.Refresh();
+                RefreshAll();
             }
         }
 
         private void OnDashboardPropertiesChanged(object sender, EventArgs args)
         {
             SetPropertyGridButtonsEnabled(false);
-            propertyGrid.Refresh();
+            RefreshAll();
         }
 
         private void SetPropertyGridButtonsEnabled(bool enabled)
@@ -133,7 +143,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void OnGroupedDashboardPropertiesChanged(object sender, EventArgs args)
         {
             DisableGroupButtons();
-            propertyGridGrouped.Refresh();
+            RefreshAll();
         }
 
         private void DisableGroupButtons()
@@ -228,10 +238,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 groupProperty.Add(property);
 
-                propertyGrid.Refresh();
                 SetPropertyGridButtonsEnabled(false);
-                propertyGridGrouped.Refresh();
-                memberListBox.Refresh();
+                RefreshAll();
             }
             catch (InvalidOperationException)
             {
@@ -266,9 +274,7 @@ namespace GoodAI.BrainSimulator.Forms
             foreach (var proxy in memberListBox.SelectedItems.Cast<SingleProxyProperty>())
                 proxy.SourceProperty.Group.Remove(proxy.SourceProperty);
 
-            memberListBox.Refresh();
-            propertyGrid.Refresh();
-            propertyGridGrouped.Refresh();
+            RefreshAll();
         }
 
         public void OnSimulationStateChanged(object sender, MySimulationHandler.StateEventArgs e)
@@ -322,12 +328,12 @@ namespace GoodAI.BrainSimulator.Forms
                 target = taskSender.Target;
             }
 
-            PreserverGroupValue(e.PropertyName, target);
+            PreserveGroupValue(e.PropertyName, target);
 
             propertyGrid.Refresh();
         }
 
-        private void PreserverGroupValue(string propertyName, object target)
+        private void PreserveGroupValue(string propertyName, object target)
         {
             DashboardNodeProperty property = DashboardViewModel.GetProperty(target, propertyName);
             if (property == null)
@@ -376,8 +382,7 @@ namespace GoodAI.BrainSimulator.Forms
             RemovePropertiesOfNode(node, GroupedDashboardViewModel);
             RemovePropertiesOfNode(node, DashboardViewModel);
 
-            propertyGrid.Refresh();
-            propertyGridGrouped.Refresh();
+            RefreshAll();
         }
 
         private void RemovePropertiesOfNode<TDashboard, TProperty>(MyNode node, DashboardViewModelBase<TDashboard, TProperty> model)

@@ -39,7 +39,7 @@ namespace GoodAI.Core.Dashboard
                 }
                 catch
                 {
-                    Properties.Remove(property);
+                    Remove(property);
                     MyLog.WARNING.WriteLine("A property with identifier \"{0}\" could not be deserialized.",
                         property.PropertyId);
                 }
@@ -48,8 +48,14 @@ namespace GoodAI.Core.Dashboard
 
         public void Remove(TProperty property)
         {
-            if (Properties.Remove(property))
-                OnPropertiesChanged("Properties");
+            if (!Properties.Remove(property))
+                return;
+
+            var memberProperty = property as DashboardNodeProperty;
+            if (memberProperty != null && memberProperty.Group != null)
+                memberProperty.Group.Remove(memberProperty);
+
+            OnPropertiesChanged("Properties");
         }
 
         public abstract void RemoveAll(object target);
@@ -113,13 +119,12 @@ namespace GoodAI.Core.Dashboard
 
         public void Remove(object target, string propertyName)
         {
-            var property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+            DashboardNodeProperty property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
 
             if (property == null)
                 return;
 
-            if (Properties.Remove(property))
-                OnPropertiesChanged("Properties");
+            Remove(property);
         }
 
         public DashboardNodeProperty Get(object target, string propertyName)
@@ -132,10 +137,7 @@ namespace GoodAI.Core.Dashboard
             List<DashboardNodeProperty> toBeRemoved = Properties.Where(property => property.Node == target).ToList();
             foreach (DashboardNodeProperty property in toBeRemoved)
             {
-                if (property.Group != null)
-                    property.Group.Remove(property);
-
-                Properties.Remove(property);
+                Remove(property);
             }
         }
     }
