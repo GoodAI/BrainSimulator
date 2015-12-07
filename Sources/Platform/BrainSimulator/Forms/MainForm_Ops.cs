@@ -73,22 +73,8 @@ namespace GoodAI.BrainSimulator.Forms
             clearDataButton.Enabled = false;
 
             UndoManager.Clear();
-            SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName);
+            SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName, "New project");
             RefreshUndoRedoButtons();
-        }
-
-        private void SaveState(string content, string filePath)
-        {
-            UndoManager.SaveState(GetProjectState(content, filePath));
-        }
-
-        private ProjectState GetProjectState(string serializedProject, string filePath, string action = null)
-        {
-            return new ProjectState(serializedProject)
-            {
-                ProjectPath = filePath,
-                Action = action
-            };
         }
 
         private void CloseCurrentProjectWindows()
@@ -151,7 +137,11 @@ namespace GoodAI.BrainSimulator.Forms
                 Project.Name = newProjectName;
 
                 UndoManager.Clear();
-                UndoManager.SaveState(GetProjectState(content, fileName));
+                UndoManager.SaveState(new ProjectState(content)
+                {
+                    ProjectPath = fileName,
+                    Action = "Project opened"
+                });
                 RefreshUndoRedoButtons();
             }
             catch (Exception e)
@@ -880,16 +870,32 @@ namespace GoodAI.BrainSimulator.Forms
             autosaveButton.Checked = Properties.Settings.Default.AutosaveEnabled;
         }
 
-        public void ProjectStateChanged(string reason)
+        public void ProjectStateChanged(string action)
         {
-            MyLog.DEBUG.WriteLine("State changed: {0}", reason);
-            SaveCurrentState();
+            MyLog.DEBUG.WriteLine("State changed: {0}", action);
+            SaveCurrentState(action);
+            DebugUndoManager();
         }
 
-        private void SaveCurrentState()
+        private void DebugUndoManager()
         {
-            UndoManager.SaveState(GetProjectState(GetSerializedProject(GetCurrentFileName()), GetCurrentFileName()));
+            MyLog.DEBUG.Write(UndoManager);
+            MyLog.DEBUG.WriteLine();
+        }
+
+        private void SaveCurrentState(string action)
+        {
+            SaveState(GetSerializedProject(GetCurrentFileName()), GetCurrentFileName(), action);
             RefreshUndoRedoButtons();
+        }
+
+        private void SaveState(string content, string filePath, string action)
+        {
+            UndoManager.SaveState(new ProjectState(content)
+            {
+                ProjectPath = filePath,
+                Action = action
+            });
         }
 
         private void RefreshUndoRedoButtons()
@@ -902,12 +908,14 @@ namespace GoodAI.BrainSimulator.Forms
         {
             LoadState(UndoManager.Undo());
             RefreshUndoRedoButtons();
+            DebugUndoManager();
         }
 
         private void Redo()
         {
             LoadState(UndoManager.Redo());
             RefreshUndoRedoButtons();
+            DebugUndoManager();
         }
 
         private void LoadState(ProjectState targetState)

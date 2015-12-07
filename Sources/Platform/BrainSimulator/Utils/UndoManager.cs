@@ -116,5 +116,20 @@ namespace GoodAI.BrainSimulator.Utils
         {
             return m_redoStates.Any();
         }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            foreach (ProjectState undoState in m_undoStates)
+            {
+                sb.AppendLine(undoState.Action);
+            }
+            sb.AppendLine("^^ current state ^^");
+            foreach (ProjectState redoState in m_redoStates)
+            {
+                sb.AppendLine(redoState.Action);
+            }
+            return sb.ToString();
+        }
     }
 }
