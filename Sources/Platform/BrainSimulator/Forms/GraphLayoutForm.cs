@@ -528,7 +528,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             Settings.Default.QuickToolBarNodes.Add(nodeConfig.NodeType.Name);
 
-            // TODO: Undo
+            // TODO: Add undo here if we also want to undo non-model-related actions
         }
 
         private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig) 

@@ -79,9 +79,11 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void CloseCurrentProjectWindows()
         {
+            SuppressStateSaving = true;
             CloseAllGraphLayouts();
             CloseAllTextEditors();
             CloseAllObservers();
+            SuppressStateSaving = false;
         }
 
         private void SaveProject(string fileName)
@@ -218,7 +220,7 @@ namespace GoodAI.BrainSimulator.Forms
                 if (showObservers && importedProject.Observers != null)
                     RestoreObserverForms(importedProject);
 
-                // TODO: Undo
+                ProjectStateChanged("Project imported");
             }
             catch (Exception e)
             {
@@ -282,6 +284,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected List<DockContent> m_views;
         protected ToolStripMenuItem showHideObserversMenuItem;
+        public bool SuppressStateSaving { get; private set; }
 
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
         public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
@@ -307,7 +310,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                 ObserverForm newView = new ObserverForm(this, observer, node);
                 ObserverViews.Add(newView);
-                // TODO: Undo
+
+                ProjectStateChanged("Node observer added");
 
                 newView.Show(dockPanel, DockState.Float);
             }
@@ -355,9 +359,10 @@ namespace GoodAI.BrainSimulator.Forms
 
                 ObserverForm newView = new ObserverForm(this, observer, declaredOwner);
                 ObserverViews.Add(newView);
-                // TODO: Undo
 
                 newView.Show(dockPanel, DockState.Float);
+
+                ProjectStateChanged("Memory block observer added");
             }
             catch (Exception e)
             {
@@ -389,7 +394,9 @@ namespace GoodAI.BrainSimulator.Forms
 
             var newView = new ObserverForm(this, observer, owner);
             ObserverViews.Add(newView);
-            // TODO: Undo
+
+            // This is only called from deserialization, the state saving would be redundant.
+            //ProjectStateChanged("Abstract observer added");
 
             newView.Show(dockPanel, DockState.Float);
             newView.FloatPane.FloatWindow.Size = new Size((int)observer.WindowSize.Width, (int)observer.WindowSize.Height);
@@ -477,7 +484,8 @@ namespace GoodAI.BrainSimulator.Forms
         public void RemoveObserverView(ObserverForm view)
         {
             ObserverViews.Remove(view);
-            // TODO: Undo
+
+            ProjectStateChanged("Abstract removed");
         }
 
         public TextEditForm OpenTextEditor(MyScriptableNode target)
@@ -835,6 +843,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void ProjectStateChanged(string action)
         {
+            if (SuppressStateSaving)
+                return;
+
             MyLog.DEBUG.WriteLine("State changed: {0}", action);
             SaveCurrentState(action);
             DebugUndoManager();
@@ -912,19 +923,8 @@ namespace GoodAI.BrainSimulator.Forms
             if (project == null)
                 project = Project;
 
-            Dictionary<string, ObserverForm> currentObservers = ObserverViews.ToDictionary(view => view.Observer.Id);
-            // Only add those observers that are not already present.
             foreach (MyAbstractObserver observer in project.Observers.Where(observer => observer.GenericTarget != null))
-            {
-                if (!currentObservers.ContainsKey(observer.Id))
-                    ShowObserverView(observer);
-                else
-                    currentObservers.Remove(observer.Id);
-            }
-
-            // Remove observers that should not exist.
-            foreach (var observerToBeRemoved in currentObservers.Values)
-                ObserverViews.Remove(observerToBeRemoved);
+                ShowObserverView(observer);
 
             project.Observers = null;
         }
@@ -1333,7 +1333,7 @@ namespace GoodAI.BrainSimulator.Forms
                     //select pasted nodes
                     activeLayout.Desktop.FocusElement = new NodeSelection(pastedNodeViews);
 
-                    // TODO: Undo
+                    ProjectStateChanged("Nodes pasted from clipboard");
                 }
                 catch (Exception e)
                 {

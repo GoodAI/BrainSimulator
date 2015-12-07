@@ -103,7 +103,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             targetItems.Add(newButton);
 
-            // TODO: Undo
+            // TODO: Add undo here if we also want to undo non-model-related actions
         }
 
         void newButton_MouseUp(object sender, MouseEventArgs e)
@@ -129,7 +129,7 @@ namespace GoodAI.BrainSimulator.Forms
                 quickToolBarNodes.Remove(typeName);
                 nodesToolStrip.Items.Remove(nodeButton);
 
-                // TODO: Undo
+                // TODO: Add undo here if we also want to undo non-model-related actions
             }
         }
 

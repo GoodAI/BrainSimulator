@@ -62,8 +62,6 @@ namespace GoodAI.BrainSimulator.Forms
 
             Project.Restore();
 
-            // TODO: Undo
-
             StringCollection recentFilesList = Properties.Settings.Default.RecentFilesList;
 
             if (recentFilesList != null)
@@ -356,7 +354,7 @@ namespace GoodAI.BrainSimulator.Forms
                         graphView.worldButton_Click(sender, e);                     
                     }
 
-                    // TODO: Undo
+                    ProjectStateChanged("World selected");
                 }
             }
         }
