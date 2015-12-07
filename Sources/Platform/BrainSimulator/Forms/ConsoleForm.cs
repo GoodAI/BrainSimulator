@@ -71,7 +71,9 @@ namespace GoodAI.BrainSimulator.Forms
             public void FlushCache()
             {
                 lock (m_builders)
-                {                    
+                {
+                    int caretPosition = m_consoleForm.CaretPosition;
+                    int currentTextLength = m_consoleForm.TextLength;
                     for (int i = 0; i < m_builders.Length; i++)
                     {
                         string text = m_builders[i].ToString();
@@ -88,7 +90,10 @@ namespace GoodAI.BrainSimulator.Forms
                         {
                             m_consoleForm.AppendText(text, COLORS[i]);
                         }
-                    }                    
+                    }
+
+                    if (caretPosition == currentTextLength)
+                        m_consoleForm.ScrollToCaret();
                 }
             }
 
@@ -98,6 +103,20 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     FlushCache();
                 }
+            }
+        }
+
+        private int TextLength
+        {
+            get { return textBox.TextLength; }
+        }
+
+        private int CaretPosition
+        {
+            get { return textBox.SelectionStart; }
+            set {
+                textBox.SelectionStart = value;
+                textBox.SelectionLength = 0;
             }
         }
 
@@ -192,7 +211,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)(() => UpdateConsole()));
+            this.BeginInvoke((MethodInvoker) UpdateConsole);
         }
 
         private void UpdateConsole()
@@ -214,5 +233,15 @@ namespace GoodAI.BrainSimulator.Forms
                         ).ToArray();
             }
         }
+
+        private bool IsCaretAtTheEnd()
+        {
+            return textBox.SelectionStart == textBox.TextLength;
+        }
+
+        private void ScrollToCaret()
+        {
+            textBox.ScrollToCaret();
+        } 
     }
 }
