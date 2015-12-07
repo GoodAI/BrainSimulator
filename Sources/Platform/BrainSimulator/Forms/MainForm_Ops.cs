@@ -848,7 +848,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             MyLog.DEBUG.WriteLine("State changed: {0}", action);
             SaveCurrentState(action);
-            DebugUndoManager();
+            //DebugUndoManager();
         }
 
         private void DebugUndoManager()
@@ -915,7 +915,7 @@ namespace GoodAI.BrainSimulator.Forms
                 SelectWorldInWorldList(Project.World);
             }
             RefreshUndoRedoButtons();
-            DebugUndoManager();
+            //DebugUndoManager();
         }
 
         private void RestoreObserverForms(MyProject project = null)
