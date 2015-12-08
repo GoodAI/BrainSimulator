@@ -12,15 +12,19 @@ using System.Globalization;
 
 namespace GoodAI.CoreRunner
 {
-    class ExampleExperiment
+    class ExampleExperimentCluster
     {
         public static void Run(string[] args)
         {
             // -clusterid $(Cluster) -processid $(Process) -brain Breakout.brain -factor 0.5
 
+            int clusterId = 0;
+            int processId = 0;
             double discountFactor = 0.6;
             string breakoutBrainFilePath = "";
             OptionSet options = new OptionSet()
+                .Add("clusterid=", v => clusterId = Int32.Parse(v))
+                .Add("processid=", v => processId = Int32.Parse(v))
                 .Add("factor=", v => discountFactor = Double.Parse(v, CultureInfo.InvariantCulture))
                 .Add("brain=", v => breakoutBrainFilePath = Path.GetFullPath(v));
 
@@ -54,12 +58,13 @@ namespace GoodAI.CoreRunner
                 runner.Reset();
             }
 
-            string resultFilePath = @"res.txt";
+            string resultFilePath = @"res." + clusterId.ToString() + "." + processId.ToString() + ".txt";
             File.WriteAllText(resultFilePath, result.ToString());
-            string brainzFilePath = @"state.brainz";
+            string brainzFilePath = @"state." + clusterId.ToString() + "." + processId.ToString() + ".brainz";
             runner.SaveProject(brainzFilePath);
 
             runner.Shutdown();
+            return;
         }
     }
 }

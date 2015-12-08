@@ -53,14 +53,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- MP: the reference to GoodAI.InternalNodes.dll is like this to allow debugging breakpoints placed in InternalNodes: -->
-    <Reference Include="GoodAI.InternalNodes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" Condition=" '$(Configuration)' == 'Debug' ">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Modules\InternalNodes\Module\bin\Release\GoodAI.InternalNodes.dll</HintPath>
-    </Reference>
-    <Reference Include="GoodAI.InternalNodes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" Condition=" '$(Configuration)' == 'Release' ">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Modules\InternalNodes\Module\bin\Debug\GoodAI.InternalNodes.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -71,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoreRunner.cs" />
+    <Compile Include="ExampleExperimentCluster.cs" />
     <Compile Include="ExampleExperiment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
