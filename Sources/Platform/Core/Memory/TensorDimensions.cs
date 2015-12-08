@@ -8,6 +8,11 @@ using YAXLib;
 
 namespace GoodAI.Core.Memory
 {
+    public class InvalidDimensionsException : FormatException
+    {
+        public InvalidDimensionsException(string message) : base(message) { }
+    }
+
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public class TensorDimensions : MemBlockAttribute
     {
@@ -30,7 +35,7 @@ namespace GoodAI.Core.Memory
             Set(dimensions);
         }
 
-        protected readonly int MaxDimensions = 100;  // ought to be enough for everybody
+        private const int MaxDimensions = 100; // ought to be enough for everybody
 
         public int Size
         {
@@ -63,7 +68,9 @@ namespace GoodAI.Core.Memory
             get { return Math.Max(m_customDimensions.Count, 1); }  // we always have at least one dimension
         }
 
-        public bool CanBeComputed { get; protected set; }
+        public bool CanBeComputed { get; private set; }
+
+        public string LastSetWarning { get; private set; }
 
         internal override void ApplyAttribute(MyAbstractMemoryBlock memoryBlock)
         {
@@ -87,17 +94,13 @@ namespace GoodAI.Core.Memory
             if (m_customDimensions.Count == 0)
                 return m_size.ToString();
 
-            return string.Join("×", m_customDimensions.Select(item =>
-                {
-                    if (item == -1)
-                    {
-                        return string.Format((indicateComputedDim ? "({0})" : "{0}"), PrintComputedDim());
-                    }
-                    else
-                    {
-                        return item.ToString();
-                    }
-                })) + (printTotalSize ? string.Format(" [{0}]", Size) : "");
+            string result = string.Join("×", m_customDimensions.Select(item =>
+                (item == -1)
+                ? string.Format((indicateComputedDim ? "({0})" : "{0}"), PrintComputedDim())
+                : item.ToString()
+            ));
+
+            return result + (printTotalSize ? string.Format(" [{0}]", Size) : "");
         }
 
         private string PrintComputedDim()
@@ -105,9 +108,11 @@ namespace GoodAI.Core.Memory
             return (m_computedDimension == -1) ? "?" : m_computedDimension.ToString();
         }
 
-        public void Set(IEnumerable<int> customDimenstions, bool autoAddComputedDim = false)
+        public void Set(IEnumerable<int> customDimenstions,
+            bool autoAddComputedDim = false,
+            bool autoRemoveDimsOfSizeOne = false)
         {
-            InnerSet(customDimenstions, autoAddComputedDim);
+            InnerSet(customDimenstions, autoAddComputedDim, autoRemoveDimsOfSizeOne);
             
             IsCustom = (m_customDimensions.Count > 0);  // No need to save "empty" value.
         }
@@ -120,7 +125,7 @@ namespace GoodAI.Core.Memory
             if (IsCustom)
                 return;
 
-            InnerSet(dimensions, autoAddComputedDim);
+            InnerSet(dimensions, autoAddComputedDim, autoRemoveDimsOfSizeOne: true);
 
             IsCustom = false;  // treat new value as default
         }
@@ -133,9 +138,9 @@ namespace GoodAI.Core.Memory
                 return;
             }
 
-            var textItems = text.Split(new char[] {',', ';' });
+            string[] textItems = text.Split(',', ';');
 
-            var dimensions = textItems.Select(item =>
+            IEnumerable<int> dimensions = textItems.Select(item =>
             {
                 int result;
 
@@ -145,30 +150,38 @@ namespace GoodAI.Core.Memory
                 }
                 else if (!int.TryParse(item.Trim(), out result))
                 {
-                    throw new FormatException(string.Format("Dimension '{0}' is not an integer.", item));
+                    throw new InvalidDimensionsException(string.Format("Dimension '{0}' is not an integer.", item));
                 }
 
                 return result;
             });
 
-            Set(dimensions, autoAddComputedDim: true);
+            Set(dimensions, autoAddComputedDim: true, autoRemoveDimsOfSizeOne: true);
         }
 
-        private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim)
+        private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne)
         {
+            LastSetWarning = "";
+
             var newDimensions = new List<int>();
 
             bool foundComputedDimension = false;
 
-            foreach (var item in dimensions)
+            foreach (int item in dimensions)
             {
-                if ((item < -1) || (item == 0))
-                    throw new FormatException(string.Format("Number {0} is not a valid dimension.", item));
+                if ((item < -1) || (item == 0) || (item == 1 && !autoRemoveDimsOfSizeOne))
+                    throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
+
+                if (item == 1)  // implies autoRemoveDimsOfSizeOne == true
+                {
+                    LastSetWarning = "Dimensions of size 1 eliminated.";
+                    continue;
+                }
 
                 if (item == -1)
                 {
                     if (foundComputedDimension)
-                        throw new FormatException(string.Format(
+                        throw new InvalidDimensionsException(string.Format(
                             "Multiple computed dimensions not allowed (item #{0}).", newDimensions.Count + 1));
 
                     foundComputedDimension = true;
@@ -177,7 +190,7 @@ namespace GoodAI.Core.Memory
                 newDimensions.Add(item);
 
                 if (newDimensions.Count > MaxDimensions)
-                    throw new FormatException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
+                    throw new InvalidDimensionsException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
             }
 
             // UX: when no computed dimension was given, let it be the first one
@@ -186,7 +199,11 @@ namespace GoodAI.Core.Memory
 
             // got only the computed dimension, it is equivalent to empty setup
             if (foundComputedDimension && (newDimensions.Count == 1))
+            {
                 newDimensions.Clear();
+                if (string.IsNullOrEmpty(LastSetWarning))
+                    LastSetWarning = "Only computed dim. changed to empty dimensions.";
+            }
 
             m_customDimensions = newDimensions;
 
@@ -218,7 +235,7 @@ namespace GoodAI.Core.Memory
             if (product < 1)
                 return -1;
 
-            var computedDimension = m_size / product;
+            int computedDimension = m_size / product;
 
             if (computedDimension * product != m_size)  // unable to compute integer division
                 return -1;

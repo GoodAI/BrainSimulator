@@ -68,5 +68,25 @@ namespace CoreTests
 
             Assert.Equal(memblock.Count, memblock.Dims.Size);
         }
+
+        [Fact]
+        public void DimensionsOfSizeOneNotAllowed()
+        {
+            var dims = new TensorDimensions();
+
+            Assert.Throws<InvalidDimensionsException>(() => dims.Set(new []{ 5, 1, 1 }));
+        }
+
+        [Fact]
+        public void ParseSkipsDimensionsOfSizeOne()
+        {
+            var dims = new TensorDimensions();
+
+            dims.Parse("1, 5, 1, 1");
+
+            Assert.Equal(2, dims.Count);  // *, 5
+            Assert.Equal(5, dims[1]);
+            Assert.NotEqual("", dims.LastSetWarning);
+        }
     }
 }
