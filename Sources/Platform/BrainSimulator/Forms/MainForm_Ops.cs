@@ -722,14 +722,13 @@ namespace GoodAI.BrainSimulator.Forms
             
             NodePropertyView = new NodePropertyForm(this);
 
-            DashboardPropertyView = new DashboardPropertyForm(this);
-
-            SimulationHandler.StateChanged += DashboardPropertyView.OnSimulationStateChanged;
-
             MemoryBlocksView = new MemoryBlocksForm(this);
 
             TaskView = new TaskForm(this);
             TaskPropertyView = new TaskPropertyForm(this);
+
+            DashboardPropertyView = new DashboardPropertyForm(this);
+            SimulationHandler.StateChanged += DashboardPropertyView.OnSimulationStateChanged;
 
             // Link the Task and Node property views to the dashboard's PropertyChanged.
             DashboardPropertyView.PropertyValueChanged += RefreshPropertyViews;
@@ -737,6 +736,7 @@ namespace GoodAI.BrainSimulator.Forms
             // Link the Node and Task property views' PropertyChanged to the dashboard so that it can refresh etc.
             NodePropertyView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
             TaskPropertyView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
+            TaskView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
 
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
             TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
@@ -971,8 +971,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)
         {
-            NodePropertyView.RefreshGrid();
-            TaskPropertyView.RefreshGrid();
+            NodePropertyView.RefreshView();
+            TaskPropertyView.RefreshView();
+            TaskView.RefreshView();
         }
 
         public void PopulateWorldList()

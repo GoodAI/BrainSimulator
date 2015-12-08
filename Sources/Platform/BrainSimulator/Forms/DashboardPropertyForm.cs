@@ -6,6 +6,7 @@ using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.Core.Dashboard;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -328,22 +329,25 @@ namespace GoodAI.BrainSimulator.Forms
             // If the property is grouped, replace its value by whatever is set in the group.
 
             propertyGrid.Refresh();
-            object target;
+            object target = null;
             var nodeSender = sender as NodePropertyForm;
             if (nodeSender != null)
-            {
                 target = nodeSender.Target;
-            }
-            else
+
+            var taskPropertySender = sender as TaskPropertyForm;
+            if (taskPropertySender != null)
+                target = taskPropertySender.Target;
+
+            var taskSender = sender as MyTask;
+            if (taskSender != null)
+                target = taskSender;
+
+            if (target != null)
             {
-                var taskSender = sender as TaskPropertyForm;
-                target = taskSender.Target;
+                PreserveGroupValue(e.PropertyName, target);
+                propertyGrid.Refresh();
+                propertyGridGrouped.Refresh();
             }
-
-            PreserveGroupValue(e.PropertyName, target);
-
-            propertyGrid.Refresh();
-            propertyGridGrouped.Refresh();
         }
 
         private void PreserveGroupValue(string propertyName, object target)
