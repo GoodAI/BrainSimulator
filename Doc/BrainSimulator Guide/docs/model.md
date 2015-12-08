@@ -137,7 +137,7 @@ public MyMemoryBlock<float> Results
 }
 ```
 
-Notice, that first argument of `GetOutput` and `SetOutput` must correspond with the number in annotation.
+Note that first argument of `GetOutput` and `SetOutput` must correspond with the number in annotation.
 
 Your memory blocks must be declared as shown. Do not use arrays or lists of them. It’s not supported yet.
 
@@ -156,6 +156,16 @@ Each memory block is divided into **Host** and **Device** part. Host corresponds
 * `GetSize()` - size of memory block in bytes
 * `Fill(value)` - fills entire memory block (Host and Device) with given value - works with `float`, `int`, `uint`, `bool` and `byte[]` values
 * `GetBytes(byte[] destBuffer)` - returns memory block data (Device=Host)
+
+#### Dynamic memory blocks
+
+Memory blocks marked with the DynamicBlockAttribute become dynamic, allowing the node creator to reallocate the memory block to a different size with a call to the block's Reallocate(int count) method. The system will try to reallocate both the host and device memory and if it's successful, it will copy the data from the original memory block over to the new one. Overflowing data is cropped, missing data is zero-filled.
+
+Dynamic connections are marked with a white outline.
+
+It is possible to use dynamic output blocks, but only nodes that have dynamic input blocks will be able to accept the connections.
+
+**Warning: it is possible to create a loop of dynamic blocks leading to a cascade of reallocations. Take care when using dynamic blocks as node outputs.**
 
 ### Validation
 If some other conditions must be fulfilled for the correct execution of your node, put them in the `MyNode.Validate()` method. If you want to omit validation completely (not a good idea), just override that method.
