@@ -23,8 +23,7 @@ namespace CoreTests
         [Fact]
         public void CanBeComputedEvaluatesToTrue()
         {
-            var dims = new TensorDimensions(3, 4, -1, 5);
-            dims.Size = 3 * 4 * 5 * 13;
+            var dims = new TensorDimensions(3, 4, -1, 5) { Size = 3*4*5*13 };
 
             Assert.True(dims.CanBeComputed);
             Assert.Equal(13, dims[2]);  // also check that the free dimension was correctly computed
@@ -33,8 +32,7 @@ namespace CoreTests
         [Fact]
         public void CanBeComputedEvaluatesToFalse()
         {
-            var dims = new TensorDimensions(3, 4, -1, 5);
-            dims.Size = 37;
+            var dims = new TensorDimensions(3, 4, -1, 5) { Size = 37 };
 
             Assert.False(dims.CanBeComputed);
         }
@@ -48,6 +46,27 @@ namespace CoreTests
             dims.Size = 4;
             Assert.True(dims.CanBeComputed);
             Assert.Equal(4, dims[0]);
+        }
+
+        [Fact]
+        public void ComputedDimCanBeOne()
+        {
+            var dims = new TensorDimensions(-1, 10) { Size = 10 };
+
+            Assert.True(dims.CanBeComputed);
+            Assert.Equal(1, dims[0]);
+        }
+
+        [Fact]
+        public void SizeGetsUpdatedWhenDimsAssignedToMemBlock()
+        {
+            var memblock = new MyMemoryBlock<float>
+            {
+                Count = 10,
+                Dims = new TensorDimensions(2)
+            };
+
+            Assert.Equal(memblock.Count, memblock.Dims.Size);
         }
     }
 }
