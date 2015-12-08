@@ -754,5 +754,15 @@ namespace GoodAI.BrainSimulator.Forms
         {
             Redo();
         }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Redo();
+        }
     }
 }
