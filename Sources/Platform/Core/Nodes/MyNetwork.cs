@@ -176,7 +176,8 @@ namespace GoodAI.Core.Nodes
                 nodes[node.Id] = node;                
 
                 //parent link 
-                node.Parent = nodeGroup;
+                TrySetParent(node, nodeGroup);
+
                 node.Owner = Owner;          
                 //topId collect
                 if (topId < node.Id)
@@ -208,6 +209,19 @@ namespace GoodAI.Core.Nodes
                 }
             }
             return topId;
+        }
+
+        private static void TrySetParent(MyNode node, MyNodeGroup nodeGroup)
+        {
+            try
+            {
+                // Setting parent may fail since v0.4. Handle it to allow loading of old [incorrect] projects.
+                node.Parent = nodeGroup;  
+            }
+            catch (InvalidOperationException e)
+            {
+                MyLog.ERROR.WriteLine("Unable to update node ({0}): {1}", node.Name, e.Message);
+            }
         }
 
         public void SaveState(string fileName, uint simulationStep)
