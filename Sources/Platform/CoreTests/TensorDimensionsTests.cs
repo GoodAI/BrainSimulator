@@ -18,6 +18,7 @@ namespace CoreTests
             Assert.Equal(2, dims.Count);
             Assert.Equal(2, dims[0]);
             Assert.Equal(3, dims[1]);
+            Assert.False(dims.IsCustom);  // dimensions created in code are "default" and should not be saved to project
         }
 
         [Fact]
@@ -58,18 +59,6 @@ namespace CoreTests
         }
 
         [Fact]
-        public void SizeGetsUpdatedWhenDimsAssignedToMemBlock()
-        {
-            var memblock = new MyMemoryBlock<float>
-            {
-                Count = 10,
-                Dims = new TensorDimensions(2)
-            };
-
-            Assert.Equal(memblock.Count, memblock.Dims.Size);
-        }
-
-        [Fact]
         public void DimensionsOfSizeOneNotAllowed()
         {
             var dims = new TensorDimensions();
@@ -87,6 +76,48 @@ namespace CoreTests
             Assert.Equal(2, dims.Count);  // *, 5
             Assert.Equal(5, dims[1]);
             Assert.NotEqual("", dims.LastSetWarning);
+        }
+
+        [Fact]
+        public void SizeGetsUpdatedWhenDimsAssignedToMemBlock()
+        {
+            var memBlock = new MyMemoryBlock<float>
+            {
+                Count = 10,
+                Dims = new TensorDimensions(2)
+            };
+
+            Assert.Equal(memBlock.Count, memBlock.Dims.Size);
+        }
+
+        private static MyMemoryBlock<float> GetMemBlockWithCustomDims()
+        {
+            var customDims = new TensorDimensions();
+            customDims.Parse("2, -1, 2");
+
+            return new MyMemoryBlock<float> {Dims = customDims};
+        }
+
+        [Fact]
+        public void CodeGeneratedDimsDoNotOverwriteCustomOnes()
+        {
+            MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims();
+
+            memBlock.Dims = new TensorDimensions(33);  // this assignment should be ignored
+
+            Assert.Equal(3, memBlock.Dims.Count);
+            Assert.Equal(2, memBlock.Dims[0]);
+        }
+
+        [Fact]
+        public void CustomDimsDoOverwritePreviousOnes()
+        {
+            MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims();
+
+            memBlock.Dims = new TensorDimensions(33) { IsCustom = true };  // this assignment must NOT be ignored
+
+            Assert.Equal(1, memBlock.Dims.Count);
+            Assert.Equal(33, memBlock.Dims[0]);
         }
     }
 }

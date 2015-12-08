@@ -14,7 +14,7 @@ namespace GoodAI.Core.Memory
         /// Has a non-default value. Attribute with a default value will not be saved, only custom values will be.
         /// </summary>
         [YAXDontSerialize]
-        public bool IsCustom { get; protected set; }
+        public bool IsCustom { get; set; }
 
         internal abstract void ApplyAttribute(MyAbstractMemoryBlock myAbstractMemoryBlock);
 

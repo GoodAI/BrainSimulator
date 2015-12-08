@@ -91,7 +91,19 @@ namespace GoodAI.Core.Memory
             get { return m_dims; }
             set
             {
-                m_dims = value;
+                if (value == null)
+                {
+                    m_dims = new TensorDimensions();
+                }
+                else if ((m_dims != null) && m_dims.IsCustom && !value.IsCustom)
+                {
+                    return;  // don't override user-defined value with code-generated value
+                }
+                else  // implied: value != null
+                {
+                    m_dims = value;
+                }
+
                 m_dims.Size = Count;
             }
         }
