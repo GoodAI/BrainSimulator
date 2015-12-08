@@ -878,19 +878,21 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void RefreshUndoRedoButtons()
         {
-            undoButton.Enabled = UndoManager.CanUndo();
-            redoButton.Enabled = UndoManager.CanRedo();
+            undoButton.Enabled = SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED &&
+                                 UndoManager.CanUndo();
+            redoButton.Enabled = SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED &&
+                                 UndoManager.CanRedo();
         }
 
         private void Undo()
         {
-            if (UndoManager.CanUndo())
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED && UndoManager.CanUndo())
                 LoadState(UndoManager.Undo());
         }
 
         private void Redo()
         {
-            if (UndoManager.CanRedo())
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED && UndoManager.CanRedo())
                 LoadState(UndoManager.Redo());
         }
 

@@ -187,6 +187,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 statusStrip.BackColor = STATUS_BAR_BLUE_BUILDING;
             }
+            RefreshUndoRedoButtons();
         }    
 
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
