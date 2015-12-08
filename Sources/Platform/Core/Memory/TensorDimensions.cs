@@ -161,7 +161,19 @@ namespace GoodAI.Core.Memory
 
         private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne)
         {
-            LastSetWarning = "";
+            string warning;
+
+            m_customDimensions = ProcessDimensions(dimensions, autoAddComputedDim, autoRemoveDimsOfSizeOne, out warning);
+
+            LastSetWarning = warning;
+
+            UpdateComputedDimension();
+        }
+
+        private static List<int> ProcessDimensions(IEnumerable<int> dimensions,
+            bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne, out string warning)
+        {
+            warning = "";
 
             var newDimensions = new List<int>();
 
@@ -172,9 +184,9 @@ namespace GoodAI.Core.Memory
                 if ((item < -1) || (item == 0) || (item == 1 && !autoRemoveDimsOfSizeOne))
                     throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
 
-                if (item == 1)  // implies autoRemoveDimsOfSizeOne == true
+                if (item == 1) // implies autoRemoveDimsOfSizeOne == true
                 {
-                    LastSetWarning = "Dimensions of size 1 eliminated.";
+                    warning = "Dimensions of size 1 eliminated.";
                     continue;
                 }
 
@@ -193,21 +205,20 @@ namespace GoodAI.Core.Memory
                     throw new InvalidDimensionsException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
             }
 
+            // got only the computed dimension, it is equivalent to empty setup
+            if (foundComputedDimension && (newDimensions.Count == 1))
+            {
+                if (string.IsNullOrEmpty(warning))
+                    warning = "Only computed dim. changed to empty dimensions.";
+
+                return new List<int>();
+            }
+
             // UX: when no computed dimension was given, let it be the first one
             if (autoAddComputedDim && (newDimensions.Count > 0) && !foundComputedDimension)
                 newDimensions.Insert(0, -1);
 
-            // got only the computed dimension, it is equivalent to empty setup
-            if (foundComputedDimension && (newDimensions.Count == 1))
-            {
-                newDimensions.Clear();
-                if (string.IsNullOrEmpty(LastSetWarning))
-                    LastSetWarning = "Only computed dim. changed to empty dimensions.";
-            }
-
-            m_customDimensions = newDimensions;
-
-            UpdateComputedDimension();
+            return newDimensions;
         }
 
         private void UpdateComputedDimension()
