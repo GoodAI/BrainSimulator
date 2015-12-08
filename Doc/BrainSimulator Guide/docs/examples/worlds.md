@@ -63,4 +63,27 @@ Simple 2D world where the agent continually moves in 8 directions. The goal is t
 
 ![](../guides/img_examples/2DAgentWorld.png)
  
+### TetrisWorld
 
+This world is an environment for playing the [Tetris](https://en.wikipedia.org/wiki/Tetris) game.
+
+The available controls are "do nothing", "move left", "move right", "move down", "rotate left" and "rotate right". You can choose whether you want to specify the actions through a binary vector of length 6 or by a single number, whose value equals the wanted action .
+
+You can change the difficulty of the game through world's parameters. You can change the number of almost full lines at the beginning of the game, you can change the speed of the game and you can change how quickly the levels of the game progress.
+
+![](../img/Tetris.png)
+ 
+ Apart from visual output, the world also provides a structured data output that contains information about the state of the area where bricks fall, about the score, level and the upcoming brick.
+ 
+ Note that the visual output uses colors. To visualize it properly, set the Coloring Method of the Visual block's observer to *RGB*.
+
+### TwoPlayerPongWorld
+
+This world is very similar to the CustomPongWorld, with two exceptions:
+
+1. the world contains two paddles for two players
+2. the world does not contain any bricks
+
+![](../img/TwoPlayerPong.png)
+ 
+ The world offers two sets of controls and also two sets of structured data that describe the environment, one set for each of the players. The two sets of data differ because they adopt the perspective of the corresponding player.
