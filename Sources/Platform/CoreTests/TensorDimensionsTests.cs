@@ -90,18 +90,18 @@ namespace CoreTests
             Assert.Equal(memBlock.Count, memBlock.Dims.Size);
         }
 
-        private static MyMemoryBlock<float> GetMemBlockWithCustomDims()
+        private static MyMemoryBlock<float> GetMemBlockWithCustomDims(string dimenstionsSource)
         {
             var customDims = new TensorDimensions();
-            customDims.Parse("2, -1, 2");
+            customDims.Parse(dimenstionsSource);
 
-            return new MyMemoryBlock<float> {Dims = customDims};
+            return new MyMemoryBlock<float> { Dims = customDims };
         }
 
         [Fact]
         public void CodeGeneratedDimsDoNotOverwriteCustomOnes()
         {
-            MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims();
+            MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims("2, -1, 2");
 
             memBlock.Dims = new TensorDimensions(33);  // this assignment should be ignored
 
@@ -112,7 +112,7 @@ namespace CoreTests
         [Fact]
         public void CustomDimsDoOverwritePreviousOnes()
         {
-            MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims();
+            MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims("2, -1, 2");
 
             memBlock.Dims = new TensorDimensions(33) { IsCustom = true };  // this assignment must NOT be ignored
 
