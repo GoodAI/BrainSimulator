@@ -7,24 +7,12 @@
                     <Component Id="cmpAD0777FBE7BB310C9C9D26FAD22EFF5C" Guid="*">
                         <File Id="filCF856B725BAB36E6C31EB7A8D5F22A4F" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\BEPUphysics.dll" />
                     </Component>
-                    
                     <Component Id="cmp4A42D4425C64177B6F42CAA22F30692E" Guid="*">
                         <File Id="fil318A4B40128D5F1ACDB89DC9A4E1AA4B" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\BEPUutilities.dll" />
                     </Component>
                     
-                    <Component Id="cmpC0688EBAE183DC96CD9E7D20789EBF23" Guid="*">
-                        <File Id="fil41594536E955EF774309C58234D3EB60" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\CudaBlas.dll" />
-                    </Component>
-                    <Component Id="cmp5F0BF089E8E5FF805FFC54F35618BF10" Guid="*">
-                        <File Id="filBFE24EF9B0BA7EC2CEFCF9D96A271E0F" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\CudaFFT.dll" />
-                    </Component>
-
                     <Component Id="cmp951509EBF8D65F10E60EA0DB048457C6" Guid="*">
                         <File Id="fil0A89B26046F3E1180B58701D8883A815" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\GoodAI.BasicNodes.dll" />
-                    </Component>
-                    
-                    <Component Id="cmp95FFD56E74D50D6BF8425930AAB6B5CC" Guid="*">
-                        <File Id="fil28DC18024F5C66A04B81236AE56B03BB" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\NPP.dll" />
                     </Component>
                     
                     <Directory Id="dir6A23F53168B0684056A17F9416992A77" Name="ptx">
@@ -45,6 +33,9 @@
                             </Component>
                             <Component Id="cmp5DC982C39D4D34258E3016E32AEBE02D" Guid="*">
                                 <File Id="filC90E0F178484176F9EE20358CC26A127" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Common\CopyRectangleKernel.ptx" />
+                            </Component>
+                            <Component Id="cmpFFF0A01CEF2AA282C338A3E446F599F6" Guid="*">
+                                <File Id="filFD66FEA968BB09D664927E7F8D957DAE" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Common\DrawBoxPlotKernel.ptx" />
                             </Component>
                             <Component Id="cmp44DE2C53E2B752A7C4904EC72F70B5CF" Guid="*">
                                 <File Id="fil39917AAF057D0ABE405E8B129317B638" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Common\SetAllButOneKernel.ptx" />
@@ -68,8 +59,13 @@
                             <Component Id="cmpF9211C20CD86EEE27E737DB8A9E72292" Guid="*">
                                 <File Id="fil4E60A5D3DF781F8CF6156E230AAE6E29" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Drawing\GridWorld.ptx" />
                             </Component>
-                            <Component Id="cmpECC5D0E72214DB6CBF07B918C78790D7" Guid="*">
-                                <File Id="fil9FAFE420423866A92F6D3EF831B23B20" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Drawing\MastermindWorld.ptx" />
+                            <Component Id="cmp9E6C30C612DA8EB8502BA4C08D247029" Guid="*">
+                                <File Id="filCB1BFDFC9AA063D4D1E884531D4FD556" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Drawing\RgbaDrawing.ptx" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="dirD1E2742F29C47ABF304C1A4760E19D13" Name="Genetic">
+                            <Component Id="cmp5895285BC7FA0464B6610F25514DEAC0" Guid="*">
+                                <File Id="fil7587ACFE9D500502325F02D22F16C0CB" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Genetic\CosyneGenetics.ptx" />
                             </Component>
                         </Directory>
                         <Directory Id="dir1E99E0365835C57AB71909377C3B78DF" Name="GrowingNeuralGas">
@@ -326,9 +322,6 @@
                             </Component>
                             <Component Id="cmp7F50363F85F727B592DFD45A376B9C49" Guid="*">
                                 <File Id="fil0C07CBF24EF6556C9E0E44C1A3FADBB5" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\VSA\MurmurHash3.ptx" />
-                            </Component>
-                            <Component Id="cmp01F5AEA790D22CF3B862D9D1D3B0DFFF" Guid="*">
-                                <File Id="filB3FCC56A1A0077E87EB06E415B969332" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\VSA\RandomMapper.ptx" />
                             </Component>
                             <Component Id="cmpC07E7CCCB6A76754AE0C1A4D4AB4DE52" Guid="*">
                                 <File Id="fil7CD9A0E640C8C48B3651F6F9E56BFBEB" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\VSA\SpatialCoder.ptx" />
@@ -598,6 +591,20 @@
                                 <File Id="filE8FEFC78A1EF265470EB03373D6BC690" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\res\pong\paddle.png" />
                             </Component>
                         </Directory>
+                        <Directory Id="dir26B46B396586231CE1ECD85E9F14730F" Name="tetrisworld">
+                            <Component Id="cmpCB9F8B3A3BC60BEF775A557EF4327C27" Guid="*">
+                                <File Id="fil2D5E24DE58C271625E798394C8E8015E" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\res\tetrisworld\brick_mask.png" />
+                            </Component>
+                            <Component Id="cmpC0A06B53EA59420D52D3B0094A333884" Guid="*">
+                                <File Id="filFC3822F83ADEE4208A5C8D1135E77AAB" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\res\tetrisworld\brick_overlay.png" />
+                            </Component>
+                            <Component Id="cmpDD137C0D38235BD0FDE030C246C0CFDE" Guid="*">
+                                <File Id="fil23EB55DA7C9D8F6B2CEA1E1A52C95DD0" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\res\tetrisworld\tetris_background.png" />
+                            </Component>
+                            <Component Id="cmp1D9304B7DDE398795D638E2770FD55C5" Guid="*">
+                                <File Id="filECBF76D521F28D05C4B0E3A5DD26732E" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\res\tetrisworld\text_area.png" />
+                            </Component>
+                        </Directory>
                         <Directory Id="dir9A6DA9618E1A91BE2FCE2060EA6FA2DC" Name="tictactoeworld">
                             <Component Id="cmp0897243F51E608602D5A09BEC7458898" Guid="*">
                                 <File Id="fil4519EA8FA589E4262BE37422251372AE" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\res\tictactoeworld\taleEmpty.png" />
@@ -612,19 +619,8 @@
                     </Directory>
                 </Directory>
                 <Directory Id="dir06701046D0935491C9D5AB9E24707B7E" Name="GoodAI.MNIST">
-                    <Component Id="cmp47BAC20F3893AC5383559E94A91A2A8B" Guid="*">
-                        <File Id="fil98657E43F372050A2856B3E6818AFF83" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.MNIST\CudaBlas.dll" />
-                    </Component>
-                    <Component Id="cmp1774EBE82D2E516D8704E1B85D99340C" Guid="*">
-                        <File Id="filC9227F727A88BA3909A4FCA6A59FEA8D" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.MNIST\CudaFFT.dll" />
-                    </Component>
-                    
                     <Component Id="cmp106B51D635A76E20412259D2558811DB" Guid="*">
                         <File Id="fil358F82E98DBB950D49EC06EE3748A3F9" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.MNIST\GoodAI.MNIST.dll" />
-                    </Component>
-                    
-                    <Component Id="cmp6933D66F80758196DDF68B30D057DD31" Guid="*">
-                        <File Id="filBCB7850B8615DC2F16439CE292DD27B1" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.MNIST\NPP.dll" />
                     </Component>
                     
                     <Directory Id="dir6BAE235646285BFD70E1B611E74AB218" Name="res">
@@ -654,9 +650,20 @@
                         <File Id="filA576D763723D976D09D6A90543E9EAF7" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\IronPython.Modules.dll" />
                     </Component>
                     
+                    <Component Id="cmpB528DE187FDC58FA6DC6093CCB638D3D" Guid="*">
+                        <File Id="filE35B3D389B19F2661472A01D65BE2FFC" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\IronPython.SQLite.dll" />
+                    </Component>
+                    
+                    <Component Id="cmpD6A8C0E71F74BFB038553BD8192CCD55" Guid="*">
+                        <File Id="fil80CCBF181E3CE0602AF5C2AFE0AE377B" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\IronPython.Wpf.dll" />
+                    </Component>
                     
                     <Component Id="cmp4D78666258805013ABFB0F6F7549028B" Guid="*">
                         <File Id="fil3C05C32A61E0699D5A22AC15DC5C54D8" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\Microsoft.Dynamic.dll" />
+                    </Component>
+                    
+                    <Component Id="cmp2187BD96974A920A9EAFC105DA988722" Guid="*">
+                        <File Id="filFE2367B7D88F3E41AFB718A122CBDF00" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\Microsoft.Scripting.AspNet.dll" />
                     </Component>
                     
                     <Component Id="cmpD7DB51466150E16F0BD9EEE2EAB6F02E" Guid="*">
@@ -665,7 +672,6 @@
                     <Component Id="cmp836D7344C366C89BFA126B3F63D63AD4" Guid="*">
                         <File Id="fil0A4B1A81425F40DADCAA3F652E9DF2EA" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\Microsoft.Scripting.Metadata.dll" />
                     </Component>
-                    
                     
                     <Directory Id="dirFE064CB4E0DEEDDEE3AA47438EAF6DB8" Name="Lib">
                         <Component Id="cmp40049BDB57C7A52A2F98E401FAF2CDC2" Guid="*">
@@ -2258,45 +2264,11 @@
                     </Directory>
                 </Directory>
                 <Directory Id="dir4278B2DD2867C0806BC76C7E9512C3A4" Name="GoodAI.SoundWorld">
-                    <Component Id="cmpD6014FB21E361743479050CC904EE7B8" Guid="*">
-                        <File Id="fil8E5697F4EC407CF00907CFEE8BAE835C" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\CudaBitmapSource.dll" />
-                    </Component>
-                    
-                    
-                    <Component Id="cmp44E3B8A458E8EEE1943235A9CBF3FEAA" Guid="*">
-                        <File Id="fil47943BEECF5984FD524731E6BBCD62FF" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\CudaBlas.dll" />
-                    </Component>
-                    
-                    
-                    <Component Id="cmp3C0EFACC718E6E34593392FDFF8C2B52" Guid="*">
-                        <File Id="filC276B3B928ED80E676AC8D261041FE9E" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\CudaFFT.dll" />
-                    </Component>
-                    
-                    
-                    <Component Id="cmp5FE68B45FC67609AD6D5E479F0B13AAF" Guid="*">
-                        <File Id="filD742686223DC14C1F54B717247208223" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\CudaSolve.dll" />
-                    </Component>
-                    
-                    
-                    <Component Id="cmp0EB8327ACC44820E4398EDB6C65B31C8" Guid="*">
-                        <File Id="filC66B1931695EE7B94AC5889DB2CC5FE0" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\CudaSparse.dll" />
-                    </Component>
-                    
-                    
-                    
+
                     <Component Id="cmp4150A4401CDCCFC617E0961BEF4C3463" Guid="*">
                         <File Id="filF5D9A0385A4FBFB00DA1C081D8D4FD0E" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\GoodAI.SoundWorld.dll" />
                     </Component>
-                    
-                    <Component Id="cmpA46DAC4FF8F4F995B0908D63253BB9B7" Guid="*">
-                        <File Id="fil05AF931AB595874EBE0F844F5B0AFBF6" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\NPP.dll" />
-                    </Component>
-                    
-                    
-                    <Component Id="cmp99F63488956C6BADA8F357DDCE424142" Guid="*">
-                        <File Id="filF51990C29148FFB16D2BE99565C17452" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\NVRTC.dll" />
-                    </Component>
-                    
+
                 </Directory>
             </Directory>
         </DirectoryRef>
@@ -2304,16 +2276,24 @@
     <Fragment>
         <ComponentGroup Id="HarvestedModules">
             <ComponentRef Id="cmpAD0777FBE7BB310C9C9D26FAD22EFF5C" />
-            
             <ComponentRef Id="cmp4A42D4425C64177B6F42CAA22F30692E" />
             
-            <ComponentRef Id="cmpC0688EBAE183DC96CD9E7D20789EBF23" />
-            <ComponentRef Id="cmp5F0BF089E8E5FF805FFC54F35618BF10" />
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             <ComponentRef Id="cmp951509EBF8D65F10E60EA0DB048457C6" />
             
             
-            <ComponentRef Id="cmp95FFD56E74D50D6BF8425930AAB6B5CC" />
+            
+            
+            
             
             
             
@@ -2328,13 +2308,15 @@
             <ComponentRef Id="cmpDCC8DE2D324C0E506C2EF4CF24244E44" />
             <ComponentRef Id="cmpD4B8B1CEE585D9909C64A93B48404DEE" />
             <ComponentRef Id="cmp5DC982C39D4D34258E3016E32AEBE02D" />
+            <ComponentRef Id="cmpFFF0A01CEF2AA282C338A3E446F599F6" />
             <ComponentRef Id="cmp44DE2C53E2B752A7C4904EC72F70B5CF" />
             <ComponentRef Id="cmpDD62C3221DD5A769198F0A5C9DF1B56D" />
             <ComponentRef Id="cmpD64FF36756736D75A720647CEF95A7E2" />
             <ComponentRef Id="cmpF63D5285EFC9DBA4D3FD42B8ED54F318" />
             <ComponentRef Id="cmpBD43F21ED48FC97CB11D3A294AA3F06F" />
             <ComponentRef Id="cmpF9211C20CD86EEE27E737DB8A9E72292" />
-            <ComponentRef Id="cmpECC5D0E72214DB6CBF07B918C78790D7" />
+            <ComponentRef Id="cmp9E6C30C612DA8EB8502BA4C08D247029" />
+            <ComponentRef Id="cmp5895285BC7FA0464B6610F25514DEAC0" />
             <ComponentRef Id="cmpCE7E03E7193F6EE00B73B97443E35134" />
             <ComponentRef Id="cmpECD1B8D5A4A7E2FB314925E183E92B16" />
             <ComponentRef Id="cmpB24D39648D964FD3B513FFC7B1998316" />
@@ -2409,7 +2391,6 @@
             <ComponentRef Id="cmpCD4C6A07AF2070E106028FCDD62CE3D8" />
             <ComponentRef Id="cmpA95C3E23231E87D4A6E5D022C31DB4F5" />
             <ComponentRef Id="cmp7F50363F85F727B592DFD45A376B9C49" />
-            <ComponentRef Id="cmp01F5AEA790D22CF3B862D9D1D3B0DFFF" />
             <ComponentRef Id="cmpC07E7CCCB6A76754AE0C1A4D4AB4DE52" />
             <ComponentRef Id="cmpD6F0015950FC996D0C1FAA19225D10AF" />
             <ComponentRef Id="cmp2AF14D05B40EB2F0963400E2AC267801" />
@@ -2493,15 +2474,30 @@
             <ComponentRef Id="cmpEF6464F1A8436565DB849776637F5B2D" />
             <ComponentRef Id="cmp096AC6044A0DB918C5A2BD71D36FA34B" />
             <ComponentRef Id="cmpF2BB776C3F78DE0DA448A2038791E49C" />
+            <ComponentRef Id="cmpCB9F8B3A3BC60BEF775A557EF4327C27" />
+            <ComponentRef Id="cmpC0A06B53EA59420D52D3B0094A333884" />
+            <ComponentRef Id="cmpDD137C0D38235BD0FDE030C246C0CFDE" />
+            <ComponentRef Id="cmp1D9304B7DDE398795D638E2770FD55C5" />
             <ComponentRef Id="cmp0897243F51E608602D5A09BEC7458898" />
             <ComponentRef Id="cmp732BEB09FBF5BADF6886E399CA2F6D68" />
             <ComponentRef Id="cmpA76C4387B770219DFF3C49F107B3D899" />
-            <ComponentRef Id="cmp47BAC20F3893AC5383559E94A91A2A8B" />
-            <ComponentRef Id="cmp1774EBE82D2E516D8704E1B85D99340C" />
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             <ComponentRef Id="cmp106B51D635A76E20412259D2558811DB" />
             
-            <ComponentRef Id="cmp6933D66F80758196DDF68B30D057DD31" />
+            
+            
+            
+            
             
             
             
@@ -2518,16 +2514,37 @@
             
             
             
+            
+            
+            
+            
+            
+            
+            
+            
             <ComponentRef Id="cmp7BF0A5A02F90230BA161BA44BF152EC5" />
             
             <ComponentRef Id="cmpBFD1CC3C05337A5B653B7C4832B76D8B" />
             <ComponentRef Id="cmp92A42C8060F7212112B1FED23F99A820" />
             
+            <ComponentRef Id="cmpB528DE187FDC58FA6DC6093CCB638D3D" />
+            
+            <ComponentRef Id="cmpD6A8C0E71F74BFB038553BD8192CCD55" />
+            
+            
+            
             
             <ComponentRef Id="cmp4D78666258805013ABFB0F6F7549028B" />
             
+            <ComponentRef Id="cmp2187BD96974A920A9EAFC105DA988722" />
+            
             <ComponentRef Id="cmpD7DB51466150E16F0BD9EEE2EAB6F02E" />
             <ComponentRef Id="cmp836D7344C366C89BFA126B3F63D63AD4" />
+            
+            
+            
+            
+            
             
             
             
@@ -3043,21 +3060,14 @@
             <ComponentRef Id="cmp4CF6A96B28A58C9B4309D64D84D3B2E5" />
             <ComponentRef Id="cmp33571C4092723F8F3A04AE2E8D525336" />
             <ComponentRef Id="cmpE7752DFB74D6E9BA1C81C933D4463523" />
-            <ComponentRef Id="cmpD6014FB21E361743479050CC904EE7B8" />
-            
-            
-            <ComponentRef Id="cmp44E3B8A458E8EEE1943235A9CBF3FEAA" />
-            
-            
-            <ComponentRef Id="cmp3C0EFACC718E6E34593392FDFF8C2B52" />
             
             
             
             
-            <ComponentRef Id="cmp5FE68B45FC67609AD6D5E479F0B13AAF" />
             
             
-            <ComponentRef Id="cmp0EB8327ACC44820E4398EDB6C65B31C8" />
+            
+            
             
             
             
@@ -3066,10 +3076,9 @@
             
             
             
-            <ComponentRef Id="cmpA46DAC4FF8F4F995B0908D63253BB9B7" />
             
             
-            <ComponentRef Id="cmp99F63488956C6BADA8F357DDCE424142" />
+            
             
             
             

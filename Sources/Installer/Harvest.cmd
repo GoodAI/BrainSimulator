@@ -1,1 +1,2 @@
-"c:\Program Files (x86)\WiX Toolset v3.10\bin\heat.exe" dir ..\Platform\BrainSimulator\bin\Release\modules\ -sfrag -sreg -ag -out HarvestedModules.wxs -t HeatFilter.xslt -dr INSTALLFOLDER -cg HarvestedModules -var wix.ModulesSourceDirectory
+"c:\Program Files (x86)\WiX Toolset v3.10\bin\heat.exe" dir ..\Platform\BrainSimulator\bin\Release\modules\ -sfrag -sreg -ag -out HarvestedModules.wxs -t HeatFilterModules.xslt -dr INSTALLFOLDER -cg HarvestedModules -var wix.ModulesSourceDirectory
+"c:\Program Files (x86)\WiX Toolset v3.10\bin\heat.exe" dir ..\..\..\BrainSimulatorSampleProjects\ -sfrag -sreg -srd -ag -out HarvestedSamples.wxs -t HeatFilterExamples.xslt -dr ExamplesDirectory -cg HarvestedSamples -var wix.ExamplesSourceDirectory
