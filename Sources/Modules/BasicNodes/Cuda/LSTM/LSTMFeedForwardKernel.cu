@@ -45,7 +45,7 @@ extern "C"
 		int bias
 		)
 	{
-		const int THREAD_CNT = 1024;
+		const int THREAD_CNT = 512;
 
 		int size = inputCount + previousOutputCount + peephole * cellsPerBlock + bias;
 		int memoryBlockId = blockIdx.x;

@@ -95,7 +95,7 @@ __device__ int buffer[8192];
 __device__ unsigned int barrier = 0;
 
 template<typename R, typename T, unsigned int tCnt>
-__forceinline__ __device__ void DReduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool distributed)
+__forceinline__ __device__ void DReduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool segmented)
 {
 	__syncthreads();
 
@@ -105,8 +105,8 @@ __forceinline__ __device__ void DReduction(void* rawOut, volatile const void* ra
 	SharedMemory<R> sPartials;
 	const unsigned int tid = threadIdx.x;
 
-	unsigned int gridDim_x = distributed ? 1 : gridDim.x;
-	unsigned int blockIdx_x = distributed ? 0 : blockIdx.x;
+	unsigned int gridDim_x = segmented ? 1 : gridDim.x;
+	unsigned int blockIdx_x = segmented ? 0 : blockIdx.x;
 
 	R sum;
 	for (unsigned int i = stride * (blockIdx_x * tCnt + tid); i < size; i += stride * tCnt * gridDim_x)
@@ -151,13 +151,19 @@ __forceinline__ __device__ void DReduction(void* rawOut, volatile const void* ra
 }
 
 template<typename R, typename T, unsigned int tCnt>
-__global__ void Reduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool distributed)
+__global__ void Reduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool segmented)
 {
-	DReduction<R,T,tCnt>(rawOut, rawIn, size, outOff, inOff, stride, distributed);
+	DReduction<R,T,tCnt>(rawOut, rawIn, size, outOff, inOff, stride, segmented);
+}
+
+template <typename R, typename T, unsigned int tCnt>
+__global__ void SReduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int stride)
+{
+	DReduction<R, T, tCnt>(rawOut, rawIn, size, blockIdx.x, blockIdx.x * size, stride, true);
 }
 
 template<typename R, typename T, unsigned int tCnt>
-__forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size, bool distributed)
+__forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size, bool segmented)
 {
 	__syncthreads();
 	
@@ -168,8 +174,8 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 	SharedMemory<R> sPartials;
 	const unsigned int tid = threadIdx.x;
 
-	unsigned int gridDim_x = distributed ? 1 : gridDim.x;
-	unsigned int blockIdx_x = distributed ? 0 : blockIdx.x;
+	unsigned int gridDim_x = segmented ? 1 : gridDim.x;
+	unsigned int blockIdx_x = segmented ? 0 : blockIdx.x;
 
 	R sum;
 	for (unsigned int i = blockIdx_x * tCnt + tid; i < size; i += tCnt * gridDim_x)
@@ -214,21 +220,31 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 }
 
 template<typename R, typename T, unsigned int tCnt>
-__global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size, bool distributed)
+__global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size, bool segmented)
 {
-	DDotProduct<R,T,tCnt>(rawOut, outOff, rawIn1, rawIn2, size, distributed);
+	DDotProduct<R,T,tCnt>(rawOut, outOff, rawIn1, rawIn2, size, segmented);
+}
+
+template<typename R, typename T, unsigned int tCnt>
+__global__ void SDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size)
+{
+	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
+	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
+	DDotProduct<R,T,tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, blockIdx.x * size, true);
 }
 
 template<typename R, typename T>
 void ReductionTemplate()
 {
 	Reduction<R,T,512><<<0,0>>>(0,0,0,0,0,0,0);
+	SReduction<R,T,512><<<0,0>>>(0,0,0,0);
 }
 
 template<typename R, typename T>
 void DotProductTemplate()
 {
 	DotProduct<R,T,512><<<0,0>>>(0,0,0,0,0,0);
+	SDotProduct<R,T,512><<<0,0>>>(0,0,0,0);
 }
 
 extern "C"
@@ -258,7 +274,7 @@ void InstantiationDummy()
 typedef void(*reduction)(void*, volatile const void*, unsigned int, unsigned int, unsigned int, unsigned int, bool);
 
 template<typename R, typename T, const int bCnt>
-void TestReduction(reduction kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool distributed)
+void TestReduction(reduction kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented)
 {
 	const int w = 20;
 	for (int r = 0; r < repetitions; ++r)
@@ -283,7 +299,7 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 		int stride = 1;
 		if (randl() % 2 == 0) stride = randl() % (32) + 1;
 
-		int outOff = distributed ? bCnt : randl() % 1000;
+		int outOff = segmented ? bCnt : randl() % 1000;
 		R* d_out;
 		R* h_out = reinterpret_cast<R*>(new char[R::outSize*(outOff+1)]);
 		R* c_out = reinterpret_cast<R*>(new char[R::outSize*(outOff+1)]);
@@ -292,14 +308,14 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 
 		HANDLE_ERROR(cudaEventRecord(startGPU, 0));
 
-		if (distributed)
+		if (segmented)
 			for (size_t b = 0; b < bCnt; b++)
 			{
 				unsigned int chunkSize = size / bCnt;
 				unsigned int chunkOffset = b * chunkSize;
-				kernel <<<bCnt,1024,sizeof(R)*1024>>>(d_out, d_in, chunkSize, b, inOff + chunkOffset, stride, distributed);
+				kernel <<<bCnt,1024,sizeof(R)*1024>>>(d_out, d_in, chunkSize, b, inOff + chunkOffset, stride, segmented);
 			}
-		else kernel<<<bCnt,1024,sizeof(R)*1024>>>(d_out, d_in, size, outOff, inOff, stride, distributed);
+		else kernel<<<bCnt,1024,sizeof(R)*1024>>>(d_out, d_in, size, outOff, inOff, stride, segmented);
 
 		HANDLE_ERROR(cudaEventRecord(stopGPU, 0));
 		HANDLE_ERROR(cudaEventSynchronize(stopGPU));
@@ -311,7 +327,7 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 		int cycles = 100000000 / (inSize - inOff) >= 1 ? 100000000 / (inSize - inOff) : 1;
 		startCPU = clock();
 
-		if (distributed)
+		if (segmented)
 			for (size_t b = 0; b < bCnt; ++b)
 			{
 				unsigned int chunkSize = size / bCnt;
@@ -335,7 +351,7 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 
 		printf("Check (GPU == CPU): \n");
 		bool passed = true;
-		if (distributed)
+		if (segmented)
 			for (size_t b = 0; b < bCnt; b++)
 				passed &= R::check(h_out, c_out, b, h_in);
 		else
@@ -358,7 +374,7 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 typedef void(*dotproduct)(void*, unsigned int, volatile const void*, volatile const void*, unsigned int, bool);
 
 template<typename R, typename T, const int bCnt>
-void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool distributed)
+void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented)
 {
 	const int w = 20;
 	for (int r = 0; r < repetitions; ++r)
@@ -381,7 +397,7 @@ void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int si
 		HANDLE_ERROR(cudaMemcpy(d_in1, h_in1, sizeof(T) * size, cudaMemcpyHostToDevice));
 		HANDLE_ERROR(cudaMemcpy(d_in2, h_in2, sizeof(T) * size, cudaMemcpyHostToDevice));
 
-		int outOff = distributed ? bCnt : randl() % 1000;
+		int outOff = segmented ? bCnt : randl() % 1000;
 		R* d_out;
 		R* h_out = reinterpret_cast<R*>(new char[R::outSize*(outOff+1)]);
 		R* c_out = reinterpret_cast<R*>(new char[R::outSize*(outOff+1)]);
@@ -390,15 +406,15 @@ void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int si
 
 		HANDLE_ERROR(cudaEventRecord(startGPU, 0));
 
-		if (distributed)
+		if (segmented)
 			for (size_t b = 0; b < bCnt; ++b)
 			{
 				unsigned int chunkSize = size / bCnt;
 				unsigned int chunkOffset = b * chunkSize;
-				kernel<<<bCnt,1024,sizeof(R)*1024>>>(d_out, b, d_in1 + chunkOffset, d_in2 + chunkOffset, chunkSize, distributed);
+				kernel<<<bCnt,1024,sizeof(R)*1024>>>(d_out, b, d_in1 + chunkOffset, d_in2 + chunkOffset, chunkSize, segmented);
 			}
 		else
-			kernel<<<bCnt,1024,sizeof(R)*1024>>>(d_out, outOff, d_in1, d_in2, size, distributed);
+			kernel<<<bCnt,1024,sizeof(R)*1024>>>(d_out, outOff, d_in1, d_in2, size, segmented);
 
 		HANDLE_ERROR(cudaEventRecord(stopGPU, 0));
 		HANDLE_ERROR(cudaEventSynchronize(stopGPU));
@@ -410,7 +426,7 @@ void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int si
 		int cycles = 100000000 / size >= 1 ? 100000000 / size : 1;
 		startCPU = clock();
 
-		if (distributed)
+		if (segmented)
 			for (size_t b = 0; b < bCnt; ++b)
 			{
 				unsigned int chunkSize = size / bCnt;
@@ -433,7 +449,7 @@ void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int si
 
 		printf("Check (GPU == CPU): \n");
 		bool passed = true;
-		if (distributed)
+		if (segmented)
 			for (size_t b = 0; b < bCnt; b++)
 				passed &= R::check(h_out, c_out, b, h_in1, h_in2);
 		else

@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.Transforms;
 using GoodAI.Modules.NeuralNetwork.Tasks;
 using ManagedCuda.VectorTypes;
 using ManagedCuda.BasicTypes;
@@ -33,13 +34,10 @@ namespace GoodAI.Modules.LSTM.Tasks
 
         private MyCudaKernel m_netInputFeedForwardKernel;
 
-        private MyCudaKernel m_inputGateFeedForwardKernel;
-        private MyCudaKernel m_forgetGateFeedForwardKernel;
-        private MyCudaKernel m_outputGateFeedForwardKernel;
-        private MyCudaKernel m_cellInputFeedForwardKernel;
-
         private MyCudaKernel m_cellStateFeedForwardKernel;
         private MyCudaKernel m_outputStateFeedForwardKernel;
+
+        private MyCudaKernel m_segmented;
 
         public MyLSTMFeedForwardTask() { }
 
@@ -54,9 +52,11 @@ namespace GoodAI.Modules.LSTM.Tasks
                 
                 case MyLSTMLayer.LearningTasksType.BPTT:
                     m_netInputFeedForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"LSTM\LSTMFeedForwardKernel", "GetNetInput");
-                    m_netInputFeedForwardKernel.DynamicSharedMemory = 1024 * sizeof(float);
+                    m_netInputFeedForwardKernel.DynamicSharedMemory = 512 * sizeof(float);
                     m_netInputFeedForwardKernel.GridDimensions = Owner.MemoryBlocks;
-                    m_netInputFeedForwardKernel.BlockDimensions = 1024;
+                    m_netInputFeedForwardKernel.BlockDimensions = 512;
+
+                    m_segmented = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f, Owner.MemoryBlocks);
 
                     m_cellStateFeedForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"LSTM\LSTMFeedForwardKernel", "CellStateFeedForwardKernelBPTT");
                     m_cellStateFeedForwardKernel.BlockDimensions = Owner.MemoryBlocks;
