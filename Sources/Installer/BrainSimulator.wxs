@@ -110,12 +110,36 @@
         <File Id='AgaControlsDLL' Name='Aga.Controls.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\Aga.Controls.dll' KeyPath='yes' />
       </Component>
 
+      <Component Id='ManagedCudaBlasLib' Guid='*'>
+        <File Id='ManagedCudaBlasDLL' Name='CudaBlas.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaBlas.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='ManagedCudaFFTLib' Guid='*'>
+        <File Id='ManagedCudaFFTDLL' Name='CudaFFT.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaFFT.dll' KeyPath='yes' />
+      </Component>
+
       <Component Id='ManagedCudaRandLib' Guid='*'>
         <File Id='ManagedCudaRandDLL' Name='CudaRand.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaRand.dll' KeyPath='yes' />
       </Component>
 
+      <Component Id='ManagedCudaSolveLib' Guid='*'>
+        <File Id='ManagedCudaSolveDLL' Name='CudaSolve.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaSolve.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='ManagedCudaSparseLib' Guid='*'>
+        <File Id='ManagedCudaSparseDLL' Name='CudaSparse.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaSparse.dll' KeyPath='yes' />
+      </Component>
+
       <Component Id='ManagedCudaLib' Guid='*'>
         <File Id='ManagedCudaDLL' Name='ManagedCuda.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\ManagedCuda.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='ManagedCudaNPPLib' Guid='*'>
+        <File Id='ManagedCudaNPPDLL' Name='NPP.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\NPP.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='ManagedCudaNVRTCLib' Guid='*'>
+        <File Id='ManagedCudaNVRTCDLL' Name='NVRTC.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\NVRTC.dll' KeyPath='yes' />
       </Component>
 
       <Component Id='OpenTKLib' Guid='*'>
