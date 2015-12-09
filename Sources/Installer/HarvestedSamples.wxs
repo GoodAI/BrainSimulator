@@ -1,0 +1,769 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="ExamplesDirectory">
+            <Component Id="cmp194164997A733864328D5544F1A9E078" Guid="*">
+                <File Id="filEA6F4B56F2EF19769D94FE8926140A9E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\README.md" />
+            </Component>
+            
+            <Directory Id="dir53784FCAE2795810EC2CC80A346DD3FB" Name="DiscreteQLearning">
+                <Component Id="cmpB3950B6F7A40D606C5ED201178706F7D" Guid="*">
+                    <File Id="fil647A274520C2B90791C6A0A8ACB5803B" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\HARM-gridworld-mapF.brain" />
+                </Component>
+                <Component Id="cmpFEEC811D129763489B81AEA418C95DC2" Guid="*">
+                    <File Id="filB24B3E6CBA3427985E7484F8B83AF837" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\HARM-gridworld-mapG.brain" />
+                </Component>
+                <Component Id="cmp883C4353E68A38504B672E2E2737D43F" Guid="*">
+                    <File Id="filD2FDB57408C59FCCAFBE896CCA1607E6" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\QLearning-gridworld-oneReward.brain" />
+                </Component>
+                <Component Id="cmp2F8B26F085F8BB6BA908261E003FF0F7" Guid="*">
+                    <File Id="fil4526A7635C68BE0BBE32B5944B183EC0" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\QLearning-gridworld-twoRewards.brain" />
+                </Component>
+                <Component Id="cmpA436E6AF221DE467EB618350535250DA" Guid="*">
+                    <File Id="fil955812745EB7CB812DA36D90EE4EC569" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\QLearning-tictactoe-twoNodes.brain" />
+                </Component>
+                <Component Id="cmp57A4A04B466AC37E2D9B22BAC9960ACC" Guid="*">
+                    <File Id="fil739D9F2A096FFCB4C98E718B1042A69B" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\QLearning-tictactoe.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dirC21AC6ABED4247F914CC78CA4E770F5A" Name="LoopGroup">
+                <Component Id="cmpBD208791779066A68798A76D376AEC60" Guid="*">
+                    <File Id="filABDAEA229203828DD7A4C184B50068A3" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\LoopGroup\loopGroupExample.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dirF9177D8CC9925389434139165B65D32A" Name="Matrix">
+                <Component Id="cmpE40C9FCBAA9186256344C4AF8A501982" Guid="*">
+                    <File Id="fil1B49CE5F20D67ADFF89430A36348B758" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Matrix\Matrix_Addition.brain" />
+                </Component>
+                <Component Id="cmp255094FFA9E98BEFE25F6D6CFD782030" Guid="*">
+                    <File Id="fil1EBAC0B252AC4C97EBFD6969C6FE3E3E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Matrix\Matrix_getRowCol.brain" />
+                </Component>
+                <Component Id="cmp6A07FBF321FBFD390545F0667FE5E7F9" Guid="*">
+                    <File Id="filB1AEF4E723CDF0A269A9684FD24D6D95" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Matrix\Matrix_LogExpRound.brain" />
+                </Component>
+                <Component Id="cmp02030A54E6B6B58A1E937441EE353F0C" Guid="*">
+                    <File Id="filCE0AB12CB9571E4230073A011B0E2EA8" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Matrix\Matrix_testMultipl.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dir820FBEB49FB22664A101A181BCF9166D" Name="Milestones">
+                <Directory Id="dirBBC442356D0B926BE58FFC1FCC504C23" Name="Breakout">
+                    <Component Id="cmp90E7A2961D7B7BC184DCEAB3C6DC8A73" Guid="*">
+                        <File Id="filC428D7DE2EF1AF324DF00D71E22B9423" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\breakout_final_release_new_visonNoXML.brain" />
+                    </Component>
+                    <Component Id="cmp16F359427FC536D70476A726D2637772" Guid="*">
+                        <File Id="fil080CCE3196016302F466580D559C9102" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\breakout_final_release_obsolete_use_BSv0.2.brain" />
+                    </Component>
+                    <Directory Id="dirE31C63895644624F421EE945B4133193" Name="Pong_Final">
+                        <Component Id="cmp490C7CFA1ACB934C1AB6FA30621C0208" Guid="*">
+                            <File Id="filDA5F314EB5F5E60DF996F3133DBAF591" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\action_net.xml" />
+                        </Component>
+                        <Component Id="cmp69436C62EA2FFF62F2131B3474094357" Guid="*">
+                            <File Id="fil8EB48587CBD852FD643B995D4C8626B2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\AN_netArchitecture.xml" />
+                        </Component>
+                        <Directory Id="dir30DEAB3286F23869A5A29A61A4C11167" Name="newNN.statedata">
+                            <Directory Id="dir0B53D495336FE70B8B7BAA87B3D18ADC" Name="MyAbsoluteValue_411">
+                                <Component Id="cmpED6E3D795005698B086F1938686EE8FD" Guid="*">
+                                    <File Id="fil682990743CD663917DE8D8391B0919EA" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyAbsoluteValue_411\Output.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir2728F31C331A9ABCB7136088B2650C30" Name="MyAbsoluteValue_413">
+                                <Component Id="cmp977D04E1D34A9CD5A818D6A2A6769F55" Guid="*">
+                                    <File Id="fil00B32F1B79A9B03439DE63926C29B520" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyAbsoluteValue_413\Output.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir0A1308E16A323C3D481A0F3C65A5B3E7" Name="MyHiddenLayer_459">
+                                <Component Id="cmpC88B1D6C48F976F08BF0D93B84558D4E" Guid="*">
+                                    <File Id="fil8D765A02FDEFC0AD29FDCB483527501A" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyHiddenLayer_459\Bias.mb" />
+                                </Component>
+                                <Component Id="cmp137CDE37FFA4C24A5CBA190DE14749DB" Guid="*">
+                                    <File Id="fil6EA60851B5D903CF10EF93EFEF54C9B2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyHiddenLayer_459\Output.mb" />
+                                </Component>
+                                <Component Id="cmp02E8F53D9A111402AC049E3054501875" Guid="*">
+                                    <File Id="fil5E7036623AAC00102C498C3F67737E49" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyHiddenLayer_459\Weights.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir4E4140EB2C121D2C0C1FC87C2C5A410E" Name="MyOutputLayer_460">
+                                <Component Id="cmp9D05354B1D9946DCA897D9AAB90053EC" Guid="*">
+                                    <File Id="filB6BC7F6D5F74563A091D920C359A9F7D" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyOutputLayer_460\Bias.mb" />
+                                </Component>
+                                <Component Id="cmp11C7AB6DC779BECC9D4CEB170D5A94FF" Guid="*">
+                                    <File Id="fil1E69CFDD69CD9ECB6D1EEDA3EF208E77" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyOutputLayer_460\Cost.mb" />
+                                </Component>
+                                <Component Id="cmp0D241DB7C7439A0BCF19B14D857AB11A" Guid="*">
+                                    <File Id="fil590445827D176F56401B23B95C58DFE2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyOutputLayer_460\Output.mb" />
+                                </Component>
+                                <Component Id="cmpC89A2FE6C4BA8784501FF65ED4D2E130" Guid="*">
+                                    <File Id="filA5ABD409EA55337CAD7C53A9396A2EE0" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\newNN.statedata\MyOutputLayer_460\Weights.mb" />
+                                </Component>
+                            </Directory>
+                        </Directory>
+                        <Directory Id="dir134F6560158A924A0B52748BE7F6C867" Name="obj_coding.statedata">
+                            <Directory Id="dir977D258802B1B301509214F851D97F6A" Name="MyAutoencoderNode_267">
+                                <Component Id="cmp222F512BAB907F4377413AFFD6965582" Guid="*">
+                                    <File Id="fil22DC5F43FD6CC08D9247BB9892342B0B" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\obj_coding.statedata\MyAutoencoderNode_267\FeatureOutput.mb" />
+                                </Component>
+                                <Component Id="cmp72A64B4064347FF10B170A7350C337CA" Guid="*">
+                                    <File Id="fil16DB73F2A0A6A7C37F3C3A914956F5E7" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\obj_coding.statedata\MyAutoencoderNode_267\Output.mb" />
+                                </Component>
+                                <Component Id="cmp9955DE22BBC5D83F51CC02219034CAC4" Guid="*">
+                                    <File Id="fil8807342CAEB5D1AF386DA54B7B34E00C" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\obj_coding.statedata\MyAutoencoderNode_267\WeightsMemoryBlock.mb" />
+                                </Component>
+                            </Directory>
+                        </Directory>
+                        <Directory Id="dir5836922BC8C03318E33E8E70A2E491C2" Name="Vision.statedata">
+                            <Directory Id="dir4E3A1BEE60014E903D71FBA89763DD1B" Name="MyHiddenLayer_441">
+                                <Component Id="cmpDF109518A84CF9DAF9AE38C5E0FCD579" Guid="*">
+                                    <File Id="fil01215333E284DF3251A7B387CB1074E2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyHiddenLayer_441\Bias.mb" />
+                                </Component>
+                                <Component Id="cmp08D9A1C98FF3F2713959F57F34E79E88" Guid="*">
+                                    <File Id="filA21975CBE06A706BAA8DBFEA63493E50" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyHiddenLayer_441\Output.mb" />
+                                </Component>
+                                <Component Id="cmp76F375117F19664D297AAF236A1BD6FD" Guid="*">
+                                    <File Id="fil1A6F813EE94F21149C4C99D9E671621D" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyHiddenLayer_441\Weights.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir72C7F5798FE035B16319ED2B8C24F206" Name="MyHiddenLayer_442">
+                                <Component Id="cmp792D11157E1ECA9AE5E79CC7134B2B41" Guid="*">
+                                    <File Id="fil9B1BD9417FDB7A098A64879A1A0B6DFE" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyHiddenLayer_442\Bias.mb" />
+                                </Component>
+                                <Component Id="cmpD1EE459E0E5D81EFB8037727EDABF9AB" Guid="*">
+                                    <File Id="filA510E5619711E8AC5F3AF233FBDD08E5" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyHiddenLayer_442\Output.mb" />
+                                </Component>
+                                <Component Id="cmp03CA8C751B754B1B105C4F721F60CB00" Guid="*">
+                                    <File Id="fil289757F784C27EFBC417AE1F048004B6" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyHiddenLayer_442\Weights.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir34F57DB6BF21640475FBCA102B7C8065" Name="MyKMeansWM_327">
+                                <Component Id="cmpDF6BB977DCC97BBA264CEE11365FDB0D" Guid="*">
+                                    <File Id="filC3C98004D8ACECCA18A0069E619227F6" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusCenters.mb" />
+                                </Component>
+                                <Component Id="cmp945F88A9E5AE288462741667E12BE262" Guid="*">
+                                    <File Id="filED63AFC2D7DA1F9B7D5B35C86C09226E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusCentersLastSeen.mb" />
+                                </Component>
+                                <Component Id="cmp845CB65133C967E3D518D776128B2218" Guid="*">
+                                    <File Id="filCDA3FDA65ECAE7AAFDB9C58626A4DFF3" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusCentersSize.mb" />
+                                </Component>
+                                <Component Id="cmp9DC3880E220687CD8C40540F10C84A94" Guid="*">
+                                    <File Id="filD664A223A016E58DF54157F8584D55B2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusCentersXY.mb" />
+                                </Component>
+                                <Component Id="cmp25D84C0279EF5CBE3B5E891C274A1F9F" Guid="*">
+                                    <File Id="fil6A928FFE303A38A6A9E0E24F2C30521C" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusterDistPos.mb" />
+                                </Component>
+                                <Component Id="cmpC2BB9C323464B0434E325075E79915DE" Guid="*">
+                                    <File Id="fil9B99BE62DE4603752E76D7DB0D473B6C" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusterDists.mb" />
+                                </Component>
+                                <Component Id="cmpA7D41F59F4C04394581953FA97E6A5BE" Guid="*">
+                                    <File Id="fil2133CB154311555D42181EF64022BE81" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\ClusterDistSym.mb" />
+                                </Component>
+                                <Component Id="cmp03C5FB8B624276FBA425E7FE62AB7CBF" Guid="*">
+                                    <File Id="fil10BA476913492C46E0D52E9C6FC7DA83" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327\NOfObjects.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir68EDADA82E0C739CC8793EFCE125E199" Name="MyKMeansWM_327zal">
+                                <Component Id="cmp718B390CE509CAC1F9421C16522893E5" Guid="*">
+                                    <File Id="fil6F984B9AFDAE0239E78E58E7A3F34047" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusCenters.mb" />
+                                </Component>
+                                <Component Id="cmpDDA8A770611194B2EBADC8988F652C09" Guid="*">
+                                    <File Id="fil84E8F5B199F607A51D66A22C9BF3E5F8" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusCentersLastSeen.mb" />
+                                </Component>
+                                <Component Id="cmp5B7E813BDB33CD6DA79DEE7592E98475" Guid="*">
+                                    <File Id="fil439E674BF28F5230C32F0797DBB1FFEE" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusCentersSize.mb" />
+                                </Component>
+                                <Component Id="cmp80839D600F988E8288247E408080CEA7" Guid="*">
+                                    <File Id="fil2D5662E116EE74BC4F1D7C9865A4FC19" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusCentersXY.mb" />
+                                </Component>
+                                <Component Id="cmp923B1D2AA287141567B86B2AFDE66206" Guid="*">
+                                    <File Id="fil277D2375C668577CE7934967DF526606" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusterDistPos.mb" />
+                                </Component>
+                                <Component Id="cmp0F7DD66F90EAAEFB334025F6F2309A18" Guid="*">
+                                    <File Id="filB149F949EB5DD12BAF51F39ABB5D6142" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusterDists.mb" />
+                                </Component>
+                                <Component Id="cmpA5C385E058E8402B9E730A1310DA6C46" Guid="*">
+                                    <File Id="filDA9C8204997A730E7D436C7498B75328" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\ClusterDistSym.mb" />
+                                </Component>
+                                <Component Id="cmp7792A8B516A80E04CC776CCCF738AD3B" Guid="*">
+                                    <File Id="filAB478FC49AD95FB87F56D8771E80AF94" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyKMeansWM_327zal\NOfObjects.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir070CC955B52499044C4A1D0F59E82A33" Name="MyOutputLayer_443">
+                                <Component Id="cmpA9579A2EB6D887BA2A21356DC45D76E5" Guid="*">
+                                    <File Id="fil19D89844DF44FC50DA1641BD89903D90" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyOutputLayer_443\Bias.mb" />
+                                </Component>
+                                <Component Id="cmp103E35C9D8EB216EB3C186C66C6F23A8" Guid="*">
+                                    <File Id="filF95FDADF77DF578B8B3E32F40C3FD3E2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyOutputLayer_443\Cost.mb" />
+                                </Component>
+                                <Component Id="cmp83F60CF8EC89E699B4333E35C2BC1903" Guid="*">
+                                    <File Id="fil87B211E977688DA05DF64A64FD94F5E2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyOutputLayer_443\Output.mb" />
+                                </Component>
+                                <Component Id="cmp5B895ECC58FA5BF7B7D954310C91F2BD" Guid="*">
+                                    <File Id="filB73FAA6DADE0CAF2F8310B2E2B3108D4" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\Vision.statedata\MyOutputLayer_443\Weights.mb" />
+                                </Component>
+                            </Directory>
+                        </Directory>
+                        <Directory Id="dirA8B12265E1F5227A1177A4C2D7E7168A" Name="VisualWM_32Feat_phong_prelearnWM.statedata">
+                            <Directory Id="dir7298F4664159A134E095FF8D9C1505AB" Name="MyKMeansWM_327">
+                                <Component Id="cmp62F65683DB9E581CA7379171CB1E7C2B" Guid="*">
+                                    <File Id="fil06B08E2C1DBECFF418FB0E2710F73488" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusCenters.mb" />
+                                </Component>
+                                <Component Id="cmp03524E92447C226F41426D7E0FF05380" Guid="*">
+                                    <File Id="filB98E69D4ADF6002F327E1175294767BB" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusCentersLastSeen.mb" />
+                                </Component>
+                                <Component Id="cmpA8EC989C3846EFB1D2514EFCB3A4AA89" Guid="*">
+                                    <File Id="filD4A98F780E9CAD46428DC96E38F34460" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusCentersSize.mb" />
+                                </Component>
+                                <Component Id="cmp64F2CD8E05E8951F879F11DA1B5319AA" Guid="*">
+                                    <File Id="fil82E5813825AA9AFC5A64448F6AB8CC4A" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusCentersXY.mb" />
+                                </Component>
+                                <Component Id="cmp2E9BEEED403907F6527BED0F861CEC96" Guid="*">
+                                    <File Id="filF0B0B94577BE1F87B586220D3DAFB857" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusterDistPos.mb" />
+                                </Component>
+                                <Component Id="cmp73C83D723B349DED0A234B12159A2A5B" Guid="*">
+                                    <File Id="filEA3CF17E2EBA061F38604D8DEADC26BB" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusterDists.mb" />
+                                </Component>
+                                <Component Id="cmpEE95CBD4A3E85D5970D561F435B477CF" Guid="*">
+                                    <File Id="fil7C80D73DCED2637F9B70696F3CC583EA" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\ClusterDistSym.mb" />
+                                </Component>
+                                <Component Id="cmp13F239104414DBF3A755448B05653B60" Guid="*">
+                                    <File Id="fil737ABABCB5DD610E762CD1D256456B0E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\VisualWM_32Feat_phong_prelearnWM.statedata\MyKMeansWM_327\NOfObjects.mb" />
+                                </Component>
+                            </Directory>
+                        </Directory>
+                        <Directory Id="dir8B2E1098E4095118E0DE1D7526AB0C54" Name="_2_1024_prelearned_to_wm3_meeting.statedata">
+                            <Directory Id="dir1A33C3CA6C64FA9C26B4F5FA5E7173F4" Name="MyAbsoluteValue_411">
+                                <Component Id="cmpCF66645FF3FC3E3BD7333DD3605EB0A7" Guid="*">
+                                    <File Id="filAF0D3AD37F1C5C6B27104C99BCFE3A04" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\_2_1024_prelearned_to_wm3_meeting.statedata\MyAbsoluteValue_411\Output.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dirC2AF21E7379751E9E6B745F768364A72" Name="MyAbsoluteValue_413">
+                                <Component Id="cmpE31D2478156008FEA6E364E32A6B6CE4" Guid="*">
+                                    <File Id="filF13E6D45B5D111113034F49103580CFF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\_2_1024_prelearned_to_wm3_meeting.statedata\MyAbsoluteValue_413\Output.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir9CEC3D8ED411EE60C6EE6E5B34BB6448" Name="MyDynamicFFNode_371">
+                                <Component Id="cmpCD45F26A743E1877D3601CC54BCECC10" Guid="*">
+                                    <File Id="filD87FF64A2F4249EF7D5487A0E2789536" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\_2_1024_prelearned_to_wm3_meeting.statedata\MyDynamicFFNode_371\Output.mb" />
+                                </Component>
+                                <Component Id="cmp9BEEF32703CF44905F6288C6C3D3DBBC" Guid="*">
+                                    <File Id="filFF9A4A3A81992CA5EDFC8E6F6C646515" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\Pong_Final\_2_1024_prelearned_to_wm3_meeting.statedata\MyDynamicFFNode_371\WeightsMemoryBlock.mb" />
+                                </Component>
+                            </Directory>
+                        </Directory>
+                    </Directory>
+                    <Directory Id="dirD8AC8930D59A6E3C43814F0E20808E50" Name="VisionTrain">
+                        <Component Id="cmpCD96574EA27CA6D16061661E8AB6AE9C" Guid="*">
+                            <File Id="fil8BB671F8EF6CAED61D3B29760E8FC704" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\00_breakout_trainVisionNN.brain" />
+                        </Component>
+                        <Component Id="cmp1F15F009CB62E28C191A0F43792822D5" Guid="*">
+                            <File Id="fil445ABB414891C3E54C7F0E1743047276" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\01_breakout_trainVisionVWM.brain" />
+                        </Component>
+                        <Component Id="cmp1FFF409BA4708116E2893F61DADEDF25" Guid="*">
+                            <File Id="filAFD512866B776D08171FB06FF3D50450" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\02_breakout_testVision.brain" />
+                        </Component>
+                        <Directory Id="dir5A710A60CCD37942A49A81D292A9D7F8" Name="Trained_Vision_NN.statedata">
+                            <Directory Id="dir424E7010600F6B914B0CBA8E475243D1" Name="MyHiddenLayer_441">
+                                <Component Id="cmpC63D28FA8881F66BA7F9F6E4428C5CF5" Guid="*">
+                                    <File Id="fil6C777BC70636A648607F2D403BBD23A0" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyHiddenLayer_441\Bias.mb" />
+                                </Component>
+                                <Component Id="cmpED9D1C54E034FB12C97D730F7928A254" Guid="*">
+                                    <File Id="filEF7B4891430FE89F948107E06FBD69C3" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyHiddenLayer_441\Output.mb" />
+                                </Component>
+                                <Component Id="cmp23DA60E3BE94DEAAC051397448921A31" Guid="*">
+                                    <File Id="fil3AB921364063FC6D9067D625B87421E9" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyHiddenLayer_441\Weights.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dirBE5F23584BCFFB33FBAA00BAA495A458" Name="MyHiddenLayer_442">
+                                <Component Id="cmpCBE2D1DB9A68ADCFA3838109D6D264AF" Guid="*">
+                                    <File Id="fil84EF14682FD561248A78F09A6FB9DD7E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyHiddenLayer_442\Bias.mb" />
+                                </Component>
+                                <Component Id="cmp0A7FEAA22A956471EC30DC2F03FC40EA" Guid="*">
+                                    <File Id="fil292F1A24B00707ED5E832053FE8EF523" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyHiddenLayer_442\Output.mb" />
+                                </Component>
+                                <Component Id="cmp1C0980E0CE9CED4634CD833A7DD7E43B" Guid="*">
+                                    <File Id="fil784AE2C19AD8CF5A074E5BF1B6EE9622" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyHiddenLayer_442\Weights.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dirA3CA5DD11EBFCE2EF5A7B792A8A89F4A" Name="MyKMeansWM_327">
+                                <Component Id="cmp33130F58690D8B511F5D05496091EAFF" Guid="*">
+                                    <File Id="filE96FCA06D1A4F59DDA46E22977BFCB27" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusCenters.mb" />
+                                </Component>
+                                <Component Id="cmp8A3E0836B85A203D3321A438F61C4828" Guid="*">
+                                    <File Id="filF0E0E89339BFA175839ADBE5151270CF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusCentersLastSeen.mb" />
+                                </Component>
+                                <Component Id="cmpC75D4E92DED3CC8FBA9407DB7B9C371E" Guid="*">
+                                    <File Id="filF86674F8EEF5C6533BCD3560C8F7E044" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusCentersSize.mb" />
+                                </Component>
+                                <Component Id="cmpCE24099433CFDC9D5BB7DC4C28A36437" Guid="*">
+                                    <File Id="fil9C27BE5E77C1751E7566B87E836CCBF7" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusCentersXY.mb" />
+                                </Component>
+                                <Component Id="cmp6FAD5206E72429EBFE7778CC6D9F061B" Guid="*">
+                                    <File Id="fil3E59D80FDC3AFFE8233ADA8014BD3A0E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusterDistPos.mb" />
+                                </Component>
+                                <Component Id="cmpB9481F4DE5CC6B65270EF8199BEA39CC" Guid="*">
+                                    <File Id="filB2A80A1B182A91AD912257D1FCF7C6DF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusterDists.mb" />
+                                </Component>
+                                <Component Id="cmpED056B6498DB78CFCE1B39281F019C56" Guid="*">
+                                    <File Id="filE07EC8A4D87B117A2E2A44F1A43F7426" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\ClusterDistSym.mb" />
+                                </Component>
+                                <Component Id="cmpA46074E49B1B3D439993131E31333674" Guid="*">
+                                    <File Id="fil00624829D3D2CD3C1775DC1A677E1801" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327\NOfObjects.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dir5EAE31F76C1241F1E03BBD32A99A43F3" Name="MyKMeansWM_327zal">
+                                <Component Id="cmpA81AED098CD99E6FE571C3EEA7848D0B" Guid="*">
+                                    <File Id="filFFE426C316B15D6CCCC12DD47DF375CB" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusCenters.mb" />
+                                </Component>
+                                <Component Id="cmpADA2A1E6B04585BF821F4456A797FD02" Guid="*">
+                                    <File Id="fil13DDB69C9EC4716CB901DA9B2844AB01" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusCentersLastSeen.mb" />
+                                </Component>
+                                <Component Id="cmp37B6670E31DB4941F178A5A0A5DC16BB" Guid="*">
+                                    <File Id="fil46E8C73D3C97E21D7F99ED4F7D6977AD" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusCentersSize.mb" />
+                                </Component>
+                                <Component Id="cmpDC66C65C9EEA003B79D47AAF4E0A6404" Guid="*">
+                                    <File Id="fil6F60683FC747469BCEB97CE0FF2B5F0C" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusCentersXY.mb" />
+                                </Component>
+                                <Component Id="cmpE24D959618BE39AB02DBFA4F82E1C037" Guid="*">
+                                    <File Id="filA01DE00E87CC43BEE76DDAAA3AAF0006" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusterDistPos.mb" />
+                                </Component>
+                                <Component Id="cmpD8ABB256B101DF337824B8051E5D3C1E" Guid="*">
+                                    <File Id="filD535F5DC8E5CE437F39EC2345119AABB" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusterDists.mb" />
+                                </Component>
+                                <Component Id="cmpB162903C458B8E47104AB68DB532AA0F" Guid="*">
+                                    <File Id="filDE28B4E1AF56E95429C85814C8300E14" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\ClusterDistSym.mb" />
+                                </Component>
+                                <Component Id="cmp4EFF381DEB697BEB7B0900A4A60B1894" Guid="*">
+                                    <File Id="fil21C7A6C37B785F2D226718A291E12C5E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyKMeansWM_327zal\NOfObjects.mb" />
+                                </Component>
+                            </Directory>
+                            <Directory Id="dirC7A7604E10055184BAE0DB1FA35B9507" Name="MyOutputLayer_443">
+                                <Component Id="cmp5993901D5AA87F8EE77E341116938C01" Guid="*">
+                                    <File Id="fil71C55D4888B72D0345EECB6804E071C0" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyOutputLayer_443\Bias.mb" />
+                                </Component>
+                                <Component Id="cmp2FE0ECFB9ABB0627D39977D5992ADB61" Guid="*">
+                                    <File Id="fil0C99C95580935EF505C3DF22658EDFE9" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyOutputLayer_443\Cost.mb" />
+                                </Component>
+                                <Component Id="cmp8A1002959023737F3F3EEA8A193B73AF" Guid="*">
+                                    <File Id="fil31D2A830CB92B2DC0F4E174D475201D8" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyOutputLayer_443\Output.mb" />
+                                </Component>
+                                <Component Id="cmp8C5A7C8EE5FB5E6C9FEA72C69C99025C" Guid="*">
+                                    <File Id="fil0182A0CEE0D5A79EC030AB736DBBB9FF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\VisionTrain\Trained_Vision_NN.statedata\MyOutputLayer_443\Weights.mb" />
+                                </Component>
+                            </Directory>
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+            <Directory Id="dir4ABF4E5EA13972A560A0812B3D26DA27" Name="Motor">
+                <Component Id="cmp574329E974EB5602A5445AEE3B9DC1D1" Guid="*">
+                    <File Id="fil36C230043D2F86C246BD9CFB7F60B16C" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Motor\jtc_bipedal.brain" />
+                </Component>
+                <Component Id="cmp2090EEEA0AF8DB4F0871DF06CE54294D" Guid="*">
+                    <File Id="filDFE5E2CCCAC5ED4A7EDE16E43C939921" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Motor\pid_arm_setpoint.brain" />
+                </Component>
+                <Component Id="cmp9A0B07F3A8D6322B99A0FF37541626FB" Guid="*">
+                    <File Id="fil21D707F7EBFD3F16D6B44C09253661E2" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Motor\pid_pendulum.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dir22FE2E806C00EFA722312A30057B8DF9" Name="NeuralNetworks">
+                <Component Id="cmpFD567EEDD3D6A490EA212392EF63A4C5" Guid="*">
+                    <File Id="fil3103E97F587EB573236BA889DA179CEE" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\BPTT_on_mnistSequences.brain" />
+                </Component>
+                <Component Id="cmp42BC0FA5D083B61822E7403FD5D03373" Guid="*">
+                    <File Id="filD8DDA2CCFCA9A425D72BFB3653537E42" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Breakout.brain" />
+                </Component>
+                <Component Id="cmpDD81D8697DCDE24601E10C0C59DCD0D9" Guid="*">
+                    <File Id="fil33BF6239DC6BAABFDE98165E398CEA81" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\LSTM_sine.brain" />
+                </Component>
+                <Component Id="cmpFE7784287AF91B5222CDF0750A457941" Guid="*">
+                    <File Id="filBEC0F2892DEA5C111B1AC1D3B226FAA7" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\LSTM_text.brain" />
+                </Component>
+                <Component Id="cmpCC453998611EBDDC45E867D82540D9A9" Guid="*">
+                    <File Id="fil608C65F5DD4288A29A151F1AB0E57659" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Mnist.brain" />
+                </Component>
+                <Component Id="cmp90267CD39736B0431C1D4DABB0DE93FC" Guid="*">
+                    <File Id="fil1AE2FE4F5F9DCCC171F1AB7B50FB9D27" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Model_batchlearning.brain" />
+                </Component>
+                <Component Id="cmp02C6A8AE107D6B68610C24D8A8A047EF" Guid="*">
+                    <File Id="fil9D3F3B48E0B15F1FC3D52F90EC501221" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\RNN_sine.brain" />
+                </Component>
+                <Component Id="cmpB906C66649B4ADC3C6E9D345A96D8583" Guid="*">
+                    <File Id="fil95807910FDA7AAC35A687A868403E31C" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Sound_FFT.brain" />
+                </Component>
+                <Component Id="cmpCB8EC0C90401368C1E624324EE39AAC2" Guid="*">
+                    <File Id="fil8FE23CCD7AAA64326AFA8149E87CC6E5" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Sound_LPC.brain" />
+                </Component>
+                <Component Id="cmp540F362E296801AFF0F8C5FF31D1D168" Guid="*">
+                    <File Id="filAB1F9D11F1E506E4E3160FB4D46FD79F" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Sound_MFCC.brain" />
+                </Component>
+                <Component Id="cmp9020EC547CEDCB67F05C99A96D362CB9" Guid="*">
+                    <File Id="fil888FCBAD8BADDE472915CA2F06A224EC" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\VariGauss.brain" />
+                </Component>
+                <Component Id="cmp94AEC45B01E18BA6F31044C18AF4281F" Guid="*">
+                    <File Id="filFDD19459C5ADE7454C305A729070D6E1" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Xor.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dir4F11521F5FF8CDC397F2A474939EC9E5" Name="RBM">
+                <Component Id="cmpBBC0D20259A6DE2BD9C6B4DCC58F517C" Guid="*">
+                    <File Id="fil4F17D2DF53E2C57E2B93B6265ED81317" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.state" />
+                </Component>
+                <Component Id="cmpFB0F8645ED4D8D8E06558DDB3288D680" Guid="*">
+                    <File Id="fil31B47C25416CA98BAF50B25D348990D5" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.brain" />
+                </Component>
+                <Directory Id="dir493AE4C50B768457196834D5F393EAFB" Name="mnist.statedata">
+                    <Directory Id="dirF314258CCC0EF84622BFF624454E5CB3" Name="MyMNISTWorld_9">
+                        <Component Id="cmp4A5E46D9AB07382153632A519553712E" Guid="*">
+                            <File Id="filA310A9797A2FF207187266E30A8355BA" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyMNISTWorld_9\Bitmap.mb" />
+                        </Component>
+                        <Component Id="cmpC9C9FC1C65B1A3DC33334F27AF6BE3FA" Guid="*">
+                            <File Id="fil7B157178E08F85A48670B056E4ED6FFF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyMNISTWorld_9\Label.mb" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dirC0AAAF1B0B7293A207AE9BCD08CAB6E5" Name="MyRBMInputLayer_11">
+                        <Component Id="cmp3BB831DC6B5B08DE1795BCD35BA75C25" Guid="*">
+                            <File Id="fil7C95C5A591E9FCCDC930E5446D138BF4" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMInputLayer_11\Bias.mb" />
+                        </Component>
+                        <Component Id="cmp4CDB3340CAE524393AF5141634A1AF0A" Guid="*">
+                            <File Id="fil5CD6BE91CD422D291B6A7359B0F2CAD8" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMInputLayer_11\Output.mb" />
+                        </Component>
+                        <Component Id="cmpED61C0ACF76E89735DC614B702A98B09" Guid="*">
+                            <File Id="fil8C01A4ED1342078184F50B0A79BEC2B1" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMInputLayer_11\PreviousBiasDelta.mb" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dir0F776E16D296DC376DED4FF3039B9853" Name="MyRBMLayer_10">
+                        <Component Id="cmp14E95136A3EF50212363F8A3725D51B3" Guid="*">
+                            <File Id="filCDCA800B65FBC2F5E7DDEDE881B9F521" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMLayer_10\Bias.mb" />
+                        </Component>
+                        <Component Id="cmp25586815487671EF3786734C7F1BFB94" Guid="*">
+                            <File Id="fil8825158CD9B70DA280F1DE60C3F3CE94" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMLayer_10\Output.mb" />
+                        </Component>
+                        <Component Id="cmp438DBA413B59AB741BD40F66965F8E97" Guid="*">
+                            <File Id="fil9C0A5035AABABE7DCE7FF06DB8F4796E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMLayer_10\Weights.mb" />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+            <Directory Id="dir4D932CBD017486111EC36AB5BB7F621D" Name="TextProcessing">
+                <Component Id="cmpD718453D63645C7AED8D597CE28BB83B" Guid="*">
+                    <File Id="filBE56EA231FA4EFB93CEA2163C9FC5D3F" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\TextProcessing\AssociativeNetworkWorldExample.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dir71E42BAE636E012882095FFA19F49F65" Name="Vision">
+                <Component Id="cmp296E96F3DE9727D618F96C270C5CC49E" Guid="*">
+                    <File Id="filE6813EB1260E3DA6CBDF9B1502327F4E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Vision\focuserRetina.brain" />
+                </Component>
+                <Component Id="cmpDA03CECA7E06D8E6C48F8ECE2F612698" Guid="*">
+                    <File Id="filA1B4B42745E55263DFF95D626ADB4886" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Vision\sequentialDrawing.brain" />
+                </Component>
+                <Component Id="cmp3D42AE04D52FE0333C5A3FE6FC72FEF0" Guid="*">
+                    <File Id="fil336C00F7E6730AA452D9024818DA3AE9" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Vision\Vision_segmentationForBreakout.brain" />
+                </Component>
+                <Component Id="cmpEFD40810BAA612EDE76B518AED9444E1" Guid="*">
+                    <File Id="fil06C26CDBB692E8C5496B504239DBB163" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Vision\Vision_SLICsegmentation.brain" />
+                </Component>
+            </Directory>
+            <Directory Id="dir87E42458E26972D3635DA300C4323F83" Name="VSA">
+                <Component Id="cmp42E9FD8E2BF09ED94A95F34BFF421808" Guid="*">
+                    <File Id="fil4404C65E2D398B89E3E2F324584FD88F" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\VSA\binding.brain" />
+                </Component>
+            </Directory>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="HarvestedSamples">
+            <ComponentRef Id="cmp194164997A733864328D5544F1A9E078" />
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <ComponentRef Id="cmpB3950B6F7A40D606C5ED201178706F7D" />
+            <ComponentRef Id="cmpFEEC811D129763489B81AEA418C95DC2" />
+            <ComponentRef Id="cmp883C4353E68A38504B672E2E2737D43F" />
+            <ComponentRef Id="cmp2F8B26F085F8BB6BA908261E003FF0F7" />
+            <ComponentRef Id="cmpA436E6AF221DE467EB618350535250DA" />
+            <ComponentRef Id="cmp57A4A04B466AC37E2D9B22BAC9960ACC" />
+            <ComponentRef Id="cmpBD208791779066A68798A76D376AEC60" />
+            <ComponentRef Id="cmpE40C9FCBAA9186256344C4AF8A501982" />
+            <ComponentRef Id="cmp255094FFA9E98BEFE25F6D6CFD782030" />
+            <ComponentRef Id="cmp6A07FBF321FBFD390545F0667FE5E7F9" />
+            <ComponentRef Id="cmp02030A54E6B6B58A1E937441EE353F0C" />
+            <ComponentRef Id="cmp90E7A2961D7B7BC184DCEAB3C6DC8A73" />
+            <ComponentRef Id="cmp16F359427FC536D70476A726D2637772" />
+            <ComponentRef Id="cmp490C7CFA1ACB934C1AB6FA30621C0208" />
+            <ComponentRef Id="cmp69436C62EA2FFF62F2131B3474094357" />
+            <ComponentRef Id="cmpED6E3D795005698B086F1938686EE8FD" />
+            <ComponentRef Id="cmp977D04E1D34A9CD5A818D6A2A6769F55" />
+            <ComponentRef Id="cmpC88B1D6C48F976F08BF0D93B84558D4E" />
+            <ComponentRef Id="cmp137CDE37FFA4C24A5CBA190DE14749DB" />
+            <ComponentRef Id="cmp02E8F53D9A111402AC049E3054501875" />
+            <ComponentRef Id="cmp9D05354B1D9946DCA897D9AAB90053EC" />
+            <ComponentRef Id="cmp11C7AB6DC779BECC9D4CEB170D5A94FF" />
+            <ComponentRef Id="cmp0D241DB7C7439A0BCF19B14D857AB11A" />
+            <ComponentRef Id="cmpC89A2FE6C4BA8784501FF65ED4D2E130" />
+            <ComponentRef Id="cmp222F512BAB907F4377413AFFD6965582" />
+            <ComponentRef Id="cmp72A64B4064347FF10B170A7350C337CA" />
+            <ComponentRef Id="cmp9955DE22BBC5D83F51CC02219034CAC4" />
+            <ComponentRef Id="cmpDF109518A84CF9DAF9AE38C5E0FCD579" />
+            <ComponentRef Id="cmp08D9A1C98FF3F2713959F57F34E79E88" />
+            <ComponentRef Id="cmp76F375117F19664D297AAF236A1BD6FD" />
+            <ComponentRef Id="cmp792D11157E1ECA9AE5E79CC7134B2B41" />
+            <ComponentRef Id="cmpD1EE459E0E5D81EFB8037727EDABF9AB" />
+            <ComponentRef Id="cmp03CA8C751B754B1B105C4F721F60CB00" />
+            <ComponentRef Id="cmpDF6BB977DCC97BBA264CEE11365FDB0D" />
+            <ComponentRef Id="cmp945F88A9E5AE288462741667E12BE262" />
+            <ComponentRef Id="cmp845CB65133C967E3D518D776128B2218" />
+            <ComponentRef Id="cmp9DC3880E220687CD8C40540F10C84A94" />
+            <ComponentRef Id="cmp25D84C0279EF5CBE3B5E891C274A1F9F" />
+            <ComponentRef Id="cmpC2BB9C323464B0434E325075E79915DE" />
+            <ComponentRef Id="cmpA7D41F59F4C04394581953FA97E6A5BE" />
+            <ComponentRef Id="cmp03C5FB8B624276FBA425E7FE62AB7CBF" />
+            <ComponentRef Id="cmp718B390CE509CAC1F9421C16522893E5" />
+            <ComponentRef Id="cmpDDA8A770611194B2EBADC8988F652C09" />
+            <ComponentRef Id="cmp5B7E813BDB33CD6DA79DEE7592E98475" />
+            <ComponentRef Id="cmp80839D600F988E8288247E408080CEA7" />
+            <ComponentRef Id="cmp923B1D2AA287141567B86B2AFDE66206" />
+            <ComponentRef Id="cmp0F7DD66F90EAAEFB334025F6F2309A18" />
+            <ComponentRef Id="cmpA5C385E058E8402B9E730A1310DA6C46" />
+            <ComponentRef Id="cmp7792A8B516A80E04CC776CCCF738AD3B" />
+            <ComponentRef Id="cmpA9579A2EB6D887BA2A21356DC45D76E5" />
+            <ComponentRef Id="cmp103E35C9D8EB216EB3C186C66C6F23A8" />
+            <ComponentRef Id="cmp83F60CF8EC89E699B4333E35C2BC1903" />
+            <ComponentRef Id="cmp5B895ECC58FA5BF7B7D954310C91F2BD" />
+            <ComponentRef Id="cmp62F65683DB9E581CA7379171CB1E7C2B" />
+            <ComponentRef Id="cmp03524E92447C226F41426D7E0FF05380" />
+            <ComponentRef Id="cmpA8EC989C3846EFB1D2514EFCB3A4AA89" />
+            <ComponentRef Id="cmp64F2CD8E05E8951F879F11DA1B5319AA" />
+            <ComponentRef Id="cmp2E9BEEED403907F6527BED0F861CEC96" />
+            <ComponentRef Id="cmp73C83D723B349DED0A234B12159A2A5B" />
+            <ComponentRef Id="cmpEE95CBD4A3E85D5970D561F435B477CF" />
+            <ComponentRef Id="cmp13F239104414DBF3A755448B05653B60" />
+            <ComponentRef Id="cmpCF66645FF3FC3E3BD7333DD3605EB0A7" />
+            <ComponentRef Id="cmpE31D2478156008FEA6E364E32A6B6CE4" />
+            <ComponentRef Id="cmpCD45F26A743E1877D3601CC54BCECC10" />
+            <ComponentRef Id="cmp9BEEF32703CF44905F6288C6C3D3DBBC" />
+            <ComponentRef Id="cmpCD96574EA27CA6D16061661E8AB6AE9C" />
+            <ComponentRef Id="cmp1F15F009CB62E28C191A0F43792822D5" />
+            <ComponentRef Id="cmp1FFF409BA4708116E2893F61DADEDF25" />
+            <ComponentRef Id="cmpC63D28FA8881F66BA7F9F6E4428C5CF5" />
+            <ComponentRef Id="cmpED9D1C54E034FB12C97D730F7928A254" />
+            <ComponentRef Id="cmp23DA60E3BE94DEAAC051397448921A31" />
+            <ComponentRef Id="cmpCBE2D1DB9A68ADCFA3838109D6D264AF" />
+            <ComponentRef Id="cmp0A7FEAA22A956471EC30DC2F03FC40EA" />
+            <ComponentRef Id="cmp1C0980E0CE9CED4634CD833A7DD7E43B" />
+            <ComponentRef Id="cmp33130F58690D8B511F5D05496091EAFF" />
+            <ComponentRef Id="cmp8A3E0836B85A203D3321A438F61C4828" />
+            <ComponentRef Id="cmpC75D4E92DED3CC8FBA9407DB7B9C371E" />
+            <ComponentRef Id="cmpCE24099433CFDC9D5BB7DC4C28A36437" />
+            <ComponentRef Id="cmp6FAD5206E72429EBFE7778CC6D9F061B" />
+            <ComponentRef Id="cmpB9481F4DE5CC6B65270EF8199BEA39CC" />
+            <ComponentRef Id="cmpED056B6498DB78CFCE1B39281F019C56" />
+            <ComponentRef Id="cmpA46074E49B1B3D439993131E31333674" />
+            <ComponentRef Id="cmpA81AED098CD99E6FE571C3EEA7848D0B" />
+            <ComponentRef Id="cmpADA2A1E6B04585BF821F4456A797FD02" />
+            <ComponentRef Id="cmp37B6670E31DB4941F178A5A0A5DC16BB" />
+            <ComponentRef Id="cmpDC66C65C9EEA003B79D47AAF4E0A6404" />
+            <ComponentRef Id="cmpE24D959618BE39AB02DBFA4F82E1C037" />
+            <ComponentRef Id="cmpD8ABB256B101DF337824B8051E5D3C1E" />
+            <ComponentRef Id="cmpB162903C458B8E47104AB68DB532AA0F" />
+            <ComponentRef Id="cmp4EFF381DEB697BEB7B0900A4A60B1894" />
+            <ComponentRef Id="cmp5993901D5AA87F8EE77E341116938C01" />
+            <ComponentRef Id="cmp2FE0ECFB9ABB0627D39977D5992ADB61" />
+            <ComponentRef Id="cmp8A1002959023737F3F3EEA8A193B73AF" />
+            <ComponentRef Id="cmp8C5A7C8EE5FB5E6C9FEA72C69C99025C" />
+            <ComponentRef Id="cmp574329E974EB5602A5445AEE3B9DC1D1" />
+            <ComponentRef Id="cmp2090EEEA0AF8DB4F0871DF06CE54294D" />
+            <ComponentRef Id="cmp9A0B07F3A8D6322B99A0FF37541626FB" />
+            <ComponentRef Id="cmpFD567EEDD3D6A490EA212392EF63A4C5" />
+            <ComponentRef Id="cmp42BC0FA5D083B61822E7403FD5D03373" />
+            <ComponentRef Id="cmpDD81D8697DCDE24601E10C0C59DCD0D9" />
+            <ComponentRef Id="cmpFE7784287AF91B5222CDF0750A457941" />
+            <ComponentRef Id="cmpCC453998611EBDDC45E867D82540D9A9" />
+            <ComponentRef Id="cmp90267CD39736B0431C1D4DABB0DE93FC" />
+            <ComponentRef Id="cmp02C6A8AE107D6B68610C24D8A8A047EF" />
+            <ComponentRef Id="cmpB906C66649B4ADC3C6E9D345A96D8583" />
+            <ComponentRef Id="cmpCB8EC0C90401368C1E624324EE39AAC2" />
+            <ComponentRef Id="cmp540F362E296801AFF0F8C5FF31D1D168" />
+            <ComponentRef Id="cmp9020EC547CEDCB67F05C99A96D362CB9" />
+            <ComponentRef Id="cmp94AEC45B01E18BA6F31044C18AF4281F" />
+            <ComponentRef Id="cmpBBC0D20259A6DE2BD9C6B4DCC58F517C" />
+            <ComponentRef Id="cmpFB0F8645ED4D8D8E06558DDB3288D680" />
+            <ComponentRef Id="cmp4A5E46D9AB07382153632A519553712E" />
+            <ComponentRef Id="cmpC9C9FC1C65B1A3DC33334F27AF6BE3FA" />
+            <ComponentRef Id="cmp3BB831DC6B5B08DE1795BCD35BA75C25" />
+            <ComponentRef Id="cmp4CDB3340CAE524393AF5141634A1AF0A" />
+            <ComponentRef Id="cmpED61C0ACF76E89735DC614B702A98B09" />
+            <ComponentRef Id="cmp14E95136A3EF50212363F8A3725D51B3" />
+            <ComponentRef Id="cmp25586815487671EF3786734C7F1BFB94" />
+            <ComponentRef Id="cmp438DBA413B59AB741BD40F66965F8E97" />
+            <ComponentRef Id="cmpD718453D63645C7AED8D597CE28BB83B" />
+            <ComponentRef Id="cmp296E96F3DE9727D618F96C270C5CC49E" />
+            <ComponentRef Id="cmpDA03CECA7E06D8E6C48F8ECE2F612698" />
+            <ComponentRef Id="cmp3D42AE04D52FE0333C5A3FE6FC72FEF0" />
+            <ComponentRef Id="cmpEFD40810BAA612EDE76B518AED9444E1" />
+            <ComponentRef Id="cmp42E9FD8E2BF09ED94A95F34BFF421808" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

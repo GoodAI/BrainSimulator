@@ -12,12 +12,14 @@
       <ComponentGroupRef Id="CudaBinaries" />
       <ComponentGroupRef Id="ThirdLicenses" />
       <ComponentGroupRef Id="HarvestedModules" />
+      <ComponentGroupRef Id="HarvestedSamples" />
     </Feature>
   
     <Icon Id="BrainSimulator.exe" SourceFile="$(var.BrainSimulator.TargetPath)" />
 
     <WixVariable Id="CudaBinariesSourceDirectory" Value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\"/>
     <WixVariable Id="ModulesSourceDirectory" Value="$(var.BrainSimulator.TargetDir)modules"/>
+    <WixVariable Id="ExamplesSourceDirectory" Value="$(var.BrainSimulator.ProjectDir)..\..\..\..\BrainSimulatorSampleProjects"/>
 
     <WixVariable Id="WixUILicenseRtf" Value="Resources\EULA.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="Resources\brainSim_installBanner_owl.bmp" />
@@ -42,6 +44,7 @@
         <Directory Id="GoodAI" Name="GoodAI">
           <Directory Id="INSTALLFOLDER" Name="Brain Simulator">
             <Directory Id="LicensesDirectory" Name="Licenses"/>
+            <Directory Id="ExamplesDirectory" Name="Examples" />
           </Directory>
         </Directory>
       </Directory>

@@ -3,7 +3,7 @@
 if "%~1"=="" goto ARGUMENT_ERROR
 if "%~2"=="" goto ARGUMENT_ERROR
 
-set INSTALLER_NAME_BASE=..\BrainSimInstaller\Release\BrainSimulatorInstaller-
+set INSTALLER_NAME_BASE=..\bin\Release\BrainSimulatorInstaller-
 set INSTALLER_FILE=%INSTALLER_NAME_BASE%vX.Y.Z-00-unsigned.msi
 set CERT_FILE=%2
 set DESCRIPTION="GoodAI Brain Simulator Installer"
