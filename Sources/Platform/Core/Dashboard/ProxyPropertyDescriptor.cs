@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Core.Dashboard
 {
-    public abstract class ProxyPropertyDescriptorBase<TProxy, TProperty> : PropertyDescriptor
-        where TProxy : ProxyPropertyBase<TProperty>
-        where TProperty : DashboardProperty
+    public class ProxyPropertyDescriptor : PropertyDescriptor
     {
-        public TProxy Proxy { get; private set; }
-        public ProxyPropertyDescriptorBase(ref TProxy proxy, Attribute[] attrs)
+        private TypeConverter m_converter;
+        public ProxyPropertyBase Proxy { get; private set; }
+        public ProxyPropertyDescriptor(ref ProxyPropertyBase proxy, Attribute[] attrs)
             : base(proxy.Name, attrs)
         {
             Proxy = proxy;
@@ -20,6 +19,10 @@ namespace GoodAI.Core.Dashboard
 
         #region PropertyDescriptor specific
 
+        public void SetConverter(TypeConverter converter)
+        {
+            m_converter = converter;
+        }
 
         public override bool CanResetValue(object component)
         {
@@ -29,6 +32,11 @@ namespace GoodAI.Core.Dashboard
         public override Type ComponentType
         {
             get { return null; }
+        }
+
+        public override TypeConverter Converter
+        {
+            get { return m_converter ?? base.Converter; }
         }
 
         public override object GetValue(object component)
@@ -75,26 +83,10 @@ namespace GoodAI.Core.Dashboard
         {
             get
             {
-                return Proxy.Value == null ? typeof (string) : Proxy.Type;
+                return Proxy.Value == null ? typeof(string) : Proxy.Type;
             }
         }
 
         #endregion
-    }
-
-    public sealed class ProxyPropertyDescriptor :
-        ProxyPropertyDescriptorBase<SingleProxyProperty, DashboardNodeProperty>
-    {
-        public ProxyPropertyDescriptor(ref SingleProxyProperty proxy, Attribute[] attrs) : base(ref proxy, attrs)
-        {
-        }
-    }
-
-    public sealed class ProxyPropertyGroupDescriptor :
-        ProxyPropertyDescriptorBase<ProxyPropertyGroup, DashboardPropertyGroup>
-    {
-        public ProxyPropertyGroupDescriptor(ref ProxyPropertyGroup proxy, Attribute[] attrs) : base(ref proxy, attrs)
-        {
-        }
     }
 }

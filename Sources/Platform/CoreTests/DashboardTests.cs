@@ -51,7 +51,7 @@ namespace CoreTests
         public void AddsPropertyToGroup()
         {
             var node = new Node();
-            
+
             var property = new DashboardNodeProperty
             {
                 Node = node,
@@ -70,7 +70,7 @@ namespace CoreTests
         public void RemovesPropertyFromGroup()
         {
             var node = new Node();
-            
+
             var property = new DashboardNodeProperty
             {
                 Node = node,
@@ -92,14 +92,14 @@ namespace CoreTests
             const string testName = "TestName";
 
             var node = new Node();
-            
+
             var property = new DashboardNodeProperty
             {
                 Node = node,
                 PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
             };
 
-            var proxy = property.Proxy;
+            var proxy = property.GenericProxy;
             proxy.Value = testName;
 
             Assert.Equal(testName, node.Name);
@@ -113,7 +113,7 @@ namespace CoreTests
 
             var node = new Node();
             var node2 = new Node();
-            
+
             var property = new DashboardNodeProperty
             {
                 Node = node,
@@ -131,11 +131,11 @@ namespace CoreTests
             group.Add(property);
             group.Add(property2);
 
-            group.Proxy.Value = testName;
+            group.GenericProxy.Value = testName;
 
             Assert.Equal(testName, node.Name);
             Assert.Equal(testName, node2.Name);
-            Assert.Equal(testName, group.Proxy.Value);
+            Assert.Equal(testName, group.GenericProxy.Value);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace CoreTests
                 Node = node,
                 PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
             };
-            Assert.Equal(property.Proxy, property.Proxy);
+            Assert.Equal(property.GenericProxy, property.GenericProxy);
 
             var property2 = new DashboardTaskProperty()
             {
@@ -160,10 +160,10 @@ namespace CoreTests
                 Task = task,
                 PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
             };
-            Assert.Equal(property2.Proxy, property2.Proxy);
+            Assert.Equal(property2.GenericProxy, property2.GenericProxy);
 
             var property3 = new DashboardPropertyGroup();
-            Assert.Equal(property3.Proxy, property3.Proxy);
+            Assert.Equal(property3.GenericProxy, property3.GenericProxy);
         }
 
         [Fact]
@@ -177,10 +177,10 @@ namespace CoreTests
                 PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
             };
 
-            var proxy = property.Proxy;
+            var proxy = property.GenericProxy;
             var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
 
-            Assert.Equal(descriptor.PropertyType, typeof(string));
+            Assert.Equal(descriptor.PropertyType, typeof (string));
         }
 
         [Fact]
@@ -197,10 +197,10 @@ namespace CoreTests
             var group = new DashboardPropertyGroup();
             group.Add(property);
 
-            var proxy = group.Proxy;
-            var descriptor = new ProxyPropertyGroupDescriptor(ref proxy, new Attribute[0]);
+            var proxy = group.GenericProxy;
+            var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
 
-            Assert.Equal(descriptor.PropertyType, typeof(string));
+            Assert.Equal(descriptor.PropertyType, typeof (string));
         }
 
         [Fact]
@@ -249,7 +249,7 @@ namespace CoreTests
         public void BothDashboardsSerialize()
         {
             var project = new MyProject();
-            project.CreateWorld(typeof(MyTestingWorld));
+            project.CreateWorld(typeof (MyTestingWorld));
             project.Network = new MyNetwork();
             var node = project.CreateNode<Node>();
             node.Name = "Foo";
@@ -278,14 +278,15 @@ namespace CoreTests
             deserializedDashboard.RestoreFromIds(project);
             project.Dashboard = deserializedDashboard;
 
-            GroupDashboard deserializedGroupDashboard = (GroupDashboard) groupSerializer.Deserialize(serializedGroupDashboard);
+            GroupDashboard deserializedGroupDashboard =
+                (GroupDashboard) groupSerializer.Deserialize(serializedGroupDashboard);
             deserializedGroupDashboard.RestoreFromIds(project);
             project.GroupedDashboard = deserializedGroupDashboard;
 
             var compareLogic = new CompareLogic(new ComparisonConfig
             {
                 MaxDifferences = 20,
-                MembersToIgnore = new List<string> { "Proxy", "GenericProxy" }
+                MembersToIgnore = new List<string> {"Proxy", "GenericProxy"}
             });
 
             ComparisonResult result = compareLogic.Compare(dashboard, deserializedDashboard);

@@ -42,8 +42,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void OnGroupPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
-            foreach (MyNode node in descriptor.Proxy.SourceProperty.GroupedProperties.Select(member => member.Node))
+            ProxyPropertyDescriptor descriptor = GetCurrentGroupDescriptor();
+            foreach (MyNode node in GroupedDashboardViewModel.GetProperty(descriptor.Proxy.PropertyId).GroupedProperties.Select(member => member.Node))
                 RefreshNode(node);
 
             RefreshAll();
@@ -52,7 +52,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
-            MyNode node = descriptor.Proxy.SourceProperty.Node;
+            MyNode node = DashboardViewModel.GetProperty(descriptor.Proxy.PropertyId).Node;
             RefreshNode(node);
 
             RefreshAll();
@@ -112,20 +112,23 @@ namespace GoodAI.BrainSimulator.Forms
                 foreach (SingleProxyProperty propertyProxy in DashboardViewModel.GetProperties(new Attribute[0])
                     .Cast<ProxyPropertyDescriptor>()
                     .Select(descriptor => descriptor.Proxy)
+                    .OfType<SingleProxyProperty>()
                     .Where(proxy => proxy.Target is MyNode))
                 {
                     propertyProxy.ReadOnly = !value;
                 }
 
-                foreach (ProxyPropertyGroup groupProxy in GroupedDashboardViewModel.GetProperties(new Attribute[0])
-                    .Cast<ProxyPropertyGroupDescriptor>()
+                foreach (SingleProxyProperty groupProxy in GroupedDashboardViewModel.GetProperties(new Attribute[0])
+                    .Cast<ProxyPropertyDescriptor>()
                     .Select(descriptor => descriptor.Proxy)
-                    .Where(proxy => proxy.SourceProperty.GroupedProperties.Any(property => property.Target is MyNode)))
+                    .OfType<SingleProxyProperty>()
+                    .Where(proxy => GroupedDashboardViewModel.GetProperty(proxy.PropertyId)
+                                    .GroupedProperties.Any(property => property.Target is MyNode)))
                 {
                     groupProxy.ReadOnly = !value;
                 }
 
-                RefreshAll();
+            RefreshAll();
             }
         }
 
@@ -194,7 +197,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void removeGroupButton_Click(object sender, EventArgs e)
         {
-            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
+            ProxyPropertyDescriptor descriptor = GetCurrentGroupDescriptor();
 
             GroupedDashboardViewModel.RemoveProperty(descriptor.Proxy);
             propertyGrid.Refresh();
@@ -205,27 +208,29 @@ namespace GoodAI.BrainSimulator.Forms
 
         private ProxyPropertyDescriptor GetCurrentPropertyDescriptor()
         {
-            var descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
-            if (descriptor == null)
-                throw new InvalidOperationException("Invalid property descriptor used in the dashboard.");
-            return descriptor;
+            return GetCurrentDescriptorForGrid(propertyGrid, errorMessage: "Invalid property descriptor used in the dashboard.");
         }
 
-        private ProxyPropertyGroupDescriptor GetCurrentGroupDescriptor()
+        private ProxyPropertyDescriptor GetCurrentGroupDescriptor()
         {
-            var descriptor =
-                propertyGridGrouped.SelectedGridItem.PropertyDescriptor as ProxyPropertyGroupDescriptor;
+            return GetCurrentDescriptorForGrid(propertyGridGrouped, errorMessage: "The group property grid contained an invalid descriptor.");
+        }
+
+        private ProxyPropertyDescriptor GetCurrentDescriptorForGrid(PropertyGrid grid, string errorMessage = "")
+        {
+            var descriptor = grid.SelectedGridItem.PropertyDescriptor as ProxyPropertyDescriptor;
             if (descriptor == null)
-                throw new InvalidOperationException("The group property grid contained an invalid descriptor.");
+                throw new InvalidOperationException(errorMessage);
 
             return descriptor;
         }
 
         private void editGroupButton_Click(object sender, EventArgs e)
         {
-            ProxyPropertyGroupDescriptor descriptor = GetCurrentGroupDescriptor();
+            ProxyPropertyDescriptor descriptor = GetCurrentGroupDescriptor();
 
-            var dialog = new DashboardGroupNameDialog(propertyGridGrouped, descriptor.Proxy.SourceProperty);
+            var dialog = new DashboardGroupNameDialog(propertyGridGrouped,
+                GroupedDashboardViewModel.GetProperty(descriptor.Proxy.PropertyId));
             dialog.ShowDialog();
         }
 
@@ -236,10 +241,11 @@ namespace GoodAI.BrainSimulator.Forms
             if (selectedPropertyDescriptor == null)
                 return;
 
-            DashboardNodeProperty property = selectedPropertyDescriptor.Proxy.SourceProperty;
+            DashboardNodeProperty property = DashboardViewModel.GetProperty(selectedPropertyDescriptor.Proxy.PropertyId);
 
-            ProxyPropertyGroupDescriptor selectedGroupDescriptor = GetCurrentGroupDescriptor();
-            DashboardPropertyGroup groupProperty = selectedGroupDescriptor.Proxy.SourceProperty;
+            ProxyPropertyDescriptor selectedGroupDescriptor = GetCurrentGroupDescriptor();
+            DashboardPropertyGroup groupProperty =
+                GroupedDashboardViewModel.GetProperty(selectedGroupDescriptor.Proxy.PropertyId);
 
             try
             {
@@ -268,21 +274,26 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 SetPropertyGridGroupedButtonsEnabled(true);
 
-                LoadGroupedProperties(e.NewSelection.PropertyDescriptor as ProxyPropertyGroupDescriptor);
+                LoadGroupedProperties(e.NewSelection.PropertyDescriptor as ProxyPropertyDescriptor);
             }
             propertyGrid.Refresh();
         }
 
-        private void LoadGroupedProperties(ProxyPropertyGroupDescriptor groupDescriptor)
+        private void LoadGroupedProperties(ProxyPropertyDescriptor groupDescriptor)
         {
-            foreach (var proxy in groupDescriptor.Proxy.GetGroupMembers())
+            foreach (ProxyPropertyBase proxy in GroupedDashboardViewModel.GetProperty(groupDescriptor.Proxy.PropertyId)
+                    .GroupedProperties.Select(property => property.GenericProxy))
                 memberListBox.Items.Add(proxy);
         }
 
         private void removeFromGroupButton_Click(object sender, EventArgs e)
         {
-            foreach (var proxy in memberListBox.SelectedItems.Cast<SingleProxyProperty>())
-                proxy.SourceProperty.Group.Remove(proxy.SourceProperty);
+            foreach (DashboardNodeProperty property in
+                    memberListBox.SelectedItems.Cast<SingleProxyProperty>()
+                        .Select(proxy => DashboardViewModel.GetProperty(proxy.PropertyId)))
+            {
+                property.Group.Remove(property);
+            }
 
             m_mainForm.ProjectStateChanged(string.Format("Dashboard property removed from group: {0}",
                 GetCurrentGroupDescriptor().Name));
@@ -297,31 +308,32 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void goToNodeButton_Click(object sender, EventArgs e)
         {
-            SingleProxyProperty proxy = GetCurrentPropertyDescriptor().Proxy;
-            GoToNode(sender, proxy);
+            var property = DashboardViewModel.GetProperty(GetCurrentPropertyDescriptor().Proxy.PropertyId);
+            GoToNode(sender, property.Node);
         }
 
-        private void GoToNode(object sender, SingleProxyProperty proxy)
+        private void GoToNode(object sender, MyNode node)
         {
-            MyNode targetNode = proxy.SourceProperty.Node;
-
-            if (targetNode is MyWorld)
+            if (node is MyWorld)
             {
-                GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(targetNode.Owner.Network);
+                GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(node.Owner.Network);
                 graphForm.worldButton_Click(sender, EventArgs.Empty);
             }
             else
             {
-                GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(targetNode.Parent);
-                graphForm.SelectNodeView(targetNode);
+                GraphLayoutForm graphForm = m_mainForm.OpenGraphLayout(node.Parent);
+                graphForm.SelectNodeView(node);
             }
         }
 
         private void goToNodeFromMemberButton_Click(object sender, EventArgs e)
         {
             SingleProxyProperty proxy = memberListBox.SelectedItems.Cast<SingleProxyProperty>().FirstOrDefault();
-            if (proxy != null)
-                GoToNode(sender, proxy);
+            if (proxy == null)
+                return;
+
+            MyNode node = DashboardViewModel.GetProperty(proxy.PropertyId).Node;
+            GoToNode(sender, node);
         }
 
         public void OnPropertyExternallyChanged(object sender, PropertyChangedEventArgs e)
@@ -361,15 +373,15 @@ namespace GoodAI.BrainSimulator.Forms
                 return;
 
             object valueOfGroupMembers = @group.GroupedProperties
-                .Select(member => member.Proxy.Value)
-                .FirstOrDefault(value => !value.Equals(property.Proxy.Value));
+                .Select(member => member.GenericProxy.Value)
+                .FirstOrDefault(value => !value.Equals(property.GenericProxy.Value));
 
             if (valueOfGroupMembers == null)
                 return;
             
             MyLog.WARNING.WriteLine("Trying to change a group property {0}. Value reverted to {1}.", propertyName,
                 valueOfGroupMembers);
-            property.Proxy.Value = valueOfGroupMembers;
+            property.GenericProxy.Value = valueOfGroupMembers;
         }
 
         private void showGroupsButton_CheckedChanged(object sender, EventArgs e)

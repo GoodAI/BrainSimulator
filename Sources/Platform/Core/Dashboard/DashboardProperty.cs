@@ -30,7 +30,7 @@ namespace GoodAI.Core.Dashboard
         /// This is only used for serialization, do not access it otherwise.
         /// </summary>
         [YAXSerializableField]
-        protected internal string PropertyId
+        public string PropertyId
         {
             get
             {
@@ -38,7 +38,7 @@ namespace GoodAI.Core.Dashboard
                     m_propertyId = GeneratePropertyId();
                 return m_propertyId;
             }
-            set { m_propertyId = value; }
+            protected set { m_propertyId = value; }
         }
 
         protected abstract string GeneratePropertyId();
@@ -66,7 +66,7 @@ namespace GoodAI.Core.Dashboard
         [YAXSerializableField]
         public string GroupId { get; internal set; }
 
-        private SingleProxyProperty m_proxy;
+        private ProxyPropertyBase m_proxy;
         private string m_displayName;
         private bool? m_readonly;
 
@@ -89,7 +89,7 @@ namespace GoodAI.Core.Dashboard
             }
         }
 
-        public SingleProxyProperty Proxy { get { return GenericProxy as SingleProxyProperty; } }
+        //public ProxyPropertyBase<DashboardNodeProperty> Proxy { get { return GenericProxy as ProxyPropertyBase<DashboardNodeProperty>; } }
 
         public override string PropertyName
         {
@@ -119,7 +119,7 @@ namespace GoodAI.Core.Dashboard
             get { return Node; }
         }
 
-        protected virtual SingleProxyProperty GetProxyBase()
+        protected virtual ProxyPropertyBase GetProxyBase()
         {
             return new SingleProxyProperty(this, Node, PropertyInfo);
         }
@@ -147,24 +147,77 @@ namespace GoodAI.Core.Dashboard
         {
             string[] idSplit = PropertyId.Split(SerializationIdSeparator.ToCharArray());
 
-            var success = false;
-
-            int nodeId;
-            if (int.TryParse(idSplit[0], out nodeId))
-            {
-                Node = project.GetNodeById(nodeId);
-                if (Node != null)
-                    success = true;
-            }
-
-            if (!success)
-                throw new SerializationException("A dashboard property target node was not found");
+            Node = FindNode(project, idSplit[0]);
 
             PropertyInfo = Node.GetType().GetProperty(idSplit[1]);
 
             if (PropertyInfo == null)
                 throw new SerializationException("A dashboard property was not found on the node");
         }
+
+        protected static MyNode FindNode(MyProject project, string nodeId)
+        {
+            var success = false;
+
+            MyNode node = null;
+            int parsedNodeId;
+            if (int.TryParse(nodeId, out parsedNodeId))
+            {
+                node = project.GetNodeById(parsedNodeId);
+                if (node != null)
+                    success = true;
+            }
+
+            if (!success)
+                throw new SerializationException("A dashboard property target node was not found");
+
+            return node;
+        }
+    }
+
+    [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
+    public class DashboardTaskGroupProperty : DashboardNodeProperty
+    {
+        [YAXSerializableField]
+        public string GroupName { get; set; }
+
+        private MyWorkingNode WorkingNode
+        {
+            get { return Node as MyWorkingNode; }
+            set { Node = value; }
+        }
+
+        protected override ProxyPropertyBase GetProxyBase()
+        {
+            return new TaskGroupProxyProperty(this, WorkingNode, GroupName);
+        }
+
+        public override string PropertyName { get; set; }
+
+        public override string DisplayName
+        {
+            get { return "[Group]" + GroupName; }
+        }
+
+        protected override string GeneratePropertyId()
+        {
+            return string.Join(SerializationIdSeparator, Node.Id, GroupName);
+        }
+
+        public override void Restore(MyProject project)
+        {
+            string[] idSplit = PropertyId.Split(new[] { SerializationIdSeparator }, StringSplitOptions.RemoveEmptyEntries);
+
+            MyNode node = FindNode(project, idSplit[0]);
+            WorkingNode = node as MyWorkingNode;
+            if (Node == null)
+                throw new SerializationException(string.Format("Node id {0} was found but doesn't contain tasks", node.Id));
+
+            string taskGroupName = idSplit[1];
+            if (!Node.GetInfo().TaskGroups.ContainsKey(taskGroupName)) ;
+            throw new SerializationException(string.Format("Task group {0} not found", taskGroupName));
+        }
+
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
@@ -173,7 +226,7 @@ namespace GoodAI.Core.Dashboard
         public MyTask Task { get; set; }
 
         // Task properties are grouped together with node properties.
-        protected override SingleProxyProperty GetProxyBase()
+        protected override ProxyPropertyBase GetProxyBase()
         {
             return new SingleProxyProperty(this, Task, PropertyInfo);
         }
@@ -195,20 +248,9 @@ namespace GoodAI.Core.Dashboard
 
         public override void Restore(MyProject project)
         {
-            string[] idSplit = PropertyId.Split(new [] {SerializationIdSeparator}, StringSplitOptions.RemoveEmptyEntries);
+            string[] idSplit = PropertyId.Split(new[] { SerializationIdSeparator }, StringSplitOptions.RemoveEmptyEntries);
 
-            var success = false;
-
-            int nodeId;
-            if (int.TryParse(idSplit[0], out nodeId))
-            {
-                Node = project.GetNodeById(nodeId);
-                if (Node != null)
-                    success = true;
-            }
-
-            if (!success)
-                throw new SerializationException("A task dashboard property did not find the specified node");
+            Node = FindNode(project, idSplit[0]);
 
             var workingNode = Node as MyWorkingNode;
             if (workingNode == null)
@@ -244,7 +286,7 @@ namespace GoodAI.Core.Dashboard
             }
         }
 
-        public ProxyPropertyGroup Proxy { get { return GenericProxy as ProxyPropertyGroup; } }
+        //public ProxyPropertyGroup Proxy { get { return GenericProxy as ProxyPropertyGroup; } }
 
         public override object Target
         {
@@ -261,7 +303,7 @@ namespace GoodAI.Core.Dashboard
                 string type = null;
                 var firstProperty = GroupedProperties.FirstOrDefault();
                 if (firstProperty != null)
-                    type = firstProperty.Proxy.Type.Name + ", ";
+                    type = firstProperty.GenericProxy.Type.Name + ", ";
 
                 return PropertyName + string.Format(" ({0}{1})", type, GroupedProperties.Count);
             }
@@ -301,7 +343,7 @@ namespace GoodAI.Core.Dashboard
 
             GroupedProperties.Add(property);
             property.Group = this;
-            property.Proxy.Value = GroupedProperties.First().Proxy.Value;
+            property.GenericProxy.Value = GroupedProperties.First().GenericProxy.Value;
         }
 
         public void Remove(DashboardNodeProperty property)

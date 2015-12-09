@@ -4,27 +4,42 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Nodes;
 
 namespace GoodAI.Core.Dashboard
 {
     public abstract class ProxyPropertyBase
     {
-        public abstract string Name { get; }
+        private bool m_isVisible;
+
+        public virtual string Name {
+            get { return GenericSourceProperty.DisplayName; }
+        }
+
+        public DashboardProperty GenericSourceProperty { get; set; }
+
+        public string PropertyId { get { return GenericSourceProperty.PropertyId; } }
 
         public virtual string FullName { get { return Name; } }
 
         public virtual string Description { get; set; }
         public bool ReadOnly { get; set; }
-        public virtual bool IsVisible { get; set; }
+
+        public virtual bool IsVisible
+        {
+            get { return m_isVisible; }
+            set { m_isVisible = value; }
+        }
 
         public virtual string Category { get; set; }
         public abstract object Value { get; set; }
 
         public abstract Type Type { get; }
 
-        protected ProxyPropertyBase()
+        protected ProxyPropertyBase(DashboardProperty property)
         {
-            IsVisible = true;
+            m_isVisible = true;
+            GenericSourceProperty = property;
         }
 
         public override string ToString()
@@ -35,15 +50,13 @@ namespace GoodAI.Core.Dashboard
 
     public abstract class ProxyPropertyBase<TSource> : ProxyPropertyBase where TSource : DashboardProperty
     {
-        public TSource SourceProperty { get; private set; }
-
-        protected ProxyPropertyBase(TSource sourceProperty)
+        protected TSource SourceProperty
         {
-            SourceProperty = sourceProperty;
+            get { return GenericSourceProperty as TSource; }
         }
 
-        public override string Name {
-            get { return SourceProperty.DisplayName; }
+        public ProxyPropertyBase(DashboardProperty property) : base(property)
+        {
         }
     }
 
@@ -83,6 +96,29 @@ namespace GoodAI.Core.Dashboard
         }
     }
 
+    public sealed class TaskGroupProxyProperty : ProxyPropertyBase<DashboardTaskGroupProperty>
+    {
+        public MyWorkingNode Node { get; set; }
+        public string GroupName { get; set; }
+
+        public TaskGroupProxyProperty(DashboardTaskGroupProperty sourceProperty, MyWorkingNode node, string groupName) : base(sourceProperty)
+        {
+            Node = node;
+            GroupName = groupName;
+        }
+
+        public override object Value
+        {
+            get { return Node.GetEnabledTask(GroupName).Name; }
+            set { Node.GetTaskByPropertyName(value as string).Enabled = true; }
+        }
+
+        public override Type Type
+        {
+            get { return typeof (string); }
+        }
+    }
+
     public sealed class ProxyPropertyGroup : ProxyPropertyBase<DashboardPropertyGroup>
     {
         public ProxyPropertyGroup(DashboardPropertyGroup sourceProperty) : base(sourceProperty)
@@ -94,13 +130,13 @@ namespace GoodAI.Core.Dashboard
             get
             {
                 var groupedProperties = SourceProperty.GroupedProperties;
-                return groupedProperties.Any() ? groupedProperties.First().Proxy.Value : null;
+                return groupedProperties.Any() ? groupedProperties.First().GenericProxy.Value : null;
             }
             set
             {
                 foreach (var property in SourceProperty.GroupedProperties)
                 {
-                    property.Proxy.Value = value;
+                    property.GenericProxy.Value = value;
                 }
             }
         }
@@ -110,18 +146,13 @@ namespace GoodAI.Core.Dashboard
             get { return string.Join(", ", SourceProperty.GroupedProperties.Select(property => property.GenericProxy.FullName)); }
         }
 
-        public IEnumerable<SingleProxyProperty> GetGroupMembers()
-        {
-            return SourceProperty.GroupedProperties.Select(member => member.Proxy);
-        }
-
         public override Type Type
         {
             get
             {
                 var groupedProperties = SourceProperty.GroupedProperties;
                 if (groupedProperties.Any())
-                    return groupedProperties.First().Proxy.Type;
+                    return groupedProperties.First().GenericProxy.Type;
 
                 return typeof (object);
             }

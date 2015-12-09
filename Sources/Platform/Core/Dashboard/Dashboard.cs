@@ -58,6 +58,11 @@ namespace GoodAI.Core.Dashboard
             OnPropertiesChanged("Properties");
         }
 
+        public TProperty Get(string propertyId)
+        {
+            return Properties.FirstOrDefault(p => p.PropertyId == propertyId);
+        }
+
         public abstract void RemoveAll(object target);
 
         protected void OnPropertiesChanged(string propertyName = null)
