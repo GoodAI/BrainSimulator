@@ -90,10 +90,10 @@ namespace CoreTests
             Assert.Equal(memBlock.Count, memBlock.Dims.Size);
         }
 
-        private static MyMemoryBlock<float> GetMemBlockWithCustomDims(string dimenstionsSource)
+        private static MyMemoryBlock<float> GetMemBlockWithCustomDims(string dimensionsSource)
         {
             var customDims = new TensorDimensions();
-            customDims.Parse(dimenstionsSource);
+            customDims.Parse(dimensionsSource);
 
             return new MyMemoryBlock<float> { Dims = customDims };
         }
