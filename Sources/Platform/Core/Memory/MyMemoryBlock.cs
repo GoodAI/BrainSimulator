@@ -20,7 +20,7 @@ namespace GoodAI.Core.Memory
         //TODO: Find if MyWorkingNode is possible here
         public virtual MyNode Owner { get; set; }
         public abstract int ColumnHint { get; set; }
-        public TensorDimensions Dims { get; set; }
+        public abstract TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
                         
@@ -61,7 +61,6 @@ namespace GoodAI.Core.Memory
         protected virtual CudaDeviceVariable<T>[] Device { get; set; }
         public T[] Host { get; protected set; }
 
-        private int m_count = 0;
         public override int Count
         {
             get { return m_count; }
@@ -71,6 +70,7 @@ namespace GoodAI.Core.Memory
                 Dims.Size = m_count;
             }
         }
+        private int m_count = 0;
 
         public override int ColumnHint
         {
@@ -85,6 +85,29 @@ namespace GoodAI.Core.Memory
                     Dims.SetDefault(new List<int> { -1, value });
             }
         }
+
+        public override TensorDimensions Dims
+        {
+            get { return m_dims; }
+            set
+            {
+                if (value == null)
+                {
+                    m_dims = new TensorDimensions();
+                }
+                else if ((m_dims != null) && m_dims.IsCustom && !value.IsCustom)
+                {
+                    return;  // don't override user-defined value with code-generated value
+                }
+                else  // implied: value != null
+                {
+                    m_dims = value;
+                }
+
+                m_dims.Size = Count;
+            }
+        }
+        private TensorDimensions m_dims;
 
         public bool OnDevice
         {

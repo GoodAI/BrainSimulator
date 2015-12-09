@@ -163,7 +163,7 @@ namespace GoodAI.BrainSimulator.Forms
             ShowCurrentBlockDimensions();
         }
 
-        private void ShowCurrentBlockDimensions()
+        private void ShowCurrentBlockDimensions(bool showWarning = false)
         {
             if (listView.SelectedItems.Count < 1)
                 return;
@@ -172,7 +172,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (block != null)
             {
                 dimensionsTextBox.Text = block.Dims.Print(indicateComputedDim: true);
-                ShowOrHideErrorInfo("");
+                ShowOrHideErrorInfo(showWarning ? block.Dims.LastSetWarning : "", isWarning: true);
             }
         }
 
@@ -255,11 +255,11 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             UpdateSizeInfoForSelectedMemoryBlock();
-            ShowOrHideErrorInfo("");
+            ShowOrHideErrorInfo(block.Dims.LastSetWarning, isWarning: true);
             return true;
         }
 
-        private void ShowOrHideErrorInfo(string info)
+        private void ShowOrHideErrorInfo(string info, bool isWarning = false)
         {
             bool showInfo = !string.IsNullOrEmpty(info);
 
@@ -274,7 +274,12 @@ namespace GoodAI.BrainSimulator.Forms
                 splitContainer.SplitterDistance += infoHeight;
             }
 
+            errorInfoLabel.ForeColor = isWarning ? Color.MidnightBlue : Color.Firebrick;
             errorInfoLabel.Text = info;
+
+            var toolTip = new ToolTip();
+            toolTip.SetToolTip(errorInfoLabel, info);
+
             m_errorInfoShown = showInfo;
         }
 
@@ -286,7 +291,7 @@ namespace GoodAI.BrainSimulator.Forms
                     return;
             }
 
-            ShowCurrentBlockDimensions();
+            ShowCurrentBlockDimensions(showWarning: true);
         }
 
         private void dimensionsTextBox_KeyPress(object sender, KeyPressEventArgs e)
