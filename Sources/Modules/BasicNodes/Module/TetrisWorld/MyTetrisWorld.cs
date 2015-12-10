@@ -491,8 +491,8 @@ namespace GoodAI.Modules.TetrisWorld
 
             public override void Init(int nGPU)
             {
-                m_RgbaTextureKernel2DBlock = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawRgbaTextureKernel2DBlock");
-                m_MaskedColorKernel2DBlock = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\MastermindWorld", "DrawMaskedColorKernel2DBlock");
+                m_RgbaTextureKernel2DBlock = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbaTextureKernel2DBlock");
+                m_MaskedColorKernel2DBlock = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawMaskedColorKernel2DBlock");
                 m_lastScore = -1;
                 for (int i = 0; i < m_streams.Length; i++)
                 {
