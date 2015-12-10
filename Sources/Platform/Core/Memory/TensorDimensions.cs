@@ -165,15 +165,14 @@ namespace GoodAI.Core.Memory
         {
             string warning;
 
-            m_customDimensions = ProcessDimensions(dimensions, autoAddComputedDim, autoRemoveDimsOfSizeOne, out warning);
+            m_customDimensions = ProcessDimensions(dimensions, autoAddComputedDim, out warning);
 
             LastSetWarning = warning;
 
             UpdateComputedDimension();
         }
 
-        private static List<int> ProcessDimensions(IEnumerable<int> dimensions,
-            bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne, out string warning)
+        private static List<int> ProcessDimensions(IEnumerable<int> dimensions, bool autoAddComputedDim, out string warning)
         {
             warning = "";
 
@@ -183,14 +182,8 @@ namespace GoodAI.Core.Memory
 
             foreach (int item in dimensions)
             {
-                if ((item < -1) || (item == 0) || (item == 1 && !autoRemoveDimsOfSizeOne))
+                if ((item < -1) || (item == 0))
                     throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
-
-                if (item == 1) // implies autoRemoveDimsOfSizeOne == true
-                {
-                    warning = "Dimensions of size 1 eliminated.";
-                    continue;
-                }
 
                 if (item == -1)
                 {
