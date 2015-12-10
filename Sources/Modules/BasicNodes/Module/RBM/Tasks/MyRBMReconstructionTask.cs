@@ -151,6 +151,12 @@ namespace GoodAI.Modules.RBM
         public override void Execute()
         {
 
+            if (layers.Count <= CurrentLayerIndex)
+            {
+                MyLog.ERROR.WriteLine("Invalid CurrentLayerIndex " + CurrentLayerIndex +
+                                      ". Must be smaller than number of layers which is " + layers.Count);
+                return;
+            }
             if (ReconstructionSource == ReconstructionSource.INPUT)
             {
 
@@ -165,6 +171,10 @@ namespace GoodAI.Modules.RBM
             }
             else
             {
+                // we want to reconstruct from hidden, set layer index to first hidden if it was set to visible
+                if (CurrentLayerIndex == 0)
+                    CurrentLayerIndex = 1;
+
                 MyRBMLayer layer = ((MyRBMLayer)layers[CurrentLayerIndex]);
                 if (layer.Target != null && layer.Target.Count > 0)
                     layer.Output.CopyFromMemoryBlock(layer.Target, 0, 0, layer.Neurons);

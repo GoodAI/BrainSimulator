@@ -211,7 +211,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 );
         }
 
-        [YAXSerializableField(DefaultValue = false), MyBrowsable, Description("Overrides layers' UpdateWeights checking if and only if set to TRUE. No effect if set to FALSE.")]
+        [YAXSerializableField(DefaultValue = false), MyBrowsable, Description("Disables and overrides layers' UpdateWeights checking if and only if set to TRUE. No effect when set to FALSE.")]
         public bool DisableLearning { get; set; }
     }
 

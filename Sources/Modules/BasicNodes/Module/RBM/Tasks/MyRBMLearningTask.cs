@@ -242,8 +242,7 @@ namespace GoodAI.Modules.RBM
 
             // sampling between hidden layers
 
-                // spatny indexovani!
-            else if (layers.Count > 2)//if ( pocet hidden vrstev vetsi nez 1)
+            else if (layers.Count > 2) // if number of  hidden layers is greater than 1)
             {
                 InputLayer.RBMInputForward();
 
@@ -306,7 +305,7 @@ namespace GoodAI.Modules.RBM
             }
             else
             {
-                MyLog.ERROR.WriteLine("Wrong index parameter. There are " + layers.Count + " total layers, can't sample from " + CurrentLayerIndex);
+                MyLog.ERROR.WriteLine("Wrong CurrentLayerIndex parameter. There are " + layers.Count + " total layers, can't sample from " + CurrentLayerIndex);
             }
 
 
