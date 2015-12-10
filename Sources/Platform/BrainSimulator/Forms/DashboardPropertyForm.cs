@@ -355,6 +355,10 @@ namespace GoodAI.BrainSimulator.Forms
             if (taskSender != null)
                 target = taskSender;
 
+            var taskGroupSender = sender as TaskGroup;
+            if (taskGroupSender != null)
+                target = taskGroupSender;
+            
             if (target != null)
             {
                 PreserveGroupValue(e.PropertyName, target);
