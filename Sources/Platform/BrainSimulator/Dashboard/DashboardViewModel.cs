@@ -135,19 +135,19 @@ namespace GoodAI.BrainSimulator.DashboardUtils
         }
     }
 
-    public class DashboardViewModel : DashboardViewModelBase<Dashboard, DashboardNodeProperty>
+    public class DashboardViewModel : DashboardViewModelBase<Dashboard, DashboardNodePropertyBase>
     {
         public DashboardViewModel(Dashboard dashboard) : base(dashboard)
         {
         }
 
-        protected override PropertyDescriptor GetDescriptor(DashboardNodeProperty property, Attribute[] attributes)
+        protected override PropertyDescriptor GetDescriptor(DashboardNodePropertyBase property, Attribute[] attributes)
         {
             ProxyPropertyBase proxy = property.GenericProxy;
             return new ProxyPropertyDescriptor(ref proxy, attributes);
         }
 
-        public DashboardNodeProperty GetProperty(object target, string propertyName)
+        public DashboardNodePropertyBase GetProperty(object target, string propertyName)
         {
             return Dashboard.Get(target, propertyName);
         }

@@ -167,9 +167,9 @@ namespace CoreTests
             Assert.Equal(descriptor.PropertyType, typeof (string));
         }
 
-        private static DashboardNodeDirectProperty GetDirectProperty(Node node)
+        private static DashboardNodeProperty GetDirectProperty(Node node)
         {
-            var property = new DashboardNodeDirectProperty(node,
+            var property = new DashboardNodeProperty(node,
                 node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance));
             return property;
         }

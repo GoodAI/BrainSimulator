@@ -46,7 +46,7 @@ namespace GoodAI.Core.Dashboard
         public abstract override bool Equals(object obj);
     }
 
-    public abstract class DashboardNodeProperty : DashboardProperty
+    public abstract class DashboardNodePropertyBase : DashboardProperty
     {
         public MyNode Node { get; set; }
 
@@ -102,7 +102,7 @@ namespace GoodAI.Core.Dashboard
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class DashboardNodeDirectProperty : DashboardNodeProperty
+    public class DashboardNodeProperty : DashboardNodePropertyBase
     {
         private bool? m_readonly;
         private string m_displayName;
@@ -111,13 +111,13 @@ namespace GoodAI.Core.Dashboard
 
         public PropertyInfo PropertyInfo { get; protected set; }
 
-        public DashboardNodeDirectProperty(MyNode node, PropertyInfo propertyInfo)
+        public DashboardNodeProperty(MyNode node, PropertyInfo propertyInfo)
         {
             Node = node;
             PropertyInfo = propertyInfo;
         }
 
-        public DashboardNodeDirectProperty() { }
+        public DashboardNodeProperty() { }
 
         protected override ProxyPropertyBase GetProxyBase()
         {
@@ -157,7 +157,7 @@ namespace GoodAI.Core.Dashboard
 
         public override bool Equals(object obj)
         {
-            var o = obj as DashboardNodeDirectProperty;
+            var o = obj as DashboardNodeProperty;
             if (o != null)
                 return Node == o.Node && PropertyName == o.PropertyName;
 
@@ -189,7 +189,7 @@ namespace GoodAI.Core.Dashboard
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class DashboardTaskGroupProperty : DashboardNodeProperty
+    public class DashboardTaskGroupProperty : DashboardNodePropertyBase
     {
         public string GroupName { get { return TaskGroup.GroupName; } }
 
@@ -262,7 +262,7 @@ namespace GoodAI.Core.Dashboard
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class DashboardTaskProperty : DashboardNodeDirectProperty
+    public class DashboardTaskProperty : DashboardNodeProperty
     {
         public MyTask Task { get; set; }
 
@@ -325,7 +325,7 @@ namespace GoodAI.Core.Dashboard
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public sealed class DashboardPropertyGroup : DashboardProperty
     {
-        public IList<DashboardNodeProperty> GroupedProperties { get; private set; }
+        public IList<DashboardNodePropertyBase> GroupedProperties { get; private set; }
 
         private ProxyPropertyBase m_proxy;
 
@@ -371,16 +371,16 @@ namespace GoodAI.Core.Dashboard
 
         public DashboardPropertyGroup()
         {
-            GroupedProperties = new List<DashboardNodeProperty>();
+            GroupedProperties = new List<DashboardNodePropertyBase>();
         }
 
         public override void Restore(MyProject project)
         {
-            foreach (DashboardNodeProperty property in project.Dashboard.Properties.Where(p => p.GroupId == PropertyId))
+            foreach (DashboardNodePropertyBase property in project.Dashboard.Properties.Where(p => p.GroupId == PropertyId))
                 Add(property);
         }
 
-        private void CheckType(DashboardNodeProperty property)
+        private void CheckType(DashboardNodePropertyBase property)
         {
             if (GroupedProperties.Any() &&
                 property.GenericProxy.Type != GroupedProperties.First().GenericProxy.Type)
@@ -388,7 +388,7 @@ namespace GoodAI.Core.Dashboard
                     property.GenericProxy.Type));
         }
 
-        public void Add(DashboardNodeProperty property)
+        public void Add(DashboardNodePropertyBase property)
         {
             CheckType(property);
 
@@ -400,7 +400,7 @@ namespace GoodAI.Core.Dashboard
             property.GenericProxy.Value = GroupedProperties.First().GenericProxy.Value;
         }
 
-        public void Remove(DashboardNodeProperty property)
+        public void Remove(DashboardNodePropertyBase property)
         {
             GroupedProperties.Remove(property);
             property.Group = null;

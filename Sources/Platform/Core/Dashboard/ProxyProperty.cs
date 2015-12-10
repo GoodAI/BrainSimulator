@@ -61,7 +61,7 @@ namespace GoodAI.Core.Dashboard
         }
     }
 
-    public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeDirectProperty>
+    public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeProperty>
     {
         private string m_description;
         public PropertyInfo PropertyInfo { get; private set; }
@@ -72,7 +72,7 @@ namespace GoodAI.Core.Dashboard
             get { return SourceProperty.Group == null; }
         }
 
-        public SingleProxyProperty(DashboardNodeDirectProperty sourceProperty, object target, PropertyInfo propertyInfo)
+        public SingleProxyProperty(DashboardNodeProperty sourceProperty, object target, PropertyInfo propertyInfo)
             : base(sourceProperty)
         {
             Target = target;

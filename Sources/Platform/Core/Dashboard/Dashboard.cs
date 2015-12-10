@@ -52,7 +52,7 @@ namespace GoodAI.Core.Dashboard
             if (!Properties.Remove(property))
                 return;
 
-            var memberProperty = property as DashboardNodeProperty;
+            var memberProperty = property as DashboardNodePropertyBase;
             if (memberProperty != null && memberProperty.Group != null)
                 memberProperty.Group.Remove(memberProperty);
 
@@ -74,14 +74,14 @@ namespace GoodAI.Core.Dashboard
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class Dashboard : DashboardBase<DashboardNodeProperty>
+    public class Dashboard : DashboardBase<DashboardNodePropertyBase>
     {
         public bool Add(object target, string propertyName)
         {
             if (Contains(target, propertyName))
                 return false;
 
-            DashboardNodeProperty property = DashboardPropertyFactory.CreateProperty(target, propertyName);
+            DashboardNodePropertyBase property = DashboardPropertyFactory.CreateProperty(target, propertyName);
 
             if (property == null)
                 throw new InvalidOperationException("Invalid property owner provided");
@@ -104,7 +104,7 @@ namespace GoodAI.Core.Dashboard
 
         public bool Remove(object target, string propertyName)
         {
-            DashboardNodeProperty property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+            DashboardNodePropertyBase property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
 
             if (property == null)
                 return false;
@@ -121,15 +121,15 @@ namespace GoodAI.Core.Dashboard
             return false;
         }
 
-        public DashboardNodeProperty Get(object target, string propertyName)
+        public DashboardNodePropertyBase Get(object target, string propertyName)
         {
             return Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
         }
 
         public override void RemoveAll(object target)
         {
-            List<DashboardNodeProperty> toBeRemoved = Properties.Where(property => property.Node == target).ToList();
-            foreach (DashboardNodeProperty property in toBeRemoved)
+            List<DashboardNodePropertyBase> toBeRemoved = Properties.Where(property => property.Node == target).ToList();
+            foreach (DashboardNodePropertyBase property in toBeRemoved)
             {
                 Remove(property);
             }

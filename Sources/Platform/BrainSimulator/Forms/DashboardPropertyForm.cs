@@ -124,7 +124,7 @@ namespace GoodAI.BrainSimulator.Forms
                     .Select(descriptor => descriptor.Proxy)
                     .OfType<SingleProxyProperty>()
                     .Where(proxy => GroupedDashboardViewModel.GetProperty(proxy.PropertyId)
-                                    .GroupedProperties.Any(property => property is DashboardNodeDirectProperty)))
+                                    .GroupedProperties.Any(property => property is DashboardNodeProperty)))
                 {
                     groupProxy.ReadOnly = !value;
                 }
@@ -242,7 +242,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (selectedPropertyDescriptor == null)
                 return;
 
-            DashboardNodeProperty property = DashboardViewModel.GetProperty(selectedPropertyDescriptor.Proxy.PropertyId);
+            DashboardNodePropertyBase property = DashboardViewModel.GetProperty(selectedPropertyDescriptor.Proxy.PropertyId);
 
             ProxyPropertyDescriptor selectedGroupDescriptor = GetCurrentGroupDescriptor();
             DashboardPropertyGroup groupProperty =
@@ -289,7 +289,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void removeFromGroupButton_Click(object sender, EventArgs e)
         {
-            foreach (DashboardNodeDirectProperty property in
+            foreach (DashboardNodeProperty property in
                     memberListBox.SelectedItems.Cast<SingleProxyProperty>()
                         .Select(proxy => DashboardViewModel.GetProperty(proxy.PropertyId)))
             {
@@ -365,7 +365,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void PreserveGroupValue(string propertyName, object target)
         {
-            DashboardNodeProperty property = DashboardViewModel.GetProperty(target, propertyName);
+            DashboardNodePropertyBase property = DashboardViewModel.GetProperty(target, propertyName);
             if (property == null)
                 return;
 

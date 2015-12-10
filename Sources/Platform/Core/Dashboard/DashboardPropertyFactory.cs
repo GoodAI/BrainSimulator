@@ -12,10 +12,10 @@ namespace GoodAI.Platform.Core.Dashboard
 {
     public static class DashboardPropertyFactory
     {
-        public static DashboardNodeDirectProperty CreateNodeProperty(MyNode node, string propertyName)
+        public static DashboardNodeProperty CreateNodeProperty(MyNode node, string propertyName)
         {
             // This is a node property holding a task. Task groups and simple tasks have to be distinguished.
-            return new DashboardNodeDirectProperty(node, node.GetType().GetProperty(propertyName));
+            return new DashboardNodeProperty(node, node.GetType().GetProperty(propertyName));
         }
 
         public static DashboardTaskProperty CreateTaskProperty(MyTask task, string propertyName)
@@ -31,7 +31,7 @@ namespace GoodAI.Platform.Core.Dashboard
             return new DashboardTaskGroupProperty(taskGroup);
         }
 
-        public static DashboardNodeProperty CreateProperty(object target, string propertyName)
+        public static DashboardNodePropertyBase CreateProperty(object target, string propertyName)
         {
             var node = target as MyNode;
             if (node != null)
