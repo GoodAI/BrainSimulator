@@ -329,7 +329,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void goToNodeFromMemberButton_Click(object sender, EventArgs e)
         {
-            SingleProxyProperty proxy = memberListBox.SelectedItems.Cast<SingleProxyProperty>().FirstOrDefault();
+            ProxyPropertyBase proxy = memberListBox.SelectedItems.Cast<ProxyPropertyBase>().FirstOrDefault();
             if (proxy == null)
                 return;
 

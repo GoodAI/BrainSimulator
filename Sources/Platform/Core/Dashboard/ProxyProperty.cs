@@ -69,6 +69,8 @@ namespace GoodAI.Core.Dashboard
         {
         }
 
+        public override string FullName { get { return SourceProperty.Node.Name + "." + Name; } }
+
         public override bool IsVisible
         {
             get { return SourceProperty.Group == null; }
@@ -99,8 +101,6 @@ namespace GoodAI.Core.Dashboard
             get { return PropertyInfo.PropertyType; }
         }
 
-        public override string FullName { get { return SourceProperty.Node.Name + "." + Name; } }
-
         public override string Category
         {
             get { return SourceProperty.Node.Name; }
@@ -125,21 +125,21 @@ namespace GoodAI.Core.Dashboard
 
     public sealed class TaskGroupProxyProperty : GroupableProxyProperty<DashboardTaskGroupProperty>
     {
-        public MyWorkingNode Node { get; set; }
         public string GroupName { get; set; }
 
-        public TaskGroupProxyProperty(DashboardTaskGroupProperty sourceProperty, MyWorkingNode node, string groupName) : base(sourceProperty)
+        public TaskGroupProxyProperty(DashboardTaskGroupProperty sourceProperty, string groupName) : base(sourceProperty)
         {
-            Node = node;
             GroupName = groupName;
         }
 
+        private MyWorkingNode WorkingNode { get { return SourceProperty.Node as MyWorkingNode; } }
+
         public override object Value
         {
-            get { return Node.GetEnabledTask(GroupName).Name; }
+            get { return WorkingNode.GetEnabledTask(GroupName).Name; }
             set
             {
-                var taskGroup = Node.TaskGroups[GroupName];
+                var taskGroup = WorkingNode.TaskGroups[GroupName];
                 taskGroup.GetTaskByName(value as string).Enabled = true;
             }
         }
@@ -154,7 +154,7 @@ namespace GoodAI.Core.Dashboard
             get { return "Task group"; }
         }
 
-        public override string Category { get { return Node.Name; } }
+        public override string Category { get { return WorkingNode.Name; } }
     }
 
     public sealed class ProxyPropertyGroup : ProxyPropertyBase<DashboardPropertyGroup>

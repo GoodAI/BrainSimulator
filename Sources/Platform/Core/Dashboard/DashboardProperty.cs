@@ -213,7 +213,7 @@ namespace GoodAI.Core.Dashboard
 
         protected override ProxyPropertyBase GetProxyBase()
         {
-            return new TaskGroupProxyProperty(this, WorkingNode, GroupName);
+            return new TaskGroupProxyProperty(this, GroupName);
         }
 
         public override string PropertyName
