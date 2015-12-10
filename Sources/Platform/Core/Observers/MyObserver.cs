@@ -126,12 +126,33 @@ namespace GoodAI.Core.Observers
                 {
                     m_cudaTextureSource.UnMap();
                 }
+                else if (m_cudaTextureVar != null)
+                {
+                    CopyCudaVariableToHost(m_cudaTextureVar, BufferTarget.PixelUnpackBuffer, m_textureVBO);
+                }
 
                 if (m_cudaVertexSource != null)
                 {
                     m_cudaVertexSource.UnMap();
                 }
+                else if (m_cudaVertexVar != null)
+                {
+                    CopyCudaVariableToHost(m_cudaVertexVar, BufferTarget.ArrayBuffer, m_vertexVBO);
+                }
             }
+        }
+
+        private static void CopyCudaVariableToHost<T>(
+            CudaDeviceVariable<T> variable, BufferTarget bufferTarget, uint buffer)
+            where T : struct
+        {
+            GL.BindBuffer(bufferTarget, buffer);
+            IntPtr ptr = GL.MapBuffer(bufferTarget, BufferAccess.WriteOnly);
+
+            variable.CopyToHost(ptr);
+
+            GL.UnmapBuffer(bufferTarget);
+            GL.BindBuffer(bufferTarget, 0);
         }
 
         protected virtual void PrepareExecution() { }
@@ -273,63 +294,89 @@ namespace GoodAI.Core.Observers
         public uint TextureVBO { get { return m_textureVBO; } }
 
         private CudaOpenGLBufferInteropResource m_cudaTextureSource;
-        protected CUdeviceptr VBODevicePointer { get { return m_cudaTextureSource.GetMappedPointer<uint>().DevicePointer; } }
+        private CudaDeviceVariable<uint> m_cudaTextureVar;
 
-        private void CreateTextureVBO()
+        protected CUdeviceptr VBODevicePointer
         {
-            if (Initialized)
+            get
             {
-                int length = TextureWidth * TextureHeight * sizeof(uint);
-
-                if (length > 0)
-                {
-                    //unbind - just in case this is causing us the invalid exception problems
-                    GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-                    //create buffer
-                    GL.GenBuffers(1, out m_textureVBO);
-                    GL.BindBuffer(BufferTarget.PixelUnpackBuffer, m_textureVBO);
-                    GL.BufferData(BufferTarget.PixelUnpackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.DynamicCopy);  // use data instead of IntPtr.Zero if needed
-                    GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-
-                    m_cudaTextureSource = new CudaOpenGLBufferInteropResource(m_textureVBO, CUGraphicsRegisterFlags.None); //.WriteDiscard);  // Write only by CUDA
-
-                    // Enable Texturing
-                    GL.Enable(EnableCap.Texture2D);
-                    // Generate a texture ID
-                    GL.GenTextures(1, out m_texture_id);
-                    // Make this the current texture (remember that GL is state-based)
-                    GL.BindTexture(TextureTarget.Texture2D, m_texture_id);
-                    // Allocate the texture memory. The last parameter is NULL since we only
-                    // want to allocate memory, not initialize it 
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, TextureWidth, TextureHeight, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
-
-                    // Must set the filter mode, GL_LINEAR enables interpolation when scaling 
-                    int filter =
-                        BilinearFiltering ?
-                        (int)OpenTK.Graphics.OpenGL.All.Linear :
-                        (int)OpenTK.Graphics.OpenGL.All.Nearest;
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, filter);
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, filter);
-                }
+                return (m_cudaTextureSource != null) 
+                    ? m_cudaTextureSource.GetMappedPointer<uint>().DevicePointer
+                    : m_cudaTextureVar.DevicePointer;
             }
         }
 
+        private void CreateTextureVBO()
+        {
+            if (!Initialized)
+                return;
+
+            int length = TextureWidth * TextureHeight * sizeof(uint);
+            if (length <= 0)
+                return;
+
+            //unbind - just in case this is causing us the invalid exception problems
+            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+            //create buffer
+            GL.GenBuffers(1, out m_textureVBO);
+            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, m_textureVBO);
+            GL.BufferData(BufferTarget.PixelUnpackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.DynamicCopy);  // use data instead of IntPtr.Zero if needed
+            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+
+            try
+            {
+                m_cudaTextureSource = new CudaOpenGLBufferInteropResource(m_textureVBO, CUGraphicsRegisterFlags.None); //.WriteDiscard);  // Write only by CUDA
+            }
+            catch (CudaException e)
+            {
+                MyLog.DEBUG.WriteLine(
+                    "{0}: CUDA-OpenGL interop error while itializing texture (using fallback): {1}",
+                    GetType().Name, e.Message);
+
+                m_cudaTextureVar = new CudaDeviceVariable<uint>(TextureSize);
+            }
+
+            // Enable Texturing
+            GL.Enable(EnableCap.Texture2D);
+            // Generate a texture ID
+            GL.GenTextures(1, out m_texture_id);
+            // Make this the current texture (remember that GL is state-based)
+            GL.BindTexture(TextureTarget.Texture2D, m_texture_id);
+            // Allocate the texture memory. The last parameter is NULL since we only
+            // want to allocate memory, not initialize it 
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, TextureWidth, TextureHeight, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
+
+            // Must set the filter mode, GL_LINEAR enables interpolation when scaling 
+            int filter = BilinearFiltering
+                ? (int)OpenTK.Graphics.OpenGL.All.Linear
+                : (int)OpenTK.Graphics.OpenGL.All.Nearest;
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, filter);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, filter);
+        }
+
+        // unregister this buffer object with CUDA and destroy buffer
         private void DeleteTextureVBO()
         {
-            // unregister this buffer object with CUDA and destroy buffer
+            if ((m_cudaTextureSource == null) && (m_cudaTextureVar == null))
+                return;
 
             if (m_cudaTextureSource != null)
             {
                 m_cudaTextureSource.Dispose();
-                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-                GL.DeleteBuffers(1, ref m_textureVBO);
-
-                GL.DeleteTextures(1, ref m_texture_id);
-                m_textureVBO = 0;
-                m_texture_id = 0;
-
                 m_cudaTextureSource = null;
             }
+            else if (m_cudaTextureVar != null)
+            {
+                m_cudaTextureVar.Dispose();
+                m_cudaTextureVar = null;
+            }
+
+            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+            GL.DeleteBuffers(1, ref m_textureVBO);
+
+            GL.DeleteTextures(1, ref m_texture_id);
+            m_textureVBO = 0;
+            m_texture_id = 0;
         }
 
 
@@ -381,38 +428,68 @@ namespace GoodAI.Core.Observers
         public uint VertexVBO { get { return m_vertexVBO; } }
 
         private CudaOpenGLBufferInteropResource m_cudaVertexSource;
-        protected CUdeviceptr VertexVBODevicePointer { get { return m_cudaVertexSource.GetMappedPointer<uint>().DevicePointer; } }
+        private CudaDeviceVariable<float> m_cudaVertexVar;
 
+        protected CUdeviceptr VertexVBODevicePointer
+        {
+            get
+            {
+                return (m_cudaVertexSource != null)
+                    ? m_cudaVertexSource.GetMappedPointer<uint>().DevicePointer
+                    : m_cudaVertexVar.DevicePointer;
+            }
+        }
+        
         private void CreateVertexVBO()
         {
-            if (Initialized)
+            if (!Initialized)
+                return;
+
+            int length = VertexDataSize * sizeof(float);
+
+            //unbind - just in case this is causing us the invalid exception problems
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            //create buffer
+            GL.GenBuffers(1, out m_vertexVBO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, m_vertexVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.DynamicCopy);  // use data instead of IntPtr.Zero if needed
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            try
             {
-                int length = VertexDataSize * sizeof(float);
+                m_cudaVertexSource = new CudaOpenGLBufferInteropResource(m_vertexVBO, CUGraphicsRegisterFlags.None);
+            }
+            catch (CudaException e)
+            {
+                MyLog.DEBUG.WriteLine(
+                    "{0}: CUDA-OpenGL interop error while itializing vertex data (using fallback): {1}",
+                    GetType().Name, e.Message);
 
-                //unbind - just in case this is causing us the invalid exception problems
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                //create buffer
-                GL.GenBuffers(1, out m_vertexVBO);
-                GL.BindBuffer(BufferTarget.ArrayBuffer, m_vertexVBO);
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.DynamicCopy);  // use data instead of IntPtr.Zero if needed
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-                m_cudaVertexSource = new CudaOpenGLBufferInteropResource(m_vertexVBO, CUGraphicsRegisterFlags.None);                
+                m_cudaVertexVar = new CudaDeviceVariable<float>(VertexDataSize);
             }
         }
 
+        // unregister this buffer object with CUDA and destroy buffer
         private void DeleteVertexVBO()
         {
-            // unregister this buffer object with CUDA and destroy buffer
+            if ((m_cudaVertexSource == null) && (m_cudaVertexVar == null))
+                return;
 
             if (m_cudaVertexSource != null)
             {
                 m_cudaVertexSource.Dispose();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                GL.DeleteBuffers(1, ref m_vertexVBO);
-                
-                m_vertexVBO = 0;                
+                m_cudaVertexSource = null;
             }
+            else if (m_cudaVertexVar != null)
+            {
+                m_cudaVertexVar.Dispose();
+                m_cudaVertexVar = null;
+            }
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DeleteBuffers(1, ref m_vertexVBO);
+
+            m_vertexVBO = 0;
         }
 
         #endregion
@@ -513,7 +590,5 @@ namespace GoodAI.Core.Observers
         {
             Target = (T)project.GetNodeById(int.Parse(TargetIdentifier));
         }
-
-        public MyNodeObserver() { } 
     }
 }
