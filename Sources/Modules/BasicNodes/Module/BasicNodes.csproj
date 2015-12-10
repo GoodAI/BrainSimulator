@@ -502,6 +502,8 @@
     </Content>
     <EmbeddedResource Include="res\loopgroup.png" />
     <EmbeddedResource Include="res\loopgroup_big.png" />
+    <EmbeddedResource Include="res\scripting.png" />
+    <EmbeddedResource Include="res\scripting_big.png" />
     <Content Include="res\tetrisworld\brick_mask.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

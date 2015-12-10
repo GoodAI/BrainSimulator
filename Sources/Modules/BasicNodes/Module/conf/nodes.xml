@@ -328,7 +328,7 @@
     <Category Name="Math" SmallIcon="distance.png"></Category>
     <Category Name="Neural Networks" SmallIcon="network.png"></Category>
     <Category Name="Reinforcement Learning" SmallIcon="reward.png"></Category>
-    <Category Name="Scripting" SmallIcon="csharp.png"></Category>
+    <Category Name="Scripting" SmallIcon="scripting.png"></Category>
     <Category Name="Symbolic ML" SmallIcon="book.png"></Category>
     <!--<Category Name="Transformations" SmallIcon="function.png"></Category>-->
     <Category Name="Vision" SmallIcon="observer.png"></Category>
