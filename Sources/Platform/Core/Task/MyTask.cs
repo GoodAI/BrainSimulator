@@ -146,6 +146,11 @@ namespace GoodAI.Core.Task
                 }
             }
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public abstract class MyTask<OwnerType> : MyTask where OwnerType : MyWorkingNode

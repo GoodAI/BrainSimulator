@@ -289,8 +289,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void removeFromGroupButton_Click(object sender, EventArgs e)
         {
-            foreach (DashboardNodeProperty property in
-                    memberListBox.SelectedItems.Cast<SingleProxyProperty>()
+            foreach (DashboardNodePropertyBase property in
+                    memberListBox.SelectedItems.Cast<ProxyPropertyBase>()
                         .Select(proxy => DashboardViewModel.GetProperty(proxy.PropertyId)))
             {
                 property.Group.Remove(property);

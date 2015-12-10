@@ -4,12 +4,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Task;
 
 namespace GoodAI.Core.Dashboard
 {
     public class ProxyPropertyDescriptor : PropertyDescriptor
     {
-        private TypeConverter m_converter;
         public ProxyPropertyBase Proxy { get; private set; }
         public ProxyPropertyDescriptor(ref ProxyPropertyBase proxy, Attribute[] attrs)
             : base(proxy.Name, attrs)
@@ -18,11 +18,6 @@ namespace GoodAI.Core.Dashboard
         }
 
         #region PropertyDescriptor specific
-
-        public void SetConverter(TypeConverter converter)
-        {
-            m_converter = converter;
-        }
 
         public override bool CanResetValue(object component)
         {
@@ -36,7 +31,32 @@ namespace GoodAI.Core.Dashboard
 
         public override TypeConverter Converter
         {
-            get { return m_converter ?? base.Converter; }
+            get
+            {
+                if (Proxy is TaskGroupProxyProperty)
+                {
+                    var taskNames = (Proxy.GenericSourceProperty as DashboardTaskGroupProperty).TaskGroup.Tasks.Select(task => task.Name);
+                    return new TaskGroupConverter(taskNames);
+                }
+
+                if (Proxy is ProxyPropertyGroup)
+                {
+                    // Get the mapping from the first member property.
+                    var propertyGroup = Proxy.GenericSourceProperty as DashboardPropertyGroup;
+
+                    if (propertyGroup.GroupedProperties.Any())
+                    {
+                        var taskGroupProxy = propertyGroup.GroupedProperties.First() as DashboardTaskGroupProperty;
+                        if (taskGroupProxy != null)
+                        {
+                            var taskNames = taskGroupProxy.TaskGroup.Tasks.Select(task => task.Name);
+                            return new TaskGroupConverter(taskNames);
+                        }
+                    }
+                }
+
+                return base.Converter;
+            }
         }
 
         public override object GetValue(object component)

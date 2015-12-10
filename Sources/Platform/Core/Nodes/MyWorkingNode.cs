@@ -4,6 +4,7 @@ using GoodAI.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using GoodAI.Core.Execution;
@@ -32,6 +33,11 @@ namespace GoodAI.Core.Nodes
         }
 
         public List<MyTask> Tasks { get; private set; }
+
+        public MyTask GetTaskByName(string value)
+        {
+            return Tasks.First(task => task.Name == value);
+        }
     }
 
     public abstract class MyWorkingNode : MyNode

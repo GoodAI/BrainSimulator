@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 
 namespace GoodAI.Core.Dashboard
 {
@@ -36,6 +37,7 @@ namespace GoodAI.Core.Dashboard
         public abstract object Value { get; set; }
 
         public abstract Type Type { get; }
+        public virtual string TypeName { get { return Type.Name; } }
 
         protected ProxyPropertyBase(DashboardProperty property)
         {
@@ -61,16 +63,23 @@ namespace GoodAI.Core.Dashboard
         }
     }
 
-    public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeProperty>
+    public abstract class GroupableProxyProperty<TSource> : ProxyPropertyBase<TSource> where TSource : DashboardNodePropertyBase
     {
-        private string m_description;
-        public PropertyInfo PropertyInfo { get; private set; }
-        public object Target { get; protected set; }
+        protected GroupableProxyProperty(DashboardProperty property) : base(property)
+        {
+        }
 
         public override bool IsVisible
         {
             get { return SourceProperty.Group == null; }
         }
+    }
+
+    public sealed class SingleProxyProperty : GroupableProxyProperty<DashboardNodeProperty>
+    {
+        private string m_description;
+        public PropertyInfo PropertyInfo { get; private set; }
+        public object Target { get; protected set; }
 
         public SingleProxyProperty(DashboardNodeProperty sourceProperty, object target, PropertyInfo propertyInfo)
             : base(sourceProperty)
@@ -114,7 +123,7 @@ namespace GoodAI.Core.Dashboard
         }
     }
 
-    public sealed class TaskGroupProxyProperty : ProxyPropertyBase<DashboardTaskGroupProperty>
+    public sealed class TaskGroupProxyProperty : GroupableProxyProperty<DashboardTaskGroupProperty>
     {
         public MyWorkingNode Node { get; set; }
         public string GroupName { get; set; }
@@ -128,12 +137,21 @@ namespace GoodAI.Core.Dashboard
         public override object Value
         {
             get { return Node.GetEnabledTask(GroupName).Name; }
-            set { Node.GetTaskByPropertyName(value as string).Enabled = true; }
+            set
+            {
+                var taskGroup = Node.TaskGroups[GroupName];
+                taskGroup.GetTaskByName(value as string).Enabled = true;
+            }
         }
 
         public override Type Type
         {
             get { return typeof (string); }
+        }
+
+        public override string TypeName
+        {
+            get { return "Task group"; }
         }
 
         public override string Category { get { return Node.Name; } }

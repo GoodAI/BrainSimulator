@@ -352,7 +352,7 @@ namespace GoodAI.Core.Dashboard
                 string type = null;
                 var firstProperty = GroupedProperties.FirstOrDefault();
                 if (firstProperty != null)
-                    type = firstProperty.GenericProxy.Type.Name + ", ";
+                    type = firstProperty.GenericProxy.TypeName + ", ";
 
                 return PropertyName + string.Format(" ({0}{1})", type, GroupedProperties.Count);
             }
