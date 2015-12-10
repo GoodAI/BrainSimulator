@@ -13,6 +13,7 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Motor;
 using GoodAI.Modules.Testing;
+using GoodAI.Platform.Core.Dashboard;
 using KellermanSoftware.CompareNetObjects;
 using Xunit;
 using Xunit.Abstractions;
@@ -52,13 +53,9 @@ namespace CoreTests
         {
             var node = new Node();
 
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var group = new DashboardPropertyGroup();
+            var group = new DashboardPropertyGroup("Foo");
 
             group.Add(property);
 
@@ -71,13 +68,9 @@ namespace CoreTests
         {
             var node = new Node();
 
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var group = new DashboardPropertyGroup();
+            var group = new DashboardPropertyGroup("Foo");
 
             group.Add(property);
             group.Remove(property);
@@ -93,11 +86,7 @@ namespace CoreTests
 
             var node = new Node();
 
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
             var proxy = property.GenericProxy;
             proxy.Value = testName;
@@ -114,19 +103,11 @@ namespace CoreTests
             var node = new Node();
             var node2 = new Node();
 
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var property2 = new DashboardNodeProperty
-            {
-                Node = node2,
-                PropertyInfo = node2.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property2 = GetDirectProperty(node2);
 
-            var group = new DashboardPropertyGroup();
+            var group = new DashboardPropertyGroup("Foo");
 
             group.Add(property);
             group.Add(property2);
@@ -147,22 +128,13 @@ namespace CoreTests
             var node = new Node();
             var task = new Task();
 
-            var property = new DashboardNodeProperty()
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
             Assert.Equal(property.GenericProxy, property.GenericProxy);
 
-            var property2 = new DashboardTaskProperty()
-            {
-                Node = node,
-                Task = task,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property2 = new DashboardTaskProperty(task, node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance));
             Assert.Equal(property2.GenericProxy, property2.GenericProxy);
 
-            var property3 = new DashboardPropertyGroup();
+            var property3 = new DashboardPropertyGroup("Foo");
             Assert.Equal(property3.GenericProxy, property3.GenericProxy);
         }
 
@@ -171,11 +143,7 @@ namespace CoreTests
         {
             var node = new Node();
 
-            var property = new DashboardNodeProperty()
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
             var proxy = property.GenericProxy;
             var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
@@ -188,19 +156,22 @@ namespace CoreTests
         {
             var node = new Node();
 
-            var property = new DashboardNodeProperty()
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var group = new DashboardPropertyGroup();
+            var group = new DashboardPropertyGroup("Foo");
             group.Add(property);
 
             var proxy = group.GenericProxy;
             var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
 
             Assert.Equal(descriptor.PropertyType, typeof (string));
+        }
+
+        private static DashboardNodeDirectProperty GetDirectProperty(Node node)
+        {
+            var property = new DashboardNodeDirectProperty(node,
+                node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance));
+            return property;
         }
 
         [Fact]
@@ -227,8 +198,6 @@ namespace CoreTests
         [Fact]
         public void GroupDashboardFiresUpdateEvents()
         {
-            var node = new Node();
-
             var flag = new AutoResetEvent(false);
 
             var groupDashboard = new GroupDashboard();
@@ -256,17 +225,10 @@ namespace CoreTests
             project.Network.AddChild(node);
 
             var dashboard = new Dashboard();
-            dashboard.Properties.Add(new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            });
+            dashboard.Properties.Add(GetDirectProperty(node));
 
             var groupDashboard = new GroupDashboard();
-            groupDashboard.Properties.Add(new DashboardPropertyGroup
-            {
-                PropertyName = "Group 1"
-            });
+            groupDashboard.Properties.Add(new DashboardPropertyGroup("Group 1"));
             groupDashboard.Properties[0].Add(dashboard.Properties[0]);
 
             YAXSerializer serializer = MyProject.GetSerializer<Dashboard>();

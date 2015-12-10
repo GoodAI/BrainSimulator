@@ -93,7 +93,7 @@ namespace GoodAI.Core.Task
         }
 
         [YAXSerializableField, YAXAttributeForClass]
-        internal string PropertyName { get; set; }
+        public string PropertyName { get; internal set; }
 
         private static Dictionary<Type, MyTaskInfoAttribute> TASK_INFO = new Dictionary<Type, MyTaskInfoAttribute>();
 

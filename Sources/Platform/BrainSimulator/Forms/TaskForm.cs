@@ -21,7 +21,7 @@ namespace GoodAI.BrainSimulator.Forms
                 PropertyChanged(task, new PropertyChangedEventArgs(propertyName));
         }
 
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
         private MyWorkingNode m_target;
         private bool isUpdating;
 

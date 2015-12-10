@@ -118,6 +118,7 @@
     <Compile Include="Configuration\MyNodeConfig.cs" />
     <Compile Include="Dashboard\Dashboard.cs" />
     <Compile Include="Dashboard\DashboardProperty.cs" />
+    <Compile Include="Dashboard\DashboardPropertyFactory.cs" />
     <Compile Include="Dashboard\ProxyProperty.cs" />
     <Compile Include="Dashboard\ProxyPropertyDescriptor.cs" />
     <Compile Include="Execution\MyExecutionBlock.cs" />

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Dashboard;
 using YAXLib;
 
 namespace GoodAI.Core.Dashboard
@@ -80,35 +81,12 @@ namespace GoodAI.Core.Dashboard
             if (Contains(target, propertyName))
                 return false;
 
-            DashboardNodeProperty property = null;
-
-            var node = target as MyNode;
-            if (node != null)
-            {
-                property = new DashboardNodeProperty
-                {
-                    Node = node,
-                    PropertyInfo = node.GetType().GetProperty(propertyName)
-                };
-            }
-            else
-            {
-                var task = target as MyTask;
-                if (task != null)
-                {
-                    property = new DashboardTaskProperty
-                    {
-                        Node = task.GenericOwner,
-                        Task = task,
-                        PropertyInfo = task.GetType().GetProperty(propertyName)
-                    };
-                }
-            }
+            DashboardNodeProperty property = DashboardPropertyFactory.CreateProperty(target, propertyName);
 
             if (property == null)
                 throw new InvalidOperationException("Invalid property owner provided");
 
-            if (property.IsReadonly)
+            if (property.IsReadOnly)
                 throw new InvalidOperationException("Readonly properties are not supported");
 
             Properties.Add(property);
@@ -162,6 +140,7 @@ namespace GoodAI.Core.Dashboard
     public sealed class GroupDashboard : DashboardBase<DashboardPropertyGroup>
     {
         private static int m_nextId = 1;
+
         private static int GetNextId()
         {
             return m_nextId++;
@@ -174,10 +153,7 @@ namespace GoodAI.Core.Dashboard
             while (Properties.Any(property => property.PropertyName == name))
                 name = "Group " + GetNextId();
 
-            Properties.Add(new DashboardPropertyGroup
-            {
-                PropertyName = name
-            });
+            Properties.Add(new DashboardPropertyGroup(name));
             OnPropertiesChanged("Properties");
         }
 

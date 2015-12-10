@@ -16,6 +16,24 @@ namespace GoodAI.Core.Nodes
         void CreateTasks();
     }
 
+    /// <summary>
+    /// This encapsulates a task group.
+    /// </summary>
+    public class TaskGroup
+    {
+        public string GroupName { get; private set; }
+        public MyWorkingNode Owner { get; private set; }
+
+        public TaskGroup(MyWorkingNode owner, string groupName)
+        {
+            GroupName = groupName;
+            Owner = owner;
+            Tasks = new List<MyTask>();
+        }
+
+        public List<MyTask> Tasks { get; private set; }
+    }
+
     public abstract class MyWorkingNode : MyNode
     {
 
@@ -195,16 +213,30 @@ namespace GoodAI.Core.Nodes
                     MyLog.ERROR.WriteLine("Automated task creation failed: " + e.Message);
                 }
             }
+
+            InitializeTaskGroups();
+        }
+
+        private void InitializeTaskGroups()
+        {
+            TaskGroups.Clear();
+
+            foreach (var task in m_tasks.Values.Where(task => !string.IsNullOrEmpty(task.TaskGroupName)))
+            {
+                TaskGroup group;
+                if (!TaskGroups.TryGetValue(task.TaskGroupName, out group))
+                    group = new TaskGroup(this, task.TaskGroupName);
+
+                group.Tasks.Add(task);
+            }
         }
 
         internal void FinalizeTasksDeserialization()
         {
             //to prevent nodegroup deserialization errors
             if (m_tasks == null)
-            {
                 m_tasks = new Dictionary<string, MyTask>();
-            }
-            
+
             //compatibility issues (no PropertyName attributes inside brain file Tasks sections)
             Dictionary<string, PropertyInfo> taskTypeTable = new Dictionary<string, PropertyInfo>();
             foreach (PropertyInfo taskProperty in GetInfo().KnownTasks.Values)
@@ -266,7 +298,15 @@ namespace GoodAI.Core.Nodes
                     }                    
                 }
             }
+
+            InitializeTaskGroups();
         }
+
+        #endregion
+
+        #region Task groups
+
+        public Dictionary<string, TaskGroup> TaskGroups { get; private set; }
 
         #endregion
 
@@ -283,11 +323,11 @@ namespace GoodAI.Core.Nodes
         internal protected MyWorkingNode()
         {
             m_tasks = new Dictionary<string, MyTask>();
+            TaskGroups = new Dictionary<string, TaskGroup>();
 
-            if (this is IMyCustomTaskFactory)
-            {
-                (this as IMyCustomTaskFactory).CreateTasks();
-            }
+            var factory = this as IMyCustomTaskFactory;
+            if (factory != null)
+                factory.CreateTasks();
 
             FinalizeTaskCreation();
         }

@@ -8,6 +8,7 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
@@ -123,7 +124,7 @@ namespace GoodAI.BrainSimulator.Forms
                     .Select(descriptor => descriptor.Proxy)
                     .OfType<SingleProxyProperty>()
                     .Where(proxy => GroupedDashboardViewModel.GetProperty(proxy.PropertyId)
-                                    .GroupedProperties.Any(property => property.Target is MyNode)))
+                                    .GroupedProperties.Any(property => property is DashboardNodeDirectProperty)))
                 {
                     groupProxy.ReadOnly = !value;
                 }
@@ -288,7 +289,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void removeFromGroupButton_Click(object sender, EventArgs e)
         {
-            foreach (DashboardNodeProperty property in
+            foreach (DashboardNodeDirectProperty property in
                     memberListBox.SelectedItems.Cast<SingleProxyProperty>()
                         .Select(proxy => DashboardViewModel.GetProperty(proxy.PropertyId)))
             {

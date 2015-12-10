@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -60,8 +61,9 @@ namespace GoodAI.Core.Dashboard
         }
     }
 
-    public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeProperty>
+    public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeDirectProperty>
     {
+        private string m_description;
         public PropertyInfo PropertyInfo { get; private set; }
         public object Target { get; protected set; }
 
@@ -70,7 +72,7 @@ namespace GoodAI.Core.Dashboard
             get { return SourceProperty.Group == null; }
         }
 
-        public SingleProxyProperty(DashboardNodeProperty sourceProperty, object target, PropertyInfo propertyInfo)
+        public SingleProxyProperty(DashboardNodeDirectProperty sourceProperty, object target, PropertyInfo propertyInfo)
             : base(sourceProperty)
         {
             Target = target;
@@ -93,6 +95,22 @@ namespace GoodAI.Core.Dashboard
         public override string Category
         {
             get { return SourceProperty.Node.Name; }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                if (m_description == null)
+                {
+                    m_description = string.Empty;
+                    var descriptionAttr = PropertyInfo.GetCustomAttribute<DescriptionAttribute>();
+                    if (descriptionAttr != null)
+                        m_description = descriptionAttr.Description;
+                }
+
+                return m_description;
+            }
         }
     }
 
