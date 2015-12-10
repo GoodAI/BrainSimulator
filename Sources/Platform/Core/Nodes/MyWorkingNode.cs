@@ -225,7 +225,10 @@ namespace GoodAI.Core.Nodes
             {
                 TaskGroup group;
                 if (!TaskGroups.TryGetValue(task.TaskGroupName, out group))
+                {
                     group = new TaskGroup(this, task.TaskGroupName);
+                    TaskGroups[group.GroupName] = group;
+                }
 
                 group.Tasks.Add(task);
             }

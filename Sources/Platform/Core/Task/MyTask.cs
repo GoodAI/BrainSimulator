@@ -92,6 +92,20 @@ namespace GoodAI.Core.Task
             }
         }
 
+        public TaskGroup TaskGroup {
+            get
+            {
+                if (!string.IsNullOrEmpty(TaskGroupName))
+                {
+                    TaskGroup taskGroup;
+                    GenericOwner.TaskGroups.TryGetValue(TaskGroupName, out taskGroup);
+                    return taskGroup;
+                }
+
+                return null;
+            }
+        }
+
         [YAXSerializableField, YAXAttributeForClass]
         public string PropertyName { get; internal set; }
 

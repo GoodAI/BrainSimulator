@@ -226,7 +226,7 @@ namespace GoodAI.Core.Dashboard
 
         public override string DisplayName
         {
-            get { return "[Group]" + GroupName; }
+            get { return "[Task Group] " + GroupName; }
         }
 
         protected override string GeneratePropertyId()

@@ -326,7 +326,10 @@ namespace GoodAI.BrainSimulator.Forms
 
             var task = selectedItem.Tag as MyTask;
 
-            m_mainForm.DashboardPropertyToggle(task, PropertyName, dashboardButton.Checked);
+            if (string.IsNullOrEmpty(task.TaskGroupName))
+                m_mainForm.DashboardPropertyToggle(task, PropertyName, dashboardButton.Checked);
+            else
+                m_mainForm.DashboardPropertyToggle(task.TaskGroup, task.TaskGroupName, dashboardButton.Checked);
         }
 
         private void RefreshDashboardButton()
@@ -338,7 +341,10 @@ namespace GoodAI.BrainSimulator.Forms
                 var task = selectedItem.Tag as MyTask;
 
                 dashboardButton.Enabled = true;
+            if (string.IsNullOrEmpty(task.TaskGroupName))
                 dashboardButton.Checked = m_mainForm.CheckDashboardContains(task, PropertyName);
+            else
+                dashboardButton.Checked = m_mainForm.CheckDashboardContains(task.TaskGroup, task.TaskGroupName);
             }
             else
             {

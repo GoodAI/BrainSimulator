@@ -135,6 +135,8 @@ namespace GoodAI.Core.Dashboard
         {
             get { return typeof (string); }
         }
+
+        public override string Category { get { return Node.Name; } }
     }
 
     public sealed class ProxyPropertyGroup : ProxyPropertyBase<DashboardPropertyGroup>
