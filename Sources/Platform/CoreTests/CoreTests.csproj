@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="DashboardTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
+    <Compile Include="ModelCreationTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="SerializationTests.cs" />
