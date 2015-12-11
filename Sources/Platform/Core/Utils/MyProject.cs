@@ -368,25 +368,45 @@ namespace GoodAI.Core.Utils
             for (int i = 0; i < serializer.ParsingErrors.Count; i++)
             {
                 var error = serializer.ParsingErrors[i];
-                YAXExceptionTypes errorLevel = error.Value;
 
-                if (error.Key is YAXAttributeMissingException ||
-                    error.Key is YAXElementMissingException ||
-                    error.Key is YAXElementValueMissingException)
-                {
-                    errorLevel = YAXExceptionTypes.Warning;
-                }
+                MyLogLevel logLevel;
 
-                switch (errorLevel)
+                switch (error.Value)
                 {
                     case YAXExceptionTypes.Error:
-                        MyLog.ERROR.WriteLine(error.Key.Message);
+                        logLevel = MyLogLevel.ERROR;
+                        break;
+                    case YAXExceptionTypes.Ignore:
+                        logLevel = MyLogLevel.INFO;
                         break;
                     case YAXExceptionTypes.Warning:
-                        MyLog.WARNING.WriteLine(error.Key.Message);
+                        logLevel = MyLogLevel.WARNING;
                         break;
                     default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                if (error.Key is YAXAttributeMissingException || error.Key is YAXElementValueMissingException)
+                    logLevel = MyLogLevel.WARNING;
+
+                if (error.Key is YAXElementMissingException)
+                    logLevel = MyLogLevel.DEBUG;
+
+                switch (logLevel)
+                {
+                    case MyLogLevel.ERROR:
+                        MyLog.ERROR.WriteLine(error.Key.Message);
                         break;
+                    case MyLogLevel.WARNING:
+                        MyLog.WARNING.WriteLine(error.Key.Message);
+                        break;
+                    case MyLogLevel.DEBUG:
+                        MyLog.DEBUG.WriteLine(error.Key.Message);
+                        break;
+                    case MyLogLevel.INFO:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
