@@ -110,11 +110,11 @@ namespace GoodAI.Core.Memory
             return (m_computedDimension == -1) ? "?" : m_computedDimension.ToString();
         }
 
-        public void Set(IEnumerable<int> customDimenstions,
+        public void Set(IEnumerable<int> customDimensions,
             bool autoAddComputedDim = false,
             bool autoRemoveDimsOfSizeOne = false)
         {
-            InnerSet(customDimenstions, autoAddComputedDim, autoRemoveDimsOfSizeOne);
+            InnerSet(customDimensions, autoAddComputedDim, autoRemoveDimsOfSizeOne);
             
             IsCustom = (m_customDimensions.Count > 0);  // No need to save "empty" value.
         }
@@ -158,7 +158,7 @@ namespace GoodAI.Core.Memory
                 return result;
             });
 
-            Set(dimensions, autoAddComputedDim: true, autoRemoveDimsOfSizeOne: true);
+            Set(dimensions, autoAddComputedDim: false, autoRemoveDimsOfSizeOne: true);
         }
 
         private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne)
