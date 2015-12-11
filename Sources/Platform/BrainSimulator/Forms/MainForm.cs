@@ -10,8 +10,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
 using GoodAI.Core.Task;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -40,6 +42,8 @@ namespace GoodAI.BrainSimulator.Forms
         private void MainForm_Load(object sender, EventArgs e)
         {
             UpgradeUserSettings();
+
+            ToolBarNodes.InitDefaultToolBar(Settings.Default, MyConfiguration.KnownNodes);
 
             if (!TryRestoreViewsLayout(UserLayoutFileName))
             {
