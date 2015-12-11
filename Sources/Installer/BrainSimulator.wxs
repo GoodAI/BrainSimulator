@@ -184,8 +184,21 @@
           <RegistryValue Name="installed" Value="1" Type="integer" KeyPath="yes"/> 
         </RegistryKey> 
 
-        <Shortcut Id="startmenuBrainSimulator" Directory="ProgramMenuDir" Name="Brain Simulator" WorkingDirectory='INSTALLDIR' Icon="BrainSimulator.exe" IconIndex="0" Target="[#BrainSimulatorEXE]" />
-        <Shortcut Id="desktopSimulator" Directory="DesktopFolder" Name="Brain Simulator" WorkingDirectory='INSTALLDIR' Icon="BrainSimulator.exe" IconIndex="0" Target="[#BrainSimulatorEXE]" />
+        <Shortcut Id="startmenuBrainSimulator"
+                  Directory="ProgramMenuDir"
+                  Name="Brain Simulator"
+                  WorkingDirectory='INSTALLFOLDER'
+                  Icon="BrainSimulator.exe"
+                  IconIndex="0"
+                  Target="[#BrainSimulatorEXE]" />
+
+        <Shortcut Id="desktopSimulator"
+                  Directory="DesktopFolder"
+                  Name="Brain Simulator"
+                  WorkingDirectory='INSTALLFOLDER'
+                  Icon="BrainSimulator.exe"
+                  IconIndex="0"
+                  Target="[#BrainSimulatorEXE]" />
 
         <RemoveFolder Id="RemoveGoodAIMenuDir" Directory="GoodAIMenuDir" On="uninstall"/>
         <RemoveFolder Id="ProgramMenuDir" On="uninstall"/>
