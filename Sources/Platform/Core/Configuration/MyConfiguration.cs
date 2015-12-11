@@ -90,11 +90,10 @@ namespace GoodAI.Core.Configuration
 
             foreach (string modulePath in ModulesSearchPath)
             {
-                var dirInfo = new FileInfo(modulePath);
-                if ((dirInfo.Attributes & FileAttributes.Directory) <= 0)
-                    continue;
+                var fileInfo = new FileInfo(modulePath);
+                if ((fileInfo.Attributes & FileAttributes.Directory) > 0)
+                    fileInfo = new FileInfo(Path.Combine(fileInfo.FullName, fileInfo.Name + ".dll"));
 
-                var fileInfo = new FileInfo(Path.Combine(dirInfo.FullName, dirInfo.Name + ".dll"));
                 if (!fileInfo.Exists)
                     MyLog.WARNING.WriteLine("Module assembly not found: " + fileInfo);
 
