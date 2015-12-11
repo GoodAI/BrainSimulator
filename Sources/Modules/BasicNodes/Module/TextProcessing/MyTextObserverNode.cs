@@ -31,7 +31,7 @@ namespace GoodAI.Modules.LTM
     /// The sole purpose of this node is to gather a matrix and visualize each of it's vectors as words (i.e. chains of characters). This visualization is performed via a custom observer - MyVectorTextObserver.
     /// <h3>Input Memory Blocks</h3>
     /// <ul>
-    ///     <li> <b>Data:</b> Data matrix (M x N) containing one word in each row. In each element is stored one character as an integer (it's ASCII code minus 32).</li>
+    ///     <li> <b>Data:</b> Data matrix (M x N) containing one word in each row. In each element is stored one character as an integer depending on the chosen encoding.</li>
     ///     <li> <b>Weights:</b> A vector (of size M) describing importance of each word. The words are written in a descending order according to this weights and the weights also determine the brightness of each word.</li>
     /// </ul>
     /// </description>
@@ -52,7 +52,7 @@ namespace GoodAI.Modules.LTM
         }
 
 
-
+       
         public MyWriteToFileTask WriteFile { get; private set; }
 
         [Description("Use ASCII-based Digit Index encoding (default) or Uppercase Vowel-Space-Consonant encoding")]
@@ -84,7 +84,7 @@ namespace GoodAI.Modules.LTM
     /// The extracted text can be formatted accordingly to represent Concept1,Concept2,Relationship,ConceptStrength,RelationStrength (In such case SplitValue should be 5, value 1 means don't split)
     /// </summary>
     /// <description></description>
-    [Description("Write on File")]
+    [Description("Write on File"), MyTaskInfo(Disabled = true)]
     public class MyWriteToFileTask : MyTask<MyTextObserverNode>
     {
 
