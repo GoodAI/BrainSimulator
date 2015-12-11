@@ -16,6 +16,7 @@ namespace GoodAI.Core.Dashboard
 
         public TaskGroupConverter(IEnumerable<string> taskNames)
         {
+            m_taskNames.Add("");
             m_taskNames.AddRange(taskNames);
         }
 

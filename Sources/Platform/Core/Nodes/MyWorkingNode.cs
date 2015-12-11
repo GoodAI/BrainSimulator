@@ -36,7 +36,13 @@ namespace GoodAI.Core.Nodes
 
         public MyTask GetTaskByName(string value)
         {
-            return Tasks.First(task => task.Name == value);
+            return Tasks.FirstOrDefault(task => task.Name == value);
+        }
+
+        public void DisableAll()
+        {
+            foreach (MyTask task in Tasks.Where(task => task.Enabled))
+                task.Enabled = false;
         }
     }
 

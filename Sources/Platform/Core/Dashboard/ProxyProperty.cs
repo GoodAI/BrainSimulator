@@ -49,6 +49,11 @@ namespace GoodAI.Core.Dashboard
         {
             return FullName.Replace("\t", "");
         }
+
+        public virtual bool CompatibleWith(ProxyPropertyBase other)
+        {
+            return Type == other.Type;
+        }
     }
 
     public abstract class ProxyPropertyBase<TSource> : ProxyPropertyBase where TSource : DashboardProperty
@@ -136,11 +141,19 @@ namespace GoodAI.Core.Dashboard
 
         public override object Value
         {
-            get { return WorkingNode.GetEnabledTask(GroupName).Name; }
+            get
+            {
+                MyTask enabledTask = WorkingNode.GetEnabledTask(GroupName);
+                return enabledTask == null ? null : enabledTask.Name;
+            }
             set
             {
-                var taskGroup = WorkingNode.TaskGroups[GroupName];
-                taskGroup.GetTaskByName(value as string).Enabled = true;
+                TaskGroup taskGroup = WorkingNode.TaskGroups[GroupName];
+                MyTask task = taskGroup.GetTaskByName(value as string);
+                if (task == null)
+                    taskGroup.DisableAll();
+                else
+                    task.Enabled = true;
             }
         }
 
@@ -151,10 +164,19 @@ namespace GoodAI.Core.Dashboard
 
         public override string TypeName
         {
-            get { return "Task group"; }
+            get { return GroupName; }
         }
 
         public override string Category { get { return WorkingNode.Name; } }
+
+        public override bool CompatibleWith(ProxyPropertyBase other)
+        {
+            var otherTaskGroup = other as TaskGroupProxyProperty;
+            if (otherTaskGroup == null)
+                return false;
+
+            return WorkingNode.GetType() == otherTaskGroup.WorkingNode.GetType() && GroupName == otherTaskGroup.GroupName;
+        }
     }
 
     public sealed class ProxyPropertyGroup : ProxyPropertyBase<DashboardPropertyGroup>

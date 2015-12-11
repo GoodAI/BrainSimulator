@@ -103,7 +103,7 @@ namespace GoodAI.Core.Dashboard
         {
             get
             {
-                return Proxy.Value == null ? typeof(string) : Proxy.Type;
+                return Proxy.Type;
             }
         }
 

@@ -382,10 +382,8 @@ namespace GoodAI.Core.Dashboard
 
         private void CheckType(DashboardNodePropertyBase property)
         {
-            if (GroupedProperties.Any() &&
-                property.GenericProxy.Type != GroupedProperties.First().GenericProxy.Type)
-                throw new InvalidOperationException(string.Format("Wrong property type: {0}",
-                    property.GenericProxy.Type));
+            if (GroupedProperties.Any() && !GroupedProperties.First().GenericProxy.CompatibleWith(property.GenericProxy))
+                throw new InvalidOperationException(string.Format("Wrong property type: {0}", property.GenericProxy.Type));
         }
 
         public void Add(DashboardNodePropertyBase property)
