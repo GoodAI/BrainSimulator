@@ -81,6 +81,38 @@ namespace CoreTests
         }
 
         [Fact]
+        public void DoesNotPrintTrailingOnes()
+        {
+            var dims = new TensorDimensions(5, 1, 1);
+
+            Assert.Equal("5", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void PrintsComputedTrailingOne()
+        {
+            var dims = new TensorDimensions(4, 2, -1) { Size = 8 };
+
+            Assert.Equal("4×2×1", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void PrintsOneOne()
+        {
+            var dims = new TensorDimensions(1, 1);
+
+            Assert.Equal("1", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void PrintsLeadingOrMiddleOnes()
+        {
+            var dims = new TensorDimensions(1, 1, -1, 5, 1, 2, 1);
+
+            Assert.Equal("1×1×?×5×1×2", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
         public void SizeGetsUpdatedWhenDimsAssignedToMemBlock()
         {
             var memBlock = new MyMemoryBlock<float>
