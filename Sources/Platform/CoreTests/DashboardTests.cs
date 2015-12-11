@@ -30,6 +30,14 @@ namespace CoreTests
             public override void UpdateMemoryBlocks()
             {
             }
+
+            public Task Task { get; set; }
+
+            [MyTaskGroup("TestGroup")]
+            public Task Task2 { get; set; }
+
+            [MyTaskGroup("TestGroup")]
+            public Task Task3 { get; set; }
         }
 
         public class Task : MyTask<Node>
@@ -225,7 +233,9 @@ namespace CoreTests
             project.Network.AddChild(node);
 
             var dashboard = new Dashboard();
-            dashboard.Properties.Add(GetDirectProperty(node));
+
+            foreach (PropertySetup propertySetup in GetPropertyExamples(project))
+                dashboard.Add(propertySetup.Target, propertySetup.PropertyName);
 
             var groupDashboard = new GroupDashboard();
             groupDashboard.Properties.Add(new DashboardPropertyGroup("Group 1"));
@@ -260,6 +270,29 @@ namespace CoreTests
             m_output.WriteLine(result.DifferencesString);
 
             Assert.True(result.AreEqual);
+        }
+
+        private class PropertySetup
+        {
+            public object Target { get; set; }
+            public string PropertyName { get; set; }
+
+            public PropertySetup(object target, string propertyName)
+            {
+                Target = target;
+                PropertyName = propertyName;
+            }
+        }
+
+        private static IEnumerable<PropertySetup> GetPropertyExamples(MyProject project)
+        {
+            var node = project.GetNodeById(1) as Node;
+            return new List<PropertySetup>
+            {
+                new PropertySetup(node, "Name"),
+                new PropertySetup(node.Task, "Name"),
+                new PropertySetup(node.TaskGroups["TestGroup"], "TestGroup")
+            };
         }
     }
 }
