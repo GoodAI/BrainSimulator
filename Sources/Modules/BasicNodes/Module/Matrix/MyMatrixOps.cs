@@ -133,7 +133,7 @@ namespace GoodAI.Modules.Matrix
                 {
                     if (A.ColumnHint != 0)
                     {
-                        Result.ColumnHint = A.Count / A.ColumnHint;
+                        Result.Dims.Set(new[] { -1, A.Count / A.ColumnHint });
                     }
                 }
                 else if (operation == MatOperation.EuclidDist)
