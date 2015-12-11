@@ -111,6 +111,8 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         TreeNodeAdv m_selectedNodeView = null;
+        // The default .NET selected background color.
+        private readonly Brush m_selectedBrush = new SolidBrush(Color.FromArgb(255, 51, 153, 255));
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
@@ -177,6 +179,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void profilerTimeValue_DrawText(object sender, DrawTextEventArgs e)
         {
+            if (e.Node.IsSelected)
+                e.BackgroundBrush = m_selectedBrush;
+
             var parentTreeNode = e.Node.Parent;
             var parentDebugNode = parentTreeNode.Tag as MyDebugNode;
             if (parentDebugNode != null)
@@ -206,6 +211,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void AlterBackground(DrawTextEventArgs e)
         {
+            if (e.Node.IsSelected)
+                e.BackgroundBrush = m_selectedBrush;
+
             var nodeData = e.Node.Tag as MyDebugNode;
             if (nodeData != null && nodeData.Breakpoint && e.Node != debugTreeView.SelectedNode)
             {
