@@ -131,7 +131,7 @@ namespace GoodAI.Modules.Matrix
                 }
                 else if (operation == MatOperation.Transpose)
                 {
-                    if (A.ColumnHint != 0)
+                    if ((A.ColumnHint != 0) && (A.Count > 0))  // prevent dimension of size 0
                     {
                         Result.Dims.Set(new[] { -1, A.Count / A.ColumnHint });
                     }
