@@ -2,6 +2,7 @@
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -74,11 +75,14 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     int caretPosition = m_consoleForm.CaretPosition;
                     int currentTextLength = m_consoleForm.TextLength;
+                    bool written = false;
                     for (int i = 0; i < m_builders.Length; i++)
                     {
                         string text = m_builders[i].ToString();
                         if (string.IsNullOrEmpty(text))
                             continue;
+
+                        written = true;
 
                         m_builders[i].Clear();
 
@@ -92,7 +96,7 @@ namespace GoodAI.BrainSimulator.Forms
                         }
                     }
 
-                    if (caretPosition == currentTextLength)
+                    if (written && caretPosition == currentTextLength)
                         m_consoleForm.ScrollToCaret();
                 }
             }
