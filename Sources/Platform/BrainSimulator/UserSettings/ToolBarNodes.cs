@@ -18,8 +18,8 @@ namespace GoodAI.BrainSimulator.UserSettings
         {
             //PrintToolBarNodes(settings);  // uncomment to get a text dump that can be used in ListDefaultToolBarNodes() below
 
-            if (Debugger.IsAttached)
-                settings.Reset();
+            //if (Debugger.IsAttached)
+            //    settings.Reset();
 
             if (settings.ToolBarNodes != null)
                 return;
