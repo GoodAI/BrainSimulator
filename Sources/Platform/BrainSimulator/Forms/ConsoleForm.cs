@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Execution;
+﻿using GoodAI.BrainSimulator.UserSettings;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
@@ -205,7 +206,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             logLevelStripComboBox.Items.AddRange(Enum.GetNames(typeof(MyLogLevel)));            
             logLevelStripComboBox.SelectedIndexChanged += logLevelStripComboBox_SelectedIndexChanged;
-            logLevelStripComboBox.SelectedIndex = Properties.Settings.Default.LogLevel;
+
+            logLevelStripComboBox.SelectedIndex = (int) AppSettings.GetInitialLogLevel();
         }
 
         void logLevelStripComboBox_SelectedIndexChanged(object sender, EventArgs e)

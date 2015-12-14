@@ -275,6 +275,7 @@
       <DependentUpon>TaskForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UserSettings\ToolBarNodes.cs" />
+    <Compile Include="UserSettings\AppSettings.cs" />
     <Compile Include="Utils\CueToolStripTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
