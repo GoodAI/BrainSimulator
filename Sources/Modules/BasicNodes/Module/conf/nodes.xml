@@ -324,7 +324,6 @@
   </KnownWorlds>
   <Categories>
     <Category Name="Control &amp; Dataflow" SmallIcon="loopgroup.png"></Category>
-    <Category Name="Input &amp; Output" SmallIcon="random.png"></Category>
     <Category Name="Math" SmallIcon="distance.png"></Category>
     <Category Name="Neural Networks" SmallIcon="network.png"></Category>
     <Category Name="Reinforcement Learning" SmallIcon="reward.png"></Category>
