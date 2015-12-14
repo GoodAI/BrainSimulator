@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Execution;
+﻿using GoodAI.BrainSimulator.UserSettings;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
@@ -72,8 +73,15 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 lock (m_builders)
                 {
-                    int caretPosition = m_consoleForm.CaretPosition;
-                    int currentTextLength = m_consoleForm.TextLength;
+                    int caretPosition = 0;
+                    int currentTextLength = 0;
+
+                    if (!m_consoleForm.InvokeRequired)
+                    {
+                        caretPosition = m_consoleForm.CaretPosition;
+                        currentTextLength = m_consoleForm.TextLength;
+                    }
+
                     bool written = false;
                     for (int i = 0; i < m_builders.Length; i++)
                     {
@@ -95,7 +103,7 @@ namespace GoodAI.BrainSimulator.Forms
                         }
                     }
 
-                    if (written && caretPosition == currentTextLength)
+                    if (!m_consoleForm.InvokeRequired && written && caretPosition == currentTextLength)
                         m_consoleForm.ScrollToCaret();
                 }
             }
@@ -198,7 +206,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             logLevelStripComboBox.Items.AddRange(Enum.GetNames(typeof(MyLogLevel)));            
             logLevelStripComboBox.SelectedIndexChanged += logLevelStripComboBox_SelectedIndexChanged;
-            logLevelStripComboBox.SelectedIndex = Properties.Settings.Default.LogLevel;
+
+            logLevelStripComboBox.SelectedIndex = (int) AppSettings.GetInitialLogLevel();
         }
 
         void logLevelStripComboBox_SelectedIndexChanged(object sender, EventArgs e)

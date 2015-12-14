@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.DashboardUtils;
+using GoodAI.BrainSimulator.UserSettings;
 using GoodAI.Core.Task;
 using GoodAI.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
