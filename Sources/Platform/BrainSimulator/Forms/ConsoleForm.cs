@@ -2,7 +2,6 @@
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
-using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Linq;
 using System.Text;
