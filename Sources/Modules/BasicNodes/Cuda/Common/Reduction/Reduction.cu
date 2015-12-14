@@ -213,7 +213,7 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 	}
 	LogStepShared<R, tCnt, false>(&out[blockIdx_x], sPartials);
 
-	__shared__ bool lastBlock;
+	//__shared__ bool lastBlock;
 	__threadfence();
 
 	//int& barrier = reinterpret_cast<int*>(tempBuffer)[8191];
