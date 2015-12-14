@@ -72,8 +72,15 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 lock (m_builders)
                 {
-                    int caretPosition = m_consoleForm.CaretPosition;
-                    int currentTextLength = m_consoleForm.TextLength;
+                    int caretPosition = 0;
+                    int currentTextLength = 0;
+
+                    if (!m_consoleForm.InvokeRequired)
+                    {
+                        caretPosition = m_consoleForm.CaretPosition;
+                        currentTextLength = m_consoleForm.TextLength;
+                    }
+
                     bool written = false;
                     for (int i = 0; i < m_builders.Length; i++)
                     {
@@ -95,7 +102,7 @@ namespace GoodAI.BrainSimulator.Forms
                         }
                     }
 
-                    if (written && caretPosition == currentTextLength)
+                    if (!m_consoleForm.InvokeRequired && written && caretPosition == currentTextLength)
                         m_consoleForm.ScrollToCaret();
                 }
             }
