@@ -98,6 +98,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
+    /// <status>Working</status>
+    /// <summary>
+    /// Used only if sequence length (neural group parameter) > 1.
+    /// Increments time step when iterating forth through time.
+    /// Used automatically, keep it checked.
+    /// </summary>
+    /// <description></description>
     [Description("IncrementTimeStep"), MyTaskInfo(OneShot = false)]
     public class MyIncrementTimeStepTask : MyTask<MyNeuralNetworkGroup>
     {
@@ -111,6 +120,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
+    /// <status>Working</status>
+    /// <summary>
+    /// Used only if sequence length (neural group parameter) > 1.
+    /// Decrements time step when iterating back through time.
+    /// Used automatically, keep it checked.
+    /// </summary>
+    /// <description></description>
     [Description("DecrementTimeStep"), MyTaskInfo(OneShot = false)]
     public class MyDecrementTimeStepTask : MyTask<MyNeuralNetworkGroup>
     {
@@ -124,6 +142,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
         }
     }
 
+    /// <author>GoodAI</author>
+    /// <meta>mb</meta>
+    /// <status>Working</status>
+    /// <summary>
+    /// Used only if sequence length (neural group parameter) > 1. When time step reaches the end of sequence,
+    /// then temporal memory blocks run a mode (method), e.g. sum memory snapshots through time. Default mode is none.
+    /// New modes can be defined in temporal memory blocks source. Used automatically, let it checked.
+    /// </summary>
+    /// <description></description>
     [Description("RunTemporalBlocksMode"), MyTaskInfo(OneShot = false)]
     public class MyRunTemporalBlocksModeTask : MyTask<MyNeuralNetworkGroup>
     {
@@ -184,7 +211,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 );
         }
 
-        [YAXSerializableField(DefaultValue = false), MyBrowsable, Description("Overrides layers' UpdateWeights checking if and only if set to TRUE. No effect if set to FALSE.")]
+        [YAXSerializableField(DefaultValue = false), MyBrowsable, Description("Disables and overrides layers' UpdateWeights checking if and only if set to TRUE. No effect when set to FALSE.")]
         public bool DisableLearning { get; set; }
     }
 

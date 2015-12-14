@@ -15,8 +15,8 @@ namespace GoodAI.Modules.Common
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
     /// <status>Working</status>
-    /// <summary>Provides simple pattern-based signal routing</summary>
-    /// <description>Node, which routes input signals to its output by a given pattern.</description>
+    /// <summary>Provides simple pattern-based data routing</summary>
+    /// <description>Node, which routes input data to its output by a given pattern.</description>
     public class MultiplexerNode : MyWorkingNode, IMyVariableBranchViewNodeBase
     {
         [MyBrowsable, YAXSerializableField(DefaultValue = 0), YAXElementFor("IO")]

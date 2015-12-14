@@ -370,6 +370,9 @@
                 <Component Id="cmp42BC0FA5D083B61822E7403FD5D03373" Guid="*">
                     <File Id="filD8DDA2CCFCA9A425D72BFB3653537E42" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Breakout.brain" />
                 </Component>
+                <Component Id="cmp7068C443594EC8EA92F937579D252E5A" Guid="*">
+                    <File Id="fil75D548EF5EBBF145413E4D8F1AE32E18" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\Conv_MNIST.brain" />
+                </Component>
                 <Component Id="cmpDD81D8697DCDE24601E10C0C59DCD0D9" Guid="*">
                     <File Id="fil33BF6239DC6BAABFDE98165E398CEA81" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\NeuralNetworks\LSTM_sine.brain" />
                 </Component>
@@ -402,41 +405,33 @@
                 </Component>
             </Directory>
             <Directory Id="dir4F11521F5FF8CDC397F2A474939EC9E5" Name="RBM">
-                <Component Id="cmpBBC0D20259A6DE2BD9C6B4DCC58F517C" Guid="*">
-                    <File Id="fil4F17D2DF53E2C57E2B93B6265ED81317" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.state" />
-                </Component>
                 <Component Id="cmpFB0F8645ED4D8D8E06558DDB3288D680" Guid="*">
                     <File Id="fil31B47C25416CA98BAF50B25D348990D5" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.brain" />
                 </Component>
-                <Directory Id="dir493AE4C50B768457196834D5F393EAFB" Name="mnist.statedata">
-                    <Directory Id="dirF314258CCC0EF84622BFF624454E5CB3" Name="MyMNISTWorld_9">
-                        <Component Id="cmp4A5E46D9AB07382153632A519553712E" Guid="*">
-                            <File Id="filA310A9797A2FF207187266E30A8355BA" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyMNISTWorld_9\Bitmap.mb" />
+                <Directory Id="dir12B1F6AFC7BA28FA0FB04BA1986914E8" Name="RBM_MNIST.statedata">
+                    <Directory Id="dir823AB83D5B6617C1A5F4E72EA84F203A" Name="Hidden">
+                        <Component Id="cmp511153036EAAD9A16CE424C868060A38" Guid="*">
+                            <File Id="fil0A12A74E2CD188282672D3B346AE774F" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Hidden\Bias.mb" />
                         </Component>
-                        <Component Id="cmpC9C9FC1C65B1A3DC33334F27AF6BE3FA" Guid="*">
-                            <File Id="fil7B157178E08F85A48670B056E4ED6FFF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyMNISTWorld_9\Label.mb" />
+                        <Component Id="cmpE74C305769C5B921DEB8BB0D3C213B10" Guid="*">
+                            <File Id="filD9994AC8789523EED9A8C8FD8C12F0DF" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Hidden\Cost.mb" />
                         </Component>
-                    </Directory>
-                    <Directory Id="dirC0AAAF1B0B7293A207AE9BCD08CAB6E5" Name="MyRBMInputLayer_11">
-                        <Component Id="cmp3BB831DC6B5B08DE1795BCD35BA75C25" Guid="*">
-                            <File Id="fil7C95C5A591E9FCCDC930E5446D138BF4" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMInputLayer_11\Bias.mb" />
+                        <Component Id="cmp056B6D18EFE0C51E0C579DFFB820AD29" Guid="*">
+                            <File Id="filFB4EAAB1B6C4863F3D92A44A3932DBC6" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Hidden\Output.mb" />
                         </Component>
-                        <Component Id="cmp4CDB3340CAE524393AF5141634A1AF0A" Guid="*">
-                            <File Id="fil5CD6BE91CD422D291B6A7359B0F2CAD8" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMInputLayer_11\Output.mb" />
-                        </Component>
-                        <Component Id="cmpED61C0ACF76E89735DC614B702A98B09" Guid="*">
-                            <File Id="fil8C01A4ED1342078184F50B0A79BEC2B1" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMInputLayer_11\PreviousBiasDelta.mb" />
+                        <Component Id="cmp211E78FF3C112460E66B0823F466C3C2" Guid="*">
+                            <File Id="filC19CDD1928220BB373BC2545D034E16F" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Hidden\Weights.mb" />
                         </Component>
                     </Directory>
-                    <Directory Id="dir0F776E16D296DC376DED4FF3039B9853" Name="MyRBMLayer_10">
-                        <Component Id="cmp14E95136A3EF50212363F8A3725D51B3" Guid="*">
-                            <File Id="filCDCA800B65FBC2F5E7DDEDE881B9F521" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMLayer_10\Bias.mb" />
+                    <Directory Id="dirC4701B08D704D6B5494AE21383D214BD" Name="Visible">
+                        <Component Id="cmpCA1C4E64990DF5D6ED25ACF7C706A5D6" Guid="*">
+                            <File Id="filBEF1F6381A87FD66146C8B424E62DC1D" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Visible\Bias.mb" />
                         </Component>
-                        <Component Id="cmp25586815487671EF3786734C7F1BFB94" Guid="*">
-                            <File Id="fil8825158CD9B70DA280F1DE60C3F3CE94" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMLayer_10\Output.mb" />
+                        <Component Id="cmp97AAA4B4FAAA43338BF5BD610FD9049C" Guid="*">
+                            <File Id="filB1DDC5E1635360D9421886D18E1436B4" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Visible\Output.mb" />
                         </Component>
-                        <Component Id="cmp438DBA413B59AB741BD40F66965F8E97" Guid="*">
-                            <File Id="fil9C0A5035AABABE7DCE7FF06DB8F4796E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\mnist.statedata\MyRBMLayer_10\Weights.mb" />
+                        <Component Id="cmp9638981A2D885A1CFB5A1302C0068BCF" Guid="*">
+                            <File Id="filBF19E4BB01F8DA8BDC5CC2E3FDBA7CBC" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\RBM\RBM_MNIST.statedata\Visible\PreviousBiasDelta.mb" />
                         </Component>
                     </Directory>
                 </Directory>
@@ -470,6 +465,36 @@
     <Fragment>
         <ComponentGroup Id="HarvestedSamples">
             <ComponentRef Id="cmp194164997A733864328D5544F1A9E078" />
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             
             
@@ -738,6 +763,7 @@
             <ComponentRef Id="cmp9A0B07F3A8D6322B99A0FF37541626FB" />
             <ComponentRef Id="cmpFD567EEDD3D6A490EA212392EF63A4C5" />
             <ComponentRef Id="cmp42BC0FA5D083B61822E7403FD5D03373" />
+            <ComponentRef Id="cmp7068C443594EC8EA92F937579D252E5A" />
             <ComponentRef Id="cmpDD81D8697DCDE24601E10C0C59DCD0D9" />
             <ComponentRef Id="cmpFE7784287AF91B5222CDF0750A457941" />
             <ComponentRef Id="cmpCC453998611EBDDC45E867D82540D9A9" />
@@ -748,16 +774,14 @@
             <ComponentRef Id="cmp540F362E296801AFF0F8C5FF31D1D168" />
             <ComponentRef Id="cmp9020EC547CEDCB67F05C99A96D362CB9" />
             <ComponentRef Id="cmp94AEC45B01E18BA6F31044C18AF4281F" />
-            <ComponentRef Id="cmpBBC0D20259A6DE2BD9C6B4DCC58F517C" />
             <ComponentRef Id="cmpFB0F8645ED4D8D8E06558DDB3288D680" />
-            <ComponentRef Id="cmp4A5E46D9AB07382153632A519553712E" />
-            <ComponentRef Id="cmpC9C9FC1C65B1A3DC33334F27AF6BE3FA" />
-            <ComponentRef Id="cmp3BB831DC6B5B08DE1795BCD35BA75C25" />
-            <ComponentRef Id="cmp4CDB3340CAE524393AF5141634A1AF0A" />
-            <ComponentRef Id="cmpED61C0ACF76E89735DC614B702A98B09" />
-            <ComponentRef Id="cmp14E95136A3EF50212363F8A3725D51B3" />
-            <ComponentRef Id="cmp25586815487671EF3786734C7F1BFB94" />
-            <ComponentRef Id="cmp438DBA413B59AB741BD40F66965F8E97" />
+            <ComponentRef Id="cmp511153036EAAD9A16CE424C868060A38" />
+            <ComponentRef Id="cmpE74C305769C5B921DEB8BB0D3C213B10" />
+            <ComponentRef Id="cmp056B6D18EFE0C51E0C579DFFB820AD29" />
+            <ComponentRef Id="cmp211E78FF3C112460E66B0823F466C3C2" />
+            <ComponentRef Id="cmpCA1C4E64990DF5D6ED25ACF7C706A5D6" />
+            <ComponentRef Id="cmp97AAA4B4FAAA43338BF5BD610FD9049C" />
+            <ComponentRef Id="cmp9638981A2D885A1CFB5A1302C0068BCF" />
             <ComponentRef Id="cmpD718453D63645C7AED8D597CE28BB83B" />
             <ComponentRef Id="cmp296E96F3DE9727D618F96C270C5CC49E" />
             <ComponentRef Id="cmpDA03CECA7E06D8E6C48F8ECE2F612698" />

@@ -13,10 +13,12 @@
 [Breakout](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Breakout.brain) based on Q-learning, a type of reinforcement learning. This example includes a gate between learned and random outputs.
 ![](../img/Breakout_flow.PNG)
 
-[Variational AutoEncoder.](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/VariGauss.brain) Guassian sampling node is between the encoder and decoder. If the output of the encoder has size $N$, first $N/2$ elements represents the mean ($\mu$) and second $N/2$ the variance ($\sigma$) that is the parametrization of a Gaussian distribution. Sampling node just sample from the distribution and this sampling is further used as the input to the decoder. See [1] for more details. The slider (outside the Group) turns off the training and the Gaussian node randomly generates samples.
+[Variational AutoEncoder.](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/VariGauss.brain) Gaussian sampling node is between the encoder and decoder. If the output of the encoder has size $N$, first $N/2$ elements represents the mean ($\mu$) and second $N/2$ the variance ($\sigma$) that is the parametrization of a Gaussian distribution. Sampling node just sample from the distribution and this sampling is further used as the input to the decoder. See [1] for more details. The slider (outside the Group) turns off the training and the Gaussian node randomly generates samples.
 
 ![](../img/Vari_AutoEncoder_brain.PNG)
 
+[MNIST classification using Convolution]((https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Conv_MNIST.brain)
+A simple application of Convolutional and Pooling layers on the MNIST database. The architecture in this example is identical to Karpathy's [ConvnetJS MNIST demo](http://cs.stanford.edu/people/karpathy/convnetjs/demo/mnist.html).
 
 ### Recurrent Architectures
 
@@ -28,7 +30,7 @@
 
 ![](../img/LSTM_sine.PNG)
 
-[Back-propagation throgh time](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/BPTT_on_mnistSequences.brain) method tries to predict the next number in the MNIST dataset.
+[Back-propagation through time](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/BPTT_on_mnistSequences.brain) method tries to predict the next number in the MNIST dataset.
 
 ![](../img/BPTT_mnist.PNG)
 The network gets part of one number (i.e. 3) in the time-step zero, then part of the next one (4) and then it has to predict 5, so the target is given only at time-step two. Most of the brain-file implements this architecture.
@@ -59,7 +61,7 @@ The text observers may not display the text properly. This error is caused by th
 ![](../img/LSTM_text.png)
 
 [Learning to recognize spoken digits using LSTM](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Sound_LPC.brain)
-Learning the neural network to recognize spoken digits using speech audio features and LSTM. In order to use SoundWorld audio features, select Features type: MFCC (Mel-frequency cepstral coeficients) or LPC (Linear predictive cepstral coeficients). It's possible to add text-observer to the Label and Output memory blocks to see the input and learned transcription for currently used Feature. To define propper input, select Input type: SampleSound (english spoken digits 1-9 with transcription) or define path to your custom audio file in User defined audio or path to the whole audio corpus in Input path corpus.
+Learning the neural network to recognize spoken digits using speech audio features and LSTM. In order to use SoundWorld audio features, select Features type: MFCC (Mel-frequency cepstral coeficients) or LPC (Linear predictive cepstral coeficients). It's possible to add text-observer to the Label and Output memory blocks to see the input and learned transcription for currently used Feature. To define proper input, select Input type: SampleSound (english spoken digits 1-9 with transcription) or define path to your custom audio file in User defined audio or path to the whole audio corpus in Input path corpus.
 ![](../img/sound_set_world.png)
 
 Two complete examples are provided for you. [One for presentation of usage of LPC features](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Sound_MFCC.brain) and [another for use of MFCC features](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/NeuralNetworks/Sound_LPC.brain). Both are very similar. After executing you can see visual representation of features using spike-observer and transcription of digit in text-observer. Second text-observer shows actual transcription output of network, that predicts what digit is being presented to the input.

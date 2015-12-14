@@ -52,6 +52,7 @@
     <World type="GoodAI.Modules.Testing.MyTestingWorld"/>
   </KnownWorlds>
   <Categories>
+    <Category Name="Input &amp; Output" SmallIcon="sliders.png"></Category>
     <Category Name="Transformations" SmallIcon="function.png"></Category>
   </Categories>
 </Configuration>

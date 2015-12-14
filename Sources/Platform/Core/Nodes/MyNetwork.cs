@@ -1,8 +1,4 @@
-﻿using GoodAI.Core.Configuration;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Utils;
-using System;
-using System.Collections.Generic;
+﻿using GoodAI.Core.Configuration;using GoodAI.Core.Memory; using GoodAI.Core.Utils; using System; using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using YAXLib;
@@ -86,7 +82,7 @@ namespace GoodAI.Core.Nodes
             m_connections.AddRange(filtered);
         }
 
-        public int UpdateAfterDeserialization(int topId, MyProject parentProject)
+        public int UpdateAfterDeserialization(int topId, MyProject parentProject, bool showWarnings = true)
         {
             if (topId < this.Id)
             {
@@ -96,7 +92,7 @@ namespace GoodAI.Core.Nodes
             this.Owner = parentProject;
             
             Dictionary<int, MyNode> nodes = new Dictionary<int,MyNode>();
-            topId = CollectNodesAndUpdate(this, nodes, topId);
+            topId = CollectNodesAndUpdate(this, nodes, topId, showWarnings);
 
             parentProject.ReadOnly = false;
             
@@ -145,7 +141,7 @@ namespace GoodAI.Core.Nodes
             return topId;
         }        
 
-        private int CollectNodesAndUpdate(MyNodeGroup nodeGroup, Dictionary<int, MyNode> nodes, int topId) 
+        private int CollectNodesAndUpdate(MyNodeGroup nodeGroup, Dictionary<int, MyNode> nodes, int topId, bool showWarnings = true) 
         {
             foreach (MyParentInput inputNode in nodeGroup.GroupInputNodes)
             {
@@ -176,7 +172,7 @@ namespace GoodAI.Core.Nodes
                 nodes[node.Id] = node;                
 
                 //parent link 
-                TrySetParent(node, nodeGroup);
+                TrySetParent(node, nodeGroup, showWarnings);
 
                 node.Owner = Owner;          
                 //topId collect
@@ -193,7 +189,7 @@ namespace GoodAI.Core.Nodes
              
                 if (node is MyNodeGroup)
                 {
-                    topId = CollectNodesAndUpdate(node as MyNodeGroup, nodes, topId);
+                    topId = CollectNodesAndUpdate(node as MyNodeGroup, nodes, topId, showWarnings);
                 }
 
                 //obsolete check 
@@ -211,7 +207,7 @@ namespace GoodAI.Core.Nodes
             return topId;
         }
 
-        private static void TrySetParent(MyNode node, MyNodeGroup nodeGroup)
+        private static void TrySetParent(MyNode node, MyNodeGroup nodeGroup, bool showWarning = true)
         {
             try
             {
@@ -220,7 +216,9 @@ namespace GoodAI.Core.Nodes
             }
             catch (InvalidOperationException e)
             {
-                MyLog.ERROR.WriteLine("Unable to update node ({0}): {1}", node.Name, e.Message);
+                // TODO(HonzaS): Remove the switch - this is here only for copy+paste to work with neural layers
+                if (showWarning)
+                    MyLog.ERROR.WriteLine("Unable to update node ({0}): {1}", node.Name, e.Message);
             }
         }
 
@@ -281,5 +279,10 @@ namespace GoodAI.Core.Nodes
                 return new MyNetworkState();                
             }
         }
+    }
+
+    public class ClipboardNetwork : MyNetwork
+    {
+        
     }
 }

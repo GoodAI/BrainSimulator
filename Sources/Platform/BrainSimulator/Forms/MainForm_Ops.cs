@@ -1126,7 +1126,8 @@ namespace GoodAI.BrainSimulator.Forms
                 if (selection != null)
                 {
                     HashSet<int> approvedNodes = new HashSet<int>();
-                    MyNetwork clipboardNetwork = Project.CreateNode<MyNetwork>();
+
+                    var clipboardNetwork = Project.CreateNode<MyNetwork>();
                     clipboardNetwork.Name = "Clipboard";
 
                     foreach (MyNodeView nodeView in selection.Nodes)
@@ -1178,7 +1179,7 @@ namespace GoodAI.BrainSimulator.Forms
                     YAXSerializer networkSerializer = new YAXSerializer(typeof(MyNetwork), YAXExceptionHandlingPolicies.ThrowErrorsOnly, YAXExceptionTypes.Error, YAXSerializationOptions.DontSerializeNullObjects);
 
                     MyNetwork networkToPaste = (MyNetwork)networkSerializer.Deserialize(xml);
-                    networkToPaste.UpdateAfterDeserialization(0, Project);
+                    networkToPaste.UpdateAfterDeserialization(0, Project, showWarnings: false);
 
                     GraphLayoutForm activeLayout = dockPanel.ActiveDocument as GraphLayoutForm;
 

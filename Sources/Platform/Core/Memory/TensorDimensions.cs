@@ -91,12 +91,22 @@ namespace GoodAI.Core.Memory
                 ));
         }
 
-        public string Print(bool printTotalSize = false, bool indicateComputedDim = false)
+        public string Print(bool printTotalSize = false, bool indicateComputedDim = false, bool hideTrailingOnes = false)
         {
             if (m_customDimensions.Count == 0)
                 return m_size.ToString();
 
-            string result = string.Join("×", m_customDimensions.Select(item =>
+            var filteredDims = new List<int>(m_customDimensions);
+
+            if (hideTrailingOnes)
+            {
+                while ((filteredDims.Count > 1) && (filteredDims[filteredDims.Count - 1] == 1))
+                {
+                    filteredDims.RemoveAt(filteredDims.Count - 1);
+                }
+            }
+
+            string result = string.Join("×", filteredDims.Select(item =>
                 (item == -1)
                 ? string.Format((indicateComputedDim ? "({0})" : "{0}"), PrintComputedDim())
                 : item.ToString()
@@ -110,11 +120,9 @@ namespace GoodAI.Core.Memory
             return (m_computedDimension == -1) ? "?" : m_computedDimension.ToString();
         }
 
-        public void Set(IEnumerable<int> customDimenstions,
-            bool autoAddComputedDim = false,
-            bool autoRemoveDimsOfSizeOne = false)
+        public void Set(IEnumerable<int> customDimensions, bool autoAddComputedDim = false)
         {
-            InnerSet(customDimenstions, autoAddComputedDim, autoRemoveDimsOfSizeOne);
+            InnerSet(customDimensions, autoAddComputedDim);
             
             IsCustom = (m_customDimensions.Count > 0);  // No need to save "empty" value.
         }
@@ -127,7 +135,7 @@ namespace GoodAI.Core.Memory
             if (IsCustom)
                 return;
 
-            InnerSet(dimensions, autoAddComputedDim, autoRemoveDimsOfSizeOne: true);
+            InnerSet(dimensions, autoAddComputedDim);
 
             IsCustom = false;  // treat new value as default
         }
@@ -158,22 +166,21 @@ namespace GoodAI.Core.Memory
                 return result;
             });
 
-            Set(dimensions, autoAddComputedDim: true, autoRemoveDimsOfSizeOne: true);
+            Set(dimensions, autoAddComputedDim: false);
         }
 
-        private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne)
+        private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim)
         {
             string warning;
 
-            m_customDimensions = ProcessDimensions(dimensions, autoAddComputedDim, autoRemoveDimsOfSizeOne, out warning);
+            m_customDimensions = ProcessDimensions(dimensions, autoAddComputedDim, out warning);
 
             LastSetWarning = warning;
 
             UpdateComputedDimension();
         }
 
-        private static List<int> ProcessDimensions(IEnumerable<int> dimensions,
-            bool autoAddComputedDim, bool autoRemoveDimsOfSizeOne, out string warning)
+        private static List<int> ProcessDimensions(IEnumerable<int> dimensions, bool autoAddComputedDim, out string warning)
         {
             warning = "";
 
@@ -183,14 +190,8 @@ namespace GoodAI.Core.Memory
 
             foreach (int item in dimensions)
             {
-                if ((item < -1) || (item == 0) || (item == 1 && !autoRemoveDimsOfSizeOne))
+                if ((item < -1) || (item == 0))
                     throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
-
-                if (item == 1) // implies autoRemoveDimsOfSizeOne == true
-                {
-                    warning = "Dimensions of size 1 eliminated.";
-                    continue;
-                }
 
                 if (item == -1)
                 {

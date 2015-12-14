@@ -62,7 +62,8 @@ It should be mentioned, that nodes are stored as XML text in a clipboard. Thanks
 * **Dashboard Properties** - opens the [dashboard](ui.md#dashboard)
 * **Node help, F1** - opens documentation for currently selected node
 * **Debugging / Profiling** - opens the window with debugging and profiling information
-* **Reset Views Layout, Ctrl+W** - Discards any custom window layout settings in Brain Simulator 
+* **Show/hide all observers, Ctrl+H** - shows or hides all observers; very useful when switching between brain editing and simulation debugging/observing memory blocks
+* **Reset Views Layout, Ctrl+W** - Discards any custom window layout settings in Brain Simulator
 * **Configure node selection..., Ctrl+L** - opens configuration window, where you can choose which nodes should be visible in Nodes toolstrip (15) and which Worlds in Simulation controls (2)
 
 #### Tools
@@ -159,6 +160,6 @@ When you are inside a node group workspace, you can rename its I/O connections b
 You can insert node groups into node groups how many times you want. You can copy/paste node groups as well.
 
 ### Conditional group
-Conditional group serves for running a group of node only when a condition is met. The condition is transferred to a conditional group by means of signals. 
+Conditional group serves for running a group of node only when a condition is met. The condition is transferred to a conditional group by means of signals.
 
 Basically, you create a node which emits a signal, add it to your project and then choose the appropriate signal in the conditional group *Misc-Signal* attribute. Then, when the signal is raised, the content of the conditional group is ran.

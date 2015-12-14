@@ -80,8 +80,8 @@ namespace GoodAI.Core.Memory
             }
             set
             {
-                // propagate value to Dims, but not for the default value 1
-                if (value > 1)
+                // propagate value to Dims, even the default value 1 (otherwise user-defined column hint would not work)
+                if (value > 0)
                     Dims.SetDefault(new List<int> { -1, value });
             }
         }

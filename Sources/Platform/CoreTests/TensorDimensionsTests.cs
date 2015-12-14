@@ -59,23 +59,57 @@ namespace CoreTests
         }
 
         [Fact]
-        public void DimensionsOfSizeOneNotAllowed()
+        public void DimensionsOfSizeOneAreAllowed()
         {
             var dims = new TensorDimensions();
 
-            Assert.Throws<InvalidDimensionsException>(() => dims.Set(new []{ 5, 1, 1 }));
+            dims.Set(new []{ 5, 1, 1 });
         }
 
         [Fact]
-        public void ParseSkipsDimensionsOfSizeOne()
+        public void ParseKeepsDimensionsOfSizeOne()
         {
             var dims = new TensorDimensions();
 
-            dims.Parse("1, 5, 1, 1");
+            dims.Parse("1, 5, *, 1, 1");
 
-            Assert.Equal(2, dims.Count);  // *, 5
+            Assert.Equal(5, dims.Count);
+            Assert.Equal(1, dims[0]);
             Assert.Equal(5, dims[1]);
-            Assert.NotEqual("", dims.LastSetWarning);
+            Assert.Equal(1, dims[4]);
+            Assert.Equal("", dims.LastSetWarning);
+        }
+
+        [Fact]
+        public void DoesNotPrintTrailingOnes()
+        {
+            var dims = new TensorDimensions(5, 1, 1);
+
+            Assert.Equal("5", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void PrintsComputedTrailingOne()
+        {
+            var dims = new TensorDimensions(4, 2, -1) { Size = 8 };
+
+            Assert.Equal("4×2×1", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void PrintsOneOne()
+        {
+            var dims = new TensorDimensions(1, 1);
+
+            Assert.Equal("1", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void PrintsLeadingOrMiddleOnes()
+        {
+            var dims = new TensorDimensions(1, 1, -1, 5, 1, 2, 1);
+
+            Assert.Equal("1×1×?×5×1×2", dims.Print(hideTrailingOnes: true));
         }
 
         [Fact]
