@@ -1,16 +1,10 @@
-﻿# GoodAI Brain Simulator
+# GoodAI Brain Simulator
 
 Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback.
 
 The platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules.
 
 Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.
-
-## How to Clone
-
-This repository uses git submodule(s) for binary libs. Some git clients (e.g. GitHub client for Windows or SourceTree) will clone also the submodules for you, in other git clients please run the following command after cloning:
-
-```git submodule update --init```
 
 ## System Requirements
 
