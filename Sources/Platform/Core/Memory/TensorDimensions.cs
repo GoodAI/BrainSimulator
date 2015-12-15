@@ -112,7 +112,12 @@ namespace GoodAI.Core.Memory
                 : item.ToString()
             ));
 
-            return result + (printTotalSize ? string.Format(" [{0}]", Size) : "");
+            // indicate that product of dimensions does not match memory block size (unless already indicated by "?")
+            bool sizeMismatch = (m_computedDimension == -1) && !filteredDims.Contains(-1);
+
+            return result + (printTotalSize
+                ? string.Format(" [{0}{1}]", Size, (sizeMismatch ? "!" : ""))
+                : (sizeMismatch ? " (!)" : ""));
         }
 
         private string PrintComputedDim()
@@ -166,21 +171,22 @@ namespace GoodAI.Core.Memory
                 return result;
             });
 
-            Set(dimensions, autoAddComputedDim: false);
+            Set(dimensions, autoAddComputedDim: true);
         }
 
         private void InnerSet(IEnumerable<int> dimensions, bool autoAddComputedDim)
         {
             string warning;
 
-            m_customDimensions = ProcessDimensions(dimensions, autoAddComputedDim, out warning);
+            m_customDimensions = ProcessDimensions(dimensions, m_size, autoAddComputedDim, out warning);
 
             LastSetWarning = warning;
 
             UpdateComputedDimension();
         }
 
-        private static List<int> ProcessDimensions(IEnumerable<int> dimensions, bool autoAddComputedDim, out string warning)
+        private static List<int> ProcessDimensions(IEnumerable<int> dimensions, int size, bool autoAddComputedDim,
+            out string warning)
         {
             warning = "";
 
@@ -218,40 +224,46 @@ namespace GoodAI.Core.Memory
             }
 
             // UX: when no computed dimension was given, let it be the first one
-            if (autoAddComputedDim && (newDimensions.Count > 0) && !foundComputedDimension)
+            if (autoAddComputedDim && (newDimensions.Count > 0) && !foundComputedDimension
+                && (ComputeDimension(size, newDimensions) != 1))
+            {
                 newDimensions.Insert(0, -1);
+
+                if (warning == "")
+                    warning = "Added leading computed dimension.";
+            }
 
             return newDimensions;
         }
 
         private void UpdateComputedDimension()
         {
-            m_computedDimension = ComputeDimension();
+            m_computedDimension = ComputeDimension(m_size, m_customDimensions);
 
             CanBeComputed = (m_computedDimension != -1);
         }
 
-        private int ComputeDimension()
+        private static int ComputeDimension(int size, List<int> dimensionsList)
         {
-            if (m_size == 0)
+            if (size == 0)
                 return -1;  // don't return dimension size 0
 
-            if (m_customDimensions.Count == 0)
-                return m_size;
+            if (dimensionsList.Count == 0)
+                return size;
 
             int product = 1;
-            m_customDimensions.ForEach(item =>
-                {
-                    if (item != -1)
-                        product *= item;
-                });
+            dimensionsList.ForEach(item =>
+            {
+                if (item != -1)
+                    product *= item;
+            });
 
             if (product < 1)
                 return -1;
 
-            int computedDimension = m_size / product;
+            int computedDimension = size / product;
 
-            if (computedDimension * product != m_size)  // unable to compute integer division
+            if ((computedDimension * product) != size)  // unable to compute integer division
                 return -1;
 
             return computedDimension;
