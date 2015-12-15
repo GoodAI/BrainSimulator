@@ -113,6 +113,28 @@ namespace CoreTests
         }
 
         [Fact]
+        public void ParseAutoAddsLeadingDim()
+        {
+            var dims = new TensorDimensions();
+            dims.Parse("2, 2, 2");
+
+            Assert.Equal(4, dims.Count);
+            Assert.Equal(-1, dims[0]);
+            Assert.Equal(2, dims[1]);
+        }
+
+        [Fact]
+        public void ParseDoesNotAutoAddDimWhenSizeMatches()
+        {
+            var dims = new TensorDimensions() { Size = 2*2*2 };
+            dims.Parse("2, 2, 2");
+
+            Assert.Equal(3, dims.Count);
+            Assert.Equal(2, dims[0]);
+            Assert.Equal(2, dims[1]);
+        }
+
+        [Fact]
         public void SizeGetsUpdatedWhenDimsAssignedToMemBlock()
         {
             var memBlock = new MyMemoryBlock<float>
