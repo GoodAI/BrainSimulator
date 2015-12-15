@@ -6,6 +6,12 @@ The platform is designed to simplify collaboration, testing, and the implementat
 
 Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.
 
+## How to Clone
+
+This repository uses git submodule(s) for binary libs. Some git clients (e.g. GitHub client for Windows or SourceTree) will clone also the submodules for you, in other git clients please run the following command after cloning:
+
+```git submodule update --init```
+
 ## System Requirements
 
 Running Brain Simulator requires an NVIDIA **CUDA-enabled graphics** card and **64-bit Windows**. More specifically, the requirements are:

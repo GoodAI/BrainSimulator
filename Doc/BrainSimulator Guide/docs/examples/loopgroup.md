@@ -18,7 +18,7 @@ Conditional gate is designed for usage together with `LoopGroup`. It takes two i
 If the actual iteration number is lower or equal to `Iteration Threshold` parameter, `InputA` is copied to `Output`. Otherwise `InputB` is copied to `Output`. Iteration number is resetted each simulation step.
 
 ### Example usage
-Brain: [BrainProjectsInternal\Personal\Michal\Examples\loopgroupexample.brain](https://github.com/GoodAI/BrainProjectsInternal/blob/master/Personal/Michal/Examples/loopGroupExample.brain)
+Brain: [BrainSimulatorSampleProjects\LoopGroup\loopgroupexample.brain](https://github.com/GoodAI/BrainSimulatorSampleProjects/blob/master/LoopGroup/loopGroupExample.brain)
 
 Let's say you want have an image and want to blur it. But `Blur` which is provided by `Filter2D` node is not strong enough for you and you decide to blur image multiple times. You can connect multiple `Filter2D` nodes in series or you can use `LoopGroup` and `ConditionalGate` as in following image
 
