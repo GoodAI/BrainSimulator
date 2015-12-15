@@ -16,11 +16,11 @@ How to edit documentation
 
 How to use MkDocs
 -----------------
-1. Install [Python](https://www.python.org/downloads/)
-2. Install [pip](http://pip.readthedocs.org/en/latest/installing.html)
-3. Install MkDocs - `pip install mkdocs` (you may need to go to your python install directory\Scripts as the python installer does not change the paths as needed)
+1. Install [Python](https://www.python.org/downloads/) - you can use Python 3 (tested with 3.5)
+2. (Install [pip](http://pip.readthedocs.org/en/latest/installing.html)) - standard windows installer installs also pip
+3. Install MkDocs - `pip install mkdocs` (you may need to run the command prompt as the administrator, also go to _Python_dir_\Scripts if the installer does not update the paths)
 4. Serve locally - `mkdocs serve`
-5. Build HTML files - `mkdocs build` as D:\KeenSWH\AI\Docs\BrainSimulator Guide>C:\Python27\Scripts\mkdocs build
+5. Build HTML files - `mkdocs build` as ...Docs\BrainSimulator Guide>mkdocs build (running mkdocs with abs path _Python_dir_\Scripts\mkdocs should not be necessary)
 
 GoodAI theme
 ------------
