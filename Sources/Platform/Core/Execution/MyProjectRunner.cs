@@ -554,5 +554,18 @@ namespace GoodAI.Core.Execution
             m_results.Clear();
             m_resultIdCounter = 0;
         }
+
+        public static MyProject CreateProject(Type worldType, string projectName = null)
+        {
+            Project = new MyProject
+            {
+                Network = new MyNetwork(),
+                Name = projectName
+            };
+
+            Project.CreateWorld(worldType);
+
+            return Project;
+        }
     }
 }

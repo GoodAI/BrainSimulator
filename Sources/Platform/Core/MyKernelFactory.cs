@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace GoodAI.Core
 {
@@ -225,24 +226,27 @@ namespace GoodAI.Core
 
         //TODO: rewrite this! repetitive code
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, string kernelName, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly()].File;
+            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly().FullName].File;
 
             return Kernel(nGPU, assemblyFile.DirectoryName + @"\ptx\", ptxFileName, kernelName, forceNewInstance);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly()].File;
+            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly().FullName].File;
 
             return Kernel(nGPU, assemblyFile.DirectoryName + @"\ptx\", ptxFileName, ptxFileName.Substring(ptxFileName.LastIndexOf('\\') + 1), forceNewInstance);            
         }
 
         // !!! Warning: This is for testing purposes only.
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(string name, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly()].File;
+            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly().FullName].File;
 
             return Kernel(DevCount - 1, assemblyFile.DirectoryName + @"\ptx\", name, name.Substring(name.LastIndexOf('\\') + 1), forceNewInstance);                        
         }

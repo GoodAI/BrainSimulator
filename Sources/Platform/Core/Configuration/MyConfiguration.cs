@@ -21,7 +21,7 @@ namespace GoodAI.Core.Configuration
         public static Dictionary<string, MyCategoryConfig> KnownCategories { get; private set; }
 
         public static List<MyModuleConfig> Modules { get; private set; }
-        public static Dictionary<Assembly, MyModuleConfig> AssemblyLookup { get; private set; }
+        public static Dictionary<string, MyModuleConfig> AssemblyLookup { get; private set; }
 
         public static List<string> ModulesSearchPath { get; private set; }
         public static string OpenOnStartupProjectName { get; private set; }
@@ -37,7 +37,7 @@ namespace GoodAI.Core.Configuration
             Modules = new List<MyModuleConfig>();
 
             ModulesSearchPath = new List<string>();
-            AssemblyLookup = new Dictionary<Assembly, MyModuleConfig>();
+            AssemblyLookup = new Dictionary<string, MyModuleConfig>();
         }
 
         public static void SetupModuleSearchPath()
@@ -120,7 +120,7 @@ namespace GoodAI.Core.Configuration
                 MyModuleConfig moduleConfig = MyModuleConfig.LoadModuleConfig(file);                
 
                 Modules.Add(moduleConfig);
-                AssemblyLookup[moduleConfig.Assembly] = moduleConfig;
+                AssemblyLookup[moduleConfig.Assembly.FullName] = moduleConfig;
 
                 if (moduleConfig.NodeConfigList != null)
                 {

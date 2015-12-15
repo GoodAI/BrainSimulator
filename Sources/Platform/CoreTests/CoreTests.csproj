@@ -93,6 +93,10 @@
       <Project>{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}</Project>
       <Name>BrainSimulator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\MNIST\Module\MNIST.csproj">
+      <Project>{EDC96485-A8A9-414C-A7D9-65EC0B817732}</Project>
+      <Name>MNIST</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>

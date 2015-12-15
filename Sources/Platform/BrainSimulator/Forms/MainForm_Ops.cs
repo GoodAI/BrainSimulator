@@ -1103,7 +1103,14 @@ namespace GoodAI.BrainSimulator.Forms
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("--------------");
-                bool anyOutputChanged = SimulationHandler.UpdateMemoryModel();
+                bool anyOutputChanged = false;
+                try
+                {
+                    anyOutputChanged = SimulationHandler.UpdateMemoryModel();
+                }
+                finally
+                {
+                }
 
                 // TODO: move this out.
                 MyValidator validator = ValidationView.Validator;
