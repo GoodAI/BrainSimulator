@@ -47,11 +47,8 @@
             </Directory>
             <Directory Id="dir820FBEB49FB22664A101A181BCF9166D" Name="Milestones">
                 <Directory Id="dirBBC442356D0B926BE58FFC1FCC504C23" Name="Breakout">
-                    <Component Id="cmp90E7A2961D7B7BC184DCEAB3C6DC8A73" Guid="*">
-                        <File Id="filC428D7DE2EF1AF324DF00D71E22B9423" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\breakout_final_release_new_visonNoXML.brain" />
-                    </Component>
-                    <Component Id="cmp16F359427FC536D70476A726D2637772" Guid="*">
-                        <File Id="fil080CCE3196016302F466580D559C9102" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\breakout_final_release_obsolete_use_BSv0.2.brain" />
+                    <Component Id="cmp1454599EDB8CBE5543F6190B9EB7B3C8" Guid="*">
+                        <File Id="filC8B5C47B820412FC53CC8A6CBB90243E" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Milestones\Breakout\breakout_final_release_noXmlNet.brain" />
                     </Component>
                     <Directory Id="dirE31C63895644624F421EE945B4133193" Name="Pong_Final">
                         <Component Id="cmp490C7CFA1ACB934C1AB6FA30621C0208" Guid="*">
@@ -664,6 +661,18 @@
             
             
             
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             <ComponentRef Id="cmpB3950B6F7A40D606C5ED201178706F7D" />
             <ComponentRef Id="cmpFEEC811D129763489B81AEA418C95DC2" />
             <ComponentRef Id="cmp883C4353E68A38504B672E2E2737D43F" />
@@ -675,8 +684,7 @@
             <ComponentRef Id="cmp255094FFA9E98BEFE25F6D6CFD782030" />
             <ComponentRef Id="cmp6A07FBF321FBFD390545F0667FE5E7F9" />
             <ComponentRef Id="cmp02030A54E6B6B58A1E937441EE353F0C" />
-            <ComponentRef Id="cmp90E7A2961D7B7BC184DCEAB3C6DC8A73" />
-            <ComponentRef Id="cmp16F359427FC536D70476A726D2637772" />
+            <ComponentRef Id="cmp1454599EDB8CBE5543F6190B9EB7B3C8" />
             <ComponentRef Id="cmp490C7CFA1ACB934C1AB6FA30621C0208" />
             <ComponentRef Id="cmp69436C62EA2FFF62F2131B3474094357" />
             <ComponentRef Id="cmpED6E3D795005698B086F1938686EE8FD" />
