@@ -112,7 +112,12 @@ namespace GoodAI.Core.Memory
                 : item.ToString()
             ));
 
-            return result + (printTotalSize ? string.Format(" [{0}]", Size) : "");
+            // indicate that product of dimensions does not match memory block size (unless already indicated by "?")
+            bool sizeMismatch = (m_computedDimension == -1) && !filteredDims.Contains(-1);
+
+            return result + (printTotalSize
+                ? string.Format(" [{0}{1}]", Size, (sizeMismatch ? "!" : ""))
+                : (sizeMismatch ? " (!)" : ""));
         }
 
         private string PrintComputedDim()

@@ -81,9 +81,17 @@ namespace CoreTests
         }
 
         [Fact]
+        public void PrintIndicatesMismatchedDimsAndSize()
+        {
+            var dims = new TensorDimensions(3, 3) { Size = 4 };
+
+            Assert.Equal("3×3 (!)", dims.Print());
+        }
+
+        [Fact]
         public void DoesNotPrintTrailingOnes()
         {
-            var dims = new TensorDimensions(5, 1, 1);
+            var dims = new TensorDimensions(5, 1, 1) { Size = 5 };
 
             Assert.Equal("5", dims.Print(hideTrailingOnes: true));
         }
@@ -101,7 +109,7 @@ namespace CoreTests
         {
             var dims = new TensorDimensions(1, 1);
 
-            Assert.Equal("1", dims.Print(hideTrailingOnes: true));
+            Assert.Equal("1 (!)", dims.Print(hideTrailingOnes: true));
         }
 
         [Fact]
