@@ -24,6 +24,34 @@ namespace GoodAI.Core.Memory
             }
         }
 
+        public class MemoryManagerBackup : IDisposable
+        {
+            private MyMemoryManager m_instance;
+
+            public MemoryManagerBackup(MyMemoryManager instance)
+            {
+                m_instance = instance;
+            }
+
+            public void Forget()
+            {
+                m_instance = null;
+            }
+
+            public void Dispose()
+            {
+                if (m_instance != null)
+                    SINGLETON = m_instance;
+            }
+        }
+
+        public static MemoryManagerBackup Backup()
+        {
+            var backup = new MemoryManagerBackup(SINGLETON);
+            SINGLETON = null;
+            return backup;
+        }
+
         //TODO: Should be something much sofisticated later, like virtual memory
         private Dictionary<MyNode, List<MyAbstractMemoryBlock>> m_memoryBlocks;
         private Dictionary<string, IDisposable>[] m_globalVariables;
