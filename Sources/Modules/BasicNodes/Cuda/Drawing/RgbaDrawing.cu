@@ -21,8 +21,12 @@ extern "C"
 	__global__ void DrawRgbBackgroundKernel(float *target, int inputWidth, int inputHeight,
 		float r, float g, float b)
 	{
-		int id = blockDim.x * ( blockIdx.y * gridDim.x + blockIdx.x)
-			+ threadIdx.x;
+		int column = threadIdx.x + blockDim.x * blockIdx.z;
+		if (column >= inputWidth)
+			return;
+
+		int id = inputWidth * ( blockIdx.y * gridDim.x + blockIdx.x) // blockIdx.x == row, blockIdx.y == color channel 
+			+ column;
 
 		int imagePixels = inputWidth * inputHeight; 
 
@@ -42,6 +46,32 @@ extern "C"
 				break;
 			}
 			target[id] = color;
+		}
+	}
+
+	/*
+	Adds noise into a 3-component image.
+	inputWidth & inputHeight: map dimensions in pixels
+	gridDim.y = 3, one for each color component
+	*/
+	__global__ void AddRgbNoiseKernel(float *target, int inputWidth, int inputHeight, float *randoms)
+	{
+		int column = threadIdx.x + blockDim.x * blockIdx.z;
+		if (column >= inputWidth)
+			return;
+
+		int id = inputWidth * (blockIdx.y * gridDim.x + blockIdx.x) // blockIdx.x == row, blockIdx.y == color channel 
+			+ column;
+
+		int imagePixels = inputWidth * inputHeight;
+
+		if (id < 3 * imagePixels) // 3 for RGB 
+		{
+			target[id] += randoms[id];
+			if (target[id] < 0)
+				target[id] = 0;
+			if (target[id] > 255)
+				target[id] = 255;
 		}
 	}
 
