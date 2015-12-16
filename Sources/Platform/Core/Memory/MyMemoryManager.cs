@@ -24,31 +24,47 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public class MemoryManagerBackup : IDisposable
+        /// <summary>
+        /// A disposable backup of a MyMemoryManager instance.
+        /// </summary>
+        public class Backup : IDisposable
         {
             private MyMemoryManager m_instance;
 
-            public MemoryManagerBackup(MyMemoryManager instance)
+            public Backup(MyMemoryManager instance)
             {
                 m_instance = instance;
             }
 
+            /// <summary>
+            /// Forget any backup so that Dispose doesn't use it.
+            /// </summary>
             public void Forget()
             {
                 m_instance = null;
             }
 
+            /// <summary>
+            /// Restore the backup unless it's been explicitely forgotten.
+            /// </summary>
             public void Dispose()
             {
                 if (m_instance != null)
-                    SINGLETON = m_instance;
+                    SINGLETON = m_instance;  // Restore backup
             }
         }
 
-        public static MemoryManagerBackup Backup()
+        /// <summary>
+        /// Get a backup of the memory manager.
+        /// </summary>
+        /// <returns>A disposable backup that auto-restores when not forgotten.</returns>
+        public static Backup GetBackup()
         {
-            var backup = new MemoryManagerBackup(SINGLETON);
+            var backup = new Backup(SINGLETON);
+
+            // Force creating a new instance when Instance is called.
             SINGLETON = null;
+
             return backup;
         }
 
