@@ -16,12 +16,15 @@ namespace GoodAI.Modules.Transforms
             f_DotProduct_f, i_DotProduct_i, f_Cosine_f
         };
 
-        public static MyCudaKernel Kernel(int nGPU, Mode mode, int segmentCount = 1)
+        public static MyCudaKernel Kernel(int nGPU, Mode mode, int blockCount = 1, bool segmented = false)
         {
             uint outSize = 0;
             MyCudaKernel kernel = null;
 
-            if (segmentCount == 1)
+            if (blockCount < 1)
+                throw new ArgumentOutOfRangeException("blockCount", "Invalid block count -- must be positive.");
+
+            if (!segmented)
             {
                 switch (mode)
                 {
@@ -41,12 +44,8 @@ namespace GoodAI.Modules.Transforms
                     case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_jb"); outSize = 16; break;
                     default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                 }
-
-                kernel.DynamicSharedMemory = 512 * outSize;
-                kernel.GridDimensions = 10;
-                kernel.BlockDimensions = 512;
             }
-            else if (segmentCount > 1)
+            else
             {
                 switch (mode)
                 {
@@ -66,23 +65,25 @@ namespace GoodAI.Modules.Transforms
                     case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_j"); outSize = 16; break;
                     default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                 }
-
-                kernel.DynamicSharedMemory = 512 * outSize;
-                kernel.GridDimensions = segmentCount;
-                kernel.BlockDimensions = 512;
             }
-            else
-                throw new ArgumentOutOfRangeException("segmentCount", "Invalid segment count.");
 
+            kernel.DynamicSharedMemory = 512 * outSize;
+            kernel.GridDimensions = blockCount;
+            kernel.BlockDimensions = 512;
             return kernel;
         }
 
-        public static MyCudaKernel AsyncKernel(int nGPU, Mode mode, int tempBlockSize, int segmentCount = 1)
+        public static MyCudaKernel AsyncKernel(int nGPU, Mode mode, int tempBlockSize, int segmentCount = 1, bool segmented = false)
         {
             uint outSize = 0;
             MyCudaKernel kernel = null;
 
-            if (segmentCount == 1)
+            if (segmentCount < 1)
+                throw new ArgumentOutOfRangeException("segmentCount", "Invalid block count -- must be positive.");
+            if (!segmented && segmentCount > 1) // The global mem barrier in reduction.cu will may create race conditions when called concurrently
+                throw new ArgumentOutOfRangeException("segmentCount", "Non-segmented mode called with multiple blocks is not allowed.");
+
+            if (!segmented)
             {
                 switch (mode)
                 {
@@ -102,12 +103,8 @@ namespace GoodAI.Modules.Transforms
                     case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_S1_jb"); outSize = 16; break;
                     default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                 }
-
-                kernel.DynamicSharedMemory = 512 * outSize;
-                kernel.GridDimensions = 10;
-                kernel.BlockDimensions = 512;
             }
-            else if (segmentCount > 1)
+            else
             {
                 switch (mode)
                 {
@@ -127,13 +124,11 @@ namespace GoodAI.Modules.Transforms
                     case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_S1_j"); outSize = 16; break;
                     default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                 }
-
-                kernel.DynamicSharedMemory = 512 * outSize;
-                kernel.GridDimensions = segmentCount;
-                kernel.BlockDimensions = 512;
             }
-            else
-                throw new ArgumentOutOfRangeException("segmentCount", "Invalid segment count.");
+
+            kernel.DynamicSharedMemory = 512 * outSize;
+            kernel.GridDimensions = segmentCount;
+            kernel.BlockDimensions = 512;
 
             if (tempBlockSize < kernel.GridDimensions.x * kernel.GridDimensions.y * kernel.GridDimensions.z * 2)
                 throw new ArgumentOutOfRangeException("tempBlockSize", "Temp block size is too small to use with this setting.");

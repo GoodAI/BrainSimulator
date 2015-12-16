@@ -213,21 +213,17 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 	}
 	LogStepShared<R, tCnt, false>(&out[blockIdx_x], sPartials);
 
-	//__shared__ bool lastBlock;
+	__shared__ bool lastBlock;
 	__threadfence();
 
-	//int& barrier = reinterpret_cast<int*>(tempBuffer)[8191];
-
-	/*	if (tid == 0)
-		{
+	if (tid == 0)
+	{
 		unsigned int ticket = atomicAdd(&barrier, 1);
 		lastBlock = (ticket == gridDim_x - 1);
-		}
-		__syncthreads();
-		*/
+	}
+	__syncthreads();
 
-	if (blockIdx_x == 0)
-		//if (lastBlock)
+	if (lastBlock)
 	{
 		R sum;
 		for (unsigned int i = tid; i < gridDim_x; i += tCnt)
@@ -239,7 +235,7 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 
 		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut)+R::outSize*outOff);
 		LogStepShared<R, tCnt, true>(out, sPartials);
-		//barrier = 0;
+		barrier = 0;
 	}
 }
 
