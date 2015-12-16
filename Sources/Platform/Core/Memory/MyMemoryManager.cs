@@ -327,7 +327,7 @@ namespace GoodAI.Core.Memory
                 {
                     string memBlockName = MyMemoryBlockSerializer.GetUniqueName(memoryBlock);
 
-                    if (!memBlocks.ContainsKey(memBlockName))  // TODO(Premek): encounterted duplicate world node, figure out why
+                    if (!memBlocks.ContainsKey(memBlockName))
                         memBlocks.Add(memBlockName, memoryBlock);
                 }
             }
