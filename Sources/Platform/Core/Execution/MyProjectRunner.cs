@@ -289,7 +289,12 @@ namespace GoodAI.Core.Execution
                 content = ProjectLoader.LoadProject(path,
                     MyMemoryBlockSerializer.GetTempStorage(newProjectName));
 
-                Project = MyProject.Deserialize(content, Path.GetDirectoryName(path));
+                using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
+                {
+                    Project = MyProject.Deserialize(content, Path.GetDirectoryName(path));
+                    backup.Forget();
+                }
+
                 Project.Name = newProjectName;
             }
             catch (Exception e)

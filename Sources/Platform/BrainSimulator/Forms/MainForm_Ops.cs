@@ -122,7 +122,12 @@ namespace GoodAI.BrainSimulator.Forms
                 content = ProjectLoader.LoadProject(fileName,
                     MyMemoryBlockSerializer.GetTempStorage(newProjectName));
 
-                Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
+                using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
+                {
+                    Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
+                    backup.Forget();
+                }
+
                 Project.Name = newProjectName;
             }
             catch (Exception e)
