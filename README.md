@@ -1,4 +1,4 @@
-﻿# GoodAI Brain Simulator
+# GoodAI Brain Simulator
 
 Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback.
 

@@ -182,7 +182,7 @@ namespace GoodAI.Modules.GameBoy
         public virtual MyRenderTask RenderGameTask { get; protected set; }
 
         /// <summary>
-        /// Loads textures, prepares game objects.
+        /// Initialises the game state and loads the resources.
         /// </summary>
         [MyTaskInfo(OneShot = true)]
         public class MyInitTask : MyTask<MyCustomPongWorld>
@@ -275,7 +275,7 @@ namespace GoodAI.Modules.GameBoy
         }
 
         /// <summary>
-        /// Draws the game's state into Visual output.
+        /// Renders the game to visual output.
         /// </summary>
         public class MyRenderTask : MyTask<MyCustomPongWorld>
         {

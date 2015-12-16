@@ -81,9 +81,17 @@ namespace CoreTests
         }
 
         [Fact]
+        public void PrintIndicatesMismatchedDimsAndSize()
+        {
+            var dims = new TensorDimensions(3, 3) { Size = 4 };
+
+            Assert.Equal("3×3 (!)", dims.Print());
+        }
+
+        [Fact]
         public void DoesNotPrintTrailingOnes()
         {
-            var dims = new TensorDimensions(5, 1, 1);
+            var dims = new TensorDimensions(5, 1, 1) { Size = 5 };
 
             Assert.Equal("5", dims.Print(hideTrailingOnes: true));
         }
@@ -101,7 +109,7 @@ namespace CoreTests
         {
             var dims = new TensorDimensions(1, 1);
 
-            Assert.Equal("1", dims.Print(hideTrailingOnes: true));
+            Assert.Equal("1 (!)", dims.Print(hideTrailingOnes: true));
         }
 
         [Fact]
@@ -110,6 +118,28 @@ namespace CoreTests
             var dims = new TensorDimensions(1, 1, -1, 5, 1, 2, 1);
 
             Assert.Equal("1×1×?×5×1×2", dims.Print(hideTrailingOnes: true));
+        }
+
+        [Fact]
+        public void ParseAutoAddsLeadingDim()
+        {
+            var dims = new TensorDimensions();
+            dims.Parse("2, 2, 2");
+
+            Assert.Equal(4, dims.Count);
+            Assert.Equal(-1, dims[0]);
+            Assert.Equal(2, dims[1]);
+        }
+
+        [Fact]
+        public void ParseDoesNotAutoAddDimWhenSizeMatches()
+        {
+            var dims = new TensorDimensions() { Size = 2*2*2 };
+            dims.Parse("2, 2, 2");
+
+            Assert.Equal(3, dims.Count);
+            Assert.Equal(2, dims[0]);
+            Assert.Equal(2, dims[1]);
         }
 
         [Fact]
