@@ -17,7 +17,7 @@ We tried to keep the UI as simple as possible, you can see the basic controls of
 12. Node group
 13. Node connection - shows size of memory block connected
 14. World
-15. Nodes toolstrip
+15. [Nodes toolbox](ui.md#nodes-toolbox)
 16. Log window
 17. Validator window
 18. [Simulation run information](ui.md#simulation-info)
@@ -64,7 +64,7 @@ It should be mentioned, that nodes are stored as XML text in a clipboard. Thanks
 * **Debugging / Profiling** - opens the window with debugging and profiling information
 * **Show/hide all observers, Ctrl+H** - shows or hides all observers; very useful when switching between brain editing and simulation debugging/observing memory blocks
 * **Reset Views Layout, Ctrl+W** - Discards any custom window layout settings in Brain Simulator
-* **Configure node selection..., Ctrl+L** - opens configuration window, where you can choose which nodes should be visible in Nodes toolstrip (15) and which Worlds in Simulation controls (2)
+* **Configure node selection..., Ctrl+L** - opens configuration window, where you can choose which nodes should be visible in the Nodes toolbox (15) and which Worlds in Simulation controls (2)
 
 #### Tools
 ![Tools](img/menu-tools.png)
@@ -124,6 +124,13 @@ Left to right:
 
 * **Update Memory Blocks** - calls `UpdateMemoryBlocks()` for all nodes. Updates the memory block sizes on connections.
 * **Zoom To Fit** - makes all nodes in current node group visible in current viewport
+
+### <a name="nodes-toolbox">Nodes Toolbox</a>
+![Quick access toolbar howto](img/quick-toolbar-howto.png)
+
+Use the **Configure node selection...** item in the **View** menu (or press **Ctrl+L**) to customize the contents of the nodes toolbox.
+
+The nodes you select are added to the drop down menus according to their categories. If you use a node often, you can drag & drop it to the upper part of the toolbar for quicker access (as suggested by the picture above).  
 
 ### <a name="simulation-info">Simulation Info</a>
 ![Simulation info](img/simulation-info.png)
