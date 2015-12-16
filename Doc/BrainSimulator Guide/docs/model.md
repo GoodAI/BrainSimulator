@@ -93,7 +93,7 @@ You should write "node comment" (the triple slash comment) before each of your n
 
 Please notice several details in the implementation:
 
-### Annotations:
+### Annotations
 For **Node and Task**, you can use the following annotations:
 
 * `MyObsolete(ReplacedBy=typeof(MyBetterNode))` - shows obsolete info in UI
@@ -125,7 +125,7 @@ There is one more annotation just for the **Task**:
 
 * `MyTaskGroup("GroupName")` - adds task to the task group (see [below](model.md#task-group))
 
-### Memory blocks:
+### Memory blocks
 Memory blocks are defined by MyMemoryBlock<T> type property. If you want your MemoryBlock to be I/O (i.e. visible in the UI and connectible to the other nodes), you must annotate them with `MyInputBlock(x)` or `MyOutputBlock(x)` where x is the number of input or output. For convenient use, you should also implement the **get** and **set** methods for them. This is really easy as the only thing you have to do is
 
 ``` csharp
@@ -183,7 +183,7 @@ Each of them takes 3 arguments. Bool value (this should be condition, you are te
 You can also directly send messages by calling `AddInfo(MyNode, string)`, `AddWarning()` or `AddError()` methods.
 
 
-### Tasks:
+### Tasks
 You must implement your own class for every task you need (see below).
 Order of tasks in the source file will be preserved during the execution of your node. As a rule of thumb: **do not implement constructor with parameters and do not instantiate any memory block or task!** Your class will be analysed for you and all necessary instantiations and allocations will be done automatically at the right time .
 
