@@ -39,6 +39,7 @@
             this.groupNameText.Name = "groupNameText";
             this.groupNameText.Size = new System.Drawing.Size(127, 20);
             this.groupNameText.TabIndex = 0;
+            this.groupNameText.KeyUp += new System.Windows.Forms.KeyEventHandler(this.groupNameText_KeyUp);
             // 
             // groupNameLabel
             // 
@@ -63,7 +64,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 36);
+            this.ClientSize = new System.Drawing.Size(304, 37);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.groupNameLabel);
             this.Controls.Add(this.groupNameText);

@@ -261,8 +261,8 @@ namespace GoodAI.BrainSimulator.Forms
             catch (InvalidOperationException)
             {
                 errorText.Text = string.Format("Cannot add a {0} property to a {1} group",
-                    selectedPropertyDescriptor.PropertyType.Name,
-                    selectedGroupDescriptor.PropertyType.Name);
+                    selectedPropertyDescriptor.Proxy.TypeName,
+                    selectedGroupDescriptor.Proxy.TypeName);
             }
         }
 

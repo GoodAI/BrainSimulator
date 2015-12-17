@@ -217,5 +217,17 @@ namespace GoodAI.Core.Dashboard
                 return typeof (object);
             }
         }
+
+        public override string TypeName
+        {
+            get
+            {
+                var groupedProperties = SourceProperty.GroupedProperties;
+                if (groupedProperties.Any())
+                    return groupedProperties.First().GenericProxy.TypeName;
+
+                return base.TypeName;
+            }
+        }
     }
 }
