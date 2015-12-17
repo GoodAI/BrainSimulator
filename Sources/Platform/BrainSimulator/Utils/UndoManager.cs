@@ -20,11 +20,10 @@ namespace GoodAI.BrainSimulator.Utils
 
         public ProjectState(string serializedProject)
         {
-            GraphPanes = new List<int>();
-
             if (serializedProject == null)
                 throw new ArgumentNullException("serializedProject");
 
+            GraphPanes = new List<int>();
             SerializedProject = serializedProject;
         }
 
@@ -35,6 +34,9 @@ namespace GoodAI.BrainSimulator.Utils
 
         public override int GetHashCode()
         {
+            // Two states are the same if the serialized project and path are the same.
+            // This is used when a new state is saved - if it equals the previous one, it is discarded.
+            // Some information might therefore be lost - add the properties here if necessary.
             unchecked
             {
                 int hash = SerializedProject.GetHashCode()*31 + 17;
@@ -113,6 +115,7 @@ namespace GoodAI.BrainSimulator.Utils
 
         public bool CanUndo()
         {
+            // The last state is "current".
             return m_undoStates.Count > 1;
         }
 

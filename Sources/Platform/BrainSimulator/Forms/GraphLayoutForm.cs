@@ -13,7 +13,6 @@ using System.Linq;
 using System.Windows.Forms;
 using GoodAI.Core.Memory;
 using GoodAI.BrainSimulator.Properties;
-using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 

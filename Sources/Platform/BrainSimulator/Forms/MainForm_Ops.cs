@@ -14,14 +14,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using GoodAI.BrainSimulator.DashboardUtils;
 using GoodAI.BrainSimulator.Properties;
-using GoodAI.Core.Task;
-using GoodAI.Core.Dashboard;
 using GoodAI.Platform.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -32,7 +28,6 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private static string TITLE_TEXT = "Brain Simulator";
 
-        public MyConfiguration Configuration { get; private set; }
         public MySimulationHandler SimulationHandler { get; private set; }
         public MyDocProvider Documentation { get; private set; }         
 
