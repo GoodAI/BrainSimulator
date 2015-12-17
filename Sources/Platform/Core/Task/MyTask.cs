@@ -17,7 +17,7 @@ namespace GoodAI.Core.Task
         [YAXSerializableField(DefaultValue = false), YAXAttributeForClass]
         public bool Enabled 
         {
-            get { return m_enabled; }
+            get { return m_enabled && !Forbidden; }
             set 
             {
                 m_enabled = value;
@@ -44,6 +44,8 @@ namespace GoodAI.Core.Task
         {
             get { return !(GetInfo().Disabled); }
         }
+
+        public bool Forbidden { get; protected set; }
 
         private MyWorkingNode m_genericOwner;
 
