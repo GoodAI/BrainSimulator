@@ -84,31 +84,25 @@ namespace CoreTests
             accumulator.ApproachValue.Factor = 0.9f;
 
             // Enable tasks.
+            project.World.EnableDefaultTasks();
 
-            project.World.EnableAllTasks();
-
+            neuralGroup.EnableDefaultTasks();
             neuralGroup.RMS.Enabled = true;
-            neuralGroup.InitGroup.Enabled = true;
-            neuralGroup.IncrementTimeStep.Enabled = true;
-            neuralGroup.DecrementTimeStep.Enabled = true;
 
-            hiddenLayer.EnableAllTasks();
-            hiddenLayer.ShareWeightsTask.Enabled = false;
+            hiddenLayer.EnableDefaultTasks();
 
-            outputLayer.EnableAllTasks();
-            outputLayer.ShareWeightsTask.Enabled = false;
+            outputLayer.EnableDefaultTasks();
 
+            accumulator.EnableDefaultTasks();
             accumulator.ApproachValue.Enabled = true;
 
             // Run the simulation.
 
             runner.RunAndPause(100);
 
-            //accumulator.Output.SafeCopyToHost();
-            //float error = accumulator.Output.GetValueAt(0);
             float error = runner.GetValues(accumulator.Id)[0];
             Assert.True(error < 0.5f);
-            //runner.SaveProject(@"c:\foobar.brain");
+            runner.SaveProject(@"c:\foobar.brain");
 
             runner.Shutdown();
         }
