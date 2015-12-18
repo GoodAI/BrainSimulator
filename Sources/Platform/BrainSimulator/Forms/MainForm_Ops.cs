@@ -68,6 +68,8 @@ namespace GoodAI.BrainSimulator.Forms
             exportStateButton.Enabled = false;
             clearDataButton.Enabled = false;
 
+            Project.Restore();
+
             UndoManager.Clear();
             SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName, "New project");
             RefreshUndoRedoButtons();
@@ -171,7 +173,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 // Do not restore links here - that would automatically restore observers and dashboard.
                 MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName),
-                    restoreModelOnly: false);
+                    restoreModelOnly: true);
                 
                 //offset all imported nodes
                 float maxY = NetworkView.Desktop.GetContentBounds().Bottom;                               
@@ -921,7 +923,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
             {
-                Project = MyProject.Deserialize(content, Path.GetDirectoryName(projectPath));
+                string projectDirectory = string.IsNullOrEmpty(projectPath) ? "" : Path.GetDirectoryName(projectPath);
+                Project = MyProject.Deserialize(content, projectDirectory);
                 Project.Restore();
                 backup.Forget();
             }
