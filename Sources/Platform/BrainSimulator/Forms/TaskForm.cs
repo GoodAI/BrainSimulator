@@ -129,6 +129,8 @@ namespace GoodAI.BrainSimulator.Forms
                 bounds.Width = bounds.X + e.Item.SubItems[1].Bounds.X;
             }
 
+            MyTask task = e.Item.Tag as MyTask;
+
             //toggle colors if the item is highlighted 
             if (e.Item.Selected && e.Item.ListView.Focused)
             {
@@ -138,12 +140,23 @@ namespace GoodAI.BrainSimulator.Forms
             else if (e.Item.Selected && !e.Item.ListView.Focused)
             {
                 e.SubItem.BackColor = SystemColors.Control;
-                e.SubItem.ForeColor = e.Item.ListView.ForeColor;
+                if (task.Forbidden)
+                    e.SubItem.ForeColor = SystemColors.GrayText;
+                else
+                    e.SubItem.ForeColor = e.Item.ListView.ForeColor;
             }
             else
             {
-                e.SubItem.BackColor = e.Item.ListView.BackColor;
-                e.SubItem.ForeColor = e.Item.ListView.ForeColor;
+                if (task.Forbidden)
+                {
+                    e.SubItem.BackColor = SystemColors.Control;
+                    e.SubItem.ForeColor = SystemColors.GrayText;
+                }
+                else
+                {
+                    e.SubItem.BackColor = e.Item.ListView.BackColor;
+                    e.SubItem.ForeColor = e.Item.ListView.ForeColor;
+                }
             }
 
             // Draw the standard header background.
@@ -151,15 +164,18 @@ namespace GoodAI.BrainSimulator.Forms
 
             int xOffset = 0;
 
-            MyTask task = e.Item.Tag as MyTask;
-
             if (e.ColumnIndex == 0)
             {
                 Point glyphPoint = new Point(4, e.Item.Position.Y + 2);            
 
-                if (!string.IsNullOrEmpty(task.TaskGroupName)) 
+                if (!string.IsNullOrEmpty(task.TaskGroupName))
                 {
-                    RadioButtonState state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
+                    RadioButtonState state;
+                    if (task.Forbidden)
+                        state = RadioButtonState.UncheckedDisabled;
+                    else
+                        state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
+
                     RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
                     xOffset = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;                    
                 }
@@ -169,7 +185,12 @@ namespace GoodAI.BrainSimulator.Forms
                 }
                 else
                 {
-                    CheckBoxState state = e.Item.Checked ? CheckBoxState.CheckedNormal : CheckBoxState.UncheckedNormal;
+                    CheckBoxState state;
+                    if (task.Forbidden)
+                        state = CheckBoxState.UncheckedDisabled;
+                    else
+                        state = e.Item.Checked ? CheckBoxState.CheckedNormal : CheckBoxState.UncheckedNormal;
+
                     CheckBoxRenderer.DrawCheckBox(e.Graphics, glyphPoint, state);
                     xOffset = CheckBoxRenderer.GetGlyphSize(e.Graphics, state).Width + 4;    
                 }
