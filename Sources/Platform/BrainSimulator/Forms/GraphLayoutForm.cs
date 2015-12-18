@@ -559,7 +559,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void Desktop_PositionChanged(object sender, PositionChangedEventArgs e)
         {
-            m_mainForm.ProjectStateChanged("Node(s) moved");
+            if (e.Target is Node)
+                m_mainForm.ProjectStateChanged("Node(s) moved");
         }
     }      
 }

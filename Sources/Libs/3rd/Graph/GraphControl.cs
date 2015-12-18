@@ -1857,11 +1857,12 @@ namespace Graph
 					var nodeItem = DragElement as NodeItem;
 					if (nodeItem != null)
 						nodeItem.OnEndDrag();
-					DragElement = null;
 					needRedraw = true;
 
 				    if (PositionChanged != null && transformedLocation != originalLocation)
 				        PositionChanged(this, new PositionChangedEventArgs(DragElement));
+
+					DragElement = null;
 				}
 
 				dragging = false;
