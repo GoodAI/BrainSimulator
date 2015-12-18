@@ -171,7 +171,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 // Do not restore links here - that would automatically restore observers and dashboard.
                 MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName),
-                    restoreLinks: false);
+                    restoreModelOnly: false);
                 
                 //offset all imported nodes
                 float maxY = NetworkView.Desktop.GetContentBounds().Bottom;                               

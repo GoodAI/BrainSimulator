@@ -19,11 +19,7 @@ namespace GoodAI.Core.Utils
 
         [YAXSerializableField]
         [YAXSerializeAs("Observers")]
-        public List<MyAbstractObserver> Observers
-        {
-            get { return m_observers; }
-            set { m_observers = value; }
-        }
+        public List<MyAbstractObserver> Observers { get; set; }
 
         public MySimulationHandler SimulationHandler { get; set; }
 
@@ -234,8 +230,6 @@ namespace GoodAI.Core.Utils
         [YAXSerializableField, YAXSerializeAs("UsedModules")]
         internal List<MyUsedModuleInfo> UsedModules;
 
-        private List<MyAbstractObserver> m_observers;
-
         public bool ReadOnly { get; internal set; }
 
         public static YAXSerializer GetSerializer()
@@ -335,7 +329,14 @@ namespace GoodAI.Core.Utils
             return convertedXml;
         }        
 
-        public static MyProject Deserialize(string xml, string projectPath, bool restoreLinks = true)
+        /// <summary>
+        /// Deserializes the project from a given string.
+        /// </summary>
+        /// <param name="xml">The input string for deserialization.</param>
+        /// <param name="projectPath">Project path for correct lookup of items like state data.</param>
+        /// <param name="restoreModelOnly">If set to true, only the model is deserialized, but not observers etc.</param>
+        /// <returns>A deserialized project.</returns>
+        public static MyProject Deserialize(string xml, string projectPath, bool restoreModelOnly = false)
         {            
             xml = MyBaseConversion.ConvertOldFileVersioning(xml);
             xml = MyBaseConversion.ConvertOldModuleNames(xml);
@@ -368,7 +369,7 @@ namespace GoodAI.Core.Utils
 
             loadedProject.ConnectWorld();            
 
-            if (restoreLinks)
+            if (!restoreModelOnly)
                 loadedProject.Restore();
 
             return loadedProject;
