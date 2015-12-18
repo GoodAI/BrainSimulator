@@ -17,7 +17,7 @@ namespace GoodAI.Core.Task
         [YAXSerializableField(DefaultValue = false), YAXAttributeForClass]
         public bool Enabled 
         {
-            get { return m_enabled; }
+            get { return m_enabled && !Forbidden; }
             set 
             {
                 m_enabled = value;
@@ -44,6 +44,12 @@ namespace GoodAI.Core.Task
         {
             get { return !(GetInfo().Disabled); }
         }
+
+        /// <summary>
+        /// The task will not run when this is true and it will also be made readonly in the UI.
+        /// Use this when a task cannot run based on other node settings (e.g. its run would break the behavior).
+        /// </summary>
+        public bool Forbidden { get; set; }
 
         private MyWorkingNode m_genericOwner;
 
