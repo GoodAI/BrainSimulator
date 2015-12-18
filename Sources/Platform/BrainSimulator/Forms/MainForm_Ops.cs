@@ -69,6 +69,7 @@ namespace GoodAI.BrainSimulator.Forms
             clearDataButton.Enabled = false;
 
             Project.Restore();
+            RestoreDashboardForm();
 
             UndoManager.Clear();
             SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName, "New project");
