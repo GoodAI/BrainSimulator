@@ -304,8 +304,6 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void Desktop_NodeRemoved(object sender, NodeEventArgs e)
         {
-            // End state saving suppression, we'll need to save one state after the node is removed.
-            m_mainForm.SuppressStateSaving = false;
             MyNode node = (e.Node as MyNodeView).Node;
             if (node == null)
                 return;
@@ -322,6 +320,9 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_mainForm.CloseObservers(node);
             m_mainForm.RemoveFromDashboard(node);
+
+            // End state saving suppression, we'll need to save one state after the node is removed.
+            m_mainForm.SuppressStateSaving = false;
 
             m_mainForm.ProjectStateChanged("Node removed");
         }
