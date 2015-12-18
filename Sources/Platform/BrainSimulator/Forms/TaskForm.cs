@@ -125,98 +125,109 @@ namespace GoodAI.BrainSimulator.Forms
             Rectangle bounds = e.SubItem.Bounds;
 
             if (e.ColumnIndex == 0)
-            {
                 bounds.Width = bounds.X + e.Item.SubItems[1].Bounds.X;
-            }
 
-            MyTask task = e.Item.Tag as MyTask;
+            var task = e.Item.Tag as MyTask;
 
-            //toggle colors if the item is highlighted 
-            if (e.Item.Selected && e.Item.ListView.Focused)
-            {
-                e.SubItem.BackColor = SystemColors.Highlight;
-                e.SubItem.ForeColor = e.Item.ListView.BackColor;
-            }
-            else if (e.Item.Selected && !e.Item.ListView.Focused)
-            {
-                e.SubItem.BackColor = SystemColors.Control;
-                if (task.Forbidden)
-                    e.SubItem.ForeColor = SystemColors.GrayText;
-                else
-                    e.SubItem.ForeColor = e.Item.ListView.ForeColor;
-            }
-            else
-            {
-                if (task.Forbidden)
-                {
-                    e.SubItem.BackColor = SystemColors.Control;
-                    e.SubItem.ForeColor = SystemColors.GrayText;
-                }
-                else
-                {
-                    e.SubItem.BackColor = e.Item.ListView.BackColor;
-                    e.SubItem.ForeColor = e.Item.ListView.ForeColor;
-                }
-            }
-
-            // Draw the standard header background.
-            e.DrawBackground();
+            // Toggle colors if the item is highlighted.
+            DrawBackgroundAndText(e, task);
 
             int xOffset = 0;
 
             if (e.ColumnIndex == 0)
             {
-                Point glyphPoint = new Point(4, e.Item.Position.Y + 2);            
-
-                if (!string.IsNullOrEmpty(task.TaskGroupName))
-                {
-                    RadioButtonState state;
-                    if (task.Forbidden)
-                        state = RadioButtonState.UncheckedDisabled;
-                    else
-                        state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
-
-                    RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
-                    xOffset = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;                    
-                }
-                else if (task.DesignTime)
-                {                                        
-                    xOffset = CheckBoxRenderer.GetGlyphSize(e.Graphics, CheckBoxState.UncheckedNormal).Width + 4;
-                }
-                else
-                {
-                    CheckBoxState state;
-                    if (task.Forbidden)
-                        state = CheckBoxState.UncheckedDisabled;
-                    else
-                        state = e.Item.Checked ? CheckBoxState.CheckedNormal : CheckBoxState.UncheckedNormal;
-
-                    CheckBoxRenderer.DrawCheckBox(e.Graphics, glyphPoint, state);
-                    xOffset = CheckBoxRenderer.GetGlyphSize(e.Graphics, state).Width + 4;    
-                }
+                DrawCheckBox(e, task, out xOffset);
             }
             else if (e.ColumnIndex == 1 && task.DesignTime)
             {                
-                PushButtonState buttonState = PushButtonState.Disabled;
-
-                if (m_mainForm.SimulationHandler.CanStart && task.Enabled)
-                {                    
-                    buttonState =
-                        m_lastHitTest != null && e.Item == m_lastHitTest.Item && e.SubItem == m_lastHitTest.SubItem ?
-                        PushButtonState.Pressed : PushButtonState.Normal;
-                }
-
-                ButtonRenderer.DrawButton(e.Graphics, e.Bounds, "Execute", listView.Font, false, buttonState);
+                DrawPushButton(e, task);
             }
             
-            //add a 2 pixel buffer the match default behavior
-            Rectangle rec = new Rectangle(e.Bounds.X + 2 + xOffset, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
+            // Add a 2 pixel buffer the match default behavior.
+            Rectangle rec = new Rectangle(e.Bounds.X + 2 + xOffset, e.Bounds.Y + 2, e.Bounds.Width - 4,
+                e.Bounds.Height - 4);
 
-            //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.
-            TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.ExpandTabs | TextFormatFlags.SingleLine;
+            // TODO: Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.
+            // MSDN claims they're exclusive but on Win7-64 they work.
+            TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.ExpandTabs |
+                                    TextFormatFlags.SingleLine;
 
-            //If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.
+            // If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.
             TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.ListView.Font, rec, e.SubItem.ForeColor, flags);         
+        }
+
+        private static void DrawCheckBox(DrawListViewSubItemEventArgs e, MyTask task, out int checkboxWidth)
+        {
+            Point glyphPoint = new Point(4, e.Item.Position.Y + 2);
+
+            if (!string.IsNullOrEmpty(task.TaskGroupName))
+            {
+                RadioButtonState state;
+                if (task.Forbidden)
+                    state = RadioButtonState.UncheckedDisabled;
+                else
+                    state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
+
+                RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
+                checkboxWidth = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;
+            }
+            else if (task.DesignTime)
+            {
+                checkboxWidth = CheckBoxRenderer.GetGlyphSize(e.Graphics, CheckBoxState.UncheckedNormal).Width + 4;
+            }
+            else
+            {
+                CheckBoxState state;
+                if (task.Forbidden)
+                    state = CheckBoxState.UncheckedDisabled;
+                else
+                    state = e.Item.Checked ? CheckBoxState.CheckedNormal : CheckBoxState.UncheckedNormal;
+
+                CheckBoxRenderer.DrawCheckBox(e.Graphics, glyphPoint, state);
+                checkboxWidth = CheckBoxRenderer.GetGlyphSize(e.Graphics, state).Width + 4;
+            }
+        }
+
+        private void DrawPushButton(DrawListViewSubItemEventArgs e, MyTask task)
+        {
+            PushButtonState buttonState = PushButtonState.Disabled;
+
+            if (m_mainForm.SimulationHandler.CanStart && task.Enabled)
+            {
+                buttonState =
+                    m_lastHitTest != null && e.Item == m_lastHitTest.Item && e.SubItem == m_lastHitTest.SubItem
+                        ? PushButtonState.Pressed
+                        : PushButtonState.Normal;
+            }
+
+            ButtonRenderer.DrawButton(e.Graphics, e.Bounds, "Execute", listView.Font, false, buttonState);
+        }
+
+        private static void DrawBackgroundAndText(DrawListViewSubItemEventArgs e, MyTask task)
+        {
+            Color listBackColor = e.Item.ListView.BackColor;
+            Color foreColor;
+            Color backColor;
+
+            if (e.Item.Selected && e.Item.ListView.Focused)
+            {
+                backColor = SystemColors.Highlight;
+                foreColor = listBackColor;
+            }
+            else
+            {
+                foreColor = task.Forbidden ? SystemColors.GrayText : e.Item.ListView.ForeColor;
+                backColor = listBackColor;
+
+                if ((e.Item.Selected && !e.Item.ListView.Focused) || task.Forbidden)
+                    backColor = SystemColors.Control;
+            }
+
+            e.SubItem.ForeColor = foreColor;
+            e.SubItem.BackColor = backColor;
+
+            // Draw the standard header background.
+            e.DrawBackground();
         }
 
         private void listView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
