@@ -164,6 +164,8 @@ namespace GoodAI.BrainSimulator.Forms
             ProxyPropertyDescriptor descriptor = GetCurrentPropertyDescriptor();
 
             DashboardViewModel.RemoveProperty(descriptor.Proxy);
+
+            m_mainForm.ProjectStateChanged(string.Format("Dashboard property removed: {0}", descriptor.Name));
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
@@ -185,6 +187,8 @@ namespace GoodAI.BrainSimulator.Forms
         private void addGroupButton_Click(object sender, EventArgs e)
         {
             GroupedDashboardViewModel.AddGroupedProperty();
+
+            m_mainForm.ProjectStateChanged("Dashboard property group added");
         }
 
         private void removeGroupButton_Click(object sender, EventArgs e)
@@ -194,6 +198,8 @@ namespace GoodAI.BrainSimulator.Forms
             GroupedDashboardViewModel.RemoveProperty(descriptor.Proxy);
             propertyGrid.Refresh();
             memberListBox.Items.Clear();
+
+            m_mainForm.ProjectStateChanged(string.Format("Dashboard property group removed: {0}", descriptor.Name));
         }
 
         private ProxyPropertyDescriptor GetCurrentPropertyDescriptor()
@@ -240,6 +246,9 @@ namespace GoodAI.BrainSimulator.Forms
 
                 SetPropertyGridButtonsEnabled(false);
                 RefreshAll();
+
+                m_mainForm.ProjectStateChanged(string.Format("Dashboard property {0} added to group: {1}",
+                    property.DisplayName, groupProperty.DisplayName));
             }
             catch (InvalidOperationException)
             {
@@ -273,6 +282,9 @@ namespace GoodAI.BrainSimulator.Forms
         {
             foreach (var proxy in memberListBox.SelectedItems.Cast<SingleProxyProperty>())
                 proxy.SourceProperty.Group.Remove(proxy.SourceProperty);
+
+            m_mainForm.ProjectStateChanged(string.Format("Dashboard property removed from group: {0}",
+                GetCurrentGroupDescriptor().Name));
 
             RefreshAll();
         }
@@ -331,6 +343,7 @@ namespace GoodAI.BrainSimulator.Forms
             PreserveGroupValue(e.PropertyName, target);
 
             propertyGrid.Refresh();
+            propertyGridGrouped.Refresh();
         }
 
         private void PreserveGroupValue(string propertyName, object target)

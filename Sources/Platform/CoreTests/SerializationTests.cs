@@ -10,6 +10,7 @@ using GoodAI.Core.Configuration;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Observers;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Common;
@@ -60,30 +61,38 @@ namespace CoreTests
             m_output = output;
         }
 
-        [Fact(Skip="DoesNotWorkYet")]
+        [Fact]
         public void SerializesAndDeserializesCorrectly()
         {
-            // TODO(HonzaS): Fix this when project creation/deserialization is unified.
             // I.e. deserialized(serialized(PROJECT)) should equal PROJECT
             string tmpPath = Path.GetTempPath();
 
             MyConfiguration.LoadModules();
 
+            MyConfiguration.KnownNodes.Add(typeof(TestNode), new MyNodeConfig());
+
             var project = new MyProject();
-            project.CreateWorld(typeof (MyTestingWorld));
             project.Network = project.CreateNode<MyNetwork>();
             project.Network.Name = "Network";
+            project.CreateWorld(typeof (MyTestingWorld));
             project.Name = "test";
             var node = project.CreateNode<TestNode>();
             project.Network.AddChild(node);
+            project.Restore();
 
             string serialized = project.Serialize(tmpPath);
             MyProject deserializedProject = MyProject.Deserialize(serialized, tmpPath);
 
             // MaxDifferences = 20 - A magic number. It shows more than one difference in the log.
             // There should eventually be zero differences, so this number can be arbitrary. Adjust as needed.
-            var compareLogic = new CompareLogic(new ComparisonConfig { MaxDifferences = 20 });
-            var result = compareLogic.Compare(project, deserializedProject);
+            // Observers are ignored - there are none, and the (de)serialization mechanism works with them in a special way.
+            var compareLogic =
+                new CompareLogic(new ComparisonConfig
+                {
+                    MaxDifferences = 20,
+                    MembersToIgnore = new List<string> {"Observers"}
+                });
+            ComparisonResult result = compareLogic.Compare(project, deserializedProject);
 
             m_output.WriteLine(result.DifferencesString);
 
@@ -91,7 +100,7 @@ namespace CoreTests
         }
 
         [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-        class PropertyAddedTest
+        private sealed class PropertyAddedTest
         {
             [YAXSerializableField]
             public string ExistingProperty { get; set; }

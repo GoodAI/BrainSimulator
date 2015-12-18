@@ -14,14 +14,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using GoodAI.BrainSimulator.DashboardUtils;
-using GoodAI.BrainSimulator.UserSettings;
-using GoodAI.Core.Task;
-using GoodAI.Core.Dashboard;
+using GoodAI.BrainSimulator.Properties;
+using GoodAI.Platform.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -31,9 +28,10 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private static string TITLE_TEXT = "Brain Simulator";
 
-        public MyConfiguration Configuration { get; private set; }
         public MySimulationHandler SimulationHandler { get; private set; }
         public MyDocProvider Documentation { get; private set; }         
+
+        public UndoManager UndoManager { get; set; }
 
         #region Project
 
@@ -69,13 +67,19 @@ namespace GoodAI.BrainSimulator.Forms
 
             exportStateButton.Enabled = false;
             clearDataButton.Enabled = false;
+
+            UndoManager.Clear();
+            SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName, "New project");
+            RefreshUndoRedoButtons();
         }
 
         private void CloseCurrentProjectWindows()
         {
+            SuppressStateSaving = true;
             CloseAllGraphLayouts();
             CloseAllTextEditors();
             CloseAllObservers();
+            SuppressStateSaving = false;
         }
 
         private void SaveProject(string fileName)
@@ -122,13 +126,15 @@ namespace GoodAI.BrainSimulator.Forms
                 content = ProjectLoader.LoadProject(fileName,
                     MyMemoryBlockSerializer.GetTempStorage(newProjectName));
 
-                using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
-                {
-                    Project = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));
-                    backup.Forget();
-                }
+                LoadSerializedContent(content, fileName, newProjectName);
 
-                Project.Name = newProjectName;
+                UndoManager.Clear();
+                UndoManager.SaveState(new ProjectState(content)
+                {
+                    ProjectPath = fileName,
+                    Action = "Project opened"
+                });
+                RefreshUndoRedoButtons();
             }
             catch (Exception e)
             {
@@ -141,25 +147,6 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_savedProjectRepresentation = content;  // for "needs saving" detection
 
-            CloseCurrentProjectWindows();
-
-            CreateNetworkView();
-            OpenGraphLayout(Project.Network);
-
-            if (Project.World != null)
-            {
-                SelectWorldInWorldList(Project.World);
-            }
-
-            if (Project.Observers != null)
-            {
-                RestoreObservers(Project);
-            }
-            Project.Observers = null;
-
-            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
-            RestoreDashboard(Project);
-            
             exportStateButton.Enabled = MyMemoryBlockSerializer.TempDataExists(Project);
             clearDataButton.Enabled = exportStateButton.Enabled;
 
@@ -182,7 +169,9 @@ namespace GoodAI.BrainSimulator.Forms
                 if (fileName.EndsWith(".brainz"))  // temp directory is only used for brainz
                     Directory.Delete(dataStoragePath, recursive: true);
 
-                MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName));                
+                // Do not restore links here - that would automatically restore observers and dashboard.
+                MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName),
+                    restoreModelOnly: false);
                 
                 //offset all imported nodes
                 float maxY = NetworkView.Desktop.GetContentBounds().Bottom;                               
@@ -192,9 +181,7 @@ namespace GoodAI.BrainSimulator.Forms
                 }
 
                 if (showObservers && importedProject.Observers != null)
-                {
-                    RestoreObservers(importedProject);
-                }
+                    importedProject.RestoreObservers();
 
                 Project.Network.AppendGroupContent(importedProject.Network);
 
@@ -208,6 +195,11 @@ namespace GoodAI.BrainSimulator.Forms
      
                 NetworkView.ReloadContent();
                 NetworkView.Desktop.ZoomToBounds();
+
+                if (showObservers && importedProject.Observers != null)
+                    RestoreObserverForms(importedProject);
+
+                ProjectStateChanged("Project imported");
             }
             catch (Exception e)
             {
@@ -237,6 +229,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private string GetSerializedProject(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                fileName = Path.GetTempFileName();
+
             Project.Observers = new List<MyAbstractObserver>();  // potential sideffect
             ObserverViews.ForEach(ov => { ov.StoreWindowInfo(); Project.Observers.Add(ov.Observer); });
 
@@ -268,6 +263,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected List<DockContent> m_views;
         protected ToolStripMenuItem showHideObserversMenuItem;
+        public bool SuppressStateSaving { get; set; }
 
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
         public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
@@ -293,6 +289,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                 ObserverForm newView = new ObserverForm(this, observer, node);
                 ObserverViews.Add(newView);
+
+                ProjectStateChanged("Node observer added");
 
                 newView.Show(dockPanel, DockState.Float);
             }
@@ -342,6 +340,8 @@ namespace GoodAI.BrainSimulator.Forms
                 ObserverViews.Add(newView);
 
                 newView.Show(dockPanel, DockState.Float);
+
+                ProjectStateChanged("Memory block observer added");
             }
             catch (Exception e)
             {
@@ -351,27 +351,31 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void ShowObserverView(MyAbstractObserver observer)
         {
-            MyNode owner = null;
+            MyNode owner;
 
-            if (observer is MyAbstractMemoryBlockObserver)
+            var blockObserver = observer as MyAbstractMemoryBlockObserver;
+            if (blockObserver != null)
             {
-                owner = (observer as MyAbstractMemoryBlockObserver).Target.Owner;
-            }
-            else if (observer is MyTimePlotObserver)
-            {
-                owner = (observer as MyTimePlotObserver).Target.Owner;
-            }
-            else if (observer is TimePlotObserver)
-            {
-                owner = (observer as TimePlotObserver).Target.Owner;
+                owner = blockObserver.Target.Owner;
             }
             else
             {
-                owner = observer.GenericTarget as MyNode;
+                var plotObserver = observer as MyTimePlotObserver;
+                if (plotObserver != null)
+                {
+                    owner = plotObserver.Target.Owner;
+                }
+                else
+                {
+                    owner = observer.GenericTarget as MyNode;
+                }
             }
 
-            ObserverForm newView = new ObserverForm(this, observer, owner);
+            var newView = new ObserverForm(this, observer, owner);
             ObserverViews.Add(newView);
+
+            // This is only called from deserialization, the state saving would be redundant.
+            //ProjectStateChanged("Abstract observer added");
 
             newView.Show(dockPanel, DockState.Float);
             newView.FloatPane.FloatWindow.Size = new Size((int)observer.WindowSize.Width, (int)observer.WindowSize.Height);
@@ -403,38 +407,6 @@ namespace GoodAI.BrainSimulator.Forms
                     ov.UpdateView(SimulationHandler.SimulationStep);
                 }
             }
-        }
-
-        private void RestoreObservers(MyProject project)
-        {
-            if (project.Observers == null)
-                return;
-
-            foreach (MyAbstractObserver observer in project.Observers)
-            {
-                observer.RestoreTargetFromIdentifier(project);
-
-                if (observer.GenericTarget != null)
-                {
-                    ShowObserverView(observer);
-                }
-            }
-        }
-
-        private void RestoreDashboard(MyProject project)
-        {
-            if (project.Dashboard == null)
-                project.Dashboard = new Dashboard();
-
-            if (project.GroupedDashboard == null)
-                project.GroupedDashboard = new GroupDashboard();
-
-            // The order is important - the normal dashboard properties must be set up
-            // before they're added to groups.
-            project.Dashboard.RestoreFromIds(project);
-            project.GroupedDashboard.RestoreFromIds(project);
-
-            DashboardPropertyView.SetDashboards(project.Dashboard, project.GroupedDashboard);
         }
 
         public void UpdateObservers()
@@ -491,6 +463,8 @@ namespace GoodAI.BrainSimulator.Forms
         public void RemoveObserverView(ObserverForm view)
         {
             ObserverViews.Remove(view);
+
+            ProjectStateChanged("Abstract removed");
         }
 
         public TextEditForm OpenTextEditor(MyScriptableNode target)
@@ -734,6 +708,8 @@ namespace GoodAI.BrainSimulator.Forms
                 Environment.Exit(1);
             }
 
+            UndoManager = new UndoManager(Settings.Default.UndoHistorySize);
+
             Documentation = new MyDocProvider();
 
             foreach (MyModuleConfig module in MyConfiguration.Modules)
@@ -842,6 +818,151 @@ namespace GoodAI.BrainSimulator.Forms
             autosaveTextBox_Validating(this, new CancelEventArgs());
 
             autosaveButton.Checked = Properties.Settings.Default.AutosaveEnabled;
+        }
+
+        public void ProjectStateChanged(string action)
+        {
+            if (SuppressStateSaving)
+                return;
+
+            MyLog.DEBUG.WriteLine("State changed: {0}", action);
+            SaveCurrentState(action);
+            //DebugUndoManager();
+        }
+
+        private void DebugUndoManager()
+        {
+            MyLog.DEBUG.Write(UndoManager);
+            MyLog.DEBUG.WriteLine();
+        }
+
+        private void SaveCurrentState(string action)
+        {
+            SaveState(GetSerializedProject(GetCurrentFileName()), GetCurrentFileName(), action);
+            RefreshUndoRedoButtons();
+        }
+
+        private void SaveState(string content, string filePath, string action)
+        {
+            int selectedNodeId = -1;
+            string selectedObserverId = null;
+
+            var selectedNode = NodePropertyView.Target as MyNode;
+            if (selectedNode != null)
+                selectedNodeId = selectedNode.Id;
+
+            var selectedObserver = NodePropertyView.Target as MyAbstractObserver;
+            if (selectedObserver != null)
+                selectedObserverId = selectedObserver.Id;
+
+            var projectState = new ProjectState(content)
+            {
+                ProjectPath = filePath,
+                Action = action,
+                SelectedNode = selectedNodeId,
+                SelectedObserver = selectedObserverId
+            };
+
+            projectState.GraphPanes.AddRange(GraphViews.Select(view => view.Value.Target.Id));
+            var activeGraphView = GraphViews.WithIndex().FirstOrDefault(view => view.Item.Value == dockPanel.ActiveDocument);
+            if (activeGraphView != null)
+                projectState.SelectedGraphView = activeGraphView.Index;
+
+            UndoManager.SaveState(projectState);
+        }
+
+        private void RefreshUndoRedoButtons()
+        {
+            undoButton.Enabled = SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED &&
+                                 UndoManager.CanUndo();
+            redoButton.Enabled = SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED &&
+                                 UndoManager.CanRedo();
+        }
+
+        private void Undo()
+        {
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED && UndoManager.CanUndo())
+                LoadState(UndoManager.Undo());
+        }
+
+        private void Redo()
+        {
+            if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED && UndoManager.CanRedo())
+                LoadState(UndoManager.Redo());
+        }
+
+        private void LoadState(ProjectState targetState)
+        {
+            if (targetState == null)
+                return;
+
+            LoadSerializedContent(targetState.SerializedProject, targetState.ProjectPath);
+
+            // Open graph views
+            foreach (MyNodeGroup nodeGroup in
+                    targetState.GraphPanes.Select(nodeId => Project.GetNodeById(nodeId)).OfType<MyNodeGroup>())
+                OpenGraphLayout(nodeGroup);
+
+            // Select active graph view
+            if (targetState.SelectedGraphView < dockPanel.DocumentsCount)
+                (dockPanel.DocumentsToArray()[targetState.SelectedGraphView] as GraphLayoutForm).Activate();
+
+            foreach (GraphLayoutForm graph in GraphViews.Values)
+                graph.SelectNodeView(targetState.SelectedNode);
+
+            foreach (ObserverForm observerView in ObserverViews
+                .Where(observerView => observerView.Observer.Id == targetState.SelectedObserver))
+                observerView.FocusWindow();
+
+            //DebugUndoManager();
+        }
+
+        private void LoadSerializedContent(string content, string projectPath, string projectName = null)
+        {
+            using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
+            {
+                Project = MyProject.Deserialize(content, Path.GetDirectoryName(projectPath));
+                Project.Restore();
+                backup.Forget();
+            }
+
+            if (projectName != null)
+                Project.Name = projectName;
+
+            // UI updates
+            CloseCurrentProjectWindows();
+
+            CreateNetworkView();
+            OpenGraphLayout(Project.Network);
+
+            RestoreObserverForms();
+            RestoreDashboardForm();
+
+            if (Project.World != null)
+                SelectWorldInWorldList(Project.World);
+
+            RefreshUndoRedoButtons();
+        }
+
+        private void RestoreObserverForms(MyProject project = null)
+        {
+            if (project == null)
+                project = Project;
+
+            foreach (MyAbstractObserver observer in project.Observers.Where(observer => observer.GenericTarget != null))
+                ShowObserverView(observer);
+
+            project.Observers = null;
+        }
+
+        private void RestoreDashboardForm()
+        {
+            DashboardPropertyView.SetDashboards(Project.Dashboard, Project.GroupedDashboard);
+        }
+
+        private string GetCurrentFileName()
+        {
+            return string.IsNullOrEmpty(saveFileDialog.FileName) ? "" : Path.GetDirectoryName(saveFileDialog.FileName);
         }
 
         private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)
@@ -1237,6 +1358,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                     //select pasted nodes
                     activeLayout.Desktop.FocusElement = new NodeSelection(pastedNodeViews);
+
+                    ProjectStateChanged("Nodes pasted from clipboard");
                 }
                 catch (Exception e)
                 {
@@ -1256,10 +1379,20 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void DashboardPropertyToggle(object target, string propertyName, bool active)
         {
+            string action = null;
             if (active)
-                Project.Dashboard.Add(target, propertyName);
+            {
+                if (Project.Dashboard.Add(target, propertyName))
+                    action = "Dashboard property added";
+            }
             else
-                Project.Dashboard.Remove(target, propertyName);
+            {
+                if (Project.Dashboard.Remove(target, propertyName))
+                    action = "Dashboard property removed";
+            }
+
+            if (action != null)
+                ProjectStateChanged(action + ": " + propertyName);
         }
 
         public void InvalidateGraphLayouts()

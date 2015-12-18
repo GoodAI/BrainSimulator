@@ -6,6 +6,7 @@ using GoodAI.Core.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using GoodAI.Core.Dashboard;
 using YAXLib;
 
 namespace GoodAI.Core.Utils
@@ -16,8 +17,9 @@ namespace GoodAI.Core.Utils
         [YAXSerializableField, YAXAttributeForClass]
         public string Name { get; set; }
 
-        [YAXSerializableField, YAXSerializeAs("Observers")]
-        public List<MyAbstractObserver> Observers;
+        [YAXSerializableField]
+        [YAXSerializeAs("Observers")]
+        public List<MyAbstractObserver> Observers { get; set; }
 
         public MySimulationHandler SimulationHandler { get; set; }
 
@@ -53,14 +55,14 @@ namespace GoodAI.Core.Utils
             }
         }
 
-        public N CreateNode<N>() where N : MyNode, new()
+        public TNode CreateNode<TNode>() where TNode : MyNode, new()
         {
-            return (N)CreateNode(typeof(N));
+            return (TNode)CreateNode(typeof(TNode));
         }        
 
         public MyNode CreateNode(Type nodeType)
         {
-            MyNode newNode = Activator.CreateInstance(nodeType) as MyNode;
+            var newNode = Activator.CreateInstance(nodeType) as MyNode;
             newNode.Owner = this;
             newNode.Init();
 
@@ -327,7 +329,14 @@ namespace GoodAI.Core.Utils
             return convertedXml;
         }        
 
-        public static MyProject Deserialize(string xml, string projectPath)
+        /// <summary>
+        /// Deserializes the project from a given string.
+        /// </summary>
+        /// <param name="xml">The input string for deserialization.</param>
+        /// <param name="projectPath">Project path for correct lookup of items like state data.</param>
+        /// <param name="restoreModelOnly">If set to true, only the model is deserialized, but not observers etc.</param>
+        /// <returns>A deserialized project.</returns>
+        public static MyProject Deserialize(string xml, string projectPath, bool restoreModelOnly = false)
         {            
             xml = MyBaseConversion.ConvertOldFileVersioning(xml);
             xml = MyBaseConversion.ConvertOldModuleNames(xml);
@@ -359,6 +368,9 @@ namespace GoodAI.Core.Utils
             loadedProject.m_nodeCounter++;
 
             loadedProject.ConnectWorld();            
+
+            if (!restoreModelOnly)
+                loadedProject.Restore();
 
             return loadedProject;
         }
@@ -511,5 +523,34 @@ namespace GoodAI.Core.Utils
         }
 
         #endregion
+
+        public void Restore()
+        {
+            RestoreObservers();
+            RestoreDashboard();
+        }
+
+        private void RestoreDashboard()
+        {
+            if (Dashboard == null)
+                Dashboard = new Dashboard.Dashboard();
+
+            if (GroupedDashboard == null)
+                GroupedDashboard = new GroupDashboard();
+
+            // The order is important - the normal dashboard properties must be set up
+            // before they're added to groups.
+            Dashboard.RestoreFromIds(this);
+            GroupedDashboard.RestoreFromIds(this);
+        }
+
+        public void RestoreObservers()
+        {
+            if (Observers == null)
+                return;
+
+            foreach (MyAbstractObserver observer in Observers)
+                observer.RestoreTargetFromIdentifier(this);
+        }
     }
 }

@@ -102,6 +102,8 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             targetItems.Add(newButton);
+
+            // TODO: Add undo here if we also want to undo non-model-related actions
         }
 
         void newButton_MouseUp(object sender, MouseEventArgs e)
@@ -126,6 +128,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 quickToolBarNodes.Remove(typeName);
                 nodesToolStrip.Items.Remove(nodeButton);
+
+                // TODO: Add undo here if we also want to undo non-model-related actions
             }
         }
 
@@ -222,9 +226,15 @@ namespace GoodAI.BrainSimulator.Forms
             Node nodeView = Desktop.Nodes.First(nw => (nw as MyNodeView).Node == node);
 
             if (nodeView != null)
-            {
                 Desktop.FocusElement = nodeView;
-            }
+        }
+
+        public void SelectNodeView(int nodeId)
+        {
+            Node nodeView = Desktop.Nodes.FirstOrDefault(nw => (nw as MyNodeView).Node.Id == nodeId);
+
+            if (nodeView != null)
+                Desktop.FocusElement = nodeView;
         }
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
