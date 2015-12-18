@@ -119,10 +119,10 @@ namespace GoodAI.BrainSimulator.Forms
                     propertyProxy.ReadOnly = !value;
                 }
 
-                foreach (SingleProxyProperty groupProxy in GroupedDashboardViewModel.GetProperties(new Attribute[0])
+                foreach (ProxyPropertyGroup groupProxy in GroupedDashboardViewModel.GetProperties(new Attribute[0])
                     .Cast<ProxyPropertyDescriptor>()
                     .Select(descriptor => descriptor.Proxy)
-                    .OfType<SingleProxyProperty>()
+                    .OfType<ProxyPropertyGroup>()
                     .Where(proxy => GroupedDashboardViewModel.GetProperty(proxy.PropertyId)
                                     .GroupedProperties.Any(property => property is DashboardNodeProperty)))
                 {
