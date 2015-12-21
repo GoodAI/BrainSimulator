@@ -51,11 +51,16 @@ namespace GoodAI.Core.Dashboard
             if (!Properties.Remove(property))
                 return;
 
-            var memberProperty = property as DashboardNodeProperty;
+            var memberProperty = property as DashboardNodePropertyBase;
             if (memberProperty != null && memberProperty.Group != null)
                 memberProperty.Group.Remove(memberProperty);
 
             OnPropertiesChanged("Properties");
+        }
+
+        public TProperty Get(string propertyId)
+        {
+            return Properties.FirstOrDefault(p => p.PropertyId == propertyId);
         }
 
         public abstract void RemoveAll(object target);
@@ -68,42 +73,19 @@ namespace GoodAI.Core.Dashboard
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class Dashboard : DashboardBase<DashboardNodeProperty>
+    public class Dashboard : DashboardBase<DashboardNodePropertyBase>
     {
         public bool Add(object target, string propertyName)
         {
             if (Contains(target, propertyName))
                 return false;
 
-            DashboardNodeProperty property = null;
-
-            var node = target as MyNode;
-            if (node != null)
-            {
-                property = new DashboardNodeProperty
-                {
-                    Node = node,
-                    PropertyInfo = node.GetType().GetProperty(propertyName)
-                };
-            }
-            else
-            {
-                var task = target as MyTask;
-                if (task != null)
-                {
-                    property = new DashboardTaskProperty
-                    {
-                        Node = task.GenericOwner,
-                        Task = task,
-                        PropertyInfo = task.GetType().GetProperty(propertyName)
-                    };
-                }
-            }
+            DashboardNodePropertyBase property = DashboardPropertyFactory.CreateProperty(target, propertyName);
 
             if (property == null)
                 throw new InvalidOperationException("Invalid property owner provided");
 
-            if (property.IsReadonly)
+            if (property.IsReadOnly)
                 throw new InvalidOperationException("Readonly properties are not supported");
 
             Properties.Add(property);
@@ -121,7 +103,7 @@ namespace GoodAI.Core.Dashboard
 
         public bool Remove(object target, string propertyName)
         {
-            DashboardNodeProperty property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
+            DashboardNodePropertyBase property = Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
 
             if (property == null)
                 return false;
@@ -138,15 +120,15 @@ namespace GoodAI.Core.Dashboard
             return false;
         }
 
-        public DashboardNodeProperty Get(object target, string propertyName)
+        public DashboardNodePropertyBase Get(object target, string propertyName)
         {
             return Properties.FirstOrDefault(p => p.Target == target && p.PropertyName == propertyName);
         }
 
         public override void RemoveAll(object target)
         {
-            List<DashboardNodeProperty> toBeRemoved = Properties.Where(property => property.Node == target).ToList();
-            foreach (DashboardNodeProperty property in toBeRemoved)
+            List<DashboardNodePropertyBase> toBeRemoved = Properties.Where(property => property.Node == target).ToList();
+            foreach (DashboardNodePropertyBase property in toBeRemoved)
             {
                 Remove(property);
             }
@@ -157,6 +139,7 @@ namespace GoodAI.Core.Dashboard
     public sealed class GroupDashboard : DashboardBase<DashboardPropertyGroup>
     {
         private static int m_nextId = 1;
+
         private static int GetNextId()
         {
             return m_nextId++;
@@ -169,10 +152,7 @@ namespace GoodAI.Core.Dashboard
             while (Properties.Any(property => property.PropertyName == name))
                 name = "Group " + GetNextId();
 
-            Properties.Add(new DashboardPropertyGroup
-            {
-                PropertyName = name
-            });
+            Properties.Add(new DashboardPropertyGroup(name));
             OnPropertiesChanged("Properties");
         }
 

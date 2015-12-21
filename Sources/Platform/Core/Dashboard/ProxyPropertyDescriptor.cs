@@ -4,22 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Task;
 
 namespace GoodAI.Core.Dashboard
 {
-    public abstract class ProxyPropertyDescriptorBase<TProxy, TProperty> : PropertyDescriptor
-        where TProxy : ProxyPropertyBase<TProperty>
-        where TProperty : DashboardProperty
+    public class ProxyPropertyDescriptor : PropertyDescriptor
     {
-        public TProxy Proxy { get; private set; }
-        public ProxyPropertyDescriptorBase(ref TProxy proxy, Attribute[] attrs)
+        public ProxyPropertyBase Proxy { get; private set; }
+        public ProxyPropertyDescriptor(ref ProxyPropertyBase proxy, Attribute[] attrs)
             : base(proxy.Name, attrs)
         {
             Proxy = proxy;
         }
 
         #region PropertyDescriptor specific
-
 
         public override bool CanResetValue(object component)
         {
@@ -29,6 +27,36 @@ namespace GoodAI.Core.Dashboard
         public override Type ComponentType
         {
             get { return null; }
+        }
+
+        public override TypeConverter Converter
+        {
+            get
+            {
+                if (Proxy is TaskGroupProxyProperty)
+                {
+                    var taskNames = (Proxy.GenericSourceProperty as DashboardTaskGroupProperty).TaskGroup.Tasks.Select(task => task.Name);
+                    return new TaskGroupConverter(taskNames);
+                }
+
+                if (Proxy is ProxyPropertyGroup)
+                {
+                    // Get the mapping from the first member property.
+                    var propertyGroup = Proxy.GenericSourceProperty as DashboardPropertyGroup;
+
+                    if (propertyGroup.GroupedProperties.Any())
+                    {
+                        var taskGroupProxy = propertyGroup.GroupedProperties.First() as DashboardTaskGroupProperty;
+                        if (taskGroupProxy != null)
+                        {
+                            var taskNames = taskGroupProxy.TaskGroup.Tasks.Select(task => task.Name);
+                            return new TaskGroupConverter(taskNames);
+                        }
+                    }
+                }
+
+                return base.Converter;
+            }
         }
 
         public override object GetValue(object component)
@@ -75,26 +103,10 @@ namespace GoodAI.Core.Dashboard
         {
             get
             {
-                return Proxy.Value == null ? typeof (string) : Proxy.Type;
+                return Proxy.Type;
             }
         }
 
         #endregion
-    }
-
-    public sealed class ProxyPropertyDescriptor :
-        ProxyPropertyDescriptorBase<SingleProxyProperty, DashboardNodeProperty>
-    {
-        public ProxyPropertyDescriptor(ref SingleProxyProperty proxy, Attribute[] attrs) : base(ref proxy, attrs)
-        {
-        }
-    }
-
-    public sealed class ProxyPropertyGroupDescriptor :
-        ProxyPropertyDescriptorBase<ProxyPropertyGroup, DashboardPropertyGroup>
-    {
-        public ProxyPropertyGroupDescriptor(ref ProxyPropertyGroup proxy, Attribute[] attrs) : base(ref proxy, attrs)
-        {
-        }
     }
 }

@@ -22,9 +22,9 @@ namespace GoodAI.BrainSimulator.DashboardUtils
             Dashboard = dashboard;
         }
 
-        public virtual void RemoveProperty(ProxyPropertyBase<TProperty> proxy)
+        public virtual void RemoveProperty(ProxyPropertyBase proxy)
         {
-            Dashboard.Remove(proxy.SourceProperty);
+            Dashboard.Remove(proxy.GenericSourceProperty as TProperty);
         }
 
         #region "TypeDescriptor Implementation"
@@ -128,21 +128,26 @@ namespace GoodAI.BrainSimulator.DashboardUtils
         {
             Dashboard.RemoveAll(owner);
         }
+
+        public TProperty GetProperty(string propertyId)
+        {
+            return Dashboard.Get(propertyId);
+        }
     }
 
-    public class DashboardViewModel : DashboardViewModelBase<Dashboard, DashboardNodeProperty>
+    public class DashboardViewModel : DashboardViewModelBase<Dashboard, DashboardNodePropertyBase>
     {
         public DashboardViewModel(Dashboard dashboard) : base(dashboard)
         {
         }
 
-        protected override PropertyDescriptor GetDescriptor(DashboardNodeProperty property, Attribute[] attributes)
+        protected override PropertyDescriptor GetDescriptor(DashboardNodePropertyBase property, Attribute[] attributes)
         {
-            SingleProxyProperty proxy = property.Proxy;
+            ProxyPropertyBase proxy = property.GenericProxy;
             return new ProxyPropertyDescriptor(ref proxy, attributes);
         }
 
-        public DashboardNodeProperty GetProperty(object target, string propertyName)
+        public DashboardNodePropertyBase GetProperty(object target, string propertyName)
         {
             return Dashboard.Get(target, propertyName);
         }
@@ -161,14 +166,14 @@ namespace GoodAI.BrainSimulator.DashboardUtils
 
         protected override PropertyDescriptor GetDescriptor(DashboardPropertyGroup property, Attribute[] attributes)
         {
-            ProxyPropertyGroup proxy = property.Proxy;
-            return new ProxyPropertyGroupDescriptor(ref proxy, attributes);
+            ProxyPropertyBase proxy = property.GenericProxy;
+            return new ProxyPropertyDescriptor(ref proxy, attributes);
         }
 
-        public override void RemoveProperty(ProxyPropertyBase<DashboardPropertyGroup> proxy)
+        public override void RemoveProperty(ProxyPropertyBase proxy)
         {
+            Dashboard.Get(proxy.PropertyId).Clear();
             base.RemoveProperty(proxy);
-            proxy.SourceProperty.Clear();
         }
     }
 }

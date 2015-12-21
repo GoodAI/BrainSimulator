@@ -271,7 +271,7 @@ namespace GoodAI.BrainSimulator.Forms
                 m_mainForm.DashboardPropertyToggle(Target, propertyDescriptor.Name, dashboardButton.Checked);
         }
 
-        public void RefreshGrid()
+        public void RefreshView()
         {
             propertyGrid.Refresh();
         }

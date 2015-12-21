@@ -51,7 +51,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        public void RefreshGrid()
+        public void RefreshView()
         {
             propertyGrid.Refresh();
         }

@@ -92,8 +92,22 @@ namespace GoodAI.Core.Task
             }
         }
 
+        public TaskGroup TaskGroup {
+            get
+            {
+                if (!string.IsNullOrEmpty(TaskGroupName))
+                {
+                    TaskGroup taskGroup;
+                    GenericOwner.TaskGroups.TryGetValue(TaskGroupName, out taskGroup);
+                    return taskGroup;
+                }
+
+                return null;
+            }
+        }
+
         [YAXSerializableField, YAXAttributeForClass]
-        internal string PropertyName { get; set; }
+        public string PropertyName { get; internal set; }
 
         private static Dictionary<Type, MyTaskInfoAttribute> TASK_INFO = new Dictionary<Type, MyTaskInfoAttribute>();
 
@@ -131,6 +145,11 @@ namespace GoodAI.Core.Task
                     pInfo.SetValue(this, defaultValue);
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 

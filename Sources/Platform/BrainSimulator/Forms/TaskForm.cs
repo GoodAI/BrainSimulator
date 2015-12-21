@@ -2,6 +2,7 @@
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -10,20 +11,32 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms
 {
-    public partial class TaskForm : DockContent
+    public partial class TaskForm : DockContent, INotifyPropertyChanged
     {
-        private MainForm m_mainForm;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(object target, string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(target, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private readonly MainForm m_mainForm;
         private MyWorkingNode m_target;
         private bool isUpdating;
 
         private int lastSelectedTaskIndex = -1;
 
+        private ListViewHitTestInfo m_lastHitTest;
+        private const string EnabledPropertyName = "Enabled";
+
         public MyWorkingNode Target
         {
             get { return m_target; }
-            set 
+            set
             {
-                if (Target != null && value != null && value.GetType() == Target.GetType() && listView.SelectedIndices.Count == 1)
+                if (Target != null && value != null && value.GetType() == Target.GetType() &&
+                    listView.SelectedIndices.Count == 1)
                 {
                     lastSelectedTaskIndex = listView.SelectedIndices[0];
                 }
@@ -36,12 +49,12 @@ namespace GoodAI.BrainSimulator.Forms
                     lastSelectedTaskIndex = -1;
                 }
 
-                m_target = value;                
-                UpdateTaskView();
+                m_target = value;
+                RefreshView();
             }
         }
 
-        private void UpdateTaskView() 
+        public void RefreshView()
         {
             isUpdating = true;
 
@@ -54,12 +67,12 @@ namespace GoodAI.BrainSimulator.Forms
 
                     if (task != null)
                     {
-                        ListViewItem item = new ListViewItem(new string[] { task.Name, task.OneShot ? "Init" : "" });
+                        ListViewItem item = new ListViewItem(new string[] {task.Name, task.OneShot ? "Init" : ""});
                         item.Checked = task.Enabled;
-                        item.Tag = task;                        
+                        item.Tag = task;
                         listView.Items.Add(item);
                     }
-                }               
+                }
             }
 
             isUpdating = false;
@@ -73,6 +86,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 m_mainForm.TaskPropertyView.Target = null;
             }
+
+            RefreshDashboardButton();
         }
 
         private void UpdateTasksEnableState()
@@ -82,7 +97,7 @@ namespace GoodAI.BrainSimulator.Forms
             foreach (ListViewItem item in listView.Items)
             {
                 MyTask task = item.Tag as MyTask;
-                item.Checked = task.Enabled;           
+                item.Checked = task.Enabled;
             }
 
             isUpdating = false;
@@ -91,7 +106,7 @@ namespace GoodAI.BrainSimulator.Forms
         public TaskForm(MainForm mainForm)
         {
             m_mainForm = mainForm;
-            
+
             InitializeComponent();
         }
 
@@ -104,9 +119,20 @@ namespace GoodAI.BrainSimulator.Forms
                 if (!task.DesignTime)
                 {
                     task.Enabled = e.Item.Checked;
+
+                    object target = task;
+                    string propertyName = EnabledPropertyName;
+                    if (!string.IsNullOrEmpty(task.TaskGroupName))
+                    {
+                        target = task.TaskGroup;
+                        propertyName = task.TaskGroupName;
+                    }
+
+                    OnPropertyChanged(target, propertyName);
+
                     UpdateTasksEnableState();
                 }
-            }            
+            }
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
@@ -115,13 +141,14 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 m_mainForm.TaskPropertyView.Target = listView.SelectedItems[0].Tag as MyTask;
             }
+            RefreshDashboardButton();
         }
 
         private static readonly Brush HL_BRUSH = new SolidBrush(SystemColors.Highlight);
         private static readonly Pen LINE_PEN = new Pen(Brushes.LightGray);
 
         private void listView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
-        {            
+        {
             Rectangle bounds = e.SubItem.Bounds;
 
             if (e.ColumnIndex == 0)
@@ -266,8 +293,6 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private ListViewHitTestInfo m_lastHitTest;
-
         private void listView_MouseDown(object sender, MouseEventArgs e)
         {
             Point mousePos = listView.PointToClient(Control.MousePosition);
@@ -290,6 +315,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void TaskForm_Load(object sender, EventArgs e)
         {
             m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
+            RefreshDashboardButton();
         }
 
         void SimulationHandler_StateChanged(object sender, Core.Execution.MySimulationHandler.StateEventArgs e)
@@ -300,6 +326,38 @@ namespace GoodAI.BrainSimulator.Forms
         private void TaskForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             m_mainForm.SimulationHandler.StateChanged -= SimulationHandler_StateChanged;
+        }
+
+        private void dashboardButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            ListViewItem selectedItem = listView.SelectedItems[0];
+
+            var task = selectedItem.Tag as MyTask;
+
+            if (string.IsNullOrEmpty(task.TaskGroupName))
+                m_mainForm.DashboardPropertyToggle(task, EnabledPropertyName, dashboardButton.Checked);
+            else
+                m_mainForm.DashboardPropertyToggle(task.TaskGroup, task.TaskGroupName, dashboardButton.Checked);
+        }
+
+        private void RefreshDashboardButton()
+        {
+            if (listView.SelectedItems.Count == 1 && Target is MyWorkingNode)
+            {
+                ListViewItem selectedItem = listView.SelectedItems[0];
+
+                var task = selectedItem.Tag as MyTask;
+
+                dashboardButton.Enabled = true;
+                if (string.IsNullOrEmpty(task.TaskGroupName))
+                    dashboardButton.Checked = m_mainForm.CheckDashboardContains(task, EnabledPropertyName);
+                else
+                    dashboardButton.Checked = m_mainForm.CheckDashboardContains(task.TaskGroup, task.TaskGroupName);
+            }
+            else
+            {
+                dashboardButton.Enabled = false;
+            }
         }
     }
 }
