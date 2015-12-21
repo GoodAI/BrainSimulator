@@ -207,8 +207,11 @@ namespace GoodAI.Core
             }
         }
 
-        public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        public MyCudaKernel Kernel(int GPU, Assembly callingAssembly, string ptxFileName, string kernelName, bool forceNewInstance = false)
         {
+            FileInfo assemblyFile = GetAssemblyFile(callingAssembly);
+            string ptxFolder = assemblyFile.DirectoryName + @"\ptx\";
+
             MyCudaKernel kernel = TryLoadPtx(GPU, ptxFolder + ptxFileName + ".ptx", kernelName, forceNewInstance);
 
             if (kernel == null)
@@ -224,32 +227,35 @@ namespace GoodAI.Core
             return kernel;
         }
 
-        //TODO: rewrite this! repetitive code
+        private static FileInfo GetAssemblyFile(Assembly callingAssembly)
+        {
+            return MyConfiguration.AssemblyLookup[callingAssembly.FullName].File;
+        }
+
+        private static string GetKernelNameFromPtx(string ptxFileName)
+        {
+            return ptxFileName.Substring(ptxFileName.LastIndexOf('\\') + 1);
+        }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, string kernelName, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly().FullName].File;
-
-            return Kernel(nGPU, assemblyFile.DirectoryName + @"\ptx\", ptxFileName, kernelName, forceNewInstance);
+            return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, kernelName, forceNewInstance);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly().FullName].File;
-
-            return Kernel(nGPU, assemblyFile.DirectoryName + @"\ptx\", ptxFileName, ptxFileName.Substring(ptxFileName.LastIndexOf('\\') + 1), forceNewInstance);            
+            return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance);            
         }
 
         // !!! Warning: This is for testing purposes only.
         [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(string name, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = MyConfiguration.AssemblyLookup[Assembly.GetCallingAssembly().FullName].File;
-
-            return Kernel(DevCount - 1, assemblyFile.DirectoryName + @"\ptx\", name, name.Substring(name.LastIndexOf('\\') + 1), forceNewInstance);                        
+            return Kernel(DevCount - 1, Assembly.GetCallingAssembly(), name, GetKernelNameFromPtx(name), forceNewInstance);                        
         }
+
 
         public int DevCount
         {
