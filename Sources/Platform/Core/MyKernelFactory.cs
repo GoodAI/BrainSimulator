@@ -207,11 +207,8 @@ namespace GoodAI.Core
             }
         }
 
-        public MyCudaKernel Kernel(int GPU, Assembly callingAssembly, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false)
         {
-            FileInfo assemblyFile = GetAssemblyFile(callingAssembly);
-            string ptxFolder = assemblyFile.DirectoryName + @"\ptx\";
-
             MyCudaKernel kernel = TryLoadPtx(GPU, ptxFolder + ptxFileName + ".ptx", kernelName, forceNewInstance);
 
             if (kernel == null)
@@ -225,6 +222,14 @@ namespace GoodAI.Core
             }
 
             return kernel;
+        }
+
+        private MyCudaKernel Kernel(int GPU, Assembly callingAssembly, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        {
+            FileInfo assemblyFile = GetAssemblyFile(callingAssembly);
+            string ptxFolder = assemblyFile.DirectoryName + @"\ptx\";
+
+            return Kernel(GPU, ptxFolder, ptxFileName, kernelName, forceNewInstance);
         }
 
         private static FileInfo GetAssemblyFile(Assembly callingAssembly)
