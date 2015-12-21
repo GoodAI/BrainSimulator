@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Platform.Core.Dashboard;
 using YAXLib;
 
 namespace GoodAI.Core.Dashboard

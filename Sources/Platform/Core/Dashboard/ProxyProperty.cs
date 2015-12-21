@@ -14,7 +14,8 @@ namespace GoodAI.Core.Dashboard
     {
         private bool m_isVisible;
 
-        public virtual string Name {
+        public string Name
+        {
             get { return GenericSourceProperty.DisplayName; }
         }
 

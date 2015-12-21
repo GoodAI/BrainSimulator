@@ -8,7 +8,6 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Platform.Core.Dashboard;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.BrainSimulator.Forms

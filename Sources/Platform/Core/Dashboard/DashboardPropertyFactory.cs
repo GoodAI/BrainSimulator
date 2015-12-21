@@ -8,7 +8,7 @@ using GoodAI.Core.Dashboard;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 
-namespace GoodAI.Platform.Core.Dashboard
+namespace GoodAI.Core.Dashboard
 {
     public static class DashboardPropertyFactory
     {

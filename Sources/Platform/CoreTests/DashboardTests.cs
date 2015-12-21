@@ -13,7 +13,6 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Motor;
 using GoodAI.Modules.Testing;
-using GoodAI.Platform.Core.Dashboard;
 using KellermanSoftware.CompareNetObjects;
 using Xunit;
 using Xunit.Abstractions;

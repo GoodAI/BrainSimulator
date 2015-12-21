@@ -340,8 +340,6 @@ namespace GoodAI.Core.Dashboard
             }
         }
 
-        //public ProxyPropertyGroup Proxy { get { return GenericProxy as ProxyPropertyGroup; } }
-
         [YAXSerializableField]
         public override string PropertyName { get; set; }
 
