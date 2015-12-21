@@ -86,7 +86,7 @@ That is especially handy if you want to:
 
 namespace GoodAI.Core.Execution
 {
-    public class MyProjectRunner
+    public class MyProjectRunner : IDisposable
     {
         private static MyProject m_project;
 
@@ -270,6 +270,11 @@ namespace GoodAI.Core.Execution
         public void Shutdown()
         {
             SimulationHandler.Finish();
+        }
+
+        public void Dispose()
+        {
+            Shutdown();
         }
 
         /// <summary>
@@ -553,6 +558,19 @@ namespace GoodAI.Core.Execution
             m_monitors.Clear();
             m_results.Clear();
             m_resultIdCounter = 0;
+        }
+
+        public static MyProject CreateProject(Type worldType, string projectName = null)
+        {
+            Project = new MyProject
+            {
+                Network = new MyNetwork(),
+                Name = projectName
+            };
+
+            Project.CreateWorld(worldType);
+
+            return Project;
         }
     }
 }

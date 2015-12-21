@@ -71,6 +71,14 @@ namespace GoodAI.Core.Utils
 
         #endregion
 
+        public MyConnection Connect(MyNode fromNode, MyNode toNode, int fromIndex=0, int toIndex=0)
+        {
+            var connection = new MyConnection(fromNode, toNode, fromIndex, toIndex);
+            connection.Connect();
+
+            return connection;
+        }
+
         #region Network & World properties code
 
         private MyNetwork m_network;
@@ -268,9 +276,9 @@ namespace GoodAI.Core.Utils
          
             MyNodeGroup.IteratorAction scanForModules = delegate(MyNode node)
             {
-                if (MyConfiguration.AssemblyLookup.ContainsKey(node.GetType().Assembly))
+                if (MyConfiguration.AssemblyLookup.ContainsKey(node.GetType().Assembly.FullName))
                 {
-                    usedModules.Add(MyConfiguration.AssemblyLookup[node.GetType().Assembly]);
+                    usedModules.Add(MyConfiguration.AssemblyLookup[node.GetType().Assembly.FullName]);
                 }
                 else
                 {

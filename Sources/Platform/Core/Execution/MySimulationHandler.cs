@@ -427,7 +427,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
-                return true;
+                throw;
             }
 
             return anyOutputChanged;                        

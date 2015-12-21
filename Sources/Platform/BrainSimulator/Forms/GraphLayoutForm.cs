@@ -440,8 +440,14 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void updateModelButton_Click(object sender, EventArgs e)
         {
-            m_mainForm.SimulationHandler.UpdateMemoryModel();
-            Desktop.Invalidate();
+            try
+            {
+                m_mainForm.SimulationHandler.UpdateMemoryModel();
+            }
+            finally
+            {
+                Desktop.Invalidate();
+            }
         }
 
         private void removeNodeToolStripMenuItem_Click(object sender, EventArgs e)

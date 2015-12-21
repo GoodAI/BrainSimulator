@@ -2,17 +2,20 @@
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace GoodAI.Core.Utils
 {
     public static class MyResources
     {
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static string GetMyAssemblyPath()
         {            
             string location = Assembly.GetCallingAssembly().Location;
             return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static string GetEntryAssemblyPath()
         {
             // Static initialization must not crash when called from tests!
