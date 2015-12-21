@@ -33,6 +33,8 @@
             this.removeButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.goToNodeButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.showMembersButton = new System.Windows.Forms.ToolStripButton();
             this.showGroupsButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainerProperties = new System.Windows.Forms.SplitContainer();
             this.globalLabel = new System.Windows.Forms.Label();
@@ -52,8 +54,6 @@
             this.removeFromGroupButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.goToNodeFromMemberButton = new System.Windows.Forms.ToolStripButton();
-            this.showMembersButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerProperties)).BeginInit();
             this.splitContainerProperties.Panel1.SuspendLayout();
@@ -127,6 +127,28 @@
             this.goToNodeButton.Size = new System.Drawing.Size(23, 22);
             this.goToNodeButton.Text = "Go to Node";
             this.goToNodeButton.Click += new System.EventHandler(this.goToNodeButton_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 100, 0);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // showMembersButton
+            // 
+            this.showMembersButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.showMembersButton.Checked = true;
+            this.showMembersButton.CheckOnClick = true;
+            this.showMembersButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showMembersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.showMembersButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.list_16xLG;
+            this.showMembersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.showMembersButton.Name = "showMembersButton";
+            this.showMembersButton.Size = new System.Drawing.Size(23, 22);
+            this.showMembersButton.Text = "Show/hide members";
+            this.showMembersButton.ToolTipText = "Show/hide group members";
+            this.showMembersButton.CheckedChanged += new System.EventHandler(this.showMembersButton_CheckedChanged);
             // 
             // showGroupsButton
             // 
@@ -205,7 +227,7 @@
             // 
             this.errorText.AutoSize = true;
             this.errorText.ForeColor = System.Drawing.Color.Firebrick;
-            this.errorText.Location = new System.Drawing.Point(135, 6);
+            this.errorText.Location = new System.Drawing.Point(114, 6);
             this.errorText.Name = "errorText";
             this.errorText.Size = new System.Drawing.Size(0, 13);
             this.errorText.TabIndex = 3;
@@ -368,28 +390,6 @@
             this.goToNodeFromMemberButton.Size = new System.Drawing.Size(23, 22);
             this.goToNodeFromMemberButton.Text = "Go to Node";
             this.goToNodeFromMemberButton.Click += new System.EventHandler(this.goToNodeFromMemberButton_Click);
-            // 
-            // showMembersButton
-            // 
-            this.showMembersButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.showMembersButton.Checked = true;
-            this.showMembersButton.CheckOnClick = true;
-            this.showMembersButton.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showMembersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.showMembersButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.list_16xLG;
-            this.showMembersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.showMembersButton.Name = "showMembersButton";
-            this.showMembersButton.Size = new System.Drawing.Size(23, 22);
-            this.showMembersButton.Text = "Show/hide members";
-            this.showMembersButton.ToolTipText = "Show/hide group members";
-            this.showMembersButton.CheckedChanged += new System.EventHandler(this.showMembersButton_CheckedChanged);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 100, 0);
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // DashboardPropertyForm
             // 

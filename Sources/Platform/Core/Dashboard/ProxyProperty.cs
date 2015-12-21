@@ -1,61 +1,93 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 
 namespace GoodAI.Core.Dashboard
 {
     public abstract class ProxyPropertyBase
     {
-        public abstract string Name { get; }
+        private bool m_isVisible;
+
+        public string Name
+        {
+            get { return GenericSourceProperty.DisplayName; }
+        }
+
+        public DashboardProperty GenericSourceProperty { get; set; }
+
+        public string PropertyId { get { return GenericSourceProperty.PropertyId; } }
 
         public virtual string FullName { get { return Name; } }
 
         public virtual string Description { get; set; }
         public bool ReadOnly { get; set; }
-        public virtual bool IsVisible { get; set; }
+
+        public virtual bool IsVisible
+        {
+            get { return m_isVisible; }
+            set { m_isVisible = value; }
+        }
 
         public virtual string Category { get; set; }
         public abstract object Value { get; set; }
 
         public abstract Type Type { get; }
+        public virtual string TypeName { get { return Type.Name; } }
 
-        protected ProxyPropertyBase()
+        protected ProxyPropertyBase(DashboardProperty property)
         {
-            IsVisible = true;
+            m_isVisible = true;
+            GenericSourceProperty = property;
         }
 
         public override string ToString()
         {
             return FullName.Replace("\t", "");
         }
+
+        public virtual bool CompatibleWith(ProxyPropertyBase other)
+        {
+            return Type == other.Type;
+        }
     }
 
     public abstract class ProxyPropertyBase<TSource> : ProxyPropertyBase where TSource : DashboardProperty
     {
-        public TSource SourceProperty { get; private set; }
-
-        protected ProxyPropertyBase(TSource sourceProperty)
+        protected TSource SourceProperty
         {
-            SourceProperty = sourceProperty;
+            get { return GenericSourceProperty as TSource; }
         }
 
-        public override string Name {
-            get { return SourceProperty.DisplayName; }
+        public ProxyPropertyBase(DashboardProperty property) : base(property)
+        {
         }
     }
 
-    public sealed class SingleProxyProperty : ProxyPropertyBase<DashboardNodeProperty>
+    public abstract class GroupableProxyProperty<TSource> : ProxyPropertyBase<TSource> where TSource : DashboardNodePropertyBase
     {
-        public PropertyInfo PropertyInfo { get; private set; }
-        public object Target { get; protected set; }
+        protected GroupableProxyProperty(DashboardProperty property) : base(property)
+        {
+        }
+
+        public override string FullName { get { return SourceProperty.Node.Name + "." + Name; } }
 
         public override bool IsVisible
         {
             get { return SourceProperty.Group == null; }
         }
+    }
+
+    public sealed class SingleProxyProperty : GroupableProxyProperty<DashboardNodeProperty>
+    {
+        private string m_description;
+        public PropertyInfo PropertyInfo { get; private set; }
+        public object Target { get; protected set; }
 
         public SingleProxyProperty(DashboardNodeProperty sourceProperty, object target, PropertyInfo propertyInfo)
             : base(sourceProperty)
@@ -75,11 +107,76 @@ namespace GoodAI.Core.Dashboard
             get { return PropertyInfo.PropertyType; }
         }
 
-        public override string FullName { get { return SourceProperty.Node.Name + "." + Name; } }
-
         public override string Category
         {
             get { return SourceProperty.Node.Name; }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                if (m_description == null)
+                {
+                    m_description = string.Empty;
+                    var descriptionAttr = PropertyInfo.GetCustomAttribute<DescriptionAttribute>();
+                    if (descriptionAttr != null)
+                        m_description = descriptionAttr.Description;
+                }
+
+                return m_description;
+            }
+        }
+    }
+
+    public sealed class TaskGroupProxyProperty : GroupableProxyProperty<DashboardTaskGroupProperty>
+    {
+        public string GroupName { get; set; }
+
+        public TaskGroupProxyProperty(DashboardTaskGroupProperty sourceProperty, string groupName) : base(sourceProperty)
+        {
+            GroupName = groupName;
+        }
+
+        private MyWorkingNode WorkingNode { get { return SourceProperty.Node as MyWorkingNode; } }
+
+        public override object Value
+        {
+            get
+            {
+                MyTask enabledTask = WorkingNode.GetEnabledTask(GroupName);
+                return enabledTask == null ? null : enabledTask.Name;
+            }
+            set
+            {
+                TaskGroup taskGroup = WorkingNode.TaskGroups[GroupName];
+                MyTask task = taskGroup.GetTaskByName(value as string);
+                if (task == null)
+                    taskGroup.DisableAll();
+                else
+                    task.Enabled = true;
+            }
+        }
+
+        public override Type Type
+        {
+            get { return typeof (string); }
+        }
+
+        public override string TypeName
+        {
+            get { return GroupName; }
+        }
+
+        public override string Category { get { return WorkingNode.Name; } }
+
+        public override bool CompatibleWith(ProxyPropertyBase other)
+        {
+            var otherTaskGroup = other as TaskGroupProxyProperty;
+            if (otherTaskGroup == null)
+                return false;
+
+            return WorkingNode.GetType() == otherTaskGroup.WorkingNode.GetType() && GroupName == otherTaskGroup.GroupName;
         }
     }
 
@@ -94,13 +191,13 @@ namespace GoodAI.Core.Dashboard
             get
             {
                 var groupedProperties = SourceProperty.GroupedProperties;
-                return groupedProperties.Any() ? groupedProperties.First().Proxy.Value : null;
+                return groupedProperties.Any() ? groupedProperties.First().GenericProxy.Value : null;
             }
             set
             {
                 foreach (var property in SourceProperty.GroupedProperties)
                 {
-                    property.Proxy.Value = value;
+                    property.GenericProxy.Value = value;
                 }
             }
         }
@@ -110,20 +207,27 @@ namespace GoodAI.Core.Dashboard
             get { return string.Join(", ", SourceProperty.GroupedProperties.Select(property => property.GenericProxy.FullName)); }
         }
 
-        public IEnumerable<SingleProxyProperty> GetGroupMembers()
-        {
-            return SourceProperty.GroupedProperties.Select(member => member.Proxy);
-        }
-
         public override Type Type
         {
             get
             {
                 var groupedProperties = SourceProperty.GroupedProperties;
                 if (groupedProperties.Any())
-                    return groupedProperties.First().Proxy.Type;
+                    return groupedProperties.First().GenericProxy.Type;
 
                 return typeof (object);
+            }
+        }
+
+        public override string TypeName
+        {
+            get
+            {
+                var groupedProperties = SourceProperty.GroupedProperties;
+                if (groupedProperties.Any())
+                    return groupedProperties.First().GenericProxy.TypeName;
+
+                return base.TypeName;
             }
         }
     }

@@ -23,7 +23,7 @@ namespace GoodAI.Core.Memory
         public abstract TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
-                        
+
         public bool Persistable { get; internal set; }
         public bool Shared { get; protected set; }
         public bool IsOutput { get; internal set; }
@@ -48,7 +48,7 @@ namespace GoodAI.Core.Memory
         public abstract CUdeviceptr GetDevicePtr(MyAbstractObserver callee);
         public abstract CUdeviceptr GetDevicePtr(MyWorkingNode callee, int offset);
         public abstract CUdeviceptr GetDevicePtr(MyAbstractObserver callee, int offset);
-        public abstract SizeT GetSize();      
+        public abstract SizeT GetSize();
         public abstract void Synchronize();
         public abstract void GetBytes(byte[] destBuffer);
         public abstract void Fill(byte[] srcBuffer);
@@ -158,7 +158,7 @@ namespace GoodAI.Core.Memory
                     Device = new CudaDeviceVariable<T>[MyKernelFactory.Instance.DevCount];
 
                     if (!Unmanaged)
-                    {       
+                    {
                         MyLog.DEBUG.WriteLine("Allocating: " + typeof(T).ToString() + ", " + Count * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T)));
                         Device[Owner.GPU] = new CudaDeviceVariable<T>(
                            MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
@@ -214,8 +214,7 @@ namespace GoodAI.Core.Memory
                 throw new InvalidOperationException("Cannot reallocate non-dynamic memory block.");
             }
 
-            MyLog.DEBUG.WriteLine("Reallocating {0} from {1} to {2}", typeof (T), Count*Marshal.SizeOf(typeof (T)),
-                newCount*Marshal.SizeOf(typeof (T)));
+            MyLog.DEBUG.WriteLine("Reallocating {0} from {1} to {2}", Name, Count, newCount);
 
             int oldCount = Count;
             Count = newCount;
@@ -242,7 +241,7 @@ namespace GoodAI.Core.Memory
             {
                 newDeviceMemory = new CudaDeviceVariable<T>(
                     MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
-                        newCount*Marshal.SizeOf(typeof (T))));
+                        newCount * Marshal.SizeOf(typeof(T))));
 
                 newDeviceMemory.Memset(BitConverter.ToUInt32(BitConverter.GetBytes(0), 0));
             }
@@ -368,7 +367,7 @@ namespace GoodAI.Core.Memory
                 {
                     if (Device[nGPU] == null)
                     {
-                        Device[nGPU] = new CudaDeviceVariable<T>(                            
+                        Device[nGPU] = new CudaDeviceVariable<T>(
                             MyKernelFactory.Instance.GetContextByGPU(nGPU).AllocateMemory(
                             Count * Marshal.SizeOf(typeof(T))));
 
@@ -478,11 +477,11 @@ namespace GoodAI.Core.Memory
 
         public virtual T GetValueAt(int index)
         {
-            T value = new T();                
+            T value = new T();
 
             if (OnDevice && index < Count)
-            {            
-                Device[Owner.GPU].CopyToHost(ref value, index * Marshal.SizeOf(typeof(T)));            
+            {
+                Device[Owner.GPU].CopyToHost(ref value, index * Marshal.SizeOf(typeof(T)));
             }
 
             return value;

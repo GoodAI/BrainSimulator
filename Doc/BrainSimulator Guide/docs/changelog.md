@@ -1,3 +1,48 @@
+### Brain Simulator 0.4.0
+*Early access release* (2015-12-16)
+
+#### New features
+
+**Dashboard** – a new panel where node and task properties can be pinned and controlled
+
+**Node categories & Toolbar** – node toolbox is now sorted into categories; redesigned node selection UI with improved full-text search
+
+**Profiling** – when turned on, collects profiling information and shows it in the debug/profiling window and the main graph view
+
+**Dynamic memory** – blocks marked as dynamic can be reallocated in node/task code
+
+**Memory Blocks dimensions (experimental)** – memory block attribute that allows arbitrary dimension setting both from the UI and from code (please do not use it from code yet, as API will probably change)
+
+##### New worlds and nodes
+
+* **Worlds**
+    * Pong for two players – Pong/Breakout game with two paddles and two sets of inputs, playable by two agents
+    * Tetris - implementation of the classic Tetris game
+    * Genetic Training World / CoSyNE - a world which evolves neural networks to run over continuous environments
+* **Nodes**
+    * StatisticsNode - mean, variance, and mode (modus); can collect data from previous steps
+    * BoxPlotNode - returns five-tuples of min, first quartile, median, third quartile, max; node observer allows visualize output
+    * Multiplexer - provides simple data routing; you can set how many steps data should be used for from various inputs, or define simple patterns for such routing
+
+#### Improvements and fixes
+
+* Node status bar (icon strip + topo order) - see topological order and save/load settings at first sight on the node
+* Backward edge coloring - edges leading against the topological ordering of nodes are colored red
+* CPU observers - rewritten matrix and plot observers so they don't use kernels for drawing
+* Disable learning with one click in neural networks - learning of the whole neural network can now be enabled /disabled on the fly with one click
+* Debug mode - added breakpoints, step over, step out
+* Console autoscroll - the console will auto-scroll when the caret is placed at the end of the text
+
+#### For developers
+
+* CoreRunner (CLI) – allows the creation of custom experiments runnable from command-line without GUI
+* MyCudaKernel.RunAsync() - provides the option to call Cuda kernels asynchronously and the possibility to specify another (non-default) Cuda Stream
+
+#### Known Bugs
+
+* Save As and Import does not support moving/loading the state data (e.g. when working with a "brainz" project file)
+* Most transformation nodes have incomplete validation that allows zero input; it will cause a crash in kernels during the simulation
+
 ### Brain Simulator 0.3.0
 *Early access release* (2015-10-29)
 
@@ -13,15 +58,11 @@
 
 #### More Features and Improvements
  
-**Hiding Observers**: Instant hiding/showing of all observers with a single keyboard shortcut (Ctrl+H). It works even during simulation (without stopping the computation)
-
-**BPTT** (back-prob through time): The network performs the feed-forward step and "remembers" the output error deltas. Once the sequence is finished, it back-propagates the errors through time and jointly updates weights, taking into account what happens in every time step
- 
-**NN weight sharing**: allows use of the same connection weights in multiple neural networks. This is useful for training a network on one data set and testing it on another at the same time
- 
-**LoopGroup**: node group which runs its content multiple times per simulation step
- 
-**ConditionalGate**: designed for usage together with LoopGroup. It takes two inputs and sends them to its output according to the current loop iteration
+- **Hiding Observers**: Instant hiding/showing of all observers with a single keyboard shortcut (Ctrl+H). It works even during simulation (without stopping the computation)
+- **BPTT** (back-prob through time): The network performs the feed-forward step and "remembers" the output error deltas. Once the sequence is finished, it back-propagates the errors through time and jointly updates weights, taking into account what happens in every time step
+- **NN weight sharing**: allows use of the same connection weights in multiple neural networks. This is useful for training a network on one data set and testing it on another at the same time
+- **LoopGroup**: node group which runs its content multiple times per simulation step
+- **ConditionalGate**: designed for usage together with LoopGroup. It takes two inputs and sends them to its output according to the current loop iteration
  
 #### New Worlds
 - MyMastermindWorld: a world that simulates the Mastermind game. It outputs both structured data about the game and a visualization of the game board

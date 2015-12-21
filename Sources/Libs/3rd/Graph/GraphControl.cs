@@ -57,6 +57,8 @@ namespace Graph
 		public event EventHandler<AcceptNodeConnectionEventArgs>	ConnectionRemoving;
 		public event EventHandler<NodeConnectionEventArgs>			ConnectionRemoved;
 
+		public event EventHandler<PositionChangedEventArgs>			PositionChanged;
+
 		#region Grid
 		public bool		ShowGrid					= true;
 		public float	internalSmallGridStep		= 16.0f;
@@ -1720,27 +1722,26 @@ namespace Graph
 			bool needRedraw = false;
 			if (!dragging)
 				return;
-			
-			try
+
+		    var transformedLocation = new PointF();
+		    try
 			{
-				Point currentLocation;
-				PointF transformed_location;
-				if (abortDrag)
-				{
-					transformed_location = originalLocation;
+			    Point currentLocation;
+			    if (abortDrag)
+                {
+                    transformedLocation = originalLocation;
 
-					var points = new PointF[] { originalLocation };
-					transformation.TransformPoints(points);
-					currentLocation = new Point((int)points[0].X, (int)points[0].Y);
-				} else
-				{
-					currentLocation = e.Location;
+                    var points = new PointF[] { originalLocation };
+                    transformation.TransformPoints(points);
+                    currentLocation = new Point((int)points[0].X, (int)points[0].Y);
+                } else
+                {
+                    currentLocation = e.Location;
 
-					var points = new PointF[] { currentLocation };
-					inverse_transformation.TransformPoints(points);
-					transformed_location = points[0];
-				}
-
+                    var points = new PointF[] { currentLocation };
+                    inverse_transformation.TransformPoints(points);
+                    transformedLocation = points[0];
+                }
 
 				switch (command)
 				{
@@ -1856,8 +1857,12 @@ namespace Graph
 					var nodeItem = DragElement as NodeItem;
 					if (nodeItem != null)
 						nodeItem.OnEndDrag();
-					DragElement = null;
 					needRedraw = true;
+
+				    if (PositionChanged != null && transformedLocation != originalLocation)
+				        PositionChanged(this, new PositionChangedEventArgs(DragElement));
+
+					DragElement = null;
 				}
 
 				dragging = false;

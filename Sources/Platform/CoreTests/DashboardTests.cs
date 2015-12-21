@@ -29,6 +29,14 @@ namespace CoreTests
             public override void UpdateMemoryBlocks()
             {
             }
+
+            public Task Task { get; set; }
+
+            [MyTaskGroup("TestGroup")]
+            public Task Task2 { get; set; }
+
+            [MyTaskGroup("TestGroup")]
+            public Task Task3 { get; set; }
         }
 
         public class Task : MyTask<Node>
@@ -51,14 +59,10 @@ namespace CoreTests
         public void AddsPropertyToGroup()
         {
             var node = new Node();
-            
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
 
-            var group = new DashboardPropertyGroup();
+            var property = GetDirectProperty(node);
+
+            var group = new DashboardPropertyGroup("Foo");
 
             group.Add(property);
 
@@ -70,14 +74,10 @@ namespace CoreTests
         public void RemovesPropertyFromGroup()
         {
             var node = new Node();
-            
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
 
-            var group = new DashboardPropertyGroup();
+            var property = GetDirectProperty(node);
+
+            var group = new DashboardPropertyGroup("Foo");
 
             group.Add(property);
             group.Remove(property);
@@ -92,14 +92,10 @@ namespace CoreTests
             const string testName = "TestName";
 
             var node = new Node();
-            
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
 
-            var proxy = property.Proxy;
+            var property = GetDirectProperty(node);
+
+            var proxy = property.GenericProxy;
             proxy.Value = testName;
 
             Assert.Equal(testName, node.Name);
@@ -113,29 +109,21 @@ namespace CoreTests
 
             var node = new Node();
             var node2 = new Node();
-            
-            var property = new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
 
-            var property2 = new DashboardNodeProperty
-            {
-                Node = node2,
-                PropertyInfo = node2.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var group = new DashboardPropertyGroup();
+            var property2 = GetDirectProperty(node2);
+
+            var group = new DashboardPropertyGroup("Foo");
 
             group.Add(property);
             group.Add(property2);
 
-            group.Proxy.Value = testName;
+            group.GenericProxy.Value = testName;
 
             Assert.Equal(testName, node.Name);
             Assert.Equal(testName, node2.Name);
-            Assert.Equal(testName, group.Proxy.Value);
+            Assert.Equal(testName, group.GenericProxy.Value);
         }
 
         /// <summary>
@@ -147,23 +135,14 @@ namespace CoreTests
             var node = new Node();
             var task = new Task();
 
-            var property = new DashboardNodeProperty()
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
-            Assert.Equal(property.Proxy, property.Proxy);
+            var property = GetDirectProperty(node);
+            Assert.Equal(property.GenericProxy, property.GenericProxy);
 
-            var property2 = new DashboardTaskProperty()
-            {
-                Node = node,
-                Task = task,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
-            Assert.Equal(property2.Proxy, property2.Proxy);
+            var property2 = new DashboardTaskProperty(task, node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance));
+            Assert.Equal(property2.GenericProxy, property2.GenericProxy);
 
-            var property3 = new DashboardPropertyGroup();
-            Assert.Equal(property3.Proxy, property3.Proxy);
+            var property3 = new DashboardPropertyGroup("Foo");
+            Assert.Equal(property3.GenericProxy, property3.GenericProxy);
         }
 
         [Fact]
@@ -171,16 +150,12 @@ namespace CoreTests
         {
             var node = new Node();
 
-            var property = new DashboardNodeProperty()
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var proxy = property.Proxy;
+            var proxy = property.GenericProxy;
             var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
 
-            Assert.Equal(descriptor.PropertyType, typeof(string));
+            Assert.Equal(descriptor.PropertyType, typeof (string));
         }
 
         [Fact]
@@ -188,19 +163,22 @@ namespace CoreTests
         {
             var node = new Node();
 
-            var property = new DashboardNodeProperty()
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            };
+            var property = GetDirectProperty(node);
 
-            var group = new DashboardPropertyGroup();
+            var group = new DashboardPropertyGroup("Foo");
             group.Add(property);
 
-            var proxy = group.Proxy;
-            var descriptor = new ProxyPropertyGroupDescriptor(ref proxy, new Attribute[0]);
+            var proxy = group.GenericProxy;
+            var descriptor = new ProxyPropertyDescriptor(ref proxy, new Attribute[0]);
 
-            Assert.Equal(descriptor.PropertyType, typeof(string));
+            Assert.Equal(descriptor.PropertyType, typeof (string));
+        }
+
+        private static DashboardNodeProperty GetDirectProperty(Node node)
+        {
+            var property = new DashboardNodeProperty(node,
+                node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance));
+            return property;
         }
 
         [Fact]
@@ -227,8 +205,6 @@ namespace CoreTests
         [Fact]
         public void GroupDashboardFiresUpdateEvents()
         {
-            var node = new Node();
-
             var flag = new AutoResetEvent(false);
 
             var groupDashboard = new GroupDashboard();
@@ -249,24 +225,19 @@ namespace CoreTests
         public void BothDashboardsSerialize()
         {
             var project = new MyProject();
-            project.CreateWorld(typeof(MyTestingWorld));
+            project.CreateWorld(typeof (MyTestingWorld));
             project.Network = new MyNetwork();
             var node = project.CreateNode<Node>();
             node.Name = "Foo";
             project.Network.AddChild(node);
 
             var dashboard = new Dashboard();
-            dashboard.Properties.Add(new DashboardNodeProperty
-            {
-                Node = node,
-                PropertyInfo = node.GetType().GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)
-            });
+
+            foreach (PropertySetup propertySetup in GetPropertyExamples(project))
+                dashboard.Add(propertySetup.Target, propertySetup.PropertyName);
 
             var groupDashboard = new GroupDashboard();
-            groupDashboard.Properties.Add(new DashboardPropertyGroup
-            {
-                PropertyName = "Group 1"
-            });
+            groupDashboard.Properties.Add(new DashboardPropertyGroup("Group 1"));
             groupDashboard.Properties[0].Add(dashboard.Properties[0]);
 
             YAXSerializer serializer = MyProject.GetSerializer<Dashboard>();
@@ -278,14 +249,15 @@ namespace CoreTests
             deserializedDashboard.RestoreFromIds(project);
             project.Dashboard = deserializedDashboard;
 
-            GroupDashboard deserializedGroupDashboard = (GroupDashboard) groupSerializer.Deserialize(serializedGroupDashboard);
+            GroupDashboard deserializedGroupDashboard =
+                (GroupDashboard) groupSerializer.Deserialize(serializedGroupDashboard);
             deserializedGroupDashboard.RestoreFromIds(project);
             project.GroupedDashboard = deserializedGroupDashboard;
 
             var compareLogic = new CompareLogic(new ComparisonConfig
             {
                 MaxDifferences = 20,
-                MembersToIgnore = new List<string> { "Proxy", "GenericProxy" }
+                MembersToIgnore = new List<string> {"Proxy", "GenericProxy"}
             });
 
             ComparisonResult result = compareLogic.Compare(dashboard, deserializedDashboard);
@@ -297,6 +269,29 @@ namespace CoreTests
             m_output.WriteLine(result.DifferencesString);
 
             Assert.True(result.AreEqual);
+        }
+
+        private class PropertySetup
+        {
+            public object Target { get; set; }
+            public string PropertyName { get; set; }
+
+            public PropertySetup(object target, string propertyName)
+            {
+                Target = target;
+                PropertyName = propertyName;
+            }
+        }
+
+        private static IEnumerable<PropertySetup> GetPropertyExamples(MyProject project)
+        {
+            var node = project.GetNodeById(1) as Node;
+            return new List<PropertySetup>
+            {
+                new PropertySetup(node, "Name"),
+                new PropertySetup(node.Task, "Name"),
+                new PropertySetup(node.TaskGroups["TestGroup"], "TestGroup")
+            };
         }
     }
 }

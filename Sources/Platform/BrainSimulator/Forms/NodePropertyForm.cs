@@ -23,6 +23,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+
+            m_mainForm.ProjectStateChanged(string.Format("Node property value changed: {0}", propertyName));
         }
 
         private readonly MainForm m_mainForm;
@@ -269,7 +271,7 @@ namespace GoodAI.BrainSimulator.Forms
                 m_mainForm.DashboardPropertyToggle(Target, propertyDescriptor.Name, dashboardButton.Checked);
         }
 
-        public void RefreshGrid()
+        public void RefreshView()
         {
             propertyGrid.Refresh();
         }

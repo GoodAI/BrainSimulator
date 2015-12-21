@@ -26,9 +26,20 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            SaveAndClose();
+        }
+
+        private void SaveAndClose()
+        {
             m_group.PropertyName = groupNameText.Text;
             m_sourceGrid.Refresh();
             Close();
+        }
+
+        private void groupNameText_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                SaveAndClose();
         }
     }
 }

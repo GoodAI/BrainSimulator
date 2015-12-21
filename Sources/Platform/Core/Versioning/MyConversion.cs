@@ -10,7 +10,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 10; }
+            get { return 11; }
         }
 
         public static string Convert1To2(string xml)
@@ -177,6 +177,20 @@ namespace GoodAI.Core.Versioning
 
             result = result.Replace("HostMatrixObserver", "MatrixObserver");
             result = result.Replace("HostTimePlotObserver", "TimePlotObserver");
+
+            return result;
+        }
+
+        public static string Convert10To11(string xml)
+        {
+            string result = xml;
+
+            // Generics require the new superclass
+            result = result.Replace("[[GoodAI.Core.Dashboard.DashboardNodeProperty,",
+                "[[GoodAI.Core.Dashboard.DashboardNodePropertyBase,");
+
+            result = result.Replace("<DashboardNodeProperty>",
+                "<DashboardNodeProperty yaxlib:realtype=\"GoodAI.Core.Dashboard.DashboardNodeProperty\">");
 
             return result;
         }

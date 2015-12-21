@@ -1,4 +1,8 @@
-﻿using GoodAI.Core.Configuration;using GoodAI.Core.Memory; using GoodAI.Core.Utils; using System; using System.Collections.Generic;
+﻿using GoodAI.Core.Configuration;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Utils;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using YAXLib;

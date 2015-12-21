@@ -29,7 +29,6 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         public MyConvolutionInitLayerTask InitLayerTask { get; protected set; }
         public MyConvolutionUpdateWeights UpdateWeights { get; protected set; }
 
-
         #region Parameters
 
         public override ConnectionType Connection
@@ -44,148 +43,117 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
 
 
-        #region Input
-        [MyBrowsable, Category("Input image dimensions"), DisplayName("\t\tWidth"), ReadOnly(true)]
-        public int InputWidth
-        {
-            get { return GetInputDimension(Input, 0); }
+        [YAXSerializableField(DefaultValue = 16)]
+        [MyBrowsable, Category("Filter")]
+        public int FilterCount { get; set; }
 
+
+        [YAXSerializableField(DefaultValue = false)]
+        private bool m_autoInput = false;
+        [MyBrowsable, Category("Input image dimensions"), DisplayName("Automatic parameters")]
+        public bool AutomaticInput
+        {
+            get { return m_autoInput; }
+            set
+            {
+                m_autoInput = false;
+                if (value)
+                {
+                    if (PreviousConnectedLayers.Count <= 0)
+                    {
+                        MyLog.ERROR.WriteLine("No connected layers to layer " + this.Name + ". Please update memory blocks.");
+                        return;
+                    }
+
+                    if (Input.Owner is MyAbstractLayer)
+                    {
+                        MyAbstractLayer prevLayer = Input.Owner as MyAbstractLayer;
+
+                        if (prevLayer is MyConvolutionLayer)
+                        {
+                            InputWidth = ((MyConvolutionLayer) prevLayer).OutputWidth;
+                            InputHeight = ((MyConvolutionLayer) prevLayer).OutputHeight;
+                            InputDepth = ((MyConvolutionLayer) prevLayer).FilterCount;
+                            MyLog.INFO.WriteLine("Input parameters of layer " + this.Name + " were set succesfully.");
+                            return;
+                        }
+
+                        else if (prevLayer is MyPoolingLayer)
+                        {
+                            InputWidth = ((MyPoolingLayer) prevLayer).OutputWidth;
+                            InputHeight = ((MyPoolingLayer) prevLayer).OutputHeight;
+                            InputDepth = ((MyPoolingLayer) prevLayer).Depth;
+                            MyLog.INFO.WriteLine("Input parameters of layer " + this.Name + " were set succesfully.");
+                            return;
+                        }
+
+                        // assume input image
+                        if ((prevLayer is MyHiddenLayer) || (Input != null && Input.Count > 0))
+                        {
+                            MyLog.INFO.WriteLine("Layer " + this.Name +
+                                                 " cannot interpret input neuron count as image width, height and depth automatically.");
+                            return;
+                        }
+                    }
+
+                    MyLog.WARNING.WriteLine("Input parameters for layer " + this.Name +
+                                            " could not be set automatically.");
+                }
+            }
         }
 
 
-        [MyBrowsable, Category("Input image dimensions"), DisplayName("\tHeight"), ReadOnly(true)]
-        public int InputHeight
-        {
-            get { return GetInputDimension(Input, 1); }
-
-        }
-
-
-        [MyBrowsable, Category("Input image dimensions"), DisplayName("Depth"), ReadOnly(true)]
+        [YAXSerializableField(DefaultValue = 1)]
+        private int m_inputDepth = 1;
+        [MyBrowsable, Category("Input image dimensions")]
         public int InputDepth
         {
-            get { return GetInputDimension(Input, 2); }
-
-        }
-        #endregion
-
-
-        #region Output
-        [MyBrowsable, Category("Output image dimensions"), DisplayName("\t\tWidth"), ReadOnly(true)]
-        public int OutputWidth
-        {
-            get { return SetOutputDimension(InputWidth, FilterWidth, HorizontalStride, ZeroPadding); }
-        }
-
-        [MyBrowsable, Category("Output image dimensions"), DisplayName("\tHeight"), ReadOnly(true)]
-        public int OutputHeight
-        {
-            get { return SetOutputDimension(InputHeight, FilterHeight, VerticalStride, ZeroPadding); }
-        }
-
-        [MyBrowsable, Category("Output image dimensions"), DisplayName("Depth"), ReadOnly(true)]
-        public int OutputDepth
-        {
-            get { return FilterCount; }
-        }
-        #endregion
-
-
-        #region Filter
-        [YAXSerializableField(DefaultValue = 3)]
-        private int m_width = 3;
-        [MyBrowsable, Category("Filter"), DisplayName("\t\t\tWidth")]
-        public int FilterWidth
-        {
-            get { return m_width; }
+            get { return m_inputDepth; }
             set
             {
                 if (value < 1)
                     return;
-                m_width = value;
+                m_inputDepth = value;
             }
         }
 
-        [YAXSerializableField(DefaultValue = 3)]
-        private int m_height = 3;
-        [MyBrowsable, Category("Filter"), DisplayName("\t\tHeight")]
-        public int FilterHeight
+
+        [YAXSerializableField(DefaultValue = 2)]
+        private int m_inputWidth = 2;
+        [MyBrowsable, Category("Input image dimensions")]
+        public int InputWidth
         {
-            get { return m_height; }
+            get { return m_inputWidth; }
             set
             {
                 if (value < 1)
                     return;
-                m_height = value;
+                m_inputWidth = value;
+                OutputWidth = SetOutputDimension(InputWidth, FilterWidth, HorizontalStride, ZeroPadding);
             }
         }
 
-        [MyBrowsable, Category("Filter"), DisplayName("\tDepth"), ReadOnly(true)]
-        public int FilterDepth
-        {
-            get { return InputDepth; }
-        }
 
-        [YAXSerializableField(DefaultValue = 16)]
-        private int m_filterCount = 16;
-        [MyBrowsable, Category("Filter"), DisplayName("Count")]
-        public int FilterCount
+        [YAXSerializableField(DefaultValue = 2)]
+        private int m_inputHeight = 2;
+        [MyBrowsable, Category("Input image dimensions")]
+        public int InputHeight
         {
-            get {return m_filterCount;}
+            get { return m_inputHeight; }
             set
             {
                 if (value < 1)
                     return;
-                m_filterCount = value;
+                m_inputHeight = value;
+                OutputHeight = SetOutputDimension(InputHeight, FilterHeight, VerticalStride, ZeroPadding);
             }
         }
 
-        [YAXSerializableField(DefaultValue = 1)]
-        private int m_horizontalStride = 1;
-        [MyBrowsable, Category("Filter"), DisplayName("Horizontal stride")]
-        public int HorizontalStride
-        {
-            get { return m_horizontalStride; }
-            set
-            {
-                if (value < 1)
-                    return;
-                m_horizontalStride = value;
-            }
-        }
-
-        [YAXSerializableField(DefaultValue = 1)]
-        private int m_verticalStride = 1;
-        [MyBrowsable, Category("Filter"), DisplayName("Vertical stride")]
-        public int VerticalStride
-        {
-            get { return m_verticalStride; }
-            set
-            {
-                if (value < 1)
-                    return;
-                m_verticalStride = value;
-            }
-        }
-
-        [YAXSerializableField(DefaultValue = 1)]
-        private int m_zeroPadding = 1;
-        [MyBrowsable, Category("Filter")]
-        public int ZeroPadding
-        {
-            get { return m_zeroPadding; }
-            set
-            {
-                if (value < 0)
-                    return;
-                m_zeroPadding = value;
-            }
-        }
 
 
         [YAXSerializableField(DefaultValue = false)]
         private bool m_autoOutput = false;
-        [MyBrowsable, Category("Filter"), DisplayName("ZeroPadding automatic")]
+        [MyBrowsable, Category("Output image dimensions"), DisplayName("Automatic zero padding")]
         public bool AutomaticOutput
         {
             get { return m_autoOutput; }
@@ -194,19 +162,126 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 m_autoOutput = false;
                 if (value)
                 {
-                    int currentOutSize = 1 + (int)Math.Ceiling((InputWidth - FilterWidth) / (double)HorizontalStride);
+                    int currentOutSize = 1 + (int)Math.Ceiling( (InputWidth - FilterWidth) / (double)HorizontalStride);
                     if (((InputWidth - currentOutSize) % 2) != 0)
                         MyLog.WARNING.WriteLine("Zero padding of " + this.Name + " set automatically but filter will not cover the whole padded image when convolving.");
                     else
                     {
-                        MyLog.INFO.WriteLine("Output parameters of layer " + this.Name + " were set succesfully.");
+                        MyLog.INFO.WriteLine("Output parameters of layer " + this.Name + " were set succesfully.");                        
                     }
                     ZeroPadding = (int)Math.Ceiling((InputWidth - currentOutSize) / (double)2);
 
                 }
             }
         }
-        #endregion
+
+
+
+        [YAXSerializableField(DefaultValue = 0)]
+        private int m_outputWidth = 0;
+        [MyBrowsable, Category("Output image dimensions"), ReadOnly(true)]
+        public int OutputWidth
+        {
+            get { return m_outputWidth; }
+            set
+            {
+                if (value < 1)
+                    return;
+                m_outputWidth = value;
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 0)]
+        private int m_outputHeight = 0;
+        [MyBrowsable, Category("Output image dimensions"), ReadOnly(true)]
+        public int OutputHeight
+        {
+            get { return m_outputHeight; }
+            set
+            {
+                if (value < 1)
+                    return;
+                m_outputHeight = value;
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 1)]
+        private int m_zeroPadding = 1;
+        [MyBrowsable, Category("Output image dimensions")]
+        public int ZeroPadding
+        {
+            get { return m_zeroPadding; }
+            set
+            {
+                if (value < 0)
+                    return;
+                m_zeroPadding = value;
+                OutputWidth = SetOutputDimension(InputWidth, FilterWidth, HorizontalStride, ZeroPadding);
+                OutputHeight = SetOutputDimension(InputHeight, FilterHeight, VerticalStride, ZeroPadding);
+            }
+        }
+
+
+
+        [YAXSerializableField(DefaultValue = 3)]
+        private int m_width = 3;
+        [MyBrowsable, Category("Filter")]
+        public int FilterWidth
+        {
+            get { return m_width; }
+            set
+            {
+                if (value < 1)
+                    return;
+                m_width = value;
+                OutputWidth = SetOutputDimension(InputWidth, FilterWidth, HorizontalStride, ZeroPadding);
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 3)]
+        private int m_height = 3;
+        [MyBrowsable, Category("Filter")]
+        public int FilterHeight
+        {
+            get { return m_height; }
+            set
+            {
+                if (value < 1)
+                    return;
+                m_height = value;
+                OutputHeight = SetOutputDimension(InputHeight, FilterHeight, VerticalStride, ZeroPadding);
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 1)]
+        private int m_horizontalStride = 1;
+        [MyBrowsable, Category("Filter")]
+        public int HorizontalStride
+        {
+            get { return m_horizontalStride; }
+            set
+            {
+                if (value < 1)
+                    return;
+                m_horizontalStride = value;
+                OutputWidth = SetOutputDimension(InputWidth, FilterWidth, HorizontalStride, ZeroPadding);
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 1)]
+        private int m_verticalStride = 1;
+        [MyBrowsable, Category("Filter")]
+        public int VerticalStride
+        {
+            get { return m_verticalStride; }
+            set
+            {
+                if (value < 1)
+                    return;
+                m_verticalStride = value;
+                OutputHeight = SetOutputDimension(InputHeight, FilterHeight, VerticalStride, ZeroPadding);
+            }
+        }
 
 
 
@@ -218,21 +293,16 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
 
         #endregion
 
-
         //Memory blocks size rules
         public override void UpdateMemoryBlocks()
         {
-            
             Neurons = OutputWidth*OutputHeight*FilterCount;
-
             base.UpdateMemoryBlocks();
-
             if (Neurons > 0)
             {
-                Output.Dims = new TensorDimensions(OutputWidth, OutputHeight, OutputDepth);
                 // allocate memory scaling with number of neurons in layer
                 Delta.Count = Neurons;
-                Delta.Dims = Output.Dims;
+                Delta.ColumnHint = OutputWidth;
                 Bias.Count = FilterCount;
                 PreviousBiasDelta.Count = Neurons; // momentum method
 
@@ -240,22 +310,29 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
                 MeanSquareWeight.Count = Weights.Count;
                 MeanSquareBias.Count = Bias.Count;
 
+                // Adadelta allocation
+                //AdadeltaWeight.Count = Weights.Count;
+                //AdadeltaBias.Count = Bias.Count;
+
+
+                PaddedImage.Count = InputDepth*(InputWidth + 2*ZeroPadding)*(InputHeight + 2*ZeroPadding);
+                PaddedImage.ColumnHint = InputWidth + 2*ZeroPadding;
+
 
                 // allocate memory scaling with input
                 if (Input != null)
                 {
-                    PaddedImage.Count = InputDepth * (InputWidth + 2 * ZeroPadding) * (InputHeight + 2 * ZeroPadding);
-                    PaddedImage.Dims = new TensorDimensions(OutputWidth + 2 * ZeroPadding, OutputHeight + 2 * ZeroPadding, InputDepth);
-
                     Weights.Count = FilterWidth * FilterHeight * InputDepth * FilterCount;
-                    Weights.Dims = new TensorDimensions(FilterWidth, FilterHeight, InputDepth, FilterCount);
+                    Weights.ColumnHint = FilterWidth;
 
                     PreviousWeightDelta.Count = Weights.Count;
-                    PreviousWeightDelta.Dims = Weights.Dims;
+                    PreviousWeightDelta.ColumnHint = Weights.ColumnHint;
 
-                    MeanSquareWeight.Dims = Weights.Dims;
+                    //AdadeltaWeight.ColumnHint = Weights.ColumnHint;
+                    MeanSquareWeight.ColumnHint = Weights.ColumnHint;
 
-                    NeuronInput.Dims = Input.Dims;
+                    Output.ColumnHint = OutputWidth;
+                    NeuronInput.ColumnHint = OutputWidth;
                 }
 
                 if (Weights.Count % 2 != 0)
@@ -288,27 +365,15 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
+        public static int SetOutputDimension(int inputSize, int filterSize, int stride, int zeroPadding)
+        {
+            return 1 + (zeroPadding * 2 + inputSize - filterSize) / stride;
+        }
 
         public void CreateTasks()
         {
             ForwardTask = new MyConvolutionForwardTask();
             DeltaBackTask = new MyConvolutionBackwardTask();
-        }
-
-
-
-        public static int GetInputDimension(MyMemoryBlock<float> memoryBlock, int dimension)
-        {
-            if (memoryBlock == null)
-                return 0;
-
-            return dimension >= memoryBlock.Dims.Count ? 1 : memoryBlock.Dims[dimension];
-
-        }
-
-        public static int SetOutputDimension(int inputSize, int filterSize, int stride, int zeroPadding = 0)
-        {
-            return 1 + (zeroPadding * 2 + inputSize - filterSize) / stride;
         }
     }
 }

@@ -39,7 +39,6 @@ namespace GoodAI.BrainSimulator.Forms
             this.worldButton = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Desktop = new Graph.GraphControl();
             this.desktopContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.searchTextBox = new GoodAI.BrainSimulator.Utils.CueToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -49,6 +48,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.zoomToFitButton = new System.Windows.Forms.ToolStripButton();
             this.groupButtonPanel = new System.Windows.Forms.Panel();
             this.groupButton = new System.Windows.Forms.PictureBox();
+            this.Desktop = new Graph.GraphControl();
             this.worldButtonPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.worldButton)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -60,8 +60,6 @@ namespace GoodAI.BrainSimulator.Forms
             // 
             // nodesToolStrip
             // 
-            this.nodesToolStrip.RenderMode = ToolStripRenderMode.Professional;
-            this.nodesToolStrip.Renderer = new NodeToolStripRenderer();
             this.nodesToolStrip.AllowDrop = true;
             this.nodesToolStrip.AutoSize = false;
             this.nodesToolStrip.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -109,35 +107,6 @@ namespace GoodAI.BrainSimulator.Forms
             this.removeNodeToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.removeNodeToolStripMenuItem.Text = "Remove node";
             this.removeNodeToolStripMenuItem.Click += new System.EventHandler(this.removeNodeToolStripMenuItem_Click);
-            // 
-            // Desktop
-            // 
-            this.Desktop.AllowDrop = true;
-            this.Desktop.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Desktop.CompatibilityStrategy = alwaysCompatible1;
-            this.Desktop.ConnectorSafeBounds = 4;
-            this.Desktop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Desktop.FocusElement = null;
-            this.Desktop.HighlightCompatible = true;
-            this.Desktop.LargeGridStep = 128F;
-            this.Desktop.LargeStepGridColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.Desktop.Location = new System.Drawing.Point(41, 0);
-            this.Desktop.Name = "Desktop";
-            this.Desktop.ShowLabels = true;
-            this.Desktop.Size = new System.Drawing.Size(502, 455);
-            this.Desktop.SmallGridStep = 16F;
-            this.Desktop.SmallStepGridColor = System.Drawing.Color.DarkGray;
-            this.Desktop.TabIndex = 1;
-            this.Desktop.Text = "desktop";
-            this.Desktop.FocusChanged += new System.EventHandler<Graph.ElementEventArgs>(this.desktop_FocusChanged);
-            this.Desktop.NodeRemoving += new System.EventHandler<Graph.AcceptNodeEventArgs>(this.Desktop_NodeRemoving);
-            this.Desktop.NodeRemoved += new System.EventHandler<Graph.NodeEventArgs>(this.Desktop_NodeRemoved);
-            this.Desktop.ConnectionAdding += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionAdding);
-            this.Desktop.ConnectionRemoving += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionRemoving);
-            this.Desktop.DoubleClick += new System.EventHandler(this.Desktop_DoubleClick);
-            this.Desktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Desktop_MouseDown);
-            this.Desktop.MouseEnter += new System.EventHandler(this.desktop_MouseEnter);
-            this.Desktop.MouseLeave += new System.EventHandler(this.desktop_MouseLeave);
             // 
             // desktopContextMenuStrip
             // 
@@ -224,6 +193,36 @@ namespace GoodAI.BrainSimulator.Forms
             this.groupButton.TabIndex = 0;
             this.groupButton.TabStop = false;
             this.groupButton.Click += new System.EventHandler(this.groupButton_Click);
+            // 
+            // Desktop
+            // 
+            this.Desktop.AllowDrop = true;
+            this.Desktop.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Desktop.CompatibilityStrategy = alwaysCompatible1;
+            this.Desktop.ConnectorSafeBounds = 4;
+            this.Desktop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Desktop.FocusElement = null;
+            this.Desktop.HighlightCompatible = true;
+            this.Desktop.LargeGridStep = 128F;
+            this.Desktop.LargeStepGridColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.Desktop.Location = new System.Drawing.Point(41, 0);
+            this.Desktop.Name = "Desktop";
+            this.Desktop.ShowLabels = true;
+            this.Desktop.Size = new System.Drawing.Size(502, 455);
+            this.Desktop.SmallGridStep = 16F;
+            this.Desktop.SmallStepGridColor = System.Drawing.Color.DarkGray;
+            this.Desktop.TabIndex = 1;
+            this.Desktop.Text = "desktop";
+            this.Desktop.FocusChanged += new System.EventHandler<Graph.ElementEventArgs>(this.desktop_FocusChanged);
+            this.Desktop.NodeRemoving += new System.EventHandler<Graph.AcceptNodeEventArgs>(this.Desktop_NodeRemoving);
+            this.Desktop.NodeRemoved += new System.EventHandler<Graph.NodeEventArgs>(this.Desktop_NodeRemoved);
+            this.Desktop.ConnectionAdding += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionAdding);
+            this.Desktop.ConnectionRemoving += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionRemoving);
+            this.Desktop.PositionChanged += new System.EventHandler<Graph.PositionChangedEventArgs>(this.Desktop_PositionChanged);
+            this.Desktop.DoubleClick += new System.EventHandler(this.Desktop_DoubleClick);
+            this.Desktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Desktop_MouseDown);
+            this.Desktop.MouseEnter += new System.EventHandler(this.desktop_MouseEnter);
+            this.Desktop.MouseLeave += new System.EventHandler(this.desktop_MouseLeave);
             // 
             // GraphLayoutForm
             // 

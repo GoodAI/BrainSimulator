@@ -60,8 +60,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_recentMenu = new MruStripMenuInline(fileToolStripMenuItem, recentFilesMenuItem , RecentFiles_Click, 5);
 
-            // TODO(HonzaS): This is not UI-specific, move project loading out of here.
-            RestoreDashboard(Project);
+            Project.Restore();
 
             StringCollection recentFilesList = Properties.Settings.Default.RecentFilesList;
 
@@ -188,6 +187,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 statusStrip.BackColor = STATUS_BAR_BLUE_BUILDING;
             }
+            RefreshUndoRedoButtons();
         }    
 
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -354,6 +354,8 @@ namespace GoodAI.BrainSimulator.Forms
                         graphView.Desktop.Invalidate();                        
                         graphView.worldButton_Click(sender, e);                     
                     }
+
+                    ProjectStateChanged("World selected");
                 }
             }
         }
@@ -740,6 +742,28 @@ namespace GoodAI.BrainSimulator.Forms
         private void profileToolButton_CheckedChanged(object sender, EventArgs e)
         {
             MyExecutionBlock.IsProfiling = profileToolButton.Checked;
+        }
+
+        // Using MouseUp instead of Click because the .Enabled property is updated as part of the action
+        // which would sometimes lead to double-clicks.
+        private void undoButton_MouseUp(object sender, MouseEventArgs e)
+        {
+            Undo();
+        }
+
+        private void redoButton_MouseUp(object sender, MouseEventArgs e)
+        {
+            Redo();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Redo();
         }
     }
 }

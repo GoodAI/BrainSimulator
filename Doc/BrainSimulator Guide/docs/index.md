@@ -17,7 +17,6 @@ The Brain Simulator project is a framework/library/application for effective dev
 * [Observer](observer.md) - how to implement your own observer
 * **Guides** - various guides
 * [Changelog](changelog.md) - changelog and list of future ideas
-
 * [Video Tutorial](https://www.youtube.com/watch?v=4ghhVl_UJwk) - short video tutorial on building a simple neural network
 
 

@@ -56,9 +56,9 @@ namespace GoodAI.BrainSimulator.Forms
         {
             HashSet<string> enabledNodes = new HashSet<string>();
 
-            if (Properties.Settings.Default.ToolBarNodes != null)
+            if (Settings.Default.ToolBarNodes != null)
             {
-                foreach (string nodeTypeName in Properties.Settings.Default.ToolBarNodes)
+                foreach (string nodeTypeName in Settings.Default.ToolBarNodes)
                 {
                     enabledNodes.Add(nodeTypeName);
                 }
@@ -178,6 +178,8 @@ namespace GoodAI.BrainSimulator.Forms
             newNodeView.OnEndDrag();
 
             EnterGraphLayout();
+
+            OnProjectStateChanged("Node added");
         }
 
         private bool TryAddChildNode(MyNode newNode)
@@ -192,6 +194,11 @@ namespace GoodAI.BrainSimulator.Forms
                 MyLog.ERROR.WriteLine("Failed to add node: " + e.Message);
                 return false;
             }
+        }
+
+        private void OnProjectStateChanged(string reason)
+        {
+            m_mainForm.ProjectStateChanged(reason);
         }
 
         void OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
@@ -210,6 +217,7 @@ namespace GoodAI.BrainSimulator.Forms
                 e.Connection.Tag = newConnection;
 
                 m_mainForm.RefreshConnections(this);
+                m_mainForm.ProjectStateChanged("Connection added");
             }
             else
             {
@@ -225,6 +233,8 @@ namespace GoodAI.BrainSimulator.Forms
             if (connToDelete != null)
             {
                 connToDelete.Disconnect();
+
+                m_mainForm.ProjectStateChanged("Connection removed");
             }
 
             m_mainForm.RefreshConnections(this);
@@ -285,6 +295,9 @@ namespace GoodAI.BrainSimulator.Forms
         {
             e.Cancel = TestIfInsideSimulation();
 
+            // Suppress state saving - connections will get removed which would generate multiple steps.
+            m_mainForm.SuppressStateSaving = true;
+
             MyNodeView nodeView = e.Node as MyNodeView;
             e.Cancel |= nodeView.Node is MyParentInput || nodeView.Node is MyOutput;
         }
@@ -292,11 +305,10 @@ namespace GoodAI.BrainSimulator.Forms
         private void Desktop_NodeRemoved(object sender, NodeEventArgs e)
         {
             MyNode node = (e.Node as MyNodeView).Node;
-            if (node != null)
-            {
-                Target.RemoveChild(node);
-            }
+            if (node == null)
+                return;
 
+            Target.RemoveChild(node);
             if (node is MyNodeGroup)
             {
                 m_mainForm.CloseGraphLayout(node as MyNodeGroup);                            
@@ -308,6 +320,11 @@ namespace GoodAI.BrainSimulator.Forms
 
             m_mainForm.CloseObservers(node);
             m_mainForm.RemoveFromDashboard(node);
+
+            // End state saving suppression, we'll need to save one state after the node is removed.
+            m_mainForm.SuppressStateSaving = false;
+
+            m_mainForm.ProjectStateChanged("Node removed");
         }
 
         public void worldButton_Click(object sender, EventArgs e)
@@ -456,9 +473,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         public void RefreshGraph()
         {
-            foreach (Node grahpNode in Desktop.Nodes)
+            foreach (Node graphNode in Desktop.Nodes)
             {
-                var nodeView = grahpNode as MyNodeView;
+                var nodeView = graphNode as MyNodeView;
                 if (nodeView == null)
                     continue;
 
@@ -466,7 +483,7 @@ namespace GoodAI.BrainSimulator.Forms
                 nodeView.UpdateView();
 
                 // refresh connections
-                foreach (NodeConnection connectionView in grahpNode.Connections)
+                foreach (NodeConnection connectionView in graphNode.Connections)
                 {
                     RefreshConnectionView(connectionView);
                 }
@@ -515,6 +532,8 @@ namespace GoodAI.BrainSimulator.Forms
             AddNodeButton(nodeConfig);
 
             Settings.Default.QuickToolBarNodes.Add(nodeConfig.NodeType.Name);
+
+            // TODO: Add undo here if we also want to undo non-model-related actions
         }
 
         private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig) 
@@ -537,6 +556,12 @@ namespace GoodAI.BrainSimulator.Forms
             var nodeView = data.GetData(typeof (MyNodeView)) as MyNodeView;
 
             return (nodeView == null) ? null : nodeView.Config;
+        }
+
+        private void Desktop_PositionChanged(object sender, PositionChangedEventArgs e)
+        {
+            if (e.Target is Node)
+                m_mainForm.ProjectStateChanged("Node(s) moved");
         }
     }      
 }

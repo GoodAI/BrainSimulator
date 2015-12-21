@@ -24,6 +24,50 @@ namespace GoodAI.Core.Memory
             }
         }
 
+        /// <summary>
+        /// A disposable backup of a MyMemoryManager instance.
+        /// </summary>
+        public class Backup : IDisposable
+        {
+            private MyMemoryManager m_instance;
+
+            public Backup(MyMemoryManager instance)
+            {
+                m_instance = instance;
+            }
+
+            /// <summary>
+            /// Forget any backup so that Dispose doesn't use it.
+            /// </summary>
+            public void Forget()
+            {
+                m_instance = null;
+            }
+
+            /// <summary>
+            /// Restore the backup unless it's been explicitely forgotten.
+            /// </summary>
+            public void Dispose()
+            {
+                if (m_instance != null)
+                    SINGLETON = m_instance;  // Restore backup
+            }
+        }
+
+        /// <summary>
+        /// Get a backup of the memory manager.
+        /// </summary>
+        /// <returns>A disposable backup that auto-restores when not forgotten.</returns>
+        public static Backup GetBackup()
+        {
+            var backup = new Backup(SINGLETON);
+
+            // Force creating a new instance when Instance is called.
+            SINGLETON = null;
+
+            return backup;
+        }
+
         //TODO: Should be something much sofisticated later, like virtual memory
         private Dictionary<MyNode, List<MyAbstractMemoryBlock>> m_memoryBlocks;
         private Dictionary<string, IDisposable>[] m_globalVariables;
@@ -283,7 +327,7 @@ namespace GoodAI.Core.Memory
                 {
                     string memBlockName = MyMemoryBlockSerializer.GetUniqueName(memoryBlock);
 
-                    if (!memBlocks.ContainsKey(memBlockName))  // TODO(Premek): encounterted duplicate world node, figure out why
+                    if (!memBlocks.ContainsKey(memBlockName))
                         memBlocks.Add(memBlockName, memoryBlock);
                 }
             }
