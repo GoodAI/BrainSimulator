@@ -270,8 +270,6 @@ extern "C"
 				int textureY = textureHeight * idObjectY / objectHeight;
 				int textureId = textureY * textureWidth + textureX;
 
-				int rgbIndex = textureId + idObjectRgb * texturePixels;
-
 				int tIndex = targetPixels * targetRgb + targetWidth * (idObjectY + inputY) + (idObjectX + inputX);
 				int aIndex = textureId + 3 * texturePixels; // the A component of the texture
 				float a = texture[aIndex];
