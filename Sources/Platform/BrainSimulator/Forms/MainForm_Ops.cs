@@ -1110,6 +1110,7 @@ namespace GoodAI.BrainSimulator.Forms
                 }
                 finally
                 {
+                    // Error handling is done below in a validation assert.
                 }
 
                 // TODO: move this out.

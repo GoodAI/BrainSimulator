@@ -86,7 +86,7 @@ That is especially handy if you want to:
 
 namespace GoodAI.Core.Execution
 {
-    public class MyProjectRunner
+    public class MyProjectRunner : IDisposable
     {
         private static MyProject m_project;
 
@@ -270,6 +270,11 @@ namespace GoodAI.Core.Execution
         public void Shutdown()
         {
             SimulationHandler.Finish();
+        }
+
+        public void Dispose()
+        {
+            Shutdown();
         }
 
         /// <summary>

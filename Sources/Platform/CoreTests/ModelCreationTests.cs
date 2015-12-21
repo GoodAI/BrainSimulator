@@ -38,73 +38,73 @@ namespace CoreTests
         [Fact]
         public void CreatesAndRunsMNIST()
         {
-            var runner = new MyProjectRunner();
-            MyProject project = MyProjectRunner.CreateProject(typeof(MyMNISTWorld), "MNIST");
+            using (var runner = new MyProjectRunner())
+            {
+                MyProject project = MyProjectRunner.CreateProject(typeof(MyMNISTWorld), "MNIST");
 
-            MyWorld world = project.World;
+                MyWorld world = project.World;
 
-            var neuralGroup = project.CreateNode<MyNeuralNetworkGroup>();
-            project.Network.AddChild(neuralGroup);
+                var neuralGroup = project.CreateNode<MyNeuralNetworkGroup>();
+                project.Network.AddChild(neuralGroup);
 
-            var hiddenLayer = project.CreateNode<MyHiddenLayer>();
-            neuralGroup.AddChild(hiddenLayer);
+                var hiddenLayer = project.CreateNode<MyHiddenLayer>();
+                neuralGroup.AddChild(hiddenLayer);
 
-            var outputLayer = project.CreateNode<MyOutputLayer>();
-            neuralGroup.AddChild(outputLayer);
+                var outputLayer = project.CreateNode<MyOutputLayer>();
+                neuralGroup.AddChild(outputLayer);
 
-            var accumulator = project.CreateNode<MyAccumulator>();
-            neuralGroup.AddChild(accumulator);
+                var accumulator = project.CreateNode<MyAccumulator>();
+                neuralGroup.AddChild(accumulator);
 
-            // Connect the nodes.
+                // Connect the nodes.
 
-            project.Connect(project.Network.GroupInputNodes[0], neuralGroup, 0, 0);
-            project.Connect(project.Network.GroupInputNodes[1], neuralGroup, 0, 1);
+                project.Connect(project.Network.GroupInputNodes[0], neuralGroup, 0, 0);
+                project.Connect(project.Network.GroupInputNodes[1], neuralGroup, 0, 1);
 
-            project.Connect(neuralGroup.GroupInputNodes[0], hiddenLayer, 0, 0);
+                project.Connect(neuralGroup.GroupInputNodes[0], hiddenLayer, 0, 0);
 
-            project.Connect(neuralGroup.GroupInputNodes[1], outputLayer, 0, 1);
+                project.Connect(neuralGroup.GroupInputNodes[1], outputLayer, 0, 1);
 
-            project.Connect(hiddenLayer, outputLayer, 0, 0);
+                project.Connect(hiddenLayer, outputLayer, 0, 0);
 
-            project.Connect(outputLayer, accumulator, 1, 0);
+                project.Connect(outputLayer, accumulator, 1, 0);
 
-            // Setup the nodes.
+                // Setup the nodes.
 
-            MyTask sendMnistData = world.GetTaskByPropertyName("SendMNISTData");
-            sendMnistData.GetType().GetProperty("RandomEnumerate").SetValue(sendMnistData, true);
-            sendMnistData.GetType().GetProperty("ExpositionTime").SetValue(sendMnistData, 1);
+                MyTask sendMnistData = world.GetTaskByPropertyName("SendMNISTData");
+                sendMnistData.GetType().GetProperty("RandomEnumerate").SetValue(sendMnistData, true);
+                sendMnistData.GetType().GetProperty("ExpositionTime").SetValue(sendMnistData, 1);
 
-            world.GetType().GetProperty("Binary").SetValue(world, true);
+                world.GetType().GetProperty("Binary").SetValue(world, true);
 
-            hiddenLayer.Neurons = 40;
+                hiddenLayer.Neurons = 40;
 
-            accumulator.ApproachValue.ApproachMethod = MyAccumulator.MyApproachValueTask.SequenceType.Momentum;
-            accumulator.ApproachValue.Delta = 0.1f;
-            accumulator.ApproachValue.Target = 0;
-            accumulator.ApproachValue.Factor = 0.9f;
+                accumulator.ApproachValue.ApproachMethod = MyAccumulator.MyApproachValueTask.SequenceType.Momentum;
+                accumulator.ApproachValue.Delta = 0.1f;
+                accumulator.ApproachValue.Target = 0;
+                accumulator.ApproachValue.Factor = 0.9f;
 
-            // Enable tasks.
-            project.World.EnableDefaultTasks();
+                // Enable tasks.
+                project.World.EnableDefaultTasks();
 
-            neuralGroup.EnableDefaultTasks();
-            neuralGroup.RMS.Enabled = true;
+                neuralGroup.EnableDefaultTasks();
+                neuralGroup.RMS.Enabled = true;
 
-            hiddenLayer.EnableDefaultTasks();
+                hiddenLayer.EnableDefaultTasks();
 
-            outputLayer.EnableDefaultTasks();
+                outputLayer.EnableDefaultTasks();
 
-            accumulator.EnableDefaultTasks();
-            accumulator.ApproachValue.Enabled = true;
+                accumulator.EnableDefaultTasks();
+                accumulator.ApproachValue.Enabled = true;
 
-            // Run the simulation.
+                // Run the simulation.
 
-            runner.RunAndPause(100);
+                runner.RunAndPause(100);
 
-            float error = runner.GetValues(accumulator.Id)[0];
-            Assert.True(error < 0.5f);
-            runner.SaveProject(@"c:\foobar.brain");
-
-            runner.Shutdown();
+                float error = runner.GetValues(accumulator.Id)[0];
+                Assert.True(error < 0.5f);
+                //runner.SaveProject(@"c:\foobar.brain");
+            }
         }
     }
 }
