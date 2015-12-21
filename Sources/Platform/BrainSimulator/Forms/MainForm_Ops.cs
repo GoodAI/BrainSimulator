@@ -939,11 +939,11 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNetworkView();
             OpenGraphLayout(Project.Network);
 
-            RestoreObserverForms();
-            RestoreDashboardForm();
-
             if (Project.World != null)
                 SelectWorldInWorldList(Project.World);
+
+            RestoreObserverForms();
+            RestoreDashboardForm();
 
             RefreshUndoRedoButtons();
         }
