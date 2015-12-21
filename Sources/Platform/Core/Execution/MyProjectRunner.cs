@@ -94,7 +94,7 @@ namespace GoodAI.Core.Execution
 
         private int m_resultIdCounter;
         protected delegate float[] MonitorFunc(MySimulation simulation);
-        private List<Tuple<int, uint, MonitorFunc>> Monitors { get; set; }
+        private List<Tuple<int, uint, MonitorFunc>> m_monitors;
         private readonly Hashtable m_results;
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace GoodAI.Core.Execution
             SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             SimulationHandler.StepPerformed += SimulationHandler_StepPerformed;
 
-            Monitors = new List<Tuple<int, uint, MonitorFunc>>();
+            m_monitors = new List<Tuple<int, uint, MonitorFunc>>();
             m_results = new Hashtable();
 
             Project = new MyProject();
@@ -392,7 +392,7 @@ namespace GoodAI.Core.Execution
             };
 
             Tuple<int, uint, MonitorFunc> rec = new Tuple<int, uint, MonitorFunc>(m_resultIdCounter++, trackInterval, valueMonitor);
-            Monitors.Add(rec);
+            m_monitors.Add(rec);
             m_results[rec.Item1] = new List<float[]>();
             MyLog.INFO.WriteLine(blockName + "[" + blockOffset + "]@" + nodeId + "is now being tracked with ID " + (m_resultIdCounter - 1));
             return m_resultIdCounter - 1;
@@ -488,7 +488,7 @@ namespace GoodAI.Core.Execution
 
         void SimulationHandler_StepPerformed(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            foreach (Tuple<int, uint, MonitorFunc> m in Monitors)
+            foreach (Tuple<int, uint, MonitorFunc> m in m_monitors)
             {
                 if (SimulationHandler.SimulationStep % m.Item2 == 0)
                 {
@@ -555,7 +555,7 @@ namespace GoodAI.Core.Execution
         {
             SimulationHandler.StopSimulation();
             SimulationHandler.Simulation.ResetSimulationStep();  // reset simulation step back to 0
-            Monitors.Clear();
+            m_monitors.Clear();
             m_results.Clear();
             m_resultIdCounter = 0;
         }
