@@ -88,14 +88,14 @@ namespace GoodAI.Core.Execution
 {
     public class MyProjectRunner : IDisposable
     {
-        private static MyProject m_project;
+        private MyProject m_project;
 
-        public static MySimulationHandler SimulationHandler { get; private set; }
+        public MySimulationHandler SimulationHandler { get; private set; }
 
         private int m_resultIdCounter;
         protected delegate float[] MonitorFunc(MySimulation simulation);
-        private static List<Tuple<int, uint, MonitorFunc>> m_monitors { get; set; }
-        private static Hashtable m_results;
+        private List<Tuple<int, uint, MonitorFunc>> Monitors { get; set; }
+        private readonly Hashtable m_results;
 
         /// <summary>
         /// Definition for filtering function
@@ -104,7 +104,7 @@ namespace GoodAI.Core.Execution
         /// <returns></returns>
         public delegate bool FilterFunc(MyNode node);
 
-        public static MyProject Project
+        public MyProject Project
         {
             get { return m_project; }
             private set
@@ -132,7 +132,7 @@ namespace GoodAI.Core.Execution
             SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             SimulationHandler.StepPerformed += SimulationHandler_StepPerformed;
 
-            m_monitors = new List<Tuple<int, uint, MonitorFunc>>();
+            Monitors = new List<Tuple<int, uint, MonitorFunc>>();
             m_results = new Hashtable();
 
             Project = new MyProject();
@@ -392,7 +392,7 @@ namespace GoodAI.Core.Execution
             };
 
             Tuple<int, uint, MonitorFunc> rec = new Tuple<int, uint, MonitorFunc>(m_resultIdCounter++, trackInterval, valueMonitor);
-            m_monitors.Add(rec);
+            Monitors.Add(rec);
             m_results[rec.Item1] = new List<float[]>();
             MyLog.INFO.WriteLine(blockName + "[" + blockOffset + "]@" + nodeId + "is now being tracked with ID " + (m_resultIdCounter - 1));
             return m_resultIdCounter - 1;
@@ -488,7 +488,7 @@ namespace GoodAI.Core.Execution
 
         void SimulationHandler_StepPerformed(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            foreach (Tuple<int, uint, MonitorFunc> m in m_monitors)
+            foreach (Tuple<int, uint, MonitorFunc> m in Monitors)
             {
                 if (SimulationHandler.SimulationStep % m.Item2 == 0)
                 {
@@ -555,12 +555,12 @@ namespace GoodAI.Core.Execution
         {
             SimulationHandler.StopSimulation();
             SimulationHandler.Simulation.ResetSimulationStep();  // reset simulation step back to 0
-            m_monitors.Clear();
+            Monitors.Clear();
             m_results.Clear();
             m_resultIdCounter = 0;
         }
 
-        public static MyProject CreateProject(Type worldType, string projectName = null)
+        public MyProject CreateProject(Type worldType, string projectName = null)
         {
             Project = new MyProject
             {

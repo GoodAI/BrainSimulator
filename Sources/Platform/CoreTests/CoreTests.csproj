@@ -71,6 +71,7 @@
     <Compile Include="ModelCreationTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
+    <Compile Include="ReleaseDeserializationTests.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="SimulationHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +79,9 @@
     <Compile Include="UndoManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\release-deserialization-test.brain">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
   </ItemGroup>

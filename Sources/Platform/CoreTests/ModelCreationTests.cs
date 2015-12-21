@@ -24,15 +24,15 @@ namespace CoreTests
         [Fact]
         public void SimulationRunsViaRunner()
         {
-            var runner = new MyProjectRunner();
-            MyProject project = MyProjectRunner.CreateProject(typeof(MyTestingWorld), "test project name");
+            using (var runner = new MyProjectRunner())
+            {
+                MyProject project = runner.CreateProject(typeof(MyTestingWorld), "test project name");
 
-            var node = project.CreateNode<MyCSharpNode>();
-            project.Network.AddChild(node);
+                var node = project.CreateNode<MyCSharpNode>();
+                project.Network.AddChild(node);
 
-            runner.RunAndPause(10);
-
-            runner.Shutdown();
+                runner.RunAndPause(1);
+            }
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace CoreTests
         {
             using (var runner = new MyProjectRunner())
             {
-                MyProject project = MyProjectRunner.CreateProject(typeof(MyMNISTWorld), "MNIST");
+                MyProject project = runner.CreateProject(typeof(MyMNISTWorld), "MNIST");
 
                 MyWorld world = project.World;
 
