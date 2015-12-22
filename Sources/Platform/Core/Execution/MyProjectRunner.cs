@@ -88,14 +88,14 @@ namespace GoodAI.Core.Execution
 {
     public class MyProjectRunner : IDisposable
     {
-        private static MyProject m_project;
+        private MyProject m_project;
 
-        public static MySimulationHandler SimulationHandler { get; private set; }
+        public MySimulationHandler SimulationHandler { get; private set; }
 
         private int m_resultIdCounter;
         protected delegate float[] MonitorFunc(MySimulation simulation);
-        private static List<Tuple<int, uint, MonitorFunc>> m_monitors { get; set; }
-        private static Hashtable m_results;
+        private List<Tuple<int, uint, MonitorFunc>> m_monitors;
+        private readonly Hashtable m_results;
 
         /// <summary>
         /// Definition for filtering function
@@ -104,7 +104,7 @@ namespace GoodAI.Core.Execution
         /// <returns></returns>
         public delegate bool FilterFunc(MyNode node);
 
-        public static MyProject Project
+        public MyProject Project
         {
             get { return m_project; }
             private set
@@ -560,7 +560,7 @@ namespace GoodAI.Core.Execution
             m_resultIdCounter = 0;
         }
 
-        public static MyProject CreateProject(Type worldType, string projectName = null)
+        public MyProject CreateProject(Type worldType, string projectName = null)
         {
             Project = new MyProject
             {
