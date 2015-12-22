@@ -36,32 +36,19 @@ namespace CoreTests
             }
         }
 
+        // Check the dashboard for expected properties.
         private static void CheckDashboard(MyProject project)
         {
             Dashboard dashboard = project.Dashboard;
 
-            // Check the dashboard for expected properties.
-            MyWorkingNode codeBookNode1 = project.Network.GetChildNodeById(338) as MyWorkingNode;
-            MyTask performTask1 = codeBookNode1.GetTaskByPropertyName("PerformTask");
-            var property1 = dashboard.Get(performTask1, "SimilarityOperator");
+            var property1 = CheckDashboardProperty(project, dashboard, 338, "PerformTask", "SimilarityOperator");
+            
+            var property2 = CheckDashboardProperty(project, dashboard, 331, "PerformTask", "SimilarityOperator");
 
-            Assert.NotNull(property1);
-
-            MyWorkingNode codeBookNode2 = project.Network.GetChildNodeById(331) as MyWorkingNode;
-            MyTask performTask2 = codeBookNode2.GetTaskByPropertyName("PerformTask");
-            var property2 = dashboard.Get(performTask2, "SimilarityOperator");
-
-            Assert.NotNull(property2);
-
-            MyWorkingNode hiddenLayerNode = project.Network.GetChildNodeById(451) as MyWorkingNode;
-            MyTask shareWeightsTask = hiddenLayerNode.GetTaskByPropertyName("ShareWeightsTask");
-            var property3 = dashboard.Get(shareWeightsTask, "SourceNodeName");
-
-            Assert.NotNull(property3);
+            CheckDashboardProperty(project, dashboard, 451, "ShareWeightsTask", "SourceNodeName");
 
             MyWorkingNode nodeGroup = project.Network.GetChildNodeById(359) as MyWorkingNode;
             var property4 = dashboard.Get(nodeGroup, "InputBranches");
-
             Assert.NotNull(property4);
 
             // Check the grouped dashboard for expected properties.
@@ -73,6 +60,21 @@ namespace CoreTests
 
             Assert.True(@group.GroupedProperties.Contains(property1));
             Assert.True(@group.GroupedProperties.Contains(property2));
+        }
+
+        private static DashboardNodePropertyBase CheckDashboardProperty(MyProject project, Dashboard dashboard, int nodeId,
+            string taskName, string propertyName)
+        {
+            var node = project.Network.GetChildNodeById(nodeId) as MyWorkingNode;
+            Assert.NotNull(node);
+
+            MyTask task = node.GetTaskByPropertyName(taskName);
+            Assert.NotNull(task);
+
+            DashboardNodePropertyBase property = dashboard.Get(task, propertyName);
+            Assert.NotNull(property);
+
+            return property;
         }
 
         private static void CheckTensors(MyProject project)
