@@ -49,7 +49,7 @@ namespace CoreTests
 
             MyWorkingNode codeBookNode2 = project.Network.GetChildNodeById(331) as MyWorkingNode;
             MyTask performTask2 = codeBookNode2.GetTaskByPropertyName("PerformTask");
-            var property2 = dashboard.Get(performTask1, "SimilarityOperator");
+            var property2 = dashboard.Get(performTask2, "SimilarityOperator");
 
             Assert.NotNull(property2);
 

@@ -2,3 +2,6 @@ rem $(SolutionDir) = %1, $(ProjectDir) = %2, $(OutDir) = %3, $(Configuration) = 
 
 mkdir %2bin\%4\modules\GoodAI.BasicNodes
 xcopy /y /s %2..\..\Modules\BasicNodes\Module\bin\%4\*.* %2bin\%4\modules\GoodAI.BasicNodes
+
+mkdir %2bin\%4\modules\GoodAI.MNIST
+xcopy /y /s %2..\..\Modules\MNIST\Module\bin\%4\*.* %2bin\%4\modules\GoodAI.MNIST
