@@ -161,6 +161,11 @@ namespace GoodAI.Core.Dashboard
             // No need to do anything, the property will remove itself.
         }
 
+        public DashboardPropertyGroup GetByName(string name)
+        {
+            return Properties.FirstOrDefault(property => property.PropertyName == name);
+        }
+
         /// <summary>
         /// Checks if the given group can set its name to the given parameter.
         /// </summary>

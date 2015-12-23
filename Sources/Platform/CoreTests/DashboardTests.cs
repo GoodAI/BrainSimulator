@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -309,6 +310,23 @@ namespace CoreTests
 
             Assert.True(dashboard.CanChangeName(group1, "a"));
             Assert.False(dashboard.CanChangeName(group1, "b"));
+        }
+
+        [Fact]
+        public void LooksUpGroupByName()
+        {
+            var dashboard = new GroupDashboard();
+            dashboard.Add();
+            dashboard.Add();
+
+            var group1 = dashboard.Properties[0];
+            var group2 = dashboard.Properties[1];
+
+            group1.PropertyName = "a";
+            group2.PropertyName = "b";
+
+            Assert.Equal(group1, dashboard.GetByName(group1.PropertyName));
+            Assert.Equal(group2, dashboard.GetByName(group2.PropertyName));
         }
 
         [Fact]
