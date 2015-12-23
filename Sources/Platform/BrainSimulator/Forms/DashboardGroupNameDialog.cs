@@ -14,12 +14,14 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class DashboardGroupNameDialog : Form
     {
         private readonly PropertyGrid m_sourceGrid;
-        private DashboardPropertyGroup m_group;
+        private readonly DashboardPropertyGroup m_group;
+        private readonly GroupDashboard m_dashboard;
 
-        public DashboardGroupNameDialog(PropertyGrid sourceGrid, DashboardPropertyGroup group)
+        public DashboardGroupNameDialog(PropertyGrid sourceGrid, DashboardPropertyGroup group, GroupDashboard dashboard)
         {
             m_sourceGrid = sourceGrid;
             m_group = @group;
+            m_dashboard = dashboard;
             InitializeComponent();
             groupNameText.Text = group.PropertyName;
         }
@@ -31,7 +33,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void SaveAndClose()
         {
-            m_group.PropertyName = groupNameText.Text;
+            string newName = groupNameText.Text;
+
+            if (!m_dashboard.CanChangeName(m_group, newName))
+                return;
+
+            m_group.PropertyName = newName;
             m_sourceGrid.Refresh();
             Close();
         }

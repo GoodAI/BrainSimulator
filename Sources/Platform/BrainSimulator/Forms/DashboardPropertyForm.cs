@@ -230,7 +230,9 @@ namespace GoodAI.BrainSimulator.Forms
             ProxyPropertyDescriptor descriptor = GetCurrentGroupDescriptor();
 
             var dialog = new DashboardGroupNameDialog(propertyGridGrouped,
-                GroupedDashboardViewModel.GetProperty(descriptor.Proxy.PropertyId));
+                GroupedDashboardViewModel.GetProperty(descriptor.Proxy.PropertyId),
+                m_mainForm.Project.GroupedDashboard);
+
             dialog.ShowDialog();
         }
 

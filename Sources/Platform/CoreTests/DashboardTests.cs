@@ -293,5 +293,46 @@ namespace CoreTests
                 new PropertySetup(node.TaskGroups["TestGroup"], "TestGroup")
             };
         }
+
+        [Fact]
+        public void ChecksNameUniqueness()
+        {
+            var dashboard = new GroupDashboard();
+            dashboard.Add();
+            dashboard.Add();
+
+            var group1 = dashboard.Properties[0];
+            var group2 = dashboard.Properties[1];
+
+            group1.PropertyName = "a";
+            group2.PropertyName = "b";
+
+            Assert.True(dashboard.CanChangeName(group1, "a"));
+            Assert.False(dashboard.CanChangeName(group1, "b"));
+        }
+
+        [Fact]
+        public void GeneratesUniqueNameForGroups()
+        {
+            // If multiple groups are found in the deserialized file with the same name, only one group keeps the name
+            // and the others get a new, unique name.
+
+            var project = new MyProject();
+
+
+            project.Dashboard = new Dashboard();
+            project.GroupedDashboard = new GroupDashboard();
+            project.GroupedDashboard.Add();
+            project.GroupedDashboard.Add();
+
+            var group1 = project.GroupedDashboard.Properties[0];
+            var group2 = project.GroupedDashboard.Properties[1];
+
+            group1.PropertyName = group2.PropertyName = "abc";
+
+            project.GroupedDashboard.RestoreFromIds(project);
+
+            Assert.False(group1.PropertyName == group2.PropertyName);
+        }
     }
 }

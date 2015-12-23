@@ -29,7 +29,7 @@ namespace GoodAI.Core.Dashboard
             Properties = new List<TProperty>();
         }
 
-        public void RestoreFromIds(MyProject project)
+        public virtual void RestoreFromIds(MyProject project)
         {
             foreach (var property in Properties.ToList())
             {
@@ -159,6 +159,38 @@ namespace GoodAI.Core.Dashboard
         public override void RemoveAll(object target)
         {
             // No need to do anything, the property will remove itself.
+        }
+
+        /// <summary>
+        /// Checks if the given group can set its name to the given parameter.
+        /// </summary>
+        public bool CanChangeName(DashboardPropertyGroup group, string name)
+        {
+            return Properties.Where(property => property != group).All(property => property.PropertyName != name);
+        }
+
+        public override void RestoreFromIds(MyProject project)
+        {
+            base.RestoreFromIds(project);
+
+            var groupedByName = Properties.GroupBy(group => group.PropertyName);
+
+            foreach (var grouping in groupedByName)
+            {
+                var first = true;
+                foreach (var property in grouping)
+                {
+                    if (first)
+                    {
+                        first = false;
+                        continue;
+                    }
+
+                    MyLog.WARNING.WriteLine("Multiple properties with the same name: {0}, generating unique name.",
+                        grouping.Key);
+                    property.PropertyName = Guid.NewGuid().ToString();
+                }
+            }
         }
     }
 }
