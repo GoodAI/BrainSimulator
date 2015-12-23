@@ -201,6 +201,7 @@
     </Node>
 
     <Node type="GoodAI.Modules.NeuralNetwork.Group.MyNeuralNetworkGroup" CanBeAdded="true" BigIcon="network_big.png" SmallIcon="network.png">
+      <Observer type="GoodAI.Modules.Observers.MyNeuralNetworkGroupObserver" />
       <Label>Neural Networks</Label>
     </Node>
     <Node type="GoodAI.Modules.NeuralNetwork.Layers.MyHiddenLayer" CanBeAdded="true" BigIcon="hidden_layer_big.png" SmallIcon="hidden_layer.png">

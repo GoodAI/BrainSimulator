@@ -156,6 +156,7 @@
     <Compile Include="Join\Stacking\MyStackingOps.cs" />
     <Compile Include="MastermindWorld\MyMastermindEngine.cs" />
     <Compile Include="MastermindWorld\MyMastermindWorld.cs" />
+    <Compile Include="NeuralNetwork\Group\MyNeuralNetworkGroupObservers.cs" />
     <Compile Include="NeuralNetwork\MyReplayBuffer.cs" />
     <Compile Include="NeuralNetwork\Layers\IPartialUpdateLayer.cs" />
     <Compile Include="NeuralNetwork\Layers\MyGaussianHiddenLayer.cs" />
