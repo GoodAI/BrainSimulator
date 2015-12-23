@@ -168,6 +168,7 @@ namespace GoodAI.BrainSimulator.NodeView
             }
 
             UpdateStatusBar();
+            Owner.Invalidate();
         }           
 
         public override void OnEndDrag()

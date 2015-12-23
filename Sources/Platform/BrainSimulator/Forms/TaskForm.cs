@@ -131,6 +131,8 @@ namespace GoodAI.BrainSimulator.Forms
                     OnPropertyChanged(target, propertyName);
 
                     UpdateTasksEnableState();
+
+                    task.GenericOwner.Updated();
                 }
             }
         }
