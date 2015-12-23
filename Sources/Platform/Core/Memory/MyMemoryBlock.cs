@@ -37,7 +37,7 @@ namespace GoodAI.Core.Memory
         public abstract void FreeHost();
         public abstract void FreeDevice();
 
-        public abstract bool Reallocate(int newCount);
+        public abstract bool Reallocate(int newCount, bool copyData = true);
 
         public abstract bool SafeCopyToDevice();
         public abstract void SafeCopyToHost();
@@ -205,7 +205,7 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public override bool Reallocate(int newCount)
+        public override bool Reallocate(int newCount, bool copyData = true)
         {
             if (!IsDynamic)
             {
@@ -253,11 +253,14 @@ namespace GoodAI.Core.Memory
 
             // Both the host and the device have enough memory for the reallocation.
 
-            // Copy the host data.
-            Array.Copy(Host, newHostMemory, Math.Min(newCount, oldCount));
+            if (copyData)
+            {
+                // Copy the host data.
+                Array.Copy(Host, newHostMemory, Math.Min(newCount, oldCount));
 
-            // Copy the device data.
-            newDeviceMemory.CopyToDevice(Device[Owner.GPU]);
+                // Copy the device data.
+                newDeviceMemory.CopyToDevice(Device[Owner.GPU]);
+            }
 
             // This will get rid of the original host memory.
             Host = newHostMemory;
