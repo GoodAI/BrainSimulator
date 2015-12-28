@@ -64,50 +64,30 @@ namespace GoodAI.BrainSimulator.Forms
         {
             OnPropertyChanged(e.ChangedItem.PropertyDescriptor.Name);
 
-            MyNodeView nodeView = null;
+            var node = propertyGrid.SelectedObject as MyNode;
+            if (node != null)
+            {
+                if (node.AnyOutputSizeChanged())
+                    m_mainForm.CloseObservers(node);
 
-            foreach(GraphLayoutForm graphView in m_mainForm.GraphViews.Values) {
+                var nodeGroup = node as MyNodeGroup;
+                if (nodeGroup != null)
+                    m_mainForm.ReloadGraphLayout(nodeGroup);
 
-                if (graphView.Desktop.FocusElement is MyNodeView 
-                    && (graphView.Desktop.FocusElement as MyNodeView).Node == propertyGrid.SelectedObject)
-                {
-                    nodeView = graphView.Desktop.FocusElement as MyNodeView;                    
-                    nodeView.UpdateView();               
-                }
+                node.Updated();
+            }
 
+            foreach (GraphLayoutForm graphView in m_mainForm.GraphViews.Values)
+            {
                 if (propertyGrid.SelectedObject is MyNodeGroup && graphView.Target == propertyGrid.SelectedObject)
-                {
                     graphView.Text = graphView.Target.Name;
-                }
-
-                graphView.Desktop.Invalidate();
             }
 
             foreach (TextEditForm textEditor in m_mainForm.TextEditors.Values)
             {
                 if (textEditor.Target == propertyGrid.SelectedObject)
-                {
                     textEditor.Text = textEditor.Target.Name;
-                }
             }
-
-            if (nodeView != null)
-            {
-                if (nodeView.BranchChangeNeeded)
-                {
-                    if (nodeView.OutputBranchChangeNeeded)
-                    {
-                        m_mainForm.CloseObservers(nodeView.Node);
-                    }
-
-                    if (nodeView.Node is MyNodeGroup)
-                    {
-                        m_mainForm.ReloadGraphLayout(nodeView.Node as MyNodeGroup);
-                    }
-
-                    (nodeView as MyVariableBranchView).UpdateBranches();
-                }
-            }            
 
             propertyGrid.Refresh();
 
