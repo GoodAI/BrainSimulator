@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
-using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -336,7 +335,6 @@ namespace CoreTests
             // and the others get a new, unique name.
 
             var project = new MyProject();
-
 
             project.Dashboard = new Dashboard();
             project.GroupedDashboard = new GroupDashboard();

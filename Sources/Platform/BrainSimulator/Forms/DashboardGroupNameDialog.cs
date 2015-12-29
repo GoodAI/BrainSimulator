@@ -48,5 +48,10 @@ namespace GoodAI.BrainSimulator.Forms
             if (e.KeyCode == Keys.Enter)
                 SaveAndClose();
         }
+
+        private void groupNameText_TextChanged(object sender, EventArgs e)
+        {
+            okButton.Enabled = m_dashboard.CanChangeName(m_group, groupNameText.Text);
+        }
     }
 }

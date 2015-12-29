@@ -39,6 +39,7 @@
             this.groupNameText.Name = "groupNameText";
             this.groupNameText.Size = new System.Drawing.Size(127, 20);
             this.groupNameText.TabIndex = 0;
+            this.groupNameText.TextChanged += new System.EventHandler(this.groupNameText_TextChanged);
             this.groupNameText.KeyUp += new System.Windows.Forms.KeyEventHandler(this.groupNameText_KeyUp);
             // 
             // groupNameLabel
