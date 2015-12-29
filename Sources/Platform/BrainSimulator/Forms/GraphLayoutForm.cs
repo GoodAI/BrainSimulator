@@ -259,15 +259,11 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (m_mainForm.SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
             {
-                m_mainForm.PauseSimulationForAction(() =>
-                {
-                    MessageBox.Show("Not allowed during simulation", "Invalid operation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return true;
-                });                
-
+                MyLog.WARNING.WriteLine("Operation not allowed during simulation");
                 return true;
             }
-            else return false;
+            
+            return false;
         }
 
         private void Desktop_MouseDown(object sender, MouseEventArgs e)
