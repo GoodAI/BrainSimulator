@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace GoodAI.BrainSimulator.NodeView
 {
-    internal class MyNodeView : Node
+    internal class MyNodeView : Node, IDisposable
     {
         private MyNode m_node;
         public MyNode Node 
@@ -25,6 +25,12 @@ namespace GoodAI.BrainSimulator.NodeView
                 InitView();
                 m_node.NodeUpdated += OnNodeUpdated;
             }
+        }
+
+        public void Dispose()
+        {
+            if (m_node != null)
+                m_node.NodeUpdated -= OnNodeUpdated;
         }
 
         public MyNodeConfig Config { get; private set; }
@@ -168,6 +174,7 @@ namespace GoodAI.BrainSimulator.NodeView
             }
 
             UpdateStatusBar();
+            Owner.Invalidate();
         }           
 
         public override void OnEndDrag()

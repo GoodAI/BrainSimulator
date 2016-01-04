@@ -120,6 +120,14 @@ namespace GoodAI.BrainSimulator.NodeView
                 AddOutputBranch();
             }    
         }
+
+        public override void UpdateView()
+        {
+            base.UpdateView();
+
+            if (BranchChangeNeeded)
+                UpdateBranches();
+        }
     }
 
     internal class MyNodeGroupView : MyVariableBranchView
