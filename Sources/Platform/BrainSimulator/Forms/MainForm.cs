@@ -280,11 +280,31 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void SaveProjectAs()
         {
-            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                SaveProject(saveFileDialog.FileName);
-                m_recentMenu.AddFile(saveFileDialog.FileName);
-            }
+            if (saveFileDialog.ShowDialog(this) != DialogResult.OK)
+                return;
+
+            string newName = saveFileDialog.FileName;
+
+            string oldProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Project);
+            string newProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Path.GetFileNameWithoutExtension(newName));
+            CopyDirectory(oldProjectDataPath, newProjectDataPath);
+
+            SaveProject(newName);
+            m_recentMenu.AddFile(newName);
+        }
+
+        private void CopyDirectory(string sourcePath, string destinationPath)
+        {
+            if (!Directory.Exists(sourcePath))
+                return;
+
+            // Create all of the directories.
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, destinationPath));
+
+            // Copy all the files & replace any files with the same name.
+            foreach (string sourceFilePath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+                File.Copy(sourceFilePath, sourceFilePath.Replace(sourcePath, destinationPath), true);
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
