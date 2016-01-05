@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.UserSettings;
 
 namespace GoodAI.BrainSimulator.Forms
 {    
@@ -37,12 +38,15 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void FillWithEnabledNodes()
         {
-            Properties.Settings.Default.ToolBarNodes = new StringCollection();
-
-            foreach (UiNodeInfo item in m_nodeInfoItems.Where(item => item.ListViewItem.Checked))
+            AppSettings.SaveSettings(settings =>
             {
-                Properties.Settings.Default.ToolBarNodes.Add(item.Config.NodeType.Name);
-            }
+                settings.ToolBarNodes = new StringCollection();
+
+                foreach (UiNodeInfo item in m_nodeInfoItems.Where(item => item.ListViewItem.Checked))
+                {
+                    settings.ToolBarNodes.Add(item.Config.NodeType.Name);
+                }
+            });
         }
 
         private void GenerateNodeList()

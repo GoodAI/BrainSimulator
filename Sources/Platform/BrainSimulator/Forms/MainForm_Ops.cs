@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
 using GoodAI.Platform.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -97,7 +98,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 m_savedProjectRepresentation = fileContent;
 
-                Properties.Settings.Default.LastProject = fileName;
+                AppSettings.SaveSettings(settings => settings.LastProject = fileName);
 
                 Text = TITLE_TEXT + " - " + Project.Name;
             }
@@ -145,7 +146,8 @@ namespace GoodAI.BrainSimulator.Forms
                 throw new ProjectLoadingException("Project loading failed.", e);
             }
 
-            Properties.Settings.Default.LastProject = fileName;
+            AppSettings.SaveSettings(settings => settings.LastProject = fileName);
+
             saveFileDialog.FileName = fileName;
 
             m_savedProjectRepresentation = content;  // for "needs saving" detection
@@ -797,7 +799,7 @@ namespace GoodAI.BrainSimulator.Forms
             AddTimerMenuItem(timerToolStripSplitButton, timerItem_Click, 100);
             AddTimerMenuItem(timerToolStripSplitButton, timerItem_Click, 500);
 
-            timerItem_Click(timerToolStripSplitButton.DropDownItems[Properties.Settings.Default.StepDelay], EventArgs.Empty);
+            timerItem_Click(timerToolStripSplitButton.DropDownItems[Settings.Default.StepDelay], EventArgs.Empty);
 
             AddTimerMenuItem(observerTimerToolButton, observerTimerItem_Click, 0);
             AddTimerMenuItem(observerTimerToolButton, observerTimerItem_Click, 20);
@@ -806,7 +808,7 @@ namespace GoodAI.BrainSimulator.Forms
             AddTimerMenuItem(observerTimerToolButton, observerTimerItem_Click, 1000);
             AddTimerMenuItem(observerTimerToolButton, observerTimerItem_Click, 5000);
 
-            observerTimerItem_Click(observerTimerToolButton.DropDownItems[Properties.Settings.Default.ObserverPeriod], EventArgs.Empty);
+            observerTimerItem_Click(observerTimerToolButton.DropDownItems[Settings.Default.ObserverPeriod], EventArgs.Empty);
             
             PropertyDescriptor descriptor = TypeDescriptor.GetProperties(typeof(MyWorkingNode))["DataFolder"];
             EditorAttribute editor = (EditorAttribute)descriptor.Attributes[typeof(EditorAttribute)];
@@ -817,10 +819,10 @@ namespace GoodAI.BrainSimulator.Forms
             editor.GetType().GetField("baseTypeName", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(editor,
                 typeof(UITypeEditor).AssemblyQualifiedName);
 
-            autosaveTextBox.Text = Properties.Settings.Default.AutosaveInterval.ToString();
+            autosaveTextBox.Text = Settings.Default.AutosaveInterval.ToString();
             autosaveTextBox_Validating(this, new CancelEventArgs());
 
-            autosaveButton.Checked = Properties.Settings.Default.AutosaveEnabled;
+            autosaveButton.Checked = Settings.Default.AutosaveEnabled;
         }
 
         public void ProjectStateChanged(string action)
@@ -982,8 +984,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             foreach (MyWorldConfig wc in MyConfiguration.KnownWorlds.Values)
             {
-                bool isAmongToolBarNodes = (Properties.Settings.Default.ToolBarNodes != null &&
-                    Properties.Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name));
+                bool isAmongToolBarNodes = (Settings.Default.ToolBarNodes != null &&
+                    Settings.Default.ToolBarNodes.Contains(wc.NodeType.Name));
                 if (isAmongToolBarNodes || wc.IsBasicNode)
                 {
                     if (!worldList.Items.Contains(wc))
@@ -1000,15 +1002,15 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void SelectWorldInWorldList(MyWorld world)
         {
-            if (Properties.Settings.Default.ToolBarNodes == null)
+            if (Settings.Default.ToolBarNodes == null)
             {
-                Properties.Settings.Default.ToolBarNodes = new System.Collections.Specialized.StringCollection();
+                AppSettings.SaveSettings(settings => settings.ToolBarNodes = new System.Collections.Specialized.StringCollection());
             }
 
             // if the world is not present in the combo box, add it first
-            if (!Properties.Settings.Default.ToolBarNodes.Contains(world.GetType().Name))
+            if (!Settings.Default.ToolBarNodes.Contains(world.GetType().Name))
             {
-                Properties.Settings.Default.ToolBarNodes.Add(world.GetType().Name);
+                Settings.Default.ToolBarNodes.Add(world.GetType().Name);
                 worldList.Items.Add(MyConfiguration.KnownWorlds[Project.World.GetType()]);
             }
 
@@ -1053,7 +1055,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (item == sender)
                 {
-                    Properties.Settings.Default.StepDelay = i;
+                    AppSettings.SaveSettings(settings => settings.StepDelay = i);
                     SimulationHandler.SleepInterval = (int)item.Tag;
                     item.Checked = true;
                 }
@@ -1072,7 +1074,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (item == sender)
                 {
-                    Properties.Settings.Default.ObserverPeriod = i;
+                    AppSettings.SaveSettings(settings => settings.ObserverPeriod = i);
                     SimulationHandler.ReportInterval = (int)item.Tag;
                     item.Checked = true;
                 }

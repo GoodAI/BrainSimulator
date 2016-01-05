@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using GoodAI.Core.Memory;
 using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
 using GoodAI.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -107,7 +108,7 @@ namespace GoodAI.BrainSimulator.Forms
             Settings settings = Settings.Default;
             if (settings.QuickToolBarNodes == null)
             {
-                settings.QuickToolBarNodes = new StringCollection();
+                AppSettings.SaveSettings(savedSettings => savedSettings.QuickToolBarNodes = new StringCollection());
             }
 
             foreach (MyNodeConfig nodeConfig in categorizer.Nodes)
