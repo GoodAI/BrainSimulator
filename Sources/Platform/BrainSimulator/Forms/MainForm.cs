@@ -62,7 +62,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             Project.Restore();
 
-            StringCollection recentFilesList = Properties.Settings.Default.RecentFilesList;
+            StringCollection recentFilesList = Settings.Default.RecentFilesList;
 
             if (recentFilesList != null)
             {
@@ -74,7 +74,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private static void UpgradeUserSettings()
         {
-            Settings settings = Properties.Settings.Default;
+            Settings settings = Settings.Default;
 
             if (!settings.ShouldUpgradeSettings)
                 return;
@@ -101,9 +101,9 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     OpenProject(MyConfiguration.OpenOnStartupProjectName);
                 }
-                else if (!string.IsNullOrEmpty(Properties.Settings.Default.LastProject))
+                else if (!string.IsNullOrEmpty(Settings.Default.LastProject))
                 {
-                    OpenProject(Properties.Settings.Default.LastProject);
+                    OpenProject(Settings.Default.LastProject);
                 }
                 else
                 {
@@ -411,10 +411,10 @@ namespace GoodAI.BrainSimulator.Forms
         {
             StoreViewsLayout(UserLayoutFileName);
 
-            Properties.Settings.Default.RecentFilesList = new StringCollection();
-            Properties.Settings.Default.RecentFilesList.AddRange(m_recentMenu.GetFiles());
+            Settings.Default.RecentFilesList = new StringCollection();
+            Settings.Default.RecentFilesList.AddRange(m_recentMenu.GetFiles());
 
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -427,7 +427,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (openNodeFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                Properties.Settings.Default.UserNodesFile = openNodeFileDialog.FileName;
+                Settings.Default.UserNodesFile = openNodeFileDialog.FileName;
 
                 if (MessageBox.Show("Restart is needed for this action to take effect.\nDo you want to quit application?", "Restart needed",
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
@@ -587,7 +587,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             try
             {
-                MyDocProvider.Navigate(Properties.Settings.Default.HelpUrl);
+                MyDocProvider.Navigate(Settings.Default.HelpUrl);
             }
             catch (Exception exc)
             {
@@ -599,7 +599,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             autosaveTextBox.Enabled = autosaveButton.Checked;
             SimulationHandler.AutosaveEnabled = autosaveButton.Checked;
-            Properties.Settings.Default.AutosaveEnabled = autosaveButton.Checked;
+            Settings.Default.AutosaveEnabled = autosaveButton.Checked;
         }        
 
         private void autosaveTextBox_Validating(object sender, CancelEventArgs e)
@@ -609,7 +609,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (int.TryParse(autosaveTextBox.Text, out result))
             {
                 SimulationHandler.AutosaveInterval = result;
-                Properties.Settings.Default.AutosaveInterval = result;
+                Settings.Default.AutosaveInterval = result;
             }
             else
             {
