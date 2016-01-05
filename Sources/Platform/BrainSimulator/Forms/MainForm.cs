@@ -300,7 +300,8 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNetworkView();
             OpenGraphLayout(Project.Network);
 
-            Properties.Settings.Default.LastProject = String.Empty;
+            SetLastProject(String.Empty);
+
             saveFileDialog.FileName = String.Empty;
         }
 

@@ -97,7 +97,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 m_savedProjectRepresentation = fileContent;
 
-                Properties.Settings.Default.LastProject = fileName;
+                SetLastProject(fileName);
 
                 Text = TITLE_TEXT + " - " + Project.Name;
             }
@@ -145,7 +145,8 @@ namespace GoodAI.BrainSimulator.Forms
                 throw new ProjectLoadingException("Project loading failed.", e);
             }
 
-            Properties.Settings.Default.LastProject = fileName;
+            SetLastProject(fileName);
+
             saveFileDialog.FileName = fileName;
 
             m_savedProjectRepresentation = content;  // for "needs saving" detection
@@ -154,6 +155,12 @@ namespace GoodAI.BrainSimulator.Forms
             clearDataButton.Enabled = exportStateButton.Enabled;
 
             Text = TITLE_TEXT + " - " + Project.Name;
+        }
+
+        private static void SetLastProject(string fileName)
+        {
+            Settings.Default.LastProject = fileName;
+            Settings.Default.Save(); // So that if the app crashes, we still get this project.
         }
 
         private void ImportProject(string fileName, bool showObservers = false)
