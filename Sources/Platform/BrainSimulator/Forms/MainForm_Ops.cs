@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
 using GoodAI.Platform.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -97,7 +98,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 m_savedProjectRepresentation = fileContent;
 
-                SetLastProject(fileName);
+                AppSettings.SaveSettings(settings => settings.LastProject = fileName);
 
                 Text = TITLE_TEXT + " - " + Project.Name;
             }
@@ -145,7 +146,7 @@ namespace GoodAI.BrainSimulator.Forms
                 throw new ProjectLoadingException("Project loading failed.", e);
             }
 
-            SetLastProject(fileName);
+            AppSettings.SaveSettings(settings => settings.LastProject = fileName);
 
             saveFileDialog.FileName = fileName;
 
@@ -155,12 +156,6 @@ namespace GoodAI.BrainSimulator.Forms
             clearDataButton.Enabled = exportStateButton.Enabled;
 
             Text = TITLE_TEXT + " - " + Project.Name;
-        }
-
-        private static void SetLastProject(string fileName)
-        {
-            Settings.Default.LastProject = fileName;
-            Settings.Default.Save(); // So that if the app crashes, we still get this project.
         }
 
         private void ImportProject(string fileName, bool showObservers = false)
@@ -1009,7 +1004,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (Settings.Default.ToolBarNodes == null)
             {
-                Settings.Default.ToolBarNodes = new System.Collections.Specialized.StringCollection();
+                AppSettings.SaveSettings(settings => settings.ToolBarNodes = new System.Collections.Specialized.StringCollection());
             }
 
             // if the world is not present in the combo box, add it first
@@ -1060,7 +1055,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (item == sender)
                 {
-                    Settings.Default.StepDelay = i;
+                    AppSettings.SaveSettings(settings => settings.StepDelay = i);
                     SimulationHandler.SleepInterval = (int)item.Tag;
                     item.Checked = true;
                 }
@@ -1079,7 +1074,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (item == sender)
                 {
-                    Settings.Default.ObserverPeriod = i;
+                    AppSettings.SaveSettings(settings => settings.ObserverPeriod = i);
                     SimulationHandler.ReportInterval = (int)item.Tag;
                     item.Checked = true;
                 }

@@ -8,7 +8,7 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.BrainSimulator.UserSettings
 {
-    public static class AppSettings
+    internal static class AppSettings
     {
         public static MyLogLevel GetInitialLogLevel()
         {
@@ -37,6 +37,18 @@ namespace GoodAI.BrainSimulator.UserSettings
             {
                 MyLog.ERROR.WriteLine("Error resetting user configuration: " + ex.Message);
             }
+        }
+
+        internal static void SaveSettings(Action<Settings> action)
+        {
+            Settings settings = Settings.Default;
+
+            action(settings);
+
+            // The settings are only saved if no handlers threw anything.
+            // This is because Settings is INotifyPropertyChanged and the app might crash as a result of a setting, 
+            // and if it gets saved, it might cause the app to crash at startup next time.
+            settings.Save();
         }
     }
 }

@@ -300,7 +300,7 @@ namespace GoodAI.BrainSimulator.Forms
             CreateNetworkView();
             OpenGraphLayout(Project.Network);
 
-            SetLastProject(String.Empty);
+            AppSettings.SaveSettings(settings => settings.LastProject = String.Empty);
 
             saveFileDialog.FileName = String.Empty;
         }
@@ -411,10 +411,11 @@ namespace GoodAI.BrainSimulator.Forms
         {
             StoreViewsLayout(UserLayoutFileName);
 
-            Settings.Default.RecentFilesList = new StringCollection();
-            Settings.Default.RecentFilesList.AddRange(m_recentMenu.GetFiles());
-
-            Settings.Default.Save();
+            AppSettings.SaveSettings(settings =>
+            {
+                settings.RecentFilesList = new StringCollection();
+                settings.RecentFilesList.AddRange(m_recentMenu.GetFiles());
+            });
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -427,7 +428,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (openNodeFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                Settings.Default.UserNodesFile = openNodeFileDialog.FileName;
+                AppSettings.SaveSettings(settings => settings.UserNodesFile = openNodeFileDialog.FileName);
 
                 if (MessageBox.Show("Restart is needed for this action to take effect.\nDo you want to quit application?", "Restart needed",
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
@@ -599,7 +600,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             autosaveTextBox.Enabled = autosaveButton.Checked;
             SimulationHandler.AutosaveEnabled = autosaveButton.Checked;
-            Settings.Default.AutosaveEnabled = autosaveButton.Checked;
+
+            AppSettings.SaveSettings(settings => settings.AutosaveEnabled = autosaveButton.Checked);
         }        
 
         private void autosaveTextBox_Validating(object sender, CancelEventArgs e)
@@ -609,7 +611,8 @@ namespace GoodAI.BrainSimulator.Forms
             if (int.TryParse(autosaveTextBox.Text, out result))
             {
                 SimulationHandler.AutosaveInterval = result;
-                Settings.Default.AutosaveInterval = result;
+
+                AppSettings.SaveSettings(settings => settings.AutosaveInterval = result);
             }
             else
             {

@@ -213,7 +213,7 @@ namespace GoodAI.BrainSimulator.Forms
         void logLevelStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             MyLog.Level = (MyLogLevel)logLevelStripComboBox.SelectedIndex;
-            Properties.Settings.Default.LogLevel = (int)MyLog.Level;
+            AppSettings.SaveSettings(settings => settings.LogLevel = (int)MyLog.Level);
         }
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
