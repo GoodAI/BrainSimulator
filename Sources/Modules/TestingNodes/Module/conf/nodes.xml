@@ -7,5 +7,8 @@
     <Node type="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicInputNode" CanBeAdded="true">
       <Label>Testing</Label>
     </Node>
+    <Node type="GoodAI.Modules.TestingNodes.BrainUnitNode" CanBeAdded="true">
+      <Label>Testing</Label>
+    </Node>
   </KnownNodes>
 </Configuration>

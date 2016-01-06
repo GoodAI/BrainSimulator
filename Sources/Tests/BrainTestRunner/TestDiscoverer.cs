@@ -13,29 +13,60 @@ namespace GoodAI.Tests.BrainTestRunner
 {
     internal class TestDiscoverer
     {
-        public TestDiscoverer()
+        private readonly string m_filter;
+
+        public TestDiscoverer(string filter)
         {
+            m_filter = filter != null ? filter.ToLower() : null;
             TestBinDirectory = Directory.GetCurrentDirectory();
+
+            BrainUnitNodeTestsDirectory =
+                Path.Combine(Directory.GetCurrentDirectory(), @"../../../BrainTests/BrainUnitNodeTests/");
         }
 
         public string TestBinDirectory { get; set; }
+
+        public string BrainUnitNodeTestsDirectory { get; set; }
 
         public IEnumerable<BrainTest> FindTests()
         {
             MyLogLevel originalLogLevel = MyLog.Level;
             MyLog.Level = MyLogLevel.INFO;
 
+            var testList = new List<BrainTest>();
+
             try
             {
-                return InnerFindTest();
+                testList.AddRange(SafeCollectTests(CollectBinaryTests));
+                testList.AddRange(SafeCollectTests(CollectBrainUnitNodeTests));
             }
             finally
             {
                 MyLog.Level = originalLogLevel;
             }
+
+            return string.IsNullOrEmpty(m_filter)
+                ? testList
+                : testList.Where(test => test.Name.ToLower().Contains(m_filter));
         }
 
-        private List<BrainTest> InnerFindTest()
+        /// <summary>
+        /// Safe means "does not throw exceptions".
+        /// </summary>
+        private static IEnumerable<BrainTest> SafeCollectTests(Func<IEnumerable<BrainTest>> collectTestsFunc)
+        {
+            try
+            {
+                return collectTestsFunc();
+            }
+            catch (Exception)
+            {
+                MyLog.ERROR.WriteLine("Failed to collect tests by '{0}'.", collectTestsFunc.Method.Name);
+                return new List<BrainTest>();
+            }
+        }
+
+        private IEnumerable<BrainTest> CollectBinaryTests()
         {
             var testList = new List<BrainTest>();
 
@@ -75,6 +106,19 @@ namespace GoodAI.Tests.BrainTestRunner
                 return new List<string>();
 
             return Directory.GetFiles(TestBinDirectory, @"*BrainTests.dll");
+        }
+
+        private IEnumerable<BrainTest> CollectBrainUnitNodeTests()
+        {
+            return FindBrainUnitNodeProjects().Select(path => new BrainUnitNodeTest(path));
+        }
+
+        private IEnumerable<string> FindBrainUnitNodeProjects()
+        {
+            if (string.IsNullOrEmpty(BrainUnitNodeTestsDirectory))
+                return new List<string>();
+
+            return Directory.GetFiles(BrainUnitNodeTestsDirectory, @"*.brain?"); 
         }
     }
 }

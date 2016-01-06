@@ -188,7 +188,7 @@ namespace GoodAI.Core.Execution
         {
             // Comparing strings is a really really bad hack. But == comparison of GetType() (or typeof) and type or using Equals methods stopped working.
             // And you cannot use "is" since the "type" is known at the execution time
-            FilterFunc filter = x => { if (x.GetType().ToString() == type.ToString()) return true; return false; };
+            FilterFunc filter = (x => x.GetType().ToString() == type.ToString());
             return Filter(filter);
         }
 

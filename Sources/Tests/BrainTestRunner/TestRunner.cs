@@ -29,14 +29,14 @@ namespace GoodAI.Tests.BrainTestRunner
         {
             m_discoverer = discoverer;
             m_reporter = reporter;
-            m_projectRunner = new MyProjectRunner(MyLogLevel.ERROR);
+            m_projectRunner = new MyProjectRunner(MyLogLevel.WARNING);  // TODO: make it configurable
         }
 
         public void Run()
         {
             foreach (BrainTest test in m_discoverer.FindTests())
             {
-                EvaluateTest(test);
+                EvaluateTest(test, m_projectRunner);
             }
 
             m_reporter.Conclude();
@@ -44,10 +44,12 @@ namespace GoodAI.Tests.BrainTestRunner
             m_projectRunner.Shutdown();
         }
 
-        private void EvaluateTest(BrainTest test)
+        private void EvaluateTest(BrainTest test, MyProjectRunner projectRunner)
         {
             try
             {
+                OpenProject(test, projectRunner);
+
                 ValidateTest(test);
 
                 m_reporter.StartTest(test);
@@ -74,28 +76,42 @@ namespace GoodAI.Tests.BrainTestRunner
             }
         }
 
-        private void RunTest(BrainTest test, MyProjectRunner projectRunner)
+        private void OpenProject(BrainTest test, MyProjectRunner projectRunner)
         {
-            projectRunner.OpenProject(FindBrainFile(test));
-            projectRunner.DumpNodes();
+            var brainUnitNodeTest = test as BrainUnitNodeTest;
+            if (brainUnitNodeTest != null)  // TODO: solve using polymorphism
+            {
+                brainUnitNodeTest.Initialize(projectRunner);
+            }
+            else
+            {
+                projectRunner.OpenProject(FindBrainFile(test));
+            }
+        }
 
+        private static void RunTest(BrainTest test, MyProjectRunner projectRunner)
+        {
             var brainScan = new BrainScan(projectRunner);
+            var step = new StepChecker();
 
             try
             {
-                do
+                while (true)
                 {
                     projectRunner.RunAndPause(GetIterationStepCount(test, projectRunner.SimulationStep));
 
-                    if (ShouldStop(test, brainScan))
+                    step.AssertIncreased(projectRunner.SimulationStep);
+
+                    if ((projectRunner.SimulationStep >= test.MaxStepCount) || ShouldStop(test, brainScan))
                         break;
                 }
-                while (projectRunner.SimulationStep < test.MaxStepCount);
 
                 test.Check(brainScan);
             }
             finally
             {
+                //MyLog.WARNING.WriteLine("  simulation step: {0}", projectRunner.SimulationStep);  // TODO(Premek): pass simulation step to the reporter
+
                 projectRunner.Reset();
             }
         }
@@ -155,6 +171,19 @@ namespace GoodAI.Tests.BrainTestRunner
                 throw new InvalidTestException("Invalid inspect interval: " + inspectInterval);
 
             return (uint)Math.Min(inspectInterval, test.MaxStepCount - simulationStep);   // limit to remaining steps
+        }
+
+        private class StepChecker
+        {
+            private uint m_stepBefore = 0;
+
+            public void AssertIncreased(uint step)
+            {
+                if (step == m_stepBefore)
+                    throw new InvalidOperationException("Step did not increase: simulation step canceled?");
+
+                m_stepBefore = step;
+            }
         }
     }
 }
