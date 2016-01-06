@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrainUnitNode.cs" />
+    <Compile Include="BrainUnitNodeSelfTests.cs" />
     <Compile Include="DynamicBlockNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
@@ -90,6 +91,10 @@
     <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Tests\BrainUnit\BrainUnit.csproj">
+      <Project>{6fcc90df-5301-4580-9b86-8a596cf9c9d9}</Project>
+      <Name>BrainUnit</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
