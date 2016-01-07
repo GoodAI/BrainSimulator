@@ -1,6 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using GoodAI.BrainSimulator.Nodes;
 using GoodAI.BrainSimulator.Utils;
+using Graph;
+
 namespace GoodAI.BrainSimulator.Forms
 {
     partial class GraphLayoutForm
@@ -214,6 +217,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.Desktop.TabIndex = 1;
             this.Desktop.Text = "desktop";
             this.Desktop.FocusChanged += new System.EventHandler<Graph.ElementEventArgs>(this.desktop_FocusChanged);
+            this.Desktop.ShowElementMenu += new EventHandler<AcceptElementLocationEventArgs>(this.desktop_ShowElementMenu);
             this.Desktop.NodeRemoving += new System.EventHandler<Graph.AcceptNodeEventArgs>(this.Desktop_NodeRemoving);
             this.Desktop.NodeRemoved += new System.EventHandler<Graph.NodeEventArgs>(this.Desktop_NodeRemoved);
             this.Desktop.ConnectionAdding += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionAdding);

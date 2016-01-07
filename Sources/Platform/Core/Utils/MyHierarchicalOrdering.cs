@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core.Nodes;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoodAI.Core.Utils
 {
@@ -97,22 +98,32 @@ namespace GoodAI.Core.Utils
             //mark node as processed
             node.TopologicalOrder = -2;
 
+            var backwardConnections = new List<MyConnection>();
+
             for (int i = 0; i < node.InputBranches; i++)
             {
                 MyConnection connection = node.InputConnections[i];
 
-                if (connection != null && nodes.Contains(connection.From))
+                if (connection == null)
+                    continue;
+
+                if (connection.IsBackward)
                 {
-                    VisitNode(connection.From, nodes, orderedNodes);
+                    backwardConnections.Add(connection);
+                    continue;
                 }
+
+                if (nodes.Contains(connection.From))
+                    VisitNode(connection.From, nodes, orderedNodes);
             }            
 
             orderedNodes.Add(node);
 
+            foreach (MyConnection connection in backwardConnections.Where(connection => nodes.Contains(connection.From)))
+                VisitNode(connection.From, nodes, orderedNodes);
+
             if (node is MyNodeGroup)
-            {
                 orderedNodes.AddRange(EvaluateOrder(node as MyNodeGroup));
-            }
         }       
     }
 }
