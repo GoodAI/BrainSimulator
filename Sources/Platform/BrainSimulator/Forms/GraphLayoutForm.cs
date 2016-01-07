@@ -419,13 +419,13 @@ namespace GoodAI.BrainSimulator.Forms
 
             Desktop.FocusChanged -= desktop_FocusChanged;
 
-            Desktop.ShowElementMenu -= desktop_ShowElementMenu;
+            Desktop.ShowElementMenu -= desktop_RightClick;
 
             Desktop.RemoveNodes(Desktop.Nodes.ToList());
             LoadContentIntoDesktop();
 
             Desktop.FocusChanged += desktop_FocusChanged;
-            Desktop.ShowElementMenu += desktop_ShowElementMenu;
+            Desktop.ShowElementMenu += desktop_RightClick;
 
             Desktop.NodeRemoving += Desktop_NodeRemoving;
             Desktop.NodeRemoved += Desktop_NodeRemoved;
@@ -582,7 +582,7 @@ namespace GoodAI.BrainSimulator.Forms
                 m_mainForm.ProjectStateChanged("Node(s) moved");
         }
 
-        private void desktop_ShowElementMenu(object sender, AcceptElementLocationEventArgs e)
+        private void desktop_RightClick(object sender, AcceptElementLocationEventArgs e)
         {
             var connectionEdge = e.Element as MyNodeViewConnection;
             if (connectionEdge == null)
