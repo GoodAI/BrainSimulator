@@ -593,7 +593,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             var connection = connectionEdge.Tag as MyConnection;
 
-            connection.IsBackward = !connection.IsBackward;
+            connection.IsLowPriority = !connection.IsLowPriority;
 
             m_mainForm.RefreshConnections(this);
         }

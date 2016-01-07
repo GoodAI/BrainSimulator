@@ -107,7 +107,7 @@ namespace GoodAI.Core.Utils
                 if (connection == null)
                     continue;
 
-                if (connection.IsBackward)
+                if (connection.IsLowPriority)
                 {
                     backwardConnections.Add(connection);
                     continue;

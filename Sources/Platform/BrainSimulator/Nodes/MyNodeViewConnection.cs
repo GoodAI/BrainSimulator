@@ -10,16 +10,22 @@ namespace GoodAI.BrainSimulator.Nodes
         {
             get
             {
+                string name = "0";
+
                 if (From != null && (From.Node is MyNodeView) && (Tag is MyConnection))
                 {
                     MyNodeView fromNodeView = From.Node as MyNodeView;
 
                     var memBlock = fromNodeView.Node.GetAbstractOutput((Tag as MyConnection).FromIndex);
                     if (memBlock != null)
-                        return memBlock.Dims.Print(hideTrailingOnes: true);
+                        name = memBlock.Dims.Print(hideTrailingOnes: true);
                 }
 
-                return "0";
+                var connection = Tag as MyConnection;
+                if (connection != null && connection.IsLowPriority)
+                    name = name + " (low priority)";
+
+                return name;
             }
             set
             {
