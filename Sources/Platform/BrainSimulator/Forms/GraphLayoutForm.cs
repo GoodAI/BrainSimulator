@@ -28,6 +28,8 @@ namespace GoodAI.BrainSimulator.Forms
         public GraphLayoutForm(MainForm mainForm, MyNodeGroup target)
         {
             InitializeComponent();
+            MakeToolStripArrowsPointRight();
+
             m_mainForm = mainForm;
             Target = target;
             Text = target.Name;
@@ -36,6 +38,14 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 return new MyNodeViewConnection();
             };            
+        }
+
+        private void MakeToolStripArrowsPointRight()
+        {
+            // this code was originally in the designer.cs, but it gets overwritten by a visual change there
+            // make toolstrip arrows point to the right -- the two lines must be in this order
+            nodesToolStrip.RenderMode = ToolStripRenderMode.Professional;
+            nodesToolStrip.Renderer = new NodeToolStripRenderer();
         }
 
         private ToolStripDropDownButton CreateToolStripMenu(string menuName, Image menuIcon)
