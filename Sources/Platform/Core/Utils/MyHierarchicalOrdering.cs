@@ -62,7 +62,7 @@ namespace GoodAI.Core.Utils
                 {
                     MyConnection connection = node.InputConnections[i];
 
-                    if (connection != null && nodes.Contains(connection.From))
+                    if (connection != null && !connection.IsLowPriority && nodes.Contains(connection.From))
                     {
                         destinations.Remove(connection.From);
                     }
@@ -98,8 +98,6 @@ namespace GoodAI.Core.Utils
             //mark node as processed
             node.TopologicalOrder = -2;
 
-            var backwardConnections = new List<MyConnection>();
-
             for (int i = 0; i < node.InputBranches; i++)
             {
                 MyConnection connection = node.InputConnections[i];
@@ -107,20 +105,15 @@ namespace GoodAI.Core.Utils
                 if (connection == null)
                     continue;
 
+                // Low priority connections are not processed. The nodes will be added to the destinations instead.
                 if (connection.IsLowPriority)
-                {
-                    backwardConnections.Add(connection);
                     continue;
-                }
 
                 if (nodes.Contains(connection.From))
                     VisitNode(connection.From, nodes, orderedNodes);
             }            
 
             orderedNodes.Add(node);
-
-            foreach (MyConnection connection in backwardConnections.Where(connection => nodes.Contains(connection.From)))
-                VisitNode(connection.From, nodes, orderedNodes);
 
             if (node is MyNodeGroup)
                 orderedNodes.AddRange(EvaluateOrder(node as MyNodeGroup));
