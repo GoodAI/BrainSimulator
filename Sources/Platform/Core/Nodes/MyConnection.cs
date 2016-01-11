@@ -44,7 +44,7 @@ namespace GoodAI.Core
                 // Check for this before adding the connection to the inputs.
                 if (To.InputConnections[ToIndex] != this)
                     // If the flag is already set, keep it, otherwise only set it if the edge would lead to a new cycle.
-                    IsLowPriority = IsLowPriority || From.CheckForNewCycle(To);
+                    IsLowPriority = IsLowPriority || From.CheckForCycle(To);
 
                 To.InputConnections[ToIndex] = this;
             }

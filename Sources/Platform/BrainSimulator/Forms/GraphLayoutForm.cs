@@ -23,7 +23,7 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private readonly MainForm m_mainForm;
 
-        public MyNodeGroup Target { get; private set; } 
+        public MyNodeGroup Target { get; private set; }
 
         public GraphLayoutForm(MainForm mainForm, MyNodeGroup target)
         {
@@ -33,11 +33,11 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm = mainForm;
             Target = target;
             Text = target.Name;
-            
+
             Desktop.CreateConnection = delegate()
             {
                 return new MyNodeViewConnection();
-            };            
+            };
         }
 
         private void MakeToolStripArrowsPointRight()
@@ -59,7 +59,7 @@ namespace GoodAI.BrainSimulator.Forms
             newMenu.Name = menuName;
             newMenu.AutoSize = false;
             newMenu.ImageScaling = ToolStripItemImageScaling.None;
-            newMenu.Size = new System.Drawing.Size(46, 36);            
+            newMenu.Size = new System.Drawing.Size(46, 36);
             return newMenu;
         }
 
@@ -94,10 +94,11 @@ namespace GoodAI.BrainSimulator.Forms
 
             CategorySortingHat categorizer = CategorizeEnabledNodes();
 
-            foreach (NodeCategory category in categorizer.SortedCategories.Reverse())  // drop downs are added from the bottom
+            foreach (NodeCategory category in categorizer.SortedCategories.Reverse())
+                // drop downs are added from the bottom
             {
                 ToolStripDropDownButton toolbarDropDown = CreateToolStripMenu(category.Name, category.SmallImage);
-                toolbarDropDown.Tag = category.Name;  // TODO(Premek): pass target drop down in a UiTag attribute
+                toolbarDropDown.Tag = category.Name; // TODO(Premek): pass target drop down in a UiTag attribute
                 toolbarDropDown.ToolTipText = category.Name;
 
                 nodesToolStrip.Items.Add(toolbarDropDown);
@@ -127,7 +128,7 @@ namespace GoodAI.BrainSimulator.Forms
                     AddNodeButton(nodeConfig);
             }
         }
- 
+
         private void GraphLayoutForm_Load(object sender, EventArgs e)
         {
             InitToolBar();
@@ -143,16 +144,17 @@ namespace GoodAI.BrainSimulator.Forms
             groupButtonPanel.Visible = Target != m_mainForm.Project.Network;
 
             m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
-            SimulationHandler_StateChanged(this, 
-                new MySimulationHandler.StateEventArgs(m_mainForm.SimulationHandler.State, m_mainForm.SimulationHandler.State));
-            
+            SimulationHandler_StateChanged(this,
+                new MySimulationHandler.StateEventArgs(m_mainForm.SimulationHandler.State,
+                    m_mainForm.SimulationHandler.State));
+
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
         }
 
         void Desktop_PanZoomPerformed(object sender, GraphControl.PanZoomEventArgs e)
         {
             StoreLayoutProperties();
-        }        
+        }
 
         private void addNodeButton_MouseDown(object sender, MouseEventArgs e)
         {
@@ -164,7 +166,7 @@ namespace GoodAI.BrainSimulator.Forms
             MyNodeView newNodeView = MyNodeView.CreateNodeView(nodeType, Desktop);
 
             var dataObject = new DataObject();
-            dataObject.SetData(typeof(MyNodeView), newNodeView);  // required to get derived types from GetData
+            dataObject.SetData(typeof (MyNodeView), newNodeView); // required to get derived types from GetData
 
             DragDropEffects result = DoDragDrop(dataObject, DragDropEffects.Copy);
             if (result != DragDropEffects.Copy)
@@ -215,10 +217,10 @@ namespace GoodAI.BrainSimulator.Forms
         void OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
         {
             MyNode fromNode = (e.Connection.From.Node as MyNodeView).Node;
-            MyNode toNode = (e.Connection.To.Node as MyNodeView).Node;      
+            MyNode toNode = (e.Connection.To.Node as MyNodeView).Node;
 
-            int fromIndex = (int)e.Connection.From.Item.Tag;
-            int toIndex = (int)e.Connection.To.Item.Tag;
+            int fromIndex = (int) e.Connection.From.Item.Tag;
+            int toIndex = (int) e.Connection.To.Item.Tag;
 
             if (toNode.AcceptsConnection(fromNode, fromIndex, toIndex))
             {
@@ -252,7 +254,7 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         private void desktop_FocusChanged(object sender, ElementEventArgs e)
-        {            
+        {
             GraphLayoutForm_Enter(sender, EventArgs.Empty);
         }
 
@@ -264,7 +266,7 @@ namespace GoodAI.BrainSimulator.Forms
         private void desktop_MouseLeave(object sender, EventArgs e)
         {
             if (Desktop.Focused) Desktop.Parent.Focus();
-        }        
+        }
 
         private bool TestIfInsideSimulation()
         {
@@ -273,7 +275,7 @@ namespace GoodAI.BrainSimulator.Forms
                 MyLog.WARNING.WriteLine("Operation not allowed during simulation");
                 return true;
             }
-            
+
             return false;
         }
 
@@ -295,7 +297,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     m_mainForm.OpenTextEditor(nodeView.Node as MyScriptableNode);
                 }
-            }            
+            }
         }
 
         private void Desktop_NodeRemoving(object sender, AcceptNodeEventArgs e)
@@ -318,7 +320,7 @@ namespace GoodAI.BrainSimulator.Forms
             Target.RemoveChild(node);
             if (node is MyNodeGroup)
             {
-                m_mainForm.CloseGraphLayout(node as MyNodeGroup);                            
+                m_mainForm.CloseGraphLayout(node as MyNodeGroup);
             }
             else if (node is MyScriptableNode)
             {
@@ -345,7 +347,7 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.HelpView.Target = world;
 
             worldButtonPanel.BackColor = Color.DarkOrange;
-            groupButtonPanel.BackColor = SystemColors.Control;            
+            groupButtonPanel.BackColor = SystemColors.Control;
         }
 
         private void Desktop_ConnectionRemoving(object sender, AcceptNodeConnectionEventArgs e)
@@ -419,19 +421,16 @@ namespace GoodAI.BrainSimulator.Forms
 
             Desktop.FocusChanged -= desktop_FocusChanged;
 
-            Desktop.ShowElementMenu -= desktop_RightClick;
-
             Desktop.RemoveNodes(Desktop.Nodes.ToList());
             LoadContentIntoDesktop();
 
             Desktop.FocusChanged += desktop_FocusChanged;
-            Desktop.ShowElementMenu += desktop_RightClick;
 
             Desktop.NodeRemoving += Desktop_NodeRemoving;
             Desktop.NodeRemoved += Desktop_NodeRemoved;
 
             Desktop.NodeRemoved += Desktop_NodeRemoved;
-            
+
             Desktop.ConnectionAdded += OnConnectionAdded;
             Desktop.ConnectionRemoved += OnConnectionRemoved;
         }
@@ -481,7 +480,7 @@ namespace GoodAI.BrainSimulator.Forms
             m_mainForm.HelpView.Target = group;
 
             worldButtonPanel.BackColor = SystemColors.Control;
-            groupButtonPanel.BackColor = Color.DarkOrange;            
+            groupButtonPanel.BackColor = Color.DarkOrange;
         }
 
         private void desktopContextMenuStrip_Opened(object sender, EventArgs e)
@@ -542,7 +541,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             AddQuickToolBarItem(nodeConfig);
 
-            e.Effect = DragDropEffects.None;  // prevent creation of the actual node
+            e.Effect = DragDropEffects.None; // prevent creation of the actual node
         }
 
         private void AddQuickToolBarItem(MyNodeConfig nodeConfig)
@@ -554,7 +553,7 @@ namespace GoodAI.BrainSimulator.Forms
             // TODO: Add undo here if we also want to undo non-model-related actions
         }
 
-        private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig) 
+        private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig)
         {
             nodeConfig = GetNodeConfigFromDropData(data);
             if (nodeConfig == null)
@@ -581,21 +580,5 @@ namespace GoodAI.BrainSimulator.Forms
             if (e.Target is Node)
                 m_mainForm.ProjectStateChanged("Node(s) moved");
         }
-
-        private void desktop_RightClick(object sender, AcceptElementLocationEventArgs e)
-        {
-            var connectionEdge = e.Element as MyNodeViewConnection;
-            if (connectionEdge == null)
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            var connection = connectionEdge.Tag as MyConnection;
-
-            connection.IsLowPriority = !connection.IsLowPriority;
-
-            m_mainForm.RefreshConnections(this);
-        }
-    }      
+    }
 }

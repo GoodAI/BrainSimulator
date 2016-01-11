@@ -21,10 +21,6 @@ namespace GoodAI.BrainSimulator.Nodes
                         name = memBlock.Dims.Print(hideTrailingOnes: true);
                 }
 
-                var connection = Tag as MyConnection;
-                if (connection != null && connection.IsLowPriority)
-                    name = name + " (low priority)";
-
                 return name;
             }
             set
