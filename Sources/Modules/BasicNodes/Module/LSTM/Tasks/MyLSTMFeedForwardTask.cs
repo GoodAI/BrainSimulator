@@ -56,7 +56,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                     m_netInputFeedForwardKernel.GridDimensions = Owner.MemoryBlocks;
                     m_netInputFeedForwardKernel.BlockDimensions = 512;
 
-                    m_segmented = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f, Owner.MemoryBlocks);
+                    m_segmented = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f, Owner.MemoryBlocks, true);
 
                     m_cellStateFeedForwardKernel = MyKernelFactory.Instance.Kernel(nGPU, @"LSTM\LSTMFeedForwardKernel", "CellStateFeedForwardKernelBPTT");
                     m_cellStateFeedForwardKernel.BlockDimensions = Owner.MemoryBlocks;
