@@ -3,9 +3,11 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using GoodAI.Platform.Core.Nodes;
 using GoodAI.Platform.Core.Utils;
 
 namespace GoodAI.Core.Execution
@@ -50,18 +52,20 @@ namespace GoodAI.Core.Execution
         public MyExecutionBlock[] CurrentDebuggedBlocks { get; internal set; }
 
         public IMyExecutionPlanner ExecutionPlanner { get; set; }
-        public IMyPartitionStrategy PartitioningStrategy { get; set; }
 
-        public MyExecutionPlan[] ExecutionPlan { get; protected set; }
-        public List<MyWorkingNode>[] NodePartitioning { get; protected set; }
+        public MyExecutionPlan ExecutionPlan { get; protected set; }
+        public HashSet<MyWorkingNode> AllNodes { get; protected set; }
+
+        protected IList<IModelChanger> ModelChangingNodeGroups { get; set; }
 
 
         protected bool m_errorOccured;
         protected Exception m_lastException;
+        protected MyProject m_project;
 
         public void OnStateChanged(object sender, MySimulationHandler.StateEventArgs args)
         {
-            foreach (MyWorkingNode node in NodePartitioning.SelectMany(nodeList => nodeList))
+            foreach (MyWorkingNode node in AllNodes)
                 node.OnSimulationStateChanged(args);
         }
 
@@ -91,6 +95,12 @@ namespace GoodAI.Core.Execution
 
         public abstract void AllocateMemory();
         public abstract void PerformStep(bool stepByStepRun);
+
+        /// <summary>
+        /// Indicates that the simulation is in between two simulation steps.
+        /// This should be true after each PerformStep run during normal simulation, and can be false during debug.
+        /// </summary>
+        public abstract bool IsStepFinished { get; }
         public abstract void FreeMemory();
 
         public abstract void StepOver();
@@ -99,7 +109,7 @@ namespace GoodAI.Core.Execution
 
         public virtual void Clear()
         {
-            NodePartitioning = null;
+            AllNodes = null;
             ExecutionPlan = null;
         }
 
@@ -114,38 +124,30 @@ namespace GoodAI.Core.Execution
 
         public void Schedule(MyProject project)
         {
-            MyExecutionPlan singleCoreExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project);
-            ExecutionPlan = PartitioningStrategy.Divide(singleCoreExecutionPlan);
+            m_project = project;
+            ExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project);
+            //ExecutionPlan = PartitioningStrategy.Divide(singleCoreExecutionPlan);
 
             //TODO: remove this and replace with proper project traversal to find nodes with no tasks!
-            ExtractPartitioningFromExecutionPlan();
+            ExtractAllNodes(m_project);
         }
 
-        private void ExtractPartitioningFromExecutionPlan()
+        private void ExtractAllNodes(MyProject project)
         {
-            if (ExecutionPlan == null)
-                throw new SimulationControlException("The simulation is not set up.");
+            AllNodes = new HashSet<MyWorkingNode>();
+            ModelChangingNodeGroups = new List<IModelChanger>();
 
-            HashSet<MyWorkingNode>[] indexTable = new HashSet<MyWorkingNode>[ExecutionPlan.Length];
-            NodePartitioning = new List<MyWorkingNode>[ExecutionPlan.Length];
+            AllNodes.Add(project.World);
 
-            MyExecutionBlock.IteratorAction extractNodesAction = delegate(IMyExecutable executable)
+            project.Network.Iterate(true, true, node =>
             {
-                if (executable is MyTask)
-                {
-                    MyWorkingNode taskOwner = (executable as MyTask).GenericOwner;
-                    indexTable[taskOwner.GPU].Add(taskOwner);
-                }
-            };
+                var workingNode = node as MyWorkingNode;
+                if (workingNode != null)
+                    AllNodes.Add(workingNode);
 
-            ExecutionPlan.EachWithIndex((item, i) =>
-            {
-                indexTable[i] = new HashSet<MyWorkingNode>();
-
-                ExecutionPlan[i].InitStepPlan.Iterate(true, extractNodesAction);
-                ExecutionPlan[i].StandardStepPlan.Iterate(true, extractNodesAction);
-
-                NodePartitioning[i] = new List<MyWorkingNode>(indexTable[i]);
+                var modelChanger = node as IModelChanger;
+                if (modelChanger != null)
+                    ModelChangingNodeGroups.Add(modelChanger);
             });
         }
 
@@ -158,7 +160,7 @@ namespace GoodAI.Core.Execution
         private void CleanBreakpoints()
         {
             var orphanedExecutables = new HashSet<IMyExecutable>(Breakpoints);
-            ExecutionPlan[0].StandardStepPlan.Iterate(true, executable => orphanedExecutables.Remove(executable));
+            ExecutionPlan.StandardStepPlan.Iterate(true, executable => orphanedExecutables.Remove(executable));
 
             foreach (var executable in orphanedExecutables)
                 Breakpoints.Remove(executable);
@@ -166,8 +168,8 @@ namespace GoodAI.Core.Execution
 
         private void CleanProfilingTimes()
         {
-            CleanExecutionBlockProfilingTimes(ExecutionPlan[0].InitStepPlan);
-            CleanExecutionBlockProfilingTimes(ExecutionPlan[0].StandardStepPlan);
+            CleanExecutionBlockProfilingTimes(ExecutionPlan.InitStepPlan);
+            CleanExecutionBlockProfilingTimes(ExecutionPlan.StandardStepPlan);
         }
 
         private void CleanExecutionBlockProfilingTimes(MyExecutionBlock plan)
@@ -179,14 +181,16 @@ namespace GoodAI.Core.Execution
                     executableBlock.CleanProfilingTimes();
             });
         }
+
+        public abstract void PerformModelChanges();
+        public abstract void Reallocate();
     }
 
-    public class MyLocalSimulation : MySimulation
+    public sealed class MyLocalSimulation : MySimulation
     {
-        private MyThreadPool m_threadPool;
+        private readonly MyThreadPool m_threadPool;
         protected bool m_debugStepComplete;
         private bool m_debugInitInProgress;
-
 
         public MyLocalSimulation()
         {
@@ -200,7 +204,6 @@ namespace GoodAI.Core.Execution
                     PlanSignalTasks = true
                 };
 
-                PartitioningStrategy = new MyAllInOneGPUPartitioning(MyKernelFactory.Instance.DevCount, 0);
                 CurrentDebuggedBlocks = new MyExecutionBlock[MyKernelFactory.Instance.DevCount];
             }
             catch (Exception e)
@@ -217,35 +220,44 @@ namespace GoodAI.Core.Execution
         {
             base.Init();
 
-            if (NodePartitioning == null)
+            if (AllNodes == null)
                 throw new SimulationControlException("The execution plan is not set up.");
 
-            NodePartitioning.EachWithIndex((partition, i) =>
+            foreach (MyWorkingNode node in AllNodes)
             {
-                MyKernelFactory.Instance.SetCurrent(i);
+                MyKernelFactory.Instance.SetCurrent(0);
 
-                foreach (MyWorkingNode node in partition)
-                {
-                    //TODO: fix UI to not flicker and disable next line to clear signals after every simulation step
-                    node.ClearSignals();
-                    node.InitTasks();
-                }
-            });
+                //TODO: fix UI to not flicker and disable next line to clear signals after every simulation step
+                node.ClearSignals();
+                node.InitTasks();
+            }
         }
 
         public override void AllocateMemory()
         {
-            if (NodePartitioning == null)
+            if (AllNodes == null)
                 throw new SimulationControlException("The execution plan is not set up.");
 
-            NodePartitioning.EachWithIndex((partition, i) =>
+            AllocateMemory(AllNodes);
+        }
+
+        private static void AllocateMemory(IEnumerable<MyWorkingNode> nodes)
+        {
+            foreach (MyWorkingNode node in nodes)
             {
-                foreach (MyWorkingNode node in partition)
-                {
-                    MyKernelFactory.Instance.SetCurrent(i);
-                    MyMemoryManager.Instance.AllocateBlocks(node, false);
-                }
-            });
+                MyKernelFactory.Instance.SetCurrent(0);
+                MyMemoryManager.Instance.AllocateBlocks(node, false);
+            }
+        }
+
+        private static void AllocateMemory(MyNode node)
+        {
+            var workingNode = node as MyWorkingNode;
+            if (workingNode == null)
+                return;
+
+            MyKernelFactory.Instance.SetCurrent(0);
+            MyMemoryManager.Instance.AllocateBlocks(node, false);
         }
 
         /// <summary>
@@ -264,33 +276,25 @@ namespace GoodAI.Core.Execution
                 {
                     throw m_lastException;
                 }
-                else
-                {
-                    throw new MySimulationException(-1, "Unknown simulation exception occured");
-                }
+
+                throw new MySimulationException(-1, "Unknown simulation exception occured");
             }
 
             //mainly for observers
             if (InDebugMode && stepByStepRun)
             {
-                if (NodePartitioning == null)
+                if (AllNodes == null)
                     throw new SimulationControlException("The execution plan is not set up.");
 
-                for (int i = 0; i < NodePartitioning.Length; i++)
-                {
-                    List<MyWorkingNode> nodeList = NodePartitioning[i];
-                    MyKernelFactory.Instance.SetCurrent(i);
+                MyKernelFactory.Instance.SetCurrent(0);
 
-                    foreach (MyWorkingNode node in nodeList)
-                    {
-                        MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
-                    }
-                }
+                foreach (MyWorkingNode node in AllNodes)
+                    MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
             }
 
             if (!InDebugMode || m_debugStepComplete)
             {
-                if (NodePartitioning == null)
+                if (AllNodes == null)
                     throw new SimulationControlException("The simulation is not set up.");
 
                 bool doAutoSave = SimulationStep > 0 && AutoSaveInterval > 0 && SimulationStep % AutoSaveInterval == 0;
@@ -300,36 +304,34 @@ namespace GoodAI.Core.Execution
                     MyLog.INFO.WriteLine("Autosave (" + SimulationStep + " steps)");
                 }
 
-                if (NodePartitioning == null)
+                if (AllNodes == null)
                     throw new SimulationControlException("The simulation is not set up.");
 
-                for (int i = 0; i < NodePartitioning.Length; i++)
+                MyKernelFactory.Instance.SetCurrent(0);
+
+                if (SimulationStep == 0)
                 {
-                    List<MyWorkingNode> nodeList = NodePartitioning[i];
-                    MyKernelFactory.Instance.SetCurrent(i);
+                    LoadBlocks(AllNodes);
+                }
 
-                    if (SimulationStep == 0)
-                    {
-                        LoadBlocks(nodeList);
-                    }
+                if (doAutoSave)
+                {
+                    SaveBlocks(AllNodes);
+                }
 
-                    if (doAutoSave)
-                    {
-                        SaveBlocks(nodeList);
-                    }
+                foreach (MyWorkingNode node in AllNodes)
+                {
+                    //TODO: fix UI to not flicker and enable this line to clear signals after every simulation step
+                    //node.ClearSignals();
 
-                    foreach (MyWorkingNode node in nodeList)
-                    {
-                        //TODO: fix UI to not flicker and enable this line to clear signals after every simulation step
-                        //node.ClearSignals();
-
-                        MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
-                    }
-                };
+                    MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
+                }
 
                 SimulationStep++;
             }
         }
+
+        public override bool IsStepFinished { get { return m_debugStepComplete; } }
 
         private void InitCore(int coreNumber)
         {
@@ -347,10 +349,9 @@ namespace GoodAI.Core.Execution
                     // This is the first debug step.
                     if (SimulationStep == 0 && currentBlock == null)
                     {
-                        ExecutionPlan[coreNumber].InitStepPlan.Reset();
-                        currentBlock = ExecutionPlan[coreNumber].InitStepPlan;
-
                         m_debugInitInProgress = true;
+                        ExecutionPlan.InitStepPlan.Reset();
+                        currentBlock = ExecutionPlan.InitStepPlan;
                         m_debugStepComplete = false;
                     }
 
@@ -373,8 +374,9 @@ namespace GoodAI.Core.Execution
                             m_debugStepComplete = false;  // This means the init plan got finished, not the standard plan.
 
                         m_debugInitInProgress = false;
-                        ExecutionPlan[coreNumber].StandardStepPlan.Reset();
-                        currentBlock = ExecutionPlan[coreNumber].StandardStepPlan;
+
+                        ExecutionPlan.StandardStepPlan.Reset();
+                        currentBlock = ExecutionPlan.StandardStepPlan;
                         leavingTargetBlock = true;
                     }
                     else
@@ -406,13 +408,13 @@ namespace GoodAI.Core.Execution
                 {
                     if (SimulationStep == 0)
                     {
-                        ExecutionPlan[coreNumber].InitStepPlan.SimulationStep = 0;
-                        ExecutionPlan[coreNumber].InitStepPlan.Execute();
+                        ExecutionPlan.InitStepPlan.SimulationStep = 0;
+                        ExecutionPlan.InitStepPlan.Execute();
                     }
 
                     //TODO: here should be else! (but some module are not prepared for this)
-                    ExecutionPlan[coreNumber].StandardStepPlan.SimulationStep = SimulationStep;
-                    ExecutionPlan[coreNumber].StandardStepPlan.Execute();
+                    ExecutionPlan.StandardStepPlan.SimulationStep = SimulationStep;
+                    ExecutionPlan.StandardStepPlan.Execute();
                 }
             }
             catch (Exception e)
@@ -433,22 +435,30 @@ namespace GoodAI.Core.Execution
 
         public override void FreeMemory()
         {
-            if (NodePartitioning == null)
+            if (AllNodes == null)
                 return;
 
-            NodePartitioning.EachWithIndex((partition, i) =>
-            {
-                MyKernelFactory.Instance.SetCurrent(i);
+            MyKernelFactory.Instance.SetCurrent(0);
 
-                SaveBlocks(partition);
+            SaveBlocks(AllNodes);
 
-                foreach (MyWorkingNode node in partition)
-                {
-                    MyMemoryManager.Instance.FreeBlocks(node, false);
+            FreeMemory(AllNodes);
+        }
 
-                    node.Cleanup();
-                }
-            });
+        private static void FreeMemory(IEnumerable<MyWorkingNode> nodes)
+        {
+            foreach (MyWorkingNode node in nodes)
+                FreeMemory(node);
+        }
+
+        private static void FreeMemory(MyNode node)
+        {
+            var workingNode = node as MyWorkingNode;
+            if (workingNode == null)
+                return;
+
+            MyMemoryManager.Instance.FreeBlocks(workingNode, false);
+            workingNode.Cleanup();
         }
 
         public override void StepOver()
@@ -508,7 +518,70 @@ namespace GoodAI.Core.Execution
             m_threadPool.FinishFromSTAThread();
         }
 
-        private void LoadBlocks(List<MyWorkingNode> nodeList)
+        public override void PerformModelChanges()
+        {
+            //var newModelChangingGroups = new List<IModelChanger>();
+            // Go through the topologically ordered model changing groups and allow them to restructure.
+            bool modelChanged = false;
+            ModelChangingNodeGroups.EachWithIndex((changer, i) =>
+            {
+                var removedNodes = new List<MyWorkingNode>();
+                var addedNodes = new List<MyWorkingNode>();
+
+                if (!changer.IsModelChanging)
+                    return;
+
+                modelChanged = true;
+                changer.ChangeModel(ref removedNodes, ref addedNodes);
+
+                // Clean up memory.
+                IterateNodes(removedNodes, FreeMemory);
+
+                // Update memory blocks of the newly added nodes.
+                // TODO(HonzaS): "shakedown" (the convergence of Count updates).
+                foreach (MyWorkingNode node in addedNodes)
+                    node.UpdateMemoryBlocks();
+
+                // Allocate new memory.
+                IterateNodes(addedNodes, AllocateMemory);
+
+                //newModelChangingGroups.Add(changer);
+                //IterateNodes(addedNodes, node =>
+                //{
+                //    var newChanger = node as IModelChanger;
+                //    if (newChanger != null)
+                //        newModelChangingGroups.Add(newChanger);
+                //});
+            });
+
+            //ModelChangingNodeGroups = newModelChangingGroups;
+
+            // Refresh topological ordering.
+            if (!modelChanged)
+                return;
+
+            MySimulationHandler.OrderNetworkNodes(m_project.Network);
+
+            Schedule(m_project);
+        }
+
+        private static void IterateNodes(IEnumerable<MyWorkingNode> nodes, MyNodeGroup.IteratorAction action)
+        {
+            foreach (MyWorkingNode node in nodes)
+            {
+                action(node);
+
+                var group = node as MyNodeGroup;
+                if (group != null)
+                    group.Iterate(true, action);
+            }
+        }
+
+        public override void Reallocate()
+        {
+        }
+
+        private void LoadBlocks(IEnumerable<MyWorkingNode> nodeList)
         {
             MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();
 
@@ -527,7 +600,7 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        private void SaveBlocks(List<MyWorkingNode> nodeList)
+        private void SaveBlocks(IEnumerable<MyWorkingNode> nodeList)
         {
             MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();
 

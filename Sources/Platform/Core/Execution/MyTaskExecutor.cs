@@ -65,7 +65,7 @@ namespace GoodAI.Core.Execution
             }     
         }
 
-        public void ResumeThreads(MyExecutionPlan[] executionPlan)
+        public void ResumeThreads(MyExecutionPlan executionPlan)
         {
             for (int i = 0; i < m_numOfThreads; i++)
             {

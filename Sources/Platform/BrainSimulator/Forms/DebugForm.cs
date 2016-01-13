@@ -16,7 +16,7 @@ namespace GoodAI.BrainSimulator.Forms
     public partial class DebugForm : DockContent
     {
         private readonly MainForm m_mainForm;        
-        private MyExecutionPlan[] m_executionPlan;
+        private MyExecutionPlan m_executionPlan;
 
 
         private MyDebugNode CreateDebugNode(IMyExecutable executable)
@@ -77,13 +77,10 @@ namespace GoodAI.BrainSimulator.Forms
 
             if (m_executionPlan != null)
             {
-                TreeModel treeModel = new TreeModel();
+                var treeModel = new TreeModel();
 
-                for (int i = 0; i < 1; i++)
-                {
-                    treeModel.Nodes.Add(CreateDebugNode(m_executionPlan[i].InitStepPlan));
-                    treeModel.Nodes.Add(CreateDebugNode(m_executionPlan[i].StandardStepPlan));
-                }
+                treeModel.Nodes.Add(CreateDebugNode(m_executionPlan.InitStepPlan));
+                treeModel.Nodes.Add(CreateDebugNode(m_executionPlan.StandardStepPlan));
 
                 debugTreeView.Model = treeModel;
                 debugTreeView.ExpandAll();

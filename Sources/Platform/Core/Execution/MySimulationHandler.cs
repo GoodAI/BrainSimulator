@@ -275,7 +275,7 @@ namespace GoodAI.Core.Execution
             long reportStart = progressUpdateStopWatch.ElapsedTicks;
             int speedStart = Environment.TickCount;
             uint speedStep = SimulationStep;
-            uint performedSteps = 0;
+            uint performedSteps = 0;  // During debug, this counts IMyExecutable steps as opposed to whole sim steps.
 
             while (true)
             {
@@ -293,6 +293,13 @@ namespace GoodAI.Core.Execution
 
                 try
                 {
+                    // If the simulation is in between two steps, we allow for model changes, block reallocation etc.
+                    if (Simulation.IsStepFinished)
+                    {
+                        Simulation.PerformModelChanges();
+                        //Simulation.Reallocate();
+                    }
+
                     Simulation.PerformStep(State == SimulationState.RUNNING_STEP);
                     ++performedSteps;
                 }
@@ -433,7 +440,7 @@ namespace GoodAI.Core.Execution
             return anyOutputChanged;                        
         }
 
-        private static List<MyNode> OrderNetworkNodes(MyNetwork network)
+        public static List<MyNode> OrderNetworkNodes(MyNodeGroup network)
         {
             IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
             return topoOps.EvaluateOrder(network);
