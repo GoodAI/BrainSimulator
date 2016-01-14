@@ -246,7 +246,6 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 	DDotProduct<R, T, tCnt>(rawOut, outOff, rawIn1, rawIn2, buffer, size, segmented);
 }
 
-
 template<typename R, typename T, unsigned int tCnt>
 __global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size, bool segmented)
 {
@@ -263,18 +262,33 @@ template<typename R, typename T, unsigned int tCnt>
 __global__ void SDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size)
 {
 	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
-	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
-	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, tempBuffer, blockIdx.x * size, true);
+	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
+	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, tempBuffer, size, true);
 }
 
 template<typename R, typename T, unsigned int tCnt>
 __global__ void SDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size)
 {
 	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
-	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
-	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, blockIdx.x * size, true);
+	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
+	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, size, true);
 }
 
+template<typename R, typename T, unsigned int tCnt>
+__global__ void SSDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size)
+{
+	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1);
+	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
+	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, tempBuffer, size, true);
+}
+
+template<typename R, typename T, unsigned int tCnt>
+__global__ void SSDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size)
+{
+	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1);
+	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
+	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, size, true);
+}
 
 template<typename R, typename T>
 void ReductionTemplate()
@@ -292,6 +306,8 @@ void DotProductTemplate()
 	DotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0);
 	SDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0);
 	SDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0);
+	SSDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0);
+	SSDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0);
 }
 
 extern "C"
@@ -543,41 +559,42 @@ int main(int argc, char* argv[])
 	int sizeMax = 10000000;
 
 	// INTEGER BASED
-	TestReduction<i_Sum_i, int, 10>(Reduction<i_Sum_i, int, 1024>, "Reduction i_Sum_i", repetitions, sizeMax, -10, 10, 1, false);
-	TestReduction<i_MinIdx_2i, int, 10>(Reduction<i_MinIdx_2i, int, 1024>, "Reduction i_MinIdx_2i", repetitions, sizeMax, -10000, 10000, 1, false);
-	TestReduction<i_MaxIdx_2i, int, 10>(Reduction<i_MaxIdx_2i, int, 1024>, "Reduction i_MaxIdx_2i", repetitions, sizeMax, -10000, 10000, 1, false);
-	TestReduction<i_MinIdxMaxIdx_4i, int, 10>(Reduction<i_MinIdxMaxIdx_4i, int, 1024>, "Reduction i_MinIdxMaxIdx_4i", repetitions, sizeMax, 0, 10000, 1, false);
+	TestReduction<i_Sum_i, int, 10>(Reduction<i_Sum_i, int, 512>, "Reduction i_Sum_i", repetitions, sizeMax, -10, 10, 1, false);
+	TestReduction<i_MinIdx_2i, int, 10>(Reduction<i_MinIdx_2i, int, 512>, "Reduction i_MinIdx_2i", repetitions, sizeMax, -10000, 10000, 1, false);
+	TestReduction<i_MaxIdx_2i, int, 10>(Reduction<i_MaxIdx_2i, int, 512>, "Reduction i_MaxIdx_2i", repetitions, sizeMax, -10000, 10000, 1, false);
+	TestReduction<i_MinIdxMaxIdx_4i, int, 10>(Reduction<i_MinIdxMaxIdx_4i, int, 512>, "Reduction i_MinIdxMaxIdx_4i", repetitions, sizeMax, 0, 10000, 1, false);
 
 	// INTEGER BASED DISTRIBUTED
-	TestReduction<i_Sum_i, int, 10>(Reduction<i_Sum_i, int, 1024>, "Reduction i_Sum_i", repetitions, sizeMax, -10, 10, 1, true);
-	TestReduction<i_MinIdx_2i, int, 10>(Reduction<i_MinIdx_2i, int, 1024>, "Reduction i_MinIdx_2i", repetitions, sizeMax, -10000, 10000, 1, true);
-	TestReduction<i_MaxIdx_2i, int, 10>(Reduction<i_MaxIdx_2i, int, 1024>, "Reduction i_MaxIdx_2i", repetitions, sizeMax, -10000, 10000, 1, true);
-	TestReduction<i_MinIdxMaxIdx_4i, int, 10>(Reduction<i_MinIdxMaxIdx_4i, int, 1024>, "Reduction i_MinIdxMaxIdx_4i", repetitions, sizeMax, 0, 10000, 1, true);
+	TestReduction<i_Sum_i, int, 10>(Reduction<i_Sum_i, int, 512>, "Reduction i_Sum_i", repetitions, sizeMax, -10, 10, 1, true);
+	TestReduction<i_MinIdx_2i, int, 10>(Reduction<i_MinIdx_2i, int, 512>, "Reduction i_MinIdx_2i", repetitions, sizeMax, -10000, 10000, 1, true);
+	TestReduction<i_MaxIdx_2i, int, 10>(Reduction<i_MaxIdx_2i, int, 512>, "Reduction i_MaxIdx_2i", repetitions, sizeMax, -10000, 10000, 1, true);
+	TestReduction<i_MinIdxMaxIdx_4i, int, 10>(Reduction<i_MinIdxMaxIdx_4i, int, 512>, "Reduction i_MinIdxMaxIdx_4i", repetitions, sizeMax, 0, 10000, 1, true);
 
 	// SINGLE BASED
-	TestReduction<f_Sum_f, float, 10>(Reduction<f_Sum_f, float, 1024>, "Reduction f_Sum_f", repetitions, sizeMax, -100, 100, 100, false);
-	TestReduction<f_MinMax_2f, float, 10>(Reduction<f_MinMax_2f, float, 1024>, "Reduction f_MinMax_2f", repetitions, sizeMax, -100000, 100000, 1000, false);
-	TestReduction<f_MinIdx_fi, float, 10>(Reduction<f_MinIdx_fi, float, 1024>, "Reduction f_MinIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, false);
-	TestReduction<f_MaxIdx_fi, float, 10>(Reduction<f_MaxIdx_fi, float, 1024>, "Reduction f_MaxIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, false);
-	TestReduction<f_MinIdxMaxIdx_fifi, float, 10>(Reduction<f_MinIdxMaxIdx_fifi, float, 1024>, "Reduction f_MinIdxMaxIdx_fifi", repetitions, sizeMax, 0, 100000, 1000, false);
+	TestReduction<f_Sum_f, float, 10>(Reduction<f_Sum_f, float, 512>, "Reduction f_Sum_f", repetitions, sizeMax, -100, 100, 100, false);
+	TestReduction<f_MinMax_2f, float, 10>(Reduction<f_MinMax_2f, float, 512>, "Reduction f_MinMax_2f", repetitions, sizeMax, -100000, 100000, 1000, false);
+	TestReduction<f_MinIdx_fi, float, 10>(Reduction<f_MinIdx_fi, float, 512>, "Reduction f_MinIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, false);
+	TestReduction<f_MaxIdx_fi, float, 10>(Reduction<f_MaxIdx_fi, float, 512>, "Reduction f_MaxIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, false);
+	TestReduction<f_MinIdxMaxIdx_fifi, float, 10>(Reduction<f_MinIdxMaxIdx_fifi, float, 512>, "Reduction f_MinIdxMaxIdx_fifi", repetitions, sizeMax, 0, 100000, 1000, false);
 
 	// SINGLE BASED DISTRIBUTED
-	TestReduction<f_Sum_f, float, 10>(Reduction<f_Sum_f, float, 1024>, "Reduction f_Sum_f", repetitions, sizeMax, -100, 100, 100, true);
-	TestReduction<f_MinMax_2f, float, 10>(Reduction<f_MinMax_2f, float, 1024>, "Reduction f_MinMax_2f", repetitions, sizeMax, -100000, 100000, 1000, true);
-	TestReduction<f_MinIdx_fi, float, 10>(Reduction<f_MinIdx_fi, float, 1024>, "Reduction f_MinIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, true);
-	TestReduction<f_MaxIdx_fi, float, 10>(Reduction<f_MaxIdx_fi, float, 1024>, "Reduction f_MaxIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, true);
-	TestReduction<f_MinIdxMaxIdx_fifi, float, 10>(Reduction<f_MinIdxMaxIdx_fifi, float, 1024>, "Reduction f_MinIdxMaxIdx_fifi", repetitions, sizeMax, 0, 100000, 1000, true);
+	TestReduction<f_Sum_f, float, 10>(Reduction<f_Sum_f, float, 512>, "Reduction f_Sum_f", repetitions, sizeMax, -100, 100, 100, true);
+	TestReduction<f_MinMax_2f, float, 10>(Reduction<f_MinMax_2f, float, 512>, "Reduction f_MinMax_2f", repetitions, sizeMax, -100000, 100000, 1000, true);
+	TestReduction<f_MinIdx_fi, float, 10>(Reduction<f_MinIdx_fi, float, 512>, "Reduction f_MinIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, true);
+	TestReduction<f_MaxIdx_fi, float, 10>(Reduction<f_MaxIdx_fi, float, 512>, "Reduction f_MaxIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, true);
+	TestReduction<f_MinIdxMaxIdx_fifi, float, 10>(Reduction<f_MinIdxMaxIdx_fifi, float, 512>, "Reduction f_MinIdxMaxIdx_fifi", repetitions, sizeMax, 0, 100000, 1000, true);
 
 	// DOT PRODUCT
-	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 1024>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, false);
-	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 1024>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, false);
-	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 1024>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, false);
+	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, false);
+	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, false);
+	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, false);
+	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, false);
 
 	// DOT PRODUCT DISTRIBUTED
-	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 1024>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, true);
-	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 1024>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, true);
-	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 1024>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, true);
-	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 1024>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, true);
+	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, true);
+	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, true);
+	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, true);
+	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, true);
 
 	return 0;
 }
