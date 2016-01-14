@@ -75,14 +75,14 @@ public:
 		for (int i = 0; i < size; ++i)
 		{
 			out[outOff].m_dot.R += in1[i].R * in2[i].R - in1[i].C * in2[i].C;
-			out[outOff].m_dot.C += in1[i].R * in2[i].C - in1[i].C * in2[i].R;
+			out[outOff].m_dot.C += in1[i].R * in2[i].C + in1[i].C * in2[i].R;
 		}
 	}
 
 	static __host__
 	bool check(c_ComplexDot_c* x, c_ComplexDot_c* y, int outOff, Complex* in1, Complex* in2)
 	{
-		//printf("dot: %f == %f\n", x[outOff].m_dot, y[outOff].m_dot);
+		printf("dot: [%f, %f] == [%f, %f]\n", x[outOff].m_dot.R, x[outOff].m_dot.C, y[outOff].m_dot.R, y[outOff].m_dot.C);
 		return complexEquals(x[outOff].m_dot, y[outOff].m_dot);
 	}
 };
