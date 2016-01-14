@@ -24,6 +24,7 @@
 #include "i_Dot_i.cuh"
 #include "f_Dot_f.cuh"
 #include "f_Cosine_f.cuh"
+#include "c_ComplexDot_c.cuh"
 
 using namespace std;
 
@@ -315,6 +316,7 @@ void InstantiationDummy()
 	DotProductTemplate <i_Dot_i, int >();
 	DotProductTemplate <f_Dot_f, float >();
 	DotProductTemplate <f_Cosine_f, float >();
+	DotProductTemplate <c_ComplexDot_c, Complex> ();
 }
 
 typedef void(*reduction)(void*, volatile const void*, unsigned int, unsigned int, unsigned int, unsigned int, bool);
@@ -419,6 +421,19 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 
 typedef void(*dotproduct)(void*, unsigned int, volatile const void*, volatile const void*, unsigned int, bool);
 
+template<typename T>
+void Randomize(T& t, int min, int max, float div)
+{
+	t = static_cast<T>(float(randl() % (max - min) + min) / div);
+}
+
+template<>
+void Randomize(Complex& t, int min, int max, float div)
+{
+	t.R = static_cast<float>(float(randl() % (max - min) + min) / div);
+	t.C = static_cast<float>(float(randl() % (max - min) + min) / div);
+}
+
 template<typename R, typename T, const int bCnt>
 void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented)
 {
@@ -437,8 +452,8 @@ void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int si
 		HANDLE_ERROR(cudaMalloc(&d_in2, sizeof(T) * size));
 		for (int i = 0; i < size; ++i)
 		{
-			h_in1[i] = static_cast<T>(float(randl() % (max - min) + min) / div);
-			h_in2[i] = static_cast<T>(float(randl() % (max - min) + min) / div);
+			Randomize<T>(h_in1[i], min, max, div);
+			Randomize<T>(h_in2[i], min, max, div);
 		}
 		HANDLE_ERROR(cudaMemcpy(d_in1, h_in1, sizeof(T) * size, cudaMemcpyHostToDevice));
 		HANDLE_ERROR(cudaMemcpy(d_in2, h_in2, sizeof(T) * size, cudaMemcpyHostToDevice));
@@ -562,6 +577,7 @@ int main(int argc, char* argv[])
 	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 1024>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, true);
 	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 1024>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, true);
 	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 1024>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, true);
+	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 1024>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, true);
 
 	return 0;
 }
