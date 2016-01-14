@@ -109,6 +109,9 @@ namespace GoodAI.Core.Configuration
             AddModuleFromAssembly(
                 new FileInfo(Path.Combine(MyResources.GetEntryAssemblyPath(), CORE_MODULE_NAME)), basicNode: true);
 
+            if (ModulesSearchPath.Count == 0)
+                throw new InvalidOperationException("ModulesSearchPath must not be empty.");
+
             MyLog.INFO.WriteLine("Loading custom modules...");
             ListModules().ForEach(moduleFileInfo => AddModuleFromAssembly(moduleFileInfo));
         }
