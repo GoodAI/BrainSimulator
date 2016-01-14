@@ -42,11 +42,11 @@ namespace GoodAI.Core.Configuration
 
         public static void SetupModuleSearchPath()
         {
-            //SearchPath.Add(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)); //add bs folder name
+            var modulesPath = Path.Combine(MyResources.GetEntryAssemblyPath(), MODULES_PATH);
 
-            if (Directory.Exists(MyResources.GetEntryAssemblyPath() + "\\" + MODULES_PATH))
+            if (Directory.Exists(modulesPath))
             {
-                foreach (string modulePath in Directory.GetDirectories(MyResources.GetEntryAssemblyPath() + "\\" + MODULES_PATH))
+                foreach (string modulePath in Directory.GetDirectories(modulesPath))
                 {
                     ModulesSearchPath.Add(modulePath);
                 }
