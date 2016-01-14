@@ -42,11 +42,11 @@ namespace GoodAI.Core.Configuration
 
         public static void SetupModuleSearchPath()
         {
-            //SearchPath.Add(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)); //add bs folder name
+            var modulesPath = Path.Combine(MyResources.GetEntryAssemblyPath(), MODULES_PATH);
 
-            if (Directory.Exists(MyResources.GetEntryAssemblyPath() + "\\" + MODULES_PATH))
+            if (Directory.Exists(modulesPath))
             {
-                foreach (string modulePath in Directory.GetDirectories(MyResources.GetEntryAssemblyPath() + "\\" + MODULES_PATH))
+                foreach (string modulePath in Directory.GetDirectories(modulesPath))
                 {
                     ModulesSearchPath.Add(modulePath);
                 }
@@ -108,6 +108,9 @@ namespace GoodAI.Core.Configuration
             MyLog.INFO.WriteLine("Loading system modules...");
             AddModuleFromAssembly(
                 new FileInfo(Path.Combine(MyResources.GetEntryAssemblyPath(), CORE_MODULE_NAME)), basicNode: true);
+
+            if (ModulesSearchPath.Count == 0)
+                throw new InvalidOperationException("ModulesSearchPath must not be empty.");
 
             MyLog.INFO.WriteLine("Loading custom modules...");
             ListModules().ForEach(moduleFileInfo => AddModuleFromAssembly(moduleFileInfo));

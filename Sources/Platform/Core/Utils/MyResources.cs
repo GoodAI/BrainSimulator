@@ -10,9 +10,8 @@ namespace GoodAI.Core.Utils
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static string GetMyAssemblyPath()
-        {            
-            string location = Assembly.GetCallingAssembly().Location;
-            return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
+        {
+            return GetAssemblyDirectory(Assembly.GetCallingAssembly());
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -21,8 +20,18 @@ namespace GoodAI.Core.Utils
             // Static initialization must not crash when called from tests!
             Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
 
-            string location = assembly.Location;
-            return location.Substring(0, location.LastIndexOf(Path.DirectorySeparatorChar));
+            return GetAssemblyDirectory(assembly);
+        }
+
+        /// <summary>
+        /// This works even if the assembly is run from a temporary directory (e.g. in unit tests)
+        /// </summary>
+        /// @see http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
+        public static string GetAssemblyDirectory(Assembly assembly)
+        {
+            var uri = new UriBuilder(assembly.CodeBase);
+
+            return Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
         }
 
         public static string PathToResourceName(string path)

@@ -151,7 +151,7 @@ namespace GoodAI.Core.Execution
             catch (Exception e)
             {
                 MyLog.WARNING.WriteLine(e.Message);
-                Environment.Exit(1);
+                throw;
             }
 
             MyLog.Level = level;
