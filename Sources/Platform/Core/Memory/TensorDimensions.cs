@@ -37,7 +37,7 @@ namespace GoodAI.Core.Memory
             IsCustom = false;  // do not save dimensions constructed in code
         }
 
-        private const int MaxDimensions = 100; // ought to be enough for everybody
+        private const int MaxDimensions = 100;  // ought to be enough for everybody
 
         public int Size
         {

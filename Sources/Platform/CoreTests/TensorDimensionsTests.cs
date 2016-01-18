@@ -183,5 +183,29 @@ namespace CoreTests
             Assert.Equal(1, memBlock.Dims.Count);
             Assert.Equal(33, memBlock.Dims[0]);
         }
+
+        private TensorDims2 m_defaultDims = new TensorDims2(5, 3, 2);
+
+        [Fact]
+        public void RankReturnsNumberOfDims()
+        {
+            Assert.Equal(3, m_defaultDims.Rank);
+        }
+
+        [Fact]
+        public void PrintsEmptyDims()
+        {
+            var dims = new TensorDims2();
+
+            Assert.Equal("0", dims.Print());
+        }
+
+        [Fact]
+        public void PrintsDims()
+        {
+            Assert.Equal("5×3×2", m_defaultDims.Print());
+            Assert.Equal("5×3×2 [30]", m_defaultDims.Print(printTotalSize: true));
+        }
+
     }
 }

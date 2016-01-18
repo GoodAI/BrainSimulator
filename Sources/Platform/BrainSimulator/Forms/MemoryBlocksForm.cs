@@ -157,14 +157,16 @@ namespace GoodAI.BrainSimulator.Forms
         {
             toolStrip.Enabled = listView.SelectedItems.Count > 0;
 
-            bool oneItemSelected = (listView.SelectedItems.Count == 1);
-            splitContainer.Panel2Collapsed = !oneItemSelected;
+            //bool oneItemSelected = (listView.SelectedItems.Count == 1);
+            //splitContainer.Panel2Collapsed = !oneItemSelected;
 
-            ShowCurrentBlockDimensions();
+            //ShowCurrentBlockDimensions();
         }
 
         private void ShowCurrentBlockDimensions(bool showWarning = false)
         {
+            return; // TODO(Premek): remove the whole thing (user-defined tensor dims) properly...
+
             if (listView.SelectedItems.Count < 1)
                 return;
 

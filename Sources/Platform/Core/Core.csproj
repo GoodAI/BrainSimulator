@@ -131,6 +131,7 @@
     <Compile Include="Memory\MemBlockAttribute.cs" />
     <Compile Include="Memory\MemoryBlockSerializer.cs" />
     <Compile Include="Memory\TensorDimensions.cs" />
+    <Compile Include="Memory\TensorDims2.cs" />
     <Compile Include="Nodes\MyScriptableNode.cs" />
     <Compile Include="Nodes\MyConditionalGroup.cs" />
     <Compile Include="Nodes\MyDataGate.cs" />
