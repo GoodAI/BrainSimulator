@@ -19,6 +19,8 @@
 #include "f_MaxIdx_ff.cuh"
 #include "f_MinMax_2f.cuh"
 #include "f_MinIdxMaxIdx_fifi.cuh"
+#include "f_Average_f.cuh"
+#include "c_Average_c.cuh"
 
 // DOT PRODUCT BASED
 #include "i_Dot_i.cuh"
@@ -182,7 +184,6 @@ __global__ void SReduction(void* rawOut, volatile const void* rawIn, unsigned in
 	DReduction<R, T, tCnt>(rawOut, rawIn, size, blockIdx.x, blockIdx.x * size, stride, true);
 }
 
-
 template<typename R, typename T, unsigned int tCnt>
 __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size, bool segmented)
 {
@@ -327,6 +328,8 @@ void InstantiationDummy()
 	ReductionTemplate < f_MaxIdx_fi, float >();
 	ReductionTemplate < f_MaxIdx_ff, float >();
 	ReductionTemplate < f_MinIdxMaxIdx_fifi, float >();
+	ReductionTemplate < f_Average_f, float >();
+	ReductionTemplate < c_Average_c, Complex >();
 
 	// DOT PRODUCT
 	DotProductTemplate <i_Dot_i, int >();
@@ -564,7 +567,7 @@ int main(int argc, char* argv[])
 	TestReduction<i_MaxIdx_2i, int, 10>(Reduction<i_MaxIdx_2i, int, 512>, "Reduction i_MaxIdx_2i", repetitions, sizeMax, -10000, 10000, 1, false);
 	TestReduction<i_MinIdxMaxIdx_4i, int, 10>(Reduction<i_MinIdxMaxIdx_4i, int, 512>, "Reduction i_MinIdxMaxIdx_4i", repetitions, sizeMax, 0, 10000, 1, false);
 
-	// INTEGER BASED DISTRIBUTED
+	// INTEGER BASED SEGMENTED
 	TestReduction<i_Sum_i, int, 10>(Reduction<i_Sum_i, int, 512>, "Reduction i_Sum_i", repetitions, sizeMax, -10, 10, 1, true);
 	TestReduction<i_MinIdx_2i, int, 10>(Reduction<i_MinIdx_2i, int, 512>, "Reduction i_MinIdx_2i", repetitions, sizeMax, -10000, 10000, 1, true);
 	TestReduction<i_MaxIdx_2i, int, 10>(Reduction<i_MaxIdx_2i, int, 512>, "Reduction i_MaxIdx_2i", repetitions, sizeMax, -10000, 10000, 1, true);
@@ -577,7 +580,7 @@ int main(int argc, char* argv[])
 	TestReduction<f_MaxIdx_fi, float, 10>(Reduction<f_MaxIdx_fi, float, 512>, "Reduction f_MaxIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, false);
 	TestReduction<f_MinIdxMaxIdx_fifi, float, 10>(Reduction<f_MinIdxMaxIdx_fifi, float, 512>, "Reduction f_MinIdxMaxIdx_fifi", repetitions, sizeMax, 0, 100000, 1000, false);
 
-	// SINGLE BASED DISTRIBUTED
+	// SINGLE BASED SEGMENTED
 	TestReduction<f_Sum_f, float, 10>(Reduction<f_Sum_f, float, 512>, "Reduction f_Sum_f", repetitions, sizeMax, -100, 100, 100, true);
 	TestReduction<f_MinMax_2f, float, 10>(Reduction<f_MinMax_2f, float, 512>, "Reduction f_MinMax_2f", repetitions, sizeMax, -100000, 100000, 1000, true);
 	TestReduction<f_MinIdx_fi, float, 10>(Reduction<f_MinIdx_fi, float, 512>, "Reduction f_MinIdx_fi", repetitions, sizeMax, -100000, 100000, 1000, true);
@@ -590,7 +593,7 @@ int main(int argc, char* argv[])
 	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, false);
 	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, false);
 
-	// DOT PRODUCT DISTRIBUTED
+	// DOT PRODUCT SEGMENTED
 	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, true);
 	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, true);
 	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, true);

@@ -13,7 +13,7 @@ namespace GoodAI.Modules.Transforms
         {
             i_Sum_i, i_MinIdx_2i, i_MaxIdx_2i, i_MinIdxMaxIdx_4i,
             f_Sum_f, f_MinIdx_fi, f_MinIdx_ff, f_MaxIdx_fi, f_MaxIdx_ff, f_MinIdxMaxIdx_fifi, f_MinMax_2f,
-            f_DotProduct_f, i_DotProduct_i, f_Cosine_f, c_ComplexDot_c
+            f_DotProduct_f, i_DotProduct_i, f_Cosine_f, c_ComplexDot_c, f_Average_f, c_Average_c
         };
 
         public static MyCudaKernel Kernel(int nGPU, Mode mode, int blockCount = 1, bool segmented = false, bool distributed = false)
@@ -78,6 +78,8 @@ namespace GoodAI.Modules.Transforms
                         case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI7f_Dot_ffLj512EEvPvPVKvS3_j"); outSize = 4; break;
                         case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_j"); outSize = 16; break;
                         case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_j"); outSize = 8; break;
+                        case Mode.f_Average_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_Average_ffLj512EEvPvPVKvjj"); outSize = 4; break;
+                        case Mode.c_Average_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11c_Average_c7ComplexLj512EEvPvPVKvjj"); outSize = 8; break;
                         default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                     }
                 }
@@ -153,6 +155,8 @@ namespace GoodAI.Modules.Transforms
                         case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI7f_Dot_ffLj512EEvPvPVKvS3_S1_j"); outSize = 4; break;
                         case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_S1_j"); outSize = 16; break;
                         case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_S2_j"); outSize = 8; break;
+                        case Mode.f_Average_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_Average_ffLj512EEvPvPVKvS1_jj"); outSize = 4; break;
+                        case Mode.c_Average_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11c_Average_c7ComplexLj512EEvPvPVKvS2_jj"); outSize = 8; break;
                         default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                     }
                 }
