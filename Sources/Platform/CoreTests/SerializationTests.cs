@@ -67,6 +67,8 @@ namespace CoreTests
             // I.e. deserialized(serialized(PROJECT)) should equal PROJECT
             string tmpPath = Path.GetTempPath();
 
+            MyConfiguration.SetupModuleSearchPath();
+
             MyConfiguration.LoadModules();
 
             MyConfiguration.KnownNodes.Add(typeof(TestNode), new MyNodeConfig());
