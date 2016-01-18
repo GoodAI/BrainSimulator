@@ -185,6 +185,7 @@ namespace GoodAI.Core.Execution
     {
         private MyThreadPool m_threadPool;
         protected bool m_debugStepComplete;
+        private bool m_debugInitInProgress;
 
 
         public MyLocalSimulation()
@@ -343,13 +344,17 @@ namespace GoodAI.Core.Execution
                 {
                     MyExecutionBlock currentBlock = CurrentDebuggedBlocks[coreNumber];
 
+                    // This is the first debug step.
                     if (SimulationStep == 0 && currentBlock == null)
                     {
                         ExecutionPlan[coreNumber].InitStepPlan.Reset();
                         currentBlock = ExecutionPlan[coreNumber].InitStepPlan;
+
+                        m_debugInitInProgress = true;
                         m_debugStepComplete = false;
                     }
 
+                    // This checks if breakpoint was encountered, also used for "stepping".
                     bool leavingTargetBlock = false;
 
                     do
@@ -363,6 +368,11 @@ namespace GoodAI.Core.Execution
 
                     if (currentBlock == null)
                     {
+                        // The current plan finished, the standard plan has to be reset and executed.
+                        if (m_debugInitInProgress)
+                            m_debugStepComplete = false;  // This means the init plan got finished, not the standard plan.
+
+                        m_debugInitInProgress = false;
                         ExecutionPlan[coreNumber].StandardStepPlan.Reset();
                         currentBlock = ExecutionPlan[coreNumber].StandardStepPlan;
                         leavingTargetBlock = true;
