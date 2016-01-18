@@ -131,9 +131,6 @@
     <ClInclude Include="Common\Reduction\i_Sum_i.cuh" />
     <ClInclude Include="Common\Reduction\SharedMemory.cuh" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Observers\ColorScaleObserverComplex.cu" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{72423431-4A15-4E8D-B987-8E684BD730FE}</ProjectGuid>
     <RootNamespace>BasicNodesCuda</RootNamespace>
