@@ -80,7 +80,7 @@ public:
     bool check(f_Sum_f* x, f_Sum_f* y, int outOff, float* in)
     {
         printf("sum: %f == %f\n", x[outOff].m_sum, y[outOff].m_sum);
-        return floatEquals(x[outOff].m_sum, y[outOff].m_sum);
+        return FloatEquals(x[outOff].m_sum, y[outOff].m_sum);
     }
 };
 

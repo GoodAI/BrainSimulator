@@ -83,7 +83,7 @@ public:
 		bool check(c_Average_c* x, c_Average_c* y, int outOff, Complex* in)
 	{
 		printf("average: [%f, %f] == [%f, %f]\n", x[outOff].m_average.R, x[outOff].m_average.C, y[outOff].m_average.R, y[outOff].m_average.C);
-		return complexEquals(x[outOff].m_average, y[outOff].m_average);
+		return ComplexEquals(x[outOff].m_average, y[outOff].m_average);
 	}
 };
 

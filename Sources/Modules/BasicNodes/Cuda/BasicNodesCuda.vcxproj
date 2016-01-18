@@ -114,6 +114,7 @@
     <ClInclude Include="Common\helper_math.h" />
     <ClInclude Include="Common\Reduction\c_Average_c.cuh" />
     <ClInclude Include="Common\Reduction\c_ComplexDot_c.cuh" />
+    <ClInclude Include="Common\Reduction\c_Sum_c.cuh" />
     <ClInclude Include="Common\Reduction\f_Average_f.cuh" />
     <ClInclude Include="Common\Reduction\f_Cosine_f.cuh" />
     <ClInclude Include="Common\Reduction\f_Dot_f.cuh" />

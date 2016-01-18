@@ -83,7 +83,7 @@ public:
 	bool check(c_ComplexDot_c* x, c_ComplexDot_c* y, int outOff, Complex* in1, Complex* in2)
 	{
 		printf("dot: [%f, %f] == [%f, %f]\n", x[outOff].m_dot.R, x[outOff].m_dot.C, y[outOff].m_dot.R, y[outOff].m_dot.C);
-		return complexEquals(x[outOff].m_dot, y[outOff].m_dot);
+		return ComplexEquals(x[outOff].m_dot, y[outOff].m_dot);
 	}
 };
 

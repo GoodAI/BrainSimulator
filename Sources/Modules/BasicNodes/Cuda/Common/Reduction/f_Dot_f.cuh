@@ -80,7 +80,7 @@ public:
     bool check(f_Dot_f* x, f_Dot_f* y, int outOff, float* in1, float* in2)
     {
         //printf("dot: %f == %f\n", x[outOff].m_dot, y[outOff].m_dot);
-        return floatEquals(x[outOff].m_dot, y[outOff].m_dot);
+        return FloatEquals(x[outOff].m_dot, y[outOff].m_dot);
     }
 };
 

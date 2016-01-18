@@ -11,7 +11,7 @@ namespace GoodAI.Modules.Transforms
     {
         public enum Mode
         {
-            i_Sum_i, i_MinIdx_2i, i_MaxIdx_2i, i_MinIdxMaxIdx_4i,
+            i_Sum_i, i_MinIdx_2i, i_MaxIdx_2i, i_MinIdxMaxIdx_4i, c_Sum_c,
             f_Sum_f, f_MinIdx_fi, f_MinIdx_ff, f_MaxIdx_fi, f_MaxIdx_ff, f_MinIdxMaxIdx_fifi, f_MinMax_2f,
             f_DotProduct_f, i_DotProduct_i, f_Cosine_f, c_ComplexDot_c, f_Average_f, c_Average_c
         };
@@ -43,6 +43,7 @@ namespace GoodAI.Modules.Transforms
                     case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI7f_Dot_ffLj512EEvPvjPVKvS3_jb"); outSize = 4; break;
                     case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_jb"); outSize = 16; break;
                     case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI14c_ComplexDot_c7ComplexLj512EEvPvjPVKvS4_jb"); outSize = 8; break;
+                    case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7c_Sum_c7ComplexLj512EEvPvPVKvjjjjb"); outSize = 8; break;
                     default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                 }
             }
@@ -67,6 +68,7 @@ namespace GoodAI.Modules.Transforms
                         case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI7f_Dot_ffLj512EEvPvPVKvS3_j"); outSize = 4; break;
                         case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_j"); outSize = 16; break;
                         case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_j"); outSize = 8; break;
+                        case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7c_Sum_c7ComplexLj512EEvPvPVKvjj"); outSize = 8; break;
                         default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                     }
                 }
@@ -120,6 +122,7 @@ namespace GoodAI.Modules.Transforms
                     case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI7f_Dot_ffLj512EEvPvjPVKvS3_S1_jb"); outSize = 4; break;
                     case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_S1_jb"); outSize = 16; break;
                     case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI14c_ComplexDot_c7ComplexLj512EEvPvjPVKvS4_S2_jb"); outSize = 8; break;
+                    case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7c_Sum_c7ComplexLj512EEvPvPVKvjjjjb"); outSize = 8; break;
                     default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                 }
             }
@@ -144,6 +147,7 @@ namespace GoodAI.Modules.Transforms
                         case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI7f_Dot_ffLj512EEvPvPVKvS3_S1_j"); outSize = 4; break;
                         case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_S1_j"); outSize = 16; break;
                         case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_S2_j"); outSize = 8; break;
+                        case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7c_Sum_c7ComplexLj512EEvPvPVKvS2_jj"); outSize = 8; break;
                         default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
                     }
                 }

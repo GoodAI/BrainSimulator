@@ -106,7 +106,7 @@ public:
         float* a = reinterpret_cast<float*>(reinterpret_cast<char*>(x)+outSize*outOff);
         float* b = reinterpret_cast<float*>(reinterpret_cast<char*>(y)+outSize*outOff);
         printf("cosine: %f == %f\n", a[0], b[0]);
-        return floatEquals(a[0], b[0]);
+        return FloatEquals(a[0], b[0]);
     }
 };
 

@@ -21,6 +21,7 @@
 #include "f_MinIdxMaxIdx_fifi.cuh"
 #include "f_Average_f.cuh"
 #include "c_Average_c.cuh"
+#include "c_Sum_c.cuh"
 
 // DOT PRODUCT BASED
 #include "i_Dot_i.cuh"
@@ -330,6 +331,7 @@ void InstantiationDummy()
 	ReductionTemplate < f_MinIdxMaxIdx_fifi, float >();
 	ReductionTemplate < f_Average_f, float >();
 	ReductionTemplate < c_Average_c, Complex >();
+	ReductionTemplate < c_Sum_c, Complex >();
 
 	// DOT PRODUCT
 	DotProductTemplate <i_Dot_i, int >();

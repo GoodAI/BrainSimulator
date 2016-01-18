@@ -106,7 +106,7 @@ public:
 	{
 		printf("min: %f == %f, idx: in[%d]:%f == in[%d]:%f\n",
 			x[outOff].m_max, y[outOff].m_max, x[outOff].m_idx, in[(int)x[outOff].m_idx], y[outOff].m_idx, in[(int)y[outOff].m_idx]);
-		return floatEquals(x[outOff].m_max, y[outOff].m_max) && floatEquals(in[(int)x[outOff].m_idx], in[(int)y[outOff].m_idx]);
+		return FloatEquals(x[outOff].m_max, y[outOff].m_max) && FloatEquals(in[(int)x[outOff].m_idx], in[(int)y[outOff].m_idx]);
 	}
 };
 

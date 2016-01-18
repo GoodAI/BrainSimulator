@@ -121,7 +121,7 @@ public:
     bool check(f_MinMax_2f* x, f_MinMax_2f* y, int outOff, float* in)
     {
         printf("max: %f == %f, min: %f == %f\n", x[outOff].m_max, y[outOff].m_max, x[outOff].m_min, y[outOff].m_min);
-        return floatEquals(x[outOff].m_max, y[outOff].m_max) && floatEquals(x[outOff].m_min, y[outOff].m_min);
+        return FloatEquals(x[outOff].m_max, y[outOff].m_max) && FloatEquals(x[outOff].m_min, y[outOff].m_min);
     }
 };
 

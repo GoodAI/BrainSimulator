@@ -80,7 +80,7 @@ public:
 	bool check(f_Average_f* x, f_Average_f* y, int outOff, float* in)
 	{
 		printf("average: %f == %f\n", x[outOff].m_average, y[outOff].m_average);
-		return floatEquals(x[outOff].m_average, y[outOff].m_average);
+		return FloatEquals(x[outOff].m_average, y[outOff].m_average);
 	}
 };
 

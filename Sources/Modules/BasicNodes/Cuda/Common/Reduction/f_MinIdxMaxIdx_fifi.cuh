@@ -143,8 +143,8 @@ public:
     {
         printf("max: %f == %f, maxIdx: in[%d]:%f == in[%d]:%f, min: %f == %f, minIdx: in[%d]:%f == in[%d]:%f\n",
             x[outOff].m_max, y[outOff].m_max, x[outOff].m_maxIdx, in[x[outOff].m_maxIdx], y[outOff].m_maxIdx, in[y[outOff].m_maxIdx], x[outOff].m_min, y[outOff].m_min, x[outOff].m_minIdx, in[x[outOff].m_minIdx], y[outOff].m_minIdx, in[y[outOff].m_minIdx]);
-        return floatEquals(x[outOff].m_max, y[outOff].m_max) && floatEquals(in[x[outOff].m_maxIdx], in[y[outOff].m_maxIdx])
-            && floatEquals(x[outOff].m_min, y[outOff].m_min) && floatEquals(in[x[outOff].m_minIdx], in[y[outOff].m_minIdx]);
+        return FloatEquals(x[outOff].m_max, y[outOff].m_max) && FloatEquals(in[x[outOff].m_maxIdx], in[y[outOff].m_maxIdx])
+            && FloatEquals(x[outOff].m_min, y[outOff].m_min) && FloatEquals(in[x[outOff].m_minIdx], in[y[outOff].m_minIdx]);
     }
 };
 
