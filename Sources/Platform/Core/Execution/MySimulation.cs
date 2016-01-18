@@ -185,6 +185,7 @@ namespace GoodAI.Core.Execution
     {
         private MyThreadPool m_threadPool;
         protected bool m_debugStepComplete;
+        private bool m_debugInit;
 
 
         public MyLocalSimulation()
@@ -345,6 +346,7 @@ namespace GoodAI.Core.Execution
 
                     if (SimulationStep == 0 && currentBlock == null)
                     {
+                        m_debugInit = true;
                         ExecutionPlan[coreNumber].InitStepPlan.Reset();
                         currentBlock = ExecutionPlan[coreNumber].InitStepPlan;
                         m_debugStepComplete = false;
@@ -363,6 +365,10 @@ namespace GoodAI.Core.Execution
 
                     if (currentBlock == null)
                     {
+                        if (m_debugInit)
+                            m_debugStepComplete = false;
+
+                        m_debugInit = false;
                         ExecutionPlan[coreNumber].StandardStepPlan.Reset();
                         currentBlock = ExecutionPlan[coreNumber].StandardStepPlan;
                         leavingTargetBlock = true;
