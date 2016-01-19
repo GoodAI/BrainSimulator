@@ -13,7 +13,7 @@ namespace CoreTests
         [Fact]
         public void ConstructsWithVariableNumberOfParams()
         {
-            var dims = new TensorDimensions(2, 3);
+            var dims = new TensorDimensionsV1(2, 3);
 
             Assert.Equal(2, dims.Count);
             Assert.Equal(2, dims[0]);
@@ -24,7 +24,7 @@ namespace CoreTests
         [Fact]
         public void CanBeComputedEvaluatesToTrue()
         {
-            var dims = new TensorDimensions(3, 4, -1, 5) { Size = 3*4*5*13 };
+            var dims = new TensorDimensionsV1(3, 4, -1, 5) { Size = 3*4*5*13 };
 
             Assert.True(dims.CanBeComputed);
             Assert.Equal(13, dims[2]);  // also check that the free dimension was correctly computed
@@ -33,7 +33,7 @@ namespace CoreTests
         [Fact]
         public void CanBeComputedEvaluatesToFalse()
         {
-            var dims = new TensorDimensions(3, 4, -1, 5) { Size = 37 };
+            var dims = new TensorDimensionsV1(3, 4, -1, 5) { Size = 37 };
 
             Assert.False(dims.CanBeComputed);
         }
@@ -41,7 +41,7 @@ namespace CoreTests
         [Fact]
         public void EmptyDimensionsCanBeComputed()
         {
-            var dims = new TensorDimensions();
+            var dims = new TensorDimensionsV1();
             Assert.False(dims.CanBeComputed);
 
             dims.Size = 4;
@@ -52,7 +52,7 @@ namespace CoreTests
         [Fact]
         public void ComputedDimCanBeOne()
         {
-            var dims = new TensorDimensions(-1, 10) { Size = 10 };
+            var dims = new TensorDimensionsV1(-1, 10) { Size = 10 };
 
             Assert.True(dims.CanBeComputed);
             Assert.Equal(1, dims[0]);
@@ -61,7 +61,7 @@ namespace CoreTests
         [Fact]
         public void DimensionsOfSizeOneAreAllowed()
         {
-            var dims = new TensorDimensions();
+            var dims = new TensorDimensionsV1();
 
             dims.Set(new []{ 5, 1, 1 });
         }
@@ -69,7 +69,7 @@ namespace CoreTests
         [Fact]
         public void ParseKeepsDimensionsOfSizeOne()
         {
-            var dims = new TensorDimensions();
+            var dims = new TensorDimensionsV1();
 
             dims.Parse("1, 5, *, 1, 1");
 
@@ -83,7 +83,7 @@ namespace CoreTests
         [Fact]
         public void PrintIndicatesMismatchedDimsAndSize()
         {
-            var dims = new TensorDimensions(3, 3) { Size = 4 };
+            var dims = new TensorDimensionsV1(3, 3) { Size = 4 };
 
             Assert.Equal("3×3 (!)", dims.Print());
         }
@@ -91,7 +91,7 @@ namespace CoreTests
         [Fact]
         public void DoesNotPrintTrailingOnes()
         {
-            var dims = new TensorDimensions(5, 1, 1) { Size = 5 };
+            var dims = new TensorDimensionsV1(5, 1, 1) { Size = 5 };
 
             Assert.Equal("5", dims.Print(hideTrailingOnes: true));
         }
@@ -99,7 +99,7 @@ namespace CoreTests
         [Fact]
         public void PrintsComputedTrailingOne()
         {
-            var dims = new TensorDimensions(4, 2, -1) { Size = 8 };
+            var dims = new TensorDimensionsV1(4, 2, -1) { Size = 8 };
 
             Assert.Equal("4×2×1", dims.Print(hideTrailingOnes: true));
         }
@@ -107,7 +107,7 @@ namespace CoreTests
         [Fact]
         public void PrintsOneOne()
         {
-            var dims = new TensorDimensions(1, 1);
+            var dims = new TensorDimensionsV1(1, 1);
 
             Assert.Equal("1 (!)", dims.Print(hideTrailingOnes: true));
         }
@@ -115,7 +115,7 @@ namespace CoreTests
         [Fact]
         public void PrintsLeadingOrMiddleOnes()
         {
-            var dims = new TensorDimensions(1, 1, -1, 5, 1, 2, 1);
+            var dims = new TensorDimensionsV1(1, 1, -1, 5, 1, 2, 1);
 
             Assert.Equal("1×1×?×5×1×2", dims.Print(hideTrailingOnes: true));
         }
@@ -123,7 +123,7 @@ namespace CoreTests
         [Fact]
         public void ParseAutoAddsLeadingDim()
         {
-            var dims = new TensorDimensions();
+            var dims = new TensorDimensionsV1();
             dims.Parse("2, 2, 2");
 
             Assert.Equal(4, dims.Count);
@@ -134,7 +134,7 @@ namespace CoreTests
         [Fact]
         public void ParseDoesNotAutoAddDimWhenSizeMatches()
         {
-            var dims = new TensorDimensions() { Size = 2*2*2 };
+            var dims = new TensorDimensionsV1() { Size = 2*2*2 };
             dims.Parse("2, 2, 2");
 
             Assert.Equal(3, dims.Count);
@@ -148,7 +148,7 @@ namespace CoreTests
             var memBlock = new MyMemoryBlock<float>
             {
                 Count = 10,
-                Dims = new TensorDimensions(2)
+                Dims = new TensorDimensionsV1(2)
             };
 
             Assert.Equal(memBlock.Count, memBlock.Dims.Size);
@@ -156,7 +156,7 @@ namespace CoreTests
 
         private static MyMemoryBlock<float> GetMemBlockWithCustomDims(string dimensionsSource)
         {
-            var customDims = new TensorDimensions();
+            var customDims = new TensorDimensionsV1();
             customDims.Parse(dimensionsSource);
 
             return new MyMemoryBlock<float> { Dims = customDims };
@@ -167,7 +167,7 @@ namespace CoreTests
         {
             MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims("2, -1, 2");
 
-            memBlock.Dims = new TensorDimensions(33);  // this assignment should be ignored
+            memBlock.Dims = new TensorDimensionsV1(33);  // this assignment should be ignored
 
             Assert.Equal(3, memBlock.Dims.Count);
             Assert.Equal(2, memBlock.Dims[0]);
@@ -178,7 +178,7 @@ namespace CoreTests
         {
             MyMemoryBlock<float> memBlock = GetMemBlockWithCustomDims("2, -1, 2");
 
-            memBlock.Dims = new TensorDimensions(33) { IsCustom = true };  // this assignment must NOT be ignored
+            memBlock.Dims = new TensorDimensionsV1(33) { IsCustom = true };  // this assignment must NOT be ignored
 
             Assert.Equal(1, memBlock.Dims.Count);
             Assert.Equal(33, memBlock.Dims[0]);

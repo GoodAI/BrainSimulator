@@ -79,7 +79,7 @@ namespace CoreTests
 
         private static void CheckTensors(MyProject project)
         {
-            TensorDimensions dimensions;
+            TensorDimensionsV1 dimensions;
 
             MyWorkingNode kwmNode = project.Network.GetChildNodeById(330) as MyWorkingNode;
             dimensions = kwmNode.GetOutput(0).Dims;

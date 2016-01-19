@@ -20,7 +20,7 @@ namespace GoodAI.Core.Memory
         //TODO: Find if MyWorkingNode is possible here
         public virtual MyNode Owner { get; set; }
         public abstract int ColumnHint { get; set; }
-        public abstract TensorDimensions Dims { get; set; }
+        public abstract TensorDimensionsV1 Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
 
@@ -86,14 +86,14 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        public override TensorDimensions Dims
+        public override TensorDimensionsV1 Dims
         {
             get { return m_dims; }
             set
             {
                 if (value == null)
                 {
-                    m_dims = new TensorDimensions();
+                    m_dims = new TensorDimensionsV1();
                 }
                 else if ((m_dims != null) && m_dims.IsCustom && !value.IsCustom)
                 {
@@ -107,7 +107,7 @@ namespace GoodAI.Core.Memory
                 m_dims.Size = Count;
             }
         }
-        private TensorDimensions m_dims;
+        private TensorDimensionsV1 m_dims;
 
         public bool OnDevice
         {
@@ -127,7 +127,7 @@ namespace GoodAI.Core.Memory
 
         public MyMemoryBlock()
         {
-            Dims = new TensorDimensions();
+            Dims = new TensorDimensionsV1();
 
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;

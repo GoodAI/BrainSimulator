@@ -14,7 +14,7 @@ namespace GoodAI.Core.Memory
     }
 
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public class TensorDimensions : MemBlockAttribute
+    public class TensorDimensionsV1 : MemBlockAttribute
     {
         [YAXSerializableField, YAXSerializeAs("CustomDimensions")]
         [YAXCollection(YAXCollectionSerializationTypes.Recursive, EachElementName = "Dim")]
@@ -24,13 +24,13 @@ namespace GoodAI.Core.Memory
 
         private const string ComputedDimLiteral = "*";
 
-        public TensorDimensions()
+        public TensorDimensionsV1()
         {
             IsCustom = false;
             CanBeComputed = false;
         }
 
-        public TensorDimensions(params int[] dimensions)
+        public TensorDimensionsV1(params int[] dimensions)
         {
             Set(dimensions);
 
