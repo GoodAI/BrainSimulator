@@ -11,5 +11,6 @@ namespace GoodAI.Platform.Core.Nodes
     {
         bool IsModelChanging { get; }
         void ChangeModel(ref List<MyWorkingNode> removedNodes, ref List<MyWorkingNode> addedNodes);
+        MyNode AffectedNode { get; }
     }
 }

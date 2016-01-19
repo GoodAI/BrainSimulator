@@ -270,7 +270,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private bool TestIfInsideSimulation()
         {
-            if (m_mainForm.SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
+            if (m_mainForm.SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED &&
+                !m_mainForm.SimulationHandler.Simulation.IsStepFinished)
             {
                 MyLog.WARNING.WriteLine("Operation not allowed during simulation");
                 return true;

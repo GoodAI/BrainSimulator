@@ -39,8 +39,20 @@ namespace GoodAI.Core.Execution
         protected DebugStepMode DebugStepMode = DebugStepMode.None;
         protected MyExecutionBlock StopWhenTouchedBlock;
 
-        public delegate void DebugTargetEncounteredHandler(object sender, EventArgs args);
-        public event DebugTargetEncounteredHandler DebugTargetReached;
+        public class ModelChangedEventArgs : EventArgs
+        {
+            public MyNode Node { get; set; }
+        }
+
+        public event EventHandler<ModelChangedEventArgs> ModelChanged;
+
+        public event EventHandler DebugTargetReached;
+
+        protected void EmitModelChanged(MyNode node)
+        {
+            if (ModelChanged != null)
+                ModelChanged(this, new ModelChangedEventArgs {Node = node});
+        }
 
         protected void EmitDebugTargetReached()
         {
@@ -128,7 +140,6 @@ namespace GoodAI.Core.Execution
             ExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project);
             //ExecutionPlan = PartitioningStrategy.Divide(singleCoreExecutionPlan);
 
-            //TODO: remove this and replace with proper project traversal to find nodes with no tasks!
             ExtractAllNodes(m_project);
         }
 
@@ -552,6 +563,10 @@ namespace GoodAI.Core.Execution
                 //    if (newChanger != null)
                 //        newModelChangingGroups.Add(newChanger);
                 //});
+
+                IterateNodes(removedNodes, node => MyMemoryManager.Instance.RemoveBlocks(node));
+
+                EmitModelChanged(changer.AffectedNode);
             });
 
             //ModelChangingNodeGroups = newModelChangingGroups;

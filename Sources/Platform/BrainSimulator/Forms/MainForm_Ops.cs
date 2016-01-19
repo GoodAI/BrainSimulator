@@ -528,6 +528,13 @@ namespace GoodAI.BrainSimulator.Forms
 
             RefreshConnections(graphForm);
 
+            SimulationHandler.Simulation.ModelChanged += (sender, args) =>
+            {
+                // TODO(HonzaS): This will be a performance hit for rapidly changing models. Optimize.
+                if (args.Node == target)
+                    ReloadGraphLayout(target);
+            };
+
             return graphForm;
         }
 
