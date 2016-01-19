@@ -200,6 +200,7 @@ namespace GoodAI.Core.Utils
         #endregion
 
         #region Memory Block Attributes
+        // TODO(Premek): remove or reuse Memory Block Attributes
 
         [YAXSerializableField, YAXDictionary(EachPairName = "Item")]
         protected Dictionary<string, MemBlockAttribute> MemoryBlockAttributes;

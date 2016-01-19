@@ -10,7 +10,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 12; }
+            get { return 13; }
         }
 
         public static string Convert1To2(string xml)
@@ -207,6 +207,24 @@ namespace GoodAI.Core.Versioning
             {
                 element.SetAttributeValue("IsLowPriority", "False");
             }
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Remove TensorDimensions and the whole MemoryBlockAttributes section.
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static string Convert12To13(string xml)
+        {
+            XDocument document = XDocument.Parse(xml);
+
+            XElement element = document.XPathSelectElement("/Project/MemoryBlockAttributes");
+            if (element == null)
+                return xml;  // Avoid regenerating of an unchanged document.
+
+            element.Remove();
 
             return document.ToString();
         }
