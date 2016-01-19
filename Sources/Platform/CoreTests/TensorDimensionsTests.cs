@@ -184,7 +184,7 @@ namespace CoreTests
             Assert.Equal(33, memBlock.Dims[0]);
         }
 
-        private TensorDims2 m_defaultDims = new TensorDims2(5, 3, 2);
+        private TensorDimensions m_defaultDims = new TensorDimensions(5, 3, 2);
 
         [Fact]
         public void RankReturnsNumberOfDims()
@@ -195,7 +195,7 @@ namespace CoreTests
         [Fact]
         public void PrintsEmptyDims()
         {
-            var dims = new TensorDims2();
+            var dims = new TensorDimensions();
 
             Assert.Equal("0", dims.Print());
         }

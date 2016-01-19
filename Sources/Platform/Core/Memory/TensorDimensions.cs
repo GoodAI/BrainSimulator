@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Core.Memory
 {
-    public struct TensorDims2
+    public struct TensorDimensions
     {
         private List<int> m_dims;
 
         private const int MaxDimensions = 100;  // ought to be enough for everybody
 
-        public TensorDims2(params int[] dimensions)
+        public TensorDimensions(params int[] dimensions)
         {
             m_dims = ProcessDimensions(dimensions);
         }
@@ -40,7 +40,7 @@ namespace GoodAI.Core.Memory
                 return product;
             }
         }
-        
+
         public string Print(bool printTotalSize = false)
         {
             if (m_dims == null || m_dims.Count == 0)
