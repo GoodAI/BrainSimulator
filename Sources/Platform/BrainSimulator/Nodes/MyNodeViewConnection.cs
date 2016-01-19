@@ -16,7 +16,7 @@ namespace GoodAI.BrainSimulator.Nodes
 
                     var memBlock = fromNodeView.Node.GetAbstractOutput((Tag as MyConnection).FromIndex);
                     if (memBlock != null)
-                        return memBlock.Dims.Print(hideTrailingOnes: true);
+                        return memBlock.Dims.Print();
                 }
 
                 return "0";

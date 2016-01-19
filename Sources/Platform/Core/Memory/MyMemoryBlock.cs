@@ -20,7 +20,7 @@ namespace GoodAI.Core.Memory
         //TODO: Find if MyWorkingNode is possible here
         public virtual MyNode Owner { get; set; }
         public abstract int ColumnHint { get; set; }
-        public abstract TensorDimensionsV1 Dims { get; set; }
+        public abstract TensorDimensions Dims { get; set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
 
@@ -63,51 +63,37 @@ namespace GoodAI.Core.Memory
 
         public override int Count
         {
-            get { return m_count; }
+            get { return Dims.ElementCount; }
             set
             {
-                m_count = value;
-                Dims.Size = m_count;
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("value", "Count must not be negative");
+
+                Dims = TensorDimensions.GetBackwardCompatibleDims(value, m_columnHint);
             }
         }
-        private int m_count = 0;
 
+        [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
         public override int ColumnHint
         {
-            get
-            {
-                return (Dims.Count >= 2) ? Dims[1] : 1;
-            }
+            get { return (Dims[0] > 0) ? Dims[0] : m_columnHint; }
             set
             {
-                // propagate value to Dims, even the default value 1 (otherwise user-defined column hint would not work)
-                if (value > 0)
-                    Dims.SetDefault(new List<int> { -1, value });
+                m_columnHint = value;
+                
+                // ReSharper disable once InvertIf
+                if ((Count > 0) && (Dims.Rank <= 2) && (Dims[0] != m_columnHint))
+                {
+                    TensorDimensions newDims = TensorDimensions.GetBackwardCompatibleDims(Count, m_columnHint);
+
+                    if (newDims.ElementCount == Count)  // only update dims if it does NOT change the total count
+                        Dims = newDims;
+                }
             }
         }
+        private int m_columnHint = 1;
 
-        public override TensorDimensionsV1 Dims
-        {
-            get { return m_dims; }
-            set
-            {
-                if (value == null)
-                {
-                    m_dims = new TensorDimensionsV1();
-                }
-                else if ((m_dims != null) && m_dims.IsCustom && !value.IsCustom)
-                {
-                    return;  // don't override user-defined value with code-generated value
-                }
-                else  // implied: value != null
-                {
-                    m_dims = value;
-                }
-
-                m_dims.Size = Count;
-            }
-        }
-        private TensorDimensionsV1 m_dims;
+        public override TensorDimensions Dims { get; set; }
 
         public bool OnDevice
         {
@@ -127,7 +113,7 @@ namespace GoodAI.Core.Memory
 
         public MyMemoryBlock()
         {
-            Dims = new TensorDimensionsV1();
+            Dims = new TensorDimensions();
 
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;

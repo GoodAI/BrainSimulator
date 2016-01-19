@@ -133,7 +133,10 @@ namespace GoodAI.Modules.Matrix
                 {
                     if ((A.ColumnHint != 0) && (A.Count > 0))  // prevent dimension of size 0
                     {
-                        Result.Dims.Set(new[] { -1, A.Count / A.ColumnHint });
+                        //Result.Dims.Set(new[] { -1, A.Count / A.ColumnHint });
+                        // TODO(Premek): Check after the new tensor dimensions are ready.
+                        // Result.Dims = new TensorDimensions();
+                        Result.ColumnHint = A.Count / A.ColumnHint;
                     }
                 }
                 else if (operation == MatOperation.EuclidDist)

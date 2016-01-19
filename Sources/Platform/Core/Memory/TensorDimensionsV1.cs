@@ -76,7 +76,7 @@ namespace GoodAI.Core.Memory
 
         internal override void ApplyAttribute(MyAbstractMemoryBlock memoryBlock)
         {
-            memoryBlock.Dims = this;
+            //memoryBlock.Dims = this;
         }
 
         public override string ToString()
