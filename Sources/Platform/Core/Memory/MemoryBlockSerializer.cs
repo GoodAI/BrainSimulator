@@ -189,23 +189,5 @@ namespace GoodAI.Core.Memory
                 MyLog.WARNING.WriteLine("Memory block saving failed (" + memoryBlock.Owner.Name + "." + memoryBlock.Name + "): " + e.Message);
             } 
         }
-
-        public void CollectAttributes(MyAbstractMemoryBlock memoryBlock,
-            IDictionary<string, MemBlockAttribute> attributes)
-        {
-            if (memoryBlock == null)
-                return;
-
-            AddAttribute(memoryBlock, memoryBlock.Dims, attributes);
-        }
-
-        private void AddAttribute(MyAbstractMemoryBlock memoryBlock, MemBlockAttribute attr,
-            IDictionary<string, MemBlockAttribute> attributes)
-        {
-            if (attr.IsCustom)
-            {
-                attributes.Add(GetUniqueName(memoryBlock), attr);
-            }
-        }
     }
 }
