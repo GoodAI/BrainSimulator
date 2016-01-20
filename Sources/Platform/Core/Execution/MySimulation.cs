@@ -39,6 +39,8 @@ namespace GoodAI.Core.Execution
         protected DebugStepMode DebugStepMode = DebugStepMode.None;
         protected MyExecutionBlock StopWhenTouchedBlock;
 
+        public MyValidator Validator { get; private set; }
+
         public class ModelChangedEventArgs : EventArgs
         {
             public MyNode Node { get; set; }
@@ -81,11 +83,14 @@ namespace GoodAI.Core.Execution
                 node.OnSimulationStateChanged(args);
         }
 
-        public MySimulation()
+        public MySimulation(MyValidator validator)
         {
             AutoSaveInterval = 0;
             GlobalDataFolder = String.Empty;
             LoadAllNodesData = false;
+
+            Validator = validator;
+            validator.Simulation = this;
         }
 
         public virtual void Init()
@@ -134,11 +139,10 @@ namespace GoodAI.Core.Execution
 
         protected abstract void DoFinish();
 
-        public void Schedule(MyProject project)
+        public void Schedule(MyProject project, IEnumerable<MyWorkingNode> newNodes = null)
         {
             m_project = project;
-            ExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project);
-            //ExecutionPlan = PartitioningStrategy.Divide(singleCoreExecutionPlan);
+            ExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project, newNodes);
 
             ExtractAllNodes(m_project);
         }
@@ -195,6 +199,17 @@ namespace GoodAI.Core.Execution
 
         public abstract void PerformModelChanges();
         public abstract void Reallocate();
+
+        public void Validate(MyProject project = null)
+        {
+            Validator.ClearValidation();
+
+            if (project == null)
+                project = m_project;
+
+            project.World.ValidateWorld(Validator);                
+            project.Network.Validate(Validator);
+        }
     }
 
     public sealed class MyLocalSimulation : MySimulation
@@ -203,7 +218,7 @@ namespace GoodAI.Core.Execution
         protected bool m_debugStepComplete;
         private bool m_debugInitInProgress;
 
-        public MyLocalSimulation()
+        public MyLocalSimulation(MyValidator validator) : base(validator)
         {
             m_threadPool = new MyThreadPool(MyKernelFactory.Instance.DevCount, InitCore, ExecuteCore);
             m_threadPool.StartThreads();
@@ -533,6 +548,9 @@ namespace GoodAI.Core.Execution
         {
             //var newModelChangingGroups = new List<IModelChanger>();
             // Go through the topologically ordered model changing groups and allow them to restructure.
+
+            var allAddedNodes = new List<MyWorkingNode>();
+
             bool modelChanged = false;
             ModelChangingNodeGroups.EachWithIndex((changer, i) =>
             {
@@ -548,6 +566,14 @@ namespace GoodAI.Core.Execution
                 // Clean up memory.
                 IterateNodes(removedNodes, FreeMemory);
 
+                // Validate new nodes.
+                Validator.ClearValidation();
+                IterateNodes(addedNodes, node =>
+                {
+                    node.ValidateMandatory(Validator);
+                    node.Validate(Validator);
+                });
+
                 // Update memory blocks of the newly added nodes.
                 // TODO(HonzaS): "shakedown" (the convergence of Count updates).
                 foreach (MyWorkingNode node in addedNodes)
@@ -555,6 +581,17 @@ namespace GoodAI.Core.Execution
 
                 // Allocate new memory.
                 IterateNodes(addedNodes, AllocateMemory);
+
+                // Init nodes
+                IterateNodes(addedNodes, node =>
+                {
+                    var workingNode = node as MyWorkingNode;
+                    if (workingNode == null)
+                        return;
+
+                    workingNode.ClearSignals();
+                    workingNode.InitTasks();
+                });
 
                 //newModelChangingGroups.Add(changer);
                 //IterateNodes(addedNodes, node =>
@@ -565,6 +602,8 @@ namespace GoodAI.Core.Execution
                 //});
 
                 IterateNodes(removedNodes, node => MyMemoryManager.Instance.RemoveBlocks(node));
+
+                allAddedNodes.AddRange(addedNodes);
 
                 EmitModelChanged(changer.AffectedNode);
             });
@@ -577,7 +616,7 @@ namespace GoodAI.Core.Execution
 
             MySimulationHandler.OrderNetworkNodes(m_project.Network);
 
-            Schedule(m_project);
+            Schedule(m_project, allAddedNodes);
         }
 
         private static void IterateNodes(IEnumerable<MyWorkingNode> nodes, MyNodeGroup.IteratorAction action)

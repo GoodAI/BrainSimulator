@@ -15,7 +15,7 @@ namespace GoodAI.Core.Execution
 
     public interface IMyExecutionPlanner
     {
-        MyExecutionPlan CreateExecutionPlan(MyProject project);        
+        MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> newNodes = null);
     }
 
     public interface IMyCustomExecutionPlanner
@@ -33,21 +33,28 @@ namespace GoodAI.Core.Execution
             PlanSignalTasks = true;
         }
 
-        public MyExecutionPlan CreateExecutionPlan(MyProject project)
+        public MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> newNodes = null)
         {
             MyExecutionPlan executionPlan = new MyExecutionPlan();            
 
             IMyOrderingAlgorithm ordering = new MyHierarchicalOrdering();
             ordering.EvaluateOrder(project.Network);            
 
+            // TODO(HonzaS): Change this - unnecessary to run after the first initialization step.
             executionPlan.InitStepPlan = new MyExecutionBlock(
                 CreateNodeExecutionPlan(project.World, true), 
                 CreateNodeExecutionPlan(project.Network, true));
             executionPlan.InitStepPlan.Name = "Initialization";
 
-            executionPlan.StandardStepPlan = new MyExecutionBlock(
-                CreateNodeExecutionPlan(project.World, false),
-                CreateNodeExecutionPlan(project.Network, false));
+
+            var executionBlocks = new List<IMyExecutable>();
+            if (newNodes != null)
+                executionBlocks.AddRange(newNodes.Select(node => CreateNodeExecutionPlan(node, true)).Cast<IMyExecutable>().ToList());
+
+            executionBlocks.Add(CreateNodeExecutionPlan(project.World, false));
+            executionBlocks.Add(CreateNodeExecutionPlan(project.Network, false));
+
+            executionPlan.StandardStepPlan = new MyExecutionBlock(executionBlocks.ToArray());
             executionPlan.StandardStepPlan.Name = "Simulation";
 
             return executionPlan;

@@ -20,6 +20,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
+using GoodAI.Platform.Core.Utils;
+using GoodAI.TypeMapping;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -686,7 +690,7 @@ namespace GoodAI.BrainSimulator.Forms
             MySimulation simulation = null;
             try
             {
-                simulation = new MyLocalSimulation();
+                simulation = new MyLocalSimulation(TypeMap.GetInstance<MyValidator>());
             }
             catch (Exception e)
             {
@@ -753,9 +757,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             ObserverViews = new List<ObserverForm>();
 
-            ValidationView = new ValidationForm(this);
-            HelpView = new NodeHelpForm(this);
-            HelpView.StartPosition = FormStartPosition.CenterScreen;
+            ValidationView = new ValidationForm(this, TypeMap.GetInstance<MyValidator>());
+            HelpView = new NodeHelpForm(this) {StartPosition = FormStartPosition.CenterScreen};
 
             DebugView = new DebugForm(this);
 
@@ -1119,6 +1122,7 @@ namespace GoodAI.BrainSimulator.Forms
                 bool anyOutputChanged = false;
                 try
                 {
+                    // TODO(HonzaS): Move this into Simulation, it will be reused when the model is changed on the run.
                     anyOutputChanged = SimulationHandler.UpdateMemoryModel();
                 }
                 finally
@@ -1126,14 +1130,10 @@ namespace GoodAI.BrainSimulator.Forms
                     // Error handling is done below in a validation assert.
                 }
 
-                // TODO: move this out.
-                MyValidator validator = ValidationView.Validator;
-                validator.Simulation = SimulationHandler.Simulation;
-
-                validator.ClearValidation();
-
-                Project.World.ValidateWorld(validator);
-                Project.Network.Validate(validator);
+                // Perform project validation (world and network).
+                SimulationHandler.Simulation.Validate(Project);
+                
+                MyValidator validator = SimulationHandler.Simulation.Validator;
 
                 if (ObserverViews != null)
                     ObserverViews.ForEach(view => view.Observer.Validate(validator));
@@ -1141,11 +1141,10 @@ namespace GoodAI.BrainSimulator.Forms
                 validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
 
                 ValidationView.UpdateListView();
-                validator.Simulation = null;
 
                 ResetObservers();
 
-                if (validator.ValidationSucessfull)
+                if (validator.ValidationSuccessful)
                 {
                     try
                     {

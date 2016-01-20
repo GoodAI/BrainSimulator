@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
+using GoodAI.TypeMapping;
 
 /*
 # How to use MyProjectRunner
@@ -125,7 +126,7 @@ namespace GoodAI.Core.Execution
 
         public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
-            MySimulation simulation = new MyLocalSimulation();
+            MySimulation simulation = new MyLocalSimulation(TypeMap.GetInstance<MyValidator>());
             SimulationHandler = new MySimulationHandler(simulation);
             m_resultIdCounter = 0;
 
@@ -519,16 +520,11 @@ namespace GoodAI.Core.Execution
                     return;
                 }
 
-                MyValidator validator = new MyValidator();
-                validator.Simulation = SimulationHandler.Simulation;
-                validator.ClearValidation();
+                SimulationHandler.Simulation.Validate(Project);
 
-                Project.World.ValidateWorld(validator);
-                Project.Network.Validate(validator);
+                MyValidator validator = SimulationHandler.Simulation.Validator;
 
-                validator.Simulation = null;
-
-                if (!validator.ValidationSucessfull)
+                if (!validator.ValidationSuccessful)
                 {
                     MyLog.ERROR.WriteLine("Simulation cannot be started! Validation failed.");
                     return;

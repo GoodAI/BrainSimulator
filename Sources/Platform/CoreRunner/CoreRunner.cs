@@ -1,4 +1,6 @@
 ﻿using System;
+using GoodAI.Platform.Core.Configuration;
+using GoodAI.TypeMapping;
 
 namespace GoodAI.CoreRunner
 {
@@ -6,6 +8,9 @@ namespace GoodAI.CoreRunner
     {
         static void Main(string[] args)
         {
+            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
+            TypeMap.Verify();
+
             ExampleExperiment.Run(args);
         }
     }

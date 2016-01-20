@@ -72,7 +72,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         {
             base.Validate(validator);
 
-            if (validator.ValidationSucessfull)
+            if (validator.ValidationSuccessful)
             {
                 // all inputs have equal size (so take first and check others)
                 for (int i = 1, size = GetInputSize(0); i < InputBranches; i++)

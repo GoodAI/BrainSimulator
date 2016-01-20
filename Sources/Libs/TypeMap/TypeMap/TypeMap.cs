@@ -9,9 +9,9 @@ namespace GoodAI.TypeMapping
 {
     public static class TypeMap
     {
-        public static Container SimpleInjectorContainer { get; private set; }
+        private static Container SimpleInjectorContainer { get; set; }
 
-        public static void Initialize()
+        private static void Initialize()
         {
             SimpleInjectorContainer = new Container
             {
@@ -30,6 +30,9 @@ namespace GoodAI.TypeMapping
 
         public static void InitializeConfiguration<TConfiguration>() where TConfiguration : IContainerConfiguration, new()
         {
+            if (SimpleInjectorContainer == null)
+                Initialize();
+
             var configuration = new TConfiguration();
             configuration.Configure(SimpleInjectorContainer);
         }
@@ -38,6 +41,11 @@ namespace GoodAI.TypeMapping
         public static T GetInstance<T>() where T : class
         {
             return SimpleInjectorContainer.GetInstance<T>();
+        }
+
+        public static void Verify()
+        {
+            SimpleInjectorContainer.Verify();
         }
     }
 }

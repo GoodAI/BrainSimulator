@@ -10,23 +10,38 @@ namespace GoodAI.Core.Utils
         void Validate(MyValidator validator);
     }
 
+    // TODO(HonzaS): use this as a dependency instead of MyValidator.
+    public interface IValidator
+    {
+        List<MyValidationMessage> Messages { get; }
+        bool ValidationSuccessful { get; }
+        MySimulation Simulation { get; set; }
+        void ClearValidation();
+        void AssertError(bool result, IValidatable sender, string failMessage);
+        void AddError(IValidatable sender, string message);
+        void AssertWarning(bool result, IValidatable sender, string failMessage);
+        void AddWarning(IValidatable sender, string message);
+        void AssertInfo(bool result, IValidatable sender, string failMessage);
+        void AddInfo(IValidatable sender, string message);
+    }
+
     public class MyValidator
     {
         public List<MyValidationMessage> Messages { get; private set; }    
-        public bool ValidationSucessfull { get; private set; }
+        public bool ValidationSuccessful { get; private set; }
 
         public MySimulation Simulation { get; set; }
 
         public MyValidator()
         {
             Messages = new List<MyValidationMessage>();
-            ValidationSucessfull = true;
+            ValidationSuccessful = true;
         }
 
         public void ClearValidation()
         {
             Messages.Clear();
-            ValidationSucessfull = true;
+            ValidationSuccessful = true;
         }
 
         private void AddMessage(MyValidationLevel level, string message, IValidatable sender) {
@@ -45,7 +60,7 @@ namespace GoodAI.Core.Utils
         {
             if (!result)
             {
-                ValidationSucessfull = false;
+                ValidationSuccessful = false;
                 AddMessage(MyValidationLevel.ERROR, failMessage, sender);
             }
         }

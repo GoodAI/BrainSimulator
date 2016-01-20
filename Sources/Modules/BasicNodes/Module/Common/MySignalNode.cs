@@ -47,11 +47,6 @@ namespace GoodAI.Core.Nodes
             }
         }
 
-        public override void Validate(MyValidator validator)
-        {
-            base.Validate(validator);           
-        }
-
         public override void UpdateMemoryBlocks()
         {
             Output.Count = GetInputSize(0);

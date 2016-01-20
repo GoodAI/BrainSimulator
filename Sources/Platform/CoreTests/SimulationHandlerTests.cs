@@ -13,6 +13,8 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Testing;
+using GoodAI.Platform.Core.Configuration;
+using GoodAI.TypeMapping;
 using Rhino.Mocks;
 using Xunit;
 
@@ -20,11 +22,16 @@ namespace CoreTests
 {
     public class SimulationHandlerTests
     {
+        private MyValidator m_validator;
+
         [Fact]
         public void SimulationPropertySetterTest()
         {
             var simulation = MockRepository.GenerateStub<MySimulation>();
             var handler = new MySimulationHandler(simulation);
+
+            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
+            m_validator = TypeMap.GetInstance<MyValidator>();
 
             // This should not throw, it's the first simulation.
 
@@ -70,7 +77,7 @@ namespace CoreTests
         [Fact]
         public void SimulationStateChangedOnNodesTest()
         {
-            var simulation = new MyLocalSimulation();
+            var simulation = new MyLocalSimulation(m_validator);
             var handler = new MySimulationHandler(simulation);
 
             MyProject project = new MyProject

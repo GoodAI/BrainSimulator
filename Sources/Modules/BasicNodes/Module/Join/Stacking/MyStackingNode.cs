@@ -111,7 +111,7 @@ namespace GoodAI.Modules.Join
         {
             base.Validate(validator);
 
-            if (validator.ValidationSucessfull)
+            if (validator.ValidationSuccessful)
             {
                 string errorOutput;
                 validator.AssertError(MyStackingOps.Validate(Operation, m_inputBlocks, Output, out errorOutput), this, errorOutput);
