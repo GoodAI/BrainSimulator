@@ -37,4 +37,5 @@ using System.Runtime.CompilerServices;
 
 // Testing
 [assembly: InternalsVisibleTo("BrainSimulatorTests")]
+[assembly: InternalsVisibleTo("CoreTests")]  // e.g. for MyForkTests
 

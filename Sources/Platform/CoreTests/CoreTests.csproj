@@ -70,6 +70,7 @@
     <Compile Include="EnumerableExtensionsTests.cs" />
     <Compile Include="ModelCreationTests.cs" />
     <Compile Include="NodeConnectionTests.cs" />
+    <Compile Include="Nodes\MyForkTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="ReleaseDeserializationTests.cs" />
