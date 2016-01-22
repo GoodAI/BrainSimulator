@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.School</name>
+    </assembly>
+    <members>
+        <member name="T:GoodAI.Modules.School.Common.AbstractLearningTask`1">
+            <summary>
+            Abstract base class for AI School exercises.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.AbstractSchoolWorld">
+             <author>GoodAI</author>
+             <meta>mp</meta>
+             <status>WIP</status>
+             <summary>Base for the school worlds</summary>
+             <description>
+            
+             </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.AbstractSchoolWorld.InitSchoolTask">
+            <summary>
+            Initialize the world's curriculum
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.AbstractSchoolWorld.LearningTaskStepTask">
+            <summary>
+            Update the state of the training task(s)
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.School.Common.GameObject.DistanceTo(GoodAI.Modules.School.Common.GameObject)">
+            <summary>
+            Computes the shortest distance from any bounding box pixel of this to any bounding box pixel of target
+            </summary>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.ManInWorld">
+            <author>GoodAI</author>
+            <meta>Mp,Mv,Os</meta>
+            <status>WIP</status>
+            <summary> Implementation of a configurable 2D world </summary>
+            <description>
+            Implementation of a configurable 2D world
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.ManInWorld.RenderTask">
+            <summary>
+            Render the world to the visual output.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.SchoolCurriculum">
+            <summary>
+            Holds tasks that an agent should be trained with to gain new abilities
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.TrainingSetHints">
+            <summary>
+            Training set hints are concrete parameters that
+            determine the difficulty of a task, such as presence of noise or the
+            number of attempts that the agent gets to complete the task.
+            The values of the hints depend on the ChallengeLevel. Hints are world
+            independent, and can sometimes be used/interpreted differently depending
+            on the world.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Moving Target" learning task</summary>
+            <description>
+            Ability Name: Efficient navigation in a simple environment + moving target.
+            In this Learning task there is an agent and a moving target, to pass each level the agent needs to reach the target a defined number of consecutive times,
+            There is a limit on the number of timesteps that can be used to reach the target, If this limit is reached, the level fails and the agent starts from the same level but the number of consecutive times is reset.
+            Different levels will create targets with different moving characteristics.
+            The teacher declares the ability as learned when the agent reaches the last level.
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld">
+            <author>GoodAI</author>
+            <meta>os</meta>
+            <status>WIP</status>
+            <summary> Custom implementation of the plumber world (Mario) </summary>
+            <description>
+            2D Platformer world which includes a traditional 2D physics engine and collision detection/handling
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld.InitialiseWorldTask">
+            <summary>
+            Initialises The objects that will populate the world using "AddGameObject" which is derived from ManInWorld world, this will define the current level
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld.UpdatePlumberTask">
+            <summary>
+            Apply configurable gravity physics to the specified GameObjects
+            </summary>
+        </member>
+    </members>
+</doc>

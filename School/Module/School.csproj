@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8C381B5A-3FD7-4311-9C42-F8115587E5FD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GoodAI.School</RootNamespace>
+    <AssemblyName>GoodAI.School</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CudaBlas, Version=7.5.7.0, Culture=neutral, PublicKeyToken=539d54d12e99fedb, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaBlas.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaFFT, Version=7.5.7.0, Culture=neutral, PublicKeyToken=f066edfa1acb2f23, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaFFT.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaRand, Version=7.5.7.0, Culture=neutral, PublicKeyToken=fe981579f4e9a066, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaRand.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaSolve, Version=7.5.7.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSolve.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CudaSparse, Version=7.5.7.0, Culture=neutral, PublicKeyToken=f65ee2ae6b331585, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSparse.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ManagedCuda, Version=7.5.7.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\ManagedCuda.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPP, Version=7.5.7.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NPP.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NVRTC, Version=7.5.7.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NVRTC.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="YAXLib, Version=2.13.0.0, Culture=neutral, PublicKeyToken=15c43682c986900f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AbstractLearningTask.cs" />
+    <Compile Include="Common\AbstractSchoolWorld.cs" />
+    <Compile Include="Common\GameObject.cs" />
+    <Compile Include="Common\LearningTaskFactory.cs" />
+    <Compile Include="Common\LearningTaskHelpers.cs" />
+    <Compile Include="Common\ManInWorld.cs" />
+    <Compile Include="Common\SchoolCurriculum.cs" />
+    <Compile Include="Common\StandardConflictResolver.cs" />
+    <Compile Include="Common\TrainingSetHints.cs" />
+    <Compile Include="Learning tasks\LT1DApproach.cs" />
+    <Compile Include="Learning tasks\LTActionWCooldown.cs" />
+    <Compile Include="Learning tasks\LTApproach.cs" />
+    <Compile Include="Learning tasks\LTConditionalTarget.cs" />
+    <Compile Include="Learning tasks\LTCopyAction.cs" />
+    <Compile Include="Learning tasks\LTCopySequence.cs" />
+    <Compile Include="Learning tasks\LTDebugging.cs" />
+    <Compile Include="Learning tasks\LTDetectBlackAndWhite.cs" />
+    <Compile Include="Learning tasks\LTDetectColor.cs" />
+    <Compile Include="Learning tasks\LTDetectDifference.cs" />
+    <Compile Include="Learning tasks\LTDetectShape.cs" />
+    <Compile Include="Learning tasks\LTDetectShapeColor.cs" />
+    <Compile Include="Learning tasks\LTDetectWhite.cs" />
+    <Compile Include="Learning tasks\LTMovingTarget.cs" />
+    <Compile Include="Learning tasks\LTShapeGroups.cs" />
+    <Compile Include="Learning tasks\LTSimpleAngle.cs" />
+    <Compile Include="Learning tasks\LTSimpleDistance.cs" />
+    <Compile Include="Learning tasks\LTSimpleSize.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Versioning\MyConversion.cs" />
+    <Compile Include="Worlds\PlumberWorld.cs" />
+    <Compile Include="Worlds\RogueGameObjects.cs" />
+    <Compile Include="Worlds\RoguelikeWorld.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
+      <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="post_build.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="conf\doc.xml" />
+    <EmbeddedResource Include="conf\nodes.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

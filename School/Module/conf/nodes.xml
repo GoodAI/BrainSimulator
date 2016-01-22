@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration RootNamespace="GoodAI.Modules.School">
+  <KnownWorlds>
+    <World type="GoodAI.Modules.School.Worlds.RoguelikeWorld" CanBeAdded="true"/>
+    <World type="GoodAI.Modules.School.Worlds.PlumberWorld" CanBeAdded="true"/>
+  </KnownWorlds>
+</Configuration>
