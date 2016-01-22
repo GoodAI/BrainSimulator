@@ -524,7 +524,7 @@ namespace GoodAI.Core.Execution
 
                 MyValidator validator = SimulationHandler.Simulation.Validator;
 
-                if (!validator.ValidationSuccessful)
+                if (!validator.ValidationSucessfull)
                 {
                     MyLog.ERROR.WriteLine("Simulation cannot be started! Validation failed.");
                     return;

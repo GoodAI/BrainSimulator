@@ -22,6 +22,7 @@ namespace GoodAI.Core.Execution
 
     public abstract class MySimulation
     {
+        protected static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
 
         public uint SimulationStep { get; protected set; }
 
@@ -62,6 +63,8 @@ namespace GoodAI.Core.Execution
             if (DebugTargetReached != null)
                 DebugTargetReached(this, EventArgs.Empty);
         }
+
+        public abstract bool UpdateMemoryModel(MyProject project, List<MyNode> orderedNodes);
 
         public MyExecutionBlock[] CurrentDebuggedBlocks { get; internal set; }
 
@@ -145,7 +148,11 @@ namespace GoodAI.Core.Execution
             ExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project, newNodes);
 
             ExtractAllNodes(m_project);
+
+            ScheduleChanged();
         }
+
+        protected virtual void ScheduleChanged() {}
 
         private void ExtractAllNodes(MyProject project)
         {
@@ -198,7 +205,6 @@ namespace GoodAI.Core.Execution
         }
 
         public abstract void PerformModelChanges();
-        public abstract void Reallocate();
 
         public void Validate(MyProject project = null)
         {
@@ -364,6 +370,12 @@ namespace GoodAI.Core.Execution
             MyKernelFactory.Instance.SetCurrent(coreNumber);
         }
 
+        protected override void ScheduleChanged()
+        {
+            if (m_debugStepComplete)
+                CurrentDebuggedBlocks[0] = ExecutionPlan.StandardStepPlan;
+        }
+
         private void ExecuteCore(int coreNumber)
         {
             try
@@ -527,96 +539,151 @@ namespace GoodAI.Core.Execution
             DebugStepMode = DebugStepMode.StepInto;
         }
 
-        private MyExecutionBlock GetNextExecutable(MyExecutionBlock executionBlock)
-        {
-            if (executionBlock.NextChild != null)
-                return executionBlock;
-
-            if (executionBlock.Parent != null)
-                return GetNextExecutable(executionBlock.Parent);
-
-            // This is the root and it doesn't have a "next" node.
-            return null;
-        }
-
         protected override void DoFinish()
         {
             m_threadPool.FinishFromSTAThread();
         }
 
+        /// <summary>
+        /// Go through the topologically ordered model changing groups and allow them to restructure.
+        /// </summary>
         public override void PerformModelChanges()
         {
-            //var newModelChangingGroups = new List<IModelChanger>();
-            // Go through the topologically ordered model changing groups and allow them to restructure.
-
             var allAddedNodes = new List<MyWorkingNode>();
+            var allRemovedNodes = new List<MyWorkingNode>();
+            var changedNodes = new List<MyNode>();
 
             bool modelChanged = false;
             ModelChangingNodeGroups.EachWithIndex((changer, i) =>
             {
-                var removedNodes = new List<MyWorkingNode>();
-                var addedNodes = new List<MyWorkingNode>();
+                bool nodeChanged = ChangeModelStructure(changer, ref allAddedNodes, ref allRemovedNodes);
+                if (nodeChanged)
+                    changedNodes.Add(changer.AffectedNode);
 
-                if (!changer.IsModelChanging)
-                    return;
-
-                modelChanged = true;
-                changer.ChangeModel(ref removedNodes, ref addedNodes);
-
-                // Clean up memory.
-                IterateNodes(removedNodes, FreeMemory);
-
-                // Validate new nodes.
-                Validator.ClearValidation();
-                IterateNodes(addedNodes, node =>
-                {
-                    node.ValidateMandatory(Validator);
-                    node.Validate(Validator);
-                });
-
-                // Update memory blocks of the newly added nodes.
-                // TODO(HonzaS): "shakedown" (the convergence of Count updates).
-                foreach (MyWorkingNode node in addedNodes)
-                    node.UpdateMemoryBlocks();
-
-                // Allocate new memory.
-                IterateNodes(addedNodes, AllocateMemory);
-
-                // Init nodes
-                IterateNodes(addedNodes, node =>
-                {
-                    var workingNode = node as MyWorkingNode;
-                    if (workingNode == null)
-                        return;
-
-                    workingNode.ClearSignals();
-                    workingNode.InitTasks();
-                });
-
-                //newModelChangingGroups.Add(changer);
-                //IterateNodes(addedNodes, node =>
-                //{
-                //    var newChanger = node as IModelChanger;
-                //    if (newChanger != null)
-                //        newModelChangingGroups.Add(newChanger);
-                //});
-
-                IterateNodes(removedNodes, node => MyMemoryManager.Instance.RemoveBlocks(node));
-
-                allAddedNodes.AddRange(addedNodes);
-
-                EmitModelChanged(changer.AffectedNode);
+                modelChanged |= nodeChanged;
             });
 
-            //ModelChangingNodeGroups = newModelChangingGroups;
-
-            // Refresh topological ordering.
             if (!modelChanged)
                 return;
 
-            MySimulationHandler.OrderNetworkNodes(m_project.Network);
+            SetupAfterModelChange(allRemovedNodes, allAddedNodes, changedNodes);
+        }
 
-            Schedule(m_project, allAddedNodes);
+        private void SetupAfterModelChange(List<MyWorkingNode> removedNodes, List<MyWorkingNode> addedNodes, List<MyNode> changedNodes)
+        {
+            // Clean up memory.
+            IterateNodes(removedNodes, FreeAndDestroyNodeMemory);
+
+            Validator.ClearValidation();
+
+            // Validate new nodes.
+            IterateNodes(addedNodes, ValidateNode);
+
+            // Refresh topological ordering.
+            List<MyNode> orderedNodes = MySimulationHandler.OrderNetworkNodes(m_project.Network);
+
+            // Update the whole memory model.
+            // TODO(HonzaS): This may break things, check.
+            // We'll need to forbid changing of count after the simulation has started with the exception of added nodes.
+            // However, the added nodes may lead to reallocation of blocks - deal with it.
+            bool updatesNotConverged = UpdateMemoryModel(m_project, orderedNodes);
+            Validator.AssertError(!updatesNotConverged, m_project.Network, "Possible infinite loop in memory block sizes.");
+
+            if (!Validator.ValidationSucessfull)
+                throw new InvalidOperationException("Validation failed for the changed model.");
+
+            // Allocate memory and init nodes
+            IterateNodes(addedNodes, AllocateAndInitNode);
+
+            // Finalize - reschedule and let listeners react.
+            Schedule(m_project, addedNodes);
+
+            foreach (MyNode node in changedNodes)
+                EmitModelChanged(node);
+        }
+
+        private static void AllocateAndInitNode(MyNode node)
+        {
+            // TODO(HonzaS): Does the allocation need to be done in a separate loop?
+            AllocateMemory(node);
+            var workingNode = node as MyWorkingNode;
+            if (workingNode == null)
+                return;
+
+            workingNode.ClearSignals();
+            workingNode.InitTasks();
+        }
+
+        private void ValidateNode(MyNode node)
+        {
+            node.ValidateMandatory(Validator);
+            node.Validate(Validator);
+        }
+
+        private static void FreeAndDestroyNodeMemory(MyNode node)
+        {
+            FreeMemory(node);
+            MyMemoryManager.Instance.RemoveBlocks(node);
+        }
+
+        private static bool ChangeModelStructure(IModelChanger changer, ref List<MyWorkingNode> allAddedNodes,
+            ref List<MyWorkingNode> allRemovedNodes)
+        {
+            var removedNodes = new List<MyWorkingNode>();
+            var addedNodes = new List<MyWorkingNode>();
+
+            bool changed = changer.ChangeModel(ref removedNodes, ref addedNodes);
+
+            if (!changed)
+                return false;
+
+            allAddedNodes.AddRange(addedNodes);
+            allRemovedNodes.AddRange(removedNodes);
+
+            return true;
+        }
+
+        public override bool UpdateMemoryModel(MyProject project, List<MyNode> orderedNodes)
+        {
+            if (!orderedNodes.Any())
+            {
+                return true;
+            }
+
+            int attempts = 0;
+            bool anyOutputChanged = false;
+
+            try
+            {
+                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
+                {
+                    attempts++;
+                    anyOutputChanged = false;
+
+                    anyOutputChanged |= UpdateAndCheckChange(project.World);
+                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
+
+                    if (!anyOutputChanged)
+                    {
+                        //MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
+                throw;
+            }
+
+            return anyOutputChanged;
+        }
+
+        private bool UpdateAndCheckChange(MyNode node)
+        {
+            node.PushOutputBlockSizes();
+            node.UpdateMemoryBlocks();
+            return node.AnyOutputSizeChanged();
         }
 
         private static void IterateNodes(IEnumerable<MyWorkingNode> nodes, MyNodeGroup.IteratorAction action)
@@ -629,10 +696,6 @@ namespace GoodAI.Core.Execution
                 if (group != null)
                     group.Iterate(true, action);
             }
-        }
-
-        public override void Reallocate()
-        {
         }
 
         private void LoadBlocks(IEnumerable<MyWorkingNode> nodeList)

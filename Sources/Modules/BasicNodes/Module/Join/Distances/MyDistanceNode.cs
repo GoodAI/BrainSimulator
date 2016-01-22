@@ -73,7 +73,7 @@ namespace GoodAI.Modules.Join
         {
             base.Validate(validator);
 
-            if (validator.ValidationSuccessful)
+            if (validator.ValidationSucessfull)
             {
                 string errorOutput;
                 validator.AssertError(MyDistanceOps.Validate(Operation, GetInput(0).Count, GetInput(1).Count, Temp.Count, Output.Count, out errorOutput), this, errorOutput);

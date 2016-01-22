@@ -9,8 +9,7 @@ namespace GoodAI.Platform.Core.Nodes
 {
     public interface IModelChanger
     {
-        bool IsModelChanging { get; }
-        void ChangeModel(ref List<MyWorkingNode> removedNodes, ref List<MyWorkingNode> addedNodes);
+        bool ChangeModel(ref List<MyWorkingNode> removedNodes, ref List<MyWorkingNode> addedNodes);
         MyNode AffectedNode { get; }
     }
 }

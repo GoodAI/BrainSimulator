@@ -13,8 +13,6 @@ namespace GoodAI.Core.Execution
     /// Managers MySimulation run
     public class MySimulationHandler : IDisposable
     {
-        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
-
         public enum SimulationState
         {
             [Description("Running")]
@@ -405,39 +403,7 @@ namespace GoodAI.Core.Execution
 
             List<MyNode> orderedNodes = OrderNetworkNodes(Project.Network);
 
-            if (!orderedNodes.Any())
-            {
-                return true;
-            }
-
-            int attempts = 0;
-            bool anyOutputChanged = false;
-
-            try
-            {
-
-                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
-                {
-                    attempts++;
-                    anyOutputChanged = false;
-
-                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
-                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
-
-                    if (!anyOutputChanged)
-                    {
-                        MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
-                throw;
-            }
-
-            return anyOutputChanged;                        
+            return Simulation.UpdateMemoryModel(Project, orderedNodes);
         }
 
         public static List<MyNode> OrderNetworkNodes(MyNodeGroup network)
@@ -449,13 +415,6 @@ namespace GoodAI.Core.Execution
         public void RefreshTopologicalOrder()
         {
             OrderNetworkNodes(Project.Network);
-        }
-
-        private bool UpdateAndCheckChange(MyNode node)
-        {
-            node.PushOutputBlockSizes();
-            node.UpdateMemoryBlocks();
-            return node.AnyOutputSizeChanged();
         }
 
 

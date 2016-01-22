@@ -417,6 +417,12 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        public void OnModelChanged(object sender, MySimulation.ModelChangedEventArgs args)
+        {
+            if (args.Node == Target)
+                ReloadContent();
+        }
+
         public void ReloadContent()
         {
             Desktop.ConnectionAdded -= OnConnectionAdded;

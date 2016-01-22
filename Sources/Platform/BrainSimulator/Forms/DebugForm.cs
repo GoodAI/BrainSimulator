@@ -121,16 +121,10 @@ namespace GoodAI.BrainSimulator.Forms
             stepOverButton.Enabled = simulationHandler.CanStepOver;
             pauseToolButton.Enabled = simulationHandler.CanPause;
 
-            if (e.NewState == MySimulationHandler.SimulationState.RUNNING)
-            {
-                if (m_executionPlan == null)
-                    UpdateDebugListView();
-            }
-            else if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
-            {
-                if (m_executionPlan == null)
-                    UpdateDebugListView();
+            UpdateDebugListView();
 
+            if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
+            {
                 if (simulationHandler.Simulation.InDebugMode)
                 {
                     noDebugLabel.Visible = false;

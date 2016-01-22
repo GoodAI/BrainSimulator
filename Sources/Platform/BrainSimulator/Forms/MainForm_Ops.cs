@@ -532,12 +532,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             RefreshConnections(graphForm);
 
-            SimulationHandler.Simulation.ModelChanged += (sender, args) =>
-            {
-                // TODO(HonzaS): This will be a performance hit for rapidly changing models. Optimize.
-                if (args.Node == target)
-                    ReloadGraphLayout(target);
-            };
+            SimulationHandler.Simulation.ModelChanged += graphForm.OnModelChanged;
 
             return graphForm;
         }
@@ -612,7 +607,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void GraphLayoutForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            GraphViews.Remove((sender as GraphLayoutForm).Target);
+            var graphForm = sender as GraphLayoutForm;
+            if (graphForm == null)
+                return;
+
+            SimulationHandler.Simulation.ModelChanged -= graphForm.OnModelChanged;
+            GraphViews.Remove(graphForm.Target);
         }
 
         private bool TryRestoreViewsLayout(string layoutFileName)
@@ -1144,7 +1144,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 ResetObservers();
 
-                if (validator.ValidationSuccessful)
+                if (validator.ValidationSucessfull)
                 {
                     try
                     {
