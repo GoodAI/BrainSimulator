@@ -84,7 +84,7 @@ namespace GoodAI.Modules.School.Common
 
         public void SetPlattformerReaction(MovableGameObject mgo1, GameObject o2)
         {
-            int collideResult = 0;
+            int collideResult = CheckCollision(mgo1, o2);
             Point lastUntouchingPosition = GetLastUntouchingPosition(mgo1, o2, ref collideResult); //finds the X,Y position of "source" in the closest point to "o2" before collision)
 
             if (collideResult == 4 || collideResult == 1)               // If it collided at the bottom or top
@@ -127,9 +127,12 @@ namespace GoodAI.Modules.School.Common
 
         }
 
-        public static Point GetMiddlePoint(Point p1, Point p2, float ratio = 0.5f)
+        public static Point ReturnCoordinatesBetweenTwoPoints(int SourceX, int SourceY, int TargetX, int TargetY, float blend)
         {
-            return new Point((int)(p1.X + ratio * (p2.Y - p1.X)), (int)(p1.Y + ratio * (p2.Y - p1.Y)));
+            Point result = new Point(); ;
+            result.X = (int)(SourceX + blend * (TargetX - SourceX));
+            result.Y = (int)(SourceY + blend * (TargetY - SourceY));
+            return result;
         }
 
         /*
@@ -151,7 +154,7 @@ namespace GoodAI.Modules.School.Common
             while (previousMiddle != currentMiddle)                         // If the previous middle point and the current one are equivalent, it means that distance can't be divided anymore by half, exit
             {
                 previousMiddle = currentMiddle;                             // Update the previous value  of the middle point, it is used to check if they are equivalent, if they are, the loop should stop
-                currentMiddle = GetMiddlePoint(lowerSide, higherSide, 0.5f);  // Find the middle point between lowerSide and higherSide
+                currentMiddle = ReturnCoordinatesBetweenTwoPoints(lowerSide.X, lowerSide.Y, higherSide.X, higherSide.Y, 0.5f);  // Find the middle point between lowerSide and higherSide
 
                 //MyLog.DEBUG.WriteLine("Recomputed middle between : " + lowerSide.x + "," + lowerSide.y + " | " + higherSide.x + "," + higherSide.y + " : = " + currentMiddle.x + ", " + currentMiddle.y);
 
@@ -193,17 +196,17 @@ namespace GoodAI.Modules.School.Common
             
         }*/
 
-        public static int CheckCollision(GameObject o1, GameObject o2)
+        public static int CheckCollision(GameObject SourceGameObject, GameObject TargetGameObject)
         {
-            float w = 0.5f * (o1.Width + o2.Width);
-            float h = 0.5f * (o1.Height + o2.Height);
+            float w = 0.5f * (SourceGameObject.Width + TargetGameObject.Width);
+            float h = 0.5f * (SourceGameObject.Height + TargetGameObject.Height);
 
-            float dx = (o1.X + (o1.Width / 2)) - (o2.X + (o2.Width / 2));
-            float dy = (o1.Y + (o1.Height / 2)) - (o2.Y + (o2.Height / 2));
+            float dx = (SourceGameObject.X + (SourceGameObject.Width / 2)) - (TargetGameObject.X + (TargetGameObject.Width / 2));
+            float dy = (SourceGameObject.Y + (SourceGameObject.Height / 2)) - (TargetGameObject.Y + (TargetGameObject.Height / 2));
 
-            MovableGameObject mobj = o1 as MovableGameObject;
+            MovableGameObject mobj = SourceGameObject as MovableGameObject;
 
-            if (o1.GetGeometry().IntersectsWith(o2.GetGeometry()) || o2.GetGeometry().IntersectsWith(o2.GetGeometry()))
+            if (Math.Abs(dx) <= 0.99f * w && Math.Abs(dy) <= 0.99f * h) // 0.99 = make it more float-robust
             {
                 //If we reached this point, there is a collision, so check the side of collision
                 float wy = w * dy;
