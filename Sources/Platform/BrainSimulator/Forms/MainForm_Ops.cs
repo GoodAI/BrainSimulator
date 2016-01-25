@@ -25,30 +25,9 @@ using YAXLib;
 
 namespace GoodAI.BrainSimulator.Forms
 {
-    public class BrainSimUIExtensionAttribute : Attribute { }
 
     public partial class MainForm : Form
     {
-        private static List<Type> GetBrainSimUIExtensions()
-        {
-            List<Type> ret = new List<Type>();
-
-            foreach (FileInfo assemblyFile in MyConfiguration.ListModules())
-            {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
-                string xml = MyResources.GetTextFromAssembly(assembly, "nodes.xml");    //MyModuleConfig.MODULE_CONFIG_FILE instead of "nodes.xml"
-                if (!string.IsNullOrEmpty(xml)) //skip nodes DLLs - GUI and logic should be divided
-                    continue;
-
-                foreach (Type type in assembly.GetTypes())
-                    if (Attribute.GetCustomAttribute(type, typeof(BrainSimUIExtensionAttribute)) != null &&
-                        type.IsSubclassOf(typeof(DockContent)) == true)
-                        ret.Add(type);
-            }
-
-            return ret;
-        }
-
         private static string TITLE_TEXT = "Brain Simulator";
 
         public MySimulationHandler SimulationHandler { get; private set; }
@@ -780,11 +759,8 @@ namespace GoodAI.BrainSimulator.Forms
             m_views = new List<DockContent>() { NetworkView, DashboardPropertyView, NodePropertyView, MemoryBlocksView, TaskView,
                 TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
 
-            foreach (Type t in GetBrainSimUIExtensions())
-            {
-                DockContent f = (DockContent)t.GetConstructor(new Type[] { }).Invoke(new object[] { });
-                m_views.Add(f);
-            }
+            foreach (var form in UIPlugins.GetBrainSimUIExtensions())
+                m_views.Add(form);
 
             foreach (DockContent view in m_views)
             {
