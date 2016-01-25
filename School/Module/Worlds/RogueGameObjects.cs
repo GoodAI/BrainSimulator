@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.Worlds
             (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
 
         public static string GetDefaultTexture(){
-            return "Agent_TOP_blue.png";
+            return "Agent_TOP_blue_m.png";
         }
 
         public static Size GetDefaultSize()
@@ -110,12 +110,12 @@ namespace GoodAI.Modules.School.Worlds
 
         public static string GetDefaultTexture()
         {
-            return "Agent_TOP_red.png";
+            return "Agent_TOP_red_m.png";
         }
 
         public static string GetDefaultStopTexture()
         {
-            return "Agent_TOP_green.png";
+            return "Agent_TOP_green_m.png";
         }
 
         public static Size GetDefaultSize()
@@ -206,7 +206,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void SwitchOn()
         {
-            SetColor(Color.Cyan);
+            bitmapPath = @"Gate_Open_m.png";
             type = GameObjectType.OpenedDoor;
             
             _isOn = true;
@@ -214,7 +214,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void SwitchOff()
         {
-            SetColor(Color.Black);
+            bitmapPath = @"Gate_Open_m.png";
             type = GameObjectType.ClosedDoor;
             _isOn = false;
         }
@@ -238,7 +238,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public static string GetDefaultTexture()
         {
-            return "White10x10.png";
+            return @"Gate_Close_m.png";
         }
 
         public static Size GetDefaultSize()
@@ -260,14 +260,6 @@ namespace GoodAI.Modules.School.Worlds
             }
             set
             {
-                if (value)
-                {
-                    type = GameObjectType.OpenedDoor;
-                }
-                else
-                {
-                    type = GameObjectType.ClosedDoor;
-                }
                 _isOn = value;
             }
         }
@@ -281,16 +273,30 @@ namespace GoodAI.Modules.School.Worlds
 
         public void Switch()
         {
+            if (isOn)
+            {
+                SwitchOff();
+            }
+            else
+            {
+                SwitchOn();
+            }
             SwitchableObject.Switch();
         }
 
         public void SwitchOn()
         {
+            isOn = true;
+            bitmapPath = @"Button_ON.png";
+            type = GameObjectType.OpenedDoor;
             SwitchableObject.SwitchOn();
         }
 
         public void SwitchOff()
         {
+            isOn = false;
+            bitmapPath = @"Button_OFF.png";
+            type = GameObjectType.ClosedDoor;
             SwitchableObject.SwitchOff();
         }
 
@@ -301,7 +307,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public static string GetDefaultTexture()
         {
-            return "WhiteCircle50x50.png";
+            return @"Button_ON.png";
         }
 
         public static Size GetDefaultSize()
@@ -318,7 +324,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public static string GetDefaultTexture()
         {
-            return "Target_TOP.png";
+            return "Lava_Surface.png";
         }
 
         public static Size GetDefaultSize()
