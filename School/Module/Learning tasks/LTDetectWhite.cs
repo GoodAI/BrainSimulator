@@ -54,8 +54,12 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
             World.AddGameObject(m_target);
+            // Plumber:
+            //m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
+            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
+            // Roguelike:
             m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
-            m_target.Y = World.FOW_HEIGHT - m_target.Height;
+            m_target.Y = m_rndGen.Next(0, World.FOW_HEIGHT - m_target.Height + 1);
         }
     }
 
