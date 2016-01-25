@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "..\..\..\Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAXLib", "..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj", "{F1C4D174-C948-4D18-A125-F6855EF55683}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeMap", "..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj", "{86955C47-2A02-41A4-AB32-C9E592EB2971}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchoolGUI", "SchoolGUI\SchoolGUI.csproj", "{CED75F77-0FA4-48B3-B193-32C07980EDDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +97,12 @@ Global
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{CED75F77-0FA4-48B3-B193-32C07980EDDA}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{CED75F77-0FA4-48B3-B193-32C07980EDDA}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{CED75F77-0FA4-48B3-B193-32C07980EDDA}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{CED75F77-0FA4-48B3-B193-32C07980EDDA}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{CED75F77-0FA4-48B3-B193-32C07980EDDA}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{CED75F77-0FA4-48B3-B193-32C07980EDDA}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
