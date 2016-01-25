@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using System.Linq;
 
 namespace GoodAI.Modules.School.Common
 {
@@ -39,6 +40,13 @@ namespace GoodAI.Modules.School.Common
                     return @"WhiteStar50x50.png";
             }
             throw new ArgumentException("Unknown shape");
+        }
+
+        public static Shapes getRandomShape(Random rndGen)
+        {
+            Array values = Enum.GetValues(typeof(Shapes));
+            Random random = new Random();
+            return (Shapes)values.GetValue(random.Next(values.Length));
         }
     }
 
@@ -136,6 +144,66 @@ namespace GoodAI.Modules.School.Common
                     newB -= 255;
             }
             color = Color.FromArgb(newR, newG, newB);
+        }
+
+        public static Color RandomVisibleColor(Random rndGen)
+        {
+            switch (rndGen.Next(10))
+            {
+                case 0:
+                    return Color.Red;
+                case 1:
+                    return Color.White;
+                case 2:
+                    return Color.Yellow;
+                case 3:
+                    return Color.Gray;
+                case 4:
+                    return Color.Black;
+                case 5:
+                    return Color.Violet;
+                case 6:
+                    return Color.Green;
+                case 7:
+                    return Color.Orange;
+                case 8:
+                    return Color.Pink;
+                case 9:
+                    return Color.Brown;
+                case 10:
+                    return Color.Gold;
+                default:
+                    return Color.White;
+            }
+        }
+
+        public static List<int> UniqueNumbers(Random rndGen, int lowerBound, int upperBound, int count)
+        {
+            // generate count random values.
+            HashSet<int> candidates = new HashSet<int>();
+            for (Int32 top = upperBound - count; top < upperBound; top++)
+            {
+                // May strike a duplicate.
+                if (!candidates.Add(lowerBound + rndGen.Next(top + 1 - lowerBound)))
+                {
+                    candidates.Add(top);
+                }
+            }
+
+            // load them in to a list.
+            List<int> result = candidates.ToList();
+
+            // shuffle the results:
+            int i = result.Count;
+            while (i > 1)
+            {
+                i--;
+                int k = rndGen.Next(i + 1);
+                int value = result[k];
+                result[k] = result[i];
+                result[i] = value;
+            }
+            return result;
         }
     }
 }

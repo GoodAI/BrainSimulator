@@ -25,7 +25,8 @@ namespace GoodAI.Modules.School.Common
         DetectShapeColor,
         ShapeGroups,
         CopyAction,
-        CopySequence
+        CopySequence,
+        DetectDifference
     }
 
     public class LearningTaskFactory
@@ -69,6 +70,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTCopyAction(world);
                 case LearningTaskNameEnum.CopySequence:
                     return new LTCopySequence(world);
+                case LearningTaskNameEnum.DetectDifference:
+                    return new LTDetectDifference(world);
                 default:
                     return null;
             }
