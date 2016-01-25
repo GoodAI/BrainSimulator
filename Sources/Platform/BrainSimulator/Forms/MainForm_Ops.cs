@@ -1,4 +1,6 @@
 ﻿using GoodAI.BrainSimulator.NodeView;
+using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
 using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core.Configuration;
 using GoodAI.Core.Execution;
@@ -7,6 +9,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Project;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Utils;
 using Graph;
 using System;
 using System.Collections.Generic;
@@ -17,20 +20,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using GoodAI.BrainSimulator.Properties;
-using GoodAI.BrainSimulator.UserSettings;
-using GoodAI.Platform.Core.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
 namespace GoodAI.BrainSimulator.Forms
 {
+
     public partial class MainForm : Form
     {
         private static string TITLE_TEXT = "Brain Simulator";
 
         public MySimulationHandler SimulationHandler { get; private set; }
-        public MyDocProvider Documentation { get; private set; }         
+        public MyDocProvider Documentation { get; private set; }
 
         public UndoManager UndoManager { get; set; }
 
@@ -38,7 +39,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private MyProject m_project;
 
-        public MyProject Project 
+        public MyProject Project
         {
             get { return m_project; }
             private set
@@ -59,7 +60,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             Project = new MyProject();
             Project.Network = Project.CreateNode<MyNetwork>();
-            Project.Network.Name = "Network";            
+            Project.Network.Name = "Network";
 
             worldList.SelectedIndex = -1;
             worldList.SelectedItem = MyConfiguration.KnownWorlds.Values.First();
@@ -113,7 +114,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             public ProjectLoadingException(string message, Exception innerException)
                 : base(message, innerException)
-            {}
+            { }
         }
 
         private void OpenProject(string fileName)
@@ -177,12 +178,12 @@ namespace GoodAI.BrainSimulator.Forms
                 // Do not restore links here - that would automatically restore observers and dashboard.
                 MyProject importedProject = MyProject.Deserialize(content, Path.GetDirectoryName(fileName),
                     restoreModelOnly: true);
-                
+
                 //offset all imported nodes
-                float maxY = NetworkView.Desktop.GetContentBounds().Bottom;                               
+                float maxY = NetworkView.Desktop.GetContentBounds().Bottom;
                 foreach (var node in importedProject.Network.Children)
                 {
-                    node.Location.Y += maxY + 10.0f;                                                                  
+                    node.Location.Y += maxY + 10.0f;
                 }
 
                 if (showObservers && importedProject.Observers != null)
@@ -197,7 +198,7 @@ namespace GoodAI.BrainSimulator.Forms
                         observer.UpdateTargetIdentifier();
                     }
                 }
-     
+
                 NetworkView.ReloadContent();
                 NetworkView.Desktop.ZoomToBounds();
 
@@ -212,7 +213,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        
+
         private bool IsProjectSaved(string fileName)
         {
             if (m_savedProjectRepresentation == null)
@@ -247,7 +248,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             return serializedProject;
         }
-        #endregion        
+        #endregion
 
         #region Views
 
@@ -255,7 +256,7 @@ namespace GoodAI.BrainSimulator.Forms
         public MemoryBlocksForm MemoryBlocksView { get; private set; }
 
         public DashboardPropertyForm DashboardPropertyView { get; private set; }
-        
+
         public TaskForm TaskView { get; private set; }
         public TaskPropertyForm TaskPropertyView { get; private set; }
 
@@ -273,7 +274,7 @@ namespace GoodAI.BrainSimulator.Forms
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
         public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
 
-        public List<ObserverForm> ObserverViews { get; private set; }     
+        public List<ObserverForm> ObserverViews { get; private set; }
 
         private void CreateNetworkView()
         {
@@ -321,13 +322,13 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (isPlot)
                 {
-                    if (mbObserverType == typeof (MyTimePlotObserver))
+                    if (mbObserverType == typeof(MyTimePlotObserver))
                     {
-                        observer = new MyTimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
+                        observer = new MyTimePlotObserver { Target = (MyMemoryBlock<float>)memoryBlock };
                     }
-                    else if (mbObserverType == typeof (TimePlotObserver))
+                    else if (mbObserverType == typeof(TimePlotObserver))
                     {
-                        observer = new TimePlotObserver { Target = (MyMemoryBlock<float>) memoryBlock };
+                        observer = new TimePlotObserver { Target = (MyMemoryBlock<float>)memoryBlock };
                     }
                 }
                 else
@@ -449,7 +450,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             checkTarget(node);
 
-            if (node is MyNodeGroup) 
+            if (node is MyNodeGroup)
             {
                 (node as MyNodeGroup).Iterate(true, checkTarget);
             }
@@ -499,7 +500,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (TextEditors.TryGetValue(target, out textEditor))
             {
                 textEditor.Close();
-            }            
+            }
         }
 
         private void CloseAllTextEditors()
@@ -565,7 +566,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 GraphViews[target].ReloadContent();
             }
-        }   
+        }
 
         private void CloseAllGraphLayouts()
         {
@@ -581,8 +582,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void ShowHideAllObservers(bool forceShow = false)
         {
-            if (forceShow && showHideObserversMenuItem.Checked) 
-            {  
+            if (forceShow && showHideObserversMenuItem.Checked)
+            {
                 return;
             }
 
@@ -590,8 +591,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 ObserverViews.ToList().ForEach(view => view.Show());
                 showHideObserversMenuItem.Checked = true;
-            } 
-            else            
+            }
+            else
             {
                 ObserverViews.ToList().ForEach(view => view.Hide());
                 showHideObserversMenuItem.Checked = false;
@@ -611,7 +612,7 @@ namespace GoodAI.BrainSimulator.Forms
             //TODO: change PersistString in WinFormsUI to be accessible publicly (or make our own DockContent common superclass for all forms)
             Dictionary<string, DockContent> viewTable = m_views.Where(view => !(view is GraphLayoutForm))
                 .ToDictionary(view => view.GetType().ToString(), view => view);
-            
+
             try
             {
                 dockPanel.LoadFromXml(layoutFileName,
@@ -655,8 +656,8 @@ namespace GoodAI.BrainSimulator.Forms
         }
 
         private void StoreViewsLayout(string layoutFileName)
-        {            
-            dockPanel.SaveAsXml(layoutFileName);                            
+        {
+            dockPanel.SaveAsXml(layoutFileName);
         }
 
         private string UserLayoutFileName
@@ -665,7 +666,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 return Application.LocalUserAppDataPath + "\\user.layout";
             }
-        } 
+        }
 
         #endregion
 
@@ -721,7 +722,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 Documentation.LoadXMLDoc(module.Assembly);
             }
-            
+
             NodePropertyView = new NodePropertyForm(this);
 
             MemoryBlocksView = new MemoryBlocksForm(this);
@@ -744,7 +745,7 @@ namespace GoodAI.BrainSimulator.Forms
             TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
 
             ObserverViews = new List<ObserverForm>();
-            
+
             ValidationView = new ValidationForm(this);
             HelpView = new NodeHelpForm(this);
             HelpView.StartPosition = FormStartPosition.CenterScreen;
@@ -752,11 +753,14 @@ namespace GoodAI.BrainSimulator.Forms
             DebugView = new DebugForm(this);
 
             PopulateWorldList();
-            CreateNewProject();                 
+            CreateNewProject();
             CreateNetworkView();
 
             m_views = new List<DockContent>() { NetworkView, DashboardPropertyView, NodePropertyView, MemoryBlocksView, TaskView,
                 TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
+
+            foreach (var form in UIPlugins.GetBrainSimUIExtensions())
+                m_views.Add(form);
 
             foreach (DockContent view in m_views)
             {
@@ -809,12 +813,12 @@ namespace GoodAI.BrainSimulator.Forms
             AddTimerMenuItem(observerTimerToolButton, observerTimerItem_Click, 5000);
 
             observerTimerItem_Click(observerTimerToolButton.DropDownItems[Settings.Default.ObserverPeriod], EventArgs.Empty);
-            
+
             PropertyDescriptor descriptor = TypeDescriptor.GetProperties(typeof(MyWorkingNode))["DataFolder"];
             EditorAttribute editor = (EditorAttribute)descriptor.Attributes[typeof(EditorAttribute)];
 
             editor.GetType().GetField("typeName", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(editor,
-                typeof(MyFolderDialog).AssemblyQualifiedName);                
+                typeof(MyFolderDialog).AssemblyQualifiedName);
 
             editor.GetType().GetField("baseTypeName", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(editor,
                 typeof(UITypeEditor).AssemblyQualifiedName);
@@ -1017,7 +1021,7 @@ namespace GoodAI.BrainSimulator.Forms
             worldList.SelectedItem = MyConfiguration.KnownWorlds[Project.World.GetType()];
         }
 
-        private void AddTimerMenuItem(ToolStripSplitButton splitButton, EventHandler clickHandler, int ms) 
+        private void AddTimerMenuItem(ToolStripSplitButton splitButton, EventHandler clickHandler, int ms)
         {
             string title;
 
@@ -1033,7 +1037,7 @@ namespace GoodAI.BrainSimulator.Forms
             ToolStripMenuItem mi = new ToolStripMenuItem(title);
             mi.Tag = ms;
             mi.Click += clickHandler;
-             
+
             splitButton.DropDownItems.Add(mi);
         }
 
@@ -1044,14 +1048,14 @@ namespace GoodAI.BrainSimulator.Forms
 
         void showHideObserversMenuItem_Click(object sender, EventArgs e)
         {
-            ShowHideAllObservers();            
-        }        
+            ShowHideAllObservers();
+        }
 
         void timerItem_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < timerToolStripSplitButton.DropDownItems.Count; i++)
             {
-                ToolStripMenuItem item = (ToolStripMenuItem)timerToolStripSplitButton.DropDownItems[i];                
+                ToolStripMenuItem item = (ToolStripMenuItem)timerToolStripSplitButton.DropDownItems[i];
 
                 if (item == sender)
                 {
@@ -1063,7 +1067,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     item.Checked = false;
                 }
-            }            
+            }
         }
 
         void observerTimerItem_Click(object sender, EventArgs e)
@@ -1084,8 +1088,8 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }
         }
-                     
-        #region Simulation               
+
+        #region Simulation
 
         /// <summary>
         /// Shorthand for StartSimulation(stepCount: 1)
@@ -1101,7 +1105,7 @@ namespace GoodAI.BrainSimulator.Forms
         /// </summary>
         /// <param name="stepCount">Number of simulation steps to run, 0 means unlimited.</param>
         private void StartSimulation(uint stepCount = 0)
-        {            
+        {
             if (SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("--------------");
@@ -1121,7 +1125,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 validator.ClearValidation();
 
-                Project.World.ValidateWorld(validator);                
+                Project.World.ValidateWorld(validator);
                 Project.Network.Validate(validator);
 
                 if (ObserverViews != null)
@@ -1130,7 +1134,7 @@ namespace GoodAI.BrainSimulator.Forms
                 validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
 
                 ValidationView.UpdateListView();
-                validator.Simulation = null;                               
+                validator.Simulation = null;
 
                 ResetObservers();
 
@@ -1146,7 +1150,7 @@ namespace GoodAI.BrainSimulator.Forms
                     }
                 }
                 else
-                {                
+                {
                     MyLog.ERROR.WriteLine("Simulation cannot be started! Validation failed.");
                     OpenFloatingOrActivate(ValidationView);
                 }
@@ -1161,7 +1165,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     MyLog.ERROR.WriteLine("Simulation cannot be started! Exception occured: " + e.Message);
                 }
-            }           
+            }
         }
 
         void SimulationHandler_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -1178,14 +1182,14 @@ namespace GoodAI.BrainSimulator.Forms
             }
             else
             {
-                statusStrip.Invoke((MethodInvoker)(() => stepStatusLabel.Text = String.Empty));                                                       
+                statusStrip.Invoke((MethodInvoker)(() => stepStatusLabel.Text = String.Empty));
             }
         }
 
         /// <summary>
         /// This method is mainly for extensive UI action (e.g. modal dialogs) to be executed during simulation
         /// </summary>
-        /// <param name="actionToExecute">Action should return true if resume of simulation is needed after the action is finished</param>        
+        /// <param name="actionToExecute">Action should return true if resume of simulation is needed after the action is finished</param>
         internal void PauseSimulationForAction(Func<bool> actionToExecute)
         {
             bool wasRunning = false;
@@ -1206,10 +1210,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         #endregion
 
-        #region Global Shortcuts        
+        #region Global Shortcuts
 
         public bool PerformMainMenuClick(Keys shortCut)
-        {           
+        {
             foreach (ToolStripItem item in mainMenuStrip.Items)
             {
                 if (PerformMenuClick(item, shortCut))
@@ -1281,7 +1285,7 @@ namespace GoodAI.BrainSimulator.Forms
                             clipboardNetwork.Children.Add(nodeView.Node);
                             approvedNodes.Add(selectedNode.Id);
                         }
-                        
+
                         if (selectedNode is MyNodeGroup)
                         {
                             (selectedNode as MyNodeGroup).Iterate(true, true, node => approvedNodes.Add(node.Id));
@@ -1327,14 +1331,14 @@ namespace GoodAI.BrainSimulator.Forms
 
                     activeLayout.Target.AppendGroupContent(networkToPaste);
                     activeLayout.ReloadContent();
-                    
+
                     HashSet<int> pastedNodes = new HashSet<int>();
                     networkToPaste.Children.ForEach(node => pastedNodes.Add(node.Id));
 
                     List<MyNodeView> pastedNodeViews = new List<MyNodeView>();
                     RectangleF? pastedBounds = null;
                     Graphics context = activeLayout.Desktop.CreateGraphics();
-                    
+
                     foreach (MyNodeView nodeView in activeLayout.Desktop.Nodes)
                     {
                         if (pastedNodes.Contains(nodeView.Node.Id))
@@ -1354,7 +1358,7 @@ namespace GoodAI.BrainSimulator.Forms
                             }
                         }
                     }
-                   
+
                     PointF pasteLocation = activeLayout.Desktop.UnprojectPoint(new PointF(20, 20));
 
                     if (pastedBounds.HasValue)
