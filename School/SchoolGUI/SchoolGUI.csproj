@@ -68,6 +68,10 @@
       <Project>{e45fa5b2-15e6-49e5-abe5-18fe9a7d027d}</Project>
       <Name>BrainSimulator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
+      <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Module\School.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>School</Name>
@@ -76,6 +80,11 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SchoolMainForm.resx">
+      <DependentUpon>SchoolMainForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

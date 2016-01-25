@@ -1,7 +1,9 @@
 ﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
+using GoodAI.Modules.School.Common;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -28,6 +30,7 @@ namespace GoodAI.School.GUI
 
         public class LearningTaskNode : SchoolTreeNode
         {
+            public Type Type { get; set; }
             public LearningTaskNode(string text) : base(text) { }
         }
 
@@ -54,6 +57,7 @@ namespace GoodAI.School.GUI
             tree.EndUpdate();
 
             tree.Refresh();
+            UpdateButtons();
         }
 
         private void SchoolMainForm_Load(object sender, System.EventArgs e)
@@ -111,6 +115,7 @@ namespace GoodAI.School.GUI
             else if (selected is LearningTaskNode)
                 groupBox1.Text = "Learning task";
 
+            btnDelete.Visible = true;
             btnNewCurr.Visible = btnDetailsCurr.Visible = btnExportCurr.Visible = btnImportCurr.Visible = btnNewTask.Visible = btnRun.Visible =
                 selected is CurriculumNode;
             btnDetailsTask.Visible = selected is LearningTaskNode;
@@ -138,7 +143,11 @@ namespace GoodAI.School.GUI
                 return;
 
             AddTaskView.ShowDialog(this);
-            Node newTask = new LearningTaskNode(AddTaskView.ResultTask);
+            if (AddTaskView.ResultTask == null)
+                return;
+
+            LearningTaskNode newTask = new LearningTaskNode(AddTaskView.ResultTask);
+            newTask.Type = AddTaskView.ResultTaskType;
             (tree.SelectedNode.Tag as Node).Nodes.Add(newTask);
             tree.SelectedNode.IsExpanded = true;
         }

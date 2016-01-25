@@ -8,33 +8,36 @@ namespace GoodAI.School.GUI
 {
     public partial class SchoolAddTaskForm : DockContent
     {
-        private struct TypeHolder
+        // this is here just for overriding ToString (for combobox list) - ask Martin P. if whole type's ToString is OK - if yes, delete this class
+        private class TypeHolder
         {
-            private Type m_type { get; set; }
+            public Type Type { get; set; }
 
             public TypeHolder(Type type)
-                : this()
             {
-                m_type = type;
+                Type = type;
             }
 
             public override string ToString()
             {
-                return m_type.Name;
+                return Type.Name;
             }
         }
 
-        // TODO: will be changed to actual info about type
-        public string ResultTask { get; set; }
+        public string ResultTask { get; set; }  // TODO:extract name from task type
+        public Type ResultTaskType { get; set; }
+        public Type ResultWorldType { get; set; }
 
         public SchoolAddTaskForm()
         {
             InitializeComponent();
 
-            Type taskInterface = typeof(ILearningTask);
+            Type taskType = typeof(AbstractLearningTask<>);
+            //TODO: check multi-level inheritance if there will be any in future
+            //TODO: check only some assemblies
             IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
-                .Where(x => !x.IsAbstract && x.GetInterfaces().Contains(taskInterface));
+                .Where(x => x.BaseType != null && x.BaseType.IsGenericType && x.BaseType.GetGenericTypeDefinition() == taskType);
 
             foreach (Type type in types)
             {
@@ -50,16 +53,40 @@ namespace GoodAI.School.GUI
             this.AcceptButton = btnAdd;
         }
 
+        private List<Type> GetSupportedWorlds(Type taskType)
+        {
+            //TODO: check multi-level inheritance if there will be any in future
+            // get generic parameter
+            Type genericType = taskType.BaseType.GetGenericArguments()[0];
+            // look up all derived classes of this type
+            //TODO: check only some assemblies
+            List<Type> results = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => x.BaseType == genericType)
+                .ToList();
+            results.Add(genericType);
+            // remove abstract classes
+            results = results.Where(x => !x.IsAbstract).ToList();
+
+            return results;
+        }
+
         private void comboTasks_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboWorlds.Items.Clear();
-            // TODO after refactor: obtain supported worlds for task
-            comboWorlds.Items.AddRange(new string[] { "PlumberWorld", "RoguelikeWorld" });
+            List<Type> worlds = GetSupportedWorlds((comboTasks.SelectedItem as TypeHolder).Type);
+            foreach (Type world in worlds)
+            {
+                TypeHolder th = new TypeHolder(world);
+                comboWorlds.Items.Add(th);
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             ResultTask = comboTasks.SelectedItem.ToString() + " (" + comboWorlds.SelectedItem.ToString() + ")";
+            ResultTaskType = (comboTasks.SelectedItem as TypeHolder).Type;
+            //ResultWorldType = (comboWorlds.SelectedItem as TypeHolder).Type;
             this.Close();
         }
     }
