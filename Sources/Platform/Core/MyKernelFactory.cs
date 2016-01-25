@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.Transforms;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaRand;
@@ -62,6 +63,7 @@ namespace GoodAI.Core
                     }
                 }
             }
+
             m_kernel.Run(args);
         }
 
@@ -252,6 +254,20 @@ namespace GoodAI.Core
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false)
         {
             return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance);            
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode, bool segmented = false,
+            int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
+        {
+            return new MyReductionKernel<T>(owner, nGPU, mode, segmented, bufferSize);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public MyProductKernel<T> KernelProduct<T>(MyNode owner, int nGPU, ProductMode mode, bool segmented = false,
+            bool distributed = false, int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
+        {
+            return new MyProductKernel<T>(owner, nGPU, mode, segmented, distributed, bufferSize);
         }
 
         // !!! Warning: This is for testing purposes only.

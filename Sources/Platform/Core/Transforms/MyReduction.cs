@@ -1,18 +1,30 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using GoodAI.Core;
+﻿using GoodAI.Core;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
+using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using GoodAI.Core.Memory;
 
 namespace GoodAI.Modules.Transforms
 {
+    public class ParallelKernelDescriptor : System.Attribute
+    {
+        public string kernelMangledName;
+        public int inTypeSize;
+        public int outTypeSize;
+        public string modeName;
+
+        public ParallelKernelDescriptor(string kernelMangledName, int inTypeSize, int outTypeSize)
+        {
+            this.kernelMangledName = kernelMangledName;
+            this.inTypeSize = inTypeSize;
+            this.outTypeSize = outTypeSize;
+        }
+    }
 
     public class MyParallelKernel<T> where T : struct
     {
@@ -20,6 +32,7 @@ namespace GoodAI.Modules.Transforms
         protected MyNode m_owner;
         protected MyCudaKernel m_kernel;
 
+        public const int BUFFER_SIZE = 1024;
         protected MyMemoryBlock<float> m_buffer { get; private set; }
 
         protected int m_TSize;
@@ -56,7 +69,9 @@ namespace GoodAI.Modules.Transforms
             object[] attributes = memInfo[0].GetCustomAttributes(typeof(ParallelKernelDescriptor), false);
             if (attributes.Length == 0)
                 throw new Exception("Kernel descriptor is missing for " + enumString + ".");
-            return attributes[0] as ParallelKernelDescriptor;
+            ParallelKernelDescriptor descriptor = attributes[0] as ParallelKernelDescriptor;
+            descriptor.modeName = enumString;
+            return descriptor;
         }
 
         public MyParallelKernel(MyNode owner, int nGPU, ParallelKernelDescriptor descriptor, int bufferSize)
@@ -72,9 +87,10 @@ namespace GoodAI.Modules.Transforms
                 m_outTypeSize % m_TSize != 0 || m_inTypeSize == 0 || m_outTypeSize == 0)
                 MyLog.Writer.WriteLine(MyLogLevel.WARNING, "MyReduction.cs: MemoryBlock type can be incompatible with reduction in/out types.");
 
-            m_kernel = MyKernelFactory.Instance.Kernel(m_nGPU, @"Common\Reduction\Reduction", descriptor.name);
+            m_kernel = MyKernelFactory.Instance.Kernel(m_nGPU, @"Common\Reduction\Reduction", descriptor.kernelMangledName);
 
             m_buffer = MyMemoryManager.Instance.CreateMemoryBlock<float>(owner);
+            m_buffer.Name = "Buffer(" + descriptor.modeName + ")";
             m_buffer.Count = bufferSize;
 
             m_blockDims = new dim3(512);
@@ -113,12 +129,12 @@ namespace GoodAI.Modules.Transforms
         c_Sum_c,
     }
 
-    public sealed class MyReductionKernel<T> : MyParallelKernel<T> where T : struct
+    public class MyReductionKernel<T> : MyParallelKernel<T> where T : struct
     {
         public int stride;
         public bool segmented;
 
-        public MyReductionKernel(MyNode owner, int nGPU, ReductionMode mode, bool segmented = false, int bufferSize = 8192)
+        public MyReductionKernel(MyNode owner, int nGPU, ReductionMode mode, bool segmented = false, int bufferSize = BUFFER_SIZE)
             : base(owner, nGPU, GetDescriptor(typeof(ReductionMode), mode.ToString()), bufferSize)
         {
             this.stride = 1;
@@ -159,7 +175,7 @@ namespace GoodAI.Modules.Transforms
         public bool segmented;
         public bool distributed;
 
-        public MyProductKernel(MyNode owner, int nGPU, ProductMode mode, bool segmented = false, bool distributed = false, int bufferSize = 8192)
+        public MyProductKernel(MyNode owner, int nGPU, ProductMode mode, bool segmented = false, bool distributed = false, int bufferSize = BUFFER_SIZE)
             : base(owner, nGPU, GetDescriptor(typeof(ProductMode), mode.ToString()), bufferSize)
         {
             this.segmented = segmented;
@@ -170,28 +186,14 @@ namespace GoodAI.Modules.Transforms
         {
             CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
 
-            m_kernel.Run(outputPtr, 0, input1, input2, m_buffer, input2.Count, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
+            m_kernel.Run(outputPtr, 0, input1, input2, m_buffer, input1.Count, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
         }
 
         public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
             CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
 
-            m_kernel.RunAsync(stream, outputPtr, 0, input1, input2, m_buffer, input2.Count, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
-        }
-    }
-
-    public class ParallelKernelDescriptor : System.Attribute
-    {
-        public string name;
-        public int inTypeSize;
-        public int outTypeSize;
-
-        public ParallelKernelDescriptor(string name, int inTypeSize, int outTypeSize)
-        {
-            this.name = name;
-            this.inTypeSize = inTypeSize;
-            this.outTypeSize = outTypeSize;
+            m_kernel.RunAsync(stream, outputPtr, 0, input1, input2, m_buffer, input1.Count, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
         }
     }
 
