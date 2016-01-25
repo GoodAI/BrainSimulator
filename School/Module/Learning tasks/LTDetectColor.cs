@@ -57,7 +57,9 @@ namespace GoodAI.Modules.School.LearningTasks
             int minX = (World.FOW_WIDTH - World.POW_WIDTH) / 2;
             int maxX = (World.FOW_WIDTH + World.POW_WIDTH) / 2 - m_target.Width;
             m_target.X = m_rndGen.Next(minX, maxX + 1);
-            m_target.Y = (World.FOW_HEIGHT + World.POW_HEIGHT) / 2 - m_target.Height;
+            int minY = (World.FOW_HEIGHT - World.POW_HEIGHT) / 2;
+            int maxY = (World.FOW_HEIGHT + World.POW_HEIGHT) / 2 - m_target.Height;
+            m_target.Y = m_rndGen.Next(minY, maxY + 1);
         }
 
     }
