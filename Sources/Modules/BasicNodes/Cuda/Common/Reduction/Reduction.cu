@@ -51,6 +51,7 @@ template<typename R, unsigned int tCnt, bool finalize>
 __forceinline__ __device__ void LogStepShared(R* out, volatile R* partials)
 {
 	const unsigned int tid = threadIdx.x;
+
 	if (tCnt >= 1024)
 	{
 		if (tid < 512) {
@@ -103,14 +104,25 @@ __forceinline__ __device__ void DReduction(void* rawOut, volatile const void* ra
 {
 	__syncthreads();
 
+	if (!tempBuffer) tempBuffer = (void*)buffer;
+
+	unsigned int gridDim_x = gridDim.x;
+	unsigned int blockIdx_x = blockIdx.x;
+
+	if (segmented)
+	{
+		gridDim_x = 1;
+		blockIdx_x = 0;
+
+		outOff = blockIdx.x;
+		inOff = blockIdx.x * size;
+	}
+
 	R* out = reinterpret_cast<R*>(tempBuffer);
-	volatile const T* in = reinterpret_cast<volatile const T*>(rawIn)+inOff;
+	volatile const T* in = reinterpret_cast<volatile const T*>(rawIn) + inOff;
 
 	SharedMemory<R> sPartials;
 	const unsigned int tid = threadIdx.x;
-
-	unsigned int gridDim_x = segmented ? 1 : gridDim.x;
-	unsigned int blockIdx_x = segmented ? 0 : blockIdx.x;
 
 	R sum;
 	for (unsigned int i = stride * (blockIdx_x * tCnt + tid); i < size; i += stride * tCnt * gridDim_x)
@@ -122,7 +134,7 @@ __forceinline__ __device__ void DReduction(void* rawOut, volatile const void* ra
 
 	if (gridDim_x == 1)
 	{
-		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut)+R::outSize*outOff);
+		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut) + R::outSize * outOff);
 		LogStepShared<R, tCnt, false>(out, sPartials);
 		return;
 	}
@@ -148,18 +160,11 @@ __forceinline__ __device__ void DReduction(void* rawOut, volatile const void* ra
 		sPartials[threadIdx.x] = sum;
 		__syncthreads();
 
-		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut)+R::outSize*outOff);
+		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut) + R::outSize * outOff);
 		LogStepShared<R, tCnt, false>(out, sPartials);
 		barrier = 0;
 	}
 }
-
-template<typename R, typename T, unsigned int tCnt>
-__forceinline__ __device__ void DReduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool segmented)
-{
-	DReduction<R, T, tCnt>(rawOut, rawIn, buffer, size, outOff, inOff, stride, segmented);
-}
-
 
 template<typename R, typename T, unsigned int tCnt>
 __global__ void Reduction(void* rawOut, volatile const void* rawIn, void* tempBuffer, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool segmented)
@@ -168,37 +173,32 @@ __global__ void Reduction(void* rawOut, volatile const void* rawIn, void* tempBu
 }
 
 template<typename R, typename T, unsigned int tCnt>
-__global__ void Reduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int outOff, unsigned int inOff, unsigned int stride, bool segmented)
-{
-	DReduction<R, T, tCnt>(rawOut, rawIn, size, outOff, inOff, stride, segmented);
-}
-
-template <typename R, typename T, unsigned int tCnt>
-__global__ void SReduction(void* rawOut, volatile const void* rawIn, void* tempBuffer, unsigned int size, unsigned int stride)
-{
-	DReduction<R, T, tCnt>(rawOut, rawIn, tempBuffer, size, blockIdx.x, blockIdx.x * size, stride, true);
-}
-
-template <typename R, typename T, unsigned int tCnt>
-__global__ void SReduction(void* rawOut, volatile const void* rawIn, unsigned int size, unsigned int stride)
-{
-	DReduction<R, T, tCnt>(rawOut, rawIn, size, blockIdx.x, blockIdx.x * size, stride, true);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size, bool segmented)
+__forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size, bool segmented, bool distributed)
 {
 	__syncthreads();
+
+	if (tempBuffer == nullptr) tempBuffer = (void*)buffer;
+
+	unsigned int gridDim_x = gridDim.x;
+	unsigned int blockIdx_x = blockIdx.x;
 
 	R* out = reinterpret_cast<R*>(tempBuffer);
 	volatile const T* in1 = reinterpret_cast<volatile const T*>(rawIn1);
 	volatile const T* in2 = reinterpret_cast<volatile const T*>(rawIn2);
 
+	if (segmented)
+	{
+		gridDim_x = 1;
+		blockIdx_x = 0;
+
+		in1 = reinterpret_cast<volatile const T*>(rawIn1) + !distributed * (blockIdx.x * size);
+		in2 = reinterpret_cast<volatile const T*>(rawIn2) + blockIdx.x * size;
+
+		outOff = blockIdx.x;
+	}
+
 	SharedMemory<R> sPartials;
 	const unsigned int tid = threadIdx.x;
-
-	unsigned int gridDim_x = segmented ? 1 : gridDim.x;
-	unsigned int blockIdx_x = segmented ? 0 : blockIdx.x;
 
 	R sum;
 	for (unsigned int i = blockIdx_x * tCnt + tid; i < size; i += tCnt * gridDim_x)
@@ -210,7 +210,7 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 
 	if (gridDim_x == 1)
 	{
-		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut)+R::outSize*outOff);
+		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut) + R::outSize * outOff);
 		LogStepShared<R, tCnt, true>(out, sPartials);
 		return;
 	}
@@ -236,80 +236,28 @@ __forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, v
 		sPartials[threadIdx.x] = sum;
 		__syncthreads();
 
-		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut)+R::outSize*outOff);
+		out = reinterpret_cast<R*>(reinterpret_cast<char*>(rawOut) + R::outSize * outOff);
 		LogStepShared<R, tCnt, true>(out, sPartials);
 		barrier = 0;
 	}
 }
 
 template<typename R, typename T, unsigned int tCnt>
-__forceinline__ __device__ void DDotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size, bool segmented)
+__global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size, bool segmented, bool distributed)
 {
-	DDotProduct<R, T, tCnt>(rawOut, outOff, rawIn1, rawIn2, buffer, size, segmented);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size, bool segmented)
-{
-	DDotProduct<R, T, tCnt>(rawOut, outOff, rawIn1, rawIn2, tempBuffer, size, segmented);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size, bool segmented)
-{
-	DDotProduct<R, T, tCnt>(rawOut, outOff, rawIn1, rawIn2, size, segmented);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__global__ void SDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size)
-{
-	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
-	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
-	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, tempBuffer, size, true);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__global__ void SDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size)
-{
-	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1)+blockIdx.x * size;
-	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
-	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, size, true);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__global__ void SSDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, void* tempBuffer, unsigned int size)
-{
-	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1);
-	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
-	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, tempBuffer, size, true);
-}
-
-template<typename R, typename T, unsigned int tCnt>
-__global__ void SSDotProduct(void* rawOut, volatile const void* rawIn1, volatile const void* rawIn2, unsigned int size)
-{
-	volatile const T* offRawIn1 = reinterpret_cast<volatile const T*>(rawIn1);
-	volatile const T* offRawIn2 = reinterpret_cast<volatile const T*>(rawIn2)+blockIdx.x * size;
-	DDotProduct<R, T, tCnt>(rawOut, blockIdx.x, (void*)offRawIn1, (void*)offRawIn2, size, true);
+	DDotProduct<R, T, tCnt>(rawOut, outOff, rawIn1, rawIn2, tempBuffer, size, segmented, distributed);
 }
 
 template<typename R, typename T>
 void ReductionTemplate()
 {
 	Reduction<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
-	Reduction<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0);
-	SReduction<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0);
-	SReduction<R, T, 512> << <0, 0 >> >(0, 0, 0, 0);
 }
 
 template<typename R, typename T>
 void DotProductTemplate()
 {
-	DotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0);
-	DotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0);
-	SDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0);
-	SDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0);
-	SSDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0);
-	SSDotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0);
+	DotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 extern "C"
@@ -337,13 +285,13 @@ void InstantiationDummy()
 	DotProductTemplate <i_Dot_i, int >();
 	DotProductTemplate <f_Dot_f, float >();
 	DotProductTemplate <f_Cosine_f, float >();
-	DotProductTemplate <c_ComplexDot_c, Complex> ();
+	DotProductTemplate <c_ComplexDot_c, Complex>();
 }
 
-typedef void(*reduction)(void*, volatile const void*, unsigned int, unsigned int, unsigned int, unsigned int, bool);
+typedef void(*reduction_type)(void*, volatile const void*, void*, unsigned int, unsigned int, unsigned int, unsigned int, bool);
 
 template<typename R, typename T, const int bCnt>
-void TestReduction(reduction kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented)
+void TestReduction(reduction_type kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented)
 {
 	const int w = 20;
 	for (int r = 0; r < repetitions; ++r)
@@ -378,13 +326,9 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 		HANDLE_ERROR(cudaEventRecord(startGPU, 0));
 
 		if (segmented)
-			for (size_t b = 0; b < bCnt; b++)
-			{
-				unsigned int chunkSize = size / bCnt;
-				unsigned int chunkOffset = b * chunkSize;
-				kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, d_in, chunkSize, b, inOff + chunkOffset, stride, segmented);
-			}
-		else kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, d_in, size, outOff, inOff, stride, segmented);
+			kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, d_in, nullptr, size / bCnt, 0, 0, stride, segmented);
+		else
+			kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, d_in, nullptr, size, outOff, inOff, stride, segmented);
 
 		HANDLE_ERROR(cudaEventRecord(stopGPU, 0));
 		HANDLE_ERROR(cudaEventSynchronize(stopGPU));
@@ -402,12 +346,11 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 				unsigned int chunkSize = size / bCnt;
 				unsigned int chunkOffset = b * chunkSize;
 				for (size_t c = 0; c < cycles; ++c)
-					R::simulate(c_out, h_in, chunkSize, b, inOff + chunkOffset, stride);
+					R::simulate(c_out, h_in, chunkSize, b, chunkOffset, stride);
 			}
 		else
 			for (size_t c = 0; c < cycles; ++c)
 				R::simulate(c_out, h_in, size, outOff, inOff, stride);
-
 
 		stopCPU = clock();
 		timeCPU = difftime(stopCPU, startCPU) / cycles;
@@ -440,7 +383,7 @@ void TestReduction(reduction kernel, const char* name, int repetitions, int size
 	}
 }
 
-typedef void(*dotproduct)(void*, unsigned int, volatile const void*, volatile const void*, unsigned int, bool);
+typedef void(*dotproduct_type)(void*, unsigned int, volatile const void*, volatile const void*, void*, unsigned int, bool, bool);
 
 template<typename T>
 void Randomize(T& t, int min, int max, float div)
@@ -456,7 +399,7 @@ void Randomize(Complex& t, int min, int max, float div)
 }
 
 template<typename R, typename T, const int bCnt>
-void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented)
+void TestDotProduct(dotproduct_type kernel, const char* name, int repetitions, int sizeMax, int min, int max, float div, bool segmented, bool distributed)
 {
 	const int w = 20;
 	for (int r = 0; r < repetitions; ++r)
@@ -489,14 +432,9 @@ void TestDotProduct(dotproduct kernel, const char* name, int repetitions, int si
 		HANDLE_ERROR(cudaEventRecord(startGPU, 0));
 
 		if (segmented)
-			for (size_t b = 0; b < bCnt; ++b)
-			{
-				unsigned int chunkSize = size / bCnt;
-				unsigned int chunkOffset = b * chunkSize;
-				kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, b, d_in1 + chunkOffset, d_in2 + chunkOffset, chunkSize, segmented);
-			}
+			kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, 0, d_in1, d_in2, nullptr, size / bCnt, segmented, distributed);
 		else
-			kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, outOff, d_in1, d_in2, size, segmented);
+			kernel << <bCnt, 1024, sizeof(R) * 1024 >> >(d_out, outOff, d_in1, d_in2, nullptr, size, segmented, distributed);
 
 		HANDLE_ERROR(cudaEventRecord(stopGPU, 0));
 		HANDLE_ERROR(cudaEventSynchronize(stopGPU));
@@ -590,16 +528,16 @@ int main(int argc, char* argv[])
 	TestReduction<f_MinIdxMaxIdx_fifi, float, 10>(Reduction<f_MinIdxMaxIdx_fifi, float, 512>, "Reduction f_MinIdxMaxIdx_fifi", repetitions, sizeMax, 0, 100000, 1000, true);
 
 	// DOT PRODUCT
-	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, false);
-	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, false);
-	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, false);
-	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, false);
+	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, false, false);
+	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, false, false);
+	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, false, false);
+	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, false, false);
 
 	// DOT PRODUCT SEGMENTED
-	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, true);
-	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, true);
-	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, true);
-	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, true);
+	TestDotProduct<i_Dot_i, int, 10>(DotProduct<i_Dot_i, int, 512>, "DotProduct i_Dot_i", repetitions, sizeMax, -10, 10, 1, true, false);
+	TestDotProduct<f_Dot_f, float, 10>(DotProduct<f_Dot_f, float, 512>, "DotProduct f_Dot_f", repetitions, sizeMax, -100, 100, 100, true, false);
+	TestDotProduct<f_Cosine_f, float, 10>(DotProduct<f_Cosine_f, float, 512>, "DotProduct f_Cosine_f", repetitions, sizeMax, -100, 100, 100, true, false);
+	TestDotProduct<c_ComplexDot_c, Complex, 10>(DotProduct<c_ComplexDot_c, Complex, 512>, "ComplexDotProduct c_ComplexDot_c", repetitions, sizeMax, -100, 100, 100, true, false);
 
 	return 0;
 }

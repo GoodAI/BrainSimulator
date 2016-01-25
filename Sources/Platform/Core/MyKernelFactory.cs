@@ -17,10 +17,10 @@ namespace GoodAI.Core
 {
     public class MyCudaKernel
     {
-        public int MAX_THREADS { get; private set;  }
+        public int MAX_THREADS { get; protected set;  }
 
-        private CudaKernel m_kernel;
-        private int m_GPU;
+        protected CudaKernel m_kernel;
+        protected int m_GPU;
 
         public string KernelName { get { return m_kernel.KernelName; } }
         public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set {m_kernel.BlockDimensions = value; } }
