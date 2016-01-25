@@ -1,6 +1,4 @@
-﻿using GoodAI.BrainSimulator.Forms;
-
-namespace SchoolGUI
+﻿namespace GoodAI.School.GUI
 {
     partial class SchoolMainForm
     {

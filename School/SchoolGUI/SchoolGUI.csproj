@@ -7,8 +7,8 @@
     <ProjectGuid>{CED75F77-0FA4-48B3-B193-32C07980EDDA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SchoolGUI</RootNamespace>
-    <AssemblyName>SchoolGUI</AssemblyName>
+    <RootNamespace>GoodAI.School.GUI</RootNamespace>
+    <AssemblyName>GoodAI.School.GUI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -68,11 +68,19 @@
       <Project>{e45fa5b2-15e6-49e5-abe5-18fe9a7d027d}</Project>
       <Name>BrainSimulator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Module\School.csproj">
+      <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
+      <Name>School</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="post_build.cmd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

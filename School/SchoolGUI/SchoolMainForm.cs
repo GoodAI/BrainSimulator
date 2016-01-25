@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace SchoolGUI
+namespace GoodAI.School.GUI
 {
     [BrainSimUIExtension]
     public partial class SchoolMainForm : DockContent

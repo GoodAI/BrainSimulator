@@ -1,8 +1,10 @@
-﻿using System;
+﻿using GoodAI.Modules.School.Common;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace SchoolGUI
+namespace GoodAI.School.GUI
 {
     public partial class SchoolAddTaskForm : DockContent
     {
@@ -29,21 +31,21 @@ namespace SchoolGUI
         {
             InitializeComponent();
 
-            //Type type = typeof(AbstractLearningTask);
-            string typeName = "AbstractLearningTask";
-            var types = AppDomain.CurrentDomain.GetAssemblies()
+            Type taskInterface = typeof(ILearningTask);
+            IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
-                .Where(x => x.BaseType != null && x.BaseType.Name == typeName && x.Name != typeName);
-            //.Where(x => type.IsAssignableFrom(x) && x != type);
+                .Where(x => !x.IsAbstract && x.GetInterfaces().Contains(taskInterface));
 
-            foreach (var one in types)
+            foreach (Type type in types)
             {
-                TypeHolder th = new TypeHolder(one);
+                TypeHolder th = new TypeHolder(type);
                 comboTasks.Items.Add(th);
             }
 
-            comboTasks.SelectedIndex = 0;
-            comboWorlds.SelectedIndex = 0;
+            if (comboTasks.Items.Count > 0)
+                comboTasks.SelectedIndex = 0;
+            if (comboWorlds.Items.Count > 0)
+                comboWorlds.SelectedIndex = 0;
 
             this.AcceptButton = btnAdd;
         }
