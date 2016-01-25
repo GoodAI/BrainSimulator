@@ -19,7 +19,7 @@ namespace GoodAI.BrainSimulator.Forms
         internal static IEnumerable<DockContent> GetBrainSimUIExtensions()
         {
             return GetBrainSimUIExtensionTypes().Select(type =>
-                (DockContent) type.GetConstructor(new Type[] {}).Invoke(new object[] {}));
+                (DockContent)type.GetConstructor(new Type[] { }).Invoke(new object[] { }));
         }
 
         private static IEnumerable<Type> GetBrainSimUIExtensionTypes()
@@ -33,6 +33,7 @@ namespace GoodAI.BrainSimulator.Forms
                 if (!string.IsNullOrEmpty(xml)) //skip nodes DLLs - GUI and logic should be divided
                     continue;
 
+                MyLog.INFO.WriteLine("UI module loaded: " + assemblyFile.Name);
                 ret.AddRange(assembly.GetTypes().Where(IsUIExtension));
             }
 
@@ -41,8 +42,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private static bool IsUIExtension(Type type)
         {
-            return Attribute.GetCustomAttribute(type, typeof (BrainSimUIExtensionAttribute)) != null &&
-                   type.IsSubclassOf(typeof (DockContent));
+            return Attribute.GetCustomAttribute(type, typeof(BrainSimUIExtensionAttribute)) != null &&
+                   type.IsSubclassOf(typeof(DockContent));
         }
     }
 }
