@@ -100,6 +100,7 @@
     <Compile Include="Learning tasks\LTDetectDifference.cs" />
     <Compile Include="Learning tasks\LTDetectShape.cs" />
     <Compile Include="Learning tasks\LTDetectShapeColor.cs" />
+    <Compile Include="Learning tasks\LTDetectSimilarity.cs" />
     <Compile Include="Learning tasks\LTDetectWhite.cs" />
     <Compile Include="Learning tasks\LTMovingTarget.cs" />
     <Compile Include="Learning tasks\LTShapeGroups.cs" />
@@ -139,7 +140,25 @@
     <Content Include="res\SchoolWorldCommon\WhiteCircle50x50.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteDoubleRhombus50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteMountains50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhitePentagon50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteRhombus50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\SchoolWorldCommon\WhiteStar50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteT50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteTent50x50.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\SchoolWorldCommon\WhiteTriangle50x50.png">

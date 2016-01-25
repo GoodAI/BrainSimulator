@@ -10,7 +10,7 @@ namespace GoodAI.Modules.School.Common
 {
     public class Shape : GameObject
     {
-        public enum Shapes { Circle, Square, Star, Triangle }
+        public enum Shapes { Circle, Square, Star, Triangle, Mountains, T, Tent, Pentagon, DoubleRhombus, Rhombus }
 
         public Shapes ShapeType { get; set; }
 
@@ -38,6 +38,18 @@ namespace GoodAI.Modules.School.Common
                     return @"WhiteTriangle50x50.png";
                 case Shape.Shapes.Star:
                     return @"WhiteStar50x50.png";
+                case Shape.Shapes.Mountains:
+                    return @"WhiteMountains50x50.png";
+                case Shape.Shapes.T:
+                    return @"WhiteT50x50.png";
+                case Shape.Shapes.Tent:
+                    return @"WhiteTent50x50.png";
+                case Shape.Shapes.Pentagon:
+                    return @"WhitePentagon50x50.png";
+                case Shape.Shapes.DoubleRhombus:
+                    return @"WhiteDoubleRhombus50x50.png";
+                case Shape.Shapes.Rhombus:
+                    return @"WhiteRhombus50x50.png";
             }
             throw new ArgumentException("Unknown shape");
         }
@@ -179,6 +191,11 @@ namespace GoodAI.Modules.School.Common
 
         public static List<int> UniqueNumbers(Random rndGen, int lowerBound, int upperBound, int count)
         {
+            if (upperBound - lowerBound < count)
+            {
+                throw new ArgumentException();
+            }
+
             // generate count random values.
             HashSet<int> candidates = new HashSet<int>();
             for (Int32 top = upperBound - count; top < upperBound; top++)
