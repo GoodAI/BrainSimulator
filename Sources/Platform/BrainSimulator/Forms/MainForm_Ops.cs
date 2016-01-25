@@ -293,11 +293,11 @@ namespace GoodAI.BrainSimulator.Forms
                 observer.GenericTarget = node;
 
                 ObserverForm newView = new ObserverForm(this, observer, node);
-                ObserverViews.Add(newView);
-
-                ProjectStateChanged("Node observer added");
+                ObserverViews.Add(newView);                
 
                 newView.Show(dockPanel, DockState.Float);
+
+                ProjectStateChanged("Node observer added");
             }
             catch (Exception e)
             {
