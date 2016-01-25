@@ -138,6 +138,7 @@
             this.btnExportCurr.TabIndex = 3;
             this.btnExportCurr.Text = "Export";
             this.btnExportCurr.UseVisualStyleBackColor = true;
+            this.btnExportCurr.Click += new System.EventHandler(this.btnExportCurr_Click);
             // 
             // btnDetailsCurr
             // 

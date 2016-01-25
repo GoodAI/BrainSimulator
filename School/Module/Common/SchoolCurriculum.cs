@@ -1,7 +1,9 @@
 ﻿using GoodAI.Modules.School.Worlds;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace GoodAI.Modules.School.Common
 {
@@ -22,6 +24,7 @@ namespace GoodAI.Modules.School.Common
         // insertion order, so we keep (somewhat redundantly) a list of learning tasks
         // to track task ordering and a dictionary to map learning tasks to world types.
         protected Dictionary<ILearningTask, Type> TaskWorldTypes = new Dictionary<ILearningTask, Type>();
+        private IEnumerable<Type> m_knownLearningTasks = null;
 
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
@@ -47,6 +50,22 @@ namespace GoodAI.Modules.School.Common
         public void ResetLearningProgress()
         {
             m_taskEnumerator.Reset();
+        }
+
+{
+            // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
+            Tasks.Add(task);
+        }
+
+        public void AddLearningTask(Type taskType, Type worldType)
+        {
+            if (m_knownLearningTasks == null)
+            {
+                Assembly ltAssembly = Assembly.GetAssembly(typeof(ILearningTask));
+                m_knownLearningTasks = ltAssembly.GetTypes().Where(x => x.GetInterfaces().Contains(typeof(ILearningTask)));
+            }
+
+
         }
 
         public void AddLearningTask(ILearningTask task, Type worldType)

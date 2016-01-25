@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using YAXLib;
 
 namespace GoodAI.School.GUI
 {
@@ -77,6 +78,16 @@ namespace GoodAI.School.GUI
             LearningTaskNode node = new LearningTaskNode("LT " + parent.Nodes.Count.ToString());
             parent.Nodes.Add(node);
             return node;
+        }
+
+        private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
+        {
+            SchoolCurriculum ret = new SchoolCurriculum();
+
+            foreach (LearningTaskNode taskNode in node.Nodes)
+                ret.AddLearningTask(taskNode.Type, null);
+
+            return ret;
         }
 
         private void ApplyToAll(Control parent, Action<Control> apply)
@@ -244,6 +255,92 @@ namespace GoodAI.School.GUI
         private void btnDelete_Click(object sender, EventArgs e)
         {
             DeleteNode();
+        }
+
+        private void btnExportCurr_Click(object sender, EventArgs e)
+        {
+            SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
+            //TreeData data = new TreeData(m_model);
+            YAXSerializer serializer = new YAXSerializer(typeof(SchoolCurriculum));
+            string st = serializer.Serialize(test);
+        }
+    }
+
+    public class NodeData
+    {
+        public string Text;
+        public object Tag;
+        public List<NodeData> Nodes;
+
+        public NodeData(Node node)
+        {
+            Nodes = new List<NodeData>();
+
+            Text = node.Text;
+
+            //if (((node.Tag!=null))&&node.Tag.GetType().IsSerializable)
+            Tag = node.Tag;
+
+            if (node.Nodes.Count == 0)
+                return;
+
+            foreach (Node childNode in node.Nodes)
+            {
+                NodeData data = new NodeData(childNode);
+                Nodes.Add(data);
+            }
+        }
+
+        public Node ToTreeNode()
+        {
+            Node node = new Node(Text);
+            node.Tag = Tag;
+
+            if (this.Nodes == null || this.Nodes.Count == 0)
+                return node;
+
+            foreach (NodeData childData in Nodes)
+            {
+                Node nodeFromData = childData.ToTreeNode();
+                node.Nodes.Add(nodeFromData);
+            }
+
+            return node;
+        }
+    }
+
+    public class TreeData
+    {
+        public List<NodeData> Nodes { get; protected set; }
+
+        public TreeData(TreeModel treeModel)
+        {
+            Nodes = new List<NodeData>();
+
+            foreach (Node node in treeModel.GetChildren(TreePath.Empty))
+            {
+                NodeData data = new NodeData(node);
+                Nodes.Add(data);
+            }
+        }
+
+        public void PopulateTree(TreeViewAdv treeView)
+        {
+            if (this.Nodes == null || this.Nodes.Count == 0)
+                return;
+
+            TreeModel model = treeView.Model as TreeModel;
+            if (model == null)
+                return;
+
+            treeView.BeginUpdate();
+            foreach (NodeData data in Nodes)
+            {
+                Node node = data.ToTreeNode();
+                model.Nodes.Add(node);
+            }
+            treeView.EndUpdate();
+
         }
     }
 }
