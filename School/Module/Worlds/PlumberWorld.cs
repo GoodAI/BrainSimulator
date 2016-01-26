@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.Worlds
     /// <description>
     /// 2D Platformer world which includes a traditional 2D physics engine and collision detection/handling
     /// </description>
-    public class PlumberWorld : ManInWorld, IMyCustomTaskFactory
+    public partial class PlumberWorld : ManInWorld, IMyCustomTaskFactory
     {
         // temporary implementation for actions
         public float moveLeftAction;

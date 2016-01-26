@@ -35,20 +35,6 @@
             <param name="target"></param>
             <returns></returns>
         </member>
-        <member name="T:GoodAI.Modules.School.Common.ManInWorld">
-            <author>GoodAI</author>
-            <meta>Mp,Mv,Os</meta>
-            <status>WIP</status>
-            <summary> Implementation of a configurable 2D world </summary>
-            <description>
-            Implementation of a configurable 2D world
-            </description>
-        </member>
-        <member name="T:GoodAI.Modules.School.Common.ManInWorld.RenderTask">
-            <summary>
-            Render the world to the visual output.
-            </summary>
-        </member>
         <member name="T:GoodAI.Modules.School.Common.SchoolCurriculum">
             <summary>
             Holds tasks that an agent should be trained with to gain new abilities
@@ -76,6 +62,20 @@
             Different levels will create targets with different moving characteristics.
             The teacher declares the ability as learned when the agent reaches the last level.
             </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.ManInWorld">
+            <author>GoodAI</author>
+            <meta>Mp,Mv,Os</meta>
+            <status>WIP</status>
+            <summary> Implementation of a configurable 2D world </summary>
+            <description>
+            Implementation of a configurable 2D world
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.ManInWorld.RenderTask">
+            <summary>
+            Render the world to the visual output.
+            </summary>
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld">
             <author>GoodAI</author>

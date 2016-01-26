@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.Worlds
 {
-    public class RoguelikeWorld : ManInWorld, IMyCustomTaskFactory
+    public partial class RoguelikeWorld : ManInWorld, IMyCustomTaskFactory
     {
         public static Size DEFAULT_GRID_SIZE = new Size(32, 32);
 
@@ -52,92 +52,7 @@ namespace GoodAI.Modules.School.Worlds
             return new Point(FOW_WIDTH / 2 - Agent.Width / 2, FOW_HEIGHT / 2 - Agent.Height / 2);
         }
 
-        public RogueAgent CreateAgent()
-        {
-            RogueAgent agent = CreateAgent(GetInitPosition());
-            return agent;
-        }
-
-        public RogueAgent CreateAgent(Point p, float size = 1.0f)
-        {
-            RogueAgent agent = new RogueAgent(p, size);
-            AddGameObject(agent);
-            Agent = agent;
-            return agent;
-        }
-
-        public RogueAgent CreateNonVisibleAgent()
-        {
-            RogueAgent agent = new RogueAgent(GetInitPosition(), null);
-            AddGameObject(agent);
-            Agent = agent;
-            return agent;
-        }
-
-        public RogueTeacher CreateTeacher(Point p, List<RogueTeacher.Actions> actions)
-        {
-            Teacher = new RogueTeacher(p, actions);
-            AddGameObject(Teacher);
-            return Teacher as RogueTeacher;
-        }
-
-        public RogueWall CreateWall(Point p, float size = 1.0f)
-        {
-            RogueWall w = new RogueWall(p, size);
-            AddGameObject(w);
-            return w;
-        }
-
-        public RogueTarget CreateTarget(Point p, float size = 1.0f)
-        {
-            RogueTarget t = new RogueTarget(p, size);
-            AddGameObject(t);
-            return t;
-        }
-
-        public RogueMovableTarget CreateMovableTarget(Point p, float size = 1.0f)
-        {
-            RogueMovableTarget mt = new RogueMovableTarget(p, size);
-            AddGameObject(mt);
-            return mt;
-        }
-
-        public RogueDoor CreateDoor(Point p, bool isClosed = true, float size = 1.0f)
-        {
-            RogueDoor rd = new RogueDoor(p, isClosed : isClosed ,size : size);
-            AddGameObject(rd);
-            return rd;
-        }
-
-        public RogueLever CreateLever(Point p, float size = 1.0f)
-        {
-            RogueLever rl = new RogueLever(p, size : size);
-            AddGameObject(rl);
-            return rl;
-        }
-
-        public RogueLever CreateLever(Point p, ISwitchable obj, float size = 1.0f)
-        {
-            RogueLever rl = new RogueLever(p, obj, size);
-            AddGameObject(rl);
-            return rl;
-        }
-
-        public RogueKiller CreateRogueKiller(Point p, float size = 1.0f)
-        {
-            RogueKiller rk = new RogueKiller(p, size);
-            AddGameObject(rk);
-            return rk;
-        }
-
-        public RogueMovableKiller CreateRogueMovableKiller(Point p, float size = 1.0f)
-        {
-            RogueMovableKiller rmk = new RogueMovableKiller(p, size);
-            AddGameObject(rmk);
-            return rmk;
-        }
-
-        public Grid GetGrid()
+        public override Grid GetGrid()
         {
             return new Grid(GetFowGeometry().Size, DEFAULT_GRID_SIZE);
         }

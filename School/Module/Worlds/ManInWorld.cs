@@ -22,7 +22,7 @@ namespace GoodAI.Modules.School.Common
     /// <description>
     /// Implementation of a configurable 2D world
     /// </description>
-    public class ManInWorld : AbstractSchoolWorld
+    public abstract class ManInWorld : AbstractSchoolWorld
     {
         public enum TextureSet
         {
@@ -482,15 +482,8 @@ namespace GoodAI.Modules.School.Common
         }
 
 
-        public virtual MovableGameObject CreateAgent()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual MovableGameObject CreateAgent(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MovableGameObject CreateAgent();
+        public abstract MovableGameObject CreateAgent(Point p, float size = 1.0f);
 
         public virtual MovableGameObject CreateNonVisibleAgent()
         {
@@ -499,50 +492,14 @@ namespace GoodAI.Modules.School.Common
             return agent;
         }
 
-        public virtual MovableGameObject CreateTeacher(Point p, List<Object> actions)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual GameObject CreateWall(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual GameObject CreateTarget(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual MovableGameObject CreateMovableTarget(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual GameObject CreateDoor(Point p, bool isClosed = true, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual GameObject CreateLever(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual GameObject CreateLever(Point p, ISwitchable obj, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual GameObject CreateRogueKiller(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual MovableGameObject CreateRogueMovableKiller(Point p, float size = 1.0f)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract GameObject CreateWall(Point p, float size = 1.0f);
+        public abstract GameObject CreateTarget(Point p, float size = 1.0f);
+        public abstract MovableGameObject CreateMovableTarget(Point p, float size = 1.0f);
+        public abstract GameObject CreateDoor(Point p, bool isClosed = true, float size = 1.0f);
+        public abstract GameObject CreateLever(Point p, float size = 1.0f);
+        public abstract GameObject CreateLever(Point p, ISwitchable obj, float size = 1.0f);
+        public abstract GameObject CreateRogueKiller(Point p, float size = 1.0f);
+        public abstract MovableGameObject CreateRogueMovableKiller(Point p, float size = 1.0f);
 
         public virtual Grid GetGrid()
         {

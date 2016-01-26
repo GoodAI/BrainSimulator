@@ -148,7 +148,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 teachersPoint = new Point(m_agent.X + World.POW_WIDTH / 3, m_agent.Y);
             }
 
-            m_teacher = (World as RoguelikeWorld).CreateTeacher(teachersPoint, actions);
+            m_teacher = (World as RoguelikeWorld).CreateTeacher(teachersPoint, actions) as RogueTeacher;
         }
     }
 
