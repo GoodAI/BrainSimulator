@@ -79,10 +79,10 @@ namespace GoodAI.Modules.School.Common
                     break;
                 case CurriculumType.TemporaryCurriculumSimon:
                     {
-                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectWhite, world));
+                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectWhite, world));
                         //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world));
                         //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.ApproachTarget, world));
-                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleSizeDetection, world));
+                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleSizeDetection, world));
                         break;
                     }
                 case CurriculumType.TemporaryCurriculumOrest:

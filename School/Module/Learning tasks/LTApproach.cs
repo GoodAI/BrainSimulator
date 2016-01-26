@@ -43,7 +43,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
+            World.ClearWorld(TSHints);
             CreateAgent();
             CreateTarget();
             AdjustTargetSize();

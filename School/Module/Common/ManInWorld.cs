@@ -369,6 +369,14 @@ namespace GoodAI.Modules.School.Common
             IsImageNoise = false;
             m_IsWorldFrozen = false;
         }
+
+        // Clear world and reapply training set hints
+        public virtual void ClearWorld(TrainingSetHints hints)
+        {
+            ClearWorld();
+            SetHints(hints);
+        }
+
         ////TODO: if two objects share the same texture, do not load it twice into memory
         public void AddGameObject(GameObject item)
         {
