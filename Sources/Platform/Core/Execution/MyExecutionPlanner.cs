@@ -15,7 +15,7 @@ namespace GoodAI.Core.Execution
 
     public interface IMyExecutionPlanner
     {
-        MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> newNodes = null);
+        MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> initNodes = null);
     }
 
     public interface IMyCustomExecutionPlanner
@@ -33,28 +33,29 @@ namespace GoodAI.Core.Execution
             PlanSignalTasks = true;
         }
 
-        public MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> newNodes = null)
+        /// <summary>
+        /// Creates the execution plan.
+        /// </summary>
+        /// <param name="project">The whole project from which the standard execution plan will be built.</param>
+        /// <param name="initNodes">Ordered list of new nodes from which the initialization plan will be built.</param>
+        /// <returns>The created execution plan.</returns>
+        public MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> initNodes = null)
         {
             MyExecutionPlan executionPlan = new MyExecutionPlan();            
 
             IMyOrderingAlgorithm ordering = new MyHierarchicalOrdering();
             ordering.EvaluateOrder(project.Network);            
 
-            // TODO(HonzaS): Change this - unnecessary to run after the first initialization step.
-            executionPlan.InitStepPlan = new MyExecutionBlock(
-                CreateNodeExecutionPlan(project.World, true), 
-                CreateNodeExecutionPlan(project.Network, true));
+            var initBlocks = new List<IMyExecutable>();
+            if (initNodes != null)
+                initBlocks.AddRange(initNodes.Select(node => CreateNodeExecutionPlan(node, true)));
+
+            executionPlan.InitStepPlan = new MyExecutionBlock(initBlocks.ToArray());
             executionPlan.InitStepPlan.Name = "Initialization";
 
-
-            var executionBlocks = new List<IMyExecutable>();
-            if (newNodes != null)
-                executionBlocks.AddRange(newNodes.Select(node => CreateNodeExecutionPlan(node, true)).Cast<IMyExecutable>().ToList());
-
-            executionBlocks.Add(CreateNodeExecutionPlan(project.World, false));
-            executionBlocks.Add(CreateNodeExecutionPlan(project.Network, false));
-
-            executionPlan.StandardStepPlan = new MyExecutionBlock(executionBlocks.ToArray());
+            executionPlan.StandardStepPlan = new MyExecutionBlock(
+                CreateNodeExecutionPlan(project.World, false),
+                CreateNodeExecutionPlan(project.Network, false));
             executionPlan.StandardStepPlan.Name = "Simulation";
 
             return executionPlan;

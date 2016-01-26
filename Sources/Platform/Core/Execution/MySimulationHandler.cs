@@ -182,7 +182,7 @@ namespace GoodAI.Core.Execution
             if (State == SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("Scheduling...");                
-                Simulation.Schedule(Project);
+                Simulation.Schedule(Project, new MyWorkingNode[] {Project.World, Project.Network});
 
                 MyLog.INFO.WriteLine("Initializing tasks...");
                 Simulation.Init();          

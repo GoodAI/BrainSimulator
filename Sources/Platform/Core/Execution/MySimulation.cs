@@ -149,6 +149,7 @@ namespace GoodAI.Core.Execution
 
             ExtractAllNodes(m_project);
 
+            // Allow subclasses to react to re-scheduling.
             ScheduleChanged();
         }
 
@@ -190,7 +191,9 @@ namespace GoodAI.Core.Execution
 
         private void CleanProfilingTimes()
         {
-            CleanExecutionBlockProfilingTimes(ExecutionPlan.InitStepPlan);
+            if (ExecutionPlan.InitStepPlan != null)
+                CleanExecutionBlockProfilingTimes(ExecutionPlan.InitStepPlan);
+
             CleanExecutionBlockProfilingTimes(ExecutionPlan.StandardStepPlan);
         }
 
@@ -220,9 +223,15 @@ namespace GoodAI.Core.Execution
 
     public sealed class MyLocalSimulation : MySimulation
     {
+        enum ExecutionPhase
+        {
+            Initialization,
+            Standard
+        }
+
         private readonly MyThreadPool m_threadPool;
-        protected bool m_debugStepComplete;
-        private bool m_debugInitInProgress;
+        private bool m_debugStepComplete;
+        private ExecutionPhase m_debugExecutionPhase;
 
         public MyLocalSimulation(MyValidator validator) : base(validator)
         {
@@ -245,9 +254,6 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        /// <summary>
-        /// Creates execution plan for project
-        /// </summary>
         public override void Init()
         {
             base.Init();
@@ -372,8 +378,9 @@ namespace GoodAI.Core.Execution
 
         protected override void ScheduleChanged()
         {
-            if (m_debugStepComplete)
-                CurrentDebuggedBlocks[0] = ExecutionPlan.StandardStepPlan;
+            m_debugExecutionPhase = ExecutionPhase.Initialization;
+
+            CurrentDebuggedBlocks[0] = ExecutionPlan.InitStepPlan;
         }
 
         private void ExecuteCore(int coreNumber)
@@ -385,12 +392,24 @@ namespace GoodAI.Core.Execution
                     MyExecutionBlock currentBlock = CurrentDebuggedBlocks[coreNumber];
 
                     // This is the first debug step.
-                    if (SimulationStep == 0 && currentBlock == null)
+                    if (currentBlock == null)
                     {
-                        m_debugInitInProgress = true;
-                        ExecutionPlan.InitStepPlan.Reset();
-                        currentBlock = ExecutionPlan.InitStepPlan;
-                        m_debugStepComplete = false;
+                        if (m_debugExecutionPhase == ExecutionPhase.Initialization)
+                        {
+                            if (ExecutionPlan.InitStepPlan != null)
+                            {
+                                ExecutionPlan.InitStepPlan.Reset();
+                                currentBlock = ExecutionPlan.InitStepPlan;
+                            }
+                        }
+
+                        if (currentBlock == null)
+                        {
+                            m_debugExecutionPhase = ExecutionPhase.Standard;
+
+                            ExecutionPlan.StandardStepPlan.Reset();
+                            currentBlock = ExecutionPlan.StandardStepPlan;
+                        }
                     }
 
                     // This checks if breakpoint was encountered, also used for "stepping".
@@ -408,13 +427,12 @@ namespace GoodAI.Core.Execution
                     if (currentBlock == null)
                     {
                         // The current plan finished, the standard plan has to be reset and executed.
-                        if (m_debugInitInProgress)
+                        if (m_debugExecutionPhase == ExecutionPhase.Initialization)
                             m_debugStepComplete = false;  // This means the init plan got finished, not the standard plan.
+                        else
+                            ExecutionPlan.InitStepPlan = null;
 
-                        m_debugInitInProgress = false;
-
-                        ExecutionPlan.StandardStepPlan.Reset();
-                        currentBlock = ExecutionPlan.StandardStepPlan;
+                        m_debugExecutionPhase = ExecutionPhase.Standard;
                         leavingTargetBlock = true;
                     }
                     else
@@ -438,21 +456,21 @@ namespace GoodAI.Core.Execution
                         }
                     }
 
-                    if (Breakpoints.Contains(currentBlock.CurrentChild))
+                    if (currentBlock != null && Breakpoints.Contains(currentBlock.CurrentChild))
                         // A breakpoint has been reached.
                         EmitDebugTargetReached();
                 }
                 else //not in debug mode
                 {
-                    if (SimulationStep == 0)
+                    if (ExecutionPlan.InitStepPlan != null)
                     {
-                        ExecutionPlan.InitStepPlan.SimulationStep = 0;
+                        ExecutionPlan.InitStepPlan.SimulationStep = SimulationStep;
                         ExecutionPlan.InitStepPlan.Execute();
                     }
 
-                    //TODO: here should be else! (but some module are not prepared for this)
                     ExecutionPlan.StandardStepPlan.SimulationStep = SimulationStep;
                     ExecutionPlan.StandardStepPlan.Execute();
+                    ExecutionPlan.InitStepPlan = null;
                 }
             }
             catch (Exception e)

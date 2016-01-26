@@ -79,7 +79,8 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 var treeModel = new TreeModel();
 
-                treeModel.Nodes.Add(CreateDebugNode(m_executionPlan.InitStepPlan));
+                if (m_executionPlan.InitStepPlan != null)
+                    treeModel.Nodes.Add(CreateDebugNode(m_executionPlan.InitStepPlan));
                 treeModel.Nodes.Add(CreateDebugNode(m_executionPlan.StandardStepPlan));
 
                 debugTreeView.Model = treeModel;
