@@ -54,6 +54,17 @@ namespace GoodAI.Modules.School.Common
         
         }
 
+        public virtual void ClearWorld()
+        {
+        }
+
+        // Clear world and reapply training set hints
+        public virtual void ClearWorld(TrainingSetHints hints)
+        {
+            ClearWorld();
+            SetHints(hints);
+        }
+
         public virtual void SetHints(TrainingSetHints trainingSetHints)
         {
             foreach(var kvp in trainingSetHints)
