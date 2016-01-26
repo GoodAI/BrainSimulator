@@ -31,7 +31,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld(); 
+            World.ClearWorld(TSHints); 
             CreateTarget();
             SetTargetColor();
         }
