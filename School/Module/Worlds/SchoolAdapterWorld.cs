@@ -13,7 +13,7 @@ using YAXLib;
 namespace GoodAI.Modules.School.Worlds
 {
 
-    public class SchoolWorldAdapter : MyWorld //, IMyCustomExecutionPlanner
+    public class SchoolAdapterWorld : MyWorld //, IMyCustomExecutionPlanner
     {
         [MyInputBlock]
         public MyMemoryBlock<float> ActionInput
