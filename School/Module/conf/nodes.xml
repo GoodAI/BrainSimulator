@@ -3,5 +3,6 @@
   <KnownWorlds>
     <World type="GoodAI.Modules.School.Worlds.RoguelikeWorld" CanBeAdded="true"/>
     <World type="GoodAI.Modules.School.Worlds.PlumberWorld" CanBeAdded="true"/>
+    <World type="GoodAI.Modules.School.Worlds.SchoolWorldAdapter" CanBeAdded="true"/>
   </KnownWorlds>
 </Configuration>
