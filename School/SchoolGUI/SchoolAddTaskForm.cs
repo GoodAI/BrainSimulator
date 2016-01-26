@@ -31,7 +31,7 @@ namespace GoodAI.School.GUI
         {
             InitializeComponent();
 
-            IEnumerable<Type> types = LearningTaskFactory.KnownLearningTasks;
+            IEnumerable<Type> types = LearningTaskFactory.KnownLearningTasks.Keys;
 
             foreach (Type type in types)
             {
@@ -62,7 +62,7 @@ namespace GoodAI.School.GUI
         {
             ResultTask = comboTasks.SelectedItem.ToString() + " (" + comboWorlds.SelectedItem.ToString() + ")";
             ResultTaskType = (comboTasks.SelectedItem as TypeHolder).Type;
-            //ResultWorldType = (comboWorlds.SelectedItem as TypeHolder).Type;
+            ResultWorldType = (comboWorlds.SelectedItem as TypeHolder).Type;
             this.Close();
         }
     }

@@ -40,22 +40,30 @@ namespace GoodAI.Modules.School.Common
 
     public class LearningTaskFactory
     {
-        
-        private static IEnumerable<Type> m_knownLearningTasks = null;
+        private static Dictionary<Type, List<Type>> m_knownLearningTasks = null;
 
-        public static IEnumerable<Type> KnownLearningTasks
+        // Dictionary with all known LTs and worlds they support
+        public static Dictionary<Type, List<Type>> KnownLearningTasks
         {
             get
             {
                 if (m_knownLearningTasks == null)
                 {
                     //TODO: check multi-level inheritance if there will be any in future
-                    m_knownLearningTasks = Assembly.GetAssembly(typeof(AbstractLearningTask<>))
+                    IEnumerable<Type> tasks = Assembly.GetAssembly(typeof(AbstractLearningTask<>))
                         .GetTypes()
                         .Where(x => x.BaseType != null &&
                             x.BaseType.IsGenericType &&
                             x.BaseType.GetGenericTypeDefinition() == typeof(AbstractLearningTask<>));
+
+                    m_knownLearningTasks = new Dictionary<Type, List<Type>>();
+                    foreach (Type taskType in tasks)
+                    {
+                        List<Type> supportedWorlds = GetSupportedWorlds(taskType);
+                        m_knownLearningTasks.Add(taskType, supportedWorlds);
+                    }
                 }
+
                 return m_knownLearningTasks;
             }
         }
@@ -113,6 +121,22 @@ namespace GoodAI.Modules.School.Common
                 default:
                     return null;
             }
+        }
+
+        public static ILearningTask CreateLearningTask(Type taskType, Type worldType)
+        {
+            // check if task type is valid
+            if (!KnownLearningTasks.ContainsKey(taskType))
+                return null;
+
+            // check if the world is valid for this task
+            if (!KnownLearningTasks[taskType].Contains(worldType))
+                return null;
+
+            // everything is OK - create the task
+            AbstractSchoolWorld world = (AbstractSchoolWorld)Activator.CreateInstance(worldType);
+            ILearningTask task = (ILearningTask)Activator.CreateInstance(taskType, world);
+            return task;
         }
 
         public static List<Type> GetSupportedWorlds(Type taskType)

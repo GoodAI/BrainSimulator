@@ -57,7 +57,8 @@ namespace GoodAI.Modules.School.Common
 
         public void AddLearningTask(Type taskType, Type worldType)
         {
-
+            ILearningTask task = LearningTaskFactory.CreateLearningTask(taskType, worldType);
+            AddLearningTask(task);
         }
 
         public void AddLearningTask(ILearningTask task, Type worldType)

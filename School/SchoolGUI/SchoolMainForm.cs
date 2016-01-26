@@ -32,6 +32,7 @@ namespace GoodAI.School.GUI
         public class LearningTaskNode : SchoolTreeNode
         {
             public Type Type { get; set; }
+            public Type WorldType { get; set; }
             public LearningTaskNode(string text) : base(text) { }
         }
 
@@ -85,7 +86,7 @@ namespace GoodAI.School.GUI
             SchoolCurriculum ret = new SchoolCurriculum();
 
             foreach (LearningTaskNode taskNode in node.Nodes)
-                ret.AddLearningTask(taskNode.Type, null);
+                ret.AddLearningTask(taskNode.Type, taskNode.WorldType);
 
             return ret;
         }
@@ -159,6 +160,7 @@ namespace GoodAI.School.GUI
 
             LearningTaskNode newTask = new LearningTaskNode(AddTaskView.ResultTask);
             newTask.Type = AddTaskView.ResultTaskType;
+            newTask.WorldType = AddTaskView.ResultWorldType;
             (tree.SelectedNode.Tag as Node).Nodes.Add(newTask);
             tree.SelectedNode.IsExpanded = true;
         }
@@ -263,84 +265,6 @@ namespace GoodAI.School.GUI
             //TreeData data = new TreeData(m_model);
             YAXSerializer serializer = new YAXSerializer(typeof(SchoolCurriculum));
             string st = serializer.Serialize(test);
-        }
-    }
-
-    public class NodeData
-    {
-        public string Text;
-        public object Tag;
-        public List<NodeData> Nodes;
-
-        public NodeData(Node node)
-        {
-            Nodes = new List<NodeData>();
-
-            Text = node.Text;
-
-            //if (((node.Tag!=null))&&node.Tag.GetType().IsSerializable)
-            Tag = node.Tag;
-
-            if (node.Nodes.Count == 0)
-                return;
-
-            foreach (Node childNode in node.Nodes)
-            {
-                NodeData data = new NodeData(childNode);
-                Nodes.Add(data);
-            }
-        }
-
-        public Node ToTreeNode()
-        {
-            Node node = new Node(Text);
-            node.Tag = Tag;
-
-            if (this.Nodes == null || this.Nodes.Count == 0)
-                return node;
-
-            foreach (NodeData childData in Nodes)
-            {
-                Node nodeFromData = childData.ToTreeNode();
-                node.Nodes.Add(nodeFromData);
-            }
-
-            return node;
-        }
-    }
-
-    public class TreeData
-    {
-        public List<NodeData> Nodes { get; protected set; }
-
-        public TreeData(TreeModel treeModel)
-        {
-            Nodes = new List<NodeData>();
-
-            foreach (Node node in treeModel.GetChildren(TreePath.Empty))
-            {
-                NodeData data = new NodeData(node);
-                Nodes.Add(data);
-            }
-        }
-
-        public void PopulateTree(TreeViewAdv treeView)
-        {
-            if (this.Nodes == null || this.Nodes.Count == 0)
-                return;
-
-            TreeModel model = treeView.Model as TreeModel;
-            if (model == null)
-                return;
-
-            treeView.BeginUpdate();
-            foreach (NodeData data in Nodes)
-            {
-                Node node = data.ToTreeNode();
-                model.Nodes.Add(node);
-            }
-            treeView.EndUpdate();
-
         }
     }
 }
