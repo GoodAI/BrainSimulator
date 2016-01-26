@@ -1,5 +1,9 @@
 ﻿using GoodAI.Modules.School.LearningTasks;
 using GoodAI.Modules.School.Worlds;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace GoodAI.Modules.School.Common
 {
@@ -36,6 +40,26 @@ namespace GoodAI.Modules.School.Common
 
     public class LearningTaskFactory
     {
+        
+        private static IEnumerable<Type> m_knownLearningTasks = null;
+
+        public static IEnumerable<Type> KnownLearningTasks
+        {
+            get
+            {
+                if (m_knownLearningTasks == null)
+                {
+                    //TODO: check multi-level inheritance if there will be any in future
+                    m_knownLearningTasks = Assembly.GetAssembly(typeof(AbstractLearningTask<>))
+                        .GetTypes()
+                        .Where(x => x.BaseType != null &&
+                            x.BaseType.IsGenericType &&
+                            x.BaseType.GetGenericTypeDefinition() == typeof(AbstractLearningTask<>));
+                }
+                return m_knownLearningTasks;
+            }
+        }
+
         public static ILearningTask CreateLearningTask(LearningTaskNameEnum learningTaskName, SchoolWorld w)
         {
             switch (learningTaskName)
@@ -90,6 +114,22 @@ namespace GoodAI.Modules.School.Common
                     return null;
             }
         }
-    }
 
+        public static List<Type> GetSupportedWorlds(Type taskType)
+        {
+            //TODO: check multi-level inheritance if there will be any in future
+            // get generic parameter
+            Type genericType = taskType.BaseType.GetGenericArguments()[0];
+            // look up all derived classes of this type
+            List<Type> results = Assembly.GetAssembly(typeof(AbstractSchoolWorld))
+                .GetTypes()
+                .Where(x => x.BaseType == genericType)
+                .ToList();
+            results.Add(genericType);
+            // remove abstract classes
+            results = results.Where(x => !x.IsAbstract).ToList();
+
+            return results;
+        }
+    }
 }
