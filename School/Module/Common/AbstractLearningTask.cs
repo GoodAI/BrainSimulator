@@ -22,6 +22,9 @@ namespace GoodAI.Modules.School.Common
         public AbilityNameEnum AbilityName { get; set; }
         public AbilityNameEnum[] RequiredAbilities { get; set; }
 
+        // True if the world is reset before presenting a new unit; true by default
+        protected bool DoResetWorldBeforeTrainingUnit { get; set; }
+
         // Tracks whether the training unit has run to completion
         public bool IsTrainingUnitCompleted { get; set; }
         
@@ -107,6 +110,7 @@ namespace GoodAI.Modules.School.Common
             CurrentLevel = 0;
             IsTrainingUnitCompleted = false;
             HasPresentedFirstUnit = false;
+            DoResetWorldBeforeTrainingUnit = true;
         }
 
         public virtual void UpdateState()
@@ -152,6 +156,10 @@ namespace GoodAI.Modules.School.Common
             }
 
             IsTrainingUnitCompleted = false;
+            if (DoResetWorldBeforeTrainingUnit)
+            {
+                World.ClearWorld(TSHints);
+            }
             PresentNewTrainingUnit();
             HasPresentedFirstUnit = true;
         }

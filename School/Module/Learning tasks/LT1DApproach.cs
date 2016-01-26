@@ -46,7 +46,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
             CreateAgent();
             CreateTarget();
 

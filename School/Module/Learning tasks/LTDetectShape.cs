@@ -30,7 +30,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
             World.CreateNonVisibleAgent();
 
             if(TSHints[TSHintAttributes.NOISE] > 0){

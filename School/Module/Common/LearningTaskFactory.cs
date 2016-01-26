@@ -41,7 +41,7 @@ namespace GoodAI.Modules.School.Common
             switch (learningTaskName)
             {
                 case LearningTaskNameEnum.DetectWhite:
-                    return new LTDetectWhite(world);
+                    return new LTDetectWhite(world as RoguelikeWorld);
                 case LearningTaskNameEnum.ApproachTarget:
                     return new LTApproach(world);
                 case LearningTaskNameEnum.SimpleSizeDetection:
@@ -55,7 +55,7 @@ namespace GoodAI.Modules.School.Common
                 case LearningTaskNameEnum.OneDApproach:
                     return new LT1DApproach(world);
                 case LearningTaskNameEnum.DetectColor:
-                    return new LTDetectColor(world);
+                    return new LTDetectColor(world as RoguelikeWorld);
                 case LearningTaskNameEnum.CooldownAction:
                     return new LTActionWCooldown(world);
                 case LearningTaskNameEnum.DetectShape:

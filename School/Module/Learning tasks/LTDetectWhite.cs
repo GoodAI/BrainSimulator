@@ -6,12 +6,13 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     // TODO: Currently presents target outside of POW.
 
-    class LTDetectWhite : AbstractLearningTask<ManInWorld>
+    class LTDetectWhite : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
 
-        public LTDetectWhite(ManInWorld w) : base(w)
+        public LTDetectWhite(RoguelikeWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints { 
                 { TSHintAttributes.NOISE, 0 }, 
@@ -27,7 +28,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld(TSHints);
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 CreateTarget();

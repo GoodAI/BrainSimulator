@@ -365,20 +365,13 @@ namespace GoodAI.Modules.School.Common
             m_IsWorldFrozen = shouldFreeze;
         }
 
-        public virtual void ClearWorld()
+        public override void ClearWorld()
         {
             Agent = null;
             gameObjects.Clear();
             Objects.Count = 0;
             IsImageNoise = false;
             m_IsWorldFrozen = false;
-        }
-
-        // Clear world and reapply training set hints
-        public virtual void ClearWorld(TrainingSetHints hints)
-        {
-            ClearWorld();
-            SetHints(hints);
         }
 
         ////TODO: if two objects share the same texture, do not load it twice into memory
