@@ -3,9 +3,9 @@ using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Modules.School.Common;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -262,9 +262,10 @@ namespace GoodAI.School.GUI
         private void btnExportCurr_Click(object sender, EventArgs e)
         {
             SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            //TreeData data = new TreeData(m_model);
             YAXSerializer serializer = new YAXSerializer(typeof(SchoolCurriculum));
             string st = serializer.Serialize(test);
+            saveFileDialog1.ShowDialog();
+            File.WriteAllText(saveFileDialog1.FileName, st);
         }
     }
 }
