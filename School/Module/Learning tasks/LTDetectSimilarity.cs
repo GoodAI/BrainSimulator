@@ -17,8 +17,8 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.NOISE, 1},
-                {TSHintAttributes.RANDOMNESS, 1},
+                {TSHintAttributes.NOISE, 0},
+                {TSHintAttributes.RANDOMNESS, 0},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
@@ -54,7 +54,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
 
                 m_sameObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
-
+                bool placeSameObject = m_sameObjectetPlaced;
                 if (m_sameObjectetPlaced)
                 {
                     numberOfObjects--;
@@ -63,10 +63,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 int numberOfShapes = Enum.GetValues(typeof(Shape.Shapes)).Length;
                 List<int> uniqueNumbers = LearningTaskHelpers.UniqueNumbers(m_rndGen, 0, numberOfShapes, numberOfObjects);
                 List<Shape.Shapes> shapes = uniqueNumbers.Select(x => (Shape.Shapes)x).ToList();
-                if (m_sameObjectetPlaced)
-                {
-                    shapes.Add(shapes.Last());
-                }
                 
                 for (int i = 0; i < shapes.Count; i++)
                 {
@@ -86,15 +82,23 @@ namespace GoodAI.Modules.School.LearningTasks
                     if (TSHints[TSHintAttributes.RANDOMNESS] > .3)
                     {
                         color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
+
                     }
                     else
                     {
                         color = Color.White;
                     }
 
+                    Point position;
 
-                    Point position = world.GetRandomPositionInsidePowNonCovering(m_rndGen, s);
+                    if (placeSameObject)
+                    {
+                        placeSameObject = false;
+                        position = world.GetRandomPositionInsidePowNonCovering(m_rndGen, s);
+                        world.CreateShape(position, shapes[i], color, size: s);
+                    }
 
+                    position = world.GetRandomPositionInsidePowNonCovering(m_rndGen, s);
                     world.CreateShape(position, shapes[i], color, size: s);
                 }
             }

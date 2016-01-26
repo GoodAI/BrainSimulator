@@ -160,7 +160,7 @@ namespace GoodAI.Modules.School.Common
 
         public static Color RandomVisibleColor(Random rndGen)
         {
-            switch (rndGen.Next(10))
+            switch (rndGen.Next(11))
             {
                 case 0:
                     return Color.Red;
@@ -173,7 +173,7 @@ namespace GoodAI.Modules.School.Common
                 case 4:
                     return Color.Black;
                 case 5:
-                    return Color.Violet;
+                    return Color.Magenta;
                 case 6:
                     return Color.Green;
                 case 7:

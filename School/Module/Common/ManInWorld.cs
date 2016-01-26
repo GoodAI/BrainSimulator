@@ -778,13 +778,13 @@ namespace GoodAI.Modules.School.Common
                             m_MaskedColorKernelNearestNeighbor.SetupExecution(g.Width * g.Height * 3);
                             m_MaskedColorKernelNearestNeighbor.Run(Owner.VisualFOW, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, g.X, g.Y,
                                 g.bitmap, g.bitmapPixelSize.Width, g.bitmapPixelSize.Height,
-                                g.Width, g.Height, ((float)g.maskColor.R) / 255.0f, ((float)g.maskColor.G) / 255.0f, ((float)g.maskColor.B) / 255.0f);
+                                g.Width, g.Height, ((float)g.maskColor.B) / 255.0f, ((float)g.maskColor.G) / 255.0f, ((float)g.maskColor.R) / 255.0f);
 
                             Point powTopLeft = new Point(powCenter.X - Owner.POW_WIDTH / 2,
                                                         powCenter.Y - Owner.POW_HEIGHT / 2);
                             m_MaskedColorKernelNearestNeighbor.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT,
                                 g.X - powTopLeft.X, g.Y - powTopLeft.Y, g.bitmap, g.bitmapPixelSize.Width, g.bitmapPixelSize.Height,
-                                g.Width, g.Height, ((float)g.maskColor.R) / 255.0f, ((float)g.maskColor.G) / 255.0f, ((float)g.maskColor.B) / 255.0f);
+                                g.Width, g.Height, ((float)g.maskColor.B) / 255.0f, ((float)g.maskColor.G) / 255.0f, ((float)g.maskColor.R) / 255.0f);
                         }
                         else
                         {

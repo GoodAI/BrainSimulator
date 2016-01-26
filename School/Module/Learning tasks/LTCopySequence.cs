@@ -74,14 +74,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (DidTrainingUnitFail())
                 {
                     wasUnitSuccessful = false;
-                    Console.WriteLine("FAILED: Time runs out");
                     return true;
                 }
 
                 if (!m_teacher.IsDone() && m_agent.isMoving())
                 {
                     wasUnitSuccessful = false;
-                    Console.WriteLine("FAILED: Moves before teacher ends");
                     return true;
                 }
 
@@ -101,7 +99,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     {
                         // compare step
                         wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
-                        Console.WriteLine("SUCCEED: Easy version");
                         return true;
                     }
                 }
@@ -115,7 +112,6 @@ namespace GoodAI.Modules.School.LearningTasks
                         m_delayedCheck = false;
                         // compare steps
                         wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
-                        Console.WriteLine("SUCCEED: Hard version");
                         return true;
                     }
                 }
