@@ -55,6 +55,12 @@ namespace GoodAI.Modules.School.Common
             Tasks.Add(task);
         }
 
+        // necessary for deserialization - maybe implement IList or ICollection instead of IEnumerable
+        public void Add(ILearningTask task)
+        {
+            AddLearningTask(task);
+        }
+
         public void AddLearningTask(Type taskType, Type worldType)
         {
             ILearningTask task = LearningTaskFactory.CreateLearningTask(taskType, worldType);

@@ -16,6 +16,7 @@ namespace GoodAI.School.GUI
     public partial class SchoolMainForm : DockContent
     {
         public SchoolAddTaskForm AddTaskView { get; private set; }
+        private YAXSerializer m_serializer;
 
         public class SchoolTreeNode : Node
         {
@@ -34,12 +35,14 @@ namespace GoodAI.School.GUI
             public Type Type { get; set; }
             public Type WorldType { get; set; }
             public LearningTaskNode(string text) : base(text) { }
+            public LearningTaskNode(Type taskType) : base(taskType.Name) { }
         }
 
         private TreeModel m_model;
 
         public SchoolMainForm()
         {
+            m_serializer = new YAXSerializer(typeof(SchoolCurriculum));
             AddTaskView = new SchoolAddTaskForm();
 
             InitializeComponent();
@@ -83,12 +86,25 @@ namespace GoodAI.School.GUI
 
         private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
         {
-            SchoolCurriculum ret = new SchoolCurriculum();
+            SchoolCurriculum data = new SchoolCurriculum();
 
             foreach (LearningTaskNode taskNode in node.Nodes)
-                ret.AddLearningTask(taskNode.Type, taskNode.WorldType);
+                data.AddLearningTask(taskNode.Type, taskNode.WorldType);
 
-            return ret;
+            return data;
+        }
+
+        private CurriculumNode CurriculumDataToCurriculumNode(SchoolCurriculum data)
+        {
+            CurriculumNode node = new CurriculumNode("tmp");
+
+            foreach (ILearningTask task in data)
+            {
+                LearningTaskNode taskNode = new LearningTaskNode(task.GetType());
+                node.Nodes.Add(taskNode);
+            }
+
+            return node;
         }
 
         private void ApplyToAll(Control parent, Action<Control> apply)
@@ -115,7 +131,7 @@ namespace GoodAI.School.GUI
         private void UpdateButtons()
         {
             HideAllButtons();
-            btnNewCurr.Visible = true;
+            btnNewCurr.Visible = btnImportCurr.Visible = true;
             if (tree.SelectedNode == null)
                 return;
 
@@ -128,6 +144,7 @@ namespace GoodAI.School.GUI
                 groupBox1.Text = "Learning task";
 
             btnDelete.Visible = true;
+            btnDetailsCurr.Enabled = btnDetailsTask.Enabled = false;
             btnNewCurr.Visible = btnDetailsCurr.Visible = btnExportCurr.Visible = btnImportCurr.Visible = btnNewTask.Visible = btnRun.Visible =
                 selected is CurriculumNode;
             btnDetailsTask.Visible = selected is LearningTaskNode;
@@ -248,24 +265,27 @@ namespace GoodAI.School.GUI
 
         #endregion
 
-        private void DeleteNode()
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             if (tree.SelectedNode != null && tree.SelectedNode.Tag is Node)
                 (tree.SelectedNode.Tag as Node).Parent = null;
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            DeleteNode();
-        }
-
         private void btnExportCurr_Click(object sender, EventArgs e)
         {
             SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            YAXSerializer serializer = new YAXSerializer(typeof(SchoolCurriculum));
-            string st = serializer.Serialize(test);
+            string xmlCurr = m_serializer.Serialize(test);
             saveFileDialog1.ShowDialog();
-            File.WriteAllText(saveFileDialog1.FileName, st);
+            File.WriteAllText(saveFileDialog1.FileName, xmlCurr);
+        }
+
+        private void btnImportCurr_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            string xmlCurr = File.ReadAllText(openFileDialog1.FileName);
+            SchoolCurriculum curr = (SchoolCurriculum)m_serializer.Deserialize(xmlCurr);
+            CurriculumNode node = CurriculumDataToCurriculumNode(curr);
+            m_model.Nodes.Add(node);
         }
     }
 }
