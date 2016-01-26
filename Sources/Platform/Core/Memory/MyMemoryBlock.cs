@@ -395,7 +395,7 @@ namespace GoodAI.Core.Memory
             return rDeviceVar != null ? rDeviceVar.DevicePointer + offset * rDeviceVar.TypeSize : default(CUdeviceptr);
         }
 
-        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int timestep)
+        public override CUdeviceptr GetDevicePtr(int GPU, int offset, int memBlockIdx)
         {
             return GetDevicePtr(GPU, offset);
         }

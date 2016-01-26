@@ -126,7 +126,7 @@ namespace GoodAI.Modules.Retina
             public float FocusInterval { get; set; }
 
             private int m_imageWidth, m_imageHeight;
-            private MyCudaKernel m_reduction_kernel;
+            private MyReductionKernel<float> m_reduction_kernel;
             private MyCudaKernel m_finalize_kernel;
             private MyCudaKernel m_eye_kernel;
             private MyCudaKernel m_dbiKernel;
@@ -145,7 +145,7 @@ namespace GoodAI.Modules.Retina
                 if (Owner.Method == ControlMethod.SimpleMean)
                 {
                     m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Statistics", "PrepareMeanStdDev");
-                    m_reduction_kernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
+                    m_reduction_kernel = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_Sum_f);
                     m_finalize_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Statistics", "FinalizeMeanStdDev");
 
                     m_eye_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Retina\FindBrightSpotKernel", "ApplyEyeMovement");
@@ -158,7 +158,7 @@ namespace GoodAI.Modules.Retina
                 else
                 {
                     m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Statistics", "PrepareK_Means");
-                    m_reduction_kernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
+                    m_reduction_kernel = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_Sum_f);
                     m_sumKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Statistics", "SumCentroids");                    
                     m_finalize_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Statistics", "FinalizeK_Means");
 
@@ -239,13 +239,21 @@ namespace GoodAI.Modules.Retina
                     {
                         for (int j = 0; j < Owner.m_sumsPerItem; j++)
                         {
-                            m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
-                                Owner.m_sumsPerItem * i + j, i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + j * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                            //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
+                            //    Owner.m_sumsPerItem * i + j, i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + j * Owner.AttentionMap.Count, 1, /* distributed: */ 0);*/
+                            m_reduction_kernel.outOffset = Owner.m_sumsPerItem * i + j;
+                            m_reduction_kernel.inOffset = i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + j * Owner.AttentionMap.Count;
+                            m_reduction_kernel.size = Owner.AttentionMap.Count;
+                            m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
                         }
                     }
 
                     //sum all weights (denominator)
-                    m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, Owner.m_sumsPerItem * Owner.m_centroidsCount, 0, 1, /* distributed: */ 0);
+                    //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, Owner.m_sumsPerItem * Owner.m_centroidsCount, 0, 1, /* distributed: */ 0);
+                    m_reduction_kernel.outOffset = Owner.m_sumsPerItem * Owner.m_centroidsCount;
+                    m_reduction_kernel.inOffset = 0;
+                    m_reduction_kernel.size = Owner.AttentionMap.Count;
+                    m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap);
 
                     //evaluate new mean & stdDev for all centroids
                     m_finalize_kernel.SetupExecution(Owner.m_centroidsCount);
@@ -344,13 +352,21 @@ namespace GoodAI.Modules.Retina
                     //do reductions
                     for (int k = 0; k < Owner.m_sumsPerItem; k++)
                     {
-                        m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
-                                   c_n1i * Owner.m_sumsPerItem + k,
-                                   c_n1i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                        //m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
+                        //           c_n1i * Owner.m_sumsPerItem + k,
+                        //           c_n1i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                        m_reduction_kernel.size = Owner.AttentionMap.Count;
+                        m_reduction_kernel.outOffset = c_n1i * Owner.m_sumsPerItem + k;
+                        m_reduction_kernel.inOffset = c_n1i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count;
+                        m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
 
-                        m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
-                                   c_n2i * Owner.m_sumsPerItem + k,
-                                   c_n2i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                        //m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
+                        //           c_n2i * Owner.m_sumsPerItem + k,
+                        //           c_n2i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                        m_reduction_kernel.size = Owner.AttentionMap.Count;
+                        m_reduction_kernel.outOffset = c_n2i * Owner.m_sumsPerItem + k;
+                        m_reduction_kernel.inOffset = c_n2i * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count;
+                        m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
                     }
                 }
 
@@ -425,9 +441,13 @@ namespace GoodAI.Modules.Retina
 
                             for (int k = 0; k < Owner.m_sumsPerItem; k++)
                             {
-                                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
-                                    (Owner.m_centroidsCount + cIndex) * Owner.m_sumsPerItem + k,
-                                    (Owner.m_centroidsCount + cIndex) * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                                //m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count,
+                                //    (Owner.m_centroidsCount + cIndex) * Owner.m_sumsPerItem + k,
+                                //    (Owner.m_centroidsCount + cIndex) * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                                m_reduction_kernel.size = Owner.AttentionMap.Count;
+                                m_reduction_kernel.outOffset = (Owner.m_centroidsCount + cIndex) * Owner.m_sumsPerItem + k;
+                                m_reduction_kernel.inOffset = (Owner.m_centroidsCount + cIndex) * Owner.AttentionMap.Count * Owner.m_sumsPerItem + k * Owner.AttentionMap.Count;
+                                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
                             }
                         }
                         cIndex++;
@@ -563,13 +583,33 @@ namespace GoodAI.Modules.Retina
                 m_kernel.Run(Owner.AttentionMap, Owner.ReductionSources, m_imageWidth, m_imageHeight);
 
                 //sum all values needed for mean & stdDev
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 0, 0, 1, /* distributed: */ 0);
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 1, Owner.AttentionMap.Count, 1, /* distributed: */ 0);
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 2, 2 * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
-                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 3, 3 * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 0, 0, 1, /* distributed: */ 0);
+                m_reduction_kernel.size = Owner.AttentionMap.Count;
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
+
+                //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 1, Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                m_reduction_kernel.size = Owner.AttentionMap.Count;
+                m_reduction_kernel.outOffset = 1;
+                m_reduction_kernel.inOffset = Owner.AttentionMap.Count;
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
+
+                //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 2, 2 * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                m_reduction_kernel.size = Owner.AttentionMap.Count;
+                m_reduction_kernel.outOffset = 2;
+                m_reduction_kernel.inOffset = 2 * Owner.AttentionMap.Count;
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
+
+                //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources, Owner.AttentionMap.Count, 3, 3 * Owner.AttentionMap.Count, 1, /* distributed: */ 0);
+                m_reduction_kernel.size = Owner.AttentionMap.Count;
+                m_reduction_kernel.outOffset = 3;
+                m_reduction_kernel.inOffset = 3 * Owner.AttentionMap.Count;
+                m_reduction_kernel.Run(Owner.Statistics, Owner.ReductionSources);
 
                 //sum all weights (denominator)
-                m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, 4, 0, 1, /* distributed: */ 0);
+                //ZXC m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap, Owner.AttentionMap.Count, 4, 0, 1, /* distributed: */ 0);
+                m_reduction_kernel.outOffset = 4;
+                m_reduction_kernel.Run(Owner.Statistics, Owner.AttentionMap);
+
 
                 //evaluate mean & stdDev
                 m_finalize_kernel.Run(Owner.Statistics);

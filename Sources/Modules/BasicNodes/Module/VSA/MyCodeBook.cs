@@ -117,7 +117,8 @@ namespace GoodAI.Modules.VSA
         {
             private static MyJoin.MyJoinOperation _similarityOperator = MyJoin.MyJoinOperation.XNOR;
 
-            private MyCudaKernel m_kernel;
+            private MyReductionKernel<float> m_sum;
+            private MyProductKernel<float> m_dot;
             private MyCudaKernel m_similarityKernel;
 
             private int lastIdx = -1;
@@ -141,9 +142,9 @@ namespace GoodAI.Modules.VSA
                 lastIdx = -1;
 
                 if (Owner.UseBSCVariety)
-                    m_kernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
+                    m_sum = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_Sum_f);
                 else
-                    m_kernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_DotProduct_f);
+                    m_dot = MyKernelFactory.Instance.KernelProduct<float>(Owner, nGPU, ProductMode.f_DotProduct_f);
 
                 MyMemoryManager.Instance.ClearGlobalVariable(Owner.GlobalVariableName, nGPU);
 
@@ -183,10 +184,15 @@ namespace GoodAI.Modules.VSA
                     if (Owner.UseBSCVariety)
                     {
                         m_similarityKernel.Run(codeVector.DevicePointer, Owner.Input, Owner.TempBlock, (int)SimilarityOperator, Owner.SymbolSize);
-                        m_kernel.Run(Owner.Output, Owner.TempBlock, Owner.SymbolSize, 0, 0, 1, /* distributed: */ 0);
+                        //ZXC m_sum.Run(Owner.Output, Owner.TempBlock, Owner.SymbolSize, 0, 0, 1, /* distributed: */ 0);
+                        m_sum.size = Owner.SymbolSize;
+                        m_sum.Run(Owner.Output, Owner.TempBlock);
                     }
                     else
-                        m_kernel.Run(Owner.Output, 0, codeVector.DevicePointer, Owner.Input, Owner.SymbolSize, /* distributed: */ 0);
+                    {
+                        //ZXC m_dot.Run(Owner.Output, 0, codeVector.DevicePointer, Owner.Input, Owner.SymbolSize, /* distributed: */ 0);
+                        m_dot.Run(Owner.Output, codeVector.DevicePointer, Owner.Input.GetDevicePtr(Owner), Owner.SymbolSize);
+                    }
                 }
 
                 lastIdx = index;

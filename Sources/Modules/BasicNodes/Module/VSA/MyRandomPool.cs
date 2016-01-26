@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.Transforms;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -249,7 +250,7 @@ namespace GoodAI.Modules.VSA
         public static void NormalizeLeadingDim(
             MyMemoryBlock<float> vectors, MyMemoryBlock<float> temp,
             int leadingDim, int otherDim,
-            MyCudaKernel dotKernel, MyCudaKernel multKernel, int GPU)
+            MyProductKernel<float> dotKernel, MyCudaKernel multKernel, int GPU)
         {
             var count = leadingDim * otherDim;
 
@@ -265,7 +266,9 @@ namespace GoodAI.Modules.VSA
             for (int i = 0; i < otherDim; i++)
             {
                 var seg = vectors.GetDevicePtr(GPU, i * leadingDim);
-                dotKernel.Run(temp, i, seg, seg, leadingDim, /* distributed: */ 0);
+                //dotKernel.Run(temp, i, seg, seg, leadingDim, /* distributed: */ 0);
+                dotKernel.outOffset = i;
+                dotKernel.Run(temp, seg, seg, leadingDim);
             }
 
             temp.SafeCopyToHost(0, otherDim);
@@ -378,7 +381,7 @@ namespace GoodAI.Modules.VSA
         public static void GenerateTransformMatrix(
             MyMemoryBlock<float> unmanagedVectors, MyMemoryBlock<float> unmanagedBaseVectors, MyMemoryBlock<float> temp,
             Random random, int xDim, int yDim,
-            MyCudaKernel dotKernel, MyCudaKernel multKernel, MyCudaKernel transposeKernel, int GPU,
+            MyProductKernel<float> dotKernel, MyCudaKernel multKernel, MyCudaKernel transposeKernel, int GPU,
             VectorGenerationMode mode = VectorGenerationMode.Normal, AxisToNormalizeEnum axisToNormalize = AxisToNormalizeEnum.yDim)
         {
             Debug.Assert(random != null, "Missing random object");
@@ -588,7 +591,7 @@ namespace GoodAI.Modules.VSA
         /// <param name="yDim">The number of vectors.</param>
         /// <param name="dotKernel">The kernel to compute a dot product.</param>
         /// <param name="multKernel">The kernel to compute vector combinations.</param>
-        public static void OrthonormalizeVectors(MyMemoryBlock<float> vectors, MyMemoryBlock<float> temp, int xDim, int yDim, MyCudaKernel dotKernel, MyCudaKernel multKernel, int GPU)
+        public static void OrthonormalizeVectors(MyMemoryBlock<float> vectors, MyMemoryBlock<float> temp, int xDim, int yDim, MyProductKernel<float> dotKernel, MyCudaKernel multKernel, int GPU)
         {
             int count = xDim * yDim;
 
@@ -607,7 +610,8 @@ namespace GoodAI.Modules.VSA
 
                 // Normalize the current vector
                 {
-                    dotKernel.Run(temp, 0, curr, curr, xDim, /* distributed: */ 0);
+                    //ZXC dotKernel.Run(temp, 0, curr, curr, xDim, /* distributed: */ 0);
+                    dotKernel.Run(temp, curr, curr, xDim);
                     temp.SafeCopyToDevice(0, 1);
 
                     if (temp.Host[0] < 0.0000001f)
@@ -625,7 +629,9 @@ namespace GoodAI.Modules.VSA
                     var next = vectors.GetDevicePtr(GPU, j);
 
                     // Compute and subtract the projection onto the current vector
-                    dotKernel.Run(temp, xDim, curr, next, xDim, /* distributed: */ 0);
+                    //ZXC dotKernel.Run(temp, xDim, curr, next, xDim, /* distributed: */ 0);
+                    dotKernel.outOffset = xDim;
+                    dotKernel.Run(temp, curr, next, xDim);
 
                     multKernel.Run(curr, temp, temp, (int)MyJoin.MyJoinOperation.Multiplication, xDim, 1);
                     multKernel.Run(next, temp, next, (int)MyJoin.MyJoinOperation.Subtraction, xDim, xDim);

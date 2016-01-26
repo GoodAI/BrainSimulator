@@ -123,8 +123,8 @@ namespace GoodAI.Modules.VSA.Hashes
             private MyCudaKernel _polynomialFuncKernel;
             private MyCudaKernel _combineVectorsKernel;
             private MyCudaKernel _mapToIdcsKernel;
-            private MyCudaKernel _dotKernel;
             private MyCudaKernel _constMulKernel;
+            private MyProductKernel<float> _dotKernel;
 
 
             [MyBrowsable, Category("Structure")]
@@ -173,7 +173,7 @@ namespace GoodAI.Modules.VSA.Hashes
                     _combineVectorsKernel.SetupExecution(Owner.SymbolSize);
                     _mapToIdcsKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel", "MapToIdcs");
                     _mapToIdcsKernel.SetupExecution(Owner.SymbolSize);
-                    _dotKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_DotProduct_f);
+                    _dotKernel = MyKernelFactory.Instance.KernelProduct<float>(Owner, nGPU, ProductMode.f_DotProduct_f);
 
                 }
                 else
@@ -218,7 +218,9 @@ namespace GoodAI.Modules.VSA.Hashes
                             src = Temp.GetDevicePtr(Owner);
                         }
 
-                        _dotKernel.Run(Temp, 2 * symbolSize, src, src, symbolSize, /* distributed: */ 0);
+                        //ZXC _dotKernel.Run(Temp, 2 * symbolSize, src, src, symbolSize, /* distributed: */ 0);
+                        _dotKernel.outOffset = 2 * symbolSize;
+                        _dotKernel.Run(Temp, src, src, symbolSize);
 
                         _mapToIdcsKernel.Run(src, Temp.GetDevicePtr(Owner.GPU, 2 * symbolSize), index, Memory, symbolSize);
                     }

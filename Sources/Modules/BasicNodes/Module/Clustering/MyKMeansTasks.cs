@@ -54,7 +54,7 @@ namespace GoodAI.Modules.Clustering
         private MyCudaKernel m_copyInputToVisFieldKernel;
         private MyCudaKernel m_markCentroidsKernel;
 
-        private MyCudaKernel m_reduction;
+        private MyReductionKernel<float> m_reduction;
 
         private CudaDeviceVariable<int> m_d_changeFlag;
         private int[] m_h_changeFlag;
@@ -70,7 +70,7 @@ namespace GoodAI.Modules.Clustering
             m_copyInputToVisFieldKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Clustering\KMeansKernel", "CopyInputToVisFieldKernel");
             m_markCentroidsKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Clustering\KMeansKernel", "MarkCentroidsKernel");
 
-            m_reduction = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
+            m_reduction = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_Sum_f);
 
             m_d_changeFlag = new CudaDeviceVariable<int>(1);
             m_h_changeFlag = new int[1];

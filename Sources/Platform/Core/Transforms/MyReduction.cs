@@ -28,6 +28,8 @@ namespace GoodAI.Modules.Transforms
 
     public class MyParallelKernel<T> where T : struct
     {
+        protected static CudaStream DEFAULT_STREAM = new CudaStream();
+
         protected int m_nGPU;
         protected MyNode m_owner;
         protected MyCudaKernel m_kernel;
@@ -39,26 +41,28 @@ namespace GoodAI.Modules.Transforms
         protected int m_outTypeSize;
         protected int m_inTypeSize;
 
+        protected dim3 m_gridDims;
         protected dim3 m_blockDims;
-        private dim3 m_gridDims;
 
+        public int size;
         public int timeOffset;
         public int outOffset;
         public int inOffset;
+        public bool segmented;
 
-        public dim3 gridDims
+        public int segments
         {
             get
             {
-                if (m_buffer.Count <= gridDims.x * m_outTypeSize)
+                if (m_buffer.Count <= m_gridDims.x * m_outTypeSize)
                     throw new Exception("Output buffer size is too small (will overflow).");
-                return m_gridDims;
+                return (int)m_gridDims.x;
             }
             set
             {
-                m_gridDims.x = value.x;
-                if (value.y != 0 || value.z != 0)
-                    MyLog.Writer.WriteLine(MyLogLevel.WARNING, "MyReduction.cs: Attempt to set reduction gridDims with non-zero y and z values.");
+                if (value < 1)
+                    throw new Exception("Grid dimension has to be positive.");
+                m_gridDims.x = (uint)value;
                 m_kernel.SetupExecution(m_blockDims, m_gridDims);
             }
         }
@@ -72,6 +76,16 @@ namespace GoodAI.Modules.Transforms
             ParallelKernelDescriptor descriptor = attributes[0] as ParallelKernelDescriptor;
             descriptor.modeName = enumString;
             return descriptor;
+        }
+
+        protected virtual void ResetParameters()
+        {
+            size = 0;
+            timeOffset = 0;
+            outOffset = 0;
+            inOffset = 0;
+            segments = 1;
+            segmented = false;
         }
 
         public MyParallelKernel(MyNode owner, int nGPU, ParallelKernelDescriptor descriptor, int bufferSize)
@@ -93,11 +107,12 @@ namespace GoodAI.Modules.Transforms
             m_buffer.Name = "Buffer(" + descriptor.modeName + ")";
             m_buffer.Count = bufferSize;
 
-            m_blockDims = new dim3(512);
-            m_gridDims = new dim3(1);
+            m_blockDims.x = 512;
 
             m_kernel.SetupExecution(m_blockDims, m_gridDims);
             m_kernel.DynamicSharedMemory = 512 * (uint)m_outTypeSize;
+
+            ResetParameters();
         }
     }
 
@@ -132,13 +147,76 @@ namespace GoodAI.Modules.Transforms
     public class MyReductionKernel<T> : MyParallelKernel<T> where T : struct
     {
         public int stride;
-        public bool segmented;
 
-        public MyReductionKernel(MyNode owner, int nGPU, ReductionMode mode, bool segmented = false, int bufferSize = BUFFER_SIZE)
+        protected override void ResetParameters()
+        {
+            base.ResetParameters();
+
+            stride = 1;
+        }
+
+        public MyReductionKernel(MyNode owner, int nGPU, ReductionMode mode, int bufferSize = BUFFER_SIZE)
             : base(owner, nGPU, GetDescriptor(typeof(ReductionMode), mode.ToString()), bufferSize)
         {
-            this.stride = 1;
+            ResetParameters();
+        }
+
+        private void KernelRun(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr inputPtr, int size)
+        {
+            // stream, rawOut, rawIn, tempBuffer, size, outOff, inOff, stride, segmented
+
+            m_kernel.RunAsync(stream, outputPtr, inputPtr, m_buffer, size, 0, 0, stride, Convert.ToInt32(segmented));
+            ResetParameters();
+        }
+
+        /* OVERLOADS - CONFIGURE */
+
+        public void Configure(int size, int outOffset, int inOffset, int timeOffset, int stride, int segments, bool segmented)
+        {
+            this.size = size;
+            this.timeOffset = timeOffset;
+            this.outOffset = outOffset;
+            this.inOffset = inOffset;
+            this.stride = stride;
+            this.segments = segments;
             this.segmented = segmented;
+        }
+
+        public void Configure(int size, int outOffset, int inOffset, int timeOffset, int stride, int segments)
+        {
+            this.size = size;
+            this.timeOffset = timeOffset;
+            this.outOffset = outOffset;
+            this.inOffset = inOffset;
+            this.stride = stride;
+            this.segments = segments;
+            this.segmented = segmented;
+        }
+
+        /* OVERLOADS - SYNCHRONOUS */
+
+        public void Run(CUdeviceptr outputPtr, CUdeviceptr inputPtr, int size)
+        {
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+            inputPtr = inputPtr + inOffset * m_inTypeSize;
+
+            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size);
+        }
+
+        public void Run(MyMemoryBlock<T> output, CUdeviceptr inputPtr, int size)
+        {
+            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
+            inputPtr = inputPtr + inOffset * m_inTypeSize;
+
+            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size);
+        }
+
+        public void Run(CUdeviceptr outputPtr, MyMemoryBlock<T> input)
+        {
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+            CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
+
+            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size <= 0 ? input.Count : size);
         }
 
         public void Run(MyMemoryBlock<T> output, MyMemoryBlock<T> input)
@@ -146,7 +224,33 @@ namespace GoodAI.Modules.Transforms
             CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
             CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
 
-            m_kernel.Run(outputPtr, inputPtr, 0, input.Count, 0, 0, stride, Convert.ToInt32(segmented));
+            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size <= 0 ? input.Count : size);
+        }
+
+        /* OVERLOADS - ASYNCHRONOUS */
+
+        public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr inputPtr, int size)
+        {
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+            inputPtr = inputPtr + inOffset * m_inTypeSize;
+
+            KernelRun(stream, outputPtr, inputPtr, size);
+        }
+
+        public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, CUdeviceptr inputPtr, int size)
+        {
+            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
+            inputPtr = inputPtr + inOffset * m_inTypeSize;
+
+            KernelRun(stream, outputPtr, inputPtr, size);
+        }
+
+        public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, MyMemoryBlock<T> input)
+        {
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+            CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
+
+            KernelRun(stream, outputPtr, inputPtr, size <= 0 ? input.Count : size);
         }
 
         public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, MyMemoryBlock<T> input)
@@ -154,7 +258,7 @@ namespace GoodAI.Modules.Transforms
             CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
             CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
 
-            m_kernel.RunAsync(stream, outputPtr, inputPtr, m_buffer, input.Count, 0, 0, stride, Convert.ToInt32(segmented));
+            KernelRun(stream, outputPtr, inputPtr, size <= 0 ? input.Count : size);
         }
     }
 
@@ -172,208 +276,83 @@ namespace GoodAI.Modules.Transforms
 
     public class MyProductKernel<T> : MyParallelKernel<T> where T : struct
     {
-        public bool segmented;
+        public int segments;
         public bool distributed;
 
-        public MyProductKernel(MyNode owner, int nGPU, ProductMode mode, bool segmented = false, bool distributed = false, int bufferSize = BUFFER_SIZE)
+        protected override void ResetParameters()
+        {
+            base.ResetParameters();
+
+            distributed = false;
+        }
+
+        public MyProductKernel(MyNode owner, int nGPU, ProductMode mode, int bufferSize = BUFFER_SIZE)
             : base(owner, nGPU, GetDescriptor(typeof(ProductMode), mode.ToString()), bufferSize)
         {
-            this.segmented = segmented;
-            this.distributed = distributed;
+            ResetParameters();
+        }
+
+        private void KernelRun(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            // stream, rawOut, outOff, rawIn1, rawIn2, tempBuffer, size, segmented, distributed
+            m_kernel.RunAsync(stream, outputPtr, 0, input1Ptr, input2Ptr, m_buffer, size, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
+            ResetParameters();
+        }
+
+        /* OVERLOADS - SYNCHRONOUS */
+
+        public void Run(CUdeviceptr outputPtr, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+
+            KernelRun(DEFAULT_STREAM, outputPtr, input1Ptr, input2Ptr, size);
+        }
+
+        public void Run(MyMemoryBlock<T> output, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
+
+            KernelRun(DEFAULT_STREAM, outputPtr, input1Ptr, input2Ptr, size);
+        }
+
+        public void Run(CUdeviceptr outputPtr, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
+        {
+            KernelRun(DEFAULT_STREAM, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
         }
 
         public void Run(MyMemoryBlock<T> output, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
             CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
 
-            m_kernel.Run(outputPtr, 0, input1, input2, m_buffer, input1.Count, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
+            KernelRun(DEFAULT_STREAM, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
+        }
+
+        /* OVERLOADS - ASYNCHRONOUS */
+
+        public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+
+            KernelRun(stream, outputPtr, input1Ptr, input2Ptr, size);
+        }
+
+        public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
+
+            KernelRun(stream, outputPtr, input1Ptr, input2Ptr, size);
+        }
+
+        public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
+        {
+            KernelRun(stream, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
         }
 
         public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
             CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
 
-            m_kernel.RunAsync(stream, outputPtr, 0, input1, input2, m_buffer, input1.Count, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
-        }
-    }
-
-        
-    /// <summary>
-    /// OBSOLETE WILL BE DELETED SOON
-    /// </summary>
-    public static class MyReductionFactory
-    {
-        public enum Mode
-        {
-            i_Sum_i, i_MinIdx_2i, i_MaxIdx_2i, i_MinIdxMaxIdx_4i, c_Sum_c,
-            f_Sum_f, f_MinIdx_fi, f_MinIdx_ff, f_MaxIdx_fi, f_MaxIdx_ff, f_MinIdxMaxIdx_fifi, f_MinMax_2f,
-            f_DotProduct_f, i_DotProduct_i, f_Cosine_f, c_ComplexDot_c
-        };
-
-        /// <summary>
-        /// OBSOLETE WILL BE DELETED SOON
-        /// </summary>
-        public static MyCudaKernel Kernel(int nGPU, Mode mode, int blockCount = 1, bool segmented = false, bool distributed = false)
-        {
-            uint outSize = 0;
-            MyCudaKernel kernel = null;
-
-            if (blockCount < 1)
-                throw new ArgumentOutOfRangeException("blockCount", "Invalid block count -- must be positive.");
-
-            if (!segmented)
-            {
-                switch (mode)
-                {
-                    case Mode.i_Sum_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7i_Sum_iiLj512EEvPvPVKvjjjjb"); outSize = 4; break;
-                    case Mode.i_MinIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11i_MinIdx_2iiLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.i_MaxIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11i_MaxIdx_2iiLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.i_MinIdxMaxIdx_4i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI17i_MinIdxMaxIdx_4iiLj512EEvPvPVKvjjjjb"); outSize = 16; break;
-                    case Mode.f_Sum_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7f_Sum_ffLj512EEvPvPVKvjjjjb"); outSize = 4; break;
-                    case Mode.f_MinIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MinIdx_fifLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.f_MinIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MinIdx_fffLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.f_MaxIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MaxIdx_fifLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.f_MaxIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MaxIdx_fffLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.f_MinMax_2f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MinMax_2ffLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    case Mode.f_MinIdxMaxIdx_fifi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI19f_MinIdxMaxIdx_fififLj512EEvPvPVKvjjjjb"); outSize = 16; break;
-                    case Mode.i_DotProduct_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI7i_Dot_iiLj512EEvPvjPVKvS3_jb"); outSize = 4; break;
-                    case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI7f_Dot_ffLj512EEvPvjPVKvS3_jb"); outSize = 4; break;
-                    case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_jb"); outSize = 16; break;
-                    case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI14c_ComplexDot_c7ComplexLj512EEvPvjPVKvS4_jb"); outSize = 8; break;
-                    case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7c_Sum_c7ComplexLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
-                }
-            }
-            else // segmented
-            {
-                if (!distributed)
-                {
-                    switch (mode)
-                    {
-                        case Mode.i_Sum_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7i_Sum_iiLj512EEvPvPVKvjj"); outSize = 4; break;
-                        case Mode.i_MinIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11i_MinIdx_2iiLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.i_MaxIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11i_MaxIdx_2iiLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.i_MinIdxMaxIdx_4i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI17i_MinIdxMaxIdx_4iiLj512EEvPvPVKvjj"); outSize = 16; break;
-                        case Mode.f_Sum_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7f_Sum_ffLj512EEvPvPVKvjj"); outSize = 4; break;
-                        case Mode.f_MinIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MinIdx_fifLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.f_MinIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MinIdx_fffLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.f_MaxIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MaxIdx_fifLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.f_MaxIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MaxIdx_fffLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.f_MinMax_2f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MinMax_2ffLj512EEvPvPVKvjj"); outSize = 8; break;
-                        case Mode.f_MinIdxMaxIdx_fifi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI19f_MinIdxMaxIdx_fififLj512EEvPvPVKvjj"); outSize = 16; break;
-                        case Mode.i_DotProduct_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI7i_Dot_iiLj512EEvPvPVKvS3_j"); outSize = 4; break;
-                        case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI7f_Dot_ffLj512EEvPvPVKvS3_j"); outSize = 4; break;
-                        case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_j"); outSize = 16; break;
-                        case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_j"); outSize = 8; break;
-                        case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7c_Sum_c7ComplexLj512EEvPvPVKvjj"); outSize = 8; break;
-                        default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
-                    }
-                }
-                else // distributed
-                {
-                    switch (mode)
-                    {
-                        case Mode.i_DotProduct_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI7i_Dot_iiLj512EEvPvPVKvS3_j"); outSize = 4; break;
-                        case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI7f_Dot_ffLj512EEvPvPVKvS3_j"); outSize = 4; break;
-                        case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_j"); outSize = 16; break;
-                        case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_j"); outSize = 8; break;
-                        //case Mode.f_Average_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_Average_ffLj512EEvPvPVKvjj"); outSize = 4; break;
-                        //case Mode.c_Average_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11c_Average_c7ComplexLj512EEvPvPVKvjj"); outSize = 8; break;
-                        default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
-                    }
-                }
-            }
-
-            kernel.DynamicSharedMemory = 512 * outSize;
-            kernel.GridDimensions = blockCount;
-            kernel.BlockDimensions = 512;
-            return kernel;
-        }
-
-        /// <summary>
-        /// OBSOLETE WILL BE DELETED SOON
-        /// </summary>
-        public static MyCudaKernel AsyncKernel(int nGPU, Mode mode, int tempBlockSize, int segmentCount = 1, bool segmented = false, bool distributed = false)
-        {
-            uint outSize = 0;
-            MyCudaKernel kernel = null;
-
-            if (segmentCount < 1)
-                throw new ArgumentOutOfRangeException("segmentCount", "Invalid block count -- must be positive.");
-            if (!segmented && segmentCount > 1) // The global mem barrier in reduction.cu will may create race conditions when called concurrently
-                throw new ArgumentOutOfRangeException("segmentCount", "Non-segmented mode called with multiple blocks is not allowed.");
-
-            if (!segmented)
-            {
-                switch (mode)
-                {
-                    case Mode.i_Sum_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7i_Sum_iiLj512EEvPvPVKvS1_jjjjb"); outSize = 4; break;
-                    case Mode.i_MinIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11i_MinIdx_2iiLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.i_MaxIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11i_MaxIdx_2iiLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.i_MinIdxMaxIdx_4i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI17i_MinIdxMaxIdx_4iiLj512EEvPvPVKvS1_jjjjb"); outSize = 16; break;
-                    case Mode.f_Sum_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7f_Sum_ffLj512EEvPvPVKvS1_jjjjb"); outSize = 4; break;
-                    case Mode.f_MinIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MinIdx_fifLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.f_MinIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MinIdx_fffLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.f_MaxIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MaxIdx_fifLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.f_MaxIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MaxIdx_fffLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.f_MinMax_2f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI11f_MinMax_2ffLj512EEvPvPVKvS1_jjjjb"); outSize = 8; break;
-                    case Mode.f_MinIdxMaxIdx_fifi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI19f_MinIdxMaxIdx_fififLj512EEvPvPVKvS1_jjjjb"); outSize = 16; break;
-                    case Mode.i_DotProduct_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI7i_Dot_iiLj512EEvPvjPVKvS3_S1_jb"); outSize = 4; break;
-                    case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI7f_Dot_ffLj512EEvPvjPVKvS3_S1_jb"); outSize = 4; break;
-                    case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_S1_jb"); outSize = 16; break;
-                    case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10DotProductI14c_ComplexDot_c7ComplexLj512EEvPvjPVKvS4_S2_jb"); outSize = 8; break;
-                    case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z9ReductionI7c_Sum_c7ComplexLj512EEvPvPVKvjjjjb"); outSize = 8; break;
-                    default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
-                }
-            }
-            else // segmented
-            {
-                if (!distributed)
-                {
-                    switch (mode)
-                    {
-                        case Mode.i_Sum_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7i_Sum_iiLj512EEvPvPVKvS1_jj"); outSize = 4; break;
-                        case Mode.i_MinIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11i_MinIdx_2iiLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.i_MaxIdx_2i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11i_MaxIdx_2iiLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.i_MinIdxMaxIdx_4i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI17i_MinIdxMaxIdx_4iiLj512EEvPvPVKvS1_jj"); outSize = 16; break;
-                        case Mode.f_Sum_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7f_Sum_ffLj512EEvPvPVKvS1_jj"); outSize = 4; break;
-                        case Mode.f_MinIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MinIdx_fifLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.f_MinIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MinIdx_fffLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.f_MaxIdx_fi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MaxIdx_fifLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.f_MaxIdx_ff: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MaxIdx_fffLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.f_MinMax_2f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_MinMax_2ffLj512EEvPvPVKvS1_jj"); outSize = 8; break;
-                        case Mode.f_MinIdxMaxIdx_fifi: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI19f_MinIdxMaxIdx_fififLj512EEvPvPVKvS1_jj"); outSize = 16; break;
-                        case Mode.i_DotProduct_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI7i_Dot_iiLj512EEvPvPVKvS3_S1_j"); outSize = 4; break;
-                        case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI7f_Dot_ffLj512EEvPvPVKvS3_S1_j"); outSize = 4; break;
-                        case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_S1_j"); outSize = 16; break;
-                        case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z11SDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_S2_j"); outSize = 8; break;
-                        case Mode.c_Sum_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI7c_Sum_c7ComplexLj512EEvPvPVKvS2_jj"); outSize = 8; break;
-                        default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
-                    }
-                }
-                else // distributed
-                {
-                    switch (mode)
-                    {
-                        case Mode.i_DotProduct_i: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI7i_Dot_iiLj512EEvPvPVKvS3_S1_j"); outSize = 4; break;
-                        case Mode.f_DotProduct_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI7f_Dot_ffLj512EEvPvPVKvS3_S1_j"); outSize = 4; break;
-                        case Mode.f_Cosine_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI10f_Cosine_ffLj512EEvPvPVKvS3_S1_j"); outSize = 16; break;
-                        case Mode.c_ComplexDot_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z12SSDotProductI14c_ComplexDot_c7ComplexLj512EEvPvPVKvS4_S2_j"); outSize = 8; break;
-                        //case Mode.f_Average_f: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11f_Average_ffLj512EEvPvPVKvS1_jj"); outSize = 4; break;
-                        //case Mode.c_Average_c: kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\Reduction\Reduction", "_Z10SReductionI11c_Average_c7ComplexLj512EEvPvPVKvS2_jj"); outSize = 8; break;
-                        default: throw new ArgumentOutOfRangeException("mode", "Unrecognized reduction mode.");
-                    }
-                }
-            }
-
-            kernel.DynamicSharedMemory = 512 * outSize;
-            kernel.GridDimensions = segmentCount;
-            kernel.BlockDimensions = 512;
-
-            if (tempBlockSize < kernel.GridDimensions.x * kernel.GridDimensions.y * kernel.GridDimensions.z * 2)
-                throw new ArgumentOutOfRangeException("tempBlockSize", "Temp block size is too small to use with this setting.");
-
-            return kernel;
+            KernelRun(stream, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
         }
     }
 }

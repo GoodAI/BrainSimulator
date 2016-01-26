@@ -256,16 +256,16 @@ namespace GoodAI.Core
             return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance);            
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode, bool segmented = false,
+        public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode, int segments = 0,
             int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
         {
-            return new MyReductionKernel<T>(owner, nGPU, mode, segmented, bufferSize);
+            MyReductionKernel<float> reduction = new MyReductionKernel<T>(owner, nGPU, mode, segments, bufferSize);
+            reduction.segments = segments;
+            return reduction;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public MyProductKernel<T> KernelProduct<T>(MyNode owner, int nGPU, ProductMode mode, bool segmented = false,
-            bool distributed = false, int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
+        public MyProductKernel<T> KernelProduct<T>(MyNode owner, int nGPU, ProductMode mode, bool segmented = false, bool distributed = false,
+            int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
         {
             return new MyProductKernel<T>(owner, nGPU, mode, segmented, distributed, bufferSize);
         }
