@@ -96,5 +96,15 @@
             Apply configurable gravity physics to the specified GameObjects
             </summary>
         </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolAdapterWorld.InitSchoolAdapterWorldTask">
+            <summary>
+            Initialize the world's curriculum
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolAdapterWorld.LearningTaskStepTask">
+            <summary>
+            Update the state of the training task(s)
+            </summary>
+        </member>
     </members>
 </doc>

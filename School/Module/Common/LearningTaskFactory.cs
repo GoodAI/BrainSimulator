@@ -33,7 +33,7 @@ namespace GoodAI.Modules.School.Common
 
     public class LearningTaskFactory
     {
-        public static ILearningTask CreateLearningTask(LearningTaskNameEnum learningTaskName, AbstractSchoolWorld w)
+        public static IDeprecatedLearningTask CreateLearningTask(LearningTaskNameEnum learningTaskName, AbstractSchoolWorld w)
         {
             // UAAAAAAAAAAA
             var world = w as ManInWorld; 

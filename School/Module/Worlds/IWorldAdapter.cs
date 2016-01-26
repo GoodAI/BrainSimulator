@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core.Nodes;
+using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,9 @@ namespace GoodAI.Modules.School.Worlds
     public interface IWorldAdapter
     {
         MyWorld World { get; }
+
+        void ClearWorld();
+        void SetHint(string attr, float value);
     }
 
     public class AAWorld: MyWorld, IWorldAdapter
@@ -24,6 +28,17 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
+
+        }
+
+        public void ClearWorld() 
+        {
+        
+        }
+
+        public void SetHint(string attr, float value)
+        {
+
         }
     }
 
@@ -39,7 +54,19 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
+
         }
+
+        public void ClearWorld()
+        {
+
+        }
+
+        public void SetHint(string attr, float value)
+        {
+
+        }
+
     }
 
     public static class IWorldAdaprersList

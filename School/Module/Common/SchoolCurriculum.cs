@@ -20,10 +20,10 @@ namespace GoodAI.Modules.School.Common
     /// <summary>
     /// Holds tasks that an agent should be trained with to gain new abilities
     /// </summary>
-    public class SchoolCurriculum : IEnumerable<ILearningTask>
+    public class SchoolCurriculum : IEnumerable<IDeprecatedLearningTask>
     {
-        protected List<ILearningTask> Tasks = new List<ILearningTask>();
-        private IEnumerator<ILearningTask> m_taskEnumerator;
+        protected List<IDeprecatedLearningTask> Tasks = new List<IDeprecatedLearningTask>();
+        private IEnumerator<IDeprecatedLearningTask> m_taskEnumerator;
 
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
@@ -31,13 +31,13 @@ namespace GoodAI.Modules.School.Common
             return this.GetEnumerator();
         }
 
-        public IEnumerator<ILearningTask> GetEnumerator()
+        public IEnumerator<IDeprecatedLearningTask> GetEnumerator()
         {
-            return Tasks.GetEnumerator() as IEnumerator<ILearningTask>;
+            return Tasks.GetEnumerator() as IEnumerator<IDeprecatedLearningTask>;
         }
 
         // for classic usage
-        public ILearningTask GetNextLearningTask()
+        public IDeprecatedLearningTask GetNextLearningTask()
         {
             if (m_taskEnumerator == null)
                 m_taskEnumerator = Tasks.GetEnumerator();
@@ -51,7 +51,7 @@ namespace GoodAI.Modules.School.Common
             m_taskEnumerator.Reset();
         }
 
-        public void AddLearningTask(ILearningTask task)
+        public void AddLearningTask(IDeprecatedLearningTask task)
         {
             // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
             Tasks.Add(task);

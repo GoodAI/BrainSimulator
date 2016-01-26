@@ -1,7 +1,9 @@
 ﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,8 +15,10 @@ using YAXLib;
 namespace GoodAI.Modules.School.Worlds
 {
 
-    public class SchoolAdapterWorld : MyWorld //, IMyCustomExecutionPlanner
+    public class SchoolAdapterWorld : MyWorld, IMyCustomExecutionPlanner
     {
+
+        #region Input and Output MemoryBlocks
         [MyInputBlock]
         public MyMemoryBlock<float> ActionInput
         {
@@ -48,7 +52,9 @@ namespace GoodAI.Modules.School.Worlds
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
+        #endregion
 
+        #region MemoryBlocks sizes
         [MyBrowsable, Category("World Sizes")]
         [YAXSerializableField(DefaultValue = 10000)]
         public int VisualSize { get; set; }
@@ -65,7 +71,17 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = 200)]
         public int DataSize { get; set; }
 
-        // for serialization
+        public override void UpdateMemoryBlocks()
+        {
+            Visual.Count = VisualSize;
+            Audio.Count = AudioSize;
+            Text.Count = TextSize;
+            Data.Count = DataSize;
+        }
+        #endregion
+
+        #region World machinery
+        // for serialization purposes
         private string CurrentWorldType
         {
             get
@@ -79,7 +95,7 @@ namespace GoodAI.Modules.School.Worlds
                     return String.Empty;
                 }
             }
-            set 
+            set
             {
                 if (String.IsNullOrEmpty(value))
                 {
@@ -92,17 +108,139 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        [MyBrowsable, Category("Awsome")]
+        [MyBrowsable, Category("World")]
         [YAXDontSerialize, TypeConverter(typeof(IWorldAdapterConverter))]
         public IWorldAdapter CurrentWorld { get; set; }
-        
-        public override void UpdateMemoryBlocks()
+
+        #endregion
+
+        SchoolCurriculum m_curriculum;
+        ILearningTask m_currentLearningTask;
+        Random m_random = new Random();
+
+        // For testing the progression of learning tasks when we don't have an agent or
+        // available agents can't complete the task, we can emulate training unit success
+        // with the probability set by this parameter.
+        [MyBrowsable, Category("World"), Description("Set to 0 < p <= 1 to emulate the success (with probability p) of training units.")]
+        [YAXSerializableField(DefaultValue = 0)]
+        public float EmulatedUnitSuccessProbability { get; set; }
+
+
+        public override void Validate(MyValidator validator)
         {
-            Visual.Count = VisualSize;
-            Audio.Count = AudioSize;
-            Text.Count = TextSize;
-            Data.Count = DataSize;
+
         }
 
+        public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
+        {
+            return defaultPlan;
+        }
+
+        public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
+        {
+            return defaultInitPhasePlan;
+        }
+
+        public void ExecuteLearningTaskStep()
+        {
+            if (m_currentLearningTask == null)
+                return;
+
+            if (m_currentLearningTask.HasPresentedFirstUnit)
+            {
+                m_currentLearningTask.UpdateState();
+
+                if (m_currentLearningTask.IsAbilityLearned)
+                {
+//TODO fix                    m_currentLearningTask = m_curriculum.GetNextLearningTask();
+                    if (m_currentLearningTask == null)
+                        return;
+                }
+                else if (m_currentLearningTask.DidAbilityFail)
+                {
+                    m_currentLearningTask = null;
+                    return;
+                }
+            }
+
+            if (!m_currentLearningTask.HasPresentedFirstUnit || m_currentLearningTask.IsTrainingUnitCompleted)
+            {
+                m_currentLearningTask.HandlePresentNewTrainingUnit(this);
+            }
+        }
+
+        public void InitializeCurriculum()
+        {
+            //m_curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this.CurrentWorld);
+        }
+
+        public void ClearWorld()
+        {
+            CurrentWorld.ClearWorld();
+        }
+
+        // Clear world and reapply training set hints
+        public void ClearWorld(TrainingSetHints hints)
+        {
+            ClearWorld();
+            SetHints(hints);
+        }
+
+        public void SetHints(TrainingSetHints trainingSetHints)
+        {
+            foreach (var kvp in trainingSetHints)
+            {
+                CurrentWorld.SetHint(kvp.Key, kvp.Value);
+            }
+        }
+
+        // Return true if we are emulating the success of training units
+        public bool IsEmulatingUnitCompletion()
+        {
+            return EmulatedUnitSuccessProbability > 0;
+        }
+
+        // Emulate the successful completion with a specified probability of the current training unit
+        public bool EmulateIsTrainingUnitCompleted(out bool wasUnitSuccessful)
+        {
+            wasUnitSuccessful = m_random.NextDouble() < EmulatedUnitSuccessProbability;
+            return true;
+        }
+
+        public InitSchoolAdapterWorldTask InitSchool { get; protected set; }
+        public LearningTaskStepTask LearningTaskStep { get; protected set; }
+
+        /// <summary>
+        /// Initialize the world's curriculum
+        /// </summary>
+        [MyTaskInfo(OneShot = true)]
+        public class InitSchoolAdapterWorldTask : MyTask<SchoolAdapterWorld>
+        {
+            public override void Init(int nGPU)
+            {
+            }
+
+            public override void Execute()
+            {
+                Owner.InitializeCurriculum();
+//TODO fix                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
+            }
+        }
+
+        /// <summary>
+        /// Update the state of the training task(s)
+        /// </summary>
+        public class LearningTaskStepTask : MyTask<SchoolAdapterWorld>
+        {
+            public override void Init(int nGPU)
+            {
+
+            }
+
+            public override void Execute()
+            {
+                Owner.ExecuteLearningTaskStep();
+            }
+        }
     }
 }

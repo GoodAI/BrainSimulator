@@ -29,7 +29,7 @@ namespace GoodAI.Modules.School.Common
         public float EmulatedUnitSuccessProbability { get; set; }
 
         SchoolCurriculum m_curriculum;
-        ILearningTask m_currentLearningTask;
+        IDeprecatedLearningTask m_currentLearningTask;
 
         // Random number generator instantiated when emulating training unit completion.
         Random m_random;
@@ -143,13 +143,12 @@ namespace GoodAI.Modules.School.Common
         {
             public override void Init(int nGPU)
             {
-                Owner.InitializeCurriculum();
-                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
             }
 
             public override void Execute()
             {
-
+                Owner.InitializeCurriculum();
+                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
             }
         }
 

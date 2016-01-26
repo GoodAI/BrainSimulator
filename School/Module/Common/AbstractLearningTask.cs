@@ -1,8 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using GoodAI.Modules.School.Worlds;
+using System.Collections.Generic;
 
 namespace GoodAI.Modules.School.Common
 {
     public interface ILearningTask
+    {
+        bool HasPresentedFirstUnit { get; set; }
+        bool IsAbilityLearned { get; }
+        bool DidAbilityFail { get; }
+        bool IsTrainingUnitCompleted { get; set; }
+
+        void UpdateState();
+        void HandlePresentNewTrainingUnit(SchoolAdapterWorld w);
+    }
+
+    
+    public interface IDeprecatedLearningTask
     {
         bool HasPresentedFirstUnit { get; set; }
         bool IsAbilityLearned { get; }
@@ -16,7 +29,7 @@ namespace GoodAI.Modules.School.Common
     /// <summary>
     /// Abstract base class for AI School exercises.
     /// </summary>
-    public abstract class AbstractLearningTask<WorldClass>: ILearningTask where WorldClass: AbstractSchoolWorld
+    public abstract class AbstractLearningTask<WorldClass>: IDeprecatedLearningTask where WorldClass: AbstractSchoolWorld
     {       
         public LearningTaskNameEnum LearningTaskName { get; set; }
         public AbilityNameEnum AbilityName { get; set; }
