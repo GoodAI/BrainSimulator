@@ -10,7 +10,7 @@ namespace GoodAI.Core.Configuration
     [YAXSerializeAs("Configuration"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
     public class MyModuleConfig
     {
-        private const string MODULE_CONFIG_FILE = "nodes.xml";
+        public const string MODULE_CONFIG_FILE = "nodes.xml";
         private const string CONVERSION_TYPE_NAME = "Versioning.MyConversion";
 
         [YAXSerializeAs("KnownNodes"), YAXErrorIfMissed(YAXExceptionTypes.Warning)]

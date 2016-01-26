@@ -119,8 +119,8 @@ namespace GoodAI.Core.Configuration
         private static void AddModuleFromAssembly(FileInfo file, bool basicNode = false)
         {
             try
-            {              
-                MyModuleConfig moduleConfig = MyModuleConfig.LoadModuleConfig(file);                
+            {
+                MyModuleConfig moduleConfig = MyModuleConfig.LoadModuleConfig(file);
 
                 Modules.Add(moduleConfig);
                 AssemblyLookup[moduleConfig.Assembly.FullName] = moduleConfig;
@@ -159,17 +159,22 @@ namespace GoodAI.Core.Configuration
                     }
                 }
 
-                MyLog.INFO.WriteLine("Module loaded: " + file.Name 
-                    + (moduleConfig.Conversion != null ? " (version=" + moduleConfig.GetXmlVersion() + ")" : " (no versioning)"));                
+                MyLog.INFO.WriteLine("Module loaded: " + file.Name
+                                     +
+                                     (moduleConfig.Conversion != null
+                                         ? " (version=" + moduleConfig.GetXmlVersion() + ")"
+                                         : " (no versioning)"));
             }
             catch (Exception e)
             {
-                MyLog.ERROR.WriteLine("Module loading failed: " + e.Message);
-
                 if (basicNode)
                 {
                     throw new MyModuleLoadingException("Core module loading failed (" + e.Message + ")", e);
                 }
+
+                // We don't report the nodes.xml missing - the dll could still contain UI extensions.
+                if (!(e is FileNotFoundException))
+                    MyLog.ERROR.WriteLine("Module loading failed: " + e.Message);
             }
         }
     }

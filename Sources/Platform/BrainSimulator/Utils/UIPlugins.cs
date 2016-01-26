@@ -29,8 +29,8 @@ namespace GoodAI.BrainSimulator.Forms
             foreach (FileInfo assemblyFile in MyConfiguration.ListModules())
             {
                 Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
-                string xml = MyResources.GetTextFromAssembly(assembly, "nodes.xml");    //MyModuleConfig.MODULE_CONFIG_FILE instead of "nodes.xml"
-                if (!string.IsNullOrEmpty(xml)) //skip nodes DLLs - GUI and logic should be divided
+                string xml;
+                if (MyResources.TryGetTextFromAssembly(assembly, MyModuleConfig.MODULE_CONFIG_FILE, out xml))
                     continue;
 
                 MyLog.INFO.WriteLine("UI module loaded: " + assemblyFile.Name);
@@ -47,3 +47,4 @@ namespace GoodAI.BrainSimulator.Forms
         }
     }
 }
+
