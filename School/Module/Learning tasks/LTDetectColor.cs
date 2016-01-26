@@ -5,12 +5,13 @@ using System;
 namespace GoodAI.Modules.School.LearningTasks
 {
 
-    public class LTDetectColor : AbstractLearningTask<ManInWorld>
+    public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
         protected GameObject m_target;
         Random m_rndGen = new Random();
-        
-        public LTDetectColor(ManInWorld w): base(w)
+
+        public LTDetectColor(RoguelikeWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.NOISE, 0},
