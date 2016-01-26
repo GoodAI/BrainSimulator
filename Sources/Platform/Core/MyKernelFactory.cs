@@ -256,12 +256,10 @@ namespace GoodAI.Core
             return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance);            
         }
 
-        public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode, int segments = 0,
+        public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode, bool segmented = false,
             int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
         {
-            MyReductionKernel<float> reduction = new MyReductionKernel<T>(owner, nGPU, mode, segments, bufferSize);
-            reduction.segments = segments;
-            return reduction;
+            return new MyReductionKernel<T>(owner, nGPU, mode, segmented, bufferSize);
         }
 
         public MyProductKernel<T> KernelProduct<T>(MyNode owner, int nGPU, ProductMode mode, bool segmented = false, bool distributed = false,

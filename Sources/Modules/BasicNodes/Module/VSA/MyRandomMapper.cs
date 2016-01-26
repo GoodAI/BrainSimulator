@@ -170,7 +170,6 @@ namespace GoodAI.Modules.VSA
 
                 var random = new Random(Owner.Seed);
 
-                var dotKernel = MyReductionFactory.Kernel(Owner.GPU, MyReductionFactory.Mode.f_DotProduct_f);
                 var dotKernel = MyKernelFactory.Instance.KernelProduct<float>(Owner, Owner.GPU, ProductMode.f_DotProduct_f);
                 var multKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"common\CombineVectorsKernel", "CombineTwoVectorsKernelVarSize");
                 var transposeKernel = MyKernelFactory.Instance.Kernel(Owner.GPU, @"VSA\Mappers", "Transpose");
