@@ -28,7 +28,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
             CreateAgent();
 
             if (LearningTaskHelpers.FlipCoin(m_rndGen))

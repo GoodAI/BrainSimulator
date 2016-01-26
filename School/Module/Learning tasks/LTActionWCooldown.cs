@@ -34,7 +34,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
             ResetCooldown();
             UnitSuccesses = 0;
         }

@@ -32,7 +32,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
             if (World.GetType() == typeof(RoguelikeWorld))
             {
                 RoguelikeWorld world = World as RoguelikeWorld;

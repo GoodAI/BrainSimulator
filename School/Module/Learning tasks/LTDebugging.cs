@@ -25,8 +25,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.ClearWorld();
-
             if (World.GetType() == typeof(PlumberWorld)) {
                 m_agent = new MovableGameObject(GameObjectType.Agent, @"Plumber24x28.png", 24, 28); ;
                 PlumberWorld world = World as PlumberWorld;
