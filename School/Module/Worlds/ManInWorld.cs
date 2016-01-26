@@ -141,6 +141,9 @@ namespace GoodAI.Modules.School.Common
                 case TSHintAttributes.NOISE:
                     IsImageNoise = value > 0;
                     break;
+                case TSHintAttributes.DEGREES_OF_FREEDOM:
+                    DegreesOfFreedom = (int)value;
+                    break;
             }
         }
 

@@ -5,7 +5,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTApproach : AbstractLearningTask<ManInWorld>
+    public class LTApproach : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
@@ -13,7 +13,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
 
-        public LTApproach(ManInWorld w) : base(w)
+        public LTApproach(RoguelikeWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints
             {
@@ -48,7 +49,7 @@ namespace GoodAI.Modules.School.LearningTasks
             AdjustTargetSize();
 
             m_stepsSincePresented = 0;
-            m_initialDistance = m_agent.DistanceTo(m_target);        
+            m_initialDistance = m_agent.DistanceTo(m_target);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
@@ -88,7 +89,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.Y -= (m_target.Height - oldTargetHeight) / 2;
             }
 
-            PutAgentOnFloor();
+            //PutAgentOnFloor();
         }
 
         /*
@@ -116,7 +117,8 @@ namespace GoodAI.Modules.School.LearningTasks
             switch (m_rndGen.Next(0, numberOfAlternatives))
             {
                 case 0:
-                    return "Block60x10.png"; // used to be GetDefaultTargetImage();
+                    //return "Block60x10.png"; // used to be GetDefaultTargetImage();
+                    return "Target2.png";
                 case 1:
                     return "White10x10.png";
                 case 2:
@@ -132,93 +134,51 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            World.CreateAgent(@"Plumber24x28.png", 0, 0);
+            // Plumber:
+            //World.CreateAgent(@"Plumber24x28.png", 0, 0);
+            //m_agent = World.Agent;
+            //// center the agent
+            //m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
+            //PutAgentOnFloor();
+            World.CreateAgent(@"Agent.png", World.FOW_WIDTH / 2, World.FOW_HEIGHT / 2);
             m_agent = World.Agent;
-            // center the agent
-            m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            PutAgentOnFloor();
-        }
-
-        protected void CreateTarget()
-        {
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
-
-            World.AddGameObject(m_target);
-
-            // first implementation, random object position (left or right)
-            int maxTargetDistance
-                = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] == -1 ? World.FOW_WIDTH : (int)(World.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
-
-            bool isLeft = m_rndGen.Next(0, 2) == 1;
-            int targetDistX = m_rndGen.Next(20, maxTargetDistance / 2 - m_agent.Width / 2 - m_target.Width / 2);
-            int targetX = m_agent.X;
-            if (isLeft)
-                targetX -= (targetDistX + m_target.Width);
-            else
-                targetX += (targetDistX + m_agent.Width);
-            m_target.X = targetX;
-            m_target.Y = World.FOW_HEIGHT - m_target.Height;
-        }
-
-        private void PutAgentOnFloor()
-        {
-            m_agent.Y = World.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
-        }
-
-    }
-
-
-/*
-    public class RoguelikeWorldWAApproach : AbstractWAApproach
-    {
-        private Worlds m_w;
-
-        protected override AbstractSchoolWorld World
-        {
-            get
-            {
-                return m_w;
-            }
-        }
-
-        protected override bool DidTrainingUnitFail()
-        {
-            return m_stepsSincePresented > 2 * m_initialDistance;
-        }
-
-        protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
-        {
-            m_w = w as RoguelikeWorld;
-            m_w.ClearWorld();
-            m_w.DegreesOfFreedom = (int)trainingSetHints[TSHintAttributes.DEGREES_OF_FREEDOM];
-            if (trainingSetHints[TSHintAttributes.NOISE] > 0)
-            {
-                m_w.IsImageNoise = true;
-            }
-        }
-
-        protected override void CreateAgent()
-        {
-            m_w.CreateAgent(@"Agent.png", m_w.FOW_WIDTH / 2, m_w.FOW_HEIGHT / 2);
-            m_agent = m_w.Agent;
             m_agent.X -= m_agent.Width / 2;
             m_agent.Y -= m_agent.Height / 2;
         }
 
-        protected override void CreateTarget(TrainingSetHints trainingSetHints)
+        protected void CreateTarget()
         {
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)trainingSetHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
-            m_w.AddGameObject(m_target);
+            // Plumber:
+            //m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
+
+            //World.AddGameObject(m_target);
+
+            //// first implementation, random object position (left or right)
+            //int maxTargetDistance
+            //    = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] == -1 ? World.FOW_WIDTH : (int)(World.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+
+            //bool isLeft = m_rndGen.Next(0, 2) == 1;
+            //int targetDistX = m_rndGen.Next(20, maxTargetDistance / 2 - m_agent.Width / 2 - m_target.Width / 2);
+            //int targetX = m_agent.X;
+            //if (isLeft)
+            //    targetX -= (targetDistX + m_target.Width);
+            //else
+            //    targetX += (targetDistX + m_agent.Width);
+            //m_target.X = targetX;
+            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
+
+            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
+            World.AddGameObject(m_target);
 
             // first implementation, random object position (left or right)
             bool isLeft = m_rndGen.Next(0, 2) == 1;
             bool isUp = m_rndGen.Next(0, 2) == 1;
 
             const int MIN_TARGET_DISTANCE = 20;
-            int maxTargetDistanceX = m_w.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
-            if (trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
+            int maxTargetDistanceX = World.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
+            if (TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
             {
-                maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
             }
             int targetDistX = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceX);
             int targetX = m_agent.X;
@@ -228,17 +188,17 @@ namespace GoodAI.Modules.School.LearningTasks
                 targetX += targetDistX;
 
             int targetY = m_agent.Y;
-            switch ((int)trainingSetHints[TSHintAttributes.DEGREES_OF_FREEDOM])
+            switch ((int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM])
             {
                 case 1:
                     // Center the target on the agent
                     targetY += (m_agent.Height - m_target.Height) / 2;
                     break;
                 case 2:
-                    int maxTargetDistanceY = m_w.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
-                    if (trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
+                    int maxTargetDistanceY = World.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
+                    if (TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
                     {
-                        maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                        maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
                     }
                     int targetDistY = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceY);
                     if (isUp)
@@ -252,10 +212,102 @@ namespace GoodAI.Modules.School.LearningTasks
             m_target.Y = targetY;
         }
 
-        protected override string GetDefaultTargetImage()
+        private void PutAgentOnFloor()
         {
-            return @"Target2.png";
+            m_agent.Y = World.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
         }
+
     }
- */
+
+
+    /*
+        public class RoguelikeWorldWAApproach : AbstractWAApproach
+        {
+            private Worlds m_w;
+
+            protected override AbstractSchoolWorld World
+            {
+                get
+                {
+                    return m_w;
+                }
+            }
+
+            protected override bool DidTrainingUnitFail()
+            {
+                return m_stepsSincePresented > 2 * m_initialDistance;
+            }
+
+            protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
+            {
+                m_w = w as RoguelikeWorld;
+                m_w.ClearWorld();
+                m_w.DegreesOfFreedom = (int)trainingSetHints[TSHintAttributes.DEGREES_OF_FREEDOM];
+                if (trainingSetHints[TSHintAttributes.NOISE] > 0)
+                {
+                    m_w.IsImageNoise = true;
+                }
+            }
+
+            protected override void CreateAgent()
+            {
+                m_w.CreateAgent(@"Agent.png", m_w.FOW_WIDTH / 2, m_w.FOW_HEIGHT / 2);
+                m_agent = m_w.Agent;
+                m_agent.X -= m_agent.Width / 2;
+                m_agent.Y -= m_agent.Height / 2;
+            }
+
+            protected override void CreateTarget(TrainingSetHints trainingSetHints)
+            {
+                m_target = new GameObject(GameObjectType.None, GetTargetImage((int)trainingSetHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
+                m_w.AddGameObject(m_target);
+
+                // first implementation, random object position (left or right)
+                bool isLeft = m_rndGen.Next(0, 2) == 1;
+                bool isUp = m_rndGen.Next(0, 2) == 1;
+
+                const int MIN_TARGET_DISTANCE = 20;
+                int maxTargetDistanceX = m_w.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
+                if (trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
+                {
+                    maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                }
+                int targetDistX = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceX);
+                int targetX = m_agent.X;
+                if (isLeft)
+                    targetX -= targetDistX;
+                else
+                    targetX += targetDistX;
+
+                int targetY = m_agent.Y;
+                switch ((int)trainingSetHints[TSHintAttributes.DEGREES_OF_FREEDOM])
+                {
+                    case 1:
+                        // Center the target on the agent
+                        targetY += (m_agent.Height - m_target.Height) / 2;
+                        break;
+                    case 2:
+                        int maxTargetDistanceY = m_w.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
+                        if (trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
+                        {
+                            maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * trainingSetHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                        }
+                        int targetDistY = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceY);
+                        if (isUp)
+                            targetY -= targetDistY;
+                        else
+                            targetY += targetDistY;
+                        break;
+                }
+
+                m_target.X = targetX;
+                m_target.Y = targetY;
+            }
+
+            protected override string GetDefaultTargetImage()
+            {
+                return @"Target2.png";
+            }
+        }
+     */
 }
