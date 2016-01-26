@@ -85,11 +85,11 @@ namespace GoodAI.Modules.School.Common
                         curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleSizeDetection, world));
                         break;
                     }
-                //case CurriculumType.TemporaryCurriculumOrest:
-                //    {
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTarget, world));
-                //        break;
-                //    }
+                case CurriculumType.TemporaryCurriculumOrest:
+                    {
+                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTarget, world));
+                        break;
+                    }
                 //case CurriculumType.TemporaryCurriculumMichal:
                 //    {
                 //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.CooldownAction, world));
