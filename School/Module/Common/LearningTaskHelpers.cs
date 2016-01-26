@@ -57,8 +57,7 @@ namespace GoodAI.Modules.School.Common
         public static Shapes getRandomShape(Random rndGen)
         {
             Array values = Enum.GetValues(typeof(Shapes));
-            Random random = new Random();
-            return (Shapes)values.GetValue(random.Next(values.Length));
+            return (Shapes)values.GetValue(rndGen.Next(values.Length));
         }
     }
 

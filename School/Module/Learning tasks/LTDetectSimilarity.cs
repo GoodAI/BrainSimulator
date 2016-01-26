@@ -44,7 +44,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
 
                 int numberOfObjects;
-                if (TSHints[TSHintAttributes.RANDOMNESS] > 1.0f)
+                if (TSHints[TSHintAttributes.RANDOMNESS] >= 1.0f)
                 {
                     numberOfObjects = m_rndGen.Next(5, 10);
                 }
@@ -68,7 +68,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 {
 
                     Size s;
-                    if (TSHints[TSHintAttributes.RANDOMNESS] > .6f)
+                    if (TSHints[TSHintAttributes.RANDOMNESS] >= .6f)
                     {
                         int a = 10 + m_rndGen.Next(10);
                         s = new Size(a, a);
@@ -79,7 +79,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     }
 
                     Color color;
-                    if (TSHints[TSHintAttributes.RANDOMNESS] > .3)
+                    if (TSHints[TSHintAttributes.RANDOMNESS] >= .3)
                     {
                         color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 

@@ -101,7 +101,7 @@ namespace GoodAI.Modules.School.Common
                 //        break;
                 //    }
                 case CurriculumType.TemporaryCurriculumMartinStransky:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectSimilarity, world));
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.CompareLayouts, world));
                     break;
                 //case CurriculumType.TemporaryCurriculumMartinMilota:
                 //    {

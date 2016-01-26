@@ -223,10 +223,14 @@ namespace GoodAI.Modules.School.Common
         // like GetRandomPositionInsidePow, but avoids all added GameOjects
         public Point GetRandomPositionInsidePowNonCovering(Random rndGen, Size s)
         {
-            Rectangle pow = GetPowGeometry();
+            return GetRandomPositionInsideRectangleNonCovering(rndGen, s, this.GetPowGeometry());
+        }
+
+        public Point GetRandomPositionInsideRectangleNonCovering(Random rndGen, Size s, Rectangle r)
+        {
             Point randPointInPow = new Point(
-                rndGen.Next(pow.Width - s.Width) + pow.X,
-                rndGen.Next(pow.Height - s.Height) + pow.Y);
+                rndGen.Next(r.Width - s.Width) + r.X,
+                rndGen.Next(r.Height - s.Height) + r.Y);
 
             Rectangle agent = GetAgentGeometry();
 

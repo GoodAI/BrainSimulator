@@ -27,7 +27,8 @@ namespace GoodAI.Modules.School.Common
         CopyAction,
         CopySequence,
         DetectDifference,
-        DetectSimilarity
+        DetectSimilarity,
+        CompareLayouts
     }
 
     public class LearningTaskFactory
@@ -75,6 +76,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTDetectDifference(world);
                 case LearningTaskNameEnum.DetectSimilarity:
                     return new LTDetectSimilarity(world);
+                case LearningTaskNameEnum.CompareLayouts:
+                    return new LTCompareLayouts(world);
                 default:
                     return null;
             }
