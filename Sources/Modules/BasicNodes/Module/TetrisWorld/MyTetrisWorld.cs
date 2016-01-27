@@ -161,6 +161,13 @@ namespace GoodAI.Modules.TetrisWorld
 
         #region Parameters
 
+        // The input is either a single number corresponding to a ActionInputType value or a vector.
+        // If it's a vector, its length equals the cardinality of ActionInputType and the input action
+        // is the index of the maximum value in the vector. This allows you to present a one-hot vector like
+        //      0 0 1 0 0 0 0
+        // or a vector with confidence values / probabilities like
+        //      0.1 0 0.6 0.2 0 0.1
+        // In the examples above, the third value (MoveRight == 2) of ActionInputType will be used.
         public enum InputModality
         {
             Vector = 0,
