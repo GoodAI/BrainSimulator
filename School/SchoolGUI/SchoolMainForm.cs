@@ -16,7 +16,12 @@ namespace GoodAI.School.GUI
     public partial class SchoolMainForm : DockContent
     {
         public SchoolAddTaskForm AddTaskView { get; private set; }
+        public SchoolRunForm RunView { get; private set; }
         private YAXSerializer m_serializer;
+        private TreeModel m_model;
+        private string m_curriculaPath;
+
+        #region Helper classes
 
         public class SchoolTreeNode : Node
         {
@@ -37,13 +42,31 @@ namespace GoodAI.School.GUI
             public LearningTaskNode(Type taskType) : base(taskType.Name) { }
         }
 
-        private TreeModel m_model;
-        private string m_curriculaPath;
+        public class LearningTaskData
+        {
+            private ILearningTask m_task;
+
+            public string Name
+            {
+                get
+                {
+                    return m_task.GetType().Name;
+                }
+            }
+
+            public string WorldName { get; private set; }
+            public int Steps { get; set; }
+            public float Time { get; set; }
+            public string Status { get; set; }
+        }
+
+        #endregion
 
         public SchoolMainForm()
         {
             m_serializer = new YAXSerializer(typeof(SchoolCurriculum));
             AddTaskView = new SchoolAddTaskForm();
+            RunView = new SchoolRunForm();
 
             InitializeComponent();
 
@@ -55,6 +78,17 @@ namespace GoodAI.School.GUI
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
             m_curriculaPath = Properties.School.Default.CurriculaFolder;
             ReloadCurricula();
+        }
+
+        private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
+
+        #region Curricula
+
+        private CurriculumNode AddCurriculum()
+        {
+            CurriculumNode node = new CurriculumNode("Curr" + m_model.Nodes.Count.ToString());
+            m_model.Nodes.Add(node);
+            return node;
         }
 
         private void ReloadCurricula()
@@ -86,18 +120,6 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void SchoolMainForm_Load(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private CurriculumNode AddCurriculum()
-        {
-            CurriculumNode node = new CurriculumNode("Curr" + m_model.Nodes.Count.ToString());
-            m_model.Nodes.Add(node);
-            return node;
-        }
-
         private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
         {
             SchoolCurriculum data = new SchoolCurriculum();
@@ -115,12 +137,17 @@ namespace GoodAI.School.GUI
 
             foreach (ILearningTask task in data)
             {
+                // TODO: World name can be displayed through reflection OR once World param is in ILearningTask (or SchoolCurriculum is restricted to AbstractLTs)
                 LearningTaskNode taskNode = new LearningTaskNode(task.GetType());
                 node.Nodes.Add(taskNode);
             }
 
             return node;
         }
+
+        #endregion
+
+        #region UI
 
         private void ApplyToAll(Control parent, Action<Control> apply)
         {
@@ -165,37 +192,7 @@ namespace GoodAI.School.GUI
             btnDetailsTask.Visible = selected is LearningTaskNode;
         }
 
-        private void btnNewCurr_Click(object sender, EventArgs e)
-        {
-            CurriculumNode newCurr = AddCurriculum();
-        }
-
-        private void tree_SelectionChanged(object sender, EventArgs e)
-        {
-            UpdateButtons();
-        }
-
-        private void nodeTextBox1_DrawText(object sender, DrawTextEventArgs e)
-        {
-            if (e.Node.IsSelected)
-                e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
-        }
-
-        private void btnNewTask_Click(object sender, EventArgs e)
-        {
-            if (tree.SelectedNode == null || !(tree.SelectedNode.Tag is CurriculumNode))
-                return;
-
-            AddTaskView.ShowDialog(this);
-            if (AddTaskView.ResultTask == null)
-                return;
-
-            LearningTaskNode newTask = new LearningTaskNode(AddTaskView.ResultTask);
-            newTask.Type = AddTaskView.ResultTaskType;
-            newTask.WorldType = AddTaskView.ResultWorldType;
-            (tree.SelectedNode.Tag as Node).Nodes.Add(newTask);
-            tree.SelectedNode.IsExpanded = true;
-        }
+        #endregion
 
         #region DragDrop
 
@@ -280,6 +277,29 @@ namespace GoodAI.School.GUI
 
         #endregion
 
+        #region Button clicks
+
+        private void btnNewCurr_Click(object sender, EventArgs e)
+        {
+            CurriculumNode newCurr = AddCurriculum();
+        }
+
+        private void btnNewTask_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode == null || !(tree.SelectedNode.Tag is CurriculumNode))
+                return;
+
+            AddTaskView.ShowDialog(this);
+            if (AddTaskView.ResultTask == null)
+                return;
+
+            LearningTaskNode newTask = new LearningTaskNode(AddTaskView.ResultTask);
+            newTask.Type = AddTaskView.ResultTaskType;
+            newTask.WorldType = AddTaskView.ResultWorldType;
+            (tree.SelectedNode.Tag as Node).Nodes.Add(newTask);
+            tree.SelectedNode.IsExpanded = true;
+        }
+
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (tree.SelectedNode != null && tree.SelectedNode.Tag is Node)
@@ -313,6 +333,24 @@ namespace GoodAI.School.GUI
             Properties.School.Default.CurriculaFolder = m_curriculaPath;
             Properties.School.Default.Save();
             ReloadCurricula();
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            RunView.ShowDialog(this);
+        }
+
+        #endregion
+
+        private void tree_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateButtons();
+        }
+
+        private void nodeTextBox1_DrawText(object sender, DrawTextEventArgs e)
+        {
+            if (e.Node.IsSelected)
+                e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
         }
     }
 }

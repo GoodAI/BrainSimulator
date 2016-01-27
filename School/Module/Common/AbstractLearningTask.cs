@@ -1,4 +1,4 @@
-using GoodAI.Core.Nodes;
+﻿using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Worlds;
 using System.Collections.Generic;
 
@@ -190,6 +190,5 @@ namespace GoodAI.Modules.School.Common
         protected abstract void PresentNewTrainingUnit();
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
     }
-
 
 }
