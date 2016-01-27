@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectShape : AbstractLearningTask<ManInWorld>
+    class LTDetectShape : DeprecatedAbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;

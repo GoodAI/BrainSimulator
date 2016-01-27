@@ -3,7 +3,7 @@ using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTShapeGroups : AbstractLearningTask<RoguelikeWorld>
+    public class LTShapeGroups : DeprecatedAbstractLearningTask<RoguelikeWorld>
     {
         public LTShapeGroups() { }
 

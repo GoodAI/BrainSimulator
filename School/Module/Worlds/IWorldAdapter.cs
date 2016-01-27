@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.Worlds
 {
     public interface IWorldAdapter
     {
-        MyWorld World { get; }
+        //MyWorld World { get; }
 
         void ClearWorld();
         void SetHint(string attr, float value);
@@ -19,12 +19,12 @@ namespace GoodAI.Modules.School.Worlds
 
     public class AAWorld: MyWorld, IWorldAdapter
     {
-        public MyWorld World {
-            get
-            {
-                return this;
-            }
-        }
+        //public MyWorld World {
+        //    get
+        //    {
+        //        return this;
+        //    }
+        //}
 
         public override void UpdateMemoryBlocks()
         {
@@ -44,13 +44,13 @@ namespace GoodAI.Modules.School.Worlds
 
     public class BBWorld : MyWorld, IWorldAdapter
     {
-        public MyWorld World
-        {
-            get
-            {
-                return this;
-            }
-        }
+        //public MyWorld World
+        //{
+        //    get
+        //    {
+        //        return this;
+        //    }
+        //}
 
         public override void UpdateMemoryBlocks()
         {

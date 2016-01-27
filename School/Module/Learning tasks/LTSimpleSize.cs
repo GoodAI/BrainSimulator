@@ -3,7 +3,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTSimpleSize : AbstractLearningTask<ManInWorld>
+    public class LTSimpleSize : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string COLOR_PATTERNS = "Color patterns";
         public const string TARGET_SIZE_LEVELS = "Target size levels";

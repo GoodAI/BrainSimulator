@@ -9,7 +9,7 @@ namespace GoodAI.Modules.School.LearningTasks
     // World actions have not been implemented yet.
     // Multiple parameters are incremented in the same step.
 
-    public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
+    public class LTDetectBlackAndWhite : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string VARIABLE_SIZE = "Variable size";
 

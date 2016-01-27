@@ -16,7 +16,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Different levels will create targets with different moving characteristics.
     /// The teacher declares the ability as learned when the agent reaches the last level.
     /// </description>
-    public class LTMovingTarget : AbstractLearningTask<ManInWorld>
+    public class LTMovingTarget : DeprecatedAbstractLearningTask<ManInWorld>
     {
 
         public uint UnitSuccesses { get; set; }

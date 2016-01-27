@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTCopySequence : AbstractLearningTask<ManInWorld>
+    public class LTCopySequence : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string STOP_REQUEST = "Stop request";
 

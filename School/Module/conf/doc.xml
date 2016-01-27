@@ -4,6 +4,11 @@
         <name>GoodAI.School</name>
     </assembly>
     <members>
+        <member name="T:GoodAI.Modules.School.Common.DeprecatedAbstractLearningTask`1">
+            <summary>
+            Abstract base class for AI School exercises.
+            </summary>
+        </member>
         <member name="T:GoodAI.Modules.School.Common.AbstractLearningTask`1">
             <summary>
             Abstract base class for AI School exercises.
@@ -50,19 +55,6 @@
             on the world.
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
-            <author>GoodAI</author>
-            <meta>Os</meta>
-            <status>WIP</status>
-            <summary>"Moving Target" learning task</summary>
-            <description>
-            Ability Name: Efficient navigation in a simple environment + moving target.
-            In this Learning task there is an agent and a moving target, to pass each level the agent needs to reach the target a defined number of consecutive times,
-            There is a limit on the number of timesteps that can be used to reach the target, If this limit is reached, the level fails and the agent starts from the same level but the number of consecutive times is reset.
-            Different levels will create targets with different moving characteristics.
-            The teacher declares the ability as learned when the agent reaches the last level.
-            </description>
-        </member>
         <member name="T:GoodAI.Modules.School.Common.ManInWorld">
             <author>GoodAI</author>
             <meta>Mp,Mv,Os</meta>
@@ -94,6 +86,19 @@
             <summary>
             Render the world to the visual output.
             </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Moving Target" learning task</summary>
+            <description>
+            Ability Name: Efficient navigation in a simple environment + moving target.
+            In this Learning task there is an agent and a moving target, to pass each level the agent needs to reach the target a defined number of consecutive times,
+            There is a limit on the number of timesteps that can be used to reach the target, If this limit is reached, the level fails and the agent starts from the same level but the number of consecutive times is reset.
+            Different levels will create targets with different moving characteristics.
+            The teacher declares the ability as learned when the agent reaches the last level.
+            </description>
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld">
             <author>GoodAI</author>

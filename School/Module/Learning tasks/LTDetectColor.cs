@@ -5,14 +5,14 @@ using System;
 namespace GoodAI.Modules.School.LearningTasks
 {
 
-    public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
+    public class DeprecatedLTDetectColor : DeprecatedAbstractLearningTask<RoguelikeWorld>
     {
         protected GameObject m_target;
         Random m_rndGen = new Random();
 
-        public LTDetectColor() { }
+        public DeprecatedLTDetectColor() { }
 
-        public LTDetectColor(RoguelikeWorld w)
+        public DeprecatedLTDetectColor(RoguelikeWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -61,6 +61,73 @@ namespace GoodAI.Modules.School.LearningTasks
             m_target.X = m_rndGen.Next(minX, maxX + 1);
             int minY = (World.FOW_HEIGHT - World.POW_HEIGHT) / 2;
             int maxY = (World.FOW_HEIGHT + World.POW_HEIGHT) / 2 - m_target.Height;
+            m_target.Y = m_rndGen.Next(minY, maxY + 1);
+        }
+
+    }
+
+    // TODO create the SchoolRoguelikeWorld : RoguelikeWorld, IWorldAdapter
+    public class SchoolRoguelikeWorld : RoguelikeWorld, IWorldAdapter
+    {
+    }
+
+    public class LTDetectColor : AbstractLearningTask<SchoolRoguelikeWorld>
+    {
+        protected GameObject m_target;
+        Random m_rndGen = new Random();
+
+        public LTDetectColor() { }
+
+        public LTDetectColor(SchoolAdapterWorld w)
+            : base(w)
+        {
+            TSHints = new TrainingSetHints {
+                {TSHintAttributes.NOISE, 0},
+                {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
+            };
+
+            TSProgression.Add(TSHints.Clone());
+            TSProgression.Add(TSHintAttributes.NOISE, 1);
+            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
+
+            SetHints(TSHints);
+        }
+
+        // TODO Is this needed now??
+        protected override void SetHints(TrainingSetHints trainingSetHints)
+        {
+            AdapterWorld.SetHints(trainingSetHints);
+        }
+
+        protected override void PresentNewTrainingUnit()
+        {
+            CreateTarget();
+            SetTargetColor();
+        }
+
+        protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
+        {
+            // TODO fill properly
+            wasUnitSuccessful = true;
+            return true;
+        }
+
+        protected void SetTargetColor()
+        {
+            m_target.isBitmapAsMask = true;
+            LearningTaskHelpers.RandomizeColor(ref m_target.maskColor, m_rndGen);
+        }
+
+        protected void CreateTarget()
+        {
+            m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
+            WrappedWorld.AddGameObject(m_target);
+            // POW is assumed to be centered
+            int minX = (WrappedWorld.FOW_WIDTH - WrappedWorld.POW_WIDTH) / 2;
+            int maxX = (WrappedWorld.FOW_WIDTH + WrappedWorld.POW_WIDTH) / 2 - m_target.Width;
+            m_target.X = m_rndGen.Next(minX, maxX + 1);
+            int minY = (WrappedWorld.FOW_HEIGHT - WrappedWorld.POW_HEIGHT) / 2;
+            int maxY = (WrappedWorld.FOW_HEIGHT + WrappedWorld.POW_HEIGHT) / 2 - m_target.Height;
             m_target.Y = m_rndGen.Next(minY, maxY + 1);
         }
 

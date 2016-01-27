@@ -4,7 +4,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTApproach : AbstractLearningTask<RoguelikeWorld>
+    public class LTApproach : DeprecatedAbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;

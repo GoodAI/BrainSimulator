@@ -3,7 +3,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LT1DApproach : AbstractLearningTask<ManInWorld>
+    public class LT1DApproach : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public LT1DApproach() { }
 

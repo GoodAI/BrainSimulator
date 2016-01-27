@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectSimilarity : AbstractLearningTask<ManInWorld>
+    class LTDetectSimilarity : DeprecatedAbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_sameObjectetPlaced;

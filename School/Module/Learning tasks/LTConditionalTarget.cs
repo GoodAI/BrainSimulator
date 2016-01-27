@@ -2,7 +2,7 @@
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTConditionalTarget : AbstractLearningTask<ManInWorld>
+    public class LTConditionalTarget : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string CONDITION_SALIENCE = "Condition salience";
 

@@ -3,7 +3,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTActionWCooldown : AbstractLearningTask<ManInWorld>
+    public class LTActionWCooldown : DeprecatedAbstractLearningTask<ManInWorld>
     {
         private AbstractSchoolWorld m_world { get; set; }
         private uint m_cooldownRemaining { get; set; }

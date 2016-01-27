@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTCompareLayouts : AbstractLearningTask<ManInWorld>
+    class LTCompareLayouts : DeprecatedAbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;

@@ -134,7 +134,7 @@ namespace GoodAI.Modules.School.Common
             ClearWorld();
         }
 
-        protected override void SetHint(string attr, float value)
+        public override void SetHint(string attr, float value)
         {
             switch (attr)
             {

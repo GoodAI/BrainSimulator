@@ -73,7 +73,7 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-        protected abstract void SetHint(string attr, float value);
+        public abstract void SetHint(string attr, float value);
 
         // probably will not be overridden
         public virtual void ExecuteLearningTaskStep()

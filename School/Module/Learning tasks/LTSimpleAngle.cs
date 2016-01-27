@@ -3,7 +3,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTSimpleAngle : AbstractLearningTask<ManInWorld>
+    public class LTSimpleAngle : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string TOLERANCE = "Tolerance in rads";
         public const string FIXED_DISTANCE = "Fixed distance to target";

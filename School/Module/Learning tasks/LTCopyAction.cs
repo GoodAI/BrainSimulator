@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTCopyAction : AbstractLearningTask<ManInWorld>
+    public class LTCopyAction : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string STOP_REQUEST = "Stop request";
 

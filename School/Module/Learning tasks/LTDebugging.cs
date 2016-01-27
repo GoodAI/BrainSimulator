@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTDebugging : AbstractLearningTask<ManInWorld>
+    public class LTDebugging : DeprecatedAbstractLearningTask<ManInWorld>
     {
         private GameObject m_target;
         private MovableGameObject m_agent;

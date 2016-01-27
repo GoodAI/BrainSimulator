@@ -3,7 +3,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
+    class LTDetectShapeColor : DeprecatedAbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected Shape m_target;

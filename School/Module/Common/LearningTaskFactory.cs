@@ -56,7 +56,7 @@ namespace GoodAI.Modules.School.Common
                 case LearningTaskNameEnum.OneDApproach:
                     return new LT1DApproach(world);
                 case LearningTaskNameEnum.DetectColor:
-                    return new LTDetectColor(world as RoguelikeWorld);
+                    return new DeprecatedLTDetectColor(world as RoguelikeWorld);
                 case LearningTaskNameEnum.CooldownAction:
                     return new LTActionWCooldown(world);
                 case LearningTaskNameEnum.DetectShape:

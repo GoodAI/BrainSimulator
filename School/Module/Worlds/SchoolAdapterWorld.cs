@@ -165,7 +165,7 @@ namespace GoodAI.Modules.School.Worlds
 
             if (!m_currentLearningTask.HasPresentedFirstUnit || m_currentLearningTask.IsTrainingUnitCompleted)
             {
-                m_currentLearningTask.HandlePresentNewTrainingUnit(this);
+                m_currentLearningTask.HandlePresentNewTrainingUnit();
             }
         }
 

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTClassComposition : AbstractLearningTask<ManInWorld>
+    class LTClassComposition : DeprecatedAbstractLearningTask<ManInWorld>
     {
         public const string CARDINALITY_OF_SET = "Cardinality of set";
 
