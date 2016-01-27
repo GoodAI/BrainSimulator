@@ -28,7 +28,7 @@ namespace GoodAI.Modules.Transforms
 
     public class MyParallelKernel<T> where T : struct
     {
-        protected static CudaStream DEFAULT_STREAM = new CudaStream();
+        protected static CudaStream NULL_STREAM;
 
         protected int m_nGPU;
         protected MyNode m_owner;
@@ -45,7 +45,6 @@ namespace GoodAI.Modules.Transforms
         protected dim3 m_blockDims;
 
         public int size;
-        public int timeOffset;
         public int outOffset;
         public int inOffset;
         public bool segmented;
@@ -54,14 +53,14 @@ namespace GoodAI.Modules.Transforms
         {
             get
             {
-                if (m_buffer.Count <= m_gridDims.x * m_outTypeSize)
+                if (segmented && m_buffer.Count <= (outOffset + m_gridDims.x) * m_outTypeSize ||
+                    m_buffer.Count <= (outOffset + 1) * m_outTypeSize)
                     throw new Exception("Output buffer size is too small (will overflow).");
                 return (int)m_gridDims.x;
             }
             set
             {
-                if (value < 1)
-                    throw new Exception("Grid dimension has to be positive.");
+                if (value < 1) throw new Exception("Grid dimension has to be positive.");
                 m_gridDims.x = (uint)value;
                 m_kernel.SetupExecution(m_blockDims, m_gridDims);
             }
@@ -81,7 +80,6 @@ namespace GoodAI.Modules.Transforms
         protected virtual void ResetParameters()
         {
             size = 0;
-            timeOffset = 0;
             outOffset = 0;
             inOffset = 0;
             segments = 1;
@@ -90,6 +88,9 @@ namespace GoodAI.Modules.Transforms
 
         public MyParallelKernel(MyNode owner, int nGPU, ParallelKernelDescriptor descriptor, int bufferSize)
         {
+            if (NULL_STREAM == null)
+                NULL_STREAM = new CudaStream(CUstream.NullStream);
+
             m_owner = owner;
             m_nGPU = nGPU;
 
@@ -107,7 +108,8 @@ namespace GoodAI.Modules.Transforms
             m_buffer.Name = "Buffer(" + descriptor.modeName + ")";
             m_buffer.Count = bufferSize;
 
-            m_blockDims.x = 512;
+            m_blockDims = new dim3(512, 1, 1);
+            m_gridDims = new dim3(1, 1, 1);
 
             m_kernel.SetupExecution(m_blockDims, m_gridDims);
             m_kernel.DynamicSharedMemory = 512 * (uint)m_outTypeSize;
@@ -163,102 +165,64 @@ namespace GoodAI.Modules.Transforms
 
         private void KernelRun(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr inputPtr, int size)
         {
-            // stream, rawOut, rawIn, tempBuffer, size, outOff, inOff, stride, segmented
+            CUdeviceptr bufferPtr = m_buffer.GetDevicePtr(m_nGPU);
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+            inputPtr = inputPtr + inOffset * m_inTypeSize;
 
-            m_kernel.RunAsync(stream, outputPtr, inputPtr, m_buffer, size, 0, 0, stride, Convert.ToInt32(segmented));
+            if (this.size > 0)
+                size = this.size;
+
+            int segmentedFlag = Convert.ToInt32(segmented);
+
+            if (stream == null)
+                stream = NULL_STREAM;
+
+            m_kernel.RunAsync(stream, outputPtr, inputPtr, bufferPtr, size, outOffset, inOffset, stride, Convert.ToInt32(segmented));
             ResetParameters();
-        }
-
-        /* OVERLOADS - CONFIGURE */
-
-        public void Configure(int size, int outOffset, int inOffset, int timeOffset, int stride, int segments, bool segmented)
-        {
-            this.size = size;
-            this.timeOffset = timeOffset;
-            this.outOffset = outOffset;
-            this.inOffset = inOffset;
-            this.stride = stride;
-            this.segments = segments;
-            this.segmented = segmented;
-        }
-
-        public void Configure(int size, int outOffset, int inOffset, int timeOffset, int stride, int segments)
-        {
-            this.size = size;
-            this.timeOffset = timeOffset;
-            this.outOffset = outOffset;
-            this.inOffset = inOffset;
-            this.stride = stride;
-            this.segments = segments;
-            this.segmented = segmented;
         }
 
         /* OVERLOADS - SYNCHRONOUS */
 
         public void Run(CUdeviceptr outputPtr, CUdeviceptr inputPtr, int size)
         {
-            outputPtr = outputPtr + outOffset * m_outTypeSize;
-            inputPtr = inputPtr + inOffset * m_inTypeSize;
-
-            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size);
+            KernelRun(null, outputPtr, inputPtr, size);
         }
 
         public void Run(MyMemoryBlock<T> output, CUdeviceptr inputPtr, int size)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
-            inputPtr = inputPtr + inOffset * m_inTypeSize;
-
-            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size);
+            KernelRun(null, output.GetDevicePtr(m_nGPU), inputPtr, size);
         }
 
         public void Run(CUdeviceptr outputPtr, MyMemoryBlock<T> input)
         {
-            outputPtr = outputPtr + outOffset * m_outTypeSize;
-            CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
-
-            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size <= 0 ? input.Count : size);
+            KernelRun(null, outputPtr, input.GetDevicePtr(m_nGPU), input.Count);
         }
 
         public void Run(MyMemoryBlock<T> output, MyMemoryBlock<T> input)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
-            CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
-
-            KernelRun(DEFAULT_STREAM, outputPtr, inputPtr, size <= 0 ? input.Count : size);
+            KernelRun(null, output.GetDevicePtr(m_nGPU), input.GetDevicePtr(m_nGPU), input.Count);
         }
 
         /* OVERLOADS - ASYNCHRONOUS */
 
         public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr inputPtr, int size)
         {
-            outputPtr = outputPtr + outOffset * m_outTypeSize;
-            inputPtr = inputPtr + inOffset * m_inTypeSize;
-
             KernelRun(stream, outputPtr, inputPtr, size);
         }
 
         public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, CUdeviceptr inputPtr, int size)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
-            inputPtr = inputPtr + inOffset * m_inTypeSize;
-
-            KernelRun(stream, outputPtr, inputPtr, size);
+            KernelRun(stream, output.GetDevicePtr(m_nGPU), inputPtr, size);
         }
 
         public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, MyMemoryBlock<T> input)
         {
-            outputPtr = outputPtr + outOffset * m_outTypeSize;
-            CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
-
-            KernelRun(stream, outputPtr, inputPtr, size <= 0 ? input.Count : size);
+            KernelRun(stream, outputPtr, input.GetDevicePtr(m_nGPU), input.Count);
         }
 
         public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, MyMemoryBlock<T> input)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
-            CUdeviceptr inputPtr = input.GetDevicePtr(m_nGPU, inOffset * (m_inTypeSize / m_TSize), timeOffset);
-
-            KernelRun(stream, outputPtr, inputPtr, size <= 0 ? input.Count : size);
+            KernelRun(stream, output.GetDevicePtr(m_nGPU), input.GetDevicePtr(m_nGPU), input.Count);
         }
     }
 
@@ -276,7 +240,6 @@ namespace GoodAI.Modules.Transforms
 
     public class MyProductKernel<T> : MyParallelKernel<T> where T : struct
     {
-        public int segments;
         public bool distributed;
 
         protected override void ResetParameters()
@@ -294,8 +257,16 @@ namespace GoodAI.Modules.Transforms
 
         private void KernelRun(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
         {
-            // stream, rawOut, outOff, rawIn1, rawIn2, tempBuffer, size, segmented, distributed
-            m_kernel.RunAsync(stream, outputPtr, 0, input1Ptr, input2Ptr, m_buffer, size, Convert.ToInt32(segmented), Convert.ToInt32(distributed));
+            CUdeviceptr bufferPtr = m_buffer.GetDevicePtr(m_nGPU);
+            outputPtr = outputPtr + outOffset * m_outTypeSize;
+
+            if (this.size > 0)
+                size = this.size;
+
+            int segmentedFlag = Convert.ToInt32(segmented);
+            int distributedFlag = Convert.ToInt32(distributed);
+
+            m_kernel.RunAsync(stream, outputPtr, outOffset, input1Ptr, input2Ptr, bufferPtr, size, segmentedFlag, distributedFlag);
             ResetParameters();
         }
 
@@ -303,56 +274,84 @@ namespace GoodAI.Modules.Transforms
 
         public void Run(CUdeviceptr outputPtr, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
         {
-            outputPtr = outputPtr + outOffset * m_outTypeSize;
-
-            KernelRun(DEFAULT_STREAM, outputPtr, input1Ptr, input2Ptr, size);
+            KernelRun(NULL_STREAM, outputPtr, input1Ptr, input2Ptr, size);
         }
 
-        public void Run(MyMemoryBlock<T> output, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        public void Run(CUdeviceptr outputPtr, MyMemoryBlock<T> input1, CUdeviceptr input2Ptr)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
+            KernelRun(NULL_STREAM, outputPtr, input1.GetDevicePtr(m_nGPU), input2Ptr, input1.Count);
+        }
 
-            KernelRun(DEFAULT_STREAM, outputPtr, input1Ptr, input2Ptr, size);
+        public void Run(CUdeviceptr outputPtr, CUdeviceptr input1Ptr, MyMemoryBlock<T> input2, int size)
+        {
+            KernelRun(NULL_STREAM, outputPtr, input1Ptr, input2.GetDevicePtr(m_nGPU), size);
         }
 
         public void Run(CUdeviceptr outputPtr, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
-            KernelRun(DEFAULT_STREAM, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
+            KernelRun(NULL_STREAM, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), input1.Count);
+        }
+
+        public void Run(MyMemoryBlock<T> output, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            KernelRun(NULL_STREAM, output.GetDevicePtr(m_nGPU), input1Ptr, input2Ptr, size);
+        }
+
+        public void Run(MyMemoryBlock<T> output, MyMemoryBlock<T> input1, CUdeviceptr input2Ptr)
+        {
+            KernelRun(NULL_STREAM, output.GetDevicePtr(m_nGPU), input1.GetDevicePtr(m_nGPU), input2Ptr, input1.Count);
+        }
+
+        public void Run(MyMemoryBlock<T> output, CUdeviceptr input1Ptr, MyMemoryBlock<T> input2, int size)
+        {
+            KernelRun(NULL_STREAM, output.GetDevicePtr(m_nGPU), input1Ptr, input2.GetDevicePtr(m_nGPU), size);
         }
 
         public void Run(MyMemoryBlock<T> output, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
-
-            KernelRun(DEFAULT_STREAM, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
+            KernelRun(NULL_STREAM, output.GetDevicePtr(m_nGPU), input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), input1.Count);
         }
 
         /* OVERLOADS - ASYNCHRONOUS */
 
         public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
         {
-            outputPtr = outputPtr + outOffset * m_outTypeSize;
-
             KernelRun(stream, outputPtr, input1Ptr, input2Ptr, size);
         }
 
-        public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, MyMemoryBlock<T> input1, CUdeviceptr input2Ptr)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
+            KernelRun(stream, outputPtr, input1.GetDevicePtr(m_nGPU), input2Ptr, input1.Count);
+        }
 
-            KernelRun(stream, outputPtr, input1Ptr, input2Ptr, size);
+        public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, CUdeviceptr input1Ptr, MyMemoryBlock<T> input2, int size)
+        {
+            KernelRun(stream, outputPtr, input1Ptr, input2.GetDevicePtr(m_nGPU), size);
         }
 
         public void RunAsync(CudaStream stream, CUdeviceptr outputPtr, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
-            KernelRun(stream, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
+            KernelRun(stream, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), input1.Count);
+        }
+
+        public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, CUdeviceptr input1Ptr, CUdeviceptr input2Ptr, int size)
+        {
+            KernelRun(stream, output.GetDevicePtr(m_nGPU), input1Ptr, input2Ptr, size);
+        }
+
+        public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, MyMemoryBlock<T> input1, CUdeviceptr input2Ptr)
+        {
+            KernelRun(stream, output.GetDevicePtr(m_nGPU), input1.GetDevicePtr(m_nGPU), input2Ptr, input1.Count);
+        }
+
+        public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, CUdeviceptr input1Ptr, MyMemoryBlock<T> input2, int size)
+        {
+            KernelRun(stream, output.GetDevicePtr(m_nGPU), input1Ptr, input2.GetDevicePtr(m_nGPU), size);
         }
 
         public void RunAsync(CudaStream stream, MyMemoryBlock<T> output, MyMemoryBlock<T> input1, MyMemoryBlock<T> input2)
         {
-            CUdeviceptr outputPtr = output.GetDevicePtr(m_nGPU, outOffset * (m_outTypeSize / m_TSize), timeOffset);
-
-            KernelRun(stream, outputPtr, input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), size <= 0 ? input1.Count : size);
+            KernelRun(stream, output.GetDevicePtr(m_nGPU), input1.GetDevicePtr(m_nGPU), input2.GetDevicePtr(m_nGPU), input1.Count);
         }
     }
 }

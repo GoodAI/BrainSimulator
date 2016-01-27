@@ -112,7 +112,7 @@ namespace GoodAI.Modules.Common
             private int elementselementsCountN { get; set; }
             private int columnsN, rowsN, elementsN;
             private float[] m_actualConslMeans;
-            MyCudaKernel m_sumKernel;
+            MyReductionKernel<float> m_sumKernel;
             private const int HostToDeviceThreshold = 1 << 13;
 
             public override void Init(int nGPU)
@@ -124,7 +124,7 @@ namespace GoodAI.Modules.Common
                 columnsN = Owner.Input.ColumnHint;
                 elementsN = Owner.Input.Count;
                 m_actualConslMeans = new float[Owner.Output.Count];
-                m_sumKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
+                m_sumKernel = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_Sum_f);
             }
 
             public override void Execute()
@@ -200,7 +200,11 @@ namespace GoodAI.Modules.Common
                 float f = 0;
                 if (stepsN >= HostToDeviceThreshold)
                 {
-                    m_sumKernel.Run(temporalMemory, values, stepsN * step, 0, startIndex, step, /* distributed: */ 0);
+                    //ZXC m_sumKernel.Run(temporalMemory, values, stepsN * step, 0, startIndex, step, /* distributed: */ 0);
+                    m_sumKernel.size = stepsN * step;
+                    m_sumKernel.inOffset = startIndex;
+                    m_sumKernel.stride = step;
+                    m_sumKernel.Run(temporalMemory, values);
                     Owner.Temp.SafeCopyToHost();
                     f = Owner.Temp.Host[0] / stepsN;
                     return f;
