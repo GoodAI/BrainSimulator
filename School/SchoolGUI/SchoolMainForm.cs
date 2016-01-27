@@ -39,6 +39,7 @@ namespace GoodAI.School.GUI
         }
 
         private TreeModel m_model;
+        private string m_curriculaPath;
 
         public SchoolMainForm()
         {
@@ -49,20 +50,41 @@ namespace GoodAI.School.GUI
 
             m_model = new TreeModel();
             tree.Model = m_model;
-
-            tree.BeginUpdate();
-            for (int i = 0; i < 3; i++)
-            {
-                CurriculumNode node = AddCurriculum();
-                for (int n = 0; n < 5; n++)
-                {
-                    LearningTaskNode child = AddLearningTask(node);
-                }
-            }
-            tree.EndUpdate();
-
             tree.Refresh();
             UpdateButtons();
+
+            checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            m_curriculaPath = Properties.School.Default.CurriculaFolder;
+            ReloadCurricula();
+        }
+
+        private void ReloadCurricula()
+        {
+            m_model.Nodes.Clear();
+
+            if (String.IsNullOrEmpty(m_curriculaPath))
+                return;
+
+            foreach (string filePath in Directory.GetFiles(m_curriculaPath))
+            {
+                LoadCurriculum(filePath);
+            }
+        }
+
+        private void LoadCurriculum(string filePath)
+        {
+            string xmlCurr = File.ReadAllText(filePath);
+
+            try
+            {
+                SchoolCurriculum curr = (SchoolCurriculum)m_serializer.Deserialize(xmlCurr);
+                CurriculumNode node = CurriculumDataToCurriculumNode(curr);
+                m_model.Nodes.Add(node);
+            }
+            catch (YAXException)
+            {
+
+            }
         }
 
         private void SchoolMainForm_Load(object sender, System.EventArgs e)
@@ -74,13 +96,6 @@ namespace GoodAI.School.GUI
         {
             CurriculumNode node = new CurriculumNode("Curr" + m_model.Nodes.Count.ToString());
             m_model.Nodes.Add(node);
-            return node;
-        }
-
-        private LearningTaskNode AddLearningTask(CurriculumNode parent)
-        {
-            LearningTaskNode node = new LearningTaskNode("LT " + parent.Nodes.Count.ToString());
-            parent.Nodes.Add(node);
             return node;
         }
 
@@ -131,7 +146,7 @@ namespace GoodAI.School.GUI
         private void UpdateButtons()
         {
             HideAllButtons();
-            btnNewCurr.Visible = btnImportCurr.Visible = true;
+            btnNewCurr.Visible = btnImportCurr.Visible = btnCurrFolder.Visible = true;
             if (tree.SelectedNode == null)
                 return;
 
@@ -282,10 +297,22 @@ namespace GoodAI.School.GUI
         private void btnImportCurr_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
-            string xmlCurr = File.ReadAllText(openFileDialog1.FileName);
-            SchoolCurriculum curr = (SchoolCurriculum)m_serializer.Deserialize(xmlCurr);
-            CurriculumNode node = CurriculumDataToCurriculumNode(curr);
-            m_model.Nodes.Add(node);
+            LoadCurriculum(openFileDialog1.FileName);
+        }
+
+        private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.School.Default.AutosaveEnabled = checkBoxAutosave.Checked;
+            Properties.School.Default.Save();
+        }
+
+        private void btnCurrFolder_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog1.ShowDialog();
+            m_curriculaPath = folderBrowserDialog1.SelectedPath;
+            Properties.School.Default.CurriculaFolder = m_curriculaPath;
+            Properties.School.Default.Save();
+            ReloadCurricula();
         }
     }
 }

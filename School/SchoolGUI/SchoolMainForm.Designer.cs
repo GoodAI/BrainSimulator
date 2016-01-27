@@ -42,6 +42,8 @@
             this.btnRun = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btnCurrFolder = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +63,7 @@
             this.tree.NodeControls.Add(this.nodeTextBox1);
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
-            this.tree.Size = new System.Drawing.Size(336, 401);
+            this.tree.Size = new System.Drawing.Size(405, 401);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
@@ -87,16 +89,16 @@
             this.groupBox1.Controls.Add(this.btnDetailsCurr);
             this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Controls.Add(this.btnNewCurr);
-            this.groupBox1.Location = new System.Drawing.Point(354, 12);
+            this.groupBox1.Location = new System.Drawing.Point(423, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(187, 233);
+            this.groupBox1.Size = new System.Drawing.Size(118, 249);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Curriculum";
             // 
             // btnNewTask
             // 
-            this.btnNewTask.Location = new System.Drawing.Point(8, 48);
+            this.btnNewTask.Location = new System.Drawing.Point(6, 48);
             this.btnNewTask.Name = "btnNewTask";
             this.btnNewTask.Size = new System.Drawing.Size(75, 23);
             this.btnNewTask.TabIndex = 9;
@@ -106,7 +108,7 @@
             // 
             // btnDetailsTask
             // 
-            this.btnDetailsTask.Location = new System.Drawing.Point(106, 48);
+            this.btnDetailsTask.Location = new System.Drawing.Point(6, 195);
             this.btnDetailsTask.Name = "btnDetailsTask";
             this.btnDetailsTask.Size = new System.Drawing.Size(75, 23);
             this.btnDetailsTask.TabIndex = 8;
@@ -116,16 +118,17 @@
             // checkBoxAutosave
             // 
             this.checkBoxAutosave.AutoSize = true;
-            this.checkBoxAutosave.Location = new System.Drawing.Point(8, 196);
+            this.checkBoxAutosave.Location = new System.Drawing.Point(5, 224);
             this.checkBoxAutosave.Name = "checkBoxAutosave";
             this.checkBoxAutosave.Size = new System.Drawing.Size(104, 17);
             this.checkBoxAutosave.TabIndex = 5;
             this.checkBoxAutosave.Text = "Autosave results";
             this.checkBoxAutosave.UseVisualStyleBackColor = true;
+            this.checkBoxAutosave.CheckedChanged += new System.EventHandler(this.checkBoxAutosave_CheckedChanged);
             // 
             // btnImportCurr
             // 
-            this.btnImportCurr.Location = new System.Drawing.Point(8, 166);
+            this.btnImportCurr.Location = new System.Drawing.Point(6, 166);
             this.btnImportCurr.Name = "btnImportCurr";
             this.btnImportCurr.Size = new System.Drawing.Size(75, 23);
             this.btnImportCurr.TabIndex = 4;
@@ -135,7 +138,7 @@
             // 
             // btnExportCurr
             // 
-            this.btnExportCurr.Location = new System.Drawing.Point(8, 136);
+            this.btnExportCurr.Location = new System.Drawing.Point(6, 136);
             this.btnExportCurr.Name = "btnExportCurr";
             this.btnExportCurr.Size = new System.Drawing.Size(75, 23);
             this.btnExportCurr.TabIndex = 3;
@@ -145,7 +148,7 @@
             // 
             // btnDetailsCurr
             // 
-            this.btnDetailsCurr.Location = new System.Drawing.Point(7, 106);
+            this.btnDetailsCurr.Location = new System.Drawing.Point(5, 106);
             this.btnDetailsCurr.Name = "btnDetailsCurr";
             this.btnDetailsCurr.Size = new System.Drawing.Size(75, 23);
             this.btnDetailsCurr.TabIndex = 2;
@@ -154,7 +157,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(7, 77);
+            this.btnDelete.Location = new System.Drawing.Point(5, 77);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 1;
@@ -164,7 +167,7 @@
             // 
             // btnNewCurr
             // 
-            this.btnNewCurr.Location = new System.Drawing.Point(8, 19);
+            this.btnNewCurr.Location = new System.Drawing.Point(6, 19);
             this.btnNewCurr.Name = "btnNewCurr";
             this.btnNewCurr.Size = new System.Drawing.Size(75, 23);
             this.btnNewCurr.TabIndex = 0;
@@ -174,7 +177,7 @@
             // 
             // btnRun
             // 
-            this.btnRun.Location = new System.Drawing.Point(361, 251);
+            this.btnRun.Location = new System.Drawing.Point(429, 267);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
             this.btnRun.TabIndex = 2;
@@ -185,11 +188,22 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // btnCurrFolder
+            // 
+            this.btnCurrFolder.Location = new System.Drawing.Point(429, 296);
+            this.btnCurrFolder.Name = "btnCurrFolder";
+            this.btnCurrFolder.Size = new System.Drawing.Size(75, 23);
+            this.btnCurrFolder.TabIndex = 10;
+            this.btnCurrFolder.Text = "Curr. folder";
+            this.btnCurrFolder.UseVisualStyleBackColor = true;
+            this.btnCurrFolder.Click += new System.EventHandler(this.btnCurrFolder_Click);
+            // 
             // SchoolMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(553, 425);
+            this.Controls.Add(this.btnCurrFolder);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tree);
@@ -219,5 +233,7 @@
         private System.Windows.Forms.Button btnNewTask;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btnCurrFolder;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }

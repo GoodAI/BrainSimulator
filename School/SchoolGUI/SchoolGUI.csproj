@@ -46,6 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\School.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>School.settings</DependentUpon>
+    </Compile>
     <Compile Include="SchoolAddTaskForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,8 +87,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
+    <None Include="Properties\School.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>School.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SchoolMainForm.resx">
