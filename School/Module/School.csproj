@@ -33,37 +33,31 @@
     <DocumentationFile>conf\doc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CudaBlas, Version=7.5.7.0, Culture=neutral, PublicKeyToken=539d54d12e99fedb, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaBlas.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CudaBlas">
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaBlas.dll</HintPath>
     </Reference>
-    <Reference Include="CudaFFT, Version=7.5.7.0, Culture=neutral, PublicKeyToken=f066edfa1acb2f23, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaFFT.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CudaFFT">
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaFFT.dll</HintPath>
     </Reference>
     <Reference Include="CudaRand, Version=7.5.7.0, Culture=neutral, PublicKeyToken=fe981579f4e9a066, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaRand.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaRand.dll</HintPath>
     </Reference>
-    <Reference Include="CudaSolve, Version=7.5.7.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSolve.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CudaSolve">
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSolve.dll</HintPath>
     </Reference>
-    <Reference Include="CudaSparse, Version=7.5.7.0, Culture=neutral, PublicKeyToken=f65ee2ae6b331585, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSparse.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CudaSparse">
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSparse.dll</HintPath>
     </Reference>
     <Reference Include="ManagedCuda, Version=7.5.7.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\ManagedCuda.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\ManagedCuda.dll</HintPath>
     </Reference>
-    <Reference Include="NPP, Version=7.5.7.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NPP.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NPP">
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NPP.dll</HintPath>
     </Reference>
-    <Reference Include="NVRTC, Version=7.5.7.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NVRTC.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NVRTC">
+      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NVRTC.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,10 +67,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="YAXLib, Version=2.13.0.0, Culture=neutral, PublicKeyToken=15c43682c986900f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\BinaryLibs\GoodAiPlatformLibs\YAXLib\YAXLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AbstractLearningTask.cs" />
@@ -104,6 +94,7 @@
     <Compile Include="Learning tasks\LTDetectSimilarity.cs" />
     <Compile Include="Learning tasks\LTDetectWhite.cs" />
     <Compile Include="Learning tasks\LTMovingTarget.cs" />
+    <Compile Include="Learning tasks\LTMovingTargetD.cs" />
     <Compile Include="Learning tasks\LTShapeGroups.cs" />
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
@@ -120,6 +111,10 @@
     <Compile Include="Worlds\RoguelikeWorld.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+      <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
+      <Name>YAXLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>

@@ -18,6 +18,7 @@ namespace GoodAI.Modules.School.Common
         SimpleSizeDetection,
         SimpleDistanceDetection,
         MovingTarget,
+        MovingTargetD,
         OneDApproach,
         DetectColor,
         CooldownAction,
@@ -53,6 +54,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTDebugging(world);
                 case LearningTaskNameEnum.MovingTarget:
                     return new LTMovingTarget(world);
+                case LearningTaskNameEnum.MovingTargetD:
+                    return new LTMovingTargetD(world as RoguelikeWorld);
                 case LearningTaskNameEnum.OneDApproach:
                     return new LT1DApproach(world);
                 case LearningTaskNameEnum.DetectColor:

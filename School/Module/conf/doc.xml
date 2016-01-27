@@ -63,6 +63,16 @@
             The teacher declares the ability as learned when the agent reaches the last level.
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTargetD">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Moving Target" learning task</summary>
+            <description>
+            Ability Name: Efficient navigation in a simple environment + moving target. The class is derived from LTApproach with some additions for the moving target (currently: circular movement).
+            Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
+            </description>
+        </member>
         <member name="T:GoodAI.Modules.School.Common.ManInWorld">
             <author>GoodAI</author>
             <meta>Mp,Mv,Os</meta>
