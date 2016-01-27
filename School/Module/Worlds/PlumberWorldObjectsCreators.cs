@@ -20,13 +20,6 @@ namespace GoodAI.Modules.School.Worlds{
             throw new NotImplementedException();
         }
 
-        public override MovableGameObject CreateNonVisibleAgent()
-        {
-            MovableGameObject agent = CreateAgent(null, FOW_WIDTH / 2, FOW_HEIGHT / 2);
-            Agent.IsAffectedByGravity = false;
-            return agent;
-        }
-
         public override GameObject CreateWall(Point p, float size = 1.0f)
         {
             throw new NotImplementedException();
@@ -65,11 +58,6 @@ namespace GoodAI.Modules.School.Worlds{
         public override MovableGameObject CreateRogueMovableKiller(Point p, float size = 1.0f)
         {
             throw new NotImplementedException();
-        }
-
-        public override Grid GetGrid()
-        {
-            return new Grid(GetFowGeometry().Size, DEFAULT_GRID_SIZE);
         }
     }
 }

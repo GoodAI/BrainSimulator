@@ -477,10 +477,18 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-
+        /// <summary>
+        /// Creates agent with default texture in the middle of field.
+        /// </summary>
+        /// <returns>Agent</returns>
         public abstract MovableGameObject CreateAgent();
         public abstract MovableGameObject CreateAgent(Point p, float size = 1.0f);
 
+
+        /// <summary>
+        /// Creates agenet in the centre of POW. Agents size is 0x0, he's invisible.
+        /// </summary>
+        /// <returns>Agent as MovableGameObject</returns>
         public virtual MovableGameObject CreateNonVisibleAgent()
         {
             MovableGameObject agent = CreateAgent(null, FOW_WIDTH / 2, FOW_HEIGHT / 2);
@@ -500,6 +508,20 @@ namespace GoodAI.Modules.School.Common
         public virtual Grid GetGrid()
         {
             return new Grid(GetFowGeometry().Size, DEFAULT_GRID_SIZE);
+        }
+
+        /// <summary>
+        /// For current step sets reward for the agent
+        /// </summary>
+        /// <param name="reward">Should be between 1 and -1</param>
+        public void SetRewardForCurrentStep(float reward)
+        {
+            Reward.Host[0] = reward;
+        }
+
+        public void ResetReward()
+        {
+            Reward.Host[0] = 0;
         }
 
         public class UpdateTask : MyTask<ManInWorld>
@@ -524,6 +546,8 @@ namespace GoodAI.Modules.School.Common
                     mobj.previousvX = mobj.vX;
                     mobj.previousvY = mobj.vY;
                 }
+
+                Owner.ResetReward();
             }
 
             private void AnimateObjects()
