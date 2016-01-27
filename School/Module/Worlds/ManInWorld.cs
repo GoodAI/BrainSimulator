@@ -205,39 +205,50 @@ namespace GoodAI.Modules.School.Common
             return Agent.GetGeometry();
         }
 
-        // returns upper left corner
-        public Point GetRandomPositionInsidePow(Random rndGen, Size s) {
+        public Point RandomPositionInsideRectangle(Random rndGen, Size size, Rectangle rectangle)
+        {
+            return new Point(
+                rndGen.Next(rectangle.Width - size.Width) + rectangle.X,
+                rndGen.Next(rectangle.Height - size.Height) + rectangle.Y);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rndGen"></param>
+        /// <param name="size"></param>
+        /// <param name="collisionWithAgentAllowed"></param>
+        /// <returns>Point inside POW with respect to Size</returns>
+        public Point RandomPositionInsidePow(Random rndGen, Size size, bool collisionWithAgentAllowed = false)
+        {
             Rectangle pow = GetPowGeometry();
-            Point randPointInPow= new Point(
-                rndGen.Next(pow.Width - s.Width) + pow.X,
-                rndGen.Next(pow.Height - s.Height) + pow.Y);
+            Point randPointInPow = RandomPositionInsideRectangle(rndGen, size, pow);
 
-            Rectangle agent = GetAgentGeometry();
+            Rectangle obj = new Rectangle(randPointInPow, size);
 
-            Rectangle obj = new Rectangle(randPointInPow, s);
-
-            while (agent.IntersectsWith(obj) || obj.IntersectsWith(agent))
+            if (!collisionWithAgentAllowed) 
             {
-                obj.Location += new Size(4, 4); ;
+                Rectangle agent = GetAgentGeometry();
+                while (agent.IntersectsWith(obj) || obj.IntersectsWith(agent))
+                {
+                    obj.Location += new Size(4, 4); ;
+                }
             }
             return obj.Location;
         }
 
-        // like GetRandomPositionInsidePow, but avoids all added GameOjects
-        public Point GetRandomPositionInsidePowNonCovering(Random rndGen, Size s)
+        public Point RandomPositionInsidePowNonCovering(Random rndGen, Size size)
         {
-            return GetRandomPositionInsideRectangleNonCovering(rndGen, s, this.GetPowGeometry());
+            return RandomPositionInsideRectangleNonCovering(rndGen, size, this.GetPowGeometry());
         }
 
-        public Point GetRandomPositionInsideRectangleNonCovering(Random rndGen, Size s, Rectangle r)
+        public Point RandomPositionInsideRectangleNonCovering(Random rndGen, Size size, Rectangle rectangle)
         {
-            Point randPointInPow = new Point(
-                rndGen.Next(r.Width - s.Width) + r.X,
-                rndGen.Next(r.Height - s.Height) + r.Y);
+            Point randPointInPow = RandomPositionInsideRectangle(rndGen, size, rectangle);
 
             Rectangle agent = GetAgentGeometry();
 
-            Rectangle obj = new Rectangle(randPointInPow, s);
+            Rectangle obj = new Rectangle(randPointInPow, size);
 
             foreach (GameObject gameObject in gameObjects)
             {

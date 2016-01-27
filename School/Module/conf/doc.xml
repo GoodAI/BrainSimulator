@@ -72,6 +72,15 @@
             Implementation of a configurable 2D world
             </description>
         </member>
+        <member name="M:GoodAI.Modules.School.Common.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="rndGen"></param>
+            <param name="size"></param>
+            <param name="collisionWithAgentAllowed"></param>
+            <returns>Point inside POW with respect to Size</returns>
+        </member>
         <member name="M:GoodAI.Modules.School.Common.ManInWorld.CreateAgent">
             <summary>
             Creates agent with default texture in the middle of field.
