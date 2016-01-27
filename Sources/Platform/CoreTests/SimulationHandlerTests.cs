@@ -77,7 +77,7 @@ namespace CoreTests
         [Fact]
         public void SimulationStateChangedOnNodesTest()
         {
-            var simulation = new MyLocalSimulation(m_validator);
+            var simulation = TypeMap.GetInstance<MySimulation>();
             var handler = new MySimulationHandler(simulation);
 
             MyProject project = new MyProject

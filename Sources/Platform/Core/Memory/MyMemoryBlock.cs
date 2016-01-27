@@ -59,6 +59,7 @@ namespace GoodAI.Core.Memory
     public class MyMemoryBlock<T> : MyAbstractMemoryBlock where T : struct
     {
         protected virtual CudaDeviceVariable<T>[] Device { get; set; }
+
         public T[] Host { get; protected set; }
 
         public override int Count

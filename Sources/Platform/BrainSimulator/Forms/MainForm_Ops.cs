@@ -690,7 +690,7 @@ namespace GoodAI.BrainSimulator.Forms
             MySimulation simulation = null;
             try
             {
-                simulation = new MyLocalSimulation(TypeMap.GetInstance<MyValidator>());
+                simulation = TypeMap.GetInstance<MySimulation>();
             }
             catch (Exception e)
             {

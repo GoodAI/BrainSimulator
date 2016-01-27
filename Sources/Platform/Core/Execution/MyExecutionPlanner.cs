@@ -16,6 +16,7 @@ namespace GoodAI.Core.Execution
     public interface IMyExecutionPlanner
     {
         MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> initNodes = null);
+        MyExecutionBlock CreateNodeExecutionPlan(MyWorkingNode node, bool initPhase);
     }
 
     public interface IMyCustomExecutionPlanner
@@ -61,7 +62,7 @@ namespace GoodAI.Core.Execution
             return executionPlan;
         }
 
-        private MyExecutionBlock CreateNodeExecutionPlan(MyWorkingNode node, bool initPhase)
+        public MyExecutionBlock CreateNodeExecutionPlan(MyWorkingNode node, bool initPhase)
         {
             List<IMyExecutable> defaultPlanContent = new List<IMyExecutable>();
 
@@ -118,6 +119,9 @@ namespace GoodAI.Core.Execution
                 }
                 resultPlan.Name = defaultPlan.Name;
             }
+
+            if (resultPlan.Name == null)
+                resultPlan.Name = node.GetType().Name;
 
             if (node is MyNodeGroup)
             {

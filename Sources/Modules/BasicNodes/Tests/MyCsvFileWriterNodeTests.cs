@@ -49,7 +49,7 @@ namespace BasicNodesTests
 
             string projectPath = directory + fileName;
 
-            var simulation = new MyLocalSimulation(m_validator);
+            var simulation = TypeMap.GetInstance<MySimulation>();
 
             // TODO(HonzaS): This should not be required!
             // The referenced assemblies get loaded only if a Type is required here. But since the serializer

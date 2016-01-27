@@ -126,7 +126,7 @@ namespace GoodAI.Core.Execution
 
         public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
-            MySimulation simulation = new MyLocalSimulation(TypeMap.GetInstance<MyValidator>());
+            MySimulation simulation = TypeMap.GetInstance<MySimulation>();
             SimulationHandler = new MySimulationHandler(simulation);
             m_resultIdCounter = 0;
 

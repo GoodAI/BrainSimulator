@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using GoodAI.Platform.Core.Nodes;
 using GoodAI.Platform.Core.Utils;
+using GoodAI.TypeMapping;
 
 namespace GoodAI.Core.Execution
 {
@@ -73,7 +74,7 @@ namespace GoodAI.Core.Execution
         public MyExecutionPlan ExecutionPlan { get; protected set; }
         public HashSet<MyWorkingNode> AllNodes { get; protected set; }
 
-        protected IList<IModelChanger> ModelChangingNodeGroups { get; set; }
+        protected IList<IModelChanger> ModelChangingNodes { get; set; }
 
 
         protected bool m_errorOccured;
@@ -158,9 +159,13 @@ namespace GoodAI.Core.Execution
         private void ExtractAllNodes(MyProject project)
         {
             AllNodes = new HashSet<MyWorkingNode>();
-            ModelChangingNodeGroups = new List<IModelChanger>();
+            ModelChangingNodes = new List<IModelChanger>();
 
             AllNodes.Add(project.World);
+
+            var worldChanger = project.World as IModelChanger;
+            if (worldChanger != null)
+                ModelChangingNodes.Add(worldChanger);
 
             project.Network.Iterate(true, true, node =>
             {
@@ -170,7 +175,7 @@ namespace GoodAI.Core.Execution
 
                 var modelChanger = node as IModelChanger;
                 if (modelChanger != null)
-                    ModelChangingNodeGroups.Add(modelChanger);
+                    ModelChangingNodes.Add(modelChanger);
             });
         }
 
@@ -230,20 +235,17 @@ namespace GoodAI.Core.Execution
         }
 
         private readonly MyThreadPool m_threadPool;
-        private bool m_debugStepComplete;
+        private bool m_debugStepComplete = true;
         private ExecutionPhase m_debugExecutionPhase;
 
-        public MyLocalSimulation(MyValidator validator) : base(validator)
+        public MyLocalSimulation(MyValidator validator, IMyExecutionPlanner executionPlanner) : base(validator)
         {
             m_threadPool = new MyThreadPool(MyKernelFactory.Instance.DevCount, InitCore, ExecuteCore);
             m_threadPool.StartThreads();
 
             try
             {
-                ExecutionPlanner = new MyDefaultExecutionPlanner()
-                {
-                    PlanSignalTasks = true
-                };
+                ExecutionPlanner = executionPlanner;
 
                 CurrentDebuggedBlocks = new MyExecutionBlock[MyKernelFactory.Instance.DevCount];
             }
@@ -281,21 +283,9 @@ namespace GoodAI.Core.Execution
 
         private static void AllocateMemory(IEnumerable<MyWorkingNode> nodes)
         {
-            foreach (MyWorkingNode node in nodes)
-            {
-                MyKernelFactory.Instance.SetCurrent(0);
-                MyMemoryManager.Instance.AllocateBlocks(node, false);
-            }
-        }
-
-        private static void AllocateMemory(MyNode node)
-        {
-            var workingNode = node as MyWorkingNode;
-            if (workingNode == null)
-                return;
-
             MyKernelFactory.Instance.SetCurrent(0);
-            MyMemoryManager.Instance.AllocateBlocks(node, false);
+            foreach (MyWorkingNode node in nodes)
+                MyMemoryManager.Instance.AllocateBlocks(node, false);
         }
 
         /// <summary>
@@ -311,9 +301,7 @@ namespace GoodAI.Core.Execution
             if (m_errorOccured)
             {
                 if (m_lastException != null)
-                {
                     throw m_lastException;
-                }
 
                 throw new MySimulationException(-1, "Unknown simulation exception occured");
             }
@@ -567,16 +555,15 @@ namespace GoodAI.Core.Execution
         /// </summary>
         public override void PerformModelChanges()
         {
-            var allAddedNodes = new List<MyWorkingNode>();
-            var allRemovedNodes = new List<MyWorkingNode>();
-            var changedNodes = new List<MyNode>();
+            var modelChanges = TypeMap.GetInstance<IModelChanges>();
+            var changersActivated = new List<MyNode>();
 
             bool modelChanged = false;
-            ModelChangingNodeGroups.EachWithIndex((changer, i) =>
+            ModelChangingNodes.EachWithIndex((changer, i) =>
             {
-                bool nodeChanged = ChangeModelStructure(changer, ref allAddedNodes, ref allRemovedNodes);
+                bool nodeChanged = changer.ChangeModel(modelChanges);
                 if (nodeChanged)
-                    changedNodes.Add(changer.AffectedNode);
+                    changersActivated.Add(changer.AffectedNode);
 
                 modelChanged |= nodeChanged;
             });
@@ -584,18 +571,18 @@ namespace GoodAI.Core.Execution
             if (!modelChanged)
                 return;
 
-            SetupAfterModelChange(allRemovedNodes, allAddedNodes, changedNodes);
+            SetupAfterModelChange(modelChanges, changersActivated);
         }
 
-        private void SetupAfterModelChange(List<MyWorkingNode> removedNodes, List<MyWorkingNode> addedNodes, List<MyNode> changedNodes)
+        private void SetupAfterModelChange(IModelChanges modelChanges, List<MyNode> changersActivated)
         {
             // Clean up memory.
-            IterateNodes(removedNodes, FreeAndDestroyNodeMemory);
+            IterateNodes(modelChanges.RemovedNodes, FreeAndDestroyNodeMemory);
 
             Validator.ClearValidation();
 
             // Validate new nodes.
-            IterateNodes(addedNodes, ValidateNode);
+            IterateNodes(modelChanges.AddedNodes, ValidateNode);
 
             // Refresh topological ordering.
             List<MyNode> orderedNodes = MySimulationHandler.OrderNetworkNodes(m_project.Network);
@@ -611,25 +598,29 @@ namespace GoodAI.Core.Execution
                 throw new InvalidOperationException("Validation failed for the changed model.");
 
             // Allocate memory and init nodes
-            IterateNodes(addedNodes, AllocateAndInitNode);
+            IEnumerable<MyWorkingNode> nodesToAllocate = modelChanges.AddedNodes.Where(node => !AllNodes.Contains(node));
+            IterateNodes(nodesToAllocate, InitAndAllocateNode);
 
             // Finalize - reschedule and let listeners react.
-            Schedule(m_project, addedNodes);
+            Schedule(m_project, modelChanges.AddedNodes);
 
-            foreach (MyNode node in changedNodes)
+            foreach (MyNode node in changersActivated)
                 EmitModelChanged(node);
         }
 
-        private static void AllocateAndInitNode(MyNode node)
+        private static void InitAndAllocateNode(MyNode node)
         {
-            // TODO(HonzaS): Does the allocation need to be done in a separate loop?
-            AllocateMemory(node);
             var workingNode = node as MyWorkingNode;
             if (workingNode == null)
                 return;
 
+            MyKernelFactory.Instance.SetCurrent(0);
+
             workingNode.ClearSignals();
             workingNode.InitTasks();
+
+            // TODO(HonzaS): Does the allocation need to be done in a separate loop?
+            MyMemoryManager.Instance.AllocateBlocks(node, false);
         }
 
         private void ValidateNode(MyNode node)
@@ -642,23 +633,6 @@ namespace GoodAI.Core.Execution
         {
             FreeMemory(node);
             MyMemoryManager.Instance.RemoveBlocks(node);
-        }
-
-        private static bool ChangeModelStructure(IModelChanger changer, ref List<MyWorkingNode> allAddedNodes,
-            ref List<MyWorkingNode> allRemovedNodes)
-        {
-            var removedNodes = new List<MyWorkingNode>();
-            var addedNodes = new List<MyWorkingNode>();
-
-            bool changed = changer.ChangeModel(ref removedNodes, ref addedNodes);
-
-            if (!changed)
-                return false;
-
-            allAddedNodes.AddRange(addedNodes);
-            allRemovedNodes.AddRange(removedNodes);
-
-            return true;
         }
 
         public override bool UpdateMemoryModel(MyProject project, List<MyNode> orderedNodes)
