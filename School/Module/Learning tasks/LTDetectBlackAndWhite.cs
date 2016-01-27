@@ -1,4 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
+using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -8,15 +11,19 @@ namespace GoodAI.Modules.School.LearningTasks
 
     public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
+        public const string VARIABLE_SIZE = "Variable size";
+
         public LTDetectBlackAndWhite() { }
+        private Random m_rndGen = new Random();
+        private bool m_appears;
+        private bool m_isBlack;
 
         public LTDetectBlackAndWhite(ManInWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints
             {
-                { TSHintAttributes.TARGET_MIN_SIZE, 1 },
-                { TSHintAttributes.TARGET_MAX_SIZE, 3 },
+                { VARIABLE_SIZE, 0 },
                 { TSHintAttributes.NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 { TSHintAttributes.IS_TARGET_MOVING, 0 }
@@ -25,7 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(
                 new TrainingSetHints {
-                    { TSHintAttributes.TARGET_MAX_SIZE, 3 },
+                    { VARIABLE_SIZE, 1 },
                     { TSHintAttributes.NOISE, 1 },
                     { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 },
                     { TSHintAttributes.IS_TARGET_MOVING, 1 }
@@ -36,12 +43,61 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
+            if (World.GetType() != typeof(RoguelikeWorld))
+            {
+                throw new NotImplementedException();
+            }
 
+            World.CreateNonVisibleAgent();
+
+            if (TSHints[TSHintAttributes.NOISE] >= 1)
+            {
+                World.IsImageNoise = true;
+            }
+
+            m_appears = LearningTaskHelpers.FlipCoin(m_rndGen);
+            if (!m_appears) return;
+
+            Size size;
+            if(TSHints[VARIABLE_SIZE] >= 1){
+                int a = m_rndGen.Next(10,20);
+                size = new Size(a, a);
+            }
+            else
+            {
+                size = new Size(15, 15);
+            }
+
+                        Point position;
+            if (TSHints[TSHintAttributes.IS_TARGET_MOVING] >= 1)
+            {
+                position = World.GetRandomPositionInsidePow(m_rndGen, size);
+            }
+            else
+            {
+                position = World.Agent.GetGeometry().Location;
+            }
+
+            m_isBlack = LearningTaskHelpers.FlipCoin(m_rndGen);
+            Color color = m_isBlack ? Color.Black : Color.White;
+
+            World.CreateShape(position, Shape.Shapes.Square, color, size);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            return false;
+            if ((!m_appears && World.Controls.Host[0] == 0 && World.Controls.Host[1] == 0) ||
+                ( m_isBlack && World.Controls.Host[0] != 0 && World.Controls.Host[1] == 0) ||
+                (!m_isBlack && World.Controls.Host[0] == 0 && World.Controls.Host[1] != 0)
+                )
+            {
+                wasUnitSuccessful = true;
+            }
+            else
+            {
+                wasUnitSuccessful = false;
+            }
+            return true;
         }
 
     }
