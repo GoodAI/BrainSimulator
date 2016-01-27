@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tree = new Aga.Controls.Tree.TreeViewAdv();
+            this.nodeCheckBox1 = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnNewTask = new System.Windows.Forms.Button();
@@ -60,6 +61,7 @@
             this.tree.Location = new System.Drawing.Point(12, 12);
             this.tree.Model = null;
             this.tree.Name = "tree";
+            this.tree.NodeControls.Add(this.nodeCheckBox1);
             this.tree.NodeControls.Add(this.nodeTextBox1);
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
@@ -69,6 +71,13 @@
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
             this.tree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
             this.tree.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);
+            // 
+            // nodeCheckBox1
+            // 
+            this.nodeCheckBox1.DataPropertyName = "Enabled";
+            this.nodeCheckBox1.EditEnabled = true;
+            this.nodeCheckBox1.LeftMargin = 0;
+            this.nodeCheckBox1.ParentColumn = null;
             // 
             // nodeTextBox1
             // 
@@ -235,5 +244,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btnCurrFolder;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
     }
 }

@@ -20,8 +20,6 @@ namespace GoodAI.School.GUI
 
         public class SchoolTreeNode : Node
         {
-            public bool Checked { get; set; }
-
             public SchoolTreeNode(string text) : base(text) { }
         }
 
@@ -32,6 +30,7 @@ namespace GoodAI.School.GUI
 
         public class LearningTaskNode : SchoolTreeNode
         {
+            public bool Enabled { get; set; }
             public Type Type { get; set; }
             public Type WorldType { get; set; }
             public LearningTaskNode(string text) : base(text) { }
