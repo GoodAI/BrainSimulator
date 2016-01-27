@@ -1,6 +1,5 @@
 ﻿using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
 using System;
 
 
@@ -32,7 +31,10 @@ namespace GoodAI.Modules.School.LearningTasks
         public const string TARGET_VX = "Target velocity X";
         public const string TARGET_VY = "Target velocity Y";
 
-        public LTMovingTarget(ManInWorld w): base(w)
+        public LTMovingTarget() { }
+
+        public LTMovingTarget(ManInWorld w)
+            : base(w)
         {
             MyLog.ERROR.WriteLine("Initialising: ");
 
@@ -43,11 +45,11 @@ namespace GoodAI.Modules.School.LearningTasks
                 {TSHintAttributes.MAX_UNIT_ATTEMPTS, 350 },
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
-            
+
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TARGET_VX, 2);
             TSProgression.Add(TARGET_VX, 3);
-            TSProgression.Add(new TrainingSetHints { { TARGET_VX, 4 }, {TARGET_VY, 1 }});
+            TSProgression.Add(new TrainingSetHints { { TARGET_VX, 4 }, { TARGET_VY, 1 } });
             TSProgression.Add(TARGET_VX, 6);
 
             SetHints(TSHints);
@@ -101,19 +103,19 @@ namespace GoodAI.Modules.School.LearningTasks
             Target.IsAffectedByGravity = false;
             World.AddGameObject(Target);
             m_target = Target;                                                                                                                      // Create reference to Target
-            
+
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            
+
             if (UnitAttempts >= TSHints[TSHintAttributes.MAX_UNIT_ATTEMPTS])
             {
                 wasUnitSuccessful = false;
                 return true;
             }
-            
-            
+
+
             if (m_agent.DistanceTo(m_target) < 15f)     // TrainingUnit is completed when the Agent reaches the coin
             {
                 World.Reward.Host[0] = 1f;              // Temporary way of using the reward for testing
@@ -128,12 +130,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
             World.Reward.Host[0] = 0f;                  // Temporary way of using the reward for testing
             World.Reward.SafeCopyToDevice();
-            
+
             return false;
         }
     }
 
 
-    
+
 }
 

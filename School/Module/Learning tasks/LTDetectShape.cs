@@ -1,6 +1,5 @@
-﻿using System;
-using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
+﻿using GoodAI.Modules.School.Common;
+using System;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -11,7 +10,10 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
-        public LTDetectShape(ManInWorld w) : base (w)
+        public LTDetectShape() { }
+
+        public LTDetectShape(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.NOISE, 0},
@@ -32,7 +34,8 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             World.CreateNonVisibleAgent();
 
-            if(TSHints[TSHintAttributes.NOISE] > 0){
+            if (TSHints[TSHintAttributes.NOISE] > 0)
+            {
                 World.IsImageNoise = true;
             }
 
@@ -40,15 +43,15 @@ namespace GoodAI.Modules.School.LearningTasks
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 //random size
-                Size shapeSize = new Size(32,32);
-                if(TSHints[TSHintAttributes.RANDOMNESS] >= 0.5)
+                Size shapeSize = new Size(32, 32);
+                if (TSHints[TSHintAttributes.RANDOMNESS] >= 0.5)
                 {
                     shapeSize = new Size(20 + m_rndGen.Next(20), 20 + m_rndGen.Next(20));
                 }
 
                 // random position
-                Point shapePosition = World.Agent.GetGeometry().Location + new Size(20,0);
-                if(TSHints[TSHintAttributes.RANDOMNESS] >= 1)
+                Point shapePosition = World.Agent.GetGeometry().Location + new Size(20, 0);
+                if (TSHints[TSHintAttributes.RANDOMNESS] >= 1)
                 {
                     shapePosition = World.GetRandomPositionInsidePow(m_rndGen, shapeSize);
                 }
@@ -78,7 +81,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (World.Controls.Host[0] != 0 || World.Controls.Host[1] != 0)
                 {
                     wasUnitSuccessful = false;
-                    
+
                 }
                 else
                 {

@@ -1,8 +1,4 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
-using System;
-using System.Collections.Generic;
+﻿using GoodAI.Modules.School.Common;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -10,7 +6,10 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         public const string CONDITION_SALIENCE = "Condition salience";
 
-        public LTConditionalTarget(ManInWorld w) : base(w)
+        public LTConditionalTarget() { }
+
+        public LTConditionalTarget(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 0 },
@@ -34,7 +33,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
-            SetHints(TSHints);            
+            SetHints(TSHints);
             // TODO condition salience
         }
 
@@ -135,5 +134,5 @@ namespace GoodAI.Modules.School.LearningTasks
     //    }
 
     //    // TODO
-    //} 
+    //}
 }

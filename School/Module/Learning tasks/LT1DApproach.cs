@@ -1,38 +1,40 @@
 ﻿using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
 using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     public class LT1DApproach : AbstractLearningTask<ManInWorld>
     {
-        public LT1DApproach(ManInWorld w) : base(w)
+        public LT1DApproach() { }
+
+        public LT1DApproach(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1},
                 { TSHintAttributes.NOISE, 0},
                 { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 0f},
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 0f}, 
-                { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1}, 
+                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 0f},
+                { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1},
                 { TSHintAttributes.MAX_TARGET_DISTANCE, 0f},
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000},
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(new TrainingSetHints { 
-                { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1f }, 
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2f }, 
-                { TSHintAttributes.NOISE, .5f }, 
-                { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0f }, 
-                { TSHintAttributes.MAX_TARGET_DISTANCE, .3f }, 
+            TSProgression.Add(new TrainingSetHints {
+                { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1f },
+                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2f },
+                { TSHintAttributes.NOISE, .5f },
+                { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0f },
+                { TSHintAttributes.MAX_TARGET_DISTANCE, .3f },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 }
             });
-            TSProgression.Add(new TrainingSetHints { 
+            TSProgression.Add(new TrainingSetHints {
                 { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1.5f },
                 { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3f },
-                { TSHintAttributes.NOISE, 1f }, 
-                { TSHintAttributes.MAX_TARGET_DISTANCE, -1f }, 
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 } 
+                { TSHintAttributes.NOISE, 1f },
+                { TSHintAttributes.MAX_TARGET_DISTANCE, -1f },
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
             });
 
             SetHints(TSHints);
@@ -104,7 +106,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_target.X = targetX;
             m_target.Y = m_agent.Y;
         }
-    }    
+    }
 
     /* TODO add Rogueliekeworld implementation
     public class RoguelikeWorldWA1DApproach : AbstractWA1DApproach

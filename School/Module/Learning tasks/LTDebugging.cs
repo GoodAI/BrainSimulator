@@ -2,7 +2,6 @@
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Drawing;
-using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -11,8 +10,11 @@ namespace GoodAI.Modules.School.LearningTasks
         private GameObject m_target;
         private MovableGameObject m_agent;
         private Random m_rndGen = new Random();
-        
-        public LTDebugging(ManInWorld w) : base(w)
+
+        public LTDebugging() { }
+
+        public LTDebugging(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
@@ -25,7 +27,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            if (World.GetType() == typeof(PlumberWorld)) {
+            if (World.GetType() == typeof(PlumberWorld))
+            {
                 m_agent = new MovableGameObject(GameObjectType.Agent, @"Plumber24x28.png", 24, 28); ;
                 PlumberWorld world = World as PlumberWorld;
                 m_target = new GameObject(GameObjectType.NonColliding, @"Coin16x16.png", 200, 200);
@@ -43,7 +46,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             else if (World.GetType() == typeof(RoguelikeWorld))
             {
-                
+
                 RoguelikeWorld world = World as RoguelikeWorld;
                 world.DegreesOfFreedom = 2;
 
@@ -77,7 +80,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     shape: Shape.Shapes.Star,
                     width: 30, height: 60); // you can resize choosen shape
 
-                RogueDoor door = (RogueDoor) world.CreateDoor(g.getPoint(14, 17));
+                RogueDoor door = (RogueDoor)world.CreateDoor(g.getPoint(14, 17));
                 world.CreateLever(g.getPoint(13, 13), door);
             }
         }
@@ -92,6 +95,6 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             return wasUnitSuccessful = false;
         }
-    
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using GoodAI.Modules.School.Worlds;
+using GoodAI.Modules.School.Worlds;
 using System.Collections.Generic;
 
 namespace GoodAI.Modules.School.Common
@@ -40,7 +40,7 @@ namespace GoodAI.Modules.School.Common
 
         // Tracks whether the training unit has run to completion
         public bool IsTrainingUnitCompleted { get; set; }
-        
+
         // True if the first training unit has been presented
         public bool HasPresentedFirstUnit { get; set; }
 
@@ -67,11 +67,12 @@ namespace GoodAI.Modules.School.Common
 
         // Number of levels of increasing difficulty
         private int m_numberOfLevels = -1;
-        protected int NumberOfLevels {
+        protected int NumberOfLevels
+        {
             get
             {
                 if (m_numberOfLevels < 0)
-                { 
+                {
                     return TSProgression.Count;
                 }
                 else
@@ -91,7 +92,7 @@ namespace GoodAI.Modules.School.Common
         protected virtual void UpdateLevel()
         {
             // We assume that levels are traversed sequentially.
-            // Random access of levels would require a change of 
+            // Random access of levels would require a change of
             // implementation.
 
             TSHints.Set(TSProgression[CurrentLevel]);
@@ -113,6 +114,8 @@ namespace GoodAI.Modules.School.Common
         {
             get { return CurrentLevel == NumberOfLevels - 1 && IsTrainingSetCompleted(); }
         }
+
+        public AbstractLearningTask() { }
 
         public AbstractLearningTask(WorldClass world)
         {

@@ -1,6 +1,5 @@
-﻿using System;
-using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
+﻿using GoodAI.Modules.School.Common;
+using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -13,7 +12,10 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Shape m_target;
         protected MovableGameObject m_agent;
 
-        public LTSimpleAngle(ManInWorld w) : base(w)
+        public LTSimpleAngle() { }
+
+        public LTSimpleAngle(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.VARIABLE_SIZE, 0 },
@@ -53,7 +55,7 @@ namespace GoodAI.Modules.School.LearningTasks
             if (upperBound > 1) upperBound -= 1;
             double lowerBound = targetAngle - TSHints[LTSimpleAngle.TOLERANCE];
             if (lowerBound < 0) upperBound += 1;
-                
+
             wasUnitSuccessful = (estimatedAngle > lowerBound) && (estimatedAngle < upperBound);
 
             GoodAI.Core.Utils.MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
@@ -96,63 +98,63 @@ namespace GoodAI.Modules.School.LearningTasks
             m_agent = World.Agent;
             // center the agent
             m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = World.FOW_HEIGHT/2 - m_agent.Height/2;
+            m_agent.Y = World.FOW_HEIGHT / 2 - m_agent.Height / 2;
         }
     }
 
-/*
-    public class RoguelikeWorldWASimpleAngle : AbstractWASimpleAngle
-    {
-        protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
+    /*
+        public class RoguelikeWorldWASimpleAngle : AbstractWASimpleAngle
         {
-            m_w = w as RoguelikeWorld;
-            m_w.ClearWorld();
-            if (trainingSetHints[TSHintAttributes.NOISE] > 0)
+            protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
             {
-                m_w.IsImageNoise = true;
+                m_w = w as RoguelikeWorld;
+                m_w.ClearWorld();
+                if (trainingSetHints[TSHintAttributes.NOISE] > 0)
+                {
+                    m_w.IsImageNoise = true;
+                }
+                CreateAgent();
             }
-            CreateAgent();
+
+            protected override void CreateTarget(TrainingSetHints trainingSetHints)
+            {
+                m_target = new Shape(Shape.Shapes.Circle, 0, 0);
+                m_w.AddGameObject(m_target);
+                m_target.X = m_rndGen.Next(m_agent.X - m_w.POW_WIDTH / 2, m_agent.X + m_w.POW_WIDTH / 2 - m_target.Width + 1);
+
+                if (trainingSetHints[TSHintAttributes.VARIABLE_SIZE] > 0)
+                {
+                    double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
+                    m_target.Height = (int)(resizeRatio * m_target.Height);
+                    m_target.Width = (int)(resizeRatio * m_target.Width);
+                }
+
+                double rad = m_rndGen.NextDouble() * Math.PI * 2;
+                double distanceMultiplicator;
+                if (trainingSetHints[LTSimpleAngle.FIXED_DISTANCE] > 0)
+                {
+                    distanceMultiplicator = 10;
+                }
+                else
+                {
+                    distanceMultiplicator = 5 + m_rndGen.NextDouble() * 10;
+                }
+                double X = Math.Sin(rad) * distanceMultiplicator;
+                double Y = Math.Cos(rad) * distanceMultiplicator;
+
+                m_target.X = m_agent.X + (int)X;
+                m_target.Y = m_agent.Y + (int)Y;
+            }
+
+
+            protected void CreateAgent()
+            {
+                m_w.CreateAgent(null, 0, 0);
+                m_agent = m_w.Agent;
+                // center the agent
+                m_agent.X = m_w.FOW_WIDTH / 2 - m_agent.Width / 2;
+                m_agent.Y = m_w.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            }
         }
-
-        protected override void CreateTarget(TrainingSetHints trainingSetHints)
-        {
-            m_target = new Shape(Shape.Shapes.Circle, 0, 0);
-            m_w.AddGameObject(m_target);
-            m_target.X = m_rndGen.Next(m_agent.X - m_w.POW_WIDTH / 2, m_agent.X + m_w.POW_WIDTH / 2 - m_target.Width + 1);
-
-            if (trainingSetHints[TSHintAttributes.VARIABLE_SIZE] > 0)
-            {
-                double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
-                m_target.Height = (int)(resizeRatio * m_target.Height);
-                m_target.Width = (int)(resizeRatio * m_target.Width);
-            }
-
-            double rad = m_rndGen.NextDouble() * Math.PI * 2;
-            double distanceMultiplicator;
-            if (trainingSetHints[LTSimpleAngle.FIXED_DISTANCE] > 0)
-            {
-                distanceMultiplicator = 10;
-            }
-            else
-            {
-                distanceMultiplicator = 5 + m_rndGen.NextDouble() * 10;
-            }
-            double X = Math.Sin(rad) * distanceMultiplicator;
-            double Y = Math.Cos(rad) * distanceMultiplicator;
-
-            m_target.X = m_agent.X + (int)X;
-            m_target.Y = m_agent.Y + (int)Y;
-        }
-
-
-        protected void CreateAgent()
-        {
-            m_w.CreateAgent(null, 0, 0);
-            m_agent = m_w.Agent;
-            // center the agent
-            m_agent.X = m_w.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = m_w.FOW_HEIGHT / 2 - m_agent.Height / 2;
-        }
-    }
- */
+     */
 }

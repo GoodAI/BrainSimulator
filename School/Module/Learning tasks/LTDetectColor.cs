@@ -10,6 +10,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_target;
         Random m_rndGen = new Random();
 
+        public LTDetectColor() { }
+
         public LTDetectColor(RoguelikeWorld w)
             : base(w)
         {
@@ -17,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 {TSHintAttributes.NOISE, 0},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
-            
+
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.NOISE, 1);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
@@ -36,7 +38,7 @@ namespace GoodAI.Modules.School.LearningTasks
             SetTargetColor();
         }
 
-        protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful) 
+        protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             // TODO fill properly
             wasUnitSuccessful = true;
@@ -63,8 +65,8 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
     }
-    
-    
+
+
     /*
     public abstract class AbstractWorldAdapter<WorldType> : IWorldAdapter where WorldType : ManInWorld
     {
@@ -90,7 +92,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             InstallWorld(w as WorldType, hints);
         }
-        
+
         public virtual bool IsTrainingUnitCompleted(ref bool wasUnitSuccessful)
         {
             if (World.IsEmulatingUnitCompletion())

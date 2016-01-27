@@ -1,7 +1,5 @@
-﻿using System;
-using System.Drawing;
-using System.Diagnostics;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
+using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -16,6 +14,8 @@ namespace GoodAI.Modules.School.LearningTasks
         private int m_stepsSincePresented = 0;
         private int m_size = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_size is lower bound of the interval
         private int m_reportedSize = -1;
+
+        public LTSimpleSize() { }
 
         public LTSimpleSize(ManInWorld w)
             : base(w)
@@ -32,18 +32,18 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(new TrainingSetHints { 
-                { COLOR_PATTERNS, 1 }, 
+            TSProgression.Add(new TrainingSetHints {
+                { COLOR_PATTERNS, 1 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0 }
             });
-            TSProgression.Add(new TrainingSetHints { 
-                { TARGET_SIZE_LEVELS, 4 }, 
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2 } 
+            TSProgression.Add(new TrainingSetHints {
+                { TARGET_SIZE_LEVELS, 4 },
+                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2 }
             });
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
-            TSProgression.Add(new TrainingSetHints { 
-                { TARGET_SIZE_LEVELS, 8 }, 
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3 }, 
+            TSProgression.Add(new TrainingSetHints {
+                { TARGET_SIZE_LEVELS, 8 },
+                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3 },
                 { TSHintAttributes.MAX_TARGET_DISTANCE, 1 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
             });
