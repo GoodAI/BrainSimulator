@@ -128,7 +128,7 @@ namespace GoodAI.Modules.School.LearningTasks
             Point teachersPoint;
             if ((int)TSHints[LTCopyAction.TEACHER_ON_DIFF_START_POSITION] != 0)
             {
-                teachersPoint = World.GetRandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
+                teachersPoint = World.RandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
             }
             else
             {

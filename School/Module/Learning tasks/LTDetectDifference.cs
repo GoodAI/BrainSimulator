@@ -83,7 +83,7 @@ namespace GoodAI.Modules.School.LearningTasks
                         color = Color.White;
                     }
 
-                    Point position = world.GetRandomPositionInsidePowNonCovering(m_rndGen, s);
+                    Point position = world.RandomPositionInsidePowNonCovering(m_rndGen, s);
 
                     if (placeDifferentObj)
                     {

@@ -53,7 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 Point shapePosition = World.Agent.GetGeometry().Location + new Size(20, 0);
                 if (TSHints[TSHintAttributes.RANDOMNESS] >= 1)
                 {
-                    shapePosition = World.GetRandomPositionInsidePow(m_rndGen, shapeSize);
+                    shapePosition = World.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
 
                 //with Pr=.5 pick Square, else pick Circle

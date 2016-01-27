@@ -66,7 +66,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 // place new wall with random position and size (1 - 3 times larger than default)
                 GameObject wall = world.CreateWall(g.getPoint(0, 0), (float)(1 + m_rndGen.NextDouble() * 2));
                 // GetRandomPositionInsidePow avoids covering agent
-                Point randPosition = world.GetRandomPositionInsidePow(m_rndGen, wall.GetGeometry().Size);
+                Point randPosition = world.RandomPositionInsidePow(m_rndGen, wall.GetGeometry().Size);
                 wall.SetPosition(randPosition);
 
                 // create target

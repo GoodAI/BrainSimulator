@@ -95,11 +95,11 @@ namespace GoodAI.Modules.School.LearningTasks
                     if (placeSameObject)
                     {
                         placeSameObject = false;
-                        position = world.GetRandomPositionInsidePowNonCovering(m_rndGen, s);
+                        position = world.RandomPositionInsidePowNonCovering(m_rndGen, s);
                         world.CreateShape(position, shapes[i], color, size: s);
                     }
 
-                    position = world.GetRandomPositionInsidePowNonCovering(m_rndGen, s);
+                    position = world.RandomPositionInsidePowNonCovering(m_rndGen, s);
                     world.CreateShape(position, shapes[i], color, size: s);
                 }
             }

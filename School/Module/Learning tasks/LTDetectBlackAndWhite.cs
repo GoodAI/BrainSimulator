@@ -71,7 +71,7 @@ namespace GoodAI.Modules.School.LearningTasks
                         Point position;
             if (TSHints[TSHintAttributes.IS_TARGET_MOVING] >= 1)
             {
-                position = World.GetRandomPositionInsidePow(m_rndGen, size);
+                position = World.RandomPositionInsidePow(m_rndGen, size);
             }
             else
             {

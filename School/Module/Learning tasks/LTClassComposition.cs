@@ -102,7 +102,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 Point position;
                 if (TSHints[TSHintAttributes.RANDOMNESS] >= 1.0f)
                 {
-                    position = world.GetRandomPositionInsidePow(m_rndGen, size);
+                    position = world.RandomPositionInsidePow(m_rndGen, size);
                 }
                 else
                 {
