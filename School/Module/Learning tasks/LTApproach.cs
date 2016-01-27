@@ -1,5 +1,4 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 
@@ -12,6 +11,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_agent;
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
+
+        public LTApproach() { }
 
         public LTApproach(RoguelikeWorld w)
             : base(w)

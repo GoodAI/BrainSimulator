@@ -2,14 +2,17 @@
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    // TODO: 
+    // TODO:
     // World actions have not been implemented yet.
     // Multiple parameters are incremented in the same step.
 
     public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
-        public LTDetectBlackAndWhite(ManInWorld w) : base(w)
-        {            
+        public LTDetectBlackAndWhite() { }
+
+        public LTDetectBlackAndWhite(ManInWorld w)
+            : base(w)
+        {
             TSHints = new TrainingSetHints
             {
                 { TSHintAttributes.TARGET_MIN_SIZE, 1 },
@@ -21,19 +24,19 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(
-                new TrainingSetHints { 
-                    { TSHintAttributes.TARGET_MAX_SIZE, 3 }, 
-                    { TSHintAttributes.NOISE, 1 }, 
-                    { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }, 
-                    { TSHintAttributes.IS_TARGET_MOVING, 1 } 
+                new TrainingSetHints {
+                    { TSHintAttributes.TARGET_MAX_SIZE, 3 },
+                    { TSHintAttributes.NOISE, 1 },
+                    { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 },
+                    { TSHintAttributes.IS_TARGET_MOVING, 1 }
                 });
 
             SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
-        { 
-        
+        {
+
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)

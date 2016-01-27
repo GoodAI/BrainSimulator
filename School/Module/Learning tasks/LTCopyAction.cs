@@ -1,9 +1,7 @@
-﻿using GoodAI.Core.Utils;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
-using GoodAI.Modules.School.Common;
-using System.Collections.Generic;
-using System.Linq;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -22,6 +20,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected AgentsHistory m_agentsHistory;
         protected AbstractTeacherInWorld m_teacher;
         protected AgentsHistory m_teachersHistory;
+
+        public LTCopyAction() { }
 
         public LTCopyAction(ManInWorld w)
             : base(w)

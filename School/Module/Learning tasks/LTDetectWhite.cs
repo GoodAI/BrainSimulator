@@ -11,11 +11,13 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
 
+        public LTDetectWhite() { }
+
         public LTDetectWhite(RoguelikeWorld w)
             : base(w)
         {
-            TSHints = new TrainingSetHints { 
-                { TSHintAttributes.NOISE, 0 }, 
+            TSHints = new TrainingSetHints {
+                { TSHintAttributes.NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 

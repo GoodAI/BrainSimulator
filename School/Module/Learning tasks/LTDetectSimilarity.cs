@@ -1,9 +1,9 @@
 ﻿
-using System;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
-using System.Drawing;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -12,6 +12,8 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         protected Random m_rndGen = new Random();
         protected bool m_sameObjectetPlaced;
+
+        public LTDetectSimilarity() { }
 
         public LTDetectSimilarity(ManInWorld w)
             : base(w)
@@ -62,7 +64,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 int numberOfShapes = Enum.GetValues(typeof(Shape.Shapes)).Length;
                 List<int> uniqueNumbers = LearningTaskHelpers.UniqueNumbers(m_rndGen, 0, numberOfShapes, numberOfObjects);
                 List<Shape.Shapes> shapes = uniqueNumbers.Select(x => (Shape.Shapes)x).ToList();
-                
+
                 for (int i = 0; i < shapes.Count; i++)
                 {
 

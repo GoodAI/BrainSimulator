@@ -5,6 +5,8 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTShapeGroups : AbstractLearningTask<RoguelikeWorld>
     {
+        public LTShapeGroups() { }
+
         public LTShapeGroups(RoguelikeWorld w)
             : base(w)
         {
@@ -27,13 +29,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            // TODO 
+            // TODO
             wasUnitSuccessful = true;
             return true;
         }
-
-
     }
-
-
 }

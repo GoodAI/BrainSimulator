@@ -1,10 +1,8 @@
 ﻿
-using System;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using System;
 using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -12,6 +10,8 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
+
+        public LTCompareLayouts() { }
 
         public LTCompareLayouts(ManInWorld w)
             : base(w)
@@ -43,12 +43,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 Rectangle leftPart = World.GetPowGeometry();
                 Rectangle rightPart = World.GetPowGeometry();
                 Size shift = new Size(leftPart.Width / 2, 0);
-                leftPart.Width  = leftPart.Width  / 2 - 20;
+                leftPart.Width = leftPart.Width / 2 - 20;
                 rightPart.Width = rightPart.Width / 2 - 2;
                 rightPart.X += rightPart.Width + 4;
 
-                world.CreateShape(rightPart.Location - new Size(4,0), 
-                    Shape.Shapes.Square, 
+                world.CreateShape(rightPart.Location - new Size(4, 0),
+                    Shape.Shapes.Square,
                     Color.Black,
                     new Size(4, leftPart.Height));
 
@@ -103,27 +103,28 @@ namespace GoodAI.Modules.School.LearningTasks
                         Shape.Shapes shapeR = shape;
                         Size sizeR = size;
 
-                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS] >= 1.0f) 
+                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS] >= 1.0f)
                         {
-                            positionR = world.GetRandomPositionInsideRectangleNonCovering(m_rndGen, size, rightPart); placeDifference = false; 
+                            positionR = world.GetRandomPositionInsideRectangleNonCovering(m_rndGen, size, rightPart); placeDifference = false;
                         }
-                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS] >= .3) 
+                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS] >= .3)
                         {
-                            colorR = LearningTaskHelpers.RandomVisibleColor(m_rndGen); placeDifference = false; 
+                            colorR = LearningTaskHelpers.RandomVisibleColor(m_rndGen); placeDifference = false;
                         }
-                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS] >= .6f) 
+                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS] >= .6f)
                         {
-                            sizeR = size + new Size(5, 5); }
-                        if (placeDifference || LearningTaskHelpers.FlipCoin(m_rndGen)) 
+                            sizeR = size + new Size(5, 5);
+                        }
+                        if (placeDifference || LearningTaskHelpers.FlipCoin(m_rndGen))
                         {
-                            shapeR = Shape.getRandomShape(m_rndGen); placeDifference = false; 
+                            shapeR = Shape.getRandomShape(m_rndGen); placeDifference = false;
                         }
                         world.CreateShape(position, shape, color, size: size);
                         world.CreateShape(positionR, shapeR, colorR, size: sizeR);
                     }
                     else
                     {
-                        world.CreateShape(position,         shape, color, size: size);
+                        world.CreateShape(position, shape, color, size: size);
                         world.CreateShape(position + shift, shape, color, size: size);
                     }
                 }

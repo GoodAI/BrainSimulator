@@ -1,6 +1,5 @@
-﻿using System;
-using System.Drawing;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
+using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -16,7 +15,10 @@ namespace GoodAI.Modules.School.LearningTasks
         public uint UnitSuccesses { get; set; }
         public uint UnitAttempts { get; set; }
 
-        public LTActionWCooldown(ManInWorld w) : base(w)
+        public LTActionWCooldown() { }
+
+        public LTActionWCooldown(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.COOLDOWN,  5},
@@ -26,7 +28,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
-            TSProgression.Add(TSHints.Clone());            
+            TSProgression.Add(TSHints.Clone());
             NumberOfLevels = 50;
 
             SetHints(TSHints);

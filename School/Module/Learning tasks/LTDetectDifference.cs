@@ -1,9 +1,9 @@
 ﻿
-using System;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
-using System.Drawing;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -12,7 +12,10 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
-        public LTDetectDifference(ManInWorld w) : base (w)
+        public LTDetectDifference() { }
+
+        public LTDetectDifference(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.NOISE, 0},
@@ -60,14 +63,14 @@ namespace GoodAI.Modules.School.LearningTasks
                 {
 
                     Size s;
-                    if(TSHints[TSHintAttributes.RANDOMNESS] >= .6f)
+                    if (TSHints[TSHintAttributes.RANDOMNESS] >= .6f)
                     {
                         int a = 10 + m_rndGen.Next(10);
                         s = new Size(a, a);
                     }
                     else
                     {
-                        s = new Size(15,15);
+                        s = new Size(15, 15);
                     }
 
                     Color color;
@@ -85,8 +88,8 @@ namespace GoodAI.Modules.School.LearningTasks
                     if (placeDifferentObj)
                     {
                         placeDifferentObj = false;
-                        world.CreateShape(position, alternativeShape, color, size : s);
-                    } 
+                        world.CreateShape(position, alternativeShape, color, size: s);
+                    }
                     else
                     {
                         world.CreateShape(position, standardShape, color, size: s);

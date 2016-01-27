@@ -1,6 +1,5 @@
-﻿using System;
-using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
+﻿using GoodAI.Modules.School.Common;
+using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -10,7 +9,10 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Shape m_target;
         private MovableGameObject m_agent;
 
-        public LTDetectShapeColor(ManInWorld w) : base(w)
+        public LTDetectShapeColor() { }
+
+        public LTDetectShapeColor(ManInWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.NOISE, 0 },
@@ -116,67 +118,67 @@ namespace GoodAI.Modules.School.LearningTasks
 
     }
 
-/*
-    public class RoguelikeWorldWADetectShapeColor : AbstractWADetectShapeColor
-    {
-        private Worlds m_w;
-        private MovableGameObject m_agent;
-
-        private string GetShapeAddr(Shape.Shapes shape)
+    /*
+        public class RoguelikeWorldWADetectShapeColor : AbstractWADetectShapeColor
         {
-            switch (shape)
-            {
-                case Shape.Shapes.Circle:
-                    return @"WhiteCircle50x50.png";
-                case Shape.Shapes.Square:
-                    return @"White10x10.png";
-            }
-            throw new ArgumentException("Unknown shape");
-        }
+            private Worlds m_w;
+            private MovableGameObject m_agent;
 
-        protected override AbstractSchoolWorld World
-        {
-            get
+            private string GetShapeAddr(Shape.Shapes shape)
             {
-                return m_w;
-            }
-        }
-
-        protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
-        {
-            m_w = w as RoguelikeWorld;
-            m_w.ClearWorld();
-            if (trainingSetHints[TSHintAttributes.NOISE] > 0)
-            {
-                m_w.IsImageNoise = true;
-            }
-            CreateAgent();
-        }
-
-        protected override void CreateTarget(TrainingSetHints trainingSetHints, Shape.Shapes shape)
-        {
-            m_target = new Shape(shape, 0, 0);
-            m_w.AddGameObject(m_target);
-
-            if (trainingSetHints[TSHintAttributes.VARIABLE_SIZE] > 0)
-            {
-                double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
-                m_target.Height = (int)(resizeRatio * m_target.Height);
-                m_target.Width = (int)(resizeRatio * m_target.Width);
+                switch (shape)
+                {
+                    case Shape.Shapes.Circle:
+                        return @"WhiteCircle50x50.png";
+                    case Shape.Shapes.Square:
+                        return @"White10x10.png";
+                }
+                throw new ArgumentException("Unknown shape");
             }
 
-            m_target.X = m_rndGen.Next(0, m_w.POW_WIDTH - m_target.Width + 1);
-            m_target.Y = m_rndGen.Next(0, m_w.POW_HEIGHT - m_target.Height + 1);
-        }
+            protected override AbstractSchoolWorld World
+            {
+                get
+                {
+                    return m_w;
+                }
+            }
 
-        protected void CreateAgent()
-        {
-            m_w.CreateAgent(null, 0, 0);
-            m_agent = m_w.Agent;
-            // center the agent
-            m_agent.X = m_w.POW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = m_w.POW_HEIGHT / 2 - m_agent.Height / 2;
+            protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
+            {
+                m_w = w as RoguelikeWorld;
+                m_w.ClearWorld();
+                if (trainingSetHints[TSHintAttributes.NOISE] > 0)
+                {
+                    m_w.IsImageNoise = true;
+                }
+                CreateAgent();
+            }
+
+            protected override void CreateTarget(TrainingSetHints trainingSetHints, Shape.Shapes shape)
+            {
+                m_target = new Shape(shape, 0, 0);
+                m_w.AddGameObject(m_target);
+
+                if (trainingSetHints[TSHintAttributes.VARIABLE_SIZE] > 0)
+                {
+                    double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
+                    m_target.Height = (int)(resizeRatio * m_target.Height);
+                    m_target.Width = (int)(resizeRatio * m_target.Width);
+                }
+
+                m_target.X = m_rndGen.Next(0, m_w.POW_WIDTH - m_target.Width + 1);
+                m_target.Y = m_rndGen.Next(0, m_w.POW_HEIGHT - m_target.Height + 1);
+            }
+
+            protected void CreateAgent()
+            {
+                m_w.CreateAgent(null, 0, 0);
+                m_agent = m_w.Agent;
+                // center the agent
+                m_agent.X = m_w.POW_WIDTH / 2 - m_agent.Width / 2;
+                m_agent.Y = m_w.POW_HEIGHT / 2 - m_agent.Height / 2;
+            }
         }
-    }
- */
+     */
 }
