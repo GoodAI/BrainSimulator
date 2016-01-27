@@ -24,6 +24,8 @@ namespace GoodAI.Modules.School.Common
         protected Dictionary<ILearningTask, Type> TaskWorldTypes = new Dictionary<ILearningTask, Type>();
        
 
+        public string Name { get; set; }
+
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
         {

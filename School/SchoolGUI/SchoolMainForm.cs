@@ -102,6 +102,7 @@ namespace GoodAI.School.GUI
         private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
         {
             SchoolCurriculum data = new SchoolCurriculum();
+            data.Name = node.Text;
 
             foreach (LearningTaskNode taskNode in node.Nodes)
                 data.AddLearningTask(taskNode.Type, taskNode.WorldType);
@@ -111,7 +112,7 @@ namespace GoodAI.School.GUI
 
         private CurriculumNode CurriculumDataToCurriculumNode(SchoolCurriculum data)
         {
-            CurriculumNode node = new CurriculumNode("tmp");
+            CurriculumNode node = new CurriculumNode(data.Name);
 
             foreach (ILearningTask task in data)
             {
