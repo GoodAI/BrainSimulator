@@ -1,9 +1,10 @@
 ﻿using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
 using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTSimpleSize : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTSimpleSize : AbstractLearningTask<SchoolRoguelikeWorld>
     {
         public const string COLOR_PATTERNS = "Color patterns";
         public const string TARGET_SIZE_LEVELS = "Target size levels";
@@ -17,7 +18,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTSimpleSize() { }
 
-        public LTSimpleSize(ManInWorld w)
+        public LTSimpleSize(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints
@@ -54,7 +55,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.FreezeWorld(true);
+            WrappedWorld.FreezeWorld(true);
 
             CreateAgent();
             CreateTarget();
@@ -80,19 +81,19 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            World.CreateAgent(null, 0, 0);
-            m_agent = World.Agent;
+            WrappedWorld.CreateAgent(null, 0, 0);
+            m_agent = WrappedWorld.Agent;
             // center the agent
-            m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = World.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
+            m_agent.Y = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2;
         }
 
         // scale and position the target:
         protected void CreateTarget()
         {
             // the number of different sizes depends on level:
-            int maxWidth = (int)(World.POW_WIDTH * 0.9);
-            int maxHeight = (int)(World.POW_HEIGHT * 0.9);
+            int maxWidth = (int)(WrappedWorld.POW_WIDTH * 0.9);
+            int maxHeight = (int)(WrappedWorld.POW_HEIGHT * 0.9);
             float fRatio = m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1) / (float)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
 
             int width = (int)(maxWidth * fRatio);
@@ -110,14 +111,14 @@ namespace GoodAI.Modules.School.LearningTasks
 
             }
             m_target.isBitmapAsMask = TSHints[LTSimpleSize.COLOR_PATTERNS] != 0;
-            m_target.maskColor = World.BackgroundColor;
+            m_target.maskColor = WrappedWorld.BackgroundColor;
             LearningTaskHelpers.RandomizeColorWDiff(ref m_target.maskColor, 0.1f, m_rndGen);
 
-            World.AddGameObject(m_target);
+            WrappedWorld.AddGameObject(m_target);
 
             // first implementation, random object position (left or right)
-            int maxTargetDistanceX = m_rndGen.Next(0, (int)((TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] / 2.0f) * (World.POW_WIDTH - m_target.Width)));
-            int maxTargetDistanceY = m_rndGen.Next(0, (int)((TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] / 2.0f) * (World.POW_HEIGHT - m_target.Height)));
+            int maxTargetDistanceX = m_rndGen.Next(0, (int)((TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] / 2.0f) * (WrappedWorld.POW_WIDTH - m_target.Width)));
+            int maxTargetDistanceY = m_rndGen.Next(0, (int)((TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] / 2.0f) * (WrappedWorld.POW_HEIGHT - m_target.Height)));
 
             bool isLeft = m_rndGen.Next(0, 2) == 1;
             if (isLeft)
