@@ -246,7 +246,7 @@ namespace GoodAI.Modules.School.Common
         }
 
         // The world where the agent lives
-        public SchoolAdapterWorld AdapterWorld { get; set; }
+        public SchoolWorld AdapterWorld { get; set; }
 
         // The wrapped world (e.g., a RoguelikeWorld or a TetrisWorld) that defines the agent's environment.
         // The learning task can access it to control the environment.
@@ -281,7 +281,7 @@ namespace GoodAI.Modules.School.Common
 
         public AbstractLearningTask() { }
 
-        public AbstractLearningTask(SchoolAdapterWorld adapterWorld)
+        public AbstractLearningTask(SchoolWorld adapterWorld)
         {
             AdapterWorld = adapterWorld;
             // I think we cannot avoid this cast? [SA]

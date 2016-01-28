@@ -78,7 +78,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTDetectColor() { }
 
-        public LTDetectColor(SchoolAdapterWorld w)
+        public LTDetectColor(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {

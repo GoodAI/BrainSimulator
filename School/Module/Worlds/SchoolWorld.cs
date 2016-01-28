@@ -15,7 +15,7 @@ using YAXLib;
 namespace GoodAI.Modules.School.Worlds
 {
 
-    public class SchoolAdapterWorld : MyWorld, IMyCustomExecutionPlanner
+    public class SchoolWorld : MyWorld, IMyCustomExecutionPlanner
     {
 
         #region Input and Output MemoryBlocks
@@ -214,7 +214,7 @@ namespace GoodAI.Modules.School.Worlds
         /// Initialize the world's curriculum
         /// </summary>
         [MyTaskInfo(OneShot = true)]
-        public class InitSchoolAdapterWorldTask : MyTask<SchoolAdapterWorld>
+        public class InitSchoolAdapterWorldTask : MyTask<SchoolWorld>
         {
             public override void Init(int nGPU)
             {
@@ -230,7 +230,7 @@ namespace GoodAI.Modules.School.Worlds
         /// <summary>
         /// Update the state of the training task(s)
         /// </summary>
-        public class LearningTaskStepTask : MyTask<SchoolAdapterWorld>
+        public class LearningTaskStepTask : MyTask<SchoolWorld>
         {
             public override void Init(int nGPU)
             {
