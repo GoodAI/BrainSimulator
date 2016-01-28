@@ -26,12 +26,6 @@ namespace GoodAI.Modules.School.LearningTasks
             SetHints(TSHints);
         }
 
-        // TODO Is this needed now??
-        protected override void SetHints(TrainingSetHints trainingSetHints)
-        {
-            AdapterWorld.SetHints(trainingSetHints);
-        }
-
         protected override void PresentNewTrainingUnit()
         {
             CreateTarget();

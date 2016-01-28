@@ -84,7 +84,7 @@ namespace GoodAI.Modules.School.Common
         }
 
         // The world where the agent lives
-        public SchoolWorld AdapterWorld { get; set; }
+        public SchoolWorld SchoolWorld { get; set; }
 
         // for purposes of interface only, do not set directly, it is handled through WrappedWorld
         public IWorldAdapter GenericWrappedWorld { get; set; } 
@@ -115,7 +115,7 @@ namespace GoodAI.Modules.School.Common
 
         protected virtual void SetHints(TrainingSetHints trainingSetHints)
         {
-            AdapterWorld.SetHints(trainingSetHints);
+            SchoolWorld.SetHints(trainingSetHints);
         }
 
         public virtual bool DidAbilityFail
@@ -131,11 +131,11 @@ namespace GoodAI.Modules.School.Common
 
         public AbstractLearningTask() { }
 
-        public AbstractLearningTask(SchoolWorld adapterWorld)
+        public AbstractLearningTask(SchoolWorld schoolWorld)
         {
-            AdapterWorld = adapterWorld;
+            SchoolWorld = schoolWorld;
             // I think we cannot avoid this cast? [SA]
-            WrappedWorld = adapterWorld.CurrentWorld as WrappedWorldClass;
+            WrappedWorld = schoolWorld.CurrentWorld as WrappedWorldClass;
             TSHints = new TrainingSetHints();
             TSProgression = new TrainingSetProgression();
             CurrentNumberOfAttempts = CurrentNumberOfSuccesses = 0;
@@ -151,9 +151,9 @@ namespace GoodAI.Modules.School.Common
             {
                 bool wasUnitSuccessful = false;
 
-                if (AdapterWorld.IsEmulatingUnitCompletion())
+                if (SchoolWorld.IsEmulatingUnitCompletion())
                 {
-                    IsTrainingUnitCompleted = AdapterWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
+                    IsTrainingUnitCompleted = SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
                 }
                 else
                 {
@@ -190,7 +190,7 @@ namespace GoodAI.Modules.School.Common
             IsTrainingUnitCompleted = false;
             if (DoResetWorldBeforeTrainingUnit)
             {
-                AdapterWorld.ClearWorld(TSHints);
+                SchoolWorld.ClearWorld(TSHints);
             }
             PresentNewTrainingUnit();
             HasPresentedFirstUnit = true;
