@@ -59,10 +59,10 @@ namespace GoodAI.Modules.School.Common
                     return new LTDetectColor(w);
                 //case LearningTaskNameEnum.CooldownAction:
                 //    return new LTActionWCooldown(world);
-                //case LearningTaskNameEnum.DetectShape:
-                //    return new LTDetectShape(world);
-                //case LearningTaskNameEnum.DetectShapeColor:
-                //    return new LTDetectShapeColor(world);
+                case LearningTaskNameEnum.DetectShape:
+                    return new LTDetectShape(w);
+                case LearningTaskNameEnum.DetectShapeColor:
+                    return new LTDetectShapeColor(w);
                 //case LearningTaskNameEnum.DetectBlackAndWhite:
                 //    return new LTDetectBlackAndWhite(world);
                 case LearningTaskNameEnum.DetectAngle:

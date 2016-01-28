@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectShape : DeprecatedAbstractLearningTask<ManInWorld>
+    class LTDetectShape : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTDetectShape() { }
 
-        public LTDetectShape(ManInWorld w)
+        public LTDetectShape(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -33,11 +33,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.CreateNonVisibleAgent();
+            WrappedWorld.CreateNonVisibleAgent();
 
             if (TSHints[TSHintAttributes.NOISE] > 0)
             {
-                World.IsImageNoise = true;
+                WrappedWorld.IsImageNoise = true;
             }
 
             // wtih Pr=.5 show object
@@ -51,10 +51,10 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
 
                 // random position
-                Point shapePosition = World.Agent.GetGeometry().Location + new Size(20, 0);
+                Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
                 if (TSHints[TSHintAttributes.RANDOMNESS] >= 1)
                 {
-                    shapePosition = World.GetRandomPositionInsidePow(m_rndGen, shapeSize);
+                    shapePosition = WrappedWorld.GetRandomPositionInsidePow(m_rndGen, shapeSize);
                 }
 
                 //with Pr=.5 pick Square, else pick Circle
@@ -67,7 +67,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     m_target_type = Shape.Shapes.Square;
                 }
 
-                m_target = World.CreateShape(shapePosition, m_target_type, Color.White, shapeSize);
+                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, Color.White, shapeSize);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             if (m_target == null)
             {
-                if (World.Controls.Host[0] != 0 || World.Controls.Host[1] != 0)
+                if (WrappedWorld.Controls.Host[0] != 0 || WrappedWorld.Controls.Host[1] != 0)
                 {
                     wasUnitSuccessful = false;
 
@@ -92,11 +92,11 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             else
             {
-                if (m_target_type == Shape.Shapes.Circle && World.Controls.Host[0] != 0 && World.Controls.Host[1] <= 0.01f)
+                if (m_target_type == Shape.Shapes.Circle && WrappedWorld.Controls.Host[0] != 0 && WrappedWorld.Controls.Host[1] <= 0.01f)
                 {
                     wasUnitSuccessful = true;
                 }
-                else if (m_target_type == Shape.Shapes.Square && World.Controls.Host[1] != 0 && World.Controls.Host[0] <= 0.01f)
+                else if (m_target_type == Shape.Shapes.Square && WrappedWorld.Controls.Host[1] != 0 && WrappedWorld.Controls.Host[0] <= 0.01f)
                 {
                     wasUnitSuccessful = true;
                 }

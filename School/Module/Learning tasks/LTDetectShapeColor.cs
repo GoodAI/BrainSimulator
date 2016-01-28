@@ -4,7 +4,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectShapeColor : DeprecatedAbstractLearningTask<ManInWorld>
+    class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected Shape m_target;
@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTDetectShapeColor() { }
 
-        public LTDetectShapeColor(ManInWorld w)
+        public LTDetectShapeColor(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -59,8 +59,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            bool wasCircleTargetDetected = (World as ManInWorld).Controls.Host[0] != 0;
-            bool wasSquareTargetDetected = (World as ManInWorld).Controls.Host[1] != 0;
+            bool wasCircleTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[0] != 0;
+            bool wasSquareTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[1] != 0;
 
             // both target detected
             if (wasCircleTargetDetected && wasSquareTargetDetected)
@@ -94,18 +94,18 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            World.CreateAgent(null, 0, 0);
-            m_agent = World.Agent;
+            WrappedWorld.CreateAgent(null, 0, 0);
+            m_agent = WrappedWorld.Agent;
             // center the agent
-            m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = World.FOW_HEIGHT - m_agent.Height;
+            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
+            m_agent.Y = WrappedWorld.FOW_HEIGHT - m_agent.Height;
         }
 
         protected void CreateTarget(Shape.Shapes shape)
         {
             m_target = new Shape(shape, 0, 0);
-            World.AddGameObject(m_target);
-            m_target.X = m_rndGen.Next(m_agent.X - World.POW_WIDTH / 2, m_agent.X + World.POW_WIDTH / 2 - m_target.Width + 1);
+            WrappedWorld.AddGameObject(m_target);
+            m_target.X = m_rndGen.Next(m_agent.X - WrappedWorld.POW_WIDTH / 2, m_agent.X + WrappedWorld.POW_WIDTH / 2 - m_target.Width + 1);
             if (TSHints[TSHintAttributes.VARIABLE_SIZE] > 0)
             {
                 double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
@@ -113,8 +113,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.Width = (int)(resizeRatio * m_target.Width);
             }
 
-            m_target.X = m_rndGen.Next(m_agent.X - World.POW_WIDTH / 2, m_agent.X + World.POW_WIDTH / 2 - m_target.Width + 1);
-            m_target.Y = World.FOW_HEIGHT - m_target.Height;
+            m_target.X = m_rndGen.Next(m_agent.X - WrappedWorld.POW_WIDTH / 2, m_agent.X + WrappedWorld.POW_WIDTH / 2 - m_target.Width + 1);
+            m_target.Y = WrappedWorld.FOW_HEIGHT - m_target.Height;
         }
 
     }
@@ -137,7 +137,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 throw new ArgumentException("Unknown shape");
             }
 
-            protected override AbstractSchoolWorld World
+            protected override AbstractSchoolWorld WrappedWorld
             {
                 get
                 {
