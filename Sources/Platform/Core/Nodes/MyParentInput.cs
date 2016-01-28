@@ -7,11 +7,6 @@ namespace GoodAI.Core.Nodes
 {    
     public class MyParentInput : MyNode
     {
-        public MyParentInput()
-        {
-            base.OutputBranches = 1;
-        }
-
         [MyOutputBlock]
         public MyMemoryBlock<float> Output
         {
@@ -42,7 +37,7 @@ namespace GoodAI.Core.Nodes
 
         public override int OutputBranches
         {
-            get { return base.OutputBranches; }
+            get { return 1; }
             set { }
         }
 

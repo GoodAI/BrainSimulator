@@ -76,17 +76,15 @@ namespace GoodAI.Core.Nodes
         [ReadOnly(false)]
         public override int OutputBranches
         {
-            get { return base.OutputBranches; }
+            get { return GroupOutputNodes != null ? GroupOutputNodes.Length : 0; }
             set
             {
-                base.OutputBranches = value;
-
                 int nodesToCopy = Math.Min(value, OutputBranches);
 
                 MyOutput[] oldOutputs = GroupOutputNodes;
                 GroupOutputNodes = new MyOutput[value];
 
-                if (oldOutputs != null && oldOutputs.Length >= nodesToCopy)
+                if (oldOutputs != null)
                 {
                     Array.Copy(oldOutputs, GroupOutputNodes, nodesToCopy);
                 }

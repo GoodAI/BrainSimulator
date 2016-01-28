@@ -128,7 +128,6 @@ namespace GoodAI.Core.Nodes
         #region Node inputs
 
         public MyConnection[] InputConnections { get; protected set; }        
-        public HashSet<MyConnection>[] OutputConnections { get; protected set; }        
 
         [MyBrowsable, Category("I/O"), ReadOnly(true)]
         public virtual int InputBranches
@@ -139,17 +138,12 @@ namespace GoodAI.Core.Nodes
                 int connToCopy = Math.Min(value, InputBranches);
                 MyConnection[] oldConns = InputConnections;
 
-                for (int i = connToCopy; i < InputBranches; i++)
-                {
-                    var connection = InputConnections[i];
-                    if (connection != null)
-                        connection.Disconnect();
-                }
-
                 InputConnections = new MyConnection[value];
 
                 if (oldConns != null)
+                {
                     Array.Copy(oldConns, InputConnections, connToCopy);
+                }
             }
         }
 
@@ -191,28 +185,7 @@ namespace GoodAI.Core.Nodes
         #region Node outputs
 
         [MyBrowsable, Category("I/O"), ReadOnly(true)]
-        public virtual int OutputBranches
-        {
-            get { return OutputConnections == null ? 0 : OutputConnections.Length; }
-            set
-            {
-                int connToCopy = Math.Min(value, OutputBranches);
-                HashSet<MyConnection>[] oldConns = OutputConnections;
-
-                for (int i = connToCopy; i < OutputBranches; i++)
-                    foreach (MyConnection connection in OutputConnections[i].ToList())
-                        connection.Disconnect();
-
-                OutputConnections = new HashSet<MyConnection>[value];
-
-                if (oldConns != null)
-                    Array.Copy(oldConns, OutputConnections, connToCopy);
-
-                for (int i = connToCopy; i < OutputBranches; i++)
-                    if (OutputConnections[i] == null)
-                        OutputConnections[i] = new HashSet<MyConnection>();
-            }
-        }
+        public abstract int OutputBranches { get; set; }   
 
         public abstract MyMemoryBlock<float> GetOutput(int index);
         public abstract MyMemoryBlock<T> GetOutput<T>(int index) where T : struct;
