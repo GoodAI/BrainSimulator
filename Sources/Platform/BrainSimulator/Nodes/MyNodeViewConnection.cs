@@ -10,18 +10,16 @@ namespace GoodAI.BrainSimulator.Nodes
         {
             get
             {
-                string name = "0";
-
                 if (From != null && (From.Node is MyNodeView) && (Tag is MyConnection))
                 {
                     MyNodeView fromNodeView = From.Node as MyNodeView;
 
                     var memBlock = fromNodeView.Node.GetAbstractOutput((Tag as MyConnection).FromIndex);
                     if (memBlock != null)
-                        name = memBlock.Dims.Print(hideTrailingOnes: true);
+                        return memBlock.Dims.Print(hideTrailingOnes: true);
                 }
 
-                return name;
+                return "0";
             }
             set
             {
