@@ -51,8 +51,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTSimpleDistance(w);
                 //case LearningTaskNameEnum.DebuggingTask:
                 //    return new LTDebugging(world);
-                //case LearningTaskNameEnum.MovingTarget:
-                //    return new LTMovingTarget(world);
+                case LearningTaskNameEnum.MovingTarget:
+                    return new LTMovingTarget(w);
                 //case LearningTaskNameEnum.OneDApproach:
                 //    return new LT1DApproach(world);
                 case LearningTaskNameEnum.DetectColor:
@@ -65,18 +65,18 @@ namespace GoodAI.Modules.School.Common
                 //    return new LTDetectShapeColor(world);
                 //case LearningTaskNameEnum.DetectBlackAndWhite:
                 //    return new LTDetectBlackAndWhite(world);
-                //case LearningTaskNameEnum.DetectAngle:
-                //    return new LTSimpleAngle(world);
-                //case LearningTaskNameEnum.ShapeGroups:
-                //    return new LTShapeGroups(world as RoguelikeWorld);
+                case LearningTaskNameEnum.DetectAngle:
+                    return new LTSimpleAngle(w);
+                case LearningTaskNameEnum.ShapeGroups:
+                    return new LTShapeGroups(w);
                 //case LearningTaskNameEnum.CopyAction:
                 //    return new LTCopyAction(world);
                 //case LearningTaskNameEnum.CopySequence:
                 //    return new LTCopySequence(world);
                 //case LearningTaskNameEnum.DetectDifference:
                 //    return new LTDetectDifference(world);
-                //case LearningTaskNameEnum.DetectSimilarity:
-                //    return new LTDetectSimilarity(world);
+                case LearningTaskNameEnum.DetectSimilarity:
+                    return new LTDetectSimilarity(w);
                 //case LearningTaskNameEnum.CompareLayouts:
                 //    return new LTCompareLayouts(world);
                 //case LearningTaskNameEnum.ClassComposition:

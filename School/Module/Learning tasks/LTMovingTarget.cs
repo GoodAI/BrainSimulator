@@ -17,7 +17,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Different levels will create targets with different moving characteristics.
     /// The teacher declares the ability as learned when the agent reaches the last level.
     /// </description>
-    public class LTMovingTarget : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTMovingTarget : AbstractLearningTask<ManInWorld>
     {
 
         public uint UnitSuccesses { get; set; }
@@ -34,7 +34,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTMovingTarget() { }
 
-        public LTMovingTarget(ManInWorld w)
+        public LTMovingTarget(SchoolWorld w)
             : base(w)
         {
             MyLog.ERROR.WriteLine("Initialising: ");
@@ -57,10 +57,10 @@ namespace GoodAI.Modules.School.LearningTasks
 
             /*
             // should it be here?
-            World.FOW_WIDTH = 400;
-            World.FOW_HEIGHT = 300;
-            World.VisualFOW.ColumnHint = 400;
-            World.VisualFOW.Reallocate(World.FOW_WIDTH * World.FOW_HEIGHT * 3);
+            WrappedWorld.FOW_WIDTH = 400;
+            WrappedWorld.FOW_HEIGHT = 300;
+            WrappedWorld.VisualFOW.ColumnHint = 400;
+            WrappedWorld.VisualFOW.Reallocate(WrappedWorld.FOW_WIDTH * WrappedWorld.FOW_HEIGHT * 3);
             */
 
         }
@@ -82,7 +82,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.Cleanup();
+            WrappedWorld.Cleanup();
             CreateAgent();
             CreateTarget();
             UnitAttempts = 0;
@@ -91,18 +91,18 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            World.CreateAgent(@"Plumber24x28.png", m_rndGen.Next(0, World.FOW_WIDTH - 100), m_rndGen.Next(0, World.FOW_HEIGHT - 100));              // Create Agent in a random X,Y position
-            m_agent = World.Agent;                                                                                                                  // Create reference to Agent
+            WrappedWorld.CreateAgent(@"Plumber24x28.png", m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - 100), m_rndGen.Next(0, WrappedWorld.FOW_HEIGHT - 100));              // Create Agent in a random X,Y position
+            m_agent = WrappedWorld.Agent;                                                                                                                  // Create reference to Agent
         }
 
         protected void CreateTarget()
         {
-            MovableGameObject Target = new MovableGameObject(GameObjectType.Enemy, @"Coin16x16.png", m_rndGen.Next(0, World.FOW_WIDTH - 100), 200); // Create Target in a random X position
+            MovableGameObject Target = new MovableGameObject(GameObjectType.Enemy, @"Coin16x16.png", m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - 100), 200); // Create Target in a random X position
             Target.vX = TSHints[TARGET_VX];                                                                                                         // Initialise X velocity (It will start by moving on the right)
             Target.vY = TSHints[TARGET_VY];                                                                                                         // Y velocity is 0 (Doesn't move Up/Down)
             Target.GameObjectStyle = GameObjectStyleType.Pinball;                                                                                   // Define Object type as Pinball, so it bounces
             Target.IsAffectedByGravity = false;
-            World.AddGameObject(Target);
+            WrappedWorld.AddGameObject(Target);
             m_target = Target;                                                                                                                      // Create reference to Target
 
         }
@@ -119,8 +119,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (m_agent.DistanceTo(m_target) < 15f)     // TrainingUnit is completed when the Agent reaches the coin
             {
-                World.Reward.Host[0] = 1f;              // Temporary way of using the reward for testing
-                World.Reward.SafeCopyToDevice();
+                WrappedWorld.Reward.Host[0] = 1f;              // Temporary way of using the reward for testing
+                WrappedWorld.Reward.SafeCopyToDevice();
 
                 UnitSuccesses++;
                 if (UnitSuccesses >= TSHints[TSHintAttributes.REQUIRED_UNIT_SUCCESSES])
@@ -129,8 +129,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
             }
 
-            World.Reward.Host[0] = 0f;                  // Temporary way of using the reward for testing
-            World.Reward.SafeCopyToDevice();
+            WrappedWorld.Reward.Host[0] = 0f;                  // Temporary way of using the reward for testing
+            WrappedWorld.Reward.SafeCopyToDevice();
 
             return false;
         }

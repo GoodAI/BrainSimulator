@@ -3,11 +3,11 @@ using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTShapeGroups : DeprecatedAbstractLearningTask<RoguelikeWorld>
+    public class LTShapeGroups : AbstractLearningTask<RoguelikeWorld>
     {
         public LTShapeGroups() { }
 
-        public LTShapeGroups(RoguelikeWorld w)
+        public LTShapeGroups(SchoolWorld w)
             : base(w)
         {
             //  TODO Add TSHints
@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void SetHints(TrainingSetHints trainingSetHints)
         {
-            World.SetHints(trainingSetHints);
+            WrappedWorld.SetHints(trainingSetHints);
         }
 
         protected override void PresentNewTrainingUnit()
