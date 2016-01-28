@@ -1,9 +1,10 @@
 ﻿using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
 using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTSimpleDistance : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTSimpleDistance : AbstractLearningTask<SchoolRoguelikeWorld>
     {
         public const string COLOR_PATTERNS = "Color patterns";
         public const string TARGET_SIZE_LEVELS = "Target size levels";
@@ -18,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTSimpleDistance() { }
 
-        public LTSimpleDistance(ManInWorld w)
+        public LTSimpleDistance(SchoolWorld w)
             : base(w)
         {
 
@@ -58,7 +59,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            World.FreezeWorld(true);
+            WrappedWorld.FreezeWorld(true);
 
             CreateAgent();
             CreateTarget();
@@ -84,19 +85,19 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private void CreateAgent()
         {
-            World.CreateAgent(null, 0, 0);
-            m_agent = World.Agent;
+            WrappedWorld.CreateAgent(null, 0, 0);
+            m_agent = WrappedWorld.Agent;
             // center the agent
-            m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = World.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
+            m_agent.Y = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2;
         }
 
         // scale and position the target:
         private void CreateTarget()
         {
             // the number of different sizes depends on level. The minimum size is 0.8*maximum size
-            int maxWidth = (int)(World.POW_WIDTH * 0.3);
-            int maxHeight = (int)(World.POW_HEIGHT * 0.3);
+            int maxWidth = (int)(WrappedWorld.POW_WIDTH * 0.3);
+            int maxHeight = (int)(WrappedWorld.POW_HEIGHT * 0.3);
             float ratio = m_rndGen.Next(1, (int)TSHints[TARGET_SIZE_LEVELS] + 1) / TSHints[TARGET_SIZE_LEVELS];
             float minRatio = 0.8f;
 
@@ -115,16 +116,16 @@ namespace GoodAI.Modules.School.LearningTasks
 
             }
             m_target.isBitmapAsMask = TSHints[COLOR_PATTERNS] != 0;
-            m_target.maskColor = World.BackgroundColor;
+            m_target.maskColor = WrappedWorld.BackgroundColor;
             LearningTaskHelpers.RandomizeColorWDiff(ref m_target.maskColor, 0.1f, m_rndGen);
 
-            World.AddGameObject(m_target);
+            WrappedWorld.AddGameObject(m_target);
 
             // first implementation, random object position (left or right)
             float maxDistanceRatioX = m_rndGen.Next(0, (int)TSHints[TARGET_DISTANCE_LEVELS] + 1) / TSHints[TARGET_DISTANCE_LEVELS];
             float maxDistanceRatioY = m_rndGen.Next(0, (int)TSHints[TARGET_DISTANCE_LEVELS] + 1) / TSHints[TARGET_DISTANCE_LEVELS];
-            int maxTargetDistanceX = (int)(maxDistanceRatioX * (World.POW_WIDTH - m_target.Width) / 2.0f);
-            int maxTargetDistanceY = (int)(maxDistanceRatioY * (World.POW_HEIGHT - m_target.Height) / 2.0f);
+            int maxTargetDistanceX = (int)(maxDistanceRatioX * (WrappedWorld.POW_WIDTH - m_target.Width) / 2.0f);
+            int maxTargetDistanceY = (int)(maxDistanceRatioY * (WrappedWorld.POW_HEIGHT - m_target.Height) / 2.0f);
 
             bool isLeft = m_rndGen.Next(0, 2) == 1;
             if (isLeft)
@@ -154,7 +155,7 @@ namespace GoodAI.Modules.School.LearningTasks
     //    protected int m_reportedDistance = -1;
     //    TSHintsSimpleDistance hints;
 
-    //    protected abstract AbstractSchoolWorld World { get; }
+    //    protected abstract AbstractSchoolWorld WrappedWorld { get; }
 
     //    public void PresentNewTrainingUnit(AbstractSchoolWorld w, IHints hints)
     //    {
@@ -168,9 +169,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
     //    public bool IsTrainingUnitCompleted(out bool wasUnitSuccessful)
     //    {
-    //        if (World.IsEmulatingUnitCompletion())
+    //        if (WrappedWorld.IsEmulatingUnitCompletion())
     //        {
-    //            return World.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
+    //            return WrappedWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
     //        }
     //        else
     //        {
@@ -198,7 +199,7 @@ namespace GoodAI.Modules.School.LearningTasks
     //{
     //    private ManInWorld m_w;
 
-    //    protected override AbstractSchoolWorld World
+    //    protected override AbstractSchoolWorld WrappedWorld
     //    {
     //        get
     //        {

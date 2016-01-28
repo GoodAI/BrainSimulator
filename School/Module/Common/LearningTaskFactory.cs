@@ -47,8 +47,8 @@ namespace GoodAI.Modules.School.Common
                 //    return new LTApproach(world as RoguelikeWorld);
                 case LearningTaskNameEnum.SimpleSizeDetection:
                     return new LTSimpleSize(w);
-                //case LearningTaskNameEnum.SimpleDistanceDetection:
-                //    return new LTSimpleDistance(world);
+                case LearningTaskNameEnum.SimpleDistanceDetection:
+                    return new LTSimpleDistance(w);
                 //case LearningTaskNameEnum.DebuggingTask:
                 //    return new LTDebugging(world);
                 //case LearningTaskNameEnum.MovingTarget:
