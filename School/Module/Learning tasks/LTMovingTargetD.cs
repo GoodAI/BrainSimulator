@@ -2,6 +2,7 @@
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -13,9 +14,10 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability Name: Efficient navigation in a simple environment + moving target. The class is derived from LTApproach with some additions for the moving target (currently: circular movement).
     /// Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
     /// </description>
-    public class LTMovingTargetD : LTApproach                       // Deriving from LTApproach
+    public class LTMovingTargetD : LTApproach                           // Deriving from LTApproach
     {
         float angle;                                                    // Used for the trajectory of the circular movement of the target
+        Point Trajectory = new Point();
 
         public LTMovingTargetD(RoguelikeWorld w)
             : base(w)
@@ -30,35 +32,63 @@ namespace GoodAI.Modules.School.LearningTasks
             base.UpdateState();
 
             // The movement of the moving target is circular, and this circular movement is represented by an ellipse inside a rectangle (the Screen)
-            // The ellipse's coordinates are calculated using a canonical form in polar coordinates 
-            // angle is the angle, it varies from 0 to 360 degrees, but it's in radians, so the range is from 0 to 2Pi 
-            // For details: https://en.wikipedia.org/wiki/Ellipse#Parametric_form_in_canonical_position
 
-            float Cx = World.FOW_WIDTH / 2;                             // X coordinate of the center of the rectangle
-            float Cy = World.FOW_HEIGHT / 2;                            // Y coordinate of the center of the rectangle
+            int stepsForEllipse = 1000;                                  // How many steps will denote one complete cycle of the ellipse
 
-            float width = World.FOW_WIDTH / 2;                            // Width of the rectangle that will contain the ellipse
-            float height = World.FOW_HEIGHT / 2;                          // Height of the rectangle that will contain the ellipse
+            angle += (float)(1f) / stepsForEllipse;                     // Increase the angle (which will produce the coordinates that will be used to generate the point to move towards to)
 
-            int stepsForEllipse = 1000;                                 // How many steps will denote one complete cycle of the ellipse
-
-
-            angle += (float)(2 * Math.PI) / stepsForEllipse;            // Reset angle when it reaches 2*Pi 
-            if (angle > 6.27f)
+            if (angle > 1f )
             {
                 angle = 0;
             }
 
-            double toX = Cx + (width / 2) * Math.Cos(angle);           // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable angle)
-            double toY = Cy + (height / 2) * Math.Sin(angle);          // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+            Trajectory = GetPointInEllipse(angle, 1f);                  // Find the current coordinates to follow
+            MoveTowardsPoint(Trajectory.X, Trajectory.Y, 2);            // Move target towards the desired Trajectory
 
-            //MyLog.DEBUG.WriteLine("angle : " + angle);
+             //MyLog.DEBUG.WriteLine("angle : " + angle);
+        }
 
-            moveTowardsPoint((int)toX, (int)toY, 3);
+        
+        public override void CreateTarget()
+        {
+            //base.CreateTarget();
+            
+            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
+            Point RandomPoint = new Point();
+            float NewNumber = (float)m_rndGen.NextDouble();
+            RandomPoint = GetPointInEllipse(NewNumber, 1f);                        // Find a random point in the ellipse
+            angle = NewNumber;
+
+            m_target.X = RandomPoint.X;
+            m_target.Y = RandomPoint.Y;
+
+            World.AddGameObject(m_target);
         }
 
 
-        public void moveTowardsPoint(int x, int y, int velocity)        // Given a point, the target moves towards it using steps of settable length (velocity)
+
+        // The ellipse's coordinates are calculated using a canonical form in polar coordinates 
+        // angle is the angle, it varies from 0 to 360 degrees, but it's in radians, so the range is from 0 to 2Pi 
+        // For details: https://en.wikipedia.org/wiki/Ellipse#Parametric_form_in_canonical_position
+
+        public Point GetPointInEllipse(float angle, float EllipseRatioSize)    // angle ranges from 0 to 2Pi, EllipseRatioSize ranges from 0 to 1 
+        {
+            Point ReturnResult = new Point();
+
+            float width = World.FOW_WIDTH / 2;                                 // Width of the rectangle that will contain the ellipse
+            float height = World.FOW_HEIGHT / 2;                               // Height of the rectangle that will contain the ellipse
+
+            float Cx = World.FOW_WIDTH / 2;                                    // X coordinate of the center of the rectangle
+            float Cy = World.FOW_HEIGHT / 2;                                   // Y coordinate of the center of the rectangle
+
+            ReturnResult.X = (int)(Cx + (width / 2) * Math.Cos(angle * (Math.PI * 2)));        // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+            ReturnResult.Y = (int)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));       // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+
+            return ReturnResult;
+
+        }
+
+        public void MoveTowardsPoint(int x, int y, int velocity)        // Given a point, the target moves towards it using steps of settable length in pixels (velocity)
         {
             // At each step, the target can move only on 1 axis, so choose the axis depending on the distances
             if (Math.Abs(x - m_target.X) > Math.Abs(y - m_target.Y))    // Check what axis has the smallest difference between 2 points, the movement can happen only by 1 axis at a time

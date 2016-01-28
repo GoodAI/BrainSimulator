@@ -147,7 +147,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_agent.Y -= m_agent.Height / 2;
         }
 
-        protected void CreateTarget()
+        public virtual void CreateTarget()
         {
             // Plumber:
             //m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
