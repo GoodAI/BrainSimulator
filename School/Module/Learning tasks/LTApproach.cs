@@ -128,7 +128,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-        protected bool DidTrainingUnitFail()
+        public virtual bool DidTrainingUnitFail()
         {
             return m_stepsSincePresented > m_initialDistance;
         }
