@@ -3,6 +3,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;

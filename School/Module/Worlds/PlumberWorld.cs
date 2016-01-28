@@ -48,7 +48,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual void CreateTasks()
         {
-            InitSchool = new InitialiseWorldTask();
+            //InitSchool = new InitialiseWorldTask();
             GetInputTask = new GetPlumberInputTask();
             UpdateWorldTask = new UpdatePlumberTask();
             RenderWorldTask = new RenderTask();
@@ -101,21 +101,21 @@ namespace GoodAI.Modules.School.Worlds
         /// <summary>
         /// Initialises The objects that will populate the world using "AddGameObject" which is derived from ManInWorld world, this will define the current level
         /// </summary>
-        [MyTaskInfo(OneShot = true, Order = 90)]
-        public class InitialiseWorldTask : InitSchoolTask
-        {
-            public PlumberWorld PlumberOwner { get { return (PlumberWorld)Owner; } }
+        //[MyTaskInfo(OneShot = true, Order = 90)]
+        //public class InitialiseWorldTask : InitSchoolTask
+        //{
+        //    public PlumberWorld PlumberOwner { get { return (PlumberWorld)Owner; } }
 
-            public override void Init(int nGPU)
-            {
-                base.Init(nGPU);
-            }
+        //    public override void Init(int nGPU)
+        //    {
+        //        base.Init(nGPU);
+        //    }
 
-            public override void Execute()
-            {
-                base.Execute();
-            }
-        }
+        //    public override void Execute()
+        //    {
+        //        base.Execute();
+        //    }
+        //}
 
         /// <summary>
         /// Apply configurable gravity physics to the specified GameObjects
