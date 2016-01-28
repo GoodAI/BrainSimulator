@@ -116,7 +116,6 @@ namespace GoodAI.Modules.School.Worlds
 
         SchoolCurriculum m_curriculum;
         ILearningTask m_currentLearningTask;
-        Random m_random = new Random();
  
         // The curriculum to use.
         [MyBrowsable, Category("Curriculum"), Description("Choose which type of curriculum you want to use.")]
@@ -208,7 +207,8 @@ namespace GoodAI.Modules.School.Worlds
         // Emulate the successful completion with a specified probability of the current training unit
         public bool EmulateIsTrainingUnitCompleted(out bool wasUnitSuccessful)
         {
-            wasUnitSuccessful = m_random.NextDouble() < EmulatedUnitSuccessProbability;
+            Random rnd = new Random(); // not effective but this method is intended for testing only
+            wasUnitSuccessful = rnd.NextDouble() < EmulatedUnitSuccessProbability;
             return true;
         }
 
