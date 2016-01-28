@@ -7,7 +7,7 @@ namespace GoodAI.School.GUI
     public partial class SchoolRunForm : DockContent
     {
         public List<GoodAI.School.GUI.SchoolMainForm.LearningTaskData> Data;
-        private BindingSource m_source;
+        //private BindingSource m_source;
 
         public SchoolRunForm()
         {
