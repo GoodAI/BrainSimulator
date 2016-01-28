@@ -109,7 +109,6 @@
     <Compile Include="Worlds\RogueGameObjects.cs" />
     <Compile Include="Worlds\RoguelikeWorldObjectsCreator.cs" />
     <Compile Include="Worlds\RoguelikeWorld.cs" />
-    <Compile Include="Worlds\SchoolRoguelikeWorld.cs" />
     <Compile Include="Worlds\SchoolWorld.cs" />
   </ItemGroup>
   <ItemGroup>

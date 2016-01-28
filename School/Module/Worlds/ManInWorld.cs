@@ -3,6 +3,7 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
 using System;
@@ -13,7 +14,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace GoodAI.Modules.School.Common
+namespace GoodAI.Modules.School.Worlds
 {
     /// <author>GoodAI</author>
     /// <meta>Mp,Mv,Os</meta>
@@ -22,7 +23,7 @@ namespace GoodAI.Modules.School.Common
     /// <description>
     /// Implementation of a configurable 2D world
     /// </description>
-    public abstract class ManInWorld : AbstractSchoolWorld
+    public abstract class ManInWorld : AbstractSchoolWorld, IWorldAdapter
     {
         public enum TextureSet
         {

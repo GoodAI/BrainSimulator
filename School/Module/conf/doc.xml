@@ -68,7 +68,7 @@
             The teacher declares the ability as learned when the agent reaches the last level.
             </description>
         </member>
-        <member name="T:GoodAI.Modules.School.Common.ManInWorld">
+        <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
             <author>GoodAI</author>
             <meta>Mp,Mv,Os</meta>
             <status>WIP</status>
@@ -77,25 +77,25 @@
             Implementation of a configurable 2D world
             </description>
         </member>
-        <member name="M:GoodAI.Modules.School.Common.ManInWorld.CreateAgent">
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateAgent">
             <summary>
             Creates agent with default texture in the middle of field.
             </summary>
             <returns>Agent</returns>
         </member>
-        <member name="M:GoodAI.Modules.School.Common.ManInWorld.CreateNonVisibleAgent">
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateNonVisibleAgent">
             <summary>
             Creates agenet in the centre of POW. Agents size is 0x0, he's invisible.
             </summary>
             <returns>Agent as MovableGameObject</returns>
         </member>
-        <member name="M:GoodAI.Modules.School.Common.ManInWorld.SetRewardForCurrentStep(System.Single)">
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.SetRewardForCurrentStep(System.Single)">
             <summary>
             For current step sets reward for the agent
             </summary>
             <param name="reward">Should be between 1 and -1</param>
         </member>
-        <member name="T:GoodAI.Modules.School.Common.ManInWorld.RenderTask">
+        <member name="T:GoodAI.Modules.School.Worlds.ManInWorld.RenderTask">
             <summary>
             Render the world to the visual output.
             </summary>

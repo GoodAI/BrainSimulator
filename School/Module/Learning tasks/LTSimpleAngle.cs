@@ -1,9 +1,10 @@
 ﻿using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
 using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTSimpleAngle : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTSimpleAngle : AbstractLearningTask<ManInWorld>
     {
         public const string TOLERANCE = "Tolerance in rads";
         public const string FIXED_DISTANCE = "Fixed distance to target";
@@ -14,7 +15,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTSimpleAngle() { }
 
-        public LTSimpleAngle(ManInWorld w)
+        public LTSimpleAngle(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -45,7 +46,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            double estimatedAngle = (World as ManInWorld).Controls.Host[0];
+            double estimatedAngle = (WrappedWorld as ManInWorld).Controls.Host[0];
 
             double targetAngle = Math.Atan2(m_target.Y - m_agent.Y, m_target.X - m_agent.X) / 2 / Math.PI;
             if (targetAngle < 0) targetAngle = 1 + targetAngle;
@@ -65,8 +66,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected void CreateTarget()
         {
             m_target = new Shape(Shape.Shapes.Circle, 0, 0);
-            World.AddGameObject(m_target);
-            m_target.X = m_rndGen.Next(m_agent.X - World.POW_WIDTH / 2, m_agent.X + World.POW_WIDTH / 2 - m_target.Width + 1);
+            WrappedWorld.AddGameObject(m_target);
+            m_target.X = m_rndGen.Next(m_agent.X - WrappedWorld.POW_WIDTH / 2, m_agent.X + WrappedWorld.POW_WIDTH / 2 - m_target.Width + 1);
 
             if (TSHints[TSHintAttributes.VARIABLE_SIZE] > 0)
             {
@@ -94,11 +95,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            World.CreateAgent(null, 0, 0);
-            m_agent = World.Agent;
+            WrappedWorld.CreateAgent(null, 0, 0);
+            m_agent = WrappedWorld.Agent;
             // center the agent
-            m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = World.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
+            m_agent.Y = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2;
         }
     }
 

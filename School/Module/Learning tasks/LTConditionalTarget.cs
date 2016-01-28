@@ -1,4 +1,5 @@
 ﻿using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {

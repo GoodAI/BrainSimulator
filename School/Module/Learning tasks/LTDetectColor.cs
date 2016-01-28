@@ -66,7 +66,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
     //}
 
-    public class LTDetectColor : AbstractLearningTask<SchoolRoguelikeWorld>
+    public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
         protected GameObject m_target;
         Random m_rndGen = new Random();
