@@ -48,14 +48,15 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 //random size
                 Size shapeSize = new Size(32, 32);
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
                 {
-                    shapeSize = new Size(20 + m_rndGen.Next(20), 20 + m_rndGen.Next(20));
+                    int side = m_rndGen.Next(10, 48);
+                    shapeSize = new Size(side, side);
                 }
 
                 // random position
                 Point shapePosition = World.Agent.GetGeometry().Location + new Size(20, 0);
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5f)
                 {
                     shapePosition = World.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
