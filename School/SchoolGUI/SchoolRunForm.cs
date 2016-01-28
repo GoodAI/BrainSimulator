@@ -20,7 +20,7 @@ namespace GoodAI.School.GUI
             //dataGridView1.DataSource = m_source;
         }
 
-        public void Update()
+        public void UpdateData()
         {
             // m_source.ResetBindings(true);
             dataGridView1.DataSource = Data;

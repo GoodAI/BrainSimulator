@@ -356,7 +356,7 @@ namespace GoodAI.School.GUI
             SchoolCurriculum curriculum = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
             List<LearningTaskData> data = CurriculumDataToLTData(curriculum);
             RunView.Data = data;
-            RunView.Update();
+            RunView.UpdateData();
         }
 
         #endregion
