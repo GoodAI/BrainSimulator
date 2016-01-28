@@ -7,7 +7,6 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
         public const string COLOR_PATTERNS = "Color patterns";
-        public const string TARGET_SIZE_VARIABILITY = "Target size variability";
         public const string ERROR_TOLERANCE = "Target distance levels";
 
         private Random m_rndGen = new Random();
@@ -24,7 +23,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints = new TrainingSetHints
             {
                 { COLOR_PATTERNS, 0 },
-                { TARGET_SIZE_VARIABILITY, 0 },
+                { TSHintAttributes.VARIABLE_SIZE, 0 },
                 { ERROR_TOLERANCE, 0.25f },
                 { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 1 },
                 { TSHintAttributes.NOISE, 0 },
@@ -42,7 +41,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2 }
             });
             TSProgression.Add(new TrainingSetHints {
-                { TARGET_SIZE_VARIABILITY, 1 },
+                { TSHintAttributes.VARIABLE_SIZE, 1 },
                 { ERROR_TOLERANCE, 0.10f },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 }
             });
@@ -59,6 +58,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override void PresentNewTrainingUnit()
         {
             World.FreezeWorld(true);
+
+            World.IsImageNoise = TSHints[TSHintAttributes.NOISE] >= 1 ? true : false;
 
             CreateAgent();
             CreateTarget();
@@ -97,7 +98,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private void CreateTarget()
         {
             Size size;
-            if (TSHints[TARGET_SIZE_VARIABILITY] >= 1)
+            if (TSHints[TSHintAttributes.VARIABLE_SIZE] >= 1)
             {
                 int side = m_rndGen.Next(8, 24);
                 size = new Size(side, side);

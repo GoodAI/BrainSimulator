@@ -15,6 +15,7 @@ namespace GoodAI.Modules.School.Common
         public const string MAX_NUMBER_OF_ATTEMPTS = "Maximum number of attempts";
 
         public const string VARIABLE_SIZE = "Variable size";
+        public const string VARIABLE_COLOR = "Variable color";
 
         // True if the agent is rewarded at each step for approaching the target
         public const string GIVE_PARTIAL_REWARDS = "Give partial rewards";
