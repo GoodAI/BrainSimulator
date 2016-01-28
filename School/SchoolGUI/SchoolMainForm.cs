@@ -3,6 +3,7 @@ using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Modules.School.Common;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -58,6 +59,11 @@ namespace GoodAI.School.GUI
             public int Steps { get; set; }
             public float Time { get; set; }
             public string Status { get; set; }
+
+            public LearningTaskData(ILearningTask task)
+            {
+                m_task = task;
+            }
         }
 
         #endregion
@@ -114,10 +120,7 @@ namespace GoodAI.School.GUI
                 CurriculumNode node = CurriculumDataToCurriculumNode(curr);
                 m_model.Nodes.Add(node);
             }
-            catch (YAXException)
-            {
-
-            }
+            catch (YAXException) { }
         }
 
         private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
@@ -143,6 +146,18 @@ namespace GoodAI.School.GUI
             }
 
             return node;
+        }
+
+        private List<LearningTaskData> CurriculumDataToLTData(SchoolCurriculum curriculum)
+        {
+            List<LearningTaskData> result = new List<LearningTaskData>();
+            foreach (ILearningTask task in curriculum)
+            {
+                LearningTaskData data = new LearningTaskData(task);
+                result.Add(data);
+            }
+
+            return result;
         }
 
         #endregion
@@ -337,10 +352,29 @@ namespace GoodAI.School.GUI
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            RunView.ShowDialog(this);
+            OpenFloatingOrActivate(RunView, DockPanel);
+            SchoolCurriculum curriculum = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
+            List<LearningTaskData> data = CurriculumDataToLTData(curriculum);
+            RunView.Data = data;
+            RunView.Update();
         }
 
         #endregion
+
+        // almost same as Mainform.OpenFloatingOrActivate - refactor?
+        private void OpenFloatingOrActivate(DockContent view, DockPanel panel)
+        {
+            if ((view.DockAreas & DockAreas.Float) > 0 && !view.Created)
+            {
+                Size viewSize = new Size(view.Bounds.Size.Width, view.Bounds.Size.Height);
+                view.Show(panel, DockState.Float);
+                view.FloatPane.FloatWindow.Size = viewSize;
+            }
+            else
+            {
+                view.Activate();
+            }
+        }
 
         private void tree_SelectionChanged(object sender, EventArgs e)
         {

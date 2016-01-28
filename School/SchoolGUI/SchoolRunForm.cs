@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.School.GUI
 {
-    public partial class SchoolRunForm : Form
+    public partial class SchoolRunForm : DockContent
     {
         public List<GoodAI.School.GUI.SchoolMainForm.LearningTaskData> Data;
         private BindingSource m_source;
