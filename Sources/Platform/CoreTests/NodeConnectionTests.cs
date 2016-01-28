@@ -12,7 +12,19 @@ namespace CoreTests
 {
     public class NodeConnectionTests
     {
+        private readonly TestNode m_node1;
+        private readonly TestNode m_node2;
+        private readonly MyConnection m_connection;
         // TODO(HonzaS): test the special subclasses of MyNode (Input/Output nodes etc.)
+
+        public NodeConnectionTests()
+        {
+            m_node1 = new TestNode();
+            m_node2 = new TestNode();
+
+            m_connection = new MyConnection(m_node1, m_node2, 0, 0);
+            m_connection.Connect();
+        }
         
         sealed class TestNode : MyWorkingNode
         {
@@ -30,92 +42,56 @@ namespace CoreTests
         [Fact]
         public void Connects()
         {
-            var node1 = new TestNode();
-            var node2 = new TestNode();
-
-            var connection = new MyConnection(node1, node2, 0, 0);
-            connection.Connect();
-
-            Assert.Equal(node1.OutputConnections[0].First().To, node2);
-            Assert.Equal(node2.InputConnections[0].From, node1);
+            Assert.Equal(m_node1.OutputConnections[0].First().To, m_node2);
+            Assert.Equal(m_node2.InputConnections[0].From, m_node1);
         }
 
         [Fact]
         public void Disconnects()
         {
-            var node1 = new TestNode();
-            var node2 = new TestNode();
-
-            var connection = new MyConnection(node1, node2, 0, 0);
-            connection.Connect();
-
-            connection.Disconnect();
-            Assert.Empty(node1.OutputConnections[0]);
-            Assert.Null(node2.InputConnections[0]);
+            m_connection.Disconnect();
+            Assert.Empty(m_node1.OutputConnections[0]);
+            Assert.Null(m_node2.InputConnections[0]);
         }
 
         [Fact]
         public void KeepsConnectionsWhenIncreasingOutputBranches()
         {
-            var node1 = new TestNode();
-            var node2 = new TestNode();
-
-            var connection = new MyConnection(node1, node2, 0, 0);
-            connection.Connect();
-
-            node1.OutputBranches = 2;
+            m_node1.OutputBranches = 2;
             
-            Assert.Equal(node1.OutputConnections[0].First().To, node2);
-            Assert.Equal(node2.InputConnections[0].From, node1);
+            Assert.Equal(m_node1.OutputConnections[0].First().To, m_node2);
+            Assert.Equal(m_node2.InputConnections[0].From, m_node1);
 
-            Assert.Empty(node1.OutputConnections[1]);
+            Assert.Empty(m_node1.OutputConnections[1]);
         }
 
         [Fact]
         public void KeepsConnectionsWhenIncreasingInputBranches()
         {
-            var node1 = new TestNode();
-            var node2 = new TestNode();
-
-            var connection = new MyConnection(node1, node2, 0, 0);
-            connection.Connect();
-
-            node2.InputBranches = 2;
+            m_node2.InputBranches = 2;
             
-            Assert.Equal(node1.OutputConnections[0].First().To, node2);
-            Assert.Equal(node2.InputConnections[0].From, node1);
+            Assert.Equal(m_node1.OutputConnections[0].First().To, m_node2);
+            Assert.Equal(m_node2.InputConnections[0].From, m_node1);
 
-            Assert.Null(node2.InputConnections[1]);
+            Assert.Null(m_node2.InputConnections[1]);
         }
 
         [Fact]
         public void DisconnectsWhenDecreasingOutputBranches()
         {
-            var node1 = new TestNode();
-            var node2 = new TestNode();
-
-            var connection = new MyConnection(node1, node2, 0, 0);
-            connection.Connect();
-
-            node1.OutputBranches = 0;
+            m_node1.OutputBranches = 0;
             
-            Assert.Empty(node1.OutputConnections);
-            Assert.Null(node2.InputConnections[0]);
+            Assert.Empty(m_node1.OutputConnections);
+            Assert.Null(m_node2.InputConnections[0]);
         }
 
         [Fact]
         public void DisconnectsWhenDecreasingInputBranches()
         {
-            var node1 = new TestNode();
-            var node2 = new TestNode();
-
-            var connection = new MyConnection(node1, node2, 0, 0);
-            connection.Connect();
-
-            node2.InputBranches = 0;
+            m_node2.InputBranches = 0;
             
-            Assert.Empty(node1.OutputConnections[0]);
-            Assert.Empty(node2.InputConnections);
+            Assert.Empty(m_node1.OutputConnections[0]);
+            Assert.Empty(m_node2.InputConnections);
         }
     }
 }
