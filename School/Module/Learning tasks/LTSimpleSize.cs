@@ -12,9 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;
-        private GameObject m_target;
-        private int m_size = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_size is lower bound of the interval
-        private int m_reportedSize = -1;
+        private float m_scale;
 
         public LTSimpleSize() { }
 
@@ -28,7 +26,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 1 },
                 { TSHintAttributes.NOISE, 0 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
@@ -38,14 +35,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0 }
             });
             TSProgression.Add(new TrainingSetHints {
-                { TARGET_SIZE_LEVELS, 8 },
+                { TARGET_SIZE_LEVELS, 5 },
                 { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2 }
             });
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
             TSProgression.Add(new TrainingSetHints {
-                { TARGET_SIZE_LEVELS, 16 },
+                { TARGET_SIZE_LEVELS, 10 },
                 { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3 },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, 1 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
             });
             TSProgression.Add(TSHintAttributes.NOISE, 1);
@@ -64,13 +60,17 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             // require immediate decision - in a single step
-            if (m_reportedSize >= m_size && m_reportedSize < m_size + 1.0f / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS])
+            float tolerance = 1.0f / (TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1);
+            if (m_scale - tolerance <= World.Controls.Host[0] && World.Controls.Host[0] <= m_scale + tolerance)
             {
                 wasUnitSuccessful = true;
-                return true;
             }
-
-            wasUnitSuccessful = false;
+            else
+            {
+                wasUnitSuccessful = false;
+            }
+            //Console.WriteLine(wasUnitSuccessful);
+            // TODO: partial reward
             return true;
         }
 
@@ -87,19 +87,16 @@ namespace GoodAI.Modules.School.LearningTasks
             int maxHeight = (int)(World.POW_HEIGHT * 0.9);
             float fRatio = m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1) / (float)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
 
-            int maxEdge = (int)(Math.Max(World.POW_WIDTH, World.POW_HEIGHT) * 0.9);
-
-            m_size = m_rndGen.Next(0, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS]);
+            int maxSide = (int)(Math.Max(World.POW_WIDTH, World.POW_HEIGHT) * 0.9);
 
             float randomNumber = (float)(m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1));
-            float scale = randomNumber / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
-            int edge = (int)((float)maxEdge * scale);
+            m_scale = randomNumber / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
+            int side = (int)((float)maxSide * m_scale);
 
-            m_size = maxEdge / edge;
-            Console.WriteLine(maxEdge);
-            Console.WriteLine(edge);
+            //Console.WriteLine(maxSide);
+            //Console.WriteLine(side);
 
-            Size size = new Size(edge, edge);
+            Size size = new Size(side, side);
 
             Point position = World.RandomPositionInsidePow(m_rndGen, size, true);
 
