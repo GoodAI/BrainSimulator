@@ -14,6 +14,8 @@ namespace GoodAI.Core
 
         public String Name { get { return From.Name + "_" + To.Name; } }
 
+        public bool IsLowPriority { get; set; }
+
         public MyConnection(MyNode from, MyNode to, int fromIndex, int toIndex)
         {
             this.From = from;
@@ -39,6 +41,11 @@ namespace GoodAI.Core
         {
             if (ToIndex < To.InputConnections.Length && FromIndex < From.OutputBranches)
             {
+                // Check for this before adding the connection to the inputs.
+                if (To.InputConnections[ToIndex] != this)
+                    // If the flag is already set, keep it, otherwise only set it if the edge would lead to a new cycle.
+                    IsLowPriority = IsLowPriority || From.CheckForCycle(To);
+
                 To.InputConnections[ToIndex] = this;
             }
             else

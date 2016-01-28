@@ -10,7 +10,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 11; }
+            get { return 12; }
         }
 
         public static string Convert1To2(string xml)
@@ -193,6 +193,22 @@ namespace GoodAI.Core.Versioning
                 "<DashboardNodeProperty yaxlib:realtype=\"GoodAI.Core.Dashboard.DashboardNodeProperty\">");
 
             return result;
+        }
+
+        public static string Convert11To12(string xml)
+        {
+            string result = xml;
+
+            // Generics require the new superclass
+            XDocument document = XDocument.Parse(result);
+
+            IEnumerable<XElement> elements = document.XPathSelectElements("//Connection");
+            foreach (XElement element in elements)
+            {
+                element.SetAttributeValue("IsLowPriority", "False");
+            }
+
+            return document.ToString();
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using GoodAI.BrainSimulator.Nodes;
 using GoodAI.BrainSimulator.Utils;
+using Graph;
+
 namespace GoodAI.BrainSimulator.Forms
 {
     partial class GraphLayoutForm

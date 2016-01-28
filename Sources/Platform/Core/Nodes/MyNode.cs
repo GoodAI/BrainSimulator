@@ -314,5 +314,21 @@ namespace GoodAI.Core.Nodes
 
             return true;
         }
+
+        public bool CheckForCycle(MyNode to)
+        {
+            var visited = new HashSet<MyNode> ();
+            return CheckForCycle(this, to, visited);
+        }
+
+        private static bool CheckForCycle(MyNode node, MyNode target, ISet<MyNode> visited)
+        {
+            visited.Add(node);
+
+            return node.InputConnections.Where(connection => connection != null && !connection.IsLowPriority)
+                .Select(connection => connection.From)
+                .Any(source =>
+                    source == target || (!visited.Contains(source) && CheckForCycle(source, target, visited)));
+        }
     }
 }
