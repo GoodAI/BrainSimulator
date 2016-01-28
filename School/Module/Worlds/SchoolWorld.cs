@@ -117,6 +117,11 @@ namespace GoodAI.Modules.School.Worlds
         SchoolCurriculum m_curriculum;
         ILearningTask m_currentLearningTask;
         Random m_random = new Random();
+ 
+        // The curriculum to use.
+        [MyBrowsable, Category("Curriculum"), Description("Choose which type of curriculum you want to use.")]
+        [YAXSerializableField(DefaultValue = CurriculumType.TrainingCurriculum)]
+        public CurriculumType TypeOfCurriculum { get; set; }
 
         // For testing the progression of learning tasks when we don't have an agent or
         // available agents can't complete the task, we can emulate training unit success
@@ -152,7 +157,7 @@ namespace GoodAI.Modules.School.Worlds
 
                 if (m_currentLearningTask.IsAbilityLearned)
                 {
-//TODO fix                    m_currentLearningTask = m_curriculum.GetNextLearningTask();
+                    m_currentLearningTask = m_curriculum.GetNextLearningTask();
                     if (m_currentLearningTask == null)
                         return;
                 }
@@ -171,7 +176,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void InitializeCurriculum()
         {
-            //m_curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this.CurrentWorld);
+            m_curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
         }
 
         public void ClearWorld()
@@ -223,7 +228,7 @@ namespace GoodAI.Modules.School.Worlds
             public override void Execute()
             {
                 Owner.InitializeCurriculum();
-//TODO fix                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
+                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
             }
         }
 

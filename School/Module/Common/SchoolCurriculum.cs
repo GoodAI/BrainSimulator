@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GoodAI.Modules.School.Worlds;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace GoodAI.Modules.School.Common
@@ -20,10 +21,10 @@ namespace GoodAI.Modules.School.Common
     /// <summary>
     /// Holds tasks that an agent should be trained with to gain new abilities
     /// </summary>
-    public class SchoolCurriculum : IEnumerable<IDeprecatedLearningTask>
+    public class SchoolCurriculum : IEnumerable<ILearningTask>
     {
-        protected List<IDeprecatedLearningTask> Tasks = new List<IDeprecatedLearningTask>();
-        private IEnumerator<IDeprecatedLearningTask> m_taskEnumerator;
+        protected List<ILearningTask> Tasks = new List<ILearningTask>();
+        private IEnumerator<ILearningTask> m_taskEnumerator;
 
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
@@ -31,13 +32,13 @@ namespace GoodAI.Modules.School.Common
             return this.GetEnumerator();
         }
 
-        public IEnumerator<IDeprecatedLearningTask> GetEnumerator()
+        public IEnumerator<ILearningTask> GetEnumerator()
         {
-            return Tasks.GetEnumerator() as IEnumerator<IDeprecatedLearningTask>;
+            return Tasks.GetEnumerator() as IEnumerator<ILearningTask>;
         }
 
         // for classic usage
-        public IDeprecatedLearningTask GetNextLearningTask()
+        public ILearningTask GetNextLearningTask()
         {
             if (m_taskEnumerator == null)
                 m_taskEnumerator = Tasks.GetEnumerator();
@@ -51,7 +52,7 @@ namespace GoodAI.Modules.School.Common
             m_taskEnumerator.Reset();
         }
 
-        public void AddLearningTask(IDeprecatedLearningTask task)
+        public void AddLearningTask(ILearningTask task)
         {
             // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
             Tasks.Add(task);
@@ -60,7 +61,7 @@ namespace GoodAI.Modules.School.Common
 
     public class SchoolCurriculumPlanner
     {
-        public static SchoolCurriculum GetCurriculumForWorld(AbstractSchoolWorld world)
+        public static SchoolCurriculum GetCurriculumForWorld(SchoolWorld world)
         {
             SchoolCurriculum curriculum = new SchoolCurriculum();
 

@@ -15,7 +15,7 @@ namespace GoodAI.Modules.School.Common
         void HandlePresentNewTrainingUnit();
     }
 
-    
+
     public interface IDeprecatedLearningTask
     {
         bool HasPresentedFirstUnit { get; set; }
@@ -24,7 +24,7 @@ namespace GoodAI.Modules.School.Common
         bool IsTrainingUnitCompleted { get; set; }
 
         void UpdateState();
-        void HandlePresentNewTrainingUnit(AbstractSchoolWorld w);    
+        void HandlePresentNewTrainingUnit(AbstractSchoolWorld w);
     }
 
     /// <summary>

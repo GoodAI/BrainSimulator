@@ -41,7 +41,7 @@ namespace GoodAI.Modules.School.Common
 
         public void InitializeCurriculum()
         {
-            m_curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
+            //m_curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
         }
 
         public override void UpdateMemoryBlocks()
@@ -50,8 +50,8 @@ namespace GoodAI.Modules.School.Common
         }
 
         public override void Validate(MyValidator validator)
-        { 
-        
+        {
+
         }
 
         public virtual void ClearWorld()
@@ -67,7 +67,7 @@ namespace GoodAI.Modules.School.Common
 
         public virtual void SetHints(TrainingSetHints trainingSetHints)
         {
-            foreach(var kvp in trainingSetHints)
+            foreach (var kvp in trainingSetHints)
             {
                 SetHint(kvp.Key, kvp.Value);
             }
@@ -87,7 +87,7 @@ namespace GoodAI.Modules.School.Common
 
                 if (m_currentLearningTask.IsAbilityLearned)
                 {
-                    m_currentLearningTask = m_curriculum.GetNextLearningTask();
+                    //m_currentLearningTask = m_curriculum.GetNextLearningTask();
                     if (m_currentLearningTask == null)
                         return;
                 }
@@ -148,7 +148,7 @@ namespace GoodAI.Modules.School.Common
             public override void Execute()
             {
                 Owner.InitializeCurriculum();
-                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
+                //Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
             }
         }
 
