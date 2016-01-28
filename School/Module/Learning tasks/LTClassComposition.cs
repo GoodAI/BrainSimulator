@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTClassComposition : DeprecatedAbstractLearningTask<ManInWorld>
+    class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
         public const string CARDINALITY_OF_SET = "Cardinality of set";
 
@@ -20,7 +20,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTClassComposition() { }
 
-        public LTClassComposition(ManInWorld w)
+        public LTClassComposition(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -71,9 +71,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            if (World.GetType() == typeof(RoguelikeWorld))
+            if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
-                RoguelikeWorld world = World as RoguelikeWorld;
+                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
 
                 world.CreateNonVisibleAgent();
 
@@ -123,7 +123,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     shape = m_negativeExamples[randShapePointer];
                 }
 
-                World.CreateShape(position, shape, color, size);
+                WrappedWorld.CreateShape(position, shape, color, size);
             }
             else
             {
@@ -133,7 +133,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (m_positiveExamplePlaced == (World.Controls.Host[0] != 0))
+            if (m_positiveExamplePlaced == (WrappedWorld.Controls.Host[0] != 0))
             {
                 wasUnitSuccessful = true;
             }

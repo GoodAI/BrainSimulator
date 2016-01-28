@@ -4,7 +4,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTApproach : DeprecatedAbstractLearningTask<RoguelikeWorld>
+    public class LTApproach : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTApproach() { }
 
-        public LTApproach(RoguelikeWorld w)
+        public LTApproach(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints
@@ -136,13 +136,13 @@ namespace GoodAI.Modules.School.LearningTasks
         protected void CreateAgent()
         {
             // Plumber:
-            //World.CreateAgent(@"Plumber24x28.png", 0, 0);
-            //m_agent = World.Agent;
+            //WrappedWorld.CreateAgent(@"Plumber24x28.png", 0, 0);
+            //m_agent = WrappedWorld.Agent;
             //// center the agent
-            //m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
+            //m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
             //PutAgentOnFloor();
-            World.CreateAgent(@"Agent.png", World.FOW_WIDTH / 2, World.FOW_HEIGHT / 2);
-            m_agent = World.Agent;
+            WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
+            m_agent = WrappedWorld.Agent;
             m_agent.X -= m_agent.Width / 2;
             m_agent.Y -= m_agent.Height / 2;
         }
@@ -152,11 +152,11 @@ namespace GoodAI.Modules.School.LearningTasks
             // Plumber:
             //m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
 
-            //World.AddGameObject(m_target);
+            //WrappedWorld.AddGameObject(m_target);
 
             //// first implementation, random object position (left or right)
             //int maxTargetDistance
-            //    = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] == -1 ? World.FOW_WIDTH : (int)(World.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+            //    = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] == -1 ? WrappedWorld.FOW_WIDTH : (int)(WrappedWorld.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
 
             //bool isLeft = m_rndGen.Next(0, 2) == 1;
             //int targetDistX = m_rndGen.Next(20, maxTargetDistance / 2 - m_agent.Width / 2 - m_target.Width / 2);
@@ -166,17 +166,17 @@ namespace GoodAI.Modules.School.LearningTasks
             //else
             //    targetX += (targetDistX + m_agent.Width);
             //m_target.X = targetX;
-            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
+            //m_target.Y = WrappedWorld.FOW_HEIGHT - m_target.Height;
 
             m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
-            World.AddGameObject(m_target);
+            WrappedWorld.AddGameObject(m_target);
 
             // first implementation, random object position (left or right)
             bool isLeft = m_rndGen.Next(0, 2) == 1;
             bool isUp = m_rndGen.Next(0, 2) == 1;
 
             const int MIN_TARGET_DISTANCE = 20;
-            int maxTargetDistanceX = World.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
+            int maxTargetDistanceX = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
             if (TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
             {
                 maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
@@ -196,7 +196,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     targetY += (m_agent.Height - m_target.Height) / 2;
                     break;
                 case 2:
-                    int maxTargetDistanceY = World.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
+                    int maxTargetDistanceY = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
                     if (TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
                     {
                         maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
@@ -215,7 +215,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private void PutAgentOnFloor()
         {
-            m_agent.Y = World.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
+            m_agent.Y = WrappedWorld.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
         }
 
     }
@@ -226,7 +226,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             private Worlds m_w;
 
-            protected override AbstractSchoolWorld World
+            protected override AbstractSchoolWorld WrappedWorld
             {
                 get
                 {

@@ -6,10 +6,10 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     // TODO:
-    // World actions have not been implemented yet.
+    // WrappedWorld actions have not been implemented yet.
     // Multiple parameters are incremented in the same step.
 
-    public class LTDetectBlackAndWhite : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
         public const string VARIABLE_SIZE = "Variable size";
 
@@ -18,7 +18,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private bool m_appears;
         private bool m_isBlack;
 
-        public LTDetectBlackAndWhite(ManInWorld w)
+        public LTDetectBlackAndWhite(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints
@@ -43,16 +43,16 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            if (World.GetType() != typeof(RoguelikeWorld))
+            if (WrappedWorld.GetType() != typeof(RoguelikeWorld))
             {
                 throw new NotImplementedException();
             }
 
-            World.CreateNonVisibleAgent();
+            WrappedWorld.CreateNonVisibleAgent();
 
             if (TSHints[TSHintAttributes.NOISE] >= 1)
             {
-                World.IsImageNoise = true;
+                WrappedWorld.IsImageNoise = true;
             }
 
             m_appears = LearningTaskHelpers.FlipCoin(m_rndGen);
@@ -71,24 +71,24 @@ namespace GoodAI.Modules.School.LearningTasks
                         Point position;
             if (TSHints[TSHintAttributes.IS_TARGET_MOVING] >= 1)
             {
-                position = World.GetRandomPositionInsidePow(m_rndGen, size);
+                position = WrappedWorld.GetRandomPositionInsidePow(m_rndGen, size);
             }
             else
             {
-                position = World.Agent.GetGeometry().Location;
+                position = WrappedWorld.Agent.GetGeometry().Location;
             }
 
             m_isBlack = LearningTaskHelpers.FlipCoin(m_rndGen);
             Color color = m_isBlack ? Color.Black : Color.White;
 
-            World.CreateShape(position, Shape.Shapes.Square, color, size);
+            WrappedWorld.CreateShape(position, Shape.Shapes.Square, color, size);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if ((!m_appears && World.Controls.Host[0] == 0 && World.Controls.Host[1] == 0) ||
-                ( m_isBlack && World.Controls.Host[0] != 0 && World.Controls.Host[1] == 0) ||
-                (!m_isBlack && World.Controls.Host[0] == 0 && World.Controls.Host[1] != 0)
+            if ((!m_appears && WrappedWorld.Controls.Host[0] == 0 && WrappedWorld.Controls.Host[1] == 0) ||
+                ( m_isBlack && WrappedWorld.Controls.Host[0] != 0 && WrappedWorld.Controls.Host[1] == 0) ||
+                (!m_isBlack && WrappedWorld.Controls.Host[0] == 0 && WrappedWorld.Controls.Host[1] != 0)
                 )
             {
                 wasUnitSuccessful = true;

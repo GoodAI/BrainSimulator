@@ -36,51 +36,48 @@ namespace GoodAI.Modules.School.Common
     {
         public static ILearningTask CreateLearningTask(LearningTaskNameEnum learningTaskName, SchoolWorld w)
         {
-            // UAAAAAAAAAAA
-            //var world = w as ManInWorld; 
-
             switch (learningTaskName)
             {
                 case LearningTaskNameEnum.DetectWhite:
                     return new LTDetectWhite(w);
-                //case LearningTaskNameEnum.ApproachTarget:
-                //    return new LTApproach(world as RoguelikeWorld);
+                case LearningTaskNameEnum.ApproachTarget:
+                    return new LTApproach(w);
                 case LearningTaskNameEnum.SimpleSizeDetection:
                     return new LTSimpleSize(w);
                 case LearningTaskNameEnum.SimpleDistanceDetection:
                     return new LTSimpleDistance(w);
-                //case LearningTaskNameEnum.DebuggingTask:
-                //    return new LTDebugging(world);
+                case LearningTaskNameEnum.DebuggingTask:
+                    return new LTDebugging(w);
                 case LearningTaskNameEnum.MovingTarget:
                     return new LTMovingTarget(w);
-                //case LearningTaskNameEnum.OneDApproach:
-                //    return new LT1DApproach(world);
+                case LearningTaskNameEnum.OneDApproach:
+                    return new LT1DApproach(w);
                 case LearningTaskNameEnum.DetectColor:
                     return new LTDetectColor(w);
-                //case LearningTaskNameEnum.CooldownAction:
-                //    return new LTActionWCooldown(world);
+                case LearningTaskNameEnum.CooldownAction:
+                    return new LTActionWCooldown(w);
                 case LearningTaskNameEnum.DetectShape:
                     return new LTDetectShape(w);
                 case LearningTaskNameEnum.DetectShapeColor:
                     return new LTDetectShapeColor(w);
-                //case LearningTaskNameEnum.DetectBlackAndWhite:
-                //    return new LTDetectBlackAndWhite(world);
+                case LearningTaskNameEnum.DetectBlackAndWhite:
+                    return new LTDetectBlackAndWhite(w);
                 case LearningTaskNameEnum.DetectAngle:
                     return new LTSimpleAngle(w);
                 case LearningTaskNameEnum.ShapeGroups:
                     return new LTShapeGroups(w);
-                //case LearningTaskNameEnum.CopyAction:
-                //    return new LTCopyAction(world);
-                //case LearningTaskNameEnum.CopySequence:
-                //    return new LTCopySequence(world);
-                //case LearningTaskNameEnum.DetectDifference:
-                //    return new LTDetectDifference(world);
+                case LearningTaskNameEnum.CopyAction:
+                    return new LTCopyAction(w);
+                case LearningTaskNameEnum.CopySequence:
+                    return new LTCopySequence(w);
+                case LearningTaskNameEnum.DetectDifference:
+                    return new LTDetectDifference(w);
                 case LearningTaskNameEnum.DetectSimilarity:
                     return new LTDetectSimilarity(w);
-                //case LearningTaskNameEnum.CompareLayouts:
-                //    return new LTCompareLayouts(world);
-                //case LearningTaskNameEnum.ClassComposition:
-                //    return new LTClassComposition(world);
+                case LearningTaskNameEnum.CompareLayouts:
+                    return new LTCompareLayouts(w);
+                case LearningTaskNameEnum.ClassComposition:
+                    return new LTClassComposition(w);
                 default:
                     return null;
             }

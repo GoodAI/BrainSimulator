@@ -4,7 +4,7 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTActionWCooldown : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTActionWCooldown : AbstractLearningTask<ManInWorld>
     {
         private AbstractSchoolWorld m_world { get; set; }
         private uint m_cooldownRemaining { get; set; }
@@ -18,7 +18,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTActionWCooldown() { }
 
-        public LTActionWCooldown(ManInWorld w)
+        public LTActionWCooldown(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {

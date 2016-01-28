@@ -4,11 +4,11 @@ using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LT1DApproach : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LT1DApproach : AbstractLearningTask<ManInWorld>
     {
         public LT1DApproach() { }
 
-        public LT1DApproach(ManInWorld w)
+        public LT1DApproach(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -80,22 +80,22 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            World.CreateAgent(@"Plumber24x28.png", 0, 0);
-            m_agent = World.Agent;
+            WrappedWorld.CreateAgent(@"Plumber24x28.png", 0, 0);
+            m_agent = WrappedWorld.Agent;
             // center the agent
-            m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = World.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
+            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
+            m_agent.Y = WrappedWorld.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
         }
 
         protected void CreateTarget()
         {
             m_target = new GameObject(GameObjectType.None, @"Block60x10.png", 0, 0);
 
-            World.AddGameObject(m_target);
+            WrappedWorld.AddGameObject(m_target);
 
             // first implementation, random object position (left or right)
             int maxTargetDistance
-                = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] < 0 ? World.FOW_WIDTH : (int)(World.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] < 0 ? WrappedWorld.FOW_WIDTH : (int)(WrappedWorld.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
 
             bool isLeft = m_rndGen.Next(0, 2) == 1;
             int targetDistX = m_rndGen.Next(20, maxTargetDistance / 2 - m_agent.Width / 2 - m_target.Width / 2);
@@ -120,7 +120,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
         {
-            World = w as RoguelikeWorld;
+            WrappedWorld = w as RoguelikeWorld;
             m_w.ClearWorld();
             m_w.DegreesOfFreedom = (int)trainingSetHints[TSHintAttributes.DEGREES_OF_FREEDOM];
             if (trainingSetHints[TSHintAttributes.NOISE] > 0)

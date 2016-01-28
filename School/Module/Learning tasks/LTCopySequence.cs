@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTCopySequence : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTCopySequence : AbstractLearningTask<ManInWorld>
     {
         public const string STOP_REQUEST = "Stop request";
 
@@ -25,7 +25,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTCopySequence() { }
 
-        public LTCopySequence(ManInWorld w)
+        public LTCopySequence(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints
@@ -61,9 +61,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (World.IsEmulatingUnitCompletion())
+            if (WrappedWorld.IsEmulatingUnitCompletion())
             {
-                return World.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
+                return WrappedWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
             }
             else
             {
@@ -125,7 +125,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            m_agent = (World as RoguelikeWorld).CreateAgent();
+            m_agent = (WrappedWorld as RoguelikeWorld).CreateAgent();
         }
 
         protected void CreateTeacher()
@@ -140,14 +140,14 @@ namespace GoodAI.Modules.School.LearningTasks
             Point teachersPoint;
             if ((int)TSHints[LTCopySequence.TEACHER_ON_DIFF_START_POSITION] != 0)
             {
-                teachersPoint = World.GetRandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
+                teachersPoint = WrappedWorld.GetRandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
             }
             else
             {
-                teachersPoint = new Point(m_agent.X + World.POW_WIDTH / 3, m_agent.Y);
+                teachersPoint = new Point(m_agent.X + WrappedWorld.POW_WIDTH / 3, m_agent.Y);
             }
 
-            m_teacher = (World as RoguelikeWorld).CreateTeacher(teachersPoint, actions) as RogueTeacher;
+            m_teacher = (WrappedWorld as RoguelikeWorld).CreateTeacher(teachersPoint, actions) as RogueTeacher;
         }
     }
 

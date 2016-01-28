@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTDebugging : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTDebugging : AbstractLearningTask<ManInWorld>
     {
         private GameObject m_target;
         private MovableGameObject m_agent;
@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public LTDebugging() { }
 
-        public LTDebugging(ManInWorld w)
+        public LTDebugging(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -27,10 +27,10 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            if (World.GetType() == typeof(PlumberWorld))
+            if (WrappedWorld.GetType() == typeof(PlumberWorld))
             {
                 m_agent = new MovableGameObject(GameObjectType.Agent, @"Plumber24x28.png", 24, 28); ;
-                PlumberWorld world = World as PlumberWorld;
+                PlumberWorld world = WrappedWorld as PlumberWorld;
                 m_target = new GameObject(GameObjectType.NonColliding, @"Coin16x16.png", 200, 200);
                 world.AddGameObject(m_target);
 
@@ -44,10 +44,10 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.AddGameObject(obj3);
                 world.AddGameObject(obj4);
             }
-            else if (World.GetType() == typeof(RoguelikeWorld))
+            else if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
 
-                RoguelikeWorld world = World as RoguelikeWorld;
+                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
                 world.DegreesOfFreedom = 2;
 
                 // create agent

@@ -6,14 +6,14 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTCompareLayouts : DeprecatedAbstractLearningTask<ManInWorld>
+    class LTCompareLayouts : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
         public LTCompareLayouts() { }
 
-        public LTCompareLayouts(ManInWorld w)
+        public LTCompareLayouts(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -34,14 +34,14 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            if (World.GetType() == typeof(RoguelikeWorld))
+            if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
-                RoguelikeWorld world = World as RoguelikeWorld;
+                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
 
                 world.CreateNonVisibleAgent();
 
-                Rectangle leftPart = World.GetPowGeometry();
-                Rectangle rightPart = World.GetPowGeometry();
+                Rectangle leftPart = WrappedWorld.GetPowGeometry();
+                Rectangle rightPart = WrappedWorld.GetPowGeometry();
                 Size shift = new Size(leftPart.Width / 2, 0);
                 leftPart.Width = leftPart.Width / 2 - 20;
                 rightPart.Width = rightPart.Width / 2 - 2;
@@ -137,7 +137,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (m_diffObjectetPlaced != (World.Controls.Host[0] > 0))
+            if (m_diffObjectetPlaced != (WrappedWorld.Controls.Host[0] > 0))
             {
                 wasUnitSuccessful = true;
             }

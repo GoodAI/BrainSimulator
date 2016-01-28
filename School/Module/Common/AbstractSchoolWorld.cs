@@ -29,7 +29,7 @@ namespace GoodAI.Modules.School.Common
         public float EmulatedUnitSuccessProbability { get; set; }
 
         SchoolCurriculum m_curriculum;
-        IDeprecatedLearningTask m_currentLearningTask;
+        ILearningTask m_currentLearningTask;
 
         // Random number generator instantiated when emulating training unit completion.
         Random m_random;
@@ -78,30 +78,30 @@ namespace GoodAI.Modules.School.Common
         // probably will not be overridden
         public virtual void ExecuteLearningTaskStep()
         {
-            if (m_currentLearningTask == null)
-                return;
+            //if (m_currentLearningTask == null)
+            //    return;
 
-            if (m_currentLearningTask.HasPresentedFirstUnit)
-            {
-                m_currentLearningTask.UpdateState();
+            //if (m_currentLearningTask.HasPresentedFirstUnit)
+            //{
+            //    m_currentLearningTask.UpdateState();
 
-                if (m_currentLearningTask.IsAbilityLearned)
-                {
-                    //m_currentLearningTask = m_curriculum.GetNextLearningTask();
-                    if (m_currentLearningTask == null)
-                        return;
-                }
-                else if (m_currentLearningTask.DidAbilityFail)
-                {
-                    m_currentLearningTask = null;
-                    return;
-                }
-            }
+            //    if (m_currentLearningTask.IsAbilityLearned)
+            //    {
+            //        //m_currentLearningTask = m_curriculum.GetNextLearningTask();
+            //        if (m_currentLearningTask == null)
+            //            return;
+            //    }
+            //    else if (m_currentLearningTask.DidAbilityFail)
+            //    {
+            //        m_currentLearningTask = null;
+            //        return;
+            //    }
+            //}
 
-            if (!m_currentLearningTask.HasPresentedFirstUnit || m_currentLearningTask.IsTrainingUnitCompleted)
-            {
-                m_currentLearningTask.HandlePresentNewTrainingUnit(this);
-            }
+            //if (!m_currentLearningTask.HasPresentedFirstUnit || m_currentLearningTask.IsTrainingUnitCompleted)
+            //{
+            //    m_currentLearningTask.HandlePresentNewTrainingUnit(this);
+            //}
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)

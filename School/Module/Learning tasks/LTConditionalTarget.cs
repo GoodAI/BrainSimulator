@@ -3,13 +3,13 @@ using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTConditionalTarget : DeprecatedAbstractLearningTask<ManInWorld>
+    public class LTConditionalTarget : AbstractLearningTask<ManInWorld>
     {
         public const string CONDITION_SALIENCE = "Condition salience";
 
         public LTConditionalTarget() { }
 
-        public LTConditionalTarget(ManInWorld w)
+        public LTConditionalTarget(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {

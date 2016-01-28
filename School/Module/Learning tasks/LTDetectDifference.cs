@@ -7,14 +7,14 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectDifference : DeprecatedAbstractLearningTask<ManInWorld>
+    class LTDetectDifference : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
         public LTDetectDifference() { }
 
-        public LTDetectDifference(ManInWorld w)
+        public LTDetectDifference(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -35,9 +35,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            if (World.GetType() == typeof(RoguelikeWorld))
+            if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
-                RoguelikeWorld world = World as RoguelikeWorld;
+                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
 
                 world.CreateNonVisibleAgent();
 
@@ -104,7 +104,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (m_diffObjectetPlaced == (World.Controls.Host[0] > 0))
+            if (m_diffObjectetPlaced == (WrappedWorld.Controls.Host[0] > 0))
             {
                 wasUnitSuccessful = true;
             }
