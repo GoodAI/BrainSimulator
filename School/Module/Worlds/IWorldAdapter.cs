@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.Worlds
     {
         void ClearWorld();
         void SetHint(string attr, float value);
-        void MapWorlds(SchoolWorld adapterWorld);
+        void MapWorlds(SchoolWorld schoolWorld);
     }
 
     /*
@@ -43,9 +43,9 @@ namespace GoodAI.Modules.School.Worlds
 
         }
 
-        public void MapWorlds(SchoolWorld adapterWorld)
+        public void MapWorlds(SchoolWorld schoolWorld)
         { 
-            //adapterWorld.Visual.CopyFromMemoryBlock(World.Whatever)
+            //schoolWorld.Visual.CopyFromMemoryBlock(World.Whatever)
         }
     }
 
@@ -67,9 +67,9 @@ namespace GoodAI.Modules.School.Worlds
 
         }
 
-        public void MapWorlds(SchoolWorld adapterWorld)
+        public void MapWorlds(SchoolWorld schoolWorld)
         {
-            //adapterWorld.Visual.CopyFromMemoryBlock(World.Whatever)
+            //schoolWorld.Visual.CopyFromMemoryBlock(World.Whatever)
         }
     }
 
