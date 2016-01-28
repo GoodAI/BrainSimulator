@@ -21,6 +21,8 @@ namespace GoodAI.Modules.School.Common
 
         void UpdateState();
         void HandlePresentNewTrainingUnit();
+
+        AbstractSchoolWorld GenericWorld { get; set; }
     }
   
     /// <summary>
@@ -92,6 +94,30 @@ namespace GoodAI.Modules.School.Common
             get
             {
                 return SchoolWorld.CurrentWorld as WrappedWorldClass;
+            }
+        }
+
+        public AbstractSchoolWorld GenericWorld
+        {
+            get
+            {
+                return m_genericWorld;
+            }
+            set
+            {
+                m_genericWorld = value;
+            }
+        }
+
+        public WorldClass World
+        {
+            get
+            {
+                return (WorldClass)m_genericWorld;
+            }
+            set
+            {
+                m_genericWorld = (WorldClass)value;
             }
         }
 

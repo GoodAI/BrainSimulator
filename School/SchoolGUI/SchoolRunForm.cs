@@ -6,7 +6,7 @@ namespace GoodAI.School.GUI
 {
     public partial class SchoolRunForm : DockContent
     {
-        public List<GoodAI.School.GUI.SchoolMainForm.LearningTaskData> Data;
+        public List<GoodAI.School.GUI.SchoolMainForm.LearningTaskNode> Data;
         //private BindingSource m_source;
 
         public SchoolRunForm()
@@ -14,6 +14,7 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             dataGridView1.DataSource = Data;
+            //dataGridView1.Columns["TaskType"].Visible = false;
             // using BindingSource is probably better but it wasn't updating; don't know why - postponed
             //m_source = new BindingSource();
             //m_source.DataSource = Data;

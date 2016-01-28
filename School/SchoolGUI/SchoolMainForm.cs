@@ -4,6 +4,7 @@ using GoodAI.BrainSimulator.Forms;
 using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -26,6 +27,7 @@ namespace GoodAI.School.GUI
 
         public class SchoolTreeNode : Node
         {
+            public SchoolTreeNode() { }
             public SchoolTreeNode(string text) : base(text) { }
         }
 
@@ -36,33 +38,65 @@ namespace GoodAI.School.GUI
 
         public class LearningTaskNode : SchoolTreeNode
         {
+            private readonly ILearningTask m_task;
             public bool Enabled { get; set; }
-            public Type Type { get; set; }
-            public Type WorldType { get; set; }
-            public LearningTaskNode(string text) : base(text) { }
-            public LearningTaskNode(Type taskType) : base(taskType.Name) { }
-        }
+            //public LearningTaskNode(string text) : base(text) { }
 
-        public class LearningTaskData
-        {
-            private ILearningTask m_task;
+            //public LearningTaskNode(Type taskType)
+            //    : base(taskType.Name)
+            //{
+            //    Type = taskType;
+            //}
+            public LearningTaskNode(ILearningTask task)
+            {
+                m_task = task;
+                Enabled = true;
+            }
 
             public string Name
             {
                 get
                 {
-                    return m_task.GetType().Name;
+                    return TaskType.Name;
                 }
             }
 
-            public string WorldName { get; private set; }
+            public string World
+            {
+                get
+                {
+                    return WorldType.Name;
+                }
+            }
+
+            [Browsable(false)]
+            public Type TaskType
+            {
+                get
+                {
+                    return m_task.GetType();
+                }
+            }
+
+            [Browsable(false)]
+            public Type WorldType
+            {
+                get
+                {
+                    return m_task.GenericWorld.GetType();
+                }
+            }
+
             public int Steps { get; set; }
             public float Time { get; set; }
             public string Status { get; set; }
 
-            public LearningTaskData(ILearningTask task)
+            public override string Text
             {
-                m_task = task;
+                get
+                {
+                    return m_task.GetType().Name + " (" + m_task.GenericWorld.GetType().Name + ")";
+                }
             }
         }
 
@@ -129,7 +163,7 @@ namespace GoodAI.School.GUI
             data.Name = node.Text;
 
             foreach (LearningTaskNode taskNode in node.Nodes)
-                data.AddLearningTask(taskNode.Type, taskNode.WorldType);
+                data.AddLearningTask(taskNode.TaskType, taskNode.WorldType);
 
             return data;
         }
@@ -141,19 +175,20 @@ namespace GoodAI.School.GUI
             foreach (ILearningTask task in data)
             {
                 // TODO: World name can be displayed through reflection OR once World param is in ILearningTask (or SchoolCurriculum is restricted to AbstractLTs)
-                LearningTaskNode taskNode = new LearningTaskNode(task.GetType());
+                LearningTaskNode taskNode = new LearningTaskNode(task);
+                taskNode.Enabled = true;
                 node.Nodes.Add(taskNode);
             }
 
             return node;
         }
 
-        private List<LearningTaskData> CurriculumDataToLTData(SchoolCurriculum curriculum)
+        private List<LearningTaskNode> CurriculumDataToLTData(SchoolCurriculum curriculum)
         {
-            List<LearningTaskData> result = new List<LearningTaskData>();
+            List<LearningTaskNode> result = new List<LearningTaskNode>();
             foreach (ILearningTask task in curriculum)
             {
-                LearningTaskData data = new LearningTaskData(task);
+                LearningTaskNode data = new LearningTaskNode(task);
                 result.Add(data);
             }
 
@@ -308,9 +343,8 @@ namespace GoodAI.School.GUI
             if (AddTaskView.ResultTask == null)
                 return;
 
-            LearningTaskNode newTask = new LearningTaskNode(AddTaskView.ResultTask);
-            newTask.Type = AddTaskView.ResultTaskType;
-            newTask.WorldType = AddTaskView.ResultWorldType;
+            ILearningTask task = LearningTaskFactory.CreateLearningTask(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
+            LearningTaskNode newTask = new LearningTaskNode(task);
             (tree.SelectedNode.Tag as Node).Nodes.Add(newTask);
             tree.SelectedNode.IsExpanded = true;
         }
@@ -326,13 +360,15 @@ namespace GoodAI.School.GUI
             SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
             string xmlCurr = m_serializer.Serialize(test);
             saveFileDialog1.ShowDialog();
-            File.WriteAllText(saveFileDialog1.FileName, xmlCurr);
+            if (!string.IsNullOrEmpty(saveFileDialog1.FileName))
+                File.WriteAllText(saveFileDialog1.FileName, xmlCurr);
         }
 
         private void btnImportCurr_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
-            LoadCurriculum(openFileDialog1.FileName);
+            if (!string.IsNullOrEmpty(openFileDialog1.FileName))
+                LoadCurriculum(openFileDialog1.FileName);
         }
 
         private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
@@ -353,8 +389,11 @@ namespace GoodAI.School.GUI
         private void btnRun_Click(object sender, EventArgs e)
         {
             OpenFloatingOrActivate(RunView, DockPanel);
-            SchoolCurriculum curriculum = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            List<LearningTaskData> data = CurriculumDataToLTData(curriculum);
+            List<LearningTaskNode> data = new List<LearningTaskNode>();
+            foreach (LearningTaskNode ltNode in (tree.SelectedNode.Tag as CurriculumNode).Nodes)
+                data.Add(ltNode);
+            //SchoolCurriculum curriculum = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
+            //List<LearningTaskNode> data = CurriculumDataToLTData(curriculum);
             RunView.Data = data;
             RunView.UpdateData();
         }
