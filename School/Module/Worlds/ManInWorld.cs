@@ -148,6 +148,18 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
+        public void MapWorlds(SchoolWorld adapterWorld)
+        { 
+            // Copy data from world to wrapper
+            VisualFOW.CopyToMemoryBlock(adapterWorld.Visual, 0, 0, Math.Min(VisualFOW.Count, adapterWorld.VisualSize));
+            Objects.CopyToMemoryBlock(adapterWorld.Data, 0, 0, Math.Min(Objects.Count, adapterWorld.DataSize));
+            adapterWorld.DataLength.Fill(Math.Min(Objects.Count, adapterWorld.DataSize));
+            Reward.CopyToMemoryBlock(adapterWorld.Reward, 0, 0, 1);
+
+            // Copy data from wrapper to world (inputs)
+            Controls.CopyFromMemoryBlock(adapterWorld.ActionInput, 0, 0, Math.Min(Controls.Count, adapterWorld.ActionInput.Count));
+        }
+
         public override void UpdateMemoryBlocks()
         {
             VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT * 3;

@@ -11,63 +11,67 @@ namespace GoodAI.Modules.School.Worlds
 {
     public interface IWorldAdapter
     {
-        //MyWorld World { get; }
-
         void ClearWorld();
         void SetHint(string attr, float value);
+        void MapWorlds(SchoolWorld adapterWorld);
     }
 
-    //public class AAWorld: MyWorld, IWorldAdapter
-    //{
-    //    //public MyWorld World {
-    //    //    get
-    //    //    {
-    //    //        return this;
-    //    //    }
-    //    //}
+    /*
+    public class SchoolTetris : MyTetrisWorld, IWorldAdapter
+    { 
+    
+        setInput(visual, tetrisvisual);
 
-    //    public override void UpdateMemoryBlocks()
-    //    {
+    }
+     */
 
-    //    }
+    public class AAWorld: MyWorld, IWorldAdapter
+    {
+ 
+        public override void UpdateMemoryBlocks()
+        {
 
-    //    public void ClearWorld() 
-    //    {
+        }
+
+        public void ClearWorld() 
+        {
         
-    //    }
+        }
 
-    //    public void SetHint(string attr, float value)
-    //    {
+        public void SetHint(string attr, float value)
+        {
 
-    //    }
-    //}
+        }
 
-    //public class BBWorld : MyWorld, IWorldAdapter
-    //{
-    //    //public MyWorld World
-    //    //{
-    //    //    get
-    //    //    {
-    //    //        return this;
-    //    //    }
-    //    //}
+        public void MapWorlds(SchoolWorld adapterWorld)
+        { 
+            //adapterWorld.Visual.CopyFromMemoryBlock(World.Whatever)
+        }
+    }
 
-    //    public override void UpdateMemoryBlocks()
-    //    {
+    public class BBWorld : MyWorld, IWorldAdapter
+    {
 
-    //    }
+        public override void UpdateMemoryBlocks()
+        {
 
-    //    public void ClearWorld()
-    //    {
+        }
 
-    //    }
+        public void ClearWorld()
+        {
 
-    //    public void SetHint(string attr, float value)
-    //    {
+        }
 
-    //    }
+        public void SetHint(string attr, float value)
+        {
 
-    //}
+        }
+
+        public void MapWorlds(SchoolWorld adapterWorld)
+        {
+            //adapterWorld.Visual.CopyFromMemoryBlock(World.Whatever)
+        }
+    }
 
     public static class IWorldAdaptersList
     {

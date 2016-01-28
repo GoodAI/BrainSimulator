@@ -33,24 +33,31 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Audio
+        public MyMemoryBlock<float> Text
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
         [MyOutputBlock(2)]
-        public MyMemoryBlock<float> Text
+        public MyMemoryBlock<float> Data
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
         [MyOutputBlock(3)]
-        public MyMemoryBlock<float> Data
+        public MyMemoryBlock<float> DataLength
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
+        }
+
+        [MyOutputBlock(4)]
+        public MyMemoryBlock<float> Reward
+        {
+            get { return GetOutput(4); }
+            set { SetOutput(4, value); }
         }
         #endregion
 
@@ -61,22 +68,19 @@ namespace GoodAI.Modules.School.Worlds
 
         [MyBrowsable, Category("World Sizes")]
         [YAXSerializableField(DefaultValue = 1000)]
-        public int AudioSize { get; set; }
-
-        [MyBrowsable, Category("World Sizes")]
-        [YAXSerializableField(DefaultValue = 100)]
         public int TextSize { get; set; }
 
         [MyBrowsable, Category("World Sizes")]
-        [YAXSerializableField(DefaultValue = 200)]
+        [YAXSerializableField(DefaultValue = 100)]
         public int DataSize { get; set; }
 
         public override void UpdateMemoryBlocks()
         {
             Visual.Count = VisualSize;
-            Audio.Count = AudioSize;
             Text.Count = TextSize;
             Data.Count = DataSize;
+            DataLength.Count = 1;
+            Reward.Count = 1;
         }
         #endregion
 
@@ -212,14 +216,15 @@ namespace GoodAI.Modules.School.Worlds
             return true;
         }
 
-        public InitSchoolAdapterWorldTask InitSchool { get; protected set; }
-        public LearningTaskStepTask LearningTaskStep { get; protected set; }
+        public InitSchoolWorldTask InitSchool { get; protected set; }
+        public AdapterTask AdapterStep { get; protected set; }
+        public LearningStepTask LearningStep { get; protected set; }
 
         /// <summary>
         /// Initialize the world's curriculum
         /// </summary>
         [MyTaskInfo(OneShot = true)]
-        public class InitSchoolAdapterWorldTask : MyTask<SchoolWorld>
+        public class InitSchoolWorldTask : MyTask<SchoolWorld>
         {
             public override void Init(int nGPU)
             {
@@ -233,9 +238,25 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
+        /// Performs all memory blocks mapping
+        /// </summary>
+        public class AdapterTask : MyTask<SchoolWorld>
+        {
+            public override void Init(int nGPU)
+            {
+
+            }
+
+            public override void Execute()
+            {
+                Owner.CurrentWorld.MapWorlds(Owner);
+            }
+        }
+
+        /// <summary>
         /// Update the state of the training task(s)
         /// </summary>
-        public class LearningTaskStepTask : MyTask<SchoolWorld>
+        public class LearningStepTask : MyTask<SchoolWorld>
         {
             public override void Init(int nGPU)
             {
@@ -247,5 +268,6 @@ namespace GoodAI.Modules.School.Worlds
                 Owner.ExecuteLearningTaskStep();
             }
         }
+
     }
 }
