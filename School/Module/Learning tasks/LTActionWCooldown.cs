@@ -6,7 +6,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTActionWCooldown : AbstractLearningTask<ManInWorld>
     {
-        private AbstractSchoolWorld m_world { get; set; }
+        private ManInWorld m_world { get; set; }
         private uint m_cooldownRemaining { get; set; }
         private Random m_rnd = new Random();
         //agent must perform action within this time limit, otherwise it is considered as a fail

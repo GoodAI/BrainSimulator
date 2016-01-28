@@ -13,19 +13,19 @@ namespace GoodAI.Modules.School.Worlds
 
         protected override string TEXTURE_DIR { get { return @"res\RoguelikeWorld"; } }
 
-        [MyTaskInfo(OneShot = true, Order = 90)]
-        public class InitTask : InitSchoolTask
-        {
-            public override void Init(int nGPU)
-            {
-                base.Init(nGPU);
-            }
+        //[MyTaskInfo(OneShot = true, Order = 90)]
+        //public class InitTask : InitSchoolTask
+        //{
+        //    public override void Init(int nGPU)
+        //    {
+        //        base.Init(nGPU);
+        //    }
 
-            public override void Execute()
-            {
-                base.Execute();
-            }
-        }
+        //    public override void Execute()
+        //    {
+        //        base.Execute();
+        //    }
+        //}
 
         public override void Validate(Core.Utils.MyValidator validator)
         {
@@ -37,7 +37,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual void CreateTasks()
         {
-            InitSchool = new InitTask();
+            //InitSchool = new InitTask();
             GetInputTask = new GetRLInputTask();
             UpdateWorldTask = new UpdateRLTask();
         }

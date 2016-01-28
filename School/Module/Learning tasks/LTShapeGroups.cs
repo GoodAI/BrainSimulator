@@ -17,11 +17,6 @@ namespace GoodAI.Modules.School.LearningTasks
             SetHints(TSHints);
         }
 
-        protected override void SetHints(TrainingSetHints trainingSetHints)
-        {
-            WrappedWorld.SetHints(trainingSetHints);
-        }
-
         protected override void PresentNewTrainingUnit()
         {
             // TODO

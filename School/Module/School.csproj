@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AbstractLearningTask.cs" />
-    <Compile Include="Common\AbstractSchoolWorld.cs" />
     <Compile Include="Common\GameObject.cs" />
     <Compile Include="Common\LearningTaskFactory.cs" />
     <Compile Include="Common\LearningTaskHelpers.cs" />

@@ -61,61 +61,53 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (WrappedWorld.IsEmulatingUnitCompletion())
+            m_stepsSincePresented++;
+
+            if (DidTrainingUnitFail())
             {
-                return WrappedWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
+                wasUnitSuccessful = false;
+                return true;
             }
+
+            if (!m_teacher.IsDone() && m_agent.isMoving())
+            {
+                wasUnitSuccessful = false;
+                return true;
+            }
+
+            // save history for agent and teacher
+            m_agentsHistory.Add(m_agent.X, m_agent.Y);
+            m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
+
+            wasUnitSuccessful = false;
+
+            int numberOfTeachersSteps = m_teachersHistory.numberOfSteps();
+            int numberOfAgentsSteps = m_agentsHistory.numberOfSteps();
+
+            // simple version of the task
+            if (TSHints[LTCopySequence.STOP_REQUEST] == .0f)
+            {
+                if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone())
+                {
+                    // compare step
+                    wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
+                    return true;
+                }
+            }
+            // hard version
             else
             {
+                if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone()) m_delayedCheck = true;
 
-                m_stepsSincePresented++;
-
-                if (DidTrainingUnitFail())
+                if (m_delayedCheck)
                 {
-                    wasUnitSuccessful = false;
+                    m_delayedCheck = false;
+                    // compare steps
+                    wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
                     return true;
                 }
-
-                if (!m_teacher.IsDone() && m_agent.isMoving())
-                {
-                    wasUnitSuccessful = false;
-                    return true;
-                }
-
-                // save history for agent and teacher
-                m_agentsHistory.Add(m_agent.X, m_agent.Y);
-                m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
-
-                wasUnitSuccessful = false;
-
-                int numberOfTeachersSteps = m_teachersHistory.numberOfSteps();
-                int numberOfAgentsSteps = m_agentsHistory.numberOfSteps();
-
-                // simple version of the task
-                if (TSHints[LTCopySequence.STOP_REQUEST] == .0f)
-                {
-                    if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone())
-                    {
-                        // compare step
-                        wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
-                        return true;
-                    }
-                }
-                // hard version
-                else
-                {
-                    if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone()) m_delayedCheck = true;
-
-                    if (m_delayedCheck)
-                    {
-                        m_delayedCheck = false;
-                        // compare steps
-                        wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
-                        return true;
-                    }
-                }
-                return false;
             }
+            return false;
         }
 
         protected bool DidTrainingUnitFail()

@@ -3,6 +3,7 @@ using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Common;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
@@ -23,7 +24,7 @@ namespace GoodAI.Modules.School.Worlds
     /// <description>
     /// Implementation of a configurable 2D world
     /// </description>
-    public abstract class ManInWorld : AbstractSchoolWorld, IWorldAdapter
+    public abstract class ManInWorld : MyWorld, IWorldAdapter
     {
         public enum TextureSet
         {
@@ -164,17 +165,8 @@ namespace GoodAI.Modules.School.Worlds
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
             ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
         }
-
-        public override void ClearWorld()
-        {
-            Agent = null;
-            gameObjects.Clear();
-            Objects.Count = 0;
-            IsImageNoise = false;
-            m_IsWorldFrozen = false;
-        }
-        
-        public override void SetHint(string attr, float value)
+      
+        public virtual void SetHint(string attr, float value)
         {
             switch (attr)
             {
@@ -408,6 +400,15 @@ namespace GoodAI.Modules.School.Worlds
             m_IsWorldFrozen = shouldFreeze;
         }
 
+        public virtual void ClearWorld()
+        {
+            Agent = null;
+            gameObjects.Clear();
+            Objects.Count = 0;
+            IsImageNoise = false;
+            m_IsWorldFrozen = false;
+        }
+
         ////TODO: if two objects share the same texture, do not load it twice into memory
         public void AddGameObject(GameObject item)
         {
@@ -452,7 +453,7 @@ namespace GoodAI.Modules.School.Worlds
             gameObjects.Add(item);
         }
 
-        public override MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
+        public MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
             List<IMyExecutable> planCopy = new List<IMyExecutable>();
 
@@ -461,21 +462,21 @@ namespace GoodAI.Modules.School.Worlds
                 planCopy.Add(task);
 
             // I know what tasks should be first:
-            IMyExecutable learningTaskStep = planCopy.Find(task => task is LearningTaskStepTask);
+            //IMyExecutable learningTaskStep = planCopy.Find(task => task is LearningTaskStepTask);
             IMyExecutable getInput = planCopy.Find(task => task is InputTask);
             IMyExecutable updateTask = planCopy.Find(task => task is UpdateTask);
             IMyExecutable render = planCopy.Find(task => task is RenderTask);
 
             HashSet<IMyExecutable> positionSensitiveTasks = new HashSet<IMyExecutable>();
             positionSensitiveTasks.Add(getInput);
-            positionSensitiveTasks.Add(learningTaskStep);
+            //positionSensitiveTasks.Add(learningTaskStep);
             positionSensitiveTasks.Add(updateTask);
             positionSensitiveTasks.Add(render);
 
             List<IMyExecutable> newPlan = new List<IMyExecutable>();
 
             // add tasks that have to be at the beginning of the plan, in this order:
-            newPlan.Add(learningTaskStep);
+            //newPlan.Add(learningTaskStep);
             newPlan.Add(getInput);
             newPlan.Add(updateTask);
 

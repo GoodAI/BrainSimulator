@@ -9,25 +9,6 @@
             Abstract base class for AI School exercises.
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.Common.AbstractSchoolWorld">
-             <author>GoodAI</author>
-             <meta>mp</meta>
-             <status>WIP</status>
-             <summary>Base for the school worlds</summary>
-             <description>
-            
-             </description>
-        </member>
-        <member name="T:GoodAI.Modules.School.Common.AbstractSchoolWorld.InitSchoolTask">
-            <summary>
-            Initialize the world's curriculum
-            </summary>
-        </member>
-        <member name="T:GoodAI.Modules.School.Common.AbstractSchoolWorld.LearningTaskStepTask">
-            <summary>
-            Update the state of the training task(s)
-            </summary>
-        </member>
         <member name="M:GoodAI.Modules.School.Common.GameObject.DistanceTo(GoodAI.Modules.School.Common.GameObject)">
             <summary>
             Computes the shortest distance from any bounding box pixel of this to any bounding box pixel of target
@@ -103,11 +84,6 @@
             <description>
             2D Platformer world which includes a traditional 2D physics engine and collision detection/handling
             </description>
-        </member>
-        <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld.InitialiseWorldTask">
-            <summary>
-            Initialises The objects that will populate the world using "AddGameObject" which is derived from ManInWorld world, this will define the current level
-            </summary>
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld.UpdatePlumberTask">
             <summary>
