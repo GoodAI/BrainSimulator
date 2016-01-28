@@ -17,59 +17,59 @@ namespace GoodAI.Modules.School.Worlds
         void SetHint(string attr, float value);
     }
 
-    public class AAWorld: MyWorld, IWorldAdapter
-    {
-        //public MyWorld World {
-        //    get
-        //    {
-        //        return this;
-        //    }
-        //}
+    //public class AAWorld: MyWorld, IWorldAdapter
+    //{
+    //    //public MyWorld World {
+    //    //    get
+    //    //    {
+    //    //        return this;
+    //    //    }
+    //    //}
 
-        public override void UpdateMemoryBlocks()
-        {
+    //    public override void UpdateMemoryBlocks()
+    //    {
 
-        }
+    //    }
 
-        public void ClearWorld() 
-        {
+    //    public void ClearWorld() 
+    //    {
         
-        }
+    //    }
 
-        public void SetHint(string attr, float value)
-        {
+    //    public void SetHint(string attr, float value)
+    //    {
 
-        }
-    }
+    //    }
+    //}
 
-    public class BBWorld : MyWorld, IWorldAdapter
-    {
-        //public MyWorld World
-        //{
-        //    get
-        //    {
-        //        return this;
-        //    }
-        //}
+    //public class BBWorld : MyWorld, IWorldAdapter
+    //{
+    //    //public MyWorld World
+    //    //{
+    //    //    get
+    //    //    {
+    //    //        return this;
+    //    //    }
+    //    //}
 
-        public override void UpdateMemoryBlocks()
-        {
+    //    public override void UpdateMemoryBlocks()
+    //    {
 
-        }
+    //    }
 
-        public void ClearWorld()
-        {
+    //    public void ClearWorld()
+    //    {
 
-        }
+    //    }
 
-        public void SetHint(string attr, float value)
-        {
+    //    public void SetHint(string attr, float value)
+    //    {
 
-        }
+    //    }
 
-    }
+    //}
 
-    public static class IWorldAdaprersList
+    public static class IWorldAdaptersList
     {
         public static Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
@@ -114,7 +114,7 @@ namespace GoodAI.Modules.School.Worlds
 
         protected Type[] GetValues() 
         {
-            return IWorldAdaprersList.Types;
+            return IWorldAdaptersList.Types;
         }
     }
 }

@@ -66,11 +66,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
     //}
 
-    // TODO create the SchoolRoguelikeWorld : RoguelikeWorld, IWorldAdapter
-    public class SchoolRoguelikeWorld : RoguelikeWorld, IWorldAdapter
-    {
-    }
-
     public class LTDetectColor : AbstractLearningTask<SchoolRoguelikeWorld>
     {
         protected GameObject m_target;

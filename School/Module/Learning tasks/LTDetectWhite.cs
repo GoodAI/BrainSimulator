@@ -6,14 +6,14 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     // TODO: Currently presents target outside of POW.
 
-    class LTDetectWhite : DeprecatedAbstractLearningTask<RoguelikeWorld>
+    class LTDetectWhite : AbstractLearningTask<SchoolRoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
 
         public LTDetectWhite() { }
 
-        public LTDetectWhite(RoguelikeWorld w)
+        public LTDetectWhite(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
@@ -44,7 +44,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             // We currently use ContinuousControl as the agent actuator.
             // Should refactor to have just one block of actuators.
-            bool wasTargetDetected = (World as ManInWorld).Controls.Host[0] != 0;
+            bool wasTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[0] != 0;
             bool isTargetPresent = m_target != null;
             wasUnitSuccessful = (wasTargetDetected == isTargetPresent);
 
@@ -55,13 +55,13 @@ namespace GoodAI.Modules.School.LearningTasks
         protected void CreateTarget()
         {
             m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
-            World.AddGameObject(m_target);
+            WrappedWorld.AddGameObject(m_target);
             // Plumber:
-            //m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
-            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
+            //m_target.X = m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - m_target.Width + 1);
+            //m_target.Y = WrappedWorld.FOW_HEIGHT - m_target.Height;
             // Roguelike:
-            m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
-            m_target.Y = m_rndGen.Next(0, World.FOW_HEIGHT - m_target.Height + 1);
+            m_target.X = m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - m_target.Width + 1);
+            m_target.Y = m_rndGen.Next(0, WrappedWorld.FOW_HEIGHT - m_target.Height + 1);
         }
     }
 
