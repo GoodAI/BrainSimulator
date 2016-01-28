@@ -13,14 +13,17 @@ namespace GoodAI.School.GUI
         {
             InitializeComponent();
 
-            m_source = new BindingSource();
-            m_source.DataSource = Data;
-            dataGridView1.DataSource = m_source;
+            dataGridView1.DataSource = Data;
+            // using BindingSource is probably better but it wasn't updating; don't know why - postponed
+            //m_source = new BindingSource();
+            //m_source.DataSource = Data;
+            //dataGridView1.DataSource = m_source;
         }
 
         public void Update()
         {
-            m_source.ResetBindings(false);
+            // m_source.ResetBindings(true);
+            dataGridView1.DataSource = Data;
         }
     }
 }
