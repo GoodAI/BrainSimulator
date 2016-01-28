@@ -4,12 +4,12 @@
         <name>GoodAI.School</name>
     </assembly>
     <members>
-        <member name="T:GoodAI.Modules.School.Common.DeprecatedAbstractLearningTask`1">
+        <member name="T:GoodAI.Modules.School.Common.AbstractLearningTask`1">
             <summary>
             Abstract base class for AI School exercises.
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.Common.AbstractLearningTask`1">
+        <member name="T:GoodAI.Modules.School.Common.DeprecatedAbstractLearningTask`1">
             <summary>
             Abstract base class for AI School exercises.
             </summary>
