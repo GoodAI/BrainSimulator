@@ -20,10 +20,10 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.VARIABLE_SIZE, 0 },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 0 },
-                { TSHintAttributes.VARIABLE_COLOR, 0 },
-                { TSHintAttributes.NOISE, 0},
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 0 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 0 },
+                { TSHintAttributes.IMAGE_NOISE, 0},
                 { ERROR_TOLERANCE , 0.2f},
                 { FIXED_DISTANCE, 1},
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
@@ -31,11 +31,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(FIXED_DISTANCE, 1);
-            TSProgression.Add(TSHintAttributes.VARIABLE_COLOR, 1);
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TSHintAttributes.TARGET_IMAGE_VARIABILITY, 1);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1);
             TSProgression.Add(ERROR_TOLERANCE, 0.1f);
-            TSProgression.Add(TSHintAttributes.VARIABLE_SIZE, 1);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
             TSProgression.Add(ERROR_TOLERANCE, 0.05f);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
@@ -52,10 +52,10 @@ namespace GoodAI.Modules.School.LearningTasks
 
             m_agent = World.CreateNonVisibleAgent();
 
-            World.IsImageNoise = TSHints[TSHintAttributes.NOISE] >= 1 ? true : false;
+            World.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1 ? true : false;
 
             Size size;
-            if (TSHints[TSHintAttributes.VARIABLE_SIZE] >= 1)
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
                 int side = m_rndGen.Next(8, 24);
                 size = new Size(side, side);
@@ -80,7 +80,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             Shape.Shapes shape;
-            if (TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY] >= 1) {
+            if (TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] >= 1) {
                 switch (m_rndGen.Next(0, 4))
                 {
                     case 0:
@@ -104,7 +104,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             Color color;
-            if (TSHints[TSHintAttributes.VARIABLE_COLOR] >= 1)
+            if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
             {
                 color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
             }

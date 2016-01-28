@@ -15,14 +15,14 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 },
-                { TSHintAttributes.VARIABLE_SIZE, 0 }
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 }
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.VARIABLE_SIZE, 0);
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 0);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
             SetHints(TSHints);
@@ -105,7 +105,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_target = new Shape(shape, 0, 0);
             World.AddGameObject(m_target);
             m_target.X = m_rndGen.Next(m_agent.X - World.POW_WIDTH / 2, m_agent.X + World.POW_WIDTH / 2 - m_target.Width + 1);
-            if (TSHints[TSHintAttributes.VARIABLE_SIZE] > 0)
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] > 0)
             {
                 double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
                 m_target.Height = (int)(resizeRatio * m_target.Height);

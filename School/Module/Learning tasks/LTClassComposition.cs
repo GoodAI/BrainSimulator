@@ -11,6 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
     class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
         public const string CARDINALITY_OF_SET = "Cardinality of set";
+        public const string IS_TARGET_MOVING = "Is target moving";
 
         protected Random m_rndGen = new Random();
         protected bool m_positiveExamplePlaced;
@@ -24,21 +25,21 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.NOISE, 0},
-                {TSHintAttributes.RANDOMNESS, 0},
+                {TSHintAttributes.IMAGE_NOISE, 0},
+                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
                 {CARDINALITY_OF_SET, 2},
-                {TSHintAttributes.IS_TARGET_MOVING, 0},
+                {IS_TARGET_MOVING, 0},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.IS_TARGET_MOVING, 1);;
+            TSProgression.Add(IS_TARGET_MOVING, 1);;
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 0.3f);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 0.6f);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.3f);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.6f);
             TSProgression.Add(CARDINALITY_OF_SET, 3);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 1.0f);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
             TSProgression.Add(CARDINALITY_OF_SET, 5); // max
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
@@ -78,7 +79,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.CreateNonVisibleAgent();
 
                 Size size;
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= .6f)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .6f)
                 {
                     int a = 10 + m_rndGen.Next(10);
                     size = new Size(a, a);
@@ -89,7 +90,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
 
                 Color color;
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= .3)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .3)
                 {
                     color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 
@@ -100,7 +101,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
 
                 Point position;
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= 1.0f)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
                 {
                     position = world.RandomPositionInsidePow(m_rndGen, size);
                 }

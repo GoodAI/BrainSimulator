@@ -12,6 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
         public const string VARIABLE_SIZE = "Variable size";
+        public const string IS_TARGET_MOVING = "Is target moving";
 
         public LTDetectBlackAndWhite() { }
         private Random m_rndGen = new Random();
@@ -24,18 +25,18 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints = new TrainingSetHints
             {
                 { VARIABLE_SIZE, 0 },
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
-                { TSHintAttributes.IS_TARGET_MOVING, 0 }
+                { IS_TARGET_MOVING, 0 }
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(
                 new TrainingSetHints {
                     { VARIABLE_SIZE, 1 },
-                    { TSHintAttributes.NOISE, 1 },
+                    { TSHintAttributes.IMAGE_NOISE, 1 },
                     { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 },
-                    { TSHintAttributes.IS_TARGET_MOVING, 1 }
+                    { IS_TARGET_MOVING, 1 }
                 });
 
             SetHints(TSHints);
@@ -50,7 +51,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             World.CreateNonVisibleAgent();
 
-            if (TSHints[TSHintAttributes.NOISE] >= 1)
+            if (TSHints[TSHintAttributes.IMAGE_NOISE] >= 1)
             {
                 World.IsImageNoise = true;
             }
@@ -69,7 +70,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
                         Point position;
-            if (TSHints[TSHintAttributes.IS_TARGET_MOVING] >= 1)
+            if (TSHints[IS_TARGET_MOVING] >= 1)
             {
                 position = World.RandomPositionInsidePow(m_rndGen, size);
             }

@@ -35,6 +35,14 @@
             <param name="target"></param>
             <returns></returns>
         </member>
+        <member name="M:GoodAI.Modules.School.Common.Shape.GetRandomShape(System.Random,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="rndGen"></param>
+            <param name="numberOfShapes">Cardinality of set from you are choosing</param>
+            <returns>Random shape</returns>
+        </member>
         <member name="T:GoodAI.Modules.School.Common.SchoolCurriculum">
             <summary>
             Holds tasks that an agent should be trained with to gain new abilities

@@ -16,15 +16,16 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.NOISE, 0},
-                {TSHintAttributes.RANDOMNESS, 0},
+                {TSHintAttributes.IMAGE_NOISE, 0},
+                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
+                {TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 0.5f);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 1.0f);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.5f);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
             SetHints(TSHints);
@@ -34,7 +35,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             World.CreateNonVisibleAgent();
 
-            if (TSHints[TSHintAttributes.NOISE] > 0)
+            if (TSHints[TSHintAttributes.IMAGE_NOISE] > 0)
             {
                 World.IsImageNoise = true;
             }
@@ -44,27 +45,20 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 //random size
                 Size shapeSize = new Size(32, 32);
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= 0.5)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5)
                 {
                     shapeSize = new Size(20 + m_rndGen.Next(20), 20 + m_rndGen.Next(20));
                 }
 
                 // random position
                 Point shapePosition = World.Agent.GetGeometry().Location + new Size(20, 0);
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= 1)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1)
                 {
                     shapePosition = World.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
 
                 //with Pr=.5 pick Square, else pick Circle
-                if (LearningTaskHelpers.FlipCoin(m_rndGen))
-                {
-                    m_target_type = Shape.Shapes.Circle;
-                }
-                else
-                {
-                    m_target_type = Shape.Shapes.Square;
-                }
+                m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
 
                 m_target = World.CreateShape(shapePosition, m_target_type, Color.White, shapeSize);
             }

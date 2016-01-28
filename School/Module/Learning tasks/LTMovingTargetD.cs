@@ -23,7 +23,7 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;           // Degrees of freedom initialised to 2: move in 4 directions (1 means move only right-left)
-            TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] = 0.9f;
+            TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] = 0.9f;
             angle = 0f;
         }
 
@@ -53,7 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             //base.CreateTarget();
             
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
+            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
             Point RandomPoint = new Point();
             float NewNumber = (float)m_rndGen.NextDouble();
             RandomPoint = GetPointInEllipse(NewNumber, 1f);                        // Find a random point in the ellipse

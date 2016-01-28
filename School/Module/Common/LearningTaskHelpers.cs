@@ -54,10 +54,20 @@ namespace GoodAI.Modules.School.Common
             throw new ArgumentException("Unknown shape");
         }
 
-        public static Shapes getRandomShape(Random rndGen)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rndGen"></param>
+        /// <param name="numberOfShapes">Cardinality of set from you are choosing</param>
+        /// <returns>Random shape</returns>
+        public static Shapes GetRandomShape(Random rndGen, int numberOfShapes = 10)
         {
             Array values = Enum.GetValues(typeof(Shapes));
-            return (Shapes)values.GetValue(rndGen.Next(values.Length));
+            if (numberOfShapes > values.Length)
+            {
+                throw new ArgumentException("Not Enought Shapes.");
+            }
+            return (Shapes)values.GetValue(rndGen.Next(numberOfShapes));
         }
     }
 

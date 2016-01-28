@@ -138,7 +138,7 @@ namespace GoodAI.Modules.School.Common
         {
             switch (attr)
             {
-                case TSHintAttributes.NOISE:
+                case TSHintAttributes.IMAGE_NOISE:
                     IsImageNoise = value > 0;
                     break;
                 case TSHintAttributes.DEGREES_OF_FREEDOM:
