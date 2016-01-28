@@ -24,7 +24,6 @@ namespace GoodAI.Modules.School.Common
         CooldownAction,
         DetectAngle,
         DetectShapeColor,
-        ShapeGroups,
         CopyAction,
         CopySequence,
         DetectDifference,
@@ -70,8 +69,6 @@ namespace GoodAI.Modules.School.Common
                     return new LTDetectBlackAndWhite(world);
                 case LearningTaskNameEnum.DetectAngle:
                     return new LTSimpleAngle(world);
-                case LearningTaskNameEnum.ShapeGroups:
-                    return new LTShapeGroups(world as RoguelikeWorld);
                 case LearningTaskNameEnum.CopyAction:
                     return new LTCopyAction(world);
                 case LearningTaskNameEnum.CopySequence:

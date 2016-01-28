@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using System;
 using System.Drawing;
+using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -25,7 +26,9 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.5f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4);
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8);
             TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
             SetHints(TSHints);
@@ -57,7 +60,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     shapePosition = World.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
 
-                //with Pr=.5 pick Square, else pick Circle
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
 
                 m_target = World.CreateShape(shapePosition, m_target_type, Color.White, shapeSize);
@@ -70,34 +72,25 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (m_target == null)
+            // check if two or more controls are active
+            int numberOfActiveInputs = (int)World.Controls.Host.Aggregate((x, y) => (float)(Math.Ceiling(x) + Math.Ceiling(y)));
+            if (numberOfActiveInputs > 1)
             {
-                if (World.Controls.Host[0] != 0 || World.Controls.Host[1] != 0)
-                {
-                    wasUnitSuccessful = false;
-
-                }
-                else
-                {
-                    wasUnitSuccessful = true;
-                }
-
+                wasUnitSuccessful = false;
+            }
+            else if (m_target == null)
+            {
+                wasUnitSuccessful = numberOfActiveInputs == 0;
+            }
+            else if (World.Controls.Host[(int)m_target_type] != 0)
+            {
+                wasUnitSuccessful = true;
             }
             else
             {
-                if (m_target_type == Shape.Shapes.Circle && World.Controls.Host[0] != 0 && World.Controls.Host[1] <= 0.01f)
-                {
-                    wasUnitSuccessful = true;
-                }
-                else if (m_target_type == Shape.Shapes.Square && World.Controls.Host[1] != 0 && World.Controls.Host[0] <= 0.01f)
-                {
-                    wasUnitSuccessful = true;
-                }
-                else
-                {
-                    wasUnitSuccessful = false;
-                }
+                wasUnitSuccessful = false;
             }
+            Console.WriteLine(wasUnitSuccessful);
             return true;
         }
 
