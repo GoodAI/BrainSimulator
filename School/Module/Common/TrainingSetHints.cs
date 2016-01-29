@@ -38,7 +38,7 @@ namespace GoodAI.Modules.School.Common
     {
         private static TypeCode m_boolT = TypeCode.Boolean;
         private static TypeCode m_intT = TypeCode.Int32;
-        private static TypeCode m_floatT = TypeCode.Decimal;
+        private static TypeCode m_floatT = TypeCode.Single;
 
         // A value [0, 1] measuring the amount of noise in the image
         public static readonly TSHintAttribute IMAGE_NOISE = new TSHintAttribute(

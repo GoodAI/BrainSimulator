@@ -7,8 +7,8 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleAngle : AbstractLearningTask<ManInWorld>
     {
-        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Tolerance in rads","",TypeCode.Decimal,0,1); //check needed;
-        private readonly TSHintAttribute FIXED_DISTANCE = new TSHintAttribute("Fixed distance to target","",TypeCode.Decimal,0,1); //check needed;
+        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Tolerance in rads","",TypeCode.Single,0,1); //check needed;
+        private readonly TSHintAttribute FIXED_DISTANCE = new TSHintAttribute("Fixed distance to target","",TypeCode.Single,0,1); //check needed;
 
         protected Random m_rndGen = new Random();
         protected MovableGameObject m_agent;

@@ -5,7 +5,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTConditionalTarget : AbstractLearningTask<ManInWorld>
     {
-        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience","",TypeCode.Decimal,0,1); //check needed;
+        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience","",TypeCode.Single,0,1); //check needed;
 
         public LTConditionalTarget() { }
 
