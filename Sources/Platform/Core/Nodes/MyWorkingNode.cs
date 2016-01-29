@@ -75,9 +75,10 @@ namespace GoodAI.Core.Nodes
 
         public override int OutputBranches
         {
-            get { return m_outputs != null ? m_outputs.Length : 0; }
+            get { return base.OutputBranches; }
             set
             {
+                base.OutputBranches = value;
                 m_outputs = new MyAbstractMemoryBlock[value];
             }
         }

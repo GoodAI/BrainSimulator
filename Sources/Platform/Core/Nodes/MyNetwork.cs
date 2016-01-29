@@ -132,6 +132,8 @@ namespace GoodAI.Core.Nodes
 
             Iterate(true, findUnknownAction);
 
+            Iterate(true, node => node.UpdateAfterDeserialization());
+
             foreach (MyConnectionProxy cp in m_connections)
             {                
                 try
