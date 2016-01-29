@@ -69,7 +69,6 @@ namespace GoodAI.School.GUI
                 }
             }
 
-            [Browsable(false)]
             public Type TaskType
             {
                 get
@@ -78,7 +77,6 @@ namespace GoodAI.School.GUI
                 }
             }
 
-            [Browsable(false)]
             public Type WorldType
             {
                 get
