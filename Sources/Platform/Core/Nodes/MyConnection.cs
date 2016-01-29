@@ -36,7 +36,33 @@ namespace GoodAI.Core
             }
         }
         */
-          
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as MyConnection;
+            if (other == null)
+                return false;
+
+            return other.From == From
+                   && other.To == To
+                   && other.FromIndex == FromIndex
+                   && other.ToIndex == ToIndex;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 13;
+                hash = (hash*7) + From.GetHashCode();
+                hash = (hash*7) + To.GetHashCode();
+                hash = (hash*7) + FromIndex.GetHashCode();
+                hash = (hash*7) + ToIndex.GetHashCode();
+
+                return hash;
+            }
+        }
+
         public void Connect()
         {
             if (ToIndex < To.InputConnections.Length && FromIndex < From.OutputBranches)
@@ -47,6 +73,7 @@ namespace GoodAI.Core
                     IsLowPriority = IsLowPriority || From.CheckForCycle(To);
 
                 To.InputConnections[ToIndex] = this;
+                From.OutputConnections[FromIndex].Add(this);
             }
             else
             {
@@ -59,6 +86,8 @@ namespace GoodAI.Core
             if (ToIndex < To.InputConnections.Length)
             {
                 To.InputConnections[ToIndex] = null;
+                if (FromIndex < From.OutputConnections.Length)
+                    From.OutputConnections[FromIndex].Remove(this);
             }
         }
 
