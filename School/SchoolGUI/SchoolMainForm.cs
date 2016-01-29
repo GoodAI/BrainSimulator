@@ -4,10 +4,10 @@ using GoodAI.BrainSimulator.Forms;
 using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
@@ -21,7 +21,7 @@ namespace GoodAI.School.GUI
         public SchoolRunForm RunView { get; private set; }
         private YAXSerializer m_serializer;
         private TreeModel m_model;
-        private string m_curriculaPath;
+        private string m_lastOpenedFile;
 
         #region Helper classes
 
@@ -111,11 +111,12 @@ namespace GoodAI.School.GUI
             m_model = new TreeModel();
             tree.Model = m_model;
             tree.Refresh();
-            UpdateButtons();
 
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
-            m_curriculaPath = Properties.School.Default.LastOpenedFile;
-            ReloadCurricula();
+            m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
+            LoadCurriculum(m_lastOpenedFile);
+
+            UpdateButtons();
         }
 
         private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
@@ -129,22 +130,14 @@ namespace GoodAI.School.GUI
             return node;
         }
 
-        private void ReloadCurricula()
-        {
-            m_model.Nodes.Clear();
-
-            if (String.IsNullOrEmpty(m_curriculaPath))
-                return;
-
-            foreach (string filePath in Directory.GetFiles(m_curriculaPath))
-            {
-                LoadCurriculum(filePath);
-            }
-        }
-
         private void LoadCurriculum(string filePath)
         {
-            string xmlCurr = File.ReadAllText(filePath);
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            string xmlCurr;
+            try { xmlCurr = File.ReadAllText(filePath); }
+            catch (FileNotFoundException e) { return; }
 
             try
             {
@@ -231,6 +224,9 @@ namespace GoodAI.School.GUI
         private void UpdateButtons()
         {
             EnableButtons(this);
+
+            if (!tree.AllNodes.Any())
+                btnSave.Enabled = btnSaveAs.Enabled = false;
 
             if (tree.SelectedNode == null)
             {
@@ -338,6 +334,18 @@ namespace GoodAI.School.GUI
             CurriculumNode newCurr = AddCurriculum();
         }
 
+        private void btnDeleteCurr_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode.Tag is CurriculumNode)
+            {
+                DeleteNode(sender, e);
+                return;
+            }
+            Node parent = (tree.SelectedNode.Tag as Node).Parent;
+            if (parent != null && parent is CurriculumNode)
+                parent.Parent = null;
+        }
+
         private void btnNewTask_Click(object sender, EventArgs e)
         {
             if (tree.SelectedNode == null || !(tree.SelectedNode.Tag is CurriculumNode))
@@ -358,35 +366,10 @@ namespace GoodAI.School.GUI
             (tree.SelectedNode.Tag as Node).Parent = null;
         }
 
-        private void btnExportCurr_Click(object sender, EventArgs e)
-        {
-            SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            string xmlCurr = m_serializer.Serialize(test);
-            saveFileDialog1.ShowDialog();
-            if (!string.IsNullOrEmpty(saveFileDialog1.FileName))
-                File.WriteAllText(saveFileDialog1.FileName, xmlCurr);
-        }
-
-        private void btnImportCurr_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.ShowDialog();
-            if (!string.IsNullOrEmpty(openFileDialog1.FileName))
-                LoadCurriculum(openFileDialog1.FileName);
-        }
-
         private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
         {
             Properties.School.Default.AutosaveEnabled = checkBoxAutosave.Checked;
             Properties.School.Default.Save();
-        }
-
-        private void btnCurrFolder_Click(object sender, EventArgs e)
-        {
-            folderBrowserDialog1.ShowDialog();
-            m_curriculaPath = folderBrowserDialog1.SelectedPath;
-            Properties.School.Default.LastOpenedFile = m_curriculaPath;
-            Properties.School.Default.Save();
-            ReloadCurricula();
         }
 
         private void btnRun_Click(object sender, EventArgs e)
@@ -395,10 +378,27 @@ namespace GoodAI.School.GUI
             List<LearningTaskNode> data = new List<LearningTaskNode>();
             foreach (LearningTaskNode ltNode in (tree.SelectedNode.Tag as CurriculumNode).Nodes)
                 data.Add(ltNode);
-            //SchoolCurriculum curriculum = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            //List<LearningTaskNode> data = CurriculumDataToLTData(curriculum);
             RunView.Data = data;
             RunView.UpdateData();
+        }
+
+        private bool AddFileContent(bool clearWorkspace = false)
+        {
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+                return false;
+            if (clearWorkspace)
+                m_model.Nodes.Clear();
+            LoadCurriculum(openFileDialog1.FileName);
+            return true;
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            if (AddFileContent(true))
+            {
+                Properties.School.Default.LastOpenedFile = openFileDialog1.FileName;
+                Properties.School.Default.Save();
+            }
         }
 
         #endregion
@@ -429,16 +429,34 @@ namespace GoodAI.School.GUI
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
         }
 
-        private void btnDeleteCurr_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode.Tag is CurriculumNode)
-            {
-                DeleteNode(sender, e);
+            if (saveFileDialog1.FileName != string.Empty)
+                SaveProject(saveFileDialog1.FileName);
+            else
+                SaveProjectAs(sender, e);  // ask for file name and then save the project
+        }
+
+        private void SaveProject(string path)
+        {
+            SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
+            string xmlCurr = m_serializer.Serialize(test);
+            File.WriteAllText(path, xmlCurr);
+        }
+
+        private void SaveProjectAs(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
                 return;
-            }
-            Node parent = (tree.SelectedNode.Tag as Node).Parent;
-            if (parent != null && parent is CurriculumNode)
-                parent.Parent = null;
+
+            SaveProject(saveFileDialog1.FileName);
+            Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
+            Properties.School.Default.Save();
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            AddFileContent();
         }
     }
 }

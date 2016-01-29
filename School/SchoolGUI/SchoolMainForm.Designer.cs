@@ -139,8 +139,9 @@
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 11;
-            this.btnOpen.Text = "Load";
+            this.btnOpen.Text = "Open";
             this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
             // btnSave
             // 
@@ -150,6 +151,7 @@
             this.btnSave.TabIndex = 10;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // checkBoxAutosave
             // 
@@ -170,7 +172,7 @@
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImportCurr_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnSaveAs
             // 
@@ -180,7 +182,7 @@
             this.btnSaveAs.TabIndex = 3;
             this.btnSaveAs.Text = "Save As...";
             this.btnSaveAs.UseVisualStyleBackColor = true;
-            this.btnSaveAs.Click += new System.EventHandler(this.btnExportCurr_Click);
+            this.btnSaveAs.Click += new System.EventHandler(this.SaveProjectAs);
             // 
             // btnRun
             // 
