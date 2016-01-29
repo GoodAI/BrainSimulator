@@ -5,7 +5,7 @@
     <Setting Name="AutosaveEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="CurriculaFolder" Type="System.String" Scope="User">
+    <Setting Name="LastOpenedFile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
