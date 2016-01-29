@@ -131,6 +131,7 @@ namespace GoodAI.Modules.School.Worlds
                 // TODO m_currentWorld Init memory of wrapped world
                 m_switchModel = true;
                 m_currentWorld = value;
+                (m_currentWorld as MyWorld).UpdateMemoryBlocks();
                 m_currentWorld.InitAdapterMemory(this);
             }
         }
