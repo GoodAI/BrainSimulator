@@ -165,7 +165,16 @@ namespace GoodAI.Modules.School.Worlds
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
             ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
         }
-      
+
+        public virtual void ClearWorld()
+        {
+            Agent = null;
+            gameObjects.Clear();
+            Objects.Count = 0;
+            IsImageNoise = false;
+            m_IsWorldFrozen = false;
+        }
+        
         public virtual void SetHint(string attr, float value)
         {
             switch (attr)
@@ -398,15 +407,6 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void FreezeWorld(bool shouldFreeze)
         {
             m_IsWorldFrozen = shouldFreeze;
-        }
-
-        public virtual void ClearWorld()
-        {
-            Agent = null;
-            gameObjects.Clear();
-            Objects.Count = 0;
-            IsImageNoise = false;
-            m_IsWorldFrozen = false;
         }
 
         ////TODO: if two objects share the same texture, do not load it twice into memory
