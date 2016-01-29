@@ -287,7 +287,7 @@ namespace GoodAI.Core.Nodes
             MyMemoryBlock<float> in0, in1, out0;
 
             private MyCudaKernel m_kernel;
-            private MyCudaKernel m_dotKernel;
+            private MyProductKernel<float> m_dotKernel;
             private MyCudaKernel m_mapToIdcsKernel;
 
             public override void Init(int nGPU)
@@ -314,7 +314,7 @@ namespace GoodAI.Core.Nodes
                         m_kernel.SetupExecution(in1.Count);
                         m_mapToIdcsKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\CombineVectorsKernel", "MapToIdcs");
                         m_mapToIdcsKernel.SetupExecution(in1.Count);
-                        m_dotKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_DotProduct_f);
+                        m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(Owner, nGPU, ProductMode.f_DotProduct_f);
                         break;
 
                     case MyJoinOperation.GatherFromIdcs:
@@ -325,11 +325,11 @@ namespace GoodAI.Core.Nodes
                     case MyJoinOperation.DotProduct:
                     case MyJoinOperation.DistanceSquared:
                         m_kernel.SetupExecution(in0.Count);
-                        m_dotKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_DotProduct_f);
+                        m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(Owner, nGPU, ProductMode.f_DotProduct_f);
                         break;
 
                     case MyJoinOperation.CosineDistance:
-                        m_dotKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Cosine_f);
+                        m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(Owner, nGPU, ProductMode.f_Cosine_f);
                         break;
 
                     case MyJoinOperation.MatMultiplication:
@@ -375,7 +375,9 @@ namespace GoodAI.Core.Nodes
 
                         m_kernel.Run(in0, in2, temp, (int)MyJoinOperation.Permutation, in2.Count);
                         m_kernel.Run(in1, temp, temp, (int)MyJoinOperation.Addition, in1.Count);
-                        m_dotKernel.Run(temp, in1.Count, temp, temp, in1.Count, /* distributed: */ 0);
+                        //ZCX m_dotKernel.Run(temp, in1.Count, temp, temp, in1.Count, /* distributed: */ 0);
+                        m_dotKernel.outOffset = in1.Count;
+                        m_dotKernel.Run(temp, temp, temp);
                         m_mapToIdcsKernel.Run(temp, temp.GetDevicePtr(Owner.GPU, in1.Count), in2, out0, in2.Count);
                         break;
 
@@ -385,12 +387,14 @@ namespace GoodAI.Core.Nodes
 
                     case MyJoinOperation.DistanceSquared:
                         m_kernel.Run(in0, in1, Owner.Temp, (int)MyJoinOperation.Subtraction, in0.Count, in1.Count);
-                        m_dotKernel.Run(out0, 0, Owner.Temp, Owner.Temp, Owner.Temp.Count, /* distributed: */ 0);
+                        //ZXC m_dotKernel.Run(out0, 0, Owner.Temp, Owner.Temp, Owner.Temp.Count, /* distributed: */ 0);
+                        m_dotKernel.Run(out0, Owner.Temp, Owner.Temp);
                         break;
 
                     case MyJoinOperation.CosineDistance:
                     case MyJoinOperation.DotProduct:
-                        m_dotKernel.Run(out0, 0, in0, in1, in0.Count, /* distributed: */ 0);
+                        //ZXC m_dotKernel.Run(out0, 0, in0, in1, in0.Count, /* distributed: */ 0);
+                        m_dotKernel.Run(out0, in0, in1);
                         break;
 
                     case MyJoinOperation.MatMultiplication:

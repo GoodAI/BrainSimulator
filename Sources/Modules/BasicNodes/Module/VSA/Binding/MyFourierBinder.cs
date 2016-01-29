@@ -20,7 +20,7 @@ namespace GoodAI.Modules.VSA
         private MyCudaKernel m_inversionKernel;
         private MyCudaKernel m_normalKernel;
 
-        private MyCudaKernel m_dotKernel;
+        private MyProductKernel<float> m_dotKernel;
 
         private int m_firstFFTOffset;
         private int m_secondFFTOffset;
@@ -48,7 +48,7 @@ namespace GoodAI.Modules.VSA
             m_inversionKernel = MyKernelFactory.Instance.Kernel(owner.GPU, @"Transforms\InvertValuesKernel", "InvertLengthComplexKernel");
             m_inversionKernel.SetupExecution(inputSize);
 
-            m_dotKernel = MyReductionFactory.Kernel(owner.GPU, MyReductionFactory.Mode.f_DotProduct_f);
+            m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(owner, owner.GPU, ProductMode.f_DotProduct_f);
 
             m_normalKernel = MyKernelFactory.Instance.Kernel(owner.GPU, @"Transforms\TransformKernels", "PolynomialFunctionKernel");
             m_normalKernel.SetupExecution(inputSize);
@@ -114,7 +114,8 @@ namespace GoodAI.Modules.VSA
 
             if (NormalizeOutput)
             {
-                m_dotKernel.RunAsync(m_stream, m_tempBlock, 0, output, output, m_inputSize, /* distributed: */ 0);
+                //ZXC m_dotKernel.RunAsync(m_stream, m_tempBlock, 0, output, output, m_inputSize, /* distributed: */ 0);
+                m_dotKernel.RunAsync(m_stream, m_tempBlock, output, output, m_inputSize);
                 m_tempBlock.SafeCopyToHost(0, 1);
 
                 if (m_tempBlock.Host[0] > 0.000001f)

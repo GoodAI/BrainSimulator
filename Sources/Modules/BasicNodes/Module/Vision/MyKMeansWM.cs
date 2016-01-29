@@ -214,10 +214,10 @@ namespace GoodAI.Modules.Vision
             private MyCudaKernel m_kernel_UpdateCC_XY;
             private MyCudaKernel m_kernel_UpdateXY_basedOnTheBrainsMovement;
 
-            private MyCudaKernel m_dotKernel;
+            private MyProductKernel<float> m_dotKernel;
             private MyCudaKernel m_mulKernel;
             private MyCudaKernel m_matMultpl;
-            private MyCudaKernel m_minIdxKernel;
+            private MyReductionKernel<float> m_minIdxKernel;
 
 
 
@@ -252,7 +252,7 @@ namespace GoodAI.Modules.Vision
                 m_kernel_UpdateCC_XY.SetupExecution(Owner.ObjectXY.Count);
 
 
-                m_dotKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_DotProduct_f);
+                m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(Owner, nGPU, ProductMode.f_DotProduct_f);
                 m_mulKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\TransformKernels", "PolynomialFunctionKernel");
                 m_mulKernel.SetupExecution(Owner.DescCount);
 
@@ -260,7 +260,7 @@ namespace GoodAI.Modules.Vision
                 m_matMultpl.GridDimensions = new ManagedCuda.VectorTypes.dim3(1, Owner.DescCount);
                 m_matMultpl.BlockDimensions = new ManagedCuda.VectorTypes.dim3(1, 1);
 
-                m_minIdxKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_MinIdx_ff);
+                m_minIdxKernel = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_MinIdx_ff);
 
                 m_kernel_UpdateXY_basedOnTheBrainsMovement = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\KMeansWM", "ApplyBrainsMovement");
                 m_kernel_UpdateCC_XY.SetupExecution(Owner.MaxClusters);
@@ -322,7 +322,8 @@ namespace GoodAI.Modules.Vision
             private void NormalizeVector(MyMemoryBlock<float> Vec, int dim ,int id_start=0){
                 CUdeviceptr VecDevPtr = Vec.GetDevicePtr(0,id_start * dim);
 
-                m_dotKernel.Run(Owner.TempVal, 0, VecDevPtr, VecDevPtr, dim, /* distributed: */ 0);
+                //ZXC m_dotKernel.Run(Owner.TempVal, 0, VecDevPtr, VecDevPtr, dim, /* distributed: */ 0);
+                m_dotKernel.Run(Owner.TempVal, VecDevPtr, VecDevPtr, dim);
                 Owner.TempVal.SafeCopyToHost();
                 float length = (float)Math.Sqrt(Owner.TempVal.Host[0]);
 

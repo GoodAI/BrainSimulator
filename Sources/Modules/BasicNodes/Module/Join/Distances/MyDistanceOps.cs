@@ -39,7 +39,9 @@ namespace GoodAI.Modules.Join
         private DistanceOperation m_operations;
         private readonly MyMemoryBlock<float> m_temp;
 
-        private readonly MyCudaKernel m_dotKernel, m_cosKernel, m_combineVecsKernel, m_reduceSumKernel;
+        private readonly MyCudaKernel m_combineVecsKernel;
+        private readonly MyProductKernel<float> m_dotKernel, m_cosKernel;
+        private readonly MyReductionKernel<float> m_reduceSumKernel;
 
 
         public MyDistanceOps(MyWorkingNode caller, DistanceOperation operations, MyMemoryBlock<float> tempBlock = null)
@@ -51,28 +53,28 @@ namespace GoodAI.Modules.Join
 
             if (operations.HasFlag(DistanceOperation.DotProd))
             {
-                m_dotKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_DotProduct_f);
+                m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(caller, caller.GPU, ProductMode.f_DotProduct_f);
             }
 
             if (operations.HasFlag(DistanceOperation.CosDist))
             {
-                m_cosKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_Cosine_f);
+                m_cosKernel = MyKernelFactory.Instance.KernelProduct<float>(caller, caller.GPU, ProductMode.f_Cosine_f);
             }
 
             if (operations.HasFlag(DistanceOperation.EuclidDist) || operations.HasFlag(DistanceOperation.EuclidDistSquared))
             {
                 // EuclidDist computes EuclidDistSquared first, so keep them together:
                 m_operations |= DistanceOperation.EuclidDist | DistanceOperation.EuclidDistSquared;
-                m_dotKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_DotProduct_f);
+                m_dotKernel = MyKernelFactory.Instance.KernelProduct<float>(caller, caller.GPU, ProductMode.f_DotProduct_f);
             }
 
             if (operations.HasFlag(DistanceOperation.HammingDist))
             {
-                m_reduceSumKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_Sum_f);
+                m_reduceSumKernel = MyKernelFactory.Instance.KernelReduction<float>(caller, caller.GPU, ReductionMode.f_Sum_f);
             }
             if (operations.HasFlag(DistanceOperation.HammingSim))
             {
-                m_reduceSumKernel = MyReductionFactory.Kernel(m_caller.GPU, MyReductionFactory.Mode.f_Sum_f);
+                m_reduceSumKernel = MyKernelFactory.Instance.KernelReduction<float>(caller, caller.GPU, ReductionMode.f_Sum_f);
             }
 
             if (operations.HasFlag(DistanceOperation.EuclidDist) || operations.HasFlag(DistanceOperation.EuclidDistSquared) || 
@@ -94,11 +96,13 @@ namespace GoodAI.Modules.Join
             switch (operation)
             {
                 case DistanceOperation.DotProd:
-                    m_dotKernel.Run(result.DevicePointer, 0, A.DevicePointer, B.DevicePointer, sizeA, 0);
+                    //ZXC m_dotKernel.Run(result.DevicePointer, 0, A.DevicePointer, B.DevicePointer, sizeA, 0);
+                    m_dotKernel.Run(result.DevicePointer, A.DevicePointer, B.DevicePointer, sizeA);
                     break;
 
                 case DistanceOperation.CosDist:
-                    m_cosKernel.Run(result.DevicePointer, 0, A.DevicePointer, B.DevicePointer, sizeA, 0);
+                    //ZXC m_cosKernel.Run(result.DevicePointer, 0, A.DevicePointer, B.DevicePointer, sizeA, 0);
+                    m_cosKernel.Run(result.DevicePointer, A.DevicePointer, B.DevicePointer, sizeA);
                     break;
 
                 case DistanceOperation.EuclidDist:
@@ -109,13 +113,15 @@ namespace GoodAI.Modules.Join
                 case DistanceOperation.EuclidDistSquared:
                     m_combineVecsKernel.SetupExecution(sizeA);
                     m_combineVecsKernel.Run(A.DevicePointer, B.DevicePointer, m_temp, (int)MyJoin.MyJoinOperation.Subtraction, sizeA);
-                    m_dotKernel.Run(result.DevicePointer, 0, m_temp, m_temp, m_temp.Count, 0);
+                    //ZXC m_dotKernel.Run(result.DevicePointer, 0, m_temp, m_temp, m_temp.Count, 0);
+                    m_dotKernel.Run(result.DevicePointer, m_temp, m_temp);
                     break;
 
                 case DistanceOperation.HammingDist:
                     m_combineVecsKernel.SetupExecution(sizeA);
                     m_combineVecsKernel.Run(A.DevicePointer, B.DevicePointer, m_temp, (int)MyJoin.MyJoinOperation.Equal, sizeA);
-                    m_reduceSumKernel.Run(result.DevicePointer, m_temp, m_temp.Count, 0, 0, 1, /*distributed = false*/0); // reduction to a single number
+                    //ZXC m_reduceSumKernel.Run(result.DevicePointer, m_temp, m_temp.Count, 0, 0, 1, /*distributed = false*/0); // reduction to a single number
+                    m_reduceSumKernel.Run(result.DevicePointer, m_temp);
                     float fDist = 0; // to transform number of matches to a number of differences
                     result.CopyToHost(ref fDist);
                     fDist = m_temp.Count - fDist;
@@ -125,7 +131,8 @@ namespace GoodAI.Modules.Join
                 case DistanceOperation.HammingSim:
                     m_combineVecsKernel.SetupExecution(sizeA);
                     m_combineVecsKernel.Run(A.DevicePointer, B.DevicePointer, m_temp, (int)MyJoin.MyJoinOperation.Equal, sizeA);
-                    m_reduceSumKernel.Run(result.DevicePointer, m_temp, m_temp.Count, 0, 0, 1, /*distributed = false*/0); // reduction to a single number
+                    //ZXC m_reduceSumKernel.Run(result.DevicePointer, m_temp, m_temp.Count, 0, 0, 1, /*distributed = false*/0); // reduction to a single number
+                    m_reduceSumKernel.Run(result.DevicePointer, m_temp);
                     // take the single number (number of different bits) and convert it to Hamming Similarity: 
                     // a number in range <0,1> that says how much the vectors are similar
                     float fSim = 0;

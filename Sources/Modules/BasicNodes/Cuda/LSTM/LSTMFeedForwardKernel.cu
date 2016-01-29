@@ -83,7 +83,7 @@ extern "C"
 			temporary[weightOffset] = weights[weightOffset];
 		}
 
-		DReduction<f_Sum_f, float, THREAD_CNT>((void*)netInput, (void*)temporary, size, memoryBlockId, memoryBlockId * size, 1, true);
+		DReduction<f_Sum_f, float, THREAD_CNT>((void*)netInput, (void*)temporary, nullptr, size, memoryBlockId, memoryBlockId * size, 1, true);
 	}
 
 	__global__ void CellStateFeedForwardKernelBPTT(

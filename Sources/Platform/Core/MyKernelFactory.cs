@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.Transforms;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.CudaRand;
@@ -17,10 +18,10 @@ namespace GoodAI.Core
 {
     public class MyCudaKernel
     {
-        public int MAX_THREADS { get; private set;  }
+        public int MAX_THREADS { get; protected set;  }
 
-        private CudaKernel m_kernel;
-        private int m_GPU;
+        protected CudaKernel m_kernel;
+        protected int m_GPU;
 
         public string KernelName { get { return m_kernel.KernelName; } }
         public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set {m_kernel.BlockDimensions = value; } }
@@ -62,6 +63,7 @@ namespace GoodAI.Core
                     }
                 }
             }
+
             m_kernel.Run(args);
         }
 
@@ -252,6 +254,18 @@ namespace GoodAI.Core
         public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false)
         {
             return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance);            
+        }
+
+        public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode,
+            int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
+        {
+            return new MyReductionKernel<T>(owner, nGPU, mode, bufferSize);
+        }
+
+        public MyProductKernel<T> KernelProduct<T>(MyNode owner, int nGPU, ProductMode mode,
+            int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
+        {
+            return new MyProductKernel<T>(owner, nGPU, mode, bufferSize);
         }
 
         // !!! Warning: This is for testing purposes only.

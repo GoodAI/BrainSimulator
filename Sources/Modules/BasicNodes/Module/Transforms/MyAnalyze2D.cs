@@ -66,16 +66,16 @@ namespace GoodAI.Modules.Transforms
             private MyCudaKernel m_kernel;
             private MyCudaKernel m_derivativeKernel;
             private MyCudaKernel m_velocityKernel;
-            private MyCudaKernel m_reductionKernel;
             private MyCudaKernel m_finalizeKernel;
+            private MyReductionKernel<float> m_reductionKernel;
 
             public override void Init(int nGPU)
             {
                 m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Common\ConvolutionSingle", "Convolution3x3Single");                
                 m_derivativeKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\OpticalFlow", "PrepareDerivativesKernel");
                 m_velocityKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\OpticalFlow", "EvaluateVelocityKernel");
-                m_reductionKernel = MyReductionFactory.Kernel(nGPU, MyReductionFactory.Mode.f_Sum_f);
                 m_finalizeKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\OpticalFlow", "FinalizeVelocityKernel");
+                m_reductionKernel = MyKernelFactory.Instance.KernelReduction<float>(Owner, nGPU, ReductionMode.f_Sum_f);
 
                 imageWidth = Owner.Input.ColumnHint;
                 imageHeight = Owner.InputSize / imageWidth;
@@ -125,8 +125,14 @@ namespace GoodAI.Modules.Transforms
 
                 if (SubtractGlobalFlow)
                 {
-                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, 0, 0, 1,0);
-                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, Owner.InputSize, 1, 1,0);
+                    //ZXC m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, 0, 0, 1,0);
+                    m_reductionKernel.outOffset = 0;
+                    m_reductionKernel.inOffset = 0;
+                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow);
+                    //ZXC m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow, Owner.InputSize, Owner.InputSize, 1, 1,0);
+                    m_reductionKernel.outOffset = Owner.InputSize;
+                    m_reductionKernel.inOffset = 1;
+                    m_reductionKernel.Run(Owner.Output, Owner.GlobalFlow);
 
                     Owner.GlobalFlow.SafeCopyToHost();
 
