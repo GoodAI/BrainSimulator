@@ -429,8 +429,6 @@ namespace GoodAI.BrainSimulator.Forms
             Desktop.NodeRemoving += Desktop_NodeRemoving;
             Desktop.NodeRemoved += Desktop_NodeRemoved;
 
-            Desktop.NodeRemoved += Desktop_NodeRemoved;
-
             Desktop.ConnectionAdded += OnConnectionAdded;
             Desktop.ConnectionRemoved += OnConnectionRemoved;
         }
