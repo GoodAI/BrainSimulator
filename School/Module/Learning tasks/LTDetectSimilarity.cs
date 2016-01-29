@@ -26,10 +26,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .3f); // different color
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .3f); // TODO: different color
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .6f); // different size
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f); // different amount
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
             SetHints(TSHints);
         }

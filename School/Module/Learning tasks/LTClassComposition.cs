@@ -34,14 +34,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(IS_TARGET_MOVING, 1);;
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.3f);
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.6f);
             TSProgression.Add(CARDINALITY_OF_SET, 3);
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
-            TSProgression.Add(CARDINALITY_OF_SET, 5); // max
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
+            TSProgression.Add(CARDINALITY_OF_SET, 5);
 
             SetHints(TSHints);
 

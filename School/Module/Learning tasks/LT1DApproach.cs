@@ -27,14 +27,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.IMAGE_NOISE, .5f },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0f },
                 { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, .3f },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 }
             });
             TSProgression.Add(new TrainingSetHints {
                 { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1.5f },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3f },
                 { TSHintAttributes.IMAGE_NOISE, 1f },
                 { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1f },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
             });
 
             SetHints(TSHints);

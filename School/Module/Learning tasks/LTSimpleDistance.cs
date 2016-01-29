@@ -43,12 +43,10 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(new TrainingSetHints {
                 { TSHintAttributes.IS_VARIABLE_SIZE, 1 },
                 { ERROR_TOLERANCE, 0.10f },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 }
             });
             TSProgression.Add(new TrainingSetHints {
                 { ERROR_TOLERANCE, 0.05f },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
             });
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 

@@ -38,11 +38,9 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TARGET_SIZE_LEVELS, 5 },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2 }
             });
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
             TSProgression.Add(new TrainingSetHints {
                 { TARGET_SIZE_LEVELS, 10 },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
             });
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 

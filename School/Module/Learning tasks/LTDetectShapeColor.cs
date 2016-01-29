@@ -16,14 +16,13 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.IMAGE_NOISE, 0 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 },
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 { TSHintAttributes.IS_VARIABLE_SIZE, 0 }
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 0);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
             SetHints(TSHints);
         }

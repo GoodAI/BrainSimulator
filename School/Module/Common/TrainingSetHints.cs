@@ -47,7 +47,8 @@ namespace GoodAI.Modules.School.Common
             m_boolT,
             0, 1);
 
-        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", m_boolT, 0, 1);
+        // Initially set this to some large number (10 000). Do not change it later!
+        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", m_intT, 0, 1);
 
         public static readonly TSHintAttribute IS_VARIABLE_POSITION = new TSHintAttribute(
             "Variable position of objects",
