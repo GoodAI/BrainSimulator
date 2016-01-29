@@ -376,6 +376,7 @@ namespace GoodAI.Core.Nodes
                         m_kernel.Run(in0, in2, temp, (int)MyJoinOperation.Permutation, in2.Count);
                         m_kernel.Run(in1, temp, temp, (int)MyJoinOperation.Addition, in1.Count);
                         //ZCX m_dotKernel.Run(temp, in1.Count, temp, temp, in1.Count, /* distributed: */ 0);
+                        m_dotKernel.size = in1.Count;
                         m_dotKernel.outOffset = in1.Count;
                         m_dotKernel.Run(temp, temp, temp);
                         m_mapToIdcsKernel.Run(temp, temp.GetDevicePtr(Owner.GPU, in1.Count), in2, out0, in2.Count);
