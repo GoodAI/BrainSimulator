@@ -357,5 +357,10 @@ namespace GoodAI.Core.Nodes
                 .Any(source =>
                     source == target || (!visited.Contains(source) && CheckForCycle(source, target, visited)));
         }
+
+        /// <summary>
+        /// This method is called after deserialization.
+        /// </summary>
+        public virtual void UpdateAfterDeserialization() { }
     }
 }

@@ -366,6 +366,8 @@ namespace GoodAI.Core.Utils
             loadedProject.ApplyMemBlockAttributes();
 
             loadedProject.World.FinalizeTasksDeserialization();
+
+            loadedProject.World.UpdateAfterDeserialization();
             loadedProject.m_nodeCounter = loadedProject.Network.UpdateAfterDeserialization(0, loadedProject);
 
             if (loadedProject.World.Id > loadedProject.m_nodeCounter)

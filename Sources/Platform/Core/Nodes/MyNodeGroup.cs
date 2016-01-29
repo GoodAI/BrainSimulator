@@ -98,6 +98,16 @@ namespace GoodAI.Core.Nodes
             }
         }
 
+        public override void UpdateAfterDeserialization()
+        {
+            base.UpdateAfterDeserialization();
+
+            if (GroupOutputNodes == null)
+                return;
+
+            OutputBranches = GroupOutputNodes.Length;
+        }
+
         public sealed override MyMemoryBlock<float> GetOutput(int index)
         {
             return GroupOutputNodes.Length > index ? GroupOutputNodes[index].Output : null;
