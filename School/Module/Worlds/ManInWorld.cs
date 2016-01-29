@@ -71,12 +71,6 @@ namespace GoodAI.Modules.School.Worlds
             get { return GetInput(0); }
         }
 
-        [MyInputBlock(2)]
-        public MyMemoryBlock<float> Difficulty
-        {
-            get { return GetInput(2); }
-        }
-
         protected virtual string TEXTURE_DIR { get { return @"res\FILL_IN_INHERITED_CLASS"; } }
         protected string TEXTURE_DIR_COMMON = @"res\SchoolWorldCommon\";
 
@@ -135,6 +129,50 @@ namespace GoodAI.Modules.School.Worlds
             ClearWorld();
         }
 
+        private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
+
+        public void InitAdapterMemory(SchoolWorld schoolWorld)
+        {
+            ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+            ControlsAdapterTemp.Count = 128;
+        }
+
+        public override MyMemoryBlock<float> GetInput(int index)
+        {
+            return ControlsAdapterTemp;
+        }
+
+        public override MyMemoryBlock<T> GetInput<T>(int index)
+        {
+            return ControlsAdapterTemp as MyMemoryBlock<T>;
+        }
+
+        public override MyAbstractMemoryBlock GetAbstractInput(int index)
+        {
+            return ControlsAdapterTemp;
+        }
+
+        public virtual void MapWorlds(SchoolWorld schoolWorld)
+        {
+            // Copy data from world to wrapper
+            VisualPOW.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualPOW.Count, schoolWorld.VisualSize));
+            Objects.CopyToMemoryBlock(schoolWorld.Data, 0, 0, Math.Min(Objects.Count, schoolWorld.DataSize));
+            schoolWorld.DataLength.Fill(Math.Min(Objects.Count, schoolWorld.DataSize));
+            Reward.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
+
+            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
+            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+        }
+
+        public override void ClearWorld()
+        {
+            Agent = null;
+            gameObjects.Clear();
+            Objects.Count = 0;
+            IsImageNoise = false;
+            m_IsWorldFrozen = false;
+        }
+        
         public override void SetHint(string attr, float value)
         {
             switch (attr)
@@ -146,18 +184,6 @@ namespace GoodAI.Modules.School.Worlds
                     DegreesOfFreedom = (int)value;
                     break;
             }
-        }
-
-        public virtual void MapWorlds(SchoolWorld schoolWorld)
-        { 
-            // Copy data from world to wrapper
-            VisualFOW.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualFOW.Count, schoolWorld.VisualSize));
-            Objects.CopyToMemoryBlock(schoolWorld.Data, 0, 0, Math.Min(Objects.Count, schoolWorld.DataSize));
-            schoolWorld.DataLength.Fill(Math.Min(Objects.Count, schoolWorld.DataSize));
-            Reward.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
-
-            // Copy data from wrapper to world (inputs)
-            Controls.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(Controls.Count, schoolWorld.ActionInput.Count));
         }
 
         public override void UpdateMemoryBlocks()
@@ -379,15 +405,6 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void FreezeWorld(bool shouldFreeze)
         {
             m_IsWorldFrozen = shouldFreeze;
-        }
-
-        public override void ClearWorld()
-        {
-            Agent = null;
-            gameObjects.Clear();
-            Objects.Count = 0;
-            IsImageNoise = false;
-            m_IsWorldFrozen = false;
         }
 
         ////TODO: if two objects share the same texture, do not load it twice into memory

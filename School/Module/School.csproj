@@ -116,6 +116,10 @@
       <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
       <Name>YAXLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+      <Project>{86955c47-2a02-41a4-ab32-c9e592eb2971}</Project>
+      <Name>TypeMap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>
