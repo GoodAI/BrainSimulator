@@ -218,12 +218,26 @@ namespace GoodAI.School.GUI
             ApplyToAll(this, hideBtns);
         }
 
+        private void DisableAllButtons()
+        {
+            Action<Control> disableBtns = (x) =>
+            {
+                Button b = x as Button;
+                if (b != null)
+                    b.Enabled = false;
+            };
+            ApplyToAll(this, disableBtns);
+        }
+
         private void UpdateButtons()
         {
-            HideAllButtons();
-            btnNewCurr.Visible = btnImportCurr.Visible = btnCurrFolder.Visible = true;
             if (tree.SelectedNode == null)
+            {
+                btnDelete.Enabled = btnNewTask.Enabled = btnRun.Enabled = false;
                 return;
+            }
+
+            btnDelete.Enabled = btnNewTask.Enabled = btnRun.Enabled = true;
 
             SchoolTreeNode selected = tree.SelectedNode.Tag as SchoolTreeNode;
             Debug.Assert(selected != null);
@@ -232,12 +246,6 @@ namespace GoodAI.School.GUI
                 groupBox1.Text = "Curriculum";
             else if (selected is LearningTaskNode)
                 groupBox1.Text = "Learning task";
-
-            btnDelete.Visible = true;
-            btnDetailsCurr.Enabled = btnDetailsTask.Enabled = false;
-            btnNewCurr.Visible = btnDetailsCurr.Visible = btnExportCurr.Visible = btnImportCurr.Visible = btnNewTask.Visible = btnRun.Visible =
-                selected is CurriculumNode;
-            btnDetailsTask.Visible = selected is LearningTaskNode;
         }
 
         #endregion

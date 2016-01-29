@@ -33,11 +33,10 @@
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnNewTask = new System.Windows.Forms.Button();
-            this.btnDetailsTask = new System.Windows.Forms.Button();
             this.checkBoxAutosave = new System.Windows.Forms.CheckBox();
-            this.btnImportCurr = new System.Windows.Forms.Button();
-            this.btnExportCurr = new System.Windows.Forms.Button();
-            this.btnDetailsCurr = new System.Windows.Forms.Button();
+            this.btnImport = new System.Windows.Forms.Button();
+            this.btnSaveAs = new System.Windows.Forms.Button();
+            this.btnDetails = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnNewCurr = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
@@ -45,6 +44,8 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnCurrFolder = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,17 +91,18 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnLoad);
+            this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.btnNewTask);
-            this.groupBox1.Controls.Add(this.btnDetailsTask);
             this.groupBox1.Controls.Add(this.checkBoxAutosave);
-            this.groupBox1.Controls.Add(this.btnImportCurr);
-            this.groupBox1.Controls.Add(this.btnExportCurr);
-            this.groupBox1.Controls.Add(this.btnDetailsCurr);
+            this.groupBox1.Controls.Add(this.btnImport);
+            this.groupBox1.Controls.Add(this.btnSaveAs);
+            this.groupBox1.Controls.Add(this.btnDetails);
             this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Controls.Add(this.btnNewCurr);
             this.groupBox1.Location = new System.Drawing.Point(423, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(118, 249);
+            this.groupBox1.Size = new System.Drawing.Size(118, 279);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Curriculum";
@@ -115,19 +117,10 @@
             this.btnNewTask.UseVisualStyleBackColor = true;
             this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
             // 
-            // btnDetailsTask
-            // 
-            this.btnDetailsTask.Location = new System.Drawing.Point(6, 195);
-            this.btnDetailsTask.Name = "btnDetailsTask";
-            this.btnDetailsTask.Size = new System.Drawing.Size(75, 23);
-            this.btnDetailsTask.TabIndex = 8;
-            this.btnDetailsTask.Text = "Details";
-            this.btnDetailsTask.UseVisualStyleBackColor = true;
-            // 
             // checkBoxAutosave
             // 
             this.checkBoxAutosave.AutoSize = true;
-            this.checkBoxAutosave.Location = new System.Drawing.Point(5, 224);
+            this.checkBoxAutosave.Location = new System.Drawing.Point(6, 256);
             this.checkBoxAutosave.Name = "checkBoxAutosave";
             this.checkBoxAutosave.Size = new System.Drawing.Size(104, 17);
             this.checkBoxAutosave.TabIndex = 5;
@@ -135,34 +128,34 @@
             this.checkBoxAutosave.UseVisualStyleBackColor = true;
             this.checkBoxAutosave.CheckedChanged += new System.EventHandler(this.checkBoxAutosave_CheckedChanged);
             // 
-            // btnImportCurr
+            // btnImport
             // 
-            this.btnImportCurr.Location = new System.Drawing.Point(6, 166);
-            this.btnImportCurr.Name = "btnImportCurr";
-            this.btnImportCurr.Size = new System.Drawing.Size(75, 23);
-            this.btnImportCurr.TabIndex = 4;
-            this.btnImportCurr.Text = "Import";
-            this.btnImportCurr.UseVisualStyleBackColor = true;
-            this.btnImportCurr.Click += new System.EventHandler(this.btnImportCurr_Click);
+            this.btnImport.Location = new System.Drawing.Point(5, 227);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(75, 23);
+            this.btnImport.TabIndex = 4;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImportCurr_Click);
             // 
-            // btnExportCurr
+            // btnSaveAs
             // 
-            this.btnExportCurr.Location = new System.Drawing.Point(6, 136);
-            this.btnExportCurr.Name = "btnExportCurr";
-            this.btnExportCurr.Size = new System.Drawing.Size(75, 23);
-            this.btnExportCurr.TabIndex = 3;
-            this.btnExportCurr.Text = "Export";
-            this.btnExportCurr.UseVisualStyleBackColor = true;
-            this.btnExportCurr.Click += new System.EventHandler(this.btnExportCurr_Click);
+            this.btnSaveAs.Location = new System.Drawing.Point(5, 169);
+            this.btnSaveAs.Name = "btnSaveAs";
+            this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveAs.TabIndex = 3;
+            this.btnSaveAs.Text = "Save As...";
+            this.btnSaveAs.UseVisualStyleBackColor = true;
+            this.btnSaveAs.Click += new System.EventHandler(this.btnExportCurr_Click);
             // 
-            // btnDetailsCurr
+            // btnDetails
             // 
-            this.btnDetailsCurr.Location = new System.Drawing.Point(5, 106);
-            this.btnDetailsCurr.Name = "btnDetailsCurr";
-            this.btnDetailsCurr.Size = new System.Drawing.Size(75, 23);
-            this.btnDetailsCurr.TabIndex = 2;
-            this.btnDetailsCurr.Text = "Details";
-            this.btnDetailsCurr.UseVisualStyleBackColor = true;
+            this.btnDetails.Location = new System.Drawing.Point(5, 106);
+            this.btnDetails.Name = "btnDetails";
+            this.btnDetails.Size = new System.Drawing.Size(75, 23);
+            this.btnDetails.TabIndex = 2;
+            this.btnDetails.Text = "Details";
+            this.btnDetails.UseVisualStyleBackColor = true;
             // 
             // btnDelete
             // 
@@ -186,7 +179,7 @@
             // 
             // btnRun
             // 
-            this.btnRun.Location = new System.Drawing.Point(429, 267);
+            this.btnRun.Location = new System.Drawing.Point(428, 297);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
             this.btnRun.TabIndex = 2;
@@ -200,13 +193,31 @@
             // 
             // btnCurrFolder
             // 
-            this.btnCurrFolder.Location = new System.Drawing.Point(429, 296);
+            this.btnCurrFolder.Location = new System.Drawing.Point(428, 326);
             this.btnCurrFolder.Name = "btnCurrFolder";
             this.btnCurrFolder.Size = new System.Drawing.Size(75, 23);
             this.btnCurrFolder.TabIndex = 10;
             this.btnCurrFolder.Text = "Curr. folder";
             this.btnCurrFolder.UseVisualStyleBackColor = true;
             this.btnCurrFolder.Click += new System.EventHandler(this.btnCurrFolder_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(5, 135);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 10;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            // 
+            // btnLoad
+            // 
+            this.btnLoad.Location = new System.Drawing.Point(5, 198);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(75, 23);
+            this.btnLoad.TabIndex = 11;
+            this.btnLoad.Text = "Load";
+            this.btnLoad.UseVisualStyleBackColor = true;
             // 
             // SchoolMainForm
             // 
@@ -231,11 +242,10 @@
 
         private Aga.Controls.Tree.TreeViewAdv tree;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnDetailsTask;
         private System.Windows.Forms.CheckBox checkBoxAutosave;
-        private System.Windows.Forms.Button btnImportCurr;
-        private System.Windows.Forms.Button btnExportCurr;
-        private System.Windows.Forms.Button btnDetailsCurr;
+        private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.Button btnSaveAs;
+        private System.Windows.Forms.Button btnDetails;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnNewCurr;
         private System.Windows.Forms.Button btnRun;
@@ -246,5 +256,7 @@
         private System.Windows.Forms.Button btnCurrFolder;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnSave;
     }
 }
