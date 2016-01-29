@@ -114,7 +114,7 @@ namespace GoodAI.School.GUI
             UpdateButtons();
 
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
-            m_curriculaPath = Properties.School.Default.CurriculaFolder;
+            m_curriculaPath = Properties.School.Default.LastOpenedFile;
             ReloadCurricula();
         }
 
@@ -207,45 +207,43 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void HideAllButtons()
+        private void SetButtonsEnabled(Control control, bool value)
         {
-            Action<Control> hideBtns = (x) =>
+            Action<Control> setBtns = (x) =>
             {
                 Button b = x as Button;
                 if (b != null)
-                    b.Visible = false;
+                    b.Enabled = value;
             };
-            ApplyToAll(this, hideBtns);
+            ApplyToAll(control, setBtns);
         }
 
-        private void DisableAllButtons()
+        private void DisableButtons(Control control)
         {
-            Action<Control> disableBtns = (x) =>
-            {
-                Button b = x as Button;
-                if (b != null)
-                    b.Enabled = false;
-            };
-            ApplyToAll(this, disableBtns);
+            SetButtonsEnabled(control, false);
+        }
+
+        private void EnableButtons(Control control)
+        {
+            SetButtonsEnabled(control, true);
         }
 
         private void UpdateButtons()
         {
+            EnableButtons(this);
+
             if (tree.SelectedNode == null)
             {
-                btnDelete.Enabled = btnNewTask.Enabled = btnRun.Enabled = false;
+                btnDeleteCurr.Enabled = btnRun.Enabled = btnDetailsCurr.Enabled = false;
+                DisableButtons(groupBoxTask);
                 return;
             }
-
-            btnDelete.Enabled = btnNewTask.Enabled = btnRun.Enabled = true;
 
             SchoolTreeNode selected = tree.SelectedNode.Tag as SchoolTreeNode;
             Debug.Assert(selected != null);
 
             if (selected is CurriculumNode)
-                groupBox1.Text = "Curriculum";
-            else if (selected is LearningTaskNode)
-                groupBox1.Text = "Learning task";
+                btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
         }
 
         #endregion
@@ -355,10 +353,9 @@ namespace GoodAI.School.GUI
             tree.SelectedNode.IsExpanded = true;
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void DeleteNode(object sender, EventArgs e)
         {
-            if (tree.SelectedNode != null && tree.SelectedNode.Tag is Node)
-                (tree.SelectedNode.Tag as Node).Parent = null;
+            (tree.SelectedNode.Tag as Node).Parent = null;
         }
 
         private void btnExportCurr_Click(object sender, EventArgs e)
@@ -387,7 +384,7 @@ namespace GoodAI.School.GUI
         {
             folderBrowserDialog1.ShowDialog();
             m_curriculaPath = folderBrowserDialog1.SelectedPath;
-            Properties.School.Default.CurriculaFolder = m_curriculaPath;
+            Properties.School.Default.LastOpenedFile = m_curriculaPath;
             Properties.School.Default.Save();
             ReloadCurricula();
         }
@@ -430,6 +427,18 @@ namespace GoodAI.School.GUI
         {
             if (e.Node.IsSelected)
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
+        }
+
+        private void btnDeleteCurr_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode.Tag is CurriculumNode)
+            {
+                DeleteNode(sender, e);
+                return;
+            }
+            Node parent = (tree.SelectedNode.Tag as Node).Parent;
+            if (parent != null && parent is CurriculumNode)
+                parent.Parent = null;
         }
     }
 }

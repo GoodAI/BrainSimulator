@@ -38,12 +38,12 @@ namespace GoodAI.School.GUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string CurriculaFolder {
+        public string LastOpenedFile {
             get {
-                return ((string)(this["CurriculaFolder"]));
+                return ((string)(this["LastOpenedFile"]));
             }
             set {
-                this["CurriculaFolder"] = value;
+                this["LastOpenedFile"] = value;
             }
         }
     }
