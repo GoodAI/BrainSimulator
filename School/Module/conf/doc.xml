@@ -81,6 +81,15 @@
             Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstacles">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Obstacles" learning task</summary>
+            <description>
+            Ability Name: Efficient navigation in a simple environment + obstacles. The class is derived from LTApproach with some additions for the environment (The presence of obstacles).
+            </description>
+        </member>
         <member name="T:GoodAI.Modules.School.Common.ManInWorld">
             <author>GoodAI</author>
             <meta>Mp,Mv,Os</meta>
