@@ -96,6 +96,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
+    <None Include="Properties\DataSources\SchoolMainForm.LearningTaskNode.datasource" />
     <None Include="Properties\School.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>School.Designer.cs</LastGenOutput>
