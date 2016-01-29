@@ -134,16 +134,15 @@ namespace GoodAI.Modules.School.Common
             ClearWorld();
         }
 
-        protected override void SetHint(string attr, float value)
+        protected override void SetHint(TSHintAttribute attr, float value)
         {
-            switch (attr)
+            if (attr == TSHintAttributes.IMAGE_NOISE)
             {
-                case TSHintAttributes.IMAGE_NOISE:
-                    IsImageNoise = value > 0;
-                    break;
-                case TSHintAttributes.DEGREES_OF_FREEDOM:
-                    DegreesOfFreedom = (int)value;
-                    break;
+                IsImageNoise = value > 0;
+            }
+            else if (attr == TSHintAttributes.DEGREES_OF_FREEDOM)
+            {
+                DegreesOfFreedom = (int)value;
             }
         }
 

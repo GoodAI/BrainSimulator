@@ -6,8 +6,8 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
-        public const string COLOR_PATTERNS = "Color patterns";
-        public const string ERROR_TOLERANCE = "Target distance levels";
+        private readonly TSHintAttribute COLOR_PATTERNS = new TSHintAttribute("Color patterns","",TypeCode.Decimal,0,1); //check needed;
+        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Target distance levels","",TypeCode.Decimal,0,1); //check needed;
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;

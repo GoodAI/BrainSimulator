@@ -7,38 +7,77 @@ using System.Threading.Tasks;
 namespace GoodAI.Modules.School.Common
 {
 
+    public class TSHintAttribute
+    {
+        public string Name { get; private set; }
+        public string Annotation { get; protected set; }
+        public TypeCode TypeOfValue { get; protected set; }
+        public Tuple<float, float> Range { get; protected set; }
+
+        public TSHintAttribute(string name, string annotation, TypeCode valueType, float lowerBound, float upperbound)
+        {
+            Name = name;
+            Annotation = annotation;
+            TypeOfValue = valueType;
+            Range = new Tuple<float, float>(lowerBound, upperbound);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this.Name == (obj as TSHintAttribute).Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+    }
+
     // !!! refactored to be more implementation independent and more operator understandable
     public static class TSHintAttributes
     {
+        private static TypeCode m_boolT = TypeCode.Boolean;
+        private static TypeCode m_intT = TypeCode.Int32;
+        private static TypeCode m_floatT = TypeCode.Decimal;
+
         // A value [0, 1] measuring the amount of noise in the image
-        public const string IMAGE_NOISE = "Noise";
+        public static readonly TSHintAttribute IMAGE_NOISE = new TSHintAttribute(
+            "Image noise", 
+            "Adding noise to agent's POW. Color of each pixel is slightly randomly changed",
+            m_boolT,
+            0, 1);
 
-        public const string MAX_NUMBER_OF_ATTEMPTS = "Maximum number of attempts";
+        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", m_boolT, 0, 1);
 
-        public const string IS_VARIABLE_POSITION = "Variable position of objects";
-        public const string IS_VARIABLE_SIZE = "Variable size of objects";
-        public const string IS_VARIABLE_COLOR = "Variable color of objects";
+        public static readonly TSHintAttribute IS_VARIABLE_POSITION = new TSHintAttribute(
+            "Variable position of objects",
+            "",
+            TypeCode.Boolean,
+            0, 1);
+
+        public static readonly TSHintAttribute IS_VARIABLE_SIZE = new TSHintAttribute("Variable size","",m_boolT,0,1);
+        public static readonly TSHintAttribute IS_VARIABLE_COLOR = new TSHintAttribute("Variable color","",m_boolT,0,1);
 
         // Randomness of whole learning task
         // For hints which are not covered by IS_VARIABLE_X
-        public const string RANDOMNESS_LEVEL = "Randomness";
+        public static readonly TSHintAttribute RANDOMNESS_LEVEL = new TSHintAttribute("RANDOMNESS_LEVEL", "", m_boolT, 0, 1);
 
         // True if the agent is rewarded at each step for approaching the target
-        public const string GIVE_PARTIAL_REWARDS = "Give partial rewards";
+        public static readonly TSHintAttribute GIVE_PARTIAL_REWARDS = new TSHintAttribute("Give partial rewards","",m_boolT,0,1);
 
         // The number of dimensions in which the agent can move (1 or 2)
-        public const string DEGREES_OF_FREEDOM = "Degrees of freedom";
+        public static readonly TSHintAttribute DEGREES_OF_FREEDOM = new TSHintAttribute("Degrees of freedom","",m_intT,1,2);
 
         // Standard deviation of target size scaling (0 for fixed size)
         // The target size is obtained by multiplying with 2^s,
         // where s is normally distributed with mean = 0 and
         // standard deviation as specified
         // 
-        // replaced with VARIABLE_SIZE (biniry)
-        public const string DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION = "Target size standard deviation";
+        // replaced with VARIABLE_SIZE (binary)
+        public static readonly TSHintAttribute DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION = new TSHintAttribute("DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION", "", m_floatT, 0, 1);
 
         // Estimate of cardinality the set of all visible objects
-        public const string NUMBER_OF_DIFFERENT_OBJECTS = "Target image variability";
+        public static readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("NUMBER_OF_DIFFERENT_OBJECTS", "", m_intT, 0, 1);
 
         // Max target distance as a multiple [0, 1] of the world size.
         // If non-negative, the distance between agent and target is uniformly distributed
@@ -46,15 +85,16 @@ namespace GoodAI.Modules.School.Common
         // from the entire image.
         //
         // use RandomPositionInsidePOW() instead;
-        public const string DEPRECATED_MAX_TARGET_DISTANCE = "Maximum target distance";
+        public static readonly TSHintAttribute DEPRECATED_MAX_TARGET_DISTANCE = new TSHintAttribute("DEPRECATED_MAX_TARGET_DISTANCE", "", m_boolT, 0, 1);
 
-        public const string DEPRECATED_TARGET_MAX_SIZE = "Maximum target size";
-        public const string DEPRECATED_TARGET_MIN_SIZE = "Minimum target size";
+        public static readonly TSHintAttribute DEPRECATED_TARGET_MAX_SIZE = new TSHintAttribute("DEPRECATED_TARGET_MAX_SIZE", "", m_floatT, 0, 1);
+        public static readonly TSHintAttribute DEPRECATED_TARGET_MIN_SIZE = new TSHintAttribute("DEPRECATED_TARGET_MIN_SIZE", "", m_floatT, 0, 1);
 
-        public const string DEPRECATED_COOLDOWN = "Cooldown interval";
+        // is used in one task only
+        public static readonly TSHintAttribute DEPRECATED_COOLDOWN = new TSHintAttribute("DEPRECATED_COOLDOWN", "", m_floatT, 0, 1);
 
-        public const string REQUIRED_UNIT_SUCCESSES = "Required unit success";
-        public const string MAX_UNIT_ATTEMPTS = "Maximal unit attemts";
+        public static readonly TSHintAttribute REQUIRED_UNIT_SUCCESSES = new TSHintAttribute("REQUIRED_UNIT_SUCCESSES", "", m_intT, 0, 1);
+        public static readonly TSHintAttribute MAX_UNIT_ATTEMPTS = new TSHintAttribute("MAX_UNIT_ATTEMPTS", "", m_intT, 0, 1);
     }
 
     /// <summary>
@@ -65,7 +105,7 @@ namespace GoodAI.Modules.School.Common
     /// independent, and can sometimes be used/interpreted differently depending
     /// on the world.
     /// </summary>
-    public class TrainingSetHints : Dictionary<string, float>
+    public class TrainingSetHints : Dictionary<TSHintAttribute, float>
     {
         public TrainingSetHints() : base()
         {
@@ -96,7 +136,7 @@ namespace GoodAI.Modules.School.Common
     public class TrainingSetProgression : List<TrainingSetHints>
     {
 
-        public void Add(string attribute, float value)
+        public void Add(TSHintAttribute attribute, float value)
         {
             TrainingSetHints tsHints = new TrainingSetHints();
             tsHints.Add(attribute, value);

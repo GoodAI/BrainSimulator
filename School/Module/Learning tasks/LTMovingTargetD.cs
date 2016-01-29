@@ -25,10 +25,10 @@ namespace GoodAI.Modules.School.LearningTasks
         int avoidingAgent;
 
 
-        public const string MOVING_VELOCITY = "Moving Velocity";
-        public const string ELLIPSE_RECTANGLE_RATIO = "Ellipse Rectangle Ratio";
-        public const string STEPS_FOR_ELLIPSE = "Steps for ellipse";
-        public const string AVOIDING_AGENT = "If avoiding agent or not";
+        private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity","",TypeCode.Decimal,0,1); //check needed;
+        private readonly TSHintAttribute ELLIPSE_RECTANGLE_RATIO = new TSHintAttribute("Ellipse Rectangle Ratio","",TypeCode.Decimal,0,1); //check needed;
+        private readonly TSHintAttribute STEPS_FOR_ELLIPSE = new TSHintAttribute("Steps for ellipse", "", TypeCode.Decimal, 0, 1);//check needed;
+        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not","",TypeCode.Decimal,0,1); //check needed;
 
         public LTMovingTargetD(RoguelikeWorld w)
             : base(w)

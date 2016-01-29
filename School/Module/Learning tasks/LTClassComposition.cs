@@ -10,8 +10,8 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
-        public const string CARDINALITY_OF_SET = "Cardinality of set";
-        public const string IS_TARGET_MOVING = "Is target moving";
+        private static readonly TSHintAttribute CARDINALITY_OF_SET = new TSHintAttribute("Cardinality of set","",TypeCode.Decimal,0,1); //check needed;
+        private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving","",TypeCode.Decimal,0,1); //check needed;
 
         protected Random m_rndGen = new Random();
         protected bool m_positiveExamplePlaced;

@@ -28,8 +28,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
 
-        public const string TARGET_VX = "Target velocity X";
-        public const string TARGET_VY = "Target velocity Y";
+        private readonly TSHintAttribute TARGET_VX = new TSHintAttribute("Target velocity X","",TypeCode.Decimal,0,1); //check needed;
+        private readonly TSHintAttribute TARGET_VY = new TSHintAttribute("Target velocity Y","",TypeCode.Decimal,0,1); //check needed;
 
         public LTMovingTarget() { }
 

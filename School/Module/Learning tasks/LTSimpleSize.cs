@@ -7,8 +7,8 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleSize : AbstractLearningTask<ManInWorld>
     {
-        public const string COLOR_PATTERNS = "Color patterns";
-        public const string TARGET_SIZE_LEVELS = "Target size levels";
+        private static readonly TSHintAttribute COLOR_PATTERNS = new TSHintAttribute("Color patterns","",TypeCode.Decimal,0,1); //check needed;
+        private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels","",TypeCode.Decimal,0,1); //check needed;
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;

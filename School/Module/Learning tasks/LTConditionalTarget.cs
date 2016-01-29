@@ -1,10 +1,11 @@
 ﻿using GoodAI.Modules.School.Common;
+using System;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTConditionalTarget : AbstractLearningTask<ManInWorld>
     {
-        public const string CONDITION_SALIENCE = "Condition salience";
+        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience","",TypeCode.Decimal,0,1); //check needed;
 
         public LTConditionalTarget() { }
 

@@ -138,33 +138,34 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-        public static void RandomizeColorWDiff(ref Color color, float minDifference, Random rndGen)
+        public static Color RandomizeColorWDiff(Color backgroundColor, float minDifference, Random rndGen)
         {
             Debug.Assert(minDifference >= 0.0f && minDifference < 0.5f);
             byte dif = (byte)(256 * minDifference);
 
             int newR = rndGen.Next(256);
-            if (Math.Abs(newR - color.R) < dif)
+            if (Math.Abs(newR - backgroundColor.R) < dif)
             {
-                newR = color.R + dif;
+                newR = backgroundColor.R + dif;
                 if (newR > 255)
                     newR -= 255;
             }
             int newG = rndGen.Next(256);
-            if (Math.Abs(newG - color.G) < dif)
+            if (Math.Abs(newG - backgroundColor.G) < dif)
             {
-                newG = color.G + dif;
+                newG = backgroundColor.G + dif;
                 if (newG > 255)
                     newG -= 255;
             }
             int newB = rndGen.Next(256);
-            if (Math.Abs(newB - color.B) < dif)
+            if (Math.Abs(newB - backgroundColor.B) < dif)
             {
-                newB = color.B + dif;
+                newB = backgroundColor.B + dif;
                 if (newB > 255)
                     newB -= 255;
             }
-            color = Color.FromArgb(newR, newG, newB);
+            return Color.FromArgb(newR, newG, newB);
+
         }
 
         public static Color RandomVisibleColor(Random rndGen)

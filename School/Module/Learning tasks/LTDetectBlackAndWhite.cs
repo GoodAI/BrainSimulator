@@ -11,8 +11,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
     public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
-        public const string VARIABLE_SIZE = "Variable size";
-        public const string IS_TARGET_MOVING = "Is target moving";
+        private static readonly TSHintAttribute VARIABLE_SIZE = new TSHintAttribute("Variable size","",TypeCode.Decimal,0,1); //check needed;
+        private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving","",TypeCode.Decimal,0,1); //check needed;
 
         public LTDetectBlackAndWhite() { }
         private Random m_rndGen = new Random();
