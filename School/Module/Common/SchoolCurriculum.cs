@@ -87,7 +87,8 @@ namespace GoodAI.Modules.School.Common
                     }
                 case CurriculumType.TemporaryCurriculumOrest:
                     {
-                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTargetD, world));
+                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTargetD, world));
+                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.Obstacles, world));
                         break;
                     }
                 //case CurriculumType.TemporaryCurriculumMichal:
