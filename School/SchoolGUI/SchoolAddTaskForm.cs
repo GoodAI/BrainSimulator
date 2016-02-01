@@ -56,6 +56,9 @@ namespace GoodAI.School.GUI
                 TypeHolder th = new TypeHolder(world);
                 comboWorlds.Items.Add(th);
             }
+
+            if (comboWorlds.Items.Count > 0)
+                comboWorlds.SelectedIndex = 0;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
