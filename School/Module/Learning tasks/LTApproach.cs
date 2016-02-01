@@ -1,4 +1,5 @@
-﻿using GoodAI.Modules.School.Common;
+﻿using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 
@@ -11,6 +12,11 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_agent;
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
+
+        public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Multiply coefficent", "", TypeCode.Single, 0, 1);           //check needed;
+        // DISTANCE_BONUS_COEFFICENT explanation: "return m_stepsSincePresented > m_initialDistance" is used to decide if the training unit failed, this means that
+        // the unit fails unless the agent goes just to the right direction (towards the target) from the beginning.
+        // DISTANCE_BONUS_COEFFICENT's default value is 1, and if it's 2 the amount of available steps to reach the target is doubled, new formula : "return m_stepsSincePresented > (m_initialDistance * (int)TSHints[MULTIPLY_COEFFICENT]);"
 
         public LTApproach() { }
 
@@ -25,8 +31,10 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
-                { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, .3f }
+                { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, .3f },
             };
+
+            TSHints.Add(DISTANCE_BONUS_COEFFICENT, 1);
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
@@ -128,7 +136,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public virtual bool DidTrainingUnitFail()
         {
-            return m_stepsSincePresented > m_initialDistance;
+            return m_stepsSincePresented > (m_initialDistance * (int)TSHints[DISTANCE_BONUS_COEFFICENT]);
         }
 
         protected void CreateAgent()

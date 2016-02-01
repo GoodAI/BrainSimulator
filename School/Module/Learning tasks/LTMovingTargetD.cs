@@ -36,6 +36,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                   // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             //TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] = 0.3f;
+            TSHints[DISTANCE_BONUS_COEFFICENT] = 2;
 
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
@@ -52,6 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     { MOVING_VELOCITY, 2 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.20f },
                     { STEPS_FOR_ELLIPSE, 1000 },
+                    { DISTANCE_BONUS_COEFFICENT, 1.5f },
             });
 
             TSProgression.Add(
@@ -75,14 +77,12 @@ namespace GoodAI.Modules.School.LearningTasks
                     { STEPS_FOR_ELLIPSE, 500 }
             });
 
-
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 8 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.65f },
                     { STEPS_FOR_ELLIPSE, 400 }
             });
-
 
             TSProgression.Add(
                 new TrainingSetHints {
@@ -123,12 +123,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-
+        /*
         public override bool DidTrainingUnitFail()
         {
             return false;
         }
-
+        */
 
         public override void CreateTarget()
         {
@@ -165,7 +165,6 @@ namespace GoodAI.Modules.School.LearningTasks
             ReturnResult.Y = (int)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));  // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
 
             return ReturnResult;
-
         }
 
         public void MoveTowardsPoint(int x, int y, int velocity)        // Given a point, the target moves towards it using steps of settable length in pixels (velocity)

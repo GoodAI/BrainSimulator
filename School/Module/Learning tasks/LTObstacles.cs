@@ -20,8 +20,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
 
-        private readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", TypeCode.Single, 0, 1);   //check needed;
-        private readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", TypeCode.Single, 0, 1);   //check needed;
+        private readonly TSHintAttribute WALLS_CONFIGURATION = new TSHintAttribute("Obstacles level", "", TypeCode.Single, 0, 1);   //check needed;
+        private readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", TypeCode.Single, 0, 1);       //check needed;
 
         public LTObstacles() { }
 
@@ -31,17 +31,16 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;               // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] = 1;
             TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS] = 10000;
-
-            TSHints.Add(OBSTACLES_LEVEL, 1);
-            TSHints.Add(TIMESTEPS_LIMIT, 200);
+            TSHints.Add(WALLS_CONFIGURATION, 1);
+            TSHints.Add(TIMESTEPS_LIMIT, 230);
             
             TSProgression.Add(TSHints.Clone());
 
-            TSProgression.Add(OBSTACLES_LEVEL, 2);
-            TSProgression.Add(OBSTACLES_LEVEL, 3);
-            TSProgression.Add(OBSTACLES_LEVEL, 4);
-            TSProgression.Add(OBSTACLES_LEVEL, 5);
-            TSProgression.Add(OBSTACLES_LEVEL, 6);
+            TSProgression.Add(WALLS_CONFIGURATION, 2);
+            TSProgression.Add(WALLS_CONFIGURATION, 3);
+            TSProgression.Add(WALLS_CONFIGURATION, 4);
+            TSProgression.Add(WALLS_CONFIGURATION, 5);
+            TSProgression.Add(WALLS_CONFIGURATION, 6);
             
             SetHints(TSHints);
         }
@@ -51,14 +50,12 @@ namespace GoodAI.Modules.School.LearningTasks
             GenerateObstacles();
 
             m_stepsSincePresented = 0;
-            //m_initialDistance = m_agent.DistanceTo(m_target);
         }
 
         //Agent and target are generated in the same function, because the correspondent positions will depend on the wall positions
         public void GenerateObstacles()
         {
-            
-            int level = (int)TSHints[OBSTACLES_LEVEL];                                          // Update value of current level
+            int level = (int)TSHints[WALLS_CONFIGURATION];                                      // Update value of current level
 
             World.CreateAgent(@"Agent.png", World.FOW_WIDTH / 2, World.FOW_HEIGHT / 2);         // Generate agent
             m_agent = World.Agent;
@@ -73,6 +70,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 1)
             {
+                TSHints[TIMESTEPS_LIMIT] = 200;
                 int widthOfRectangle = 10;
                 int heightOfRectangle = 5;
 
@@ -90,6 +88,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 2)                                                                     // Like level 1, but inverted
             {
+                TSHints[TIMESTEPS_LIMIT] = 200;
                 int widthOfRectangle = 10;
                 int heightOfRectangle = 5;
 
@@ -107,6 +106,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 3)
             {
+                TSHints[TIMESTEPS_LIMIT] = 500;
                 int widthOfRectangle = 20;
                 int heightOfRectangle = 5;
 
@@ -128,8 +128,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 4)
             {
+                TSHints[TIMESTEPS_LIMIT] = 500;
                 int widthOfRectangle = 20;
-                int heightOfRectangle = 10;
+                int heightOfRectangle = 10; 
 
                 createRectangle(world, widthOfRectangle, heightOfRectangle);
 
@@ -140,7 +141,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.CreateWall(g.getPoint(14, 5));
                 world.CreateWall(g.getPoint(14, 4));
                 world.CreateWall(g.getPoint(14, 3));
-
 
                 world.CreateWall(g.getPoint(8, 1));
                 world.CreateWall(g.getPoint(8, 2));
@@ -202,9 +202,9 @@ namespace GoodAI.Modules.School.LearningTasks
             // expect this method to be called once per simulation step
             m_stepsSincePresented++;
 
-            MyLog.ERROR.WriteLine("StepsSincePresented: " + m_stepsSincePresented);
+            //MyLog.DEBUG.WriteLine("StepsSincePresented: " + m_stepsSincePresented);
+            //MyLog.DEBUG.WriteLine("LIMIT in TIMESTEPS: " + TSHints[TIMESTEPS_LIMIT]);
 
-            
             if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])
             {
                 wasUnitSuccessful = false;
