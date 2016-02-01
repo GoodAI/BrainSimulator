@@ -66,7 +66,8 @@ __forceinline__ __device__ void LogStepShared(R* out, volatile R* partials)
 		}
 		__syncthreads();
 	}
-	if (tCnt >= 256) {
+	if (tCnt >= 256)
+	{
 		if (tid < 128) {
 			partials[tid].op(partials[tid + 128]);
 		}
@@ -81,18 +82,18 @@ __forceinline__ __device__ void LogStepShared(R* out, volatile R* partials)
 
 	if (tid < 32)
 	{
-		if (tCnt >= 64) { partials[tid].op(partials[tid + 32]); }
-		if (tCnt >= 32) { partials[tid].op(partials[tid + 16]); }
-		if (tCnt >= 16) { partials[tid].op(partials[tid + 8]); }
-		if (tCnt >= 8) { partials[tid].op(partials[tid + 4]); }
-		if (tCnt >= 4) { partials[tid].op(partials[tid + 2]); }
-		if (tCnt >= 2) { partials[tid].op(partials[tid + 1]); }
+		if (tCnt >= 64 && tid < 32) { partials[tid].op(partials[tid + 32]); }
+		if (tCnt >= 32 && tid < 16) { partials[tid].op(partials[tid + 16]); }
+		if (tCnt >= 16 && tid < 8) { partials[tid].op(partials[tid + 8]); }
+		if (tCnt >= 8 && tid < 4) { partials[tid].op(partials[tid + 4]); }
+		if (tCnt >= 4 && tid < 2) { partials[tid].op(partials[tid + 2]); }
+		if (tCnt >= 2 && tid < 1) { partials[tid].op(partials[tid + 1]); }
+	}
 
-		if (tid == 0)
-		{
-			if (finalize) partials[0].finalize(out);
-			else *out = partials[0];
-		}
+	if (tid == 0)
+	{
+		if (finalize) partials[0].finalize(out);
+		else *out = partials[0];
 	}
 }
 
