@@ -137,14 +137,17 @@ namespace Graph.Items
 					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 					var sliderWidth = this.MinimumSliderSize + SliderBoxSize;
 
-					this.textSize			= (SizeF)graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+					this.textSize			= graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
 					this.textSize.Width		= Math.Max(this.TextSize, this.textSize.Width + 4);
 					this.itemSize.Width		= Math.Max(size.Width, this.textSize.Width + sliderWidth + Spacing);
 					this.itemSize.Height	= Math.Max(size.Height, this.textSize.Height);
 				}
 				return this.itemSize;
-			} else
+			}
+			else
 			{
+				if (TextSize == 0)
+					this.textSize = SizeF.Empty;
 				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 			}
 		}

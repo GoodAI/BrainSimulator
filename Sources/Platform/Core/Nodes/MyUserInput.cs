@@ -38,6 +38,10 @@ namespace GoodAI.Core.Nodes
         [YAXSerializableField(DefaultValue = 1)]
         public int ColumnHint { get; set; }
 
+        [MyBrowsable, Category("UI")]
+        [YAXSerializableField(DefaultValue = false), YAXElementFor("IO")]
+        public bool ShowValues { get; set; }
+
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Interval"),DisplayName("M\tinValue")]
         public float MinValue { get; set; }
