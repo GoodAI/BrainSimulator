@@ -161,16 +161,13 @@ namespace GoodAI.Modules.School.Worlds
 
         public MyNode AffectedNode { get {return this;} }
 
-        public bool ChangeModel(ref List<MyWorkingNode> removedNodes, ref List<MyWorkingNode> addedNodes)
+        public bool ChangeModel(IModelChanges changes)
         {
             if (!m_switchModel)
                 return false;
 
-            //removedNodes.Add(m_lastWorld as MyWorld);
-            addedNodes.Add(CurrentWorld as MyWorld);
+            changes.AddNode(CurrentWorld as MyWorld);
             m_switchModel = false;
-            // m_lastWorld = null;  - TODO ? should we assign null to garbage collect the last world??
-
             return true;
         }
 
