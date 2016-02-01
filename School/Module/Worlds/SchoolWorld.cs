@@ -167,6 +167,7 @@ namespace GoodAI.Modules.School.Worlds
             if (!m_switchModel)
                 return false;
 
+            (CurrentWorld as MyWorld).EnableDefaultTasks();
             changes.AddNode(CurrentWorld as MyWorld);
             m_switchModel = false;
             return true;
