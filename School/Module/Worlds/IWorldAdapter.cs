@@ -11,9 +11,10 @@ namespace GoodAI.Modules.School.Worlds
 {
     public interface IWorldAdapter
     {
+        void InitAdapterMemory(SchoolWorld schoolWorld);
+        void MapWorlds(SchoolWorld schoolWorld);
         void ClearWorld();
         void SetHint(string attr, float value);
-        void MapWorlds(SchoolWorld schoolWorld);
     }
 
     /*
@@ -35,6 +36,11 @@ namespace GoodAI.Modules.School.Worlds
 
         public void ClearWorld() 
         {
+        
+        }
+
+        public void InitAdapterMemory(SchoolWorld schoolWorld)
+        { 
         
         }
 
@@ -63,6 +69,11 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         public void SetHint(string attr, float value)
+        {
+
+        }
+
+        public void InitAdapterMemory(SchoolWorld schoolWorld)
         {
 
         }

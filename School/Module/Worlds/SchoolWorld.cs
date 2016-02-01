@@ -5,6 +5,8 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Common;
+using GoodAI.Platform.Core.Nodes;
+using GoodAI.TypeMapping;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +18,7 @@ using YAXLib;
 namespace GoodAI.Modules.School.Worlds
 {
 
-    public class SchoolWorld : MyWorld, IMyCustomExecutionPlanner
+    public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
 
         #region Input and Output MemoryBlocks
@@ -113,9 +115,27 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
+
+        private IWorldAdapter m_currentWorld;
+        private bool m_switchModel = true;
+
         [MyBrowsable, Category("World")]
         [YAXDontSerialize, TypeConverter(typeof(IWorldAdapterConverter))]
-        public IWorldAdapter CurrentWorld { get; set; }
+        public IWorldAdapter CurrentWorld
+        {
+            get
+            {
+                return m_currentWorld;
+            }
+            set
+            {
+                // TODO m_currentWorld Init memory of wrapped world
+                m_switchModel = true;
+                m_currentWorld = value;
+                (m_currentWorld as MyWorld).UpdateMemoryBlocks();
+                m_currentWorld.InitAdapterMemory(this);
+            }
+        }
 
         #endregion
 
@@ -137,17 +157,44 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void Validate(MyValidator validator)
         {
-
+            validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
         }
 
-        public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
+        public MyNode AffectedNode { get {return this;} }
+
+        public bool ChangeModel(IModelChanges changes)
         {
-            return defaultPlan;
+            if (!m_switchModel)
+                return false;
+
+            changes.AddNode(CurrentWorld as MyWorld);
+            m_switchModel = false;
+            return true;
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            return defaultInitPhasePlan;
+            var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
+
+            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, true);
+            plan.Name = (CurrentWorld as MyWorld).Name;
+
+            return new MyExecutionBlock(new IMyExecutable[] { defaultInitPhasePlan, plan } );
+        }
+
+        public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
+        {
+            var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
+
+            IMyExecutable[] thisWorldTasks = defaultPlan.Children;
+
+            var blocks = new List<IMyExecutable>();
+            // The default plan will only contain one block with: signals in, world tasks, signals out.
+            blocks.Add(thisWorldTasks[0]);
+            blocks.Add(executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, false));
+            blocks.AddRange(thisWorldTasks.Skip(1));
+
+            return new MyExecutionBlock(blocks.ToArray());
         }
 
         public void ExecuteLearningTaskStep()
