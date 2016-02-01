@@ -37,7 +37,8 @@ namespace GoodAI.School.GUI
 
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
-            LoadCurriculum(m_lastOpenedFile);
+            if (LoadCurriculum(m_lastOpenedFile))
+                saveFileDialog1.FileName = m_lastOpenedFile;
 
             UpdateButtons();
         }
@@ -124,14 +125,14 @@ namespace GoodAI.School.GUI
             return node;
         }
 
-        private void LoadCurriculum(string filePath)
+        private bool LoadCurriculum(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
-                return;
+                return false;
 
             string xmlCurr;
             try { xmlCurr = File.ReadAllText(filePath); }
-            catch (FileNotFoundException e) { return; }
+            catch (FileNotFoundException e) { return false; }
 
             try
             {
@@ -139,7 +140,12 @@ namespace GoodAI.School.GUI
                 CurriculumNode node = CurriculumDataToCurriculumNode(curr);
                 m_model.Nodes.Add(node);
             }
-            catch (YAXException) { }
+            catch (YAXException) { return false; }
+
+            Properties.School.Default.LastOpenedFile = filePath;
+            Properties.School.Default.Save();
+
+            return true;
         }
 
         private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
@@ -388,11 +394,7 @@ namespace GoodAI.School.GUI
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            if (AddFileContent(true))
-            {
-                Properties.School.Default.LastOpenedFile = openFileDialog1.FileName;
-                Properties.School.Default.Save();
-            }
+            AddFileContent(true);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
