@@ -20,6 +20,7 @@ namespace GoodAI.Modules.School.Common
         MovingTarget,
         MovingTargetD,
         Obstacles,
+        MultipleTargetsSequence,
         OneDApproach,
         DetectColor,
         CooldownAction,
