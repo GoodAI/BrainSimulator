@@ -116,11 +116,12 @@ namespace GoodAI.Modules.School.Worlds
         }
 
 
+        [YAXSerializableField, YAXSerializeAs("CurrentWorld"), YAXCustomSerializer(typeof(WorldAdapterSerializer))]
         private IWorldAdapter m_currentWorld;
+
         private bool m_switchModel = true;
 
-        [MyBrowsable, Category("World")]
-        [YAXCustomSerializer(typeof(WorldAdapterSerializer)), TypeConverter(typeof(IWorldAdapterConverter))]
+        [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter))]
         public IWorldAdapter CurrentWorld
         {
             get

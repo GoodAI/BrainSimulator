@@ -19,73 +19,6 @@ namespace GoodAI.Modules.School.Worlds
         void SetHint(string attr, float value);
     }
 
-    /*
-    public class SchoolTetris : MyTetrisWorld, IWorldAdapter
-    { 
-    
-        setInput(visual, tetrisvisual);
-
-    }
-     */
-
-    public class AAWorld: MyWorld, IWorldAdapter
-    {
- 
-        public override void UpdateMemoryBlocks()
-        {
-
-        }
-
-        public void ClearWorld() 
-        {
-        
-        }
-
-        public void InitAdapterMemory(SchoolWorld schoolWorld)
-        { 
-        
-        }
-
-        public void SetHint(string attr, float value)
-        {
-
-        }
-
-        public void MapWorlds(SchoolWorld schoolWorld)
-        { 
-            //schoolWorld.Visual.CopyFromMemoryBlock(World.Whatever)
-        }
-    }
-
-    public class BBWorld : MyWorld, IWorldAdapter
-    {
-
-        public override void UpdateMemoryBlocks()
-        {
-
-        }
-
-        public void ClearWorld()
-        {
-
-        }
-
-        public void SetHint(string attr, float value)
-        {
-
-        }
-
-        public void InitAdapterMemory(SchoolWorld schoolWorld)
-        {
-
-        }
-
-        public void MapWorlds(SchoolWorld schoolWorld)
-        {
-            //schoolWorld.Visual.CopyFromMemoryBlock(World.Whatever)
-        }
-    }
-
     public static class IWorldAdaptersList
     {
         public static Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
@@ -139,17 +72,17 @@ namespace GoodAI.Modules.School.Worlds
     {
         public IWorldAdapter DeserializeFromAttribute(XAttribute attrib)
         {
-            return ConvertToWorldAdapter(attrib.Value);
+            return ConvertToIWorldAdapter(attrib.Value);
         }
 
         public IWorldAdapter DeserializeFromElement(XElement element)
         {
-            return ConvertToWorldAdapter(element.Value);
+            return ConvertToIWorldAdapter(element.Value);
         }
 
         public IWorldAdapter DeserializeFromValue(string value)
         {
-            return ConvertToWorldAdapter(value);
+            return ConvertToIWorldAdapter(value);
         }
 
         public void SerializeToAttribute(IWorldAdapter objectToSerialize, XAttribute attrToFill)
@@ -166,9 +99,8 @@ namespace GoodAI.Modules.School.Worlds
         {
             return objectToSerialize.GetType().ToString();
         }
-
  
-        private static IWorldAdapter ConvertToWorldAdapter(string attributeString)
+        private static IWorldAdapter ConvertToIWorldAdapter(string attributeString)
         {
             return (IWorldAdapter)(Activator.CreateInstance(Type.GetType(attributeString)));
         }
