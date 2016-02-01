@@ -23,12 +23,34 @@ namespace GoodAI.School.GUI
         private TreeModel m_model;
         private string m_lastOpenedFile;
 
-        #region Helper classes
+        public SchoolMainForm()
+        {
+            m_serializer = new YAXSerializer(typeof(SchoolCurriculum));
+            AddTaskView = new SchoolAddTaskForm();
+            RunView = new SchoolRunForm();
+
+            InitializeComponent();
+
+            m_model = new TreeModel();
+            tree.Model = m_model;
+            tree.Refresh();
+
+            checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
+            LoadCurriculum(m_lastOpenedFile);
+
+            UpdateButtons();
+        }
+
+        private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
+
+        #region Nodes classes
 
         public class SchoolTreeNode : Node
         {
             public SchoolTreeNode() { }
             public SchoolTreeNode(string text) : base(text) { }
+            public bool Enabled { get; set; }
         }
 
         public class CurriculumNode : SchoolTreeNode
@@ -39,14 +61,7 @@ namespace GoodAI.School.GUI
         public class LearningTaskNode : SchoolTreeNode
         {
             private readonly ILearningTask m_task;
-            public bool Enabled { get; set; }
-            //public LearningTaskNode(string text) : base(text) { }
 
-            //public LearningTaskNode(Type taskType)
-            //    : base(taskType.Name)
-            //{
-            //    Type = taskType;
-            //}
             public LearningTaskNode(ILearningTask task)
             {
                 m_task = task;
@@ -99,27 +114,6 @@ namespace GoodAI.School.GUI
         }
 
         #endregion
-
-        public SchoolMainForm()
-        {
-            m_serializer = new YAXSerializer(typeof(SchoolCurriculum));
-            AddTaskView = new SchoolAddTaskForm();
-            RunView = new SchoolRunForm();
-
-            InitializeComponent();
-
-            m_model = new TreeModel();
-            tree.Model = m_model;
-            tree.Refresh();
-
-            checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
-            m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
-            LoadCurriculum(m_lastOpenedFile);
-
-            UpdateButtons();
-        }
-
-        private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
 
         #region Curricula
 
@@ -401,6 +395,40 @@ namespace GoodAI.School.GUI
             }
         }
 
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.FileName != string.Empty)
+                SaveProject(saveFileDialog1.FileName);
+            else
+                SaveProjectAs(sender, e);  // ask for file name and then save the project
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            AddFileContent();
+        }
+
+        #endregion
+
+        #region (De)serialization
+
+        private void SaveProject(string path)
+        {
+            SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
+            string xmlCurr = m_serializer.Serialize(test);
+            File.WriteAllText(path, xmlCurr);
+        }
+
+        private void SaveProjectAs(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
+
+            SaveProject(saveFileDialog1.FileName);
+            Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
+            Properties.School.Default.Save();
+        }
+
         #endregion
 
         // almost same as Mainform.OpenFloatingOrActivate - refactor?
@@ -427,36 +455,6 @@ namespace GoodAI.School.GUI
         {
             if (e.Node.IsSelected)
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if (saveFileDialog1.FileName != string.Empty)
-                SaveProject(saveFileDialog1.FileName);
-            else
-                SaveProjectAs(sender, e);  // ask for file name and then save the project
-        }
-
-        private void SaveProject(string path)
-        {
-            SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            string xmlCurr = m_serializer.Serialize(test);
-            File.WriteAllText(path, xmlCurr);
-        }
-
-        private void SaveProjectAs(object sender, EventArgs e)
-        {
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
-                return;
-
-            SaveProject(saveFileDialog1.FileName);
-            Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
-            Properties.School.Default.Save();
-        }
-
-        private void btnImport_Click(object sender, EventArgs e)
-        {
-            AddFileContent();
         }
     }
 }
