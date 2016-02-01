@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using YAXLib;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -132,4 +134,44 @@ namespace GoodAI.Modules.School.Worlds
             return IWorldAdaptersList.Types;
         }
     }
+
+    public class WorldAdapterSerializer : ICustomSerializer<IWorldAdapter>
+    {
+        public IWorldAdapter DeserializeFromAttribute(XAttribute attrib)
+        {
+            return ConvertToWorldAdapter(attrib.Value);
+        }
+
+        public IWorldAdapter DeserializeFromElement(XElement element)
+        {
+            return ConvertToWorldAdapter(element.Value);
+        }
+
+        public IWorldAdapter DeserializeFromValue(string value)
+        {
+            return ConvertToWorldAdapter(value);
+        }
+
+        public void SerializeToAttribute(IWorldAdapter objectToSerialize, XAttribute attrToFill)
+        {
+            attrToFill.Value = objectToSerialize.GetType().ToString();
+        }
+
+        public void SerializeToElement(IWorldAdapter objectToSerialize, XElement elemToFill)
+        {
+            elemToFill.Value = objectToSerialize.GetType().ToString();
+        }
+
+        public string SerializeToValue(IWorldAdapter objectToSerialize)
+        {
+            return objectToSerialize.GetType().ToString();
+        }
+
+ 
+        private static IWorldAdapter ConvertToWorldAdapter(string attributeString)
+        {
+            return (IWorldAdapter)(Activator.CreateInstance(Type.GetType(attributeString)));
+        }
+    }
+
 }

@@ -120,7 +120,7 @@ namespace GoodAI.Modules.School.Worlds
         private bool m_switchModel = true;
 
         [MyBrowsable, Category("World")]
-        [YAXDontSerialize, TypeConverter(typeof(IWorldAdapterConverter))]
+        [YAXCustomSerializer(typeof(WorldAdapterSerializer)), TypeConverter(typeof(IWorldAdapterConverter))]
         public IWorldAdapter CurrentWorld
         {
             get
