@@ -244,6 +244,10 @@ namespace GoodAI.BrainSimulator.NodeView
             {
                 return new MyUserInputView(config, owner);
             }
+            if (typeof(DeviceInput).IsAssignableFrom(nodeType))
+            {
+                return new DeviceInputView(config, owner);
+            }
             if (typeof(MyGateInput).IsAssignableFrom(nodeType))
             {
                 return new MyGateInputView(config, owner);
@@ -270,6 +274,5 @@ namespace GoodAI.BrainSimulator.NodeView
 
             return nodeView;
         }
-        
     }
 }

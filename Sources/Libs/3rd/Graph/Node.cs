@@ -232,5 +232,8 @@ namespace Graph
         }
 
         public ElementType ElementType { get { return ElementType.Node; } }
+
+        public virtual void OnKeyDown(KeyEventArgs e) { }
+        public virtual void OnKeyUp(KeyEventArgs e) { }
     }
 }
