@@ -181,7 +181,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-
+        
         protected virtual string GetTargetImage(int numberOfAlternatives)
         {
             switch (m_rndGen.Next(0, numberOfAlternatives))
@@ -196,7 +196,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     return "WhiteCircle50x50.png";
             }
         }
-
+        
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             // expect this method to be called once per simulation step

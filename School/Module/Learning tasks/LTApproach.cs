@@ -136,7 +136,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public virtual bool DidTrainingUnitFail()
         {
-            return m_stepsSincePresented > (m_initialDistance * (int)TSHints[DISTANCE_BONUS_COEFFICENT]);
+            return m_stepsSincePresented > (int)(m_initialDistance * (float)TSHints[DISTANCE_BONUS_COEFFICENT]);
         }
 
         protected void CreateAgent()
