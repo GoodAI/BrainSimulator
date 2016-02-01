@@ -6,21 +6,43 @@ using ManagedCuda;
 using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace GoodAI.Modules.Transforms
 {
+    public enum ThreadCount:int { T32 = 32,  T64 = 64,  T128 = 128, T256 = 256, T512 = 512 }
+
     public class ParallelKernelDescriptor : System.Attribute
     {
-        public string kernelMangledName;
+        public string nameFirstHalf;
+        public string nameSecondHalf;
         public int inTypeSize;
         public int outTypeSize;
         public string modeName;
 
-        public ParallelKernelDescriptor(string kernelMangledName, int inTypeSize, int outTypeSize)
+        public string GetKernelName(ThreadCount threads)
         {
-            this.kernelMangledName = kernelMangledName;
+            return nameFirstHalf + ((int)threads).ToString() + nameSecondHalf;
+        }
+
+        public static ParallelKernelDescriptor GetDescriptor(Type type, string name)
+        {
+            MemberInfo[] memInfo = type.GetMember(name);
+            object[] attributes = memInfo[0].GetCustomAttributes(typeof(ParallelKernelDescriptor), false);
+            if (attributes.Length == 0)
+                throw new Exception("Kernel descriptor is missing for " + name + ".");
+            ParallelKernelDescriptor descriptor = attributes[0] as ParallelKernelDescriptor;
+            descriptor.modeName = name;
+            return descriptor;
+        }
+
+        public ParallelKernelDescriptor(string nameFirstHalf, string nameSecondHalf, int inTypeSize, int outTypeSize)
+        {
+            this.nameFirstHalf = nameFirstHalf;
+            this.nameSecondHalf = nameSecondHalf;
             this.inTypeSize = inTypeSize;
             this.outTypeSize = outTypeSize;
         }
@@ -30,9 +52,10 @@ namespace GoodAI.Modules.Transforms
     {
         protected int m_nGPU;
         protected MyNode m_owner;
-        protected MyCudaKernel m_kernel;
 
-        public const int BUFFER_SIZE = 1024;
+        protected Dictionary<ThreadCount, MyCudaKernel> m_kernels;
+
+        public const int BUFFER_SIZE = 8192;
         protected MyMemoryBlock<float> m_buffer { get; private set; }
 
         protected int m_TSize;
@@ -47,6 +70,18 @@ namespace GoodAI.Modules.Transforms
         public int inOffset;
         public bool segmented;
 
+        private ThreadCount m_threadCount;
+        public ThreadCount threadCount
+        {
+            get { return m_threadCount; }
+            set
+            {
+                m_blockDims.x = (uint)((int)m_threadCount);
+                m_kernels[m_threadCount].SetupExecution(m_blockDims, m_gridDims);
+                m_kernels[m_threadCount].DynamicSharedMemory = (uint)((int)m_threadCount * m_outTypeSize);
+            }
+        }
+
         public int segments
         {
             get
@@ -60,26 +95,15 @@ namespace GoodAI.Modules.Transforms
             {
                 if (value < 1) throw new Exception("Grid dimension has to be positive.");
                 m_gridDims.x = (uint)value;
-                m_kernel.SetupExecution(m_blockDims, m_gridDims);
+                m_kernels[m_threadCount].SetupExecution(m_blockDims, m_gridDims);
+                m_kernels[m_threadCount].DynamicSharedMemory = (uint)((int)m_threadCount * m_outTypeSize);
             }
-        }
-
-        protected static ParallelKernelDescriptor GetDescriptor(Type enumType, string enumString)
-        {
-            MemberInfo[] memInfo = enumType.GetMember(enumString);
-            object[] attributes = memInfo[0].GetCustomAttributes(typeof(ParallelKernelDescriptor), false);
-            if (attributes.Length == 0)
-                throw new Exception("Kernel descriptor is missing for " + enumString + ".");
-            ParallelKernelDescriptor descriptor = attributes[0] as ParallelKernelDescriptor;
-            descriptor.modeName = enumString;
-            return descriptor;
         }
 
         protected virtual void ResetParameters()
         {
-            size = 0;
-            outOffset = 0;
-            inOffset = 0;
+            m_threadCount = ThreadCount.T32;
+            size = outOffset = inOffset = 0;
             segments = 1;
             segmented = false;
         }
@@ -89,6 +113,8 @@ namespace GoodAI.Modules.Transforms
             m_owner = owner;
             m_nGPU = nGPU;
 
+            m_threadCount = ThreadCount.T32;
+
             m_outTypeSize = descriptor.outTypeSize;
             m_inTypeSize = descriptor.inTypeSize;
 
@@ -97,47 +123,48 @@ namespace GoodAI.Modules.Transforms
                 m_outTypeSize % m_TSize != 0 || m_inTypeSize == 0 || m_outTypeSize == 0)
                 MyLog.Writer.WriteLine(MyLogLevel.WARNING, "MyReduction.cs: MemoryBlock type can be incompatible with reduction in/out types.");
 
-            m_kernel = MyKernelFactory.Instance.Kernel(m_nGPU, @"Common\Reduction\Reduction", descriptor.kernelMangledName);
+            Array threadCountValues = Enum.GetValues(typeof(ThreadCount));
+            m_kernels = new Dictionary<ThreadCount, MyCudaKernel>();
+            foreach (ThreadCount threadCount in Enum.GetValues(typeof(ThreadCount)))
+            {
+                string kernelName = descriptor.GetKernelName(threadCount);
+                m_kernels.Add(threadCount, MyKernelFactory.Instance.Kernel(owner.GPU, @"Common\Reduction\Reduction", kernelName));
+            }
 
             m_buffer = MyMemoryManager.Instance.CreateMemoryBlock<float>(owner);
             m_buffer.Name = "Buffer(" + descriptor.modeName + ")";
             m_buffer.Count = bufferSize;
 
-            m_blockDims = new dim3(512, 1, 1);
+            m_blockDims = new dim3((int)m_threadCount, 1, 1);
             m_gridDims = new dim3(1, 1, 1);
-
-            m_kernel.SetupExecution(m_blockDims, m_gridDims);
-            m_kernel.DynamicSharedMemory = 512 * (uint)m_outTypeSize;
-
-            ResetParameters();
         }
     }
 
     public enum ReductionMode
     {
-        [ParallelKernelDescriptor("_Z9ReductionI7i_Sum_iiLj512EEvPvPVKvS1_jjjjb", 4, 4)]
+        [ParallelKernelDescriptor("_Z9ReductionI7i_Sum_iiLj", "EEvPvPVKvS1_jjjjb", 4, 4)]
         i_Sum_i,
-        [ParallelKernelDescriptor("_Z9ReductionI11i_MinIdx_2iiLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11i_MinIdx_2iiLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         i_MinIdx_2i,
-        [ParallelKernelDescriptor("_Z9ReductionI11i_MaxIdx_2iiLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11i_MaxIdx_2iiLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         i_MaxIdx_2i,
-        [ParallelKernelDescriptor("_Z9ReductionI17i_MinIdxMaxIdx_4iiLj512EEvPvPVKvS1_jjjjb", 4, 16)]
+        [ParallelKernelDescriptor("_Z9ReductionI17i_MinIdxMaxIdx_4iiLj", "EEvPvPVKvS1_jjjjb", 4, 16)]
         i_MinIdxMaxIdx_4i,
-        [ParallelKernelDescriptor("_Z9ReductionI7f_Sum_ffLj512EEvPvPVKvS1_jjjjb", 4, 4)]
+        [ParallelKernelDescriptor("_Z9ReductionI7f_Sum_ffLj", "EEvPvPVKvS1_jjjjb", 4, 4)]
         f_Sum_f,
-        [ParallelKernelDescriptor("_Z9ReductionI11f_MinMax_2ffLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11f_MinMax_2ffLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         f_MinMax_2f,
-        [ParallelKernelDescriptor("_Z9ReductionI11f_MinIdx_fifLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11f_MinIdx_fifLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         f_MinIdx_fi,
-        [ParallelKernelDescriptor("_Z9ReductionI11f_MaxIdx_fifLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11f_MaxIdx_fifLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         f_MaxIdx_fi,
-        [ParallelKernelDescriptor("_Z9ReductionI19f_MinIdxMaxIdx_fififLj512EEvPvPVKvS1_jjjjb", 4, 16)]
+        [ParallelKernelDescriptor("_Z9ReductionI19f_MinIdxMaxIdx_fififLj", "EEvPvPVKvS1_jjjjb", 4, 16)]
         f_MinIdxMaxIdx_fifi,
-        [ParallelKernelDescriptor("_Z9ReductionI11f_MinIdx_fffLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11f_MinIdx_fffLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         f_MinIdx_ff,
-        [ParallelKernelDescriptor("_Z9ReductionI11f_MaxIdx_fffLj512EEvPvPVKvS1_jjjjb", 4, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI11f_MaxIdx_fffLj", "EEvPvPVKvS1_jjjjb", 4, 8)]
         f_MaxIdx_ff,
-        [ParallelKernelDescriptor("_Z9ReductionI7c_Sum_c7ComplexLj512EEvPvPVKvS2_jjjjb", 8, 8)]
+        [ParallelKernelDescriptor("_Z9ReductionI7c_Sum_c7ComplexLj", "EEvPvPVKvS2_jjjjb", 8, 8)]
         c_Sum_c,
     }
 
@@ -153,7 +180,7 @@ namespace GoodAI.Modules.Transforms
         }
 
         public MyReductionKernel(MyNode owner, int nGPU, ReductionMode mode, int bufferSize = BUFFER_SIZE)
-            : base(owner, nGPU, GetDescriptor(typeof(ReductionMode), mode.ToString()), bufferSize)
+            : base(owner, nGPU, ParallelKernelDescriptor.GetDescriptor(typeof(ReductionMode), mode.ToString()), bufferSize)
         {
             ResetParameters();
         }
@@ -171,11 +198,11 @@ namespace GoodAI.Modules.Transforms
 
             if (async)
             {
-                m_kernel.RunAsync(stream, outputPtr, inputPtr, bufferPtr, size, outOffset, inOffset, stride, Convert.ToInt32(segmented));
+                m_kernels[threadCount].RunAsync(stream, outputPtr, inputPtr, bufferPtr, size, outOffset, inOffset, stride, Convert.ToInt32(segmented));
             }
             else
             {
-                m_kernel.Run(outputPtr, inputPtr, bufferPtr, size, outOffset, inOffset, stride, Convert.ToInt32(segmented));
+                m_kernels[threadCount].Run(outputPtr, inputPtr, bufferPtr, size, outOffset, inOffset, stride, Convert.ToInt32(segmented));
             }
             
             ResetParameters();
@@ -228,13 +255,13 @@ namespace GoodAI.Modules.Transforms
 
     public enum ProductMode
     {
-        [ParallelKernelDescriptor("_Z10DotProductI7f_Dot_ffLj512EEvPvjPVKvS3_S1_jbb", 4, 4)]
+        [ParallelKernelDescriptor("_Z10DotProductI7f_Dot_ffLj", "EEvPvjPVKvS3_S1_jbb", 4, 4)]
         f_DotProduct_f,
-        [ParallelKernelDescriptor("_Z10DotProductI7i_Dot_iiLj512EEvPvjPVKvS3_S1_jbb", 4, 4)]
+        [ParallelKernelDescriptor("_Z10DotProductI7i_Dot_iiLj", "EEvPvjPVKvS3_S1_jbb", 4, 4)]
         i_DotProduct_i,
-        [ParallelKernelDescriptor("_Z10DotProductI10f_Cosine_ffLj512EEvPvjPVKvS3_S1_jbb", 4, 16)]
+        [ParallelKernelDescriptor("_Z10DotProductI10f_Cosine_ffLj", "EEvPvjPVKvS3_S1_jbb", 4, 16)]
         f_Cosine_f,
-        [ParallelKernelDescriptor("_Z10DotProductI14c_ComplexDot_c7ComplexLj512EEvPvjPVKvS4_S2_jbb", 8, 8)]
+        [ParallelKernelDescriptor("_Z10DotProductI14c_ComplexDot_c7ComplexLj", "EEvPvjPVKvS4_S2_jbb", 8, 8)]
         c_ComplexDot_c
     }
 
@@ -250,7 +277,7 @@ namespace GoodAI.Modules.Transforms
         }
 
         public MyProductKernel(MyNode owner, int nGPU, ProductMode mode, int bufferSize = BUFFER_SIZE)
-            : base(owner, nGPU, GetDescriptor(typeof(ProductMode), mode.ToString()), bufferSize)
+            : base(owner, nGPU, ParallelKernelDescriptor.GetDescriptor(typeof(ProductMode), mode.ToString()), bufferSize)
         {
             ResetParameters();
         }
@@ -268,11 +295,11 @@ namespace GoodAI.Modules.Transforms
 
             if (async)
             {
-                m_kernel.RunAsync(stream, outputPtr, outOffset, input1Ptr, input2Ptr, bufferPtr, size, segmentedFlag, distributedFlag);
+                m_kernels[threadCount].RunAsync(stream, outputPtr, outOffset, input1Ptr, input2Ptr, bufferPtr, size, segmentedFlag, distributedFlag);
             }
             else
             {
-                m_kernel.Run(outputPtr, outOffset, input1Ptr, input2Ptr, bufferPtr, size, segmentedFlag, distributedFlag);
+                m_kernels[threadCount].Run(outputPtr, outOffset, input1Ptr, input2Ptr, bufferPtr, size, segmentedFlag, distributedFlag);
             }
             
             ResetParameters();

@@ -251,12 +251,20 @@ __global__ void DotProduct(void* rawOut, unsigned int outOff, volatile const voi
 template<typename R, typename T>
 void ReductionTemplate()
 {
+	Reduction<R, T, 32> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
+	Reduction<R, T, 64> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
+	Reduction<R, T, 128> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
+	Reduction<R, T, 256> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
 	Reduction<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 template<typename R, typename T>
 void DotProductTemplate()
 {
+	DotProduct<R, T, 32> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
+	DotProduct<R, T, 64> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
+	DotProduct<R, T, 128> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
+	DotProduct<R, T, 256> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
 	DotProduct<R, T, 512> << <0, 0 >> >(0, 0, 0, 0, 0, 0, 0, 0);
 }
 
