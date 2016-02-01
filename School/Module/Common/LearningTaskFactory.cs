@@ -18,12 +18,13 @@ namespace GoodAI.Modules.School.Common
         SimpleSizeDetection,
         SimpleDistanceDetection,
         MovingTarget,
+        MovingTargetD,
+        Obstacles,
         OneDApproach,
         DetectColor,
         CooldownAction,
         DetectAngle,
         DetectShapeColor,
-        ShapeGroups,
         CopyAction,
         CopySequence,
         DetectDifference,
@@ -50,6 +51,10 @@ namespace GoodAI.Modules.School.Common
                     return new LTDebugging(w);
                 case LearningTaskNameEnum.MovingTarget:
                     return new LTMovingTarget(w);
+                case LearningTaskNameEnum.MovingTargetD:
+                    return new LTMovingTargetD(w);
+                case LearningTaskNameEnum.Obstacles:
+                    return new LTObstacles(w);
                 case LearningTaskNameEnum.OneDApproach:
                     return new LT1DApproach(w);
                 case LearningTaskNameEnum.DetectColor:
@@ -64,8 +69,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTDetectBlackAndWhite(w);
                 case LearningTaskNameEnum.DetectAngle:
                     return new LTSimpleAngle(w);
-                case LearningTaskNameEnum.ShapeGroups:
-                    return new LTShapeGroups(w);
+//                case LearningTaskNameEnum.ShapeGroups:
+//                    return new LTShapeGroups(w);
                 case LearningTaskNameEnum.CopyAction:
                     return new LTCopyAction(w);
                 case LearningTaskNameEnum.CopySequence:

@@ -2,6 +2,7 @@
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Drawing;
+using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -17,16 +18,18 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.NOISE, 0},
-                {TSHintAttributes.RANDOMNESS, 0},
+                {TSHintAttributes.IMAGE_NOISE, 0},
+                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
+                {TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 0.5f);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS, 1.0f);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.5f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4);
+            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8);
 
             SetHints(TSHints);
         }
@@ -35,7 +38,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.CreateNonVisibleAgent();
 
-            if (TSHints[TSHintAttributes.NOISE] > 0)
+            if (TSHints[TSHintAttributes.IMAGE_NOISE] > 0)
             {
                 WrappedWorld.IsImageNoise = true;
             }
@@ -45,27 +48,20 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 //random size
                 Size shapeSize = new Size(32, 32);
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= 0.5)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
                 {
-                    shapeSize = new Size(20 + m_rndGen.Next(20), 20 + m_rndGen.Next(20));
+                    int side = m_rndGen.Next(10, 48);
+                    shapeSize = new Size(side, side);
                 }
 
                 // random position
                 Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
-                if (TSHints[TSHintAttributes.RANDOMNESS] >= 1)
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5f)
                 {
-                    shapePosition = WrappedWorld.GetRandomPositionInsidePow(m_rndGen, shapeSize);
+                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
 
-                //with Pr=.5 pick Square, else pick Circle
-                if (LearningTaskHelpers.FlipCoin(m_rndGen))
-                {
-                    m_target_type = Shape.Shapes.Circle;
-                }
-                else
-                {
-                    m_target_type = Shape.Shapes.Square;
-                }
+                m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
 
                 m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, Color.White, shapeSize);
             }
@@ -77,34 +73,25 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (m_target == null)
+            // check if two or more controls are active
+            int numberOfActiveInputs = (int)WrappedWorld.Controls.Host.Aggregate((x, y) => (float)(Math.Ceiling(x) + Math.Ceiling(y)));
+            if (numberOfActiveInputs > 1)
             {
-                if (WrappedWorld.Controls.Host[0] != 0 || WrappedWorld.Controls.Host[1] != 0)
-                {
-                    wasUnitSuccessful = false;
-
-                }
-                else
-                {
-                    wasUnitSuccessful = true;
-                }
-
+                wasUnitSuccessful = false;
+            }
+            else if (m_target == null)
+            {
+                wasUnitSuccessful = numberOfActiveInputs == 0;
+            }
+            else if (WrappedWorld.Controls.Host[(int)m_target_type] != 0)
+            {
+                wasUnitSuccessful = true;
             }
             else
             {
-                if (m_target_type == Shape.Shapes.Circle && WrappedWorld.Controls.Host[0] != 0 && WrappedWorld.Controls.Host[1] <= 0.01f)
-                {
-                    wasUnitSuccessful = true;
-                }
-                else if (m_target_type == Shape.Shapes.Square && WrappedWorld.Controls.Host[1] != 0 && WrappedWorld.Controls.Host[0] <= 0.01f)
-                {
-                    wasUnitSuccessful = true;
-                }
-                else
-                {
-                    wasUnitSuccessful = false;
-                }
+                wasUnitSuccessful = false;
             }
+            Console.WriteLine(wasUnitSuccessful);
             return true;
         }
 

@@ -1,17 +1,18 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleAngle : AbstractLearningTask<ManInWorld>
     {
-        public const string TOLERANCE = "Tolerance in rads";
-        public const string FIXED_DISTANCE = "Fixed distance to target";
+        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Tolerance in rads","",TypeCode.Single,0,1); //check needed;
+        private readonly TSHintAttribute FIXED_DISTANCE = new TSHintAttribute("Fixed distance to target","",TypeCode.Single,0,1); //check needed;
 
         protected Random m_rndGen = new Random();
-        protected Shape m_target;
         protected MovableGameObject m_agent;
+        private GameObject m_target;
 
         public LTSimpleAngle() { }
 
@@ -19,143 +20,141 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.VARIABLE_SIZE, 0 },
-                { TSHintAttributes.NOISE, 0},
-                { TOLERANCE , 0.2f},
-                { FIXED_DISTANCE, 0},
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 0 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 0 },
+                { TSHintAttributes.IMAGE_NOISE, 0},
+                { ERROR_TOLERANCE , 0.2f},
+                { FIXED_DISTANCE, 1},
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(FIXED_DISTANCE, 1);
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TOLERANCE, 0.1f);
-            TSProgression.Add(TSHintAttributes.VARIABLE_SIZE, 1);
-            TSProgression.Add(TOLERANCE, 0.05f);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1);
+            TSProgression.Add(ERROR_TOLERANCE, 0.1f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
+            TSProgression.Add(ERROR_TOLERANCE, 0.05f);
 
             SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
         {
-            CreateAgent();
-            CreateTarget();
+            if (WrappedWorld.GetType() != typeof(RoguelikeWorld))
+            {
+                throw new NotImplementedException();
+            }
+
+            m_agent = WrappedWorld.CreateNonVisibleAgent();
+
+            WrappedWorld.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1 ? true : false;
+
+            Size size;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
+            {
+                int side = m_rndGen.Next(8, 24);
+                size = new Size(side, side);
+            }
+            else
+            {
+                int side = 10;
+                size = new Size(side, side);
+            }
+
+            Point position;
+            float radius = Math.Min(WrappedWorld.POW_HEIGHT, WrappedWorld.POW_WIDTH) / 3;
+            if (TSHints[FIXED_DISTANCE] >= 1)
+            {
+                double angle = m_rndGen.NextDouble() * Math.PI * 2;
+                position = new Point((int)(Math.Cos(angle) * radius), (int)(Math.Sin(angle) * radius));
+                position += new Size(m_agent.X, m_agent.Y);
+            }
+            else
+            {
+                position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size);
+            }
+
+            Shape.Shapes shape;
+            if (TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] >= 1) {
+                switch (m_rndGen.Next(0, 4))
+                {
+                    case 0:
+                    default:
+                        shape = Shape.Shapes.Circle;
+                        break;
+                    case 1:
+                        shape = Shape.Shapes.Square;
+                        break;
+                    case 2:
+                        shape = Shape.Shapes.Triangle;
+                        break;
+                    case 3:
+                        shape = Shape.Shapes.Mountains;
+                        break;
+                }
+            }
+            else
+            {
+                shape = Shape.Shapes.Circle;
+            }
+
+            Color color;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
+            {
+                color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
+            }
+            else
+            {
+                color = Color.White;
+            }
+
+            m_target = WrappedWorld.CreateShape(position, shape, color, size);
+        }
+
+        public static float EuclideanDistance(Point p1, Point p2)
+        {
+            return (float)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+        }
+
+        public static float RelativeSin(Point point, Point related)
+        {
+            return (point.Y - related.Y) / EuclideanDistance(point, related);
+        }
+
+        public static float RelativeCos(Point point, Point related)
+        {
+            return (point.X - related.X) / EuclideanDistance(point, related);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            double estimatedAngle = (WrappedWorld as ManInWorld).Controls.Host[0];
+            float tolerance = TSHints[ERROR_TOLERANCE];
 
-            double targetAngle = Math.Atan2(m_target.Y - m_agent.Y, m_target.X - m_agent.X) / 2 / Math.PI;
-            if (targetAngle < 0) targetAngle = 1 + targetAngle;
-
-
-            double upperBound = targetAngle + TSHints[LTSimpleAngle.TOLERANCE];
-            if (upperBound > 1) upperBound -= 1;
-            double lowerBound = targetAngle - TSHints[LTSimpleAngle.TOLERANCE];
-            if (lowerBound < 0) upperBound += 1;
-
-            wasUnitSuccessful = (estimatedAngle > lowerBound) && (estimatedAngle < upperBound);
-
-            GoodAI.Core.Utils.MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
-            return true;
-        }
-
-        protected void CreateTarget()
-        {
-            m_target = new Shape(Shape.Shapes.Circle, 0, 0);
-            WrappedWorld.AddGameObject(m_target);
-            m_target.X = m_rndGen.Next(m_agent.X - WrappedWorld.POW_WIDTH / 2, m_agent.X + WrappedWorld.POW_WIDTH / 2 - m_target.Width + 1);
-
-            if (TSHints[TSHintAttributes.VARIABLE_SIZE] > 0)
+            float sin = RelativeSin(m_target.GetGeometry().Location, m_agent.GetGeometry().Location);
+            float cos = RelativeCos(m_target.GetGeometry().Location, m_agent.GetGeometry().Location);
+            //Console.WriteLine(sin);
+            //Console.WriteLine(cos);
+            sin = (sin + 1) / 2;
+            cos = (cos + 1) / 2;
+            //Console.WriteLine(sin);
+            //Console.WriteLine(cos);
+            if ((sin - tolerance <= WrappedWorld.Controls.Host[0] && WrappedWorld.Controls.Host[0] <= sin + tolerance) &&
+                (cos - tolerance <= WrappedWorld.Controls.Host[1] && WrappedWorld.Controls.Host[1] <= cos + tolerance))
             {
-                double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
-                m_target.Height = (int)(resizeRatio * m_target.Height);
-                m_target.Width = (int)(resizeRatio * m_target.Width);
-            }
-
-            double rad = m_rndGen.NextDouble() * Math.PI * 2;
-            double distanceMultiplicator;
-            if (TSHints[LTSimpleAngle.FIXED_DISTANCE] > 0)
-            {
-                distanceMultiplicator = 30;
+                wasUnitSuccessful = true;
             }
             else
             {
-                distanceMultiplicator = 10 + m_rndGen.NextDouble() * 50;
+                wasUnitSuccessful = false;
             }
-            double X = Math.Sin(rad) * distanceMultiplicator;
-            double Y = Math.Cos(rad) * distanceMultiplicator;
 
-            m_target.X = m_agent.X + (int)X;
-            m_target.Y = m_agent.Y + (int)Y;
-        }
+            // TODO: Partial reward
 
-        protected void CreateAgent()
-        {
-            WrappedWorld.CreateAgent(null, 0, 0);
-            m_agent = WrappedWorld.Agent;
-            // center the agent
-            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            //Console.WriteLine(wasUnitSuccessful);
+            return true;
         }
     }
-
-    /*
-        public class RoguelikeWorldWASimpleAngle : AbstractWASimpleAngle
-        {
-            protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
-            {
-                m_w = w as RoguelikeWorld;
-                m_w.ClearWorld();
-                if (trainingSetHints[TSHintAttributes.NOISE] > 0)
-                {
-                    m_w.IsImageNoise = true;
-                }
-                CreateAgent();
-            }
-
-            protected override void CreateTarget(TrainingSetHints trainingSetHints)
-            {
-                m_target = new Shape(Shape.Shapes.Circle, 0, 0);
-                m_w.AddGameObject(m_target);
-                m_target.X = m_rndGen.Next(m_agent.X - m_w.POW_WIDTH / 2, m_agent.X + m_w.POW_WIDTH / 2 - m_target.Width + 1);
-
-                if (trainingSetHints[TSHintAttributes.VARIABLE_SIZE] > 0)
-                {
-                    double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
-                    m_target.Height = (int)(resizeRatio * m_target.Height);
-                    m_target.Width = (int)(resizeRatio * m_target.Width);
-                }
-
-                double rad = m_rndGen.NextDouble() * Math.PI * 2;
-                double distanceMultiplicator;
-                if (trainingSetHints[LTSimpleAngle.FIXED_DISTANCE] > 0)
-                {
-                    distanceMultiplicator = 10;
-                }
-                else
-                {
-                    distanceMultiplicator = 5 + m_rndGen.NextDouble() * 10;
-                }
-                double X = Math.Sin(rad) * distanceMultiplicator;
-                double Y = Math.Cos(rad) * distanceMultiplicator;
-
-                m_target.X = m_agent.X + (int)X;
-                m_target.Y = m_agent.Y + (int)Y;
-            }
-
-
-            protected void CreateAgent()
-            {
-                m_w.CreateAgent(null, 0, 0);
-                m_agent = m_w.Agent;
-                // center the agent
-                m_agent.X = m_w.FOW_WIDTH / 2 - m_agent.Width / 2;
-                m_agent.Y = m_w.FOW_HEIGHT / 2 - m_agent.Height / 2;
-            }
-        }
-     */
 }

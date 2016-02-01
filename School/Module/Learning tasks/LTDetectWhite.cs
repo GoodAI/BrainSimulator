@@ -17,13 +17,12 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 
             SetHints(TSHints);
         }
@@ -57,8 +56,8 @@ namespace GoodAI.Modules.School.LearningTasks
             m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
             WrappedWorld.AddGameObject(m_target);
             // Plumber:
-            //m_target.X = m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - m_target.Width + 1);
-            //m_target.Y = WrappedWorld.FOW_HEIGHT - m_target.Height;
+            //m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
+            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
             // Roguelike:
             m_target.X = m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - m_target.Width + 1);
             m_target.Y = m_rndGen.Next(0, WrappedWorld.FOW_HEIGHT - m_target.Height + 1);

@@ -16,6 +16,14 @@
             <param name="target"></param>
             <returns></returns>
         </member>
+        <member name="M:GoodAI.Modules.School.Common.Shape.GetRandomShape(System.Random,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="rndGen"></param>
+            <param name="numberOfShapes">Cardinality of set from you are choosing</param>
+            <returns>Random shape</returns>
+        </member>
         <member name="T:GoodAI.Modules.School.Common.SchoolCurriculum">
             <summary>
             Holds tasks that an agent should be trained with to gain new abilities
@@ -44,6 +52,25 @@
             The teacher declares the ability as learned when the agent reaches the last level.
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTargetD">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Moving Target" learning task</summary>
+            <description>
+            Ability Name: Efficient navigation in a simple environment + moving target. The class is derived from LTApproach with some additions for the moving target (currently: circular movement).
+            Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstacles">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Obstacles" learning task</summary>
+            <description>
+            Ability Name: Navigate to the target efficiently by avoiding obstacles
+            </description>
+        </member>
         <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
             <author>GoodAI</author>
             <meta>Mp,Mv,Os</meta>
@@ -52,6 +79,15 @@
             <description>
             Implementation of a configurable 2D world
             </description>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="rndGen"></param>
+            <param name="size"></param>
+            <param name="collisionWithAgentAllowed"></param>
+            <returns>Point inside POW with respect to Size</returns>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateAgent">
             <summary>

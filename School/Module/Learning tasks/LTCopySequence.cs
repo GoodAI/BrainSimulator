@@ -9,11 +9,11 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTCopySequence : AbstractLearningTask<ManInWorld>
     {
-        public const string STOP_REQUEST = "Stop request";
+        private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request","",TypeCode.Single,0,1); //check needed;
 
         // True if teacher agent can spawn on different places
         // Teacher should not cover agent
-        public const string TEACHER_ON_DIFF_START_POSITION = "Teacher on diff start position";
+        private static readonly TSHintAttribute TEACHER_ON_DIFF_START_POSITION = new TSHintAttribute("Teacher on diff start position","",TypeCode.Single,0,1); //check needed;
 
         protected Random m_rndGen = new Random();
         protected int m_stepsSincePresented = 0;
@@ -32,19 +32,17 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 { STOP_REQUEST, 0},
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TEACHER_ON_DIFF_START_POSITION, 0},
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TEACHER_ON_DIFF_START_POSITION, 1);
-            TSProgression.Add(TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1.5f);
+            TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1.5f);
             TSProgression.Add(STOP_REQUEST, 1);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -61,53 +59,61 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            m_stepsSincePresented++;
-
-            if (DidTrainingUnitFail())
+            if (SchoolWorld.IsEmulatingUnitCompletion())
             {
-                wasUnitSuccessful = false;
-                return true;
+                return SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
             }
-
-            if (!m_teacher.IsDone() && m_agent.isMoving())
-            {
-                wasUnitSuccessful = false;
-                return true;
-            }
-
-            // save history for agent and teacher
-            m_agentsHistory.Add(m_agent.X, m_agent.Y);
-            m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
-
-            wasUnitSuccessful = false;
-
-            int numberOfTeachersSteps = m_teachersHistory.numberOfSteps();
-            int numberOfAgentsSteps = m_agentsHistory.numberOfSteps();
-
-            // simple version of the task
-            if (TSHints[LTCopySequence.STOP_REQUEST] == .0f)
-            {
-                if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone())
-                {
-                    // compare step
-                    wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
-                    return true;
-                }
-            }
-            // hard version
             else
             {
-                if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone()) m_delayedCheck = true;
 
-                if (m_delayedCheck)
+                m_stepsSincePresented++;
+
+                if (DidTrainingUnitFail())
                 {
-                    m_delayedCheck = false;
-                    // compare steps
-                    wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
+                    wasUnitSuccessful = false;
                     return true;
                 }
+
+                if (!m_teacher.IsDone() && m_agent.isMoving())
+                {
+                    wasUnitSuccessful = false;
+                    return true;
+                }
+
+                // save history for agent and teacher
+                m_agentsHistory.Add(m_agent.X, m_agent.Y);
+                m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
+
+                wasUnitSuccessful = false;
+
+                int numberOfTeachersSteps = m_teachersHistory.numberOfSteps();
+                int numberOfAgentsSteps = m_agentsHistory.numberOfSteps();
+
+                // simple version of the task
+                if (TSHints[LTCopySequence.STOP_REQUEST] == .0f)
+                {
+                    if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone())
+                    {
+                        // compare step
+                        wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
+                        return true;
+                    }
+                }
+                // hard version
+                else
+                {
+                    if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone()) m_delayedCheck = true;
+
+                    if (m_delayedCheck)
+                    {
+                        m_delayedCheck = false;
+                        // compare steps
+                        wasUnitSuccessful = m_teachersHistory.CompareTo(m_agentsHistory, m_stepsSincePresented);
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
 
         protected bool DidTrainingUnitFail()
@@ -132,7 +138,7 @@ namespace GoodAI.Modules.School.LearningTasks
             Point teachersPoint;
             if ((int)TSHints[LTCopySequence.TEACHER_ON_DIFF_START_POSITION] != 0)
             {
-                teachersPoint = WrappedWorld.GetRandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
+                teachersPoint = WrappedWorld.RandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
             }
             else
             {

@@ -16,7 +16,7 @@ namespace GoodAI.Modules.School.Worlds
         void InitAdapterMemory(SchoolWorld schoolWorld);
         void MapWorlds(SchoolWorld schoolWorld);
         void ClearWorld();
-        void SetHint(string attr, float value);
+        void SetHint(TSHintAttribute attr, float value);
     }
 
     public static class IWorldAdaptersList

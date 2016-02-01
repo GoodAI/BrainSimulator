@@ -19,26 +19,24 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints
             {
-                { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 0 },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 1 },
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 0 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, .3f }
+                { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, .3f }
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
-            TSProgression.Add(TSHintAttributes.MAX_TARGET_DISTANCE, -1);
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
-            TSProgression.Add(TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1);
-            TSProgression.Add(TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1.5f);
-            TSProgression.Add(TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2);
-            TSProgression.Add(TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3);
+            TSProgression.Add(TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1);
+            TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1.5f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100);
 
             SetHints(TSHints);
         }
@@ -77,9 +75,9 @@ namespace GoodAI.Modules.School.LearningTasks
         // Randomly shrink or expand target
         protected void AdjustTargetSize()
         {
-            if (TSHints[TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION] != 0)
+            if (TSHints[TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION] != 0)
             {
-                float scalingFactor = (float)Math.Pow(2, TSHints[TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION] * GetRandomGaussian());
+                float scalingFactor = (float)Math.Pow(2, TSHints[TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION] * GetRandomGaussian());
 
                 int oldTargetWidth = m_target.Width;
                 m_target.Width = (int)(scalingFactor * m_target.Width);
@@ -128,7 +126,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-        protected bool DidTrainingUnitFail()
+        public virtual bool DidTrainingUnitFail()
         {
             return m_stepsSincePresented > m_initialDistance;
         }
@@ -136,10 +134,10 @@ namespace GoodAI.Modules.School.LearningTasks
         protected void CreateAgent()
         {
             // Plumber:
-            //WrappedWorld.CreateAgent(@"Plumber24x28.png", 0, 0);
-            //m_agent = WrappedWorld.Agent;
+            //World.CreateAgent(@"Plumber24x28.png", 0, 0);
+            //m_agent = World.Agent;
             //// center the agent
-            //m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
+            //m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
             //PutAgentOnFloor();
             WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
             m_agent = WrappedWorld.Agent;
@@ -147,16 +145,16 @@ namespace GoodAI.Modules.School.LearningTasks
             m_agent.Y -= m_agent.Height / 2;
         }
 
-        protected void CreateTarget()
+        public virtual void CreateTarget()
         {
             // Plumber:
             //m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
 
-            //WrappedWorld.AddGameObject(m_target);
+            //World.AddGameObject(m_target);
 
             //// first implementation, random object position (left or right)
             //int maxTargetDistance
-            //    = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] == -1 ? WrappedWorld.FOW_WIDTH : (int)(WrappedWorld.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+            //    = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] == -1 ? World.FOW_WIDTH : (int)(World.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
 
             //bool isLeft = m_rndGen.Next(0, 2) == 1;
             //int targetDistX = m_rndGen.Next(20, maxTargetDistance / 2 - m_agent.Width / 2 - m_target.Width / 2);
@@ -166,9 +164,9 @@ namespace GoodAI.Modules.School.LearningTasks
             //else
             //    targetX += (targetDistX + m_agent.Width);
             //m_target.X = targetX;
-            //m_target.Y = WrappedWorld.FOW_HEIGHT - m_target.Height;
+            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
 
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]), 0, 0);
+            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
             WrappedWorld.AddGameObject(m_target);
 
             // first implementation, random object position (left or right)
@@ -177,9 +175,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
             const int MIN_TARGET_DISTANCE = 20;
             int maxTargetDistanceX = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
-            if (TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
+            if (TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] != -1)
             {
-                maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
             }
             int targetDistX = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceX);
             int targetX = m_agent.X;
@@ -197,9 +195,9 @@ namespace GoodAI.Modules.School.LearningTasks
                     break;
                 case 2:
                     int maxTargetDistanceY = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
-                    if (TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] != -1)
+                    if (TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] != -1)
                     {
-                        maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                        maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
                     }
                     int targetDistY = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceY);
                     if (isUp)
@@ -226,7 +224,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             private Worlds m_w;
 
-            protected override AbstractSchoolWorld WrappedWorld
+            protected override AbstractSchoolWorld World
             {
                 get
                 {

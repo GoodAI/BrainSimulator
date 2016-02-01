@@ -88,7 +88,8 @@ namespace GoodAI.Modules.School.Common
                     }
                 case CurriculumType.TemporaryCurriculumOrest:
                     {
-                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTarget, world));
+                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTargetD, world));
+                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.Obstacles, world));
                         break;
                     }
                 //case CurriculumType.TemporaryCurriculumMichal:
@@ -102,7 +103,7 @@ namespace GoodAI.Modules.School.Common
                 //        break;
                 //    }
                 case CurriculumType.TemporaryCurriculumMartinStransky:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.CompareLayouts, world));
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectShape, world));
                     break;
                 //case CurriculumType.TemporaryCurriculumMartinMilota:
                 //    {

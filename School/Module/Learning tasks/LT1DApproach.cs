@@ -13,29 +13,27 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1},
-                { TSHintAttributes.NOISE, 0},
-                { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 0f},
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 0f},
+                { TSHintAttributes.IMAGE_NOISE, 0},
+                { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 0f},
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 0f},
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1},
-                { TSHintAttributes.MAX_TARGET_DISTANCE, 0f},
+                { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, 0f},
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000},
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(new TrainingSetHints {
-                { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1f },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2f },
-                { TSHintAttributes.NOISE, .5f },
+                { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1f },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2f },
+                { TSHintAttributes.IMAGE_NOISE, .5f },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0f },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, .3f },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 }
+                { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, .3f },
             });
             TSProgression.Add(new TrainingSetHints {
-                { TSHintAttributes.TARGET_SIZE_STANDARD_DEVIATION, 1.5f },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3f },
-                { TSHintAttributes.NOISE, 1f },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, -1f },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
+                { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1.5f },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3f },
+                { TSHintAttributes.IMAGE_NOISE, 1f },
+                { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1f },
             });
 
             SetHints(TSHints);
@@ -95,7 +93,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             // first implementation, random object position (left or right)
             int maxTargetDistance
-                = TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] < 0 ? WrappedWorld.FOW_WIDTH : (int)(WrappedWorld.FOW_WIDTH * TSHints[TSHintAttributes.MAX_TARGET_DISTANCE]);
+                = TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] < 0 ? WrappedWorld.FOW_WIDTH : (int)(WrappedWorld.FOW_WIDTH * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
 
             bool isLeft = m_rndGen.Next(0, 2) == 1;
             int targetDistX = m_rndGen.Next(20, maxTargetDistance / 2 - m_agent.Width / 2 - m_target.Width / 2);
@@ -120,7 +118,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
         {
-            WrappedWorld = w as RoguelikeWorld;
+            World = w as RoguelikeWorld;
             m_w.ClearWorld();
             m_w.DegreesOfFreedom = (int)trainingSetHints[TSHintAttributes.DEGREES_OF_FREEDOM];
             if (trainingSetHints[TSHintAttributes.NOISE] > 0)

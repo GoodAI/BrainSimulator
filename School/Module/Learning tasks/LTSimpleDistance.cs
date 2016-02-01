@@ -1,21 +1,19 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
-        public const string COLOR_PATTERNS = "Color patterns";
-        public const string TARGET_SIZE_LEVELS = "Target size levels";
-        public const string TARGET_DISTANCE_LEVELS = "Target distance levels";
+        private readonly TSHintAttribute COLOR_PATTERNS = new TSHintAttribute("Color patterns","",TypeCode.Single,0,1); //check needed;
+        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Target distance levels","",TypeCode.Single,0,1); //check needed;
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;
         private GameObject m_target;
-        private int m_stepsSincePresented = 0;
-        private int m_distance = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_distance is lower bound of the interval
-        private int m_reportedDistance = -1;
+        private float m_distance = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_distance is lower bound of the interval
 
         public LTSimpleDistance() { }
 
@@ -26,33 +24,32 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints = new TrainingSetHints
             {
                 { COLOR_PATTERNS, 0 },
-                { TARGET_SIZE_LEVELS, 1 },
-                { TARGET_DISTANCE_LEVELS, 2 },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 1 },
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
+                { ERROR_TOLERANCE, 0.25f },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
-            // TODO
             TSProgression.Add(new TrainingSetHints {
                 { COLOR_PATTERNS, 1 },
-                { TARGET_DISTANCE_LEVELS, 8 },
+                { ERROR_TOLERANCE, 0.15f },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0 }
             });
             TSProgression.Add(new TrainingSetHints {
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2 }
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2 }
             });
             TSProgression.Add(new TrainingSetHints {
-                { TARGET_SIZE_LEVELS, 8 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000 }
+                { TSHintAttributes.IS_VARIABLE_SIZE, 1 },
+                { ERROR_TOLERANCE, 0.10f },
             });
             TSProgression.Add(new TrainingSetHints {
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
+                { ERROR_TOLERANCE, 0.05f },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3 },
             });
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 
             SetHints(TSHints);
         }
@@ -61,25 +58,29 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.FreezeWorld(true);
 
+            WrappedWorld.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1 ? true : false;
+
             CreateAgent();
             CreateTarget();
-
-            m_stepsSincePresented = 0;
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            // expect this method to be called once per simulation step
-            m_stepsSincePresented++;
-
+            float tolerance = TSHints[ERROR_TOLERANCE];
+            //Console.WriteLine(m_distance);
+            //Console.WriteLine(m_distance - tolerance);
+            //Console.WriteLine(m_distance + tolerance);
             // require immediate decision - in a single step
-            if (m_reportedDistance >= m_distance && m_reportedDistance < m_distance + 1.0f / TSHints[TARGET_DISTANCE_LEVELS])
+            if (m_distance - tolerance <= WrappedWorld.Controls.Host[0] && WrappedWorld.Controls.Host[0] <= m_distance + tolerance)
             {
                 wasUnitSuccessful = true;
-                return true;
             }
-
-            wasUnitSuccessful = false;
+            else
+            {
+                wasUnitSuccessful = false;
+            }
+            //Console.WriteLine(wasUnitSuccessful);
+            // TODO: partial reward
             return true;
         }
 
@@ -95,187 +96,53 @@ namespace GoodAI.Modules.School.LearningTasks
         // scale and position the target:
         private void CreateTarget()
         {
-            // the number of different sizes depends on level. The minimum size is 0.8*maximum size
-            int maxWidth = (int)(WrappedWorld.POW_WIDTH * 0.3);
-            int maxHeight = (int)(WrappedWorld.POW_HEIGHT * 0.3);
-            float ratio = m_rndGen.Next(1, (int)TSHints[TARGET_SIZE_LEVELS] + 1) / TSHints[TARGET_SIZE_LEVELS];
-            float minRatio = 0.8f;
+            Size size;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
+            {
+                int side = m_rndGen.Next(8, 24);
+                size = new Size(side, side);
+            }
+            else
+            {
+                int side = 10;
+                size = new Size(side, side);
+            }
 
-            int width = (int)(maxWidth * minRatio + maxWidth * (1.0f - minRatio) * ratio);
-            int height = (int)(maxHeight * minRatio + maxHeight * (1.0f - minRatio) * ratio);
+            Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, true);
 
-            switch (m_rndGen.Next(0, (int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]))
+            Shape.Shapes shape;
+            switch (m_rndGen.Next(0, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]))
             {
                 case 0:
-                    m_target = new GameObject(GameObjectType.None, @"White10x10.png", m_agent.X, m_agent.Y, width, height);
+                default:
+                    shape = Shape.Shapes.Circle;
                     break;
                 case 1:
-                default:
-                    m_target = new GameObject(GameObjectType.None, @"WhiteCircle50x50.png", m_agent.X, m_agent.Y, width, height);
+                    shape = Shape.Shapes.Square;
                     break;
-
+                case 2:
+                    shape = Shape.Shapes.Triangle;
+                    break;
+                case 3:
+                    shape = Shape.Shapes.Mountains;
+                    break;
             }
-            m_target.isBitmapAsMask = TSHints[COLOR_PATTERNS] != 0;
-            m_target.maskColor = WrappedWorld.BackgroundColor;
-            LearningTaskHelpers.RandomizeColorWDiff(ref m_target.maskColor, 0.1f, m_rndGen);
 
-            WrappedWorld.AddGameObject(m_target);
+            Color color;
+            if (TSHints[COLOR_PATTERNS] >= 1)
+            {
+                color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
+            }
+            else
+            {
+                color = Color.White;
+            }
 
-            // first implementation, random object position (left or right)
-            float maxDistanceRatioX = m_rndGen.Next(0, (int)TSHints[TARGET_DISTANCE_LEVELS] + 1) / TSHints[TARGET_DISTANCE_LEVELS];
-            float maxDistanceRatioY = m_rndGen.Next(0, (int)TSHints[TARGET_DISTANCE_LEVELS] + 1) / TSHints[TARGET_DISTANCE_LEVELS];
-            int maxTargetDistanceX = (int)(maxDistanceRatioX * (WrappedWorld.POW_WIDTH - m_target.Width) / 2.0f);
-            int maxTargetDistanceY = (int)(maxDistanceRatioY * (WrappedWorld.POW_HEIGHT - m_target.Height) / 2.0f);
+            m_target = WrappedWorld.CreateShape(position, shape, color, size);
 
-            bool isLeft = m_rndGen.Next(0, 2) == 1;
-            if (isLeft)
-                maxTargetDistanceX = -maxTargetDistanceX;
-
-            bool isUp = m_rndGen.Next(0, 2) == 1;
-            if (isUp)
-                maxTargetDistanceY = -maxTargetDistanceY;
-
-            m_target.X += maxTargetDistanceX;
-            m_target.Y += maxTargetDistanceY;
-
-            // center:
-            m_target.X -= (m_target.Width) / 2;
-            m_target.Y -= (m_target.Height) / 2;
+            float distance = m_target.CenterDistanceTo(m_agent);
+            float maxDistance = (float)Math.Sqrt(Math.Pow(WrappedWorld.POW_WIDTH / 2, 2) + Math.Pow(WrappedWorld.POW_HEIGHT / 2, 2));
+            m_distance = distance / maxDistance;
         }
     }
-
-    // Abstract base class for world adapters
-    //public abstract class AbstractWASimpleDistance : IDeprecatedWorldAdapter
-    //{
-    //    protected Random m_rndGen = new Random();
-    //    protected GameObject m_agent;
-    //    protected GameObject m_target;
-    //    protected int m_stepsSincePresented = 0;
-    //    protected int m_distance = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_distance is lower bound of the interval
-    //    protected int m_reportedDistance = -1;
-    //    TSHintsSimpleDistance hints;
-
-    //    protected abstract AbstractSchoolWorld WrappedWorld { get; }
-
-    //    public void PresentNewTrainingUnit(AbstractSchoolWorld w, IHints hints)
-    //    {
-    //        this.hints = hints as TSHintsSimpleDistance;
-    //        InstallWorld(w, hints as TSHintsSimpleDistance);
-    //        CreateAgent();
-    //        CreateTarget(hints as TSHintsSimpleDistance);
-
-    //        m_stepsSincePresented = 0;
-    //    }
-
-    //    public bool IsTrainingUnitCompleted(out bool wasUnitSuccessful)
-    //    {
-    //        if (WrappedWorld.IsEmulatingUnitCompletion())
-    //        {
-    //            return WrappedWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
-    //        }
-    //        else
-    //        {
-    //            // expect this method to be called once per simulation step
-    //            m_stepsSincePresented++;
-
-    //            // require immediate decision - in a single step
-    //            if (m_reportedDistance >= m_distance && m_reportedDistance < m_distance + 1.0f / hints.TargetDistanceLevels)
-    //            {
-    //                wasUnitSuccessful = true;
-    //                return true;
-    //            }
-
-    //            wasUnitSuccessful = false;
-    //            return true;
-    //        }
-    //    }
-
-    //    protected abstract void CreateAgent();
-    //    protected abstract void InstallWorld(AbstractSchoolWorld w, TSHintsSimpleDistance trainingSetHints);
-    //    protected abstract void CreateTarget(TSHintsSimpleDistance trainingSetHints);
-    //}
-
-    //public class ManInWorldWASimpleDistance : AbstractWASimpleDistance
-    //{
-    //    private ManInWorld m_w;
-
-    //    protected override AbstractSchoolWorld WrappedWorld
-    //    {
-    //        get
-    //        {
-    //            return m_w;
-    //        }
-    //    }
-
-    //    protected override void InstallWorld(AbstractSchoolWorld w, TSHintsSimpleDistance trainingSetHints)
-    //    {
-    //        m_w = w as ManInWorld;
-    //        m_w.ClearWorld();
-    //        m_w.FreezeWorld(true);
-    //        if (trainingSetHints.Noise > 0)
-    //        {
-    //            m_w.IsImageNoise = true;
-    //        }
-    //    }
-
-    //    protected override void CreateAgent()
-    //    {
-    //        m_w.CreateAgent(null, 0, 0);
-    //        m_agent = m_w.Agent;
-    //        // center the agent
-    //        m_agent.X = m_w.FOW_WIDTH / 2 - m_agent.Width / 2;
-    //        m_agent.Y = m_w.FOW_HEIGHT / 2 - m_agent.Height / 2;
-    //    }
-
-    //    // scale and position the target:
-    //    protected override void CreateTarget(TSHintsSimpleDistance trainingSetHints)
-    //    {
-    //        // the number of different sizes depends on level. The minimum size is 0.8*maximum size
-    //        int maxWidth = (int)(m_w.POW_WIDTH * 0.3);
-    //        int maxHeight = (int)(m_w.POW_HEIGHT * 0.3);
-    //        float ratio = m_rndGen.Next(1, trainingSetHints.TargetSizeLevels + 1) / (float)trainingSetHints.TargetSizeLevels;
-    //        float minRatio = 0.8f;
-
-    //        int width = (int)(maxWidth * minRatio + maxWidth * (1.0f - minRatio) * ratio);
-    //        int height = (int)(maxHeight * minRatio + maxHeight * (1.0f - minRatio) * ratio);
-
-    //        switch (m_rndGen.Next(0, trainingSetHints.TargetImageVariability))
-    //        {
-    //            case 0:
-    //                m_target = new GameObject(GameObjectType.None, @"White10x10.png", m_agent.X, m_agent.Y, width, height);
-    //                break;
-    //            case 1:
-    //            default:
-    //                m_target = new GameObject(GameObjectType.None, @"WhiteCircle50x50.png", m_agent.X, m_agent.Y, width, height);
-    //                break;
-
-    //        }
-    //        m_target.isBitmapAsMask = trainingSetHints.ColorPatterns;
-    //        m_target.maskColor = m_w.BackgroundColor;
-    //        LearningTaskHelpers.RandomizeColorWDiff(ref m_target.maskColor, 0.1f, m_rndGen);
-
-    //        m_w.AddGameObject(m_target);
-
-    //        // first implementation, random object position (left or right)
-    //        float maxDistanceRatioX = m_rndGen.Next(0, (trainingSetHints.TargetDistanceLevels + 1)) / (float)trainingSetHints.TargetDistanceLevels;
-    //        float maxDistanceRatioY = m_rndGen.Next(0, (trainingSetHints.TargetDistanceLevels + 1)) / (float)trainingSetHints.TargetDistanceLevels;
-    //        int maxTargetDistanceX = (int)(maxDistanceRatioX * (m_w.POW_WIDTH - m_target.Width) / 2.0f);
-    //        int maxTargetDistanceY = (int)(maxDistanceRatioY * (m_w.POW_HEIGHT - m_target.Height) / 2.0f);
-
-    //        bool isLeft = m_rndGen.Next(0, 2) == 1;
-    //        if (isLeft)
-    //            maxTargetDistanceX = -maxTargetDistanceX;
-
-    //        bool isUp = m_rndGen.Next(0, 2) == 1;
-    //        if (isUp)
-    //            maxTargetDistanceY = -maxTargetDistanceY;
-
-    //        m_target.X += maxTargetDistanceX;
-    //        m_target.Y += maxTargetDistanceY;
-
-    //        // center:
-    //        m_target.X -= (m_target.Width) / 2;
-    //        m_target.Y -= (m_target.Height) / 2;
-    //    }
-    //}
 }

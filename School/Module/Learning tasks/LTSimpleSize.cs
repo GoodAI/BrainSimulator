@@ -1,20 +1,19 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleSize : AbstractLearningTask<ManInWorld>
     {
-        public const string COLOR_PATTERNS = "Color patterns";
-        public const string TARGET_SIZE_LEVELS = "Target size levels";
+        private static readonly TSHintAttribute COLOR_PATTERNS = new TSHintAttribute("Color patterns","",TypeCode.Single,0,1); //check needed;
+        private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels","",TypeCode.Single,0,1); //check needed;
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;
-        private GameObject m_target;
-        private int m_stepsSincePresented = 0;
-        private int m_size = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_size is lower bound of the interval
-        private int m_reportedSize = -1;
+        private float m_scale;
 
         public LTSimpleSize() { }
 
@@ -25,10 +24,9 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 { COLOR_PATTERNS, 0 },
                 { TARGET_SIZE_LEVELS, 2 },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 1 },
-                { TSHintAttributes.NOISE, 0 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
@@ -38,17 +36,14 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0 }
             });
             TSProgression.Add(new TrainingSetHints {
-                { TARGET_SIZE_LEVELS, 4 },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 2 }
+                { TARGET_SIZE_LEVELS, 5 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2 }
             });
-            TSProgression.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000);
             TSProgression.Add(new TrainingSetHints {
-                { TARGET_SIZE_LEVELS, 8 },
-                { TSHintAttributes.TARGET_IMAGE_VARIABILITY, 3 },
-                { TSHintAttributes.MAX_TARGET_DISTANCE, 1 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 100 }
+                { TARGET_SIZE_LEVELS, 10 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3 },
             });
-            TSProgression.Add(TSHintAttributes.NOISE, 1);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 
             SetHints(TSHints);
         }
@@ -57,35 +52,32 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.FreezeWorld(true);
 
+            WrappedWorld.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1 ? true : false;
+
             CreateAgent();
             CreateTarget();
-
-            m_stepsSincePresented = 0;
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            // expect this method to be called once per simulation step
-            m_stepsSincePresented++;
-
             // require immediate decision - in a single step
-            if (m_reportedSize >= m_size && m_reportedSize < m_size + 1.0f / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS])
+            float tolerance = 1.0f / (TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1);
+            if (m_scale - tolerance <= WrappedWorld.Controls.Host[0] && WrappedWorld.Controls.Host[0] <= m_scale + tolerance)
             {
                 wasUnitSuccessful = true;
-                return true;
             }
-
-            wasUnitSuccessful = false;
+            else
+            {
+                wasUnitSuccessful = false;
+            }
+            //Console.WriteLine(wasUnitSuccessful);
+            // TODO: partial reward
             return true;
         }
 
         protected void CreateAgent()
         {
-            WrappedWorld.CreateAgent(null, 0, 0);
-            m_agent = WrappedWorld.Agent;
-            // center the agent
-            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            m_agent = WrappedWorld.CreateNonVisibleAgent();
         }
 
         // scale and position the target:
@@ -96,44 +88,45 @@ namespace GoodAI.Modules.School.LearningTasks
             int maxHeight = (int)(WrappedWorld.POW_HEIGHT * 0.9);
             float fRatio = m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1) / (float)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
 
-            int width = (int)(maxWidth * fRatio);
-            int height = (int)(maxHeight * fRatio);
+            int maxSide = (int)(Math.Max(WrappedWorld.POW_WIDTH, WrappedWorld.POW_HEIGHT) * 0.9);
 
-            switch (m_rndGen.Next(0, (int)TSHints[TSHintAttributes.TARGET_IMAGE_VARIABILITY]))
+            float randomNumber = (float)(m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1));
+            m_scale = randomNumber / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
+            int side = (int)((float)maxSide * m_scale);
+
+            //Console.WriteLine(maxSide);
+            //Console.WriteLine(side);
+
+            Size size = new Size(side, side);
+
+            Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, true);
+
+            List<Shape.Shapes> shapes = new List<Shape.Shapes>();
+            switch ((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS])
             {
-                case 0:
-                    m_target = new GameObject(GameObjectType.None, @"White10x10.png", m_agent.X, m_agent.Y, width, height);
-                    break;
+                case 3:
+                    shapes.Add(Shape.Shapes.Star);
+                    goto case 2;
+                case 2:
+                    shapes.Add(Shape.Shapes.DoubleRhombus);
+                    goto case 1;
                 case 1:
-                default:
-                    m_target = new GameObject(GameObjectType.None, @"WhiteCircle50x50.png", m_agent.X, m_agent.Y, width, height);
+                    shapes.Add(Shape.Shapes.Square);
                     break;
-
             }
-            m_target.isBitmapAsMask = TSHints[LTSimpleSize.COLOR_PATTERNS] != 0;
-            m_target.maskColor = WrappedWorld.BackgroundColor;
-            LearningTaskHelpers.RandomizeColorWDiff(ref m_target.maskColor, 0.1f, m_rndGen);
+            Shape.Shapes shape = shapes[m_rndGen.Next(0, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS])];
 
-            WrappedWorld.AddGameObject(m_target);
+            Color color;
+            if (TSHints[LTSimpleSize.COLOR_PATTERNS] >= 1)
+            {
+                color = LearningTaskHelpers.FlipCoin(m_rndGen) ? Color.Black : Color.White;
+            }
+            else
+            {
+                color = Color.White;
+            }
 
-            // first implementation, random object position (left or right)
-            int maxTargetDistanceX = m_rndGen.Next(0, (int)((TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] / 2.0f) * (WrappedWorld.POW_WIDTH - m_target.Width)));
-            int maxTargetDistanceY = m_rndGen.Next(0, (int)((TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] / 2.0f) * (WrappedWorld.POW_HEIGHT - m_target.Height)));
-
-            bool isLeft = m_rndGen.Next(0, 2) == 1;
-            if (isLeft)
-                maxTargetDistanceX = -maxTargetDistanceX;
-
-            bool isUp = m_rndGen.Next(0, 2) == 1;
-            if (isUp)
-                maxTargetDistanceY = -maxTargetDistanceY;
-
-            m_target.X += maxTargetDistanceX;
-            m_target.Y += maxTargetDistanceY;
-
-            // center:
-            m_target.X -= (m_target.Width) / 2;
-            m_target.Y -= (m_target.Height) / 2;
+            WrappedWorld.CreateShape(position, shape, color, size);
         }
 
     }

@@ -22,8 +22,8 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.COOLDOWN,  5},
-                {TSHintAttributes.RANDOMNESS, 0 },
+                {TSHintAttributes.DEPRECATED_COOLDOWN,  5},
+                {TSHintAttributes.RANDOMNESS_LEVEL, 0 },
                 {TSHintAttributes.REQUIRED_UNIT_SUCCESSES, 10 },
                 {TSHintAttributes.MAX_UNIT_ATTEMPTS, 1000 },
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
@@ -56,15 +56,15 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override void UpdateLevel()
         {
             var tsp = TSProgression[0];
-            tsp[TSHintAttributes.COOLDOWN] = 5 * (CurrentLevel + 1);
-            tsp[TSHintAttributes.RANDOMNESS] = CurrentLevel < 20 ? 0 : CurrentLevel - 19;
+            tsp[TSHintAttributes.DEPRECATED_COOLDOWN] = 5 * (CurrentLevel + 1);
+            tsp[TSHintAttributes.RANDOMNESS_LEVEL] = CurrentLevel < 20 ? 0 : CurrentLevel - 19;
             TSHints.Set(tsp);
         }
 
         private void ResetCooldown()
         {
-            m_cooldownRemaining = (uint)TSHints[TSHintAttributes.COOLDOWN];
-            int randomness = (int)TSHints[TSHintAttributes.RANDOMNESS];
+            m_cooldownRemaining = (uint)TSHints[TSHintAttributes.DEPRECATED_COOLDOWN];
+            int randomness = (int)TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
             m_cooldownRemaining += (uint)m_rnd.Next(-randomness * 3, randomness * 3);
             m_actionReadyFor = 0;
         }
