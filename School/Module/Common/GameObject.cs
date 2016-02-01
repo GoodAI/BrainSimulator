@@ -82,6 +82,7 @@ namespace GoodAI.Modules.School.Common
         public Color maskColor; // R,G,B 
         public string bitmapPath;
         public CUdeviceptr bitmap;
+        public int SpriteTextureHandle;
 
         public int X { get; set; }
         public int Y { get; set; }

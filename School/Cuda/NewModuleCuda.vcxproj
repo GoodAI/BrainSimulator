@@ -187,6 +187,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="NewModuleKernel.cu" />
+    <CudaCompile Include="ShuffleRGB.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

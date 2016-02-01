@@ -14,6 +14,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -121,6 +125,7 @@ namespace GoodAI.Modules.School.Worlds
         private string m_errorMessage;
 
         public MyMemoryBlock<float> AgentVisualTemp { get; protected set; } // used e.g. for holding random numbers during noise generation
+        public MyMemoryBlock<float> ShuffleRGBTemp { get; protected set; }
 
         public ManInWorld()
         {
@@ -197,6 +202,8 @@ namespace GoodAI.Modules.School.Worlds
             VisualPOW.ColumnHint = POW_WIDTH;
 
             AgentVisualTemp.Count = VisualPOW.Count;
+
+            ShuffleRGBTemp.Count = VisualFOW.Count;
 
             Bitmaps.Count = 0;
 
@@ -508,7 +515,10 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual InputTask GetInputTask { get; protected set; }
         public virtual UpdateTask UpdateWorldTask { get; protected set; }
+        [MyTaskGroup("Rendering")]
         public RenderTask RenderWorldTask { get; protected set; }
+        [MyTaskGroup("Rendering")]
+        public RenderGLTask RenderGLWorldTask { get; protected set; }
 
         public class InputTask : MyTask<ManInWorld>
         {
@@ -850,6 +860,223 @@ namespace GoodAI.Modules.School.Worlds
                     m_AddRgbNoiseKernel.SetupExecution(new dim3(Owner.POW_WIDTH, 1, 1), new dim3(Owner.POW_HEIGHT, 3, 1));
                     m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp.GetDevicePtr(Owner));
                 }
+            }
+        }
+
+        /// <summary>
+        /// Render the world to the visual output.
+        /// </summary>
+        public class RenderGLTask : MyTask<ManInWorld>
+        {
+            private uint m_sharedBufferHandle;
+            uint m_fboHandle;
+            uint m_renderTextureHandle;
+            private CudaOpenGLBufferInteropResource m_renderResource;
+
+            private MyCudaKernel m_ShuffleRGBKernel;
+
+            INativeWindow m_window = null;
+            IGraphicsContext m_context = null;
+
+            bool texturesInitialized;
+
+            public override void Init(int nGPU)
+            {
+                // Init pixel-reorganization kernel
+                m_ShuffleRGBKernel = MyKernelFactory.Instance.Kernel(nGPU, @"ShuffleRGB", "ShuffleRGB");
+                m_ShuffleRGBKernel.SetupExecution(Owner.VisualFOW.Count);
+
+                texturesInitialized = false;
+            }
+
+            public void InitGLTextures(int nGPU)
+            {
+                if (m_context != null)
+                    m_context.Dispose();
+                if (m_window != null)
+                    m_window.Dispose();
+
+                m_window = new NativeWindow();
+                m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
+                m_context.MakeCurrent(m_window.WindowInfo);
+
+
+                // Setup game object textures
+                var spriteTextureHandles = new int[Owner.gameObjects.Count];
+                GL.GenTextures(Owner.gameObjects.Count, spriteTextureHandles);
+
+                for (int i = 0; i < Owner.gameObjects.Count; i++)
+                {
+                    var gameObject = Owner.gameObjects[i];
+                    gameObject.SpriteTextureHandle = spriteTextureHandles[i];
+
+                    GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
+
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+
+                    Bitmap bmp = Owner.m_bitmapTable[gameObject.bitmapPath].Item1;
+                    BitmapData data = bmp.LockBits(
+                        new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
+                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                    /*GL.TexImage2D(
+                        TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
+                        gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height, 0,
+                        OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte,
+                        data.Scan0);*/
+
+                    // from example:
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+                    bmp.UnlockBits(data);
+                }
+
+                // Setup rendering texture
+                m_renderTextureHandle = (uint)GL.GenTexture();
+                GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+
+                // Register the texture for use with CUDA
+                //m_sharedBufferHandle = (uint)GL.GenBuffer();
+                //GL.BindBuffer(BufferTarget., m_sharedBufferHandle);
+                //int size = Owner.FOW_WIDTH * Owner.FOW_HEIGHT * sizeof(float) * 3;
+                //GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(size), default(IntPtr), BufferUsageHint.DynamicDraw);
+                //m_renderResource = new CudaOpenGLBufferInteropResource(m_sharedBufferHandle, CUGraphicsRegisterFlags.None);
+                //Owner.VisualFOW.ExternalPointer = MyMemoryManager.Instance.GetGlobalVariable("RANDOMNAMEaa", Owner.GPU, () => new float[size]).DevicePointer.Pointer; // TODO: odstranit!
+                //Owner.VisualFOW.AllocateDevice();
+
+                // Setup FBO
+                m_fboHandle = (uint)GL.GenFramebuffer();
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, m_renderTextureHandle, 0);
+
+                // Clean up
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                FramebufferErrorCode err = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            }
+
+            public override void Execute()
+            {
+                RenderFOW();
+            }
+
+            void RenderFOW()
+            {
+                if (!texturesInitialized)
+                {
+                    InitGLTextures(Owner.GPU);
+                    texturesInitialized = true;
+                }
+
+                //if (m_renderResource.IsMapped)
+                //    m_renderResource.UnMap();
+
+                // maybe unnecessary fix of the bug with garbage collected old m_windows:
+                //m_window.ProcessEvents();
+
+                m_context.MakeCurrent(m_window.WindowInfo);
+                GL.Finish();
+
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+
+                //GL.PushAttrib(AttribMask.ViewportBit); // stores GL.Viewport() parameters
+
+                // Setup rendering
+                GL.Viewport(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
+
+                GL.MatrixMode(MatrixMode.Projection);
+                GL.LoadIdentity();
+                GL.Ortho(0, Owner.FOW_WIDTH, 0, Owner.FOW_HEIGHT, -1, 1);
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.LoadIdentity();
+                // For POW
+                //GL.LoadMatrix(Matrix4.LookAt(...));
+
+                GL.ClearColor(Owner.BackgroundColor);
+
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.Blend);
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+                GL.End();
+
+                //GL.LoadIdentity();
+
+                // Render game objects
+                // TODO: object rendering order -- environment first, then creatures and active objects
+                foreach (var gameObject in Owner.gameObjects)
+                {
+                    // does something only for 2 (which means only first texture is shown)
+                    //if (gameObject.SpriteTextureHandle == 2)
+                    //{
+                    //    break;
+                    //}
+                    GL.PushMatrix();
+                    // TODO: check if object is in view (POW only)
+
+                    GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
+                    // Rotation not implemented yet
+                    //GL.Rotate((DisableRotation ? 0.0f : rot) * 180.0f, 0.0f, 0.0f, 1.0f);
+                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
+
+                    GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
+                    GL.Begin(PrimitiveType.Quads);
+                    GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                    GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 0f);
+                    GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, 1f);
+                    GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, 1f);
+                    GL.End();
+
+                    GL.PopMatrix();
+                }
+
+                // Clean up
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                GL.Disable(EnableCap.Texture2D);
+                GL.Disable(EnableCap.Blend);
+
+                //GL.PopAttrib(); // restores GL.Viewport() parameters
+
+
+                // ==========================================================================================================
+
+
+                // Prepare the results for CUDA
+
+                // Copy to buffer object (not working)
+                /*GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, default(IntPtr));
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                m_renderResource.Map();
+                Owner.VisualFOW.ExternalPointer = m_renderResource.GetMappedPointer().Pointer;
+                Owner.VisualFOW.AllocateDevice();*/
+
+
+                // Copy to host first
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, Owner.ShuffleRGBTemp.Host);
+                GL.ReadBuffer(ReadBufferMode.None);
+
+                Owner.ShuffleRGBTemp.SafeCopyToDevice();
+                // Reorganize RGB for our observers
+                m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualFOW, Owner.VisualFOW.Count);
             }
         }
     }

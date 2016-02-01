@@ -121,6 +121,11 @@
             Render the world to the visual output.
             </summary>
         </member>
+        <member name="T:GoodAI.Modules.School.Common.ManInWorld.RenderGLTask">
+            <summary>
+            Render the world to the visual output.
+            </summary>
+        </member>
         <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld">
             <author>GoodAI</author>
             <meta>os</meta>
