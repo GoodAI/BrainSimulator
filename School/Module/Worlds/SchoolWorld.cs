@@ -177,7 +177,6 @@ namespace GoodAI.Modules.School.Worlds
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
             MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, true);
-            plan.Name = (CurrentWorld as MyWorld).Name;
 
             return new MyExecutionBlock(new IMyExecutable[] { defaultInitPhasePlan, plan } );
         }
