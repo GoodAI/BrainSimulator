@@ -5,8 +5,6 @@ namespace GoodAI.Modules.School.Common
 {
     public interface ILearningTask
     {
-        SchoolWorld SchoolWorld { get; set; }
-
         bool HasPresentedFirstUnit { get; set; }
         bool IsAbilityLearned { get; }
         bool DidAbilityFail { get; }
@@ -27,7 +25,6 @@ namespace GoodAI.Modules.School.Common
     /// </summary>
     public abstract class AbstractLearningTask<WrappedWorldClass> : ILearningTask where WrappedWorldClass : MyWorld, IWorldAdapter
     {
-        public LearningTaskNameEnum LearningTaskName { get; set; }
         public AbilityNameEnum AbilityName { get; set; }
         public AbilityNameEnum[] RequiredAbilities { get; set; }
 
