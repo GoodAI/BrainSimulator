@@ -56,6 +56,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTMovingTargetD(w);
                 case LearningTaskNameEnum.Obstacles:
                     return new LTObstacles(w);
+                case LearningTaskNameEnum.MultipleTargetsSequence:
+                    return new LTMultipleTargetsSequence(w);
                 case LearningTaskNameEnum.OneDApproach:
                     return new LT1DApproach(w);
                 case LearningTaskNameEnum.DetectColor:

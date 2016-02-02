@@ -201,9 +201,6 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             // expect this method to be called once per simulation step
             m_stepsSincePresented++;
-
-            MyLog.ERROR.WriteLine("StepsSincePresented: " + m_stepsSincePresented);
-
             
             if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])
             {
