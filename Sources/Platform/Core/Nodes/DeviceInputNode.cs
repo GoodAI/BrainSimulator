@@ -15,9 +15,10 @@ namespace GoodAI.Core.Nodes
     public class DeviceInput : MyWorkingNode
     {
         // The keyboard keys should fit into a short (add some fields for continuous inputs, like mouse).
+        // The mapping should match: https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
         private const int TotalOutputSize = 256;// + 32;
 
-        private float[] m_values = new float[TotalOutputSize];
+        private readonly float[] m_values = new float[TotalOutputSize];
 
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Output
@@ -31,13 +32,13 @@ namespace GoodAI.Core.Nodes
             Output.Count = TotalOutputSize;
         }
 
-        public void OnKeyUp(int keyValue)
+        public void SetKeyUp(int keyValue)
         {
             //MyLog.INFO.WriteLine("KeyUp: {0}", keyValue);
             m_values[keyValue] = 0.0f;
         }
 
-        public void OnKeyDown(int keyValue)
+        public void SetKeyDown(int keyValue)
         {
             MyLog.INFO.WriteLine("KeyDown: {0}", keyValue);
             m_values[keyValue] = 1.0f;

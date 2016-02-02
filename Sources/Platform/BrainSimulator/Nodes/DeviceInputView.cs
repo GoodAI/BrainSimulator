@@ -29,7 +29,7 @@ namespace GoodAI.BrainSimulator.Nodes
             if (e.Handled)
                 return;
 
-            DeviceNode.OnKeyDown(e.KeyValue);
+            DeviceNode.SetKeyDown(e.KeyValue);
 
             e.Handled = true;
             e.SuppressKeyPress = true;
@@ -42,7 +42,7 @@ namespace GoodAI.BrainSimulator.Nodes
             if (e.Handled)
                 return;
 
-            DeviceNode.OnKeyUp(e.KeyValue);
+            DeviceNode.SetKeyUp(e.KeyValue);
 
             e.Handled = true;
             e.SuppressKeyPress = true;
