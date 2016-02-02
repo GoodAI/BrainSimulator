@@ -1,4 +1,5 @@
-﻿using GoodAI.Modules.School.Worlds;
+﻿using GoodAI.Modules.School.LearningTasks;
+using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -76,11 +77,11 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectShape, world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectColor), world), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectShape), world), typeof(RoguelikeWorld));
                     break;
                 case CurriculumType.DebuggingCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DebuggingTask, world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDebugging), world), typeof(RoguelikeWorld));
                     break;
             }
 

@@ -27,7 +27,6 @@ namespace GoodAI.Modules.School.Common
     /// </summary>
     public abstract class AbstractLearningTask<WrappedWorldClass> : ILearningTask where WrappedWorldClass : MyWorld, IWorldAdapter
     {
-        public LearningTaskNameEnum LearningTaskName { get; set; }
         public AbilityNameEnum AbilityName { get; set; }
         public AbilityNameEnum[] RequiredAbilities { get; set; }
 
