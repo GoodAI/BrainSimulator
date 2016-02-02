@@ -72,6 +72,7 @@ namespace GoodAI.Modules.School.Common
             {
                 case CurriculumType.TrainingCurriculum:
                     curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectShape, world), typeof(RoguelikeWorld).GetType());
                     break;
                 case CurriculumType.DebuggingCurriculum:
                     curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DebuggingTask, world), typeof(RoguelikeWorld).GetType());
