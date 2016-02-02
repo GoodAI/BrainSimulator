@@ -1,6 +1,7 @@
 ﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace GoodAI.School.GUI
 
         public SchoolMainForm()
         {
-            m_serializer = new YAXSerializer(typeof(SchoolCurriculum));
+            m_serializer = new YAXSerializer(typeof(PlanDesign));
             AddTaskView = new SchoolAddTaskForm();
             RunView = new SchoolRunForm();
 
@@ -45,71 +46,138 @@ namespace GoodAI.School.GUI
 
         private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
 
-        #region Nodes classes
+        #region Helper classes
+
+        // mediator between view (CurriculumNode) and model (SchoolCurriculum) - is also used for serialization
+        [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
+        public class PlanDesign
+        {
+            [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
+            private class LTDesign
+            {
+                [YAXSerializeAs("Enabled"), YAXAttributeForClass]
+                private readonly bool m_enabled;
+                [YAXSerializeAs("TaskType")]
+                private readonly string m_taskType;
+                [YAXSerializeAs("WorldType")]
+                private readonly string m_worldType;
+
+                public LTDesign() { }
+
+                public LTDesign(LearningTaskNode node)
+                {
+                    m_taskType = node.TaskType.AssemblyQualifiedName;
+                    m_worldType = node.WorldType.AssemblyQualifiedName;
+                    m_enabled = node.Enabled;
+                }
+
+                public static explicit operator LearningTaskNode(LTDesign design)
+                {
+                    LearningTaskNode node = new LearningTaskNode(Type.GetType(design.m_taskType), Type.GetType(design.m_worldType));
+                    node.Enabled = design.m_enabled;
+                    return node;
+                }
+            }
+
+            [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
+            private class CurriculumDesign
+            {
+                [YAXSerializeAs("Tasks")]
+                private readonly List<LTDesign> m_tasks;
+                [YAXSerializeAs("Enabled"), YAXAttributeForClass]
+                private readonly bool m_enabled;
+                [YAXSerializeAs("Name"), YAXAttributeForClass]
+                private readonly string m_name;
+
+                public CurriculumDesign() { }
+
+                public CurriculumDesign(CurriculumNode node)
+                {
+                    m_tasks = node.Nodes.
+                        Where(x => x is LearningTaskNode).
+                        Select(x => new LTDesign(x as LearningTaskNode)).
+                        ToList();
+                    m_enabled = node.Enabled;
+                    m_name = node.Text;
+                }
+
+                public static explicit operator CurriculumNode(CurriculumDesign design)
+                {
+                    CurriculumNode node = new CurriculumNode();
+                    node.Text = design.m_name;
+                    node.Enabled = design.m_enabled;
+
+                    design.m_tasks.ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+
+                    return node;
+                }
+            }
+
+            [YAXSerializeAs("Curricula")]
+            private List<CurriculumDesign> m_curricula;
+
+            public PlanDesign() { }
+
+            public PlanDesign(List<CurriculumNode> nodes)
+            {
+                m_curricula = nodes.Select(x => new CurriculumDesign(x)).ToList();
+            }
+
+            public PlanDesign(SchoolCurriculum data)
+            {
+                //public CurriculumNode(SchoolCurriculum data)
+                //{
+                //    Text = data.Name;
+
+                //    foreach (ILearningTask task in data)
+                //    {
+                //        // TODO: World name can be displayed through reflection OR once World param is in ILearningTask (or SchoolCurriculum is restricted to AbstractLTs)
+                //        LearningTaskNode taskNode = new LearningTaskNode(task);
+                //        taskNode.Enabled = true;
+                //        Nodes.Add(taskNode);
+                //    }
+                //}
+            }
+
+            public static explicit operator List<CurriculumNode>(PlanDesign design)
+            {
+                return design.m_curricula.Select(x => (CurriculumNode)x).ToList();
+            }
+
+            public static explicit operator SchoolCurriculum(PlanDesign design)
+            {
+                return new SchoolCurriculum();
+            }
+        }
 
         public class SchoolTreeNode : Node
         {
-            public SchoolTreeNode() { }
-            public SchoolTreeNode(string text) : base(text) { }
             public bool Enabled { get; set; }
+            public SchoolTreeNode() { Enabled = true; }
         }
 
-        public class CurriculumNode : SchoolTreeNode
-        {
-            public CurriculumNode(string text) : base(text) { }
-        }
+        public class CurriculumNode : SchoolTreeNode { }
 
         public class LearningTaskNode : SchoolTreeNode
         {
-            private readonly ILearningTask m_task;
-
-            public LearningTaskNode(ILearningTask task)
-            {
-                m_task = task;
-                Enabled = true;
-            }
-
-            public string Name
-            {
-                get
-                {
-                    return TaskType.Name;
-                }
-            }
-
-            public string World
-            {
-                get
-                {
-                    return WorldType.Name;
-                }
-            }
-
-            public Type TaskType
-            {
-                get
-                {
-                    return m_task.GetType();
-                }
-            }
-
-            public Type WorldType
-            {
-                get
-                {
-                    return m_task.GenericWorld.GetType();
-                }
-            }
-
+            public Type TaskType { get; private set; }
+            public Type WorldType { get; private set; }
+            // for data grid
             public int Steps { get; set; }
             public float Time { get; set; }
             public string Status { get; set; }
+
+            public LearningTaskNode(Type taskType, Type worldType)
+            {
+                TaskType = taskType;
+                WorldType = worldType;
+            }
 
             public override string Text
             {
                 get
                 {
-                    return m_task.GetType().Name + " (" + m_task.GenericWorld.GetType().Name + ")";
+                    return TaskType.Name + " (" + WorldType.Name + ")";
                 }
             }
         }
@@ -120,7 +188,8 @@ namespace GoodAI.School.GUI
 
         private CurriculumNode AddCurriculum()
         {
-            CurriculumNode node = new CurriculumNode("Curr" + m_model.Nodes.Count.ToString());
+            CurriculumNode node = new CurriculumNode();
+            node.Text = "Curr" + m_model.Nodes.Count.ToString();
             m_model.Nodes.Add(node);
             return node;
         }
@@ -132,58 +201,30 @@ namespace GoodAI.School.GUI
 
             string xmlCurr;
             try { xmlCurr = File.ReadAllText(filePath); }
-            catch (FileNotFoundException e) { return false; }
+            catch (IOException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
+                return false;
+            }
 
             try
             {
-                SchoolCurriculum curr = (SchoolCurriculum)m_serializer.Deserialize(xmlCurr);
-                CurriculumNode node = CurriculumDataToCurriculumNode(curr);
-                m_model.Nodes.Add(node);
+                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
+                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
+
+                foreach (CurriculumNode curr in currs)
+                    m_model.Nodes.Add(curr);
             }
-            catch (YAXException) { return false; }
+            catch (YAXException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
+                return false;
+            }
 
             Properties.School.Default.LastOpenedFile = filePath;
             Properties.School.Default.Save();
 
-            return true;
-        }
-
-        private SchoolCurriculum CurriculumNodeToCurriculumData(CurriculumNode node)
-        {
-            SchoolCurriculum data = new SchoolCurriculum();
-            data.Name = node.Text;
-
-            foreach (LearningTaskNode taskNode in node.Nodes)
-                data.AddLearningTask(taskNode.TaskType, taskNode.WorldType);
-
-            return data;
-        }
-
-        private CurriculumNode CurriculumDataToCurriculumNode(SchoolCurriculum data)
-        {
-            CurriculumNode node = new CurriculumNode(data.Name);
-
-            foreach (ILearningTask task in data)
-            {
-                // TODO: World name can be displayed through reflection OR once World param is in ILearningTask (or SchoolCurriculum is restricted to AbstractLTs)
-                LearningTaskNode taskNode = new LearningTaskNode(task);
-                taskNode.Enabled = true;
-                node.Nodes.Add(taskNode);
-            }
-
-            return node;
-        }
-
-        private List<LearningTaskNode> CurriculumDataToLTData(SchoolCurriculum curriculum)
-        {
-            List<LearningTaskNode> result = new List<LearningTaskNode>();
-            foreach (ILearningTask task in curriculum)
-            {
-                LearningTaskNode data = new LearningTaskNode(task);
-                result.Add(data);
-            }
-
-            return result;
+            return false;
         }
 
         #endregion
@@ -355,9 +396,8 @@ namespace GoodAI.School.GUI
             if (AddTaskView.ResultTask == null)
                 return;
 
-            ILearningTask task = LearningTaskFactory.CreateLearningTask(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
-            LearningTaskNode newTask = new LearningTaskNode(task);
-            (tree.SelectedNode.Tag as Node).Nodes.Add(newTask);
+            LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
+            (tree.SelectedNode.Tag as Node).Nodes.Add(task);
             tree.SelectedNode.IsExpanded = true;
         }
 
@@ -416,9 +456,10 @@ namespace GoodAI.School.GUI
 
         private void SaveProject(string path)
         {
-            SchoolCurriculum test = CurriculumNodeToCurriculumData(tree.SelectedNode.Tag as CurriculumNode);
-            string xmlCurr = m_serializer.Serialize(test);
-            File.WriteAllText(path, xmlCurr);
+            PlanDesign plan = new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
+
+            string xmlResult = m_serializer.Serialize(plan);
+            File.WriteAllText(path, xmlResult);
         }
 
         private void SaveProjectAs(object sender, EventArgs e)
