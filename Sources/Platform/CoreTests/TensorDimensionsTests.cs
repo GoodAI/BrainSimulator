@@ -152,12 +152,30 @@ namespace CoreTests
         }
 
         [Fact]
+        public void ElementCountIsProductOfItems()
+        {
+            Assert.Equal(21, (new TensorDimensions(3, 7)).ElementCount);
+        }
+
+        [Fact]
+        public void EqualsTests()
+        {
+            Assert.True((new TensorDimensions(2, 3, 5)).Equals(new TensorDimensions(2, 3, 5)));
+            Assert.True((new TensorDimensions()).Equals(new TensorDimensions()));
+
+            Assert.False((new TensorDimensions(2, 3, 5)).Equals(0));  // Compare with some other value type.
+            Assert.False((new TensorDimensions(2, 3, 5)).Equals(new TensorDimensions(2, 3)));
+            Assert.False((new TensorDimensions(2, 3, 5)).Equals(new TensorDimensions(2, 3, 11)));
+        }
+
+        [Fact]
         public void DefaultDimIsRankOneOfSizeZero()
         {
             var defaultDims = new TensorDimensions();
 
             Assert.Equal(1, defaultDims.Rank);
             Assert.Equal(0, defaultDims[0]);
+            Assert.Equal(0, defaultDims.ElementCount);
         }
 
         private TensorDimensions m_testDims = new TensorDimensions(5, 3, 2);
@@ -260,11 +278,7 @@ namespace CoreTests
             MyAbstractMemoryBlock memBlock = GetMemBlock(testData.InitialDims);
             memBlock.ColumnHint = testData.ColumnHint;
 
-            Assert.Equal(testData.ExpectedDims.ElementCount, memBlock.Count);
-            Assert.Equal(testData.ExpectedDims.Rank, memBlock.Dims.Rank);
-
-            for (var i = 0; i < testData.ExpectedDims.Rank; i++)  // TODO: define Equals for TensorDimensions ?
-                Assert.Equal(testData.ExpectedDims[i], memBlock.Dims[i]);
+            Assert.True(memBlock.Dims.Equals(testData.ExpectedDims));
         }
 
         [Fact]
@@ -280,6 +294,21 @@ namespace CoreTests
             Assert.Equal(12, memBlock.Dims.ElementCount);
             Assert.Equal(2, memBlock.Dims.Rank);
             Assert.Equal(4, memBlock.Dims[1]);
+        }
+
+        public static readonly TheoryData<TensorDimensions, TensorDimensions> TranspositionData
+            = new TheoryData<TensorDimensions, TensorDimensions>
+        {
+            { new TensorDimensions(1, 4), new TensorDimensions(4, 1) },
+            { new TensorDimensions(1, 4, 3), new TensorDimensions(4, 1, 3) },
+            { new TensorDimensions(4), new TensorDimensions(4) },
+            { new TensorDimensions(), new TensorDimensions() }
+        };
+
+        [Theory, MemberData("TranspositionData")]
+        public void TranspositionTests(TensorDimensions initial, TensorDimensions expected)
+        {
+            Assert.True(initial.Transpose().Equals(expected));
         }
     }
 }

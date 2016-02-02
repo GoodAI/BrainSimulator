@@ -18,6 +18,33 @@ namespace GoodAI.Core.Memory
             m_dims = ProcessDimensions(dimensions);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TensorDimensions))  // Can't compare value type with null.
+                return false;
+
+            return Equals((TensorDimensions)obj);
+        }
+
+        public bool Equals(TensorDimensions other)
+        {
+            if (other.Rank != Rank)
+                return false;
+
+            if ((Rank == 1) && (m_dims == null) && (other.m_dims == null))
+                return true;
+
+            return (m_dims != null) && (other.m_dims != null) && m_dims.SequenceEqual(other.m_dims);
+        }
+
+        public override int GetHashCode()
+        {
+            if (m_dims == null || m_dims.Count == 0)
+                return 0;
+
+            return m_dims.Aggregate(19, (hashCode, item) => 31*hashCode + item);
+        }
+
         public int Rank
         {
             get
@@ -33,11 +60,7 @@ namespace GoodAI.Core.Memory
                 if (m_dims == null || m_dims.Count == 0)
                     return 0;
 
-                // ReSharper disable once SuggestVarOrType_BuiltInTypes
-                int product = 1;
-                m_dims.ForEach(item => { product *= item; });
-
-                return product;
+                return m_dims.Aggregate(1, (acc, item) => acc*item);
             }
         }
 
@@ -63,6 +86,22 @@ namespace GoodAI.Core.Memory
 
             return string.Join("×", m_dims.Select(item => item.ToString()))
                 + (printTotalSize ? string.Format(" [{0}]", ElementCount) : "");
+        }
+
+        public TensorDimensions Transpose()
+        {
+            if (Rank <= 1)
+                return this;
+
+            var transposed = new int[Rank];
+
+            transposed[0] = m_dims[1];
+            transposed[1] = m_dims[0];
+
+            for (int i = 2; i < Rank; i++)
+                transposed[i] = m_dims[i];
+
+            return new TensorDimensions(transposed);
         }
 
         public static TensorDimensions GetBackwardCompatibleDims(int count, int columnHint)
