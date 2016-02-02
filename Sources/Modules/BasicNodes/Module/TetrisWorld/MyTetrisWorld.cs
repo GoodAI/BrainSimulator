@@ -151,7 +151,7 @@ namespace GoodAI.Modules.TetrisWorld
             set { SetOutput(7, value); }
         }
 
-        public MyMemoryBlock<float> Bitmaps { get; private set; }
+        public MyMemoryBlock<float> Bitmaps { get; protected set; }
 
         #endregion
 
