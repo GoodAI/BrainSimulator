@@ -6,7 +6,7 @@ namespace GoodAI.Modules.School.Common
 {
     public interface ILearningTask
     {
-        IWorldAdapter GenericWrappedWorld { get; set; }
+        SchoolWorld SchoolWorld { get; set; }
 
         bool HasPresentedFirstUnit { get; set; }
         bool IsAbilityLearned { get; }
@@ -85,20 +85,13 @@ namespace GoodAI.Modules.School.Common
 
         // The world where the agent lives
         public SchoolWorld SchoolWorld { get; set; }
-
-        // for purposes of interface only, do not set directly, it is handled through WrappedWorld
-        public IWorldAdapter GenericWrappedWorld { get; set; } 
-        
+      
         // The wrapped world (e.g., a RoguelikeWorld or a TetrisWorld) that defines the agent's environment.
         // The learning task can access it to control the environment.
         public WrappedWorldClass WrappedWorld { 
             get
             {
-                return (WrappedWorldClass)GenericWrappedWorld;
-            }
-            set
-            {
-                GenericWrappedWorld = value;
+                return SchoolWorld.CurrentWorld as WrappedWorldClass;
             }
         }
 
@@ -134,8 +127,6 @@ namespace GoodAI.Modules.School.Common
         public AbstractLearningTask(SchoolWorld schoolWorld)
         {
             SchoolWorld = schoolWorld;
-            // I think we cannot avoid this cast? [SA]
-            WrappedWorld = schoolWorld.CurrentWorld as WrappedWorldClass;
             TSHints = new TrainingSetHints();
             TSProgression = new TrainingSetProgression();
             CurrentNumberOfAttempts = CurrentNumberOfSuccesses = 0;

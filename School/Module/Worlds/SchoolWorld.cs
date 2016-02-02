@@ -66,7 +66,7 @@ namespace GoodAI.Modules.School.Worlds
 
         #region MemoryBlocks sizes
         [MyBrowsable, Category("World Sizes")]
-        [YAXSerializableField(DefaultValue = 10000)]
+        [YAXSerializableField(DefaultValue = 196608)] // 768 * 256
         public int VisualSize { get; set; }
 
         [MyBrowsable, Category("World Sizes")]
