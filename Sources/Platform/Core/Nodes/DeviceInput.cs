@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using ManagedCuda.BasicTypes;
+using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
@@ -19,6 +21,10 @@ namespace GoodAI.Core.Nodes
         private const int TotalOutputSize = 256;// + 32;
 
         private readonly float[] m_values = new float[TotalOutputSize];
+
+        [MyBrowsable]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool StepOnKeyDown { get; set; }
 
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Output
@@ -34,14 +40,27 @@ namespace GoodAI.Core.Nodes
 
         public void SetKeyUp(int keyValue)
         {
-            //MyLog.INFO.WriteLine("KeyUp: {0}", keyValue);
             m_values[keyValue] = 0.0f;
+
+            ExecuteIfPaused();
         }
 
         public void SetKeyDown(int keyValue)
         {
-            MyLog.INFO.WriteLine("KeyDown: {0}", keyValue);
+            bool pressed = m_values[keyValue] < 1.0f;
             m_values[keyValue] = 1.0f;
+
+            ExecuteIfPaused();
+
+            MySimulationHandler handler = Owner.SimulationHandler;
+            if (pressed && StepOnKeyDown && (handler.State == MySimulationHandler.SimulationState.PAUSED))
+                handler.StartSimulation(1);
+        }
+
+        private void ExecuteIfPaused()
+        {
+            if (Owner.SimulationHandler.State == MySimulationHandler.SimulationState.PAUSED)
+                ProcessInputTask.Execute();
         }
 
         private DeviceInputTask ProcessInputTask { get; set; }
