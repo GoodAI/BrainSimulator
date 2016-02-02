@@ -62,7 +62,7 @@ namespace GoodAI.School.Worlds
         {
             validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
             if (ActionInput != null)
-                validator.AssertError(ActionInput.Count != 6, this, "Size of ActionInput must be 6");
+                validator.AssertError(ActionInput.Count == 6, this, "Size of ActionInput must be 6");
             //base.Validate(validator);
         }
 

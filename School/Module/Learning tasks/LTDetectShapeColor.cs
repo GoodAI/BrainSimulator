@@ -22,7 +22,7 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 0);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 
             SetHints(TSHints);
