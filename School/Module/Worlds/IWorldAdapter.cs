@@ -87,17 +87,22 @@ namespace GoodAI.Modules.School.Worlds
 
         public void SerializeToAttribute(IWorldAdapter objectToSerialize, XAttribute attrToFill)
         {
-            attrToFill.Value = objectToSerialize.GetType().ToString();
+            if (objectToSerialize != null)
+                attrToFill.Value = objectToSerialize.GetType().ToString();
         }
 
         public void SerializeToElement(IWorldAdapter objectToSerialize, XElement elemToFill)
         {
-            elemToFill.Value = objectToSerialize.GetType().ToString();
+            if (objectToSerialize != null)
+                elemToFill.Value = objectToSerialize.GetType().ToString();
         }
 
         public string SerializeToValue(IWorldAdapter objectToSerialize)
         {
-            return objectToSerialize.GetType().ToString();
+            if (objectToSerialize != null)
+                return objectToSerialize.GetType().ToString();
+            else
+                return String.Empty;
         }
  
         private static IWorldAdapter ConvertToIWorldAdapter(string attributeString)

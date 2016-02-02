@@ -9,7 +9,6 @@ namespace GoodAI.Modules.School.Worlds
 {
     public partial class RoguelikeWorld : ManInWorld, IMyCustomTaskFactory
     {
-        public static Size DEFAULT_GRID_SIZE = new Size(32, 32);
 
         protected override string TEXTURE_DIR { get { return @"res\RoguelikeWorld"; } }
 

@@ -138,6 +138,10 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
+        public override void UpdateAfterDeserialization()
+        {
+            CurrentWorld = m_currentWorld;
+        }
         #endregion
 
         SchoolCurriculum m_curriculum;
