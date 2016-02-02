@@ -18,12 +18,6 @@ namespace GoodAI.Modules.School.Common
     {
         protected List<ILearningTask> Tasks = new List<ILearningTask>();
         private IEnumerator<ILearningTask> m_taskEnumerator;
-        // The .NET framework does not provide a generic dictionary that preserves
-        // insertion order, so we keep (somewhat redundantly) a list of learning tasks
-        // to track task ordering and a dictionary to map learning tasks to world types.
-        //protected Dictionary<ILearningTask, Type> TaskWorldTypes = new Dictionary<ILearningTask, Type>();
-
-
         public string Name { get; set; }
 
         // for foreach usage
@@ -62,13 +56,7 @@ namespace GoodAI.Modules.School.Common
         {
             // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
             Tasks.Add(task);
-            //TaskWorldTypes.Add(task, worldType);
         }
-
-        //public Type GetWorldType(ILearningTask task)
-        //{
-        //    return TaskWorldTypes[task];
-        //}
     }
 
     public class SchoolCurriculumPlanner

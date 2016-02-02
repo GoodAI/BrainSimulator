@@ -190,5 +190,4 @@ namespace GoodAI.Modules.School.Common
         protected abstract void PresentNewTrainingUnit();
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
     }
-
 }

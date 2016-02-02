@@ -104,8 +104,6 @@ namespace GoodAI.Modules.School.Common
                     return new LTDetectBlackAndWhite(w);
                 case LearningTaskNameEnum.DetectAngle:
                     return new LTSimpleAngle(w);
-                //                case LearningTaskNameEnum.ShapeGroups:
-                //                    return new LTShapeGroups(w);
                 case LearningTaskNameEnum.CopyAction:
                     return new LTCopyAction(w);
                 case LearningTaskNameEnum.CopySequence:
