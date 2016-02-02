@@ -53,6 +53,13 @@ namespace GoodAI.Core.Memory
             }
         }
 
+        /// <summary>
+        /// Rank synonym. (This is required by tests because this class has an the indexer. Please use Rank if possible.)
+        /// </summary>
+        [Obsolete("Preferably use Rank instead")]
+        public int Count
+        { get { return Rank; } }
+
         public int ElementCount
         {
             get
