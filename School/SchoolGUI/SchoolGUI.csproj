@@ -57,6 +57,7 @@
     <Compile Include="SchoolAddTaskForm.Designer.cs">
       <DependentUpon>SchoolAddTaskForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SchoolGUIClasses.cs" />
     <Compile Include="SchoolMainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -3,7 +3,6 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Common;
 using GoodAI.Platform.Core.Nodes;
 using GoodAI.TypeMapping;
@@ -11,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YAXLib;
 
 namespace GoodAI.Modules.School.Worlds
@@ -146,7 +143,7 @@ namespace GoodAI.Modules.School.Worlds
 
         SchoolCurriculum m_curriculum;
         ILearningTask m_currentLearningTask;
- 
+
         // The curriculum to use.
         [MyBrowsable, Category("Curriculum"), Description("Choose which type of curriculum you want to use.")]
         [YAXSerializableField(DefaultValue = CurriculumType.TrainingCurriculum)]
@@ -165,7 +162,7 @@ namespace GoodAI.Modules.School.Worlds
             validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
         }
 
-        public MyNode AffectedNode { get {return this;} }
+        public MyNode AffectedNode { get { return this; } }
 
         public bool ChangeModel(IModelChanges changes)
         {
@@ -184,7 +181,7 @@ namespace GoodAI.Modules.School.Worlds
 
             MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, true);
 
-            return new MyExecutionBlock(new IMyExecutable[] { defaultInitPhasePlan, plan } );
+            return new MyExecutionBlock(new IMyExecutable[] { defaultInitPhasePlan, plan });
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)

@@ -1,6 +1,5 @@
 ﻿using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Worlds;
-using System.Collections.Generic;
 
 namespace GoodAI.Modules.School.Common
 {
@@ -21,10 +20,8 @@ namespace GoodAI.Modules.School.Common
 
         void UpdateState();
         void HandlePresentNewTrainingUnit();
-
-        AbstractSchoolWorld GenericWorld { get; set; }
     }
-  
+
     /// <summary>
     /// Abstract base class for AI School exercises.
     /// </summary>
@@ -87,37 +84,14 @@ namespace GoodAI.Modules.School.Common
 
         // The world where the agent lives
         public SchoolWorld SchoolWorld { get; set; }
-      
+
         // The wrapped world (e.g., a RoguelikeWorld or a TetrisWorld) that defines the agent's environment.
         // The learning task can access it to control the environment.
-        public WrappedWorldClass WrappedWorld { 
+        public WrappedWorldClass WrappedWorld
+        {
             get
             {
                 return SchoolWorld.CurrentWorld as WrappedWorldClass;
-            }
-        }
-
-        public AbstractSchoolWorld GenericWorld
-        {
-            get
-            {
-                return m_genericWorld;
-            }
-            set
-            {
-                m_genericWorld = value;
-            }
-        }
-
-        public WorldClass World
-        {
-            get
-            {
-                return (WorldClass)m_genericWorld;
-            }
-            set
-            {
-                m_genericWorld = (WorldClass)value;
             }
         }
 

@@ -104,8 +104,8 @@ namespace GoodAI.Modules.School.Common
                     return new LTDetectBlackAndWhite(w);
                 case LearningTaskNameEnum.DetectAngle:
                     return new LTSimpleAngle(w);
-//                case LearningTaskNameEnum.ShapeGroups:
-//                    return new LTShapeGroups(w);
+                //                case LearningTaskNameEnum.ShapeGroups:
+                //                    return new LTShapeGroups(w);
                 case LearningTaskNameEnum.CopyAction:
                     return new LTCopyAction(w);
                 case LearningTaskNameEnum.CopySequence:
@@ -134,7 +134,7 @@ namespace GoodAI.Modules.School.Common
                 return null;
 
             // everything is OK - create the task
-            AbstractSchoolWorld world = (AbstractSchoolWorld)Activator.CreateInstance(worldType);
+            SchoolWorld world = (SchoolWorld)Activator.CreateInstance(worldType);
             ILearningTask task = (ILearningTask)Activator.CreateInstance(taskType, world);
             return task;
         }
@@ -145,7 +145,7 @@ namespace GoodAI.Modules.School.Common
             // get generic parameter
             Type genericType = taskType.BaseType.GetGenericArguments()[0];
             // look up all derived classes of this type
-            List<Type> results = Assembly.GetAssembly(typeof(AbstractSchoolWorld))
+            List<Type> results = Assembly.GetAssembly(typeof(SchoolWorld))
                 .GetTypes()
                 .Where(x => x.BaseType == genericType)
                 .ToList();
