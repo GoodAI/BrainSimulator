@@ -5,8 +5,6 @@ namespace GoodAI.Modules.School.Common
 {
     public interface ILearningTask
     {
-        SchoolWorld SchoolWorld { get; set; }
-
         bool HasPresentedFirstUnit { get; set; }
         bool IsAbilityLearned { get; }
         bool DidAbilityFail { get; }
