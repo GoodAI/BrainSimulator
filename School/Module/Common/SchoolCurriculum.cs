@@ -77,8 +77,15 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectColor), world), typeof(RoguelikeWorld));
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectShape), world), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectBlackAndWhite), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectShape), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectColor), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectShapeColor), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTSimpleSize), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTApproach), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTCopyAction), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectDifference), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTCompareLayouts), world), typeof(RoguelikeWorld).GetType());
                     break;
                 case CurriculumType.DebuggingCurriculum:
                     curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDebugging), world), typeof(RoguelikeWorld));

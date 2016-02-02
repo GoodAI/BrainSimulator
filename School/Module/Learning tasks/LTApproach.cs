@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -117,7 +118,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 case 0:
                     //return "Block60x10.png"; // used to be GetDefaultTargetImage();
-                    return "Target2.png";
+                    return "Target_TOP.png";
                 case 1:
                     return "White10x10.png";
                 case 2:
@@ -139,7 +140,7 @@ namespace GoodAI.Modules.School.LearningTasks
             //// center the agent
             //m_agent.X = World.FOW_WIDTH / 2 - m_agent.Width / 2;
             //PutAgentOnFloor();
-            WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
+            WrappedWorld.CreateAgent();
             m_agent = WrappedWorld.Agent;
             m_agent.X -= m_agent.Width / 2;
             m_agent.Y -= m_agent.Height / 2;
@@ -166,49 +167,52 @@ namespace GoodAI.Modules.School.LearningTasks
             //m_target.X = targetX;
             //m_target.Y = World.FOW_HEIGHT - m_target.Height;
 
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
-            WrappedWorld.AddGameObject(m_target);
+            m_target = WrappedWorld.CreateTarget(new Point(0,0));
+
+            // TODO: hint resolving
+            Point p = WrappedWorld.RandomPositionInsidePow(m_rndGen, m_target.GetGeometry().Size);
+            m_target.SetPosition(p);
 
             // first implementation, random object position (left or right)
-            bool isLeft = m_rndGen.Next(0, 2) == 1;
-            bool isUp = m_rndGen.Next(0, 2) == 1;
+            //bool isLeft = m_rndGen.Next(0, 2) == 1;
+            //bool isUp = m_rndGen.Next(0, 2) == 1;
 
-            const int MIN_TARGET_DISTANCE = 20;
-            int maxTargetDistanceX = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
-            if (TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] != -1)
-            {
-                maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
-            }
-            int targetDistX = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceX);
-            int targetX = m_agent.X;
-            if (isLeft)
-                targetX -= targetDistX;
-            else
-                targetX += targetDistX;
+            //const int MIN_TARGET_DISTANCE = 20;
+            //int maxTargetDistanceX = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2 - m_target.Height / 2;
+            //if (TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] != -1)
+            //{
+            //    maxTargetDistanceX = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceX - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
+            //}
+            //int targetDistX = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceX);
+            //int targetX = m_agent.X;
+            //if (isLeft)
+            //    targetX -= targetDistX;
+            //else
+            //    targetX += targetDistX;
 
-            int targetY = m_agent.Y;
-            switch ((int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM])
-            {
-                case 1:
-                    // Center the target on the agent
-                    targetY += (m_agent.Height - m_target.Height) / 2;
-                    break;
-                case 2:
-                    int maxTargetDistanceY = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
-                    if (TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] != -1)
-                    {
-                        maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
-                    }
-                    int targetDistY = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceY);
-                    if (isUp)
-                        targetY -= targetDistY;
-                    else
-                        targetY += targetDistY;
-                    break;
-            }
+            //int targetY = m_agent.Y;
+            //switch ((int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM])
+            //{
+            //    case 1:
+            //        // Center the target on the agent
+            //        targetY += (m_agent.Height - m_target.Height) / 2;
+            //        break;
+            //    case 2:
+            //        int maxTargetDistanceY = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2 - m_target.Height / 2;
+            //        if (TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE] != -1)
+            //        {
+            //            maxTargetDistanceY = (int)(MIN_TARGET_DISTANCE + (maxTargetDistanceY - MIN_TARGET_DISTANCE) * TSHints[TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE]);
+            //        }
+            //        int targetDistY = m_rndGen.Next(MIN_TARGET_DISTANCE, maxTargetDistanceY);
+            //        if (isUp)
+            //            targetY -= targetDistY;
+            //        else
+            //            targetY += targetDistY;
+            //        break;
+            //}
 
-            m_target.X = targetX;
-            m_target.Y = targetY;
+            //m_target.X = targetX;
+            //m_target.Y = targetY;
         }
 
         private void PutAgentOnFloor()

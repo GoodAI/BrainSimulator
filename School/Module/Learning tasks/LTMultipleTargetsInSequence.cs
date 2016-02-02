@@ -53,7 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
+            WrappedWorld.CreateAgent();
             m_agent = WrappedWorld.Agent;
             m_agent.X = 30;
             m_agent.Y = 30;
@@ -93,7 +93,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 case 0:
                     //return "Block60x10.png"; // used to be GetDefaultTargetImage();
-                    return "Target2.png";
+                    return "Target_TOP.png";
                 case 1:
                     return "White10x10.png";
                 case 2:
