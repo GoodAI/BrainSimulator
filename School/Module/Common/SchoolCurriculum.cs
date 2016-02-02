@@ -1,4 +1,5 @@
 ﻿using GoodAI.Modules.School.Worlds;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,24 +8,20 @@ namespace GoodAI.Modules.School.Common
     public enum CurriculumType
     {
         TrainingCurriculum,
-        DebuggingCurriculum,
-        TemporaryCurriculumSimon, // TODO: remove temporaries when curriculum is configurable and saveable from GUI
-        TemporaryCurriculumOrest,
-        TemporaryCurriculumMichal,
-        TemporaryCurriculumMartinPoliak,
-        TemporaryCurriculumMartinStransky,
-        TemporaryCurriculumMartinMilota,
-        TemporaryCurriculumMartinBalek,
-        TemporaryCurriculumPeterHrosso
-    }
+        DebuggingCurriculum
+     }
 
     /// <summary>
     /// Holds tasks that an agent should be trained with to gain new abilities
     /// </summary>
     public class SchoolCurriculum : IEnumerable<ILearningTask>
     {
-        protected List<ILearningTask> Tasks = new List<ILearningTask>();
+        protected List<ILearningTask> TaskOrder = new List<ILearningTask>();
         private IEnumerator<ILearningTask> m_taskEnumerator;
+        // The .NET framework does not provide a generic dictionary that preserves 
+        // insertion order, so we keep (somewhat redundantly) a list of learning tasks
+        // to track task ordering and a dictionary to map learning tasks to world types.
+        protected Dictionary<ILearningTask, Type> TaskWorldTypes = new Dictionary<ILearningTask, Type>();
 
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
@@ -34,14 +31,14 @@ namespace GoodAI.Modules.School.Common
 
         public IEnumerator<ILearningTask> GetEnumerator()
         {
-            return Tasks.GetEnumerator() as IEnumerator<ILearningTask>;
+            return TaskOrder.GetEnumerator() as IEnumerator<ILearningTask>;
         }
 
         // for classic usage
         public ILearningTask GetNextLearningTask()
         {
             if (m_taskEnumerator == null)
-                m_taskEnumerator = Tasks.GetEnumerator();
+                m_taskEnumerator = TaskOrder.GetEnumerator();
             if (m_taskEnumerator.MoveNext())
                 return m_taskEnumerator.Current;
             return null;
@@ -52,10 +49,16 @@ namespace GoodAI.Modules.School.Common
             m_taskEnumerator.Reset();
         }
 
-        public void AddLearningTask(ILearningTask task)
+        public void AddLearningTask(ILearningTask task, Type worldType)
         {
             // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
-            Tasks.Add(task);
+            TaskOrder.Add(task);
+            TaskWorldTypes.Add(task, worldType);
+        }
+
+        public Type GetWorldType(ILearningTask task)
+        {
+            return TaskWorldTypes[task];
         }
     }
 
@@ -67,59 +70,12 @@ namespace GoodAI.Modules.School.Common
 
             switch (world.TypeOfCurriculum)
             {
-                //case CurriculumType.TrainingCurriculum:
-                //    {
-
-                //        // TODO: add more tasks to this curriculum:
-                //        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectBlackAndWhite, world));
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.ApproachTarget, world));
-                //        break;
-                //    }
+                case CurriculumType.TrainingCurriculum:
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.ApproachTarget, world), Type.GetType("RoguelikeWorld"));
+                    break;
                 case CurriculumType.DebuggingCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DebuggingTask, world));
+                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DebuggingTask, world), Type.GetType("RoguelikeWorld"));
                     break;
-                case CurriculumType.TemporaryCurriculumSimon:
-                    {
-                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectWhite, world));
-                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world));
-                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.ApproachTarget, world));
-                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleSizeDetection, world));
-                        break;
-                    }
-                case CurriculumType.TemporaryCurriculumOrest:
-                    {
-                        curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.MovingTargetD, world));
-                        //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.Obstacles, world));
-                        break;
-                    }
-                //case CurriculumType.TemporaryCurriculumMichal:
-                //    {
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.CooldownAction, world));
-                //        break;
-                //    }
-                //case CurriculumType.TemporaryCurriculumMartinPoliak:
-                //    {
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleDistanceDetection, world));
-                //        break;
-                //    }
-                case CurriculumType.TemporaryCurriculumMartinStransky:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectShape, world));
-                    break;
-                //case CurriculumType.TemporaryCurriculumMartinMilota:
-                //    {
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleDistanceDetection, world));
-                //        break;
-                //    }
-                //case CurriculumType.TemporaryCurriculumMartinBalek:
-                //    {
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleSizeDetection, world));
-                //        break;
-                //    }
-                //case CurriculumType.TemporaryCurriculumPeterHrosso:
-                //    {
-                //        curriculum.AddLearningTask(DeprecatedLearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.SimpleDistanceDetection, world));
-                //        break;
-                //    }
             }
 
             return curriculum;
