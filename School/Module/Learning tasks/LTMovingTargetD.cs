@@ -37,6 +37,8 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                   // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             //TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] = 0.3f;
 
+            //TSHints[DISTANCE_BONUS_COEFFICENT] = 4f;                             // Coefficent of 4 means that the available steps to reach the target are "initialDistance (between agent and target) * 4" (for more info check LTApproach)
+
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
             TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.15f);

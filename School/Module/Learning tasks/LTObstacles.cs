@@ -76,7 +76,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 int widthOfRectangle = 10;
                 int heightOfRectangle = 5;
 
-                createRectangle(world, widthOfRectangle, heightOfRectangle);
+                createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
                 // Position agent
                 m_agent.X = 50;
@@ -93,7 +93,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 int widthOfRectangle = 10;
                 int heightOfRectangle = 5;
 
-                createRectangle(world, widthOfRectangle, heightOfRectangle);
+                createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
                 // Position agent
                 m_agent.X = 280;
@@ -110,7 +110,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 int widthOfRectangle = 20;
                 int heightOfRectangle = 5;
 
-                createRectangle(world, widthOfRectangle, heightOfRectangle);
+                createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
                 world.CreateWall(g.getPoint(14, 4));
                 world.CreateWall(g.getPoint(14, 3));
@@ -131,7 +131,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 int widthOfRectangle = 20;
                 int heightOfRectangle = 10;
 
-                createRectangle(world, widthOfRectangle, heightOfRectangle);
+                createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
                 world.CreateWall(g.getPoint(14, 9));
                 world.CreateWall(g.getPoint(14, 8));
@@ -164,7 +164,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        public void createRectangle(RoguelikeWorld world, int widthOfRectangle, int heightOfRectangle)
+        public void createWallRectangle(RoguelikeWorld world, int widthOfRectangle, int heightOfRectangle)
         {
             Grid g = world.GetGrid();
 

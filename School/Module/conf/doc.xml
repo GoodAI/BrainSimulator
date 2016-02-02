@@ -62,6 +62,15 @@
             Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMultipleTargetsSequence">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Multiple targets in a sequence" learning task</summary>
+            <description>
+            Ability Name: Multiple targets in a sequence
+            </description>
+        </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTObstacles">
             <author>GoodAI</author>
             <meta>Os</meta>

@@ -94,6 +94,7 @@
     <Compile Include="Learning tasks\LTDetectWhite.cs" />
     <Compile Include="Learning tasks\LTMovingTarget.cs" />
     <Compile Include="Learning tasks\LTMovingTargetD.cs" />
+    <Compile Include="Learning tasks\LTMultipleTargetsInSequence.cs" />
     <Compile Include="Learning tasks\LTObstacles.cs" />
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
