@@ -87,6 +87,8 @@ namespace GoodAI.Modules.School.Common
         public int X { get; set; }
         public int Y { get; set; }
 
+        public float Rotation { get; set; } // rotation in radians
+
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -96,6 +98,7 @@ namespace GoodAI.Modules.School.Common
             this.bitmapPath = path;
             this.X = x;
             this.Y = y;
+            this.Rotation = 0;
             this.bitmapPixelSize = new Size(0, 0);
             this.Width = width;
             this.Height = height;

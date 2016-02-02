@@ -908,6 +908,12 @@ namespace GoodAI.Modules.School.Worlds
                 for (int i = 0; i < Owner.gameObjects.Count; i++)
                 {
                     var gameObject = Owner.gameObjects[i];
+                    if (gameObject.isBitmapAsMask)
+                    {
+                        // masks currently not supported, loading disabled
+                        // shapes are drawn directly through vertices
+                        continue;
+                    }
                     gameObject.SpriteTextureHandle = spriteTextureHandles[i];
 
                     GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
@@ -921,12 +927,6 @@ namespace GoodAI.Modules.School.Worlds
                     BitmapData data = bmp.LockBits(
                         new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
                         ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                    /*GL.TexImage2D(
-                        TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
-                        gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height, 0,
-                        OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte,
-                        data.Scan0);*/
 
                     // from example:
                     GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
@@ -968,30 +968,26 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                RenderFOW();
-            }
-
-            void RenderFOW()
-            {
                 if (!texturesInitialized)
                 {
+                    // init textures
                     InitGLTextures(Owner.GPU);
                     texturesInitialized = true;
                 }
 
-                //if (m_renderResource.IsMapped)
-                //    m_renderResource.UnMap();
+                // fow
+                setupFOWview();
+                RenderGL();
+                copyPixelsFOW();
 
-                // maybe unnecessary fix of the bug with garbage collected old m_windows:
-                //m_window.ProcessEvents();
+                // pow
+                setupPOWview();
+                RenderGL();
+                copyPixelsPOW();
+            }
 
-                m_context.MakeCurrent(m_window.WindowInfo);
-                GL.Finish();
-
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
-
-                //GL.PushAttrib(AttribMask.ViewportBit); // stores GL.Viewport() parameters
-
+            void setupFOWview()
+            {
                 // Setup rendering
                 GL.Viewport(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
 
@@ -1000,61 +996,50 @@ namespace GoodAI.Modules.School.Worlds
                 GL.Ortho(0, Owner.FOW_WIDTH, 0, Owner.FOW_HEIGHT, -1, 1);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.LoadIdentity();
-                // For POW
-                //GL.LoadMatrix(Matrix4.LookAt(...));
+            }
 
-                GL.ClearColor(Owner.BackgroundColor);
+            void copyPixelsFOW()
+            {
+                // Prepare the results for CUDA
 
-                GL.Enable(EnableCap.Texture2D);
-                GL.Enable(EnableCap.Blend);
+                // Copy to buffer object (not working)
+                /*GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, default(IntPtr));
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
 
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+                m_renderResource.Map();
+                Owner.VisualFOW.ExternalPointer = m_renderResource.GetMappedPointer().Pointer;
+                Owner.VisualFOW.AllocateDevice();*/
 
-                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                // Copy to host first
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, Owner.ShuffleRGBTemp.Host);
+                GL.ReadBuffer(ReadBufferMode.None);
 
-                GL.End();
+                Owner.ShuffleRGBTemp.SafeCopyToDevice();
+                // Reorganize RGB for our observers
+                m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualFOW, Owner.VisualFOW.Count);
+            }
 
-                //GL.LoadIdentity();
+            void setupPOWview()
+            {
+                Point powCenter = Owner.GetPowCenter();
+                // Setup rendering
+                GL.Viewport(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT);
 
-                // Render game objects
-                // TODO: object rendering order -- environment first, then creatures and active objects
-                foreach (var gameObject in Owner.gameObjects)
-                {
-                    // does something only for 2 (which means only first texture is shown)
-                    //if (gameObject.SpriteTextureHandle == 2)
-                    //{
-                    //    break;
-                    //}
-                    GL.PushMatrix();
-                    // TODO: check if object is in view (POW only)
+                GL.MatrixMode(MatrixMode.Projection);
+                GL.LoadIdentity();
+                //GL.Ortho(worldTopLeftInPow.X, worldTopLeftInPow.X + Owner.POW_WIDTH, worldTopLeftInPow.Y + Owner.POW_HEIGHT, worldTopLeftInPow.Y, -1, 1);
+                //GL.Ortho(powCenter.X, powCenter.X + Owner.POW_WIDTH, powCenter.Y + Owner.POW_HEIGHT, powCenter.Y, -1, 1);
+                GL.Ortho(powCenter.X - (float)Owner.POW_WIDTH / 2, powCenter.X + (float)Owner.POW_WIDTH / 2, powCenter.Y - (float)Owner.POW_HEIGHT / 2, powCenter.Y + (float)Owner.POW_HEIGHT / 2, -1, 1);
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.LoadIdentity();
+            }
 
-                    GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
-                    // Rotation not implemented yet
-                    //GL.Rotate((DisableRotation ? 0.0f : rot) * 180.0f, 0.0f, 0.0f, 1.0f);
-                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
-
-                    GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
-                    GL.Begin(PrimitiveType.Quads);
-                    GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                    GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 0f);
-                    GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, 1f);
-                    GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, 1f);
-                    GL.End();
-
-                    GL.PopMatrix();
-                }
-
-                // Clean up
-                GL.BindTexture(TextureTarget.Texture2D, 0);
-                GL.Disable(EnableCap.Texture2D);
-                GL.Disable(EnableCap.Blend);
-
-                //GL.PopAttrib(); // restores GL.Viewport() parameters
-
-
-                // ==========================================================================================================
-
-
+            void copyPixelsPOW()
+            {
                 // Prepare the results for CUDA
 
                 // Copy to buffer object (not working)
@@ -1071,12 +1056,233 @@ namespace GoodAI.Modules.School.Worlds
 
                 // Copy to host first
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, Owner.ShuffleRGBTemp.Host);
+                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, Owner.ShuffleRGBTemp.Host);
                 GL.ReadBuffer(ReadBufferMode.None);
 
                 Owner.ShuffleRGBTemp.SafeCopyToDevice();
                 // Reorganize RGB for our observers
-                m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualFOW, Owner.VisualFOW.Count);
+                m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualPOW, Owner.VisualPOW.Count);
+            }
+
+            void RenderGL()
+            {
+                //if (m_renderResource.IsMapped)
+                //    m_renderResource.UnMap();
+
+                // maybe unnecessary fix of the bug with garbage collected old m_windows:
+                //m_window.ProcessEvents();
+
+                m_context.MakeCurrent(m_window.WindowInfo);
+                GL.Finish();
+
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+
+                //GL.PushAttrib(AttribMask.ViewportBit); // stores GL.Viewport() parameters
+
+
+                // For POW
+                //GL.LoadMatrix(Matrix4.LookAt(...));
+
+                GL.ClearColor(Owner.BackgroundColor);
+
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.Blend);
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+                GL.End();
+
+                // Render game objects
+                // TODO: object rendering order -- environment first, then creatures and active objects
+                foreach (var gameObject in Owner.gameObjects)
+                {
+
+                    GL.PushMatrix();
+                    // TODO: check if object is in view (POW only)
+
+                    GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
+                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
+                    GL.Rotate(gameObject.Rotation * 180, 0.0f, 0.0f, 1.0f);
+
+
+                    if (gameObject.isBitmapAsMask)
+                    {
+                        // gameObject is a shape -> draw it directly
+                        //((Shape)gameObject).ShapeType = Shape.Shapes.Triangle;
+                        GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
+                        drawShape(gameObject);
+                    }
+                    else
+                    {
+                        // gameObject has a texture -> draw it
+                        GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
+                        GL.Begin(PrimitiveType.Quads);
+                        GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                        GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 0f);
+                        GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, 1f);
+                        GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, 1f);
+                        GL.End();
+                    }
+
+                    GL.PopMatrix();
+                }
+
+                // Clean up
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                GL.Disable(EnableCap.Texture2D);
+                GL.Disable(EnableCap.Blend);
+
+                //GL.PopAttrib(); // restores GL.Viewport() parameters
+            }
+
+            public void drawShape(GameObject gameObject)
+            {
+                Shape s = (Shape)gameObject;
+
+                GL.Color4(gameObject.maskColor);
+                GL.Begin(PrimitiveType.Polygon);
+
+                switch (s.ShapeType)
+                {
+                    case Shape.Shapes.Circle:
+                        drawCircle();
+                        break;
+                    case Shape.Shapes.Square:
+                        drawSquare();
+                        break;
+                    case Shape.Shapes.Triangle:
+                        drawTriangle();
+                        break;
+                    case Shape.Shapes.Star:
+                        drawStar();
+                        break;
+                    case Shape.Shapes.Pentagon:
+                        drawPentagon();
+                        break;
+                    case Shape.Shapes.Mountains:
+                        drawMountains();
+                        break;
+                    case Shape.Shapes.T:
+                        drawT();
+                        break;
+                    case Shape.Shapes.Tent:
+                        drawTent();
+                        break;
+                    case Shape.Shapes.Rhombus:
+                        drawRhombus();
+                        break;
+                    case Shape.Shapes.DoubleRhombus:
+                        drawDoubleRhombus();
+                        break;
+                    default:
+                        // reset color
+                        GL.Color4(Color.White);
+                        throw new ArgumentException("Unknown shape");
+                }
+                GL.End();
+                // reset color
+                GL.Color4(Color.White);
+            }
+
+            void drawTriangle()
+            {
+                GL.Vertex2(0, 0);
+                GL.Vertex2(1, 0);
+                GL.Vertex2(0.5f, 0.707f);  // 0.5, 1/sqrt(2)
+            }
+
+            void drawSquare()
+            {
+                GL.Vertex2(0f, 0f);
+                GL.Vertex2(1f, 0f);
+                GL.Vertex2(1f, 1f);
+                GL.Vertex2(0f, 1f);
+            }
+
+            void drawCircle()
+            {
+                float deg2rad = 3.14159f / 180;
+                for (int i = 0; i < 360; i++)
+                {
+                    float degInRad = i * deg2rad;
+                    GL.Vertex2((Math.Cos(degInRad) + 1) / 2, (Math.Sin(degInRad) + 1) / 2);
+                }
+            }
+
+            void drawPentagon()
+            {
+                GL.Vertex2(1.0, 0.5);
+                GL.Vertex2(0.654507120060765305, 0.97552870560096394);
+                GL.Vertex2(0.095489800597887, 0.793890283234513885);
+                GL.Vertex2(0.095489800597887, 0.206109716765486115);
+                GL.Vertex2(0.654514005681348905, 0.024473531705853315);
+            }
+
+            void drawStar()
+            {
+                GL.Vertex2(0.5f, 0.26f);
+                GL.Vertex2(0.82f, 0.0f);
+                GL.Vertex2(0.75f, 0.38f);
+                GL.Vertex2(1f, 0.6f);
+                GL.Vertex2(0.66f, 0.62f);
+                GL.Vertex2(0.5f, 1f);
+                GL.Vertex2(0.34f, 0.62f);
+                GL.Vertex2(0f, 0.6f);
+                GL.Vertex2(0.25f, 0.38f);
+                GL.Vertex2(0.18, 0.0);
+            }
+
+            void drawMountains()
+            {
+                GL.Vertex2(0.5f, 0.5f);
+                GL.Vertex2(0.66f, 0f);
+                GL.Vertex2(1f, 1f);
+                GL.Vertex2(0f, 1);
+                GL.Vertex2(0.33f, 0f);
+            }
+
+            void drawT()
+            {
+                GL.Vertex2(0.6f, 0.2f);
+                GL.Vertex2(0.6f, 1f);
+                GL.Vertex2(0.4f, 1f);
+                GL.Vertex2(0.4f, 0.2f);
+                GL.Vertex2(0f, 0.2f);
+                GL.Vertex2(0f, 0f);
+                GL.Vertex2(1f, 0f);
+                GL.Vertex2(1f, 0.2f);
+            }
+
+            void drawTent()
+            {
+                GL.Vertex2(0.5f, 0f);
+                GL.Vertex2(1f, 0.5f);
+                GL.Vertex2(1f, 1f);
+                GL.Vertex2(0.5f, 0.5f);
+                GL.Vertex2(0f, 1f);
+                GL.Vertex2(0f, 0.5f);
+            }
+
+            void drawRhombus()
+            {
+                GL.Vertex2(0.33f, 0f);
+                GL.Vertex2(1f, 0f);
+                GL.Vertex2(0.66f, 1f);
+                GL.Vertex2(0f, 1f);
+            }
+
+            void drawDoubleRhombus()
+            {
+                GL.Vertex2(0.5f, 0.4f);
+                GL.Vertex2(0.75f, 0f);
+                GL.Vertex2(1f, 0.5f);
+                GL.Vertex2(0.75f, 1f);
+                GL.Vertex2(0.5f, 0.6f);
+                GL.Vertex2(0.25f, 1f);
+                GL.Vertex2(0f, 0.5f);
+                GL.Vertex2(0.25f, 0f);
             }
         }
     }
