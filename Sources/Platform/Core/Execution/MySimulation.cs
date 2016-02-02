@@ -145,8 +145,22 @@ namespace GoodAI.Core.Execution
 
         public void Schedule(MyProject project, IEnumerable<MyWorkingNode> newNodes = null)
         {
+            // If there are any init tasks in the current plan, copy them over to the new one.
+            // This is mostly for the first simulation step if there is also a model change.
+            MyExecutionBlock oldPlan = null;
+            if (ExecutionPlan != null)
+                oldPlan = ExecutionPlan.InitStepPlan;
+
             m_project = project;
             ExecutionPlan = ExecutionPlanner.CreateExecutionPlan(project, newNodes);
+
+            if (oldPlan != null)
+            {
+                var newInitPlan = new List<IMyExecutable>();
+                newInitPlan.AddRange(oldPlan.Children);
+                newInitPlan.AddRange(ExecutionPlan.InitStepPlan.Children);
+                ExecutionPlan.InitStepPlan = new MyExecutionBlock(newInitPlan.ToArray()) {Name = oldPlan.Name};
+            }
 
             ExtractAllNodes(m_project);
 
@@ -548,6 +562,12 @@ namespace GoodAI.Core.Execution
         protected override void DoFinish()
         {
             m_threadPool.FinishFromSTAThread();
+        }
+
+        public override void Clear()
+        {
+            base.Clear();
+            m_debugStepComplete = true;
         }
 
         /// <summary>
