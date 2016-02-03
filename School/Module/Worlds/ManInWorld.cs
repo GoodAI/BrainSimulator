@@ -1,12 +1,15 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Common;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +17,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.School.Worlds
@@ -30,16 +30,6 @@ namespace GoodAI.Modules.School.Worlds
     /// </description>
     public abstract class ManInWorld : MyWorld, IWorldAdapter
     {
-        public enum TextureSet
-        {
-            A = 0,
-            B = 1,
-            C = 2,
-            D = 3,
-            E = 4,
-            Plumber = 5
-        };
-
         public int DegreesOfFreedom { get; set; }
 
         [MyOutputBlock(0), DynamicBlock]
@@ -261,7 +251,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="rndGen"></param>
         /// <param name="size"></param>
