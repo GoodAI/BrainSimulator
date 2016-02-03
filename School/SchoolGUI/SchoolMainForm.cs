@@ -128,11 +128,11 @@ namespace GoodAI.School.GUI
             EnableButtons(this);
 
             if (!tree.AllNodes.Any())
-                btnSave.Enabled = btnSaveAs.Enabled = false;
+                btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
 
             if (tree.SelectedNode == null)
             {
-                btnDeleteCurr.Enabled = btnRun.Enabled = btnDetailsCurr.Enabled = false;
+                btnDeleteCurr.Enabled = btnDetailsCurr.Enabled = false;
                 DisableButtons(groupBoxTask);
                 return;
             }
@@ -142,6 +142,9 @@ namespace GoodAI.School.GUI
 
             if (selected is CurriculumNode)
                 btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
+
+            // to be removed
+            btnDetailsCurr.Enabled = btnDetailsTask.Enabled = false;
         }
 
         #endregion
@@ -250,7 +253,7 @@ namespace GoodAI.School.GUI
 
         private void btnNewTask_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode == null || !(tree.SelectedNode.Tag is CurriculumNode))
+            if (tree.SelectedNode == null)
                 return;
 
             AddTaskView.ShowDialog(this);
@@ -258,8 +261,17 @@ namespace GoodAI.School.GUI
                 return;
 
             LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
-            (tree.SelectedNode.Tag as Node).Nodes.Add(task);
-            tree.SelectedNode.IsExpanded = true;
+            if (tree.SelectedNode.Tag is CurriculumNode)
+            {
+                (tree.SelectedNode.Tag as Node).Nodes.Add(task);
+                tree.SelectedNode.IsExpanded = true;
+            }
+            else if (tree.SelectedNode.Tag is LearningTaskNode)
+            {
+                LearningTaskNode source = tree.SelectedNode.Tag as LearningTaskNode;
+                int targetPositon = source.Parent.Nodes.IndexOf(source);
+                source.Parent.Nodes.Insert(targetPositon + 1, task);
+            }
         }
 
         private void DeleteNode(object sender, EventArgs e)
@@ -277,7 +289,19 @@ namespace GoodAI.School.GUI
         {
             OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
-            foreach (LearningTaskNode ltNode in (tree.SelectedNode.Tag as CurriculumNode).Nodes)
+
+            //PlanDesign design = new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode));
+            IEnumerable<CurriculumNode> activeCurricula = m_model.Nodes.
+                Where(x => x is CurriculumNode).
+                Select(x => x as CurriculumNode).
+                Where(x => x.Enabled == true);
+
+            IEnumerable<LearningTaskNode> ltNodes = activeCurricula.
+                SelectMany(x => (x as CurriculumNode).Nodes).
+                Select(x => x as LearningTaskNode).
+                Where(x => x.Enabled == true);
+
+            foreach (LearningTaskNode ltNode in ltNodes)
                 data.Add(ltNode);
             RunView.Data = data;
             RunView.UpdateData();
@@ -359,6 +383,12 @@ namespace GoodAI.School.GUI
         {
             if (e.Node.IsSelected)
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
+        }
+
+        private void SchoolMainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+                DeleteNode(sender, null);
         }
     }
 }

@@ -516,11 +516,11 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual InputTask GetInputTask { get; protected set; }
         public virtual UpdateTask UpdateWorldTask { get; protected set; }
+
         [MyTaskGroup("Rendering")]
         public RenderGLTask RenderGLWorldTask { get; protected set; }
         [MyTaskGroup("Rendering")]
         public RenderTask RenderWorldTask { get; protected set; }
-
 
         public class InputTask : MyTask<ManInWorld>
         {
@@ -877,6 +877,7 @@ namespace GoodAI.Modules.School.Worlds
             private CudaOpenGLBufferInteropResource m_renderResource;
 
             private MyCudaKernel m_ShuffleRGBKernel;
+            private MyCudaKernel m_AddRgbNoiseKernel;
 
             INativeWindow m_window = null;
             IGraphicsContext m_context = null;
@@ -889,6 +890,8 @@ namespace GoodAI.Modules.School.Worlds
                 // Init pixel-reorganization kernel
                 m_ShuffleRGBKernel = MyKernelFactory.Instance.Kernel(nGPU, @"ShuffleRGB", "ShuffleRGB");
                 m_ShuffleRGBKernel.SetupExecution(Owner.VisualFOW.Count);
+
+                m_AddRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
 
                 m_textureHandles = new Dictionary<string, int>();
                 m_glInitialized = false;
@@ -1078,6 +1081,18 @@ namespace GoodAI.Modules.School.Worlds
                 Owner.ShuffleRGBTemp.SafeCopyToDevice();
                 // Reorganize RGB for our observers
                 m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualPOW, Owner.VisualPOW.Count);
+
+                // add noise over POW
+                if (Owner.IsImageNoise)
+                {
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.AgentVisualTemp.GetDevice(Owner),
+                        Owner.ImageNoiseMean / 256.0f, Owner.ImageNoiseStandardDeviation / 256.0f);
+
+                    Owner.AgentVisualTemp.SafeCopyToHost();
+
+                    m_AddRgbNoiseKernel.SetupExecution(new dim3(Owner.POW_WIDTH, 1, 1), new dim3(Owner.POW_HEIGHT, 3, 1));
+                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp.GetDevicePtr(Owner));
+                }
             }
 
             void RenderGL()
@@ -1130,7 +1145,7 @@ namespace GoodAI.Modules.School.Worlds
                         GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
                         drawShape(gameObject);
                     }
-                    else
+                    else if (gameObject.bitmapPath != null)
                     {
                         // gameObject has a texture -> draw it
                         GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);

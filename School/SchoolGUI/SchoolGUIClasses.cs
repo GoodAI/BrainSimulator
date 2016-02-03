@@ -118,30 +118,9 @@ namespace GoodAI.School.GUI
             m_curricula = nodes.Select(x => new CurriculumDesign(x)).ToList();
         }
 
-        public PlanDesign(SchoolCurriculum data)
-        {
-            //public CurriculumNode(SchoolCurriculum data)
-            //{
-            //    Text = data.Name;
-
-            //    foreach (ILearningTask task in data)
-            //    {
-            //        // TODO: World name can be displayed through reflection OR once World param is in ILearningTask (or SchoolCurriculum is restricted to AbstractLTs)
-            //        LearningTaskNode taskNode = new LearningTaskNode(task);
-            //        taskNode.Enabled = true;
-            //        Nodes.Add(taskNode);
-            //    }
-            //}
-        }
-
         public static explicit operator List<CurriculumNode>(PlanDesign design)
         {
             return design.m_curricula.Select(x => (CurriculumNode)x).ToList();
-        }
-
-        public static explicit operator SchoolCurriculum(PlanDesign design)
-        {
-            return new SchoolCurriculum();
         }
     }
 }
