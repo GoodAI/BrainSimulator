@@ -289,7 +289,19 @@ namespace GoodAI.School.GUI
         {
             OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
-            foreach (LearningTaskNode ltNode in (tree.SelectedNode.Tag as CurriculumNode).Nodes)
+
+            //PlanDesign design = new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode));
+            IEnumerable<CurriculumNode> activeCurricula = m_model.Nodes.
+                Where(x => x is CurriculumNode).
+                Select(x => x as CurriculumNode).
+                Where(x => x.Enabled == true);
+
+            IEnumerable<LearningTaskNode> ltNodes = activeCurricula.
+                SelectMany(x => (x as CurriculumNode).Nodes).
+                Select(x => x as LearningTaskNode).
+                Where(x => x.Enabled == true);
+
+            foreach (LearningTaskNode ltNode in ltNodes)
                 data.Add(ltNode);
             RunView.Data = data;
             RunView.UpdateData();
