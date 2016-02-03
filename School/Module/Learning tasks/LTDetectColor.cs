@@ -52,7 +52,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateTarget()
         {
-            m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
+            m_target = new Shape(Shape.Shapes.Square, 0, 0);
             WrappedWorld.AddGameObject(m_target);
             // POW is assumed to be centered
             int minX = (WrappedWorld.FOW_WIDTH - WrappedWorld.POW_WIDTH) / 2;
