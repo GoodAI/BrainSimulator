@@ -68,7 +68,7 @@
             <status>WIP</status>
             <summary>"Multiple targets in a sequence" learning task</summary>
             <description>
-            Ability Name: Multiple targets in a sequence
+            Ability description: The agent learns to navigate to multiple targets in a defined sequence. One target type is always the first target, another target type is always the second and so on.
             </description>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTObstacles">

@@ -157,6 +157,21 @@
     <Content Include="res\PlumberWorld\Plumber24x28.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\SchoolWorldCommon\Number1_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number2_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number3_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number4_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number5_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\SchoolWorldCommon\White10x10.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
