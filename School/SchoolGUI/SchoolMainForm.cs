@@ -360,5 +360,11 @@ namespace GoodAI.School.GUI
             if (e.Node.IsSelected)
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
         }
+
+        private void SchoolMainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+                DeleteNode(sender, null);
+        }
     }
 }
