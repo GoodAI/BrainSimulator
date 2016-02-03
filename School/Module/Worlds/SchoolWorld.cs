@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Execution;
+﻿using GoodAI.Core;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
@@ -63,7 +64,7 @@ namespace GoodAI.Modules.School.Worlds
 
         #region MemoryBlocks sizes
         [MyBrowsable, Category("World Sizes")]
-        [YAXSerializableField(DefaultValue = 196608)] // 768 * 256
+        [YAXSerializableField(DefaultValue = 65536)] // 196608 768 * 256
         public int VisualSize { get; set; }
 
         [MyBrowsable, Category("World Sizes")]
@@ -193,8 +194,9 @@ namespace GoodAI.Modules.School.Worlds
             var blocks = new List<IMyExecutable>();
             // The default plan will only contain one block with: signals in, world tasks, signals out.
             blocks.Add(thisWorldTasks[0]);
+            blocks.Add(thisWorldTasks[1]);
             blocks.Add(executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, false));
-            blocks.AddRange(thisWorldTasks.Skip(1));
+            blocks.AddRange(thisWorldTasks.Skip(2));
 
             return new MyExecutionBlock(blocks.ToArray());
         }
@@ -267,7 +269,8 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         public InitSchoolWorldTask InitSchool { get; protected set; }
-        public AdapterTask AdapterStep { get; protected set; }
+        public InputAdapterTask AdapterInputStep { get; protected set; }
+        public OutputAdapterTask AdapterOutputStep { get; protected set; }
         public LearningStepTask LearningStep { get; protected set; }
 
         /// <summary>
@@ -288,18 +291,34 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// Performs all memory blocks mapping
+        /// Performs Output memory blocks mapping
         /// </summary>
-        public class AdapterTask : MyTask<SchoolWorld>
+        public class OutputAdapterTask : MyTask<SchoolWorld>
         {
             public override void Init(int nGPU)
             {
-
+                Owner.CurrentWorld.InitWorldOutputs(nGPU, Owner);
             }
 
             public override void Execute()
             {
-                Owner.CurrentWorld.MapWorlds(Owner);
+                Owner.CurrentWorld.MapWorldOutputs(Owner);
+            }
+        }
+
+        /// <summary>
+        /// Performs Input memory blocks mapping
+        /// </summary>
+        public class InputAdapterTask : MyTask<SchoolWorld>
+        {
+            public override void Init(int nGPU)
+            {
+                Owner.CurrentWorld.InitWorldInputs(nGPU, Owner);
+            }
+
+            public override void Execute()
+            {
+               Owner.CurrentWorld.MapWorldInputs(Owner);
             }
         }
 

@@ -5,11 +5,13 @@ using GoodAI.Modules.School.Worlds;
 using GoodAI.Modules.GameBoy;
 using System;
 using GoodAI.Core.Task;
+using GoodAI.Core;
 
 namespace GoodAI.School.Worlds
 {
     class PongAdapterWorld : MyCustomPongWorld, IWorldAdapter
     {
+        private MyCudaKernel m_kernel;
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
 
         public void InitAdapterMemory(SchoolWorld schoolWorld)
@@ -33,11 +35,31 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public void MapWorlds(SchoolWorld schoolWorld)
+        public void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        {
+        }
+
+
+        public void MapWorldInputs(SchoolWorld schoolWorld)
+        {
+            // reward setup??
+            // ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
+
+            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
+            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+        }
+
+        public void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        {
+            m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
+            m_kernel.SetupExecution(schoolWorld.VisualSize);
+        }
+
+        public void MapWorldOutputs(SchoolWorld schoolWorld)
         {
             // Copy data from world to wrapper
             Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
-            
+
             // Copy of structured data
             Event.CopyToMemoryBlock(schoolWorld.Data, 0, 0, 1);
             BallPosX.CopyToMemoryBlock(schoolWorld.Data, 0, 1, 1);
@@ -48,12 +70,6 @@ namespace GoodAI.School.Worlds
 
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
             schoolWorld.DataLength.Fill(6);
-            
-            // reward setup??
-            // ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
-
-            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
         }
 
         public void ClearWorld()

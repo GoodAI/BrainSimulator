@@ -14,7 +14,10 @@ namespace GoodAI.Modules.School.Worlds
     public interface IWorldAdapter
     {
         void InitAdapterMemory(SchoolWorld schoolWorld);
-        void MapWorlds(SchoolWorld schoolWorld);
+        void InitWorldInputs(int nGPU, SchoolWorld schoolWorld);
+        void MapWorldInputs(SchoolWorld schoolWorld);
+        void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld);
+        void MapWorldOutputs(SchoolWorld schoolWorld);
         void ClearWorld();
         void SetHint(TSHintAttribute attr, float value);
     }

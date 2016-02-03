@@ -110,8 +110,13 @@ namespace GoodAI.Modules.School.Common
 
         public virtual bool DidAbilityFail
         {
-            // TODO can we assume presence of this attribute???
-            get { return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS]; }
+            get 
+            {
+                if (TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS))
+                    return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS]; 
+                else
+                    return false;
+             }
         }
 
         public virtual bool IsAbilityLearned

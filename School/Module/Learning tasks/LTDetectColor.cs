@@ -26,11 +26,6 @@ namespace GoodAI.Modules.School.LearningTasks
             SetHints(TSHints);
         }
 
-        protected override void SetHints(TrainingSetHints trainingSetHints)
-        {
-            SchoolWorld.SetHints(trainingSetHints);
-        }
-
         protected override void PresentNewTrainingUnit()
         {
             CreateTarget();

@@ -148,7 +148,23 @@ namespace GoodAI.Modules.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public virtual void MapWorlds(SchoolWorld schoolWorld)
+        public virtual void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        {
+
+        }
+
+        public virtual void MapWorldInputs(SchoolWorld schoolWorld)
+        {
+            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
+            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+        }
+            
+        public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        {
+
+        }
+
+        public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
         {
             // Copy data from world to wrapper
             VisualPOW.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualPOW.Count, schoolWorld.VisualSize));
@@ -157,9 +173,6 @@ namespace GoodAI.Modules.School.Worlds
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
             schoolWorld.DataLength.Fill(Math.Min(Objects.Count, schoolWorld.DataSize));
             Reward.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
-
-            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
         }
 
         public virtual void ClearWorld()
