@@ -254,6 +254,7 @@
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.checkBoxAutosave);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HideOnClose = true;
             this.Name = "SchoolMainForm";
             this.Text = "SchoolMainForm";
             this.Load += new System.EventHandler(this.SchoolMainForm_Load);
