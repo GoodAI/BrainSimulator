@@ -121,6 +121,7 @@ namespace GoodAI.Core.Execution
         /// Indicates that the simulation is in between two simulation steps.
         /// This should be true after each PerformStep run during normal simulation, and can be false during debug.
         /// </summary>
+        public abstract bool IsChangingModel { get; }
         public abstract bool IsStepFinished { get; }
         public abstract void FreeMemory();
 
@@ -251,6 +252,7 @@ namespace GoodAI.Core.Execution
         private readonly MyThreadPool m_threadPool;
         private bool m_debugStepComplete = true;
         private ExecutionPhase m_debugExecutionPhase;
+        private bool m_isChangingModel;
 
         public MyLocalSimulation(MyValidator validator, IMyExecutionPlanner executionPlanner) : base(validator)
         {
@@ -371,6 +373,7 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        public override bool IsChangingModel { get { return m_isChangingModel; } }
         public override bool IsStepFinished { get { return m_debugStepComplete; } }
 
         private void InitCore(int coreNumber)
@@ -575,6 +578,7 @@ namespace GoodAI.Core.Execution
         /// </summary>
         public override void PerformModelChanges()
         {
+            m_isChangingModel = true;
             var modelChanges = TypeMap.GetInstance<IModelChanges>();
             var changersActivated = new List<MyNode>();
 
@@ -592,6 +596,7 @@ namespace GoodAI.Core.Execution
                 return;
 
             SetupAfterModelChange(modelChanges, changersActivated);
+            m_isChangingModel = false;
         }
 
         private void SetupAfterModelChange(IModelChanges modelChanges, List<MyNode> changersActivated)

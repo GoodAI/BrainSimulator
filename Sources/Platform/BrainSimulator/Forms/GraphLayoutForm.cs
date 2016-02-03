@@ -268,10 +268,10 @@ namespace GoodAI.BrainSimulator.Forms
             if (Desktop.Focused) Desktop.Parent.Focus();
         }
 
-        private bool TestIfInsideSimulation()
+        private bool CanChangeGraph()
         {
             if (m_mainForm.SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED &&
-                !m_mainForm.SimulationHandler.Simulation.IsStepFinished)
+                !m_mainForm.SimulationHandler.Simulation.IsChangingModel)
             {
                 MyLog.WARNING.WriteLine("Operation not allowed during simulation");
                 return true;
@@ -308,7 +308,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void Desktop_NodeRemoving(object sender, AcceptNodeEventArgs e)
         {
-            e.Cancel = TestIfInsideSimulation();
+            e.Cancel = CanChangeGraph();
 
             // Suppress state saving - connections will get removed which would generate multiple steps.
             m_mainForm.SuppressStateSaving = true;
@@ -358,12 +358,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void Desktop_ConnectionRemoving(object sender, AcceptNodeConnectionEventArgs e)
         {
-            e.Cancel = TestIfInsideSimulation();
+            e.Cancel = CanChangeGraph();
         }
 
         private void Desktop_ConnectionAdding(object sender, AcceptNodeConnectionEventArgs e)
         {
-            e.Cancel = TestIfInsideSimulation();
+            e.Cancel = CanChangeGraph();
         }
 
         private void GraphLayoutForm_FormClosed(object sender, FormClosedEventArgs e)
