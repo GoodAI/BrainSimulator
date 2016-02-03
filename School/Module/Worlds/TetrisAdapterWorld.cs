@@ -8,7 +8,7 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.School.Worlds
 {
-    class TetrisAdapterWorld : TetrisWorld, IWorldAdapter
+    public class TetrisAdapterWorld : TetrisWorld, IWorldAdapter
     {
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
 
@@ -32,8 +32,24 @@ namespace GoodAI.School.Worlds
         {
             return ControlsAdapterTemp;
         }
-        
-        public void MapWorlds(SchoolWorld schoolWorld)
+
+        public virtual void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        {
+
+        }
+
+        public virtual void MapWorldInputs(SchoolWorld schoolWorld)
+        {
+            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
+            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+        }
+
+        public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        {
+
+        }
+
+        public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
         {
             // Copy data from world to wrapper
             VisualOutput.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualOutput.Count, schoolWorld.VisualSize));
@@ -42,11 +58,8 @@ namespace GoodAI.School.Worlds
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
             schoolWorld.DataLength.Fill(Math.Min(BrickAreaOutput.Count, schoolWorld.DataSize));
             ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
-
-            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));        
         }
-        
+               
         public void ClearWorld()
         {
             m_engine.Reset();

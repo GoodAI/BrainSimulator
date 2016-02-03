@@ -90,13 +90,13 @@
             </description>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Boolean)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="rndGen"></param>
-            <param name="size"></param>
-            <param name="collisionWithAgentAllowed"></param>
-            <returns>Point inside POW with respect to Size</returns>
+             </summary>
+             <param name="rndGen"></param>
+             <param name="size"></param>
+             <param name="collisionWithAgentAllowed"></param>
+             <returns>Point inside POW with respect to Size</returns>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateAgent">
             <summary>
