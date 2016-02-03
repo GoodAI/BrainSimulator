@@ -253,7 +253,7 @@ namespace GoodAI.School.GUI
 
         private void btnNewTask_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode == null || !(tree.SelectedNode.Tag is CurriculumNode))
+            if (tree.SelectedNode == null)
                 return;
 
             AddTaskView.ShowDialog(this);
@@ -261,8 +261,17 @@ namespace GoodAI.School.GUI
                 return;
 
             LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
-            (tree.SelectedNode.Tag as Node).Nodes.Add(task);
-            tree.SelectedNode.IsExpanded = true;
+            if (tree.SelectedNode.Tag is CurriculumNode)
+            {
+                (tree.SelectedNode.Tag as Node).Nodes.Add(task);
+                tree.SelectedNode.IsExpanded = true;
+            }
+            else if (tree.SelectedNode.Tag is LearningTaskNode)
+            {
+                LearningTaskNode source = tree.SelectedNode.Tag as LearningTaskNode;
+                int targetPositon = source.Parent.Nodes.IndexOf(source);
+                source.Parent.Nodes.Insert(targetPositon + 1, task);
+            }
         }
 
         private void DeleteNode(object sender, EventArgs e)
