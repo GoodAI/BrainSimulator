@@ -45,8 +45,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(SEQUENCE_LENGTH, 2);
             TSProgression.Add(SEQUENCE_LENGTH, 3);
             TSProgression.Add(SEQUENCE_LENGTH, 4);
-            TSProgression.Add(SEQUENCE_LENGTH, 5);
-            TSProgression.Add(SEQUENCE_LENGTH, 6);
+            
 
             SetHints(TSHints);
         }
