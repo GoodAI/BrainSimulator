@@ -82,9 +82,12 @@ namespace GoodAI.Modules.School.Common
         public Color maskColor; // R,G,B 
         public string bitmapPath;
         public CUdeviceptr bitmap;
+        public int SpriteTextureHandle;
 
         public int X { get; set; }
         public int Y { get; set; }
+
+        public float Rotation { get; set; } // rotation in radians
 
         public int Width { get; set; }
         public int Height { get; set; }
@@ -95,10 +98,12 @@ namespace GoodAI.Modules.School.Common
             this.bitmapPath = path;
             this.X = x;
             this.Y = y;
+            this.Rotation = 0;
             this.bitmapPixelSize = new Size(0, 0);
             this.Width = width;
             this.Height = height;
             this.Subtype = subtype;
+            this.SpriteTextureHandle = -1;
 
             isBitmapAsMask = false;
             maskColor = Color.FromArgb(0, 0, 0);
