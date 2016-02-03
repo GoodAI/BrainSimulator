@@ -579,14 +579,14 @@ namespace GoodAI.Core.Execution
             var changersActivated = new List<MyNode>();
 
             bool modelChanged = false;
-            ModelChangingNodes.EachWithIndex((changer, i) =>
+            foreach (IModelChanger changer in ModelChangingNodes)
             {
                 bool nodeChanged = changer.ChangeModel(modelChanges);
                 if (nodeChanged)
                     changersActivated.Add(changer.AffectedNode);
 
                 modelChanged |= nodeChanged;
-            });
+            }
 
             if (!modelChanged)
                 return;
@@ -618,7 +618,8 @@ namespace GoodAI.Core.Execution
                 throw new InvalidOperationException("Validation failed for the changed model.");
 
             // Allocate memory and init nodes
-            IEnumerable<MyWorkingNode> nodesToAllocate = modelChanges.AddedNodes.Where(node => !AllNodes.Contains(node));
+            IEnumerable<MyWorkingNode> nodesToAllocate =
+                modelChanges.AddedNodes.Where(node => MyMemoryManager.Instance.IsRegistered(node));
             IterateNodes(nodesToAllocate, InitAndAllocateNode);
 
             // Finalize - reschedule and let listeners react.
