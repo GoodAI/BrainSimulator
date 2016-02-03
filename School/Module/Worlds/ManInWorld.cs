@@ -870,9 +870,10 @@ namespace GoodAI.Modules.School.Worlds
         /// </summary>
         public class RenderGLTask : MyTask<ManInWorld>
         {
-            private uint m_sharedBufferHandle;
             uint m_fboHandle;
             uint m_renderTextureHandle;
+
+            private uint m_sharedBufferHandle;
             private CudaOpenGLBufferInteropResource m_renderResource;
 
             private MyCudaKernel m_ShuffleRGBKernel;
@@ -960,51 +961,44 @@ namespace GoodAI.Modules.School.Worlds
 
             public void UpdateTextures()
             {
-                // Setup game object textures
-                //var spriteTextureHandles = new int[Owner.gameObjects.Count];
-                //GL.GenTextures(Owner.gameObjects.Count, spriteTextureHandles);
-
                 for (int i = 0; i < Owner.gameObjects.Count; i++)
                 {
                     var gameObject = Owner.gameObjects[i];
-                    if (gameObject.isBitmapAsMask)
+                    // masks currently not supported, loading disabled
+                    // shapes are drawn directly through vertices
+                    if (!gameObject.isBitmapAsMask && gameObject.bitmapPath != null)
                     {
-                        // masks currently not supported, loading disabled
-                        // shapes are drawn directly through vertices
-                        continue;
+                        int loadedTextureHandle;
+                        // We are assuming the gameObject.bitmapPath is the most up-to-date information about what should be rendered
+                        bool loaded = m_textureHandles.TryGetValue(gameObject.bitmapPath, out loadedTextureHandle);    // returns null if not present?
+                        if (!loaded)
+                        {
+                            // generate handle for new texture
+                            GL.GenTextures(1, out loadedTextureHandle);
+                            m_textureHandles.Add(gameObject.bitmapPath, loadedTextureHandle);
+
+                            // load the bitmap for the texture here
+                            GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
+                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+
+                            Owner.LoadAndGetBitmapSize(gameObject.bitmapPath);
+                            Bitmap bmp = Owner.m_bitmapTable[gameObject.bitmapPath].Item1;
+                            BitmapData data = bmp.LockBits(
+                                new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
+                                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                            // from example:
+                            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+                            bmp.UnlockBits(data);
+                        }
+
+                        // update texture for the gameObject
+                        gameObject.SpriteTextureHandle = loadedTextureHandle;
                     }
-
-                    int loadedTextureHandle;
-                    // We are assuming the gameObject.bitmapPath is the most up-to-date information
-                    bool loaded = m_textureHandles.TryGetValue(gameObject.bitmapPath, out loadedTextureHandle);    // returns null if not present?
-                    if (!loaded)
-                    {
-                        // generate handle for new texture
-                        GL.GenTextures(1, out loadedTextureHandle);
-                        m_textureHandles.Add(gameObject.bitmapPath, loadedTextureHandle);
-
-                        // load the bitmap for the texture here
-                        GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-
-                        Owner.LoadAndGetBitmapSize(gameObject.bitmapPath);
-                        Bitmap bmp = Owner.m_bitmapTable[gameObject.bitmapPath].Item1;
-                        BitmapData data = bmp.LockBits(
-                            new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
-                            ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                        // from example:
-                        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-                        bmp.UnlockBits(data);
-                    }
-                    //gameObject.SpriteTextureHandle = spriteTextureHandles[i];
-
-                    // update texture for the gameObject
-                    gameObject.SpriteTextureHandle = loadedTextureHandle;
                 }
             }
 
