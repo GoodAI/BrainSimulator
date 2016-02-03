@@ -128,11 +128,11 @@ namespace GoodAI.School.GUI
             EnableButtons(this);
 
             if (!tree.AllNodes.Any())
-                btnSave.Enabled = btnSaveAs.Enabled = false;
+                btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
 
             if (tree.SelectedNode == null)
             {
-                btnDeleteCurr.Enabled = btnRun.Enabled = btnDetailsCurr.Enabled = false;
+                btnDeleteCurr.Enabled = btnDetailsCurr.Enabled = false;
                 DisableButtons(groupBoxTask);
                 return;
             }
@@ -142,6 +142,9 @@ namespace GoodAI.School.GUI
 
             if (selected is CurriculumNode)
                 btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
+
+            // to be removed
+            btnDetailsCurr.Enabled = btnDetailsTask.Enabled = false;
         }
 
         #endregion
