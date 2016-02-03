@@ -103,6 +103,7 @@ namespace GoodAI.Modules.School.Common
             this.Width = width;
             this.Height = height;
             this.Subtype = subtype;
+            this.SpriteTextureHandle = -1;
 
             isBitmapAsMask = false;
             maskColor = Color.FromArgb(0, 0, 0);

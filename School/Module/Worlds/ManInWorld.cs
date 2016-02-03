@@ -180,7 +180,7 @@ namespace GoodAI.Modules.School.Worlds
             IsImageNoise = false;
             m_IsWorldFrozen = false;
         }
-        
+
         public void SetHint(TSHintAttribute attr, float value)
         {
             if (attr == TSHintAttributes.IMAGE_NOISE)
@@ -237,7 +237,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public Rectangle GetFowGeometry()
         {
-            return new Rectangle(0 ,0 ,FOW_WIDTH, FOW_HEIGHT);
+            return new Rectangle(0, 0, FOW_WIDTH, FOW_HEIGHT);
         }
 
         public Rectangle GetPowGeometry()
@@ -274,7 +274,7 @@ namespace GoodAI.Modules.School.Worlds
 
             Rectangle obj = new Rectangle(randPointInPow, size);
 
-            if (!collisionWithAgentAllowed) 
+            if (!collisionWithAgentAllowed)
             {
                 Rectangle agent = GetAgentGeometry();
                 while (agent.IntersectsWith(obj) || obj.IntersectsWith(agent))
@@ -483,7 +483,8 @@ namespace GoodAI.Modules.School.Worlds
             //IMyExecutable learningTaskStep = planCopy.Find(task => task is LearningTaskStepTask);
             IMyExecutable getInput = planCopy.Find(task => task is InputTask);
             IMyExecutable updateTask = planCopy.Find(task => task is UpdateTask);
-            IMyExecutable render = planCopy.Find(task => task is RenderTask);
+            //IMyExecutable render = planCopy.Find(task => task is RenderTask);
+            IMyExecutable render = planCopy.Find(task => task is RenderGLTask);
 
             HashSet<IMyExecutable> positionSensitiveTasks = new HashSet<IMyExecutable>();
             positionSensitiveTasks.Add(getInput);
@@ -516,9 +517,10 @@ namespace GoodAI.Modules.School.Worlds
         public virtual InputTask GetInputTask { get; protected set; }
         public virtual UpdateTask UpdateWorldTask { get; protected set; }
         [MyTaskGroup("Rendering")]
-        public RenderTask RenderWorldTask { get; protected set; }
-        [MyTaskGroup("Rendering")]
         public RenderGLTask RenderGLWorldTask { get; protected set; }
+        [MyTaskGroup("Rendering")]
+        public RenderTask RenderWorldTask { get; protected set; }
+
 
         public class InputTask : MyTask<ManInWorld>
         {
@@ -780,7 +782,7 @@ namespace GoodAI.Modules.School.Worlds
                 Owner.VisualPOW.Fill(DUMMY_PIXEL);
                 m_RgbaColorKernel.SetupExecution(Owner.FOW_WIDTH * Owner.FOW_HEIGHT * 3);
                 m_RgbaColorKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, worldTopLeftInPow.X, worldTopLeftInPow.Y,
-                    Owner.FOW_WIDTH, Owner.FOW_HEIGHT, ((float)Owner.BackgroundColor.R) / 255.0f, ((float)Owner.BackgroundColor.G) / 255.0f, ((float)Owner.BackgroundColor.B) / 255.0f); 
+                    Owner.FOW_WIDTH, Owner.FOW_HEIGHT, ((float)Owner.BackgroundColor.R) / 255.0f, ((float)Owner.BackgroundColor.G) / 255.0f, ((float)Owner.BackgroundColor.B) / 255.0f);
 
                 int blockDimX = Owner.FOW_WIDTH;
                 int gridDimZ = 1;
@@ -878,7 +880,8 @@ namespace GoodAI.Modules.School.Worlds
             INativeWindow m_window = null;
             IGraphicsContext m_context = null;
 
-            bool texturesInitialized;
+            private Dictionary<String, int> m_textureHandles;
+            bool m_glInitialized;
 
             public override void Init(int nGPU)
             {
@@ -886,10 +889,33 @@ namespace GoodAI.Modules.School.Worlds
                 m_ShuffleRGBKernel = MyKernelFactory.Instance.Kernel(nGPU, @"ShuffleRGB", "ShuffleRGB");
                 m_ShuffleRGBKernel.SetupExecution(Owner.VisualFOW.Count);
 
-                texturesInitialized = false;
+                m_textureHandles = new Dictionary<string, int>();
+                m_glInitialized = false;
             }
 
-            public void InitGLTextures(int nGPU)
+            public override void Execute()
+            {
+                if (!m_glInitialized)
+                {
+                    onlyOnce();
+                    m_glInitialized = true;
+                }
+
+                // init textures
+                UpdateTextures();
+
+                // fow
+                setupFOWview();
+                RenderGL();
+                copyPixelsFOW();
+
+                // pow
+                setupPOWview();
+                RenderGL();
+                copyPixelsPOW();
+            }
+
+            void onlyOnce()
             {
                 if (m_context != null)
                     m_context.Dispose();
@@ -899,40 +925,6 @@ namespace GoodAI.Modules.School.Worlds
                 m_window = new NativeWindow();
                 m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
                 m_context.MakeCurrent(m_window.WindowInfo);
-
-
-                // Setup game object textures
-                var spriteTextureHandles = new int[Owner.gameObjects.Count];
-                GL.GenTextures(Owner.gameObjects.Count, spriteTextureHandles);
-
-                for (int i = 0; i < Owner.gameObjects.Count; i++)
-                {
-                    var gameObject = Owner.gameObjects[i];
-                    if (gameObject.isBitmapAsMask)
-                    {
-                        // masks currently not supported, loading disabled
-                        // shapes are drawn directly through vertices
-                        continue;
-                    }
-                    gameObject.SpriteTextureHandle = spriteTextureHandles[i];
-
-                    GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
-
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-
-                    Bitmap bmp = Owner.m_bitmapTable[gameObject.bitmapPath].Item1;
-                    BitmapData data = bmp.LockBits(
-                        new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
-                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                    // from example:
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-                    bmp.UnlockBits(data);
-                }
 
                 // Setup rendering texture
                 m_renderTextureHandle = (uint)GL.GenTexture();
@@ -966,24 +958,54 @@ namespace GoodAI.Modules.School.Worlds
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             }
 
-            public override void Execute()
+            public void UpdateTextures()
             {
-                if (!texturesInitialized)
+                // Setup game object textures
+                //var spriteTextureHandles = new int[Owner.gameObjects.Count];
+                //GL.GenTextures(Owner.gameObjects.Count, spriteTextureHandles);
+
+                for (int i = 0; i < Owner.gameObjects.Count; i++)
                 {
-                    // init textures
-                    InitGLTextures(Owner.GPU);
-                    texturesInitialized = true;
+                    var gameObject = Owner.gameObjects[i];
+                    if (gameObject.isBitmapAsMask)
+                    {
+                        // masks currently not supported, loading disabled
+                        // shapes are drawn directly through vertices
+                        continue;
+                    }
+
+                    int loadedTextureHandle;
+                    // We are assuming the gameObject.bitmapPath is the most up-to-date information
+                    bool loaded = m_textureHandles.TryGetValue(gameObject.bitmapPath, out loadedTextureHandle);    // returns null if not present?
+                    if (!loaded)
+                    {
+                        // generate handle for new texture
+                        GL.GenTextures(1, out loadedTextureHandle);
+                        m_textureHandles.Add(gameObject.bitmapPath, loadedTextureHandle);
+
+                        // load the bitmap for the texture here
+                        GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+
+                        Owner.LoadAndGetBitmapSize(gameObject.bitmapPath);
+                        Bitmap bmp = Owner.m_bitmapTable[gameObject.bitmapPath].Item1;
+                        BitmapData data = bmp.LockBits(
+                            new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
+                            ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                        // from example:
+                        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+                        bmp.UnlockBits(data);
+                    }
+                    //gameObject.SpriteTextureHandle = spriteTextureHandles[i];
+
+                    // update texture for the gameObject
+                    gameObject.SpriteTextureHandle = loadedTextureHandle;
                 }
-
-                // fow
-                setupFOWview();
-                RenderGL();
-                copyPixelsFOW();
-
-                // pow
-                setupPOWview();
-                RenderGL();
-                copyPixelsPOW();
             }
 
             void setupFOWview()
