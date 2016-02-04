@@ -1,4 +1,4 @@
-﻿using GoodAI.Core.Nodes;
+﻿using GoodAI.Modules.School.LearningTasks;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
@@ -42,10 +42,11 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-        public static ILearningTask CreateLearningTask(Type taskType, MyWorld world)
+        public static ILearningTask CreateLearningTask(Type learningTaskType, SchoolWorld w)
         {
-            ILearningTask task = (ILearningTask)Activator.CreateInstance(taskType, world);
-            return task;
+            //ConstructorInfo c = learningTaskType.GetConstructor(new[] { typeof(SchoolWorld) });
+            //return (ILearningTask)c.Invoke(new[] { w });
+            return (ILearningTask) Activator.CreateInstance(learningTaskType, w);
         }
 
         public static ILearningTask CreateLearningTask(Type taskType, Type worldType)
@@ -60,7 +61,8 @@ namespace GoodAI.Modules.School.Common
 
             // everything is OK - create the task
             SchoolWorld world = (SchoolWorld)Activator.CreateInstance(worldType);
-            return CreateLearningTask(taskType, world);
+            ILearningTask task = (ILearningTask)Activator.CreateInstance(taskType, world);
+            return task;
         }
 
         public static List<Type> GetSupportedWorlds(Type taskType)

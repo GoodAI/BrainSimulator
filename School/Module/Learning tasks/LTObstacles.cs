@@ -33,15 +33,13 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS] = 10000;
 
             TSHints.Add(OBSTACLES_LEVEL, 1);
-            TSHints.Add(TIMESTEPS_LIMIT, 200);
+            TSHints.Add(TIMESTEPS_LIMIT, 800);
             
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(OBSTACLES_LEVEL, 2);
             TSProgression.Add(OBSTACLES_LEVEL, 3);
             TSProgression.Add(OBSTACLES_LEVEL, 4);
-            TSProgression.Add(OBSTACLES_LEVEL, 5);
-            TSProgression.Add(OBSTACLES_LEVEL, 6);
             
             SetHints(TSHints);
         }
@@ -60,14 +58,14 @@ namespace GoodAI.Modules.School.LearningTasks
             
             int level = (int)TSHints[OBSTACLES_LEVEL];                                          // Update value of current level
 
-            WrappedWorld.CreateAgent();         // Generate agent
+            WrappedWorld.CreateAgent();                                                         // Generate agent
             m_agent = WrappedWorld.Agent;
 
             // Generate target
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
+            m_target = new GameObject(GameObjectType.None, "White10x10.png", 0, 0);             // TODO: Change temporary "White10x10.png" with appropriate texture
             WrappedWorld.AddGameObject(m_target);
 
-            RoguelikeWorld world = WrappedWorld as RoguelikeWorld;                                     // Reference to World
+            RoguelikeWorld world = WrappedWorld as RoguelikeWorld;                              // Reference to World
             Grid g = world.GetGrid();                                                           // Get grid
 
 
@@ -181,21 +179,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-
-        protected virtual string GetTargetImage(int numberOfAlternatives)
-        {
-            switch (m_rndGen.Next(0, numberOfAlternatives))
-            {
-                case 0:
-                    //return "Block60x10.png"; // used to be GetDefaultTargetImage();
-                    return "Target_TOP.png";
-                case 1:
-                    return "White10x10.png";
-                case 2:
-                default:
-                    return "WhiteCircle50x50.png";
-            }
-        }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {

@@ -1,12 +1,15 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Nodes;
 using GoodAI.Modules.School.Common;
 using ManagedCuda;
 using ManagedCuda.VectorTypes;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +17,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.School.Worlds
@@ -30,16 +30,6 @@ namespace GoodAI.Modules.School.Worlds
     /// </description>
     public abstract class ManInWorld : MyWorld, IWorldAdapter
     {
-        public enum TextureSet
-        {
-            A = 0,
-            B = 1,
-            C = 2,
-            D = 3,
-            E = 4,
-            Plumber = 5
-        };
-
         public int DegreesOfFreedom { get; set; }
 
         [MyOutputBlock(0), DynamicBlock]
@@ -158,7 +148,23 @@ namespace GoodAI.Modules.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public virtual void MapWorlds(SchoolWorld schoolWorld)
+        public virtual void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        {
+
+        }
+
+        public virtual void MapWorldInputs(SchoolWorld schoolWorld)
+        {
+            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
+            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+        }
+            
+        public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        {
+
+        }
+
+        public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
         {
             // Copy data from world to wrapper
             VisualPOW.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualPOW.Count, schoolWorld.VisualSize));
@@ -167,9 +173,6 @@ namespace GoodAI.Modules.School.Worlds
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
             schoolWorld.DataLength.Fill(Math.Min(Objects.Count, schoolWorld.DataSize));
             Reward.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
-
-            // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
         }
 
         public virtual void ClearWorld()
@@ -261,7 +264,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="rndGen"></param>
         /// <param name="size"></param>

@@ -90,13 +90,13 @@
             </description>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Boolean)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="rndGen"></param>
-            <param name="size"></param>
-            <param name="collisionWithAgentAllowed"></param>
-            <returns>Point inside POW with respect to Size</returns>
+             </summary>
+             <param name="rndGen"></param>
+             <param name="size"></param>
+             <param name="collisionWithAgentAllowed"></param>
+             <returns>Point inside POW with respect to Size</returns>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateAgent">
             <summary>
@@ -145,9 +145,14 @@
             Initialize the world's curriculum
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.AdapterTask">
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.OutputAdapterTask">
             <summary>
-            Performs all memory blocks mapping
+            Performs Output memory blocks mapping
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.InputAdapterTask">
+            <summary>
+            Performs Input memory blocks mapping
             </summary>
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.LearningStepTask">

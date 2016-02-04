@@ -1,5 +1,6 @@
 ﻿using GoodAI.Modules.School.LearningTasks;
 using GoodAI.Modules.School.Worlds;
+using GoodAI.School.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ namespace GoodAI.Modules.School.Common
         TrainingCurriculum,
         DebuggingCurriculum,
         AllLTsCurriculum,
-        PresentationCurriculum,
     }
 
     /// <summary>
@@ -64,14 +64,19 @@ namespace GoodAI.Modules.School.Common
             TaskWorldTypes.Add(task, worldType);
         }
 
-        public void AddRlwLearningTask(SchoolWorld world, Type learningTaskType, Type worldType)
-        {
-            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), worldType.GetType());
-        }
-
         public Type GetWorldType(ILearningTask task)
         {
             return TaskWorldTypes[task];
+        }
+
+        public void AddLearningTask(SchoolWorld world, Type learningTaskType, Type worldType)
+        {
+            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), worldType);
+        }
+
+        public void AddLearningTask(SchoolWorld world, Type learningTaskType)
+        {
+            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), learningTaskType.BaseType.GetGenericArguments()[0]);
         }
     }
 
@@ -84,35 +89,36 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectBlackAndWhite), world), typeof(RoguelikeWorld).GetType());
+                    curriculum.AddLearningTask(world, typeof(LTDetectColor));
                     break;
+
                 case CurriculumType.AllLTsCurriculum:
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectWhite), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectBlackAndWhite), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectColor), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTClassComposition), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectShapeColor), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LT1DApproach), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTActionWCooldown), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTSimpleSize), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTSimpleDistance), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTSimpleAngle), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectShapeColor), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTApproach), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(world, typeof(LTDetectWhite));
+                    curriculum.AddLearningTask(world, typeof(LTDetectBlackAndWhite));
+                    curriculum.AddLearningTask(world, typeof(LTDetectColor));
+                    curriculum.AddLearningTask(world, typeof(LTClassComposition));
+                    curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
+                    curriculum.AddLearningTask(world, typeof(LT1DApproach));
+                    curriculum.AddLearningTask(world, typeof(LTActionWCooldown));
+                    curriculum.AddLearningTask(world, typeof(LTSimpleSize));
+                    curriculum.AddLearningTask(world, typeof(LTSimpleDistance));
+                    curriculum.AddLearningTask(world, typeof(LTSimpleAngle));
+                    curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
+                    curriculum.AddLearningTask(world, typeof(LTApproach));
                     //Moving Target
                     //Hidden Target
                     //Conditional Target
                     //Noise in Actions
-                    curriculum.AddRlwLearningTask(world, typeof(LTObstacles), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(world, typeof(LTObstacles));
                     //Multiple Targets in Sequence
                     //Shape sorting
-                    curriculum.AddRlwLearningTask(world, typeof(LTCopyAction), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTCopySequence), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(world, typeof(LTCopyAction));
+                    curriculum.AddLearningTask(world, typeof(LTCopySequence));
                     //Count repetititons
                     //Unsupervised Tetris
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectDifference), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTDetectSimilarity), typeof(RoguelikeWorld));
-                    curriculum.AddRlwLearningTask(world, typeof(LTCompareLayouts), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(world, typeof(LTDetectDifference));
+                    curriculum.AddLearningTask(world, typeof(LTDetectSimilarity));
+                    curriculum.AddLearningTask(world, typeof(LTCompareLayouts));
                     //Visual Equivalence
                     //Compatibility Matching
                     //Rotate and move to fit
@@ -125,19 +131,9 @@ namespace GoodAI.Modules.School.Common
                     //Pong without bricks
                     //Pong with bricks
                     break;
-                case CurriculumType.PresentationCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectBlackAndWhite), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectShape), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectColor), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectShapeColor), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTSimpleSize), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTApproach), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTCopyAction), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDetectDifference), world), typeof(RoguelikeWorld).GetType());
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTCompareLayouts), world), typeof(RoguelikeWorld).GetType());
-                    break;
                 case CurriculumType.DebuggingCurriculum:
-                    curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(typeof(LTDebugging), world), typeof(RoguelikeWorld));
+                    curriculum.AddLearningTask(world, typeof(LTDebugging));
+                    //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world).GetType());
                     break;
             }
 

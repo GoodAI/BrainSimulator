@@ -14,7 +14,10 @@ namespace GoodAI.Modules.School.Worlds
     public interface IWorldAdapter
     {
         void InitAdapterMemory(SchoolWorld schoolWorld);
-        void MapWorlds(SchoolWorld schoolWorld);
+        void InitWorldInputs(int nGPU, SchoolWorld schoolWorld);
+        void MapWorldInputs(SchoolWorld schoolWorld);
+        void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld);
+        void MapWorldOutputs(SchoolWorld schoolWorld);
         void ClearWorld();
         void SetHint(TSHintAttribute attr, float value);
     }
@@ -23,7 +26,9 @@ namespace GoodAI.Modules.School.Worlds
     {
         public static Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => typeof(IWorldAdapter).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToArray();
+                .Where(p => typeof(IWorldAdapter)
+                .IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
+                .ToArray();
     }
     
     public class IWorldAdapterConverter: TypeConverter
