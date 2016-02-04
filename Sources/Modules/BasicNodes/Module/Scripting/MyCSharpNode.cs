@@ -57,6 +57,13 @@ namespace GoodAI.Modules.Scripting
             m_scriptEngine = new MyCSharpEngine<MyDefaultMethods>(this);
         }
 
+        public override void UpdateMemoryBlocks()
+        {
+            UpdateOutputBlocks();
+        }       
+
+        #region IScriptableNode implementation
+
         public override string NameExpressions
         {
             get { return "GetInput GetOutput"; }
@@ -73,11 +80,7 @@ namespace GoodAI.Modules.Scripting
         {
             get { return "CSharp"; }
         }
-
-        public override void UpdateMemoryBlocks()
-        {
-            UpdateOutputBlocks();
-        }        
+        #endregion 
 
         #region inputs & outputs
         [ReadOnly(false)]
@@ -198,15 +201,7 @@ namespace GoodAI.Modules.Scripting
             {
                 if (Owner.m_scriptEngine.HasMethod(MyDefaultMethods.Init))
                 {
-                    for (int i = 0; i < Owner.InputBranches; i++)
-                    {
-                        MyAbstractMemoryBlock mb = Owner.GetAbstractInput(i);
-
-                        if (mb != null)
-                        {
-                            mb.SafeCopyToHost();
-                        }
-                    }
+                    Owner.CopyInputBlocksToHost();
 
                     try
                     {
@@ -217,15 +212,7 @@ namespace GoodAI.Modules.Scripting
                         MyLog.WARNING.WriteLine("Script Init() call failed: " + e.GetType().Name + ": " + e.Message);
                     }
 
-                    for (int i = 0; i < Owner.OutputBranches; i++)
-                    {
-                        MyAbstractMemoryBlock mb = Owner.GetAbstractOutput(i);
-
-                        if (mb != null)
-                        {
-                            mb.SafeCopyToDevice();
-                        }
-                    }
+                    Owner.CopyOutputBlocksToDevice();
                 }
                 else
                 {
@@ -248,19 +235,11 @@ namespace GoodAI.Modules.Scripting
             }
 
             public override void Execute()
-            {
-                for (int i = 0; i < Owner.InputBranches; i++)
-                {
-                    MyAbstractMemoryBlock mb = Owner.GetAbstractInput(i);
-
-                    if (mb != null)
-                    {
-                        mb.SafeCopyToHost();
-                    }
-                }
-
+            {              
                 if (Owner.m_scriptEngine.HasMethod(MyDefaultMethods.Execute))
                 {
+                    Owner.CopyInputBlocksToHost();
+
                     try
                     {
                         Owner.m_scriptEngine.Run(MyDefaultMethods.Execute, Owner);
@@ -269,20 +248,12 @@ namespace GoodAI.Modules.Scripting
                     {
                         MyLog.WARNING.WriteLine("Script Execute() call failed: " + e.GetType().Name + ": " + e.Message);
                     }
+
+                    Owner.CopyOutputBlocksToDevice();
                 }
                 else 
                 {
                     MyLog.WARNING.WriteLine(Owner.Name + ": No Execute() method available");
-                }
-
-                for (int i = 0; i < Owner.OutputBranches; i++)
-                {
-                    MyAbstractMemoryBlock mb = Owner.GetAbstractOutput(i);
-
-                    if (mb != null)
-                    {
-                        mb.SafeCopyToDevice();
-                    }
                 }
             }
         }

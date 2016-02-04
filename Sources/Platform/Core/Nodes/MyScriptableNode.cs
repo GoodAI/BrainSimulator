@@ -58,5 +58,31 @@ namespace GoodAI.Core.Nodes
         public abstract string NameExpressions { get; }
         public abstract string Keywords { get; }
         public abstract string Language { get; }
+
+        protected void CopyInputBlocksToHost()
+        {
+            for (int i = 0; i < InputBranches; i++)
+            {
+                MyAbstractMemoryBlock mb = GetAbstractInput(i);
+
+                if (mb != null)
+                {
+                    mb.SafeCopyToHost();
+                }
+            }
+        }
+
+        protected void CopyOutputBlocksToDevice()
+        {
+            for (int i = 0; i < OutputBranches; i++)
+            {
+                MyAbstractMemoryBlock mb = GetAbstractOutput(i);
+
+                if (mb != null)
+                {
+                    mb.SafeCopyToDevice();
+                }
+            }
+        }
     } 
 }
