@@ -20,18 +20,19 @@ using Xunit;
 
 namespace CoreTests
 {
-    public class SimulationHandlerTests
+    public class SimulationHandlerTests : IDisposable
     {
-        private MyValidator m_validator;
+        public SimulationHandlerTests()
+        {
+            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
+        }
 
         [Fact]
         public void SimulationPropertySetterTest()
         {
-            var simulation = MockRepository.GenerateStub<MySimulation>();
+            var validator = TypeMap.GetInstance<MyValidator>();
+            var simulation = MockRepository.GenerateStub<MySimulation>(validator);
             var handler = new MySimulationHandler(simulation);
-
-            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
-            m_validator = TypeMap.GetInstance<MyValidator>();
 
             // This should not throw, it's the first simulation.
 
@@ -121,6 +122,11 @@ namespace CoreTests
             Assert.Equal(MySimulationHandler.SimulationState.STOPPED, node.CurrentState);
 
             handler.Finish();
+        }
+
+        public void Dispose()
+        {
+            TypeMap.Destroy();
         }
     }
 }

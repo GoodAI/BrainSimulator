@@ -10,11 +10,13 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Configuration;
+using GoodAI.TypeMapping;
 using Xunit;
 
 namespace CoreTests
 {
-    public class ReleaseDeserializationTests
+    public class ReleaseDeserializationTests : CoreTestBase
     {
         [Fact]
         public void ReleaseDeserializationTest()

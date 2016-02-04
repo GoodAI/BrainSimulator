@@ -24,6 +24,9 @@ namespace GoodAI.TypeMapping
 
         public static void Destroy()
         {
+            if (SimpleInjectorContainer == null)
+                return;
+
             SimpleInjectorContainer.Dispose();
             SimpleInjectorContainer = null;
         }

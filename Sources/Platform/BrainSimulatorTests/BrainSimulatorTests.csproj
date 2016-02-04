@@ -65,9 +65,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+      <Project>{86955C47-2A02-41A4-AB32-C9E592EB2971}</Project>
+      <Name>TypeMap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BrainSimulator\BrainSimulator.csproj">
       <Project>{e45fa5b2-15e6-49e5-abe5-18fe9a7d027d}</Project>
       <Name>BrainSimulator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreTests\CoreTests.csproj">
+      <Project>{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}</Project>
+      <Name>CoreTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>

@@ -70,6 +70,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContainerConfigurationTestBase.cs" />
+    <Compile Include="ContainerConfigurationTests.cs" />
+    <Compile Include="CoreTestBase.cs" />
     <Compile Include="DashboardTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
     <Compile Include="ModelCreationTests.cs" />
