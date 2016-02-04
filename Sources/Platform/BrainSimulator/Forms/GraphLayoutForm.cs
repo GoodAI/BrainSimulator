@@ -293,9 +293,9 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     m_mainForm.OpenGraphLayout(nodeView.Node as MyNodeGroup);
                 }
-                else if (nodeView.Node is MyScriptableNode)
+                else if (nodeView.Node is IScriptableNode)
                 {
-                    m_mainForm.OpenTextEditor(nodeView.Node as MyScriptableNode);
+                    m_mainForm.OpenTextEditor(nodeView.Node as IScriptableNode);
                 }
             }
         }
@@ -322,9 +322,9 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 m_mainForm.CloseGraphLayout(node as MyNodeGroup);
             }
-            else if (node is MyScriptableNode)
+            else if (node is IScriptableNode)
             {
-                m_mainForm.CloseTextEditor(node as MyScriptableNode);
+                m_mainForm.CloseTextEditor(node as IScriptableNode);
             }
 
             m_mainForm.CloseObservers(node);

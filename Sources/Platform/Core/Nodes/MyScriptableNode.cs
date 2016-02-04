@@ -11,7 +11,30 @@ using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
-    public abstract class MyScriptableNode : MyWorkingNode
+    public interface IScriptableNode : IValidatable
+    {
+        event EventHandler<MyPropertyChangedEventArgs<string>> ScriptChanged;
+
+        string Script { get; set; }
+        string Name { get; }
+
+        /// <summary>
+        /// Should return alphabetically ordered space delimited list of name expressions for auto complete & syntax highlighting.
+        /// </summary>
+        string NameExpressions { get; }
+
+        /// <summary>
+        /// Should return alphabetically ordered space delimited list of keywords for auto complete & syntax highlighting.
+        /// </summary>
+        string Keywords { get; }
+
+        /// <summary>
+        /// Should return language name. Temporaly used for syntax highlighting settings.
+        /// </summary>
+        string Language { get; }
+    }
+
+    public abstract class MyScriptableNode : MyWorkingNode, IScriptableNode
     {
         [YAXSerializableField]
         protected string m_script;
@@ -32,19 +55,8 @@ namespace GoodAI.Core.Nodes
             }
         }
 
-        /// <summary>
-        /// Should return alphabetically ordered space delimited list of name expressions for auto complete & syntax highlighting.
-        /// </summary>
         public abstract string NameExpressions { get; }
-
-        /// <summary>
-        /// Should return alphabetically ordered space delimited list of keywords for auto complete & syntax highlighting.
-        /// </summary>
         public abstract string Keywords { get; }
-
-        /// <summary>
-        /// Should return language name. Temporaly used for syntax highlighting settings.
-        /// </summary>
         public abstract string Language { get; }
     } 
 }

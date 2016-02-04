@@ -272,7 +272,7 @@ namespace GoodAI.BrainSimulator.Forms
         public bool SuppressStateSaving { get; set; }
 
         public Dictionary<MyNodeGroup, GraphLayoutForm> GraphViews { get; private set; }
-        public Dictionary<MyScriptableNode, TextEditForm> TextEditors { get; private set; }
+        public Dictionary<IScriptableNode, TextEditForm> TextEditors { get; private set; }
 
         public List<ObserverForm> ObserverViews { get; private set; }
 
@@ -473,7 +473,7 @@ namespace GoodAI.BrainSimulator.Forms
             ProjectStateChanged("Abstract removed");
         }
 
-        public TextEditForm OpenTextEditor(MyScriptableNode target)
+        public TextEditForm OpenTextEditor(IScriptableNode target)
         {
             TextEditForm textEditor;
 
@@ -493,7 +493,7 @@ namespace GoodAI.BrainSimulator.Forms
             TextEditors.Remove((sender as TextEditForm).Target);
         }
 
-        internal void CloseTextEditor(MyScriptableNode target)
+        internal void CloseTextEditor(IScriptableNode target)
         {
             TextEditForm textEditor;
 
@@ -742,7 +742,7 @@ namespace GoodAI.BrainSimulator.Forms
             TaskView.PropertyChanged += DashboardPropertyView.OnPropertyExternallyChanged;
 
             GraphViews = new Dictionary<MyNodeGroup, GraphLayoutForm>();
-            TextEditors = new Dictionary<MyScriptableNode, TextEditForm>();
+            TextEditors = new Dictionary<IScriptableNode, TextEditForm>();
 
             ObserverViews = new List<ObserverForm>();
 
