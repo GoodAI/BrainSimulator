@@ -105,15 +105,15 @@ namespace GoodAI.Modules.School.Common
                 case CurriculumType.AllLTsCurriculum:
                     curriculum.AddLearningTask(world, typeof(LTDetectWhite));
                     curriculum.AddLearningTask(world, typeof(LTDetectBlackAndWhite));
+                    curriculum.AddLearningTask(world, typeof(LTDetectShape));
                     curriculum.AddLearningTask(world, typeof(LTDetectColor));
                     curriculum.AddLearningTask(world, typeof(LTClassComposition));
                     curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
-                    curriculum.AddLearningTask(world, typeof(LT1DApproach));
-                    curriculum.AddLearningTask(world, typeof(LTActionWCooldown));
+                    //curriculum.AddLearningTask(world, typeof(LT1DApproach));
+                    //curriculum.AddLearningTask(world, typeof(LTActionWCooldown));
                     curriculum.AddLearningTask(world, typeof(LTSimpleSize));
                     curriculum.AddLearningTask(world, typeof(LTSimpleDistance));
                     curriculum.AddLearningTask(world, typeof(LTSimpleAngle));
-                    curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
                     curriculum.AddLearningTask(world, typeof(LTApproach));
                     //Moving Target
                     //Hidden Target
@@ -129,7 +129,7 @@ namespace GoodAI.Modules.School.Common
                     curriculum.AddLearningTask(world, typeof(LTDetectDifference));
                     curriculum.AddLearningTask(world, typeof(LTDetectSimilarity));
                     curriculum.AddLearningTask(world, typeof(LTCompareLayouts));
-                    //Visual Equivalence
+                    curriculum.AddLearningTask(world, typeof(LTVisualEquivalence));
                     //Compatibility Matching
                     //Rotate and move to fit
                     //2 Back binary test
