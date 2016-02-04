@@ -70,6 +70,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// </summary>
     public class LTVisualEquivalence : AbstractLearningTask<RoguelikeWorld>
     {
+        // Attributes
         protected readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("Max number of attempts", "", TypeCode.Int32, 10000, 10000);
         protected readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("Number of different objects", "", TypeCode.Int32, 1, 4);
         protected readonly TSHintAttribute ROTATE_SHAPE = new TSHintAttribute("Rotate shape", "", TypeCode.Boolean, 0, 1);
@@ -79,7 +80,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private static Random m_rand = new Random();
 
         // How large a share of the examples are guaranteed to be positive -- to maintain a balance between negative and positive examples
-        protected const float MIN_SHARE_OF_POSITIVE_EXAMPLES = .5f;
+        protected const float MIN_SHARE_OF_POSITIVE_EXAMPLES = .3f;
 
         // First shape
         protected ComparisonShape targetA;
@@ -92,22 +93,22 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { MAX_NUMBER_OF_ATTEMPTS, 10000 },
-                { NUMBER_OF_DIFFERENT_OBJECTS, 1 },
+                { NUMBER_OF_DIFFERENT_OBJECTS, 2 },
                 { ROTATE_SHAPE, 0 },
                 { SCALE_SHAPE, 0 }
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(NUMBER_OF_DIFFERENT_OBJECTS, 2);
             TSProgression.Add(NUMBER_OF_DIFFERENT_OBJECTS, 3);
-            TSProgression.Add(ROTATE_SHAPE, 1);
             TSProgression.Add(SCALE_SHAPE, 1);
+            TSProgression.Add(ROTATE_SHAPE, 1);
 
             SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
         {
+            WrappedWorld.CreateNonVisibleAgent();
             targetA = CreateTarget(ComparisonShape.GetRandomShape(m_rand, (int)TSHints[NUMBER_OF_DIFFERENT_OBJECTS]));
             if (GuaranteePositiveExample())
             {
@@ -121,24 +122,24 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            wasUnitSuccessful = targetA.IsSameShape(targetB) == DoesAgentSayShapesAreEquivalent();
+            wasUnitSuccessful = targetA.IsSameShape(targetB) == DoesAgentSayShapesAreSame();
             return true;
         }
 
-        // TODO check actuators
-        private bool DoesAgentSayShapesAreEquivalent()
+        private bool DoesAgentSayShapesAreSame()
         {
-            throw new NotImplementedException();
+            return SchoolWorld.ActionInput.Host[0] == 1;
         }
 
         // Create a shape
         protected ComparisonShape CreateTarget(ComparisonShape.Shapes shape)
         {
-            Size size = GetRandomSize(TSHints[SCALE_SHAPE] == 1);
+            Size size = GetSize(TSHints[SCALE_SHAPE] == 1);
             Point location = GetRandomLocation(size);
-            targetA = new ComparisonShape(location, shape, size);
-            WrappedWorld.AddGameObject(targetA);
-            return targetA;
+            ComparisonShape target = new ComparisonShape(location, shape, size);
+            target.Rotation = GetRotation(TSHints[ROTATE_SHAPE] == 1);
+            WrappedWorld.AddGameObject(target);
+            return target;
         }
 
         // True if the next example should be (guaranteed to be) positive?
@@ -148,7 +149,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Get a target size
-        private Size GetRandomSize(bool doScaleShape)
+        private Size GetSize(bool doScaleShape)
         {
             Size size = new Size(32, 32);
             if (doScaleShape)
@@ -160,6 +161,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 size.Height = (int)Math.Round(size.Height * scale);
             }
             return size;
+        }
+
+        // Get target rotation
+        private float GetRotation(bool doRotateShape)
+        {
+            return doRotateShape ? GetRandom(0, 2 * (float)Math.PI) : 0;
         }
 
         // Return a random number lowerBound <= r < upperBound
