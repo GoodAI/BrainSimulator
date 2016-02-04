@@ -294,7 +294,7 @@ namespace GoodAI.BrainSimulator.Forms
                 observer.GenericTarget = node;
 
                 ObserverForm newView = new ObserverForm(this, observer, node);
-                ObserverViews.Add(newView);                
+                ObserverViews.Add(newView);
 
                 newView.Show(dockPanel, DockState.Float);
 
@@ -759,7 +759,7 @@ namespace GoodAI.BrainSimulator.Forms
             m_views = new List<DockContent>() { NetworkView, DashboardPropertyView, NodePropertyView, MemoryBlocksView, TaskView,
                 TaskPropertyView, ConsoleView, ValidationView, DebugView, HelpView };
 
-            foreach (var form in UIPlugins.GetBrainSimUIExtensions())
+            foreach (var form in UIPlugins.GetBrainSimUIExtensions(this))
                 m_views.Add(form);
 
             foreach (DockContent view in m_views)
