@@ -26,7 +26,9 @@ namespace GoodAI.Modules.School.Worlds
     {
         public static Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => typeof(IWorldAdapter).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToArray();
+                .Where(p => typeof(IWorldAdapter)
+                .IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
+                .ToArray();
     }
     
     public class IWorldAdapterConverter: TypeConverter
