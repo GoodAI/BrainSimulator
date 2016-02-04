@@ -103,6 +103,7 @@
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
     <Compile Include="Learning tasks\LTSimpleSize.cs" />
+    <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
     <Compile Include="Learning tasks\LTTetrisTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
@@ -195,6 +196,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\SchoolWorldCommon\WhiteStar50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteL50x50.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\SchoolWorldCommon\WhiteT50x50.png">
