@@ -710,7 +710,6 @@
     <None Include="res\Symbols_Blocked_16xLG.png" />
     <Content Include="res\tasks_disabled.png" />
     <Content Include="res\text_16xMD.ico" />
-    <Content Include="res\text_16xMD.png" />
     <Content Include="res\threshold.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

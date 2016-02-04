@@ -54,7 +54,6 @@ namespace GoodAI.Modules.Scripting
         {
             InputBranches = 1;
             Script = EXAMPLE_CODE;
-            m_scriptEngine = new MyCSharpEngine<MyDefaultMethods>(this);
         }
 
         public override string NameExpressions
@@ -172,12 +171,97 @@ namespace GoodAI.Modules.Scripting
 
         #region Compilation
 
-        internal IScriptingEngine<MyDefaultMethods> m_scriptEngine;
+        internal MethodInfo ScriptInitMethod { get; private set; }
+        internal MethodInfo ScriptExecuteMethod { get; private set; }
+
+        //internal MethodInfo ScriptOutputNameGetter { get; private set; }
+        //internal MethodInfo ScriptInputNameGetter { get; private set; }
 
         public override void Validate(MyValidator validator)
         {
-            m_scriptEngine.Compile(validator);
+            ScriptInitMethod = null;
+            ScriptExecuteMethod = null;
+
+            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+            CompilerParameters parameters = new CompilerParameters()
+            {
+                GenerateInMemory = false,
+                GenerateExecutable = false,
+            };
+
+            parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
+            parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
+            parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
+
+            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll");
+            if (openTKAssemblies.Count() > 0)
+                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
+
+            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
+            Assembly compiledAssembly = null;
+
+            if (results.Errors.HasErrors)
+            {
+                string message = "";
+
+                foreach (CompilerError error in results.Errors)
+                {
+                    message += "Line " + error.Line + ": " + error.ErrorText + "\n";
+                }
+                validator.AddError(this, "Errors in compiled script:\n" + message);                
+            }
+            else
+            {
+                compiledAssembly = results.CompiledAssembly;
+            }            
+
+            if (compiledAssembly != null)
+            {
+                try
+                {
+                    Type enclosingType = compiledAssembly.GetType("Runtime.Script");
+
+                    ScriptInitMethod = enclosingType.GetMethod("Init");
+                    validator.AssertError(ScriptInitMethod != null, this, "Init() method not found in compiled script");
+
+                    ScriptExecuteMethod = enclosingType.GetMethod("Execute");
+                    validator.AssertError(ScriptExecuteMethod != null, this, "Execute() method not found in compiled script");
+
+                    /*
+                    ScriptInputNameGetter = enclosingType.GetMethod("GetInputName");
+
+                    if (!CheckNameGetterMethod(ScriptInputNameGetter)) 
+                    {
+                        validator.AddWarning(this, "\"string GetInputName(int)\" method not found in compiled script");
+                        ScriptInputNameGetter = null;
+                    }
+
+                    ScriptOutputNameGetter = enclosingType.GetMethod("GetOutputName");
+
+                    if (!CheckNameGetterMethod(ScriptOutputNameGetter))
+                    {
+                        validator.AddWarning(this, "\"string GetOutputName(int)\" method not found in compiled script");
+                        ScriptOutputNameGetter = null;
+                    }
+                    */
+                }
+                catch (Exception e)
+                {
+                    validator.AddError(this, "Script analysis failed: " + e.GetType().Name + ": " + e.Message);
+                }                             
+            }
         }
+
+        private bool CheckNameGetterMethod(MethodInfo methodInfo)
+        {
+            if (methodInfo == null ||
+                methodInfo.ReturnParameter.ParameterType != typeof(string) ||
+                methodInfo.GetParameters().Length != 1 ||
+                methodInfo.GetParameters()[0].ParameterType != typeof(int)) return false;
+            else return true;
+        }
+
         #endregion
 
         #region Tasks
@@ -197,7 +281,7 @@ namespace GoodAI.Modules.Scripting
             
             public override void Execute()
             {
-                if (Owner.m_scriptEngine.HasMethod(MyDefaultMethods.Init))
+                if (Owner.ScriptInitMethod != null)
                 {
                     for (int i = 0; i < Owner.InputBranches; i++)
                     {
@@ -211,7 +295,7 @@ namespace GoodAI.Modules.Scripting
 
                     try
                     {
-                        Owner.m_scriptEngine.Run(MyDefaultMethods.Init, Owner);
+                        Owner.ScriptInitMethod.Invoke(null, new object[] { Owner });
                     }
                     catch (Exception e)
                     {
@@ -260,11 +344,11 @@ namespace GoodAI.Modules.Scripting
                     }
                 }
 
-                if (Owner.m_scriptEngine.HasMethod(MyDefaultMethods.Execute))
+                if (Owner.ScriptExecuteMethod != null)
                 {
                     try
                     {
-                        Owner.m_scriptEngine.Run(MyDefaultMethods.Execute, Owner);
+                        Owner.ScriptExecuteMethod.Invoke(null, new object[] { Owner });
                     }
                     catch (Exception e)
                     {

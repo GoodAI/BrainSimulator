@@ -19,9 +19,9 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private readonly MainForm m_mainForm;        
 
-        public IScriptableNode Target { get; private set; } 
+        public MyScriptableNode Target { get; private set; } 
 
-        public TextEditForm(MainForm mainForm, IScriptableNode target)
+        public TextEditForm(MainForm mainForm, MyScriptableNode target)
         {
             InitializeComponent();
 
@@ -77,9 +77,9 @@ namespace GoodAI.BrainSimulator.Forms
             if (Target != null)
             {
                 m_mainForm.NodePropertyView.Target = Target;
-                m_mainForm.MemoryBlocksView.Target = Target as MyNode;
-                m_mainForm.HelpView.Target = Target as MyNode;
-                m_mainForm.TaskView.Target = Target as MyWorkingNode;                
+                m_mainForm.MemoryBlocksView.Target = Target;
+                m_mainForm.HelpView.Target = Target;
+                m_mainForm.TaskView.Target = Target;                
             }
             else
             {

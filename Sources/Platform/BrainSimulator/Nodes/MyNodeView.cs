@@ -41,7 +41,6 @@ namespace GoodAI.BrainSimulator.NodeView
         private MyStatusBarItem m_statusBar;
         private MyStatusBarItem.IconSubitem m_loadSubitem;
         private MyStatusBarItem.IconSubitem m_saveSubitem;
-        private MyStatusBarItem.IconSubitem m_scriptSubitem;
 
         protected Image m_icon;        
 
@@ -143,7 +142,6 @@ namespace GoodAI.BrainSimulator.NodeView
 
             m_loadSubitem = m_statusBar.AddIcon(Properties.Resources.open_mb_12);
             m_saveSubitem = m_statusBar.AddIcon(Properties.Resources.save_mb_12);
-            m_scriptSubitem = m_statusBar.AddIcon(Properties.Resources.text_12xMD);
 
             UpdateStatusBar();
             
@@ -160,7 +158,6 @@ namespace GoodAI.BrainSimulator.NodeView
 
             m_loadSubitem.Enabled = workingNode.LoadOnStart;
             m_saveSubitem.Enabled = workingNode.SaveOnStop;
-            m_scriptSubitem.Enabled = workingNode is IScriptableNode;
         }
 
         public virtual void UpdateView()
