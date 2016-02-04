@@ -76,7 +76,7 @@ namespace GoodAI.Modules.School.Common
 
         public void AddLearningTask(SchoolWorld world, Type learningTaskType)
         {
-            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), learningTaskType.GetGenericArguments()[0]);
+            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), learningTaskType.BaseType.GetGenericArguments()[0]);
         }
     }
 
@@ -89,7 +89,7 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTDetectShape));
+                    curriculum.AddLearningTask(world, typeof(LTDetectColor));
                     break;
 
                 case CurriculumType.AllLTsCurriculum:
