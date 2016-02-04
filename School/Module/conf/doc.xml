@@ -80,6 +80,18 @@
             Ability Name: Navigate to the target efficiently by avoiding obstacles
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">
+            <summary>
+            Visual object for comparison. Similar to the Shape class.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTVisualEquivalence">
+            <summary>
+            The learning task tests the comparison of simple objects.
+            Two shapes are presented; they are considered equivalent if they differ
+            only in color, translation, scaling, and rotation.
+            </summary>
+        </member>
         <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
             <author>GoodAI</author>
             <meta>Mp,Mv,Os</meta>

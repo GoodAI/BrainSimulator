@@ -59,6 +59,11 @@ namespace GoodAI.School.Worlds
         {
             // m_kernel.Run(VisualOutput, 256, 256, 128, 128, schoolWorld.Visual, 256, 256, VisualWidth, VisualHeight);
             m_kernel.Run(VisualOutput, schoolWorld.Visual, VisualWidth, VisualHeight, 256, 256);
+
+            //HACK to make it grayscale
+            schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 256 * 256, 256 * 256);
+            schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 2 * 256 * 256, 256 * 256);
+
             // Copy data from world to wrapper
             // VisualOutput.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualOutput.Count, schoolWorld.VisualSize));
             if (BrickAreaOutput.Count > 0)

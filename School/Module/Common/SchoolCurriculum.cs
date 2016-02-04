@@ -10,6 +10,8 @@ namespace GoodAI.Modules.School.Common
     public enum CurriculumType
     {
         TrainingCurriculum,
+        TetrisCurriculum,
+        PongCurriculum,
         DebuggingCurriculum,
         AllLTsCurriculum,
     }
@@ -90,6 +92,14 @@ namespace GoodAI.Modules.School.Common
             {
                 case CurriculumType.TrainingCurriculum:
                     curriculum.AddLearningTask(world, typeof(LTDetectColor));
+                    break;
+                
+                case CurriculumType.TetrisCurriculum:
+                    curriculum.AddLearningTask(world, typeof(LTTetrisTest));
+                    break;
+
+                case CurriculumType.PongCurriculum:
+                    curriculum.AddLearningTask(world, typeof(LTPongTest));
                     break;
 
                 case CurriculumType.AllLTsCurriculum:

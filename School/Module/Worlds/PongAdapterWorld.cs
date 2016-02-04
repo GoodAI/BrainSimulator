@@ -9,7 +9,7 @@ using GoodAI.Core;
 
 namespace GoodAI.School.Worlds
 {
-    class PongAdapterWorld : MyCustomPongWorld, IWorldAdapter
+    public class PongAdapterWorld : MyCustomPongWorld, IWorldAdapter
     {
         private MyCudaKernel m_kernel;
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
@@ -52,13 +52,19 @@ namespace GoodAI.School.Worlds
         public void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
         {
             m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
-            m_kernel.SetupExecution(schoolWorld.VisualSize);
+            m_kernel.SetupExecution(256 * 256);
         }
 
         public void MapWorldOutputs(SchoolWorld schoolWorld)
         {
             // Copy data from world to wrapper
-            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
+            m_kernel.Run(Visual, schoolWorld.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
+
+            //HACK to make it grayscale
+            schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 256 * 256, 256 * 256);
+            schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 2 * 256 * 256, 256 * 256);
+
+//            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
 
             // Copy of structured data
             Event.CopyToMemoryBlock(schoolWorld.Data, 0, 0, 1);
