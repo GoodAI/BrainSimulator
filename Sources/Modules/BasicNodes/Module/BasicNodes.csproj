@@ -169,6 +169,8 @@
     <Compile Include="Observers\MyFocuserRetinaObservers.cs" />
     <Compile Include="Retina\MyAbstractFocuser.cs" />
     <Compile Include="Retina\MyUnfocuser.cs" />
+    <Compile Include="Scripting\IScriptingEngine.cs" />
+    <Compile Include="Scripting\MyCSharpEngine.cs" />
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
     <Compile Include="TetrisWorld\MyTetrisEngine.cs" />
