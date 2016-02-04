@@ -225,8 +225,8 @@ namespace GoodAI.Modules.TetrisWorld
         private Point GFX_HINT_AREA_TOP_LEFT = new Point(321, 94);
         private Point GFX_TEXT_AREA_TOP_LEFT = new Point(317, 5);
         
-        private const int SOURCE_VALUES_PER_PIXEL = 4; // RGBA: 4 floats per pixel
-        private const int TARGET_VALUES_PER_PIXEL = 3; // RGB: 3 floats per pixel
+        protected const int SOURCE_VALUES_PER_PIXEL = 4; // RGBA: 4 floats per pixel
+        protected const int TARGET_VALUES_PER_PIXEL = 3; // RGB: 3 floats per pixel
 
         #endregion
 
