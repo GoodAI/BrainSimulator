@@ -83,6 +83,7 @@ namespace GoodAI.Modules.School.Common
         public string bitmapPath;
         public CUdeviceptr bitmap;
         public int SpriteTextureHandle;
+        public int Layer = 0;
 
         public int X { get; set; }
         public int Y { get; set; }
@@ -313,10 +314,8 @@ namespace GoodAI.Modules.School.Common
     {
         bool isOn { get; set; }
 
-        void SwitchOn();
-        void SwitchOff();
-
         void Switch();
+        void Switch(bool on);
         bool SwitchOnCollision();
     }
 }

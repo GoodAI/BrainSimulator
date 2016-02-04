@@ -57,6 +57,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 Grid g = world.GetGrid();
 
                 // place objects according to the grid
+                world.CreateWall(g.getPoint(12, 17));
                 m_agent.SetPosition(g.getPoint(15, 16));
                 world.CreateWall(g.getPoint(15, 17));
                 world.CreateWall(g.getPoint(16, 17));
@@ -80,7 +81,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     shape: Shape.Shapes.Star,
                     width: 30, height: 60); // you can resize choosen shape
 
-                RogueDoor door = (RogueDoor)world.CreateDoor(g.getPoint(14, 17));
+                RogueDoor door = (RogueDoor)world.CreateDoor(g.getPoint(13, 17), size: 2f);
                 world.CreateLever(g.getPoint(13, 13), door);
             }
         }

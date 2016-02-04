@@ -40,7 +40,8 @@ namespace GoodAI.Modules.School.Common
             {
                 // other object interactions
                 ISwitchable switcher = o2 as ISwitchable;
-                if (switcher != null && switcher.SwitchOnCollision())
+                if (switcher != null && switcher.SwitchOnCollision() &&
+                    (o2 as MovableGameObject) == null) // prevents from switching twice per turn
                 {
                     switcher.Switch();
                 }

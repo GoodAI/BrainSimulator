@@ -110,6 +110,16 @@
              <param name="collisionWithAgentAllowed"></param>
              <returns>Point inside POW with respect to Size</returns>
         </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.AddGameObject(GoodAI.Modules.School.Common.GameObject,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="item"></param>
+            <param name="layer">
+            Layers are rendered from lowest to greatest, so greater layer cover lower.
+            Agent is in layer 10 by default.
+            </param>
+        </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateAgent">
             <summary>
             Creates agent with default texture in the middle of field.

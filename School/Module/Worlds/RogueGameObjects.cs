@@ -11,11 +11,11 @@ namespace GoodAI.Modules.School.Worlds
     public class RogueAgent : MovableGameObject
     {
         public RogueAgent(Point p, float size = 1.0f)
-            : base(GameObjectType.Teacher, GetDefaultTexture(), p.X, p.Y,
+            : base(GameObjectType.Agent, GetDefaultTexture(), p.X, p.Y,
             (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
 
         public RogueAgent(Point p, string path, float size = 1.0f)
-            : base(GameObjectType.Teacher, path, p.X, p.Y,
+            : base(GameObjectType.Agent, path, p.X, p.Y,
             (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
 
         public static string GetDefaultTexture(){
@@ -194,29 +194,23 @@ namespace GoodAI.Modules.School.Worlds
             : base(GameObjectType.ClosedDoor, GetDefaultTexture(), p.X, p.Y,
             (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size))
         {
-            if (!isClosed)
+            Switch(!isClosed);
+        }
+
+        public void Switch(bool on)
+        {
+            isOn = on;
+            if (on)
             {
-                SwitchOn();
+                bitmapPath = @"Gate_Open_m.png";
+                type = GameObjectType.OpenedDoor;
             }
             else
             {
-                SwitchOff();
+                bitmapPath = @"Gate_Close_m.png";
+                type = GameObjectType.ClosedDoor;
+
             }
-        }
-
-        public void SwitchOn()
-        {
-            bitmapPath = @"Gate_Open_m.png";
-            type = GameObjectType.OpenedDoor;
-            
-            _isOn = true;
-        }
-
-        public void SwitchOff()
-        {
-            bitmapPath = @"Gate_Open_m.png";
-            type = GameObjectType.ClosedDoor;
-            _isOn = false;
         }
 
         public bool SwitchOnCollision()
@@ -226,14 +220,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void Switch()
         {
-            if (_isOn)
-            {
-                SwitchOff();
-            }
-            else
-            {
-                SwitchOn();
-            }
+            Switch(!_isOn);
         }
 
         public static string GetDefaultTexture()
@@ -264,40 +251,39 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        public RogueLever(Point p, ISwitchable switchableObject = null, float size = 1.0f)
+        public RogueLever(Point p, ISwitchable switchableObject = null, bool isOn = false, float size = 1.0f)
             : base(GameObjectType.Obstacle, GetDefaultTexture(), p.X, p.Y,
             (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size))
         {
             this.SwitchableObject = switchableObject;
+            this.isOn = isOn;
+            if (isOn)
+            {
+                bitmapPath = @"Button_ON.png";
+            }
+            else
+            {
+                bitmapPath = @"Button_OFF.png";
+            }
         }
 
         public void Switch()
         {
-            if (isOn)
+            Switch(!_isOn);
+        }
+
+        public void Switch(bool on)
+        {
+            SwitchableObject.Switch();
+            isOn = on;
+            if (on)
             {
-                SwitchOff();
+                bitmapPath = @"Button_ON.png";
             }
             else
             {
-                SwitchOn();
+                bitmapPath = @"Button_OFF.png";
             }
-            SwitchableObject.Switch();
-        }
-
-        public void SwitchOn()
-        {
-            isOn = true;
-            bitmapPath = @"Button_ON.png";
-            type = GameObjectType.OpenedDoor;
-            SwitchableObject.SwitchOn();
-        }
-
-        public void SwitchOff()
-        {
-            isOn = false;
-            bitmapPath = @"Button_OFF.png";
-            type = GameObjectType.ClosedDoor;
-            SwitchableObject.SwitchOff();
         }
 
         public bool SwitchOnCollision()

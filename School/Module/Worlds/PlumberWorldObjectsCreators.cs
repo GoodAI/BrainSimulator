@@ -40,12 +40,12 @@ namespace GoodAI.Modules.School.Worlds{
             throw new NotImplementedException();
         }
 
-        public override GameObject CreateLever(Point p, float size = 1.0f)
+        public override GameObject CreateLever(Point p, bool isOn = false, float size = 1.0f)
         {
             throw new NotImplementedException();
         }
 
-        public override GameObject CreateLever(Point p, ISwitchable obj, float size = 1.0f)
+        public override GameObject CreateLever(Point p, ISwitchable obj, bool isOn = false, float size = 1.0f)
         {
             throw new NotImplementedException();
         }

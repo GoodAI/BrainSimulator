@@ -67,16 +67,16 @@ namespace GoodAI.Modules.School.Worlds
             return rd;
         }
 
-        public override GameObject CreateLever(Point p, float size = 1.0f)
+        public override GameObject CreateLever(Point p, bool isOn = false, float size = 1.0f)
         {
             RogueLever rl = new RogueLever(p, size: size);
             AddGameObject(rl);
             return rl;
         }
 
-        public override GameObject CreateLever(Point p, ISwitchable obj, float size = 1.0f)
+        public override GameObject CreateLever(Point p, ISwitchable obj, bool isOn = false, float size = 1.0f)
         {
-            RogueLever rl = new RogueLever(p, obj, size);
+            RogueLever rl = new RogueLever(p, obj, isOn, size);
             AddGameObject(rl);
             return rl;
         }

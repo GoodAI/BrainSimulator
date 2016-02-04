@@ -18,6 +18,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using System.Linq;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -433,6 +434,7 @@ namespace GoodAI.Modules.School.Worlds
         ////TODO: if two objects share the same texture, do not load it twice into memory
         public void AddGameObject(GameObject item)
         {
+            
             if (item.bitmapPath != null)
             {
 
@@ -471,7 +473,34 @@ namespace GoodAI.Modules.School.Worlds
             Debug.Assert(item.ArraySize >= 0, "You should not create object with negative size.");
             Objects.Reallocate(Objects.Count + item.ArraySize);
 
+            // agent should be in front in most cases
+            if (item.type == GameObjectType.Agent)
+            {
+                item.Layer = 10;
+            }
+
             gameObjects.Add(item);
+            gameObjects = gameObjects.OrderBy(o1 => o1.Layer).ToList();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="layer">
+        /// Layers are rendered from lowest to greatest, so greater layer cover lower.
+        /// Agent is in layer 10 by default.
+        /// </param>
+        public void AddGameObject(GameObject item, int layer)
+        {
+            item.Layer = layer;
+            AddGameObject(item);
+        }
+
+        public void SetGameObjectLayer(GameObject item, int layer)
+        {
+            item.Layer = layer;
+            gameObjects = gameObjects.OrderBy(o1 => o1.Layer).ToList();
         }
 
         public MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
@@ -558,8 +587,8 @@ namespace GoodAI.Modules.School.Worlds
         public abstract GameObject CreateTarget(Point p, float size = 1.0f);
         public abstract MovableGameObject CreateMovableTarget(Point p, float size = 1.0f);
         public abstract GameObject CreateDoor(Point p, bool isClosed = true, float size = 1.0f);
-        public abstract GameObject CreateLever(Point p, float size = 1.0f);
-        public abstract GameObject CreateLever(Point p, ISwitchable obj, float size = 1.0f);
+        public abstract GameObject CreateLever(Point p, bool isOn = false, float size = 1.0f);
+        public abstract GameObject CreateLever(Point p, ISwitchable obj, bool isOn = false,  float size = 1.0f);
         public abstract GameObject CreateRogueKiller(Point p, float size = 1.0f);
         public abstract MovableGameObject CreateRogueMovableKiller(Point p, float size = 1.0f);
 

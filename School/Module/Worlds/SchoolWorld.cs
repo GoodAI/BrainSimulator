@@ -142,6 +142,8 @@ namespace GoodAI.Modules.School.Worlds
         }
         #endregion
 
+        Random m_rndGen = new Random();
+
         SchoolCurriculum m_curriculum;
         ILearningTask m_currentLearningTask;
 
@@ -263,9 +265,8 @@ namespace GoodAI.Modules.School.Worlds
         // Emulate the successful completion with a specified probability of the current training unit
         public bool EmulateIsTrainingUnitCompleted(out bool wasUnitSuccessful)
         {
-            Random rnd = new Random(); // not effective but this method is intended for testing only
-            wasUnitSuccessful = rnd.NextDouble() < EmulatedUnitSuccessProbability;
-            return true;
+            wasUnitSuccessful = m_rndGen.NextDouble() < EmulatedUnitSuccessProbability;
+            return wasUnitSuccessful;
         }
 
         public InitSchoolWorldTask InitSchool { get; protected set; }
