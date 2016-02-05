@@ -41,7 +41,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
-            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 1.0f);
+            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.8f);
             TSHints.Add(STEPS_FOR_ELLIPSE, 200);
             TSHints.Add(AVOIDING_AGENT, 0);
 
@@ -51,38 +51,45 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { MOVING_VELOCITY, 2 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.20f },
-                    { STEPS_FOR_ELLIPSE, 1000 },
+                    { MOVING_VELOCITY, 1 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.5f },
+                    { STEPS_FOR_ELLIPSE, 700 },
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { MOVING_VELOCITY, 3 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.30f },
-                    { STEPS_FOR_ELLIPSE, 700 }
-            });
-
-            TSProgression.Add(
-                new TrainingSetHints {
-                    { MOVING_VELOCITY, 4 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.40f },
+                    { MOVING_VELOCITY, 1 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.5f },
                     { STEPS_FOR_ELLIPSE, 600 }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { MOVING_VELOCITY, 5 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.50f },
-                    { STEPS_FOR_ELLIPSE, 500 }
+                    { MOVING_VELOCITY, 1 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.6f },
+                    { STEPS_FOR_ELLIPSE, 400 }
+            });
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { MOVING_VELOCITY, 1 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.7f },
+                    { STEPS_FOR_ELLIPSE, 400 }
             });
 
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { MOVING_VELOCITY, 8 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.65f },
-                    { STEPS_FOR_ELLIPSE, 400 }
+                    { MOVING_VELOCITY, 1 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.7f },
+                    { STEPS_FOR_ELLIPSE, 300 }
+            });
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { MOVING_VELOCITY, 1 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.8f },
+                    { STEPS_FOR_ELLIPSE, 200 }
             });
 
 
@@ -140,8 +147,8 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
 
-            m_target.Width = 30;
-            m_target.Height = 20;
+            m_target.Width = 40;
+            m_target.Height = 40;
 
             Point RandomPoint = new Point();
             float NewNumber = (float)m_rndGen.NextDouble();
