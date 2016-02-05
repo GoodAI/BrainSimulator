@@ -38,13 +38,33 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS] = 10000;
 
             TSHints.Add(SEQUENCE_LENGTH, 1);
-            TSHints.Add(TIMESTEPS_LIMIT, 2000);                             // Training unit fails if the TIMESTEP_LIMIT is reached, this is used to avoid that the agent stands without moving
+            TSHints.Add(TIMESTEPS_LIMIT, 500);                             // Training unit fails if the TIMESTEP_LIMIT is reached, this is used to avoid that the agent stands without moving
 
             TSProgression.Add(TSHints.Clone());
 
-            TSProgression.Add(SEQUENCE_LENGTH, 2);
-            TSProgression.Add(SEQUENCE_LENGTH, 3);
-            TSProgression.Add(SEQUENCE_LENGTH, 4);
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { SEQUENCE_LENGTH, 2 },
+                    { TIMESTEPS_LIMIT, 400 }
+            });
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { SEQUENCE_LENGTH, 3 },
+                    { TIMESTEPS_LIMIT, 400 }
+            });
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { SEQUENCE_LENGTH, 4 },
+                    { TIMESTEPS_LIMIT, 400 }
+            });
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { SEQUENCE_LENGTH, 5 },
+                    { TIMESTEPS_LIMIT, 350 }
+            });
             
 
             SetHints(TSHints);
