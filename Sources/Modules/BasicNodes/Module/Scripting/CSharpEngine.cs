@@ -11,23 +11,23 @@ using System.Threading.Tasks;
 
 namespace GoodAI.Modules.Scripting
 {
-    public class MyCSharpEngine<E> : IScriptingEngine<E> where E : struct
+    public class CSharpEngine<TMethodEnum> : IScriptingEngine<TMethodEnum> where TMethodEnum : struct
     {
         private Dictionary<string, MethodInfo> m_methods;
         private IScriptableNode m_node;
 
-        public MyCSharpEngine(IScriptableNode node)
+        public CSharpEngine(IScriptableNode node)
         {
-            if (!typeof(E).IsEnum)
+            if (!typeof(TMethodEnum).IsEnum)
             {
-                throw new ArgumentException("Only enum types allowed for method enumeration:" + typeof(E).Name);
+                throw new ArgumentException("Only enum types allowed for method enumeration:" + typeof(TMethodEnum).Name);
             }
 
             m_methods = new Dictionary<string, MethodInfo>();
             m_node = node;
         }
         
-        public void Run(E methodName, params object[] arguments)
+        public void Run(TMethodEnum methodName, params object[] arguments)
         {
             MethodInfo method = null;
 
@@ -37,21 +37,26 @@ namespace GoodAI.Modules.Scripting
             }
         }
 
-        public bool HasMethod(E methodName)
+        public bool HasMethod(TMethodEnum methodName)
         {
             return m_methods.ContainsKey(methodName.ToString());
         }
 
         public void Compile(MyValidator validator)
         {
-            if (m_node.Language != "CSharp")
+            Compile(m_node.Script, validator);
+        }
+
+        public void Compile(string script, MyValidator validator)
+        {
+            if (m_node.Language != this.Language)
             {
-                throw new ArgumentException("Language is not supported (CSharp only): " + m_node.Language);
+                throw new ArgumentException("Language is not supported (" + this.Language + " only): " + m_node.Language);
             }
 
             m_methods.Clear();
 
-            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+            CSharpCodeProvider codeProvider = new CSharpCodeProvider();            
             CompilerParameters parameters = new CompilerParameters()
             {
                 GenerateInMemory = false,
@@ -63,11 +68,14 @@ namespace GoodAI.Modules.Scripting
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll");
-            if (openTKAssemblies.Count() > 0)
-                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
+            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll").ToList();
 
-            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, m_node.Script);
+            if (openTKAssemblies.Any())
+            {
+                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
+            }
+
+            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, script);
             Assembly compiledAssembly = null;
 
             if (results.Errors.HasErrors)
@@ -76,9 +84,9 @@ namespace GoodAI.Modules.Scripting
 
                 foreach (CompilerError error in results.Errors)
                 {
-                    message += "Line " + error.Line + ": " + error.ErrorText + "\n";
+                    message += "\nLine " + error.Line + ": " + error.ErrorText;
                 }
-                validator.AddError(m_node, "Errors in compiled script:\n" + message);
+                validator.AddError(m_node, "Errors in compiled script:" + message);
             }
             else
             {
@@ -90,7 +98,7 @@ namespace GoodAI.Modules.Scripting
                 try
                 {
                     Type enclosingType = compiledAssembly.GetType("Runtime.Script");
-                    Type methodEnum = typeof(E);
+                    Type methodEnum = typeof(TMethodEnum);
 
                     foreach (string methodName in methodEnum.GetEnumNames())
                     {
@@ -112,5 +120,22 @@ namespace GoodAI.Modules.Scripting
                 }
             }
         }
+
+        public string DefaultNameExpressions
+        {
+            get { return String.Empty; }
+        }
+
+        public string DefaultKeywords
+        {
+            get
+            {
+                return
+                    "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while"
+                    + " bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void";
+            }
+        }
+
+        public string Language { get { return "CSharp"; } }
     }
 }

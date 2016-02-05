@@ -223,6 +223,16 @@ namespace GoodAI.BrainSimulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Diagram_16XMD {
+            get {
+                object obj = ResourceManager.GetObject("Diagram_16XMD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Error_red_16x16 {
             get {
                 object obj = ResourceManager.GetObject("Error_red_16x16", resourceCulture);

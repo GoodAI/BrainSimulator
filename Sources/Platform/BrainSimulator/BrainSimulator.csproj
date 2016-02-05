@@ -464,6 +464,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\Diagram_16XMD.ico" />
+    <Content Include="res\Diagram_16XMD.png" />
     <Content Include="res\distribution.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

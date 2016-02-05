@@ -139,8 +139,15 @@ namespace GoodAI.BrainSimulator.Forms
             // Important for Python
             scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
 
-            scintilla.SetKeywords(0, Target.Keywords);
-            scintilla.SetKeywords(1, Target.NameExpressions);
+            if (!string.IsNullOrEmpty(Target.Keywords))
+            {
+                scintilla.SetKeywords(0, Target.Keywords);
+            }            
+
+            if (!string.IsNullOrEmpty(Target.NameExpressions)) 
+            {
+                scintilla.SetKeywords(1, Target.NameExpressions);
+            }            
         }
 
         private void ApplyCSharpRecipe()

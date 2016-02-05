@@ -54,7 +54,7 @@ namespace GoodAI.Modules.Scripting
         {
             InputBranches = 1;
             Script = EXAMPLE_CODE;
-            m_scriptEngine = new MyCSharpEngine<MyDefaultMethods>(this);
+            ScriptEngine = new CSharpEngine<DefaultMethods>(this);
         }
 
         public override void UpdateMemoryBlocks()
@@ -174,11 +174,11 @@ namespace GoodAI.Modules.Scripting
 
         #region Compilation
 
-        internal IScriptingEngine<MyDefaultMethods> m_scriptEngine;
+        internal IScriptingEngine<DefaultMethods> ScriptEngine { get; set; }
 
         public override void Validate(MyValidator validator)
         {
-            m_scriptEngine.Compile(validator);
+            ScriptEngine.Compile(validator);
         }
         #endregion
 
@@ -199,13 +199,13 @@ namespace GoodAI.Modules.Scripting
             
             public override void Execute()
             {
-                if (Owner.m_scriptEngine.HasMethod(MyDefaultMethods.Init))
+                if (Owner.ScriptEngine.HasMethod(DefaultMethods.Init))
                 {
                     Owner.CopyInputBlocksToHost();
 
                     try
                     {
-                        Owner.m_scriptEngine.Run(MyDefaultMethods.Init, Owner);
+                        Owner.ScriptEngine.Run(DefaultMethods.Init, Owner);
                     }
                     catch (Exception e)
                     {
@@ -236,13 +236,13 @@ namespace GoodAI.Modules.Scripting
 
             public override void Execute()
             {              
-                if (Owner.m_scriptEngine.HasMethod(MyDefaultMethods.Execute))
+                if (Owner.ScriptEngine.HasMethod(DefaultMethods.Execute))
                 {
                     Owner.CopyInputBlocksToHost();
 
                     try
                     {
-                        Owner.m_scriptEngine.Run(MyDefaultMethods.Execute, Owner);
+                        Owner.ScriptEngine.Run(DefaultMethods.Execute, Owner);
                     }
                     catch (Exception e)
                     {

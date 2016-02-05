@@ -257,6 +257,10 @@
       <Label>Scripting</Label>
     </Node>
 
+    <Node type="GoodAI.Modules.Scripting.MyCSharpNodeGroup" CanBeAdded="true" BigIcon="csharp_group_big.png" SmallIcon="csharp_group.png">
+      <Label>Scripting</Label>
+    </Node>
+
     <Node type="GoodAI.Modules.Join.MyStackingNode" CanBeAdded="true" BigIcon="stacking_big.png" SmallIcon="stacking.png">
       <Label>Transformations</Label>
     </Node>
