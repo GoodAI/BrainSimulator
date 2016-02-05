@@ -961,6 +961,7 @@ namespace GoodAI.Modules.School.Worlds
                 m_window = new NativeWindow();
                 m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
                 m_context.MakeCurrent(m_window.WindowInfo);
+                m_context.LoadAll();
 
                 // Setup rendering texture
                 m_renderTextureHandle = (uint)GL.GenTexture();
