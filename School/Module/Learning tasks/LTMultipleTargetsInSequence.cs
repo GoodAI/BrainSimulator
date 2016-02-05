@@ -89,7 +89,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target = new GameObject(GameObjectType.None, GetNumberTargetImage(n), 0, 0);
                 WrappedWorld.AddGameObject(m_target);
 
+                m_target.Width = 20;
+                m_target.Height = 30;
+
                 GameObjectReferences.Add(m_target);                                                                     // Add the current GameObject to the vector of GameObject references 
+
+
 
                 PositionFree = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, m_target.GetGeometry().Size);  // Generate a random point where the corresponding GameObject doesn't cover any other GameObject
 

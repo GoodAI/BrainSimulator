@@ -41,8 +41,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
-            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.15f);
-            TSHints.Add(STEPS_FOR_ELLIPSE, 1000);
+            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 1.0f);
+            TSHints.Add(STEPS_FOR_ELLIPSE, 200);
             TSHints.Add(AVOIDING_AGENT, 0);
 
             TSProgression.Clear();                                              // Clearing TSProgression that was declared in LTApproach before filling custom one
@@ -116,7 +116,11 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             Trajectory = GetPointInEllipse(angle, ellipseRectangleRatio);   // Find the current coordinates to follow
-            MoveTowardsPoint(Trajectory.X, Trajectory.Y, movingVelocity);   // Move target towards the desired Trajectory
+
+            m_target.X = Trajectory.X;
+            m_target.Y = Trajectory.Y;
+
+            //MoveTowardsPoint(Trajectory.X, Trajectory.Y, movingVelocity);   // Move target towards the desired Trajectory
 
             if (avoidingAgent == 1)                                         // If avoidingAgent is required from the TSHints, compute additional moving step trying to avoid the agent
             {
@@ -135,6 +139,9 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void CreateTarget()
         {
             m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
+
+            m_target.Width = 30;
+            m_target.Height = 20;
 
             Point RandomPoint = new Point();
             float NewNumber = (float)m_rndGen.NextDouble();
@@ -157,14 +164,18 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Point ReturnResult = new Point();
 
-            float width = WrappedWorld.FOW_WIDTH * EllipseRatioSize;                             // Width of the rectangle that will contain the ellipse
-            float height = WrappedWorld.FOW_HEIGHT * EllipseRatioSize;                           // Height of the rectangle that will contain the ellipse
+            float width = WrappedWorld.POW_WIDTH * EllipseRatioSize;                             // Width of the rectangle that will contain the ellipse
+            float height = WrappedWorld.POW_HEIGHT * EllipseRatioSize;                           // Height of the rectangle that will contain the ellipse
 
-            float Cx = WrappedWorld.FOW_WIDTH / 2;                                               // X coordinate of the center of the rectangle
-            float Cy = WrappedWorld.FOW_HEIGHT / 2;                                              // Y coordinate of the center of the rectangle
+            float Cx = (WrappedWorld.FOW_WIDTH / 2) - (m_agent.Width / 2);                                               // X coordinate of the center of the rectangle
+            float Cy = (WrappedWorld.FOW_HEIGHT / 2) - (m_agent.Height / 2);                                             // Y coordinate of the center of the rectangle
 
             ReturnResult.X = (int)(Cx + (width / 2) * Math.Cos(angle * (Math.PI * 2)));   // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable angle)
             ReturnResult.Y = (int)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));  // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+
+
+            ReturnResult.X -= (m_target.Width / 2);
+            ReturnResult.Y -= (m_target.Height / 2);
 
             return ReturnResult;
 
