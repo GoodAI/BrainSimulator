@@ -149,7 +149,7 @@ namespace GoodAI.BrainSimulator.Forms
         private static string PrintBlockSize(MyAbstractMemoryBlock block)
         {
             return (block != null)
-                ? block.Dims.Print(printTotalSize: true, indicateComputedDim: true)
+                ? block.Dims.Print(printTotalSize: true)
                 : "?";
         }
 
@@ -157,22 +157,24 @@ namespace GoodAI.BrainSimulator.Forms
         {
             toolStrip.Enabled = listView.SelectedItems.Count > 0;
 
-            bool oneItemSelected = (listView.SelectedItems.Count == 1);
-            splitContainer.Panel2Collapsed = !oneItemSelected;
+            //bool oneItemSelected = (listView.SelectedItems.Count == 1);
+            //splitContainer.Panel2Collapsed = !oneItemSelected;
 
-            ShowCurrentBlockDimensions();
+            //ShowCurrentBlockDimensions();
         }
 
         private void ShowCurrentBlockDimensions(bool showWarning = false)
         {
+            return; // TODO(Premek): remove the whole thing (user-defined tensor dims) properly...
+
             if (listView.SelectedItems.Count < 1)
                 return;
 
             var block = listView.SelectedItems[0].Tag as MyAbstractMemoryBlock;
             if (block != null)
             {
-                dimensionsTextBox.Text = block.Dims.Print(indicateComputedDim: true);
-                ShowOrHideErrorInfo(showWarning ? block.Dims.LastSetWarning : "", isWarning: true);
+                //dimensionsTextBox.Text = block.Dims.Print(indicateComputedDim: true);
+                //ShowOrHideErrorInfo(showWarning ? block.Dims.LastSetWarning : "", isWarning: true);
             }
         }
 
@@ -238,6 +240,7 @@ namespace GoodAI.BrainSimulator.Forms
                 PrintBlockSize(listView.SelectedItems[0].Tag as MyAbstractMemoryBlock);
         }
 
+        /*
         private bool TrySetMemBlockDimensions()
         {
             var block = TryGetSelectedMemoryBlock();
@@ -258,6 +261,7 @@ namespace GoodAI.BrainSimulator.Forms
             ShowOrHideErrorInfo(block.Dims.LastSetWarning, isWarning: true);
             return true;
         }
+        */
 
         private void ShowOrHideErrorInfo(string info, bool isWarning = false)
         {
@@ -283,6 +287,7 @@ namespace GoodAI.BrainSimulator.Forms
             m_errorInfoShown = showInfo;
         }
 
+        /*
         private void dimensionsTextBox_Leave(object sender, EventArgs e)
         {
             if (!m_escapeOrEnterPressed)  // (Esc) => Don't set, (Enter) => Already tried.
@@ -321,5 +326,6 @@ namespace GoodAI.BrainSimulator.Forms
 
             dimensionsTextBox.Text = block.Dims.PrintSource();
         }
+        */
     }
 }

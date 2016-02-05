@@ -31,8 +31,6 @@ namespace CoreTests
                 MyProject project = runner.Project;
 
                 CheckDashboard(project);
-
-                CheckTensors(project);
             }
         }
 
@@ -75,23 +73,6 @@ namespace CoreTests
             Assert.NotNull(property);
 
             return property;
-        }
-
-        private static void CheckTensors(MyProject project)
-        {
-            TensorDimensions dimensions;
-
-            MyWorkingNode kwmNode = project.Network.GetChildNodeById(330) as MyWorkingNode;
-            dimensions = kwmNode.GetOutput(0).Dims;
-            Assert.Equal("*, 32", dimensions.ToString());
-
-            MyWorkingNode absoluteValue1 = project.Network.GetChildNodeById(411) as MyWorkingNode;
-            dimensions = absoluteValue1.GetOutput(0).Dims;
-            Assert.Equal("32, *", dimensions.ToString());
-
-            MyWorkingNode absoluteValue2 = project.Network.GetChildNodeById(413) as MyWorkingNode;
-            dimensions = absoluteValue2.GetOutput(0).Dims;
-            Assert.Equal("32, 32", dimensions.ToString());
         }
     }
 }

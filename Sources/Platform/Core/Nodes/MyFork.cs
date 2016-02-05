@@ -44,74 +44,86 @@ namespace GoodAI.Core.Nodes
         }        
 
         public void InitOutputs()
-        {          
-            if (Branches != null && Branches != String.Empty)
+        {
+            if (string.IsNullOrEmpty(Branches))
+                return;
+
+            string[] branchConf = Branches.Split(',');
+
+            if (branchConf.Length != OutputBranches)
             {
-                string[] branchConf = Branches.Split(',');
+                for (int i = 0; i < OutputBranches; i++)
+                {
+                    MyMemoryBlock<float> mb = GetOutput(i);
+                    MyMemoryManager.Instance.RemoveBlock(this, mb);
+                }
 
-                if (branchConf.Length != OutputBranches) {
+                OutputBranches = branchConf.Length;
 
-                    for (int i = 0; i < OutputBranches; i++)
-                    {
-                        MyMemoryBlock<float> mb = GetOutput(i);
-                        MyMemoryManager.Instance.RemoveBlock(this, mb);
-                    }
+                for (int i = 0; i < branchConf.Length; i++)
+                {
+                    MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+                    mb.Name = "Output_" + (i + 1);
+                    m_outputs[i] = mb;
+                }
+            }                               
 
-                    OutputBranches = branchConf.Length;
-
-                    for (int i = 0; i < branchConf.Length; i++)
-                    {
-                        MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-                        mb.Name = "Output_" + (i + 1);
-                        mb.Count = -1;
-                        m_outputs[i] = mb;
-                    }
-                }                               
-
-               UpdateMemoryBlocks();                         
-            }
+            UpdateMemoryBlocks();
         }
 
         private void UpdateOutputBlocks()
         {
-            if (Branches != null && Branches != String.Empty)
+            if (string.IsNullOrEmpty(Branches))
+                return;
+
+            IList<int> branchSizes = CalculateBranchSizes(Branches, InputSize);
+
+            for (int i = 0; i < branchSizes.Count; i++)
             {
-                string[] branchConf = Branches.Split(',');
-                int[] branchSizes = new int[OutputBranches];
+                GetOutput(i).Count = branchSizes[i];
+            }
+        }
 
-                List<int> stars = new List<int>();
-                int sum = 0;
-                for (int i = 0; i < branchConf.Length; i++)
+        // make internal for tests
+        internal static IList<int> CalculateBranchSizes(string branchConfig, int inputSize)
+        {
+            string[] branchConfigItems = branchConfig.Split(',');
+            if (branchConfigItems.Length == 0)
+                return new List<int>();
+
+            var branchSizes = new int[branchConfigItems.Length];
+
+            List<int> stars = new List<int>();
+            int sum = 0;
+            for (int i = 0; i < branchConfigItems.Length; i++)
+            {
+                if (string.Equals(branchConfigItems[i].Trim(), "*"))
                 {
-                    if (String.Equals(branchConf[i].Trim(), "*"))
-                    {
-                        stars.Add(i);
-                    }
-                    else
-                    {
-                        branchSizes[i] = int.Parse(branchConf[i], CultureInfo.InvariantCulture);
-                        sum += branchSizes[i];
-                    }
+                    stars.Add(i);
+                    branchSizes[i] = 0;
                 }
-
-                if (stars.Count > 0)
+                else
                 {
-                    //TODO fix for InputSize == 0, i.e. when a .brain file is loaded
-                    int starSize = (InputSize - sum) / stars.Count;
-                    int rest = InputSize - sum - starSize * stars.Count;
-
-                    for (int j = 0; j < stars.Count; j++)
-                    {
-                        branchSizes[stars[j]] = starSize;
-                    }
-                    branchSizes[stars[stars.Count - 1]] += rest;
-                }
-
-                for (int i = 0; i < branchConf.Length; i++)
-                {
-                    GetOutput(i).Count = branchSizes[i];
+                    branchSizes[i] = int.Parse(branchConfigItems[i], CultureInfo.InvariantCulture);
+                    sum += branchSizes[i];
                 }
             }
+
+            // ReSharper disable once InvertIf
+            if ((stars.Count > 0) && (inputSize > sum)) // inputSize == 0, i.e. when a .brain file is loaded
+            {
+                int starSize = (inputSize - sum)/stars.Count;
+                int reminder = inputSize - sum - starSize*stars.Count;
+
+                foreach (int starIndex in stars)
+                {
+                    branchSizes[starIndex] = starSize;
+                }
+
+                branchSizes[stars[stars.Count - 1]] += reminder;
+            }
+
+            return branchSizes;
         }
 
         public override void UpdateMemoryBlocks()
@@ -141,7 +153,7 @@ namespace GoodAI.Core.Nodes
                 validator.AssertError(GetOutput(i).Count > 0, this, "Invalid size of '" + GetOutput(i).Name + "'. Check 'Branches' setting.");
             }
 
-            validator.AssertError(totalOutputs == InputSize, this, "Sum of ouput sizes must be equal to the input size");
+            validator.AssertError(totalOutputs == InputSize, this, "Sum of output sizes must be equal to the input size");
         }
 
         public MyForkTask DoFork { get; private set; }

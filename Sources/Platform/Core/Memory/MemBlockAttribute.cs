@@ -7,6 +7,7 @@ using YAXLib;
 
 namespace GoodAI.Core.Memory
 {
+    // TODO(Premek): Remove class.
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public abstract class MemBlockAttribute
     {
