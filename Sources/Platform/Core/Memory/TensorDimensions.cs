@@ -7,11 +7,16 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.Core.Memory
 {
-    public struct TensorDimensions
+    public class TensorDimensions
     {
-        private readonly List<int> m_dims;
+        private readonly List<int> m_dims;  // TODO(Premek): use immutable collection!!
 
         private const int MaxDimensions = 100;  // ought to be enough for everybody
+
+        public TensorDimensions()
+        {
+            m_dims = null;  // This means default dimensions. TODO(Premek): provide default instance to save memory.
+        }
 
         public TensorDimensions(params int[] dimensions)
         {
@@ -20,7 +25,7 @@ namespace GoodAI.Core.Memory
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TensorDimensions))  // Can't compare value type with null.
+            if (!(obj is TensorDimensions))
                 return false;
 
             return Equals((TensorDimensions)obj);
