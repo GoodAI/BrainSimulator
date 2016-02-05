@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -31,6 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
+                WrappedWorld.CreateNonVisibleAgent();
                 CreateTarget();
             }
             else
@@ -41,26 +43,25 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            // We currently use ContinuousControl as the agent actuator.
-            // Should refactor to have just one block of actuators.
-            bool wasTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[0] != 0;
+            bool wasTargetDetected = SchoolWorld.ActionInput.Host[0] != 0;
             bool isTargetPresent = m_target != null;
             wasUnitSuccessful = (wasTargetDetected == isTargetPresent);
 
-            //MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
             return true;
         }
 
         protected void CreateTarget()
         {
-            m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
-            WrappedWorld.AddGameObject(m_target);
+            const int TARGET_SIZE = 32;
+            Size size = new Size(TARGET_SIZE, TARGET_SIZE);
+            Point location = WrappedWorld.RandomPositionInsidePow(m_rndGen, size);
+            m_target = WrappedWorld.CreateGameObject(location, GameObjectType.None, @"White10x10.png", size.Width, size.Height);
             // Plumber:
             //m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
             //m_target.Y = World.FOW_HEIGHT - m_target.Height;
             // Roguelike:
-            m_target.X = m_rndGen.Next(0, WrappedWorld.FOW_WIDTH - m_target.Width + 1);
-            m_target.Y = m_rndGen.Next(0, WrappedWorld.FOW_HEIGHT - m_target.Height + 1);
+            //m_target.X = m_rndGen.Next(0, WrappedWorld.POW_WIDTH - m_target.Width + 1);
+            //m_target.Y = m_rndGen.Next(0, WrappedWorld.POW_HEIGHT - m_target.Height + 1);
         }
     }
 

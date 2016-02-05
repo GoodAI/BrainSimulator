@@ -142,7 +142,7 @@ namespace GoodAI.Modules.School.LearningTasks
             return target;
         }
 
-        // True if the next example should be (guaranteed to be) positive?
+        // True if the next example should be (guaranteed to be) positive
         private bool GuaranteePositiveExample()
         {
             return m_rand.NextDouble() <= MIN_SHARE_OF_POSITIVE_EXAMPLES;
