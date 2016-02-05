@@ -51,7 +51,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 //random size
                 Size shapeSize = new Size(32, 32);
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
+                if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
                     int side = m_rndGen.Next(10, 48);
                     shapeSize = new Size(side, side);
@@ -59,21 +59,21 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 // random position
                 Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5f)
+                if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
                     shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
 
                 // random color
                 Color shapeColor = Color.White;
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5f)
+                if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1.0f)
                 {
                     shapeColor = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
                 }
 
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
 
-                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, Color.White, shapeSize);
+                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize);
             }
             else
             {
@@ -101,7 +101,6 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 wasUnitSuccessful = false;
             }
-            Console.WriteLine(wasUnitSuccessful);
             return true;
         }
 
