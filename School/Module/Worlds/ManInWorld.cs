@@ -484,7 +484,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// 
+        /// Adds game object with defined layer.
         /// </summary>
         /// <param name="item"></param>
         /// <param name="layer">

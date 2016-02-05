@@ -19,16 +19,19 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.IMAGE_NOISE, 0},
-                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
+                {TSHintAttributes.IS_VARIABLE_COLOR, 0},
+                {TSHintAttributes.IS_VARIABLE_SIZE, 0},
+                {TSHintAttributes.IS_VARIABLE_POSITION, 0},
                 {TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.5f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_POSITION, 1.0f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1.0f);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1.0f);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8);
 
             SetHints(TSHints);
@@ -59,6 +62,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5f)
                 {
                     shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
+                }
+
+                // random color
+                Color shapeColor = Color.White;
+                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 0.5f)
+                {
+                    shapeColor = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
                 }
 
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
