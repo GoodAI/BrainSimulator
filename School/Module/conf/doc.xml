@@ -112,7 +112,7 @@
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.AddGameObject(GoodAI.Modules.School.Common.GameObject,System.Int32)">
             <summary>
-            
+            Adds game object with defined layer.
             </summary>
             <param name="item"></param>
             <param name="layer">

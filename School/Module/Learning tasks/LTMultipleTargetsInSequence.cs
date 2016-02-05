@@ -69,14 +69,16 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
+            //WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
+
+            WrappedWorld.CreateAgent();
             m_agent = WrappedWorld.Agent;
 
             m_agent.X = WrappedWorld.FOW_WIDTH / 2;
             m_agent.Y = WrappedWorld.FOW_HEIGHT / 2;
         }
 
-        public void CreateTargets()
+        public void CreateTargets()                                                                                     // Create a number of targets and fill the list(GameObjectReferences) of references for the sequence indexing
         {
             Point PositionFree = new Point();
             currentIndex = 0;
@@ -95,7 +97,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.Y = PositionFree.Y;
             }
 
-            //MyLog.ERROR.WriteLine("Number of references created: " + GameObjectReferences.Count);
+            //MyLog.DEBUG.WriteLine("Number of references created: " + GameObjectReferences.Count);
         }
 
 
@@ -105,17 +107,19 @@ namespace GoodAI.Modules.School.LearningTasks
             switch (number)
             {
                 case 0:
-                    return "Number1_30x50.png";
+                    return "Number0_30x50.png";
                 case 1:
-                    return "Number2_30x50.png";
+                    return "Number1_30x50.png";
                 case 2:
-                    return "Number3_30x50.png";
+                    return "Number2_30x50.png";
                 case 3:
-                    return "Number4_30x50.png";
+                    return "Number3_30x50.png";
                 case 4:
+                    return "Number4_30x50.png";
+                case 5:
                     return "Number5_30x50.png";
                 default:
-                    return "Number1_30x50.png";
+                    return "Number0_30x50.png";
             }
         }
 
@@ -127,8 +131,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 // TODO: check if it's more appropriate having a delete function in ManInWorld
                 WrappedWorld.gameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
-                currentIndex++;
-                //m_stepsSincePresented = 0;
+                currentIndex++;                                                         // And now change the index (the index will denote a reference to the GameObject that needs to be reached next)
             }
         }
 
@@ -138,6 +141,7 @@ namespace GoodAI.Modules.School.LearningTasks
             // expect this method to be called once per simulation step
             m_stepsSincePresented++;
 
+            // Training unit is completed if the last index of the sequence is reached AND the last GameObject is reached
             if ((currentIndex == ((int)TSHints[SEQUENCE_LENGTH]) - 1) && (m_agent.DistanceTo(GameObjectReferences[currentIndex]) < 15))
             {
                 wasUnitSuccessful = true;
@@ -147,7 +151,7 @@ namespace GoodAI.Modules.School.LearningTasks
             //MyLog.DEBUG.WriteLine("StepsSincePresented: " + m_stepsSincePresented);
             //MyLog.DEBUG.WriteLine("LIMIT in TIMESTEPS: " + TSHints[TIMESTEPS_LIMIT]);
 
-            if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])
+            if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])                 // If the limit of timesteps is reached, declare the current training unit failed     
             {
                 wasUnitSuccessful = false;
                 return true;

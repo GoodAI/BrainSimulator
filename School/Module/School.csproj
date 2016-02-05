@@ -160,6 +160,9 @@
     <Content Include="res\PlumberWorld\Plumber24x28.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\SchoolWorldCommon\Number0_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\SchoolWorldCommon\Number1_30x50.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
