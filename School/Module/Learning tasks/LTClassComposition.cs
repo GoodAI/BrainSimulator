@@ -10,14 +10,13 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
-        private static readonly TSHintAttribute CARDINALITY_OF_SET = new TSHintAttribute("Cardinality of set","",TypeCode.Single,0,1); //check needed;
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving","",TypeCode.Single,0,1); //check needed;
 
         protected Random m_rndGen = new Random();
         protected bool m_positiveExamplePlaced;
         //private int m_numberOfObjects;
-        private List<Shape.Shapes> m_positiveExamples;
-        private List<Shape.Shapes> m_negativeExamples;
+        private List<Shape.Shapes> m_positiveExamples = new List<Shape.Shapes>();
+        private List<Shape.Shapes> m_negativeExamples = new List<Shape.Shapes>();
 
         public LTClassComposition() { }
 
@@ -26,50 +25,49 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.IMAGE_NOISE, 0},
-                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
-                {CARDINALITY_OF_SET, 2},
-                {IS_TARGET_MOVING, 0},
+                {TSHintAttributes.IS_VARIABLE_POSITION, 0},
+                {TSHintAttributes.IS_VARIABLE_COLOR, 0},
+                {TSHintAttributes.IS_VARIABLE_SIZE, 0},
+                {TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4f},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(IS_TARGET_MOVING, 1);;
+
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1.0f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_POSITION, 1.0f);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.3f);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 0.6f);
-            TSProgression.Add(CARDINALITY_OF_SET, 3);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f);
-            TSProgression.Add(CARDINALITY_OF_SET, 5);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1.0f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 6f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8f);
 
             SetHints(TSHints);
 
-            int numberOfObjects = (int) TSHints[CARDINALITY_OF_SET];
-
-            List<Shape.Shapes> positiveExamples = new List<Shape.Shapes>();
-            positiveExamples.Add(Shape.Shapes.Star);
-            positiveExamples.Add(Shape.Shapes.Circle);
-            positiveExamples.Add(Shape.Shapes.T);
-            positiveExamples.Add(Shape.Shapes.Tent);
-            positiveExamples.Add(Shape.Shapes.Mountains);
-            List<Shape.Shapes> negativeExamples = new List<Shape.Shapes>();
-            negativeExamples.Add(Shape.Shapes.DoubleRhombus);
-            negativeExamples.Add(Shape.Shapes.Pentagon);
-            negativeExamples.Add(Shape.Shapes.Rhombus);
-            negativeExamples.Add(Shape.Shapes.Square);
-            negativeExamples.Add(Shape.Shapes.Triangle);
-
-            m_positiveExamples = new List<Shape.Shapes>();
-            m_negativeExamples = new List<Shape.Shapes>();
-            for (int i = 0; i < numberOfObjects; i++)
-            {
-                m_positiveExamples.Add(positiveExamples[i]);
-                m_negativeExamples.Add(negativeExamples[i]);
-            }
             
+            m_positiveExamples.Add(Shape.Shapes.Star);
+            m_positiveExamples.Add(Shape.Shapes.Circle);
+            m_positiveExamples.Add(Shape.Shapes.T);
+            m_positiveExamples.Add(Shape.Shapes.Tent);
+            m_positiveExamples.Add(Shape.Shapes.Mountains);
+            
+            m_negativeExamples.Add(Shape.Shapes.DoubleRhombus);
+            m_negativeExamples.Add(Shape.Shapes.Pentagon);
+            m_negativeExamples.Add(Shape.Shapes.Rhombus);
+            m_negativeExamples.Add(Shape.Shapes.Square);
+            m_negativeExamples.Add(Shape.Shapes.Triangle);      
         }
 
         protected override void PresentNewTrainingUnit()
         {
+            int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS];
+            List<Shape.Shapes> positiveExamplesRed = new List<Shape.Shapes>();
+            List<Shape.Shapes> negativeExamplesRed = new List<Shape.Shapes>();
+            for (int i = 0; i < numberOfObjects / 2; i++)
+            {
+                positiveExamplesRed.Add(m_positiveExamples[i]);
+                negativeExamplesRed.Add(m_negativeExamples[i]);
+            }
+
             if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
                 RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
@@ -77,18 +75,19 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.CreateNonVisibleAgent();
 
                 Size size;
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .6f)
+                int standardSideSize =  WrappedWorld.POW_WIDTH / 10;
+                if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
-                    int a = 10 + m_rndGen.Next(10);
+                    int a = standardSideSize + m_rndGen.Next(standardSideSize);
                     size = new Size(a, a);
                 }
                 else
                 {
-                    size = new Size(15, 15);
+                    size = new Size(standardSideSize, standardSideSize);
                 }
 
                 Color color;
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .3)
+                if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1.0f)
                 {
                     color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 
@@ -99,7 +98,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
 
                 Point position;
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
+                if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
                     position = world.RandomPositionInsidePow(m_rndGen, size);
                 }
@@ -113,13 +112,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 Shape.Shapes shape;
                 if (m_positiveExamplePlaced)
                 {
-                    int randShapePointer = m_rndGen.Next(0, m_positiveExamples.Count);
-                    shape = m_positiveExamples[randShapePointer];
+                    int randShapePointer = m_rndGen.Next(0, positiveExamplesRed.Count);
+                    shape = positiveExamplesRed[randShapePointer];
                 }
                 else
                 {
-                    int randShapePointer = m_rndGen.Next(0, m_negativeExamples.Count);
-                    shape = m_negativeExamples[randShapePointer];
+                    int randShapePointer = m_rndGen.Next(0, negativeExamplesRed.Count);
+                    shape = negativeExamplesRed[randShapePointer];
                 }
 
                 WrappedWorld.CreateShape(position, shape, color, size);
