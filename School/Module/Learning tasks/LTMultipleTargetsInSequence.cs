@@ -23,6 +23,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public readonly TSHintAttribute SEQUENCE_LENGTH = new TSHintAttribute("Sequence length", "", TypeCode.Single, 0, 1);
         public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", TypeCode.Single, 0, 1);
+        public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Multiply coefficent", "", TypeCode.Single, 0, 1);
 
         List<GameObject> GameObjectReferences = new List<GameObject>();     // Create a vector of references to GameObjects, we will need the index for the sequence order
         public int currentIndex = 0;                                        // Represents current index of the sequence
@@ -39,34 +40,46 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSHints.Add(SEQUENCE_LENGTH, 1);
             TSHints.Add(TIMESTEPS_LIMIT, 500);                             // Training unit fails if the TIMESTEP_LIMIT is reached, this is used to avoid that the agent stands without moving
+            TSHints.Add(DISTANCE_BONUS_COEFFICENT, 3.0f);                  // Manhattan distance is calculated to estimate how many steps are needed to finish the sequence, DISTANCE_BONUS_COEFFICENT can be used to increase that number, if for example it's 2.0f then TIMESTEPS_LIMIT is (2 * EstimatedManahattanDistance)
 
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { SEQUENCE_LENGTH, 2 },
-                    { TIMESTEPS_LIMIT, 400 }
+                    { DISTANCE_BONUS_COEFFICENT, 3f }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { SEQUENCE_LENGTH, 3 },
-                    { TIMESTEPS_LIMIT, 400 }
+                    { DISTANCE_BONUS_COEFFICENT, 3f }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { SEQUENCE_LENGTH, 4 },
-                    { TIMESTEPS_LIMIT, 400 }
+                    { DISTANCE_BONUS_COEFFICENT, 2.5f }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { SEQUENCE_LENGTH, 5 },
-                    { TIMESTEPS_LIMIT, 350 }
+                    { DISTANCE_BONUS_COEFFICENT, 2.0f }
             });
-            
 
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { SEQUENCE_LENGTH, 5 },
+                    { DISTANCE_BONUS_COEFFICENT, 1.5f }
+            });
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { SEQUENCE_LENGTH, 5 },
+                    { DISTANCE_BONUS_COEFFICENT, 1.0f }
+            });
             SetHints(TSHints);
         }
 
@@ -89,8 +102,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            //WrappedWorld.CreateAgent(@"Agent.png", WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
-
             WrappedWorld.CreateAgent();
             m_agent = WrappedWorld.Agent;
 
@@ -104,25 +115,49 @@ namespace GoodAI.Modules.School.LearningTasks
             currentIndex = 0;
             GameObjectReferences.Clear();
 
+            int estimatedManhattanDistance = 0;
+            int CumulatedManhattanDistance = 0;
+
+            GameObject previousGameObject;
+            previousGameObject = m_agent;
+
             for (int n = 0; n < ((int)TSHints[SEQUENCE_LENGTH]); n++)                                                   // Generate a number of targets corresponding to the length of the sequence
             {
-                m_target = new GameObject(GameObjectType.None, GetNumberTargetImage(n), 0, 0);
+
+                m_target = new GameObject(GameObjectType.NonColliding, GetNumberTargetImage(n), 0, 0);
                 WrappedWorld.AddGameObject(m_target);
 
-                m_target.Width = 20;
-                m_target.Height = 30;
+                m_target.Width = 10;
+                m_target.Height = 15;
 
                 GameObjectReferences.Add(m_target);                                                                     // Add the current GameObject to the vector of GameObject references 
 
+                // PositionFree = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, m_target.GetGeometry().Size);  // Generate a random point where the corresponding GameObject doesn't cover any other GameObject
 
+                // The generated GameObjects should be close to the agent, close enough so that no objects are outside the screen while following the sequence
+                Rectangle r1 = new Rectangle();
+                r1.X = m_agent.X - (WrappedWorld.POW_WIDTH / 4);
+                r1.Y = m_agent.Y - (WrappedWorld.POW_HEIGHT / 4);
+                r1.Width = (WrappedWorld.POW_WIDTH / 2);
+                r1.Height = (WrappedWorld.POW_HEIGHT / 2);
 
-                PositionFree = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, m_target.GetGeometry().Size);  // Generate a random point where the corresponding GameObject doesn't cover any other GameObject
+                PositionFree = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, r1);
 
                 m_target.X = PositionFree.X;                                                                            // Position target in the free position
                 m_target.Y = PositionFree.Y;
+
+                estimatedManhattanDistance = Math.Abs(GameObjectReferences[n].X - previousGameObject.X) + Math.Abs(GameObjectReferences[n].Y - previousGameObject.Y);
+                estimatedManhattanDistance /= 4;                                                                        // Assuming that agent travels using 1 actuator at a time, (In such case it can move max 4 pixels per step, otherwise it's 8)
+                CumulatedManhattanDistance += estimatedManhattanDistance;
+
+                //MyLog.DEBUG.WriteLine("Calculating Manhattan distance between previous Object X,Y: " + previousGameObject.X + ", " + previousGameObject.Y + " AND " + GameObjectReferences[n].X + ", " + GameObjectReferences[n].Y + " := " + estimatedManhattanDistance);
+
+                previousGameObject = GameObjectReferences[n];
             }
 
-            //MyLog.DEBUG.WriteLine("Number of references created: " + GameObjectReferences.Count);
+            //MyLog.DEBUG.WriteLine("Final estimatedManhattan Distance: " + CumulatedManhattanDistance);
+
+            TSHints[TIMESTEPS_LIMIT] = CumulatedManhattanDistance * TSHints[DISTANCE_BONUS_COEFFICENT];
         }
 
 
@@ -151,10 +186,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public void UpdateSequenceState()
         {
+
+            //MyLog.ERROR.WriteLine("m_stepsSincePresented: " + m_stepsSincePresented + ", LIMIT: " + TSHints[TIMESTEPS_LIMIT]);
+
             float dist = m_agent.DistanceTo(GameObjectReferences[currentIndex]);        // Check if the agent reached the GameObject corresponding to the current index of the sequence, this is done by reference
             if (dist < 15)
             {
-                // TODO: check if it's more appropriate having a delete function in ManInWorld
                 WrappedWorld.gameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
                 currentIndex++;                                                         // And now change the index (the index will denote a reference to the GameObject that needs to be reached next)
             }

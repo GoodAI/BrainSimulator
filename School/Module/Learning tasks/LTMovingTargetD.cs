@@ -24,28 +24,27 @@ namespace GoodAI.Modules.School.LearningTasks
         int movingVelocity;                                             // Defined in pixels
         int avoidingAgent;
 
-
-        private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity","",TypeCode.Single,0,1);                   //check needed;
-        private readonly TSHintAttribute ELLIPSE_RECTANGLE_RATIO = new TSHintAttribute("Ellipse Rectangle Ratio","",TypeCode.Single,0,1);   //check needed;
-        private readonly TSHintAttribute STEPS_FOR_ELLIPSE = new TSHintAttribute("Steps for ellipse", "", TypeCode.Single, 0, 1);           //check needed;
-        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not","",TypeCode.Single,0,1);           //check needed;
+        private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity","",TypeCode.Single,0,1);                   
+        private readonly TSHintAttribute ELLIPSE_RECTANGLE_RATIO = new TSHintAttribute("Ellipse Rectangle Ratio","",TypeCode.Single,0,1);   
+        private readonly TSHintAttribute STEPS_FOR_ELLIPSE = new TSHintAttribute("Steps for ellipse", "", TypeCode.Single, 0, 1);           
+        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not","",TypeCode.Single,0,1);           
 
         public LTMovingTargetD(SchoolWorld w)
             : base(w)
         {
 
-            TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                   // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
+            TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                    // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             //TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] = 0.3f;
 
-            TSHints[DISTANCE_BONUS_COEFFICENT] = 4f;                             // Coefficent of 4 means that the available steps to reach the target are "initialDistance (between agent and target) * 4" (for more info check LTApproach)
+            TSHints[DISTANCE_BONUS_COEFFICENT] = 2f;                             // Coefficent of 4 means that the available steps to reach the target are "initialDistance (between agent and target) * 4" (for more info check LTApproach)
 
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
-            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.8f);
-            TSHints.Add(STEPS_FOR_ELLIPSE, 200);
+            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.5f);
+            TSHints.Add(STEPS_FOR_ELLIPSE, 700);
             TSHints.Add(AVOIDING_AGENT, 0);
 
-            TSProgression.Clear();                                              // Clearing TSProgression that was declared in LTApproach before filling custom one
+            TSProgression.Clear();                                               // Clearing TSProgression that was declared in LTApproach before filling custom one
 
             TSProgression.Add(TSHints.Clone());
 
@@ -53,7 +52,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.5f },
-                    { STEPS_FOR_ELLIPSE, 700 },
+                    { STEPS_FOR_ELLIPSE, 650 },
             });
 
             TSProgression.Add(
@@ -137,11 +136,6 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        public override bool DidTrainingUnitFail()
-        {
-            return false;
-        }
-
 
         public override void CreateTarget()
         {
@@ -188,6 +182,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
+        /*
         public void MoveTowardsPoint(int x, int y, int velocity)        // Given a point, the target moves towards it using steps of settable length in pixels (velocity)
         {
             // At each step, the target can move only on 1 axis, so choose the axis depending on the distances
@@ -214,7 +209,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
             }
         }
-
+        */
 
         public void MoveAwayFromAgentStep(int velocity)
         {
