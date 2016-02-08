@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Worlds;
+using System;
 using System.Linq;
 
 namespace GoodAI.Modules.School.Common
@@ -20,6 +21,8 @@ namespace GoodAI.Modules.School.Common
 
         void UpdateState();
         void HandlePresentNewTrainingUnit();
+
+        Type RequiredWorld { get; set; }
     }
 
     /// <summary>
@@ -94,6 +97,8 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
+        public Type RequiredWorld { get; set; }
+
         // Implement to manage challenge levels and training set hints
         protected virtual void UpdateLevel()
         {
@@ -117,13 +122,13 @@ namespace GoodAI.Modules.School.Common
 
         public virtual bool DidAbilityFail
         {
-            get 
+            get
             {
                 if (TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS))
-                    return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS]; 
+                    return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS];
                 else
                     return false;
-             }
+            }
         }
 
         public virtual bool IsAbilityLearned

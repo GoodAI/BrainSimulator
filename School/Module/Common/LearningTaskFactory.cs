@@ -41,6 +41,11 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
+        public static ILearningTask CreateLearningTask(Type taskType)
+        {
+            return (ILearningTask)Activator.CreateInstance(taskType);
+        }
+
         public static ILearningTask CreateLearningTask(Type learningTaskType, SchoolWorld w)
         {
             //ConstructorInfo c = learningTaskType.GetConstructor(new[] { typeof(SchoolWorld) });

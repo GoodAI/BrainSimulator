@@ -58,6 +58,12 @@ namespace GoodAI.Modules.School.Common
             TaskOrder.Add(task);
         }
 
+        public void Add(SchoolCurriculum curr)
+        {
+            foreach (ILearningTask task in curr)
+                Add(task);
+        }
+
         public void AddLearningTask(ILearningTask task, Type worldType)
         {
             // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
