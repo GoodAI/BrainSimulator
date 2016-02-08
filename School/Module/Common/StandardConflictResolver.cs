@@ -28,9 +28,10 @@ namespace GoodAI.Modules.School.Common
             // both objects are movable
             if (mgo2 != null)
             {
+                // TODO : Recheck this code (cases where both objects are movable) for future functionality
+                SetPinballReaction(mgo1, o2);
                 if (mgo2.type == GameObjectType.Enemy)
                 {
-                    // TODO
                 }
                 return;
             }
