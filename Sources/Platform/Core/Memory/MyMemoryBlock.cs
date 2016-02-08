@@ -113,7 +113,7 @@ namespace GoodAI.Core.Memory
 
         public MyMemoryBlock()
         {
-            Dims = new TensorDimensions();
+            Dims = TensorDimensions.Empty;
 
             MinValueHint = float.NegativeInfinity;
             MaxValueHint = float.PositiveInfinity;
