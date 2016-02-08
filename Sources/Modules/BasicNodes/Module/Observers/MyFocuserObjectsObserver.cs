@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using GoodAI.Core.Memory;
 using YAXLib;
 
 namespace GoodAI.Modules.Observers
@@ -34,7 +35,7 @@ namespace GoodAI.Modules.Observers
         protected override void Execute()
         {
             m_kernel.SetupExecution(Target.InputSize);
-            m_kernel.Run(Target.Input, (int)MyMemoryBlockObserver.RenderingMethod.GrayScale, (int)MyMemoryBlockObserver.RenderingScale.Linear,
+            m_kernel.Run(Target.Input, (int)RenderingMethod.GrayScale, (int)MyMemoryBlockObserver.RenderingScale.Linear,
                 0, 1.0f, VBODevicePointer, Target.Input.Count);
         }        
 

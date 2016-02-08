@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using GoodAI.TypeMapping;
 
 namespace GoodAI.Core.Memory
 {
@@ -21,6 +22,7 @@ namespace GoodAI.Core.Memory
         public virtual MyNode Owner { get; set; }
         public abstract int ColumnHint { get; set; }
         public abstract TensorDimensions Dims { get; set; }
+        public IMemoryBlockMetadata Metadata { get; private set; }
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
 
@@ -54,6 +56,12 @@ namespace GoodAI.Core.Memory
         public abstract void Fill(byte[] srcBuffer);
 
         public abstract void GetValueAt<T>(ref T value, int index);
+
+        public MyAbstractMemoryBlock()
+        {
+            // TODO(HonzaS): Dependency injection.
+            Metadata = TypeMap.GetInstance<IMemoryBlockMetadata>();
+        }
     }
 
     public class MyMemoryBlock<T> : MyAbstractMemoryBlock where T : struct
