@@ -36,12 +36,12 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                    // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             //TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] = 0.3f;
 
-            TSHints[DISTANCE_BONUS_COEFFICENT] = 2f;                             // Coefficent of 4 means that the available steps to reach the target are "initialDistance (between agent and target) * 4" (for more info check LTApproach)
+            TSHints[DISTANCE_BONUS_COEFFICENT] = 3f;                            // Coefficent of 4 means that the available steps to reach the target are "initialDistance (between agent and target) * 4" (for more info check LTApproach)
 
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
-            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.5f);
-            TSHints.Add(STEPS_FOR_ELLIPSE, 700);
+            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.55f);
+            TSHints.Add(STEPS_FOR_ELLIPSE, 600);
             TSHints.Add(AVOIDING_AGENT, 0);
 
             TSProgression.Clear();                                               // Clearing TSProgression that was declared in LTApproach before filling custom one
@@ -51,15 +51,15 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.5f },
-                    { STEPS_FOR_ELLIPSE, 650 },
+                    { ELLIPSE_RECTANGLE_RATIO, 0.55f },
+                    { STEPS_FOR_ELLIPSE, 600 },
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.5f },
-                    { STEPS_FOR_ELLIPSE, 600 }
+                    { ELLIPSE_RECTANGLE_RATIO, 0.55f },
+                    { STEPS_FOR_ELLIPSE, 500 }
             });
 
             TSProgression.Add(
@@ -73,7 +73,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.7f },
-                    { STEPS_FOR_ELLIPSE, 400 }
+                    { STEPS_FOR_ELLIPSE, 300 }
             });
 
 
@@ -81,14 +81,14 @@ namespace GoodAI.Modules.School.LearningTasks
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.7f },
-                    { STEPS_FOR_ELLIPSE, 300 }
+                    { STEPS_FOR_ELLIPSE, 200 }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.8f },
-                    { STEPS_FOR_ELLIPSE, 200 }
+                    { STEPS_FOR_ELLIPSE, 100 }
             });
 
 
@@ -97,7 +97,8 @@ namespace GoodAI.Modules.School.LearningTasks
                     { MOVING_VELOCITY, 4 },
                     { ELLIPSE_RECTANGLE_RATIO, 0.65f },
                     { STEPS_FOR_ELLIPSE, 1000 },
-                    { AVOIDING_AGENT, 1 }
+                    { AVOIDING_AGENT, 1 },
+                    { DISTANCE_BONUS_COEFFICENT, 7f }
             });
 
             SetHints(TSHints);
@@ -114,23 +115,26 @@ namespace GoodAI.Modules.School.LearningTasks
 
             // The movement of the moving target is circular, and this circular movement is represented by an ellipse inside a rectangle (the Screen)           
 
-            angle += (float)(1f) / stepsForEllipse;                         // Increase the angle (which will produce the coordinates that will be used to generate the point to move towards to)
+                angle += (float)(1f) / stepsForEllipse;                         // Increase the angle (which will produce the coordinates that will be used to generate the point to move towards to)
 
-            if (angle > 1f)
-            {
-                angle = 0;
-            }
+                if (angle > 1f)
+                {
+                    angle = 0;
+                }
 
-            Trajectory = GetPointInEllipse(angle, ellipseRectangleRatio);   // Find the current coordinates to follow
+                Trajectory = GetPointInEllipse(angle, ellipseRectangleRatio);   // Find the current coordinates to follow
 
-            m_target.X = Trajectory.X;
-            m_target.Y = Trajectory.Y;
+                if (avoidingAgent == 0)
+                {
+                    m_target.X = Trajectory.X;
+                    m_target.Y = Trajectory.Y;
+                }
 
             //MoveTowardsPoint(Trajectory.X, Trajectory.Y, movingVelocity);   // Move target towards the desired Trajectory
 
             if (avoidingAgent == 1)                                         // If avoidingAgent is required from the TSHints, compute additional moving step trying to avoid the agent
             {
-                MoveAwayFromAgentStep(movingVelocity - 1);
+                MoveAwayFromAgentStep(2);
             }
 
         }
@@ -161,18 +165,18 @@ namespace GoodAI.Modules.School.LearningTasks
         // angle varies from 0 to 360 degrees, but it's in radians, the range is from 0 to 1 (2Pi)
         // For details: https://en.wikipedia.org/wiki/Ellipse#Parametric_form_in_canonical_position
 
-        public Point GetPointInEllipse(float angle, float EllipseRatioSize)               // angle ranges from 0 to 1 (2Pi), EllipseRatioSize ranges from 0 to 1  (1 being the biggest ellipse inside the screen)
+        public Point GetPointInEllipse(float angle, float EllipseRatioSize)                     // angle ranges from 0 to 1 (2Pi), EllipseRatioSize ranges from 0 to 1  (1 being the biggest ellipse inside the screen)
         {
             Point ReturnResult = new Point();
 
-            float width = WrappedWorld.POW_WIDTH * EllipseRatioSize;                             // Width of the rectangle that will contain the ellipse
-            float height = WrappedWorld.POW_HEIGHT * EllipseRatioSize;                           // Height of the rectangle that will contain the ellipse
+            float width = WrappedWorld.POW_WIDTH * EllipseRatioSize;                            // Width of the rectangle that will contain the ellipse
+            float height = WrappedWorld.POW_HEIGHT * EllipseRatioSize;                          // Height of the rectangle that will contain the ellipse
 
-            float Cx = (WrappedWorld.FOW_WIDTH / 2) - (m_agent.Width / 2);                                               // X coordinate of the center of the rectangle
-            float Cy = (WrappedWorld.FOW_HEIGHT / 2) - (m_agent.Height / 2);                                             // Y coordinate of the center of the rectangle
+            float Cx = (WrappedWorld.FOW_WIDTH / 2) - (m_agent.Width / 2);                      // X coordinate of the center of the rectangle
+            float Cy = (WrappedWorld.FOW_HEIGHT / 2) - (m_agent.Height / 2);                    // Y coordinate of the center of the rectangle
 
-            ReturnResult.X = (int)(Cx + (width / 2) * Math.Cos(angle * (Math.PI * 2)));   // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable angle)
-            ReturnResult.Y = (int)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));  // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+            ReturnResult.X = (int)(Cx + (width / 2) * Math.Cos(angle * (Math.PI * 2)));         // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+            ReturnResult.Y = (int)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));        // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
 
 
             ReturnResult.X -= (m_target.Width / 2);
