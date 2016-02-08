@@ -57,8 +57,6 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.FreezeWorld(true);
 
-            WrappedWorld.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1 ? true : false;
-
             CreateAgent();
             CreateTarget();
         }

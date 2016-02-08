@@ -50,11 +50,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             WrappedWorld.CreateNonVisibleAgent();
 
-            if (TSHints[TSHintAttributes.IMAGE_NOISE] >= 1)
-            {
-                WrappedWorld.IsImageNoise = true;
-            }
-
             m_appears = LearningTaskHelpers.FlipCoin(m_rndGen);
             if (!m_appears) return;
 

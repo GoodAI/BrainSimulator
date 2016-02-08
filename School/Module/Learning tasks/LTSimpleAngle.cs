@@ -50,8 +50,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             m_agent = WrappedWorld.CreateNonVisibleAgent();
 
-            WrappedWorld.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1 ? true : false;
-
             Size size;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
