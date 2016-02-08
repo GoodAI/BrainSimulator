@@ -119,6 +119,15 @@ namespace GoodAI.Modules.School.Common
             return rndGen.Next(0, 2) == 1;
         }
 
+        public static float GetRandomGaussian(Random rndGen)
+        {
+            float u1 = Convert.ToSingle(rndGen.NextDouble()); //these are uniform(0,1) random doubles
+            float u2 = Convert.ToSingle(rndGen.NextDouble()); //these are uniform(0,1) random doubles
+            float randStdNormal = Convert.ToSingle(Math.Sqrt(-2.0 * Math.Log(u1)) *
+                         Math.Sin(2.0 * Math.PI * u2)); //random normal(0,1)
+            return randStdNormal;
+        }
+
         public static void RandomizeColor(ref Color color, Random rndGen)
         {
             // Colors are uniformly distributed in either of two corners in
