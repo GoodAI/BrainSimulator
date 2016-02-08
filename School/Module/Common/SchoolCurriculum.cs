@@ -1,6 +1,5 @@
 ﻿using GoodAI.Modules.School.LearningTasks;
 using GoodAI.Modules.School.Worlds;
-using GoodAI.School.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -78,15 +77,7 @@ namespace GoodAI.Modules.School.Common
 
         public void AddLearningTask(SchoolWorld world, Type learningTaskType)
         {
-            Type baseClass;
-            baseClass = learningTaskType;
-            do
-            {
-                baseClass = baseClass.BaseType;
-            }
-            while (baseClass.GetGenericArguments().Length == 0);
-
-            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), baseClass.GetGenericArguments()[0]);
+            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), LearningTaskFactory.GetGenericType(learningTaskType));
         }
     }
 
@@ -101,7 +92,7 @@ namespace GoodAI.Modules.School.Common
                 case CurriculumType.TrainingCurriculum:
                     curriculum.AddLearningTask(world, typeof(LTMovingTargetD));
                     break;
-                
+
                 case CurriculumType.TetrisCurriculum:
                     curriculum.AddLearningTask(world, typeof(LTTetrisTest));
                     break;

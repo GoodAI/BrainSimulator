@@ -1,5 +1,4 @@
-﻿using GoodAI.Modules.School.LearningTasks;
-using GoodAI.Modules.School.Worlds;
+﻿using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +45,7 @@ namespace GoodAI.Modules.School.Common
         {
             //ConstructorInfo c = learningTaskType.GetConstructor(new[] { typeof(SchoolWorld) });
             //return (ILearningTask)c.Invoke(new[] { w });
-            return (ILearningTask) Activator.CreateInstance(learningTaskType, w);
+            return (ILearningTask)Activator.CreateInstance(learningTaskType, w);
         }
 
         public static ILearningTask CreateLearningTask(Type taskType, Type worldType)
@@ -65,11 +64,23 @@ namespace GoodAI.Modules.School.Common
             return task;
         }
 
+        public static Type GetGenericType(Type taskType)
+        {
+            Type baseClass = taskType;
+            do
+            {
+                baseClass = baseClass.BaseType;
+            }
+            while (baseClass.GetGenericArguments().Length == 0);
+
+            return baseClass.GetGenericArguments()[0];
+        }
+
         public static List<Type> GetSupportedWorlds(Type taskType)
         {
             //TODO: check multi-level inheritance if there will be any in future
             // get generic parameter
-            Type genericType = taskType.BaseType.GetGenericArguments()[0];
+            Type genericType = GetGenericType(taskType);
             // look up all derived classes of this type
             List<Type> results = Assembly.GetAssembly(typeof(SchoolWorld))
                 .GetTypes()
