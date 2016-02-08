@@ -92,15 +92,25 @@ namespace GoodAI.Core.Memory
         {
             get
             {
-                if ((m_dims == null) && (index == 0))
-                    return 0;  // we pretend we have one dimension of size 0
+                if (m_dims == null)
+                {
+                    if (index == 0)
+                        return 0;  // We pretend we have one dimension of size 0.
+
+                    throw GetIndexOutOfRangeException(index, 0);
+                }
 
                 if (index >= m_dims.Count)
-                    throw new IndexOutOfRangeException(string.Format(
-                        "Index {0} is greater than max index {1}.", index, m_dims.Count - 1));
+                    throw GetIndexOutOfRangeException(index, m_dims.Count - 1);
 
                 return m_dims[index];
             }
+        }
+
+        private static IndexOutOfRangeException GetIndexOutOfRangeException(int index, int maxIndex)
+        {
+            return new IndexOutOfRangeException(string.Format(
+                "Index {0} is greater than max index {1}.", index, maxIndex));
         }
 
         public string Print(bool printTotalSize = false)
@@ -122,7 +132,7 @@ namespace GoodAI.Core.Memory
             transposed[0] = m_dims[1];
             transposed[1] = m_dims[0];
 
-            for (int i = 2; i < Rank; i++)
+            for (var i = 2; i < Rank; i++)
                 transposed[i] = m_dims[i];
 
             return new TensorDimensions(transposed);
