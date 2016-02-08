@@ -1004,7 +1004,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private void SelectWorldInWorldList(MyWorld world)
+        public void SelectWorldInWorldList(MyWorld world)
         {
             if (Settings.Default.ToolBarNodes == null)
             {
