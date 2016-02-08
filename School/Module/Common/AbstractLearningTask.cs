@@ -1,5 +1,7 @@
 ﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Worlds;
+using System.Linq;
 
 namespace GoodAI.Modules.School.Common
 {
@@ -160,6 +162,15 @@ namespace GoodAI.Modules.School.Common
                     else
                         CurrentNumberOfSuccesses = 0;
                     CurrentNumberOfAttempts++;
+
+                    MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                        this.GetType().ToString().Split(new[] { '.' }).Last() +
+                        " unit ends with result: " +
+                        (wasUnitSuccessful ? "succes" : "fail") +
+                        ". " +
+                        CurrentNumberOfSuccesses + " succesful attepts in row, " +
+                        NumberOfSuccessesRequired + " required."
+                        );
                 }
             }
         }
