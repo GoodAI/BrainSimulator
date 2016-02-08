@@ -1,14 +1,15 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
-        protected Shape m_target;
-        private MovableGameObject m_agent;
+        protected GameObject m_target;
+        protected Shape.Shapes m_target_type;
 
         public LTDetectShapeColor() { }
 
@@ -17,8 +18,8 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.IMAGE_NOISE, 0 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
-                { TSHintAttributes.IS_VARIABLE_SIZE, 0 }
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
@@ -30,19 +31,32 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
-            CreateAgent();
+            WrappedWorld.CreateNonVisibleAgent();
 
+             // wtih Pr=.5 show object
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
-                if (LearningTaskHelpers.FlipCoin(m_rndGen))
+                //random size
+                Size shapeSize = new Size(32, 32);
+                if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
-                    CreateTarget(Shape.Shapes.Circle);
+                    int side = m_rndGen.Next(10, 48);
+                    shapeSize = new Size(side, side);
                 }
-                else
+
+                // random position
+                Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
+                if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
-                    CreateTarget(Shape.Shapes.Square);
+                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
                 }
-                SetTargetColor();
+
+                // random color
+                Color shapeColor = LearningTaskHelpers.FlipCoin(m_rndGen) ? Color.Cyan : Color.Yellow;
+
+                m_target_type = LearningTaskHelpers.FlipCoin(m_rndGen) ? Shape.Shapes.Circle : Shape.Shapes.Square;
+
+                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize);
             }
             else
             {
@@ -50,16 +64,10 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-        protected virtual void SetTargetColor()
-        {
-            m_target.isBitmapAsMask = true;
-            LearningTaskHelpers.RandomizeColor(ref m_target.maskColor, m_rndGen);
-        }
-
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            bool wasCircleTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[0] != 0;
-            bool wasSquareTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[1] != 0;
+            bool wasCircleTargetDetected = WrappedWorld.Controls.Host[(int)Shape.Shapes.Circle] != 0;
+            bool wasSquareTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[(int)Shape.Shapes.Square] != 0;
 
             // both target detected
             if (wasCircleTargetDetected && wasSquareTargetDetected)
@@ -84,101 +92,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 return true;
             }
 
-            wasUnitSuccessful = (wasCircleTargetDetected && m_target.ShapeType == Shape.Shapes.Circle ||
-                wasSquareTargetDetected && m_target.ShapeType == Shape.Shapes.Square);
+            wasUnitSuccessful = (wasCircleTargetDetected && m_target_type == Shape.Shapes.Circle ||
+                wasSquareTargetDetected && m_target_type == Shape.Shapes.Square);
 
             GoodAI.Core.Utils.MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
             return true;
         }
 
-        protected void CreateAgent()
-        {
-            WrappedWorld.CreateAgent(null, 0, 0);
-            m_agent = WrappedWorld.Agent;
-            // center the agent
-            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = WrappedWorld.FOW_HEIGHT - m_agent.Height;
-        }
-
-        protected void CreateTarget(Shape.Shapes shape)
-        {
-            m_target = new Shape(shape, 0, 0);
-            WrappedWorld.AddGameObject(m_target);
-            m_target.X = m_rndGen.Next(m_agent.X - WrappedWorld.POW_WIDTH / 2, m_agent.X + WrappedWorld.POW_WIDTH / 2 - m_target.Width + 1);
-            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] > 0)
-            {
-                double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
-                m_target.Height = (int)(resizeRatio * m_target.Height);
-                m_target.Width = (int)(resizeRatio * m_target.Width);
-            }
-
-            m_target.X = m_rndGen.Next(m_agent.X - WrappedWorld.POW_WIDTH / 2, m_agent.X + WrappedWorld.POW_WIDTH / 2 - m_target.Width + 1);
-            m_target.Y = WrappedWorld.FOW_HEIGHT - m_target.Height;
-        }
-
     }
 
-    /*
-        public class RoguelikeWorldWADetectShapeColor : AbstractWADetectShapeColor
-        {
-            private Worlds m_w;
-            private MovableGameObject m_agent;
-
-            private string GetShapeAddr(Shape.Shapes shape)
-            {
-                switch (shape)
-                {
-                    case Shape.Shapes.Circle:
-                        return @"WhiteCircle50x50.png";
-                    case Shape.Shapes.Square:
-                        return @"White10x10.png";
-                }
-                throw new ArgumentException("Unknown shape");
-            }
-
-            protected override AbstractSchoolWorld World
-            {
-                get
-                {
-                    return m_w;
-                }
-            }
-
-            protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
-            {
-                m_w = w as RoguelikeWorld;
-                m_w.ClearWorld();
-                if (trainingSetHints[TSHintAttributes.NOISE] > 0)
-                {
-                    m_w.IsImageNoise = true;
-                }
-                CreateAgent();
-            }
-
-            protected override void CreateTarget(TrainingSetHints trainingSetHints, Shape.Shapes shape)
-            {
-                m_target = new Shape(shape, 0, 0);
-                m_w.AddGameObject(m_target);
-
-                if (trainingSetHints[TSHintAttributes.VARIABLE_SIZE] > 0)
-                {
-                    double resizeRatio = m_rndGen.NextDouble() * 3 + 1.0d;
-                    m_target.Height = (int)(resizeRatio * m_target.Height);
-                    m_target.Width = (int)(resizeRatio * m_target.Width);
-                }
-
-                m_target.X = m_rndGen.Next(0, m_w.POW_WIDTH - m_target.Width + 1);
-                m_target.Y = m_rndGen.Next(0, m_w.POW_HEIGHT - m_target.Height + 1);
-            }
-
-            protected void CreateAgent()
-            {
-                m_w.CreateAgent(null, 0, 0);
-                m_agent = m_w.Agent;
-                // center the agent
-                m_agent.X = m_w.POW_WIDTH / 2 - m_agent.Width / 2;
-                m_agent.Y = m_w.POW_HEIGHT / 2 - m_agent.Height / 2;
-            }
-        }
-     */
 }
