@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace GoodAI.Core.Memory
 {
     public class TensorDimensions
     {
-        private readonly List<int> m_dims;  // TODO(Premek): use immutable collection!!
+        private readonly IImmutableList<int> m_dims;
 
         private const int MaxDimensions = 100;  // ought to be enough for everybody
 
@@ -136,22 +137,22 @@ namespace GoodAI.Core.Memory
             return new TensorDimensions(columnHint, count/columnHint);
         }
 
-        private static List<int> ProcessDimensions(IEnumerable<int> dimensions)
+        private static IImmutableList<int> ProcessDimensions(IEnumerable<int> dimensions)
         {
-            var newDimensions = new List<int>();
+            ImmutableList<int>.Builder newDimensionsBuilder = ImmutableList.CreateBuilder<int>();
 
             foreach (int item in dimensions)
             {
                 if ((item <= 0))
                     throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
 
-                newDimensions.Add(item);
+                newDimensionsBuilder.Add(item);
 
-                if (newDimensions.Count > MaxDimensions)
+                if (newDimensionsBuilder.Count > MaxDimensions)
                     throw new InvalidDimensionsException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
             }
 
-            return newDimensions;
+            return newDimensionsBuilder.ToImmutable();
         }
     }
 }
