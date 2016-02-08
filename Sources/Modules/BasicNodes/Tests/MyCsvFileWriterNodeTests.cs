@@ -15,6 +15,8 @@ using GoodAI.Modules.Testing;
 using Xunit;
 using Xunit.Sdk;
 using GoodAI.Modules.Common;
+using GoodAI.Platform.Core.Configuration;
+using GoodAI.TypeMapping;
 
 namespace BasicNodesTests
 {
@@ -24,6 +26,13 @@ namespace BasicNodesTests
 
         private AutoResetEvent m_continueEvent = new AutoResetEvent(false);
         private string m_outputFileFullPath;
+        private MyValidator m_validator;
+
+        public MyCsvFileWriterNodeTests()
+        {
+            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
+            m_validator = TypeMap.GetInstance<MyValidator>();
+        }
 
         /// <summary>
         /// When the simulation is paused or stopped, the handle should be released so that the file can be modified.
@@ -40,7 +49,7 @@ namespace BasicNodesTests
 
             string projectPath = directory + fileName;
 
-            var simulation = new MyLocalSimulation();
+            var simulation = TypeMap.GetInstance<MySimulation>();
 
             // TODO(HonzaS): This should not be required!
             // The referenced assemblies get loaded only if a Type is required here. But since the serializer

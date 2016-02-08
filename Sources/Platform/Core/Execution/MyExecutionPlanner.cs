@@ -15,7 +15,8 @@ namespace GoodAI.Core.Execution
 
     public interface IMyExecutionPlanner
     {
-        MyExecutionPlan CreateExecutionPlan(MyProject project);        
+        MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> initNodes = null);
+        MyExecutionBlock CreateNodeExecutionPlan(MyWorkingNode node, bool initPhase);
     }
 
     public interface IMyCustomExecutionPlanner
@@ -33,16 +34,24 @@ namespace GoodAI.Core.Execution
             PlanSignalTasks = true;
         }
 
-        public MyExecutionPlan CreateExecutionPlan(MyProject project)
+        /// <summary>
+        /// Creates the execution plan.
+        /// </summary>
+        /// <param name="project">The whole project from which the standard execution plan will be built.</param>
+        /// <param name="initNodes">Ordered list of new nodes from which the initialization plan will be built.</param>
+        /// <returns>The created execution plan.</returns>
+        public MyExecutionPlan CreateExecutionPlan(MyProject project, IEnumerable<MyWorkingNode> initNodes = null)
         {
             MyExecutionPlan executionPlan = new MyExecutionPlan();            
 
             IMyOrderingAlgorithm ordering = new MyHierarchicalOrdering();
             ordering.EvaluateOrder(project.Network);            
 
-            executionPlan.InitStepPlan = new MyExecutionBlock(
-                CreateNodeExecutionPlan(project.World, true), 
-                CreateNodeExecutionPlan(project.Network, true));
+            var initBlocks = new List<IMyExecutable>();
+            if (initNodes != null)
+                initBlocks.AddRange(initNodes.Select(node => CreateNodeExecutionPlan(node, true)));
+
+            executionPlan.InitStepPlan = new MyExecutionBlock(initBlocks.ToArray());
             executionPlan.InitStepPlan.Name = "Initialization";
 
             executionPlan.StandardStepPlan = new MyExecutionBlock(
@@ -53,7 +62,7 @@ namespace GoodAI.Core.Execution
             return executionPlan;
         }
 
-        private MyExecutionBlock CreateNodeExecutionPlan(MyWorkingNode node, bool initPhase)
+        public MyExecutionBlock CreateNodeExecutionPlan(MyWorkingNode node, bool initPhase)
         {
             List<IMyExecutable> defaultPlanContent = new List<IMyExecutable>();
 
@@ -110,6 +119,9 @@ namespace GoodAI.Core.Execution
                 }
                 resultPlan.Name = defaultPlan.Name;
             }
+
+            if (resultPlan.Name == null)
+                resultPlan.Name = node.GetType().Name;
 
             if (node is MyNodeGroup)
             {

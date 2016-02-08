@@ -13,17 +13,25 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Testing;
+using GoodAI.Platform.Core.Configuration;
+using GoodAI.TypeMapping;
 using Rhino.Mocks;
 using Xunit;
 
 namespace CoreTests
 {
-    public class SimulationHandlerTests
+    public class SimulationHandlerTests : IDisposable
     {
+        public SimulationHandlerTests()
+        {
+            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
+        }
+
         [Fact]
         public void SimulationPropertySetterTest()
         {
-            var simulation = MockRepository.GenerateStub<MySimulation>();
+            var validator = TypeMap.GetInstance<MyValidator>();
+            var simulation = MockRepository.GenerateStub<MySimulation>(validator);
             var handler = new MySimulationHandler(simulation);
 
             // This should not throw, it's the first simulation.
@@ -70,7 +78,7 @@ namespace CoreTests
         [Fact]
         public void SimulationStateChangedOnNodesTest()
         {
-            var simulation = new MyLocalSimulation();
+            var simulation = TypeMap.GetInstance<MySimulation>();
             var handler = new MySimulationHandler(simulation);
 
             MyProject project = new MyProject
@@ -114,6 +122,11 @@ namespace CoreTests
             Assert.Equal(MySimulationHandler.SimulationState.STOPPED, node.CurrentState);
 
             handler.Finish();
+        }
+
+        public void Dispose()
+        {
+            TypeMap.Destroy();
         }
     }
 }

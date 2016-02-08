@@ -116,6 +116,11 @@ namespace GoodAI.Core.Memory
             else return EMPTY_LIST;
         }
 
+        public bool IsRegistered(MyNode holder)
+        {
+            return m_memoryBlocks.ContainsKey(holder);
+        }
+
         public MyAbstractMemoryBlock GetMemoryBlockByName(MyNode holder, string name)
         {
             List<MyAbstractMemoryBlock> blocks = GetBlocks(holder);

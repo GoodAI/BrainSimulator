@@ -214,7 +214,7 @@ namespace GoodAI.Modules.GeneticWorld
                 arr_size = (int)Math.Ceiling(Math.Sqrt(m_weights));
 
                 // Get the relevant execution plan
-                m_executionPlan = Owner.Owner.SimulationHandler.Simulation.ExecutionPlan[0];
+                m_executionPlan = Owner.Owner.SimulationHandler.Simulation.ExecutionPlan;
 
                 #region MemoryBlocks
                 // Initialise the population

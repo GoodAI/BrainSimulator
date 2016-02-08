@@ -20,6 +20,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using GoodAI.BrainSimulator.Properties;
+using GoodAI.BrainSimulator.UserSettings;
+using GoodAI.Platform.Core.Utils;
+using GoodAI.TypeMapping;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -528,6 +532,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             RefreshConnections(graphForm);
 
+            SimulationHandler.Simulation.ModelChanged += graphForm.OnModelChanged;
+
             return graphForm;
         }
 
@@ -601,7 +607,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void GraphLayoutForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            GraphViews.Remove((sender as GraphLayoutForm).Target);
+            var graphForm = sender as GraphLayoutForm;
+            if (graphForm == null)
+                return;
+
+            SimulationHandler.Simulation.ModelChanged -= graphForm.OnModelChanged;
+            GraphViews.Remove(graphForm.Target);
         }
 
         private bool TryRestoreViewsLayout(string layoutFileName)
@@ -679,7 +690,7 @@ namespace GoodAI.BrainSimulator.Forms
             MySimulation simulation = null;
             try
             {
-                simulation = new MyLocalSimulation();
+                simulation = TypeMap.GetInstance<MySimulation>();
             }
             catch (Exception e)
             {
@@ -746,9 +757,8 @@ namespace GoodAI.BrainSimulator.Forms
 
             ObserverViews = new List<ObserverForm>();
 
-            ValidationView = new ValidationForm(this);
-            HelpView = new NodeHelpForm(this);
-            HelpView.StartPosition = FormStartPosition.CenterScreen;
+            ValidationView = new ValidationForm(this, TypeMap.GetInstance<MyValidator>());
+            HelpView = new NodeHelpForm(this) {StartPosition = FormStartPosition.CenterScreen};
 
             DebugView = new DebugForm(this);
 
@@ -1112,6 +1122,7 @@ namespace GoodAI.BrainSimulator.Forms
                 bool anyOutputChanged = false;
                 try
                 {
+                    // TODO(HonzaS): Move this into Simulation, it will be reused when the model is changed on the run.
                     anyOutputChanged = SimulationHandler.UpdateMemoryModel();
                 }
                 finally
@@ -1119,14 +1130,10 @@ namespace GoodAI.BrainSimulator.Forms
                     // Error handling is done below in a validation assert.
                 }
 
-                // TODO: move this out.
-                MyValidator validator = ValidationView.Validator;
-                validator.Simulation = SimulationHandler.Simulation;
-
-                validator.ClearValidation();
-
-                Project.World.ValidateWorld(validator);
-                Project.Network.Validate(validator);
+                // Perform project validation (world and network).
+                SimulationHandler.Simulation.Validate(Project);
+                
+                MyValidator validator = SimulationHandler.Simulation.Validator;
 
                 if (ObserverViews != null)
                     ObserverViews.ForEach(view => view.Observer.Validate(validator));
@@ -1134,7 +1141,6 @@ namespace GoodAI.BrainSimulator.Forms
                 validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
 
                 ValidationView.UpdateListView();
-                validator.Simulation = null;
 
                 ResetObservers();
 

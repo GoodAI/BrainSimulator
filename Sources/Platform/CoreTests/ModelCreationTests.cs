@@ -19,7 +19,7 @@ using Xunit;
 
 namespace CoreTests
 {
-    public class ModelCreationTests
+    public class ModelCreationTests : CoreTestBase
     {
         [Fact]
         public void SimulationRunsViaRunner()

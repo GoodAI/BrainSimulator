@@ -13,8 +13,6 @@ namespace GoodAI.Core.Execution
     /// Managers MySimulation run
     public class MySimulationHandler : IDisposable
     {
-        private static int MAX_BLOCKS_UPDATE_ATTEMPTS = 20;
-
         public enum SimulationState
         {
             [Description("Running")]
@@ -184,7 +182,7 @@ namespace GoodAI.Core.Execution
             if (State == SimulationState.STOPPED)
             {
                 MyLog.INFO.WriteLine("Scheduling...");                
-                Simulation.Schedule(Project);
+                Simulation.Schedule(Project, new MyWorkingNode[] {Project.World, Project.Network});
 
                 MyLog.INFO.WriteLine("Initializing tasks...");
                 Simulation.Init();          
@@ -275,7 +273,7 @@ namespace GoodAI.Core.Execution
             long reportStart = progressUpdateStopWatch.ElapsedTicks;
             int speedStart = Environment.TickCount;
             uint speedStep = SimulationStep;
-            uint performedSteps = 0;
+            uint performedSteps = 0;  // During debug, this counts IMyExecutable steps as opposed to whole sim steps.
 
             while (true)
             {
@@ -293,6 +291,13 @@ namespace GoodAI.Core.Execution
 
                 try
                 {
+                    // If the simulation is in between two steps, we allow for model changes, block reallocation etc.
+                    if (Simulation.IsStepFinished)
+                    {
+                        Simulation.PerformModelChanges();
+                        //Simulation.Reallocate();
+                    }
+
                     Simulation.PerformStep(State == SimulationState.RUNNING_STEP);
                     ++performedSteps;
                 }
@@ -398,42 +403,10 @@ namespace GoodAI.Core.Execution
 
             List<MyNode> orderedNodes = OrderNetworkNodes(Project.Network);
 
-            if (!orderedNodes.Any())
-            {
-                return true;
-            }
-
-            int attempts = 0;
-            bool anyOutputChanged = false;
-
-            try
-            {
-
-                while (attempts < MAX_BLOCKS_UPDATE_ATTEMPTS)
-                {
-                    attempts++;
-                    anyOutputChanged = false;
-
-                    anyOutputChanged |= UpdateAndCheckChange(Project.World);
-                    orderedNodes.ForEach(node => anyOutputChanged |= UpdateAndCheckChange(node));
-
-                    if (!anyOutputChanged)
-                    {
-                        MyLog.INFO.WriteLine("Successful update after " + attempts + " cycle(s).");
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                MyLog.ERROR.WriteLine("Exception occured while updating memory model: " + e.Message);
-                throw;
-            }
-
-            return anyOutputChanged;                        
+            return Simulation.UpdateMemoryModel(Project, orderedNodes);
         }
 
-        private static List<MyNode> OrderNetworkNodes(MyNetwork network)
+        public static List<MyNode> OrderNetworkNodes(MyNodeGroup network)
         {
             IMyOrderingAlgorithm topoOps = new MyHierarchicalOrdering();
             return topoOps.EvaluateOrder(network);
@@ -442,13 +415,6 @@ namespace GoodAI.Core.Execution
         public void RefreshTopologicalOrder()
         {
             OrderNetworkNodes(Project.Network);
-        }
-
-        private bool UpdateAndCheckChange(MyNode node)
-        {
-            node.PushOutputBlockSizes();
-            node.UpdateMemoryBlocks();
-            return node.AnyOutputSizeChanged();
         }
 
 

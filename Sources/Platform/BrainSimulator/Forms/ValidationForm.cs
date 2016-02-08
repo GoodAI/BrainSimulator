@@ -12,10 +12,10 @@ namespace GoodAI.BrainSimulator.Forms
 
         private MainForm m_mainForm;
 
-        public ValidationForm(MainForm mainForm)
+        public ValidationForm(MainForm mainForm, MyValidator validator)
         {
             InitializeComponent();
-            Validator = new MyValidator();
+            Validator = validator;
 
             m_mainForm = mainForm;
         }
