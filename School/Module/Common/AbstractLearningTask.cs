@@ -103,6 +103,11 @@ namespace GoodAI.Modules.School.Common
 
             TSHints.Set(TSProgression[CurrentLevel]);
             SetHints(TSProgression[CurrentLevel]);
+
+            MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                "Next level settings: \n" +
+                TSHints.ToString()
+                );
         }
 
         protected virtual void SetHints(TrainingSetHints trainingSetHints)

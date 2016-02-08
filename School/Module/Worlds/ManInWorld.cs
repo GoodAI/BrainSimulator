@@ -279,7 +279,7 @@ namespace GoodAI.Modules.School.Worlds
         /// <param name="rndGen"></param>
         /// <param name="size"></param>
         /// <param name="collisionWithAgentAllowed"></param>
-        /// <returns>Point inside POW with respect to Size</returns>
+        /// <returns>Point inside POW with respect to size</returns>
         public Point RandomPositionInsidePow(Random rndGen, Size size, bool collisionWithAgentAllowed = false)
         {
             Rectangle pow = GetPowGeometry();
@@ -309,17 +309,26 @@ namespace GoodAI.Modules.School.Worlds
 
             Rectangle agent = GetAgentGeometry();
 
+            Size one = new Size(1, 1);
+
+            randPointInPow -= one;
+            size += one + one;
+
             Rectangle obj = new Rectangle(randPointInPow, size);
 
-            foreach (GameObject gameObject in gameObjects)
+            for (int i = 0; i < gameObjects.Count; i++)
             {
-                Rectangle gameObjectG = gameObject.GetGeometry();
+                Rectangle gameObjectG = gameObjects[i].GetGeometry();
                 while (gameObjectG.IntersectsWith(obj) || obj.IntersectsWith(gameObjectG) ||
                     agent.IntersectsWith(obj) || obj.IntersectsWith(agent))
                 {
-                    obj.Location += new Size(4, 4); ;
+                    obj.Location += new Size(4, 4);
+                    i = -1;
                 }
             }
+
+            randPointInPow += one;
+            size -= one - one;
             return obj.Location;
         }
 

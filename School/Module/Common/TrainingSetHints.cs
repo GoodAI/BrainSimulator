@@ -80,6 +80,7 @@ namespace GoodAI.Modules.School.Common
 
         // Estimate of cardinality the set of all visible objects
         public static readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("NUMBER_OF_DIFFERENT_OBJECTS", "", m_intT, 0, 1);
+        public static readonly TSHintAttribute NUMBER_OBJECTS = new TSHintAttribute("Number of objects", "", m_intT, 0, 1);
 
         // Max target distance as a multiple [0, 1] of the world size.
         // If non-negative, the distance between agent and target is uniformly distributed
@@ -130,6 +131,21 @@ namespace GoodAI.Modules.School.Common
             {
                 this[tsHint.Key] = tsHint.Value;
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("{\n");
+
+            foreach (var item in this)
+	        {
+                sb.Append(item.Key.Name).Append(": ").Append(item.Value).Append("\n");
+	        }
+
+            sb.Append("}");
+            return sb.ToString();
         }
     }
 

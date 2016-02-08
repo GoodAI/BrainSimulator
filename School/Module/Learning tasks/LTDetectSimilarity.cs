@@ -20,15 +20,19 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.IMAGE_NOISE, 0},
-                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
+                {TSHintAttributes.IS_VARIABLE_COLOR, 0},
+                {TSHintAttributes.IS_VARIABLE_SIZE, 0},
+                {TSHintAttributes.NUMBER_OBJECTS, 2},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .3f); // TODO: different color
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .6f); // different size
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f); // different amount
+            TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 4f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 8f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 10f);
 
             SetHints(TSHints);
         }
@@ -43,15 +47,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
 
 
-                int numberOfObjects;
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
-                {
-                    numberOfObjects = m_rndGen.Next(5, 10);
-                }
-                else
-                {
-                    numberOfObjects = 7;
-                }
+                int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
 
                 m_sameObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
                 bool placeSameObject = m_sameObjectetPlaced;
@@ -68,7 +64,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 {
 
                     Size s;
-                    if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .6f)
+                    if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                     {
                         int a = 10 + m_rndGen.Next(10);
                         s = new Size(a, a);
@@ -79,7 +75,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     }
 
                     Color color;
-                    if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .3)
+                    if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
                     {
                         color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 

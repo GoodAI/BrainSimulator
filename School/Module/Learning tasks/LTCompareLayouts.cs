@@ -18,15 +18,21 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.IMAGE_NOISE, 0},
-                {TSHintAttributes.RANDOMNESS_LEVEL, 0},
+                {TSHintAttributes.IS_VARIABLE_COLOR, 0},
+                {TSHintAttributes.IS_VARIABLE_SIZE, 0},
+                {TSHintAttributes.IS_VARIABLE_POSITION, 0},
+                {TSHintAttributes.NUMBER_OBJECTS, 2},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .3f); // different color
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, .6f); // different size
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.0f); // different amount
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_POSITION, 1);
+            TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 4f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 8f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1f);
+            TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 10f);
 
             SetHints(TSHints);
         }
@@ -41,8 +47,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 Rectangle leftPart = WrappedWorld.GetPowGeometry();
                 Rectangle rightPart = WrappedWorld.GetPowGeometry();
-                Size shift = new Size(leftPart.Width / 2, 0);
-                leftPart.Width = leftPart.Width / 2 - 20;
+                Size shift = new Size(leftPart.Width / 2 + 4, 0);
+
+                leftPart.Width = leftPart.Width / 2 - 4;
                 rightPart.Width = rightPart.Width / 2 - 2;
                 rightPart.X += rightPart.Width + 4;
 
@@ -51,15 +58,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     Color.Black,
                     new Size(4, leftPart.Height));
 
-                int numberOfObjects;
-                if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
-                {
-                    numberOfObjects = m_rndGen.Next(5, 10);
-                }
-                else
-                {
-                    numberOfObjects = 4;
-                }
+                int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
 
                 m_diffObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
                 bool placeDifference = m_diffObjectetPlaced;
@@ -68,7 +67,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 {
 
                     Size size;
-                    if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .6f)
+                    if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                     {
                         int a = 10 + m_rndGen.Next(10);
                         size = new Size(a, a);
@@ -79,7 +78,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     }
 
                     Color color;
-                    if (TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .3)
+                    if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1f)
                     {
                         color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 
@@ -102,15 +101,15 @@ namespace GoodAI.Modules.School.LearningTasks
                         Shape.Shapes shapeR = shape;
                         Size sizeR = size;
 
-                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= 1.0f)
+                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                         {
                             positionR = world.RandomPositionInsideRectangleNonCovering(m_rndGen, size, rightPart); placeDifference = false;
                         }
-                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .3)
+                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1f)
                         {
                             colorR = LearningTaskHelpers.RandomVisibleColor(m_rndGen); placeDifference = false;
                         }
-                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.RANDOMNESS_LEVEL] >= .6f)
+                        if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                         {
                             sizeR = size + new Size(5, 5);
                         }

@@ -108,7 +108,7 @@
              <param name="rndGen"></param>
              <param name="size"></param>
              <param name="collisionWithAgentAllowed"></param>
-             <returns>Point inside POW with respect to Size</returns>
+             <returns>Point inside POW with respect to size</returns>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.AddGameObject(GoodAI.Modules.School.Common.GameObject,System.Int32)">
             <summary>

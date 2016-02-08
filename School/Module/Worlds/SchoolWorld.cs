@@ -217,6 +217,10 @@ namespace GoodAI.Modules.School.Worlds
                     m_currentLearningTask = m_curriculum.GetNextLearningTask();
                     if (m_currentLearningTask == null)
                         return;
+                    MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                        "Switching to LearningTask: " +
+                        m_currentLearningTask.GetType().ToString().Split(new[] { '.' }).Last()
+                        );
                 }
                 else if (m_currentLearningTask.DidAbilityFail)
                 {
