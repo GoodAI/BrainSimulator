@@ -1015,10 +1015,10 @@ namespace GoodAI.BrainSimulator.Forms
             if (!Settings.Default.ToolBarNodes.Contains(world.GetType().Name))
             {
                 Settings.Default.ToolBarNodes.Add(world.GetType().Name);
-                worldList.Items.Add(MyConfiguration.KnownWorlds[Project.World.GetType()]);
+                worldList.Items.Add(MyConfiguration.KnownWorlds[world.GetType()]);
             }
 
-            worldList.SelectedItem = MyConfiguration.KnownWorlds[Project.World.GetType()];
+            worldList.SelectedItem = MyConfiguration.KnownWorlds[world.GetType()];
         }
 
         private void AddTimerMenuItem(ToolStripSplitButton splitButton, EventHandler clickHandler, int ms)
