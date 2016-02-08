@@ -387,7 +387,7 @@ namespace Runtime
             }
         }
         
-        //[generated_code_location] DO NOT REMOVE THIS COMMENT!
+        " + GENERATED_CODE_LABEL + @" DO NOT REMOVE THIS COMMENT!
     }
 }";
         #endregion
