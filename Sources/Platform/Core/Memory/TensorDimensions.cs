@@ -10,13 +10,24 @@ namespace GoodAI.Core.Memory
 {
     public class TensorDimensions
     {
+        #region Static 
+
+        private static TensorDimensions m_emptyInstance;
+
+        public static TensorDimensions Empty
+        {
+            get { return m_emptyInstance ?? (m_emptyInstance = new TensorDimensions()); }
+        }
+
+        #endregion
+
         private readonly IImmutableList<int> m_dims;
 
         private const int MaxDimensions = 100;  // ought to be enough for everybody
 
         public TensorDimensions()
         {
-            m_dims = null;  // This means default dimensions. TODO(Premek): provide default instance to save memory.
+            m_dims = null;  // This means default dimensions.
         }
 
         public TensorDimensions(params int[] dimensions)
@@ -120,7 +131,7 @@ namespace GoodAI.Core.Memory
         public static TensorDimensions GetBackwardCompatibleDims(int count, int columnHint)
         {
             if (count == 0)
-                return new TensorDimensions();
+                return Empty;
 
             if (columnHint == 0)
                 return new TensorDimensions(count);

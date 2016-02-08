@@ -35,14 +35,20 @@ namespace CoreTests
         [Fact]
         public void DefaultDimIsRankOneOfSizeZero()
         {
-            var defaultDims = new TensorDimensions();
+            TensorDimensions emptyDims = TensorDimensions.Empty;
 
-            Assert.Equal(1, defaultDims.Rank);
-            Assert.Equal(0, defaultDims[0]);
-            Assert.Equal(0, defaultDims.ElementCount);
+            Assert.Equal(1, emptyDims.Rank);
+            Assert.Equal(0, emptyDims[0]);
+            Assert.Equal(0, emptyDims.ElementCount);
         }
 
-        private TensorDimensions m_testDims = new TensorDimensions(5, 3, 2);
+        [Fact]
+        public void DefaultConstructorReturnsEmptyDims()
+        {
+            Assert.True(TensorDimensions.Empty.Equals(new TensorDimensions()));
+        }
+
+        private readonly TensorDimensions m_testDims = new TensorDimensions(5, 3, 2);
 
         [Fact]
         public void RankReturnsNumberOfDims()
