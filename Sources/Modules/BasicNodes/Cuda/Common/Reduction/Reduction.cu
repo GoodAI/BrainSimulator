@@ -404,7 +404,7 @@ template<>
 void Randomize(Complex& t, int min, int max, float div)
 {
 	t.R = static_cast<float>(float(randl() % (max - min) + min) / div);
-	t.C = static_cast<float>(float(randl() % (max - min) + min) / div);
+	t.I = static_cast<float>(float(randl() % (max - min) + min) / div);
 }
 
 template<typename R, typename T, const int bCnt>

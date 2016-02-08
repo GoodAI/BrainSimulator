@@ -16,7 +16,7 @@ public:
 		c_Sum_c& op(Complex x, int idx)
 	{
 		m_sum.R += x.R;
-		m_sum.C += x.C;
+		m_sum.I += x.I;
 		return *this;
 	}
 
@@ -24,7 +24,7 @@ public:
 		volatile c_Sum_c& op(Complex x, int idx) volatile
 	{
 		m_sum.R += x.R;
-		m_sum.C += x.C;
+		m_sum.I += x.I;
 		return *this;
 	}
 
@@ -32,7 +32,7 @@ public:
 		c_Sum_c& op(const c_Sum_c& x)
 	{
 		m_sum.R += x.m_sum.R;
-		m_sum.C += x.m_sum.C;
+		m_sum.I += x.m_sum.I;
 		return *this;
 	}
 
@@ -40,7 +40,7 @@ public:
 		volatile c_Sum_c& op(volatile c_Sum_c& x) volatile
 	{
 		m_sum.R += x.m_sum.R;
-		m_sum.C += x.m_sum.C;
+		m_sum.I += x.m_sum.I;
 		return *this;
 	}
 
@@ -48,7 +48,7 @@ public:
 		c_Sum_c& operator=(const c_Sum_c& x)
 	{
 		m_sum.R = x.m_sum.R;
-		m_sum.C = x.m_sum.C;
+		m_sum.I = x.m_sum.I;
 		return *this;
 	}
 
@@ -56,7 +56,7 @@ public:
 		volatile c_Sum_c& operator=(volatile c_Sum_c& x) volatile
 	{
 		m_sum.R = x.m_sum.R;
-		m_sum.C = x.m_sum.C;
+		m_sum.I = x.m_sum.I;
 		return *this;
 	}
 
@@ -64,25 +64,25 @@ public:
 		void finalize(c_Sum_c* x) volatile
 	{
 		x->m_sum.R = m_sum.R;
-		x->m_sum.C = m_sum.C;
+		x->m_sum.I = m_sum.I;
 	}
 
 	static __host__
 		void simulate(c_Sum_c* out, Complex* in, int size, int outOff, int inOff, int stride)
 	{
 		out[outOff].m_sum.R = 0;
-		out[outOff].m_sum.C = 0;
+		out[outOff].m_sum.I = 0;
 		for (int i = inOff; i < inOff + size; i += stride)
 		{
 			out[outOff].m_sum.R += in[i].R;
-			out[outOff].m_sum.C += in[i].C;
+			out[outOff].m_sum.I += in[i].I;
 		}
 	}
 
 	static __host__
 		bool check(c_Sum_c* x, c_Sum_c* y, int outOff, Complex* in)
 	{
-		printf("sum: [%f, %f] == [%f, %f]\n", x[outOff].m_sum.R, x[outOff].m_sum.C, y[outOff].m_sum.R, y[outOff].m_sum.C);
+		printf("sum: [%f, %f] == [%f, %f]\n", x[outOff].m_sum.R, x[outOff].m_sum.I, y[outOff].m_sum.R, y[outOff].m_sum.I);
 		return ComplexEquals(x[outOff].m_sum, y[outOff].m_sum);
 	}
 };

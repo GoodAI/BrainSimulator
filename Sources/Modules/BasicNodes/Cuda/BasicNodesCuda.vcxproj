@@ -69,6 +69,7 @@
     <CudaCompile Include="NeuralNetwork\vSGD\UpdateMovingAveragesKernels.cu" />
     <CudaCompile Include="NeuralNetwork\vSGD\UpdateParametersKernels.cu" />
     <CudaCompile Include="Observers\ColorHelpers.cu" />
+    <CudaCompile Include="Observers\ColorScaleObserverComplex.cu" />
     <CudaCompile Include="Observers\ColorScaleObserverDouble.cu" />
     <CudaCompile Include="Observers\ColorScaleObserverInt32.cu" />
     <CudaCompile Include="Observers\ColorScaleObserverSingle.cu" />
