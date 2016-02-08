@@ -52,6 +52,9 @@ namespace GoodAI.BrainSimulator.Forms
             this.groupButtonPanel = new System.Windows.Forms.Panel();
             this.groupButton = new System.Windows.Forms.PictureBox();
             this.Desktop = new Graph.GraphControl();
+            this.nodeContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.worldButtonPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.worldButton)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -59,6 +62,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.topToolStrip.SuspendLayout();
             this.groupButtonPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.groupButton)).BeginInit();
+            this.nodeContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // nodesToolStrip
@@ -219,6 +223,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.Desktop.FocusChanged += new System.EventHandler<Graph.ElementEventArgs>(this.desktop_FocusChanged);
             this.Desktop.NodeRemoving += new System.EventHandler<Graph.AcceptNodeEventArgs>(this.Desktop_NodeRemoving);
             this.Desktop.NodeRemoved += new System.EventHandler<Graph.NodeEventArgs>(this.Desktop_NodeRemoved);
+            this.Desktop.ShowElementMenu += new System.EventHandler<Graph.AcceptElementLocationEventArgs>(this.Desktop_ShowElementMenu);
             this.Desktop.ConnectionAdding += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionAdding);
             this.Desktop.ConnectionRemoving += new System.EventHandler<Graph.AcceptNodeConnectionEventArgs>(this.Desktop_ConnectionRemoving);
             this.Desktop.PositionChanged += new System.EventHandler<Graph.PositionChangedEventArgs>(this.Desktop_PositionChanged);
@@ -226,6 +231,32 @@ namespace GoodAI.BrainSimulator.Forms
             this.Desktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Desktop_MouseDown);
             this.Desktop.MouseEnter += new System.EventHandler(this.desktop_MouseEnter);
             this.Desktop.MouseLeave += new System.EventHandler(this.desktop_MouseLeave);
+            // 
+            // nodeContextMenuStrip
+            // 
+            this.nodeContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openEditorToolStripMenuItem,
+            this.openGroupToolStripMenuItem});
+            this.nodeContextMenuStrip.Name = "nodeContextMenuStrip";
+            this.nodeContextMenuStrip.Size = new System.Drawing.Size(153, 70);
+            // 
+            // openEditorToolStripMenuItem
+            // 
+            this.openEditorToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.text_12xMD;
+            this.openEditorToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.openEditorToolStripMenuItem.Name = "openEditorToolStripMenuItem";
+            this.openEditorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openEditorToolStripMenuItem.Text = "Open Editor";
+            this.openEditorToolStripMenuItem.Click += new System.EventHandler(this.openEditorToolStripMenuItem_Click);
+            // 
+            // openGroupToolStripMenuItem
+            // 
+            this.openGroupToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Diagram_16XMD;
+            this.openGroupToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.openGroupToolStripMenuItem.Name = "openGroupToolStripMenuItem";
+            this.openGroupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openGroupToolStripMenuItem.Text = "Open Group";
+            this.openGroupToolStripMenuItem.Click += new System.EventHandler(this.openGroupToolStripMenuItem_Click);
             // 
             // GraphLayoutForm
             // 
@@ -257,6 +288,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.topToolStrip.PerformLayout();
             this.groupButtonPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.groupButton)).EndInit();
+            this.nodeContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -278,6 +310,9 @@ namespace GoodAI.BrainSimulator.Forms
         private CueToolStripTextBox searchTextBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem itemToolStripMenuItem;
+        private ContextMenuStrip nodeContextMenuStrip;
+        private ToolStripMenuItem openEditorToolStripMenuItem;
+        private ToolStripMenuItem openGroupToolStripMenuItem;
 
     }
 }

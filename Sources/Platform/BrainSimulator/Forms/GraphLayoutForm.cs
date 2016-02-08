@@ -287,16 +287,21 @@ namespace GoodAI.BrainSimulator.Forms
         private void Desktop_DoubleClick(object sender, EventArgs e)
         {
             MyNodeView nodeView = Desktop.FocusElement as MyNodeView;
+
             if (nodeView != null)
             {
-                if (nodeView.Node is MyNodeGroup)
+                MyNodeGroup group = nodeView.Node as MyNodeGroup;
+                IScriptableNode scriptable = nodeView.Node as IScriptableNode;
+
+                if (scriptable != null && group == null || 
+                    scriptable != null && group != null && (Control.ModifierKeys & Keys.Shift) != 0)
                 {
-                    m_mainForm.OpenGraphLayout(nodeView.Node as MyNodeGroup);
+                    m_mainForm.OpenTextEditor(scriptable);
                 }
-                else if (nodeView.Node is MyScriptableNode)
+                else if (group != null)
                 {
-                    m_mainForm.OpenTextEditor(nodeView.Node as MyScriptableNode);
-                }
+                    m_mainForm.OpenGraphLayout(group);
+                }                
             }
         }
 
@@ -322,9 +327,9 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 m_mainForm.CloseGraphLayout(node as MyNodeGroup);
             }
-            else if (node is MyScriptableNode)
+            else if (node is IScriptableNode)
             {
-                m_mainForm.CloseTextEditor(node as MyScriptableNode);
+                m_mainForm.CloseTextEditor(node as IScriptableNode);
             }
 
             m_mainForm.CloseObservers(node);
@@ -577,6 +582,37 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (e.Target is Node)
                 m_mainForm.ProjectStateChanged("Node(s) moved");
+        }
+
+        private void Desktop_ShowElementMenu(object sender, AcceptElementLocationEventArgs e)
+        {
+            NodeItem item = e.Element as NodeItem;
+
+            if (item != null)
+            {                
+                MyNodeView nodeView = item.Node as MyNodeView;
+
+                if (nodeView != null) 
+                {
+                    MyNode node = nodeView.Node;
+
+                    openEditorToolStripMenuItem.Enabled = node is IScriptableNode;
+                    openGroupToolStripMenuItem.Enabled = node is MyNodeGroup;
+
+                    nodeContextMenuStrip.Tag = node;
+                    nodeContextMenuStrip.Show(e.Position);
+                }
+            }
+        }
+
+        private void openEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_mainForm.OpenTextEditor(nodeContextMenuStrip.Tag as IScriptableNode);
+        }
+
+        private void openGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_mainForm.OpenGraphLayout(nodeContextMenuStrip.Tag as MyNodeGroup);
         }
     }
 }

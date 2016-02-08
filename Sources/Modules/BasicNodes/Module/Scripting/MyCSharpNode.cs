@@ -54,7 +54,15 @@ namespace GoodAI.Modules.Scripting
         {
             InputBranches = 1;
             Script = EXAMPLE_CODE;
+            ScriptEngine = new CSharpEngine<DefaultMethods>(this);
         }
+
+        public override void UpdateMemoryBlocks()
+        {
+            UpdateOutputBlocks();
+        }       
+
+        #region IScriptableNode implementation
 
         public override string NameExpressions
         {
@@ -63,20 +71,14 @@ namespace GoodAI.Modules.Scripting
 
         public override string Keywords
         {           
-            get { return 
-                "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while"
-                + " bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void"; }
+            get { return ScriptEngine.DefaultKeywords; }
         }
 
         public override string Language
         {
             get { return "CSharp"; }
         }
-
-        public override void UpdateMemoryBlocks()
-        {
-            UpdateOutputBlocks();
-        }        
+        #endregion 
 
         #region inputs & outputs
         [ReadOnly(false)]
@@ -170,97 +172,12 @@ namespace GoodAI.Modules.Scripting
 
         #region Compilation
 
-        internal MethodInfo ScriptInitMethod { get; private set; }
-        internal MethodInfo ScriptExecuteMethod { get; private set; }
-
-        //internal MethodInfo ScriptOutputNameGetter { get; private set; }
-        //internal MethodInfo ScriptInputNameGetter { get; private set; }
+        internal IScriptingEngine<DefaultMethods> ScriptEngine { get; set; }
 
         public override void Validate(MyValidator validator)
         {
-            ScriptInitMethod = null;
-            ScriptExecuteMethod = null;
-
-            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-            CompilerParameters parameters = new CompilerParameters()
-            {
-                GenerateInMemory = false,
-                GenerateExecutable = false,
-            };
-
-            parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
-            parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
-            parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
-
-            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            IEnumerable<Assembly> openTKAssemblies = loadedAssemblies.Where(x => x.ManifestModule.Name == "OpenTK.dll");
-            if (openTKAssemblies.Count() > 0)
-                parameters.ReferencedAssemblies.Add(openTKAssemblies.First().Location);
-
-            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, Script);
-            Assembly compiledAssembly = null;
-
-            if (results.Errors.HasErrors)
-            {
-                string message = "";
-
-                foreach (CompilerError error in results.Errors)
-                {
-                    message += "Line " + error.Line + ": " + error.ErrorText + "\n";
-                }
-                validator.AddError(this, "Errors in compiled script:\n" + message);                
-            }
-            else
-            {
-                compiledAssembly = results.CompiledAssembly;
-            }            
-
-            if (compiledAssembly != null)
-            {
-                try
-                {
-                    Type enclosingType = compiledAssembly.GetType("Runtime.Script");
-
-                    ScriptInitMethod = enclosingType.GetMethod("Init");
-                    validator.AssertError(ScriptInitMethod != null, this, "Init() method not found in compiled script");
-
-                    ScriptExecuteMethod = enclosingType.GetMethod("Execute");
-                    validator.AssertError(ScriptExecuteMethod != null, this, "Execute() method not found in compiled script");
-
-                    /*
-                    ScriptInputNameGetter = enclosingType.GetMethod("GetInputName");
-
-                    if (!CheckNameGetterMethod(ScriptInputNameGetter)) 
-                    {
-                        validator.AddWarning(this, "\"string GetInputName(int)\" method not found in compiled script");
-                        ScriptInputNameGetter = null;
-                    }
-
-                    ScriptOutputNameGetter = enclosingType.GetMethod("GetOutputName");
-
-                    if (!CheckNameGetterMethod(ScriptOutputNameGetter))
-                    {
-                        validator.AddWarning(this, "\"string GetOutputName(int)\" method not found in compiled script");
-                        ScriptOutputNameGetter = null;
-                    }
-                    */
-                }
-                catch (Exception e)
-                {
-                    validator.AddError(this, "Script analysis failed: " + e.GetType().Name + ": " + e.Message);
-                }                             
-            }
+            ScriptEngine.Compile(validator);
         }
-
-        private bool CheckNameGetterMethod(MethodInfo methodInfo)
-        {
-            if (methodInfo == null ||
-                methodInfo.ReturnParameter.ParameterType != typeof(string) ||
-                methodInfo.GetParameters().Length != 1 ||
-                methodInfo.GetParameters()[0].ParameterType != typeof(int)) return false;
-            else return true;
-        }
-
         #endregion
 
         #region Tasks
@@ -280,36 +197,20 @@ namespace GoodAI.Modules.Scripting
             
             public override void Execute()
             {
-                if (Owner.ScriptInitMethod != null)
+                if (Owner.ScriptEngine.HasMethod(DefaultMethods.Init))
                 {
-                    for (int i = 0; i < Owner.InputBranches; i++)
-                    {
-                        MyAbstractMemoryBlock mb = Owner.GetAbstractInput(i);
-
-                        if (mb != null)
-                        {
-                            mb.SafeCopyToHost();
-                        }
-                    }
+                    Owner.CopyInputBlocksToHost();
 
                     try
                     {
-                        Owner.ScriptInitMethod.Invoke(null, new object[] { Owner });
+                        Owner.ScriptEngine.Run(DefaultMethods.Init, Owner);
                     }
                     catch (Exception e)
                     {
                         MyLog.WARNING.WriteLine("Script Init() call failed: " + e.GetType().Name + ": " + e.Message);
                     }
 
-                    for (int i = 0; i < Owner.OutputBranches; i++)
-                    {
-                        MyAbstractMemoryBlock mb = Owner.GetAbstractOutput(i);
-
-                        if (mb != null)
-                        {
-                            mb.SafeCopyToDevice();
-                        }
-                    }
+                    Owner.CopyOutputBlocksToDevice();
                 }
                 else
                 {
@@ -332,41 +233,25 @@ namespace GoodAI.Modules.Scripting
             }
 
             public override void Execute()
-            {
-                for (int i = 0; i < Owner.InputBranches; i++)
+            {              
+                if (Owner.ScriptEngine.HasMethod(DefaultMethods.Execute))
                 {
-                    MyAbstractMemoryBlock mb = Owner.GetAbstractInput(i);
+                    Owner.CopyInputBlocksToHost();
 
-                    if (mb != null)
-                    {
-                        mb.SafeCopyToHost();
-                    }
-                }
-
-                if (Owner.ScriptExecuteMethod != null)
-                {
                     try
                     {
-                        Owner.ScriptExecuteMethod.Invoke(null, new object[] { Owner });
+                        Owner.ScriptEngine.Run(DefaultMethods.Execute, Owner);
                     }
                     catch (Exception e)
                     {
                         MyLog.WARNING.WriteLine("Script Execute() call failed: " + e.GetType().Name + ": " + e.Message);
                     }
+
+                    Owner.CopyOutputBlocksToDevice();
                 }
                 else 
                 {
                     MyLog.WARNING.WriteLine(Owner.Name + ": No Execute() method available");
-                }
-
-                for (int i = 0; i < Owner.OutputBranches; i++)
-                {
-                    MyAbstractMemoryBlock mb = Owner.GetAbstractOutput(i);
-
-                    if (mb != null)
-                    {
-                        mb.SafeCopyToDevice();
-                    }
                 }
             }
         }

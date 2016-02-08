@@ -19,9 +19,9 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private readonly MainForm m_mainForm;        
 
-        public MyScriptableNode Target { get; private set; } 
+        public IScriptableNode Target { get; private set; } 
 
-        public TextEditForm(MainForm mainForm, MyScriptableNode target)
+        public TextEditForm(MainForm mainForm, IScriptableNode target)
         {
             InitializeComponent();
 
@@ -77,9 +77,9 @@ namespace GoodAI.BrainSimulator.Forms
             if (Target != null)
             {
                 m_mainForm.NodePropertyView.Target = Target;
-                m_mainForm.MemoryBlocksView.Target = Target;
-                m_mainForm.HelpView.Target = Target;
-                m_mainForm.TaskView.Target = Target;                
+                m_mainForm.MemoryBlocksView.Target = Target as MyNode;
+                m_mainForm.HelpView.Target = Target as MyNode;
+                m_mainForm.TaskView.Target = Target as MyWorkingNode;                
             }
             else
             {
@@ -139,8 +139,15 @@ namespace GoodAI.BrainSimulator.Forms
             // Important for Python
             scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
 
-            scintilla.SetKeywords(0, Target.Keywords);
-            scintilla.SetKeywords(1, Target.NameExpressions);
+            if (!string.IsNullOrEmpty(Target.Keywords))
+            {
+                scintilla.SetKeywords(0, Target.Keywords);
+            }            
+
+            if (!string.IsNullOrEmpty(Target.NameExpressions)) 
+            {
+                scintilla.SetKeywords(1, Target.NameExpressions);
+            }            
         }
 
         private void ApplyCSharpRecipe()
