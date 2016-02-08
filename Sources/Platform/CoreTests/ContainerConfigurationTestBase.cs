@@ -9,18 +9,8 @@ using Xunit;
 
 namespace CoreTests
 {
-    public abstract class ContainerConfigurationTestBase : IDisposable
+    public abstract class ContainerConfigurationTestBase : CoreTestBase
     {
-        protected ContainerConfigurationTestBase()
-        {
-            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
-        }
-
-        public void Dispose()
-        {
-            TypeMap.Destroy();
-        }
-
         protected static void CheckResolveItem<T>() where T : class
         {
             var item = TypeMap.GetInstance<T>();

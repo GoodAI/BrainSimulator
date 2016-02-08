@@ -121,8 +121,9 @@ namespace GoodAI.Core.Execution
         /// Indicates that the simulation is in between two simulation steps.
         /// This should be true after each PerformStep run during normal simulation, and can be false during debug.
         /// </summary>
-        public abstract bool IsChangingModel { get; }
         public abstract bool IsStepFinished { get; }
+
+        public abstract bool IsChangingModel { get; }
         public abstract void FreeMemory();
 
         public abstract void StepOver();

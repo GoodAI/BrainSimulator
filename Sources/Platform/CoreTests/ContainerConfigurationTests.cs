@@ -23,19 +23,19 @@ namespace CoreTests
         [Fact]
         public void ResolvesExecutionPlanner()
         {
-            TypeMap.GetInstance<IMyExecutionPlanner>();
+            CheckResolveItem<IMyExecutionPlanner>();
         }
 
         [Fact]
         public void ResolvesSimulation()
         {
-            TypeMap.GetInstance<MySimulation>();
+            CheckResolveItem<MySimulation>();
         }
 
         [Fact]
         public void ResolvesModelChanges()
         {
-            TypeMap.GetInstance<IModelChanges>();
+            CheckResolveItem<IModelChanges>();
         }
     }
 }
