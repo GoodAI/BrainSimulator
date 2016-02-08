@@ -232,5 +232,17 @@ namespace Graph
         }
 
         public ElementType ElementType { get { return ElementType.Node; } }
+
+        /// <summary>
+        /// This gets called if the graph control of this node is selected and if the node itself is selected
+        /// and a key is pressed.
+        /// </summary>
+        public virtual void OnKeyDown(KeyEventArgs e) { }
+
+        /// <summary>
+        /// This gets called if the graph control of this node is selected and if the node itself is selected
+        /// and a key is depressed.
+        /// </summary>
+        public virtual void OnKeyUp(KeyEventArgs e) { }
     }
 }

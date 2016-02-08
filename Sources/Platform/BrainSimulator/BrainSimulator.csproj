@@ -243,6 +243,7 @@
       <DependentUpon>ValidationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Nodes\CategorySortingHat.cs" />
+    <Compile Include="Nodes\DeviceInputView.cs" />
     <Compile Include="Nodes\MySignalItem.cs" />
     <Compile Include="Nodes\MyGateInputView.cs" />
     <Compile Include="Nodes\MyIOSizeStrategy.cs" />

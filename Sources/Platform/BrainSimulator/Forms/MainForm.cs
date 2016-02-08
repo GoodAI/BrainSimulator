@@ -328,14 +328,12 @@ namespace GoodAI.BrainSimulator.Forms
         private void runToolButton_Click(object sender, EventArgs e)
         {
             ShowHideAllObservers(forceShow: true);
-            ConsoleView.Activate();            
             StartSimulation();            
         }
 
         private void SetupDebugViews()
         {
             ShowHideAllObservers(forceShow: true);
-            ConsoleView.Activate();
         }
 
         private void stopToolButton_Click(object sender, EventArgs e)

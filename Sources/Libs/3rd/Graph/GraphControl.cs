@@ -1992,9 +1992,21 @@ namespace Graph
 		#endregion
 
 		#region OnKeyDown
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
+
+			if (FocusElement != null && FocusElement.ElementType == ElementType.Node)
+			{
+				var node = FocusElement as Node;
+				if (node != null)
+					node.OnKeyDown(e);
+			}
+
+			if (e.Handled)
+				return;
+
 			if (e.KeyCode == Keys.Escape)
 			{
 				if (dragging)
@@ -2024,6 +2036,17 @@ namespace Graph
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			base.OnKeyUp(e);
+
+			if (FocusElement != null && FocusElement.ElementType == ElementType.Node)
+			{
+				var node = FocusElement as Node;
+				if (node != null)
+					node.OnKeyUp(e);
+			}
+
+			if (e.Handled)
+				return;
+
 			if (e.KeyCode == Keys.Delete)
 			{
 				if (FocusElement == null)

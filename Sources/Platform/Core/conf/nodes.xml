@@ -11,6 +11,10 @@
       <Label>Input &amp; Output</Label>
       <Label>Input</Label>
     </Node>
+    <Node type="GoodAI.Core.Nodes.DeviceInput" CanBeAdded="true" BigIcon="sliders_big.png" SmallIcon="sliders.png">
+      <Label>Input &amp; Output</Label>
+      <Label>Input</Label>
+    </Node>
             
     <Node type="GoodAI.Modules.Transforms.MyAbsoluteValue" CanBeAdded="true" BigIcon="abs_big.png" SmallIcon="abs.png">
       <Label>Transformations</Label>
