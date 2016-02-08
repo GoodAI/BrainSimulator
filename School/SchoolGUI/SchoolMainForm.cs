@@ -23,11 +23,22 @@ namespace GoodAI.School.GUI
         private TreeModel m_model;
         private string m_lastOpenedFile;
 
-        public SchoolMainForm()
+        private PlanDesign m_design
+        {
+            get
+            {
+                return new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
+            }
+        }
+
+        private readonly MainForm m_mainForm;
+
+        public SchoolMainForm(MainForm mainForm)
         {
             m_serializer = new YAXSerializer(typeof(PlanDesign));
             AddTaskView = new SchoolAddTaskForm();
-            RunView = new SchoolRunForm();
+            RunView = new SchoolRunForm(mainForm);
+            m_mainForm = mainForm;
 
             InitializeComponent();
 
@@ -49,8 +60,7 @@ namespace GoodAI.School.GUI
 
         private CurriculumNode AddCurriculum()
         {
-            CurriculumNode node = new CurriculumNode();
-            node.Text = "Curr" + m_model.Nodes.Count.ToString();
+            CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
             m_model.Nodes.Add(node);
             return node;
         }
@@ -304,6 +314,7 @@ namespace GoodAI.School.GUI
             foreach (LearningTaskNode ltNode in ltNodes)
                 data.Add(ltNode);
             RunView.Data = data;
+            RunView.Design = m_design;
             RunView.UpdateData();
         }
 
@@ -341,9 +352,7 @@ namespace GoodAI.School.GUI
 
         private void SaveProject(string path)
         {
-            PlanDesign plan = new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
-
-            string xmlResult = m_serializer.Serialize(plan);
+            string xmlResult = m_serializer.Serialize(m_design);
             File.WriteAllText(path, xmlResult);
         }
 
