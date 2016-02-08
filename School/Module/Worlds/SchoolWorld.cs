@@ -1,5 +1,4 @@
-﻿using GoodAI.Core;
-using GoodAI.Core.Execution;
+﻿using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
@@ -144,7 +143,7 @@ namespace GoodAI.Modules.School.Worlds
 
         Random m_rndGen = new Random();
 
-        SchoolCurriculum m_curriculum;
+        public SchoolCurriculum Curriculum { get; set; }
         ILearningTask m_currentLearningTask;
 
         // The curriculum to use.
@@ -214,7 +213,7 @@ namespace GoodAI.Modules.School.Worlds
 
                 if (m_currentLearningTask.IsAbilityLearned)
                 {
-                    m_currentLearningTask = m_curriculum.GetNextLearningTask();
+                    m_currentLearningTask = Curriculum.GetNextLearningTask();
                     if (m_currentLearningTask == null)
                         return;
                     MyLog.Writer.WriteLine(MyLogLevel.INFO,
@@ -237,7 +236,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void InitializeCurriculum()
         {
-            m_curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
+            Curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
         }
 
         public void ClearWorld()
@@ -291,7 +290,7 @@ namespace GoodAI.Modules.School.Worlds
             public override void Execute()
             {
                 Owner.InitializeCurriculum();
-                Owner.m_currentLearningTask = Owner.m_curriculum.GetNextLearningTask();
+                Owner.m_currentLearningTask = Owner.Curriculum.GetNextLearningTask();
             }
         }
 
@@ -323,7 +322,7 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-               Owner.CurrentWorld.MapWorldInputs(Owner);
+                Owner.CurrentWorld.MapWorldInputs(Owner);
             }
         }
 
