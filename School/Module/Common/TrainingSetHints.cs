@@ -11,10 +11,10 @@ namespace GoodAI.Modules.School.Common
     {
         public string Name { get; private set; }
         public string Annotation { get; protected set; }
-        public TypeCode TypeOfValue { get; protected set; }
+        public Type TypeOfValue { get; protected set; }
         public Tuple<float, float> Range { get; protected set; }
 
-        public TSHintAttribute(string name, string annotation, TypeCode valueType, float lowerBound, float upperbound)
+        public TSHintAttribute(string name, string annotation, Type valueType, float lowerBound, float upperbound)
         {
             Name = name;
             Annotation = annotation;
@@ -36,9 +36,9 @@ namespace GoodAI.Modules.School.Common
     // !!! refactored to be more implementation independent and more operator understandable
     public static class TSHintAttributes
     {
-        private static TypeCode m_boolT = TypeCode.Boolean;
-        private static TypeCode m_intT = TypeCode.Int32;
-        private static TypeCode m_floatT = TypeCode.Single;
+        private static Type m_boolT = typeof(bool);
+        private static Type m_intT = typeof(int);
+        private static Type m_floatT = typeof(float);
 
         // A value [0, 1] measuring the amount of noise in the image
         public static readonly TSHintAttribute IMAGE_NOISE = new TSHintAttribute(
@@ -53,7 +53,7 @@ namespace GoodAI.Modules.School.Common
         public static readonly TSHintAttribute IS_VARIABLE_POSITION = new TSHintAttribute(
             "Variable position of objects",
             "",
-            TypeCode.Boolean,
+            m_boolT,
             0, 1);
 
         public static readonly TSHintAttribute IS_VARIABLE_SIZE = new TSHintAttribute("Variable size","",m_boolT,0,1);

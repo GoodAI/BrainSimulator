@@ -29,8 +29,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
 
-        private readonly TSHintAttribute TARGET_VX = new TSHintAttribute("Target velocity X","",TypeCode.Single,0,1); //check needed;
-        private readonly TSHintAttribute TARGET_VY = new TSHintAttribute("Target velocity Y","",TypeCode.Single,0,1); //check needed;
+        private readonly TSHintAttribute TARGET_VX = new TSHintAttribute("Target velocity X", "", typeof(float), 0, 1); //check needed;
+        private readonly TSHintAttribute TARGET_VY = new TSHintAttribute("Target velocity Y","",typeof(float),0,1); //check needed;
 
         public LTMovingTarget() { }
 

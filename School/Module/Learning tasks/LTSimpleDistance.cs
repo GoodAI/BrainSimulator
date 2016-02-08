@@ -7,7 +7,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
-        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Error tolerence in [0,1]","",TypeCode.Single,0,1); //check needed;
+        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Error tolerence in [0,1]", "", typeof(float), 0, 1);
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;

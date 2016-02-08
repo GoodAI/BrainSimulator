@@ -11,8 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
     public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
-        private static readonly TSHintAttribute VARIABLE_SIZE = new TSHintAttribute("Variable size","",TypeCode.Single,0,1); //check needed;
-        private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving","",TypeCode.Single,0,1); //check needed;
+        private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1);
 
         public LTDetectBlackAndWhite() { }
         private Random m_rndGen = new Random();
@@ -24,7 +23,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints
             {
-                { VARIABLE_SIZE, 0 },
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 { IS_TARGET_MOVING, 0 }
@@ -33,7 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(
                 new TrainingSetHints {
-                    { VARIABLE_SIZE, 1 },
+                    { TSHintAttributes.IS_VARIABLE_SIZE, 1 },
                     { TSHintAttributes.IMAGE_NOISE, 1 },
                     { IS_TARGET_MOVING, 1 }
                 });
@@ -54,7 +53,8 @@ namespace GoodAI.Modules.School.LearningTasks
             if (!m_appears) return;
 
             Size size;
-            if(TSHints[VARIABLE_SIZE] >= 1){
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
+            {
                 int a = m_rndGen.Next(10,20);
                 size = new Size(a, a);
             }

@@ -21,9 +21,9 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_agent;
         protected int m_stepsSincePresented = 0;
 
-        public readonly TSHintAttribute SEQUENCE_LENGTH = new TSHintAttribute("Sequence length", "", TypeCode.Single, 0, 1);
-        public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", TypeCode.Single, 0, 1);
-        public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Multiply coefficent", "", TypeCode.Single, 0, 1);
+        public readonly TSHintAttribute SEQUENCE_LENGTH = new TSHintAttribute("Sequence length", "", typeof(int), 0, 5);
+        public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);
+        public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Multiply coefficent", "", typeof(float), 0, 1);
 
         List<GameObject> GameObjectReferences = new List<GameObject>();     // Create a vector of references to GameObjects, we will need the index for the sequence order
         public int currentIndex = 0;                                        // Represents current index of the sequence

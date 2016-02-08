@@ -71,10 +71,10 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTVisualEquivalence : AbstractLearningTask<RoguelikeWorld>
     {
         // Attributes
-        protected readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("Max number of attempts", "", TypeCode.Int32, 10000, 10000);
-        protected readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("Number of different objects", "", TypeCode.Int32, 1, 4);
-        protected readonly TSHintAttribute ROTATE_SHAPE = new TSHintAttribute("Rotate shape", "", TypeCode.Boolean, 0, 1);
-        protected readonly TSHintAttribute SCALE_SHAPE = new TSHintAttribute("Scale shape", "", TypeCode.Boolean, 0, 1);
+        protected readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("Max number of attempts", "", typeof(int), 10000, 10000);
+        protected readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("Number of different objects", "", typeof(int), 1, 4);
+        protected readonly TSHintAttribute ROTATE_SHAPE = new TSHintAttribute("Rotate shape", "", typeof(bool), 0, 1);
+        protected readonly TSHintAttribute SCALE_SHAPE = new TSHintAttribute("Scale shape", "", typeof(bool), 0, 1);
 
         // Random generator
         private static Random m_rand = new Random();

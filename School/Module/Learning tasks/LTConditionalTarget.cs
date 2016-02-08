@@ -153,7 +153,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTConditionalTarget : AbstractLearningTask<RoguelikeWorld>
     {
         // The condition can be more or less salient
-        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience", "", TypeCode.Single, 0, 1); //check needed;
+        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience", "", typeof(bool), 0, 1); //check needed;
 
         // Visual condition
         protected ConditionGameObject condition;

@@ -24,10 +24,11 @@ namespace GoodAI.Modules.School.LearningTasks
         int movingVelocity;                                             // Defined in pixels
         int avoidingAgent;
 
-        private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity","",TypeCode.Single,0,1);                   
-        private readonly TSHintAttribute ELLIPSE_SIZE = new TSHintAttribute("Ellipse Rectangle Ratio","",TypeCode.Single,0,1);   
-        private readonly TSHintAttribute STEPS_FOR_ELLIPSE = new TSHintAttribute("Steps for ellipse", "", TypeCode.Single, 0, 1);           
-        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not","",TypeCode.Single,0,1);           
+
+        private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity","",typeof(float),0,1);                   
+        private readonly TSHintAttribute ELLIPSE_SIZE = new TSHintAttribute("Ellipse Rectangle Ratio","",typeof(float),0,1);   
+        private readonly TSHintAttribute STEPS_FOR_ELLIPSE = new TSHintAttribute("Steps for ellipse", "", typeof(float), 0, 1);
+        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not", "", typeof(float), 0, 1);
 
         public LTMovingTargetD(SchoolWorld w)
             : base(w)

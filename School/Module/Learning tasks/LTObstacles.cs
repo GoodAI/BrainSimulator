@@ -24,8 +24,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected MovableGameObject m_movingObstacle1;
         protected MovableGameObject m_movingObstacle2;
 
-        private readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", TypeCode.Single, 0, 1);   //check needed;
-        private readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", TypeCode.Single, 0, 1);   //check needed;
+        private readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
+        private readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
 
         public LTObstacles() { }
 

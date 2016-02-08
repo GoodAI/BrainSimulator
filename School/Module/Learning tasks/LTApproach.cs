@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
 
-        public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Multiply coefficent", "", TypeCode.Single, 0, 1);
+        public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Distant bonus coefficient", "", typeof(float), 0, 1);
         // DISTANCE_BONUS_COEFFICENT explanation: "return m_stepsSincePresented > m_initialDistance" is used to decide if the training unit failed, this means that
         // the unit fails unless the agent goes just to the right direction (towards the target) from the beginning.
         // DISTANCE_BONUS_COEFFICENT's default value is 1, and if it's 2 the amount of available steps to reach the target is doubled, new formula : "return m_stepsSincePresented > (m_initialDistance * (int)TSHints[MULTIPLY_COEFFICENT]);"

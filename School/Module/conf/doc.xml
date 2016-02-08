@@ -39,6 +39,16 @@
             on the world.
             </summary>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTConditionalTarget">
+            <summary>
+            In this learning task, the agent must learn to choose one of two targets depending on an arbitrary visual signal (the condition).
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTHiddenTarget">
+            <summary>
+            In this learning task, the agent must learn to choose one of multiple targets without prior information as to which one to choose.
+            </summary>
+        </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
             <author>GoodAI</author>
             <meta>Os</meta>

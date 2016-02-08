@@ -8,11 +8,11 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTCopyAction : AbstractLearningTask<ManInWorld>
     {
-        private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request","",TypeCode.Single,0,1); //check needed;
+        private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);
 
         // True if teacher agent can spawn on different places
         // Teacher should not cover agent
-        private static readonly TSHintAttribute TEACHER_ON_DIFF_START_POSITION = new TSHintAttribute("Teacher on diff start position","",TypeCode.Single,0,1); //check needed;
+        private static readonly TSHintAttribute TEACHER_ON_DIFF_START_POSITION = new TSHintAttribute("Teacher on diff start position", "", typeof(bool), 0, 1);
 
         protected Random m_rndGen = new Random();
         protected int m_stepsSincePresented = 0;
