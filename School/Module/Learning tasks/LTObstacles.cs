@@ -2,6 +2,7 @@
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -20,6 +21,9 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int m_stepsSincePresented = 0;
         protected float m_initialDistance = 0;
 
+        protected MovableGameObject m_movingObstacle1;
+        protected MovableGameObject m_movingObstacle2;
+
         private readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", TypeCode.Single, 0, 1);   //check needed;
         private readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", TypeCode.Single, 0, 1);   //check needed;
 
@@ -34,13 +38,16 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSHints.Add(OBSTACLES_LEVEL, 1);
             TSHints.Add(TIMESTEPS_LIMIT, 800);
-            
+
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(OBSTACLES_LEVEL, 2);
             TSProgression.Add(OBSTACLES_LEVEL, 3);
             TSProgression.Add(OBSTACLES_LEVEL, 4);
-            
+
+            TSProgression.Add(OBSTACLES_LEVEL, 5);
+            TSProgression.Add(OBSTACLES_LEVEL, 6);
+
             SetHints(TSHints);
         }
 
@@ -55,22 +62,23 @@ namespace GoodAI.Modules.School.LearningTasks
         //Agent and target are generated in the same function, because the correspondent positions will depend on the wall positions
         public void GenerateObstacles()
         {
-            
             int level = (int)TSHints[OBSTACLES_LEVEL];                                          // Update value of current level
 
             WrappedWorld.CreateAgent();                                                         // Generate agent
             m_agent = WrappedWorld.Agent;
 
-            // Generate target
-            m_target = new GameObject(GameObjectType.None, "White10x10.png", 0, 0);             // TODO: Change temporary "White10x10.png" with appropriate texture
+            m_target = WrappedWorld.CreateTarget(new Point(0, 0));
             WrappedWorld.AddGameObject(m_target);
 
             RoguelikeWorld world = WrappedWorld as RoguelikeWorld;                              // Reference to World
             Grid g = world.GetGrid();                                                           // Get grid
 
 
+
             if (level == 1)
             {
+                TSHints[TIMESTEPS_LIMIT] = 500;
+
                 int widthOfRectangle = 10;
                 int heightOfRectangle = 5;
 
@@ -88,6 +96,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 2)                                                                     // Like level 1, but inverted
             {
+
+                TSHints[TIMESTEPS_LIMIT] = 500;
+
                 int widthOfRectangle = 10;
                 int heightOfRectangle = 5;
 
@@ -105,6 +116,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 3)
             {
+
+                TSHints[TIMESTEPS_LIMIT] = 400;
+
                 int widthOfRectangle = 20;
                 int heightOfRectangle = 5;
 
@@ -126,6 +140,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 4)
             {
+                TSHints[TIMESTEPS_LIMIT] = 400;
+
                 int widthOfRectangle = 20;
                 int heightOfRectangle = 10;
 
@@ -159,6 +175,55 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
 
+            if (level == 5)
+            {
+                TSHints[TIMESTEPS_LIMIT] = 300;
+
+                int widthOfRectangle = 13;
+                int heightOfRectangle = 5;
+
+                createWallRectangle(world, widthOfRectangle, heightOfRectangle);
+
+                // Walls positioned randomly inside the wall rectangle
+                createWallVerticalLine(world, 4, m_rndGen.Next(1, 3), 3);
+                createWallVerticalLine(world, 6, m_rndGen.Next(1, 3), 3);
+                createWallVerticalLine(world, 8, m_rndGen.Next(1, 3), 3);
+
+                // Position agent
+                m_agent.X = 50;
+                m_agent.Y = 50;
+
+                // Position target according to the wall rectangle that was generated with random size
+                m_target.X = 350;
+                //m_target.Y = 110;
+                m_target.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
+            }
+
+            if (level == 6)
+            {
+                TSHints[TIMESTEPS_LIMIT] = 260;
+
+                int widthOfRectangle = 13;
+                int heightOfRectangle = 5;
+
+                createWallRectangle(world, widthOfRectangle, heightOfRectangle);
+
+                // Walls positioned randomly inside the wall rectangle
+                createWallVerticalLine(world, 4, m_rndGen.Next(1, 3), 3);
+                createWallVerticalLine(world, 6, m_rndGen.Next(1, 3), 3);
+                createWallVerticalLine(world, 8, m_rndGen.Next(1, 3), 3);
+
+                // Position agent
+                m_agent.X = 50;
+                m_agent.Y = 50;
+
+                // Position target according to the wall rectangle that was generated with random size
+                m_target.X = 350;
+                //m_target.Y = 110;
+                m_target.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
+            }
+
+
         }
 
 
@@ -179,14 +244,35 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
+        public void createWallHorizontalLine(RoguelikeWorld world, int GridX, int GridY, int lengthOfLine)
+        {
+            Grid g = world.GetGrid();
+
+            for (int k = 0; k < lengthOfLine; k++)
+            {
+                world.CreateWall(g.getPoint(GridX + k, GridY));
+            }
+        }
+
+        public void createWallVerticalLine(RoguelikeWorld world, int GridX, int GridY, int lengthOfLine)
+        {
+            Grid g = world.GetGrid();
+
+            for (int k = 0; k < lengthOfLine; k++)
+            {
+                world.CreateWall(g.getPoint(GridX, GridY + k));
+            }
+        }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
+            // MyLog.DEBUG.WriteLine("X, Y = " + m_agent.X + ", " + m_agent.Y);
             // expect this method to be called once per simulation step
             m_stepsSincePresented++;
-            
+
             if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])
             {
+                m_stepsSincePresented = 0;
                 wasUnitSuccessful = false;
                 return true;
             }
@@ -208,3 +294,54 @@ namespace GoodAI.Modules.School.LearningTasks
 
 
 }
+
+
+
+
+
+// Wall rectangle with random width and corresponding target positioning
+/*
+if (level == 1)
+{
+    //int widthOfRectangle = 10;
+    int widthOfRectangle = m_rndGen.Next(20, 30);
+
+    int heightOfRectangle = 5;
+
+
+    createWallRectangle(world, widthOfRectangle, heightOfRectangle);
+
+    /*
+    // Create bouncing block
+    m_movingObstacle1 = new MovableGameObject(GameObjectType.Obstacle, "Armor_Block.png", 30, 60);
+    m_movingObstacle1.Width = 30;
+    m_movingObstacle1.Height = 60;
+    m_movingObstacle1.GameObjectStyle = GameObjectStyleType.Pinball;
+    m_movingObstacle1.IsAffectedByGravity = false;
+    m_movingObstacle1.X = 98;
+    m_movingObstacle1.Y = 60;
+    m_movingObstacle1.vY = 2;
+    WrappedWorld.AddGameObject(m_movingObstacle1);
+
+                
+    // Create bouncing block
+    m_movingObstacle2 = new MovableGameObject(GameObjectType.Obstacle, "Armor_Block.png", 30, 60);
+    m_movingObstacle2.Width = 30;
+    m_movingObstacle2.Height = 60;
+    m_movingObstacle2.GameObjectStyle = GameObjectStyleType.Pinball;
+    m_movingObstacle2.IsAffectedByGravity = false;
+    m_movingObstacle2.X = 170;
+    m_movingObstacle2.Y = 90;
+    m_movingObstacle2.vY = -2;
+    WrappedWorld.AddGameObject(m_movingObstacle2);
+                
+
+    // Position agent
+    m_agent.X = 50;
+    m_agent.Y = 50;
+
+    // Position target according to the wall rectangle that was generated with random size
+    m_target.X = (widthOfRectangle * 30) - 30 ;
+    m_target.Y = 120;
+}
+*/
