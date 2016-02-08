@@ -177,9 +177,14 @@ namespace GoodAI.Modules.School.Common
 
         }
 
-        public static Color RandomVisibleColor(Random rndGen)
+        public static Color RandomVisibleColor(Random rndGen, int numberOfColors = 11)
         {
-            switch (rndGen.Next(11))
+            return GetVisibleColor(rndGen.Next(numberOfColors));
+        }
+
+        public static Color GetVisibleColor(int colorIndex)
+        {
+            switch (colorIndex)
             {
                 case 0:
                     return Color.Red;

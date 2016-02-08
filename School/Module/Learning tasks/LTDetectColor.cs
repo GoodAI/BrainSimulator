@@ -1,14 +1,19 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
 
     public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
+        private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Condition salience", "", TypeCode.Single, 0, 1); //check needed;
+
         protected GameObject m_target;
-        Random m_rndGen = new Random();
+        protected Random m_rndGen = new Random();
+
+        protected int m_colorIndex;
 
         public LTDetectColor() { }
 
@@ -16,12 +21,15 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.IMAGE_NOISE, 0},
-                {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
+                { TSHintAttributes.IMAGE_NOISE, 0 },
+                { NUMBER_OF_COLORS, 2 },
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(NUMBER_OF_COLORS, 4);
+            TSProgression.Add(NUMBER_OF_COLORS, 8);
 
             SetHints(TSHints);
         }
@@ -34,15 +42,45 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            // TODO fill properly
+            // Identify color with a 1-of-k encoding (or confidence values)
+            int guessedColor = GetMaxIndex(SchoolWorld.ActionInput.Host, (int)TSHints[NUMBER_OF_COLORS]);
+
             wasUnitSuccessful = true;
             return true;
+        }
+
+        protected int GetMaxIndex(float[] array, int numberOfElements)
+        {
+            float max = float.NegativeInfinity;
+            int maxIndex = -1;
+            for (int index = 0; index < numberOfElements; index++)
+            {
+                if (array[index] > max)
+                {
+                    max = array[index];
+                    maxIndex = index;
+                }
+            }
+            return maxIndex;
         }
 
         protected void SetTargetColor()
         {
             m_target.isBitmapAsMask = true;
-            LearningTaskHelpers.RandomizeColor(ref m_target.maskColor, m_rndGen);
+
+            m_colorIndex = m_rndGen.Next((int)TSHints[NUMBER_OF_COLORS]);
+            Color color = LearningTaskHelpers.GetVisibleColor(m_colorIndex);
+            m_target.maskColor = Color.FromArgb(
+                AddRandomColorOffset(color.R),
+                AddRandomColorOffset(color.G),
+                AddRandomColorOffset(color.B));
+        }
+
+        protected byte AddRandomColorOffset(byte colorComponent)
+        {
+            const int MAX_RANDOM_OFFSET = 10;
+            return (byte)Math.Max(0, Math.Min(255, 
+                (int)colorComponent + m_rndGen.Next(-MAX_RANDOM_OFFSET, MAX_RANDOM_OFFSET + 1)));
         }
 
         protected void CreateTarget()
