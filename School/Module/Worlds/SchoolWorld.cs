@@ -271,8 +271,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public InitSchoolWorldTask InitSchool { get; protected set; }
         public InputAdapterTask AdapterInputStep { get; protected set; }
-        public OutputAdapterTask AdapterOutputStep { get; protected set; }
         public LearningStepTask LearningStep { get; protected set; }
+        public OutputAdapterTask AdapterOutputStep { get; protected set; }
 
         /// <summary>
         /// Initialize the world's curriculum

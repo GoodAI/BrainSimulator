@@ -136,17 +136,26 @@ namespace GoodAI.Modules.School.Worlds
 
         public override MyMemoryBlock<float> GetInput(int index)
         {
-            return ControlsAdapterTemp;
+            if (ControlsAdapterTemp != null)  //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
+                return ControlsAdapterTemp as MyMemoryBlock<float>;
+            else
+                return base.GetInput<float>(index);
         }
 
         public override MyMemoryBlock<T> GetInput<T>(int index)
         {
-            return ControlsAdapterTemp as MyMemoryBlock<T>;
+            if (ControlsAdapterTemp != null) //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
+                return ControlsAdapterTemp as MyMemoryBlock<T>;
+            else
+                return base.GetInput<T>(index);
         }
 
         public override MyAbstractMemoryBlock GetAbstractInput(int index)
         {
-            return ControlsAdapterTemp;
+            if (ControlsAdapterTemp != null) //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
+                return ControlsAdapterTemp;
+            else
+                return base.GetAbstractInput(index);
         }
 
         public virtual void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
