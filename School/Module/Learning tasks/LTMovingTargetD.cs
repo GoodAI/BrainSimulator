@@ -19,13 +19,13 @@ namespace GoodAI.Modules.School.LearningTasks
         float angle;                                                    // Used for the trajectory of the circular movement of the target
         Point Trajectory = new Point();
 
-        float ellipseRectangleRatio = 0.15f;                            // Ranges from 0 to 1, ratio 1 generates the biggest ellipse that can fit into the rectangle
+        float ellipseSize = 0.15f;                                      // Ranges from 0 to 1, ratio 1 generates the biggest ellipse that can fit into the rectangle (screen)
         int stepsForEllipse;                                            // How many steps will denote one complete cycle of the ellipse
         int movingVelocity;                                             // Defined in pixels
         int avoidingAgent;
 
         private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity","",TypeCode.Single,0,1);                   
-        private readonly TSHintAttribute ELLIPSE_RECTANGLE_RATIO = new TSHintAttribute("Ellipse Rectangle Ratio","",TypeCode.Single,0,1);   
+        private readonly TSHintAttribute ELLIPSE_SIZE = new TSHintAttribute("Ellipse Rectangle Ratio","",TypeCode.Single,0,1);   
         private readonly TSHintAttribute STEPS_FOR_ELLIPSE = new TSHintAttribute("Steps for ellipse", "", TypeCode.Single, 0, 1);           
         private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not","",TypeCode.Single,0,1);           
 
@@ -33,46 +33,46 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
 
-            TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                    // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
+            TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;                   // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             //TSHints[TSHintAttributes.MAX_TARGET_DISTANCE] = 0.3f;
 
             TSHints[DISTANCE_BONUS_COEFFICENT] = 3f;                            // Coefficent of 4 means that the available steps to reach the target are "initialDistance (between agent and target) * 4" (for more info check LTApproach)
 
             //Reusing TSHints from LTApproach with some additions
             TSHints.Add(MOVING_VELOCITY, 1);
-            TSHints.Add(ELLIPSE_RECTANGLE_RATIO, 0.55f);
+            TSHints.Add(ELLIPSE_SIZE, 0.55f);
             TSHints.Add(STEPS_FOR_ELLIPSE, 600);
             TSHints.Add(AVOIDING_AGENT, 0);
 
-            TSProgression.Clear();                                               // Clearing TSProgression that was declared in LTApproach before filling custom one
+            TSProgression.Clear();                                              // Clearing TSProgression that was declared in LTApproach before filling custom one
 
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.55f },
+                    { ELLIPSE_SIZE, 0.55f },
                     { STEPS_FOR_ELLIPSE, 600 },
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.55f },
+                    { ELLIPSE_SIZE, 0.55f },
                     { STEPS_FOR_ELLIPSE, 500 }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.6f },
+                    { ELLIPSE_SIZE, 0.6f },
                     { STEPS_FOR_ELLIPSE, 400 }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.7f },
+                    { ELLIPSE_SIZE, 0.7f },
                     { STEPS_FOR_ELLIPSE, 300 }
             });
 
@@ -80,14 +80,14 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.7f },
+                    { ELLIPSE_SIZE, 0.7f },
                     { STEPS_FOR_ELLIPSE, 200 }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 1 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.8f },
+                    { ELLIPSE_SIZE, 0.8f },
                     { STEPS_FOR_ELLIPSE, 100 }
             });
 
@@ -95,7 +95,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(
                 new TrainingSetHints {
                     { MOVING_VELOCITY, 4 },
-                    { ELLIPSE_RECTANGLE_RATIO, 0.65f },
+                    { ELLIPSE_SIZE, 0.65f },
                     { STEPS_FOR_ELLIPSE, 1000 },
                     { AVOIDING_AGENT, 1 },
                     { DISTANCE_BONUS_COEFFICENT, 7f }
@@ -109,7 +109,7 @@ namespace GoodAI.Modules.School.LearningTasks
             base.UpdateState();
 
             movingVelocity = (int)TSHints[MOVING_VELOCITY];
-            ellipseRectangleRatio = (float)TSHints[ELLIPSE_RECTANGLE_RATIO];
+            ellipseSize = (float)TSHints[ELLIPSE_SIZE];
             stepsForEllipse = (int)TSHints[STEPS_FOR_ELLIPSE];
             avoidingAgent = (int)TSHints[AVOIDING_AGENT];
 
@@ -122,7 +122,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     angle = 0;
                 }
 
-                Trajectory = GetPointInEllipse(angle, ellipseRectangleRatio);   // Find the current coordinates to follow
+                Trajectory = GetPointInEllipse(angle, ellipseSize);             // Find the current coordinates to follow
 
                 if (avoidingAgent == 0)
                 {
@@ -130,9 +130,9 @@ namespace GoodAI.Modules.School.LearningTasks
                     m_target.Y = Trajectory.Y;
                 }
 
-            //MoveTowardsPoint(Trajectory.X, Trajectory.Y, movingVelocity);   // Move target towards the desired Trajectory
+            //MoveTowardsPoint(Trajectory.X, Trajectory.Y, movingVelocity);     // Move target towards the desired Trajectory
 
-            if (avoidingAgent == 1)                                         // If avoidingAgent is required from the TSHints, compute additional moving step trying to avoid the agent
+            if (avoidingAgent == 1)                                             // If avoidingAgent is required from the TSHints, compute additional moving step trying to avoid the agent
             {
                 MoveAwayFromAgentStep(2);
             }
@@ -143,15 +143,17 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void CreateTarget()
         {
-            m_target = new GameObject(GameObjectType.None, GetTargetImage((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]), 0, 0);
+            //MyLog.INFO.WriteLine(" called CreateTarget() from LTMovingTargetD");
 
-            m_target.Width = 40;
-            m_target.Height = 40;
+            m_target = WrappedWorld.CreateTarget(new Point(0, 0));
+
+            m_target.Width = 30;
+            m_target.Height = 30;
 
             Point RandomPoint = new Point();
             float NewNumber = (float)m_rndGen.NextDouble();
 
-            RandomPoint = GetPointInEllipse(NewNumber, ellipseRectangleRatio);  // Find a random point in the ellipse
+            RandomPoint = GetPointInEllipse(NewNumber, ellipseSize);            // Find a random point in the ellipse
             angle = NewNumber;                                                  // Adapt the new current angle to the point generated
 
             m_target.X = RandomPoint.X;
@@ -186,34 +188,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-        /*
-        public void MoveTowardsPoint(int x, int y, int velocity)        // Given a point, the target moves towards it using steps of settable length in pixels (velocity)
-        {
-            // At each step, the target can move only on 1 axis, so choose the axis depending on the distances
-            if (Math.Abs(x - m_target.X) > Math.Abs(y - m_target.Y))    // Check what axis has the smallest difference between 2 points, the movement can happen only by 1 axis at a time
-            {
-                if (m_target.X < x)
-                {
-                    m_target.X += velocity;
-                }
-                else if (m_target.X > x)
-                {
-                    m_target.X -= velocity;
-                }
-            }
-            else                                                        // Move on Y axis
-            {
-                if (m_target.Y < y)
-                {
-                    m_target.Y += velocity;
-                }
-                else if (m_target.Y > y)
-                {
-                    m_target.Y -= velocity;
-                }
-            }
-        }
-        */
 
         public void MoveAwayFromAgentStep(int velocity)
         {
