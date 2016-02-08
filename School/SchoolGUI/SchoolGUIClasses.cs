@@ -68,9 +68,17 @@ namespace GoodAI.School.GUI
 
             public static explicit operator LearningTaskNode(LTDesign design)
             {
-                LearningTaskNode node = new LearningTaskNode(Type.GetType(design.m_taskType), Type.GetType(design.m_worldType));
-                node.Enabled = design.m_enabled;
-                return node;
+                return new LearningTaskNode(Type.GetType(design.m_taskType), Type.GetType(design.m_worldType)) { Enabled = design.m_enabled };
+            }
+
+            public ILearningTask AsILearningTask()
+            {
+                if (!m_enabled)
+                    return null;    //there is no placeholder for empty task, therefore null
+
+                ILearningTask task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
+                task.RequiredWorld = Type.GetType(m_worldType);
+                return task;
             }
         }
 
@@ -98,13 +106,26 @@ namespace GoodAI.School.GUI
 
             public static explicit operator CurriculumNode(CurriculumDesign design)
             {
-                CurriculumNode node = new CurriculumNode();
-                node.Text = design.m_name;
-                node.Enabled = design.m_enabled;
+                CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled };
 
-                design.m_tasks.ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+                design.m_tasks.Where(x => x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
 
                 return node;
+            }
+
+            public static explicit operator SchoolCurriculum(CurriculumDesign design)
+            {
+                SchoolCurriculum curriculum = new SchoolCurriculum();
+                if (!design.m_enabled)
+                    return curriculum;
+
+                design.m_tasks.
+                    Select(x => x.AsILearningTask()).
+                    Where(x => x != null).
+                    ToList().
+                    ForEach(x => curriculum.Add(x));
+
+                return curriculum;
             }
         }
 
@@ -121,6 +142,15 @@ namespace GoodAI.School.GUI
         public static explicit operator List<CurriculumNode>(PlanDesign design)
         {
             return design.m_curricula.Select(x => (CurriculumNode)x).ToList();
+        }
+
+        public static explicit operator SchoolCurriculum(PlanDesign design)
+        {
+            SchoolCurriculum result = new SchoolCurriculum();
+            foreach (CurriculumDesign curr in design.m_curricula)
+                result.Add((SchoolCurriculum)curr);
+
+            return result;
         }
     }
 }
