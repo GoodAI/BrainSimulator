@@ -58,6 +58,7 @@ namespace GoodAI.Modules.School.Common
 
         public static readonly TSHintAttribute IS_VARIABLE_SIZE = new TSHintAttribute("Variable size","",m_boolT,0,1);
         public static readonly TSHintAttribute IS_VARIABLE_COLOR = new TSHintAttribute("Variable color","",m_boolT,0,1);
+        public static readonly TSHintAttribute IS_VARIABLE_ROTATION = new TSHintAttribute("Variable rotation", "", m_boolT, 0, 1);
 
         // Randomness of whole learning task
         // For hints which are not covered by IS_VARIABLE_X

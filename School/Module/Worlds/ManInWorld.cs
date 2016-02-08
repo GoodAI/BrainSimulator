@@ -321,24 +321,24 @@ namespace GoodAI.Modules.School.Worlds
             return rmk;
         }
 
-        public GameObject CreateShape(Point p, Shape.Shapes shape, GameObjectType type = GameObjectType.None, int width = 0, int height = 0)
+        public GameObject CreateShape(Point p, Shape.Shapes shape, GameObjectType type = GameObjectType.None, int width = 0, int height = 0, float rotation = 0)
         {
-            Shape rmk = new Shape(shape, p.X, p.Y, type, width, height);
+            Shape rmk = new Shape(shape, p.X, p.Y, type, width, height, rotation);
             AddGameObject(rmk);
             return rmk;
         }
 
-        public GameObject CreateShape(Point p, Shape.Shapes shape, Color color, Size size, GameObjectType type = GameObjectType.None)
+        public GameObject CreateShape(Point p, Shape.Shapes shape, Color color, Size size, GameObjectType type = GameObjectType.None, float rotation = 0)
         {
-            Shape rmk = new Shape(shape, p.X, p.Y, type, size.Width, size.Height);
+            Shape rmk = new Shape(shape, p.X, p.Y, type, size.Width, size.Height, rotation);
             rmk.SetColor(color);
             AddGameObject(rmk);
             return rmk;
         }
 
-        public GameObject CreateShape(Point p, Shape.Shapes shape, Color color, GameObjectType type = GameObjectType.None, int width = 0, int height = 0)
+        public GameObject CreateShape(Point p, Shape.Shapes shape, Color color, GameObjectType type = GameObjectType.None, int width = 0, int height = 0, float rotation = 0)
         {
-            Shape rmk = new Shape(shape, p.X, p.Y, type, width, height);
+            Shape rmk = new Shape(shape, p.X, p.Y, type, width, height, rotation);
             rmk.SetColor(color);
             AddGameObject(rmk);
             return rmk;

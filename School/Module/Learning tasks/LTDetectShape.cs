@@ -22,6 +22,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 {TSHintAttributes.IS_VARIABLE_COLOR, 0},
                 {TSHintAttributes.IS_VARIABLE_SIZE, 0},
                 {TSHintAttributes.IS_VARIABLE_POSITION, 0},
+                {TSHintAttributes.IS_VARIABLE_ROTATION, 0},
                 {TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000}
             };
@@ -33,6 +34,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4);
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1.0f);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1.0f);
 
             SetHints(TSHints);
         }
@@ -71,9 +73,16 @@ namespace GoodAI.Modules.School.LearningTasks
                     shapeColor = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
                 }
 
+                // random rotation
+                float rotation = 0;
+                if (TSHints[TSHintAttributes.IS_VARIABLE_ROTATION] >= 1.0f)
+                {
+                    rotation = (float)(m_rndGen.NextDouble() * 2 * Math.PI);
+                }
+
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
 
-                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize);
+                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize, rotation: rotation);
             }
             else
             {

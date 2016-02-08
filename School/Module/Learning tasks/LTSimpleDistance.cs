@@ -7,8 +7,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
-        private readonly TSHintAttribute COLOR_PATTERNS = new TSHintAttribute("Color patterns","",TypeCode.Single,0,1); //check needed;
-        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Target distance levels","",TypeCode.Single,0,1); //check needed;
+        private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Error tolerence in [0,1]","",TypeCode.Single,0,1); //check needed;
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;
@@ -23,7 +22,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSHints = new TrainingSetHints
             {
-                { COLOR_PATTERNS, 0 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 0 },
                 { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
                 { ERROR_TOLERANCE, 0.25f },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
@@ -34,7 +33,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(new TrainingSetHints {
-                { COLOR_PATTERNS, 1 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 1 },
                 { ERROR_TOLERANCE, 0.15f },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0 }
             });
@@ -97,15 +96,15 @@ namespace GoodAI.Modules.School.LearningTasks
         private void CreateTarget()
         {
             Size size;
+            int standardSideSize = WrappedWorld.POW_WIDTH / 10;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
-                int side = m_rndGen.Next(8, 24);
+                int side = standardSideSize + m_rndGen.Next(standardSideSize);
                 size = new Size(side, side);
             }
             else
             {
-                int side = 10;
-                size = new Size(side, side);
+                size = new Size(standardSideSize, standardSideSize);
             }
 
             Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, true);
@@ -129,7 +128,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             Color color;
-            if (TSHints[COLOR_PATTERNS] >= 1)
+            if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
             {
                 color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
             }

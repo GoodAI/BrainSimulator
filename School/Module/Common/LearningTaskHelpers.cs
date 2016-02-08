@@ -14,14 +14,14 @@ namespace GoodAI.Modules.School.Common
 
         public Shapes ShapeType { get; set; }
 
-        public Shape(Shapes shapeType, int x, int y, int width = 0, int height = 0)
-            : base(GameObjectType.None, GetShapeAddr(shapeType), x, y, width, height)
+        public Shape(Shapes shapeType, int x, int y, int width = 0, int height = 0, float rotation = 0f)
+            : base(GameObjectType.None, GetShapeAddr(shapeType), x, y, width, height, rotation)
         {
             this.ShapeType = shapeType;
         }
 
-        public Shape(Shapes shapeType, int x, int y, GameObjectType type, int width = 0, int height = 0)
-            : base(type, GetShapeAddr(shapeType), x, y, width, height)
+        public Shape(Shapes shapeType, int x, int y, GameObjectType type, int width = 0, int height = 0, float rotation = 0f)
+            : base(type, GetShapeAddr(shapeType), x, y, width, height, rotation)
         {
             this.ShapeType = shapeType;
         }

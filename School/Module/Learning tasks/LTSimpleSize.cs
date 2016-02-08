@@ -1,4 +1,5 @@
-﻿using GoodAI.Modules.School.Common;
+﻿using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleSize : AbstractLearningTask<ManInWorld>
     {
-        private static readonly TSHintAttribute COLOR_PATTERNS = new TSHintAttribute("Color patterns","",TypeCode.Single,0,1); //check needed;
-        private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels","",TypeCode.Single,0,1); //check needed;
+        private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels","",TypeCode.Single,0,1);
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;
@@ -22,7 +22,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints
             {
-                { COLOR_PATTERNS, 0 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 0 },
                 { TARGET_SIZE_LEVELS, 2 },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
@@ -32,7 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(new TrainingSetHints {
-                { COLOR_PATTERNS, 1 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 1 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 0 }
             });
             TSProgression.Add(new TrainingSetHints {
@@ -69,9 +69,9 @@ namespace GoodAI.Modules.School.LearningTasks
             else
             {
                 wasUnitSuccessful = false;
+                WrappedWorld.Reward.Host[0] = 1 - Math.Abs(m_scale - WrappedWorld.Controls.Host[0]);
             }
-            //Console.WriteLine(wasUnitSuccessful);
-            // TODO: partial reward
+            MyLog.Writer.WriteLine(MyLogLevel.INFO, "Unit ended. Result: " + wasUnitSuccessful);
             return true;
         }
 
@@ -94,8 +94,8 @@ namespace GoodAI.Modules.School.LearningTasks
             m_scale = randomNumber / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
             int side = (int)((float)maxSide * m_scale);
 
-            //Console.WriteLine(maxSide);
-            //Console.WriteLine(side);
+            //MyLog.Writer.WriteLine(maxSide);
+            //MyLog.Writer.WriteLine(side);
 
             Size size = new Size(side, side);
 
@@ -117,15 +117,15 @@ namespace GoodAI.Modules.School.LearningTasks
             Shape.Shapes shape = shapes[m_rndGen.Next(0, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS])];
 
             Color color;
-            if (TSHints[LTSimpleSize.COLOR_PATTERNS] >= 1)
+            if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
             {
-                color = LearningTaskHelpers.FlipCoin(m_rndGen) ? Color.Black : Color.White;
+                color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
             }
             else
             {
                 color = Color.White;
             }
-
+            
             WrappedWorld.CreateShape(position, shape, color, size);
         }
 

@@ -93,13 +93,13 @@ namespace GoodAI.Modules.School.Common
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public GameObject(GameObjectType type, string path, int x, int y, int width = 0, int height = 0, string subtype = null)
+        public GameObject(GameObjectType type, string path, int x, int y, int width = 0, int height = 0, float rotation = 0, string subtype = null)
         {
             this.type = type;
             this.bitmapPath = path;
             this.X = x;
             this.Y = y;
-            this.Rotation = 0;
+            this.Rotation = rotation;
             this.bitmapPixelSize = new Size(0, 0);
             this.Width = width;
             this.Height = height;
@@ -218,6 +218,11 @@ namespace GoodAI.Modules.School.Common
         {
             X = p.X;
             Y = p.Y;
+        }
+
+        public void SetRotation(float rotation)
+        {
+            Rotation = rotation;
         }
     }
 
