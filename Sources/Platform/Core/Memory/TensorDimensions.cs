@@ -154,7 +154,7 @@ namespace GoodAI.Core.Memory
 
             foreach (int item in dimensions)
             {
-                if ((item <= 0))
+                if (item < 0)
                     throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
 
                 newDimensionsBuilder.Add(item);

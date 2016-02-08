@@ -43,6 +43,17 @@ namespace CoreTests
         }
 
         [Fact]
+        public void AnyDimensionCanBeZero()
+        {
+            var rank1Dims = new TensorDimensions(0);
+            Assert.Equal(0, rank1Dims.ElementCount);
+
+            var rankNDims = new TensorDimensions(3, 0, 5);
+            Assert.Equal(3, rankNDims[0]);
+            Assert.Equal(0, rankNDims.ElementCount);
+        }
+
+        [Fact]
         public void DefaultConstructorReturnsEmptyDims()
         {
             Assert.True(TensorDimensions.Empty.Equals(new TensorDimensions()));
