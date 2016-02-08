@@ -18,9 +18,7 @@ namespace GoodAI.Core.Nodes
     {
         // The keyboard keys should fit into a short (add some fields for continuous inputs, like mouse).
         // The mapping should match: https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
-        private const int TotalOutputSize = 256;// + 32;
-
-        private readonly float[] m_values = new float[TotalOutputSize];
+        private const int TotalOutputSize = 256;
 
         [MyBrowsable]
         [YAXSerializableField(DefaultValue = false)]
@@ -40,20 +38,20 @@ namespace GoodAI.Core.Nodes
 
         public void SetKeyUp(int keyValue)
         {
-            m_values[keyValue] = 0.0f;
+            Output.Host[keyValue] = 0.0f;
 
             ExecuteIfPaused();
         }
 
         public void SetKeyDown(int keyValue)
         {
-            bool pressed = m_values[keyValue] < 1.0f;
-            m_values[keyValue] = 1.0f;
+            bool wasNotPressed = Output.Host[keyValue] < 1.0f;
+            Output.Host[keyValue] = 1.0f;
 
             ExecuteIfPaused();
 
             MySimulationHandler handler = Owner.SimulationHandler;
-            if (pressed && StepOnKeyDown && (handler.State == MySimulationHandler.SimulationState.PAUSED))
+            if (wasNotPressed && StepOnKeyDown && (handler.State == MySimulationHandler.SimulationState.PAUSED))
                 handler.StartSimulation(1);
         }
 
@@ -73,8 +71,6 @@ namespace GoodAI.Core.Nodes
 
             public override void Execute()
             {
-                MyLog.DEBUG.WriteLine("InputDevice - task executing");
-                Array.Copy(Owner.m_values, Owner.Output.Host, Owner.m_values.Length);
                 Owner.Output.SafeCopyToDevice();
             }
         }

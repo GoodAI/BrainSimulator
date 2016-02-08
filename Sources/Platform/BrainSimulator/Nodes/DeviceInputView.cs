@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.NodeView;
 using GoodAI.Core.Configuration;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
 using Graph;
 
@@ -29,6 +30,9 @@ namespace GoodAI.BrainSimulator.Nodes
             if (e.Handled)
                 return;
 
+            if (Node.Owner.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
+                return;
+
             DeviceNode.SetKeyDown(e.KeyValue);
 
             e.Handled = true;
@@ -40,6 +44,9 @@ namespace GoodAI.BrainSimulator.Nodes
             base.OnKeyUp(e);
 
             if (e.Handled)
+                return;
+
+            if (Node.Owner.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
                 return;
 
             DeviceNode.SetKeyUp(e.KeyValue);
