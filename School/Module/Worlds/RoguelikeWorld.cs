@@ -88,6 +88,9 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void MoveWorldObjects()
             {
+                if (Owner.IsWorldFrozen)
+                    return;
+
                 if (Owner.Agent == null)
                     return;
 
@@ -99,7 +102,8 @@ namespace GoodAI.Modules.School.Worlds
                 {
                     MoveAgent(Owner.Teacher, Owner.Teacher.CurrentAction());
                 }
-                
+
+                base.MoveWorldObjects();
             }
 
             public void MoveAgent(MovableGameObject a, float[] controls)
@@ -121,11 +125,11 @@ namespace GoodAI.Modules.School.Worlds
                     }
                 }
 
-                int futureX = a.X + (int)a.vX;
-                a.X = futureX;
+                //int futureX = a.X + (int)a.vX;
+                //a.X = futureX;
 
-                int futureY = a.Y + (int)a.vY;
-                a.Y = futureY;
+                //int futureY = a.Y + (int)a.vY;
+                //a.Y = futureY;
             }
         }
     }
