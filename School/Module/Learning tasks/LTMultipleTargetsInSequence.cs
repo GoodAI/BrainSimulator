@@ -29,7 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public int currentIndex = 0;                                        // Represents current index of the sequence
 
 
-        public LTMultipleTargetsSequence() { }
+        public LTMultipleTargetsSequence() : this(null) { }
 
         public LTMultipleTargetsSequence(SchoolWorld w)
             : base(w)
@@ -130,7 +130,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.Width = 10;
                 m_target.Height = 15;
 
-                GameObjectReferences.Add(m_target);                                                                     // Add the current GameObject to the vector of GameObject references 
+                GameObjectReferences.Add(m_target);                                                                     // Add the current GameObject to the vector of GameObject references
 
                 // PositionFree = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, m_target.GetGeometry().Size);  // Generate a random point where the corresponding GameObject doesn't cover any other GameObject
 
@@ -213,7 +213,7 @@ namespace GoodAI.Modules.School.LearningTasks
             //MyLog.DEBUG.WriteLine("StepsSincePresented: " + m_stepsSincePresented);
             //MyLog.DEBUG.WriteLine("LIMIT in TIMESTEPS: " + TSHints[TIMESTEPS_LIMIT]);
 
-            if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])                 // If the limit of timesteps is reached, declare the current training unit failed     
+            if (m_stepsSincePresented >= (int)TSHints[TIMESTEPS_LIMIT])                 // If the limit of timesteps is reached, declare the current training unit failed
             {
                 wasUnitSuccessful = false;
                 return true;

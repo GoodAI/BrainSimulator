@@ -18,6 +18,8 @@ namespace GoodAI.Modules.School.LearningTasks
         private bool m_appears;
         private bool m_isBlack;
 
+        public LTDetectBlackAndWhite() : this(null) { }
+
         public LTDetectBlackAndWhite(SchoolWorld w)
             : base(w)
         {
@@ -55,7 +57,7 @@ namespace GoodAI.Modules.School.LearningTasks
             Size size;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
-                int a = m_rndGen.Next(10,20);
+                int a = m_rndGen.Next(10, 20);
                 size = new Size(a, a);
             }
             else
@@ -63,7 +65,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 size = new Size(15, 15);
             }
 
-                        Point position;
+            Point position;
             if (TSHints[IS_TARGET_MOVING] >= 1)
             {
                 position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size);

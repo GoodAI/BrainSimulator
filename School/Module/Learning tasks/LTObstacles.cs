@@ -27,7 +27,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
         public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
 
-        public LTObstacles() { }
+        public LTObstacles() : this(null) { }
 
         public LTObstacles(SchoolWorld w)
             : base(w)
@@ -413,7 +413,7 @@ if (level == 1)
     m_movingObstacle1.vY = 2;
     WrappedWorld.AddGameObject(m_movingObstacle1);
 
-                
+
     // Create bouncing block
     m_movingObstacle2 = new MovableGameObject(GameObjectType.Obstacle, "Armor_Block.png", 30, 60);
     m_movingObstacle2.Width = 30;
@@ -424,7 +424,7 @@ if (level == 1)
     m_movingObstacle2.Y = 90;
     m_movingObstacle2.vY = -2;
     WrappedWorld.AddGameObject(m_movingObstacle2);
-                
+
 
     // Position agent
     m_agent.X = 50;

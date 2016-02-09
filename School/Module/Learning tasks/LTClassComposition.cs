@@ -18,7 +18,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private List<Shape.Shapes> m_positiveExamples = new List<Shape.Shapes>();
         private List<Shape.Shapes> m_negativeExamples = new List<Shape.Shapes>();
 
-        public LTClassComposition() { }
+        public LTClassComposition() : this(null) { }
 
         public LTClassComposition(SchoolWorld w)
             : base(w)
@@ -43,18 +43,18 @@ namespace GoodAI.Modules.School.LearningTasks
 
             SetHints(TSHints);
 
-            
+
             m_positiveExamples.Add(Shape.Shapes.Star);
             m_positiveExamples.Add(Shape.Shapes.Circle);
             m_positiveExamples.Add(Shape.Shapes.T);
             m_positiveExamples.Add(Shape.Shapes.Tent);
             m_positiveExamples.Add(Shape.Shapes.Mountains);
-            
+
             m_negativeExamples.Add(Shape.Shapes.DoubleRhombus);
             m_negativeExamples.Add(Shape.Shapes.Pentagon);
             m_negativeExamples.Add(Shape.Shapes.Rhombus);
             m_negativeExamples.Add(Shape.Shapes.Square);
-            m_negativeExamples.Add(Shape.Shapes.Triangle);      
+            m_negativeExamples.Add(Shape.Shapes.Triangle);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -75,7 +75,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.CreateNonVisibleAgent();
 
                 Size size;
-                int standardSideSize =  WrappedWorld.POW_WIDTH / 10;
+                int standardSideSize = WrappedWorld.POW_WIDTH / 10;
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
                     int a = standardSideSize + m_rndGen.Next(standardSideSize);

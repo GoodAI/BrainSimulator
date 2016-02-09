@@ -18,7 +18,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public uint UnitSuccesses { get; set; }
         public uint UnitAttempts { get; set; }
 
-        public LTActionWCooldown() { }
+        public LTActionWCooldown() : this(null) { }
 
         public LTActionWCooldown(SchoolWorld w)
             : base(w)
@@ -32,7 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            // TODO 
+            // TODO
 
             SetHints(TSHints);
         }

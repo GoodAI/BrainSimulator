@@ -9,11 +9,12 @@ using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTTetrisTest: AbstractLearningTask<TetrisAdapterWorld>
+    public class LTTetrisTest : AbstractLearningTask<TetrisAdapterWorld>
     {
-        public LTTetrisTest() { }
+        public LTTetrisTest() : this(null) { }
 
-        public LTTetrisTest(SchoolWorld w): base(w)
+        public LTTetrisTest(SchoolWorld w)
+            : base(w)
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.IMAGE_NOISE, 0},
@@ -21,7 +22,7 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            SetHints(TSHints);        
+            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()

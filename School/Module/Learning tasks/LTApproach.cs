@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // DISTANCE_BONUS_COEFFICENT's default value is 1, and if it's 2 the amount of available steps to reach the target is doubled, new formula : "return m_stepsSincePresented > (m_initialDistance * (int)TSHints[MULTIPLY_COEFFICENT]);"
 
 
-        public LTApproach() { }
+        public LTApproach() : this(null) { }
 
         public LTApproach(SchoolWorld w)
             : base(w)
@@ -175,7 +175,7 @@ namespace GoodAI.Modules.School.LearningTasks
             //m_target.X = targetX;
             //m_target.Y = World.FOW_HEIGHT - m_target.Height;
 
-            m_target = WrappedWorld.CreateTarget(new Point(0,0));
+            m_target = WrappedWorld.CreateTarget(new Point(0, 0));
 
             // TODO: hint resolving
             Point p = WrappedWorld.RandomPositionInsidePow(m_rndGen, m_target.GetGeometry().Size);

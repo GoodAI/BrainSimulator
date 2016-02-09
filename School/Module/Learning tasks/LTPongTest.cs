@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTPongTest : AbstractLearningTask<PongAdapterWorld>
     {
-        public LTPongTest() { }
+        public LTPongTest() : this(null) { }
 
         public LTPongTest(SchoolWorld w)
             : base(w)

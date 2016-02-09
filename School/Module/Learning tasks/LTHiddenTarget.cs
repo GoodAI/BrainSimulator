@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    // A target (dummy target or reward target) 
+    // A target (dummy target or reward target)
     public class HiddenTarget : GameObject
     {
         // Random numbers
@@ -13,8 +13,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         // Instantiates and installs the target
         public HiddenTarget(
-            ManInWorld world, 
-            int imageIndex, 
+            ManInWorld world,
+            int imageIndex,
             float targetSizeStandardDeviation) :
             base(GameObjectType.None, GetShapeAddr(imageIndex), 0, 0)
         {
@@ -75,7 +75,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTHiddenTarget : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute NUMBER_OF_FALSE_TARGETS = new TSHintAttribute("Number of false targets", "", typeof(int), 1, 3);
- 
+
         // Random numbers
         protected static Random m_rand = new Random();
 
@@ -87,6 +87,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         // Tracks the initial agent-target distance to determine if the TU has failed
         protected float initialDistance = 0;
+
+        public LTHiddenTarget() : this(null) { }
 
         // Construct the learning task
         public LTHiddenTarget(SchoolWorld w)
@@ -150,7 +152,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 return true;
             }
 
-            // We assume this method is called once per simulation step 
+            // We assume this method is called once per simulation step
             // There should be a better way to notify the LT of a new simulation step
             bool didFail = ++stepsSincePresented > MAX_STEPS_TO_DISTANCE_RATIO * initialDistance;
             if (didFail)

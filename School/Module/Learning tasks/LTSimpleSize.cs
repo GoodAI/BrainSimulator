@@ -9,13 +9,13 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTSimpleSize : AbstractLearningTask<ManInWorld>
     {
-        private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels","",typeof(int),0,1);
+        private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels", "", typeof(int), 0, 1);
 
         private Random m_rndGen = new Random();
         private GameObject m_agent;
         private float m_scale;
 
-        public LTSimpleSize() { }
+        public LTSimpleSize() : this(null) { }
 
         public LTSimpleSize(SchoolWorld w)
             : base(w)
@@ -123,7 +123,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 color = Color.White;
             }
-            
+
             WrappedWorld.CreateShape(position, shape, color, size);
         }
 

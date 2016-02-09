@@ -8,14 +8,14 @@ namespace GoodAI.Modules.School.LearningTasks
 
     public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
-        private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Condition salience", "", typeof(int), 0, 8); 
+        private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Condition salience", "", typeof(int), 0, 8);
 
         protected GameObject m_target;
         protected Random m_rndGen = new Random();
 
         protected int m_colorIndex;
 
-        public LTDetectColor() { }
+        public LTDetectColor() : this(null) { }
 
         public LTDetectColor(SchoolWorld w)
             : base(w)
@@ -80,7 +80,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected byte AddRandomColorOffset(byte colorComponent)
         {
             const int MAX_RANDOM_OFFSET = 10;
-            return (byte)Math.Max(0, Math.Min(255, 
+            return (byte)Math.Max(0, Math.Min(255,
                 (int)colorComponent + m_rndGen.Next(-MAX_RANDOM_OFFSET, MAX_RANDOM_OFFSET + 1)));
         }
 

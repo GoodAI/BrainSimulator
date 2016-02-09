@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    // The condition is an arbitrary visual signal that tells the agent which target 
+    // The condition is an arbitrary visual signal that tells the agent which target
     // to go to. It has two states (black and white).
     public class ConditionGameObject : Shape
     {
@@ -41,7 +41,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // Determine the size of the condition
         public static int DetermineSize(float salience)
         {
-            // Currently we distinguish between two levels of 
+            // Currently we distinguish between two levels of
             // condition salience, corresponding to a huge condition
             // and a tiny one.
             return salience >= 1 ? SALIENT_CONDITION_SIZE : SUBTLE_CONDITION_SIZE;
@@ -54,20 +54,20 @@ namespace GoodAI.Modules.School.LearningTasks
         }
     }
 
-    // A target (dummy target or reward target) 
+    // A target (dummy target or reward target)
     public class ConditionalTarget : GameObject
     {
         // Random numbers
         private static Random m_rand = new Random();
-   
+
         // True if the target is indicated by the white condition state
         private bool m_isWhiteConditionTarget;
 
         // Instantiates and installs the target
         public ConditionalTarget(
-            ManInWorld world, 
-            bool isWhiteConditionTarget, 
-            float targetSizeStandardDeviation, 
+            ManInWorld world,
+            bool isWhiteConditionTarget,
+            float targetSizeStandardDeviation,
             int numberOfDifferentObjects,
             int degreesOfFreedom) :
             base(GameObjectType.None, PickShape(isWhiteConditionTarget, numberOfDifferentObjects), 0, 0)
@@ -170,6 +170,8 @@ namespace GoodAI.Modules.School.LearningTasks
         // Tracks the initial agent-target distance to determine if the TU has failed
         protected float initialDistance = 0;
 
+        public LTConditionalTarget() : this(null) { }
+
         // Construct the learning task
         public LTConditionalTarget(SchoolWorld w)
             : base(w)
@@ -216,7 +218,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             return new ConditionalTarget(
                 WrappedWorld,
-                isWhiteConditionTarget, 
+                isWhiteConditionTarget,
                 TSHints[TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION],
                 (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS],
                 (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]);
@@ -234,7 +236,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 return true;
             }
 
-            // We assume this method is called once per simulation step 
+            // We assume this method is called once per simulation step
             // There should be a better way to notify the LT of a new simulation step
             bool didFail = ++stepsSincePresented > MAX_STEPS_TO_DISTANCE_RATIO * initialDistance;
             if (didFail)

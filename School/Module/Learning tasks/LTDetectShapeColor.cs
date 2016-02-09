@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
-        public LTDetectShapeColor() { }
+        public LTDetectShapeColor() : this(null) { }
 
         public LTDetectShapeColor(SchoolWorld w)
             : base(w)
@@ -34,7 +34,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.CreateNonVisibleAgent();
 
-             // wtih Pr=.5 show object
+            // wtih Pr=.5 show object
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 //random size

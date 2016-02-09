@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected MovableGameObject m_agent;
         private GameObject m_target;
 
-        public LTSimpleAngle() { }
+        public LTSimpleAngle() : this(null) { }
 
         public LTSimpleAngle(SchoolWorld w)
             : base(w)
@@ -76,7 +76,8 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             Shape.Shapes shape;
-            if (TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] >= 1) {
+            if (TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] >= 1)
+            {
                 switch (m_rndGen.Next(0, 4))
                 {
                     case 0:

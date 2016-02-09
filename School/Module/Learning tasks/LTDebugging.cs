@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private MovableGameObject m_agent;
         private Random m_rndGen = new Random();
 
-        public LTDebugging() { }
+        public LTDebugging() : this(null) { }
 
         public LTDebugging(SchoolWorld w)
             : base(w)

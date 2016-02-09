@@ -24,8 +24,10 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity", "", typeof(float), 0, 1);                 // The velocity of the Target when it's trying to avoid the agent
         private readonly TSHintAttribute ELLIPSE_SIZE = new TSHintAttribute("Ellipse Rectangle Ratio", "", typeof(float), 0, 1);            // The size of the ellipse inside the screen it ranges from 0 to 1: 1.0f is the biggest ellipse that can fit in the POW screen
-        private readonly TSHintAttribute STEPS_TAKEN_FOR_ONE_CIRCLE = new TSHintAttribute("Steps for ellipse", "", typeof(float), 0, 1);    // How many steps it takes for one complete cycle of the ellipse   
-        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not", "", typeof(float), 0, 1);         // Either 0 or 1, If it's 1, the target tries to move away from the agent instead of moving ina  circular way            
+        private readonly TSHintAttribute STEPS_TAKEN_FOR_ONE_CIRCLE = new TSHintAttribute("Steps for ellipse", "", typeof(float), 0, 1);    // How many steps it takes for one complete cycle of the ellipse
+        private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not", "", typeof(float), 0, 1);         // Either 0 or 1, If it's 1, the target tries to move away from the agent instead of moving ina  circular way
+
+        public LTMovingTarget() : this(null) { }
 
         public LTMovingTarget(SchoolWorld w)
             : base(w)
@@ -102,7 +104,7 @@ namespace GoodAI.Modules.School.LearningTasks
             ellipseSize = (float)TSHints[ELLIPSE_SIZE];
             stepsTakenForOneCircle = (int)TSHints[STEPS_TAKEN_FOR_ONE_CIRCLE];
 
-            // The movement of the moving target is circular, and this circular movement is represented by an ellipse inside a rectangle (the Screen)           
+            // The movement of the moving target is circular, and this circular movement is represented by an ellipse inside a rectangle (the Screen)
 
             angle += (float)(1f) / stepsTakenForOneCircle;                  // Increase the angle (which will produce the coordinates that will be used to generate the point to move towards to)
 
@@ -152,7 +154,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        // The ellipse's coordinates are calculated using a canonical form in polar coordinates 
+        // The ellipse's coordinates are calculated using a canonical form in polar coordinates
         // angle varies from 0 to 360 degrees, but it's in radians, the range is from 0 to 1 (2Pi)
         // For details: https://en.wikipedia.org/wiki/Ellipse#Parametric_form_in_canonical_position
 

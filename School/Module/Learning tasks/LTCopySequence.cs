@@ -23,7 +23,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected AgentsHistory m_teachersHistory;
         protected bool m_delayedCheck = false;
 
-        public LTCopySequence() { }
+        public LTCopySequence() : this(null) { }
 
         public LTCopySequence(SchoolWorld w)
             : base(w)
