@@ -66,6 +66,11 @@ namespace GoodAI.Modules.School.Worlds
             set { SetOutput(4, value); }
         }
 
+        // Memory block informing the agent of changes in learning task,
+        // training unit, and level.
+        //
+        // Currently consists of three flags, set to 1 on the presentation
+        // of a new task, unit, and level respectively.
         [MyOutputBlock(5)]
         public MyMemoryBlock<float> LTStatus
         {
