@@ -74,7 +74,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// </summary>
     public class LTHiddenTarget : AbstractLearningTask<RoguelikeWorld>
     {
-        private static readonly TSHintAttribute NUMBER_OF_FALSE_TARGETS = new TSHintAttribute("Number of false targets", "", TypeCode.Single, 1, 3);
+        private static readonly TSHintAttribute NUMBER_OF_FALSE_TARGETS = new TSHintAttribute("Number of false targets", "", typeof(int), 1, 3);
  
         // Random numbers
         protected static Random m_rand = new Random();

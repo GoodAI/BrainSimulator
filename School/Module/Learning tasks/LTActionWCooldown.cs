@@ -6,6 +6,8 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTActionWCooldown : AbstractLearningTask<ManInWorld>
     {
+        private TSHintAttribute COOLDOWN = new TSHintAttribute("Cooldown value", "", typeof(float), 0, 1);
+
         private ManInWorld m_world { get; set; }
         private uint m_cooldownRemaining { get; set; }
         private Random m_rnd = new Random();
@@ -22,7 +24,7 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                {TSHintAttributes.DEPRECATED_COOLDOWN,  5},
+                {COOLDOWN,  5},
                 {TSHintAttributes.RANDOMNESS_LEVEL, 0 },
                 {TSHintAttributes.REQUIRED_UNIT_SUCCESSES, 10 },
                 {TSHintAttributes.MAX_UNIT_ATTEMPTS, 1000 },
@@ -30,7 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            NumberOfLevels = 50;
+            // TODO 
 
             SetHints(TSHints);
         }
