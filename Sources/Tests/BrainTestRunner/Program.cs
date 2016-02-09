@@ -2,6 +2,8 @@
 using CommandLine;
 using CommandLine.Text;
 using System.Diagnostics;
+using GoodAI.Platform.Core.Configuration;
+using GoodAI.TypeMapping;
 
 namespace GoodAI.Tests.BrainTestRunner
 {
@@ -25,6 +27,8 @@ namespace GoodAI.Tests.BrainTestRunner
             if (!Parser.Default.ParseArguments(args, options))
                 Console.WriteLine(options.GetUsage());
 
+            ConfigureTypeMap();
+
             var testRunner = new TestRunner(new TestDiscoverer(options.Filter), new TestReporter());
 
             testRunner.Run();
@@ -34,6 +38,12 @@ namespace GoodAI.Tests.BrainTestRunner
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
+        }
+
+        private static void ConfigureTypeMap()
+        {
+            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
+            TypeMap.Verify();
         }
     }
 }

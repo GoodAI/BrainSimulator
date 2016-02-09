@@ -99,6 +99,10 @@
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+      <Project>{86955C47-2A02-41A4-AB32-C9E592EB2971}</Project>
+      <Name>TypeMap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\BasicNodes\BrainTests\BasicBrainTests.csproj">
       <Project>{c60ce33a-e25a-47c2-a539-c9fc29bb0d8b}</Project>
       <Name>BasicBrainTests</Name>

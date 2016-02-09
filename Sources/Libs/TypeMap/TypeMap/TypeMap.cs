@@ -9,11 +9,21 @@ namespace GoodAI.TypeMapping
 {
     public static class TypeMap
     {
-        private static Container SimpleInjectorContainer { get; set; }
+        private static Container SimpleInjectorContainer
+        {
+            get
+            {
+                if (m_simpleInjectorContainer == null)
+                    Initialize();
+
+                return m_simpleInjectorContainer;
+            }
+        }
+        private static Container m_simpleInjectorContainer;
 
         private static void Initialize()
         {
-            SimpleInjectorContainer = new Container
+            m_simpleInjectorContainer = new Container
             {
                 Options =
                 {
@@ -24,18 +34,15 @@ namespace GoodAI.TypeMapping
 
         public static void Destroy()
         {
-            if (SimpleInjectorContainer == null)
+            if (m_simpleInjectorContainer == null)
                 return;
 
-            SimpleInjectorContainer.Dispose();
-            SimpleInjectorContainer = null;
+            m_simpleInjectorContainer.Dispose();
+            m_simpleInjectorContainer = null;
         }
 
         public static void InitializeConfiguration<TConfiguration>() where TConfiguration : IContainerConfiguration, new()
         {
-            if (SimpleInjectorContainer == null)
-                Initialize();
-
             var configuration = new TConfiguration();
             configuration.Configure(SimpleInjectorContainer);
         }
