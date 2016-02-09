@@ -24,8 +24,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected MovableGameObject m_movingObstacle1;
         protected MovableGameObject m_movingObstacle2;
 
-        private readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
-        private readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
+        public readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
+        public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
 
         public LTObstacles() { }
 
@@ -74,7 +74,6 @@ namespace GoodAI.Modules.School.LearningTasks
             Grid g = world.GetGrid();                                                           // Get grid
 
 
-
             if (level == 1)
             {
                 TSHints[TIMESTEPS_LIMIT] = 500;
@@ -96,7 +95,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 2)                                                                     // Like level 1, but inverted
             {
-
                 TSHints[TIMESTEPS_LIMIT] = 500;
 
                 int widthOfRectangle = 10;
@@ -116,7 +114,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (level == 3)
             {
-
                 TSHints[TIMESTEPS_LIMIT] = 400;
 
                 int widthOfRectangle = 20;
@@ -154,7 +151,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.CreateWall(g.getPoint(14, 5));
                 world.CreateWall(g.getPoint(14, 4));
                 world.CreateWall(g.getPoint(14, 3));
-
 
                 world.CreateWall(g.getPoint(8, 1));
                 world.CreateWall(g.getPoint(8, 2));
@@ -224,6 +220,38 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
 
+
+            if (level == 7)
+            {
+                TSHints[TIMESTEPS_LIMIT] = 200;
+
+                int widthOfRectangle = 3;
+                int heightOfRectangle = 2;
+
+                createWallRectangleWithFillProbability(world, m_rndGen, 5, 5, widthOfRectangle, heightOfRectangle, 0.8f, 1.0f);
+
+                // Position agent
+                m_agent.X = 200;
+                m_agent.Y = 193;
+
+
+                // Position target
+                m_target.X = m_rndGen.Next(160, 280);
+
+                if (m_rndGen.Next(0, 2) == 0)
+                {
+                    m_target.Y = 120;
+                }
+                else
+                {
+                    m_target.Y = 270;
+                }
+
+
+            }
+
+
+
         }
 
 
@@ -241,8 +269,70 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.CreateWall(g.getPoint(k, 0));
                 world.CreateWall(g.getPoint(k, heightOfRectangle));
             }
-
         }
+
+
+
+        /*
+         * The function uses the grid to create a partial rectangle with settable size and position, the rectangle is made of walls and the probability of the corresponding blocks being filled can be set.
+         * "wallAddProbability" denotes the probability of each block of the rectangle being filled: it ranges from 0 (empty rectangle, no rectangle) to 1 (full rectangle), 0.5f means the rectangle is filled using half of the blocks
+         * The algorithm ensures there is always 1 hole, even if "wallAddProbability" is 1.0f
+         */
+        public void createWallRectangleWithFillProbability(RoguelikeWorld world, Random rndGen, int gridX, int gridY, int widthOfRectangle, int heightOfRectangle, float wallAddProbability, float sizeWall)
+        {
+            Grid g = world.GetGrid();
+            bool firstHoleEncountered = false;
+
+            for (int k = 1; k < heightOfRectangle; k++) // Fill Y axis
+            {
+                if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
+                {
+                    world.CreateWall(g.getPoint(gridX, k + gridY), sizeWall);
+                }
+                else
+                {
+                    firstHoleEncountered = true;
+                }
+                if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
+                {
+                    world.CreateWall(g.getPoint(widthOfRectangle + gridX, k + gridY), sizeWall);
+                }
+                else
+                {
+                    firstHoleEncountered = true;
+                }
+            }
+
+            for (int k = 1; k < widthOfRectangle; k++)  // Fill X axis
+            {
+                if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
+                {
+                    world.CreateWall(g.getPoint(gridX + k, gridY), sizeWall);
+                }
+                else
+                {
+                    firstHoleEncountered = true;
+                }
+
+                if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
+                {
+                    if (k == (widthOfRectangle - 1) && firstHoleEncountered == false)
+                    {
+                        // This case will happen to avoid the rectangle being without holes
+                    }
+                    else
+                    {
+                        world.CreateWall(g.getPoint(gridX + k, heightOfRectangle + gridY), sizeWall);
+                    }
+
+                }
+                else
+                {
+                    firstHoleEncountered = true;
+                }
+            }
+        }
+
 
         public void createWallHorizontalLine(RoguelikeWorld world, int GridX, int GridY, int lengthOfLine)
         {

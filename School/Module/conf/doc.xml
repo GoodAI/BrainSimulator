@@ -90,6 +90,15 @@
             Ability Name: Navigate to the target efficiently by avoiding obstacles
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstaclesTargetOnSight">
+             <author>GoodAI</author>
+             <meta>Os</meta>
+             <status>WIP</status>
+             <summary>"LTObstacles with POW visible target" learning task</summary>
+             <description>
+            
+             </description>
+        </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">
             <summary>
             Visual object for comparison. Similar to the Shape class.

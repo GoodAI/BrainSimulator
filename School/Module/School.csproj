@@ -101,6 +101,7 @@
     <Compile Include="Learning tasks\LTMovingTargetD.cs" />
     <Compile Include="Learning tasks\LTMultipleTargetsInSequence.cs" />
     <Compile Include="Learning tasks\LTObstacles.cs" />
+    <Compile Include="Learning tasks\LTObstaclesTargetOnSight.cs" />
     <Compile Include="Learning tasks\LTPongTest.cs" />
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
