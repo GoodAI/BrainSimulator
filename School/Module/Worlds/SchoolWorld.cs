@@ -139,14 +139,11 @@ namespace GoodAI.Modules.School.Worlds
 
         #endregion
 
-        #region World machinery
-
-        [YAXSerializableField, YAXSerializeAs("CurrentWorld"), YAXCustomSerializer(typeof(WorldAdapterSerializer))]
+        
         private IWorldAdapter m_currentWorld;
-
         private bool m_switchModel = true;
 
-        [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter))]
+        [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter)), YAXDontSerialize]
         public IWorldAdapter CurrentWorld
         {
             get
@@ -163,10 +160,6 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        public override void UpdateAfterDeserialization()
-        {
-            CurrentWorld = m_currentWorld;
-        }
 
         public override void OnSimulationStateChanged(MySimulationHandler.StateEventArgs args)
         {
@@ -185,12 +178,16 @@ namespace GoodAI.Modules.School.Worlds
         Random m_rndGen = new Random();
 
         public SchoolCurriculum Curriculum { get; set; }
-        ILearningTask m_currentLearningTask;
-
-        // The curriculum to use.
-        [MyBrowsable, Category("Curriculum"), Description("Choose which type of curriculum you want to use.")]
-        [YAXSerializableField(DefaultValue = CurriculumType.TrainingCurriculum)]
-        public CurriculumType TypeOfCurriculum { get; set; }
+        private ILearningTask m_currentLTBF;
+        private ILearningTask m_currentLearningTask
+        {
+            get { return m_currentLTBF; }
+            set
+            {
+                m_currentLTBF = value;
+                CurrentWorld = (IWorldAdapter)Activator.CreateInstance(m_currentLTBF.RequiredWorld);
+            }
+        }
 
         // For testing the progression of learning tasks when we don't have an agent or
         // available agents can't complete the task, we can emulate training unit success
@@ -220,6 +217,9 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
+            Curriculum.ResetLearningProgress();
+            m_currentLearningTask = Curriculum.GetNextLearningTask();
+
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
             MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
@@ -350,7 +350,6 @@ namespace GoodAI.Modules.School.Worlds
 
         public void InitializeCurriculum()
         {
-            Curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
             m_currentLearningTask = null;
             NotifyNewCurriculum();
         }
@@ -404,7 +403,9 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                Owner.InitializeCurriculum();
+                
+                if (Owner.m_currentLearningTask == null)
+                    Owner.m_currentLearningTask = Owner.Curriculum.GetNextLearningTask();
             }
         }
 
@@ -468,6 +469,5 @@ namespace GoodAI.Modules.School.Worlds
                 Owner.ExecuteLearningTaskStep();
             }
         }
-
     }
 }

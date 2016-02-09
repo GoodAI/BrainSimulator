@@ -1,14 +1,9 @@
-﻿using GoodAI.Core.Nodes;
-using GoodAI.Core.Task;
+﻿using GoodAI.Core.Task;
 using GoodAI.Modules.School.Common;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using YAXLib;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -36,8 +31,8 @@ namespace GoodAI.Modules.School.Worlds
                 .IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
                 .ToArray();
     }
-    
-    public class IWorldAdapterConverter: TypeConverter
+
+    public class IWorldAdapterConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
@@ -51,7 +46,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (value is string)
             {
-                return (IWorldAdapter)(Activator.CreateInstance(Type.GetType((string)value))); 
+                return (IWorldAdapter)(Activator.CreateInstance(Type.GetType((string)value)));
             }
             if (value == null)
             {
@@ -73,53 +68,9 @@ namespace GoodAI.Modules.School.Worlds
             return true;
         }
 
-        protected Type[] GetValues() 
+        protected Type[] GetValues()
         {
             return IWorldAdaptersList.Types;
         }
     }
-
-    public class WorldAdapterSerializer : ICustomSerializer<IWorldAdapter>
-    {
-        public IWorldAdapter DeserializeFromAttribute(XAttribute attrib)
-        {
-            return ConvertToIWorldAdapter(attrib.Value);
-        }
-
-        public IWorldAdapter DeserializeFromElement(XElement element)
-        {
-            return ConvertToIWorldAdapter(element.Value);
-        }
-
-        public IWorldAdapter DeserializeFromValue(string value)
-        {
-            return ConvertToIWorldAdapter(value);
-        }
-
-        public void SerializeToAttribute(IWorldAdapter objectToSerialize, XAttribute attrToFill)
-        {
-            if (objectToSerialize != null)
-                attrToFill.Value = objectToSerialize.GetType().ToString();
-        }
-
-        public void SerializeToElement(IWorldAdapter objectToSerialize, XElement elemToFill)
-        {
-            if (objectToSerialize != null)
-                elemToFill.Value = objectToSerialize.GetType().ToString();
-        }
-
-        public string SerializeToValue(IWorldAdapter objectToSerialize)
-        {
-            if (objectToSerialize != null)
-                return objectToSerialize.GetType().ToString();
-            else
-                return String.Empty;
-        }
- 
-        private static IWorldAdapter ConvertToIWorldAdapter(string attributeString)
-        {
-            return (IWorldAdapter)(Activator.CreateInstance(Type.GetType(attributeString)));
-        }
-    }
-
 }
