@@ -8,7 +8,7 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.Core.Memory
 {
-    public class TensorDimensions
+    public class TensorDimensions : TensorDimensionsBase
     {
         #region Static 
 
@@ -21,19 +21,11 @@ namespace GoodAI.Core.Memory
 
         #endregion
 
-        private readonly IImmutableList<int> m_dims;
-
-        private const int MaxDimensions = 100;  // ought to be enough for everybody
-
         public TensorDimensions()
-        {
-            m_dims = null;  // This means default dimensions.
-        }
+        {}
 
-        public TensorDimensions(params int[] dimensions)
-        {
-            m_dims = ProcessDimensions(dimensions);
-        }
+        public TensorDimensions(params int[] dimensions) : base(ProcessDimensions(dimensions))
+        {}
 
         public TensorDimensions(IEnumerable<int> dimensions) : base(ProcessDimensions(dimensions))
         {}
@@ -43,77 +35,17 @@ namespace GoodAI.Core.Memory
             if (!(obj is TensorDimensions))
                 return false;
 
-            return Equals((TensorDimensions)obj);
+            return base.Equals((TensorDimensions)obj);
         }
 
-        public bool Equals(TensorDimensions other)
+        public bool Equals(TensorDimensions dimensionsHint)
         {
-            if (other.Rank != Rank)
-                return false;
-
-            if ((Rank == 1) && (m_dims == null) && (other.m_dims == null))
-                return true;
-
-            return (m_dims != null) && (other.m_dims != null) && m_dims.SequenceEqual(other.m_dims);
+            return base.Equals(dimensionsHint);
         }
 
         public override int GetHashCode()
         {
-            if (m_dims == null || m_dims.Count == 0)
-                return 0;
-
-            return m_dims.Aggregate(19, (hashCode, item) => 31*hashCode + item);
-        }
-
-        public int Rank
-        {
-            get
-            {
-                return (m_dims != null) ? m_dims.Count : 1;
-            }
-        }
-
-        /// <summary>
-        /// Rank synonym. (This is required by tests because this class has an the indexer. Please use Rank if possible.)
-        /// </summary>
-        [Obsolete("Preferably use Rank instead")]
-        public int Count
-        { get { return Rank; } }
-
-        public int ElementCount
-        {
-            get
-            {
-                if (m_dims == null || m_dims.Count == 0)
-                    return 0;
-
-                return m_dims.Aggregate(1, (acc, item) => acc*item);
-            }
-        }
-
-        public int this[int index]
-        {
-            get
-            {
-                if (m_dims == null)
-                {
-                    if (index == 0)
-                        return 0;  // We pretend we have one dimension of size 0.
-
-                    throw GetIndexOutOfRangeException(index, 0);
-                }
-
-                if (index >= m_dims.Count)
-                    throw GetIndexOutOfRangeException(index, m_dims.Count - 1);
-
-                return m_dims[index];
-            }
-        }
-
-        private static IndexOutOfRangeException GetIndexOutOfRangeException(int index, int maxIndex)
-        {
-            return new IndexOutOfRangeException(string.Format(
-                "Index {0} is greater than max index {1}.", index, maxIndex));
+            return base.GetHashCode();
         }
 
         public string Print(bool printTotalSize = false)

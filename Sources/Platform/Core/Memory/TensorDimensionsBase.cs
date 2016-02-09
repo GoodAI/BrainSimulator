@@ -11,7 +11,7 @@ namespace GoodAI.Core.Memory
 {
     public abstract class TensorDimensionsBase
     {
-        private readonly IImmutableList<int> m_dims;
+        protected readonly IImmutableList<int> m_dims;
 
         protected const int MaxDimensions = 100;  // ought to be enough for everybody
 
@@ -23,11 +23,6 @@ namespace GoodAI.Core.Memory
         protected TensorDimensionsBase(IImmutableList<int> immutableDimensions)
         {
             m_dims = immutableDimensions;
-        }
-
-        public TensorDimensionsBase(params int[] dimensions)
-        {
-            m_dims = ProcessDimensions(dimensions);
         }
 
         protected bool Equals(TensorDimensionsBase other)
@@ -71,7 +66,7 @@ namespace GoodAI.Core.Memory
                 if (m_dims == null || m_dims.Count == 0)
                     return 0;
 
-                return m_dims.Aggregate(1, (acc, item) => acc * item);
+                return Math.Abs(m_dims.Aggregate(1, (acc, item) => acc * item));  // Abs to cope with minus ones.
             }
         }
 
@@ -98,33 +93,6 @@ namespace GoodAI.Core.Memory
         {
             return new IndexOutOfRangeException(string.Format(
                 "Index {0} is greater than max index {1}.", index, maxIndex));
-        }
-
-        public string Print(bool printTotalSize = false)
-        {
-            if (m_dims == null || m_dims.Count == 0)
-                return "0";
-
-            return string.Join("×", m_dims.Select(item => item.ToString()))
-                + (printTotalSize ? string.Format(" [{0}]", ElementCount) : "");
-        }
-
-        private static IImmutableList<int> ProcessDimensions(IEnumerable<int> dimensions)
-        {
-            ImmutableList<int>.Builder newDimensionsBuilder = ImmutableList.CreateBuilder<int>();
-
-            foreach (int item in dimensions)
-            {
-                if (item < 0)
-                    throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
-
-                newDimensionsBuilder.Add(item);
-
-                if (newDimensionsBuilder.Count > MaxDimensions)
-                    throw new InvalidDimensionsException(string.Format("Maximum number of dimensions is {0}.", MaxDimensions));
-            }
-
-            return newDimensionsBuilder.ToImmutable();
         }
     }
 }
