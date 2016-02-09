@@ -758,7 +758,7 @@ namespace GoodAI.BrainSimulator.Forms
             ObserverViews = new List<ObserverForm>();
 
             ValidationView = new ValidationForm(this, TypeMap.GetInstance<MyValidator>());
-            HelpView = new NodeHelpForm(this) {StartPosition = FormStartPosition.CenterScreen};
+            HelpView = new NodeHelpForm(this) { StartPosition = FormStartPosition.CenterScreen };
 
             DebugView = new DebugForm(this);
 
@@ -956,7 +956,7 @@ namespace GoodAI.BrainSimulator.Forms
             OpenGraphLayout(Project.Network);
 
             if (Project.World != null)
-                SelectWorldInWorldList(Project.World);
+                SelectWorldInWorldList(Project.World.GetType());
 
             RestoreObserverForms();
             RestoreDashboardForm();
@@ -1014,7 +1014,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        public void SelectWorldInWorldList(MyWorld world)
+        public void SelectWorldInWorldList(Type worldType)
         {
             if (Settings.Default.ToolBarNodes == null)
             {
@@ -1022,13 +1022,13 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             // if the world is not present in the combo box, add it first
-            if (!Settings.Default.ToolBarNodes.Contains(world.GetType().Name))
+            if (!Settings.Default.ToolBarNodes.Contains(worldType.Name))
             {
-                Settings.Default.ToolBarNodes.Add(world.GetType().Name);
-                worldList.Items.Add(MyConfiguration.KnownWorlds[world.GetType()]);
+                Settings.Default.ToolBarNodes.Add(worldType.Name);
+                worldList.Items.Add(MyConfiguration.KnownWorlds[worldType]);
             }
 
-            worldList.SelectedItem = MyConfiguration.KnownWorlds[world.GetType()];
+            worldList.SelectedItem = MyConfiguration.KnownWorlds[worldType];
         }
 
         private void AddTimerMenuItem(ToolStripSplitButton splitButton, EventHandler clickHandler, int ms)
@@ -1132,7 +1132,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 // Perform project validation (world and network).
                 SimulationHandler.Simulation.Validate(Project);
-                
+
                 MyValidator validator = SimulationHandler.Simulation.Validator;
 
                 if (ObserverViews != null)
