@@ -43,9 +43,10 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             // Identify color with a 1-of-k encoding (or confidence values)
-            int guessedColor = GetMaxIndex(SchoolWorld.ActionInput.Host, (int)TSHints[NUMBER_OF_COLORS]);
+            int arraySize = Math.Max(SchoolWorld.ActionInput.Count, (int)TSHints[NUMBER_OF_COLORS]);
+            int guessedColor = GetMaxIndex(SchoolWorld.ActionInput.Host, arraySize);
 
-            wasUnitSuccessful = true;
+            wasUnitSuccessful = guessedColor == m_colorIndex;
             return true;
         }
 
