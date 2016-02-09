@@ -19,6 +19,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using System.Linq;
+using ManagedCuda.BasicTypes;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -208,15 +209,13 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT * 3;
+            VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT;
             VisualFOW.ColumnHint = FOW_WIDTH;
 
-            VisualPOW.Count = POW_HEIGHT * POW_WIDTH * 3;
+            VisualPOW.Count = POW_HEIGHT * POW_WIDTH;
             VisualPOW.ColumnHint = POW_WIDTH;
 
-            AgentVisualTemp.Count = VisualPOW.Count;
-
-            ShuffleRGBTemp.Count = VisualFOW.Count;
+            AgentVisualTemp.Count = VisualPOW.Count * 3;
 
             Bitmaps.Count = 0;
 
@@ -606,7 +605,7 @@ namespace GoodAI.Modules.School.Worlds
         public abstract MovableGameObject CreateMovableTarget(Point p, float size = 1.0f);
         public abstract GameObject CreateDoor(Point p, bool isClosed = true, float size = 1.0f);
         public abstract GameObject CreateLever(Point p, bool isOn = false, float size = 1.0f);
-        public abstract GameObject CreateLever(Point p, ISwitchable obj, bool isOn = false,  float size = 1.0f);
+        public abstract GameObject CreateLever(Point p, ISwitchable obj, bool isOn = false, float size = 1.0f);
         public abstract GameObject CreateRogueKiller(Point p, float size = 1.0f);
         public abstract MovableGameObject CreateRogueMovableKiller(Point p, float size = 1.0f);
 
@@ -926,7 +925,6 @@ namespace GoodAI.Modules.School.Worlds
             private uint m_sharedBufferHandle;
             private CudaOpenGLBufferInteropResource m_renderResource;
 
-            private MyCudaKernel m_ShuffleRGBKernel;
             private MyCudaKernel m_AddRgbNoiseKernel;
 
             INativeWindow m_window = null;
@@ -937,10 +935,6 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Init(int nGPU)
             {
-                // Init pixel-reorganization kernel
-                m_ShuffleRGBKernel = MyKernelFactory.Instance.Kernel(nGPU, @"ShuffleRGB", "ShuffleRGB");
-                m_ShuffleRGBKernel.SetupExecution(Owner.VisualFOW.Count);
-
                 m_AddRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
 
                 m_textureHandles = new Dictionary<string, int>();
@@ -958,10 +952,11 @@ namespace GoodAI.Modules.School.Worlds
                 // init textures
                 UpdateTextures();
 
+                /* FOW currently unused
                 // fow
                 setupFOWview();
                 RenderGL();
-                copyPixelsFOW();
+                copyPixelsFOW();*/
 
                 // pow
                 setupPOWview();
@@ -992,19 +987,31 @@ namespace GoodAI.Modules.School.Worlds
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
-                // Register the texture for use with CUDA
-                //m_sharedBufferHandle = (uint)GL.GenBuffer();
-                //GL.BindBuffer(BufferTarget., m_sharedBufferHandle);
-                //int size = Owner.FOW_WIDTH * Owner.FOW_HEIGHT * sizeof(float) * 3;
-                //GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(size), default(IntPtr), BufferUsageHint.DynamicDraw);
-                //m_renderResource = new CudaOpenGLBufferInteropResource(m_sharedBufferHandle, CUGraphicsRegisterFlags.None);
-                //Owner.VisualFOW.ExternalPointer = MyMemoryManager.Instance.GetGlobalVariable("RANDOMNAMEaa", Owner.GPU, () => new float[size]).DevicePointer.Pointer; // TODO: odstranit!
-                //Owner.VisualFOW.AllocateDevice();
-
                 // Setup FBO
                 m_fboHandle = (uint)GL.GenFramebuffer();
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, m_renderTextureHandle, 0);
+
+
+                // Setup Cuda <-> OpenGL interop
+                int length = Owner.POW_HEIGHT * Owner.POW_WIDTH * sizeof(uint);
+                //unbind - just in case this is causing us the invalid exception problems
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                //create buffer
+                GL.GenBuffers(1, out m_sharedBufferHandle);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                GL.BufferData(BufferTarget.PixelPackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.StaticRead);  // use data instead of IntPtr.Zero if needed
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                try
+                {
+                    m_renderResource = new CudaOpenGLBufferInteropResource(m_renderTextureHandle, CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                }
+                catch (CudaException e)
+                {
+                    MyLog.INFO.WriteLine(
+                        "{0}: CUDA-OpenGL interop error while itializing texture (using fallback): {1}",
+                        GetType().Name, e.Message);
+                }
 
                 // Clean up
                 GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -1056,43 +1063,6 @@ namespace GoodAI.Modules.School.Worlds
                 }
             }
 
-            void setupFOWview()
-            {
-                // Setup rendering
-                GL.Viewport(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
-
-                GL.MatrixMode(MatrixMode.Projection);
-                GL.LoadIdentity();
-                GL.Ortho(0, Owner.FOW_WIDTH, 0, Owner.FOW_HEIGHT, -1, 1);
-                GL.MatrixMode(MatrixMode.Modelview);
-                GL.LoadIdentity();
-            }
-
-            void copyPixelsFOW()
-            {
-                // Prepare the results for CUDA
-
-                // Copy to buffer object (not working)
-                /*GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
-                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, default(IntPtr));
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-
-                m_renderResource.Map();
-                Owner.VisualFOW.ExternalPointer = m_renderResource.GetMappedPointer().Pointer;
-                Owner.VisualFOW.AllocateDevice();*/
-
-                // Copy to host first
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, Owner.ShuffleRGBTemp.Host);
-                GL.ReadBuffer(ReadBufferMode.None);
-
-                Owner.ShuffleRGBTemp.SafeCopyToDevice();
-                // Reorganize RGB for our observers
-                m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualFOW, Owner.VisualFOW.Count);
-            }
-
             void setupPOWview()
             {
                 Point powCenter = Owner.GetPowCenter();
@@ -1101,8 +1071,6 @@ namespace GoodAI.Modules.School.Worlds
 
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
-                //GL.Ortho(worldTopLeftInPow.X, worldTopLeftInPow.X + Owner.POW_WIDTH, worldTopLeftInPow.Y + Owner.POW_HEIGHT, worldTopLeftInPow.Y, -1, 1);
-                //GL.Ortho(powCenter.X, powCenter.X + Owner.POW_WIDTH, powCenter.Y + Owner.POW_HEIGHT, powCenter.Y, -1, 1);
                 GL.Ortho(powCenter.X - (float)Owner.POW_WIDTH / 2, powCenter.X + (float)Owner.POW_WIDTH / 2, powCenter.Y - (float)Owner.POW_HEIGHT / 2, powCenter.Y + (float)Owner.POW_HEIGHT / 2, -1, 1);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.LoadIdentity();
@@ -1112,45 +1080,39 @@ namespace GoodAI.Modules.School.Worlds
             {
                 // Prepare the results for CUDA
 
-                // Copy to buffer object (not working)
-                /*GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                // bind pixel buffer object
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
-                GL.ReadPixels(0, 0, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, default(IntPtr));
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-
-                m_renderResource.Map();
-                Owner.VisualFOW.ExternalPointer = m_renderResource.GetMappedPointer().Pointer;
-                Owner.VisualFOW.AllocateDevice();*/
-
-
-                // Copy to host first
+                // bind buffer from which data will be read
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.Float, Owner.ShuffleRGBTemp.Host);
+                // read data to PBO (IntPtr.Zero means offset is 0)
+                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
                 GL.ReadBuffer(ReadBufferMode.None);
 
-                Owner.ShuffleRGBTemp.SafeCopyToDevice();
-                // Reorganize RGB for our observers
-                m_ShuffleRGBKernel.Run(Owner.ShuffleRGBTemp, Owner.VisualPOW, Owner.VisualPOW.Count);
+                if (m_renderResource != null && m_renderResource.IsRegistered && !m_renderResource.IsMapped)
+                {
+                    // map the interop resource
+                    m_renderResource.Map();
+                }
+
+                int size = Owner.POW_HEIGHT * Owner.POW_WIDTH * Marshal.SizeOf(typeof(uint));
+                Owner.VisualPOW.GetDevice(Owner).CopyToDevice(m_renderResource.GetMappedPointer<uint>().DevicePointer, 0, 0, size);
+
+                // deinit CUDA interop
+                m_renderResource.UnMap();
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
 
                 // add noise over POW
                 if (Owner.IsImageNoise)
                 {
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.AgentVisualTemp.GetDevice(Owner),
-                        Owner.ImageNoiseMean / 256.0f, Owner.ImageNoiseStandardDeviation / 256.0f);
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, (SizeT)(Owner.AgentVisualTemp.Count), Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
-                    Owner.AgentVisualTemp.SafeCopyToHost();
-
-                    m_AddRgbNoiseKernel.SetupExecution(new dim3(Owner.POW_WIDTH, 1, 1), new dim3(Owner.POW_HEIGHT, 3, 1));
-                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp.GetDevicePtr(Owner));
+                    m_AddRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
+                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
                 }
             }
 
             void RenderGL()
             {
-                //if (m_renderResource.IsMapped)
-                //    m_renderResource.UnMap();
-
                 // maybe unnecessary fix of the bug with garbage collected old m_windows:
                 //m_window.ProcessEvents();
 
@@ -1184,10 +1146,19 @@ namespace GoodAI.Modules.School.Worlds
                     GL.PushMatrix();
                     // TODO: check if object is in view (POW only)
 
+                    // translate object to its position in the scene
                     GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
-                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
-                    GL.Rotate(gameObject.Rotation * 180, 0.0f, 0.0f, 1.0f);
 
+                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
+
+                    // translate back
+                    GL.Translate(0.5f, 0.5f, 0.0f);
+
+                    // rotate around center (origin)
+                    GL.Rotate(gameObject.Rotation, 0.0f, 0.0f, 1.0f);
+
+                    // translate s.t. object center in origin
+                    GL.Translate(-0.5f, -0.5f, 0.0f);
 
                     if (gameObject.isBitmapAsMask)
                     {

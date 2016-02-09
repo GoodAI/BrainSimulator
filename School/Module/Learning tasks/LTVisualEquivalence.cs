@@ -166,7 +166,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // Get target rotation
         private float GetRotation(bool doRotateShape)
         {
-            return doRotateShape ? GetRandom(0, 2 * (float)Math.PI) : 0;
+            return doRotateShape ? GetRandom(0, 360) : 0;
         }
 
         // Return a random number lowerBound <= r < upperBound
