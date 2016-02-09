@@ -44,20 +44,12 @@
             In this learning task, the agent must learn to choose one of two targets depending on an arbitrary visual signal (the condition).
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
-            <author>GoodAI</author>
-            <meta>Os</meta>
-            <status>WIP</status>
-            <summary>"Moving Target" learning task</summary>
-            <description>
-            Ability Name: Efficient navigation in a simple environment + moving target.
-            In this Learning task there is an agent and a moving target, to pass each level the agent needs to reach the target a defined number of consecutive times,
-            There is a limit on the number of timesteps that can be used to reach the target, If this limit is reached, the level fails and the agent starts from the same level but the number of consecutive times is reset.
-            Different levels will create targets with different moving characteristics.
-            The teacher declares the ability as learned when the agent reaches the last level.
-            </description>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTHiddenTarget">
+            <summary>
+            In this learning task, the agent must learn to choose one of multiple targets without prior information as to which one to choose.
+            </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTargetD">
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
             <author>GoodAI</author>
             <meta>Os</meta>
             <status>WIP</status>
@@ -83,6 +75,15 @@
             <summary>"Obstacles" learning task</summary>
             <description>
             Ability Name: Navigate to the target efficiently by avoiding obstacles
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstaclesTargetOnSight">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"LTObstacles with POW visible target" learning task</summary>
+            <description>
+            The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
             </description>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">

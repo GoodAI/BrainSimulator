@@ -36,39 +36,35 @@ namespace GoodAI.Modules.School.Common
     // !!! refactored to be more implementation independent and more operator understandable
     public static class TSHintAttributes
     {
-        private static Type m_boolT = typeof(bool);
-        private static Type m_intT = typeof(int);
-        private static Type m_floatT = typeof(float);
-
         // A value [0, 1] measuring the amount of noise in the image
         public static readonly TSHintAttribute IMAGE_NOISE = new TSHintAttribute(
             "Image noise", 
             "Adding noise to agent's POW. Color of each pixel is slightly randomly changed",
-            m_boolT,
+            typeof(bool),
             0, 1);
 
         // Initially set this to some large number (10 000). Do not change it later!
-        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", m_intT, 0, 1);
+        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", typeof(int), 0, 1);
 
         public static readonly TSHintAttribute IS_VARIABLE_POSITION = new TSHintAttribute(
             "Variable position of objects",
             "",
-            m_boolT,
+            typeof(bool),
             0, 1);
 
-        public static readonly TSHintAttribute IS_VARIABLE_SIZE = new TSHintAttribute("Variable size","",m_boolT,0,1);
-        public static readonly TSHintAttribute IS_VARIABLE_COLOR = new TSHintAttribute("Variable color","",m_boolT,0,1);
-        public static readonly TSHintAttribute IS_VARIABLE_ROTATION = new TSHintAttribute("Variable rotation", "", m_boolT, 0, 1);
+        public static readonly TSHintAttribute IS_VARIABLE_SIZE = new TSHintAttribute("Variable size", "", typeof(bool), 0, 1);
+        public static readonly TSHintAttribute IS_VARIABLE_COLOR = new TSHintAttribute("Variable color", "", typeof(bool), 0, 1);
+        public static readonly TSHintAttribute IS_VARIABLE_ROTATION = new TSHintAttribute("Variable rotation", "", typeof(bool), 0, 1);
 
         // Randomness of whole learning task
         // For hints which are not covered by IS_VARIABLE_X
-        public static readonly TSHintAttribute RANDOMNESS_LEVEL = new TSHintAttribute("RANDOMNESS_LEVEL", "", m_boolT, 0, 1);
+        public static readonly TSHintAttribute RANDOMNESS_LEVEL = new TSHintAttribute("RANDOMNESS_LEVEL", "", typeof(bool), 0, 1);
 
         // True if the agent is rewarded at each step for approaching the target
-        public static readonly TSHintAttribute GIVE_PARTIAL_REWARDS = new TSHintAttribute("Give partial rewards","",m_boolT,0,1);
+        public static readonly TSHintAttribute GIVE_PARTIAL_REWARDS = new TSHintAttribute("Give partial rewards", "", typeof(bool), 0, 1);
 
         // The number of dimensions in which the agent can move (1 or 2)
-        public static readonly TSHintAttribute DEGREES_OF_FREEDOM = new TSHintAttribute("Degrees of freedom","",m_intT,1,2);
+        public static readonly TSHintAttribute DEGREES_OF_FREEDOM = new TSHintAttribute("Degrees of freedom", "", typeof(int), 1, 2);
 
         // Standard deviation of target size scaling (0 for fixed size)
         // The target size is obtained by multiplying with 2^s,
@@ -76,11 +72,11 @@ namespace GoodAI.Modules.School.Common
         // standard deviation as specified
         // 
         // replaced with VARIABLE_SIZE (binary)
-        public static readonly TSHintAttribute DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION = new TSHintAttribute("DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION", "", m_floatT, 0, 1);
+        public static readonly TSHintAttribute DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION = new TSHintAttribute("DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION", "", typeof(float), 0, 1);
 
         // Estimate of cardinality the set of all visible objects
-        public static readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("NUMBER_OF_DIFFERENT_OBJECTS", "", m_intT, 0, 1);
-        public static readonly TSHintAttribute NUMBER_OBJECTS = new TSHintAttribute("Number of objects", "", m_intT, 0, 1);
+        public static readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("NUMBER_OF_DIFFERENT_OBJECTS", "", typeof(int), 0, 1);
+        public static readonly TSHintAttribute NUMBER_OBJECTS = new TSHintAttribute("Number of objects", "", typeof(int), 0, 1);
 
         // Max target distance as a multiple [0, 1] of the world size.
         // If non-negative, the distance between agent and target is uniformly distributed
@@ -88,16 +84,16 @@ namespace GoodAI.Modules.School.Common
         // from the entire image.
         //
         // use RandomPositionInsidePOW() instead;
-        public static readonly TSHintAttribute DEPRECATED_MAX_TARGET_DISTANCE = new TSHintAttribute("DEPRECATED_MAX_TARGET_DISTANCE", "", m_boolT, 0, 1);
+        public static readonly TSHintAttribute DEPRECATED_MAX_TARGET_DISTANCE = new TSHintAttribute("DEPRECATED_MAX_TARGET_DISTANCE", "", typeof(bool), 0, 1);
 
-        public static readonly TSHintAttribute DEPRECATED_TARGET_MAX_SIZE = new TSHintAttribute("DEPRECATED_TARGET_MAX_SIZE", "", m_floatT, 0, 1);
-        public static readonly TSHintAttribute DEPRECATED_TARGET_MIN_SIZE = new TSHintAttribute("DEPRECATED_TARGET_MIN_SIZE", "", m_floatT, 0, 1);
+        public static readonly TSHintAttribute DEPRECATED_TARGET_MAX_SIZE = new TSHintAttribute("DEPRECATED_TARGET_MAX_SIZE", "", typeof(float), 0, 1);
+        public static readonly TSHintAttribute DEPRECATED_TARGET_MIN_SIZE = new TSHintAttribute("DEPRECATED_TARGET_MIN_SIZE", "", typeof(float), 0, 1);
 
         // is used in one task only
-        public static readonly TSHintAttribute DEPRECATED_COOLDOWN = new TSHintAttribute("DEPRECATED_COOLDOWN", "", m_floatT, 0, 1);
+        public static readonly TSHintAttribute DEPRECATED_COOLDOWN = new TSHintAttribute("DEPRECATED_COOLDOWN", "", typeof(float), 0, 1);
 
-        public static readonly TSHintAttribute REQUIRED_UNIT_SUCCESSES = new TSHintAttribute("REQUIRED_UNIT_SUCCESSES", "", m_intT, 0, 1);
-        public static readonly TSHintAttribute MAX_UNIT_ATTEMPTS = new TSHintAttribute("MAX_UNIT_ATTEMPTS", "", m_intT, 0, 1);
+        public static readonly TSHintAttribute REQUIRED_UNIT_SUCCESSES = new TSHintAttribute("REQUIRED_UNIT_SUCCESSES", "", typeof(int), 0, 1);
+        public static readonly TSHintAttribute MAX_UNIT_ATTEMPTS = new TSHintAttribute("MAX_UNIT_ATTEMPTS", "", typeof(int), 0, 1);
     }
 
     /// <summary>
