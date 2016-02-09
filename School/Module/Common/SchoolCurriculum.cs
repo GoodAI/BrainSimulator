@@ -42,7 +42,8 @@ namespace GoodAI.Modules.School.Common
 
         public void ResetLearningProgress()
         {
-            m_taskEnumerator.Reset();
+            if (m_taskEnumerator != null)
+                m_taskEnumerator.Reset();
         }
 
         public void Add(ILearningTask task)

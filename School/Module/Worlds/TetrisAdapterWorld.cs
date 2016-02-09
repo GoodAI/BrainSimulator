@@ -90,14 +90,13 @@ namespace GoodAI.School.Worlds
 
         public void ClearWorld()
         {
-            Engine.Reset();
+            //Engine.Reset();
         }
 
         public void SetHint(TSHintAttribute attr, float value)
         {
             // some TSHints related to Tetris?
         }
-
 
         public override void Validate(MyValidator validator)
         {
