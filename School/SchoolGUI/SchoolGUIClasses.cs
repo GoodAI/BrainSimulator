@@ -1,5 +1,6 @@
 ﻿using Aga.Controls.Tree;
 using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,12 +76,15 @@ namespace GoodAI.School.GUI
                 return new LearningTaskNode(taskType, worldType) { Enabled = design.m_enabled };
             }
 
-            public ILearningTask AsILearningTask()
+            public ILearningTask AsILearningTask(SchoolWorld world = null)
             {
                 if (!m_enabled)
                     return null;    //there is no placeholder for empty task, therefore null
-
-                ILearningTask task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
+                ILearningTask task;
+                if (world != null)
+                    task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType), world);
+                else
+                    task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
                 task.RequiredWorld = Type.GetType(m_worldType);
                 return task;
             }
@@ -106,6 +110,21 @@ namespace GoodAI.School.GUI
                     ToList();
                 m_enabled = node.Enabled;
                 m_name = node.Text;
+            }
+
+            public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
+            {
+                SchoolCurriculum curriculum = new SchoolCurriculum();
+                if (!m_enabled)
+                    return curriculum;
+
+                m_tasks.
+                    Select(x => x.AsILearningTask(world)).
+                    Where(x => x != null).
+                    ToList().
+                    ForEach(x => curriculum.Add(x));
+
+                return curriculum;
             }
 
             public static explicit operator CurriculumNode(CurriculumDesign design)
@@ -141,6 +160,15 @@ namespace GoodAI.School.GUI
         public PlanDesign(List<CurriculumNode> nodes)
         {
             m_curricula = nodes.Select(x => new CurriculumDesign(x)).ToList();
+        }
+
+        public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
+        {
+            SchoolCurriculum result = new SchoolCurriculum();
+            foreach (CurriculumDesign curr in m_curricula)
+                result.Add(curr.AsSchoolCurriculum(world));
+
+            return result;
         }
 
         public static explicit operator List<CurriculumNode>(PlanDesign design)
