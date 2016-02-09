@@ -13,7 +13,6 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1);
 
-        public LTDetectBlackAndWhite() { }
         private Random m_rndGen = new Random();
         private bool m_appears;
         private bool m_isBlack;
