@@ -22,12 +22,10 @@ namespace GoodAI.Modules.School.Common
             {
                 if (m_knownLearningTasks == null)
                 {
-                    //TODO: check multi-level inheritance if there will be any in future
                     IEnumerable<Type> tasks = Assembly.GetAssembly(typeof(AbstractLearningTask<>))
                         .GetTypes()
-                        .Where(x => x.BaseType != null &&
-                            x.BaseType.IsGenericType &&
-                            x.BaseType.GetGenericTypeDefinition() == typeof(AbstractLearningTask<>));
+                        .Where(x => !x.IsGenericType &&
+                            IsSubclassOfRawGeneric(typeof(AbstractLearningTask<>), x));
 
                     m_knownLearningTasks = new Dictionary<Type, List<Type>>();
                     foreach (Type taskType in tasks)
@@ -48,8 +46,6 @@ namespace GoodAI.Modules.School.Common
 
         public static ILearningTask CreateLearningTask(Type learningTaskType, SchoolWorld w)
         {
-            //ConstructorInfo c = learningTaskType.GetConstructor(new[] { typeof(SchoolWorld) });
-            //return (ILearningTask)c.Invoke(new[] { w });
             return (ILearningTask)Activator.CreateInstance(learningTaskType, w);
         }
 
@@ -67,6 +63,19 @@ namespace GoodAI.Modules.School.Common
             SchoolWorld world = (SchoolWorld)Activator.CreateInstance(worldType);
             ILearningTask task = (ILearningTask)Activator.CreateInstance(taskType, world);
             return task;
+        }
+
+        public static bool IsSubclassOfRawGeneric(Type generic, Type toCheck)
+        {
+            while (toCheck != null && toCheck != typeof(object))
+            {
+                Type cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                if (generic == cur)
+                    return true;
+
+                toCheck = toCheck.BaseType;
+            }
+            return false;
         }
 
         public static Type GetGenericType(Type taskType)
