@@ -23,7 +23,7 @@ using YAXLib;
 
 namespace CoreTests
 {
-    public class SerializationTests
+    public class SerializationTests : CoreTestBase
     {
         private ITestOutputHelper m_output;
 
