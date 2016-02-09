@@ -68,7 +68,11 @@ namespace GoodAI.School.GUI
 
             public static explicit operator LearningTaskNode(LTDesign design)
             {
-                return new LearningTaskNode(Type.GetType(design.m_taskType), Type.GetType(design.m_worldType)) { Enabled = design.m_enabled };
+                Type taskType = Type.GetType(design.m_taskType);
+                Type worldType = Type.GetType(design.m_worldType);
+                if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
+                    return null;
+                return new LearningTaskNode(taskType, worldType) { Enabled = design.m_enabled };
             }
 
             public ILearningTask AsILearningTask()
@@ -108,7 +112,7 @@ namespace GoodAI.School.GUI
             {
                 CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled };
 
-                design.m_tasks.Where(x => x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+                design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
 
                 return node;
             }
