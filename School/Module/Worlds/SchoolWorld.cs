@@ -17,6 +17,12 @@ namespace GoodAI.Modules.School.Worlds
 
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
+        #region Constants
+        // Constants defining the memory layout of LTStatus information
+        private const int NEW_LT_FLAG = 0;
+        private const int NEW_TU_FLAG = NEW_LT_FLAG + 1;
+        private const int NEW_LEVEL_FLAG = NEW_TU_FLAG + 1;
+        #endregion
 
         #region Input and Output MemoryBlocks
         [MyInputBlock]
@@ -59,6 +65,16 @@ namespace GoodAI.Modules.School.Worlds
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
         }
+
+        [MyOutputBlock(5)]
+        public MyMemoryBlock<float> LTStatus
+        {
+            get { return GetOutput(5); }
+            set { SetOutput(5, value); }
+        }
+
+
+
         #endregion
 
         #region MemoryBlocks sizes
@@ -81,6 +97,7 @@ namespace GoodAI.Modules.School.Worlds
             Data.Count = DataSize;
             DataLength.Count = 1;
             Reward.Count = 1;
+            LTStatus.Count = 3;
         }
         #endregion
 
@@ -207,6 +224,8 @@ namespace GoodAI.Modules.School.Worlds
             if (m_currentLearningTask == null)
                 return;
 
+            ResetLTStatusFlags();
+
             if (m_currentLearningTask.HasPresentedFirstUnit)
             {
                 m_currentLearningTask.UpdateState();
@@ -220,6 +239,8 @@ namespace GoodAI.Modules.School.Worlds
                         "Switching to LearningTask: " +
                         m_currentLearningTask.GetType().ToString().Split(new[] { '.' }).Last()
                         );
+
+                    NotifyNewLearningTask();
                 }
                 else if (m_currentLearningTask.DidAbilityFail)
                 {
@@ -227,10 +248,42 @@ namespace GoodAI.Modules.School.Worlds
                     return;
                 }
             }
+            else
+            {
+                NotifyNewLearningTask();
+            }
 
             if (!m_currentLearningTask.HasPresentedFirstUnit || m_currentLearningTask.IsTrainingUnitCompleted)
             {
-                m_currentLearningTask.HandlePresentNewTrainingUnit();
+                bool didIncreaseLevel = m_currentLearningTask.HandlePresentNewTrainingUnit();
+                NotifyNewTrainingUnit(didIncreaseLevel);
+            }
+
+            LTStatus.SafeCopyToDevice();
+        }
+
+        // Reset the flags signalling new learning task, training unit, or level
+        private void ResetLTStatusFlags()
+        {
+            LTStatus.Host[NEW_LT_FLAG] = 0;
+            LTStatus.Host[NEW_TU_FLAG] = 0;
+            LTStatus.Host[NEW_LEVEL_FLAG] = 0;
+        }
+
+        // Notify of the start of a new learning task
+        private void NotifyNewLearningTask()
+        {
+            LTStatus.Host[NEW_LT_FLAG] = 1;
+            LTStatus.Host[NEW_LEVEL_FLAG] = 1;
+        }
+
+        // Notify of the start of a new training unit and (possibly) level
+        private void NotifyNewTrainingUnit(bool didIncreaseLevel)
+        {
+            LTStatus.Host[NEW_TU_FLAG] = 1;
+            if (didIncreaseLevel)
+            {
+                LTStatus.Host[NEW_LEVEL_FLAG] = 1;
             }
         }
 

@@ -20,7 +20,7 @@ namespace GoodAI.Modules.School.Common
         int NumberOfSuccessesRequired { get; }
 
         void UpdateState();
-        void HandlePresentNewTrainingUnit();
+        bool HandlePresentNewTrainingUnit();
 
         Type RequiredWorld { get; set; }
     }
@@ -191,14 +191,17 @@ namespace GoodAI.Modules.School.Common
             return CurrentNumberOfSuccesses >= NumberOfSuccessesRequired;
         }
 
-        public virtual void HandlePresentNewTrainingUnit()
+        public virtual bool HandlePresentNewTrainingUnit()
         {
+            bool didIncreaseLevel = false;
+
             if (IsTrainingSetCompleted())
             {
                 CurrentLevel++;
                 CurrentNumberOfAttempts = 0;
                 CurrentNumberOfSuccesses = 0;
                 UpdateLevel();
+                didIncreaseLevel = true;
             }
 
             IsTrainingUnitCompleted = false;
@@ -208,6 +211,8 @@ namespace GoodAI.Modules.School.Common
             }
             PresentNewTrainingUnit();
             HasPresentedFirstUnit = true;
+
+            return didIncreaseLevel;
         }
 
         protected abstract void PresentNewTrainingUnit();
