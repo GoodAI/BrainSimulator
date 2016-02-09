@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private GameObject m_target;
         private float m_distance = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_distance is lower bound of the interval
 
-        public LTSimpleDistance() : this(null) { }
+        public LTSimpleDistance() { }
 
         public LTSimpleDistance(SchoolWorld w)
             : base(w)

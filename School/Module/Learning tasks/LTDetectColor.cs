@@ -15,7 +15,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected int m_colorIndex;
 
-        public LTDetectColor() : this(null) { }
+        public LTDetectColor() { }
 
         public LTDetectColor(SchoolWorld w)
             : base(w)

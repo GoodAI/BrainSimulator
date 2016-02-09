@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected bool m_sameObjectetPlaced;
 
-        public LTDetectSimilarity() : this(null) { }
+        public LTDetectSimilarity() { }
 
         public LTDetectSimilarity(SchoolWorld w)
             : base(w)

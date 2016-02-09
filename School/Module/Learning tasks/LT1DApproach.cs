@@ -6,7 +6,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LT1DApproach : AbstractLearningTask<ManInWorld>
     {
-        public LT1DApproach() : this(null) { }
+        public LT1DApproach() { }
 
         public LT1DApproach(SchoolWorld w)
             : base(w)

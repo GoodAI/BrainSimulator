@@ -29,7 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public int currentIndex = 0;                                        // Represents current index of the sequence
 
 
-        public LTMultipleTargetsSequence() : this(null) { }
+        public LTMultipleTargetsSequence() { }
 
         public LTMultipleTargetsSequence(SchoolWorld w)
             : base(w)

@@ -21,7 +21,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected AbstractTeacherInWorld m_teacher;
         protected AgentsHistory m_teachersHistory;
 
-        public LTCopyAction() : this(null) { }
+        public LTCopyAction() { }
 
         public LTCopyAction(SchoolWorld w)
             : base(w)

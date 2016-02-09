@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
-        public LTDetectShape() : this(null) { }
+        public LTDetectShape() { }
 
         public LTDetectShape(SchoolWorld w)
             : base(w)

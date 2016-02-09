@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
-        public LTDetectShapeColor() : this(null) { }
+        public LTDetectShapeColor() { }
 
         public LTDetectShapeColor(SchoolWorld w)
             : base(w)

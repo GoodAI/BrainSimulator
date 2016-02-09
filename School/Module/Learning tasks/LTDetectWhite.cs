@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
 
-        public LTDetectWhite() : this(null) { }
+        public LTDetectWhite() { }
 
         public LTDetectWhite(SchoolWorld w)
             : base(w)

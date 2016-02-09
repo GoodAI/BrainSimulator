@@ -27,7 +27,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
         public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
 
-        public LTObstacles() : this(null) { }
+        public LTObstacles() { }
 
         public LTObstacles(SchoolWorld w)
             : base(w)
