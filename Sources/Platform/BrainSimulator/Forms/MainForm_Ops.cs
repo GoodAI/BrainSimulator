@@ -704,6 +704,7 @@ namespace GoodAI.BrainSimulator.Forms
             SimulationHandler = new MySimulationHandler(simulation);
             SimulationHandler.StateChanged += SimulationHandler_StateChanged;
             SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+            SimulationHandler.SimulationStopped += SimulationHandler_SimulationStopped;
 
             // must be created in advance to grab possible error logs
             ConsoleView = new ConsoleForm(this);
@@ -837,6 +838,13 @@ namespace GoodAI.BrainSimulator.Forms
             autosaveTextBox_Validating(this, new CancelEventArgs());
 
             autosaveButton.Checked = Settings.Default.AutosaveEnabled;
+        }
+
+        private void SimulationHandler_SimulationStopped(object sender, MySimulationHandler.SimulationStoppedEventArgs args)
+        {
+            ValidationView.UpdateListView();
+            foreach (GraphLayoutForm graphView in GraphViews.Values)
+                graphView.ReloadContent();
         }
 
         public void ProjectStateChanged(string action)
