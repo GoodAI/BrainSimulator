@@ -37,6 +37,20 @@ namespace GoodAI.Modules.TestingNodes.DynamicBlocks
             Output.Count = 50;
         }
 
+        public override void ReallocateMemoryBlocks()
+        {
+            base.ReallocateMemoryBlocks();
+
+            if (Output.Reallocate(GetNewBufferSize()))
+            {
+                MyLog.INFO.WriteLine("Reallocated the output block");
+            }
+            else
+            {
+                MyLog.WARNING.WriteLine("Failed to reallocate");
+            }
+        }
+
         public int GetNewBufferSize()
         {
             return Random.Next(99) + 1;
@@ -55,22 +69,13 @@ namespace GoodAI.Modules.TestingNodes.DynamicBlocks
 
         public override void Execute()
         {
-            if (Owner.Output.Reallocate(Owner.GetNewBufferSize()))
-            {
-                MyLog.INFO.WriteLine("Reallocated the output block");
+            for (int i = 0; i < Owner.Output.Count; i++)
+                Owner.Output.Host[i] = Owner.Random.Next(100);
 
-                for (int i = 0; i < Owner.Output.Count; i++)
-                    Owner.Output.Host[i] = Owner.Random.Next(100);
+            MyLog.INFO.WriteLine("Source output count: " + Owner.Output.Count);
+            MyLog.INFO.WriteLine("Source output sum: " + Owner.Output.Host.Sum());
 
-                MyLog.INFO.WriteLine("Source output count: " + Owner.Output.Count);
-                MyLog.INFO.WriteLine("Source output sum: " + Owner.Output.Host.Sum());
-
-                Owner.Output.SafeCopyToDevice();
-            }
-            else
-            {
-                MyLog.WARNING.WriteLine("Failed to reallocate");
-            }
+            Owner.Output.SafeCopyToDevice();
         }
     }
 
@@ -99,6 +104,13 @@ namespace GoodAI.Modules.TestingNodes.DynamicBlocks
         {
             Output.Count = Input != null ? Input.Count : 0;
         }
+
+        public override void ReallocateMemoryBlocks()
+        {
+            base.ReallocateMemoryBlocks();
+
+            Output.Reallocate(Input.Count);
+        }
     }
 
     /// <summary>
@@ -113,8 +125,6 @@ namespace GoodAI.Modules.TestingNodes.DynamicBlocks
 
         public override void Execute()
         {
-            Owner.Output.Reallocate(Owner.Input.Count);
-
             Owner.Output.GetDevice(Owner.GPU).CopyToDevice(Owner.Input.GetDevicePtr(Owner.GPU));
 
             Owner.Input.SafeCopyToHost();

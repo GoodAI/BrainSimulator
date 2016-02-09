@@ -295,7 +295,7 @@ namespace GoodAI.Core.Execution
                     if (Simulation.IsStepFinished)
                     {
                         Simulation.PerformModelChanges();
-                        //Simulation.Reallocate();
+                        Simulation.Reallocate();
                     }
 
                     Simulation.PerformStep(State == SimulationState.RUNNING_STEP);
