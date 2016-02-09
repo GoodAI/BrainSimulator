@@ -19,6 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
+                { TSHintAttributes.IS_VARIABLE_POSITION, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
