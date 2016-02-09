@@ -104,6 +104,7 @@
     <Compile Include="Learning tasks\LTObstaclesTargetOnSight.cs" />
     <Compile Include="Learning tasks\LTPongTest.cs" />
     <Compile Include="Learning tasks\LTRotateAndMoveToFit.cs" />
+    <Compile Include="Learning tasks\LTShapeSorting.cs" />
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
     <Compile Include="Learning tasks\LTSimpleSize.cs" />

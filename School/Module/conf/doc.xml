@@ -86,6 +86,12 @@
             The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
             </description>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTShapeSorting">
+            <meta>mm</meta>
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">
             <summary>
             Visual object for comparison. Similar to the Shape class.
