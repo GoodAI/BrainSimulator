@@ -22,6 +22,7 @@ namespace GoodAI.Modules.School.Common
         void UpdateState();
         bool HandlePresentNewTrainingUnit();
 
+        SchoolWorld SchoolWorld { get; set; }
         Type RequiredWorld { get; set; }
     }
 
@@ -136,7 +137,7 @@ namespace GoodAI.Modules.School.Common
             get { return CurrentLevel == NumberOfLevels - 1 && IsTrainingSetCompleted(); }
         }
 
-        public AbstractLearningTask() { }
+        public AbstractLearningTask() : this(null) { }
 
         public AbstractLearningTask(SchoolWorld schoolWorld)
         {
