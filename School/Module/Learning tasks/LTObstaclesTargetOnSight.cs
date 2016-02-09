@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <status>WIP</status>
     /// <summary>"LTObstacles with POW visible target" learning task</summary>
     /// <description>
-    ///
+    /// The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
     /// </description>
     public class LTObstaclesTargetOnSight : LTObstacles                           // Deriving from LTObstacles
     {

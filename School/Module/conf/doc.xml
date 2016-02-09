@@ -78,13 +78,13 @@
             </description>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTObstaclesTargetOnSight">
-             <author>GoodAI</author>
-             <meta>Os</meta>
-             <status>WIP</status>
-             <summary>"LTObstacles with POW visible target" learning task</summary>
-             <description>
-            
-             </description>
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"LTObstacles with POW visible target" learning task</summary>
+            <description>
+            The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
+            </description>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">
             <summary>
