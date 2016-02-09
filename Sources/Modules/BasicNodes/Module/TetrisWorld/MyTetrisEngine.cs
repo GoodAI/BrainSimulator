@@ -51,16 +51,28 @@ namespace GoodAI.Modules.TetrisWorld
     public class TetrisGameBoard
     {
         private BrickType[,] m_gameBoardState;
+        private int[] m_horizon;
         private int m_columns;
         private int m_rows;
 
         public BrickType[,] GameBoardState { get { return m_gameBoardState; } }
+        public int[] Horizon {
+            get
+            {
+                return m_horizon;
+            }
+            set
+            {
+                m_horizon = value;
+            }
+        }
 
         public TetrisGameBoard(int columns, int rows)
         {
             m_gameBoardState = new BrickType[rows, columns];
             m_columns = columns;
             m_rows = rows;
+            m_horizon = new int[m_columns];
         }
 
         public TetrisGameBoard(TetrisGameBoard source)
@@ -69,6 +81,14 @@ namespace GoodAI.Modules.TetrisWorld
             m_columns = source.m_columns;
             m_gameBoardState = new BrickType[source.m_rows, source.m_columns];
             Array.Copy(source.m_gameBoardState, m_gameBoardState, m_columns * m_rows);
+        }
+
+        public TetrisGameBoard(int[] horizon, int rows = 20)
+        {
+            m_rows = rows;
+            m_columns = horizon.Count();            
+            m_gameBoardState = new BrickType[m_rows, m_columns];
+            SetHorizon(horizon);
         }
 
         /// <summary>
@@ -188,6 +208,65 @@ namespace GoodAI.Modules.TetrisWorld
             }
             return false;
         }
+
+        private void MakeBoardByHorizon()
+        {
+            int min = m_horizon.Min();
+            BrickType brick = BrickType.None;
+            for (int iRow = 0; iRow < m_rows; iRow++)
+                for (int iCol = 0; iCol < m_columns; iCol++)
+                {
+                    if (iRow < m_rows - 1 - (m_horizon[iCol] - min))
+                        brick = BrickType.None;
+                    else
+                        brick = BrickType.Preset;
+                    m_gameBoardState[iRow, iCol] = brick;
+                }
+        }
+
+        private void CalculateHorizon()
+        {
+            int iRow = 0;
+            for (int iCol = 0; iCol < m_columns; iCol++)
+            { 
+                iRow = m_rows - 1;
+                while (iRow >= 0 && m_gameBoardState[iRow, iCol] == BrickType.None)
+                {
+                    iRow--;
+                }
+                m_horizon[iCol] = iRow;
+            }
+            m_horizon = Array.ConvertAll(m_horizon, x => -(x - iRow));  //last brick will be at level 0 (just for simplicity), holes are negative, hills positive
+        }
+
+        public void SetHorizon(int[] horizon)
+        {
+            Debug.Assert(horizon.Count() == m_columns, "You need to set horizon of proper width");
+            Array.Copy(horizon, m_horizon, m_columns);
+         //   CalculateHorizon();
+            MakeBoardByHorizon();
+        }
+
+
+        public bool DoesBrickFitToHorizon(int[] brick)
+        {
+            bool result = false;
+            int bWidth = brick.Count();
+            int[] tmp = new int[bWidth];
+            int idx = 0;
+            while (!result && idx < m_columns - bWidth)
+            {
+                for (int bi = 0; bi < bWidth; bi++)
+                {
+                    tmp[bi] = m_horizon[idx + bi] - brick[bi]; // add a brick to horizon 
+                }
+                if (tmp.Distinct().Count() == 1) // if result levels are same, brick fits
+                    result = true;
+                idx++;
+            }
+            return result;
+        }
+
     }
 
     public class MovingTetrominoFactory
@@ -252,6 +331,7 @@ namespace GoodAI.Modules.TetrisWorld
         public BrickType[,] DescriptiveGrid { get; protected set; } // do not change the returned grid!
         public abstract BrickType TetrominoBrickType { get; }
         protected abstract BrickType[,] GetRotatedDescriptiveGrid(TetrominoRotation rotation);
+        public abstract int[] GetRotatedLowerHorizon(TetrominoRotation rotation);
 
         protected TetrominoRotation m_rotation;
         protected TetrisGameBoard m_gameBoard;
@@ -373,6 +453,21 @@ namespace GoodAI.Modules.TetrisWorld
                         return gridRotL;
             }
         }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation) 
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                case TetrominoRotation.UpsideDown:
+                    return new int[] {0, 0, 0, 0};
+                case TetrominoRotation.Left:
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 0 };
+            }        
+        }
+
     }
 
     public class MovingTetrominoJ : MovingTetromino
@@ -420,6 +515,23 @@ namespace GoodAI.Modules.TetrisWorld
                     return gridRotR;
             }
         }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation)
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                    return new int[] { 0, 0, 0};
+                case TetrominoRotation.UpsideDown:
+                    return new int[] { 1, 1, 0 };
+                case TetrominoRotation.Left:
+                    return new int[] { 0, 0 };
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 0, 2 };
+            }
+        }
+
     }
 
     public class MovingTetrominoL : MovingTetromino
@@ -467,6 +579,23 @@ namespace GoodAI.Modules.TetrisWorld
                     return gridRotR;
             }
         }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation)
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                    return new int[] { 0, 0, 0 };
+                case TetrominoRotation.UpsideDown:
+                    return new int[] { 0, 1, 1 };
+                case TetrominoRotation.Left:
+                    return new int[] { 2, 0 };
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 0, 0 };
+            }
+        }
+
     }
 
     public class MovingTetrominoO : MovingTetromino
@@ -487,6 +616,19 @@ namespace GoodAI.Modules.TetrisWorld
         {
 
             return gridRot0;
+        }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation)
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                case TetrominoRotation.UpsideDown:
+                case TetrominoRotation.Left:
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 0, 0 };
+            }
         }
     }
 
@@ -523,6 +665,21 @@ namespace GoodAI.Modules.TetrisWorld
                         return gridRot90;
             }
         }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation)
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                case TetrominoRotation.UpsideDown:
+                    return new int[] { 0, 0, 1 };
+                case TetrominoRotation.Left:
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 1, 0 };
+            }
+        }
+
     }
 
     public class MovingTetrominoT : MovingTetromino
@@ -570,6 +727,23 @@ namespace GoodAI.Modules.TetrisWorld
                     return gridRotR;
             }
         }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation)
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                    return new int[] { 0, 0, 0 };
+                case TetrominoRotation.UpsideDown:
+                    return new int[] { 1, 0, 1 };
+                case TetrominoRotation.Left:
+                    return new int[] { 1, 0 };
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 0, 1 };
+            }
+        }
+
     }
 
     public class MovingTetrominoZ : MovingTetromino
@@ -605,6 +779,21 @@ namespace GoodAI.Modules.TetrisWorld
                         return gridRot90;
             }
         }
+
+        public override int[] GetRotatedLowerHorizon(TetrominoRotation rotation)
+        {
+            switch (rotation)
+            {
+                case TetrominoRotation.None:
+                case TetrominoRotation.UpsideDown:
+                    return new int[] { 1, 0, 0 };
+                case TetrominoRotation.Left:
+                case TetrominoRotation.Right:
+                default:
+                    return new int[] { 0, 1 };
+            }
+        }
+
     }
 
     /// <summary>
@@ -680,6 +869,22 @@ namespace GoodAI.Modules.TetrisWorld
         {
             ReinitGameBoard();
             m_world.WorldEventOutput.Fill(0.0f);
+        }
+
+        public void ResetToRandomHorizon(int range = 2)
+        {
+            Reset();
+            Random rnd = new Random();
+            int[] horizon = Enumerable
+                .Repeat(0, m_world.BrickAreaColumns)
+                .Select(i => rnd.Next(-range, range))
+                .ToArray();
+            m_gameBoard.SetHorizon(horizon);
+        }
+
+        public bool CanMatch(TetrominoRotation rotation = TetrominoRotation.None)
+        {
+            return m_gameBoard.DoesBrickFitToHorizon(m_tetromino.GetRotatedLowerHorizon(rotation));
         }
 
         private void ResetLost()

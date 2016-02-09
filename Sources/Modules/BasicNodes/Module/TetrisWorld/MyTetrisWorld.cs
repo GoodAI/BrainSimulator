@@ -156,8 +156,8 @@ namespace GoodAI.Modules.TetrisWorld
         #endregion
 
         private Dictionary<TetrisWorld.TextureType, Bitmap> m_bitmapTable = new Dictionary<TetrisWorld.TextureType, Bitmap>();
-        protected TetrisWorldEngine m_engine;
-        protected WorldEngineParams m_engineParams = new WorldEngineParams();
+        public TetrisWorldEngine Engine;
+        public WorldEngineParams EngineParams = new WorldEngineParams();
 
         #region Parameters
 
@@ -181,24 +181,24 @@ namespace GoodAI.Modules.TetrisWorld
         [MyBrowsable, Category("Difficulty"), Description("Number of cleared lines before level is incremented.")]
         [YAXSerializableField(DefaultValue = 50)]
         public int ClearedLinesPerLevel {
-            get { return m_engineParams.ClearedLinesPerLevel; }
-            set { m_engineParams.ClearedLinesPerLevel = value; }
+            get { return EngineParams.ClearedLinesPerLevel; }
+            set { EngineParams.ClearedLinesPerLevel = value; }
         }
 
         [MyBrowsable, Category("Difficulty"), Description("Number of steps before a tetromino falls down 1 cell.")]
         [YAXSerializableField(DefaultValue = 5)]
         public int WaitStepsPerFall
         {
-            get { return m_engineParams.WaitStepsPerFall; }
-            set { m_engineParams.WaitStepsPerFall = value; }
+            get { return EngineParams.WaitStepsPerFall; }
+            set { EngineParams.WaitStepsPerFall = value; }
         }
 
         [MyBrowsable, Category("Difficulty"), Description("Number of almost full lines present at the start of the game.")]
         [YAXSerializableField(DefaultValue = 5)]
         public int AlmostFullLinesAtStart
         {
-            get { return m_engineParams.AlmostFullLinesAtStart; }
-            set { m_engineParams.AlmostFullLinesAtStart = value; }
+            get { return EngineParams.AlmostFullLinesAtStart; }
+            set { EngineParams.AlmostFullLinesAtStart = value; }
         }
 
         [Category("Constants")]
@@ -454,12 +454,12 @@ namespace GoodAI.Modules.TetrisWorld
         {
             public override void Init(int nGPU)
             {
-                Owner.m_engine = new TetrisWorldEngine(Owner, Owner.m_engineParams);
+                Owner.Engine = new TetrisWorldEngine(Owner, Owner.EngineParams);
             }
 
             public override void Execute()
             {
-                Owner.m_engine.Reset();
+                Owner.Engine.Reset();
 
                 // load bitmaps to Bitmaps memory block; remembers their offsets in Owner's texture variables
                 CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);
@@ -662,7 +662,7 @@ namespace GoodAI.Modules.TetrisWorld
                 ActionInputType input = DecodeAction();
  
                 // The engine updates the world's memory blocks based on agent's input
-                Owner.m_engine.Step(input);
+                Owner.Engine.Step(input);
             }
 
             protected ActionInputType DecodeAction()
