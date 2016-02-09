@@ -60,6 +60,11 @@ namespace GoodAI.Core.Memory
             return base.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return PrintSource();
+        }
+
         #endregion
 
         #region Public
