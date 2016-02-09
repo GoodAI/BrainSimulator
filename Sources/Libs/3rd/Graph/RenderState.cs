@@ -39,6 +39,7 @@ namespace Graph
 		Incompatible	= 32,	// Connector is shown as not being able to be connected to
 		Compatible		= 64,	// Connector is shown as being able to be connected to
 		Backward		= 128,	// The edge is going against the topological order
-		Marked  		= 256	// The edge is marked
+		Marked  		= 256,	// The edge is marked
+        Hidden          = 512
 	}
 }

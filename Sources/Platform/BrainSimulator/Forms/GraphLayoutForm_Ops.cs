@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Task;
+using System.Diagnostics;
 
 namespace GoodAI.BrainSimulator.Forms
 {
@@ -205,10 +206,13 @@ namespace GoodAI.BrainSimulator.Forms
                 if (connection != null)
                 {
                     MyNodeView fromNodeView = nodeViewTable[connection.From];
-                    NodeItem fromNodeViewItem = fromNodeView.GetOuputBranchItem(connection.FromIndex);                    
+                    NodeItem fromNodeViewItem = fromNodeView.GetOuputBranchItem(connection.FromIndex);
 
-                    NodeConnection c = Desktop.Connect(fromNodeViewItem, toNodeView.GetInputBranchItem(connection.ToIndex));
+                    MyNodeViewConnection c = Desktop.Connect(fromNodeViewItem, toNodeView.GetInputBranchItem(connection.ToIndex)) as MyNodeViewConnection;
+                    Debug.Assert(c != null, "Invalid connection factory delegate");
+
                     c.Tag = connection;
+                    c.Hidden = connection.IsHidden;
                 }
             }       
         }

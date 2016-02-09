@@ -42,6 +42,7 @@ namespace Graph
 		public const int HorizontalSpacing		= 2;
 		public const int NodeExtraWidth			= ((int)GraphConstants.ConnectorSize + (int)GraphConstants.HorizontalSpacing) * 2;
         public const int StatusBarHeight = 20;
+        public const int HiddenConnectionLabelOffset = 25;
 
 
 		
