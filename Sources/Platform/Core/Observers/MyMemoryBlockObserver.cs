@@ -28,12 +28,14 @@ namespace GoodAI.Core.Observers
             get { return m_method; }
             set 
             { 
-                m_method = value; 
+                m_method = value;
+                m_methodSelected = true;
                 TriggerReset(); 
             }
         }
-
         private RenderingMethod m_method;
+
+        private bool m_methodSelected;
 
         [YAXSerializableField]
         [MyBrowsable, Category("Scale + Bounds")]
@@ -98,7 +100,6 @@ namespace GoodAI.Core.Observers
 
         public MyMemoryBlockObserver()
         {
-            Method = RenderingMethod.RedGreenScale;
             BoundPolicy = MyBoundPolicy.Inherited;
             Elements = 2;
             MinValue = 0;
@@ -114,13 +115,22 @@ namespace GoodAI.Core.Observers
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");
             m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");
 
+            if (m_methodSelected)
+                return;
+
+            m_methodSelected = true;
+
             string colorScheme;
             RenderingMethod renderingMethod;
             if (Target.Metadata.TryGetValue(MemoryBlockMetadataKeys.RenderingMethod, out colorScheme) &&
                 Enum.TryParse(colorScheme, out renderingMethod))
             {
                 Method = renderingMethod;
+                return;
             }
+
+            // The default when no hint is provided.
+            Method = RenderingMethod.RedGreenScale;
         }
 
         protected override void Execute()
