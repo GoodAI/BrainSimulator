@@ -214,6 +214,7 @@
             this.HideOnClose = true;
             this.Name = "SchoolRunForm";
             this.Text = "SchoolRunForm";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();
             this.ResumeLayout(false);
