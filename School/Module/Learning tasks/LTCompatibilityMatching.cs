@@ -8,7 +8,7 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         public LTCompatibilityMatching() : base(null) { }
 
-        public static readonly TSHintAttribute ROTATION_ALLOWED = new TSHintAttribute("ROTATION_ALLOWED", "", typeof(bool), 0, 1);
+        public static readonly TSHintAttribute ROTATION_ALLOWED = new TSHintAttribute("ROTATION_ALLOWED", "", TypeCode.Boolean, 0, 1);
 
         public LTCompatibilityMatching(SchoolWorld w)
             : base(w)
