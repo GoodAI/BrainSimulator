@@ -91,7 +91,7 @@ namespace GoodAI.School.GUI
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Close();
+            Hide();
         }
     }
 }
