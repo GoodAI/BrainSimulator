@@ -116,6 +116,7 @@ namespace GoodAI.Core.Execution
                 }
                 m_project = value;
                 SimulationHandler.Project = value;
+                m_project.SimulationHandler = SimulationHandler;
             }
         }
 
