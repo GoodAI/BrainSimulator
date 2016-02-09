@@ -20,8 +20,12 @@ namespace GoodAI.Modules.School.Worlds
         #region Constants
         // Constants defining the memory layout of LTStatus information
         private const int NEW_LT_FLAG = 0;
-        private const int NEW_TU_FLAG = NEW_LT_FLAG + 1;
-        private const int NEW_LEVEL_FLAG = NEW_TU_FLAG + 1;
+        private const int NEW_LEVEL_FLAG = NEW_LT_FLAG + 1;
+        private const int NEW_TU_FLAG = NEW_LEVEL_FLAG + 1;
+        private const int LT_IDENTIFIER = NEW_TU_FLAG + 1;
+        private const int LEVEL_INDEX = LT_IDENTIFIER + 1;
+        private const int TU_INDEX = LEVEL_INDEX + 1;
+        private const int LT_STATUS_COUNT = TU_INDEX + 1;
         #endregion
 
         #region Input and Output MemoryBlocks
@@ -67,10 +71,11 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         // Memory block informing the agent of changes in learning task,
-        // training unit, and level.
+        // level, and training unit.
         //
-        // Currently consists of three flags, set to 1 on the presentation
-        // of a new task, unit, and level respectively.
+        // Consists of 
+        // - flags signifying a new task, level, and unit, respectively
+        // - numbers identifying the current task, level, and unit
         [MyOutputBlock(5)]
         public MyMemoryBlock<float> LTStatus
         {
@@ -102,7 +107,7 @@ namespace GoodAI.Modules.School.Worlds
             Data.Count = DataSize;
             DataLength.Count = 1;
             Reward.Count = 1;
-            LTStatus.Count = 3;
+            LTStatus.Count = LT_STATUS_COUNT;
         }
         #endregion
 
@@ -280,11 +285,20 @@ namespace GoodAI.Modules.School.Worlds
             LTStatus.Host[NEW_LEVEL_FLAG] = 0;
         }
 
+        // Notify of the start of a new curriculum
+        private void NotifyNewCurriculum()
+        {
+            // Will be incremented when LT is presented
+            LTStatus.Host[LT_IDENTIFIER] = -1;
+        }
+
         // Notify of the start of a new learning task
         private void NotifyNewLearningTask()
         {
             LTStatus.Host[NEW_LT_FLAG] = 1;
             LTStatus.Host[NEW_LEVEL_FLAG] = 1;
+            LTStatus.Host[TU_INDEX] = 0;
+            LTStatus.Host[LT_IDENTIFIER] = LTStatus.Host[LT_IDENTIFIER] + 1;
         }
 
         // Notify of the start of a new training unit and (possibly) level
@@ -294,12 +308,23 @@ namespace GoodAI.Modules.School.Worlds
             if (didIncreaseLevel)
             {
                 LTStatus.Host[NEW_LEVEL_FLAG] = 1;
+                LTStatus.Host[LEVEL_INDEX] = LTStatus.Host[LEVEL_INDEX] + 1;
+            }
+
+            if (LTStatus.Host[NEW_LT_FLAG] == 1 || didIncreaseLevel)
+            {
+                LTStatus.Host[TU_INDEX] = 0;
+            }
+            else
+            {
+                LTStatus.Host[TU_INDEX] = LTStatus.Host[TU_INDEX] + 1;
             }
         }
 
         public void InitializeCurriculum()
         {
             Curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
+            NotifyNewCurriculum();
         }
 
         public void ClearWorld()
