@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using GoodAI.Core.Memory;
 using YAXLib;
 
 namespace GoodAI.Core.Observers
@@ -8,21 +9,10 @@ namespace GoodAI.Core.Observers
     [YAXSerializeAs("MemoryBlockObserver")]
     public class MyMemoryBlockObserver : MyAbstractMemoryBlockObserver
     {        
-        public enum RenderingMethod
-        {           
-            RedGreenScale,
-            GrayScale,
-            ColorScale,
-            BlackWhite,
-            Vector,
-            Raw,
-            RGB
-        }
-
         public enum MyBoundPolicy
         {
-            INHERITED,
-            MANUAL
+            Inherited,
+            Manual
         }
 
         public enum RenderingScale
@@ -38,19 +28,21 @@ namespace GoodAI.Core.Observers
             get { return m_method; }
             set 
             { 
-                m_method = value; 
+                m_method = value;
+                m_methodSelected = true;
                 TriggerReset(); 
             }
         }
-
         private RenderingMethod m_method;
+
+        private bool m_methodSelected;
 
         [YAXSerializableField]
         [MyBrowsable, Category("Scale + Bounds")]
         public RenderingScale Scale { get; set; }
 
-        [YAXSerializableField(DefaultValue = MyBoundPolicy.MANUAL)]
-        private MyBoundPolicy m_boundPolicy = MyBoundPolicy.INHERITED;
+        [YAXSerializableField(DefaultValue = MyBoundPolicy.Manual)]
+        private MyBoundPolicy m_boundPolicy = MyBoundPolicy.Inherited;
 
         [MyBrowsable, Category("Scale + Bounds"), Description("The way the Min / Max of Y axis are chosen")]
         public MyBoundPolicy BoundPolicy
@@ -60,7 +52,7 @@ namespace GoodAI.Core.Observers
             set
             {                
                 m_boundPolicy = value;
-                if (m_boundPolicy == MyBoundPolicy.INHERITED)
+                if (m_boundPolicy == MyBoundPolicy.Inherited)
                 {
                     TriggerReset();
                 }
@@ -77,7 +69,7 @@ namespace GoodAI.Core.Observers
             set 
             { 
                 m_minValue = value;
-                BoundPolicy = MyBoundPolicy.MANUAL; 
+                BoundPolicy = MyBoundPolicy.Manual; 
             }
         }
 
@@ -91,7 +83,7 @@ namespace GoodAI.Core.Observers
             set
             {
                 m_maxValue = value;
-                BoundPolicy = MyBoundPolicy.MANUAL;
+                BoundPolicy = MyBoundPolicy.Manual;
             }
         }
 
@@ -108,8 +100,7 @@ namespace GoodAI.Core.Observers
 
         public MyMemoryBlockObserver()
         {
-            Method = RenderingMethod.RedGreenScale;
-            BoundPolicy = MyBoundPolicy.INHERITED;
+            BoundPolicy = MyBoundPolicy.Inherited;
             Elements = 2;
             MinValue = 0;
             MaxValue = 1;
@@ -122,11 +113,28 @@ namespace GoodAI.Core.Observers
             Type type = Target.GetType().GenericTypeArguments[0];
             m_kernel = MyKernelFactory.Instance.Kernel(@"Observers\ColorScaleObserver" + type.Name);
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");
-            m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");              
+            m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");
+
+            if (m_methodSelected)
+                return;
+
+            m_methodSelected = true;
+
+            string colorScheme;
+            RenderingMethod renderingMethod;
+            if (Target.Metadata.TryGetValue(MemoryBlockMetadataKeys.RenderingMethod, out colorScheme) &&
+                Enum.TryParse(colorScheme, out renderingMethod))
+            {
+                Method = renderingMethod;
+                return;
+            }
+
+            // The default when no hint is provided.
+            Method = RenderingMethod.RedGreenScale;
         }
 
         protected override void Execute()
-        {                   
+        {
             if (Method == RenderingMethod.Vector)
             {
                 m_vectorKernel.SetupExecution(TextureSize);
@@ -146,7 +154,7 @@ namespace GoodAI.Core.Observers
 
         private void ResetBounds()
         {
-            if (BoundPolicy == MyBoundPolicy.INHERITED)
+            if (BoundPolicy == MyBoundPolicy.Inherited)
             {
                 if (!float.IsNegativeInfinity(Target.MinValueHint))
                     m_minValue = Target.MinValueHint;

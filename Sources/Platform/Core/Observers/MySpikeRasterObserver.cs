@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using GoodAI.Core.Memory;
 using YAXLib;
 
 namespace GoodAI.Core.Observers
@@ -109,7 +110,7 @@ namespace GoodAI.Core.Observers
 
         [YAXSerializableField]
         [MyBrowsable, Category("Texture"), DisplayName("Coloring Method")]
-        public MyMemoryBlockObserver.RenderingMethod Method { get; set; }
+        public RenderingMethod Method { get; set; }
 
         [YAXSerializableField]
         private uint MARKER_COLOR = 0xFFFFFF80;  // light yellow
@@ -156,7 +157,7 @@ namespace GoodAI.Core.Observers
         {
             MinValue = 0.0f;
             MaxValue = 1.0f;
-            Method = MyMemoryBlockObserver.RenderingMethod.RedGreenScale;
+            Method = RenderingMethod.RedGreenScale;
 
             m_ringArrayStart = 0;
             m_gridStepCounter = 0;

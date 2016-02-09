@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using GoodAI.Platform.Core.Nodes;
 using GoodAI.TypeMapping;
@@ -20,6 +21,8 @@ namespace GoodAI.Platform.Core.Configuration
             container.Register<MySimulation, MyLocalSimulation>(Lifestyle.Singleton);
 
             container.Register<IModelChanges, ModelChanges>(Lifestyle.Transient);
+
+            container.Register<IMemoryBlockMetadata, MemoryBlockMetadata>(Lifestyle.Transient);
         }
     }
 }

@@ -138,6 +138,7 @@
     <Compile Include="Execution\MyPartitionStrategy.cs" />
     <Compile Include="Execution\MyTaskExecutor.cs" />
     <Compile Include="Memory\MemBlockAttribute.cs" />
+    <Compile Include="Memory\MemoryBlockMetadata.cs" />
     <Compile Include="Memory\MemoryBlockSerializer.cs" />
     <Compile Include="Memory\OldTensorDimensions.cs" />
     <Compile Include="Memory\TensorDimensions.cs" />
