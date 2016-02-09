@@ -75,7 +75,7 @@ namespace GoodAI.School.Worlds
                
         public void ClearWorld()
         {
-            m_engine.Reset();
+            Engine.Reset();
         }
         
         public void SetHint(TSHintAttribute attr, float value)

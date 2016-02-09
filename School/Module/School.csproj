@@ -85,6 +85,7 @@
     <Compile Include="Learning tasks\LTActionWCooldown.cs" />
     <Compile Include="Learning tasks\LTApproach.cs" />
     <Compile Include="Learning tasks\LTCompareLayouts.cs" />
+    <Compile Include="Learning tasks\LTCompatibilityMatching.cs" />
     <Compile Include="Learning tasks\LTConditionalTarget.cs" />
     <Compile Include="Learning tasks\LTCopyAction.cs" />
     <Compile Include="Learning tasks\LTCopySequence.cs" />

@@ -50,8 +50,7 @@ namespace GoodAI.Modules.School.Common
 
         public void ResetLearningProgress()
         {
-            if (m_taskEnumerator != null)
-                m_taskEnumerator.Reset();
+            m_taskEnumerator.Reset();
         }
 
         public void Add(ILearningTask task)
@@ -97,7 +96,7 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTMovingTarget));
+                    curriculum.AddLearningTask(world, typeof(LTCompatibilityMatching));
                     break;
 
                 case CurriculumType.TetrisCurriculum:
@@ -148,7 +147,7 @@ namespace GoodAI.Modules.School.Common
                     //Pong with bricks
                     break;
                 case CurriculumType.DebuggingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTDebugging));
+                    curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
                     //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world).GetType());
                     break;
             }
