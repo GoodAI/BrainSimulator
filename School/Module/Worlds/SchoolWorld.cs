@@ -163,6 +163,11 @@ namespace GoodAI.Modules.School.Worlds
         }
         #endregion
 
+        public SchoolWorld()
+        {
+            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw.ToString();
+        }
+
         Random m_rndGen = new Random();
 
         public SchoolCurriculum Curriculum { get; set; }
