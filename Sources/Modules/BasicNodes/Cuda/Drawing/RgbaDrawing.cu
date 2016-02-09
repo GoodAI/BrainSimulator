@@ -1,9 +1,5 @@
 #include <cuda.h>
 #include <device_launch_parameters.h>
-#include <texture_fetch_functions.h>
-#include "float.h"
-#include <builtin_types.h>
-#include <vector_functions.h>
 
 /*
 Inspired by the implementation of CustomPong.cu + GridWorld.cu
@@ -52,26 +48,40 @@ extern "C"
 	/*
 	Adds noise into a 3-component image.
 	inputWidth & inputHeight: map dimensions in pixels
-	gridDim.y = 3, one for each color component
 	*/
 	__global__ void AddRgbNoiseKernel(float *target, int inputWidth, int inputHeight, float *randoms)
 	{
-		int column = threadIdx.x + blockDim.x * blockIdx.z;
-		if (column >= inputWidth)
-			return;
-
-		int id = inputWidth * (blockIdx.y * gridDim.x + blockIdx.x) // blockIdx.x == row, blockIdx.y == color channel 
-			+ column;
+		int id = blockDim.x * blockIdx.y * gridDim.x
+			+ blockDim.x * blockIdx.x
+			+ threadIdx.x;
 
 		int imagePixels = inputWidth * inputHeight;
 
-		if (id < 3 * imagePixels) // 3 for RGB 
+		if (id < imagePixels)
 		{
-			target[id] += randoms[id];
-			if (target[id] < 0)
-				target[id] = 0;
-			if (target[id] > 255)
-				target[id] = 255;
+			unsigned int tg = *((unsigned int*)(&target[id]));
+
+			int blue = (tg >> 0) & (0xFF);
+			blue += (int)(randoms[id]);
+			blue = blue < 255 ? blue : 255;
+			blue = blue > 0 ? blue : 0;
+
+			int green = ((tg >> 8) & (0xFF));
+			green += (int)(randoms[id + imagePixels]);
+			green = green < 255 ? green : 255;
+			green = green > 0 ? green : 0;
+
+			int red = ((tg >> 16) & (0xFF));
+			red += (int)(randoms[id + imagePixels * 2]);
+			red = red < 255 ? red : 255;
+			red = red > 0 ? red : 0;
+
+			// alpha is the last channel (<< 24)
+			unsigned int tmp = (*((unsigned int *)(&blue)) << 0)
+						     | (*((unsigned int *)(&green)) << 8)
+							 | (*((unsigned int *)(&red)) << 16);
+
+			target[id] = *((float *)(&tmp));
 		}
 	}
 

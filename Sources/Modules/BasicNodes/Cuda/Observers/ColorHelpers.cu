@@ -115,7 +115,7 @@ __device__ unsigned int float_to_uint_rgba(float input, int method, int scale, f
 {				
 	if (method == 5) // RAW data
 	{
-		return (unsigned int)input;			
+		return *((unsigned int *)&input);
 	}
 	else
 	{
