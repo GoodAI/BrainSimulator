@@ -88,7 +88,7 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTCompatibilityMatching));
+                    curriculum.AddLearningTask(world, typeof(LTDetectWhite));
                     break;
 
                 case CurriculumType.TetrisCurriculum:
@@ -139,8 +139,7 @@ namespace GoodAI.Modules.School.Common
                     //Pong with bricks
                     break;
                 case CurriculumType.DebuggingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
-                    //curriculum.AddLearningTask(LearningTaskFactory.CreateLearningTask(LearningTaskNameEnum.DetectColor, world).GetType());
+                    curriculum.AddLearningTask(world, typeof(LTDebugging));
                     break;
             }
 
