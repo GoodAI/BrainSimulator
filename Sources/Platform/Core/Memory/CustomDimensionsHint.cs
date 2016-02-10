@@ -18,32 +18,36 @@ namespace GoodAI.Core.Memory
             get { return m_emptyInstance ?? (m_emptyInstance = new CustomDimensionsHint()); }
         }
 
+        public static CustomDimensionsHint Parse(string source)
+        {
+            return new CustomDimensionsHint(ParseToEnumerable(source));
+        }
+
         #endregion
 
-        public CustomDimensionsHint()
+        private CustomDimensionsHint()
+        {}
+
+        public CustomDimensionsHint(params int[] dimensions)
+            : base(ProcessDimensions(dimensions))
         {}
 
         public CustomDimensionsHint(IEnumerable<int> dimensions)
             : base(ProcessDimensions(dimensions))
         {}
 
-        public CustomDimensionsHint(string source)
-            : base(ProcessDimensions(Parse(source)))
-        {}
-
         public bool IsFullyDefined
         {
-            get { return (m_dims != null) && m_dims.All(dim => (dim != -1)); }
+            get { return !IsEmpty && m_dims.All(dim => (dim != -1)); }
         }
 
         #region Object overrides
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CustomDimensionsHint))
-                return false;
+            var customDimensionsHint = obj as CustomDimensionsHint;
 
-            return base.Equals((CustomDimensionsHint)obj);
+            return (customDimensionsHint != null) && base.Equals(customDimensionsHint);
         }
 
         public bool Equals(CustomDimensionsHint dimensionsHint)
@@ -60,23 +64,20 @@ namespace GoodAI.Core.Memory
 
         #region Public
 
-        public TensorDimensions ComputeDimensions(int targetElementCount)
+        // TODO: report whether or not was the hint successfully applied
+        public TensorDimensions TryToApply(TensorDimensions originalDims)
         {
-            if (ElementCount == 0)  // I'm empty. (Prevent division by zero.)
-            {
-                return new TensorDimensions(targetElementCount);
-            }
+            return ComputeDimensions(originalDims.ElementCount) ?? originalDims;
+        }
 
-            if (IsFullyDefined && (ElementCount == targetElementCount))
-            {
-                return new TensorDimensions(m_dims); // TODO: this superfluously creates a new immutable collection
-            }
+        public string PrintSource()
+        {
+            if (IsEmpty)
+                return "";
 
-            int computed = targetElementCount / ElementCount;
-
-            return (computed*ElementCount == targetElementCount)
-                ? new TensorDimensions(m_dims.Select(dim => (dim == -1) ? computed : dim))
-                : new TensorDimensions(targetElementCount);
+            return string.Join(", ", m_dims.Select(item =>
+                (item == -1) ? ComputedDimLiteral : item.ToString()
+                ));
         }
 
         #endregion
@@ -85,24 +86,24 @@ namespace GoodAI.Core.Memory
 
         private const string ComputedDimLiteral = "*";
 
-        private static IEnumerable<int> Parse(string source)
+        private static IEnumerable<int> ParseToEnumerable(string source)
         {
             if (source.Trim() == string.Empty)
             {
                 return Enumerable.Empty<int>();
             }
 
-            string[] sourceItems = source.Split(',', ';');
-
-            IEnumerable<int> dimensions = sourceItems.Select(item =>
+            IEnumerable<int> dimensions = source.Split(',', ';')
+                .Select(item => item.Trim())
+                .Select(item =>
             {
                 int result;
 
-                if ((item.Trim() == ComputedDimLiteral) || (item.Trim() == "_"))
+                if (item == ComputedDimLiteral)
                 {
                     result = -1;  // computed dimension
                 }
-                else if (!int.TryParse(item.Trim(), out result))
+                else if (!int.TryParse(item, out result))
                 {
                     throw new InvalidDimensionsException(string.Format("Dimension '{0}' is not an integer.", item));
                 }
@@ -141,6 +142,30 @@ namespace GoodAI.Core.Memory
             }
 
             return newDimensions.ToImmutable();
+        }
+
+        private TensorDimensions ComputeDimensions(int targetElementCount)
+        {
+            if (IsEmpty || (ElementCount == 0))  // Prevent division by zero.
+            {
+                return null;
+            }
+
+            if (IsFullyDefined)
+            {
+                // Use the hint only when its element count matches the target count.
+                return (ElementCount == targetElementCount)
+                    ? new TensorDimensions(m_dims) // TODO: this superfluously creates a new immutable collection
+                    : null;
+            }
+
+            // ...else is not fully defined (there's a computed dimension).
+            // Use the hint when target count is divisible by the hint's element count.
+            int computed = targetElementCount / ElementCount;
+
+            return (computed * ElementCount == targetElementCount)
+                ? new TensorDimensions(m_dims.Select(dim => (dim == -1) ? computed : dim))
+                : null;
         }
 
         #endregion

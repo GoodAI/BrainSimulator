@@ -20,6 +20,15 @@ namespace CoreTests.Memory
         }
 
         [Fact]
+        public void ElementCountIsCachedProperly()
+        {
+            var dims = new TensorDimensions(3, 5, 7);
+
+            Assert.Equal(3*5*7, dims.ElementCount);
+            Assert.Equal(3 * 5 * 7, dims.ElementCount);
+        }
+
+        [Fact]
         public void EqualsTests()
         {
             Assert.True((new TensorDimensions(2, 3, 5)).Equals(new TensorDimensions(2, 3, 5)));

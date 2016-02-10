@@ -14,28 +14,53 @@ namespace CoreTests.Memory
     public class CustomDimensionsTests
     {
         [Fact]
-        public void FactoryParsesSimpleDimensions()
+        public void ParsesSimpleDimensions()
         {
-            var dimensionsHint = new CustomDimensionsHint("2, 3, 5");
+            var dimensionsHint = CustomDimensionsHint.Parse("2, 3, 5");
 
-            Assert.Equal(3, dimensionsHint.Rank);
-            Assert.Equal(2, dimensionsHint[0]);
-            Assert.Equal(3, dimensionsHint[1]);
-            Assert.Equal(5, dimensionsHint[2]);
+            Assert.Equal(new CustomDimensionsHint(2, 3, 5), dimensionsHint);
         }
-        // TODO(Premek): Test more cases such as with *s, also test checking of invalid cases.
-        // TODO: Test IsFullyDefined
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static readonly TheoryData<string, CustomDimensionsHint, bool, bool> ValidParseData
+            = new TheoryData<string, CustomDimensionsHint, bool, bool>
+            {
+                {"1", new CustomDimensionsHint(1), /* IsEmpty: */ false, /* IsFullyDefined: */ true},
+                {"3, 100, *", new CustomDimensionsHint(3, 100, -1), false, false },
+                {"*", new CustomDimensionsHint(-1), false, false },
+                {"", CustomDimensionsHint.Empty, true, false }  // Empty is *not* fully defined by definition (OK?)
+            };
+        
+        [Theory, MemberData("ValidParseData")]
+        public void ParsingAndFlaggingTheory(
+            string source, CustomDimensionsHint expectedHint, bool isEmpty, bool isFullyDefined)
+        {
+            var hint = CustomDimensionsHint.Parse(source);
+
+            Assert.True(hint.Equals(expectedHint));
+            Assert.Equal(isEmpty, hint.IsEmpty);
+            Assert.Equal(isFullyDefined, hint.IsFullyDefined);
+        }
+
+        [Theory]
+        [InlineData("foo")]
+        [InlineData("*, 2, *")]
+        [InlineData("*, 2, bar, *")]
+        public void ParsingErrorsTheory(string source)
+        {
+            Assert.Throws<InvalidDimensionsException>(() => { var hint = CustomDimensionsHint.Parse(source); });
+        }
 
         [Fact]
         public void ElementCountWorksForWildcardHints()
         {
-            Assert.Equal(6, new CustomDimensionsHint("2, *, 3").ElementCount);
+            Assert.Equal(6, CustomDimensionsHint.Parse("2, *, 3").ElementCount);
         }
 
         [Fact]
         public void CustomDimensionsAreSameAsHintWhenCountMatches()
         {
-            TensorDimensions dims = new CustomDimensionsHint("2, 3, 5").ComputeDimensions(30);
+            TensorDimensions dims = CustomDimensionsHint.Parse("2, 3, 5").TryToApply(new TensorDimensions(30));
 
             Assert.Equal(new TensorDimensions(2, 3, 5), dims);
         }
@@ -43,33 +68,36 @@ namespace CoreTests.Memory
         [Fact]
         public void WildcardDimensionIsCorrectlyComputed()
         {
-            TensorDimensions dims = new CustomDimensionsHint("2, *, 3").ComputeDimensions(30);
+            TensorDimensions dims = CustomDimensionsHint.Parse("2, *, 3").TryToApply(new TensorDimensions(30));
 
             Assert.Equal(dims, new TensorDimensions(2, 5, 3));
         }
 
-        [Fact]
-        public void FallsBackToOneDimWhenCountDoesNotMatch()
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static readonly TheoryData<CustomDimensionsHint, TensorDimensions> ApplyFallbackData
+            = new TheoryData<CustomDimensionsHint, TensorDimensions>
+            {
+                // TryToApply falls back to original dimensions ...
+                // when count does not match
+                { CustomDimensionsHint.Parse("2, 3, 5"), new TensorDimensions(7, 13) },
+
+                // when count is not divisible (to be able to figure out the computed dimension)
+                { CustomDimensionsHint.Parse("2, *, 5"), new TensorDimensions(7, 13) },
+
+                // when count is divisible, but there is no computed dimension
+                { CustomDimensionsHint.Parse("2"), new TensorDimensions(8) },
+
+                // when hint is empty
+                { CustomDimensionsHint.Empty, new TensorDimensions(7, 13) }
+            };
+
+        [Theory, MemberData("ApplyFallbackData")]
+        public void ApplyFallbackTheory(CustomDimensionsHint hint, TensorDimensions originalDims)
         {
-            // TODO: Test that the fallback is logged.
-            TensorDimensions dims = new CustomDimensionsHint("2, 3, 5").ComputeDimensions(47);
+            // TODO(Premek): Test that the fallback is logged.
+            TensorDimensions resultDims = hint.TryToApply(originalDims);
 
-            Assert.Equal(new TensorDimensions(47), dims);
-        }
-
-        [Fact]
-        public void FallsBackToOneDimWhenCountIsNotDivisible()
-        {
-            // TODO: Test that the fallback is logged.
-            TensorDimensions dims = new CustomDimensionsHint("2, *, 3").ComputeDimensions(47);
-
-            Assert.Equal(new TensorDimensions(47), dims);
-        }
-
-        [Fact]
-        public void FallsBackToOneDimWhenEmpty()
-        {
-            Assert.Equal(new TensorDimensions(47), CustomDimensionsHint.Empty.ComputeDimensions(47));
+            Assert.Equal(originalDims, resultDims);
         }
     }
 }
