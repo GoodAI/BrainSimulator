@@ -23,7 +23,6 @@ namespace GoodAI.Modules.School.Common
 
         SchoolWorld SchoolWorld { get; set; }
         Type RequiredWorld { get; set; }
-        string Description { get; set; }
         string GetTypeName();
 
         void Init();
@@ -98,8 +97,6 @@ namespace GoodAI.Modules.School.Common
         }
 
         public Type RequiredWorld { get; set; }
-
-        public string Description { get; set; }
 
         // Implement to manage challenge levels and training set hints
         protected virtual bool IncreaseLevel()

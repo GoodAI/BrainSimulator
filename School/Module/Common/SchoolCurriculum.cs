@@ -14,8 +14,6 @@ namespace GoodAI.Modules.School.Common
         protected List<ILearningTask> Tasks = new List<ILearningTask>();
         private IEnumerator<ILearningTask> m_taskEnumerator;
 
-        public string Description { get; set; }
-
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
         {
