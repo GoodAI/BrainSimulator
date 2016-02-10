@@ -94,6 +94,10 @@ namespace GoodAI.Core.Observers
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Temporal")]
         public int TimeStep { get; set; }
+        
+        [YAXSerializableField]
+        [MyBrowsable, Category("\tWindow")]
+        public bool ShowCoordinates { get; set; }
 
         protected MyCudaKernel m_vectorKernel;
         protected MyCudaKernel m_rgbKernel;
