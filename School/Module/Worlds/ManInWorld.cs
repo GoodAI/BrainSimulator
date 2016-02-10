@@ -252,12 +252,16 @@ namespace GoodAI.Modules.School.Worlds
             return new Rectangle(0, 0, FOW_WIDTH, FOW_HEIGHT);
         }
 
+        /// <summary>
+        /// Returns POW borders rectangle reduced by 1 pixel
+        /// </summary>
+        /// <returns></returns>
         public Rectangle GetPowGeometry()
         {
             Point powCentre = GetPowCenter();
-            Size halfPow = new Size(POW_WIDTH / 2, POW_HEIGHT / 2);
-            Size pow = new Size(POW_WIDTH, POW_HEIGHT);
-            return new Rectangle(powCentre - halfPow, pow);
+            Size halfPowSize = new Size(POW_WIDTH / 2 - 1, POW_HEIGHT / 2 - 1);
+            Size powSize = new Size(POW_WIDTH - 2, POW_HEIGHT - 2);
+            return new Rectangle(powCentre - halfPowSize, powSize);
         }
 
         public Rectangle GetAgentGeometry()
@@ -302,6 +306,8 @@ namespace GoodAI.Modules.School.Worlds
             return RandomPositionInsideRectangleNonCovering(rndGen, size, this.GetPowGeometry());
         }
 
+
+        private int m_randomPositionCounter = 0;
         public Point RandomPositionInsideRectangleNonCovering(Random rndGen, Size size, Rectangle rectangle)
         {
             Point randPointInPow = RandomPositionInsideRectangle(rndGen, size, rectangle);
@@ -317,14 +323,21 @@ namespace GoodAI.Modules.School.Worlds
 
             for (int i = 0; i < gameObjects.Count; i++)
             {
+                if (m_randomPositionCounter > 1000)
+                {
+                    throw new Exception("Cannot place object randomly");
+                }
                 Rectangle gameObjectG = gameObjects[i].GetGeometry();
-                while (gameObjectG.IntersectsWith(obj) || obj.IntersectsWith(gameObjectG) ||
+                if (gameObjectG.IntersectsWith(obj) || obj.IntersectsWith(gameObjectG) ||
                     agent.IntersectsWith(obj) || obj.IntersectsWith(agent))
                 {
-                    obj.Location += new Size(4, 4);
-                    i = -1;
+                    obj.Location = RandomPositionInsideRectangle(rndGen, size, rectangle);
+                    m_randomPositionCounter++;
+                    i = -1; // reset cyclus
                 }
             }
+            MyLog.Writer.WriteLine(MyLogLevel.DEBUG, "Number of unsuccessful attempts of random object placing: " + m_randomPositionCounter);
+            m_randomPositionCounter = 0;
 
             randPointInPow += one;
             size -= one - one;
