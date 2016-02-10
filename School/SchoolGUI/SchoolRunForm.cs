@@ -42,7 +42,7 @@ namespace GoodAI.School.GUI
 
         private void CreateCurriculum()
         {
-            m_school.Curriculum = (SchoolCurriculum)Design;
+            m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
             foreach (ILearningTask task in m_school.Curriculum)
                 task.SchoolWorld = m_school;
         }
