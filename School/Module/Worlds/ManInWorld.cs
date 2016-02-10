@@ -193,6 +193,7 @@ namespace GoodAI.Modules.School.Worlds
             Objects.Count = 0;
             IsImageNoise = false;
             m_IsWorldFrozen = false;
+            DegreesOfFreedom = 2;
         }
 
         public void SetHint(TSHintAttribute attr, float value)
