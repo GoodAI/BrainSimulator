@@ -83,14 +83,14 @@
     <Compile Include="ModelCreationTests.cs" />
     <Compile Include="NodeConnectionTests.cs" />
     <Compile Include="Nodes\MyForkTests.cs" />
-    <Compile Include="OldTensorDimensionsTests.cs" />
+    <Compile Include="Memory\OldTensorDimensionsTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="ReleaseDeserializationTests.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="SimulationHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TensorDimensionsTests.cs" />
+    <Compile Include="Memory\TensorDimensionsTests.cs" />
     <Compile Include="UndoManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ using GoodAI.Core.Memory;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace CoreTests
+namespace CoreTests.Memory
 {
     public class OldTensorDimensionsTests
     {
