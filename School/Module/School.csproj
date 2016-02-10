@@ -106,6 +106,7 @@
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
     <Compile Include="Learning tasks\LTSimpleSize.cs" />
+    <Compile Include="Learning tasks\LTTetrisFull.cs" />
     <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
     <Compile Include="Learning tasks\LTTetrisTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

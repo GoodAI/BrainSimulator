@@ -92,7 +92,7 @@ namespace GoodAI.Modules.School.Common
                     break;
 
                 case CurriculumType.TetrisCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTTetrisTest));
+                    curriculum.AddLearningTask(world, typeof(LTTetrisFull));
                     break;
 
                 case CurriculumType.PongCurriculum:
