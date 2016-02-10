@@ -16,6 +16,10 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using YAXLib;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.TetrisWorld
 {
@@ -153,9 +157,18 @@ namespace GoodAI.Modules.TetrisWorld
 
         public MyMemoryBlock<float> Bitmaps { get; protected set; }
 
+        public MyMemoryBlock<float> AgentVisualTemp { get; protected set; } // used e.g. for holding random numbers during noise generation
+
+        // noise:
+        // R/G/B intensity value range is 0-256
+        public float ImageNoiseStandardDeviation = 20.0f; // the noise follows a normal distribution (maybe can be simpler?)
+        public float ImageNoiseMean = 0; // the average value that is added to each pixel in the image
+        public bool IsImageNoise { get; set; }
+
         #endregion
 
         private Dictionary<TetrisWorld.TextureType, Bitmap> m_bitmapTable = new Dictionary<TetrisWorld.TextureType, Bitmap>();
+
         public TetrisWorldEngine Engine;
         public WorldEngineParams EngineParams = new WorldEngineParams();
 
@@ -180,7 +193,10 @@ namespace GoodAI.Modules.TetrisWorld
 
         [MyBrowsable, Category("Difficulty"), Description("Number of cleared lines before level is incremented.")]
         [YAXSerializableField(DefaultValue = 50)]
-        public int ClearedLinesPerLevel {
+
+        public int ClearedLinesPerLevel
+        {
+
             get { return EngineParams.ClearedLinesPerLevel; }
             set { EngineParams.ClearedLinesPerLevel = value; }
         }
@@ -189,6 +205,7 @@ namespace GoodAI.Modules.TetrisWorld
         [YAXSerializableField(DefaultValue = 5)]
         public int WaitStepsPerFall
         {
+
             get { return EngineParams.WaitStepsPerFall; }
             set { EngineParams.WaitStepsPerFall = value; }
         }
@@ -219,12 +236,12 @@ namespace GoodAI.Modules.TetrisWorld
         public int HintAreaRows { get { return 4; } }
 
         private string textureSet = @"res\tetrisworld\";
-        
+
         private const int GFX_CELL_SQUARE_WIDTH = 30;
         private Point GFX_BRICK_AREA_TOP_LEFT = new Point(4, 4);
         private Point GFX_HINT_AREA_TOP_LEFT = new Point(321, 94);
         private Point GFX_TEXT_AREA_TOP_LEFT = new Point(317, 5);
-        
+
         protected const int SOURCE_VALUES_PER_PIXEL = 4; // RGBA: 4 floats per pixel
         protected const int TARGET_VALUES_PER_PIXEL = 3; // RGB: 3 floats per pixel
 
@@ -250,7 +267,7 @@ namespace GoodAI.Modules.TetrisWorld
         /// <returns></returns>
         public Color GetBrickColor(BrickType brick)
         {
-            switch(brick)
+            switch (brick)
             {
                 case BrickType.I: return Color.Cyan;
                 case BrickType.J: return Color.Blue;
@@ -311,9 +328,16 @@ namespace GoodAI.Modules.TetrisWorld
 
             VisualWidth = m_bitmapTable[TextureType.Background].Width;
             VisualHeight = m_bitmapTable[TextureType.Background].Height;
-            VisualOutput.Count = VisualWidth * VisualHeight * TARGET_VALUES_PER_PIXEL;
+
+            VisualOutput.Count = VisualWidth * VisualHeight;
             VisualOutput.ColumnHint = VisualWidth;
-        }      
+            VisualOutput.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw.ToString();
+
+            AgentVisualTemp.Count = VisualOutput.Count * 3;   // for each color channel one random number
+
+            // noise can be added
+            //IsImageNoise = true;
+        }
 
         /// <summary>
         /// Loads a bitmap from a file and stores it in a dictionary. Checks for ARGB color format (e.g. 32bit png). 
@@ -330,7 +354,7 @@ namespace GoodAI.Modules.TetrisWorld
                     Bitmap bitmap = (Bitmap)Image.FromFile(MyResources.GetMyAssemblyPath() + "\\" + path, true);
                     m_bitmapTable[textureType] = bitmap;
 
-                    if(bitmap.PixelFormat != PixelFormat.Format32bppArgb)
+                    if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
                     {
                         throw new ArgumentException("The specified image is not in the required RGBA format."); // note: alpha must not be premultiplied
                     }
@@ -401,11 +425,11 @@ namespace GoodAI.Modules.TetrisWorld
 
         private void ValidateRange(MyValidator validator, int value, int valueMin, int valueMax, string valueName)
         {
-            if(value > valueMax)
+            if (value > valueMax)
             {
                 validator.AddError(this, string.Format("{0} cannot be more than {1}.", valueName, valueMax));
             }
-            if(value < valueMin)
+            if (value < valueMin)
             {
                 validator.AddError(this, string.Format("{0} cannot be less than {1}.", valueName, valueMin));
             }
@@ -415,14 +439,15 @@ namespace GoodAI.Modules.TetrisWorld
         {
             ValidateRange(validator, ClearedLinesPerLevel, 1, 1000000000, "ClearedLinesPerLevel");
             ValidateRange(validator, AlmostFullLinesAtStart, 0, 15, "AlmostFullLinesAtStart");
-            if(ActionInput != null)
+
+            if (ActionInput != null)
             {
                 // make sure ActionInput has the required modality
-                if(ActionInputModality == InputModality.Number && ActionInput.Count != 1)
+                if (ActionInputModality == InputModality.Number && ActionInput.Count != 1)
                 {
                     validator.AddError(this, "InputModality is Number. A single number is expected on ActionInput.");
                 }
-                else if(ActionInputModality == InputModality.Vector && ActionInput.Count != 6)
+                else if (ActionInputModality == InputModality.Vector && ActionInput.Count != 6)
                 {
                     validator.AddError(this, "InputModality is Vector. A vector of length 6 is expected on ActionInput.");
                 }
@@ -434,7 +459,7 @@ namespace GoodAI.Modules.TetrisWorld
         public RenderTask RenderGameTask { get; protected set; }
 
         // based on MyMastermindWorld.MyCudaTexture (TODO: refactor once TetrisWorld is in BasicNodes)
-        public class CudaTexture 
+        public class CudaTexture
         {
             public int2 SizeInPixels;
             public CUdeviceptr BitmapPtr;
@@ -468,7 +493,8 @@ namespace GoodAI.Modules.TetrisWorld
                 CudaTexture[] textures = { Owner.m_textureBackground, Owner.m_textureBrickOverlay, 
                                            Owner.m_textureBrickMask, Owner.m_textureText};
                 int offset = 0;
-                for (int i = 0; i < textures.Length; i++ )
+
+                for (int i = 0; i < textures.Length; i++)
                 {
                     Bitmap bitmap = Owner.m_bitmapTable[textureTypes[i]];
 
@@ -476,7 +502,7 @@ namespace GoodAI.Modules.TetrisWorld
                     textures[i].BitmapPtr = devBitmaps.DevicePointer + devBitmaps.TypeSize * offset;
                     textures[i].DataOffset = offset;
 
-                    offset += FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);   
+                    offset += FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, offset);
                 }
 
                 Owner.Bitmaps.SafeCopyToDevice();
@@ -488,22 +514,315 @@ namespace GoodAI.Modules.TetrisWorld
         /// </summary>
         public class RenderTask : MyTask<TetrisWorld>
         {
-            
-            private MyCudaKernel m_RgbaTextureKernel2DBlock;
-            private MyCudaKernel m_MaskedColorKernel2DBlock;
             private int m_lastScore;
-            // Streams are used for an asynchronous drawing of individual cells. 
-            // They provide a 3x speedup compared to the default stream.
-            CudaStream[] m_streams = new CudaStream[5]; // testing suggests values between 2 and 5 work best
+
+            private MyCudaKernel m_AddRgbNoiseKernel;
+
+            // GL
+            uint m_renderTextureHandle;
+            uint m_fboHandle;
+            uint m_scoreTextHandle;
+
+            bool m_texturesLoaded = false;
+            INativeWindow m_window = null;
+            IGraphicsContext m_context = null;
+            Dictionary<TextureType, int> m_textureHandles;
+
+            // CUDA interop
+            private uint m_sharedBufferHandle;
+            private CudaOpenGLBufferInteropResource m_renderResource;
+
 
             public override void Init(int nGPU)
             {
-                m_RgbaTextureKernel2DBlock = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbaTextureKernel2DBlock");
-                m_MaskedColorKernel2DBlock = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawMaskedColorKernel2DBlock");
                 m_lastScore = -1;
-                for (int i = 0; i < m_streams.Length; i++)
+                m_AddRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
+            }
+
+            void initGL()
+            {
+                if (m_context != null)
+                    m_context.Dispose();
+                if (m_window != null)
+                    m_window.Dispose();
+
+                m_window = new NativeWindow();
+                m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
+                m_context.MakeCurrent(m_window.WindowInfo);
+                m_context.LoadAll();
+
+                // Setup rendering texture
+                m_renderTextureHandle = (uint)GL.GenTexture();
+                GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.VisualWidth, Owner.VisualHeight, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+
+                // Setup FBO
+                m_fboHandle = (uint)GL.GenFramebuffer();
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, m_renderTextureHandle, 0);
+
+                // Setup Cuda <-> OpenGL interop
+                int length = Owner.VisualHeight * Owner.VisualWidth * sizeof(uint);
+                //unbind - just in case this is causing us the invalid exception problems
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                //create buffer
+                GL.GenBuffers(1, out m_sharedBufferHandle);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                GL.BufferData(BufferTarget.PixelPackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.StaticRead);  // use data instead of IntPtr.Zero if needed
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                try
                 {
-                    m_streams[i] = new CudaStream(CUStreamFlags.NonBlocking);
+                    m_renderResource = new CudaOpenGLBufferInteropResource(m_renderTextureHandle, CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                }
+                catch (CudaException e)
+                {
+                    MyLog.INFO.WriteLine(
+                        "{0}: CUDA-OpenGL interop error while itializing texture (using fallback): {1}",
+                        GetType().Name, e.Message);
+                }
+
+                // Clean up
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                FramebufferErrorCode err = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            }
+
+            public void LoadTextures()
+            {
+                // OpenGL texture handles
+                m_textureHandles = new Dictionary<TextureType, int>();
+
+                foreach (KeyValuePair<TextureType, Bitmap> kvp in Owner.m_bitmapTable)
+                {
+                    int loadedTextureHandle;
+                    // generate handle for new texture
+                    GL.GenTextures(1, out loadedTextureHandle);
+                    m_textureHandles[kvp.Key] = loadedTextureHandle;
+
+                    // load the bitmap for the texture here
+                    GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+
+                    BitmapData data = kvp.Value.LockBits(
+                        new Rectangle(0, 0, kvp.Value.Width, kvp.Value.Height),
+                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+                    kvp.Value.UnlockBits(data);
+                }
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+            }
+
+            void setupView()
+            {
+                Point powCenter = new Point(Owner.VisualWidth / 2, Owner.VisualHeight / 2);
+                // Setup view
+                GL.Viewport(0, 0, Owner.VisualWidth, Owner.VisualHeight);
+
+                GL.MatrixMode(MatrixMode.Projection);
+                GL.LoadIdentity();
+                GL.Ortho(powCenter.X - (float)Owner.VisualWidth / 2, powCenter.X + (float)Owner.VisualWidth / 2, powCenter.Y - (float)Owner.VisualHeight / 2, powCenter.Y + (float)Owner.VisualHeight / 2, -1, 1);
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.LoadIdentity();
+
+                // Setup rendering
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.Blend);
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+                GL.End();
+            }
+
+            void renderBackground()
+            {
+                GL.PushMatrix();
+
+                int texHandle = m_textureHandles[TextureType.Background];
+                GL.BindTexture(TextureTarget.Texture2D, texHandle);
+                GL.Begin(PrimitiveType.Quads);
+                GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2((float)Owner.VisualWidth, 0f);
+                GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(Owner.VisualWidth, Owner.VisualHeight);
+                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, (float)Owner.VisualHeight);
+                GL.End();
+
+                GL.PopMatrix();
+            }
+
+            void renderBricks()
+            {
+                for (int iRow = 2; iRow < Owner.BrickAreaRows; iRow++) // do not render rows 0 and 1
+                {
+                    for (int iCol = 0; iCol < Owner.BrickAreaColumns; iCol++)
+                    {
+                        int index = iRow * Owner.BrickAreaColumns + iCol;
+                        BrickType brick = (BrickType)Math.Round(Owner.BrickAreaOutput.Host[index]);
+                        if (brick != BrickType.None)
+                        {
+                            RenderBrickAtPosition(iRow, iCol, Owner.GFX_BRICK_AREA_TOP_LEFT.X, Owner.GFX_BRICK_AREA_TOP_LEFT.Y, Owner.GetBrickColor(brick));
+                        }
+                    }
+                }
+            }
+
+            void renderHint()
+            {
+                for (int iRow = 0; iRow < Owner.HintAreaRows; iRow++)
+                {
+                    for (int iCol = 0; iCol < Owner.HintAreaColumns; iCol++)
+                    {
+                        int index = iRow * Owner.HintAreaColumns + iCol;
+                        BrickType brick = (BrickType)Math.Round(Owner.HintAreaOutput.Host[index]);
+                        if (brick != BrickType.None)
+                        {
+                            RenderBrickAtPosition(iRow + 1, iCol + 1, Owner.GFX_HINT_AREA_TOP_LEFT.X, Owner.GFX_HINT_AREA_TOP_LEFT.Y, Owner.GetBrickColor(brick));
+                        }
+                    }
+                }
+            }
+
+            private void RenderBrickAtPosition(int row, int column, int xTopLeft, int yTopLeft, Color color)
+            {
+                GL.PushMatrix();
+
+                // translate the brick
+                float xOffset = column * GFX_CELL_SQUARE_WIDTH + xTopLeft;
+                float yOffset = row * GFX_CELL_SQUARE_WIDTH + yTopLeft;
+                GL.Translate(xOffset, yOffset, 0.0f);
+
+                GL.Disable(EnableCap.Texture2D);
+                GL.Disable(EnableCap.Blend);
+
+
+                float width = Owner.m_bitmapTable[TextureType.BrickOverlay].Width;
+                float height = Owner.m_bitmapTable[TextureType.BrickOverlay].Height;
+
+                // draw colorful square
+                GL.Color4(color);
+                GL.Begin(PrimitiveType.Quads);
+                GL.Vertex2(0f, 0f);
+                GL.Vertex2(width, 0f);
+                GL.Vertex2(width, height);
+                GL.Vertex2(0f, height);
+                GL.End();
+                GL.Color4(Color.White);
+
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.Blend);
+
+                int texHandle = m_textureHandles[TextureType.BrickOverlay];
+
+                // render texture over the colorful square
+                GL.BindTexture(TextureTarget.Texture2D, texHandle);
+                GL.Begin(PrimitiveType.Quads);
+                GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(width, 0f);
+                GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(width, height);
+                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, height);
+                GL.End();
+
+                GL.PopMatrix();
+            }
+
+            void renderText()
+            {
+                // 1) update text if score changed
+                int score = (int)Math.Round(Owner.ScoreOutput.Host[0]);
+                if (m_lastScore != score)
+                {
+                    m_lastScore = score;
+                    // 2) clone bitmap
+                    Bitmap bitmap = Owner.m_bitmapTable[TextureType.TextArea];
+                    Rectangle cloneRect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                    PixelFormat pixelFormat = bitmap.PixelFormat;
+                    bitmap = bitmap.Clone(cloneRect, pixelFormat);
+                    // 3) draw text
+                    DrawTextToBitmap("Score: " + score, bitmap, 0);
+                    DrawTextToBitmap("Level: " + (int)Math.Round(Owner.LevelOutput.Host[0]), bitmap, 30);
+                    DrawTextToBitmap("Next:", bitmap, 60);
+
+                    if (m_scoreTextHandle != 0)
+                    {
+                        // deinit texture
+                        GL.BindTexture(TextureTarget.Texture2D, 0);
+                        GL.DeleteTextures(1, ref m_scoreTextHandle);
+                    }
+                    // create texture
+                    GL.GenTextures(1, out m_scoreTextHandle);
+                    GL.BindTexture(TextureTarget.Texture2D, m_scoreTextHandle);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
+                    BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                    bitmap.UnlockBits(data);
+                }
+                float xOffset = Owner.GFX_TEXT_AREA_TOP_LEFT.X;
+                float yOffset = Owner.GFX_TEXT_AREA_TOP_LEFT.Y;
+                float width = Owner.m_textureText.SizeInPixels.x;
+                float height = Owner.m_textureText.SizeInPixels.y;
+
+                GL.PushMatrix();
+                GL.Translate(xOffset, yOffset, 0.0f);
+
+                GL.BindTexture(TextureTarget.Texture2D, m_scoreTextHandle);
+                GL.Begin(PrimitiveType.Quads);
+                GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(width, 0f);
+                GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(width, height);
+                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, height);
+                GL.End();
+
+                GL.PopMatrix();
+            }
+
+            void copyPixels()
+            {
+                // Prepare the results for CUDA
+
+                // bind pixel buffer object
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                // bind buffer from which data will be read
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                // read data to PBO (IntPtr.Zero means offset is 0)
+                GL.ReadPixels(0, 0, Owner.VisualWidth, Owner.VisualHeight, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
+                GL.ReadBuffer(ReadBufferMode.None);
+
+                if (m_renderResource != null && m_renderResource.IsRegistered && !m_renderResource.IsMapped)
+                {
+                    // map the interop resource
+                    m_renderResource.Map();
+                }
+
+                int size = Owner.VisualHeight * Owner.VisualWidth * Marshal.SizeOf(typeof(uint));
+                Owner.VisualOutput.GetDevice(Owner).CopyToDevice(m_renderResource.GetMappedPointer<uint>().DevicePointer, 0, 0, size);
+
+                // deinit CUDA interop
+                m_renderResource.UnMap();
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                // add noise over POW
+                if (Owner.IsImageNoise)
+                {
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, (SizeT)(Owner.AgentVisualTemp.Count), Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
+
+                    m_AddRgbNoiseKernel.SetupExecution(Owner.VisualWidth * Owner.VisualHeight);
+                    m_AddRgbNoiseKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, Owner.AgentVisualTemp);
                 }
             }
 
@@ -525,118 +844,78 @@ namespace GoodAI.Modules.TetrisWorld
             }
 
             /// <summary>
-            /// Draws a single cell with the specified color on the specified grid position
-            /// TODO: if performance is needed, try moving this function and its caller loop to a cuda kernel,
-            ///       because due to small texture sizes, the occupancy is low for these kernels (20%).
-            ///       However, since asynchronous streams are used, a higher occupancy might not mean a higher speed.
-            /// </summary>
-            /// <param name="s">An [asynchronous] stream that the kernel will run in.</param>
-            /// <param name="row"></param>
-            /// <param name="column"></param>
-            /// <param name="xTopLeft"></param>
-            /// <param name="yTopLeft"></param>
-            /// <param name="color"></param>
-            private void DrawCellAtPosition(CudaStream s, int row, int column, int xTopLeft, int yTopLeft, Color color)
-            {
-                CudaTexture textureBrickOverlay = Owner.m_textureBrickOverlay;
-                CudaTexture textureBrickMask = Owner.m_textureBrickMask;
-
-                int xOffset = column * GFX_CELL_SQUARE_WIDTH + xTopLeft;
-                int yOffset = row * GFX_CELL_SQUARE_WIDTH + yTopLeft;
-
-                // color
-                int yDiv = 10;
-                Debug.Assert(textureBrickMask.SizeInPixels.y % yDiv == 0);
-                m_MaskedColorKernel2DBlock.SetupExecution(new dim3(textureBrickMask.SizeInPixels.x, yDiv, 1),
-                    new dim3(textureBrickMask.SizeInPixels.y / yDiv, TARGET_VALUES_PER_PIXEL, 1));
-                m_MaskedColorKernel2DBlock.RunAsync(s, 
-                    Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
-                    textureBrickMask.BitmapPtr, textureBrickMask.SizeInPixels.x, textureBrickMask.SizeInPixels.y,
-                    color.R / 255.0f, color.G / 255.0f, color.B / 255.0f);
-
-                // overlay
-                Debug.Assert(textureBrickOverlay.SizeInPixels.y % yDiv == 0);
-                m_RgbaTextureKernel2DBlock.SetupExecution(new dim3(textureBrickOverlay.SizeInPixels.x, yDiv, 1),
-                    new dim3(textureBrickOverlay.SizeInPixels.y / yDiv, TARGET_VALUES_PER_PIXEL, 1));
-                m_RgbaTextureKernel2DBlock.RunAsync(s, 
-                    Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, xOffset, yOffset,
-                    textureBrickOverlay.BitmapPtr, textureBrickOverlay.SizeInPixels.x, textureBrickOverlay.SizeInPixels.y);
-            }
-
-            
-            /// <summary>
             /// draws tetris game board into Owner's VisualOutput memory block
             /// data is ready for rendering thanks to updateTask (score, level, brickarea, ...)
-            /// performance analysis: background takes 2.7ms to draw, cells take 1.85 ms to draw (in debug)
             /// </summary>
             public override void Execute()
             {
-                // erease background
-                Debug.Assert(Owner.VisualHeight % 2 == 0);
-                Debug.Assert(Owner.VisualWidth * 2 <= 1024); // because of blockDims:
-                m_RgbaTextureKernel2DBlock.SetupExecution(new dim3(Owner.VisualWidth,2,1),
-                    new dim3(Owner.VisualHeight/2, TARGET_VALUES_PER_PIXEL, 1));
-                m_RgbaTextureKernel2DBlock.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, 0, 0,
-                    Owner.m_textureBackground.BitmapPtr, Owner.m_textureBackground.SizeInPixels.x,
-                    Owner.m_textureBackground.SizeInPixels.y);
-
-                int iStreamIndex = 0;
-                // render bricks
-                for(int iRow = 2; iRow < Owner.BrickAreaRows; iRow++) // do not render rows 0 and 1
+                if (!m_texturesLoaded)
                 {
-                    for(int iCol = 0; iCol < Owner.BrickAreaColumns; iCol++)
-                    {
-                        int index = iRow * Owner.BrickAreaColumns + iCol;
-                        BrickType brick = (BrickType)Math.Round(Owner.BrickAreaOutput.Host[index]);
-                        if (brick != BrickType.None)
-                        {
-                            iStreamIndex++;
-                            DrawCellAtPosition(m_streams[iStreamIndex % m_streams.Length], iRow, iCol, Owner.GFX_BRICK_AREA_TOP_LEFT.X,
-                                Owner.GFX_BRICK_AREA_TOP_LEFT.Y, Owner.GetBrickColor(brick));
-                        }
-                    }
+                    initGL();
+                    LoadTextures();
+                    m_texturesLoaded = true;
                 }
 
-                // render hint bricks
-                for (int iRow = 0; iRow < Owner.HintAreaRows; iRow++) 
+                setupView();
+                
+                renderBackground();
+                renderBricks();
+                renderHint();
+                renderText();
+
+                copyPixels();
+            }
+
+            internal void Dispose()
+            {
+                if (m_context != null)
+                    m_context.Dispose();
+                if (m_window != null)
+                    m_window.Dispose();
+
+                m_window = new NativeWindow();
+                m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
+                m_context.MakeCurrent(m_window.WindowInfo);
+                m_context.LoadAll();
+
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                // delete textures
+                foreach (int handle in m_textureHandles.Values)
                 {
-                    for (int iCol = 0; iCol < Owner.HintAreaColumns; iCol++)
-                    {
-                        int index = iRow * Owner.HintAreaColumns + iCol;
-                        BrickType brick = (BrickType)Math.Round(Owner.HintAreaOutput.Host[index]);
-                        if (brick != BrickType.None)
-                        {
-                            iStreamIndex++;
-                            DrawCellAtPosition(m_streams[iStreamIndex % m_streams.Length], iRow + 1, iCol + 1, Owner.GFX_HINT_AREA_TOP_LEFT.X,
-                                Owner.GFX_HINT_AREA_TOP_LEFT.Y, Owner.GetBrickColor(brick));
-                        }
-                    }
+                    int h = handle;
+                    GL.DeleteTextures(1, ref h);
+                }
+                GL.DeleteTextures(1, ref m_renderTextureHandle);
+                GL.DeleteTextures(1, ref m_scoreTextHandle);
+
+                // delete FbO
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.DeleteFramebuffers(1, ref m_fboHandle);
+
+                // delete PBO
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+
+                // delete CUDA <-> GL interop
+                if (m_renderResource.IsMapped)
+                {
+                    m_renderResource.UnMap();
+                }
+                if (m_renderResource.IsRegistered)
+                {
+                    m_renderResource.Unregister();
                 }
 
-                // draw score and level
-                // 1) update text if score changed
-                int score = (int)Math.Round(Owner.ScoreOutput.Host[0]);
-                if (m_lastScore != score)
+                m_renderResource.Dispose();
+
+                if (m_context != null)
                 {
-                    m_lastScore = score;
-                    // 2) clone bitmap
-                    Bitmap bitmap = Owner.m_bitmapTable[TextureType.TextArea];
-                    Rectangle cloneRect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
-                    PixelFormat pixelFormat = bitmap.PixelFormat;
-                    bitmap = bitmap.Clone(cloneRect, pixelFormat);
-                    // 3) draw text
-                    DrawTextToBitmap("Score: " + score, bitmap, 0);
-                    DrawTextToBitmap("Level: " + (int)Math.Round(Owner.LevelOutput.Host[0]), bitmap, 30);
-                    DrawTextToBitmap("Next:", bitmap, 60);
-                    int dataSize = FillWithChannelsFromBitmap(bitmap, Owner.Bitmaps.Host, Owner.m_textureText.DataOffset);
-                    Owner.Bitmaps.SafeCopyToDevice(Owner.m_textureText.DataOffset, dataSize);
+                    m_context.Dispose();
                 }
-                // 3) draw on GPU
-                m_RgbaTextureKernel2DBlock.SetupExecution(new dim3(Owner.m_textureText.SizeInPixels.x, 1, 1),
-                    new dim3(Owner.m_textureText.SizeInPixels.y, TARGET_VALUES_PER_PIXEL, 1));
-                m_RgbaTextureKernel2DBlock.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight,
-                    Owner.GFX_TEXT_AREA_TOP_LEFT.X, Owner.GFX_TEXT_AREA_TOP_LEFT.Y,
-                    Owner.m_textureText.BitmapPtr, Owner.m_textureText.SizeInPixels.x, Owner.m_textureText.SizeInPixels.y);
+                if (m_window != null)
+                {
+                    m_window.Dispose();
+                }
             }
         }
 
@@ -660,20 +939,20 @@ namespace GoodAI.Modules.TetrisWorld
                 Owner.WorldEventOutput.Fill(0.0f);
 
                 ActionInputType input = DecodeAction();
- 
+
                 // The engine updates the world's memory blocks based on agent's input
                 Owner.Engine.Step(input);
             }
 
             protected ActionInputType DecodeAction()
             {
-                if(m_firstStep)
+                if (m_firstStep)
                 {
                     m_firstStep = false;
                     return ActionInputType.NoAction;
                 }
 
-                if(Owner.ActionInput == null || Owner.ActionInput.Count == 0)
+                if (Owner.ActionInput == null || Owner.ActionInput.Count == 0)
                 {
                     return ActionInputType.NoAction;
                 }
@@ -693,9 +972,9 @@ namespace GoodAI.Modules.TetrisWorld
                 {
                     int maxIndex = 0;
                     float max = float.NegativeInfinity;
-                    for(int i = 0; i < 6; i++)
+                    for (int i = 0; i < 6; i++)
                     {
-                        if(Owner.ActionInput.Host[i] > max)
+                        if (Owner.ActionInput.Host[i] > max)
                         {
                             maxIndex = i;
                             max = Owner.ActionInput.Host[i];
