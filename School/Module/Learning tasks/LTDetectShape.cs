@@ -56,7 +56,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
-                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
+                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize, 2);
                 }
 
                 // random color

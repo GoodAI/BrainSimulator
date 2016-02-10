@@ -80,8 +80,8 @@
     <Compile Include="Common\SchoolCurriculum.cs" />
     <Compile Include="Common\StandardConflictResolver.cs" />
     <Compile Include="Common\TrainingSetHints.cs" />
+    <Compile Include="Learning tasks\LTSimpleRhythm.cs" />
     <Compile Include="Learning tasks\LTClassComposition.cs" />
-    <Compile Include="Learning tasks\LT1DApproach.cs" />
     <Compile Include="Learning tasks\LTActionWCooldown.cs" />
     <Compile Include="Learning tasks\LTApproach.cs" />
     <Compile Include="Learning tasks\LTCompareLayouts.cs" />

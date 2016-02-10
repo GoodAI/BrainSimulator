@@ -88,7 +88,7 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTDetectWhite));
+                    curriculum.AddLearningTask(world, typeof(LTCompareLayouts));
                     break;
 
                 case CurriculumType.TetrisCurriculum:
@@ -108,7 +108,8 @@ namespace GoodAI.Modules.School.Common
                     curriculum.AddLearningTask(world, typeof(LTClassComposition));
                     curriculum.AddLearningTask(world, typeof(LTDetectShapeColor));
                     //curriculum.AddLearningTask(world, typeof(LT1DApproach));
-                    //curriculum.AddLearningTask(world, typeof(LTActionWCooldown));
+                    // Deprecated curriculum.AddLearningTask(world, typeof(LTActionWCooldown));
+                    curriculum.AddLearningTask(world, typeof(LTSimpleRhythm));
                     curriculum.AddLearningTask(world, typeof(LTSimpleSize));
                     curriculum.AddLearningTask(world, typeof(LTSimpleDistance));
                     curriculum.AddLearningTask(world, typeof(LTSimpleAngle));

@@ -103,7 +103,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 size = new Size(standardSideSize, standardSideSize);
             }
 
-            Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, true);
+            Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, -1);
 
             Shape.Shapes shape;
             switch (m_rndGen.Next(0, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]))

@@ -88,7 +88,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
                     Shape.Shapes shape = Shape.GetRandomShape(m_rndGen);
 
-                    Point position = world.RandomPositionInsideRectangleNonCovering(m_rndGen, size, leftPart);
+                    Point position = world.RandomPositionInsideRectangleNonCovering(m_rndGen, size, leftPart, 2);
 
                     if (placeDifference && i == numberOfObjects - 1)
                     {
@@ -101,7 +101,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
                         if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                         {
-                            positionR = world.RandomPositionInsideRectangleNonCovering(m_rndGen, size, rightPart); placeDifference = false;
+                            positionR = world.RandomPositionInsideRectangleNonCovering(m_rndGen, size, rightPart, 2); placeDifference = false;
                         }
                         if (LearningTaskHelpers.FlipCoin(m_rndGen) && TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1f)
                         {

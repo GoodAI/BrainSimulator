@@ -7,12 +7,12 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTActionWCooldown : AbstractLearningTask<ManInWorld>
     {
         private TSHintAttribute COOLDOWN = new TSHintAttribute("Cooldown value", "", typeof(float), 0, 1);
+        private TSHintAttribute ACTION_LIMIT = new TSHintAttribute("Limit of number of steps waiting for action", "", typeof(float), 2, 10);
 
         private ManInWorld m_world { get; set; }
         private uint m_cooldownRemaining { get; set; }
         private Random m_rnd = new Random();
         //agent must perform action within this time limit, otherwise it is considered as a fail
-        private const uint ACTION_LIMIT = 10;
         private int m_actionReadyFor;
 
         public uint UnitSuccesses { get; set; }
@@ -25,14 +25,14 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 {COOLDOWN,  5},
+                {ACTION_LIMIT,  10},
                 {TSHintAttributes.RANDOMNESS_LEVEL, 0 },
                 {TSHintAttributes.REQUIRED_UNIT_SUCCESSES, 10 },
-                {TSHintAttributes.MAX_UNIT_ATTEMPTS, 1000 },
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
-            // TODO
+            
         }
 
         protected override void PresentNewTrainingUnit()
@@ -56,14 +56,14 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override void UpdateLevel()
         {
             var tsp = TSProgression[0];
-            tsp[TSHintAttributes.DEPRECATED_COOLDOWN] = 5 * (CurrentLevel + 1);
+            tsp[COOLDOWN] = 5 * (CurrentLevel + 1);
             tsp[TSHintAttributes.RANDOMNESS_LEVEL] = CurrentLevel < 20 ? 0 : CurrentLevel - 19;
             TSHints.Set(tsp);
         }
 
         private void ResetCooldown()
         {
-            m_cooldownRemaining = (uint)TSHints[TSHintAttributes.DEPRECATED_COOLDOWN];
+            m_cooldownRemaining = (uint)TSHints[COOLDOWN];
             int randomness = (int)TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
             m_cooldownRemaining += (uint)m_rnd.Next(-randomness * 3, randomness * 3);
             m_actionReadyFor = 0;
@@ -86,7 +86,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 if (m_cooldownRemaining <= 0)
                 {
-                    if (m_actionReadyFor < ACTION_LIMIT)
+                    if (m_actionReadyFor < TSHints[ACTION_LIMIT])
                     {
                         manInWorld.Reward.Host[0] = 1;
                         UnitSuccesses++;
