@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace CoreTests.Memory
 {
-    public class TensorDimensionsTests
+    public class TensorDimensionsTests : CoreTestBase
     {
         private readonly ITestOutputHelper m_output;
 
