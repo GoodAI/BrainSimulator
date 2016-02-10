@@ -20,12 +20,10 @@ namespace GoodAI.Modules.School.Common
     /// </summary>
     public class SchoolCurriculum : IEnumerable<ILearningTask>
     {
-        protected List<ILearningTask> TaskOrder = new List<ILearningTask>();
+        protected List<ILearningTask> Tasks = new List<ILearningTask>();
         private IEnumerator<ILearningTask> m_taskEnumerator;
-        // The .NET framework does not provide a generic dictionary that preserves
-        // insertion order, so we keep (somewhat redundantly) a list of learning tasks
-        // to track task ordering and a dictionary to map learning tasks to world types.
-        protected Dictionary<ILearningTask, Type> TaskWorldTypes = new Dictionary<ILearningTask, Type>();
+
+        public string Description { get; set; }
 
         // for foreach usage
         IEnumerator IEnumerable.GetEnumerator()
@@ -35,14 +33,14 @@ namespace GoodAI.Modules.School.Common
 
         public IEnumerator<ILearningTask> GetEnumerator()
         {
-            return TaskOrder.GetEnumerator() as IEnumerator<ILearningTask>;
+            return Tasks.GetEnumerator() as IEnumerator<ILearningTask>;
         }
 
         // for classic usage
         public ILearningTask GetNextLearningTask()
         {
             if (m_taskEnumerator == null)
-                m_taskEnumerator = TaskOrder.GetEnumerator();
+                m_taskEnumerator = Tasks.GetEnumerator();
             if (m_taskEnumerator.MoveNext())
                 return m_taskEnumerator.Current;
             return null;
@@ -55,7 +53,7 @@ namespace GoodAI.Modules.School.Common
 
         public void Add(ILearningTask task)
         {
-            TaskOrder.Add(task);
+            Tasks.Add(task);
         }
 
         public void Add(SchoolCurriculum curr)
@@ -67,13 +65,7 @@ namespace GoodAI.Modules.School.Common
         public void AddLearningTask(ILearningTask task, Type worldType)
         {
             // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
-            TaskOrder.Add(task);
-            TaskWorldTypes.Add(task, worldType);
-        }
-
-        public Type GetWorldType(ILearningTask task)
-        {
-            return TaskWorldTypes[task];
+            Tasks.Add(task);
         }
 
         public void AddLearningTask(SchoolWorld world, Type learningTaskType, Type worldType)
