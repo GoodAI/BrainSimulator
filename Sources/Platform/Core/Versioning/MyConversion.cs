@@ -10,7 +10,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 13; }
+            get { return 14; }
         }
 
         public static string Convert1To2(string xml)
@@ -225,6 +225,27 @@ namespace GoodAI.Core.Versioning
                 return xml;  // Avoid regenerating of an unchanged document.
 
             element.Remove();
+
+            return document.ToString();
+        }
+
+        /// <summary>
+        /// Adds "IsHidden" attribute to all connections
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static string Convert13To14(string xml)
+        {
+            string result = xml;
+
+            // Generics require the new superclass
+            XDocument document = XDocument.Parse(result);
+
+            IEnumerable<XElement> elements = document.XPathSelectElements("//Connection");
+            foreach (XElement element in elements)
+            {
+                element.SetAttributeValue("IsHidden", "False");
+            }
 
             return document.ToString();
         }

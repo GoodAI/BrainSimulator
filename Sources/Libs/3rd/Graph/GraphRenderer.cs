@@ -514,7 +514,7 @@ namespace Graph
                 PointF position;
                 PointF textPosition = center;
 
-                var text = isConnectionHidden && isFromLabel ? "\u22ef" : connection.Name;
+                var text = isConnectionHidden && isFromLabel ? "⋯" : connection.Name;
 
                 if (connection.textBounds.IsEmpty ||
                     connection.textBounds.Location != center)
@@ -568,6 +568,7 @@ namespace Graph
                 }
                 graphics.DrawString(text, SystemFonts.StatusFont, Brushes.Black, textPosition, GraphConstants.CenterTextStringFormat);
 
+                //draw outline for all conn. labels when not dragged focused or hovered
                 if ((state & ~RenderState.Hidden & ~RenderState.Backward) == RenderState.None) 
                 {
                     graphics.DrawPath(new Pen(GetArrowLineColor(state | RenderState.Connected)), path);
