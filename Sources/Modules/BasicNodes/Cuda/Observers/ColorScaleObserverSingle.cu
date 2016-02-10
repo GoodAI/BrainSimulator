@@ -86,4 +86,17 @@ extern "C"
 			pixels[id] = (0xFF << 24) | (red << 16) | (green << 8) | blue;		
 		}
 	}
+
+	__global__ void DrawGrayscaleKernel(float* values, unsigned int* pixels, int numOfPixels)
+	{
+		int id = blockDim.x*blockIdx.y*gridDim.x
+			+ blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (id < numOfPixels) //id of the thread is valid
+		{
+			pixels[id] = grayscale_to_uint_rgba(fminf(fmaxf(values[id], 0.0f), 1.0f));
+		}
+	}
+
 }
