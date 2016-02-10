@@ -603,6 +603,12 @@ namespace GoodAI.Modules.School.Worlds
             return new MyExecutionBlock(newPlan.ToArray());
         }
 
+        public override void Cleanup()
+        {
+            RenderGLWorldTask.Cleanup();
+            base.Cleanup();
+        }
+
         public virtual InputTask GetInputTask { get; protected set; }
         public virtual UpdateTask UpdateWorldTask { get; protected set; }
 
@@ -1184,7 +1190,6 @@ namespace GoodAI.Modules.School.Worlds
                 {
 
                     GL.PushMatrix();
-                    // TODO: check if object is in view (POW only)
 
                     // translate object to its position in the scene
                     GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
@@ -1376,6 +1381,41 @@ namespace GoodAI.Modules.School.Worlds
                 GL.Vertex2(0.25f, 1f);
                 GL.Vertex2(0f, 0.5f);
                 GL.Vertex2(0.25f, 0f);
+            }
+
+            internal void Cleanup()
+            {
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                // delete textures
+                foreach (int handle in m_textureHandles.Values)
+                {
+                    int h = handle;
+                    GL.DeleteTextures(1, ref h);
+                }
+                GL.DeleteTextures(1, ref m_renderTextureHandle);
+
+                // delete buffers
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.DeleteFramebuffers(1, ref m_fboHandle);
+
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+
+                // delete CUDA <-> GL interop
+                if (m_renderResource.IsMapped)
+                {
+                    m_renderResource.UnMap();
+                }
+                if (m_renderResource.IsRegistered)
+                {
+                    m_renderResource.Unregister();
+                }
+                m_renderResource.Dispose();
+
+                if (m_context != null)
+                {
+                    m_context.Dispose();
+                }
             }
         }
     }
