@@ -25,6 +25,8 @@ namespace GoodAI.Modules.School.Common
         SchoolWorld SchoolWorld { get; set; }
         Type RequiredWorld { get; set; }
         string Description { get; set; }
+
+        void StartLearningTask();
     }
 
     /// <summary>
@@ -221,5 +223,10 @@ namespace GoodAI.Modules.School.Common
 
         protected abstract void PresentNewTrainingUnit();
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
+
+        public virtual void StartLearningTask()
+        {
+            SetHints(TSHints);
+        }
     }
 }

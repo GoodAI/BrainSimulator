@@ -255,6 +255,7 @@ namespace GoodAI.Modules.School.Worlds
                         m_currentLearningTask.GetType().ToString().Split(new[] { '.' }).Last()
                         );
 
+                    m_currentLearningTask.StartLearningTask();
                     NotifyNewLearningTask();
                 }
                 else if (m_currentLearningTask.DidAbilityFail)
@@ -265,6 +266,7 @@ namespace GoodAI.Modules.School.Worlds
             }
             else
             {
+                m_currentLearningTask.StartLearningTask();
                 NotifyNewLearningTask();
             }
 
