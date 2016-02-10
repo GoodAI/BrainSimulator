@@ -117,7 +117,6 @@ namespace GoodAI.Modules.School.Worlds
         private string m_errorMessage;
 
         public MyMemoryBlock<float> AgentVisualTemp { get; protected set; } // used e.g. for holding random numbers during noise generation
-        public MyMemoryBlock<float> ShuffleRGBTemp { get; protected set; }
 
         public ManInWorld()
         {
@@ -1098,7 +1097,6 @@ namespace GoodAI.Modules.School.Worlds
                                 new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
                                 ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-                            // from example:
                             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 
                             bmp.UnlockBits(data);
