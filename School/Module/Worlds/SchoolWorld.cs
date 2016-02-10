@@ -200,6 +200,7 @@ namespace GoodAI.Modules.School.Worlds
         public override void Validate(MyValidator validator)
         {
             validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
+            validator.AssertError(Curriculum != null, this, "Curriculum must not be null. Start the simulation from School GUI.");
         }
 
         public MyNode AffectedNode { get { return this; } }
