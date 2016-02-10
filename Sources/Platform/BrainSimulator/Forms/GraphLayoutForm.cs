@@ -216,6 +216,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         void OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
         {
+            bool isHidden = (Control.ModifierKeys & Keys.Shift) != 0;            
+			
             MyNode fromNode = (e.Connection.From.Node as MyNodeView).Node;
             MyNode toNode = (e.Connection.To.Node as MyNodeView).Node;
 
@@ -227,7 +229,10 @@ namespace GoodAI.BrainSimulator.Forms
                 MyConnection newConnection = new MyConnection(fromNode, toNode, fromIndex, toIndex);
                 newConnection.Connect();
 
+                newConnection.IsHidden = isHidden;
                 e.Connection.Tag = newConnection;
+                (e.Connection as MyNodeViewConnection).Hidden = isHidden;
+
 
                 m_mainForm.RefreshConnections(this);
                 m_mainForm.ProjectStateChanged("Connection added");

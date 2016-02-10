@@ -403,7 +403,7 @@ namespace Graph
         public static void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)
         {
             if (!node.shown)
-                return;
+                return;            
 
             foreach (var connection in node.connections.Reverse<NodeConnection>())
             {
@@ -432,6 +432,12 @@ namespace Graph
 
                     float centerX;
                     float centerY;
+                    int xOffset = GraphConstants.HiddenConnectionLabelOffset;
+
+                    bool isFromNodeHover = (connection.From.Node.state & RenderState.Hover) != 0;
+                    bool isConnectionHidden = (connection.state & RenderState.Hidden) != 0;
+                    bool isConnectionHover = (connection.state & RenderState.Hover) != 0;
+
                     using (var path = GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
                     {
                         Color arrowLineColor = GetArrowLineColor(connection.state | RenderState.Connected);
@@ -440,7 +446,7 @@ namespace Graph
                         {
                             Color glowColorBase = Color.Ivory;
                             Color glowColor = Color.FromArgb(
-                                (int) (glowColorBase.A * 0.5),
+                                (int)(glowColorBase.A * 0.5),
                                 glowColorBase.R,
                                 glowColorBase.G,
                                 glowColorBase.B);
@@ -451,38 +457,92 @@ namespace Graph
 
                         Brush brush = new SolidBrush(arrowLineColor);
 
-                        graphics.FillPath(brush, path);
-                        connection.bounds = path.GetBounds();
+                        if (isConnectionHidden && !isConnectionHover)
+                        {
+                            if (isFromNodeHover)
+                            {
+                                graphics.FillPath(new SolidBrush(GetArrowLineColor(RenderState.Hover)), path);                                
+                            }
+                            else
+                            {
+                                graphics.FillRectangle(brush, x1, y1 - 0.75f, xOffset, 1.5f);
+                                graphics.FillRectangle(brush, x2 - xOffset, y2 - 2, xOffset, 4);
+                            }
+                        }
+                        else
+                        {
+                            graphics.FillPath(brush, path);
+                        }
+
+                        connection.bounds = RectangleF.Union(path.GetBounds(), connection.textBounds);                        
                     }
 
                     if (showLabels && !string.IsNullOrWhiteSpace(connection.Name))
                     {
-                        var center = new PointF(centerX, centerY);
-                        RenderLabel(graphics, connection, center, connection.state);
+                        if (isConnectionHidden)
+                        {
+                            RenderState rState = isFromNodeHover ? connection.state | RenderState.Hover : connection.state;                            
+
+                            var center = new PointF(x1, y1);
+                            RenderLabel(graphics, connection, center, rState, true);
+
+                            center = new PointF(x2, y2);
+                            RenderLabel(graphics, connection, center, rState);
+                        }
+                        else
+                        {
+                            var center = new PointF(centerX, centerY);
+                            RenderLabel(graphics, connection, center, connection.state);
+                        }
                     }
                 }
             }
         }
 
-        static void RenderLabel(Graphics graphics, NodeConnection connection, PointF center, RenderState state)
+        static void RenderLabel(Graphics graphics, NodeConnection connection, PointF center, RenderState state, bool isFromLabel = false)
         {
             using (var path = new GraphicsPath(FillMode.Winding))
             {			
                 int cornerSize			= (int)GraphConstants.CornerSize * 2;
                 int connectorSize		= (int)GraphConstants.ConnectorSize;
                 int halfConnectorSize	= (int)Math.Ceiling(connectorSize / 2.0f);
+                int xOffset = GraphConstants.HiddenConnectionLabelOffset;
+
+                bool isConnectionHidden = (connection.state & RenderState.Hidden) != 0;
 
                 SizeF size;
                 PointF position;
-                var text		= connection.Name;
+                PointF textPosition = center;
+
+                var text = isConnectionHidden && isFromLabel ? "⋯" : connection.Name;
+
                 if (connection.textBounds.IsEmpty ||
                     connection.textBounds.Location != center)
                 {
-                    size		= graphics.MeasureString(text, SystemFonts.StatusFont, center, GraphConstants.CenterTextStringFormat);
-                    position	= new PointF(center.X - (size.Width / 2.0f) - halfConnectorSize, center.Y - (size.Height / 2.0f));
+                    size = graphics.MeasureString(text, SystemFonts.StatusFont, center, GraphConstants.CenterTextStringFormat);
+
+                    if (isConnectionHidden) 
+                    {
+                        if (isFromLabel)
+                        {
+                            textPosition = new PointF(center.X + xOffset + size.Width / 2.0f, center.Y);
+                            position = new PointF(center.X + xOffset - halfConnectorSize, center.Y - (size.Height / 2.0f));
+                        }
+                        else
+                        {
+                            textPosition = new PointF(center.X - xOffset - size.Width / 2.0f, center.Y);
+                            position = new PointF(center.X - xOffset - size.Width - halfConnectorSize, center.Y - (size.Height / 2.0f));
+                        }
+                    }
+                    else
+                    {                        
+                        position = new PointF(center.X - (size.Width / 2.0f) - halfConnectorSize, center.Y - (size.Height / 2.0f));
+                    }
+
                     size.Width	+= connectorSize;
                     connection.textBounds = new RectangleF(position, size);
-                } else
+                } 
+                else
                 {
                     size		= connection.textBounds.Size;
                     position	= connection.textBounds.Location;
@@ -506,12 +566,15 @@ namespace Graph
                 {
                     graphics.FillPath(brush, path);
                 }
-                graphics.DrawString(text, SystemFonts.StatusFont, Brushes.Black, center, GraphConstants.CenterTextStringFormat);
+                graphics.DrawString(text, SystemFonts.StatusFont, Brushes.Black, textPosition, GraphConstants.CenterTextStringFormat);
 
-                if (state == RenderState.None)
-                    graphics.DrawPath(Pens.Black, path);
+                //draw outline for all conn. labels when not dragged focused or hovered
+                if ((state & ~RenderState.Hidden & ~RenderState.Backward) == RenderState.None) 
+                {
+                    graphics.DrawPath(new Pen(GetArrowLineColor(state | RenderState.Connected)), path);
+                }                
 
-                //graphics.DrawRectangle(Pens.Black, connection.textBounds.Left, connection.textBounds.Top, connection.textBounds.Width, connection.textBounds.Height);
+                //graphics.DrawRectangle(Pens.Red, connection.textBounds.Left, connection.textBounds.Top, connection.textBounds.Width, connection.textBounds.Height);
             }
         }
 
@@ -534,9 +597,17 @@ namespace Graph
             Region region;
             float centerX;
             float centerY;
-            using (var linePath = GetArrowLinePath(	x1, y1, x2, y2, out centerX, out centerY, true, 5.0f))
+
+            if ((connection.state & RenderState.Hidden) != 0)
             {
-                region = new Region(linePath);
+                region = new Region(connection.textBounds);
+            }
+            else
+            {
+                using (var linePath = GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, true, 5.0f))
+                {
+                    region = new Region(linePath);
+                }
             }
             return region;
         }

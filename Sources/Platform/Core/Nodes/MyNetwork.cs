@@ -25,6 +25,8 @@ namespace GoodAI.Core.Nodes
             public int ToIndex { get; set; }
             [YAXSerializableField, YAXAttributeForClass]
             public bool IsLowPriority { get; set; }
+            [YAXSerializableField, YAXAttributeForClass]
+            public bool IsHidden { get; set; }
         };
 
         [YAXSerializableField, YAXSerializeAs("Connections")]
@@ -61,7 +63,8 @@ namespace GoodAI.Core.Nodes
                         To = inputConnection.To.Id,
                         FromIndex = inputConnection.FromIndex,
                         ToIndex = inputConnection.ToIndex,
-                        IsLowPriority = inputConnection.IsLowPriority
+                        IsLowPriority = inputConnection.IsLowPriority,
+                        IsHidden = inputConnection.IsHidden
                     };
                     m_connections.Add(cp);
                 }
@@ -140,6 +143,7 @@ namespace GoodAI.Core.Nodes
                 {
                     MyConnection connection = new MyConnection(nodes[cp.From], nodes[cp.To], cp.FromIndex, cp.ToIndex);
                     connection.IsLowPriority = cp.IsLowPriority;
+                    connection.IsHidden = cp.IsHidden;
                     connection.Connect();
                 }
                 catch (Exception e)

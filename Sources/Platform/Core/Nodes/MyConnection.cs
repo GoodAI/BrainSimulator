@@ -15,6 +15,7 @@ namespace GoodAI.Core
         public String Name { get { return From.Name + "_" + To.Name; } }
 
         public bool IsLowPriority { get; set; }
+        public bool IsHidden { get; set; }
 
         public MyConnection(MyNode from, MyNode to, int fromIndex, int toIndex)
         {
