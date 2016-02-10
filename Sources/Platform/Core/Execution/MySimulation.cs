@@ -247,12 +247,13 @@ namespace GoodAI.Core.Execution
         enum ExecutionPhase
         {
             Initialization,
+            PreStandard,
             Standard
         }
 
         private readonly MyThreadPool m_threadPool;
-        private bool m_debugStepComplete = true;
-        private ExecutionPhase m_debugExecutionPhase;
+        private bool m_stepComplete = true;
+        private ExecutionPhase m_executionPhase;
         private bool m_isChangingModel;
 
         public MyLocalSimulation(MyValidator validator, IMyExecutionPlanner executionPlanner) : base(validator)
@@ -310,24 +311,34 @@ namespace GoodAI.Core.Execution
         /// </summary>
         public override void PerformStep(bool stepByStepRun)
         {
-            m_debugStepComplete = true;
+            m_stepComplete = true;
             m_errorOccured = false;
 
-            m_threadPool.ResumeThreads(ExecutionPlan);
+            if (m_executionPhase == ExecutionPhase.Initialization || m_executionPhase == ExecutionPhase.Standard)
+                ResumeThreads();
 
-            if (m_errorOccured)
+            // The phase might have changed during ResumeThreads. If it did, the loading of blocks must happen now.
+            if (m_executionPhase == ExecutionPhase.PreStandard)
             {
-                if (m_lastException != null)
-                    throw m_lastException;
+                // TODO(HonzaS): When we enable block loading during simulation, change this to support it.
+                // There should be a field (m_blockLoadingNodes) that gets processed here.
+                if (SimulationStep == 0)
+                {
+                    MyKernelFactory.Instance.SetCurrent(0);
+                    LoadBlocks(AllNodes);
+                }
 
-                throw new MySimulationException(-1, "Unknown simulation exception occured");
+                m_executionPhase = ExecutionPhase.Standard;
+
+                // In normal mode, we want to run the whole step - we don't wait for the next PerformStep call.
+                if (!InDebugMode)
+                    ResumeThreads();
             }
 
             //mainly for observers
             if (InDebugMode && stepByStepRun)
             {
-                if (AllNodes == null)
-                    throw new SimulationControlException("The execution plan is not set up.");
+                CheckSimulationSetup();
 
                 MyKernelFactory.Instance.SetCurrent(0);
 
@@ -335,12 +346,11 @@ namespace GoodAI.Core.Execution
                     MyMemoryManager.Instance.SynchronizeSharedBlocks(node, false);
             }
 
-            if (!InDebugMode || m_debugStepComplete)
+            if (m_stepComplete)
             {
-                if (AllNodes == null)
-                    throw new SimulationControlException("The simulation is not set up.");
+                CheckSimulationSetup();
 
-                bool doAutoSave = SimulationStep > 0 && AutoSaveInterval > 0 && SimulationStep % AutoSaveInterval == 0;
+                bool doAutoSave = SimulationStep > 0 && AutoSaveInterval > 0 && SimulationStep%AutoSaveInterval == 0;
 
                 if (doAutoSave)
                 {
@@ -351,11 +361,6 @@ namespace GoodAI.Core.Execution
                     throw new SimulationControlException("The simulation is not set up.");
 
                 MyKernelFactory.Instance.SetCurrent(0);
-
-                if (SimulationStep == 0)
-                {
-                    LoadBlocks(AllNodes);
-                }
 
                 if (doAutoSave)
                 {
@@ -374,8 +379,27 @@ namespace GoodAI.Core.Execution
             }
         }
 
+        private void ResumeThreads()
+        {
+            m_threadPool.ResumeThreads();
+
+            if (m_errorOccured)
+            {
+                if (m_lastException != null)
+                    throw m_lastException;
+
+                throw new MySimulationException(-1, "Unknown simulation exception occured");
+            }
+        }
+
+        private void CheckSimulationSetup()
+        {
+            if (AllNodes == null)
+                throw new SimulationControlException("The execution plan is not set up.");
+        }
+
         public override bool IsChangingModel { get { return m_isChangingModel; } }
-        public override bool IsStepFinished { get { return m_debugStepComplete; } }
+        public override bool IsStepFinished { get { return m_stepComplete; } }
 
         private void InitCore(int coreNumber)
         {
@@ -384,7 +408,7 @@ namespace GoodAI.Core.Execution
 
         protected override void ScheduleChanged()
         {
-            m_debugExecutionPhase = ExecutionPhase.Initialization;
+            m_executionPhase = ExecutionPhase.Initialization;
 
             CurrentDebuggedBlocks[0] = ExecutionPlan.InitStepPlan;
         }
@@ -397,21 +421,33 @@ namespace GoodAI.Core.Execution
                 {
                     MyExecutionBlock currentBlock = CurrentDebuggedBlocks[coreNumber];
 
-                    // This is the first debug step.
-                    if (currentBlock == null)
+                    if (m_executionPhase == ExecutionPhase.Initialization)
                     {
-                        if (m_debugExecutionPhase == ExecutionPhase.Initialization)
+                        // The next step should be taken from the initialization plan.
+                        if (currentBlock == null)
                         {
+                            // The next step should be the beginning of the initialization plan.
                             if (ExecutionPlan.InitStepPlan != null)
                             {
+                                // There is an initialization plan, take the first step.
                                 ExecutionPlan.InitStepPlan.Reset();
                                 currentBlock = ExecutionPlan.InitStepPlan;
                             }
+                            else
+                            {
+                                // There is no initialization plan, go to PreStandard and stop because the loading of
+                                // block data might be needed.
+                                m_executionPhase = ExecutionPhase.PreStandard;
+                                return;
+                            }
                         }
+                    }
 
+                    if (m_executionPhase == ExecutionPhase.Standard)
+                    {
                         if (currentBlock == null)
                         {
-                            m_debugExecutionPhase = ExecutionPhase.Standard;
+                            m_executionPhase = ExecutionPhase.Standard;
 
                             ExecutionPlan.StandardStepPlan.Reset();
                             currentBlock = ExecutionPlan.StandardStepPlan;
@@ -432,18 +468,27 @@ namespace GoodAI.Core.Execution
 
                     if (currentBlock == null)
                     {
-                        // The current plan finished, the standard plan has to be reset and executed.
-                        if (m_debugExecutionPhase == ExecutionPhase.Initialization)
-                            m_debugStepComplete = false;  // This means the init plan got finished, not the standard plan.
-                        else
-                            ExecutionPlan.InitStepPlan = null;
+                        // The current plan finished.
 
-                        m_debugExecutionPhase = ExecutionPhase.Standard;
+                        if (m_executionPhase == ExecutionPhase.Initialization)
+                        {
+                            // This means the init plan got finished, not the standard plan.
+                            m_stepComplete = false;
+                        }
+                        else
+                        {
+                            // This means the standard plan finished, remove the init plan (debug window will reset).
+                            ExecutionPlan.InitStepPlan = null;  
+                        }
+
+                        // If rescheduling happens, this will be set to "Initialization" again, if not, we need to 
+                        // perform just the standard plan again.
+                        m_executionPhase = ExecutionPhase.PreStandard;
                         leavingTargetBlock = true;
                     }
                     else
                     {
-                        m_debugStepComplete = false;
+                        m_stepComplete = false;
                     }
 
                     CurrentDebuggedBlocks[coreNumber] = currentBlock;
@@ -468,15 +513,31 @@ namespace GoodAI.Core.Execution
                 }
                 else //not in debug mode
                 {
-                    if (ExecutionPlan.InitStepPlan != null)
+                    if (m_executionPhase == ExecutionPhase.Initialization)
                     {
-                        ExecutionPlan.InitStepPlan.SimulationStep = SimulationStep;
-                        ExecutionPlan.InitStepPlan.Execute();
+                        if (ExecutionPlan.InitStepPlan != null)
+                        {
+                            ExecutionPlan.InitStepPlan.SimulationStep = SimulationStep;
+                            ExecutionPlan.InitStepPlan.Execute();
+                        }
+                        m_executionPhase = ExecutionPhase.PreStandard;
+
+                        // Finish here and let the other thread (PerformStep) do block loading etc.
+                        return;
                     }
 
-                    ExecutionPlan.StandardStepPlan.SimulationStep = SimulationStep;
-                    ExecutionPlan.StandardStepPlan.Execute();
-                    ExecutionPlan.InitStepPlan = null;
+                    // No PreStandard check here - this method doesn't have any PreStandard stuff to do.
+
+                    if (m_executionPhase == ExecutionPhase.Standard)
+                    {
+                        ExecutionPlan.StandardStepPlan.SimulationStep = SimulationStep;
+                        ExecutionPlan.StandardStepPlan.Execute();
+                        ExecutionPlan.InitStepPlan = null;
+
+                        // We don't go to Initialization, because init currently only reappears when rescheduling is done,
+                        // which sets this accordingly.
+                        m_executionPhase = ExecutionPhase.PreStandard;
+                    }
                 }
             }
             catch (Exception e)
@@ -571,7 +632,7 @@ namespace GoodAI.Core.Execution
         public override void Clear()
         {
             base.Clear();
-            m_debugStepComplete = true;
+            m_stepComplete = true;
         }
 
         /// <summary>
