@@ -6,7 +6,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class LT1DApproach : AbstractLearningTask<ManInWorld>
     {
-        public LT1DApproach() { }
+        public LT1DApproach() : base(null) { }
 
         public LT1DApproach(SchoolWorld w)
             : base(w)
@@ -35,8 +35,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.IMAGE_NOISE, 1f },
                 { TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1f },
             });
-
-            SetHints(TSHints);
         }
 
         protected Random m_rndGen = new Random();

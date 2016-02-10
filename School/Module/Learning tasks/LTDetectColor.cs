@@ -15,7 +15,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected int m_colorIndex;
 
-        public LTDetectColor() { }
+        public LTDetectColor() : base(null) { }
 
         public LTDetectColor(SchoolWorld w)
             : base(w)
@@ -30,8 +30,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(NUMBER_OF_COLORS, 4);
             TSProgression.Add(NUMBER_OF_COLORS, 8);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -96,6 +94,5 @@ namespace GoodAI.Modules.School.LearningTasks
             int maxY = (WrappedWorld.FOW_HEIGHT + WrappedWorld.POW_HEIGHT) / 2 - m_target.Height;
             m_target.Y = m_rndGen.Next(minY, maxY + 1);
         }
-
     }
 }

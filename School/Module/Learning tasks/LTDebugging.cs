@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private MovableGameObject m_agent;
         private Random m_rndGen = new Random();
 
-        public LTDebugging() { }
+        public LTDebugging() : base(null) { }
 
         public LTDebugging(SchoolWorld w)
             : base(w)
@@ -21,8 +21,6 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -96,6 +94,5 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             return wasUnitSuccessful = false;
         }
-
     }
 }

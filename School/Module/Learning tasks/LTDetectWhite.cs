@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected GameObject m_target;
 
-        public LTDetectWhite() { }
+        public LTDetectWhite() : base(null) { }
 
         public LTDetectWhite(SchoolWorld w)
             : base(w)
@@ -24,8 +24,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()

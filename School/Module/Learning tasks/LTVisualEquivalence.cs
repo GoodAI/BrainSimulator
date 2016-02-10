@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using System;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -88,7 +84,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // Second shape
         protected ComparisonShape targetB;
 
-        public LTVisualEquivalence() { }
+        public LTVisualEquivalence() : base(null) { }
 
         public LTVisualEquivalence(SchoolWorld w)
             : base(w)
@@ -104,8 +100,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(SCALE_SHAPE, 1);
             TSProgression.Add(ROTATE_SHAPE, 1);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -182,7 +176,5 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             return WrappedWorld.RandomPositionInsidePowNonCovering(m_rand, size);
         }
-
-
     }
 }

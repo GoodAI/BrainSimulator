@@ -1,17 +1,12 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.School.Worlds;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    public class LTCompatibilityMatching: AbstractLearningTask<TetrisAdapterWorld>
+    public class LTCompatibilityMatching : AbstractLearningTask<TetrisAdapterWorld>
     {
-        public LTCompatibilityMatching() { }
+        public LTCompatibilityMatching() : base(null) { }
 
         public static readonly TSHintAttribute ROTATION_ALLOWED = new TSHintAttribute("ROTATION_ALLOWED", "", typeof(bool), 0, 1);
 
@@ -27,8 +22,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(ROTATION_ALLOWED, 1);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -49,10 +42,9 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             else
             {
-                wasUnitSuccessful = WrappedWorld.Engine.CanMatch();            
+                wasUnitSuccessful = WrappedWorld.Engine.CanMatch();
             }
             return true;
         }
-
     }
 }

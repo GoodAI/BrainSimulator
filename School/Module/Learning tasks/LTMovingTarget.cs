@@ -1,5 +1,4 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Drawing;
@@ -27,7 +26,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private readonly TSHintAttribute STEPS_TAKEN_FOR_ONE_CIRCLE = new TSHintAttribute("Steps for ellipse", "", typeof(float), 0, 1);    // How many steps it takes for one complete cycle of the ellipse
         private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not", "", typeof(float), 0, 1);         // Either 0 or 1, If it's 1, the target tries to move away from the agent instead of moving ina  circular way
 
-        public LTMovingTarget() { }
+        public LTMovingTarget() : base(null) { }
 
         public LTMovingTarget(SchoolWorld w)
             : base(w)
@@ -93,8 +92,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { AVOIDING_AGENT, 1 },
                     { DISTANCE_BONUS_COEFFICENT, 7f }
             });
-
-            SetHints(TSHints);
         }
 
         public override void UpdateState()                                  // UpdateState calls base's equivalent and then its own additional functions
@@ -127,10 +124,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 MoveAwayFromAgentStep((int)TSHints[MOVING_VELOCITY]);
             }
-
         }
-
-
 
         public override void CreateTarget()
         {
@@ -153,7 +147,6 @@ namespace GoodAI.Modules.School.LearningTasks
             WrappedWorld.AddGameObject(m_target);
         }
 
-
         // The ellipse's coordinates are calculated using a canonical form in polar coordinates
         // angle varies from 0 to 360 degrees, but it's in radians, the range is from 0 to 1 (2Pi)
         // For details: https://en.wikipedia.org/wiki/Ellipse#Parametric_form_in_canonical_position
@@ -175,9 +168,7 @@ namespace GoodAI.Modules.School.LearningTasks
             ReturnResult.Y -= (m_target.Height / 2);
 
             return ReturnResult;
-
         }
-
 
         public void MoveAwayFromAgentStep(int velocity)
         {
@@ -205,7 +196,5 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
             }
         }
-
-
     }
 }

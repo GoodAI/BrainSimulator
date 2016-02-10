@@ -17,7 +17,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private bool m_appears;
         private bool m_isBlack;
 
-        public LTDetectBlackAndWhite() { }
+        public LTDetectBlackAndWhite() : base(null) { }
 
         public LTDetectBlackAndWhite(SchoolWorld w)
             : base(w)
@@ -37,8 +37,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { TSHintAttributes.IMAGE_NOISE, 1 },
                     { IS_TARGET_MOVING, 1 }
                 });
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -95,7 +93,6 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             return true;
         }
-
     }
 
     // The learning task consists of training units (TUs).

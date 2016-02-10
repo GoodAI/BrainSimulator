@@ -1,5 +1,4 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public int currentIndex = 0;                                        // Represents current index of the sequence
 
 
-        public LTMultipleTargetsSequence() { }
+        public LTMultipleTargetsSequence() : base(null) { }
 
         public LTMultipleTargetsSequence(SchoolWorld w)
             : base(w)
@@ -80,7 +79,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { SEQUENCE_LENGTH, 5 },
                     { DISTANCE_BONUS_COEFFICENT, 1.0f }
             });
-            SetHints(TSHints);
         }
 
 
@@ -222,8 +220,5 @@ namespace GoodAI.Modules.School.LearningTasks
             wasUnitSuccessful = false;
             return false;
         }
-
-
-
     }
 }

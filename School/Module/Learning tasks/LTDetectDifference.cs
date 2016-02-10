@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
-        public LTDetectDifference() { }
+        public LTDetectDifference() : base(null) { }
 
         public LTDetectDifference(SchoolWorld w)
             : base(w)
@@ -32,8 +32,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 8f);
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1f);
             TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 10f);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -105,6 +103,5 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             return true;
         }
-
     }
 }

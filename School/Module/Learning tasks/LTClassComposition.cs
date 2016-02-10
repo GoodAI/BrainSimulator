@@ -4,7 +4,6 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -18,7 +17,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private List<Shape.Shapes> m_positiveExamples = new List<Shape.Shapes>();
         private List<Shape.Shapes> m_negativeExamples = new List<Shape.Shapes>();
 
-        public LTClassComposition() { }
+        public LTClassComposition() : base(null) { }
 
         public LTClassComposition(SchoolWorld w)
             : base(w)
@@ -40,9 +39,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1.0f);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 6f);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8f);
-
-            SetHints(TSHints);
-
 
             m_positiveExamples.Add(Shape.Shapes.Star);
             m_positiveExamples.Add(Shape.Shapes.Circle);
@@ -141,6 +137,5 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             return true;
         }
-
     }
 }

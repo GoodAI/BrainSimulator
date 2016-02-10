@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected MovableGameObject m_agent;
         private GameObject m_target;
 
-        public LTSimpleAngle() { }
+        public LTSimpleAngle() : base(null) { }
 
         public LTSimpleAngle(SchoolWorld w)
             : base(w)
@@ -37,8 +37,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(ERROR_TOLERANCE, 0.1f);
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
             TSProgression.Add(ERROR_TOLERANCE, 0.05f);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()

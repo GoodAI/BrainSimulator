@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // DISTANCE_BONUS_COEFFICENT's default value is 1, and if it's 2 the amount of available steps to reach the target is doubled, new formula : "return m_stepsSincePresented > (m_initialDistance * (int)TSHints[MULTIPLY_COEFFICENT]);"
 
 
-        public LTApproach() { }
+        public LTApproach() : base(null) { }
 
         public LTApproach(SchoolWorld w)
             : base(w)
@@ -46,8 +46,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()

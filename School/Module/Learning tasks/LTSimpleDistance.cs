@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private GameObject m_target;
         private float m_distance = 0; // ranging from 0 to 1; 0-0.125 is smallest, 0.875-1 is biggest; m_distance is lower bound of the interval
 
-        public LTSimpleDistance() { }
+        public LTSimpleDistance() : base(null) { }
 
         public LTSimpleDistance(SchoolWorld w)
             : base(w)
@@ -49,8 +49,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3 },
             });
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()

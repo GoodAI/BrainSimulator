@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
-        public LTDetectShape() { }
+        public LTDetectShape() : base(null) { }
 
         public LTDetectShape(SchoolWorld w)
             : base(w)
@@ -35,8 +35,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1.0f);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 8);
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1.0f);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -107,6 +105,5 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             return true;
         }
-
     }
 }

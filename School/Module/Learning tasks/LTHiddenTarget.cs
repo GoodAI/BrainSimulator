@@ -88,7 +88,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // Tracks the initial agent-target distance to determine if the TU has failed
         protected float initialDistance = 0;
 
-        public LTHiddenTarget() { }
+        public LTHiddenTarget() : base(null) { }
 
         // Construct the learning task
         public LTHiddenTarget(SchoolWorld w)
@@ -109,8 +109,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(NUMBER_OF_FALSE_TARGETS, 2);
             TSProgression.Add(NUMBER_OF_FALSE_TARGETS, 3);
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -163,6 +161,5 @@ namespace GoodAI.Modules.School.LearningTasks
 
             return false;
         }
-
     }
 }

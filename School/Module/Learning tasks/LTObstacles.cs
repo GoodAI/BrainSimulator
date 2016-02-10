@@ -1,5 +1,4 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Drawing;
@@ -27,7 +26,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
         public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
 
-        public LTObstacles() { }
+        public LTObstacles() : base(null) { }
 
         public LTObstacles(SchoolWorld w)
             : base(w)
@@ -47,8 +46,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(OBSTACLES_LEVEL, 5);
             TSProgression.Add(OBSTACLES_LEVEL, 6);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -378,11 +375,7 @@ namespace GoodAI.Modules.School.LearningTasks
             wasUnitSuccessful = false;
             return false;
         }
-
-
     }
-
-
 }
 
 

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.School.Worlds;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using GoodAI.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     public class LTTetrisTest : AbstractLearningTask<TetrisAdapterWorld>
     {
-        public LTTetrisTest() { }
+        public LTTetrisTest() : base(null) { }
 
         public LTTetrisTest(SchoolWorld w)
             : base(w)
@@ -22,7 +17,6 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()

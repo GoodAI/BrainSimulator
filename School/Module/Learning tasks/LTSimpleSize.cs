@@ -15,7 +15,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private GameObject m_agent;
         private float m_scale;
 
-        public LTSimpleSize() { }
+        public LTSimpleSize() : base(null) { }
 
         public LTSimpleSize(SchoolWorld w)
             : base(w)
@@ -44,8 +44,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3 },
             });
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-
-            SetHints(TSHints);
         }
 
         protected override void PresentNewTrainingUnit()
@@ -126,7 +124,5 @@ namespace GoodAI.Modules.School.LearningTasks
 
             WrappedWorld.CreateShape(position, shape, color, size);
         }
-
     }
-
 }

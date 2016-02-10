@@ -1,8 +1,4 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Worlds;
-using System;
-using System.Drawing;
+﻿using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -15,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// </description>
     public class LTObstaclesTargetOnSight : LTObstacles                           // Deriving from LTObstacles
     {
-        public LTObstaclesTargetOnSight() { }
+        public LTObstaclesTargetOnSight() : base(null) { }
 
         public LTObstaclesTargetOnSight(SchoolWorld w)
             : base(w)
@@ -25,10 +21,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSHints[OBSTACLES_LEVEL] = 7;
             TSProgression.Add(OBSTACLES_LEVEL, 7);
-
-            SetHints(TSHints);
         }
-
-
     }
 }
