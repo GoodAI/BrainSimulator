@@ -28,33 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.learningTaskDetailsControl1 = new GoodAI.School.GUI.LearningTaskDetailsControl();
             this.SuspendLayout();
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(12, 12);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(286, 162);
-            this.textBox1.TabIndex = 0;
-            // 
+            //
+            // learningTaskDetailsControl1
+            //
+            this.learningTaskDetailsControl1.Location = new System.Drawing.Point(12, 12);
+            this.learningTaskDetailsControl1.Name = "learningTaskDetailsControl1";
+            this.learningTaskDetailsControl1.Size = new System.Drawing.Size(232, 266);
+            this.learningTaskDetailsControl1.TabIndex = 0;
+            //
             // SchoolTaskDetailsForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(310, 390);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.learningTaskDetailsControl1);
+            this.HideOnClose = true;
             this.Name = "SchoolTaskDetailsForm";
             this.Text = "SchoolTaskDetailsForm";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
+        private LearningTaskDetailsControl learningTaskDetailsControl1;
+
     }
 }

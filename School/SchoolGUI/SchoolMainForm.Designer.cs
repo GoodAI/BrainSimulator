@@ -224,6 +224,7 @@
             this.btnDetailsTask.TabIndex = 2;
             this.btnDetailsTask.Text = "Details";
             this.btnDetailsTask.UseVisualStyleBackColor = true;
+            this.btnDetailsTask.Click += new System.EventHandler(this.btnDetailsTask_Click);
             // 
             // btnDeleteTask
             // 

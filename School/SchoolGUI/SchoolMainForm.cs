@@ -152,9 +152,6 @@ namespace GoodAI.School.GUI
 
             if (selected is CurriculumNode)
                 btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
-
-            // to be removed
-            btnDetailsCurr.Enabled = btnDetailsTask.Enabled = false;
         }
 
         #endregion
@@ -344,6 +341,19 @@ namespace GoodAI.School.GUI
         private void btnImport_Click(object sender, EventArgs e)
         {
             AddFileContent();
+        }
+
+        private void btnDetailsTask_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode == null)
+                return;
+
+            LearningTaskNode node = tree.SelectedNode.Tag as LearningTaskNode;
+            if (node == null)
+                return;
+
+            SchoolTaskDetailsForm detailsForm = new SchoolTaskDetailsForm(node.TaskType);
+            OpenFloatingOrActivate(detailsForm, DockPanel);
         }
 
         #endregion
