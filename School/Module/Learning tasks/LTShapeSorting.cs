@@ -25,7 +25,9 @@ namespace GoodAI.Modules.School.LearningTasks
         protected readonly Random m_rndGen = new Random();
         protected MovableGameObject m_agent;
         protected GameObject[] m_targets;
-        private int pickIdx;
+        protected GameObject m_question;
+        private int m_pickIdx;
+        private int m_stepCount;
 
         private readonly HashSet<float> m_candidates = new HashSet<float>();
         private float[] m_shapeIdcs;
@@ -42,10 +44,10 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints
             {
-                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2 },
-                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
-                { TSHintAttributes.RANDOMNESS_LEVEL, 1 },
+                { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2 },
+                { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
+                { TSHintAttributes.IMAGE_NOISE, 0 },
                 // Rotation about origin
                 { TSHintAttributes.IS_VARIABLE_POSITION, 0},
                 // Shape scaling
@@ -56,7 +58,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.IS_VARIABLE_COLOR, 0},
                 // Random distance from origin
                 { IS_VARIABLE_DISTANCE, 0},
-                { ERROR_TOLERANCE, 0.2f } // in rads/Pi to each side
+                { TSHintAttributes.RANDOMNESS_LEVEL, 1 },
             };
 
             base.SetHints(TSHints);
@@ -65,10 +67,12 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1);
-            TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3);
+            TSProgression.Add(new TrainingSetHints{
+                                {TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3},
+                                {TSHintAttributes.DEGREES_OF_FREEDOM, 2}});
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
-            TSProgression.Add(ERROR_TOLERANCE, 0.1f);
+            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
 
             TSProgression.Add(IS_VARIABLE_DISTANCE, 1);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4);
@@ -77,7 +81,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.2f);
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
-            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 5);
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.4f);
         }
@@ -88,6 +91,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void PresentNewTrainingUnit()
         {
+            m_stepCount = 0;
+
             // Scale the noise in the world base on randomness_level
             {
                 float randomness = TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
@@ -98,17 +103,17 @@ namespace GoodAI.Modules.School.LearningTasks
 
             // Generate an artificial invisible agent
             m_agent = WrappedWorld.CreateNonVisibleAgent();
-            Point agentPos = WrappedWorld.GetInitPosition();
-            m_agent.SetPosition(agentPos);
+            Point agentPos = m_agent.GetGeometry().Location;
+            m_agent.GameObjectStyle = GameObjectStyleType.None; // Prevent reseting movement vector when colliding with something from the top (default style is Platformer)
 
             // Generate shapes around the agent
             CreateTargets(noObjects, agentPos);
 
             // Pick one target and duplicate it in the pow center
-            pickIdx = m_rndGen.Next(noObjects);
-            var pick = m_targets[pickIdx];
+            m_pickIdx = m_rndGen.Next(noObjects);
+            var pick = m_targets[m_pickIdx];
             Color color = TSHints[TSHintAttributes.IS_VARIABLE_COLOR] > 0 ? LearningTaskHelpers.RandomVisibleColor(m_rndGen) : pick.maskColor;
-            WrappedWorld.CreateShape(agentPos, (Shape.Shapes)m_shapeIdcs[pickIdx], color, GameObjectType.None, pick.Width, pick.Height);
+            m_question = WrappedWorld.CreateShape(agentPos, (Shape.Shapes)m_shapeIdcs[m_pickIdx], color, GameObjectType.None, pick.Width, pick.Height);
         }
 
         public virtual void CreateTargets(int noObjects, Point center)
@@ -134,7 +139,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 // Determine shape position
                 if (TSHints[IS_VARIABLE_DISTANCE] > 0)
-                    distance += GetRandomGaussian() * TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
+                    distance *= 1 + 0.04f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
 
                 Point pos = new Point((int)(Math.Cos(angle) * distance), (int)(Math.Sin(angle) * distance));
 
@@ -143,7 +148,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 float scale = 1.4f;
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] > 0)
-                    scale = scale + 0.2f * GetRandomGaussian() * TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
+                    scale = scale + 0.2f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
 
                 Size size = new Size((int)(16 * scale), (int)(16 * scale));
 
@@ -171,15 +176,6 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-        protected float GetRandomGaussian()
-        {
-            float u1 = Convert.ToSingle(m_rndGen.NextDouble()); //these are uniform(0,1) random doubles
-            float u2 = Convert.ToSingle(m_rndGen.NextDouble()); //these are uniform(0,1) random doubles
-            float randStdNormal = Convert.ToSingle(Math.Sqrt(-2.0 * Math.Log(u1)) *
-                         Math.Sin(2.0 * Math.PI * u2)); //random normal(0,1)
-            return randStdNormal;
-        }
-
         private void Resize<T>(ref T[] array, int count)
         {
             if (array == null || array.Length < count)
@@ -192,22 +188,24 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            Vector2 origin = new Vector2(m_agent.previousX, m_agent.previousY);
+            // Don't let the agent wander around for too long
+            if (m_stepCount++ > 35 / TSHints[TSHintAttributes.RANDOMNESS_LEVEL])
+                return true;
 
-            Vector2 agentDir = new Vector2(m_agent.vX, m_agent.vY);
-            agentDir.NormalizeFast();
+            // Move the question shape with the invisible agent
+            m_question.SetPosition(new Point(m_agent.X, m_agent.Y));
 
-            var pick = m_targets[pickIdx];
-            Vector2 pickDir = new Vector2(pick.X, pick.Y) - origin;
-            pickDir.NormalizeFast();
 
-            float cos;
-            Vector2.Dot(ref agentDir, ref pickDir, out cos);
+            foreach (var gameObject in m_targets)
+            {
+                if (m_agent.DistanceTo(gameObject) < 5)
+                {
+                    wasUnitSuccessful = gameObject == m_targets[m_pickIdx];
+                    return true;
+                }
+            }
 
-            //if (1 - cos < TSHints[ERROR_TOLERANCE])
-            wasUnitSuccessful = true;
-
-            return true;
+            return false;
         }
 
         #endregion
