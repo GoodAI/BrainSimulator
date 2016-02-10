@@ -79,8 +79,10 @@ namespace GoodAI.Modules.TetrisWorld
         {
             m_rows = source.m_rows;
             m_columns = source.m_columns;
+            m_horizon = new int[m_columns];
             m_gameBoardState = new BrickType[source.m_rows, source.m_columns];
             Array.Copy(source.m_gameBoardState, m_gameBoardState, m_columns * m_rows);
+            CalculateHorizon();
         }
 
         public TetrisGameBoard(int[] horizon, int rows = 20)
@@ -154,6 +156,7 @@ namespace GoodAI.Modules.TetrisWorld
                     }
                 }
             }
+            CalculateHorizon();
         }
 
         /// <summary>
@@ -243,26 +246,31 @@ namespace GoodAI.Modules.TetrisWorld
         {
             Debug.Assert(horizon.Count() == m_columns, "You need to set horizon of proper width");
             Array.Copy(horizon, m_horizon, m_columns);
-         //   CalculateHorizon();
             MakeBoardByHorizon();
         }
 
-
-        public bool DoesBrickFitToHorizon(int[] brick)
+        public bool DoesBrickFitAtIdx(int[] brick, int idx)
         {
             bool result = false;
             int bWidth = brick.Count();
             int[] tmp = new int[bWidth];
+            for (int bi = 0; bi < bWidth && idx + bi < m_columns; bi++)
+            {
+                tmp[bi] = m_horizon[idx + bi] - brick[bi]; // add a brick to horizon 
+            }
+            if (tmp.Distinct().Count() == 1) // if result levels are same, brick fits
+                result = true;
+            return result;        
+        }
+
+        public bool DoesBrickFitToHorizon(int[] brick)
+        {
+            bool result = false;
             int idx = 0;
+            int bWidth = brick.Count();
             while (!result && idx < m_columns - bWidth)
             {
-                for (int bi = 0; bi < bWidth; bi++)
-                {
-                    tmp[bi] = m_horizon[idx + bi] - brick[bi]; // add a brick to horizon 
-                }
-                if (tmp.Distinct().Count() == 1) // if result levels are same, brick fits
-                    result = true;
-                idx++;
+                result = DoesBrickFitAtIdx(brick, idx);
             }
             return result;
         }
@@ -332,14 +340,14 @@ namespace GoodAI.Modules.TetrisWorld
         public abstract BrickType TetrominoBrickType { get; }
         protected abstract BrickType[,] GetRotatedDescriptiveGrid(TetrominoRotation rotation);
         public abstract int[] GetRotatedLowerHorizon(TetrominoRotation rotation);
+        public TetrominoRotation Rotation { get; protected set; }
 
-        protected TetrominoRotation m_rotation;
         protected TetrisGameBoard m_gameBoard;
 
         public MovingTetromino(TetrisGameBoard gameBoard)
         {
             m_gameBoard = gameBoard;
-            m_rotation = TetrominoRotation.None;
+            Rotation = TetrominoRotation.None;
             Column = 3; // starts in the middle
             Row = 0;
             DescriptiveGrid = null;
@@ -347,7 +355,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         public void InitializeDescriptiveGrid()
         {
-            DescriptiveGrid = GetRotatedDescriptiveGrid(m_rotation);
+            DescriptiveGrid = GetRotatedDescriptiveGrid(Rotation);
         }
 
         public bool IsOverlappingGameBoardBricks()
@@ -368,7 +376,7 @@ namespace GoodAI.Modules.TetrisWorld
             bool bottomHit = !m_gameBoard.FitTetrominoToGameBoard(descriptiveGrid, ref column, ref row);
             if (!bottomHit && !m_gameBoard.IsTetrominoInCollision(descriptiveGrid, column, row))
             {
-                m_rotation = rotation;
+                Rotation = rotation;
                 DescriptiveGrid = descriptiveGrid;
                 Column = column;
                 Row = row;
@@ -379,7 +387,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         public bool TryRotateLeft()
         {
-            TetrominoRotation rot = m_rotation; 
+            TetrominoRotation rot = Rotation; 
             rot = (TetrominoRotation)((int)(rot+1) % 4);
             BrickType[,] descriptiveGrid = GetRotatedDescriptiveGrid(rot);
             int column = Column, row = Row;
@@ -388,7 +396,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         public bool TryRotateRight()
         {
-            TetrominoRotation rot = m_rotation;
+            TetrominoRotation rot = Rotation;
             rot = (TetrominoRotation)((int)(rot + 3) % 4); // 3 == -1 mod 4
             BrickType[,] descriptiveGrid = GetRotatedDescriptiveGrid(rot);
             int column = Column, row = Row;
@@ -397,7 +405,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         public bool TryMoveDown()
         {
-            TetrominoRotation rot = m_rotation;
+            TetrominoRotation rot = Rotation;
             BrickType[,] descriptiveGrid = GetRotatedDescriptiveGrid(rot);
             int column = Column, row = Row + 1;
             return TryMovement(descriptiveGrid, column, row, rot);
@@ -405,7 +413,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         public bool TryMoveLeft()
         {
-            TetrominoRotation rot = m_rotation;
+            TetrominoRotation rot = Rotation;
             BrickType[,] descriptiveGrid = GetRotatedDescriptiveGrid(rot);
             int column = Column - 1, row = Row;
             return TryMovement(descriptiveGrid, column, row, rot);
@@ -413,7 +421,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         public bool TryMoveRight()
         {
-            TetrominoRotation rot = m_rotation;
+            TetrominoRotation rot = Rotation;
             BrickType[,] descriptiveGrid = GetRotatedDescriptiveGrid(rot);
             int column = Column + 1, row = Row;
             return TryMovement(descriptiveGrid, column, row, rot);
@@ -801,6 +809,9 @@ namespace GoodAI.Modules.TetrisWorld
     /// </summary>
     public sealed class TetrisWorldEngine
     {
+        public bool IsMerging { get; private set; }
+        public bool CleanMatch { get; private set; }
+
         private WorldEngineParams m_params;
         private TetrisWorld m_world;
         private TetrisGameBoard m_gameBoard;
@@ -917,7 +928,9 @@ namespace GoodAI.Modules.TetrisWorld
         /// </summary>
         public void Step(TetrisWorld.ActionInputType input)
         {
-            if(m_shouldSpawnTetromino)
+            IsMerging = false;
+
+            if (m_shouldSpawnTetromino)
             {
                 m_shouldSpawnTetromino = false;
                 if(!SpawnTetromino())
@@ -975,6 +988,8 @@ namespace GoodAI.Modules.TetrisWorld
                 m_stepsFromLastDrop = 0;
                 if(!m_tetromino.TryMoveDown())
                 {
+                    IsMerging = true;
+                    CalculateMerge();
                     m_gameBoard.MergeTetrominoWithGameBoard(m_tetromino);
                     int erasedLines = m_gameBoard.EraseFullLines(); // most often returns 0
                     m_scoreDelta = 100 * erasedLines * erasedLines;
@@ -993,6 +1008,11 @@ namespace GoodAI.Modules.TetrisWorld
             }
 
             FillWorldState();
+        }
+
+        private void CalculateMerge()
+        {
+            CleanMatch = m_gameBoard.DoesBrickFitAtIdx(m_tetromino.GetRotatedLowerHorizon(m_tetromino.Rotation), m_tetromino.Column);
         }
 
         /// <summary>
@@ -1057,7 +1077,6 @@ namespace GoodAI.Modules.TetrisWorld
             }
             m_world.BrickAreaOutput.SafeCopyToDevice();
         }
-        
     }
 }
 
