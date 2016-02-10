@@ -57,19 +57,14 @@ namespace GoodAI.School.Worlds
 
         public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
         {
-            // m_kernel.Run(VisualOutput, 256, 256, 128, 128, schoolWorld.Visual, 256, 256, VisualWidth, VisualHeight);
             m_kernel.Run(VisualOutput, schoolWorld.Visual, VisualWidth, VisualHeight, 256, 256);
-
-            //HACK to make it grayscale
-            //schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 256 * 256, 256 * 256);
-            //schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 2 * 256 * 256, 256 * 256);
-
             // Copy data from world to wrapper
             // VisualOutput.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualOutput.Count, schoolWorld.VisualSize));
+
             if (BrickAreaOutput.Count > 0)
                 BrickAreaOutput.CopyToMemoryBlock(schoolWorld.Data, 0, 0, Math.Min(BrickAreaOutput.Count, schoolWorld.DataSize));
-            //schoolWorld.Visual.Dims = VisualPOW.Dims;
             schoolWorld.DataLength.Fill(Math.Min(BrickAreaOutput.Count, schoolWorld.DataSize));
+
             ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
         }
                

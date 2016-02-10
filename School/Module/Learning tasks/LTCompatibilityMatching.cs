@@ -27,7 +27,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override void PresentNewTrainingUnit()
         {
             WrappedWorld.Engine.ResetToRandomHorizon();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 4 * WrappedWorld.WaitStepsPerFall; i++)                
                 WrappedWorld.Engine.Step(Modules.TetrisWorld.TetrisWorld.ActionInputType.NoAction);
         }
 
