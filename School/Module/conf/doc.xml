@@ -39,6 +39,16 @@
             on the world.
             </summary>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithoutBricks">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Pong without bricks" learning task</summary>
+            <description>
+            Ability info: Ability to play pong without bricks.
+            The difficulty of the levels is denoted by the number of hits (paddle touching ball) needed in order to pass a training unit (BALL_HITS_NEEDED), and the maximum number of misses (ball reaching the bottom part of the screen untouched by the paddle, MAX_MISSES_ALLOWED)
+            </description>
+        </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTConditionalTarget">
             <summary>
             In this learning task, the agent must learn to choose one of two targets depending on an arbitrary visual signal (the condition).
@@ -103,6 +113,16 @@
             Two shapes are presented; they are considered equivalent if they differ
             only in color, translation, scaling, and rotation.
             </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithBricks">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Pong with bricks" learning task</summary>
+            <description>
+            Ability info: Ability to play pong with bricks.
+            The agent is presented the pong game, the expectancy is that the agent completes the game by passing all the required levels
+            </description>
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
             <author>GoodAI</author>

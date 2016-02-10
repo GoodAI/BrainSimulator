@@ -112,6 +112,7 @@
     <Compile Include="Learning tasks\LTTetrisFull.cs" />
     <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
     <Compile Include="Learning tasks\LTTetrisTest.cs" />
+    <Compile Include="Learning tasks\PongWithBricks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
     <Compile Include="Worlds\ManInWorld.cs">
