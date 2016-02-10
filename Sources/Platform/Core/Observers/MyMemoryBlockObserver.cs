@@ -11,8 +11,8 @@ namespace GoodAI.Core.Observers
     {        
         public enum MyBoundPolicy
         {
-            Inherited,
-            Manual
+            IHNERITED,
+            MANUAL
         }
 
         public enum RenderingScale
@@ -41,8 +41,8 @@ namespace GoodAI.Core.Observers
         [MyBrowsable, Category("Scale + Bounds")]
         public RenderingScale Scale { get; set; }
 
-        [YAXSerializableField(DefaultValue = MyBoundPolicy.Manual)]
-        private MyBoundPolicy m_boundPolicy = MyBoundPolicy.Inherited;
+        [YAXSerializableField(DefaultValue = MyBoundPolicy.MANUAL)]
+        private MyBoundPolicy m_boundPolicy = MyBoundPolicy.IHNERITED;
 
         [MyBrowsable, Category("Scale + Bounds"), Description("The way the Min / Max of Y axis are chosen")]
         public MyBoundPolicy BoundPolicy
@@ -52,7 +52,7 @@ namespace GoodAI.Core.Observers
             set
             {                
                 m_boundPolicy = value;
-                if (m_boundPolicy == MyBoundPolicy.Inherited)
+                if (m_boundPolicy == MyBoundPolicy.IHNERITED)
                 {
                     TriggerReset();
                 }
@@ -69,7 +69,7 @@ namespace GoodAI.Core.Observers
             set 
             { 
                 m_minValue = value;
-                BoundPolicy = MyBoundPolicy.Manual; 
+                BoundPolicy = MyBoundPolicy.MANUAL; 
             }
         }
 
@@ -83,7 +83,7 @@ namespace GoodAI.Core.Observers
             set
             {
                 m_maxValue = value;
-                BoundPolicy = MyBoundPolicy.Manual;
+                BoundPolicy = MyBoundPolicy.MANUAL;
             }
         }
 
@@ -100,7 +100,7 @@ namespace GoodAI.Core.Observers
 
         public MyMemoryBlockObserver()
         {
-            BoundPolicy = MyBoundPolicy.Inherited;
+            BoundPolicy = MyBoundPolicy.IHNERITED;
             Elements = 2;
             MinValue = 0;
             MaxValue = 1;
@@ -154,7 +154,7 @@ namespace GoodAI.Core.Observers
 
         private void ResetBounds()
         {
-            if (BoundPolicy == MyBoundPolicy.Inherited)
+            if (BoundPolicy == MyBoundPolicy.IHNERITED)
             {
                 if (!float.IsNegativeInfinity(Target.MinValueHint))
                     m_minValue = Target.MinValueHint;
