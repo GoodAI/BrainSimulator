@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class ComparisonShape : GameObject
     {
         // The shapes used for the targets
-        public enum Shapes { L, T, Circle, Count };
+        public enum Shapes { L, T, Circle, Rhombus, Mountains, Count };
 
         // The shape of the object
         public Shapes Shape { get; protected set; }
@@ -37,6 +37,10 @@ namespace GoodAI.Modules.School.LearningTasks
                     return @"WhiteT50x50.png";
                 case Shapes.Circle:
                     return @"WhiteCircle50x50.png";
+                case Shapes.Rhombus:
+                    return @"WhiteRhombus50x50.png";
+                case Shapes.Mountains:
+                    return @"WhiteMountains50x50.png";
             }
             throw new ArgumentException("Unknown shape");
         }
@@ -100,6 +104,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(SCALE_SHAPE, 1);
             TSProgression.Add(ROTATE_SHAPE, 1);
+            TSProgression.Add(NUMBER_OF_DIFFERENT_OBJECTS, 5);
         }
 
         protected override void PresentNewTrainingUnit()
