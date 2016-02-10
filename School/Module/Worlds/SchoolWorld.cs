@@ -249,11 +249,17 @@ namespace GoodAI.Modules.School.Worlds
                 {
                     m_currentLearningTask = Curriculum.GetNextLearningTask();
                     if (m_currentLearningTask == null)
+                    {
+                        if (Owner.SimulationHandler.CanPause)
+                        {
+                            Owner.SimulationHandler.PauseSimulation();
+                        }
                         return;
+                    }
                     MyLog.Writer.WriteLine(MyLogLevel.INFO,
                         "Switching to LearningTask: " +
                         m_currentLearningTask.GetType().ToString().Split(new[] { '.' }).Last()
-                        );
+                    );
 
                     m_currentLearningTask.StartLearningTask();
                     NotifyNewLearningTask();
