@@ -10,7 +10,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class ConditionGameObject : Shape
     {
         // Size for salient condition
-        private const int SALIENT_CONDITION_SIZE = 64;
+        private const int SALIENT_CONDITION_SIZE = 32;
 
         // Size for subtle condition
         private const int SUBTLE_CONDITION_SIZE = 16;
@@ -68,14 +68,14 @@ namespace GoodAI.Modules.School.LearningTasks
             ManInWorld world,
             bool isWhiteConditionTarget,
             float targetSizeStandardDeviation,
-            int numberOfDifferentObjects,
-            int degreesOfFreedom) :
+            int numberOfDifferentObjects /*,
+            int degreesOfFreedom */) :
             base(GameObjectType.None, PickShape(isWhiteConditionTarget, numberOfDifferentObjects), 0, 0)
         {
             m_isWhiteConditionTarget = isWhiteConditionTarget;
 
             int size1D = GetSize(targetSizeStandardDeviation);
-            Point location = PickLocation(world, new Size(size1D, size1D), degreesOfFreedom);
+            Point location = PickLocation(world, new Size(size1D, size1D) /*, degreesOfFreedom */);
             X = location.X;
             Y = location.Y;
 
@@ -138,7 +138,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Determine the placement of the target
-        public static Point PickLocation(ManInWorld world, Size size, int degreesOfFreedom)
+        public static Point PickLocation(ManInWorld world, Size size /*, int degreesOfFreedom */)
         {
             // TODO Currently, degrees of freedom is not taken into account
             // And distance to target is the same throughout the learning task
@@ -181,7 +181,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { CONDITION_SALIENCE, 1 },
-                { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
+                //{ TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 // Currently, target locations are always uniformly distributed inside POW
@@ -218,8 +218,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 WrappedWorld,
                 isWhiteConditionTarget,
                 TSHints[TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION],
-                (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS],
-                (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]);
+                (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] /*,
+                (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] */);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
