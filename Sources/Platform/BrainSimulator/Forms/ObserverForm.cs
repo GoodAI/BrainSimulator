@@ -9,9 +9,11 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -367,12 +369,30 @@ namespace GoodAI.BrainSimulator.Forms
                     if (index >= mbObserver.Target.Count)
                         return;
 
-                    float result = float.NaN;
+                    peekLabel.Visible = true;
 
+                    float result = 0;
                     mbObserver.Target.GetValueAt(ref result, index);
 
-                    peekLabel.Visible = true;
-                    peekLabel.Text = mbObserver.Target.Name + "[" + index + "] = " + result.ToString("0.0000");
+                    string formattedValue;
+                    if (mbObserver.Method == RenderingMethod.Raw)
+                    {
+                        IEnumerable<string> channels = BitConverter.GetBytes(result).Reverse()  // Get the byte values.
+                            .Select(channel => channel.ToString())
+                            .Select(channel => new String(' ', 3 - channel.Length) + channel);  // Indent with spaces.
+
+                        // Zip labels and values, join with a separator.
+                        formattedValue = String.Join(", ", "ARGB".Zip(channels, (label, channel) => label + ":" + channel));
+                    }
+                    else
+                    {
+                        formattedValue = result.ToString("0.0000");
+                    }
+
+                    // Show coordinates or index.
+                    string formattedIndex = mbObserver.ShowCoordinates ? px + ", " + py : index.ToString();
+
+                    peekLabel.Text = mbObserver.Target.Name + @"[" + formattedIndex + @"] = " + formattedValue;
                 }
             }
         }
