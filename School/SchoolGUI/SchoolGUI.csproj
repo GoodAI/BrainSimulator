@@ -70,6 +70,12 @@
     <Compile Include="SchoolRunForm.Designer.cs">
       <DependentUpon>SchoolRunForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SchoolTaskDetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SchoolTaskDetailsForm.Designer.cs">
+      <DependentUpon>SchoolTaskDetailsForm.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Libs\3rd\WinFormsUI\WinFormsUI.csproj">
@@ -109,6 +115,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SchoolRunForm.resx">
       <DependentUpon>SchoolRunForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SchoolTaskDetailsForm.resx">
+      <DependentUpon>SchoolTaskDetailsForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

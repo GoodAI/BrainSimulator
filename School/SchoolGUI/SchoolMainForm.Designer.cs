@@ -191,7 +191,7 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
             this.btnRun.TabIndex = 2;
-            this.btnRun.Text = "Run";
+            this.btnRun.Text = "Run...";
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
@@ -241,7 +241,7 @@
             this.btnNewTask.Name = "btnNewTask";
             this.btnNewTask.Size = new System.Drawing.Size(75, 23);
             this.btnNewTask.TabIndex = 0;
-            this.btnNewTask.Text = "New";
+            this.btnNewTask.Text = "New...";
             this.btnNewTask.UseVisualStyleBackColor = true;
             this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
             // 
