@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -367,12 +368,24 @@ namespace GoodAI.BrainSimulator.Forms
                     if (index >= mbObserver.Target.Count)
                         return;
 
-                    float result = float.NaN;
+                    peekLabel.Visible = true;
 
+                    float result = 0;
                     mbObserver.Target.GetValueAt(ref result, index);
 
-                    peekLabel.Visible = true;
-                    peekLabel.Text = mbObserver.Target.Name + "[" + index + "] = " + result.ToString("0.0000");
+                    if (mbObserver.Method == RenderingMethod.Raw)
+                    {
+                        byte[] argb = BitConverter.GetBytes(result).Reverse().ToArray();
+                        string pixelValue = string.Join(", ",
+                            "ARGB".Zip(argb, (s, b) => s + ":" + b.ToString()));
+
+                        peekLabel.Text = mbObserver.Target.Name + "[" + index + "] = " +
+                                         string.Join(",", pixelValue);
+                    }
+                    else
+                    {
+                        peekLabel.Text = mbObserver.Target.Name + "[" + index + "] = " + result.ToString("0.0000");
+                    }
                 }
             }
         }
