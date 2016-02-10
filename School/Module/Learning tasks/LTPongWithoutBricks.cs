@@ -89,6 +89,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             ballHitSum = 0f;
             ballMissSum = 0f;
+            WrappedWorld.UpdateTask.ResetGame();                            // Needed to restart from the default position when BALL_HITS_NEEDED is 1 and the training unit is already completed
         }
 
         public override void UpdateState()
