@@ -41,7 +41,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.CreateNonVisibleAgent();
 
-            // wtih Pr=.5 show object
+            // with Pr=.5 show object
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 //random size

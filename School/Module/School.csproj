@@ -80,6 +80,8 @@
     <Compile Include="Common\SchoolCurriculum.cs" />
     <Compile Include="Common\StandardConflictResolver.cs" />
     <Compile Include="Common\TrainingSetHints.cs" />
+    <Compile Include="Learning tasks\LTPongWithBricks.cs" />
+    <Compile Include="Learning tasks\LTPongWithoutBricks.cs" />
     <Compile Include="Learning tasks\LTSimpleRhythm.cs" />
     <Compile Include="Learning tasks\LTClassComposition.cs" />
     <Compile Include="Learning tasks\LTActionWCooldown.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="Learning tasks\LTObstaclesTargetOnSight.cs" />
     <Compile Include="Learning tasks\LTPongTest.cs" />
     <Compile Include="Learning tasks\LTRotateAndMoveToFit.cs" />
+    <Compile Include="Learning tasks\LTShapeSorting.cs" />
     <Compile Include="Learning tasks\LTSimpleAngle.cs" />
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
     <Compile Include="Learning tasks\LTSimpleSize.cs" />

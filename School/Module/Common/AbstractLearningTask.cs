@@ -9,6 +9,8 @@ namespace GoodAI.Modules.School.Common
     public interface ILearningTask
     {
         // GUI
+        bool IsInitialized { get; set; }
+
         TrainingSetHints TSHints { get; set; }
         TrainingSetProgression TSProgression { get; set; }
         int NumberOfLevels { get; set; }
@@ -25,6 +27,8 @@ namespace GoodAI.Modules.School.Common
         string GetTypeName();
 
         void Init();
+
+        bool Solve(bool successfully);
     }
 
     /// <summary>
@@ -132,6 +136,7 @@ namespace GoodAI.Modules.School.Common
             TSProgression = new TrainingSetProgression();
             CurrentNumberOfAttempts = CurrentNumberOfSuccesses = 0;
             CurrentLevel = 0;
+            IsInitialized = false;
         }
 
         private bool DidLearingTaskFail()
@@ -230,6 +235,11 @@ namespace GoodAI.Modules.School.Common
 
             SchoolWorld.NotifyNewTrainingUnit();
             SchoolWorld.NotifyNewLevel();
+        }
+
+        public virtual bool Solve(bool successfully)
+        {
+            throw new NotImplementedException();
         }
     }
 }

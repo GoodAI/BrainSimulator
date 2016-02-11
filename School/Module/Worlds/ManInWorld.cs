@@ -6,6 +6,7 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using ManagedCuda;
+using ManagedCuda.BasicTypes;
 using ManagedCuda.VectorTypes;
 using OpenTK;
 using OpenTK.Graphics;
@@ -16,10 +17,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using System.Linq;
-using ManagedCuda.BasicTypes;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -117,7 +117,6 @@ namespace GoodAI.Modules.School.Worlds
         private string m_errorMessage;
 
         public MyMemoryBlock<float> AgentVisualTemp { get; protected set; } // used e.g. for holding random numbers during noise generation
-        public MyMemoryBlock<float> ShuffleRGBTemp { get; protected set; }
 
         public ManInWorld()
         {
@@ -169,7 +168,7 @@ namespace GoodAI.Modules.School.Worlds
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
             ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
         }
-            
+
         public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
         {
 
@@ -491,7 +490,7 @@ namespace GoodAI.Modules.School.Worlds
         ////TODO: if two objects share the same texture, do not load it twice into memory
         public void AddGameObject(GameObject item)
         {
-            
+
             if (item.bitmapPath != null)
             {
 
@@ -601,6 +600,12 @@ namespace GoodAI.Modules.School.Worlds
 
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());
+        }
+
+        public override void Dispose()
+        {
+            RenderGLWorldTask.Dispose();
+            base.Dispose();
         }
 
         public virtual InputTask GetInputTask { get; protected set; }
@@ -1042,6 +1047,7 @@ namespace GoodAI.Modules.School.Worlds
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
                 GL.BufferData(BufferTarget.PixelPackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.StaticRead);  // use data instead of IntPtr.Zero if needed
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
                 try
                 {
                     m_renderResource = new CudaOpenGLBufferInteropResource(m_renderTextureHandle, CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
@@ -1091,7 +1097,6 @@ namespace GoodAI.Modules.School.Worlds
                                 new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
                                 ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-                            // from example:
                             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 
                             bmp.UnlockBits(data);
@@ -1184,7 +1189,6 @@ namespace GoodAI.Modules.School.Worlds
                 {
 
                     GL.PushMatrix();
-                    // TODO: check if object is in view (POW only)
 
                     // translate object to its position in the scene
                     GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
@@ -1376,6 +1380,69 @@ namespace GoodAI.Modules.School.Worlds
                 GL.Vertex2(0.25f, 1f);
                 GL.Vertex2(0f, 0.5f);
                 GL.Vertex2(0.25f, 0f);
+            }
+
+            internal void Dispose()
+            {
+                if (m_context != null)
+                    m_context.Dispose();
+                if (m_window != null)
+                    m_window.Dispose();
+
+                m_window = new NativeWindow();
+                m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
+                m_context.MakeCurrent(m_window.WindowInfo);
+                m_context.LoadAll();
+
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                // delete textures
+                if (m_textureHandles != null)
+                {
+                    foreach (int handle in m_textureHandles.Values)
+                    {
+                        int h = handle;
+                        GL.DeleteTextures(1, ref h);
+                    }
+                }
+
+                if (m_renderTextureHandle != 0)
+                {
+                    GL.DeleteTextures(1, ref m_renderTextureHandle);
+                }
+
+                // delete FbO
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                if (m_fboHandle != 0)
+                {
+                    GL.DeleteFramebuffers(1, ref m_fboHandle);
+                }
+
+                // delete PBO
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                if (m_sharedBufferHandle != 0)
+                {
+                    GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                }
+
+                // delete CUDA <-> GL interop
+                if (m_renderResource.IsMapped)
+                {
+                    m_renderResource.UnMap();
+                }
+                if (m_renderResource.IsRegistered)
+                {
+                    m_renderResource.Unregister();
+                }
+                m_renderResource.Dispose();
+
+                if (m_context != null)
+                {
+                    m_context.Dispose();
+                }
+                if (m_window != null)
+                {
+                    m_window.Dispose();
+                }
             }
         }
     }

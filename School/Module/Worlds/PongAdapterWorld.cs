@@ -12,7 +12,9 @@ namespace GoodAI.School.Worlds
     public class PongAdapterWorld : MyCustomPongWorld, IWorldAdapter
     {
         private MyCudaKernel m_kernel;
-        private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
+        private MyCudaKernel m_grayscaleKernel;
+        
+        private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }        
 
         public void InitAdapterMemory(SchoolWorld schoolWorld)
         {
@@ -53,16 +55,17 @@ namespace GoodAI.School.Worlds
         {
             m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
             m_kernel.SetupExecution(256 * 256);
+
+            m_grayscaleKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawGrayscaleKernel");
+            m_grayscaleKernel.SetupExecution(256 * 256);
+
         }
 
         public void MapWorldOutputs(SchoolWorld schoolWorld)
         {
-            // Copy data from world to wrapper
+            // Rescale data from world to wrapper
             m_kernel.Run(Visual, schoolWorld.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
-
-            //HACK to make it grayscale
-            schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 256 * 256, 256 * 256);
-            schoolWorld.Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 2 * 256 * 256, 256 * 256);
+            m_grayscaleKernel.Run(schoolWorld.Visual, schoolWorld.Visual, 256 * 256);
 
 //            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
 

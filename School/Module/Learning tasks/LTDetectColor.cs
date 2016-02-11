@@ -84,7 +84,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateTarget()
         {
-            m_target = new Shape(Shape.Shapes.Square, 0, 0);
+            const int TARGET_SIZE = 64;
+
+            m_target = new Shape(Shape.Shapes.Square, 0, 0, TARGET_SIZE, TARGET_SIZE);
             WrappedWorld.AddGameObject(m_target);
             // POW is assumed to be centered
             int minX = (WrappedWorld.FOW_WIDTH - WrappedWorld.POW_WIDTH) / 2;
@@ -94,5 +96,23 @@ namespace GoodAI.Modules.School.LearningTasks
             int maxY = (WrappedWorld.FOW_HEIGHT + WrappedWorld.POW_HEIGHT) / 2 - m_target.Height;
             m_target.Y = m_rndGen.Next(minY, maxY + 1);
         }
+
+        public override bool Solve(bool successfully)
+        {
+            bool didGetCorrectReward = false;
+
+            // Set controls to zero; if solving successfully, set the correct one to 1
+            SchoolWorld.ActionInput.Fill(0);
+            if (successfully && SchoolWorld.ActionInput.Count > m_colorIndex)
+            {
+                SchoolWorld.ActionInput.Host[m_colorIndex] = 1;
+                SchoolWorld.ActionInput.SafeCopyToDevice();
+            }
+
+            // TODO check reward
+
+            return didGetCorrectReward;
+        }
+
     }
 }
