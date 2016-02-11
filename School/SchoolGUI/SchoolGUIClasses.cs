@@ -16,7 +16,10 @@ namespace GoodAI.School.GUI
         public SchoolTreeNode() { Enabled = true; }
     }
 
-    public class CurriculumNode : SchoolTreeNode { }
+    public class CurriculumNode : SchoolTreeNode
+    {
+        public string Description { get; set; }
+    }
 
     public class LearningTaskNode : SchoolTreeNode
     {

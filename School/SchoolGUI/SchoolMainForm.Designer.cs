@@ -113,6 +113,7 @@
             this.btnDetailsCurr.TabIndex = 2;
             this.btnDetailsCurr.Text = "Details";
             this.btnDetailsCurr.UseVisualStyleBackColor = true;
+            this.btnDetailsCurr.Click += new System.EventHandler(this.btnDetailsCurr_Click);
             // 
             // btnDeleteCurr
             // 

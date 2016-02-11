@@ -356,6 +356,22 @@ namespace GoodAI.School.GUI
             OpenFloatingOrActivate(detailsForm, DockPanel);
         }
 
+        private void btnDetailsCurr_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode == null)
+                return;
+
+            CurriculumNode curr = tree.SelectedNode.Tag as CurriculumNode;
+            if (curr == null)
+            {
+                curr = tree.SelectedNode.Parent.Tag as CurriculumNode;
+                if (curr == null)
+                    return;
+                SchoolCurrDetailsForm detailsForm = new SchoolCurrDetailsForm(curr);
+                OpenFloatingOrActivate(detailsForm, DockPanel);
+            }
+        }
+
         #endregion
 
         #region (De)serialization

@@ -1,6 +1,6 @@
 ﻿namespace GoodAI.School.GUI
 {
-    partial class LearningTaskDetailsControl
+    partial class LabelDescriptionControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,32 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelDescriptionControl1 = new GoodAI.School.GUI.LabelDescriptionControl();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // labelDescriptionControl1
+            // label1
             // 
-            this.labelDescriptionControl1.Location = new System.Drawing.Point(4, 4);
-            this.labelDescriptionControl1.Name = "labelDescriptionControl1";
-            this.labelDescriptionControl1.Size = new System.Drawing.Size(200, 187);
-            this.labelDescriptionControl1.TabIndex = 0;
-            this.labelDescriptionControl1.Type = null;
+            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label1.Location = new System.Drawing.Point(4, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(193, 183);
+            this.label1.TabIndex = 0;
             // 
-            // LearningTaskDetailsControl
+            // LabelDescriptionControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.labelDescriptionControl1);
-            this.Name = "LearningTaskDetailsControl";
-            this.Size = new System.Drawing.Size(212, 342);
+            this.Controls.Add(this.label1);
+            this.Name = "LabelDescriptionControl";
+            this.Size = new System.Drawing.Size(200, 187);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private LabelDescriptionControl labelDescriptionControl1;
-
-
+        private System.Windows.Forms.Label label1;
     }
 }
