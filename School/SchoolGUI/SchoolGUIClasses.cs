@@ -54,11 +54,11 @@ namespace GoodAI.School.GUI
         [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
         private class LTDesign
         {
-            [YAXSerializeAs("Enabled"), YAXAttributeForClass]
+            [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
             private readonly bool m_enabled;
-            [YAXSerializeAs("TaskType")]
+            [YAXSerializeAs("TaskType"), YAXSerializableField(DefaultValue = "")]
             private readonly string m_taskType;
-            [YAXSerializeAs("WorldType")]
+            [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
             private readonly string m_worldType;
 
             public LTDesign() { }
@@ -98,10 +98,12 @@ namespace GoodAI.School.GUI
         {
             [YAXSerializeAs("Tasks")]
             private readonly List<LTDesign> m_tasks;
-            [YAXSerializeAs("Enabled"), YAXAttributeForClass]
+            [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
             private readonly bool m_enabled;
-            [YAXSerializeAs("Name"), YAXAttributeForClass]
+            [YAXSerializeAs("Name"), YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
             private readonly string m_name;
+            [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
+            private readonly string m_description;
 
             public CurriculumDesign() { }
 
@@ -113,6 +115,7 @@ namespace GoodAI.School.GUI
                     ToList();
                 m_enabled = node.Enabled;
                 m_name = node.Text;
+                m_description = node.Description;
             }
 
             public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
@@ -132,7 +135,7 @@ namespace GoodAI.School.GUI
 
             public static explicit operator CurriculumNode(CurriculumDesign design)
             {
-                CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled };
+                CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled, Description = design.m_description };
 
                 design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
 

@@ -367,9 +367,9 @@ namespace GoodAI.School.GUI
                 curr = tree.SelectedNode.Parent.Tag as CurriculumNode;
                 if (curr == null)
                     return;
-                SchoolCurrDetailsForm detailsForm = new SchoolCurrDetailsForm(curr);
-                OpenFloatingOrActivate(detailsForm, DockPanel);
             }
+            SchoolCurrDetailsForm detailsForm = new SchoolCurrDetailsForm(curr);
+            OpenFloatingOrActivate(detailsForm, DockPanel);
         }
 
         #endregion

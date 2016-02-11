@@ -17,5 +17,10 @@ namespace GoodAI.School.GUI
         {
             m_node.Description = textBox1.Text;
         }
+
+        private void btnClose_Click(object sender, System.EventArgs e)
+        {
+            Close();
+        }
     }
 }
