@@ -107,7 +107,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(NUMBER_OF_DIFFERENT_OBJECTS, 5);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             WrappedWorld.CreateNonVisibleAgent();
             targetA = CreateTarget(ComparisonShape.GetRandomShape(m_rand, (int)TSHints[NUMBER_OF_DIFFERENT_OBJECTS]));

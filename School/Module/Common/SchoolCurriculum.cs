@@ -36,7 +36,10 @@ namespace GoodAI.Modules.School.Common
             return Tasks.GetEnumerator() as IEnumerator<ILearningTask>;
         }
 
-        // for classic usage
+        /// <summary>
+        /// Provides next LearningTask if there is any, null otherwise
+        /// </summary>
+        /// <returns></returns>
         public ILearningTask GetNextLearningTask()
         {
             if (m_taskEnumerator == null)
@@ -88,7 +91,7 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTCompareLayouts));
+                    curriculum.AddLearningTask(world, typeof(LTSimpleRhythm));
                     break;
 
                 case CurriculumType.TetrisCurriculum:

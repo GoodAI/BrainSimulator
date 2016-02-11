@@ -53,7 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_negativeExamples.Add(Shape.Shapes.Triangle);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS];
             List<Shape.Shapes> positiveExamplesRed = new List<Shape.Shapes>();

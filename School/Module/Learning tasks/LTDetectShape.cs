@@ -37,7 +37,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1.0f);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             WrappedWorld.CreateNonVisibleAgent();
 

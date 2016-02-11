@@ -23,8 +23,8 @@ namespace GoodAI.Modules.School.LearningTasks
         protected MovableGameObject m_movingObstacle1;
         protected MovableGameObject m_movingObstacle2;
 
-        public readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);   //check needed;
-        public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);   //check needed;
+        public readonly TSHintAttribute OBSTACLES_LEVEL = new TSHintAttribute("Obstacles level", "", typeof(int), 0, 1);
+        public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);
 
         public LTObstacles() : base(null) { }
 
@@ -48,7 +48,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(OBSTACLES_LEVEL, 6);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             GenerateObstacles();
 
@@ -215,40 +215,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 //m_target.Y = 110;
                 m_target.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
             }
-
-
-
-            if (level == 7)
-            {
-                TSHints[TIMESTEPS_LIMIT] = 200;
-
-                int widthOfRectangle = 3;
-                int heightOfRectangle = 2;
-
-                createWallRectangleWithFillProbability(world, m_rndGen, 5, 5, widthOfRectangle, heightOfRectangle, 0.8f, 1.0f);
-
-                // Position agent
-                m_agent.X = 200;
-                m_agent.Y = 193;
-
-
-                // Position target
-                m_target.X = m_rndGen.Next(160, 280);
-
-                if (m_rndGen.Next(0, 2) == 0)
-                {
-                    m_target.Y = 120;
-                }
-                else
-                {
-                    m_target.Y = 270;
-                }
-
-
-            }
-
-
-
         }
 
 
@@ -331,23 +297,23 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        public void createWallHorizontalLine(RoguelikeWorld world, int GridX, int GridY, int lengthOfLine)
+        public void createWallHorizontalLine(RoguelikeWorld world, int gridX, int gridY, int lengthOfLine)
         {
             Grid g = world.GetGrid();
 
             for (int k = 0; k < lengthOfLine; k++)
             {
-                world.CreateWall(g.getPoint(GridX + k, GridY));
+                world.CreateWall(g.getPoint(gridX + k, gridY));
             }
         }
 
-        public void createWallVerticalLine(RoguelikeWorld world, int GridX, int GridY, int lengthOfLine)
+        public void createWallVerticalLine(RoguelikeWorld world, int gridX, int gridY, int lengthOfLine)
         {
             Grid g = world.GetGrid();
 
             for (int k = 0; k < lengthOfLine; k++)
             {
-                world.CreateWall(g.getPoint(GridX, GridY + k));
+                world.CreateWall(g.getPoint(gridX, gridY + k));
             }
         }
 

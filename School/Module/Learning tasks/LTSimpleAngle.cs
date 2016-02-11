@@ -39,7 +39,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(ERROR_TOLERANCE, 0.05f);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             if (WrappedWorld.GetType() != typeof(RoguelikeWorld))
             {

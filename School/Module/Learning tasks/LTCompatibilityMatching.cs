@@ -24,7 +24,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             WrappedWorld.Engine.ResetToRandomHorizon();
             for (int i = 0; i < 4 * WrappedWorld.WaitStepsPerFall; i++)                

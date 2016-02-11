@@ -35,7 +35,7 @@ namespace GoodAI.Modules.School.LearningTasks
             
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             ResetCooldown();
             UnitSuccesses = 0;
@@ -53,7 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
             return wasUnitSuccessful = false;
         }
 
-        protected override void UpdateLevel()
+        protected override void IncreaseLevel()
         {
             var tsp = TSProgression[0];
             tsp[COOLDOWN] = 5 * (CurrentLevel + 1);

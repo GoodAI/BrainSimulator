@@ -90,7 +90,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             CreateAgent();
             CreateTargets();

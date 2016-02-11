@@ -35,7 +35,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.NUMBER_OBJECTS, 10f);
         }
 
-        protected override void PresentNewTrainingUnit()
+        protected override void Init()
         {
             if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
