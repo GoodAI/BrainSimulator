@@ -43,8 +43,8 @@ namespace GoodAI.School.Worlds
 
         void IWorldAdapter.UpdateMemoryBlocks()
         {
-            DISPLAY_WIDTH = School.Visual.Dims[0];
-            DISPLAY_HEIGHT = School.Visual.Dims[1];
+        //    DISPLAY_WIDTH = School.Visual.Dims[0];
+        //    DISPLAY_HEIGHT = School.Visual.Dims[1];
 
             UpdateMemoryBlocks();
         }

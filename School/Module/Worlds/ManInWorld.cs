@@ -217,23 +217,14 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            /**
-            float ratio = POW_WIDTH / (float)POW_HEIGHT;
-            float count = schoolWorld.VisualSize;
+            //if (School != null)
+            //{
+            //    POW_WIDTH = School.Visual.Dims[0];
+            //    POW_HEIGHT = School.Visual.Dims[1];
 
-            // Get such numbers whose product is Count and whose ratio is Ratio
-            POW_WIDTH = (int)Math.Sqrt(ratio * count);
-            POW_HEIGHT = (int)(count / POW_WIDTH);
-            **/
-
-            if (School != null)
-            {
-                POW_WIDTH = School.Visual.Dims[0];
-                POW_HEIGHT = School.Visual.Dims[1];
-
-                FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
-                FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
-            }
+            //    FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
+            //    FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
+            //}
 
             VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT;
             VisualFOW.ColumnHint = FOW_WIDTH;
