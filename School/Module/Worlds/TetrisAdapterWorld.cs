@@ -12,12 +12,12 @@ namespace GoodAI.School.Worlds
     public class TetrisAdapterWorld : TetrisWorld, IWorldAdapter
     {
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
-        private MyCudaKernel m_kernel;
 
         public void InitAdapterMemory(SchoolWorld schoolWorld)
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 6;
+            VisualHeight = VisualWidth = 400;
         }
 
         public override MyMemoryBlock<float> GetInput(int index)
@@ -48,18 +48,12 @@ namespace GoodAI.School.Worlds
 
         public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
         {
-            m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
-            m_kernel.SetupExecution(256 * 256 * TARGET_VALUES_PER_PIXEL);
-
-            // m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbaTextureKernelNearestNeighbor");
-            // m_kernel.SetupExecution(VisualWidth * VisualHeight * 3 ); // TARGET_VALUES_PER_PIXEL);
         }
 
         public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
         {
-            m_kernel.Run(VisualOutput, schoolWorld.Visual, VisualWidth, VisualHeight, 256, 256);
             // Copy data from world to wrapper
-            // VisualOutput.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualOutput.Count, schoolWorld.VisualSize));
+            VisualOutput.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualOutput.Count, schoolWorld.VisualSize));
 
             if (BrickAreaOutput.Count > 0)
                 BrickAreaOutput.CopyToMemoryBlock(schoolWorld.Data, 0, 0, Math.Min(BrickAreaOutput.Count, schoolWorld.DataSize));
