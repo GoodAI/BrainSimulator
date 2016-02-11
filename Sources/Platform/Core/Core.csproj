@@ -141,7 +141,6 @@
     <Compile Include="Memory\MemBlockAttribute.cs" />
     <Compile Include="Memory\MemoryBlockMetadata.cs" />
     <Compile Include="Memory\MemoryBlockSerializer.cs" />
-    <Compile Include="Memory\OldTensorDimensions.cs" />
     <Compile Include="Memory\TensorDimensions.cs" />
     <Compile Include="Memory\TensorDimensionsBase.cs" />
     <Compile Include="Nodes\DeviceInput.cs" />

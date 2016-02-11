@@ -9,6 +9,11 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.Core.Memory
 {
+    public class InvalidDimensionsException : FormatException
+    {
+        public InvalidDimensionsException(string message) : base(message) { }
+    }
+
     public abstract class TensorDimensionsBase
     {
         protected readonly IImmutableList<int> m_dims;

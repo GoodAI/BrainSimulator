@@ -83,7 +83,6 @@
     <Compile Include="ModelCreationTests.cs" />
     <Compile Include="NodeConnectionTests.cs" />
     <Compile Include="Nodes\MyForkTests.cs" />
-    <Compile Include="Memory\OldTensorDimensionsTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="ReleaseDeserializationTests.cs" />
