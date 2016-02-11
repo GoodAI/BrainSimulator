@@ -51,6 +51,9 @@ namespace GoodAI.Modules.School.Common
             get { return 20; }  // default value
         }
 
+        // True if the initialization step has been run
+        public bool IsInitialized { get; set; }
+
         // Current level of difficulty
         public int CurrentLevel { get; set; }
 
@@ -235,6 +238,8 @@ namespace GoodAI.Modules.School.Common
 
             SchoolWorld.NotifyNewTrainingUnit();
             SchoolWorld.NotifyNewLevel();
+
+            IsInitialized = true;
         }
 
         public virtual bool Solve(bool successfully)

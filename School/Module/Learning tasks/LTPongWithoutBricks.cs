@@ -85,17 +85,15 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-        protected override void PresentNewTrainingUnit()
+        public override void PresentNewTrainingUnit()
         {
             ballHitSum = 0f;
             ballMissSum = 0f;
             WrappedWorld.UpdateTask.ResetGame();                            // Needed to restart from the default position when BALL_HITS_NEEDED is 1 and the training unit is already completed
         }
 
-        public override void UpdateState()
+        public override void ExecuteStep()
         {
-            base.UpdateState();
-
             ballHitSum += WrappedWorld.BinaryEvent.Host[0];
             ballMissSum += WrappedWorld.BinaryEvent.Host[2];
         }

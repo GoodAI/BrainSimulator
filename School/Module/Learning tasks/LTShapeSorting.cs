@@ -89,7 +89,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         #region Init functions
 
-        protected override void PresentNewTrainingUnit()
+        public override void PresentNewTrainingUnit()
         {
             m_stepCount = 0;
 

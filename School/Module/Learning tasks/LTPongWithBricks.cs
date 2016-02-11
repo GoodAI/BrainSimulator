@@ -71,7 +71,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-        protected override void PresentNewTrainingUnit()
+        public override void PresentNewTrainingUnit()
         {
             ballHitSum = 0f;
             ballMissSum = 0f;
@@ -80,10 +80,8 @@ namespace GoodAI.Modules.School.LearningTasks
             //WrappedWorld.UpdateTask.SetLevel();
         }
 
-        public override void UpdateState()
+        public override void ExecuteStep()
         {
-            base.UpdateState();
-
             ballHitSum += WrappedWorld.BinaryEvent.Host[0];
             ballMissSum += WrappedWorld.BinaryEvent.Host[2];
         }
