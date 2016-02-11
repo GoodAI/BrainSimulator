@@ -174,7 +174,19 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void MapWorldInputs()
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            if (School.ActionInput.Owner is DeviceInput)
+            {
+                School.ActionInput.SafeCopyToDevice();
+                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[68];  // A 
+                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65];  // D
+                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[83];  // W
+                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[87];  // S
+                ControlsAdapterTemp.SafeCopyToDevice();
+            }
+            else
+            {
+                ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            }
         }
 
         public virtual void InitWorldOutputs(int nGPU)
