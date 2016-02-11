@@ -603,7 +603,7 @@ namespace GoodAI.Core.Execution
         private void SetupAfterModelChange(IModelChanges modelChanges, List<MyNode> changersActivated)
         {
             // Clean up memory.
-            IterateNodes(modelChanges.RemovedNodes, FreeAndDestroyNodeMemory);
+            IterateNodes(modelChanges.RemovedNodes, DestroyNode);
 
             Validator.ClearValidation();
 
@@ -656,10 +656,10 @@ namespace GoodAI.Core.Execution
             node.Validate(Validator);
         }
 
-        private static void FreeAndDestroyNodeMemory(MyNode node)
+        private static void DestroyNode(MyNode node)
         {
             FreeMemory(node);
-            MyMemoryManager.Instance.RemoveBlocks(node);
+            node.Dispose();
         }
 
         public override bool UpdateMemoryModel(MyProject project, List<MyNode> orderedNodes)
