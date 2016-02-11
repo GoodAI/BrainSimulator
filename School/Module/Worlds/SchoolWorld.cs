@@ -108,37 +108,11 @@ namespace GoodAI.Modules.School.Worlds
             DataLength.Count = 1;
             Reward.Count = 1;
             LTStatus.Count = LT_STATUS_COUNT;
+            CurrentWorld.UpdateMemoryBlocks();
         }
         #endregion
 
         #region World machinery
-        // for serialization purposes
-        private string CurrentWorldType
-        {
-            get
-            {
-                if (CurrentWorld != null)
-                {
-                    return CurrentWorldType.ToString();
-                }
-                else
-                {
-                    return String.Empty;
-                }
-            }
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                {
-                    CurrentWorld = null;
-                }
-                else
-                {
-                    CurrentWorld = (IWorldAdapter)Type.GetType(value);
-                }
-            }
-        }
-
 
         [YAXSerializableField, YAXSerializeAs("CurrentWorld"), YAXCustomSerializer(typeof(WorldAdapterSerializer))]
         private IWorldAdapter m_currentWorld;
@@ -157,8 +131,9 @@ namespace GoodAI.Modules.School.Worlds
                 // TODO m_currentWorld Init memory of wrapped world
                 m_switchModel = true;
                 m_currentWorld = value;
-                (m_currentWorld as MyWorld).UpdateMemoryBlocks();
-                m_currentWorld.InitAdapterMemory(this);
+                m_currentWorld.School = this;
+                m_currentWorld.UpdateMemoryBlocks();
+                m_currentWorld.InitAdapterMemory();
             }
         }
 
@@ -203,8 +178,8 @@ namespace GoodAI.Modules.School.Worlds
             if (!m_switchModel)
                 return false;
 
-            (CurrentWorld as MyWorld).EnableDefaultTasks();
-            changes.AddNode(CurrentWorld as MyWorld);
+            CurrentWorld.World.EnableDefaultTasks();
+            changes.AddNode(CurrentWorld.World);
             m_switchModel = false;
             return true;
         }
@@ -213,7 +188,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
-            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, true);
+            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
 
             return new MyExecutionBlock(new IMyExecutable[] { defaultInitPhasePlan, plan });
         }
@@ -226,10 +201,14 @@ namespace GoodAI.Modules.School.Worlds
 
             var blocks = new List<IMyExecutable>();
             // The default plan will only contain one block with: signals in, world tasks, signals out.
-            blocks.Add(thisWorldTasks[0]);
-            blocks.Add(thisWorldTasks[1]);
-            blocks.Add(executionPlanner.CreateNodeExecutionPlan(CurrentWorld as MyWorld, false));
-            blocks.AddRange(thisWorldTasks.Skip(2));
+            blocks.Add(thisWorldTasks.First());
+            blocks.Add(AdapterInputStep);
+            var worldPlan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false);
+            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.GetWorldRenderTask()));
+            blocks.Add(LearningStep);
+            blocks.Add(CurrentWorld.GetWorldRenderTask());
+            blocks.Add(AdapterOutputStep);
+            blocks.Add(thisWorldTasks.Last());
 
             return new MyExecutionBlock(blocks.ToArray());
         }
@@ -385,8 +364,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public InitSchoolWorldTask InitSchool { get; protected set; }
         public InputAdapterTask AdapterInputStep { get; protected set; }
-        public OutputAdapterTask AdapterOutputStep { get; protected set; }
         public LearningStepTask LearningStep { get; protected set; }
+        public OutputAdapterTask AdapterOutputStep { get; protected set; }
 
         /// <summary>
         /// Initialize the world's curriculum
@@ -411,12 +390,12 @@ namespace GoodAI.Modules.School.Worlds
         {
             public override void Init(int nGPU)
             {
-                Owner.CurrentWorld.InitWorldOutputs(nGPU, Owner);
+                Owner.CurrentWorld.InitWorldOutputs(nGPU);
             }
 
             public override void Execute()
             {
-                Owner.CurrentWorld.MapWorldOutputs(Owner);
+                Owner.CurrentWorld.MapWorldOutputs();
             }
         }
 
@@ -427,12 +406,12 @@ namespace GoodAI.Modules.School.Worlds
         {
             public override void Init(int nGPU)
             {
-                Owner.CurrentWorld.InitWorldInputs(nGPU, Owner);
+                Owner.CurrentWorld.InitWorldInputs(nGPU);
             }
 
             public override void Execute()
             {
-                Owner.CurrentWorld.MapWorldInputs(Owner);
+                Owner.CurrentWorld.MapWorldInputs();
             }
         }
 

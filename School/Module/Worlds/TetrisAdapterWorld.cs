@@ -6,6 +6,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using GoodAI.Core.Utils;
 using GoodAI.Core;
+using GoodAI.Core.Task;
 
 namespace GoodAI.School.Worlds
 {
@@ -13,8 +14,9 @@ namespace GoodAI.School.Worlds
     {
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
 
-        public void InitAdapterMemory(SchoolWorld schoolWorld)
+        public void InitAdapterMemory()
         {
+            //VisualHeight = VisualWidth = 256;
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 6;
             VisualHeight = VisualWidth = 400;
@@ -35,31 +37,49 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public virtual void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        public MyWorkingNode World
+        {
+            get { return this; }
+        }
+
+        public SchoolWorld School { get; set; }
+
+        public MyTask GetWorldRenderTask()
+        { 
+            return RenderGameTask; 
+        }
+
+        public override void UpdateMemoryBlocks()
+        {
+            VisualWidth = 256;
+            base.UpdateMemoryBlocks();
+        }
+
+        public virtual void InitWorldInputs(int nGPU)
         {
 
         }
 
-        public virtual void MapWorldInputs(SchoolWorld schoolWorld)
+        public virtual void MapWorldInputs()
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+            ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
         }
 
-        public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        public virtual void InitWorldOutputs(int nGPU)
         {
         }
 
-        public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
+        public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualOutput.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualOutput.Count, schoolWorld.VisualSize));
+            VisualOutput.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualOutput.Count, School.VisualSize));
 
             if (BrickAreaOutput.Count > 0)
-                BrickAreaOutput.CopyToMemoryBlock(schoolWorld.Data, 0, 0, Math.Min(BrickAreaOutput.Count, schoolWorld.DataSize));
-            schoolWorld.DataLength.Fill(Math.Min(BrickAreaOutput.Count, schoolWorld.DataSize));
+                BrickAreaOutput.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(BrickAreaOutput.Count, School.DataSize));
+            School.DataLength.Fill(Math.Min(BrickAreaOutput.Count, School.DataSize));
 
-            ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
+            ScoreDeltaOutput.CopyToMemoryBlock(School.Reward, 0, 0, 1);
         }
                
         public void ClearWorld()

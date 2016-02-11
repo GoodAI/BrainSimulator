@@ -128,7 +128,7 @@ namespace GoodAI.Modules.School.Worlds
 
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
 
-        public void InitAdapterMemory(SchoolWorld schoolWorld)
+        public void InitAdapterMemory()
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 128;
@@ -158,31 +158,43 @@ namespace GoodAI.Modules.School.Worlds
                 return base.GetAbstractInput(index);
         }
 
-        public virtual void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        public MyWorkingNode World
+        {
+            get { return this; }
+        }
+
+        public SchoolWorld School { get; set; }
+
+        public MyTask GetWorldRenderTask()
+        {
+            return RenderGLWorldTask;
+        }
+
+        public virtual void InitWorldInputs(int nGPU)
         {
 
         }
 
-        public virtual void MapWorldInputs(SchoolWorld schoolWorld)
+        public virtual void MapWorldInputs()
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+            ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
         }
 
-        public virtual void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        public virtual void InitWorldOutputs(int nGPU)
         {
 
         }
 
-        public virtual void MapWorldOutputs(SchoolWorld schoolWorld)
+        public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualPOW.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(VisualPOW.Count, schoolWorld.VisualSize));
+            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.VisualSize));
             if (Objects.Count > 0)
-                Objects.CopyToMemoryBlock(schoolWorld.Data, 0, 0, Math.Min(Objects.Count, schoolWorld.DataSize));
+                Objects.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(Objects.Count, School.DataSize));
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
-            schoolWorld.DataLength.Fill(Math.Min(Objects.Count, schoolWorld.DataSize));
-            Reward.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
+            School.DataLength.Fill(Math.Min(Objects.Count, School.DataSize));
+            Reward.CopyToMemoryBlock(School.Reward, 0, 0, 1);
         }
 
         public virtual void ClearWorld()
