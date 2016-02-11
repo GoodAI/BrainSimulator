@@ -286,7 +286,7 @@ namespace GoodAI.Modules.School.Worlds
             if (LTStatus.Host[NEW_TU_FLAG] == 1)
             {
                 m_currentLearningTask.SchoolWorld.ClearWorld();
-                m_currentLearningTask.PresentNewTrainingUnit();
+                m_currentLearningTask.PresentNewTrainingUnitCommon();
             }
 
             // LTStatus should be complete in this moment

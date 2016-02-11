@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.Common
 
         void ExecuteStep();
         void EvaluateStep(out bool learningTaskFail);
-        void PresentNewTrainingUnit();
+        void PresentNewTrainingUnitCommon();
 
         SchoolWorld SchoolWorld { get; set; }
         Type RequiredWorld { get; set; }
@@ -118,10 +118,6 @@ namespace GoodAI.Modules.School.Common
             TSHints.Set(TSProgression[CurrentLevel]);
             SetHints(TSHints);
 
-            MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                "Next level settings: \n" +
-                TSHints.ToString()
-                );
             return true;
         }
 
@@ -226,6 +222,17 @@ namespace GoodAI.Modules.School.Common
         public string GetTypeName()
         {
             return this.GetType().ToString().Split(new[] { '.' }).Last();
+        }
+
+        public void PresentNewTrainingUnitCommon()
+        {
+            ManInWorld miw = WrappedWorld as ManInWorld;
+            if (miw != null)
+            {
+                miw.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1f;
+            }
+            
+            PresentNewTrainingUnit();
         }
 
         public abstract void PresentNewTrainingUnit();
