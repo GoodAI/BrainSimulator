@@ -36,8 +36,6 @@ namespace GoodAI.School.GUI
         public SchoolMainForm(MainForm mainForm)
         {
             m_serializer = new YAXSerializer(typeof(PlanDesign));
-            AddTaskView = new SchoolAddTaskForm();
-            RunView = new SchoolRunForm(mainForm);
             m_mainForm = mainForm;
 
             InitializeComponent();
@@ -269,6 +267,8 @@ namespace GoodAI.School.GUI
             if (tree.SelectedNode == null)
                 return;
 
+            AddTaskView = new SchoolAddTaskForm();
+            AddTaskView.StartPosition = FormStartPosition.CenterParent;
             AddTaskView.ShowDialog(this);
             if (AddTaskView.ResultTask == null)
                 return;
@@ -300,6 +300,7 @@ namespace GoodAI.School.GUI
 
         private void btnRun_Click(object sender, EventArgs e)
         {
+            RunView = new SchoolRunForm(m_mainForm);
             OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
 
