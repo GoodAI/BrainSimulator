@@ -246,7 +246,7 @@ namespace GoodAI.Modules.School.Worlds
             return new MyExecutionBlock(blocks.ToArray());
         }
 
-        public void ExecuteCurriculumStep()
+        public void ExecuteLearningTaskStep()
         {
             ResetLTStatusFlags();
 
@@ -465,7 +465,7 @@ namespace GoodAI.Modules.School.Worlds
                 }
                 else
                 {
-                    Owner.ExecuteCurriculumStep();
+                    Owner.ExecuteLearningTaskStep();
                 }
             }
         }
