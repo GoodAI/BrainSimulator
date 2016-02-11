@@ -13,6 +13,8 @@ namespace GoodAI.Modules.School.Common
         bool DidAbilityFail { get; }
         bool IsTrainingUnitCompleted { get; set; }
 
+        bool IsInitialized { get; set; }
+
         TrainingSetHints TSHints { get; set; }
         TrainingSetProgression TSProgression { get; set; }
         int NumberOfLevels { get; set; }
@@ -27,6 +29,8 @@ namespace GoodAI.Modules.School.Common
         string Description { get; set; }
 
         void StartLearningTask();
+
+        bool Solve(bool successfully);
     }
 
     /// <summary>
@@ -42,6 +46,9 @@ namespace GoodAI.Modules.School.Common
 
         // Tracks whether the training unit has run to completion
         public bool IsTrainingUnitCompleted { get; set; }
+
+        // True if the initialization step has been run
+        public bool IsInitialized { get; set; }
 
         // True if the first training unit has been presented
         public bool HasPresentedFirstUnit { get; set; }
@@ -154,6 +161,7 @@ namespace GoodAI.Modules.School.Common
             IsTrainingUnitCompleted = false;
             HasPresentedFirstUnit = false;
             DoResetWorldBeforeTrainingUnit = true;
+            IsInitialized = false;
         }
 
         public virtual void UpdateState()
@@ -227,6 +235,12 @@ namespace GoodAI.Modules.School.Common
         public virtual void StartLearningTask()
         {
             SetHints(TSHints);
+            IsInitialized = true;
+        }
+
+        public virtual bool Solve(bool successfully)
+        {
+            throw new NotImplementedException();
         }
     }
 }

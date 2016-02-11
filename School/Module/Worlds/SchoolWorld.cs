@@ -190,6 +190,18 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = 0)]
         public float EmulatedUnitSuccessProbability { get; set; }
 
+        // The phases of learning task processing
+        enum LTState
+        {
+            NoLearningTask,     // No learning task -- do nothing
+            NewLearningTask,    // New learning task -- initialize
+            FirstTU,            // Present first training unit
+            TUInProcess,        // Continue processing current unit
+            NextTU,             // Present new unit
+            AbilityLearned,     // The ability was learned
+            AbilityFailed       // The ability failed
+        };
+            
 
         public override void Validate(MyValidator validator)
         {
@@ -236,17 +248,34 @@ namespace GoodAI.Modules.School.Worlds
 
         public void ExecuteLearningTaskStep()
         {
-            if (m_currentLearningTask == null)
-                return;
-
             ResetLTStatusFlags();
 
-            if (m_currentLearningTask.HasPresentedFirstUnit)
-            {
-                m_currentLearningTask.UpdateState();
+            UpdateLTState();
 
-                if (m_currentLearningTask.IsAbilityLearned)
-                {
+            switch (GetLTState())
+            {
+                // No learning task -- do nothing
+                case LTState.NoLearningTask:
+                    return;
+                // New learning task -- initialize
+                case LTState.NewLearningTask:
+                    StartLearningTask();
+                    break;
+                // Present first training unit
+                case LTState.FirstTU:
+                    m_currentLearningTask.HandlePresentNewTrainingUnit();
+                    NotifyNewTrainingUnit(false);
+                    break;
+                // Continue processing current unit
+                case LTState.TUInProcess:
+                    return;
+                // Present new unit
+                case LTState.NextTU:
+                    bool didIncreaseLevel = m_currentLearningTask.HandlePresentNewTrainingUnit();
+                    NotifyNewTrainingUnit(didIncreaseLevel);
+                    break;
+                // The ability was learned
+                case LTState.AbilityLearned:
                     m_currentLearningTask = Curriculum.GetNextLearningTask();
                     if (m_currentLearningTask == null)
                     {
@@ -254,35 +283,49 @@ namespace GoodAI.Modules.School.Worlds
                         {
                             Owner.SimulationHandler.PauseSimulation();
                         }
-                        return;
                     }
-                    MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                        "Switching to LearningTask: " +
-                        m_currentLearningTask.GetType().ToString().Split(new[] { '.' }).Last()
-                    );
+                    else
+                    { 
+                        MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                            "Switching to LearningTask: " +
+                            m_currentLearningTask.GetType().ToString().Split(new[] { '.' }).Last()
+                        );
 
-                    m_currentLearningTask.StartLearningTask();
-                    NotifyNewLearningTask();
-                }
-                else if (m_currentLearningTask.DidAbilityFail)
-                {
+                        StartLearningTask();
+                    }
+                    break;
+                // The ability failed
+                case LTState.AbilityFailed:
                     m_currentLearningTask = null;
-                    return;
-                }
-            }
-            else
-            {
-                m_currentLearningTask.StartLearningTask();
-                NotifyNewLearningTask();
-            }
-
-            if (!m_currentLearningTask.HasPresentedFirstUnit || m_currentLearningTask.IsTrainingUnitCompleted)
-            {
-                bool didIncreaseLevel = m_currentLearningTask.HandlePresentNewTrainingUnit();
-                NotifyNewTrainingUnit(didIncreaseLevel);
+                    break;
             }
 
             LTStatus.SafeCopyToDevice();
+        }
+
+        private LTState GetLTState()
+        {
+            return m_currentLearningTask == null ? LTState.NoLearningTask :
+                !m_currentLearningTask.IsInitialized ? LTState.NewLearningTask :
+                !m_currentLearningTask.HasPresentedFirstUnit ? LTState.FirstTU :
+                m_currentLearningTask.IsAbilityLearned ? LTState.AbilityLearned :
+                m_currentLearningTask.DidAbilityFail ? LTState.AbilityFailed :
+                m_currentLearningTask.IsTrainingUnitCompleted ? LTState.NextTU :
+                LTState.TUInProcess;
+        }
+
+        private void UpdateLTState()
+        {
+            if (m_currentLearningTask != null && m_currentLearningTask.HasPresentedFirstUnit)
+            {
+                m_currentLearningTask.UpdateState();
+            }
+        }
+
+        private void StartLearningTask()
+        {
+            m_currentLearningTask.StartLearningTask();
+            NotifyNewLearningTask();
         }
 
         // Reset the flags signalling new learning task, training unit, or level
