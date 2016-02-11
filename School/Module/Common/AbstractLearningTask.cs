@@ -144,7 +144,11 @@ namespace GoodAI.Modules.School.Common
 
         private bool DidLearingTaskFail()
         {
-            return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS];
+            if(TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS))
+            {
+                return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS];
+            }
+            return false;
         }
 
         public virtual void ExecuteStep() { }
