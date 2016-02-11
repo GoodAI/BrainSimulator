@@ -1396,21 +1396,33 @@ namespace GoodAI.Modules.School.Worlds
 
                 GL.BindTexture(TextureTarget.Texture2D, 0);
                 // delete textures
-                foreach (int handle in m_textureHandles.Values)
+                if (m_textureHandles != null)
                 {
-                    int h = handle;
-                    //GL.BindTexture(TextureTarget.Texture2D, h);
-                    GL.DeleteTextures(1, ref h);
-                    //GL.DeleteTexture(handle);
+                    foreach (int handle in m_textureHandles.Values)
+                    {
+                        int h = handle;
+                        GL.DeleteTextures(1, ref h);
+                    }
                 }
-                GL.DeleteTextures(1, ref m_renderTextureHandle);
 
-                // delete buffers
+                if (m_renderTextureHandle != 0)
+                {
+                    GL.DeleteTextures(1, ref m_renderTextureHandle);
+                }
+
+                // delete FbO
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                GL.DeleteFramebuffers(1, ref m_fboHandle);
+                if (m_fboHandle != 0)
+                {
+                    GL.DeleteFramebuffers(1, ref m_fboHandle);
+                }
 
+                // delete PBO
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-                GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                if (m_sharedBufferHandle != 0)
+                {
+                    GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                }
 
                 // delete CUDA <-> GL interop
                 if (m_renderResource.IsMapped)
