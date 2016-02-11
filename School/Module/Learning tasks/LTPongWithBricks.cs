@@ -77,7 +77,7 @@ namespace GoodAI.Modules.School.LearningTasks
             ballMissSum = 0f;
             WrappedWorld.UpdateTask.ResetGame();
 
-            WrappedWorld.UpdateTask.SetLevel();
+            //WrappedWorld.UpdateTask.SetLevel();
         }
 
         public override void UpdateState()
