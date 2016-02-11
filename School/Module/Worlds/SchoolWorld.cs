@@ -189,7 +189,7 @@ namespace GoodAI.Modules.School.Worlds
                     MyWorld world = (CurrentWorld as MyWorld);
                     if (world != null)
                         world.Dispose();
-                    CurrentWorld = (IWorldAdapter)Activator.CreateInstance(m_currentLTBF.RequiredWorld);
+                    CurrentWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
                 }
             }
         }
