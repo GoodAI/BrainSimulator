@@ -14,7 +14,6 @@ using YAXLib;
 
 namespace GoodAI.Modules.School.Worlds
 {
-
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
         #region Constants
@@ -185,7 +184,13 @@ namespace GoodAI.Modules.School.Worlds
             set
             {
                 m_currentLTBF = value;
-                CurrentWorld = (IWorldAdapter)Activator.CreateInstance(m_currentLTBF.RequiredWorld);
+                if (m_currentLTBF != null)
+                {
+                    MyWorld world = (CurrentWorld as MyWorld);
+                    if (world != null)
+                        world.Dispose();
+                    CurrentWorld = (IWorldAdapter)Activator.CreateInstance(m_currentLTBF.RequiredWorld);
+                }
             }
         }
 
