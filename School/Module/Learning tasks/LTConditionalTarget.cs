@@ -22,14 +22,14 @@ namespace GoodAI.Modules.School.LearningTasks
         private static Random m_rand = new Random();
 
         // Instantiates and installs the condition
-        public ConditionGameObject(ManInWorld world, float salience) :
+        public ConditionGameObject(ManInWorld world, bool movingCondition, float salience) :
             base(Shapes.Square, 0, 0)
         {
             IsWhite = LearningTaskHelpers.FlipCoin(m_rand);
             SetColor(IsWhite ? Color.White : Color.Black);
 
             int size1D = ConditionGameObject.DetermineSize(salience);
-            Point location = PickLocation(world, new Size(size1D, size1D));
+            Point location = PickLocation(world, movingCondition, new Size(size1D, size1D));
             X = location.X;
             Y = location.Y;
 
@@ -48,9 +48,18 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Determine the placement of the condition
-        public static Point PickLocation(ManInWorld world, Size size)
+        public static Point PickLocation(ManInWorld world, bool movingCondition, Size size)
         {
-            return world.RandomPositionInsidePowNonCovering(m_rand, size);
+            if (movingCondition)
+            { 
+                return world.RandomPositionInsidePowNonCovering(m_rand, size);
+            }
+            else
+            {
+                const int FIXED_OFFSET = 10;
+                Rectangle powRectangle = world.GetPowGeometry();
+                return new Point(powRectangle.X + FIXED_OFFSET, powRectangle.Y + FIXED_OFFSET);
+            }
         }
     }
 
@@ -152,8 +161,11 @@ namespace GoodAI.Modules.School.LearningTasks
     /// </summary>
     public class LTConditionalTarget : AbstractLearningTask<RoguelikeWorld>
     {
+        // In the beginning, the condition doesn't move
+        private static readonly TSHintAttribute MOVING_CONDITION = new TSHintAttribute("Moving condition", "", typeof(bool), 0, 1);
+
         // The condition can be more or less salient
-        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience", "", typeof(bool), 0, 1); //check needed;
+        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience", "", typeof(float), 0, 1);
 
         // Visual condition
         protected ConditionGameObject condition;
@@ -177,6 +189,7 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
+                { MOVING_CONDITION, 0 },
                 { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 0 },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
@@ -189,6 +202,7 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
+            TSProgression.Add(MOVING_CONDITION, 1);
             //TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
             //TSProgression.Add(TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
@@ -203,7 +217,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void PresentNewTrainingUnit()
         {
             WrappedWorld.CreateAgent();
-            ConditionGameObject condition = new ConditionGameObject(WrappedWorld, TSHints[CONDITION_SALIENCE]);
+            ConditionGameObject condition = new ConditionGameObject(WrappedWorld, TSHints[MOVING_CONDITION] == 1, TSHints[CONDITION_SALIENCE]);
             ConditionalTarget blackConditionTarget = CreateTarget(/* isWhiteConditionalTarget: */ false);
             ConditionalTarget whiteConditionTarget = CreateTarget(/* isWhiteConditionalTarget: */ true);
             dummyTarget = condition.IsWhite ? blackConditionTarget : whiteConditionTarget;
