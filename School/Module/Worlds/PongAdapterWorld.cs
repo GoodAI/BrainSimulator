@@ -20,7 +20,6 @@ namespace GoodAI.School.Worlds
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 128;
-            schoolWorld.Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.GrayScale.ToString();
         }
 
         public override MyMemoryBlock<float> GetInput(int index)
