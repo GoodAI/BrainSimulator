@@ -167,32 +167,38 @@ namespace GoodAI.School.GUI
         {
             if (e.Data.GetDataPresent(typeof(TreeNodeAdv[])) && tree.DropPosition.Node != null)
             {
-                TreeNodeAdv[] nodes = e.Data.GetData(typeof(TreeNodeAdv[])) as TreeNodeAdv[];
+                TreeNodeAdv draggedNode = (e.Data.GetData(typeof(TreeNodeAdv[])) as TreeNodeAdv[]).First();
                 TreeNodeAdv parent = tree.DropPosition.Node;
                 if (tree.DropPosition.Position != NodePosition.Inside)
                     parent = parent.Parent;
 
-                foreach (TreeNodeAdv node in nodes)
-                    if (!CheckNodeParent(parent, node))
-                    {
-                        e.Effect = DragDropEffects.None;
-                        return;
-                    }
+                if (IsNodeAncestor(draggedNode, parent))
+                {
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
 
-                e.Effect = e.AllowedEffect;
+                CurriculumNode curr = draggedNode.Tag as CurriculumNode;
+                LearningTaskNode lt = draggedNode.Tag as LearningTaskNode;
+
+                if (curr != null && parent.Level > 0) // curriculum can only be moved - not set as someone's child
+                    e.Effect = DragDropEffects.None;
+                else if (lt != null && parent.Level != 1)    //LT can only be in curriculum. Not in root, not in other LT
+                    e.Effect = DragDropEffects.None;
+                else
+                    e.Effect = e.AllowedEffect;
             }
         }
 
-        private bool CheckNodeParent(TreeNodeAdv parent, TreeNodeAdv node)
+        private bool IsNodeAncestor(TreeNodeAdv node, TreeNodeAdv examine)
         {
-            while (parent != null)
+            while (examine != null)
             {
-                if (node == parent)
-                    return false;
-                else
-                    parent = parent.Parent;
+                if (node == examine)
+                    return true;
+                examine = examine.Parent;
             }
-            return true;
+            return false;
         }
 
         private void tree_DragDrop(object sender, DragEventArgs e)
