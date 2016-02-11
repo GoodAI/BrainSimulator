@@ -39,6 +39,16 @@
             on the world.
             </summary>
         </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithBricks">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Pong with bricks" learning task</summary>
+            <description>
+            Ability info: Ability to play pong with bricks.
+            The agent is presented the pong game, the expectancy is that the agent completes the game by passing all the required levels
+            </description>
+        </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithoutBricks">
             <author>GoodAI</author>
             <meta>Os</meta>
@@ -113,16 +123,6 @@
             Two shapes are presented; they are considered equivalent if they differ
             only in color, translation, scaling, and rotation.
             </summary>
-        </member>
-        <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithBricks">
-            <author>GoodAI</author>
-            <meta>Os</meta>
-            <status>WIP</status>
-            <summary>"Pong with bricks" learning task</summary>
-            <description>
-            Ability info: Ability to play pong with bricks.
-            The agent is presented the pong game, the expectancy is that the agent completes the game by passing all the required levels
-            </description>
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
             <author>GoodAI</author>
