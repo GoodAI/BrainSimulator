@@ -454,6 +454,12 @@ namespace GoodAI.Modules.TetrisWorld
             }
         }
 
+        public override void Dispose()
+        {
+            RenderGameTask.Dispose();
+            base.Dispose();
+        }
+
         public InitTask InitGameTask { get; protected set; }
         public UpdateTask UpdateGameTask { get; protected set; }
         public RenderTask RenderGameTask { get; protected set; }
@@ -887,16 +893,28 @@ namespace GoodAI.Modules.TetrisWorld
                     int h = handle;
                     GL.DeleteTextures(1, ref h);
                 }
-                GL.DeleteTextures(1, ref m_renderTextureHandle);
-                GL.DeleteTextures(1, ref m_scoreTextHandle);
+                if (m_renderTextureHandle != 0)
+                {
+                    GL.DeleteTextures(1, ref m_renderTextureHandle);
+                }
+                if (m_scoreTextHandle != 0)
+                {
+                    GL.DeleteTextures(1, ref m_scoreTextHandle);
+                }
 
                 // delete FbO
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                GL.DeleteFramebuffers(1, ref m_fboHandle);
+                if (m_fboHandle != 0)
+                {
+                    GL.DeleteFramebuffers(1, ref m_fboHandle);
+                }
 
                 // delete PBO
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-                GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                if (m_sharedBufferHandle != 0)
+                {
+                    GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                }
 
                 // delete CUDA <-> GL interop
                 if (m_renderResource.IsMapped)
