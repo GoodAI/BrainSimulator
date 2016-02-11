@@ -6,6 +6,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using GoodAI.Core.Utils;
 using GoodAI.Core;
+using GoodAI.Core.Task;
 
 namespace GoodAI.School.Worlds
 {
@@ -42,6 +43,11 @@ namespace GoodAI.School.Worlds
         }
 
         public SchoolWorld School { get; set; }
+
+        public MyTask GetWorldRenderTask()
+        { 
+            return RenderGameTask; 
+        }
 
         public override void UpdateMemoryBlocks()
         {

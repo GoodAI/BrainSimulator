@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace GoodAI.Modules.School.Worlds
     {
         MyWorkingNode World { get; }
         SchoolWorld School { get; set; }
+
+        MyTask GetWorldRenderTask();
         void InitAdapterMemory();
         void InitWorldInputs(int nGPU);
         void MapWorldInputs();

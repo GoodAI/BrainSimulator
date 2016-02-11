@@ -165,6 +165,11 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolWorld School { get; set; }
 
+        public MyTask GetWorldRenderTask()
+        {
+            return RenderGLWorldTask;
+        }
+
         public virtual void InitWorldInputs(int nGPU)
         {
 

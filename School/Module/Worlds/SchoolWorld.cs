@@ -213,10 +213,14 @@ namespace GoodAI.Modules.School.Worlds
 
             var blocks = new List<IMyExecutable>();
             // The default plan will only contain one block with: signals in, world tasks, signals out.
-            blocks.Add(thisWorldTasks[0]);
-            blocks.Add(thisWorldTasks[1]);
-            blocks.Add(executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false));
-            blocks.AddRange(thisWorldTasks.Skip(2));
+            blocks.Add(thisWorldTasks.First());
+            blocks.Add(AdapterInputStep);
+            var worldPlan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false);
+            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.GetWorldRenderTask()));
+            blocks.Add(LearningStep);
+            blocks.Add(CurrentWorld.GetWorldRenderTask());
+            blocks.Add(AdapterOutputStep);
+            blocks.Add(thisWorldTasks.Last());
 
             return new MyExecutionBlock(blocks.ToArray());
         }
@@ -388,8 +392,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public InitSchoolWorldTask InitSchool { get; protected set; }
         public InputAdapterTask AdapterInputStep { get; protected set; }
-        public OutputAdapterTask AdapterOutputStep { get; protected set; }
         public LearningStepTask LearningStep { get; protected set; }
+        public OutputAdapterTask AdapterOutputStep { get; protected set; }
 
         /// <summary>
         /// Initialize the world's curriculum
