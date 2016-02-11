@@ -16,7 +16,7 @@ namespace GoodAI.School.Worlds
         
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }        
 
-        public void InitAdapterMemory(SchoolWorld schoolWorld)
+        public void InitAdapterMemory()
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 128;
@@ -37,21 +37,28 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public void InitWorldInputs(int nGPU, SchoolWorld schoolWorld)
+        public MyWorkingNode World
+        {
+            get { return this; }
+        }
+
+        public SchoolWorld School { get; set; }
+
+        public void InitWorldInputs(int nGPU)
         {
         }
 
 
-        public void MapWorldInputs(SchoolWorld schoolWorld)
+        public void MapWorldInputs()
         {
             // reward setup??
             // ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
 
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(schoolWorld.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, schoolWorld.ActionInput.Count));
+            ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
         }
 
-        public void InitWorldOutputs(int nGPU, SchoolWorld schoolWorld)
+        public void InitWorldOutputs(int nGPU)
         {
             m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
             m_kernel.SetupExecution(256 * 256);
@@ -61,24 +68,24 @@ namespace GoodAI.School.Worlds
 
         }
 
-        public void MapWorldOutputs(SchoolWorld schoolWorld)
+        public void MapWorldOutputs()
         {
             // Rescale data from world to wrapper
-            m_kernel.Run(Visual, schoolWorld.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
-            m_grayscaleKernel.Run(schoolWorld.Visual, schoolWorld.Visual, 256 * 256);
+            m_kernel.Run(Visual, School.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
+            m_grayscaleKernel.Run(School.Visual, School.Visual, 256 * 256);
 
 //            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
 
             // Copy of structured data
-            Event.CopyToMemoryBlock(schoolWorld.Data, 0, 0, 1);
-            BallPosX.CopyToMemoryBlock(schoolWorld.Data, 0, 1, 1);
-            BallPosY.CopyToMemoryBlock(schoolWorld.Data, 0, 2, 1);
-            PaddlePosX.CopyToMemoryBlock(schoolWorld.Data, 0, 3, 1);
-            PaddlePosY.CopyToMemoryBlock(schoolWorld.Data, 0, 4, 1);
-            BinaryEvent.CopyToMemoryBlock(schoolWorld.Data, 0, 5, 1);
+            Event.CopyToMemoryBlock(School.Data, 0, 0, 1);
+            BallPosX.CopyToMemoryBlock(School.Data, 0, 1, 1);
+            BallPosY.CopyToMemoryBlock(School.Data, 0, 2, 1);
+            PaddlePosX.CopyToMemoryBlock(School.Data, 0, 3, 1);
+            PaddlePosY.CopyToMemoryBlock(School.Data, 0, 4, 1);
+            BinaryEvent.CopyToMemoryBlock(School.Data, 0, 5, 1);
 
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
-            schoolWorld.DataLength.Fill(6);
+            School.DataLength.Fill(6);
         }
 
         public void ClearWorld()
