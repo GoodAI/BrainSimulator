@@ -34,9 +34,6 @@ namespace GoodAI.Modules.School.Common
         public AbilityNameEnum AbilityName { get; set; }
         public AbilityNameEnum[] RequiredAbilities { get; set; }
 
-        // True if the world is reset before presenting a new unit; true by default
-        protected bool DoResetWorldBeforeTrainingUnit { get; set; }
-
         // The number of consecutive examples in the training set classified correctly
         protected int CurrentNumberOfSuccesses { get; set; }
 
@@ -158,7 +155,7 @@ namespace GoodAI.Modules.School.Common
             // new training unit
             if (trainingUnitIsComplete)
             {
-
+                CurrentNumberOfAttempts++;
                 if (wasUnitSuccessful)
                 {
                     CurrentNumberOfSuccesses++;
@@ -210,7 +207,13 @@ namespace GoodAI.Modules.School.Common
 
         public void Init()
         {
+            CurrentNumberOfAttempts = 0;
+            CurrentLevel = 0;
+            CurrentNumberOfSuccesses = 0;
+
+            TSHints.Set(TSProgression[CurrentLevel]);
             SetHints(TSHints);
+
             SchoolWorld.NotifyNewTrainingUnit();
             SchoolWorld.NotifyNewLevel();
         }
