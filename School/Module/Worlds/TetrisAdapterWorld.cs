@@ -16,10 +16,8 @@ namespace GoodAI.School.Worlds
 
         public void InitAdapterMemory()
         {
-            //VisualHeight = VisualWidth = 256;
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 6;
-            VisualHeight = VisualWidth = 400;
         }
 
         public override MyMemoryBlock<float> GetInput(int index)
@@ -51,7 +49,7 @@ namespace GoodAI.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            VisualWidth = 256;
+            VisualHeight = VisualWidth = 256;
             base.UpdateMemoryBlocks();
         }
 
