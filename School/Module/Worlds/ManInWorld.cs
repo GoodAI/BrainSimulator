@@ -966,6 +966,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             uint m_fboHandle;
             uint m_renderTextureHandle;
+            uint m_backgroundTexHandle;
 
             private uint m_sharedBufferHandle;
             private CudaOpenGLBufferInteropResource m_renderResource;
@@ -1005,7 +1006,10 @@ namespace GoodAI.Modules.School.Worlds
 
                 // pow
                 setupPOWview();
-                RenderGL();
+
+                renderBackground();
+                renderGL();
+
                 copyPixelsPOW();
             }
 
@@ -1031,6 +1035,24 @@ namespace GoodAI.Modules.School.Worlds
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+
+                // Setup background texture
+                m_backgroundTexHandle = (uint)GL.GenTexture();
+                GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+                string bitmapPath = "Ground_TOP.png";
+                Owner.LoadAndGetBitmapSize(bitmapPath);
+                Bitmap bmp = Owner.m_bitmapTable[bitmapPath].Item1;
+                BitmapData data = bmp.LockBits(
+                    new Rectangle(0, 0, bmp.Width, bmp.Height),
+                    ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                bmp.UnlockBits(data);
 
                 // Setup FBO
                 m_fboHandle = (uint)GL.GenFramebuffer();
@@ -1086,7 +1108,7 @@ namespace GoodAI.Modules.School.Worlds
 
                             // load the bitmap for the texture here
                             GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
-                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
                             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
                             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
@@ -1100,18 +1122,20 @@ namespace GoodAI.Modules.School.Worlds
                             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 
                             bmp.UnlockBits(data);
+                            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
                         }
 
                         // update texture for the gameObject
                         gameObject.SpriteTextureHandle = loadedTextureHandle;
                     }
                 }
+                GL.BindTexture(TextureTarget.Texture2D, 0);
             }
 
             void setupPOWview()
             {
                 Point powCenter = Owner.GetPowCenter();
-                // Setup rendering
+                // Setup view
                 GL.Viewport(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT);
 
                 GL.MatrixMode(MatrixMode.Projection);
@@ -1119,6 +1143,20 @@ namespace GoodAI.Modules.School.Worlds
                 GL.Ortho(powCenter.X - (float)Owner.POW_WIDTH / 2, powCenter.X + (float)Owner.POW_WIDTH / 2, powCenter.Y - (float)Owner.POW_HEIGHT / 2, powCenter.Y + (float)Owner.POW_HEIGHT / 2, -1, 1);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.LoadIdentity();
+
+                // Setup rendering
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
+
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.Blend);
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+                //GL.ClearColor(Owner.BackgroundColor);                
+
+                GL.End();
             }
 
             void copyPixelsPOW()
@@ -1156,32 +1194,30 @@ namespace GoodAI.Modules.School.Worlds
                 }
             }
 
-            void RenderGL()
+            void renderBackground()
+            {
+                GL.PushMatrix();
+
+                GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
+                GL.Begin(PrimitiveType.Quads);
+                GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                GL.TexCoord2(0.5f, 0.0f); GL.Vertex2((float)Owner.FOW_WIDTH, 0f);
+                GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
+                GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, (float)Owner.FOW_HEIGHT);
+                GL.End();
+
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+
+                GL.PopMatrix();
+            }
+
+            void renderGL()
             {
                 // maybe unnecessary fix of the bug with garbage collected old m_windows:
                 //m_window.ProcessEvents();
 
                 m_context.MakeCurrent(m_window.WindowInfo);
                 GL.Finish();
-
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
-
-                //GL.PushAttrib(AttribMask.ViewportBit); // stores GL.Viewport() parameters
-
-
-                // For POW
-                //GL.LoadMatrix(Matrix4.LookAt(...));
-
-                GL.ClearColor(Owner.BackgroundColor);
-
-                GL.Enable(EnableCap.Texture2D);
-                GL.Enable(EnableCap.Blend);
-
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-
-                GL.End();
 
                 // Render game objects
                 // TODO: object rendering order -- environment first, then creatures and active objects

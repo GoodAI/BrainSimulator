@@ -167,6 +167,9 @@
     <Content Include="res\PlumberWorld\Plumber24x28.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\SchoolWorldCommon\Ground_TOP.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\SchoolWorldCommon\Number0_30x50.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -279,9 +282,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\RoguelikeWorld\Gate_Open_m.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\RoguelikeWorld\Ground_TOP.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\RoguelikeWorld\Lava_Surface.png">
