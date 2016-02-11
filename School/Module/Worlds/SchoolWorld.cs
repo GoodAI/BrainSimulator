@@ -251,7 +251,7 @@ namespace GoodAI.Modules.School.Worlds
             ResetLTStatusFlags();
 
             // first evaluate previus step
-            if (m_currentLearningTask != null)
+            if (m_currentLearningTask.IsInitialized)
             {
                 // 
                 m_currentLearningTask.ExecuteStep();
@@ -272,21 +272,14 @@ namespace GoodAI.Modules.School.Worlds
             }
             else
             {
-                NotifyNewLearningTask();
+                InitNewLearningTask();
             }
 
             // set new learning task or stop simulation
             if(LTStatus.Host[NEW_LT_FLAG] == 1)
             {
-                if(!InitNewLearningTask())
-                {
-                    // try stop simulation
-                    if (Owner.SimulationHandler.CanPause)
-                    {
-                        Owner.SimulationHandler.PauseSimulation();
-                    }
-                    return;
-                }
+                m_currentLearningTask = null;
+                return;
             }
 
             // if new TU is requested, present new training unit
@@ -302,8 +295,8 @@ namespace GoodAI.Modules.School.Worlds
 
         private bool InitNewLearningTask()
         {
-            m_currentLearningTask = Curriculum.GetNextLearningTask();
-
+            //m_currentLearningTask = Curriculum.GetNextLearningTask();
+            
             // end of curriculum - there are no more LTs
             if (m_currentLearningTask == null)
             {
@@ -459,7 +452,21 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                Owner.ExecuteCurriculumStep();
+                if (Owner.m_currentLearningTask == null)
+                {
+                    Owner.m_currentLearningTask = Owner.Curriculum.GetNextLearningTask();
+                    if (Owner.m_currentLearningTask == null)
+                    {
+                        if (Owner.Owner.SimulationHandler.CanPause)
+                        {
+                            Owner.Owner.SimulationHandler.PauseSimulation();
+                        }
+                    }
+                }
+                else
+                {
+                    Owner.ExecuteCurriculumStep();
+                }
             }
         }
 
