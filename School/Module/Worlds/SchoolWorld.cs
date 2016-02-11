@@ -409,9 +409,8 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                
-                if (Owner.m_currentLearningTask == null)
-                    Owner.m_currentLearningTask = Owner.Curriculum.GetNextLearningTask();
+
+                Owner.InitializeCurriculum();
             }
         }
 
