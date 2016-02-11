@@ -8,12 +8,6 @@ namespace GoodAI.Modules.School.Common
 {
     public interface ILearningTask
     {
-        bool HasPresentedFirstUnit { get; set; }
-        bool IsTrainingUnitCompleted { get; set; }
-
-        bool LTFinishedSuccessfully { get; set; }
-        bool LTFinishedUnsuccessfully { get; set; }
-
         TrainingSetHints TSHints { get; set; }
         TrainingSetProgression TSProgression { get; set; }
         int NumberOfLevels { get; set; }
@@ -21,13 +15,15 @@ namespace GoodAI.Modules.School.Common
         int NumberOfSuccessesRequired { get; }
 
         void ExecuteStep();
-        bool EvaluateStep();
+        void EvaluateStep();
+        void PresentNewTrainingUnit();
 
         SchoolWorld SchoolWorld { get; set; }
         Type RequiredWorld { get; set; }
         string Description { get; set; }
+        string GetTypeName();
 
-        void InitLearningTask();
+        void Init();
     }
 
     /// <summary>
@@ -37,9 +33,6 @@ namespace GoodAI.Modules.School.Common
     {
         public AbilityNameEnum AbilityName { get; set; }
         public AbilityNameEnum[] RequiredAbilities { get; set; }
-
-        bool LTFinishedSuccessfully { get; set; }
-        bool LTFinishedUnsuccessfully { get; set; }
 
         // True if the world is reset before presenting a new unit; true by default
         protected bool DoResetWorldBeforeTrainingUnit { get; set; }
@@ -118,9 +111,7 @@ namespace GoodAI.Modules.School.Common
             CurrentNumberOfSuccesses = 0;
 
             TSHints.Set(TSProgression[CurrentLevel]);
-            SetHints(TSProgression[CurrentLevel]);
-
-            SchoolWorld.SetHints(TSHints);
+            SetHints(TSHints);
 
             MyLog.Writer.WriteLine(MyLogLevel.INFO,
                 "Next level settings: \n" +
@@ -134,22 +125,6 @@ namespace GoodAI.Modules.School.Common
             SchoolWorld.SetHints(trainingSetHints);
         }
 
-        public virtual bool DidAbilityFail
-        {
-            get
-            {
-                if (TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS))
-                    return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS];
-                else
-                    return false;
-            }
-        }
-
-        public virtual bool IsAbilityLearned
-        {
-            get { return CurrentLevel == NumberOfLevels - 1 && IsTrainingSetCompleted(); }
-        }
-
         public AbstractLearningTask() : this(null) { }
 
         public AbstractLearningTask(SchoolWorld schoolWorld)
@@ -161,68 +136,9 @@ namespace GoodAI.Modules.School.Common
             CurrentLevel = 0;
         }
 
-        public virtual void ExecuteStep()
-        {
-            if (HasPresentedFirstUnit)
-            {
-                bool wasUnitSuccessful = false;
+        public virtual void ExecuteStep() { }
 
-                if (SchoolWorld.IsEmulatingUnitCompletion())
-                {
-                    IsTrainingUnitCompleted = SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
-                }
-                else
-                {
-                    IsTrainingUnitCompleted = DidTrainingUnitComplete(ref wasUnitSuccessful);
-                }
-
-                if (IsTrainingUnitCompleted)
-                {
-                    if (wasUnitSuccessful)
-                        CurrentNumberOfSuccesses++;
-                    else
-                        CurrentNumberOfSuccesses = 0;
-                    CurrentNumberOfAttempts++;
-
-                    MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                        this.GetType().ToString().Split(new[] { '.' }).Last() +
-                        " unit ends with result: " +
-                        (wasUnitSuccessful ? "succes" : "fail") +
-                        ". " +
-                        CurrentNumberOfSuccesses + " succesful attepts in row, " +
-                        NumberOfSuccessesRequired + " required."
-                        );
-                }
-            }
-        }
-
-        // Implement to define the training set completion criterion
-        protected virtual bool IsTrainingSetCompleted()
-        {
-            return CurrentNumberOfSuccesses >= NumberOfSuccessesRequired;
-        }
-
-        public virtual bool HandlePresentNewTrainingUnit()
-        {
-            bool didIncreaseLevel = false;
-
-            if (IsTrainingSetCompleted())
-            {
-                IncreaseLevel();
-                didIncreaseLevel = true;
-            }
-
-            IsTrainingUnitCompleted = false;
-            if (DoResetWorldBeforeTrainingUnit)
-            {
-                SchoolWorld.ClearWorld(TSHints);
-            }
-            HasPresentedFirstUnit = true;
-
-            return didIncreaseLevel;
-        }
-
-        public sealed void EvaluateStep()
+        public void EvaluateStep()
         {
             bool wasUnitSuccessful = false;
 
@@ -231,7 +147,7 @@ namespace GoodAI.Modules.School.Common
             if (SchoolWorld.IsEmulatingUnitCompletion())
             {
                 // emulated validation
-                trainingUnitIsComplete = SchoolWorld.EmulateIsTrainingUnitCompleted();
+                trainingUnitIsComplete = SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful);
             }
             else
             {
@@ -242,40 +158,61 @@ namespace GoodAI.Modules.School.Common
             // new training unit
             if (trainingUnitIsComplete)
             {
-                CurrentNumberOfSuccesses++;
-                SchoolWorld.ClearWorld();
+
+                if (wasUnitSuccessful)
+                {
+                    CurrentNumberOfSuccesses++;
+                }
+                else
+                {
+                    CurrentNumberOfSuccesses = 0;
+                }
+                MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                    GetTypeName() +
+                    " unit ends with result: " +
+                    (wasUnitSuccessful ? "success" : "fail") +
+                    ". " +
+                    CurrentNumberOfSuccesses + " successful attempts in row, " +
+                    NumberOfSuccessesRequired + " required."
+                    );
+                // SchoolWorld.ClearWorld(TSHints);
                 SchoolWorld.NotifyNewTrainingUnit();
             }
             // new level
             if (CurrentNumberOfSuccesses >= NumberOfSuccessesRequired)
             {
-                bool canIncreaseLevel = IncreaseLevel();
-                SchoolWorld.NotifyNewLevel();
-                if (!canIncreaseLevel)
+                bool didIncreaseLevel = IncreaseLevel();
+                if(didIncreaseLevel)
                 {
-                    LTFinishedUnsuccessfully = true;
+                    SchoolWorld.NotifyNewLevel();
+                    // inform about new level
+                    MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                        "Next level settings: \n" +
+                        TSHints.ToString()
+                        );
+                }
+                else // LT is over
+                {
+                    SchoolWorld.NotifyNewLearningTask();
                     return;
                 }
-
-                // inform about new level
-                MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                    this.GetType().ToString().Split(new[] { '.' }).Last() +
-                    " unit ends with result: " +
-                    (wasUnitSuccessful ? "succes" : "fail") +
-                    ". " +
-                    CurrentNumberOfSuccesses + " succesful attepts in row, " +
-                    NumberOfSuccessesRequired + " required."
-                    );
             }
         }
 
-        protected abstract void Init();
+        public string GetTypeName()
+        {
+            return this.GetType().ToString().Split(new[] { '.' }).Last();
+        }
+
+        public abstract void PresentNewTrainingUnit();
         protected virtual void Update() { }
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
 
-        public virtual void InitLearningTask()
+        public void Init()
         {
             SetHints(TSHints);
+            SchoolWorld.NotifyNewTrainingUnit();
+            SchoolWorld.NotifyNewLevel();
         }
     }
 }

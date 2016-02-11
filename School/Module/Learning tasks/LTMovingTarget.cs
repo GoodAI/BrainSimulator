@@ -94,10 +94,8 @@ namespace GoodAI.Modules.School.LearningTasks
             });
         }
 
-        public override void UpdateState()                                  // UpdateState calls base's equivalent and then its own additional functions
+        public override void ExecuteStep()                                  // UpdateState calls base's equivalent and then its own additional functions
         {
-            base.UpdateState();
-
             ellipseSize = (float)TSHints[ELLIPSE_SIZE];
             stepsTakenForOneCircle = (int)TSHints[STEPS_TAKEN_FOR_ONE_CIRCLE];
 

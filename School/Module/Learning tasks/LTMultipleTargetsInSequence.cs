@@ -82,15 +82,13 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        public override void UpdateState()                                  // UpdateState calls base's equivalent and then its own additional functions
+        public override void ExecuteStep()                                  // UpdateState calls base's equivalent and then its own additional functions
         {
-            base.UpdateState();
-
             UpdateSequenceState();
         }
 
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             CreateAgent();
             CreateTargets();

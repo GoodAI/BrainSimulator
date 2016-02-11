@@ -24,7 +24,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             WrappedWorld.Engine.ResetToRandomHorizon();
         }

@@ -91,7 +91,7 @@ namespace GoodAI.Modules.School.Common
             switch (world.TypeOfCurriculum)
             {
                 case CurriculumType.TrainingCurriculum:
-                    curriculum.AddLearningTask(world, typeof(LTSimpleRhythm));
+                    curriculum.AddLearningTask(world, typeof(LTDetectShape));
                     break;
 
                 case CurriculumType.TetrisCurriculum:

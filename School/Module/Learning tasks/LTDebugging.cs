@@ -23,7 +23,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             if (WrappedWorld.GetType() == typeof(PlumberWorld))
             {

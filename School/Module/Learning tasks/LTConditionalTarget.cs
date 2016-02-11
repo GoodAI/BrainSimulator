@@ -200,7 +200,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             WrappedWorld.CreateAgent();
             ConditionGameObject condition = new ConditionGameObject(WrappedWorld, TSHints[CONDITION_SALIENCE]);

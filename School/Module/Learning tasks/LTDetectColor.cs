@@ -32,7 +32,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(NUMBER_OF_COLORS, 8);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             CreateTarget();
             SetTargetColor();

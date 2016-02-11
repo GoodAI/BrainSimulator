@@ -39,7 +39,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 });
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             if (WrappedWorld.GetType() != typeof(RoguelikeWorld))
             {

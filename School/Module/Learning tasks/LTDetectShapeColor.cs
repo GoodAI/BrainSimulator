@@ -28,7 +28,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             WrappedWorld.CreateNonVisibleAgent();
 

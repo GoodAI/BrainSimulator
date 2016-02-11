@@ -42,7 +42,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1.5f);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             CreateAgent();
             CreateTeacher();

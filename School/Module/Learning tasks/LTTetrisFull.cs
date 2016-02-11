@@ -25,7 +25,7 @@ namespace GoodAI.Modules.School.LearningTasks
             SetHints(TSHints);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
 
         }

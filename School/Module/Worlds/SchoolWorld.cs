@@ -234,55 +234,66 @@ namespace GoodAI.Modules.School.Worlds
             return new MyExecutionBlock(blocks.ToArray());
         }
 
-        public void SelectLearningTaskAndEvaluateAndExecuteStep()
+        public void ExecuteCurriculumStep()
         {
+            ResetLTStatusFlags();
+
             // first evaluate previus step
             if (m_currentLearningTask != null)
             {
+                // 
+                m_currentLearningTask.ExecuteStep();
                 // set new level, training unit or step
+                // this also partially sets LTStatus
                 m_currentLearningTask.EvaluateStep();
-                // this also partially set LTStatus
+            }
+            else
+            {
+                NotifyNewLearningTask();
+            }
 
-                // if LT was successfully solved, set current LT to null
-                if (m_currentLearningTask.LTFinishedSuccessfully || m_currentLearningTask.LTFinishedUnsuccessfully)
+            // set new learning task or stop simulation
+            if(LTStatus.Host[NEW_LT_FLAG] == 1)
+            {
+                if(!InitNewLearningTask())
                 {
-                    m_currentLearningTask = null;
+                    // try stop simulation
+                    if (Owner.SimulationHandler.CanPause)
+                    {
+                        Owner.SimulationHandler.PauseSimulation();
+                        return;
+                    }
                 }
             }
 
-            // set new learning task
-            if(m_currentLearningTask == null)
+            // if new TU is requested, present new training unit
+            if (LTStatus.Host[NEW_TU_FLAG] == 1)
             {
-                m_currentLearningTask = Curriculum.GetNextLearningTask();
-
-                // end of curriculum - there are no more LTs
-                if (m_currentLearningTask == null)
-                {
-                    // try stop simulation
-                    if (Owner.SimulationHandler.CanPause) Owner.SimulationHandler.PauseSimulation();
-                    return;
-                }
-                // inform user about new LT
-                string nameOfCurrentLearningTask = m_currentLearningTask
-                    .GetType()
-                    .ToString()
-                    .Split(new[] { '.' })
-                    .Last();
-                MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                    "Switching to LearningTask: " +
-                    nameOfCurrentLearningTask);
-
-                // initiate new LT
-                m_currentLearningTask.InitLearningTask();
-
-                NotifyNewLearningTask();
+                m_currentLearningTask.SchoolWorld.ClearWorld();
+                m_currentLearningTask.PresentNewTrainingUnit();
             }
 
             // LTStatus should be complete in this moment
             LTStatus.SafeCopyToDevice();
+        }
 
-            // makes step or presents new training unit and makes step
-            m_currentLearningTask.ExecuteStep();
+        private bool InitNewLearningTask()
+        {
+            m_currentLearningTask = Curriculum.GetNextLearningTask();
+
+            // end of curriculum - there are no more LTs
+            if (m_currentLearningTask == null)
+            {
+                return false;
+            }
+            // inform user about new LT
+            MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                "Switching to LearningTask: " +
+                m_currentLearningTask.GetTypeName());
+
+            m_currentLearningTask.Init();
+
+            return true;
         }
 
         // Notify of the start of a new curriculum
@@ -292,25 +303,39 @@ namespace GoodAI.Modules.School.Worlds
             LTStatus.Host[LT_IDENTIFIER] = -1;
         }
 
+        public void ResetLTStatusFlags()
+        {
+            LTStatus.Host[NEW_LT_FLAG] = 0;
+            LTStatus.Host[NEW_LEVEL_FLAG] = 0;
+            LTStatus.Host[NEW_TU_FLAG] = 0;
+        }
+
         // Notify of the start of a new learning task
-        private void NotifyNewLearningTask()
+        public void NotifyNewLearningTask()
         {
             LTStatus.Host[NEW_LT_FLAG] = 1;
+            LTStatus.Host[LT_IDENTIFIER]++;
+            LTStatus.Host[TU_INDEX] = 0;
+            LTStatus.Host[LEVEL_INDEX] = 0;
         }
 
         public void NotifyNewLevel()
         {
             LTStatus.Host[NEW_LEVEL_FLAG] = 1;
+            LTStatus.Host[LEVEL_INDEX]++;
+            LTStatus.Host[TU_INDEX] = 0;
         }
 
         public void NotifyNewTrainingUnit()
         {
             LTStatus.Host[NEW_TU_FLAG] = 1;
+            LTStatus.Host[TU_INDEX]++;
         }
 
         public void InitializeCurriculum()
         {
             Curriculum = SchoolCurriculumPlanner.GetCurriculumForWorld(this);
+            m_currentLearningTask = null;
             NotifyNewCurriculum();
         }
 
@@ -411,7 +436,7 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                Owner.SelectLearningTaskAndEvaluateAndExecuteStep();
+                Owner.ExecuteCurriculumStep();
             }
         }
 

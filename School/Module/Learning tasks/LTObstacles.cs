@@ -48,7 +48,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(OBSTACLES_LEVEL, 6);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             GenerateObstacles();
 

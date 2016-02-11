@@ -31,7 +31,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TIMESTEPS_LIMIT, 50);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             GenerateObstacles();
 

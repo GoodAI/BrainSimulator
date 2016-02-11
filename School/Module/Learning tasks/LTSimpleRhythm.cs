@@ -44,7 +44,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             p = WrappedWorld.CreateNonVisibleAgent().GetGeometry().Location;
 

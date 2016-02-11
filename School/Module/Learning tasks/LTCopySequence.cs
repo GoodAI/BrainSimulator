@@ -45,7 +45,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(STOP_REQUEST, 1);
         }
 
-        protected override void Init()
+        public override void PresentNewTrainingUnit()
         {
             CreateAgent();
             CreateTeacher();
