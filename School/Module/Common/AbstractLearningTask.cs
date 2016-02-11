@@ -8,6 +8,7 @@ namespace GoodAI.Modules.School.Common
 {
     public interface ILearningTask
     {
+        // GUI
         TrainingSetHints TSHints { get; set; }
         TrainingSetProgression TSProgression { get; set; }
         int NumberOfLevels { get; set; }
@@ -15,7 +16,7 @@ namespace GoodAI.Modules.School.Common
         int NumberOfSuccessesRequired { get; }
 
         void ExecuteStep();
-        void EvaluateStep();
+        void EvaluateStep(out bool learningTaskFail);
         void PresentNewTrainingUnit();
 
         SchoolWorld SchoolWorld { get; set; }
@@ -133,10 +134,16 @@ namespace GoodAI.Modules.School.Common
             CurrentLevel = 0;
         }
 
+        private bool DidLearingTaskFail()
+        {
+            return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS];
+        }
+
         public virtual void ExecuteStep() { }
 
-        public void EvaluateStep()
+        public void EvaluateStep(out bool learningTaskFail)
         {
+            learningTaskFail = false;
             bool wasUnitSuccessful = false;
 
             // evaluate whether is training unit complete
@@ -164,6 +171,14 @@ namespace GoodAI.Modules.School.Common
                 {
                     CurrentNumberOfSuccesses = 0;
                 }
+
+                // if number of attempts reach its maximum, return with fail
+                if (DidLearingTaskFail())
+                {
+                    learningTaskFail = true;
+                    return;
+                }
+
                 MyLog.Writer.WriteLine(MyLogLevel.INFO,
                     GetTypeName() +
                     " unit ends with result: " +
@@ -202,7 +217,6 @@ namespace GoodAI.Modules.School.Common
         }
 
         public abstract void PresentNewTrainingUnit();
-        protected virtual void Update() { }
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
 
         public void Init()

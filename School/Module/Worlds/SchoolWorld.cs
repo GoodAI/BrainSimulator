@@ -236,6 +236,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void ExecuteCurriculumStep()
         {
+            
             ResetLTStatusFlags();
 
             // first evaluate previus step
@@ -243,9 +244,20 @@ namespace GoodAI.Modules.School.Worlds
             {
                 // 
                 m_currentLearningTask.ExecuteStep();
+
                 // set new level, training unit or step
                 // this also partially sets LTStatus
-                m_currentLearningTask.EvaluateStep();
+                bool learningTaskFail;
+                m_currentLearningTask.EvaluateStep(out learningTaskFail);
+
+                if (learningTaskFail)
+                {
+                    if (Owner.SimulationHandler.CanPause)
+                    {
+                        Owner.SimulationHandler.PauseSimulation();
+                    }
+                    return;
+                }
             }
             else
             {
@@ -261,8 +273,8 @@ namespace GoodAI.Modules.School.Worlds
                     if (Owner.SimulationHandler.CanPause)
                     {
                         Owner.SimulationHandler.PauseSimulation();
-                        return;
                     }
+                    return;
                 }
             }
 
