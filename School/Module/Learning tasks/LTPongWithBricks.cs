@@ -51,16 +51,22 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { MAX_MISSES_ALLOWED, 10 },
-                    { BALL_HITS_NEEDED, 6 }
+                    { MAX_MISSES_ALLOWED, 6 },
+                    { BALL_HITS_NEEDED, 10 }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { MAX_MISSES_ALLOWED, 10 },
-                    { BALL_HITS_NEEDED, 10 }
+                    { MAX_MISSES_ALLOWED, 6 },
+                    { BALL_HITS_NEEDED, 20 }
             });
 
+
+            TSProgression.Add(
+                new TrainingSetHints {
+                    { MAX_MISSES_ALLOWED, 5 },
+                    { BALL_HITS_NEEDED, 30 }
+            });
 
 
         }
@@ -70,6 +76,8 @@ namespace GoodAI.Modules.School.LearningTasks
             ballHitSum = 0f;
             ballMissSum = 0f;
             WrappedWorld.UpdateTask.ResetGame();
+
+            WrappedWorld.UpdateTask.SetLevel();
         }
 
         public override void UpdateState()
