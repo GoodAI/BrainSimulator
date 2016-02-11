@@ -13,14 +13,9 @@ namespace GoodAI.School.Worlds
     {
         private MyCudaKernel m_kernel;
         private MyCudaKernel m_grayscaleKernel;
-        
-        private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }        
 
-        public void InitAdapterMemory()
-        {
-            ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-            ControlsAdapterTemp.Count = 128;
-        }
+        private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
+
 
         public override MyMemoryBlock<float> GetInput(int index)
         {
@@ -37,11 +32,8 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public MyWorkingNode World
-        {
-            get { return this; }
-        }
-
+        
+        public MyWorkingNode World { get { return this; } }
         public SchoolWorld School { get; set; }
 
         public MyTask GetWorldRenderTask()
@@ -49,10 +41,22 @@ namespace GoodAI.School.Worlds
             return RenderGameTask;
         }
 
-        public void InitWorldInputs(int nGPU)
+        void IWorldAdapter.UpdateMemoryBlocks()
         {
+            DISPLAY_WIDTH = School.Visual.Dims[0];
+            DISPLAY_HEIGHT = School.Visual.Dims[1];
+
+            UpdateMemoryBlocks();
         }
 
+        public void InitAdapterMemory()
+        {
+            ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+            ControlsAdapterTemp.Count = 128;
+        }
+
+        public void InitWorldInputs(int nGPU)
+        { }
 
         public void MapWorldInputs()
         {
@@ -70,7 +74,6 @@ namespace GoodAI.School.Worlds
 
             m_grayscaleKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawGrayscaleKernel");
             m_grayscaleKernel.SetupExecution(256 * 256);
-
         }
 
         public void MapWorldOutputs()
@@ -79,7 +82,7 @@ namespace GoodAI.School.Worlds
             m_kernel.Run(Visual, School.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
             m_grayscaleKernel.Run(School.Visual, School.Visual, 256 * 256);
 
-//            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
+            //            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
 
             // Copy of structured data
             Event.CopyToMemoryBlock(School.Data, 0, 0, 1);
@@ -102,13 +105,5 @@ namespace GoodAI.School.Worlds
         {
             // some TSHints related to Tetris?
         }
-
-        /*
-        public virtual void CreateTasks()
-        {
-
-        }
-        */
-
     }
 }

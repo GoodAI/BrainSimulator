@@ -54,14 +54,16 @@ namespace GoodAI.Modules.School.Worlds
             RenderWorldTask = new RenderTask();
         }
 
-        new protected int m_FOW_WIDTH = 1000;
-        new protected int m_FOW_HEIGHT = 300;
+        protected new int m_FOW_WIDTH = 1000;
+        protected new int m_FOW_HEIGHT = 300;
+        protected new int m_POW_WIDTH = 300;
+        protected new int m_POW_HEIGHT = 200;
 
         public override int FOW_WIDTH { get { return m_FOW_WIDTH; } set { m_FOW_WIDTH = value; } }
         public override int FOW_HEIGHT { get { return m_FOW_HEIGHT; } set { m_FOW_HEIGHT = value; } }
 
-        public override int POW_WIDTH { get { return 300; } }
-        public override int POW_HEIGHT { get { return 200; } }
+        public override int POW_WIDTH { get { return m_POW_WIDTH; } set { m_POW_WIDTH = value; } }
+        public override int POW_HEIGHT { get { return m_POW_HEIGHT; } set { m_POW_HEIGHT = value; } }
 
         public class GetPlumberInputTask : InputTask
         {

@@ -14,12 +14,6 @@ namespace GoodAI.School.Worlds
     {
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
 
-        public void InitAdapterMemory()
-        {
-            ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-            ControlsAdapterTemp.Count = 6;
-        }
-
         public override MyMemoryBlock<float> GetInput(int index)
         {
             return ControlsAdapterTemp;
@@ -35,28 +29,31 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public MyWorkingNode World
-        {
-            get { return this; }
-        }
-
+        public MyWorkingNode World { get { return this; } }
         public SchoolWorld School { get; set; }
 
         public MyTask GetWorldRenderTask()
-        { 
-            return RenderGameTask; 
+        {
+            return RenderGameTask;
         }
 
         public override void UpdateMemoryBlocks()
         {
+            //VisualWidth = School.Visual.Dims[0];
+            //VisualHeight = School.Visual.Dims[1];
+
             VisualHeight = VisualWidth = 256;
             base.UpdateMemoryBlocks();
         }
 
-        public virtual void InitWorldInputs(int nGPU)
+        public void InitAdapterMemory()
         {
-
+            ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+            ControlsAdapterTemp.Count = 6;
         }
+
+        public virtual void InitWorldInputs(int nGPU)
+        { }
 
         public virtual void MapWorldInputs()
         {
@@ -79,15 +76,15 @@ namespace GoodAI.School.Worlds
 
             ScoreDeltaOutput.CopyToMemoryBlock(School.Reward, 0, 0, 1);
         }
-               
+
         public void ClearWorld()
         {
             Engine.Reset();
         }
-        
+
         public void SetHint(TSHintAttribute attr, float value)
         {
-        // some TSHints related to Tetris?
+            // some TSHints related to Tetris?
         }
 
 
@@ -99,6 +96,6 @@ namespace GoodAI.School.Worlds
             //base.Validate(validator);
         }
 
-        
+
     }
 }

@@ -88,6 +88,7 @@ namespace GoodAI.Modules.School.Worlds
         #endregion
 
         #region MemoryBlocks sizes
+
         [MyBrowsable, Category("World Sizes")]
         [YAXSerializableField(DefaultValue = 65536)] // 196608 768 * 256
         public int VisualSize { get; set; }
@@ -102,14 +103,39 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Count = VisualSize;
+            Visual.Dims = GetShape(VisualSize);
             Text.Count = TextSize;
             Data.Count = DataSize;
             DataLength.Count = 1;
             Reward.Count = 1;
             LTStatus.Count = LT_STATUS_COUNT;
+
             CurrentWorld.UpdateMemoryBlocks();
         }
+
+        static TensorDimensions GetShape(int pixelCount)
+        {
+            // Borrowed from MyAbstractObserver
+            int root = (int)Math.Sqrt(pixelCount);
+            int i = root;
+            int width = pixelCount / root;
+            int height = root + 1;
+
+            while (i > root / 2)
+            {
+                if (pixelCount % root == 0)
+                {
+                    width = pixelCount / root;
+                    height = root;
+                    break;
+                }
+
+                root--;
+            }
+
+            return new TensorDimensions(width, height);
+        }
+
         #endregion
 
         #region World machinery
@@ -132,7 +158,6 @@ namespace GoodAI.Modules.School.Worlds
                 m_switchModel = true;
                 m_currentWorld = value;
                 m_currentWorld.School = this;
-                m_currentWorld.UpdateMemoryBlocks();
                 m_currentWorld.InitAdapterMemory();
             }
         }
@@ -141,6 +166,14 @@ namespace GoodAI.Modules.School.Worlds
         {
             CurrentWorld = m_currentWorld;
         }
+
+        public override void OnSimulationStateChanged(MySimulationHandler.StateEventArgs args)
+        {
+            // Notify BS that the model has changed -- it will reuse the old model otherwise and won't call inits on CurrentWorld's tasks when run
+            if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
+                m_switchModel = true;
+        }
+
         #endregion
 
         public SchoolWorld()
@@ -190,7 +223,7 @@ namespace GoodAI.Modules.School.Worlds
 
             MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
 
-            return new MyExecutionBlock(new IMyExecutable[] { defaultInitPhasePlan, plan });
+            return new MyExecutionBlock(defaultInitPhasePlan, plan);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
@@ -215,7 +248,6 @@ namespace GoodAI.Modules.School.Worlds
 
         public void ExecuteCurriculumStep()
         {
-            
             ResetLTStatusFlags();
 
             // first evaluate previus step

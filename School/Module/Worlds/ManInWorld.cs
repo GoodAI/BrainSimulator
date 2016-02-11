@@ -73,12 +73,14 @@ namespace GoodAI.Modules.School.Worlds
 
         protected int m_FOW_WIDTH = 1024;
         protected int m_FOW_HEIGHT = 1024;
+        protected int m_POW_WIDTH = 256;
+        protected int m_POW_HEIGHT = 256;
 
         public virtual int FOW_WIDTH { get { return m_FOW_WIDTH; } set { m_FOW_WIDTH = value; } }
         public virtual int FOW_HEIGHT { get { return m_FOW_HEIGHT; } set { m_FOW_HEIGHT = value; } }
 
-        public virtual int POW_WIDTH { get { return 256; } }
-        public virtual int POW_HEIGHT { get { return 256; } }
+        public virtual int POW_WIDTH { get { return m_POW_WIDTH; } set { m_POW_WIDTH = value; } }
+        public virtual int POW_HEIGHT { get { return m_POW_HEIGHT; } set { m_POW_HEIGHT = value; } }
 
         public virtual Color BackgroundColor { get; set; }
 
@@ -158,11 +160,7 @@ namespace GoodAI.Modules.School.Worlds
                 return base.GetAbstractInput(index);
         }
 
-        public MyWorkingNode World
-        {
-            get { return this; }
-        }
-
+        public MyWorkingNode World { get { return this; } }
         public SchoolWorld School { get; set; }
 
         public MyTask GetWorldRenderTask()
@@ -171,9 +169,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         public virtual void InitWorldInputs(int nGPU)
-        {
-
-        }
+        { }
 
         public virtual void MapWorldInputs()
         {
@@ -221,6 +217,24 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
+            /**
+            float ratio = POW_WIDTH / (float)POW_HEIGHT;
+            float count = schoolWorld.VisualSize;
+
+            // Get such numbers whose product is Count and whose ratio is Ratio
+            POW_WIDTH = (int)Math.Sqrt(ratio * count);
+            POW_HEIGHT = (int)(count / POW_WIDTH);
+            **/
+
+            if (School != null)
+            {
+                POW_WIDTH = School.Visual.Dims[0];
+                POW_HEIGHT = School.Visual.Dims[1];
+
+                FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
+                FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
+            }
+
             VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT;
             VisualFOW.ColumnHint = FOW_WIDTH;
 
@@ -1003,6 +1017,7 @@ namespace GoodAI.Modules.School.Worlds
             {
                 if (!m_glInitialized)
                 {
+                    //Dispose();
                     onlyOnce();
                     m_glInitialized = true;
                 }
@@ -1190,7 +1205,8 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 int size = Owner.POW_HEIGHT * Owner.POW_WIDTH * Marshal.SizeOf(typeof(uint));
-                Owner.VisualPOW.GetDevice(Owner).CopyToDevice(m_renderResource.GetMappedPointer<uint>().DevicePointer, 0, 0, size);
+                var ptr = m_renderResource.GetMappedPointer<uint>().DevicePointer;
+                Owner.VisualPOW.GetDevice(Owner).CopyToDevice(ptr, 0, 0, size);
 
                 // deinit CUDA interop
                 m_renderResource.UnMap();
@@ -1473,15 +1489,18 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 // delete CUDA <-> GL interop
-                if (m_renderResource.IsMapped)
+                if (m_renderResource != null)
                 {
-                    m_renderResource.UnMap();
+                    if (m_renderResource.IsMapped)
+                    {
+                        m_renderResource.UnMap();
+                    }
+                    if (m_renderResource.IsRegistered)
+                    {
+                        m_renderResource.Unregister();
+                    }
+                    m_renderResource.Dispose();
                 }
-                if (m_renderResource.IsRegistered)
-                {
-                    m_renderResource.Unregister();
-                }
-                m_renderResource.Dispose();
 
                 if (m_context != null)
                 {
