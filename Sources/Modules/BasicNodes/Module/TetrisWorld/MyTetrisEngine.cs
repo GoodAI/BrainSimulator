@@ -1012,7 +1012,24 @@ namespace GoodAI.Modules.TetrisWorld
 
         private void CalculateMerge()
         {
-            CleanMatch = m_gameBoard.DoesBrickFitAtIdx(m_tetromino.GetRotatedLowerHorizon(m_tetromino.Rotation), m_tetromino.Column);
+            // calculate real position of leftmost brick piece
+            var col = m_tetromino.Column + 1;
+            switch (m_tetromino.TetrominoBrickType)
+            {
+                case BrickType.T:
+                    if (m_tetromino.Rotation == TetrominoRotation.Right)
+                        col++;
+                    break;
+                case BrickType.I:
+                    if (m_tetromino.Rotation == TetrominoRotation.None || m_tetromino.Rotation == TetrominoRotation.UpsideDown)
+                        col--;
+                    break;
+                case BrickType.Z:
+                    if (m_tetromino.Rotation == TetrominoRotation.Right || m_tetromino.Rotation == TetrominoRotation.Left)
+                        col++;
+                    break;
+            }
+            CleanMatch = m_gameBoard.DoesBrickFitAtIdx(m_tetromino.GetRotatedLowerHorizon(m_tetromino.Rotation), col);
         }
 
         /// <summary>
