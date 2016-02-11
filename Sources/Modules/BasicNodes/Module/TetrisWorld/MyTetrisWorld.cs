@@ -218,12 +218,14 @@ namespace GoodAI.Modules.TetrisWorld
             set { EngineParams.AlmostFullLinesAtStart = value; }
         }
 
+        // default bitmap width: GFX_BACKGROUND_WIDTH = 668
         [Category("Constants")]
-        [YAXSerializableField(DefaultValue = 100)]
+        [YAXSerializableField(DefaultValue = 668)]
         public int VisualWidth { get; protected set; }
 
+        // default bitmap height: GFX_BACKGROUND_WIDTH = 668
         [MyBrowsable, Category("Constants")]
-        [YAXSerializableField(DefaultValue = 100)]
+        [YAXSerializableField(DefaultValue = 668)]
         public int VisualHeight { get; protected set; }
 
         #endregion
@@ -238,9 +240,10 @@ namespace GoodAI.Modules.TetrisWorld
         private string textureSet = @"res\tetrisworld\";
 
         private const int GFX_CELL_SQUARE_WIDTH = 30;
-        private Point GFX_BRICK_AREA_TOP_LEFT = new Point(4, 4);
-        private Point GFX_HINT_AREA_TOP_LEFT = new Point(321, 94);
-        private Point GFX_TEXT_AREA_TOP_LEFT = new Point(317, 5);
+        private const int GFX_BACKGROUND_WIDTH = 668;
+        private Point GFX_BRICK_AREA_TOP_LEFT = new Point(82, 4);
+        private Point GFX_HINT_AREA_TOP_LEFT = new Point(399, 94);
+        private Point GFX_TEXT_AREA_TOP_LEFT = new Point(395, 5);
 
         protected const int SOURCE_VALUES_PER_PIXEL = 4; // RGBA: 4 floats per pixel
         protected const int TARGET_VALUES_PER_PIXEL = 3; // RGB: 3 floats per pixel
@@ -325,9 +328,6 @@ namespace GoodAI.Modules.TetrisWorld
             LevelOutput.Count = 1;
 
             WorldEventOutput.Count = 1;
-
-            VisualWidth = m_bitmapTable[TextureType.Background].Width;
-            VisualHeight = m_bitmapTable[TextureType.Background].Height;
 
             VisualOutput.Count = VisualWidth * VisualHeight;
             VisualOutput.ColumnHint = VisualWidth;
@@ -704,22 +704,21 @@ namespace GoodAI.Modules.TetrisWorld
                 // translate the brick
                 float xOffset = column * GFX_CELL_SQUARE_WIDTH + xTopLeft;
                 float yOffset = row * GFX_CELL_SQUARE_WIDTH + yTopLeft;
+
+                GL.Scale((float)Owner.VisualWidth / GFX_BACKGROUND_WIDTH, (float)Owner.VisualHeight / GFX_BACKGROUND_WIDTH, 1f);
+
                 GL.Translate(xOffset, yOffset, 0.0f);
 
                 GL.Disable(EnableCap.Texture2D);
                 GL.Disable(EnableCap.Blend);
 
-
-                float width = Owner.m_bitmapTable[TextureType.BrickOverlay].Width;
-                float height = Owner.m_bitmapTable[TextureType.BrickOverlay].Height;
-
                 // draw colorful square
                 GL.Color4(color);
                 GL.Begin(PrimitiveType.Quads);
                 GL.Vertex2(0f, 0f);
-                GL.Vertex2(width, 0f);
-                GL.Vertex2(width, height);
-                GL.Vertex2(0f, height);
+                GL.Vertex2(GFX_CELL_SQUARE_WIDTH, 0f);
+                GL.Vertex2(GFX_CELL_SQUARE_WIDTH, GFX_CELL_SQUARE_WIDTH);
+                GL.Vertex2(0f, GFX_CELL_SQUARE_WIDTH);
                 GL.End();
                 GL.Color4(Color.White);
 
@@ -732,9 +731,9 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.BindTexture(TextureTarget.Texture2D, texHandle);
                 GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(width, 0f);
-                GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(width, height);
-                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, height);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(GFX_CELL_SQUARE_WIDTH, 0f);
+                GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(GFX_CELL_SQUARE_WIDTH, GFX_CELL_SQUARE_WIDTH);
+                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, GFX_CELL_SQUARE_WIDTH);
                 GL.End();
 
                 GL.PopMatrix();
@@ -778,6 +777,9 @@ namespace GoodAI.Modules.TetrisWorld
                 float height = Owner.m_textureText.SizeInPixels.y;
 
                 GL.PushMatrix();
+
+                GL.Scale((float)Owner.VisualWidth / GFX_BACKGROUND_WIDTH, (float)Owner.VisualHeight / GFX_BACKGROUND_WIDTH, 1f);
+
                 GL.Translate(xOffset, yOffset, 0.0f);
 
                 GL.BindTexture(TextureTarget.Texture2D, m_scoreTextHandle);
