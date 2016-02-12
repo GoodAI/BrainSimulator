@@ -35,9 +35,6 @@ namespace GoodAI.Modules.School.LearningTasks
             ballHitSum = 0f;
             ballHitSum = 0f;
 
-            WrappedWorld.UpdateTask.BOUNCE_BALL = 1.0f;         // Set the default reward that is given upon hitting the ball to 1.0f (World's default value is 0.1f)
-            WrappedWorld.UpdateTask.RandomBallDir = true;      
-
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(
@@ -90,6 +87,8 @@ namespace GoodAI.Modules.School.LearningTasks
             ballHitSum = 0f;
             ballMissSum = 0f;
             WrappedWorld.UpdateTask.ResetGame();                            // Needed to restart from the default position when BALL_HITS_NEEDED is 1 and the training unit is already completed
+            WrappedWorld.UpdateTask.BOUNCE_BALL = 1.0f;         // Set the default reward that is given upon hitting the ball to 1.0f (World's default value is 0.1f)
+            WrappedWorld.UpdateTask.RandomBallDir = true;
         }
 
         public override void ExecuteStep()
