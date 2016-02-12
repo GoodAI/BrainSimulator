@@ -121,7 +121,7 @@ namespace GoodAI.Modules.School.Common
                     //Hidden Target
                     //Conditional Target
                     //Noise in Actions
-                    curriculum.AddLearningTask(world, typeof(LTObstacles));
+                    curriculum.AddLearningTask(world, typeof(LTObstaclesTargetOnSight));
                     //Multiple Targets in Sequence
                     //Shape sorting
                     curriculum.AddLearningTask(world, typeof(LTCopyAction));
