@@ -73,7 +73,7 @@ namespace GoodAI.Modules.School.Worlds
         // Memory block informing the agent of changes in learning task,
         // level, and training unit.
         //
-        // Consists of 
+        // Consists of
         // - flags signifying a new task, level, and unit, respectively
         // - numbers identifying the current task, level, and unit
         [MyOutputBlock(5)]
@@ -110,7 +110,8 @@ namespace GoodAI.Modules.School.Worlds
             Reward.Count = 1;
             LTStatus.Count = LT_STATUS_COUNT;
 
-            CurrentWorld.UpdateMemoryBlocks();
+            if (CurrentWorld != null)
+                CurrentWorld.UpdateMemoryBlocks();
         }
 
         static TensorDimensions GetShape(int pixelCount)
@@ -253,7 +254,7 @@ namespace GoodAI.Modules.School.Worlds
             // first evaluate previus step
             if (m_currentLearningTask.IsInitialized)
             {
-                // 
+                //
                 m_currentLearningTask.ExecuteStep();
 
                 // set new level, training unit or step
@@ -276,7 +277,7 @@ namespace GoodAI.Modules.School.Worlds
             }
 
             // set new learning task or stop simulation
-            if(LTStatus.Host[NEW_LT_FLAG] == 1)
+            if (LTStatus.Host[NEW_LT_FLAG] == 1)
             {
                 m_currentLearningTask = null;
                 return;
@@ -295,7 +296,7 @@ namespace GoodAI.Modules.School.Worlds
         private bool InitNewLearningTask()
         {
             //m_currentLearningTask = Curriculum.GetNextLearningTask();
-            
+
             // end of curriculum - there are no more LTs
             if (m_currentLearningTask == null)
             {
@@ -463,7 +464,7 @@ namespace GoodAI.Modules.School.Worlds
                         return;
                     }
                 }
-                
+
                 Owner.ExecuteLearningTaskStep();
             }
         }
