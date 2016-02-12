@@ -152,7 +152,6 @@ namespace GoodAI.Modules.School.Worlds
             set
             {
                 // TODO m_currentWorld Init memory of wrapped world
-                //m_switchModel = true;
                 m_currentWorld = value;
                 m_currentWorld.School = this;
                 m_currentWorld.InitAdapterMemory();
@@ -185,12 +184,7 @@ namespace GoodAI.Modules.School.Worlds
             {
                 m_currentLTBF = value;
                 if (m_currentLTBF != null)
-                {
                     m_newWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
-
-                    //MyWorld world = (CurrentWorld as MyWorld);
-                    //CurrentWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
-                }
             }
         }
 
@@ -216,9 +210,7 @@ namespace GoodAI.Modules.School.Worlds
                 return false;
 
             if (CurrentWorld == null)
-            {
                 m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
-            }
 
             if (m_newWorld != null)
             {
@@ -236,11 +228,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-
-            var world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
-
-            //Curriculum.ResetLearningProgress();
-            //m_currentLearningTask = Curriculum.GetNextLearningTask();
+            IWorldAdapter world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
@@ -251,7 +239,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
-            var world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+            IWorldAdapter world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
@@ -490,8 +478,10 @@ namespace GoodAI.Modules.School.Worlds
                         return;
                     }
                 }
-
-                Owner.ExecuteLearningTaskStep();
+                else
+                {
+                    Owner.ExecuteLearningTaskStep();
+                }
                 if (SimulationStep == 0)
                     Owner.ExecuteLearningTaskStep();
             }
