@@ -271,6 +271,7 @@ namespace GoodAI.Modules.TetrisWorld
             while (!result && idx < m_columns - bWidth)
             {
                 result = DoesBrickFitAtIdx(brick, idx);
+                idx++;
             }
             return result;
         }
@@ -891,6 +892,15 @@ namespace GoodAI.Modules.TetrisWorld
                 .Select(i => rnd.Next(-range, range))
                 .ToArray();
             m_gameBoard.SetHorizon(horizon);
+        }
+
+        public bool CanMatchAnyRotation()
+        {
+            bool match = CanMatch();
+            match = match || CanMatch(TetrominoRotation.Left);
+            match = match || CanMatch(TetrominoRotation.Right);
+            match = match || CanMatch(TetrominoRotation.UpsideDown);
+            return match;
         }
 
         public bool CanMatch(TetrominoRotation rotation = TetrominoRotation.None)
