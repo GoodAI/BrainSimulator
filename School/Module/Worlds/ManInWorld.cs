@@ -177,10 +177,10 @@ namespace GoodAI.Modules.School.Worlds
             if (School.ActionInput.Owner is DeviceInput)
             {
                 School.ActionInput.SafeCopyToDevice();
-                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[68];  // A 
-                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65];  // D
-                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[83];  // W
-                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[87];  // S
+                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[68];  // D 
+                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65];  // A
+                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[83];  // S
+                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[87];  // W
                 ControlsAdapterTemp.SafeCopyToDevice();
             }
             else

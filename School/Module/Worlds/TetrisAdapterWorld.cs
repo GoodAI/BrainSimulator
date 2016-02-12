@@ -39,9 +39,6 @@ namespace GoodAI.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            //VisualWidth = School.Visual.Dims[0];
-            //VisualHeight = School.Visual.Dims[1];
-
             VisualHeight = VisualWidth = 256;
             base.UpdateMemoryBlocks();
         }
@@ -58,7 +55,21 @@ namespace GoodAI.School.Worlds
         public virtual void MapWorldInputs()
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            if (School.ActionInput.Owner is DeviceInput)
+            {
+                School.ActionInput.SafeCopyToDevice();
+                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65];  // A - Left
+                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[68];  // D - Right
+                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[83];  // S - Down
+                ControlsAdapterTemp.Host[4] = School.ActionInput.Host[75];  // K - rotate left
+                ControlsAdapterTemp.Host[5] = School.ActionInput.Host[76];  // L - rotate right
+
+                ControlsAdapterTemp.SafeCopyToDevice();
+            }
+            else
+            {
+                ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            }
         }
 
         public virtual void InitWorldOutputs(int nGPU)

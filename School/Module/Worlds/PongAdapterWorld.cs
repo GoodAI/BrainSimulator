@@ -60,11 +60,19 @@ namespace GoodAI.School.Worlds
 
         public void MapWorldInputs()
         {
-            // reward setup??
-            // ScoreDeltaOutput.CopyToMemoryBlock(schoolWorld.Reward, 0, 0, 1);
-
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            if (School.ActionInput.Owner is DeviceInput)
+            {
+                School.ActionInput.SafeCopyToDevice();
+                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[65];  // D
+                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[87];  // S
+                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[68];  // A 
+                ControlsAdapterTemp.SafeCopyToDevice();
+            }
+            else
+            {
+                ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            }
         }
 
         public void InitWorldOutputs(int nGPU)
