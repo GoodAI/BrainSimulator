@@ -94,6 +94,7 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
+                {TSHintAttributes.IMAGE_NOISE, 0},
                 { MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 { NUMBER_OF_DIFFERENT_OBJECTS, 2 },
                 { ROTATE_SHAPE, 0 },

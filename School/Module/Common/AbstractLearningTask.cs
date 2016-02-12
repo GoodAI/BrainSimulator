@@ -229,7 +229,14 @@ namespace GoodAI.Modules.School.Common
             ManInWorld miw = WrappedWorld as ManInWorld;
             if (miw != null)
             {
-                miw.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1f;
+                if (TSHints.ContainsKey(TSHintAttributes.IMAGE_NOISE))
+                {
+                    miw.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1f;
+                }
+                else
+                {
+                    miw.IsImageNoise = false;
+                }
             }
             
             PresentNewTrainingUnit();
