@@ -332,7 +332,9 @@ namespace GoodAI.Modules.School.Worlds
 
             Rectangle agentGeometry = Agent.GetGeometry();
 
-            for (int i = 0; i < 1; i++)
+            m_randomPositionCounter = 0;
+            bool intersects = true;
+            while (intersects)
             {
                 if (m_randomPositionCounter > 1000)
                 {
@@ -343,11 +345,13 @@ namespace GoodAI.Modules.School.Worlds
                 {
                     obj.Location = RandomPositionInsideRectangle(rndGen, size, GetPowGeometry());
                     m_randomPositionCounter++;
-                    i = -1; // reset cycle
+                }
+                else
+                {
+                    intersects = false;
                 }
             }
             MyLog.Writer.WriteLine(MyLogLevel.DEBUG, "Number of unsuccessful attempts of random object placing: " + m_randomPositionCounter);
-            m_randomPositionCounter = 0;
 
             randPointInPow = obj.Location + borders;
             size = obj.Size - borders - borders;
@@ -375,23 +379,34 @@ namespace GoodAI.Modules.School.Worlds
 
             Rectangle obj = new Rectangle(randPointInPow, size);
 
-            for (int i = 0; i < gameObjects.Count; i++)
+            m_randomPositionCounter = 0;
+
+            bool intersects = true;
+            while (intersects)
             {
-                if (m_randomPositionCounter > 1000)
+                // check intersection for all gameObjects
+                for (int i = 0; i < gameObjects.Count; i++)
                 {
-                    throw new Exception("Cannot place object randomly");
-                }
-                Rectangle gameObjectG = gameObjects[i].GetGeometry();
-                if (gameObjectG.IntersectsWith(obj) || obj.IntersectsWith(gameObjectG) ||
-                    agent.IntersectsWith(obj) || obj.IntersectsWith(agent))
-                {
-                    obj.Location = RandomPositionInsideRectangle(rndGen, size, rectangle);
-                    m_randomPositionCounter++;
-                    i = -1; // reset cycle
+                    if (m_randomPositionCounter > 1000)
+                    {
+                        throw new Exception("Cannot place object randomly");
+                    }
+                    Rectangle gameObjectG = gameObjects[i].GetGeometry();
+                    if (gameObjectG.IntersectsWith(obj) ||
+                        obj.IntersectsWith(gameObjectG) ||
+                        agent.IntersectsWith(obj) ||
+                        obj.IntersectsWith(agent))
+                    {
+                        obj.Location = RandomPositionInsideRectangle(rndGen, size, rectangle);
+                        m_randomPositionCounter++;
+                    }
+                    else
+                    {
+                        intersects = false;
+                    }
                 }
             }
             MyLog.Writer.WriteLine(MyLogLevel.DEBUG, "Number of unsuccessful attempts of random object placing: " + m_randomPositionCounter);
-            m_randomPositionCounter = 0;
 
             randPointInPow = obj.Location + borders;
             size = obj.Size - borders - borders;
