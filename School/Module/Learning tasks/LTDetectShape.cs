@@ -70,7 +70,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 float rotation = 0;
                 if (TSHints[TSHintAttributes.IS_VARIABLE_ROTATION] >= 1.0f)
                 {
-                    rotation = (float)(m_rndGen.NextDouble() * 2 * Math.PI);
+                    rotation = (float)(m_rndGen.NextDouble() * 360);
                 }
 
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
