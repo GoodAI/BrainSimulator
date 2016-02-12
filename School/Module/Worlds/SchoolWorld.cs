@@ -285,7 +285,6 @@ namespace GoodAI.Modules.School.Worlds
             // if new TU is requested, present new training unit
             if (LTStatus.Host[NEW_TU_FLAG] == 1)
             {
-                m_currentLearningTask.SchoolWorld.ClearWorld();
                 m_currentLearningTask.PresentNewTrainingUnitCommon();
             }
 

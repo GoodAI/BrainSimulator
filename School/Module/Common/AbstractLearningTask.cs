@@ -227,19 +227,7 @@ namespace GoodAI.Modules.School.Common
         public void PresentNewTrainingUnitCommon()
         {
             SchoolWorld.ClearWorld();
-
-            ManInWorld miw = WrappedWorld as ManInWorld;
-            if (miw != null)
-            {
-                if (TSHints.ContainsKey(TSHintAttributes.IMAGE_NOISE))
-                {
-                    miw.IsImageNoise = TSHints[TSHintAttributes.IMAGE_NOISE] >= 1f;
-                }
-                else
-                {
-                    miw.IsImageNoise = false;
-                }
-            }
+            SchoolWorld.SetHints(TSHints);
             
             PresentNewTrainingUnit();
         }
