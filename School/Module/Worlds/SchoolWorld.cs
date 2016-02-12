@@ -185,7 +185,10 @@ namespace GoodAI.Modules.School.Worlds
             {
                 m_currentLTBF = value;
                 if (m_currentLTBF != null)
+                {
                     m_newWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
+                    m_switchModel = true;
+                }
             }
         }
 
@@ -229,7 +232,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+            if (m_newWorld == null)
+                m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
