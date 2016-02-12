@@ -332,7 +332,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             float dist = m_agent.DistanceTo(m_target);
-            if (dist < 15)
+            if (dist < 3)
             {
                 m_stepsSincePresented = 0;
                 wasUnitSuccessful = true;
