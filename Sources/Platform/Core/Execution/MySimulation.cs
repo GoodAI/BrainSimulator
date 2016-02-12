@@ -672,13 +672,13 @@ namespace GoodAI.Core.Execution
             if (!Validator.ValidationSucessfull)
                 throw new InvalidOperationException("Validation failed for the changed model.");
 
+            // Reschedule.
+            Schedule(m_project, modelChanges.AddedNodes);
+
             // Allocate memory and init nodes
             IEnumerable<MyWorkingNode> nodesToAllocate =
                 modelChanges.AddedNodes.Where(node => MyMemoryManager.Instance.IsRegistered(node));
             IterateNodes(nodesToAllocate, InitAndAllocateNode);
-
-            // Finalize - reschedule and let listeners react.
-            Schedule(m_project, modelChanges.AddedNodes);
 
             foreach (MyNode node in changersActivated)
                 EmitModelChanged(node);
