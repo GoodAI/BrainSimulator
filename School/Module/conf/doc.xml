@@ -145,7 +145,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Int32)">
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Int32,System.Int32)">
              <summary>
             
              </summary>

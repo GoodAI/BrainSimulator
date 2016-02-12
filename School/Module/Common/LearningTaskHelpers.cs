@@ -272,8 +272,8 @@ namespace GoodAI.Modules.School.Common
             int dX = dx;
             int dY = dy;
 
-            int xNew = r.X + dX;
-            int yNew = r.Y + dY;
+            int xNew = r.X - dX;
+            int yNew = r.Y - dY;
             f.Location = new Point(xNew, yNew);
 
             int newWidth = r.Width + 2 * dX;
