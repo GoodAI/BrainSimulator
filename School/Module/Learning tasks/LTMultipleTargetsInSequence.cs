@@ -1,4 +1,5 @@
-﻿using GoodAI.Modules.School.Common;
+﻿using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
@@ -81,12 +82,12 @@ namespace GoodAI.Modules.School.LearningTasks
             });
         }
 
-
+        /*
         public override void ExecuteStep()                                  // UpdateState calls base's equivalent and then its own additional functions
         {
             UpdateSequenceState();
         }
-
+        */
 
         public override void PresentNewTrainingUnit()
         {
@@ -138,6 +139,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 r1.Height = (WrappedWorld.POW_HEIGHT / 2);
 
                 PositionFree = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, r1);
+                //PositionFree.X = 500;
+                //PositionFree.Y = 420;
 
                 m_target.X = PositionFree.X;                                                                            // Position target in the free position
                 m_target.Y = PositionFree.Y;
@@ -180,28 +183,16 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
 
-        public void UpdateSequenceState()
-        {
-
-            //MyLog.ERROR.WriteLine("m_stepsSincePresented: " + m_stepsSincePresented + ", LIMIT: " + TSHints[TIMESTEPS_LIMIT]);
-
-            float dist = m_agent.DistanceTo(GameObjectReferences[currentIndex]);        // Check if the agent reached the GameObject corresponding to the current index of the sequence, this is done by reference
-            if (dist < 15)
-            {
-                WrappedWorld.gameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
-                currentIndex++;                                                         // And now change the index (the index will denote a reference to the GameObject that needs to be reached next)
-            }
-        }
-
-
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
+
             // expect this method to be called once per simulation step
             m_stepsSincePresented++;
 
             // Training unit is completed if the last index of the sequence is reached AND the last GameObject is reached
             if ((currentIndex == ((int)TSHints[SEQUENCE_LENGTH]) - 1) && (m_agent.DistanceTo(GameObjectReferences[currentIndex]) < 15))
             {
+                currentIndex = 0;
                 wasUnitSuccessful = true;
                 return true;
             }
@@ -214,6 +205,15 @@ namespace GoodAI.Modules.School.LearningTasks
                 wasUnitSuccessful = false;
                 return true;
             }
+
+            // Updates the state of the sequence when necessary
+            float dist = m_agent.DistanceTo(GameObjectReferences[currentIndex]);        // Check if the agent reached the GameObject corresponding to the current index of the sequence, this is done by reference
+            if (dist < 15)
+            {
+                WrappedWorld.gameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
+                currentIndex++;                                                         // And now change the index (the index will denote a reference to the GameObject that needs to be reached next)
+            }
+
 
             wasUnitSuccessful = false;
             return false;
