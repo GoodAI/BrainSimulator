@@ -1,4 +1,5 @@
-﻿using GoodAI.Modules.School.Common;
+﻿using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Drawing;
@@ -18,7 +19,6 @@ namespace GoodAI.Modules.School.LearningTasks
         float angle;                                                    // Used for the trajectory of the circular movement of the target
         Point Trajectory = new Point();
 
-        float ellipseSize = 0.15f;                                      // Ranges from 0 to 1, ratio 1 generates the biggest ellipse that can fit into the rectangle (screen)
         int stepsTakenForOneCircle;                                     // How many steps will denote one complete cycle of the ellipse
 
         private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity", "", typeof(float), 0, 1);                 // The velocity of the Target when it's trying to avoid the agent
@@ -96,7 +96,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void ExecuteStep()                                  // UpdateState calls base's equivalent and then its own additional functions
         {
-            ellipseSize = (float)TSHints[ELLIPSE_SIZE];
             stepsTakenForOneCircle = (int)TSHints[STEPS_TAKEN_FOR_ONE_CIRCLE];
 
             // The movement of the moving target is circular, and this circular movement is represented by an ellipse inside a rectangle (the Screen)
@@ -108,7 +107,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 angle = 0;
             }
 
-            Trajectory = GetPointInEllipse(angle, ellipseSize);             // Find the current coordinates to follow
+            Trajectory = GetPointInEllipse(angle, (float)TSHints[ELLIPSE_SIZE]);             // Find the current coordinates to follow
 
             if ((int)TSHints[AVOIDING_AGENT] == 0)
             {
@@ -126,7 +125,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void CreateTarget()
         {
-            //MyLog.INFO.WriteLine(" called CreateTarget() from LTMovingTargetD");
+            //MyLog.INFO.WriteLine(" called CreateTarget() from LTMovingTarget");
 
             m_target = WrappedWorld.CreateTarget(new Point(0, 0));
 
@@ -136,7 +135,7 @@ namespace GoodAI.Modules.School.LearningTasks
             Point RandomPoint = new Point();
             float NewNumber = (float)m_rndGen.NextDouble();
 
-            RandomPoint = GetPointInEllipse(NewNumber, ellipseSize);            // Find a random point in the ellipse
+            RandomPoint = GetPointInEllipse(NewNumber, (float)TSHints[ELLIPSE_SIZE]);            // Find a random point in the ellipse
             angle = NewNumber;                                                  // Adapt the new current angle to the point generated
 
             m_target.X = RandomPoint.X;
