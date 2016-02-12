@@ -378,7 +378,7 @@ namespace GoodAI.Core.Execution
                 if (m_lastException != null)
                     throw m_lastException;
 
-                throw new MySimulationException(-1, "Unknown simulation exception occured");
+                throw new MySimulationException("Unknown simulation exception occured");
             }
         }
 
@@ -403,6 +403,7 @@ namespace GoodAI.Core.Execution
             CurrentDebuggedBlock = ExecutionPlan.InitStepPlan;
         }
 
+        // TODO(HonzaS): The coreNumber parameter is not needed, remove it with the StarPU merge.
         private void ExecutePlan(int coreNumber)
         {
             try
@@ -426,8 +427,8 @@ namespace GoodAI.Core.Execution
                 }
                 else
                 {
-                    m_lastException = new MySimulationException(coreNumber, e.Message, e);
-                    MyKernelFactory.Instance.MarkContextDead(coreNumber);
+                    m_lastException = new MySimulationException(e.Message, e);
+                    MyKernelFactory.Instance.MarkContextDead(0);
                 }
             }
         }
@@ -475,6 +476,7 @@ namespace GoodAI.Core.Execution
                         // There is no initialization plan, go to PreStandard and stop because the loading of
                         // block data might be needed.
                         m_executionPhase = ExecutionPhase.PreStandard;
+                        return;
                     }
                 }
                 else if (m_executionPhase == ExecutionPhase.Standard)
@@ -809,17 +811,8 @@ namespace GoodAI.Core.Execution
 
     public class MySimulationException : Exception
     {
-        public int CoreNumber { get; private set; }
+        public MySimulationException(string message) : base(message) { }
 
-        public MySimulationException(int coreNumber, string message) : base(message)
-        {
-            CoreNumber = coreNumber;
-        }
-
-        public MySimulationException(int coreNumber, string message, Exception innerException)
-            : base(message, innerException)
-        {
-            CoreNumber = coreNumber;
-        }
+        public MySimulationException(string message, Exception innerException) : base(message, innerException) { }
     }
  }
