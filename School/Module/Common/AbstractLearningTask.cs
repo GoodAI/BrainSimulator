@@ -226,6 +226,8 @@ namespace GoodAI.Modules.School.Common
 
         public void PresentNewTrainingUnitCommon()
         {
+            SchoolWorld.ClearWorld();
+
             ManInWorld miw = WrappedWorld as ManInWorld;
             if (miw != null)
             {
