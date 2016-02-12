@@ -460,6 +460,7 @@ namespace GoodAI.Modules.School.Worlds
                         {
                             Owner.Owner.SimulationHandler.PauseSimulation();
                         }
+                        return;
                     }
                 }
                 
