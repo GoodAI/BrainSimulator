@@ -35,10 +35,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             if (TSHints[ROTATION_ALLOWED] > 0)
             {
-                    wasUnitSuccessful = wasUnitSuccessful || WrappedWorld.Engine.CanMatch();
-                    wasUnitSuccessful = wasUnitSuccessful || WrappedWorld.Engine.CanMatch(TetrisWorld.TetrominoRotation.Left);
-                    wasUnitSuccessful = wasUnitSuccessful || WrappedWorld.Engine.CanMatch(TetrisWorld.TetrominoRotation.Right);
-                    wasUnitSuccessful = wasUnitSuccessful || WrappedWorld.Engine.CanMatch(TetrisWorld.TetrominoRotation.UpsideDown);
+                    wasUnitSuccessful = WrappedWorld.Engine.CanMatchAnyRotation();
             }
             else
             {

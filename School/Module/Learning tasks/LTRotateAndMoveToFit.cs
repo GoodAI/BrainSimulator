@@ -27,6 +27,14 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void PresentNewTrainingUnit()
         {
             WrappedWorld.Engine.ResetToRandomHorizon();
+            WrappedWorld.Engine.Step(Modules.TetrisWorld.TetrisWorld.ActionInputType.NoAction);
+            while (!WrappedWorld.Engine.CanMatchAnyRotation())
+            {
+                WrappedWorld.Engine.ResetToRandomHorizon();
+                WrappedWorld.Engine.Step(Modules.TetrisWorld.TetrisWorld.ActionInputType.NoAction);
+            }
+            for (int i = 0; i < 4 * WrappedWorld.WaitStepsPerFall; i++)
+                WrappedWorld.Engine.Step(Modules.TetrisWorld.TetrisWorld.ActionInputType.NoAction);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
