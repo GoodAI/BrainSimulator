@@ -62,38 +62,4 @@ namespace GoodAI.Modules.School.LearningTasks
             //m_target.Y = m_rndGen.Next(0, WrappedWorld.POW_HEIGHT - m_target.Height + 1);
         }
     }
-
-    /*
-    public class RoguelikeWorldWADetectWhite : AbstractWADetectWhite
-    {
-        private Worlds m_w;
-
-        protected override AbstractSchoolWorld World
-        {
-            get
-            {
-                return m_w;
-            }
-        }
-
-        protected override void InstallWorld(AbstractSchoolWorld w, TrainingSetHints trainingSetHints)
-        {
-            m_w = w as RoguelikeWorld;
-            m_w.ClearWorld();
-            if (trainingSetHints[TSHintAttributes.NOISE] > 0)
-            {
-                m_w.IsImageNoise = true;
-            }
-        }
-
-        protected override void CreateTarget(TrainingSetHints trainingSetHints)
-        {
-            m_target = new GameObject(GameObjectType.None, @"White10x10.png", 0, 0);
-            m_w.AddGameObject(m_target);
-            m_target.X = m_rndGen.Next(0, m_w.FOW_WIDTH - m_target.Width + 1);
-            m_target.Y = m_rndGen.Next(0, m_w.FOW_HEIGHT - m_target.Height + 1);
-        }
-    }
-*/
-
 }

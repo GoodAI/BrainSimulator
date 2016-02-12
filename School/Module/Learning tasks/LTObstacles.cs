@@ -31,6 +31,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public LTObstacles(SchoolWorld w)
             : base(w)
         {
+            TSHints[TSHintAttributes.IMAGE_NOISE] = 0;
             TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] = 2;               // Set degrees of freedom to 2: move in 4 directions (1 means move only right-left)
             TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] = 1;
             TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS] = 10000;

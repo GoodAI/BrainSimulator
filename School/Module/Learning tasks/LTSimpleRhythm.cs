@@ -29,6 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
+                {TSHintAttributes.IMAGE_NOISE, 0},
                 {RHYTHM_MAX_SIZE,  1},
                 {DELAY, 0},
                 {TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
