@@ -130,7 +130,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     noDebugLabel.Visible = false;
 
-                    MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlocks[0];
+                    MyExecutionBlock currentBlock = simulationHandler.Simulation.CurrentDebuggedBlock;
                     m_selectedNodeView = null;
 
                     if (currentBlock != null && currentBlock.CurrentChild != null)
