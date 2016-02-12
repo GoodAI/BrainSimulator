@@ -157,7 +157,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 float rotation = 0;
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_ROTATION] > 0)
-                    rotation = (float)(m_rndGen.Next() * 2 * Math.PI);
+                    rotation = (float)(m_rndGen.Next() * 360);
 
 
                 // Determine shape color
