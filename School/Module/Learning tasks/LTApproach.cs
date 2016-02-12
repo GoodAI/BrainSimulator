@@ -103,7 +103,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 Rectangle POW = WrappedWorld.GetPowGeometry();
                 POW.Location = new Point(POW.X, POW.Y + POW.Height / 2 - m_agent.Height);
                 POW.Size = new Size(POW.Width, m_agent.Height * 2);
-                p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, POW, 10);
+                p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, POW, 5, 20);
             }
             else
             {
