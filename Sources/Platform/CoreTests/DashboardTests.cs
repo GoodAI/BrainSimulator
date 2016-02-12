@@ -20,7 +20,7 @@ using YAXLib;
 
 namespace CoreTests
 {
-    public class DashboardTests
+    public class DashboardTests : CoreTestBase
     {
         private readonly ITestOutputHelper m_output;
 

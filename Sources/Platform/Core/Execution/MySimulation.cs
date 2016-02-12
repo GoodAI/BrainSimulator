@@ -653,11 +653,6 @@ namespace GoodAI.Core.Execution
             // Clean up memory.
             IterateNodes(modelChanges.RemovedNodes, DestroyNode);
 
-            Validator.ClearValidation();
-
-            // Validate new nodes.
-            IterateNodes(modelChanges.AddedNodes, ValidateNode);
-
             // Refresh topological ordering.
             List<MyNode> orderedNodes = MySimulationHandler.OrderNetworkNodes(m_project.Network);
 
@@ -666,6 +661,12 @@ namespace GoodAI.Core.Execution
             // We'll need to forbid changing of count after the simulation has started with the exception of added nodes.
             // However, the added nodes may lead to reallocation of blocks - deal with it.
             bool updatesNotConverged = UpdateMemoryModel(m_project, orderedNodes);
+
+            Validator.ClearValidation();
+
+            // Validate new nodes.
+            IterateNodes(modelChanges.AddedNodes, ValidateNode);
+
             Validator.AssertError(!updatesNotConverged, m_project.Network, "Possible infinite loop in memory block sizes.");
 
             if (!Validator.ValidationSucessfull)
