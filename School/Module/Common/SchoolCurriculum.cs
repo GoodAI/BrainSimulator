@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.LearningTasks;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -35,6 +36,20 @@ namespace GoodAI.Modules.School.Common
                 m_taskEnumerator = Tasks.GetEnumerator();
             if (m_taskEnumerator.MoveNext())
                 return m_taskEnumerator.Current;
+            return null;
+        }
+
+        public Type GetWorldForNextLT()
+        {
+            if (m_taskEnumerator == null && Tasks.First() != null)
+                return Tasks.First().RequiredWorld;
+            else
+            {
+                int idx = Tasks.IndexOf(m_taskEnumerator.Current);
+                if (Tasks.ElementAt(idx + 1) != null)
+                    return Tasks.ElementAt(idx + 1).RequiredWorld;
+            }
+
             return null;
         }
 

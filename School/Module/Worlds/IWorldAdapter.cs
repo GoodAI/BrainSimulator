@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Task;
+﻿using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
 using GoodAI.Modules.School.Common;
 using System;
 using System.ComponentModel;

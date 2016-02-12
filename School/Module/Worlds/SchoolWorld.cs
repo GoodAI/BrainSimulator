@@ -138,7 +138,7 @@ namespace GoodAI.Modules.School.Worlds
 
         #endregion
 
-        
+
         private IWorldAdapter m_currentWorld;
         private bool m_switchModel = true;
 
@@ -152,7 +152,7 @@ namespace GoodAI.Modules.School.Worlds
             set
             {
                 // TODO m_currentWorld Init memory of wrapped world
-                m_switchModel = true;
+                //m_switchModel = true;
                 m_currentWorld = value;
                 m_currentWorld.School = this;
                 m_currentWorld.InitAdapterMemory();
@@ -167,14 +167,14 @@ namespace GoodAI.Modules.School.Worlds
                 m_switchModel = true;
         }
 
-        #endregion
-
         public SchoolWorld()
         {
             Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw.ToString();
         }
 
         Random m_rndGen = new Random();
+
+        private IWorldAdapter m_newWorld = null;
 
         public SchoolCurriculum Curriculum { get; set; }
         private ILearningTask m_currentLTBF;
@@ -186,10 +186,10 @@ namespace GoodAI.Modules.School.Worlds
                 m_currentLTBF = value;
                 if (m_currentLTBF != null)
                 {
-                    MyWorld world = (CurrentWorld as MyWorld);
-                    if (world != null)
-                        world.Dispose();
-                    CurrentWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
+                    m_newWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
+
+                    //MyWorld world = (CurrentWorld as MyWorld);
+                    //CurrentWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
                 }
             }
         }
@@ -215,26 +215,44 @@ namespace GoodAI.Modules.School.Worlds
             if (!m_switchModel)
                 return false;
 
-            CurrentWorld.World.EnableDefaultTasks();
-            changes.AddNode(CurrentWorld.World);
+            if (CurrentWorld == null)
+            {
+                m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+            }
+
+            if (m_newWorld != null)
+            {
+                if (CurrentWorld != null)
+                    changes.RemoveNode(CurrentWorld.World);
+                CurrentWorld = m_newWorld;
+                CurrentWorld.World.EnableDefaultTasks();
+                changes.AddNode(CurrentWorld.World);
+                m_newWorld = null;
+            }
+
             m_switchModel = false;
             return true;
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            Curriculum.ResetLearningProgress();
-            m_currentLearningTask = Curriculum.GetNextLearningTask();
+
+            var world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+
+            //Curriculum.ResetLearningProgress();
+            //m_currentLearningTask = Curriculum.GetNextLearningTask();
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
-            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
+            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(world.World, true);
 
             return new MyExecutionBlock(defaultInitPhasePlan, plan);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
+            var world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
             IMyExecutable[] thisWorldTasks = defaultPlan.Children;
@@ -243,10 +261,10 @@ namespace GoodAI.Modules.School.Worlds
             // The default plan will only contain one block with: signals in, world tasks, signals out.
             blocks.Add(thisWorldTasks.First());
             blocks.Add(AdapterInputStep);
-            var worldPlan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false);
-            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.GetWorldRenderTask()));
+            var worldPlan = executionPlanner.CreateNodeExecutionPlan(world.World, false);
+            blocks.AddRange(worldPlan.Children.Where(x => x != world.GetWorldRenderTask()));
             blocks.Add(LearningStep);
-            blocks.Add(CurrentWorld.GetWorldRenderTask());
+            blocks.Add(world.GetWorldRenderTask());
             blocks.Add(AdapterOutputStep);
             blocks.Add(thisWorldTasks.Last());
 
@@ -421,7 +439,8 @@ namespace GoodAI.Modules.School.Worlds
         {
             public override void Init(int nGPU)
             {
-                Owner.CurrentWorld.InitWorldOutputs(nGPU);
+                if (Owner.CurrentWorld != null)
+                    Owner.CurrentWorld.InitWorldOutputs(nGPU);
             }
 
             public override void Execute()
@@ -437,7 +456,8 @@ namespace GoodAI.Modules.School.Worlds
         {
             public override void Init(int nGPU)
             {
-                Owner.CurrentWorld.InitWorldInputs(nGPU);
+                if (Owner.CurrentWorld != null)
+                    Owner.CurrentWorld.InitWorldInputs(nGPU);
             }
 
             public override void Execute()
@@ -472,6 +492,8 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 Owner.ExecuteLearningTaskStep();
+                if (SimulationStep == 0)
+                    Owner.ExecuteLearningTaskStep();
             }
         }
     }
