@@ -462,10 +462,8 @@ namespace GoodAI.Modules.School.Worlds
                         }
                     }
                 }
-                else
-                {
-                    Owner.ExecuteLearningTaskStep();
-                }
+                
+                Owner.ExecuteLearningTaskStep();
             }
         }
 
