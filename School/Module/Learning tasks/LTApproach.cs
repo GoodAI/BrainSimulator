@@ -39,6 +39,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
+            TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1);
         }
 
         public override void PresentNewTrainingUnit()

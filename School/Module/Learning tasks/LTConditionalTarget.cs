@@ -212,6 +212,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(CONDITION_SALIENCE, .5f);
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
+            TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1);
         }
 
         public override void PresentNewTrainingUnit()

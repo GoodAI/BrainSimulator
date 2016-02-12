@@ -83,6 +83,7 @@ namespace GoodAI.Modules.School.Worlds
         public virtual int POW_HEIGHT { get { return m_POW_HEIGHT; } set { m_POW_HEIGHT = value; } }
 
         public virtual Color BackgroundColor { get; set; }
+        public virtual bool UseBackgroundTexture { get; set; }
 
         public const float DUMMY_PIXEL = float.NaN;
         private const int PIXEL_SIZE = 4; // RGBA: 4 floats per pixel
@@ -225,6 +226,10 @@ namespace GoodAI.Modules.School.Worlds
             {
                 DegreesOfFreedom = (int)value;
             }
+            else if (attr == TSHintAttributes.IMAGE_TEXTURE_BACKGROUND)
+            {
+                UseBackgroundTexture = value > 0;
+            }
         }
 
         public override void UpdateMemoryBlocks()
@@ -256,6 +261,8 @@ namespace GoodAI.Modules.School.Worlds
             Objects.Count = 0;
 
             Reward.Count = 1;
+
+            UseBackgroundTexture = false;
         }
 
         public override void Validate(MyValidator validator)
@@ -329,7 +336,7 @@ namespace GoodAI.Modules.School.Worlds
             Size agentBorders = new Size(agentMargin, agentMargin);
             Rectangle agentGeometry = Agent.GetGeometry();
             agentGeometry.Location -= agentBorders;
-            agentGeometry.Size  += agentBorders + agentBorders;
+            agentGeometry.Size += agentBorders + agentBorders;
 
             Rectangle obj = new Rectangle();
             int randomPositionCounter = 0;
@@ -1239,15 +1246,25 @@ namespace GoodAI.Modules.School.Worlds
             {
                 GL.PushMatrix();
 
-                GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
-                GL.Begin(PrimitiveType.Quads);
-                GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                GL.TexCoord2(0.5f, 0.0f); GL.Vertex2((float)Owner.FOW_WIDTH, 0f);
-                GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
-                GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, (float)Owner.FOW_HEIGHT);
-                GL.End();
+                if (Owner.UseBackgroundTexture)
+                {
+                    GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
+                    GL.Begin(PrimitiveType.Quads);
+                    GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
+                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2((float)Owner.FOW_WIDTH, 0f);
+                    GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
+                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, (float)Owner.FOW_HEIGHT);
+                    GL.BindTexture(TextureTarget.Texture2D, 0);
+                }
+                else
+                {
+                    GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
+                    GL.ClearColor(Owner.BackgroundColor);
+                    GL.Clear(ClearBufferMask.ColorBufferBit);
+                    GL.BindTexture(TextureTarget.Texture2D, 0);
+                }
 
-                GL.BindTexture(TextureTarget.Texture2D, 0);
+                GL.End();
 
                 GL.PopMatrix();
             }

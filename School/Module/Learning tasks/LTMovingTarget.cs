@@ -90,7 +90,8 @@ namespace GoodAI.Modules.School.LearningTasks
                     { ELLIPSE_SIZE, 0.65f },
                     { STEPS_TAKEN_FOR_ONE_CIRCLE, 1000 },
                     { AVOIDING_AGENT, 1 },
-                    { DISTANCE_BONUS_COEFFICENT, 7f }
+                    { DISTANCE_BONUS_COEFFICENT, 7f },
+                    { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1f}
             });
         }
 
