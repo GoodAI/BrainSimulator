@@ -117,12 +117,12 @@ namespace GoodAI.Modules.School.Common
                     curriculum.AddLearningTask(world, typeof(LTSimpleDistance));
                     curriculum.AddLearningTask(world, typeof(LTSimpleAngle));
                     curriculum.AddLearningTask(world, typeof(LTApproach));
-                    //Moving Target
-                    //Hidden Target
-                    //Conditional Target
+                    curriculum.AddLearningTask(world, typeof(LTMovingTarget));
+                    curriculum.AddLearningTask(world, typeof(LTHiddenTarget));
+                    curriculum.AddLearningTask(world, typeof(LTConditionalTarget));
                     //Noise in Actions
                     curriculum.AddLearningTask(world, typeof(LTObstaclesTargetOnSight));
-                    //Multiple Targets in Sequence
+                    curriculum.AddLearningTask(world, typeof(LTMultipleTargetsSequence));
                     //Shape sorting
                     curriculum.AddLearningTask(world, typeof(LTCopyAction));
                     curriculum.AddLearningTask(world, typeof(LTCopySequence));

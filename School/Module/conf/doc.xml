@@ -151,7 +151,8 @@
              </summary>
              <param name="rndGen"></param>
              <param name="size"></param>
-             <param name="minMarginFromAgent"> if -1, collision is allowed</param>
+             <param name="agentMargin"> if -1, collision is allowed</param>
+             <param name="objectMargin"></param>
              <returns>Point inside POW with respect to size</returns>
         </member>
         <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.AddGameObject(GoodAI.Modules.School.Common.GameObject,System.Int32)">

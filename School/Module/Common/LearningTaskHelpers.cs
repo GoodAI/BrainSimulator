@@ -197,7 +197,7 @@ namespace GoodAI.Modules.School.Common
                 case 4:
                     return Color.Black;
                 case 5:
-                    return Color.Magenta;
+                    return Color.SteelBlue;
                 case 6:
                     return Color.Green;
                 case 7:
