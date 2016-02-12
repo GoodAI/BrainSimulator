@@ -202,9 +202,12 @@ namespace GoodAI.Core.Memory
 
         public override bool Reallocate(int newCount, bool copyData = true)
         {
-            // TODO(HonzaS): The simulation should be accessible in a better way.
-            if (!Owner.Owner.SimulationHandler.Simulation.IsStepFinished)
-                throw new InvalidOperationException("Reallocate called from Execute()");
+            // TODO(HonzaS): Some of the current models need this during Execute().
+            // TODO(HonzaS): Research will have to switch to the new model, but there is no reason to forbid it now.
+
+            //// TODO(HonzaS): The simulation should be accessible in a better way.
+            //if (!Owner.Owner.SimulationHandler.Simulation.IsStepFinished)
+            //    throw new InvalidOperationException("Reallocate called from Execute()");
 
             if (!IsDynamic)
             {
