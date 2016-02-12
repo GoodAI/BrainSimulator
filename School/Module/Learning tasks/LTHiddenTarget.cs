@@ -44,6 +44,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(NUMBER_OF_FALSE_TARGETS, 2);
             TSProgression.Add(NUMBER_OF_FALSE_TARGETS, 3);
             TSProgression.Add(TSHintAttributes.GIVE_PARTIAL_REWARDS, 0);
+            TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1);
         }
 
         public override void PresentNewTrainingUnit()

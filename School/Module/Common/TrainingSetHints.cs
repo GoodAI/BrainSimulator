@@ -43,6 +43,12 @@ namespace GoodAI.Modules.School.Common
             typeof(bool),
             0, 1);
 
+        public static readonly TSHintAttribute IMAGE_TEXTURE_BACKGROUND = new TSHintAttribute(
+            "Image background",
+            "Adding texture to the background of the world.",
+            typeof(bool),
+            0, 1);
+
         // Initially set this to some large number (10 000). Do not change it later!
         public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", typeof(int), 0, 1);
 

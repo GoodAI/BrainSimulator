@@ -78,7 +78,8 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(
                 new TrainingSetHints {
                     { SEQUENCE_LENGTH, 5 },
-                    { DISTANCE_BONUS_COEFFICENT, 1.0f }
+                    { DISTANCE_BONUS_COEFFICENT, 1.0f },
+                    { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1.0f }
             });
         }
 

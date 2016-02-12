@@ -29,6 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TIMESTEPS_LIMIT, 100);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TIMESTEPS_LIMIT, 50);
+            TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1);
         }
 
         public override void PresentNewTrainingUnit()
