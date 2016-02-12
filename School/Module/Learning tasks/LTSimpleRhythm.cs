@@ -85,6 +85,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void ExecuteStep()
         {
+            if (m_currentStep >= m_timeplan.Length)
+            {
+                return;
+            }
+
             m_currentStep++;
             base.ExecuteStep();
             WrappedWorld.ClearWorld();
