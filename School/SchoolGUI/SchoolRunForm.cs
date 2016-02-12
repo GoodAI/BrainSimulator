@@ -57,6 +57,7 @@ namespace GoodAI.School.GUI
         {
             //m_source.ResetBindings(true);
             dataGridView1.DataSource = Data;
+            PrepareSimulation();
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
