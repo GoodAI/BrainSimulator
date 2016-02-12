@@ -9,6 +9,7 @@ using GoodAI.TypeMapping;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using YAXLib;
 
@@ -209,8 +210,8 @@ namespace GoodAI.Modules.School.Worlds
             if (!m_switchModel)
                 return false;
 
-            if (CurrentWorld == null)
-                m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+            //if (CurrentWorld == null)
+            //m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
 
             if (m_newWorld != null)
             {
@@ -228,19 +229,20 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            IWorldAdapter world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+            m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
-            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(world.World, true);
+            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(m_newWorld.World, true);
 
             return new MyExecutionBlock(defaultInitPhasePlan, plan);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
-            IWorldAdapter world = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
-
+            IWorldAdapter world = m_newWorld;
+            if (m_newWorld == null)
+                world = CurrentWorld;
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
             IMyExecutable[] thisWorldTasks = defaultPlan.Children;
