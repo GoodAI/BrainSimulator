@@ -135,10 +135,13 @@ namespace GoodAI.Modules.School.LearningTasks
             actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
             actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
 
+            Rectangle restrcitedRectangle = WrappedWorld.GetPowGeometry();
+            restrcitedRectangle = LearningTaskHelpers.ResizeRectangleAroundCentre(restrcitedRectangle, 0.8f);
+
             Point teachersPoint;
-            if ((int)TSHints[LTCopySequence.TEACHER_ON_DIFF_START_POSITION] != 0)
+            if ((int)TSHints[TEACHER_ON_DIFF_START_POSITION] != 0)
             {
-                teachersPoint = WrappedWorld.RandomPositionInsidePow(m_rndGen, RogueTeacher.GetDefaultSize());
+                teachersPoint = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, RogueTeacher.GetDefaultSize(), restrcitedRectangle, 10);
             }
             else
             {

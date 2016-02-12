@@ -246,5 +246,41 @@ namespace GoodAI.Modules.School.Common
             }
             return result;
         }
+
+        public static Rectangle ResizeRectangleAroundCentre(Rectangle r, float ratio)
+        {
+            Rectangle f = new Rectangle();
+
+            int dX = (int)(((r.Width * ratio) - r.Width) / 2);
+            int dY = (int)(((r.Height * ratio) - r.Height) / 2);
+
+            int xNew = r.X - dX;
+            int yNew = r.Y - dY;
+            f.Location = new Point(xNew, yNew);
+
+            int newWidth = r.Width + 2 * dX;
+            int newHeight = r.Height + 2 * dX;
+            f.Size = new Size(newWidth, newHeight);
+
+            return f;
+        }
+
+        public static Rectangle ResizeRectangleAroundCentre(Rectangle r, int dx, int dy)
+        {
+            Rectangle f = new Rectangle();
+
+            int dX = dx;
+            int dY = dy;
+
+            int xNew = r.X + dX;
+            int yNew = r.Y + dY;
+            f.Location = new Point(xNew, yNew);
+
+            int newWidth = r.Width + 2 * dX;
+            int newHeight = r.Height + 2 * dX;
+            f.Size = new Size(newWidth, newHeight);
+
+            return f;
+        }
     }
 }
