@@ -52,7 +52,7 @@ namespace GoodAI.Modules.School.LearningTasks
             Color shapeColor = Color.White;
             float rotation = 0;
 
-            Shape nthShape = m_lastNShapes[m_lastNShapes.Length - 1];
+            Shape nthShape = m_lastNShapes[m_lastNShapes.Length - 2];   // check N steps back, but current is not pushed, so it is N - 1
             if (nthShape != null && m_rndGen.NextDouble() < 0.5)
             {
                 // with probability 0.5 copy the same
@@ -145,7 +145,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 return false;
             }
 
-            bool shapeTypes = s1.ShapeType.Equals(s1.ShapeType);
+            bool shapeTypes = s1.ShapeType == s2.ShapeType;
             bool colors = s1.maskColor == s2.maskColor;
             bool positions = s1.X == s2.X && s1.Y == s2.Y;
             bool sizes = s1.Width == s2.Width && s1.Height == s2.Height;
