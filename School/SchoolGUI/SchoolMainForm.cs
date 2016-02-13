@@ -17,11 +17,12 @@ namespace GoodAI.School.GUI
     [BrainSimUIExtension]
     public partial class SchoolMainForm : DockContent
     {
-        public SchoolAddTaskForm AddTaskView { get; private set; }
-        public SchoolRunForm RunView { get; private set; }
+        private readonly MainForm m_mainForm;
         private YAXSerializer m_serializer;
         private TreeModel m_model;
         private string m_lastOpenedFile;
+        public SchoolAddTaskForm AddTaskView { get; private set; }
+        public SchoolRunForm RunView { get; private set; }
 
         private PlanDesign m_design
         {
@@ -30,8 +31,6 @@ namespace GoodAI.School.GUI
                 return new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
             }
         }
-
-        private readonly MainForm m_mainForm;
 
         public SchoolMainForm(MainForm mainForm)
         {
@@ -52,7 +51,9 @@ namespace GoodAI.School.GUI
             UpdateButtons();
         }
 
-        private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
+        private void SchoolMainForm_Load(object sender, System.EventArgs e)
+        {
+        }
 
         #region Curricula
 
@@ -96,7 +97,7 @@ namespace GoodAI.School.GUI
             return false;
         }
 
-        #endregion
+        #endregion Curricula
 
         #region UI
 
@@ -152,7 +153,7 @@ namespace GoodAI.School.GUI
                 btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
         }
 
-        #endregion
+        #endregion UI
 
         #region DragDrop
 
@@ -241,7 +242,7 @@ namespace GoodAI.School.GUI
             tree.EndUpdate();
         }
 
-        #endregion
+        #endregion DragDrop
 
         #region Button clicks
 
@@ -379,7 +380,7 @@ namespace GoodAI.School.GUI
             OpenFloatingOrActivate(detailsForm, DockPanel);
         }
 
-        #endregion
+        #endregion Button clicks
 
         #region (De)serialization
 
@@ -399,7 +400,7 @@ namespace GoodAI.School.GUI
             Properties.School.Default.Save();
         }
 
-        #endregion
+        #endregion (De)serialization
 
         // almost same as Mainform.OpenFloatingOrActivate - refactor?
         private void OpenFloatingOrActivate(DockContent view, DockPanel panel)

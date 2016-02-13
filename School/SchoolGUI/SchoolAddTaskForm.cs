@@ -7,7 +7,8 @@ namespace GoodAI.School.GUI
 {
     public partial class SchoolAddTaskForm : DockContent
     {
-        // this is here just for overriding ToString (for combobox list) - ask Martin P. if whole type's ToString is OK - if yes, delete this class
+        // this is here just for overriding ToString (for combobox list) - ask Martin P. if whole
+        // type's ToString is OK - if yes, delete this class
         private class TypeHolder
         {
             public Type Type { get; set; }

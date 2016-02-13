@@ -1,10 +1,8 @@
 ﻿using GoodAI.BrainSimulator.Forms;
-using GoodAI.Core.Configuration;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -14,8 +12,10 @@ namespace GoodAI.School.GUI
     {
         public List<LearningTaskNode> Data;
         public PlanDesign Design;
+
         //private BindingSource m_source;
         private readonly MainForm m_mainForm;
+
         private SchoolWorld m_school;
 
         public SchoolRunForm(MainForm mainForm)
@@ -24,16 +24,21 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             dataGridView1.DataSource = Data;
-            // using BindingSource is probably better but it wasn't updating; don't know why - postponed
-            // m_source = new BindingSource();
-            // m_source.DataSource = Data;
+            // using BindingSource is probably better but it wasn't updating; don't know why -
+            // postponed m_source = new BindingSource(); m_source.DataSource = Data;
             // dataGridView1.DataSource = m_source;
+        }
+
+        public void UpdateData()
+        {
+            //m_source.ResetBindings(true);
+            dataGridView1.DataSource = Data;
+            PrepareSimulation();
         }
 
         private void SelectSchoolWorld()
         {
-            // Enable SchoolWorld
-            // Add SchoolWorld to World combolist
+            // Enable SchoolWorld Add SchoolWorld to World combolist
             // -- lets assume we have this (TODO but some of this is checked by SelectWorldInWorldList)
             // select it
             m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
@@ -53,13 +58,6 @@ namespace GoodAI.School.GUI
             CreateCurriculum();
         }
 
-        public void UpdateData()
-        {
-            //m_source.ResetBindings(true);
-            dataGridView1.DataSource = Data;
-            PrepareSimulation();
-        }
-
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
@@ -77,7 +75,8 @@ namespace GoodAI.School.GUI
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
-            // needs to be here - this way curr. is recreated and all its tasks reseted each time simulation is started
+            // needs to be here - this way curr. is recreated and all its tasks reseted each time
+            // simulation is started
             PrepareSimulation();
             m_mainForm.runToolButton.PerformClick();
         }

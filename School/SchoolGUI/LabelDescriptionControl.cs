@@ -8,6 +8,7 @@ namespace GoodAI.School.GUI
     public partial class LabelDescriptionControl : UserControl
     {
         private Type m_type;
+
         public Type Type
         {
             get { return m_type; }

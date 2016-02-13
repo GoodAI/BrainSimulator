@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace GoodAI.School.GUI
@@ -8,6 +6,7 @@ namespace GoodAI.School.GUI
     public partial class LearningTaskDetailsControl : UserControl
     {
         private Type m_taskType;
+
         public Type TaskType
         {
             get { return m_taskType; }
