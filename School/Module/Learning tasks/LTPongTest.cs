@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Pong test")]
+    [DisplayName("Pong test")]
     public class LTPongTest : AbstractLearningTask<PongAdapterWorld>
     {
         public LTPongTest() : base(null) { }

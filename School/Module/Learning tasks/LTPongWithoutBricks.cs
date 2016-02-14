@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability info: Ability to play pong without bricks.
     /// The difficulty of the levels is denoted by the number of hits (paddle touching ball) needed in order to pass a training unit (BALL_HITS_NEEDED), and the maximum number of misses (ball reaching the bottom part of the screen untouched by the paddle, MAX_MISSES_ALLOWED)
     /// </description>
-    [DisplayNameAttribute("Pong without bricks")]
+    [DisplayName("Pong without bricks")]
     public class LTPongWithoutBricks : AbstractLearningTask<PongAdapterWorld>
     {
         public LTPongWithoutBricks() : base(null) { }

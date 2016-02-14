@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability info: Ability to play pong with bricks.
     /// The agent is presented the pong game, the expectancy is that the agent completes the game by passing all the required levels
     /// </description>
-    [DisplayNameAttribute("Pong with bricks")]
+    [DisplayName("Pong with bricks")]
     public class LTPongWithBricks : AbstractLearningTask<PongAdapterWorld>
     {
         public LTPongWithBricks() : base(null) { }

@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <meta>mm</meta>
     /// <summary>
     /// </summary>
-    [DisplayNameAttribute("Shape sorting")]
+    [DisplayName("Shape sorting")]
     public class LTShapeSorting : AbstractLearningTask<RoguelikeWorld>
     {
         #region Fields

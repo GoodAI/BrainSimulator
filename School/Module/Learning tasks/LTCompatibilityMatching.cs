@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Compatibility matching")]
+    [DisplayName("Compatibility matching")]
     public class LTCompatibilityMatching : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTCompatibilityMatching() : base(null) { }

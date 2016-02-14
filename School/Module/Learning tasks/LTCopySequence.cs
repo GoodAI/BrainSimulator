@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Copy sequence")]
+    [DisplayName("Copy sequence")]
     public class LTCopySequence : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);

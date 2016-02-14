@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Class composition")]
+    [DisplayName("Class composition")]
     public class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1); //check needed;

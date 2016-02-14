@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Simple rhythm")]
+    [DisplayName("Simple rhythm")]
     public class LTSimpleRhythm : AbstractLearningTask<ManInWorld>
     {
         private TSHintAttribute RHYTHM_MAX_SIZE = new TSHintAttribute("Max number of steps between two ticks", "", typeof(int), 1, 8);

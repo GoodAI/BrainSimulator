@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Debugging")]
+    [DisplayName("Debugging")]
     public class LTDebugging : AbstractLearningTask<ManInWorld>
     {
         private GameObject m_target;

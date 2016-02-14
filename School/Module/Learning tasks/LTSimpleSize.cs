@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Simple size")]
+    [DisplayName("Simple size")]
     public class LTSimpleSize : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels", "", typeof(int), 0, 1);

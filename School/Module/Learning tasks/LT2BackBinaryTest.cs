@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("2 back binary test")]
+    [DisplayName("2 back binary test")]
     public class LT2BackBinaryTest : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

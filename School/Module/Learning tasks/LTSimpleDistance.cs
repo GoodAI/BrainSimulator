@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Simple distance")]
+    [DisplayName("Simple distance")]
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
         private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Error tolerence in [0,1]", "", typeof(float), 0, 1);

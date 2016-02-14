@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability Name: Efficient navigation in a simple environment + moving target. The class is derived from LTApproach with some additions for the moving target (currently: circular movement).
     /// Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
     /// </description>
-    [DisplayNameAttribute("Moving target")]
+    [DisplayName("Moving target")]
     public class LTMovingTarget : LTApproach                           // Deriving from LTApproach
     {
         private float angle;                                                    // Used for the trajectory of the circular movement of the target

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Detect shape")]
+    [DisplayName("Detect shape")]
     public class LTDetectShape : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

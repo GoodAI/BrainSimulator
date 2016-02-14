@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <description>
     /// Ability Name: Navigate to the target efficiently by avoiding obstacles
     /// </description>
-    [DisplayNameAttribute("Obstacles")]
+    [DisplayName("Obstacles")]
     public class LTObstacles : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();

@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Rotate and move to fit")]
+    [DisplayName("Rotate and move to fit")]
     public class LTRotateAndMoveToFit : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTRotateAndMoveToFit() { }

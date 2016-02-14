@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Tetris test")]
+    [DisplayName("Tetris test")]
     public class LTTetrisTest : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTTetrisTest() : base(null) { }

@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Detect color")]
+    [DisplayName("Detect color")]
     public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Condition salience", "", typeof(int), 0, 8);

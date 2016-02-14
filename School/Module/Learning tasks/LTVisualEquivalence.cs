@@ -7,7 +7,7 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     /// <summary>Visual object for comparison. Similar to the Shape class.</summary>
-    [DisplayNameAttribute("Comparison shape")]
+    [DisplayName("Comparison shape")]
     public class ComparisonShape : GameObject
     {
         // The shapes used for the targets

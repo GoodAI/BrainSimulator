@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <description>
     /// The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
     /// </description>
-    [DisplayNameAttribute("Obstacles target on sight")]
+    [DisplayName("Obstacles target on sight")]
     public class LTObstaclesTargetOnSight : LTObstacles                           // Deriving from LTObstacles
     {
         public LTObstaclesTargetOnSight() : base(null) { }

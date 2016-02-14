@@ -1,15 +1,13 @@
 ﻿using GoodAI.Core.Nodes;
-using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
-using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.Worlds
 {
+    [DisplayName("Roguelike")]
     public partial class RoguelikeWorld : ManInWorld, IMyCustomTaskFactory
     {
-
         protected override string TEXTURE_DIR { get { return @"res\RoguelikeWorld"; } }
 
         //[MyTaskInfo(OneShot = true, Order = 90)]
@@ -43,7 +41,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public Point GetInitPosition()
         {
-            if(Agent == null){
+            if (Agent == null)
+            {
                 return new Point(
                     FOW_WIDTH / 2 - RogueAgent.GetDefaultSize().Width / 2,
                     FOW_HEIGHT / 2 - RogueAgent.GetDefaultSize().Height / 2);

@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Detect difference")]
+    [DisplayName("Detect difference")]
     public class LTDetectDifference : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayNameAttribute("Approach")]
+    [DisplayName("Approach")]
     public class LTApproach : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
