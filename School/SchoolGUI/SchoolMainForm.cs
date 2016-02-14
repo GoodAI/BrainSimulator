@@ -360,6 +360,11 @@ namespace GoodAI.School.GUI
                 data.Add(ltNode);
             RunView.Data = data;
             RunView.Design = m_design;
+            if (activeCurricula.Count() == 1)
+                RunView.RunName = activeCurricula.First().Text;
+            else
+                RunView.RunName = Path.GetFileNameWithoutExtension(m_currentFile);
+
             RunView.UpdateData();
         }
 

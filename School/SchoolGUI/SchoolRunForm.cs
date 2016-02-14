@@ -16,7 +16,22 @@ namespace GoodAI.School.GUI
         public PlanDesign Design;
 
         private readonly MainForm m_mainForm;
+        private string m_runName;
         private SchoolWorld m_school;
+
+        public string RunName
+        {
+            get { return m_runName; }
+            set
+            {
+                m_runName = value;
+
+                string result = "School run";
+                if (!String.IsNullOrEmpty(m_runName))
+                    result += " - " + RunName;
+                this.Text = result;
+            }
+        }
 
         public SchoolRunForm(MainForm mainForm)
         {
