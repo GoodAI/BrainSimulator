@@ -1,6 +1,8 @@
 ﻿using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GoodAI.School.GUI
@@ -20,6 +22,9 @@ namespace GoodAI.School.GUI
 
             public override string ToString()
             {
+                DisplayNameAttribute displayNameAtt = Type.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                if (displayNameAtt != null)
+                    return displayNameAtt.DisplayName;
                 return Type.Name;
             }
         }

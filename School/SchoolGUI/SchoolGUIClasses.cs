@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using YAXLib;
 
@@ -37,7 +38,13 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                return TaskType.Name + " (" + WorldType.Name + ")";
+                DisplayNameAttribute displayNameAttTask = TaskType.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                DisplayNameAttribute displayNameAttWorld = WorldType.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+
+                string taskDisplayName = displayNameAttTask != null ? displayNameAttTask.DisplayName : TaskType.Name;
+                string worldDisplayName = displayNameAttWorld != null ? displayNameAttWorld.DisplayName : WorldType.Name;
+
+                return taskDisplayName + " (" + worldDisplayName + ")";
             }
         }
 

@@ -3,6 +3,8 @@ using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -58,7 +60,11 @@ namespace GoodAI.School.GUI
                 if (e.Value != null)
                 {
                     Type typeValue = e.Value as Type;
-                    if (typeValue != null)
+
+                    DisplayNameAttribute displayNameAtt = typeValue.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                    if (displayNameAtt != null)
+                        e.Value = displayNameAtt.DisplayName;
+                    else
                         e.Value = typeValue.Name;
                 }
             }
