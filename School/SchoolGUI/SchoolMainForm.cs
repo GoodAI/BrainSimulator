@@ -50,6 +50,7 @@ namespace GoodAI.School.GUI
             m_model.NodesInserted += UpdateWindowName;
 
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            checkBoxAutorun.Checked = Properties.School.Default.AutorunEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
             if (LoadCurriculum(m_lastOpenedFile))
                 saveFileDialog1.FileName = m_lastOpenedFile;
