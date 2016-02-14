@@ -1,9 +1,11 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayNameAttribute("Compatibility matching")]
     public class LTCompatibilityMatching : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTCompatibilityMatching() : base(null) { }
@@ -27,7 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void PresentNewTrainingUnit()
         {
             WrappedWorld.Engine.ResetToRandomHorizon();
-            for (int i = 0; i < 4 * WrappedWorld.WaitStepsPerFall; i++)                
+            for (int i = 0; i < 4 * WrappedWorld.WaitStepsPerFall; i++)
                 WrappedWorld.Engine.Step(Modules.TetrisWorld.TetrisWorld.ActionInputType.NoAction);
         }
 
@@ -35,7 +37,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             if (TSHints[ROTATION_ALLOWED] > 0)
             {
-                    wasUnitSuccessful = WrappedWorld.Engine.CanMatchAnyRotation();
+                wasUnitSuccessful = WrappedWorld.Engine.CanMatchAnyRotation();
             }
             else
             {

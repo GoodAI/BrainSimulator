@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -12,6 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <description>
     /// Ability Name: Navigate to the target efficiently by avoiding obstacles
     /// </description>
+    [DisplayNameAttribute("Obstacles")]
     public class LTObstacles : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
@@ -71,7 +73,6 @@ namespace GoodAI.Modules.School.LearningTasks
             RoguelikeWorld world = WrappedWorld as RoguelikeWorld;                              // Reference to World
             Grid g = world.GetGrid();                                                           // Get grid
 
-
             if (level == 1)
             {
                 TSHints[TIMESTEPS_LIMIT] = 500;
@@ -90,7 +91,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.Y = 120;
             }
 
-
             if (level == 2)                                                                     // Like level 1, but inverted
             {
                 TSHints[TIMESTEPS_LIMIT] = 500;
@@ -108,7 +108,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.X = 50;
                 m_target.Y = 50;
             }
-
 
             if (level == 3)
             {
@@ -131,7 +130,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.X = 550;
                 m_target.Y = 110;
             }
-
 
             if (level == 4)
             {
@@ -167,7 +165,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target.X = 550;
                 m_target.Y = 250;
             }
-
 
             if (level == 5)
             {
@@ -218,7 +215,6 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-
         public void createWallRectangle(RoguelikeWorld world, int widthOfRectangle, int heightOfRectangle)
         {
             Grid g = world.GetGrid();
@@ -235,13 +231,12 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-
-
         /*
          * The function uses the grid to create a partial rectangle with settable size and position, the rectangle is made of walls and the probability of the corresponding blocks being filled can be set.
          * "wallAddProbability" denotes the probability of each block of the rectangle being filled: it ranges from 0 (empty rectangle, no rectangle) to 1 (full rectangle), 0.5f means the rectangle is filled using half of the blocks
          * The algorithm ensures there is always 1 hole, even if "wallAddProbability" is 1.0f
          */
+
         public void createWallRectangleWithFillProbability(RoguelikeWorld world, Random rndGen, int gridX, int gridY, int widthOfRectangle, int heightOfRectangle, float wallAddProbability, float sizeWall)
         {
             Grid g = world.GetGrid();
@@ -288,7 +283,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     {
                         world.CreateWall(g.getPoint(gridX + k, heightOfRectangle + gridY), sizeWall);
                     }
-
                 }
                 else
                 {
@@ -296,7 +290,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
             }
         }
-
 
         public void createWallHorizontalLine(RoguelikeWorld world, int gridX, int gridY, int lengthOfLine)
         {
@@ -345,10 +338,6 @@ namespace GoodAI.Modules.School.LearningTasks
     }
 }
 
-
-
-
-
 // Wall rectangle with random width and corresponding target positioning
 /*
 if (level == 1)
@@ -357,7 +346,6 @@ if (level == 1)
     int widthOfRectangle = m_rndGen.Next(20, 30);
 
     int heightOfRectangle = 5;
-
 
     createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
@@ -373,7 +361,6 @@ if (level == 1)
     m_movingObstacle1.vY = 2;
     WrappedWorld.AddGameObject(m_movingObstacle1);
 
-
     // Create bouncing block
     m_movingObstacle2 = new MovableGameObject(GameObjectType.Obstacle, "Armor_Block.png", 30, 60);
     m_movingObstacle2.Width = 30;
@@ -384,7 +371,6 @@ if (level == 1)
     m_movingObstacle2.Y = 90;
     m_movingObstacle2.vY = -2;
     WrappedWorld.AddGameObject(m_movingObstacle2);
-
 
     // Position agent
     m_agent.X = 50;

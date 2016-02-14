@@ -1,7 +1,7 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -13,11 +13,13 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability info: Ability to play pong without bricks.
     /// The difficulty of the levels is denoted by the number of hits (paddle touching ball) needed in order to pass a training unit (BALL_HITS_NEEDED), and the maximum number of misses (ball reaching the bottom part of the screen untouched by the paddle, MAX_MISSES_ALLOWED)
     /// </description>
+    [DisplayNameAttribute("Pong without bricks")]
     public class LTPongWithoutBricks : AbstractLearningTask<PongAdapterWorld>
     {
         public LTPongWithoutBricks() : base(null) { }
-        float ballHitSum;
-        float ballMissSum;
+
+        private float ballHitSum;
+        private float ballMissSum;
 
         public readonly TSHintAttribute MAX_MISSES_ALLOWED = new TSHintAttribute("Maximum number of ball misses allowed before the training unit is declared failed", "", typeof(int), 0, 1);
         public readonly TSHintAttribute BALL_HITS_NEEDED = new TSHintAttribute("Ball hits needed in order to pass the training unit", "", typeof(int), 0, 1);
@@ -78,8 +80,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { MAX_MISSES_ALLOWED, 1 },
                     { BALL_HITS_NEEDED, 10 }
             });
-
-
         }
 
         public override void PresentNewTrainingUnit()
@@ -99,7 +99,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-
             if (ballMissSum >= TSHints[MAX_MISSES_ALLOWED])
             {
                 wasUnitSuccessful = false;

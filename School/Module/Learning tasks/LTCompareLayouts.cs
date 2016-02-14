@@ -1,12 +1,13 @@
-﻿
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTCompareLayouts : AbstractLearningTask<ManInWorld>
+    [DisplayNameAttribute("Compare layouts")]
+    public class LTCompareLayouts : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
@@ -63,7 +64,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 for (int i = 0; i < numberOfObjects; i++)
                 {
-
                     Size size;
                     if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                     {
@@ -79,7 +79,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1f)
                     {
                         color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
-
                     }
                     else
                     {

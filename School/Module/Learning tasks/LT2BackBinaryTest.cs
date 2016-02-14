@@ -1,20 +1,21 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LT2BackBinaryTest : AbstractLearningTask<ManInWorld>
+    [DisplayNameAttribute("2 back binary test")]
+    public class LT2BackBinaryTest : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected Shape m_target;
         protected Shape.Shapes m_target_type;
 
-        Shape[] m_lastNShapes;
+        private Shape[] m_lastNShapes;
 
-        const int N_BACK = 2;
+        private const int N_BACK = 2;
 
         public LT2BackBinaryTest() : base(null) { }
 
@@ -104,7 +105,7 @@ namespace GoodAI.Modules.School.LearningTasks
             push(m_target);
         }
 
-        void push(Shape pushedObject)
+        private void push(Shape pushedObject)
         {
             for (int i = m_lastNShapes.Length - 1; i > 0; i--)
             {
@@ -134,7 +135,7 @@ namespace GoodAI.Modules.School.LearningTasks
             return true;
         }
 
-        bool shapesEqual(Shape s1, Shape s2)
+        private bool shapesEqual(Shape s1, Shape s2)
         {
             if (s1 == null && s2 == null)
             {

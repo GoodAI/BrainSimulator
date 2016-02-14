@@ -1,10 +1,12 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayNameAttribute("Simple rhythm")]
     public class LTSimpleRhythm : AbstractLearningTask<ManInWorld>
     {
         private TSHintAttribute RHYTHM_MAX_SIZE = new TSHintAttribute("Max number of steps between two ticks", "", typeof(int), 1, 8);
@@ -18,11 +20,12 @@ namespace GoodAI.Modules.School.LearningTasks
             GiveHint,
             AskAction
         }
+
         protected TimeActions[] m_timeplan;
         private Point m_p;
         private Size m_size;
 
-        int m_currentStep;
+        private int m_currentStep;
 
         public LTSimpleRhythm() : base(null) { }
 
@@ -46,7 +49,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(RHYTHM_MAX_SIZE, 4);
             TSProgression.Add(RHYTHM_MAX_SIZE, 6);
             TSProgression.Add(RHYTHM_MAX_SIZE, 8);
-
         }
 
         public override void PresentNewTrainingUnit()

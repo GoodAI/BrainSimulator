@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.School.Worlds;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using GoodAI.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayNameAttribute("Rotate and move to fit")]
     public class LTRotateAndMoveToFit : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTRotateAndMoveToFit() { }

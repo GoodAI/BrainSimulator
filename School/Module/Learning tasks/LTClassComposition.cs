@@ -1,18 +1,20 @@
-﻿
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTClassComposition : AbstractLearningTask<ManInWorld>
+    [DisplayNameAttribute("Class composition")]
+    public class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1); //check needed;
 
         protected Random m_rndGen = new Random();
         protected bool m_positiveExamplePlaced;
+
         //private int m_numberOfObjects;
         private List<Shape.Shapes> m_positiveExamples = new List<Shape.Shapes>();
         private List<Shape.Shapes> m_negativeExamples = new List<Shape.Shapes>();
@@ -86,7 +88,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1.0f)
                 {
                     color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
-
                 }
                 else
                 {

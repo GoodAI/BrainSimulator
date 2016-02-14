@@ -1,13 +1,13 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    /// <summary>
-    /// Visual object for comparison. Similar to the Shape class.
-    /// </summary>
+    /// <summary>Visual object for comparison. Similar to the Shape class.</summary>
+    [DisplayNameAttribute("Comparison shape")]
     public class ComparisonShape : GameObject
     {
         // The shapes used for the targets
@@ -61,7 +61,6 @@ namespace GoodAI.Modules.School.LearningTasks
             return Shape == otherShape.Shape;
         }
     }
-
 
     /// <summary>
     /// The learning task tests the comparison of simple objects.

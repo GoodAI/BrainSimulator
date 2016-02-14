@@ -1,11 +1,12 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-
+    [DisplayNameAttribute("Detect color")]
     public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Condition salience", "", typeof(int), 0, 8);
@@ -113,6 +114,5 @@ namespace GoodAI.Modules.School.LearningTasks
 
             return didGetCorrectReward;
         }
-
     }
 }

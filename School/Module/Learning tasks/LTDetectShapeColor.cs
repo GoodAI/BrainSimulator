@@ -1,11 +1,13 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
+    [DisplayNameAttribute("Detect shape color")]
+    public class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected GameObject m_target;

@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -8,6 +9,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <summary>
     /// In this learning task, the agent must learn to choose one of multiple targets without prior information as to which one to choose.
     /// </summary>
+    [DisplayNameAttribute("Hidden target")]
     public class LTHiddenTarget : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute NUMBER_OF_FALSE_TARGETS = new TSHintAttribute("Number of false targets", "", typeof(int), 1, 3);
@@ -68,8 +70,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected Shape CreateTarget(int imageIndex)
         {
-
-            Size size = new Size(15,15);
+            Size size = new Size(15, 15);
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
             {
                 int a = m_rand.Next(10, 25);
