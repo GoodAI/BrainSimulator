@@ -13,34 +13,25 @@ namespace GoodAI.School.GUI
         public List<LearningTaskNode> Data;
         public PlanDesign Design;
 
-        //private BindingSource m_source;
         private readonly MainForm m_mainForm;
-
         private SchoolWorld m_school;
 
         public SchoolRunForm(MainForm mainForm)
         {
             m_mainForm = mainForm;
             InitializeComponent();
-
-            dataGridView1.DataSource = Data;
-            // using BindingSource is probably better but it wasn't updating; don't know why -
-            // postponed m_source = new BindingSource(); m_source.DataSource = Data;
-            // dataGridView1.DataSource = m_source;
         }
 
         public void UpdateData()
         {
-            //m_source.ResetBindings(true);
             dataGridView1.DataSource = Data;
             PrepareSimulation();
+            if (Properties.School.Default.AutorunEnabled)
+                btnPlay.PerformClick();
         }
 
         private void SelectSchoolWorld()
         {
-            // Enable SchoolWorld Add SchoolWorld to World combolist
-            // -- lets assume we have this (TODO but some of this is checked by SelectWorldInWorldList)
-            // select it
             m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
             m_school = (SchoolWorld)m_mainForm.Project.World;
         }
@@ -75,9 +66,6 @@ namespace GoodAI.School.GUI
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
-            // needs to be here - this way curr. is recreated and all its tasks reseted each time
-            // simulation is started
-            PrepareSimulation();
             m_mainForm.runToolButton.PerformClick();
         }
 
@@ -102,17 +90,17 @@ namespace GoodAI.School.GUI
             {
                 case Keys.F5:
                     {
-                        btnPlay_Click(sender, null);
+                        btnPlay.PerformClick();
                         break;
                     }
                 case Keys.F7:
                     {
-                        btnPause_Click(sender, null);
+                        btnPause.PerformClick();
                         break;
                     }
                 case Keys.F8:
                     {
-                        btnStop_Click(sender, null);
+                        btnStop.PerformClick();
                         break;
                     }
             }

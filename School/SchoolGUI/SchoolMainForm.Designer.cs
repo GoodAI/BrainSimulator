@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tree = new Aga.Controls.Tree.TreeViewAdv();
             this.nodeCheckBox1 = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.groupBoxCurr = new System.Windows.Forms.GroupBox();
@@ -48,34 +47,15 @@
             this.btnDetailsTask = new System.Windows.Forms.Button();
             this.btnDeleteTask = new System.Windows.Forms.Button();
             this.btnNewTask = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBoxAutorun = new System.Windows.Forms.CheckBox();
+            this.tree = new Aga.Controls.Tree.TreeViewAdv();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.groupBoxCurr.SuspendLayout();
             this.groupBoxTask.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // tree
-            // 
-            this.tree.AllowDrop = true;
-            this.tree.BackColor = System.Drawing.SystemColors.Window;
-            this.tree.ColumnHeaderHeight = 0;
-            this.tree.DefaultToolTipProvider = null;
-            this.tree.DragDropMarkColor = System.Drawing.Color.Black;
-            this.tree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
-            this.tree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
-            this.tree.LineColor = System.Drawing.SystemColors.ControlDark;
-            this.tree.Location = new System.Drawing.Point(12, 31);
-            this.tree.Model = null;
-            this.tree.Name = "tree";
-            this.tree.NodeControls.Add(this.nodeCheckBox1);
-            this.tree.NodeControls.Add(this.nodeTextBox1);
-            this.tree.NodeFilter = null;
-            this.tree.SelectedNode = null;
-            this.tree.Size = new System.Drawing.Size(405, 399);
-            this.tree.TabIndex = 0;
-            this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
-            this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
-            this.tree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
-            this.tree.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);
-            this.tree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolMainForm_KeyDown);
             // 
             // nodeCheckBox1
             // 
@@ -98,7 +78,7 @@
             this.groupBoxCurr.Controls.Add(this.btnDetailsCurr);
             this.groupBoxCurr.Controls.Add(this.btnDeleteCurr);
             this.groupBoxCurr.Controls.Add(this.btnNewCurr);
-            this.groupBoxCurr.Location = new System.Drawing.Point(423, 12);
+            this.groupBoxCurr.Location = new System.Drawing.Point(3, 6);
             this.groupBoxCurr.Name = "groupBoxCurr";
             this.groupBoxCurr.Size = new System.Drawing.Size(92, 110);
             this.groupBoxCurr.TabIndex = 1;
@@ -137,7 +117,7 @@
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(174, 2);
+            this.btnOpen.Location = new System.Drawing.Point(165, 3);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 11;
@@ -147,7 +127,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(12, 2);
+            this.btnSave.Location = new System.Drawing.Point(3, 3);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 10;
@@ -158,7 +138,9 @@
             // checkBoxAutosave
             // 
             this.checkBoxAutosave.AutoSize = true;
-            this.checkBoxAutosave.Location = new System.Drawing.Point(429, 413);
+            this.checkBoxAutosave.Checked = true;
+            this.checkBoxAutosave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAutosave.Location = new System.Drawing.Point(3, 293);
             this.checkBoxAutosave.Name = "checkBoxAutosave";
             this.checkBoxAutosave.Size = new System.Drawing.Size(104, 17);
             this.checkBoxAutosave.TabIndex = 5;
@@ -168,7 +150,7 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(255, 2);
+            this.btnImport.Location = new System.Drawing.Point(246, 3);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
             this.btnImport.TabIndex = 4;
@@ -178,7 +160,7 @@
             // 
             // btnSaveAs
             // 
-            this.btnSaveAs.Location = new System.Drawing.Point(93, 2);
+            this.btnSaveAs.Location = new System.Drawing.Point(84, 3);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
             this.btnSaveAs.TabIndex = 3;
@@ -188,7 +170,7 @@
             // 
             // btnRun
             // 
-            this.btnRun.Location = new System.Drawing.Point(429, 384);
+            this.btnRun.Location = new System.Drawing.Point(10, 239);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
             this.btnRun.TabIndex = 2;
@@ -210,7 +192,7 @@
             this.groupBoxTask.Controls.Add(this.btnDetailsTask);
             this.groupBoxTask.Controls.Add(this.btnDeleteTask);
             this.groupBoxTask.Controls.Add(this.btnNewTask);
-            this.groupBoxTask.Location = new System.Drawing.Point(423, 128);
+            this.groupBoxTask.Location = new System.Drawing.Point(4, 122);
             this.groupBoxTask.Name = "groupBoxTask";
             this.groupBoxTask.Size = new System.Drawing.Size(92, 111);
             this.groupBoxTask.TabIndex = 10;
@@ -247,36 +229,98 @@
             this.btnNewTask.UseVisualStyleBackColor = true;
             this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.checkBoxAutorun);
+            this.panel1.Controls.Add(this.checkBoxAutosave);
+            this.panel1.Controls.Add(this.btnRun);
+            this.panel1.Controls.Add(this.groupBoxTask);
+            this.panel1.Controls.Add(this.groupBoxCurr);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(420, 26);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(111, 393);
+            this.panel1.TabIndex = 13;
+            // 
+            // checkBoxAutorun
+            // 
+            this.checkBoxAutorun.AutoSize = true;
+            this.checkBoxAutorun.Checked = true;
+            this.checkBoxAutorun.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAutorun.Location = new System.Drawing.Point(3, 270);
+            this.checkBoxAutorun.Name = "checkBoxAutorun";
+            this.checkBoxAutorun.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxAutorun.TabIndex = 11;
+            this.checkBoxAutorun.Text = "Autorun school";
+            this.checkBoxAutorun.UseVisualStyleBackColor = true;
+            this.checkBoxAutorun.Click += new System.EventHandler(this.checkBoxAutorun_CheckedChanged);
+            // 
+            // tree
+            // 
+            this.tree.AllowDrop = true;
+            this.tree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tree.BackColor = System.Drawing.SystemColors.Window;
+            this.tree.ColumnHeaderHeight = 0;
+            this.tree.DefaultToolTipProvider = null;
+            this.tree.DragDropMarkColor = System.Drawing.Color.Black;
+            this.tree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.tree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
+            this.tree.LineColor = System.Drawing.SystemColors.ControlDark;
+            this.tree.Location = new System.Drawing.Point(3, 32);
+            this.tree.Model = null;
+            this.tree.Name = "tree";
+            this.tree.NodeControls.Add(this.nodeCheckBox1);
+            this.tree.NodeControls.Add(this.nodeTextBox1);
+            this.tree.NodeFilter = null;
+            this.tree.SelectedNode = null;
+            this.tree.Size = new System.Drawing.Size(414, 387);
+            this.tree.TabIndex = 0;
+            this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
+            this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
+            this.tree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
+            this.tree.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);
+            this.tree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolMainForm_KeyDown);
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.btnSave);
+            this.panel2.Controls.Add(this.btnSaveAs);
+            this.panel2.Controls.Add(this.btnOpen);
+            this.panel2.Controls.Add(this.btnImport);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(531, 26);
+            this.panel2.TabIndex = 14;
+            // 
             // SchoolMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(532, 436);
-            this.Controls.Add(this.groupBoxTask);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.btnOpen);
-            this.Controls.Add(this.btnRun);
-            this.Controls.Add(this.btnSaveAs);
-            this.Controls.Add(this.groupBoxCurr);
+            this.ClientSize = new System.Drawing.Size(531, 419);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.tree);
-            this.Controls.Add(this.btnImport);
-            this.Controls.Add(this.checkBoxAutosave);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.HideOnClose = true;
             this.Name = "SchoolMainForm";
-            this.Text = "SchoolMainForm";
+            this.Text = "School for AI";
             this.Load += new System.EventHandler(this.SchoolMainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolMainForm_KeyDown);
             this.groupBoxCurr.ResumeLayout(false);
             this.groupBoxTask.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private Aga.Controls.Tree.TreeViewAdv tree;
         private System.Windows.Forms.GroupBox groupBoxCurr;
         private System.Windows.Forms.CheckBox checkBoxAutosave;
         private System.Windows.Forms.Button btnImport;
@@ -296,5 +340,9 @@
         private System.Windows.Forms.Button btnDetailsTask;
         private System.Windows.Forms.Button btnDeleteTask;
         private System.Windows.Forms.Button btnNewTask;
+        private System.Windows.Forms.Panel panel1;
+        private Aga.Controls.Tree.TreeViewAdv tree;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.CheckBox checkBoxAutorun;
     }
 }

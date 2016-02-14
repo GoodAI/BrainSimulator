@@ -299,6 +299,12 @@ namespace GoodAI.School.GUI
             Properties.School.Default.Save();
         }
 
+        private void checkBoxAutorun_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.School.Default.AutorunEnabled = checkBoxAutorun.Checked;
+            Properties.School.Default.Save();
+        }
+
         private void btnRun_Click(object sender, EventArgs e)
         {
             RunView = new SchoolRunForm(m_mainForm);
