@@ -51,6 +51,7 @@
             this.checkBoxAutorun = new System.Windows.Forms.CheckBox();
             this.tree = new Aga.Controls.Tree.TreeViewAdv();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnNew = new System.Windows.Forms.Button();
             this.groupBoxCurr.SuspendLayout();
             this.groupBoxTask.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -117,17 +118,17 @@
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(165, 3);
+            this.btnOpen.Location = new System.Drawing.Point(246, 3);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 11;
-            this.btnOpen.Text = "Open";
+            this.btnOpen.Text = "Open...";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(3, 3);
+            this.btnSave.Location = new System.Drawing.Point(84, 3);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 10;
@@ -150,17 +151,17 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(246, 3);
+            this.btnImport.Location = new System.Drawing.Point(327, 3);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
             this.btnImport.TabIndex = 4;
-            this.btnImport.Text = "Import";
+            this.btnImport.Text = "Import...";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnSaveAs
             // 
-            this.btnSaveAs.Location = new System.Drawing.Point(84, 3);
+            this.btnSaveAs.Location = new System.Drawing.Point(165, 3);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
             this.btnSaveAs.TabIndex = 3;
@@ -285,6 +286,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnNew);
             this.panel2.Controls.Add(this.btnSave);
             this.panel2.Controls.Add(this.btnSaveAs);
             this.panel2.Controls.Add(this.btnOpen);
@@ -294,6 +296,16 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(531, 26);
             this.panel2.TabIndex = 14;
+            // 
+            // btnNew
+            // 
+            this.btnNew.Location = new System.Drawing.Point(3, 3);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(75, 23);
+            this.btnNew.TabIndex = 12;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
             // SchoolMainForm
             // 
@@ -344,5 +356,6 @@
         private Aga.Controls.Tree.TreeViewAdv tree;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.CheckBox checkBoxAutorun;
+        private System.Windows.Forms.Button btnNew;
     }
 }

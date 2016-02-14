@@ -17,10 +17,15 @@ namespace GoodAI.School.GUI
     [BrainSimUIExtension]
     public partial class SchoolMainForm : DockContent
     {
+        private const string DEFAULT_FORM_NAME = "School for AI";
+
         private readonly MainForm m_mainForm;
         private YAXSerializer m_serializer;
         private TreeModel m_model;
         private string m_lastOpenedFile;
+        private string m_savedRepresentation;
+        private string m_currentFile;
+
         public SchoolAddTaskForm AddTaskView { get; private set; }
         public SchoolRunForm RunView { get; private set; }
 
@@ -42,6 +47,7 @@ namespace GoodAI.School.GUI
             m_model = new TreeModel();
             tree.Model = m_model;
             tree.Refresh();
+            m_model.NodesInserted += UpdateWindowName;
 
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
@@ -51,8 +57,23 @@ namespace GoodAI.School.GUI
             UpdateButtons();
         }
 
-        private void SchoolMainForm_Load(object sender, System.EventArgs e)
+        private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
+
+        private void UpdateWindowName(object sender, EventArgs e)
         {
+            string lof = Properties.School.Default.LastOpenedFile;
+            string filename = String.IsNullOrEmpty(Properties.School.Default.LastOpenedFile) ? "Unsaved workspace*" : Path.GetFileName(Properties.School.Default.LastOpenedFile);
+            Text = DEFAULT_FORM_NAME + " - " + filename;
+            if (!IsWorkspaceSaved())
+                Text += '*';
+        }
+
+        private bool IsWorkspaceSaved()
+        {
+            if (m_savedRepresentation == null)
+                return false;
+            string currentRepresentation = m_serializer.Serialize(m_design);
+            return m_savedRepresentation.Equals(currentRepresentation);
         }
 
         #region Curricula
@@ -93,7 +114,9 @@ namespace GoodAI.School.GUI
 
             Properties.School.Default.LastOpenedFile = filePath;
             Properties.School.Default.Save();
-
+            m_savedRepresentation = xmlCurr;
+            m_currentFile = filePath;
+            UpdateWindowName(null, EventArgs.Empty);
             return false;
         }
 
@@ -248,6 +271,14 @@ namespace GoodAI.School.GUI
 
         #region Button clicks
 
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            Properties.School.Default.LastOpenedFile = null;
+            Properties.School.Default.Save();
+            m_model.Nodes.Clear();
+            UpdateWindowName(null, EventArgs.Empty);
+        }
+
         private void btnNewCurr_Click(object sender, EventArgs e)
         {
             CurriculumNode newCurr = AddCurriculum();
@@ -348,10 +379,10 @@ namespace GoodAI.School.GUI
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.FileName != string.Empty)
-                SaveProject(saveFileDialog1.FileName);
-            else
+            if (String.IsNullOrEmpty(m_currentFile))
                 SaveProjectAs(sender, e);  // ask for file name and then save the project
+            else
+                SaveProject(m_currentFile);
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -396,6 +427,9 @@ namespace GoodAI.School.GUI
         {
             string xmlResult = m_serializer.Serialize(m_design);
             File.WriteAllText(path, xmlResult);
+            m_savedRepresentation = xmlResult;
+            m_currentFile = path;
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
         private void SaveProjectAs(object sender, EventArgs e)
@@ -406,6 +440,7 @@ namespace GoodAI.School.GUI
             SaveProject(saveFileDialog1.FileName);
             Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
             Properties.School.Default.Save();
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
         #endregion (De)serialization
