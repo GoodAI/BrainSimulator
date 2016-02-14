@@ -205,6 +205,8 @@ namespace GoodAI.School.GUI
             tree.BeginUpdate();
 
             TreeNodeAdv[] nodes = (TreeNodeAdv[])e.Data.GetData(typeof(TreeNodeAdv[]));
+            if (tree.DropPosition.Node == null)
+                return;
             Node dropNode = tree.DropPosition.Node.Tag as Node;
             if (tree.DropPosition.Position == NodePosition.Inside)
             {
