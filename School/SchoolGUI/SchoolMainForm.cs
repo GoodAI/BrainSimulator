@@ -47,7 +47,6 @@ namespace GoodAI.School.GUI
             m_model = new TreeModel();
             tree.Model = m_model;
             tree.Refresh();
-            m_model.NodesInserted += UpdateWindowName;
 
             checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
             checkBoxAutorun.Checked = Properties.School.Default.AutorunEnabled;
@@ -63,7 +62,7 @@ namespace GoodAI.School.GUI
         private void UpdateWindowName(object sender, EventArgs e)
         {
             string lof = Properties.School.Default.LastOpenedFile;
-            string filename = String.IsNullOrEmpty(Properties.School.Default.LastOpenedFile) ? "Unsaved workspace*" : Path.GetFileName(Properties.School.Default.LastOpenedFile);
+            string filename = String.IsNullOrEmpty(Properties.School.Default.LastOpenedFile) ? "Unsaved workspace" : Path.GetFileName(Properties.School.Default.LastOpenedFile);
             Text = DEFAULT_FORM_NAME + " - " + filename;
             if (!IsWorkspaceSaved())
                 Text += '*';
@@ -76,52 +75,6 @@ namespace GoodAI.School.GUI
             string currentRepresentation = m_serializer.Serialize(m_design);
             return m_savedRepresentation.Equals(currentRepresentation);
         }
-
-        #region Curricula
-
-        private CurriculumNode AddCurriculum()
-        {
-            CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
-            m_model.Nodes.Add(node);
-            return node;
-        }
-
-        private bool LoadCurriculum(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-                return false;
-
-            string xmlCurr;
-            try { xmlCurr = File.ReadAllText(filePath); }
-            catch (IOException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
-                return false;
-            }
-
-            try
-            {
-                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
-
-                foreach (CurriculumNode curr in currs)
-                    m_model.Nodes.Add(curr);
-            }
-            catch (YAXException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
-                return false;
-            }
-
-            Properties.School.Default.LastOpenedFile = filePath;
-            Properties.School.Default.Save();
-            m_savedRepresentation = xmlCurr;
-            m_currentFile = filePath;
-            UpdateWindowName(null, EventArgs.Empty);
-            return false;
-        }
-
-        #endregion Curricula
 
         #region UI
 
@@ -282,7 +235,9 @@ namespace GoodAI.School.GUI
 
         private void btnNewCurr_Click(object sender, EventArgs e)
         {
-            CurriculumNode newCurr = AddCurriculum();
+            CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
+            m_model.Nodes.Add(node);
+            UpdateButtons();    //for activating Run button - workaround because events of tree model are not working as expected
         }
 
         private void btnDeleteCurr_Click(object sender, EventArgs e)
@@ -447,6 +402,41 @@ namespace GoodAI.School.GUI
             Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
             Properties.School.Default.Save();
             UpdateWindowName(null, EventArgs.Empty);
+        }
+
+        private bool LoadCurriculum(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return false;
+
+            string xmlCurr;
+            try { xmlCurr = File.ReadAllText(filePath); }
+            catch (IOException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
+                return false;
+            }
+
+            try
+            {
+                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
+                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
+
+                foreach (CurriculumNode curr in currs)
+                    m_model.Nodes.Add(curr);
+            }
+            catch (YAXException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
+                return false;
+            }
+
+            Properties.School.Default.LastOpenedFile = filePath;
+            Properties.School.Default.Save();
+            m_savedRepresentation = xmlCurr;
+            m_currentFile = filePath;
+            UpdateWindowName(null, EventArgs.Empty);
+            return false;
         }
 
         #endregion (De)serialization
