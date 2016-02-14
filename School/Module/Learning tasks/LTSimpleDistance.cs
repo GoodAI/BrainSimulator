@@ -1,10 +1,12 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Simple distance")]
     public class LTSimpleDistance : AbstractLearningTask<ManInWorld>
     {
         private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Error tolerence in [0,1]", "", typeof(float), 0, 1);
@@ -19,7 +21,6 @@ namespace GoodAI.Modules.School.LearningTasks
         public LTSimpleDistance(SchoolWorld w)
             : base(w)
         {
-
             TSHints = new TrainingSetHints
             {
                 { TSHintAttributes.IS_VARIABLE_COLOR, 0 },

@@ -1,14 +1,15 @@
-﻿
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectSimilarity : AbstractLearningTask<ManInWorld>
+    [DisplayName("Detect similarity")]
+    public class LTDetectSimilarity : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_sameObjectetPlaced;
@@ -43,8 +44,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 world.CreateNonVisibleAgent();
 
-
-
                 int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
 
                 m_sameObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
@@ -60,7 +59,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 for (int i = 0; i < shapes.Count; i++)
                 {
-
                     Size s;
                     if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                     {
@@ -76,7 +74,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
                     {
                         color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
-
                     }
                     else
                     {

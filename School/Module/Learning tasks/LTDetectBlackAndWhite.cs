@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -9,6 +10,7 @@ namespace GoodAI.Modules.School.LearningTasks
     // World actions have not been implemented yet.
     // Multiple parameters are incremented in the same step.
 
+    [DisplayName("Detect black and white")]
     public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1);
@@ -120,5 +122,4 @@ namespace GoodAI.Modules.School.LearningTasks
     //   exit learning task with failure
     //
     //
-
 }

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.School.Worlds;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using GoodAI.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Tetris full")]
     public class LTTetrisFull : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTTetrisFull() { }
@@ -27,7 +24,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)

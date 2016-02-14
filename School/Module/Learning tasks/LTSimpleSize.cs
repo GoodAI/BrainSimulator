@@ -3,10 +3,12 @@ using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Simple size")]
     public class LTSimpleSize : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute TARGET_SIZE_LEVELS = new TSHintAttribute("Target size levels", "", typeof(int), 0, 1);

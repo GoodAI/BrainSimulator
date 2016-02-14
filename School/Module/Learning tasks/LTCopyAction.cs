@@ -2,10 +2,12 @@
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Copy action")]
     public class LTCopyAction : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);

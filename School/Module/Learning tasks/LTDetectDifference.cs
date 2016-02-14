@@ -1,13 +1,14 @@
-﻿
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    class LTDetectDifference : AbstractLearningTask<ManInWorld>
+    [DisplayName("Detect difference")]
+    public class LTDetectDifference : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
@@ -54,7 +55,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 for (int i = 0; i < numberOfObjects; i++)
                 {
-
                     Size size;
                     if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                     {

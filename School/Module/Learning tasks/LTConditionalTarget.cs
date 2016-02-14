@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -51,7 +52,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public static Point PickLocation(ManInWorld world, bool movingCondition, Size size)
         {
             if (movingCondition)
-            { 
+            {
                 return world.RandomPositionInsidePowNonCovering(m_rand, size);
             }
             else
@@ -152,13 +153,13 @@ namespace GoodAI.Modules.School.LearningTasks
             // TODO Currently, degrees of freedom is not taken into account
             // And distance to target is the same throughout the learning task
             return world.RandomPositionInsidePowNonCovering(m_rand, size);
-
         }
     }
 
     /// <summary>
     /// In this learning task, the agent must learn to choose one of two targets depending on an arbitrary visual signal (the condition).
     /// </summary>
+    [DisplayName("Conditional target")]
     public class LTConditionalTarget : AbstractLearningTask<RoguelikeWorld>
     {
         // In the beginning, the condition doesn't move

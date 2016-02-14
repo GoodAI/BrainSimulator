@@ -1,9 +1,11 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Tetris test")]
     public class LTTetrisTest : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTTetrisTest() : base(null) { }
@@ -21,7 +23,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)

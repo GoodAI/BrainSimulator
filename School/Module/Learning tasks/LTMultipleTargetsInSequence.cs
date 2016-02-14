@@ -1,8 +1,8 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -14,6 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <description>
     /// Ability description: The agent learns to navigate to multiple targets in a defined sequence. One target type is always the first target, another target type is always the second and so on.
     /// </description>
+    [DisplayName("Multiple targets sequence")]
     public class LTMultipleTargetsSequence : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
@@ -25,9 +26,8 @@ namespace GoodAI.Modules.School.LearningTasks
         public readonly TSHintAttribute TIMESTEPS_LIMIT = new TSHintAttribute("Timesteps limit", "", typeof(int), 0, 1);
         public readonly TSHintAttribute DISTANCE_BONUS_COEFFICENT = new TSHintAttribute("Multiply coefficent", "", typeof(float), 0, 1);
 
-        List<GameObject> GameObjectReferences = new List<GameObject>();     // Create a vector of references to GameObjects, we will need the index for the sequence order
+        private List<GameObject> GameObjectReferences = new List<GameObject>();     // Create a vector of references to GameObjects, we will need the index for the sequence order
         public int currentIndex = 0;                                        // Represents current index of the sequence
-
 
         public LTMultipleTargetsSequence() : base(null) { }
 
@@ -67,7 +67,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { SEQUENCE_LENGTH, 5 },
                     { DISTANCE_BONUS_COEFFICENT, 2.0f }
             });
-
 
             TSProgression.Add(
                 new TrainingSetHints {
@@ -121,7 +120,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             for (int n = 0; n < ((int)TSHints[SEQUENCE_LENGTH]); n++)                                                   // Generate a number of targets corresponding to the length of the sequence
             {
-
                 m_target = new GameObject(GameObjectType.NonColliding, GetNumberTargetImage(n), 0, 0);
                 WrappedWorld.AddGameObject(m_target);
 
@@ -160,7 +158,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints[TIMESTEPS_LIMIT] = CumulatedManhattanDistance * TSHints[DISTANCE_BONUS_COEFFICENT];
         }
 
-
         // Given an integer parameter, returns ther relevant path to its texture
         protected virtual string GetNumberTargetImage(int number)
         {
@@ -183,10 +180,8 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-
             // expect this method to be called once per simulation step
             m_stepsSincePresented++;
 
@@ -214,7 +209,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 WrappedWorld.gameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
                 currentIndex++;                                                         // And now change the index (the index will denote a reference to the GameObject that needs to be reached next)
             }
-
 
             wasUnitSuccessful = false;
             return false;

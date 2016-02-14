@@ -1,7 +1,7 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -14,12 +14,13 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability Name: Efficient navigation in a simple environment + moving target. The class is derived from LTApproach with some additions for the moving target (currently: circular movement).
     /// Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
     /// </description>
+    [DisplayName("Moving target")]
     public class LTMovingTarget : LTApproach                           // Deriving from LTApproach
     {
-        float angle;                                                    // Used for the trajectory of the circular movement of the target
-        Point Trajectory = new Point();
+        private float angle;                                                    // Used for the trajectory of the circular movement of the target
+        private Point Trajectory = new Point();
 
-        int stepsTakenForOneCircle;                                     // How many steps will denote one complete cycle of the ellipse
+        private int stepsTakenForOneCircle;                                     // How many steps will denote one complete cycle of the ellipse
 
         private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity", "", typeof(float), 0, 1);                 // The velocity of the Target when it's trying to avoid the agent
         private readonly TSHintAttribute ELLIPSE_SIZE = new TSHintAttribute("Ellipse Rectangle Ratio", "", typeof(float), 0, 1);            // The size of the ellipse inside the screen it ranges from 0 to 1: 1.0f is the biggest ellipse that can fit in the POW screen
@@ -70,7 +71,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { STEPS_TAKEN_FOR_ONE_CIRCLE, 300 }
             });
 
-
             TSProgression.Add(
                 new TrainingSetHints {
                     { ELLIPSE_SIZE, 0.7f },
@@ -82,7 +82,6 @@ namespace GoodAI.Modules.School.LearningTasks
                     { ELLIPSE_SIZE, 0.8f },
                     { STEPS_TAKEN_FOR_ONE_CIRCLE, 100 }
             });
-
 
             TSProgression.Add(
                 new TrainingSetHints {

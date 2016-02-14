@@ -14,6 +14,7 @@ namespace GoodAI.Modules.School.Worlds
     /// <description>
     /// 2D Platformer world which includes a traditional 2D physics engine and collision detection/handling
     /// </description>
+    [DisplayName("Plumber")]
     public partial class PlumberWorld : ManInWorld, IMyCustomTaskFactory
     {
         // temporary implementation for actions
@@ -238,7 +239,6 @@ namespace GoodAI.Modules.School.Worlds
                 MyLog.DEBUG.WriteLine("VelocityY: " + magent.vY);
                 MyLog.DEBUG.WriteLine("onGround: " + magent.onGround);
                 */
-
             }
 
             public override void HandleCollisions()

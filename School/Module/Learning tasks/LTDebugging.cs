@@ -1,10 +1,12 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Debugging")]
     public class LTDebugging : AbstractLearningTask<ManInWorld>
     {
         private GameObject m_target;
@@ -45,7 +47,6 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             else if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
-
                 RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
                 world.DegreesOfFreedom = 2;
 

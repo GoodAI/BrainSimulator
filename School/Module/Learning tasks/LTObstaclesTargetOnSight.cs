@@ -1,5 +1,6 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -11,6 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <description>
     /// The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
     /// </description>
+    [DisplayName("Obstacles target on sight")]
     public class LTObstaclesTargetOnSight : LTObstacles                           // Deriving from LTObstacles
     {
         public LTObstaclesTargetOnSight() : base(null) { }
@@ -62,7 +64,6 @@ namespace GoodAI.Modules.School.LearningTasks
             m_agent.X = 200;
             m_agent.Y = 193;
 
-
             // Position target
             m_target.X = m_rndGen.Next(160, 280);
 
@@ -74,7 +75,6 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 m_target.Y = 270;
             }
-            
         }
     }
 }

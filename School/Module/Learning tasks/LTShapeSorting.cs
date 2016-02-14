@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.Modules.VSA;
-using OpenTK;
-
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     /// <meta>mm</meta>
     /// <summary>
-    /// 
     /// </summary>
+    [DisplayName("Shape sorting")]
     public class LTShapeSorting : AbstractLearningTask<RoguelikeWorld>
     {
         #region Fields
@@ -32,7 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private readonly HashSet<float> m_candidates = new HashSet<float>();
         private float[] m_shapeIdcs;
 
-        #endregion
+        #endregion Fields
 
         #region Initialization
 
@@ -63,7 +60,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             base.SetHints(TSHints);
 
-
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1);
@@ -85,7 +81,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.4f);
         }
 
-        #endregion
+        #endregion Initialization
 
         #region Init functions
 
@@ -120,12 +116,10 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Size centerSz = new Size(center); // Is Size because there is no overload for +(Point,Point)........
 
-
             // Pick random unique shapes from the available pool
             Resize(ref m_shapeIdcs, noObjects);
             int shapeCount = Enum.GetValues(typeof(Shape.Shapes)).Length; // noObjects must be at most shapeCount
             MyCombinationBase.GenerateCombinationUnique(new ArraySegment<float>(m_shapeIdcs), m_candidates, 0, shapeCount, m_rndGen);
-
 
             // Setup initial shape's positional parameters
             float step = (float)(2 * Math.PI / noObjects); // rads
@@ -143,7 +137,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 Point pos = new Point((int)(Math.Cos(angle) * distance), (int)(Math.Sin(angle) * distance));
 
-
                 // Determine shape size
                 float scale = 1.4f;
 
@@ -152,13 +145,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 Size size = new Size((int)(16 * scale), (int)(16 * scale));
 
-
                 // Determine shape rotation
                 float rotation = 0;
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_ROTATION] > 0)
                     rotation = (float)(m_rndGen.Next() * 360);
-
 
                 // Determine shape color
                 Color color = Color.White;
@@ -166,11 +157,9 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] > 0)
                     color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 
-
                 // Create the correct shape
                 m_targets[i] = WrappedWorld.CreateShape(pos + centerSz, (Shape.Shapes)m_shapeIdcs[i], color, size);
                 m_targets[i].Rotation = rotation;
-
 
                 angle += step;
             }
@@ -182,7 +171,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 array = new T[count];
         }
 
-        #endregion
+        #endregion Init functions
 
         #region Update functions
 
@@ -194,7 +183,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
             // Move the question shape with the invisible agent
             m_question.SetPosition(new Point(m_agent.X, m_agent.Y));
-
 
             foreach (var gameObject in m_targets)
             {
@@ -208,6 +196,6 @@ namespace GoodAI.Modules.School.LearningTasks
             return false;
         }
 
-        #endregion
+        #endregion Update functions
     }
 }

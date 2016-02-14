@@ -1,7 +1,7 @@
-﻿using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Common;
+﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -13,11 +13,13 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Ability info: Ability to play pong with bricks.
     /// The agent is presented the pong game, the expectancy is that the agent completes the game by passing all the required levels
     /// </description>
+    [DisplayName("Pong with bricks")]
     public class LTPongWithBricks : AbstractLearningTask<PongAdapterWorld>
     {
         public LTPongWithBricks() : base(null) { }
-        float ballHitSum;
-        float ballMissSum;
+
+        private float ballHitSum;
+        private float ballMissSum;
 
         public readonly TSHintAttribute MAX_MISSES_ALLOWED = new TSHintAttribute("Maximum number of ball misses allowed before the training unit is declared failed", "", typeof(int), 0, 1);
         public readonly TSHintAttribute BALL_HITS_NEEDED = new TSHintAttribute("Ball hits needed in order to pass the training unit", "", typeof(int), 0, 1);
@@ -35,12 +37,7 @@ namespace GoodAI.Modules.School.LearningTasks
             ballHitSum = 0f;
             ballHitSum = 0f;
 
-            WrappedWorld.UpdateTask.BOUNCE_BALL = 1.0f; // Set the default reward that is given upon hitting the ball to 1.0f (World's default value is 0.1f)
-            WrappedWorld.UpdateTask.RandomBallDir = true;
-            WrappedWorld.BricksEnabled = true;
-
             TSProgression.Add(TSHints.Clone());
-
 
             // TODO: modify Difficulty according also to current pong level
             TSProgression.Add(
@@ -61,14 +58,11 @@ namespace GoodAI.Modules.School.LearningTasks
                     { BALL_HITS_NEEDED, 20 }
             });
 
-
             TSProgression.Add(
                 new TrainingSetHints {
                     { MAX_MISSES_ALLOWED, 5 },
                     { BALL_HITS_NEEDED, 30 }
             });
-
-
         }
 
         public override void PresentNewTrainingUnit()
@@ -76,6 +70,9 @@ namespace GoodAI.Modules.School.LearningTasks
             ballHitSum = 0f;
             ballMissSum = 0f;
             WrappedWorld.UpdateTask.ResetGame();
+            WrappedWorld.UpdateTask.BOUNCE_BALL = 1.0f; // Set the default reward that is given upon hitting the ball to 1.0f (World's default value is 0.1f)
+            WrappedWorld.UpdateTask.RandomBallDir = true;
+            WrappedWorld.BricksEnabled = true;
 
             //WrappedWorld.UpdateTask.SetLevel();
         }
@@ -88,7 +85,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-
             if (ballMissSum >= TSHints[MAX_MISSES_ALLOWED])
             {
                 wasUnitSuccessful = false;

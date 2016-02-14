@@ -1,10 +1,12 @@
 ﻿using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Approach")]
     public class LTApproach : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();
@@ -17,7 +19,6 @@ namespace GoodAI.Modules.School.LearningTasks
         // DISTANCE_BONUS_COEFFICENT explanation: "return m_stepsSincePresented > m_initialDistance" is used to decide if the training unit failed, this means that
         // the unit fails unless the agent goes just to the right direction (towards the target) from the beginning.
         // DISTANCE_BONUS_COEFFICENT's default value is 1, and if it's 2 the amount of available steps to reach the target is doubled, new formula : "return m_stepsSincePresented > (m_initialDistance * (int)TSHints[MULTIPLY_COEFFICENT]);"
-
 
         public LTApproach() : base(null) { }
 
@@ -91,7 +92,8 @@ namespace GoodAI.Modules.School.LearningTasks
         public virtual void CreateTarget()
         {
             float scaleFactor = 1;
-            if(TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1){
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
+            {
                 scaleFactor = (float)m_rndGen.NextDouble() * 0.7f + 0.8f;
             }
 
@@ -103,13 +105,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 Rectangle POW = WrappedWorld.GetPowGeometry();
                 POW.Location = new Point(POW.X, POW.Y + POW.Height / 2 - m_agent.Height);
                 POW.Size = new Size(POW.Width, m_agent.Height * 2);
-                p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, POW, 10);
+                p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, POW, 5, 20);
             }
             else
             {
                 p = WrappedWorld.RandomPositionInsidePow(m_rndGen, m_target.GetGeometry().Size, 20);
             }
-            
+
             m_target.SetPosition(p);
         }
 
@@ -117,6 +119,5 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             m_agent.Y = WrappedWorld.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
         }
-
     }
 }

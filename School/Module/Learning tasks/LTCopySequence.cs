@@ -2,11 +2,13 @@
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
+    [DisplayName("Copy sequence")]
     public class LTCopySequence : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);
@@ -66,7 +68,6 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             else
             {
-
                 m_stepsSincePresented++;
 
                 if (DidTrainingUnitFail())
@@ -155,7 +156,6 @@ namespace GoodAI.Modules.School.LearningTasks
 
     public class AgentsHistory : LinkedList<Point>
     {
-
         public void Add(Point position)
         {
             this.AddLast(position);
@@ -194,7 +194,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
                 h1.MoveNext();
                 h2.MoveNext();
-
             }
             return true;
         }
