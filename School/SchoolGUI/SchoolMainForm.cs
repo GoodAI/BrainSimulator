@@ -39,9 +39,9 @@ namespace GoodAI.School.GUI
 
         public SchoolMainForm(MainForm mainForm)
         {
-            RunView = new SchoolRunForm(m_mainForm);
             m_serializer = new YAXSerializer(typeof(PlanDesign));
             m_mainForm = mainForm;
+            RunView = new SchoolRunForm(m_mainForm);
 
             InitializeComponent();
 

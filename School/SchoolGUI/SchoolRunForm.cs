@@ -37,6 +37,16 @@ namespace GoodAI.School.GUI
         {
             m_mainForm = mainForm;
             InitializeComponent();
+
+            m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
+            UpdateButtons(null, null);
+        }
+
+        private void UpdateButtons(object sender, Core.Execution.MySimulationHandler.StateEventArgs e)
+        {
+            btnRun.Enabled = m_mainForm.runToolButton.Enabled;
+            btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
+            btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
         }
 
         public void UpdateData()
