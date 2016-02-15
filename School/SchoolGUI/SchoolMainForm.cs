@@ -39,6 +39,7 @@ namespace GoodAI.School.GUI
 
         public SchoolMainForm(MainForm mainForm)
         {
+            RunView = new SchoolRunForm(m_mainForm);
             m_serializer = new YAXSerializer(typeof(PlanDesign));
             m_mainForm = mainForm;
 
@@ -322,7 +323,6 @@ namespace GoodAI.School.GUI
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            RunView = new SchoolRunForm(m_mainForm);
             OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
 
