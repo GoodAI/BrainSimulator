@@ -1,4 +1,6 @@
 ﻿using GoodAI.BrainSimulator.Forms;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
@@ -18,6 +20,8 @@ namespace GoodAI.School.GUI
         private readonly MainForm m_mainForm;
         private string m_runName;
         private SchoolWorld m_school;
+        private bool m_showVisual;
+        private ObserverForm m_observer;
 
         public string RunName
         {
@@ -53,8 +57,55 @@ namespace GoodAI.School.GUI
         {
             dataGridView1.DataSource = Data;
             PrepareSimulation();
+            m_showVisual = true;
+            SetObserver();
+
             if (Properties.School.Default.AutorunEnabled)
                 btnRun.PerformClick();
+        }
+
+        private void SetObserver()
+        {
+            if (m_showVisual) {
+                if (m_observer == null)
+                {
+                    try
+                    {
+                        MyMemoryBlockObserver observer = new MyMemoryBlockObserver();
+                        observer.Target = m_school.Visual;
+
+                        if (observer == null)
+                            throw new InvalidOperationException("No observer was initialized");
+
+                        m_observer = new ObserverForm(m_mainForm, observer, m_school);
+                        m_mainForm.ObserverViews.Add(m_observer);
+                        m_observer.TopLevel = false;
+                        observerDockPanel.Controls.Add(m_observer);
+                        m_observer.Dock = DockStyle.Fill;
+                        m_observer.Show();
+                        m_observer.Size = new System.Drawing.Size(300, 300);
+                        //
+                        //Form f = observerDockPanel.FindForm();
+                        //newView.MdiParent = f;
+                        //f.Show();
+                    }
+                    catch (Exception e)
+                    {
+                        MyLog.ERROR.WriteLine("Error creating observer: " + e.Message);
+                    }
+                }
+                else
+                {
+                    observerDockPanel.Show();
+                }
+            }
+            else
+            {
+                if (m_observer != null)
+                {
+                    observerDockPanel.Hide();
+                }
+            }
         }
 
         private void SelectSchoolWorld()
@@ -115,6 +166,13 @@ namespace GoodAI.School.GUI
                         break;
                     }
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox c = (CheckBox)sender;
+            m_showVisual = c.Checked;
+            SetObserver();
         }
     }
 }

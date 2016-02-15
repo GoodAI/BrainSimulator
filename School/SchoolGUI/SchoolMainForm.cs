@@ -414,6 +414,7 @@ namespace GoodAI.School.GUI
         {
             string xmlResult = m_serializer.Serialize(m_design);
             File.WriteAllText(path, xmlResult);
+            MyLog.Writer.WriteLine(MyLogLevel.INFO, "School project saved to: " + path);
             m_savedRepresentation = xmlResult;
             m_currentFile = path;
             UpdateWindowName(null, EventArgs.Empty);
