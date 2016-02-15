@@ -31,6 +31,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
+                { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1 },
             };
 
             TSHints.Add(DISTANCE_BONUS_COEFFICENT, 1);
