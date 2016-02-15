@@ -183,6 +183,9 @@
   <ItemGroup>
     <None Include="Resources\SaveFileDialogControl_703.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\debug.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>

@@ -35,8 +35,10 @@
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnRun = new System.Windows.Forms.ToolStripButton();
-            this.btnPause = new System.Windows.Forms.ToolStripButton();
             this.btnStop = new System.Windows.Forms.ToolStripButton();
+            this.btnPause = new System.Windows.Forms.ToolStripButton();
+            this.btnStepOver = new System.Windows.Forms.ToolStripButton();
+            this.btnDebug = new System.Windows.Forms.ToolStripButton();
             this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -47,7 +49,6 @@
             this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.learningTaskNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.btnStepOver = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
@@ -104,7 +105,8 @@
             this.btnRun,
             this.btnStop,
             this.btnPause,
-            this.btnStepOver});
+            this.btnStepOver,
+            this.btnDebug});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(831, 25);
@@ -119,17 +121,7 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(23, 22);
             this.btnRun.Text = "Run Simulation";
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
-            // 
-            // btnPause
-            // 
-            this.btnPause.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnPause.Image = global::GoodAI.School.GUI.Properties.Resources.StatusAnnotations_Pause_16xLG_color;
-            this.btnPause.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPause.Name = "btnPause";
-            this.btnPause.Size = new System.Drawing.Size(23, 22);
-            this.btnPause.Text = "Pause Simulation";
-            this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
+            this.btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
             // 
             // btnStop
             // 
@@ -139,7 +131,37 @@
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(23, 22);
             this.btnStop.Text = "Stop Simulation";
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            this.btnStop.Click += new System.EventHandler(m_mainForm.stopToolButton_Click);
+            // 
+            // btnPause
+            // 
+            this.btnPause.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnPause.Image = global::GoodAI.School.GUI.Properties.Resources.StatusAnnotations_Pause_16xLG_color;
+            this.btnPause.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPause.Name = "btnPause";
+            this.btnPause.Size = new System.Drawing.Size(23, 22);
+            this.btnPause.Text = "Pause Simulation";
+            this.btnPause.Click += new System.EventHandler(m_mainForm.pauseToolButton_Click);
+            // 
+            // btnStepOver
+            // 
+            this.btnStepOver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnStepOver.Image = global::GoodAI.School.GUI.Properties.Resources.StepOver;
+            this.btnStepOver.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnStepOver.Name = "btnStepOver";
+            this.btnStepOver.Size = new System.Drawing.Size(23, 22);
+            this.btnStepOver.Text = "Step Over";
+            this.btnStepOver.Click += new System.EventHandler(m_mainForm.stepOverToolButton_Click);
+            // 
+            // btnDebug
+            // 
+            this.btnDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDebug.Image = global::GoodAI.School.GUI.Properties.Resources.debug;
+            this.btnDebug.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDebug.Name = "btnDebug";
+            this.btnDebug.Size = new System.Drawing.Size(23, 22);
+            this.btnDebug.Text = "Debug Simulation";
+            this.btnDebug.Click += new System.EventHandler(m_mainForm.debugToolButton_Click);
             // 
             // stepsDataGridViewTextBoxColumn
             // 
@@ -206,16 +228,6 @@
             // 
             this.learningTaskNodeBindingSource.DataSource = typeof(GoodAI.School.GUI.LearningTaskNode);
             // 
-            // btnStepOver
-            // 
-            this.btnStepOver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnStepOver.Image = global::GoodAI.School.GUI.Properties.Resources.StepOver;
-            this.btnStepOver.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnStepOver.Name = "btnStepOver";
-            this.btnStepOver.Size = new System.Drawing.Size(23, 22);
-            this.btnStepOver.Text = "toolStripButton1";
-            this.btnStepOver.Click += new System.EventHandler(this.btnStepOver_Click);
-            // 
             // SchoolRunForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -260,5 +272,6 @@
         private System.Windows.Forms.ToolStripButton btnPause;
         private System.Windows.Forms.ToolStripButton btnStop;
         private System.Windows.Forms.ToolStripButton btnStepOver;
+        private System.Windows.Forms.ToolStripButton btnDebug;
     }
 }

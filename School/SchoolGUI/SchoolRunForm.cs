@@ -85,26 +85,6 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void btnRun_Click(object sender, EventArgs e)
-        {
-            m_mainForm.runToolButton.PerformClick();
-        }
-
-        private void btnPause_Click(object sender, EventArgs e)
-        {
-            m_mainForm.pauseToolButton.PerformClick();
-        }
-
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            m_mainForm.stopToolButton.PerformClick();
-        }
-
-        private void btnStepOver_Click(object sender, EventArgs e)
-        {
-            m_mainForm.stepOverToolButton.PerformClick();
-        }
-
         private void SchoolRunForm_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
