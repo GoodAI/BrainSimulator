@@ -236,6 +236,7 @@
             this.tree.NodeControls.Add(this.nodeTextBox1);
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
+            this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
             this.tree.Size = new System.Drawing.Size(414, 387);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
