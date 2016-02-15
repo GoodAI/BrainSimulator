@@ -122,12 +122,18 @@ namespace GoodAI.School.GUI
         private void EnableButtons(Control control)
         {
             SetButtonsEnabled(control, true);
-            SetToolstripButtonsEnabled(control, true);
+        }
+
+        private void EnableToolstripButtons(ToolStrip toolstrip)
+        {
+            SetToolstripButtonsEnabled(toolstrip, true);
         }
 
         private void UpdateButtons()
         {
             EnableButtons(this);
+            EnableToolstripButtons(toolStrip1);
+
 
             if (!tree.AllNodes.Any())
                 btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
