@@ -208,6 +208,7 @@ Global
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
