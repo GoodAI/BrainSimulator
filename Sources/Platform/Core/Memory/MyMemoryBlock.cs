@@ -379,6 +379,11 @@ namespace GoodAI.Core.Memory
                 return null;
         }
 
+        public static implicit operator CUdeviceptr(MyMemoryBlock<T> memBlock)
+        {
+            return memBlock.GetDevicePtr(memBlock.Owner.GPU);
+        }
+
         public override CUdeviceptr GetDevicePtr(int GPU)
         {
             return GetDevicePtr(GPU, 0);
