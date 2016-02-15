@@ -179,7 +179,10 @@ namespace GoodAI.Modules.School.LearningTasks
         // Get a target location
         private Point GetRandomLocation(Size size)
         {
-            return WrappedWorld.RandomPositionInsidePowNonCovering(m_rand, size);
+            // Need to separate objects enough so that even large objects do not touch when
+            // rotated.
+            const int OBJECT_MARGIN = 10;
+            return WrappedWorld.RandomPositionInsidePowNonCovering(m_rand, size, OBJECT_MARGIN);
         }
     }
 }
