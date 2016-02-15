@@ -46,6 +46,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -75,17 +79,17 @@
     <Compile Include="CoreTestBase.cs" />
     <Compile Include="DashboardTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
+    <Compile Include="Memory\CustomDimensionsTests.cs" />
     <Compile Include="ModelCreationTests.cs" />
     <Compile Include="NodeConnectionTests.cs" />
     <Compile Include="Nodes\MyForkTests.cs" />
-    <Compile Include="OldTensorDimensionsTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="ReleaseDeserializationTests.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="SimulationHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TensorDimensionsTests.cs" />
+    <Compile Include="Memory\TensorDimensionsTests.cs" />
     <Compile Include="UndoManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>

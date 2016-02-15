@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Memory;
+﻿using System;
+using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.Transforms;
@@ -25,7 +26,7 @@ namespace GoodAI.Core.Nodes
             set { SetOutput(0, value); }
         }
 
-        public int OutputSize
+        private int OutputSize
         {
             get { return Output.Count; }
             set { Output.Count = value; }
@@ -43,8 +44,32 @@ namespace GoodAI.Core.Nodes
             }
         }
 
-        [MyBrowsable, YAXSerializableField(DefaultValue = 0), YAXElementFor("IO")]
-        public int OutputColHint { get; set; }
+        [Obsolete("Use OutputDimensions please.")]
+        [YAXSerializableField(DefaultValue = 0), YAXElementFor("IO")]
+        private int OutputColHint { get; set; }
+
+        [MyBrowsable, Category("I/O"), Description("Comma separated dimensions, such as \"2, 3, *\".")]
+        [YAXSerializableField(DefaultValue = ""), YAXElementFor("IO")]
+        public string OutputDimensions
+        {
+            get
+            {
+                // backward compatible layer: use OutputColHint saved in the project
+                if (m_outputDimsHint.IsEmpty && OutputColHint > 0)
+                {
+                    m_outputDimsHint = new CustomDimensionsHint(OutputColHint);
+                    OutputColHint = 0;  // Don't use the old value next time.
+                }
+
+                return m_outputDimsHint.PrintSource();
+            }
+            set
+            {
+                m_outputDimsHint = CustomDimensionsHint.Parse(value);
+            }
+        }
+
+        private CustomDimensionsHint m_outputDimsHint;
 
         public int[] m_offsets = new int[0];
 
@@ -79,7 +104,7 @@ namespace GoodAI.Core.Nodes
             CosineDistance,
             DistanceSquared,
 
-            MatMultiplication, /// Matrix mutliplication
+            MatMultiplication, /// Matrix multiplication
 
             //must be last
             StackInputs
@@ -126,11 +151,6 @@ namespace GoodAI.Core.Nodes
                 {
                     Output.ColumnHint = ai.ColumnHint;
                 }
-            }
-
-            if (OutputColHint > 0)
-            {
-                Output.ColumnHint = OutputColHint;
             }
 
             switch (Operation)
@@ -190,6 +210,8 @@ namespace GoodAI.Core.Nodes
                     }
                     break;
             }
+
+            Output.Dims = m_outputDimsHint.TryToApply(Output.Dims);  // Returns original dims when the hint is empty.
         }
 
         public override void Validate(MyValidator validator)

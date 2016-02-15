@@ -8,15 +8,24 @@ using GoodAI.Core.Memory;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace CoreTests
+namespace CoreTests.Memory
 {
-    public class TensorDimensionsTests
+    public class TensorDimensionsTests : CoreTestBase
     {
         private readonly ITestOutputHelper m_output;
 
         public TensorDimensionsTests(ITestOutputHelper output)
         {
             m_output = output;
+        }
+
+        [Fact]
+        public void ElementCountIsCachedProperly()
+        {
+            var dims = new TensorDimensions(3, 5, 7);
+
+            Assert.Equal(3*5*7, dims.ElementCount);
+            Assert.Equal(3 * 5 * 7, dims.ElementCount);
         }
 
         [Fact]
