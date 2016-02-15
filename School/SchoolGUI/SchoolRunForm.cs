@@ -44,7 +44,7 @@ namespace GoodAI.School.GUI
             dataGridView1.DataSource = Data;
             PrepareSimulation();
             if (Properties.School.Default.AutorunEnabled)
-                btnPlay.PerformClick();
+                btnRun.PerformClick();
         }
 
         private void SelectSchoolWorld()
@@ -85,7 +85,7 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void btnPlay_Click(object sender, EventArgs e)
+        private void btnRun_Click(object sender, EventArgs e)
         {
             m_mainForm.runToolButton.PerformClick();
         }
@@ -100,9 +100,9 @@ namespace GoodAI.School.GUI
             m_mainForm.stopToolButton.PerformClick();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void btnStepOver_Click(object sender, EventArgs e)
         {
-            Hide();
+            m_mainForm.stepOverToolButton.PerformClick();
         }
 
         private void SchoolRunForm_KeyDown(object sender, KeyEventArgs e)
@@ -111,7 +111,7 @@ namespace GoodAI.School.GUI
             {
                 case Keys.F5:
                     {
-                        btnPlay.PerformClick();
+                        btnRun.PerformClick();
                         break;
                     }
                 case Keys.F7:
