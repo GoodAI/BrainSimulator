@@ -104,14 +104,25 @@ namespace GoodAI.School.GUI
             ApplyToAll(control, setBtns);
         }
 
+        private void SetToolstripButtonsEnabled(Control control, bool value)
+        {
+            ToolStrip tools = control as ToolStrip;
+            if (tools != null)
+                foreach (ToolStripItem item in tools.Items)
+                    if (item as ToolStripButton != null)
+                        item.Enabled = value;
+        }
+
         private void DisableButtons(Control control)
         {
             SetButtonsEnabled(control, false);
+            SetToolstripButtonsEnabled(control, false);
         }
 
         private void EnableButtons(Control control)
         {
             SetButtonsEnabled(control, true);
+            SetToolstripButtonsEnabled(control, true);
         }
 
         private void UpdateButtons()
@@ -224,6 +235,7 @@ namespace GoodAI.School.GUI
             }
 
             tree.EndUpdate();
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
         #endregion DragDrop
@@ -234,6 +246,9 @@ namespace GoodAI.School.GUI
         {
             Properties.School.Default.LastOpenedFile = null;
             Properties.School.Default.Save();
+            m_currentFile = null;
+            m_lastOpenedFile = null;
+            m_savedRepresentation = null;
             m_model.Nodes.Clear();
             UpdateWindowName(null, EventArgs.Empty);
         }
@@ -441,6 +456,7 @@ namespace GoodAI.School.GUI
             m_savedRepresentation = xmlCurr;
             m_currentFile = filePath;
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateButtons();
             return false;
         }
 
