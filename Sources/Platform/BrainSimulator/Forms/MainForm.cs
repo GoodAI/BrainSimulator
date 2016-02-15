@@ -325,7 +325,7 @@ namespace GoodAI.BrainSimulator.Forms
             saveFileDialog.FileName = String.Empty;
         }
 
-        private void runToolButton_Click(object sender, EventArgs e)
+        public void runToolButton_Click(object sender, EventArgs e)
         {
             ShowHideAllObservers(forceShow: true);
             StartSimulation();            
@@ -336,14 +336,14 @@ namespace GoodAI.BrainSimulator.Forms
             ShowHideAllObservers(forceShow: true);
         }
 
-        private void stopToolButton_Click(object sender, EventArgs e)
+        public void stopToolButton_Click(object sender, EventArgs e)
         {
             ShowHideAllObservers(forceShow: true);
             SimulationHandler.StopSimulation();
             SimulationHandler.Simulation.InDebugMode = false;
         }
 
-        private void pauseToolButton_Click(object sender, EventArgs e)
+        public void pauseToolButton_Click(object sender, EventArgs e)
         {
             ShowHideAllObservers(forceShow: true);
             SimulationHandler.PauseSimulation();
@@ -638,7 +638,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
-        private void debugToolButton_Click(object sender, EventArgs e)
+        public void debugToolButton_Click(object sender, EventArgs e)
         {            
             SimulationHandler.Simulation.InDebugMode = true;
             StartSimulationStep();
@@ -646,7 +646,7 @@ namespace GoodAI.BrainSimulator.Forms
             OpenFloatingOrActivate(DebugView);        
         }
 
-        private void stepOverToolButton_Click(object sender, EventArgs e)
+        public void stepOverToolButton_Click(object sender, EventArgs e)
         {
             SetupDebugViews();
 
