@@ -84,6 +84,7 @@ namespace GoodAI.School.GUI
                         m_observer.Dock = DockStyle.Fill;
                         m_observer.Show();
                         m_observer.Size = new System.Drawing.Size(300, 300);
+                        m_observer.CloseButtonVisible = false;
                         //
                         //Form f = observerDockPanel.FindForm();
                         //newView.MdiParent = f;
@@ -93,6 +94,10 @@ namespace GoodAI.School.GUI
                     {
                         MyLog.ERROR.WriteLine("Error creating observer: " + e.Message);
                     }
+                }
+                else if (m_observer.IsHidden)
+                {
+                    m_observer.Show();
                 }
                 else
                 {

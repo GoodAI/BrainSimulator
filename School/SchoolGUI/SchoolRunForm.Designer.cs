@@ -94,7 +94,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(12, 28);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(573, 468);
+            this.dataGridView1.Size = new System.Drawing.Size(572, 420);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
@@ -194,7 +194,7 @@
             this.btnDebug});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(972, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(971, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -247,7 +247,7 @@
             // 
             this.observerDockPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.observerDockPanel.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            this.observerDockPanel.Location = new System.Drawing.Point(592, 29);
+            this.observerDockPanel.Location = new System.Drawing.Point(591, 29);
             this.observerDockPanel.Name = "observerDockPanel";
             this.observerDockPanel.Size = new System.Drawing.Size(368, 373);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
@@ -304,7 +304,7 @@
             this.observerCheckBox.AutoSize = true;
             this.observerCheckBox.Checked = true;
             this.observerCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.observerCheckBox.Location = new System.Drawing.Point(591, 408);
+            this.observerCheckBox.Location = new System.Drawing.Point(590, 408);
             this.observerCheckBox.Name = "observerCheckBox";
             this.observerCheckBox.Size = new System.Drawing.Size(69, 17);
             this.observerCheckBox.TabIndex = 8;
@@ -316,15 +316,17 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(972, 508);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(971, 460);
             this.Controls.Add(this.observerCheckBox);
             this.Controls.Add(this.observerDockPanel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.dataGridView1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
+            this.MinimumSize = new System.Drawing.Size(410, 480);
             this.Name = "SchoolRunForm";
-            this.Text = "SchoolRunForm";
+            this.Text = "School Run Controller";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();
