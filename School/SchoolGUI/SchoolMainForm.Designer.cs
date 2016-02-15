@@ -321,6 +321,7 @@
             this.Name = "SchoolMainForm";
             this.Text = "School for AI";
             this.Load += new System.EventHandler(this.SchoolMainForm_Load);
+            this.VisibleChanged += new System.EventHandler(this.UpdateWindowName);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolMainForm_KeyDown);
             this.groupBoxCurr.ResumeLayout(false);
             this.groupBoxTask.ResumeLayout(false);

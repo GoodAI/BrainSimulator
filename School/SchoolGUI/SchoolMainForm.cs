@@ -61,6 +61,11 @@ namespace GoodAI.School.GUI
 
         private void UpdateWindowName(object sender, EventArgs e)
         {
+            if (!Visible)
+            {
+                Text = DEFAULT_FORM_NAME;
+                return;
+            }
             string lof = Properties.School.Default.LastOpenedFile;
             string filename = String.IsNullOrEmpty(Properties.School.Default.LastOpenedFile) ? "Unsaved workspace" : Path.GetFileName(Properties.School.Default.LastOpenedFile);
             Text = DEFAULT_FORM_NAME + " - " + filename;
