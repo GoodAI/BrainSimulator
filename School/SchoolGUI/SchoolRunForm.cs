@@ -97,7 +97,6 @@ namespace GoodAI.School.GUI
             dataGridView1.DataSource = Data;
             UpdateData();
             PrepareSimulation();
-            m_showObserver = true;
             SetObserver();
             if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
