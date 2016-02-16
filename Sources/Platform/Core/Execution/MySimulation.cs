@@ -722,7 +722,9 @@ namespace GoodAI.Core.Execution
 
         public override void Reallocate()
         {
+            // This will allocate memory on the device. The CUDA context needs to be set up.
             MyKernelFactory.Instance.SetCurrent(0);
+
             // TODO(HonzaS): cache the ordered nodes if they have been ordered in model changes.
             foreach (MyNode node in MySimulationHandler.OrderNetworkNodes(m_project.Network))
                 node.ReallocateMemoryBlocks();

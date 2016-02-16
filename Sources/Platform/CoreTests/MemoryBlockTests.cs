@@ -32,6 +32,8 @@ namespace CoreTests
 
             node.Block.IsDynamic = true;
             node.Block.Reallocate(10);
+
+            Assert.Equal(10, node.Block.Count);
         }
 
         [Fact]

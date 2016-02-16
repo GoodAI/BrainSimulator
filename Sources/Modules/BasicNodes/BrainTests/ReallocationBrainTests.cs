@@ -8,11 +8,11 @@ using Xunit;
 
 namespace GoodAI.Modules.Tests
 {
-    public sealed class ReallocationBrainTests : BrainTest
+    public sealed class ReallocationBrainTest : BrainTest
     {
         private float m_difference;
 
-        public ReallocationBrainTests()
+        public ReallocationBrainTest()
         {
             BrainFileName = "reallocation-test.brain";
 
@@ -24,15 +24,15 @@ namespace GoodAI.Modules.Tests
         {
             m_difference = scan.GetValues(22).Sum() - scan.GetValues(20).Sum();
 
-            return CheckSumFailed();
+            return IsCheckSumFailed();
         }
 
         public override void Check(IBrainScan b)
         {
-            Assert.False(CheckSumFailed());
+            Assert.False(IsCheckSumFailed());
         }
 
-        private bool CheckSumFailed()
+        private bool IsCheckSumFailed()
         {
             return Math.Abs(m_difference) > 0;
         }
