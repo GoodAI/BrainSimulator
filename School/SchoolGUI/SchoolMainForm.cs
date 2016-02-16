@@ -306,25 +306,21 @@ namespace GoodAI.School.GUI
 
         private void DeleteNodes(object sender, EventArgs e)
         {
-            TreeNodeAdv nextone = tree.SelectedNode.NextNode;
-
             // Walking through the nodes backwards. That way the index doesn't increase past the node size
             for (int i = tree.SelectedNodes.Count - 1; i >= 0; i--)
             {
-
+                // After 1/many nodes are deleted, select the node that was after it/them
                 if (i == tree.SelectedNodes.Count - 1)
                 {
-                    nextone = tree.SelectedNode.NextNode;
+                    TreeNodeAdv nextone = tree.SelectedNode.NextNode;
+                    if (nextone != null)
+                    {
+                        nextone.IsSelected = true;
+                    }
                 }
 
                 TreeNodeAdv n = (TreeNodeAdv)tree.SelectedNodes[i];
                 (n.Tag as Node).Parent = null;
-            }
-
-            // After 1/many nodes are deleted, select the node that was after it/them
-            if (nextone != null)
-            {
-                nextone.IsSelected = true;
             }
         }
 
