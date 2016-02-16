@@ -1,6 +1,7 @@
 ﻿using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
+using GoodAI.Core.Execution;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
@@ -23,7 +24,8 @@ namespace GoodAI.School.GUI
         private bool m_showVisual;
         private ObserverForm m_observer;
 
-        private uint m_currentRow { get; set; }
+        private uint m_currentRow = 0;
+        private uint m_stepOffset = 0;
 
         public string RunName
         {
@@ -44,12 +46,16 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
             InitializeComponent();
 
+
+            btnRun.Click += new System.EventHandler(simulationStart);
+            btnStepOver.Click += new System.EventHandler(simulationStart);
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
             btnStop.Click += new System.EventHandler(m_mainForm.stopToolButton_Click);
             btnPause.Click += new System.EventHandler(m_mainForm.pauseToolButton_Click);
             btnStepOver.Click += new System.EventHandler(m_mainForm.stepOverToolButton_Click);
             btnDebug.Click += new System.EventHandler(m_mainForm.debugToolButton_Click);
+
 
 
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
@@ -63,22 +69,25 @@ namespace GoodAI.School.GUI
             if (actualTask == null)
                 return;
 
-            if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType)
+            uint simStep = m_mainForm.SimulationHandler.SimulationStep;
+            if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) // next LT
+            {
                 m_currentRow++;
+                m_stepOffset = simStep;
+            }
             if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) //should not happen at all - just a safeguard
             {
                 MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
                 return;
             }
 
-            uint simStep = m_mainForm.SimulationHandler.SimulationStep;
             LearningTaskNode node = Data.ElementAt((int)m_currentRow);
-            node.Steps = simStep;
+            node.Steps = simStep - m_stepOffset;
             UpdateData();
             dataGridView1.Invalidate();
         }
 
-        private void UpdateButtons(object sender, Core.Execution.MySimulationHandler.StateEventArgs e)
+        private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
         {
             btnRun.Enabled = m_mainForm.runToolButton.Enabled;
             btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
@@ -168,6 +177,8 @@ namespace GoodAI.School.GUI
         {
             SelectSchoolWorld();
             CreateCurriculum();
+            m_currentRow = 0;
+            m_stepOffset = 0;
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -216,6 +227,12 @@ namespace GoodAI.School.GUI
             CheckBox c = (CheckBox)sender;
             m_showVisual = c.Checked;
             SetObserver();
+        }
+
+        private void simulationStart(object sender, EventArgs e)
+        {
+            if (m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
+                PrepareSimulation();
         }
     }
 }
