@@ -236,14 +236,14 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            //if (School != null)
-            //{
-            //    POW_WIDTH = School.Visual.Dims[0];
-            //    POW_HEIGHT = School.Visual.Dims[1];
+            if (School != null)
+            {
+                POW_WIDTH = School.Visual.Dims[0];
+                POW_HEIGHT = School.Visual.Dims[1];
 
-            //    FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
-            //    FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
-            //}
+                FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
+                FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
+            }
 
             VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT;
             VisualFOW.ColumnHint = FOW_WIDTH;
