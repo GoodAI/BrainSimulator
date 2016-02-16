@@ -187,6 +187,8 @@ namespace GoodAI.Modules.School.Worlds
         public SchoolCurriculum Curriculum { get; set; }
         ILearningTask m_currentLearningTask;
 
+        private TrainingResult m_taskResult;
+
         // The curriculum to use.
         [MyBrowsable, Category("Curriculum"), Description("Choose which type of curriculum you want to use.")]
         [YAXSerializableField(DefaultValue = CurriculumType.TrainingCurriculum)]
@@ -198,6 +200,10 @@ namespace GoodAI.Modules.School.Worlds
         [MyBrowsable, Category("World"), Description("Set to 0 < p <= 1 to emulate the success (with probability p) of training units.")]
         [YAXSerializableField(DefaultValue = 0)]
         public float EmulatedUnitSuccessProbability { get; set; }
+
+        [MyBrowsable, Category("World"), Description("If true, a black screen will be presented for one step after each success.")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool ShowBlackscreen { get; set; }
 
 
         public override void Validate(MyValidator validator)
@@ -247,33 +253,58 @@ namespace GoodAI.Modules.School.Worlds
             return new MyExecutionBlock(blocks.ToArray());
         }
 
-        public void ExecuteLearningTaskStep()
+        private void ExecuteLearningTaskStep()
         {
             ResetLTStatusFlags();
 
-            // first evaluate previus step
-            if (m_currentLearningTask.IsInitialized)
+            if (ShowBlackscreen)
+                switch (m_taskResult)
+                {
+                    case TrainingResult.Completed:
+                    case TrainingResult.LevelUp:
+                    case TrainingResult.Finished:
+                        // Skip task evaluation, a blackscreen will show up this step
+                        return;
+                }
+
+            if (!m_currentLearningTask.IsInitialized)
             {
-                //
+                InitNewLearningTask();
+            }
+            else
+            {
+                // evaluate previus step
                 m_currentLearningTask.ExecuteStep();
 
                 // set new level, training unit or step
                 // this also partially sets LTStatus
-                bool learningTaskFail;
-                m_currentLearningTask.EvaluateStep(out learningTaskFail);
+                m_taskResult = m_currentLearningTask.EvaluateStep();
 
-                if (learningTaskFail)
+                switch (m_taskResult)
                 {
-                    if (Owner.SimulationHandler.CanPause)
-                    {
-                        Owner.SimulationHandler.PauseSimulation();
-                    }
-                    return;
+                    case TrainingResult.InProgress:
+                        break;
+
+                    case TrainingResult.Completed:
+                        NotifyNewTrainingUnit();
+                        break;
+
+                    case TrainingResult.Failed:
+                        if (Owner.SimulationHandler.CanPause)
+                            Owner.SimulationHandler.PauseSimulation();
+                        return;
+
+                    case TrainingResult.LevelUp:
+                        NotifyNewLevel();
+                        break;
+
+                    case TrainingResult.Finished:
+                        NotifyNewLearningTask();
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-            }
-            else
-            {
-                InitNewLearningTask();
             }
 
             // set new learning task or stop simulation
@@ -303,11 +334,12 @@ namespace GoodAI.Modules.School.Worlds
                 return false;
             }
             // inform user about new LT
-            MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                "Switching to LearningTask: " +
-                m_currentLearningTask.GetTypeName());
+            MyLog.Writer.WriteLine(MyLogLevel.INFO, "Switching to LearningTask: " + m_currentLearningTask.GetTypeName());
 
             m_currentLearningTask.Init();
+
+            NotifyNewTrainingUnit();
+            NotifyNewLevel();
 
             return true;
         }
@@ -387,6 +419,15 @@ namespace GoodAI.Modules.School.Worlds
             return m_rndGen.NextDouble() < EmulatedUnitSuccessProbability;
         }
 
+        public bool EmulateIsTrainingUnitCompleted(out TrainingResult result)
+        {
+            bool res = m_rndGen.NextDouble() < EmulatedUnitSuccessProbability;
+
+            result = res ? TrainingResult.Completed : TrainingResult.InProgress;
+
+            return res;
+        }
+
         public InitSchoolWorldTask InitSchool { get; protected set; }
         public InputAdapterTask AdapterInputStep { get; protected set; }
         public LearningStepTask LearningStep { get; protected set; }
@@ -413,6 +454,8 @@ namespace GoodAI.Modules.School.Worlds
         /// </summary>
         public class OutputAdapterTask : MyTask<SchoolWorld>
         {
+            private bool drawBlackscreen = false;
+
             public override void Init(int nGPU)
             {
                 Owner.CurrentWorld.InitWorldOutputs(nGPU);
@@ -420,6 +463,26 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
+                if (drawBlackscreen)
+                {
+                    drawBlackscreen = false;
+                    Owner.Visual.Fill(0);
+                    Owner.m_taskResult = TrainingResult.InProgress;
+                    return;
+                }
+
+                if (Owner.ShowBlackscreen)
+                    switch (Owner.m_taskResult)
+                    {
+                        case TrainingResult.Completed:
+                        case TrainingResult.LevelUp:
+                        case TrainingResult.Finished:
+                            // Display a blackscreen as a notification about the agent's success    
+                            // delay it to the next step -- the learning tasks won't execute next step aswell
+                            drawBlackscreen = true;
+                            break;
+                    }
+
                 Owner.CurrentWorld.MapWorldOutputs();
             }
         }
@@ -447,7 +510,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             public override void Init(int nGPU)
             {
-
             }
 
             public override void Execute()
@@ -468,6 +530,5 @@ namespace GoodAI.Modules.School.Worlds
                 Owner.ExecuteLearningTaskStep();
             }
         }
-
     }
 }

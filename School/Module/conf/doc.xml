@@ -115,13 +115,10 @@
         <member name="T:GoodAI.Modules.School.LearningTasks.LTShapeSorting">
             <meta>mm</meta>
             <summary>
-            
             </summary>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">
-            <summary>
-            Visual object for comparison. Similar to the Shape class.
-            </summary>
+            <summary>Visual object for comparison. Similar to the Shape class.</summary>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTVisualEquivalence">
             <summary>
