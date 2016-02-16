@@ -135,15 +135,16 @@ namespace GoodAI.School.GUI
                             throw new InvalidOperationException("No observer was initialized");
 
                         m_observer = new ObserverForm(m_mainForm, observer, m_school);
-                        m_mainForm.ObserverViews.Add(m_observer);
+
                         m_observer.TopLevel = false;
                         observerDockPanel.Controls.Add(m_observer);
-                        m_observer.Show();
-
+                        
                         m_observer.CloseButtonVisible = false;
                         m_observer.MaximizeBox = false;
                         m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
                         m_observer.Location = new System.Drawing.Point(-8, -30);
+
+                        m_observer.Show();
                     }
                     catch (Exception e)
                     {
