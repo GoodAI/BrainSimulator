@@ -51,6 +51,12 @@
     <Compile Include="LabelDescriptionControl.Designer.cs">
       <DependentUpon>LabelDescriptionControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="LearningTaskSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LearningTaskSelectionForm.Designer.cs">
+      <DependentUpon>LearningTaskSelectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -136,6 +142,9 @@
     <EmbeddedResource Include="LabelDescriptionControl.resx">
       <DependentUpon>LabelDescriptionControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LearningTaskSelectionForm.resx">
+      <DependentUpon>LearningTaskSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -185,6 +194,45 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\debug.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\html\LT2BackBinaryTest.html" />
+    <Content Include="Resources\html\LTActionWCooldown.html" />
+    <Content Include="Resources\html\LTApproach.html" />
+    <Content Include="Resources\html\LTClassComposition.html" />
+    <Content Include="Resources\html\LTCompareLayouts.html" />
+    <Content Include="Resources\html\LTCompatibilityMatching.html" />
+    <Content Include="Resources\html\LTConditionalTarget.html" />
+    <Content Include="Resources\html\LTCopyAction.html" />
+    <Content Include="Resources\html\LTCopySequence.html" />
+    <Content Include="Resources\html\LTDebugging.html" />
+    <Content Include="Resources\html\LTDetectBlackAndWhite.html" />
+    <Content Include="Resources\html\LTDetectColor.html" />
+    <Content Include="Resources\html\LTDetectDifference.html" />
+    <Content Include="Resources\html\LTDetectShape.html" />
+    <Content Include="Resources\html\LTDetectShapeColor.html" />
+    <Content Include="Resources\html\LTDetectSimilarity.html" />
+    <Content Include="Resources\html\LTDetectWhite.html" />
+    <Content Include="Resources\html\LTHiddenTarget.html" />
+    <Content Include="Resources\html\LTMovingTarget.html" />
+    <Content Include="Resources\html\LTMultipleTargetsInSequence.html" />
+    <Content Include="Resources\html\LTObstacles.html" />
+    <Content Include="Resources\html\LTObstaclesTargetOnSight.html" />
+    <Content Include="Resources\html\LTPongTest.html" />
+    <Content Include="Resources\html\LTPongWithBricks.html" />
+    <Content Include="Resources\html\LTPongWithoutBricks.html" />
+    <Content Include="Resources\html\LTRotateAndMoveToFit.html" />
+    <Content Include="Resources\html\LTShapeSorting.html" />
+    <Content Include="Resources\html\LTSimpleAngle.html" />
+    <Content Include="Resources\html\LTSimpleDistance.html" />
+    <Content Include="Resources\html\LTSimpleRhythm.html" />
+    <Content Include="Resources\html\LTSimpleSize.html" />
+    <Content Include="Resources\html\LTTetrisFull.html" />
+    <Content Include="Resources\html\LTTetrisTest.html" />
+    <Content Include="Resources\html\LTVisualEquivalence.html" />
+    <Content Include="Resources\html\resources\220px-The_Imitation_Game.png" />
+    <Content Include="Resources\html\resources\sheet.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
