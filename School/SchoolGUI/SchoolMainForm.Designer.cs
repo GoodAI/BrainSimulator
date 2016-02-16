@@ -28,23 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SchoolMainForm));
             this.nodeCheckBox1 = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
-            this.groupBoxCurr = new System.Windows.Forms.GroupBox();
-            this.btnDetailsCurr = new System.Windows.Forms.Button();
-            this.btnDeleteCurr = new System.Windows.Forms.Button();
-            this.btnNewCurr = new System.Windows.Forms.Button();
-            this.checkBoxAutosave = new System.Windows.Forms.CheckBox();
-            this.btnRun = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.groupBoxTask = new System.Windows.Forms.GroupBox();
-            this.btnDetailsTask = new System.Windows.Forms.Button();
-            this.btnDeleteTask = new System.Windows.Forms.Button();
-            this.btnNewTask = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.checkBoxAutorun = new System.Windows.Forms.CheckBox();
             this.tree = new Aga.Controls.Tree.TreeViewAdv();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnNew = new System.Windows.Forms.ToolStripButton();
@@ -52,9 +41,20 @@
             this.btnSaveAs = new System.Windows.Forms.ToolStripButton();
             this.btnOpen = new System.Windows.Forms.ToolStripButton();
             this.btnImport = new System.Windows.Forms.ToolStripButton();
-            this.groupBoxCurr.SuspendLayout();
-            this.groupBoxTask.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.btnNewCurr = new System.Windows.Forms.ToolStripButton();
+            this.btnDetailsCurr = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.btnNewTask = new System.Windows.Forms.ToolStripButton();
+            this.btnDetailsTask = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnDelete = new System.Windows.Forms.ToolStripButton();
+            this.btnAutorun = new System.Windows.Forms.ToolStripButton();
+            this.btnAutosave = new System.Windows.Forms.ToolStripButton();
+            this.btnUpload = new System.Windows.Forms.ToolStripButton();
+            this.btnRun = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,71 +74,6 @@
             this.nodeTextBox1.ParentColumn = null;
             this.nodeTextBox1.DrawText += new System.EventHandler<Aga.Controls.Tree.NodeControls.DrawTextEventArgs>(this.nodeTextBox1_DrawText);
             // 
-            // groupBoxCurr
-            // 
-            this.groupBoxCurr.Controls.Add(this.btnDetailsCurr);
-            this.groupBoxCurr.Controls.Add(this.btnDeleteCurr);
-            this.groupBoxCurr.Controls.Add(this.btnNewCurr);
-            this.groupBoxCurr.Location = new System.Drawing.Point(3, 6);
-            this.groupBoxCurr.Name = "groupBoxCurr";
-            this.groupBoxCurr.Size = new System.Drawing.Size(92, 110);
-            this.groupBoxCurr.TabIndex = 1;
-            this.groupBoxCurr.TabStop = false;
-            this.groupBoxCurr.Text = "Curriculum";
-            // 
-            // btnDetailsCurr
-            // 
-            this.btnDetailsCurr.Location = new System.Drawing.Point(6, 77);
-            this.btnDetailsCurr.Name = "btnDetailsCurr";
-            this.btnDetailsCurr.Size = new System.Drawing.Size(75, 23);
-            this.btnDetailsCurr.TabIndex = 2;
-            this.btnDetailsCurr.Text = "Details";
-            this.btnDetailsCurr.UseVisualStyleBackColor = true;
-            this.btnDetailsCurr.Click += new System.EventHandler(this.btnDetailsCurr_Click);
-            // 
-            // btnDeleteCurr
-            // 
-            this.btnDeleteCurr.Location = new System.Drawing.Point(6, 48);
-            this.btnDeleteCurr.Name = "btnDeleteCurr";
-            this.btnDeleteCurr.Size = new System.Drawing.Size(75, 23);
-            this.btnDeleteCurr.TabIndex = 1;
-            this.btnDeleteCurr.Text = "Delete";
-            this.btnDeleteCurr.UseVisualStyleBackColor = true;
-            this.btnDeleteCurr.Click += new System.EventHandler(this.btnDeleteCurr_Click);
-            // 
-            // btnNewCurr
-            // 
-            this.btnNewCurr.Location = new System.Drawing.Point(6, 19);
-            this.btnNewCurr.Name = "btnNewCurr";
-            this.btnNewCurr.Size = new System.Drawing.Size(75, 23);
-            this.btnNewCurr.TabIndex = 0;
-            this.btnNewCurr.Text = "New";
-            this.btnNewCurr.UseVisualStyleBackColor = true;
-            this.btnNewCurr.Click += new System.EventHandler(this.btnNewCurr_Click);
-            // 
-            // checkBoxAutosave
-            // 
-            this.checkBoxAutosave.AutoSize = true;
-            this.checkBoxAutosave.Checked = true;
-            this.checkBoxAutosave.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutosave.Location = new System.Drawing.Point(3, 293);
-            this.checkBoxAutosave.Name = "checkBoxAutosave";
-            this.checkBoxAutosave.Size = new System.Drawing.Size(104, 17);
-            this.checkBoxAutosave.TabIndex = 5;
-            this.checkBoxAutosave.Text = "Autosave results";
-            this.checkBoxAutosave.UseVisualStyleBackColor = true;
-            this.checkBoxAutosave.CheckedChanged += new System.EventHandler(this.checkBoxAutosave_CheckedChanged);
-            // 
-            // btnRun
-            // 
-            this.btnRun.Location = new System.Drawing.Point(10, 239);
-            this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(75, 23);
-            this.btnRun.TabIndex = 2;
-            this.btnRun.Text = "Run...";
-            this.btnRun.UseVisualStyleBackColor = true;
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
-            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "xml";
@@ -147,74 +82,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // groupBoxTask
-            // 
-            this.groupBoxTask.Controls.Add(this.btnDetailsTask);
-            this.groupBoxTask.Controls.Add(this.btnDeleteTask);
-            this.groupBoxTask.Controls.Add(this.btnNewTask);
-            this.groupBoxTask.Location = new System.Drawing.Point(4, 122);
-            this.groupBoxTask.Name = "groupBoxTask";
-            this.groupBoxTask.Size = new System.Drawing.Size(92, 111);
-            this.groupBoxTask.TabIndex = 10;
-            this.groupBoxTask.TabStop = false;
-            this.groupBoxTask.Text = "Learning task";
-            // 
-            // btnDetailsTask
-            // 
-            this.btnDetailsTask.Location = new System.Drawing.Point(5, 77);
-            this.btnDetailsTask.Name = "btnDetailsTask";
-            this.btnDetailsTask.Size = new System.Drawing.Size(75, 23);
-            this.btnDetailsTask.TabIndex = 2;
-            this.btnDetailsTask.Text = "Details";
-            this.btnDetailsTask.UseVisualStyleBackColor = true;
-            this.btnDetailsTask.Click += new System.EventHandler(this.btnDetailsTask_Click);
-            // 
-            // btnDeleteTask
-            // 
-            this.btnDeleteTask.Location = new System.Drawing.Point(5, 48);
-            this.btnDeleteTask.Name = "btnDeleteTask";
-            this.btnDeleteTask.Size = new System.Drawing.Size(75, 23);
-            this.btnDeleteTask.TabIndex = 1;
-            this.btnDeleteTask.Text = "Delete";
-            this.btnDeleteTask.UseVisualStyleBackColor = true;
-            this.btnDeleteTask.Click += new System.EventHandler(this.DeleteNodes);
-            // 
-            // btnNewTask
-            // 
-            this.btnNewTask.Location = new System.Drawing.Point(6, 19);
-            this.btnNewTask.Name = "btnNewTask";
-            this.btnNewTask.Size = new System.Drawing.Size(75, 23);
-            this.btnNewTask.TabIndex = 0;
-            this.btnNewTask.Text = "New...";
-            this.btnNewTask.UseVisualStyleBackColor = true;
-            this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.checkBoxAutorun);
-            this.panel1.Controls.Add(this.checkBoxAutosave);
-            this.panel1.Controls.Add(this.btnRun);
-            this.panel1.Controls.Add(this.groupBoxTask);
-            this.panel1.Controls.Add(this.groupBoxCurr);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(420, 25);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(111, 394);
-            this.panel1.TabIndex = 13;
-            // 
-            // checkBoxAutorun
-            // 
-            this.checkBoxAutorun.AutoSize = true;
-            this.checkBoxAutorun.Checked = true;
-            this.checkBoxAutorun.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutorun.Location = new System.Drawing.Point(3, 270);
-            this.checkBoxAutorun.Name = "checkBoxAutorun";
-            this.checkBoxAutorun.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxAutorun.TabIndex = 11;
-            this.checkBoxAutorun.Text = "Autorun school";
-            this.checkBoxAutorun.UseVisualStyleBackColor = true;
-            this.checkBoxAutorun.CheckedChanged += new System.EventHandler(this.checkBoxAutorun_CheckedChanged);
             // 
             // tree
             // 
@@ -237,7 +104,7 @@
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
             this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
-            this.tree.Size = new System.Drawing.Size(414, 387);
+            this.tree.Size = new System.Drawing.Size(630, 387);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
@@ -252,10 +119,24 @@
             this.btnSave,
             this.btnSaveAs,
             this.btnOpen,
-            this.btnImport});
+            this.btnImport,
+            this.toolStripSeparator1,
+            this.toolStripLabel1,
+            this.btnNewCurr,
+            this.btnDetailsCurr,
+            this.toolStripSeparator2,
+            this.toolStripLabel2,
+            this.btnNewTask,
+            this.btnDetailsTask,
+            this.toolStripSeparator3,
+            this.btnDelete,
+            this.btnAutorun,
+            this.btnAutosave,
+            this.btnUpload,
+            this.btnRun});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(531, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(645, 25);
             this.toolStrip1.TabIndex = 14;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -309,12 +190,128 @@
             this.btnImport.Text = "Import Project";
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(67, 22);
+            this.toolStripLabel1.Text = "Curriculum";
+            // 
+            // btnNewCurr
+            // 
+            this.btnNewCurr.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnNewCurr.Image = global::GoodAI.School.GUI.Properties.Resources.action_add_16xMD;
+            this.btnNewCurr.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnNewCurr.Name = "btnNewCurr";
+            this.btnNewCurr.Size = new System.Drawing.Size(23, 22);
+            this.btnNewCurr.Text = "New Curriculum";
+            this.btnNewCurr.Click += new System.EventHandler(this.btnNewCurr_Click);
+            // 
+            // btnDetailsCurr
+            // 
+            this.btnDetailsCurr.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDetailsCurr.Image = global::GoodAI.School.GUI.Properties.Resources.Symbols_Information_16xLG;
+            this.btnDetailsCurr.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDetailsCurr.Name = "btnDetailsCurr";
+            this.btnDetailsCurr.Size = new System.Drawing.Size(23, 22);
+            this.btnDetailsCurr.Text = "Curriculum Details";
+            this.btnDetailsCurr.Click += new System.EventHandler(this.btnDetailsCurr_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(31, 22);
+            this.toolStripLabel2.Text = "Task";
+            // 
+            // btnNewTask
+            // 
+            this.btnNewTask.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnNewTask.Image = global::GoodAI.School.GUI.Properties.Resources.action_add_16xMD;
+            this.btnNewTask.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnNewTask.Name = "btnNewTask";
+            this.btnNewTask.Size = new System.Drawing.Size(23, 22);
+            this.btnNewTask.Text = "New Learning Task";
+            this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
+            // 
+            // btnDetailsTask
+            // 
+            this.btnDetailsTask.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDetailsTask.Image = global::GoodAI.School.GUI.Properties.Resources.Symbols_Information_16xLG;
+            this.btnDetailsTask.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDetailsTask.Name = "btnDetailsTask";
+            this.btnDetailsTask.Size = new System.Drawing.Size(23, 22);
+            this.btnDetailsTask.Text = "Learning Task Details";
+            this.btnDetailsTask.Click += new System.EventHandler(this.btnDetailsTask_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDelete.Image = global::GoodAI.School.GUI.Properties.Resources.action_Cancel_16xMD;
+            this.btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(23, 22);
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.Click += new System.EventHandler(this.DeleteNodes);
+            // 
+            // btnAutorun
+            // 
+            this.btnAutorun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnAutorun.Image = ((System.Drawing.Image)(resources.GetObject("btnAutorun.Image")));
+            this.btnAutorun.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAutorun.Name = "btnAutorun";
+            this.btnAutorun.Size = new System.Drawing.Size(55, 22);
+            this.btnAutorun.Text = "Autorun";
+            this.btnAutorun.Click += new System.EventHandler(this.btnToggleCheck);
+            // 
+            // btnAutosave
+            // 
+            this.btnAutosave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnAutosave.Image = global::GoodAI.School.GUI.Properties.Resources.autosave;
+            this.btnAutosave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAutosave.Name = "btnAutosave";
+            this.btnAutosave.Size = new System.Drawing.Size(23, 22);
+            this.btnAutosave.Text = "Autosave Results";
+            this.btnAutosave.Click += new System.EventHandler(this.btnToggleCheck);
+            // 
+            // btnUpload
+            // 
+            this.btnUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnUpload.Enabled = false;
+            this.btnUpload.Image = ((System.Drawing.Image)(resources.GetObject("btnUpload.Image")));
+            this.btnUpload.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnUpload.Name = "btnUpload";
+            this.btnUpload.Size = new System.Drawing.Size(103, 22);
+            this.btnUpload.Text = "Upload to Project";
+            // 
+            // btnRun
+            // 
+            this.btnRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnRun.Image = global::GoodAI.School.GUI.Properties.Resources.StatusAnnotations_Play_16xLG_color;
+            this.btnRun.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(23, 22);
+            this.btnRun.Text = "Run Simulation";
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
             // SchoolMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(531, 419);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(645, 419);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.tree);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -325,10 +322,6 @@
             this.Load += new System.EventHandler(this.SchoolMainForm_Load);
             this.VisibleChanged += new System.EventHandler(this.UpdateWindowName);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolMainForm_KeyDown);
-            this.groupBoxCurr.ResumeLayout(false);
-            this.groupBoxTask.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -338,29 +331,31 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBoxCurr;
-        private System.Windows.Forms.CheckBox checkBoxAutosave;
-        private System.Windows.Forms.Button btnDetailsCurr;
-        private System.Windows.Forms.Button btnDeleteCurr;
-        private System.Windows.Forms.Button btnNewCurr;
-        private System.Windows.Forms.Button btnRun;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
-        private System.Windows.Forms.GroupBox groupBoxTask;
-        private System.Windows.Forms.Button btnDetailsTask;
-        private System.Windows.Forms.Button btnDeleteTask;
-        private System.Windows.Forms.Button btnNewTask;
-        private System.Windows.Forms.Panel panel1;
         private Aga.Controls.Tree.TreeViewAdv tree;
-        private System.Windows.Forms.CheckBox checkBoxAutorun;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnNew;
         private System.Windows.Forms.ToolStripButton btnSave;
         private System.Windows.Forms.ToolStripButton btnSaveAs;
         private System.Windows.Forms.ToolStripButton btnOpen;
         private System.Windows.Forms.ToolStripButton btnImport;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripButton btnNewCurr;
+        private System.Windows.Forms.ToolStripButton btnDetailsCurr;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolStripButton btnNewTask;
+        private System.Windows.Forms.ToolStripButton btnDetailsTask;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton btnDelete;
+        private System.Windows.Forms.ToolStripButton btnAutorun;
+        private System.Windows.Forms.ToolStripButton btnAutosave;
+        private System.Windows.Forms.ToolStripButton btnUpload;
+        private System.Windows.Forms.ToolStripButton btnRun;
     }
 }

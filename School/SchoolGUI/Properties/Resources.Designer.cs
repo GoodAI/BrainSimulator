@@ -63,6 +63,26 @@ namespace GoodAI.School.GUI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap action_add_16xMD {
+            get {
+                object obj = ResourceManager.GetObject("action_add_16xMD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap action_Cancel_16xMD {
+            get {
+                object obj = ResourceManager.GetObject("action_Cancel_16xMD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap AddExistingItem_6269 {
             get {
                 object obj = ResourceManager.GetObject("AddExistingItem_6269", resourceCulture);
@@ -76,6 +96,16 @@ namespace GoodAI.School.GUI.Properties {
         internal static System.Drawing.Bitmap AddNewItem_6273 {
             get {
                 object obj = ResourceManager.GetObject("AddNewItem_6273", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap autosave {
+            get {
+                object obj = ResourceManager.GetObject("autosave", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -146,6 +176,16 @@ namespace GoodAI.School.GUI.Properties {
         internal static System.Drawing.Bitmap StepOver {
             get {
                 object obj = ResourceManager.GetObject("StepOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Symbols_Information_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("Symbols_Information_16xLG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

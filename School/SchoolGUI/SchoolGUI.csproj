@@ -197,6 +197,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\Symbols_Information_16xLG.png" />
+    <None Include="Resources\autosave.png" />
+    <None Include="Resources\delete_12x12.png" />
+    <None Include="Resources\action_Cancel_16xMD.png" />
+    <None Include="Resources\action_add_16xMD.png" />
     <Content Include="Resources\html\LT2BackBinaryTest.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

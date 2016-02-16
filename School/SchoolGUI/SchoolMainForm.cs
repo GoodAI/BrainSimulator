@@ -49,8 +49,8 @@ namespace GoodAI.School.GUI
             tree.Model = m_model;
             tree.Refresh();
 
-            checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
-            checkBoxAutorun.Checked = Properties.School.Default.AutorunEnabled;
+            btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            btnAutorun.Checked = Properties.School.Default.AutorunEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
             if (LoadCurriculum(m_lastOpenedFile))
                 saveFileDialog1.FileName = m_lastOpenedFile;
@@ -141,8 +141,8 @@ namespace GoodAI.School.GUI
 
             if (tree.SelectedNode == null)
             {
-                btnDeleteCurr.Enabled = btnDetailsCurr.Enabled = false;
-                DisableButtons(groupBoxTask);
+                btnDetailsCurr.Enabled = false;
+                btnNewTask.Enabled = btnDetailsTask.Enabled = false;
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace GoodAI.School.GUI
             Debug.Assert(selected != null);
 
             if (selected is CurriculumNode)
-                btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
+                btnDetailsTask.Enabled = false;
         }
 
         #endregion UI
@@ -418,6 +418,11 @@ namespace GoodAI.School.GUI
             }
             SchoolCurrDetailsForm detailsForm = new SchoolCurrDetailsForm(curr);
             OpenFloatingOrActivate(detailsForm, DockPanel);
+        }
+
+        private void btnToggleCheck(object sender, EventArgs e)
+        {
+            (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
         }
 
         #endregion Button clicks
