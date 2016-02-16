@@ -41,6 +41,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints.Add(SEQUENCE_LENGTH, 1);
             TSHints.Add(TIMESTEPS_LIMIT, 500);                             // Training unit fails if the TIMESTEP_LIMIT is reached, this is used to avoid that the agent stands without moving
             TSHints.Add(DISTANCE_BONUS_COEFFICENT, 3.0f);                  // Manhattan distance is calculated to estimate how many steps are needed to finish the sequence, DISTANCE_BONUS_COEFFICENT can be used to increase that number, if for example it's 2.0f then TIMESTEPS_LIMIT is (2 * EstimatedManahattanDistance)
+            TSHints.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1f);
 
             TSProgression.Add(TSHints.Clone());
 
@@ -70,15 +71,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { SEQUENCE_LENGTH, 5 },
                     { DISTANCE_BONUS_COEFFICENT, 1.5f }
             });
 
             TSProgression.Add(
                 new TrainingSetHints {
-                    { SEQUENCE_LENGTH, 5 },
                     { DISTANCE_BONUS_COEFFICENT, 1.0f },
-                    { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1.0f }
             });
         }
 
