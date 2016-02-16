@@ -178,7 +178,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolCurriculum Curriculum { get; set; }
         private ILearningTask m_currentLTBF;
-        private ILearningTask m_currentLearningTask
+        public ILearningTask m_currentLearningTask
         {
             get { return m_currentLTBF; }
             set
@@ -202,6 +202,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void Validate(MyValidator validator)
         {
+            Curriculum.ResetLearningProgress(); //OMG this is bad, really bad, don't look at it! It is temporary I PROMISE!
             validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
             validator.AssertError(Curriculum != null, this, "Curriculum must not be null. Start the simulation from School GUI.");
         }
