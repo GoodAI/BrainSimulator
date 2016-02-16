@@ -229,7 +229,7 @@ namespace GoodAI.Core.Execution
         {
             MyMemoryBlock<float> block = GetMemBlock(nodeId, blockName);
             block.SafeCopyToHost();
-            return block.Host as float[];
+            return block.Host;
         }
 
         /// <summary>

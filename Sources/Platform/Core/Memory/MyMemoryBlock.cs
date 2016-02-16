@@ -29,7 +29,7 @@ namespace GoodAI.Core.Memory
         public bool Persistable { get; internal set; }
         public bool Shared { get; protected set; }
         public bool IsOutput { get; internal set; }
-        public bool IsDynamic { get; internal set; }
+        public bool IsDynamic { get; set; }
 
         public bool Unmanaged { get; internal set; }
         public SizeT ExternalPointer { get; set; }
@@ -202,6 +202,13 @@ namespace GoodAI.Core.Memory
 
         public override bool Reallocate(int newCount, bool copyData = true)
         {
+            // TODO(HonzaS): Some of the current models need this during Execute().
+            // TODO(HonzaS): Research will have to switch to the new model, but there is no reason to forbid it now.
+
+            //// TODO(HonzaS): The simulation should be accessible in a better way.
+            //if (!Owner.Owner.SimulationHandler.Simulation.IsStepFinished)
+            //    throw new InvalidOperationException("Reallocate called from Execute()");
+
             if (!IsDynamic)
             {
                 MyLog.ERROR.WriteLine(

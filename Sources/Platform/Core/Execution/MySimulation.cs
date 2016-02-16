@@ -118,7 +118,7 @@ namespace GoodAI.Core.Execution
         /// Indicates that the simulation is in between two simulation steps.
         /// This should be true after each PerformStep run during normal simulation, and can be false during debug.
         /// </summary>
-        public abstract bool IsStepFinished { get; }
+        public bool IsStepFinished { get; protected internal set; }
 
         public abstract bool IsChangingModel { get; }
         public abstract void FreeMemory();
@@ -227,6 +227,8 @@ namespace GoodAI.Core.Execution
 
         public abstract void PerformModelChanges();
 
+        public abstract void Reallocate();
+
         public void Validate(MyProject project = null)
         {
             Validator.ClearValidation();
@@ -283,6 +285,8 @@ namespace GoodAI.Core.Execution
                 node.ClearSignals();
                 node.InitTasks();
             }
+
+            IsStepFinished = true;
         }
 
         public override void AllocateMemory()
@@ -304,7 +308,9 @@ namespace GoodAI.Core.Execution
         /// </summary>
         public override void PerformStep(bool stepByStepRun)
         {
+            // Debug step is presumed finished, but can change to false during the execution.
             m_stepComplete = true;
+            IsStepFinished = false;
             m_errorOccured = false;
 
             if (m_executionPhase == ExecutionPhase.Initialization || m_executionPhase == ExecutionPhase.Standard)
@@ -389,7 +395,6 @@ namespace GoodAI.Core.Execution
         }
 
         public override bool IsChangingModel { get { return m_isChangingModel; } }
-        public override bool IsStepFinished { get { return m_stepComplete; } }
 
         private void InitCore(int coreNumber)
         {
@@ -430,6 +435,10 @@ namespace GoodAI.Core.Execution
                     m_lastException = new MySimulationException(e.Message, e);
                     MyKernelFactory.Instance.MarkContextDead(0);
                 }
+            }
+            finally
+            {
+                IsStepFinished = m_stepComplete;
             }
         }
 
@@ -709,6 +718,16 @@ namespace GoodAI.Core.Execution
         {
             FreeMemory(node);
             node.Dispose();
+        }
+
+        public override void Reallocate()
+        {
+            // This will allocate memory on the device. The CUDA context needs to be set up.
+            MyKernelFactory.Instance.SetCurrent(0);
+
+            // TODO(HonzaS): cache the ordered nodes if they have been ordered in model changes.
+            foreach (MyNode node in MySimulationHandler.OrderNetworkNodes(m_project.Network))
+                node.ReallocateMemoryBlocks();
         }
 
         public override bool UpdateMemoryModel(MyProject project, List<MyNode> orderedNodes)

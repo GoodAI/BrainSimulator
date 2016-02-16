@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Name="reallocation-test" xmlns:yaxlib="http://www.sinairv.com/yaxlib/">
+  <Observers />
+  <Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network">
+    <Children>
+      <Group Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="10" Name="Node_10" yaxlib:realtype="GoodAI.Core.Nodes.MyNodeGroup">
+        <Children />
+        <LayoutProperties />
+        <GroupInputNodes>
+          <MyParentInput ParentInputIndex="0" Id="11" Name="Input 1">
+            <Location X="50" Y="100" />
+          </MyParentInput>
+        </GroupInputNodes>
+        <GroupOutputNodes>
+          <MyOutput Id="12" Name="Output 1">
+            <Location X="800" Y="100" />
+          </MyOutput>
+        </GroupOutputNodes>
+        <DataFolder></DataFolder>
+        <Location X="347" Y="36" />
+        <Tasks />
+      </Group>
+      <DynamicInputNode LoadOnStart="False" SaveOnStop="False" Id="20" Name="Node_20" yaxlib:realtype="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicInputNode">
+        <DataFolder></DataFolder>
+        <Location X="726" Y="249" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="Task" yaxlib:realtype="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicInputTask" />
+        </Tasks>
+      </DynamicInputNode>
+      <DynamicOutputNode LoadOnStart="False" SaveOnStop="False" Id="22" Name="Node_22" yaxlib:realtype="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicOutputNode">
+        <DataFolder></DataFolder>
+        <Location X="212" Y="351" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="Task" yaxlib:realtype="GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicOutputTask" />
+        </Tasks>
+      </DynamicOutputNode>
+      <Group Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="23" Name="Node_23" yaxlib:realtype="GoodAI.Core.Nodes.MyConditionalGroup">
+        <Signal>&lt;none&gt;</Signal>
+        <Children />
+        <LayoutProperties />
+        <GroupInputNodes>
+          <MyParentInput ParentInputIndex="0" Id="24" Name="Input 1">
+            <Location X="50" Y="100" />
+          </MyParentInput>
+        </GroupInputNodes>
+        <GroupOutputNodes>
+          <MyOutput Id="25" Name="Output 1">
+            <Location X="800" Y="100" />
+          </MyOutput>
+        </GroupOutputNodes>
+        <DataFolder></DataFolder>
+        <Location X="529" Y="42" />
+        <Tasks />
+      </Group>
+    </Children>
+    <LayoutProperties Zoom="0.8408963">
+      <Translation X="30" Y="70" />
+    </LayoutProperties>
+    <GroupInputNodes>
+      <MyParentInput ParentInputIndex="0" Id="1" Name="Output">
+        <Location X="99" Y="46" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="1" Id="4" Name="RandomPool">
+        <Location X="50" Y="250" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="2" Id="5" Name="Label">
+        <Location X="50" Y="400" />
+      </MyParentInput>
+    </GroupInputNodes>
+    <GroupOutputNodes />
+    <DataFolder></DataFolder>
+    <Location />
+    <Connections>
+      <Connection From="22" To="10" FromIndex="0" ToIndex="0" IsLowPriority="False" />
+      <Connection From="11" To="12" FromIndex="0" ToIndex="0" IsLowPriority="False" />
+      <Connection From="23" To="20" FromIndex="0" ToIndex="0" IsLowPriority="False" />
+      <Connection From="10" To="23" FromIndex="0" ToIndex="0" IsLowPriority="False" />
+      <Connection From="24" To="25" FromIndex="0" ToIndex="0" IsLowPriority="False" />
+    </Connections>
+    <Tasks />
+  </Network>
+  <World LoadOnStart="False" SaveOnStop="False" Id="3" Name="World" yaxlib:realtype="GoodAI.Modules.Testing.MyTestingWorld">
+    <IO>
+      <OutputSize>1</OutputSize>
+      <ColumnHint>1</ColumnHint>
+      <PatternCount>0</PatternCount>
+      <PatternGroups>1</PatternGroups>
+    </IO>
+    <DataFolder></DataFolder>
+    <Location />
+    <Tasks>
+      <Task Enabled="True" PropertyName="GenerateInput" yaxlib:realtype="GoodAI.Modules.Testing.MyTestingWorld+MyCUDAGenerateInputTask">
+        <ExpositionTime>1</ExpositionTime>
+        <RandomOrder>False</RandomOrder>
+      </Task>
+    </Tasks>
+  </World>
+  <Dashboard>
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardNodePropertyBase, GoodAI.Platform.Core, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null]]" />
+  </Dashboard>
+  <GroupedDashboard>
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardPropertyGroup, GoodAI.Platform.Core, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null]]" />
+  </GroupedDashboard>
+  <UsedModules>
+    <Module Name="GoodAI.Platform.Core.dll" Version="13" />
+    <Module Name="GoodAI.TestingNodes.dll" Version="1" />
+  </UsedModules>
+</Project>

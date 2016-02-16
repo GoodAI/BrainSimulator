@@ -230,6 +230,8 @@ namespace GoodAI.Core.Nodes
 
         public abstract void UpdateMemoryBlocks();
 
+        public virtual void ReallocateMemoryBlocks() { }
+
         private int[] m_outputBlockSizes = new int[0];
 
         public void PushOutputBlockSizes()
