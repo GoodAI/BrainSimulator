@@ -92,6 +92,7 @@
             this.tree.BackColor = System.Drawing.SystemColors.Window;
             this.tree.ColumnHeaderHeight = 0;
             this.tree.DefaultToolTipProvider = null;
+            this.tree.DisplayDraggingNodes = true;
             this.tree.DragDropMarkColor = System.Drawing.Color.Black;
             this.tree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
             this.tree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
