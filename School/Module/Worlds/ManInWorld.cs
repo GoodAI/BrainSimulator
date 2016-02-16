@@ -1,4 +1,12 @@
-﻿using GoodAI.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using GoodAI.Core;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
@@ -43,7 +51,7 @@ namespace GoodAI.Modules.School.Worlds
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1)]
+        [MyOutputBlock(1), MyUnmanaged]
         public MyMemoryBlock<float> VisualPOW
         {
             get { return GetOutput(1); }
@@ -98,7 +106,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public float Time = 1f;
 
-        private bool m_IsWorldFrozen = false;
+        private bool m_IsWorldFrozen;
         public bool IsWorldFrozen { get { return m_IsWorldFrozen; } } // nothing moves in a frozen world
 
         // noise:
@@ -142,8 +150,7 @@ namespace GoodAI.Modules.School.Worlds
         public override MyMemoryBlock<float> GetInput(int index)
         {
             if (ControlsAdapterTemp != null)  //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
-                return ControlsAdapterTemp as MyMemoryBlock<float>;
-            else
+                return ControlsAdapterTemp;
                 return base.GetInput<float>(index);
         }
 
@@ -151,7 +158,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (ControlsAdapterTemp != null) //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
                 return ControlsAdapterTemp as MyMemoryBlock<T>;
-            else
                 return base.GetInput<T>(index);
         }
 
@@ -159,7 +165,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (ControlsAdapterTemp != null) //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
                 return ControlsAdapterTemp;
-            else
                 return base.GetAbstractInput(index);
         }
 
@@ -370,7 +375,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public Point RandomPositionInsidePowNonCovering(Random rndGen, Size size, int objectMargin = 1)
         {
-            return RandomPositionInsideRectangleNonCovering(rndGen, size, this.GetPowGeometry(), objectMargin);
+            return RandomPositionInsideRectangleNonCovering(rndGen, size, GetPowGeometry(), objectMargin);
         }
 
 
@@ -453,7 +458,7 @@ namespace GoodAI.Modules.School.Worlds
             if (m_bitmapTable.ContainsKey(path))
                 return m_bitmapTable[path].Item1.Width * m_bitmapTable[path].Item1.Height * PIXEL_SIZE;
 
-            foreach (string dir in new string[] { TEXTURE_DIR, TEXTURE_DIR_COMMON })
+            foreach (string dir in new[] { TEXTURE_DIR, TEXTURE_DIR_COMMON })
             {
                 try
                 {
@@ -1021,8 +1026,8 @@ namespace GoodAI.Modules.School.Worlds
 
             private MyCudaKernel m_AddRgbNoiseKernel;
 
-            INativeWindow m_window = null;
-            IGraphicsContext m_context = null;
+            INativeWindow m_window;
+            IGraphicsContext m_context;
 
             private Dictionary<String, int> m_textureHandles;
             bool m_glInitialized;
@@ -1033,13 +1038,18 @@ namespace GoodAI.Modules.School.Worlds
 
                 m_textureHandles = new Dictionary<string, int>();
                 m_glInitialized = false;
+
+                // A hack to prevent BS from crashing after init
+                Owner.VisualPOW.ExternalPointer =
+                    MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_2", Owner.GPU, () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
             }
 
             public override void Execute()
             {
                 if (!m_glInitialized)
                 {
-                    //Dispose();
+                    // Clean the residual memory from init
+                    MyMemoryManager.Instance.ClearGlobalVariable("HACK_NAME_2", Owner.GPU);
                     onlyOnce();
                     m_glInitialized = true;
                 }
@@ -1107,7 +1117,6 @@ namespace GoodAI.Modules.School.Worlds
                 m_fboHandle = (uint)GL.GenFramebuffer();
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, m_renderTextureHandle, 0);
-
 
                 // Setup Cuda <-> OpenGL interop
                 int length = Owner.POW_HEIGHT * Owner.POW_WIDTH * sizeof(uint);
@@ -1212,6 +1221,10 @@ namespace GoodAI.Modules.School.Worlds
             {
                 // Prepare the results for CUDA
 
+                // deinit CUDA interop to enable copying
+                if (m_renderResource.IsMapped)
+                    m_renderResource.UnMap();
+
                 // bind pixel buffer object
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
                 // bind buffer from which data will be read
@@ -1220,24 +1233,18 @@ namespace GoodAI.Modules.School.Worlds
                 GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
                 GL.ReadBuffer(ReadBufferMode.None);
 
-                if (m_renderResource != null && m_renderResource.IsRegistered && !m_renderResource.IsMapped)
-                {
-                    // map the interop resource
-                    m_renderResource.Map();
-                }
-
-                int size = Owner.POW_HEIGHT * Owner.POW_WIDTH * Marshal.SizeOf(typeof(uint));
-                var ptr = m_renderResource.GetMappedPointer<uint>().DevicePointer;
-                Owner.VisualPOW.GetDevice(Owner).CopyToDevice(ptr, 0, 0, size);
-
-                // deinit CUDA interop
-                m_renderResource.UnMap();
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                // Update the pointer for other usage in BS
+                    m_renderResource.Map();
+                Owner.VisualPOW.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                Owner.VisualPOW.FreeDevice();
+                Owner.VisualPOW.AllocateDevice();
 
                 // add noise over POW
                 if (Owner.IsImageNoise)
                 {
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, (SizeT)(Owner.AgentVisualTemp.Count), Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
                     m_AddRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
                     m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
@@ -1253,9 +1260,9 @@ namespace GoodAI.Modules.School.Worlds
                     GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
                     GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2((float)Owner.FOW_WIDTH, 0f);
+                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2(Owner.FOW_WIDTH, 0f);
                     GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
-                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, (float)Owner.FOW_HEIGHT);
+                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, Owner.FOW_HEIGHT);
                     GL.BindTexture(TextureTarget.Texture2D, 0);
                 }
                 else
@@ -1283,13 +1290,12 @@ namespace GoodAI.Modules.School.Worlds
                 // TODO: object rendering order -- environment first, then creatures and active objects
                 foreach (var gameObject in Owner.gameObjects)
                 {
-
                     GL.PushMatrix();
 
                     // translate object to its position in the scene
-                    GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
+                    GL.Translate(gameObject.X, gameObject.Y, 0.0f);
 
-                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
+                    GL.Scale(gameObject.Width, gameObject.Height, 1f);
 
                     // translate back
                     GL.Translate(0.5f, 0.5f, 0.0f);
