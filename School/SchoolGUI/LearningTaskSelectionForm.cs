@@ -65,15 +65,11 @@ namespace GoodAI.School.GUI
             }
             else
             { 
-                const string HTML_DIRECTORY = @"res\html";
+                const string HTML_DIRECTORY = @"Resources\html";
                 string htmlFileName = (learningTaskList.SelectedItem as LearningTaskListItem).HTMLFileName;
                 string fullPath = MyResources.GetMyAssemblyPath() + "\\" + HTML_DIRECTORY + "\\" + htmlFileName;
                 learningTaskDescription.Navigate(fullPath);
-
-                //System.Uri uri = new System.Uri(fullPath);
-                //learningTaskDescription.Url = uri;
             }
-            //learningTaskDescription.Invalidate();
         }
     }
 
