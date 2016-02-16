@@ -46,17 +46,15 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
             InitializeComponent();
 
+            observerCheckBox.Checked = Properties.School.Default.ShowVisual;
+            m_showVisual = observerCheckBox.Checked;
 
-            btnRun.Click += new System.EventHandler(simulationStart);
-            btnStepOver.Click += new System.EventHandler(simulationStart);
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
             btnStop.Click += new System.EventHandler(m_mainForm.stopToolButton_Click);
             btnPause.Click += new System.EventHandler(m_mainForm.pauseToolButton_Click);
             btnStepOver.Click += new System.EventHandler(m_mainForm.stepOverToolButton_Click);
             btnDebug.Click += new System.EventHandler(m_mainForm.debugToolButton_Click);
-
-
 
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
@@ -99,7 +97,6 @@ namespace GoodAI.School.GUI
             dataGridView1.DataSource = Data;
             UpdateData();
             PrepareSimulation();
-            m_showVisual = true;
             SetObserver();
             if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
@@ -224,6 +221,9 @@ namespace GoodAI.School.GUI
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+            Properties.School.Default.ShowVisual = (sender as CheckBox).Checked;
+            Properties.School.Default.Save();
+
             CheckBox c = (CheckBox)sender;
             m_showVisual = c.Checked;
             SetObserver();

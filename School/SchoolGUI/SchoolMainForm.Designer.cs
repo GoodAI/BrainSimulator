@@ -214,7 +214,7 @@
             this.checkBoxAutorun.TabIndex = 11;
             this.checkBoxAutorun.Text = "Autorun school";
             this.checkBoxAutorun.UseVisualStyleBackColor = true;
-            this.checkBoxAutorun.Click += new System.EventHandler(this.checkBoxAutorun_CheckedChanged);
+            this.checkBoxAutorun.CheckedChanged += new System.EventHandler(this.checkBoxAutorun_CheckedChanged);
             // 
             // tree
             // 

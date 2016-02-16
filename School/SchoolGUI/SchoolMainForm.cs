@@ -311,13 +311,13 @@ namespace GoodAI.School.GUI
 
         private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.School.Default.AutosaveEnabled = checkBoxAutosave.Checked;
+            Properties.School.Default.AutosaveEnabled = (sender as CheckBox).Checked;
             Properties.School.Default.Save();
         }
 
         private void checkBoxAutorun_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.School.Default.AutorunEnabled = checkBoxAutorun.Checked;
+            Properties.School.Default.AutorunEnabled = (sender as CheckBox).Checked;
             Properties.School.Default.Save();
         }
 

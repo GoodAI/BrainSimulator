@@ -73,8 +73,8 @@
             // 
             // dataGridView1
             // 
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -207,6 +207,7 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(23, 22);
             this.btnRun.Text = "Run Simulation";
+            this.btnRun.Click += new System.EventHandler(this.simulationStart);
             // 
             // btnStop
             // 
@@ -234,6 +235,7 @@
             this.btnStepOver.Name = "btnStepOver";
             this.btnStepOver.Size = new System.Drawing.Size(23, 22);
             this.btnStepOver.Text = "Step Over";
+            this.btnStepOver.Click += new System.EventHandler(this.simulationStart);
             // 
             // btnDebug
             // 
