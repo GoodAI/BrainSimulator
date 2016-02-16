@@ -271,7 +271,7 @@ namespace GoodAI.School.GUI
         {
             if (tree.SelectedNode.Tag is CurriculumNode)
             {
-                DeleteNode(sender, e);
+                DeleteNodes(sender, e);
                 return;
             }
             Node parent = (tree.SelectedNode.Tag as Node).Parent;
@@ -304,9 +304,14 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void DeleteNode(object sender, EventArgs e)
+        private void DeleteNodes(object sender, EventArgs e)
         {
-            (tree.SelectedNode.Tag as Node).Parent = null;
+            // Walking through the nodes backwards. That way the index doesn't increase past the node size
+            for (int i = tree.SelectedNodes.Count - 1; i >= 0; i--)
+            {
+                TreeNodeAdv n = (TreeNodeAdv)tree.SelectedNodes[i];
+                (n.Tag as Node).Parent = null;
+            }
         }
 
         private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
@@ -497,7 +502,7 @@ namespace GoodAI.School.GUI
         private void SchoolMainForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                DeleteNode(sender, null);
+                DeleteNodes(sender, null);
         }
     }
 }
