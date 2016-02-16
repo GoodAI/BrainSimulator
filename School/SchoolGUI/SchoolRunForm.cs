@@ -7,6 +7,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -24,8 +25,8 @@ namespace GoodAI.School.GUI
         private bool m_showObserver;
         private ObserverForm m_observer;
 
-        private uint m_currentRow = 0;
-        private uint m_stepOffset = 0;
+        private int m_currentRow = -1;
+        private int m_stepOffset = 0;
         private DateTime? m_ltStart = null;
 
         public string RunName
@@ -70,21 +71,22 @@ namespace GoodAI.School.GUI
             if (m_ltStart == null)  // for the first LT
                 m_ltStart = DateTime.UtcNow;
 
-            uint simStep = m_mainForm.SimulationHandler.SimulationStep;
-            if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) // next LT
+            int simStep = (int)m_mainForm.SimulationHandler.SimulationStep;
+            if (m_currentRow < 0 || actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) // next LT
             {
                 m_currentRow++;
+                HighlightCurrentTask();
                 m_stepOffset = simStep;
                 DateTime end = DateTime.UtcNow;
                 m_ltStart = end;
             }
-            if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) //should not happen at all - just a safeguard
+            if (actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
             {
                 MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
                 return;
             }
 
-            LearningTaskNode node = Data.ElementAt((int)m_currentRow);
+            LearningTaskNode node = Data.ElementAt(m_currentRow);
             node.Steps = simStep - m_stepOffset;
             TimeSpan? diff = DateTime.UtcNow - m_ltStart;
             if (diff != null)
@@ -174,6 +176,23 @@ namespace GoodAI.School.GUI
                 task.SchoolWorld = m_school;
         }
 
+        private void HighlightCurrentTask()
+        {
+            if (m_currentRow < 0)
+                return;
+
+            DataGridViewCellStyle defaultStyle = new DataGridViewCellStyle();
+            DataGridViewCellStyle highlightStyle = new DataGridViewCellStyle();
+            highlightStyle.BackColor = Color.PaleGreen;
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+                foreach (DataGridViewCell cell in row.Cells)
+                    if (row.Index == m_currentRow)
+                        cell.Style = highlightStyle;
+                    else
+                        cell.Style = defaultStyle;
+        }
+
         private void PrepareSimulation()
         {
             // data
@@ -181,8 +200,8 @@ namespace GoodAI.School.GUI
             CreateCurriculum();
 
             // gui
-            m_currentRow = 0;
             m_stepOffset = 0;
+            HighlightCurrentTask();
             Data.ForEach(x => x.Steps = 0);
             Data.ForEach(x => x.Time = 0f);
         }
