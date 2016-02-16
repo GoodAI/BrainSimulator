@@ -345,8 +345,7 @@ namespace GoodAI.School.GUI
                 RunView.RunName = activeCurricula.First().Text;
             else
                 RunView.RunName = Path.GetFileNameWithoutExtension(m_currentFile);
-
-            RunView.UpdateData();
+            RunView.Ready();
         }
 
         private bool AddFileContent(bool clearWorkspace = false)

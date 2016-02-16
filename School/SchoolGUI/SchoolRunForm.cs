@@ -23,6 +23,8 @@ namespace GoodAI.School.GUI
         private bool m_showVisual;
         private ObserverForm m_observer;
 
+        private uint m_currentRow { get; set; }
+
         public string RunName
         {
             get { return m_runName; }
@@ -42,8 +44,38 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
             InitializeComponent();
 
+            // here so it does not interfere with designer generated code
+            btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
+            btnStop.Click += new System.EventHandler(m_mainForm.stopToolButton_Click);
+            btnPause.Click += new System.EventHandler(m_mainForm.pauseToolButton_Click);
+            btnStepOver.Click += new System.EventHandler(m_mainForm.stepOverToolButton_Click);
+            btnDebug.Click += new System.EventHandler(m_mainForm.debugToolButton_Click);
+
+
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
+            m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             UpdateButtons(null, null);
+        }
+
+        private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ILearningTask actualTask = m_school.m_currentLearningTask;
+            if (actualTask == null)
+                return;
+
+            if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType)
+                m_currentRow++;
+            if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) //should not happen at all - just a safeguard
+            {
+                MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
+                return;
+            }
+
+            uint simStep = m_mainForm.SimulationHandler.SimulationStep;
+            LearningTaskNode node = Data.ElementAt((int)m_currentRow);
+            node.Steps = simStep;
+            UpdateData();
+            dataGridView1.Invalidate();
         }
 
         private void UpdateButtons(object sender, Core.Execution.MySimulationHandler.StateEventArgs e)
@@ -53,20 +85,26 @@ namespace GoodAI.School.GUI
             btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
         }
 
-        public void UpdateData()
+        public void Ready()
         {
             dataGridView1.DataSource = Data;
+            UpdateData();
             PrepareSimulation();
             m_showVisual = true;
             SetObserver();
-
-            if (Properties.School.Default.AutorunEnabled)
+            if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
+        }
+
+        public void UpdateData()
+        {
+            dataGridView1.DataSource = Data;
         }
 
         private void SetObserver()
         {
-            if (m_showVisual) {
+            if (m_showVisual)
+            {
                 if (m_observer == null)
                 {
                     try
