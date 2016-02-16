@@ -21,7 +21,7 @@ namespace GoodAI.School.GUI
         private readonly MainForm m_mainForm;
         private string m_runName;
         private SchoolWorld m_school;
-        private bool m_showVisual;
+        private bool m_showObserver;
         private ObserverForm m_observer;
 
         private uint m_currentRow = 0;
@@ -47,7 +47,7 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             observerCheckBox.Checked = Properties.School.Default.ShowVisual;
-            m_showVisual = observerCheckBox.Checked;
+            m_showObserver = observerCheckBox.Checked;
 
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
@@ -97,6 +97,7 @@ namespace GoodAI.School.GUI
             dataGridView1.DataSource = Data;
             UpdateData();
             PrepareSimulation();
+            m_showObserver = true;
             SetObserver();
             if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
@@ -109,8 +110,7 @@ namespace GoodAI.School.GUI
 
         private void SetObserver()
         {
-            if (m_showVisual)
-            {
+            if (m_showObserver) {
                 if (m_observer == null)
                 {
                     try
@@ -125,26 +125,21 @@ namespace GoodAI.School.GUI
                         m_mainForm.ObserverViews.Add(m_observer);
                         m_observer.TopLevel = false;
                         observerDockPanel.Controls.Add(m_observer);
-                        m_observer.Dock = DockStyle.Fill;
                         m_observer.Show();
-                        m_observer.Size = new System.Drawing.Size(300, 300);
+                        
                         m_observer.CloseButtonVisible = false;
-                        //
-                        //Form f = observerDockPanel.FindForm();
-                        //newView.MdiParent = f;
-                        //f.Show();
+                        m_observer.MaximizeBox = false;
+                        m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
+                        m_observer.Location = new System.Drawing.Point(-8, -30);
                     }
                     catch (Exception e)
                     {
                         MyLog.ERROR.WriteLine("Error creating observer: " + e.Message);
                     }
                 }
-                else if (m_observer.IsHidden)
-                {
-                    m_observer.Show();
-                }
                 else
                 {
+                    m_observer.Show();
                     observerDockPanel.Show();
                 }
             }
@@ -225,7 +220,7 @@ namespace GoodAI.School.GUI
             Properties.School.Default.Save();
 
             CheckBox c = (CheckBox)sender;
-            m_showVisual = c.Checked;
+            m_showObserver = c.Checked;
             SetObserver();
         }
 
