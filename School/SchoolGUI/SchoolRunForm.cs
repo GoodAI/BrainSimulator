@@ -65,6 +65,8 @@ namespace GoodAI.School.GUI
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            if (m_school == null)
+                return;
             ILearningTask actualTask = m_school.m_currentLearningTask;
             if (actualTask == null)
                 return;
