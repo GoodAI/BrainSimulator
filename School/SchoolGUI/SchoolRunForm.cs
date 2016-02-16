@@ -1,7 +1,7 @@
 ﻿using GoodAI.BrainSimulator.Forms;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Execution;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
@@ -26,6 +26,7 @@ namespace GoodAI.School.GUI
 
         private uint m_currentRow = 0;
         private uint m_stepOffset = 0;
+        private DateTime? m_ltStart = null;
 
         public string RunName
         {
@@ -66,12 +67,16 @@ namespace GoodAI.School.GUI
             ILearningTask actualTask = m_school.m_currentLearningTask;
             if (actualTask == null)
                 return;
+            if (m_ltStart == null)  // for the first LT
+                m_ltStart = DateTime.UtcNow;
 
             uint simStep = m_mainForm.SimulationHandler.SimulationStep;
             if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) // next LT
             {
                 m_currentRow++;
                 m_stepOffset = simStep;
+                DateTime end = DateTime.UtcNow;
+                m_ltStart = end;
             }
             if (actualTask.GetType() != Data.ElementAt((int)m_currentRow).TaskType) //should not happen at all - just a safeguard
             {
@@ -81,8 +86,11 @@ namespace GoodAI.School.GUI
 
             LearningTaskNode node = Data.ElementAt((int)m_currentRow);
             node.Steps = simStep - m_stepOffset;
+            TimeSpan? diff = DateTime.UtcNow - m_ltStart;
+            if (diff != null)
+                node.Time = (float)Math.Round(diff.Value.TotalSeconds, 2);
+
             UpdateData();
-            dataGridView1.Invalidate();
         }
 
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
@@ -94,7 +102,6 @@ namespace GoodAI.School.GUI
 
         public void Ready()
         {
-            dataGridView1.DataSource = Data;
             UpdateData();
             PrepareSimulation();
             SetObserver();
@@ -105,11 +112,14 @@ namespace GoodAI.School.GUI
         public void UpdateData()
         {
             dataGridView1.DataSource = Data;
+            dataGridView1.Invalidate();
+
         }
 
         private void SetObserver()
         {
-            if (m_showObserver) {
+            if (m_showObserver)
+            {
                 if (m_observer == null)
                 {
                     try
@@ -125,7 +135,7 @@ namespace GoodAI.School.GUI
                         m_observer.TopLevel = false;
                         observerDockPanel.Controls.Add(m_observer);
                         m_observer.Show();
-                        
+
                         m_observer.CloseButtonVisible = false;
                         m_observer.MaximizeBox = false;
                         m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
@@ -166,10 +176,15 @@ namespace GoodAI.School.GUI
 
         private void PrepareSimulation()
         {
+            // data
             SelectSchoolWorld();
             CreateCurriculum();
+
+            // gui
             m_currentRow = 0;
             m_stepOffset = 0;
+            Data.ForEach(x => x.Steps = 0);
+            Data.ForEach(x => x.Time = 0f);
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -208,6 +223,11 @@ namespace GoodAI.School.GUI
                 case Keys.F8:
                     {
                         btnStop.PerformClick();
+                        break;
+                    }
+                case Keys.F10:
+                    {
+                        btnStepOver.PerformClick();
                         break;
                     }
             }
