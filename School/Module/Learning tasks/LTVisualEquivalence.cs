@@ -87,7 +87,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // Second shape
         protected ComparisonShape targetB;
 
-        public LTVisualEquivalence() : base(null) { }
+        public LTVisualEquivalence() : this(null) { }
 
         public LTVisualEquivalence(SchoolWorld w)
             : base(w)

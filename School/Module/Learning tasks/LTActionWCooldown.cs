@@ -18,7 +18,7 @@ namespace GoodAI.Modules.School.LearningTasks
     //    public uint UnitSuccesses { get; set; }
     //    public uint UnitAttempts { get; set; }
 
-    //    public LTActionWCooldown() : base(null) { }
+    //    public LTActionWCooldown() : this(null) { }
 
     //    public LTActionWCooldown(SchoolWorld w)
     //        : base(w)

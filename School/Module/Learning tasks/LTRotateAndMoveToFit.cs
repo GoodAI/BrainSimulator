@@ -8,7 +8,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Rotate and move to fit")]
     public class LTRotateAndMoveToFit : AbstractLearningTask<TetrisAdapterWorld>
     {
-        public LTRotateAndMoveToFit() { }
+        public LTRotateAndMoveToFit() : this(null) { }
 
         public LTRotateAndMoveToFit(SchoolWorld w)
             : base(w)

@@ -27,7 +27,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private int m_currentStep;
 
-        public LTSimpleRhythm() : base(null) { }
+        public LTSimpleRhythm() : this(null) { }
 
         public LTSimpleRhythm(SchoolWorld w)
             : base(w)

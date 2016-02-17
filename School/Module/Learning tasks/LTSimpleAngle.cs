@@ -16,7 +16,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected MovableGameObject m_agent;
         private GameObject m_target;
 
-        public LTSimpleAngle() : base(null) { }
+        public LTSimpleAngle() : this(null) { }
 
         public LTSimpleAngle(SchoolWorld w)
             : base(w)

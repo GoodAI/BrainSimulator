@@ -33,8 +33,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         #region Initialization
 
-        public LTShapeSorting()
-        { }
+        public LTShapeSorting() : this(null) { }
 
         public LTShapeSorting(SchoolWorld w)
             : base(w)

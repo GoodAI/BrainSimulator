@@ -8,7 +8,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Compatibility matching")]
     public class LTCompatibilityMatching : AbstractLearningTask<TetrisAdapterWorld>
     {
-        public LTCompatibilityMatching() : base(null) { }
+        public LTCompatibilityMatching() : this(null) { }
 
         public static readonly TSHintAttribute ROTATION_ALLOWED = new TSHintAttribute("ROTATION_ALLOWED", "", typeof(bool), 0, 1);
 

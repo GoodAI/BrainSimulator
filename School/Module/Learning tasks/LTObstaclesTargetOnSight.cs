@@ -15,7 +15,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Obstacles target on sight")]
     public class LTObstaclesTargetOnSight : LTObstacles                           // Deriving from LTObstacles
     {
-        public LTObstaclesTargetOnSight() : base(null) { }
+        public LTObstaclesTargetOnSight() : this(null) { }
 
         public LTObstaclesTargetOnSight(SchoolWorld w)
             : base(w)

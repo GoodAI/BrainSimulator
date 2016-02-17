@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private bool m_appears;
         private bool m_isBlack;
 
-        public LTDetectBlackAndWhite() : base(null) { }
+        public LTDetectBlackAndWhite() : this(null) { }
 
         public LTDetectBlackAndWhite(SchoolWorld w)
             : base(w)

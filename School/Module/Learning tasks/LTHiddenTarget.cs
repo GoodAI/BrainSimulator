@@ -26,7 +26,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // Tracks the initial agent-target distance to determine if the TU has failed
         protected float initialDistance = 0;
 
-        public LTHiddenTarget() : base(null) { }
+        public LTHiddenTarget() : this(null) { }
 
         // Construct the learning task
         public LTHiddenTarget(SchoolWorld w)

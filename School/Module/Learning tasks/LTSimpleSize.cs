@@ -17,7 +17,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private GameObject m_agent;
         private float m_scale;
 
-        public LTSimpleSize() : base(null) { }
+        public LTSimpleSize() : this(null) { }
 
         public LTSimpleSize(SchoolWorld w)
             : base(w)

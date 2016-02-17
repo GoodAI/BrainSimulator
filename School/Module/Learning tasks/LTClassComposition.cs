@@ -19,7 +19,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private List<Shape.Shapes> m_positiveExamples = new List<Shape.Shapes>();
         private List<Shape.Shapes> m_negativeExamples = new List<Shape.Shapes>();
 
-        public LTClassComposition() : base(null) { }
+        public LTClassComposition() : this(null) { }
 
         public LTClassComposition(SchoolWorld w)
             : base(w)
