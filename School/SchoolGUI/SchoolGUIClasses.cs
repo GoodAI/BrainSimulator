@@ -58,6 +58,24 @@ namespace GoodAI.School.GUI
         }
     }
 
+    public class LevelNode : LearningTaskNode
+    {
+        public int Level { get; set; }
+
+        public LevelNode(int level, Type taskType, Type worldType) : base(taskType, worldType)
+        {
+            this.Level = level;
+        }
+
+        public override string Text
+        {
+            get
+            {
+                return "Attribute 1";
+            }
+        }
+    }
+
     #endregion UI classes
 
     // mediator between view (CurriculumNode) and model (SchoolCurriculum) - is also used for serialization
