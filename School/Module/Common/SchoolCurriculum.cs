@@ -44,6 +44,10 @@ namespace GoodAI.Modules.School.Common
 
         public bool IsLast()
         {
+            if (m_taskEnumerator == null)
+            {
+                return (Tasks.Count == 0);
+            }
             return Tasks.LastIndexOf(m_taskEnumerator.Current) == Tasks.Count - 1;
         }
 

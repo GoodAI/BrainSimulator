@@ -165,7 +165,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             // Notify BS that the model has changed -- it will reuse the old model otherwise and won't call inits on CurrentWorld's tasks when run
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
-                m_newLearningTask = true;
+                m_isNewLearningTask = true;
         }
 
         public SchoolWorld()
@@ -175,7 +175,7 @@ namespace GoodAI.Modules.School.Worlds
 
         Random m_rndGen = new Random();
 
-        private bool m_newLearningTask = true;
+        private bool m_isNewLearningTask = true;
 
         public SchoolCurriculum Curriculum { get; set; }
         private ILearningTask m_currentLearningTask;
@@ -185,7 +185,6 @@ namespace GoodAI.Modules.School.Worlds
             set
             {
                 m_currentLearningTask = value;
-                m_newLearningTask = true;
             }
         }
 
@@ -207,16 +206,27 @@ namespace GoodAI.Modules.School.Worlds
 
         public bool ChangeModel(IModelChanges changes)
         {
-            if (m_newLearningTask)
+            if (m_isNewLearningTask)
             {
                 if (CurrentWorld != null)
                     changes.RemoveNode(CurrentWorld.World);
+                if(Curriculum.IsLast())
+                {
+                    // stop execution
+                    CurrentLearningTask = null;
+                    if (Owner.SimulationHandler.CanPause)
+                    {
+                        Owner.SimulationHandler.PauseSimulation();
+                    }
+                    return false;
+                }
                 CurrentLearningTask = Curriculum.GetNext();
                 CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
                 CurrentWorld.World.EnableDefaultTasks();
                 changes.AddNode(CurrentWorld.World);
+                //changes.AddNode(this);
 
-                m_newLearningTask = false;
+                m_isNewLearningTask = false;
                 return true;
             }
             
@@ -290,7 +300,8 @@ namespace GoodAI.Modules.School.Worlds
             // set new learning task or stop simulation
             if (LTStatus.Host[NEW_LT_FLAG] == 1)
             {
-                CurrentLearningTask = null;
+                m_isNewLearningTask = true;
+                //CurrentLearningTask = null;
                 return;
             }
 
@@ -361,7 +372,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public void InitializeCurriculum()
         {
-            CurrentLearningTask = null;
+            Curriculum.Reset();
             NotifyNewCurriculum();
         }
 
@@ -466,22 +477,13 @@ namespace GoodAI.Modules.School.Worlds
             {
                 if (Owner.CurrentLearningTask == null)
                 {
-                    Owner.CurrentLearningTask = Owner.Curriculum.GetEnumerator().MoveNext() ? Owner.Curriculum.GetEnumerator().Current : null;
-                    if (Owner.CurrentLearningTask == null)
-                    {
-                        if (Owner.Owner.SimulationHandler.CanPause)
-                        {
-                            Owner.Owner.SimulationHandler.PauseSimulation();
-                        }
-                        return;
-                    }
+                    //Debug.Assert(false);
+                    return;
                 }
                 else
                 {
                     Owner.ExecuteLearningTaskStep();
                 }
-                if (SimulationStep == 0)
-                    Owner.ExecuteLearningTaskStep();
             }
         }
     }
