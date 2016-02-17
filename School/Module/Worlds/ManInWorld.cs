@@ -1041,7 +1041,7 @@ namespace GoodAI.Modules.School.Worlds
 
                 // A hack to prevent BS from crashing after init
                 Owner.VisualPOW.ExternalPointer =
-                    MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_2", Owner.GPU, () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
+                    MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU, () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
             }
 
             public override void Execute()
@@ -1049,8 +1049,8 @@ namespace GoodAI.Modules.School.Worlds
                 if (!m_glInitialized)
                 {
                     // Clean the residual memory from init
-                    MyMemoryManager.Instance.ClearGlobalVariable("HACK_NAME_2", Owner.GPU);
-                    onlyOnce();
+                    MyMemoryManager.Instance.ClearGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU);
+                    InitGL();
                     m_glInitialized = true;
                 }
 
@@ -1072,7 +1072,7 @@ namespace GoodAI.Modules.School.Worlds
                 copyPixelsPOW();
             }
 
-            void onlyOnce()
+            void InitGL()
             {
                 if (m_context != null)
                     m_context.Dispose();
@@ -1217,40 +1217,6 @@ namespace GoodAI.Modules.School.Worlds
                 GL.End();
             }
 
-            void copyPixelsPOW()
-            {
-                // Prepare the results for CUDA
-
-                // deinit CUDA interop to enable copying
-                if (m_renderResource.IsMapped)
-                    m_renderResource.UnMap();
-
-                // bind pixel buffer object
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
-                // bind buffer from which data will be read
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                // read data to PBO (IntPtr.Zero means offset is 0)
-                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
-                GL.ReadBuffer(ReadBufferMode.None);
-
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-
-                // Update the pointer for other usage in BS
-                    m_renderResource.Map();
-                Owner.VisualPOW.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
-                Owner.VisualPOW.FreeDevice();
-                Owner.VisualPOW.AllocateDevice();
-
-                // add noise over POW
-                if (Owner.IsImageNoise)
-                {
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
-
-                    m_AddRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
-                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
-                }
-            }
-
             void renderBackground()
             {
                 GL.PushMatrix();
@@ -1334,6 +1300,39 @@ namespace GoodAI.Modules.School.Worlds
                 GL.Disable(EnableCap.Blend);
 
                 //GL.PopAttrib(); // restores GL.Viewport() parameters
+            }
+
+            void copyPixelsPOW()
+            {
+                // Prepare the results for CUDA
+                // deinit CUDA interop to enable copying
+                if (m_renderResource.IsMapped)
+                    m_renderResource.UnMap();
+
+                // bind pixel buffer object
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                // bind buffer from which data will be read
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                // read data to PBO (IntPtr.Zero means offset is 0)
+                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
+                GL.ReadBuffer(ReadBufferMode.None);
+
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                // Update the pointer for other usage in BS
+                m_renderResource.Map();
+                Owner.VisualPOW.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                Owner.VisualPOW.FreeDevice();
+                Owner.VisualPOW.AllocateDevice();
+
+                // add noise over POW
+                if (Owner.IsImageNoise)
+                {
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
+
+                    m_AddRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
+                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
+                }
             }
 
             public void drawShape(GameObject gameObject)

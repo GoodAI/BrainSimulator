@@ -41,7 +41,16 @@ namespace GoodAI.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            VisualHeight = VisualWidth = 256;
+            if (School != null)
+            {
+                VisualWidth = School.Visual.Dims[0];
+                VisualHeight = School.Visual.Dims[1];
+            }
+            else
+            {
+                VisualHeight = VisualWidth = 256;
+            }
+
             base.UpdateMemoryBlocks();
         }
 
