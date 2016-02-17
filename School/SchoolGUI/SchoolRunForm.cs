@@ -22,12 +22,13 @@ namespace GoodAI.School.GUI
         private readonly MainForm m_mainForm;
         private string m_runName;
         private SchoolWorld m_school;
-        private bool m_showObserver;
         private ObserverForm m_observer;
 
         private int m_currentRow = -1;
         private int m_stepOffset = 0;
-        private DateTime? m_ltStart = null;
+        private DateTime m_ltStart;
+
+        private bool m_showObserver { get { return observerCheckBox.Checked; } }
 
         public string RunName
         {
@@ -36,12 +37,18 @@ namespace GoodAI.School.GUI
             {
                 m_runName = value;
 
-                string result = "School run";
-                if (!String.IsNullOrEmpty(m_runName))
-                    result += " - " + RunName;
-                this.Text = result;
+                Text = String.IsNullOrEmpty(m_runName) ? "School run" : "School run - " + m_runName;
             }
         }
+
+        private LearningTaskNode CurrentTask
+        {
+            get
+            {
+                return Data.ElementAt(m_currentRow);
+            }
+        }
+
 
         public SchoolRunForm(MainForm mainForm)
         {
@@ -49,7 +56,6 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             observerCheckBox.Checked = Properties.School.Default.ShowVisual;
-            m_showObserver = observerCheckBox.Checked;
 
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
@@ -67,34 +73,21 @@ namespace GoodAI.School.GUI
         {
             if (m_school == null)
                 return;
-            ILearningTask actualTask = m_school.CurrentLearningTask;
-            if (actualTask == null)
-                return;
-            if (m_ltStart == null)  // for the first LT
-                m_ltStart = DateTime.UtcNow;
 
-            int simStep = (int)m_mainForm.SimulationHandler.SimulationStep;
-            if (m_currentRow < 0 || actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) // next LT
-            {
-                m_currentRow++;
-                HighlightCurrentTask();
-                m_stepOffset = simStep;
-                DateTime end = DateTime.UtcNow;
-                m_ltStart = end;
-            }
-            if (actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
+            ILearningTask runningTask = m_school.CurrentLearningTask;
+            if (runningTask == null)
+                return;
+
+            if (m_currentRow < 0 || runningTask.GetType() != Data.ElementAt(m_currentRow).TaskType) // next LT
+                GoToNextTask();
+
+            if (runningTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
             {
                 MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
                 return;
             }
 
-            LearningTaskNode node = Data.ElementAt(m_currentRow);
-            node.Steps = simStep - m_stepOffset;
-            TimeSpan? diff = DateTime.UtcNow - m_ltStart;
-            if (diff != null)
-                node.Time = (float)Math.Round(diff.Value.TotalSeconds, 2);
-
-            UpdateData();
+            UpdateTaskData(runningTask);
         }
 
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
@@ -106,18 +99,36 @@ namespace GoodAI.School.GUI
 
         public void Ready()
         {
-            UpdateData();
+            UpdateGridData();
             PrepareSimulation();
             SetObserver();
             if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
         }
 
-        public void UpdateData()
+        public void UpdateGridData()
         {
             dataGridView1.DataSource = Data;
             dataGridView1.Invalidate();
+        }
 
+        private void UpdateTaskData(ILearningTask runningTask)
+        {
+            CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
+            CurrentTask.Progress = (int)runningTask.Progress;
+            TimeSpan diff = DateTime.UtcNow - m_ltStart;
+            CurrentTask.Time = (float)Math.Round(diff.TotalSeconds, 2);
+
+            UpdateGridData();
+        }
+
+        private void GoToNextTask()
+        {
+            m_currentRow++;
+            m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
+            m_ltStart = DateTime.UtcNow; ;
+
+            HighlightCurrentTask();
         }
 
         private void SetObserver()
@@ -138,7 +149,7 @@ namespace GoodAI.School.GUI
 
                         m_observer.TopLevel = false;
                         observerDockPanel.Controls.Add(m_observer);
-                        
+
                         m_observer.CloseButtonVisible = false;
                         m_observer.MaximizeBox = false;
                         m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
@@ -175,6 +186,7 @@ namespace GoodAI.School.GUI
         private void CreateCurriculum()
         {
             m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
+            // TODO: next two lines are probably not necessary
             foreach (ILearningTask task in m_school.Curriculum)
                 task.SchoolWorld = m_school;
         }
@@ -204,9 +216,10 @@ namespace GoodAI.School.GUI
 
             // gui
             m_stepOffset = 0;
-            HighlightCurrentTask();
+            m_currentRow = -1;
             Data.ForEach(x => x.Steps = 0);
             Data.ForEach(x => x.Time = 0f);
+            Data.ForEach(x => x.Progress = 0);
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -259,9 +272,6 @@ namespace GoodAI.School.GUI
         {
             Properties.School.Default.ShowVisual = (sender as CheckBox).Checked;
             Properties.School.Default.Save();
-
-            CheckBox c = (CheckBox)sender;
-            m_showObserver = c.Checked;
             SetObserver();
         }
 
@@ -271,9 +281,6 @@ namespace GoodAI.School.GUI
                 PrepareSimulation();
         }
 
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
-        {
-
-        }
+        public void dataGridView1_SelectionChanged(object sender, EventArgs e) { }
     }
 }
