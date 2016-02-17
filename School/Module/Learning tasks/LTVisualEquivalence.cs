@@ -7,7 +7,6 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     /// <summary>Visual object for comparison. Similar to the Shape class.</summary>
-    [DisplayName("Comparison shape")]
     public class ComparisonShape : GameObject
     {
         // The shapes used for the targets
@@ -67,6 +66,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Two shapes are presented; they are considered equivalent if they differ
     /// only in color, translation, scaling, and rotation.
     /// </summary>
+    [DisplayName("Visual equivalence")]
     public class LTVisualEquivalence : AbstractLearningTask<RoguelikeWorld>
     {
         // Attributes
