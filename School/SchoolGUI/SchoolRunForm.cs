@@ -25,7 +25,7 @@ namespace GoodAI.School.GUI
         private ObserverForm m_observer;
         private int m_currentRow = -1;
         private int m_stepOffset = 0;
-        private DateTime? m_ltStart = null;
+        private DateTime m_ltStart;
 
         public string RunName
         {
@@ -33,11 +33,15 @@ namespace GoodAI.School.GUI
             set
             {
                 m_runName = value;
+                Text = String.IsNullOrEmpty(m_runName) ? "School run" : "School run - " + m_runName;
+            }
+        }
 
-                string result = "School run";
-                if (!String.IsNullOrEmpty(m_runName))
-                    result += " - " + RunName;
-                this.Text = result;
+        private LearningTaskNode CurrentTask
+        {
+            get
+            {
+                return Data.ElementAt(m_currentRow);
             }
         }
 
@@ -64,52 +68,57 @@ namespace GoodAI.School.GUI
 
         public void Ready()
         {
-            UpdateData();
+            UpdateGridData();
             PrepareSimulation();
             SetObserver();
             if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
         }
 
-        public void UpdateData()
+        private void UpdateGridData()
         {
             dataGridView1.DataSource = Data;
             dataGridView1.Invalidate();
+        }
+
+        private void UpdateTaskData(ILearningTask runningTask)
+        {
+            CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
+            CurrentTask.Progress = (int)runningTask.Progress;
+            TimeSpan diff = DateTime.UtcNow - m_ltStart;
+            CurrentTask.Time = (float)Math.Round(diff.TotalSeconds, 2);
+
+            UpdateGridData();
+        }
+
+        private void GoToNextTask()
+        {
+            m_currentRow++;
+            m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
+            m_ltStart = DateTime.UtcNow; ;
+
+            HighlightCurrentTask();
         }
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (m_school == null)
                 return;
-            ILearningTask actualTask = m_school.m_currentLearningTask;
-            if (actualTask == null)
-                return;
-            if (m_ltStart == null)  // for the first LT
-                m_ltStart = DateTime.UtcNow;
 
-            int simStep = (int)m_mainForm.SimulationHandler.SimulationStep;
-            if (m_currentRow < 0 || actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) // next LT
-            {
-                m_currentRow++;
-                HighlightCurrentTask();
-                m_stepOffset = simStep;
-                DateTime end = DateTime.UtcNow;
-                m_ltStart = end;
-            }
-            if (actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
+            ILearningTask runningTask = m_school.m_currentLearningTask;
+            if (runningTask == null)
+                return;
+
+            if (m_currentRow < 0 || runningTask.GetType() != CurrentTask.TaskType)
+                GoToNextTask();
+
+            if (runningTask.GetType() != CurrentTask.TaskType) //should not happen at all - just a safeguard
             {
                 MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
                 return;
             }
 
-            LearningTaskNode node = Data.ElementAt(m_currentRow);
-            node.Steps = simStep - m_stepOffset;
-            node.Progress = (int)actualTask.Progress;
-            TimeSpan? diff = DateTime.UtcNow - m_ltStart;
-            if (diff != null)
-                node.Time = (float)Math.Round(diff.Value.TotalSeconds, 2);
-
-            UpdateData();
+            UpdateTaskData(runningTask);
         }
 
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
@@ -118,6 +127,7 @@ namespace GoodAI.School.GUI
             btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
             btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
         }
+
         private void SetObserver()
         {
             if (m_showObserver)
@@ -203,7 +213,7 @@ namespace GoodAI.School.GUI
 
             // gui
             m_stepOffset = 0;
-            HighlightCurrentTask();
+            //HighlightCurrentTask();
             Data.ForEach(x => x.Steps = 0);
             Data.ForEach(x => x.Time = 0f);
             Data.ForEach(x => x.Progress = 0);

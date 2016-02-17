@@ -30,10 +30,12 @@ namespace GoodAI.School.GUI
     {
         public Type TaskType { get; private set; }
         public Type WorldType { get; private set; }
-        public int Steps { get; set; }
-        public float Time { get; set; }
+
+        public bool IsActive { get; set; }
         public int Progress { get; set; }
         public string Status { get; set; }
+        public int Steps { get; set; }
+        public float Time { get; set; }
 
         public override string Text
         {
