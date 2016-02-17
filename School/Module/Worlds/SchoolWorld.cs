@@ -168,7 +168,7 @@ namespace GoodAI.Modules.School.Worlds
             {
                 m_shouldRunFullInit = true;
                 m_isNewLearningTask = true;
-                Curriculum.Reset(); 
+                Curriculum.Reset();
             }
         }
 
@@ -214,33 +214,35 @@ namespace GoodAI.Modules.School.Worlds
 
         public bool ChangeModel(IModelChanges changes)
         {
-            if (m_isNewLearningTask)
+            if (!m_isNewLearningTask)
             {
-                if (CurrentWorld != null)
-                    changes.RemoveNode(CurrentWorld.World);
-                if(Curriculum.IsLast())
-                {
-                    // stop execution
-                    CurrentLearningTask = null;
-                    if (Owner.SimulationHandler.CanPause)
-                    {
-                        Owner.SimulationHandler.PauseSimulation();
-                    }
-                    return false;
-                }
-                CurrentLearningTask = Curriculum.GetNext();
-                CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
-                CurrentWorld.World.EnableDefaultTasks();
-                changes.AddNode(CurrentWorld.World);
-                changes.AddNode(this);
-
-                m_isNewLearningTask = false;
-                m_isAfterChangeModelExecute = true;
-                m_isAfterChangeModelInit = true;
-                return true;
+                return false;
             }
-            
-            return false;
+
+            if (CurrentWorld != null)
+            {
+                changes.RemoveNode(CurrentWorld.World);
+            }
+            if (Curriculum.IsLast())
+            {
+                // stop execution
+                CurrentLearningTask = null;
+                if (Owner.SimulationHandler.CanPause)
+                {
+                    Owner.SimulationHandler.PauseSimulation();
+                }
+                return false;
+            }
+            CurrentLearningTask = Curriculum.GetNext();
+            CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
+            CurrentWorld.World.EnableDefaultTasks();
+            changes.AddNode(CurrentWorld.World);
+            changes.AddNode(this);
+
+            m_isNewLearningTask = false;
+            m_isAfterChangeModelExecute = true;
+            m_isAfterChangeModelInit = true;
+            return true;
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
@@ -257,11 +259,8 @@ namespace GoodAI.Modules.School.Worlds
 
             MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
 
-            // add init tasks that initialize the adapter:
-            //public InputAdapterTask AdapterInputStep { get; protected set; }
-            //public LearningStepTask LearningStep { get; protected set; }
-            //public OutputAdapterTask AdapterOutputStep { get; protected set; }
-
+            // add init tasks that initialize the adapter, but not the InitSchool task,
+            // which should be run only once at the very beginning
             var blocks = new List<IMyExecutable>();
             blocks.AddRange(defaultInitPhasePlan.Children.Where(x => x != InitSchool));
             MyExecutionBlock initPhasePlanPruned = new MyExecutionBlock(blocks.ToArray());
@@ -272,7 +271,10 @@ namespace GoodAI.Modules.School.Worlds
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
             if (!m_isAfterChangeModelExecute)
+            {
+                // this if is true at the beginning of simulation
                 return defaultPlan;
+            }
 
             m_isAfterChangeModelExecute = false;
 
