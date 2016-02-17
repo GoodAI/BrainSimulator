@@ -42,8 +42,15 @@ namespace GoodAI.Core.Memory
             object objectValue;
             if (base.TryGetValue(key, out objectValue))
             {
-                value = (T) objectValue;
-                return true;
+                try
+                {
+                    value = (T) objectValue;
+                    return true;
+                }
+                catch
+                {
+                    // Default is used (see below).
+                }
             }
 
             value = default(T);
