@@ -10,7 +10,8 @@ namespace GoodAI.Core.Memory
 {
     public enum MemoryBlockMetadataKeys
     {
-        RenderingMethod
+        RenderingMethod,
+        ShowCoordinates
     }
 
     public interface IMemoryBlockMetadata : IDictionary<string, object>
