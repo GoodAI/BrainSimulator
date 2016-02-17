@@ -123,7 +123,7 @@ namespace GoodAI.School.GUI
                     task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType), world);
                 else
                     task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
-                task.RequiredWorld = Type.GetType(m_worldType);
+                task.RequiredWorldType = Type.GetType(m_worldType);
                 return task;
             }
         }

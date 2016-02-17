@@ -23,7 +23,7 @@ namespace GoodAI.Modules.School.Common
         void PresentNewTrainingUnitCommon();
 
         SchoolWorld SchoolWorld { get; set; }
-        Type RequiredWorld { get; set; }
+        Type RequiredWorldType { get; set; }
         string GetTypeName();
 
         void Init();
@@ -98,7 +98,7 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-        public Type RequiredWorld { get; set; }
+        public Type RequiredWorldType { get; set; }
 
         public virtual float Progress
         {

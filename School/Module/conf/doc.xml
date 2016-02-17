@@ -29,7 +29,7 @@
             Holds tasks that an agent should be trained with to gain new abilities
             </summary>
         </member>
-        <member name="M:GoodAI.Modules.School.Common.SchoolCurriculum.GetNextLearningTask">
+        <member name="M:GoodAI.Modules.School.Common.SchoolCurriculum.GetNext">
             <summary>
             Provides next LearningTask if there is any, null otherwise
             </summary>
