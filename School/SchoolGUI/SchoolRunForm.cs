@@ -22,9 +22,7 @@ namespace GoodAI.School.GUI
         private readonly MainForm m_mainForm;
         private string m_runName;
         private SchoolWorld m_school;
-        private bool m_showObserver { get { return observerCheckBox.Checked; } }
         private ObserverForm m_observer;
-
         private int m_currentRow = -1;
         private int m_stepOffset = 0;
         private DateTime? m_ltStart = null;
@@ -43,6 +41,8 @@ namespace GoodAI.School.GUI
             }
         }
 
+        private bool m_showObserver { get { return observerCheckBox.Checked; } }
+
         public SchoolRunForm(MainForm mainForm)
         {
             m_mainForm = mainForm;
@@ -60,6 +60,21 @@ namespace GoodAI.School.GUI
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             UpdateButtons(null, null);
+        }
+
+        public void Ready()
+        {
+            UpdateData();
+            PrepareSimulation();
+            SetObserver();
+            if (Properties.School.Default.AutorunEnabled && Data != null)
+                btnRun.PerformClick();
+        }
+
+        public void UpdateData()
+        {
+            dataGridView1.DataSource = Data;
+            dataGridView1.Invalidate();
         }
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -103,22 +118,6 @@ namespace GoodAI.School.GUI
             btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
             btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
         }
-
-        public void Ready()
-        {
-            UpdateData();
-            PrepareSimulation();
-            SetObserver();
-            if (Properties.School.Default.AutorunEnabled && Data != null)
-                btnRun.PerformClick();
-        }
-
-        public void UpdateData()
-        {
-            dataGridView1.DataSource = Data;
-            dataGridView1.Invalidate();
-        }
-
         private void SetObserver()
         {
             if (m_showObserver)
