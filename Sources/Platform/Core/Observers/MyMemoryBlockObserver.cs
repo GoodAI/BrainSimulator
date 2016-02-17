@@ -90,7 +90,18 @@ namespace GoodAI.Core.Observers
 
         [YAXSerializableField(DefaultValue = 2)]
         [MyBrowsable, Category("Texture"), DisplayName("Vector Elements")]
-        public int Elements { get; set; }
+        public int Elements
+        {
+            get { return m_elements; }
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentException("Vector element count must be greater than zero.");
+
+                m_elements = value;
+            }
+        }
+        private int m_elements;
 
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Temporal")]
@@ -109,10 +120,10 @@ namespace GoodAI.Core.Observers
         }
 
         private bool m_showCoordinatesSelected;
+        private bool m_showCoordinates;
 
         protected MyCudaKernel m_vectorKernel;
         protected MyCudaKernel m_rgbKernel;
-        private bool m_showCoordinates;
 
         public MyMemoryBlockObserver()
         {
