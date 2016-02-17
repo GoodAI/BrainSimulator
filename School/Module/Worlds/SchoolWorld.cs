@@ -174,7 +174,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolWorld()
         {
-            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw.ToString();
+            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
+            Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
         }
 
         Random m_rndGen = new Random();
