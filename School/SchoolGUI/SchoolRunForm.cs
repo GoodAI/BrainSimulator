@@ -17,7 +17,11 @@ namespace GoodAI.School.GUI
     public partial class SchoolRunForm : DockContent
     {
         public List<LearningTaskNode> Data;
+        public List<LevelNode> Levels;
+        public List<List<AttributeNode>> Attributes;
         public PlanDesign Design;
+
+        private List<DataGridView> LevelGrids;
 
         private readonly MainForm m_mainForm;
         private string m_runName;
@@ -281,6 +285,68 @@ namespace GoodAI.School.GUI
                 PrepareSimulation();
         }
 
-        public void dataGridView1_SelectionChanged(object sender, EventArgs e) { }
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            DataGridView senderT = sender as DataGridView;
+            int dataIndex;
+            if (senderT.SelectedRows != null)
+            {
+                DataGridViewRow row = senderT.SelectedRows[0];
+                dataIndex = row.Index;
+            }
+            else
+            {
+                dataIndex = 0;
+            }
+            LearningTaskNode ltNode = Data[dataIndex];
+            Type ltType = ltNode.TaskType;
+            Type ltWorld = ltNode.WorldType;
+            ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
+            
+            TrainingSetHints hint = lt.TSProgression[0];
+
+            Levels = new List<LevelNode>();
+            LevelGrids = new List<DataGridView>();
+            Attributes = new List<List<AttributeNode>>();
+            tabControl1.TabPages.Clear();
+
+            for (int i = 0; i < lt.TSProgression.Count; i++)
+            {
+                // create tab
+                LevelNode ln = new LevelNode(i + 1);
+                Levels.Add(ln);
+                TabPage tp = new TabPage(ln.Text);
+                tabControl1.TabPages.Add(tp);
+                
+                // create grid
+                DataGridView dgv = new DataGridView();
+                LevelGrids.Add(dgv);
+                dgv.Parent = tp;
+                dgv.Margin = new Padding(3);
+                dgv.Dock = DockStyle.Fill;
+                dgv.RowHeadersVisible = false;
+                // create attributes
+                Attributes.Add(new List<AttributeNode>());
+                foreach (var attribute in lt.TSProgression[i])
+                {
+                    
+                    AttributeNode an = new AttributeNode(
+                        attribute.Key.Name,
+                        attribute.Value,
+                        attribute.Key.TypeOfValue);
+                    Attributes.Last().Add(an);
+                }
+
+                dgv.DataSource = Attributes.Last();
+                for (int k = 13; k > 2; k--)
+                {
+                    dgv.Columns.RemoveAt(k);
+                    Console.WriteLine(dgv.Columns.Count);
+                }
+                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                tabControl1.Update();
+            }
+            
+        }
     }
 }

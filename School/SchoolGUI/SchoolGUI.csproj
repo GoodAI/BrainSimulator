@@ -132,6 +132,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
+    <None Include="Properties\DataSources\AttributeNode.datasource" />
     <None Include="Properties\DataSources\GoodAI.Modules.School.Worlds.SchoolWorld.datasource" />
     <None Include="Properties\DataSources\LearningTaskNode.datasource" />
     <None Include="Properties\DataSources\LevelNode.datasource" />

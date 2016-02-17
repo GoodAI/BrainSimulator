@@ -58,20 +58,42 @@ namespace GoodAI.School.GUI
         }
     }
 
-    public class LevelNode : LearningTaskNode
+    public class LevelNode : Node
     {
         public int Level { get; set; }
 
-        public LevelNode(int level, Type taskType, Type worldType) : base(taskType, worldType)
+        public LevelNode(int level)
         {
-            this.Level = level;
+            Level = level;
         }
 
         public override string Text
         {
             get
             {
-                return "Attribute 1";
+                return "Level " + Level;
+            }
+        }
+    }
+
+    public class AttributeNode : Node
+    {
+        public string Name { get; set; }
+        public float Value { get; set; }
+        public Type Type { get; set; }
+
+        public AttributeNode(string name, float value, Type type)
+        {
+            this.Name = name;
+            this.Value = value;
+            this.Type = type;
+        }
+
+        public override string Text
+        {
+            get
+            {
+                return Name;
             }
         }
     }
