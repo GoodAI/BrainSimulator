@@ -80,7 +80,8 @@
     <Compile Include="DashboardTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
     <Compile Include="Memory\CustomDimensionsTests.cs" />
-    <Compile Include="MemoryBlockTests.cs" />
+    <Compile Include="Memory\MemoryBlockMetadataTests.cs" />
+    <Compile Include="Memory\MemoryBlockTests.cs" />
     <Compile Include="ModelCreationTests.cs" />
     <Compile Include="NodeConnectionTests.cs" />
     <Compile Include="Nodes\MyForkTests.cs" />

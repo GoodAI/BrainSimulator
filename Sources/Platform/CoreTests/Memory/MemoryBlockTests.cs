@@ -10,7 +10,7 @@ using GoodAI.Core.Utils;
 using GoodAI.TypeMapping;
 using Xunit;
 
-namespace CoreTests
+namespace CoreTests.Memory
 {
     public class MemoryBlockTests : CoreTestBase
     {
