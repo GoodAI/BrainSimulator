@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using System.Reflection;
 using GoodAI.Core.Memory;
 using YAXLib;
 
@@ -94,13 +95,24 @@ namespace GoodAI.Core.Observers
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Temporal")]
         public int TimeStep { get; set; }
-        
+
         [YAXSerializableField]
         [MyBrowsable, Category("\tWindow")]
-        public bool ShowCoordinates { get; set; }
+        public bool ShowCoordinates
+        {
+            get { return m_showCoordinates; }
+            set
+            {
+                m_showCoordinatesSelected = true;
+                m_showCoordinates = value;
+            }
+        }
+
+        private bool m_showCoordinatesSelected;
 
         protected MyCudaKernel m_vectorKernel;
         protected MyCudaKernel m_rgbKernel;
+        private bool m_showCoordinates;
 
         public MyMemoryBlockObserver()
         {
@@ -119,22 +131,17 @@ namespace GoodAI.Core.Observers
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");
             m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");
 
-            if (m_methodSelected)
-                return;
-
-            m_methodSelected = true;
-
-            string colorScheme;
-            RenderingMethod renderingMethod;
-            if (Target.Metadata.TryGetValue(MemoryBlockMetadataKeys.RenderingMethod, out colorScheme) &&
-                Enum.TryParse(colorScheme, out renderingMethod))
+            if (!m_methodSelected)
             {
-                Method = renderingMethod;
-                return;
+                Method = Target.Metadata.GetOrDefault(MemoryBlockMetadataKeys.RenderingMethod,
+                    defaultValue: RenderingMethod.RedGreenScale);
             }
 
-            // The default when no hint is provided.
-            Method = RenderingMethod.RedGreenScale;
+            if (!m_showCoordinatesSelected)
+            {
+                ShowCoordinates = Target.Metadata.GetOrDefault(MemoryBlockMetadataKeys.ShowCoordinates,
+                    defaultValue: false);
+            }
         }
 
         protected override void Execute()
