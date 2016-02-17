@@ -67,7 +67,7 @@ namespace GoodAI.School.GUI
         {
             if (m_school == null)
                 return;
-            ILearningTask actualTask = m_school.m_currentLearningTask;
+            ILearningTask actualTask = m_school.CurrentLearningTask;
             if (actualTask == null)
                 return;
             if (m_ltStart == null)  // for the first LT
@@ -83,18 +83,6 @@ namespace GoodAI.School.GUI
                 m_ltStart = end;
             }
             if (actualTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
-            {
-            if (m_school == null)
-                return;
-
-            ILearningTask runningTask = m_school.CurrentLearningTask;
-            if (runningTask == null)
-                return;
-
-            if (m_currentRow < 0 || runningTask.GetType() != CurrentTask.TaskType)
-                GoToNextTask();
-
-            if (runningTask.GetType() != CurrentTask.TaskType) //should not happen at all - just a safeguard
             {
                 MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
                 return;
