@@ -63,6 +63,12 @@ namespace GoodAI.School.GUI
             UpdateButtons(null, null);
         }
 
+        // if LTs would like to have some more specific "Progress" definition -> move to AbstractLT; right now this understanding is good
+        private int GetProgressForLT(ILearningTask task)
+        {
+            return 100 * task.CurrentLevel / task.NumberOfLevels;
+        }
+
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (m_school == null)
@@ -90,6 +96,7 @@ namespace GoodAI.School.GUI
 
             LearningTaskNode node = Data.ElementAt(m_currentRow);
             node.Steps = simStep - m_stepOffset;
+            node.Progress = GetProgressForLT(actualTask);
             TimeSpan? diff = DateTime.UtcNow - m_ltStart;
             if (diff != null)
                 node.Time = (float)Math.Round(diff.Value.TotalSeconds, 2);
@@ -117,7 +124,6 @@ namespace GoodAI.School.GUI
         {
             dataGridView1.DataSource = Data;
             dataGridView1.Invalidate();
-
         }
 
         private void SetObserver()
@@ -138,7 +144,7 @@ namespace GoodAI.School.GUI
 
                         m_observer.TopLevel = false;
                         observerDockPanel.Controls.Add(m_observer);
-                        
+
                         m_observer.CloseButtonVisible = false;
                         m_observer.MaximizeBox = false;
                         m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
@@ -175,6 +181,7 @@ namespace GoodAI.School.GUI
         private void CreateCurriculum()
         {
             m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
+            // TODO: next two lines are probably not necessary
             foreach (ILearningTask task in m_school.Curriculum)
                 task.SchoolWorld = m_school;
         }
@@ -207,6 +214,7 @@ namespace GoodAI.School.GUI
             HighlightCurrentTask();
             Data.ForEach(x => x.Steps = 0);
             Data.ForEach(x => x.Time = 0f);
+            Data.ForEach(x => x.Progress = 0);
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

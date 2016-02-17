@@ -137,7 +137,7 @@ namespace GoodAI.Modules.School.Common
 
         private bool DidLearingTaskFail()
         {
-            if(TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS))
+            if (TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS))
             {
                 return CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS];
             }
@@ -199,7 +199,7 @@ namespace GoodAI.Modules.School.Common
             if (CurrentNumberOfSuccesses >= NumberOfSuccessesRequired)
             {
                 bool didIncreaseLevel = IncreaseLevel();
-                if(didIncreaseLevel)
+                if (didIncreaseLevel)
                 {
                     SchoolWorld.NotifyNewLevel();
                     // inform about new level
@@ -225,7 +225,7 @@ namespace GoodAI.Modules.School.Common
         {
             SchoolWorld.ClearWorld();
             SchoolWorld.SetHints(TSHints);
-            
+
             PresentNewTrainingUnit();
         }
 
