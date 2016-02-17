@@ -25,7 +25,16 @@ namespace CoreTests.Memory
             var dims = new TensorDimensions(3, 5, 7);
 
             Assert.Equal(3*5*7, dims.ElementCount);
-            Assert.Equal(3 * 5 * 7, dims.ElementCount);
+            Assert.Equal(3*5*7, dims.ElementCount);
+        }
+
+        [Fact]
+        public void HashCodeIsCachedProperly()
+        {
+            var dims = new TensorDimensions(3, 5, 7);
+
+            int hashCode = dims.GetHashCode();
+            Assert.Equal(hashCode, dims.GetHashCode());
         }
 
         [Fact]

@@ -20,14 +20,15 @@ namespace GoodAI.Core.Memory
 
         protected const int MaxDimensions = 100;  // ought to be enough for everybody
 
-        protected TensorDimensionsBase()
-        {
-            m_dims = ImmutableList<int>.Empty;  // This means default dimensions.
-        }
+        protected TensorDimensionsBase() : this(ImmutableList<int>.Empty)  // This means default dimensions.
+        {}
 
         protected TensorDimensionsBase(IImmutableList<int> immutableDimensions)
         {
             m_dims = immutableDimensions;
+
+            // Precompute this since we are immutable.
+            ElementCount = IsEmpty ? 0 : Math.Abs(m_dims.Aggregate(1, (acc, item) => acc * item));  // Tolerate -1s.
         }
 
         protected bool Equals(TensorDimensionsBase other)
@@ -43,8 +44,14 @@ namespace GoodAI.Core.Memory
 
         public override int GetHashCode()
         {
-            return IsEmpty ? 0 : m_dims.Aggregate(19, (hashCode, item) => 31 * hashCode + item);
+            if (m_hashCode == -1)
+            {
+                m_hashCode = IsEmpty ? 0 : m_dims.Aggregate(19, (acc, item) => 31*acc + item);
+            }
+
+            return m_hashCode;
         }
+        private int m_hashCode = -1;
 
         public bool IsEmpty
         {
@@ -63,19 +70,7 @@ namespace GoodAI.Core.Memory
         public int Count
         { get { return Rank; } }
 
-        public int ElementCount
-        {
-            get
-            {
-                if (m_cachedElementCount == -1)
-                {
-                    m_cachedElementCount = IsEmpty ? 0 : Math.Abs(m_dims.Aggregate(1, (acc, item) => acc * item));
-                }
-
-                return m_cachedElementCount;
-            }
-        }
-        private int m_cachedElementCount = -1;
+        public int ElementCount { get; private set; }
 
         public int this[int index]
         {
