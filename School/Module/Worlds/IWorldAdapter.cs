@@ -28,8 +28,7 @@ namespace GoodAI.Modules.School.Worlds
     {
         public static Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => typeof(IWorldAdapter)
-                .IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
+                .Where(p => typeof(IWorldAdapter).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
                 .ToArray();
     }
 

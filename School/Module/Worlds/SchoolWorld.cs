@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using YAXLib;
+using GoodAI.School.Worlds;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -141,7 +142,7 @@ namespace GoodAI.Modules.School.Worlds
 
 
         private IWorldAdapter m_currentWorld;
-        private bool m_switchModel = true;
+        //private bool m_switchModel = true;
 
         [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter)), YAXDontSerialize]
         public IWorldAdapter CurrentWorld
@@ -164,7 +165,11 @@ namespace GoodAI.Modules.School.Worlds
         {
             // Notify BS that the model has changed -- it will reuse the old model otherwise and won't call inits on CurrentWorld's tasks when run
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
-                m_switchModel = true;
+            {
+                m_shouldRunFullInit = true;
+                m_isNewLearningTask = true;
+                Curriculum.Reset(); 
+            }
         }
 
         public SchoolWorld()
@@ -174,21 +179,19 @@ namespace GoodAI.Modules.School.Worlds
 
         Random m_rndGen = new Random();
 
-        private IWorldAdapter m_newWorld = null;
+        private bool m_shouldRunFullInit = true;
+        private bool m_isNewLearningTask = true;
+        private bool m_isAfterChangeModelInit = false;
+        private bool m_isAfterChangeModelExecute = false;
 
         public SchoolCurriculum Curriculum { get; set; }
-        private ILearningTask m_currentLTBF;
-        public ILearningTask m_currentLearningTask
+        private ILearningTask m_currentLearningTask;
+        public ILearningTask CurrentLearningTask
         {
-            get { return m_currentLTBF; }
+            get { return m_currentLearningTask; }
             set
             {
-                m_currentLTBF = value;
-                if (m_currentLTBF != null)
-                {
-                    m_newWorld = (IWorldAdapter)Owner.CreateNode(m_currentLTBF.RequiredWorld);
-                    m_switchModel = true;
-                }
+                m_currentLearningTask = value;
             }
         }
 
@@ -210,43 +213,68 @@ namespace GoodAI.Modules.School.Worlds
 
         public bool ChangeModel(IModelChanges changes)
         {
-            if (!m_switchModel)
-                return false;
-
-            //if (CurrentWorld == null)
-            //m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
-
-            if (m_newWorld != null)
+            if (m_isNewLearningTask)
             {
                 if (CurrentWorld != null)
                     changes.RemoveNode(CurrentWorld.World);
-                CurrentWorld = m_newWorld;
+                if(Curriculum.IsLast())
+                {
+                    // stop execution
+                    CurrentLearningTask = null;
+                    if (Owner.SimulationHandler.CanPause)
+                    {
+                        Owner.SimulationHandler.PauseSimulation();
+                    }
+                    return false;
+                }
+                CurrentLearningTask = Curriculum.GetNext();
+                CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
                 CurrentWorld.World.EnableDefaultTasks();
                 changes.AddNode(CurrentWorld.World);
-                m_newWorld = null;
-            }
+                changes.AddNode(this);
 
-            m_switchModel = false;
-            return true;
+                m_isNewLearningTask = false;
+                m_isAfterChangeModelExecute = true;
+                m_isAfterChangeModelInit = true;
+                return true;
+            }
+            
+            return false;
         }
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            if (m_newWorld == null)
-                m_newWorld = (IWorldAdapter)Owner.CreateNode(Curriculum.GetWorldForNextLT());
+            if (!m_isAfterChangeModelInit)
+            {
+                // this if is true at the beginning of simulation
+                return defaultInitPhasePlan;
+            }
+
+            m_isAfterChangeModelInit = false;
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
-            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(m_newWorld.World, true);
+            MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
 
-            return new MyExecutionBlock(defaultInitPhasePlan, plan);
+            // add init tasks that initialize the adapter:
+            //public InputAdapterTask AdapterInputStep { get; protected set; }
+            //public LearningStepTask LearningStep { get; protected set; }
+            //public OutputAdapterTask AdapterOutputStep { get; protected set; }
+
+            var blocks = new List<IMyExecutable>();
+            blocks.AddRange(defaultInitPhasePlan.Children.Where(x => x != InitSchool));
+            MyExecutionBlock initPhasePlanPruned = new MyExecutionBlock(blocks.ToArray());
+
+            return new MyExecutionBlock(initPhasePlanPruned, plan, AdapterInputStep, AdapterOutputStep, LearningStep);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
-            IWorldAdapter world = m_newWorld;
-            if (m_newWorld == null)
-                world = CurrentWorld;
+            if (!m_isAfterChangeModelExecute)
+                return defaultPlan;
+
+            m_isAfterChangeModelExecute = false;
+
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
             IMyExecutable[] thisWorldTasks = defaultPlan.Children;
@@ -255,10 +283,10 @@ namespace GoodAI.Modules.School.Worlds
             // The default plan will only contain one block with: signals in, world tasks, signals out.
             blocks.Add(thisWorldTasks.First());
             blocks.Add(AdapterInputStep);
-            var worldPlan = executionPlanner.CreateNodeExecutionPlan(world.World, false);
-            blocks.AddRange(worldPlan.Children.Where(x => x != world.GetWorldRenderTask()));
+            var worldPlan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false);
+            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.GetWorldRenderTask()));
             blocks.Add(LearningStep);
-            blocks.Add(world.GetWorldRenderTask());
+            blocks.Add(CurrentWorld.GetWorldRenderTask());
             blocks.Add(AdapterOutputStep);
             blocks.Add(thisWorldTasks.Last());
 
@@ -270,15 +298,15 @@ namespace GoodAI.Modules.School.Worlds
             ResetLTStatusFlags();
 
             // first evaluate previus step
-            if (m_currentLearningTask.IsInitialized)
+            if (CurrentLearningTask.IsInitialized)
             {
                 //
-                m_currentLearningTask.ExecuteStep();
+                CurrentLearningTask.ExecuteStep();
 
                 // set new level, training unit or step
                 // this also partially sets LTStatus
                 bool learningTaskFail;
-                m_currentLearningTask.EvaluateStep(out learningTaskFail);
+                CurrentLearningTask.EvaluateStep(out learningTaskFail);
 
                 if (learningTaskFail)
                 {
@@ -297,14 +325,15 @@ namespace GoodAI.Modules.School.Worlds
             // set new learning task or stop simulation
             if (LTStatus.Host[NEW_LT_FLAG] == 1)
             {
-                m_currentLearningTask = null;
+                m_isNewLearningTask = true;
+                //CurrentLearningTask = null;
                 return;
             }
 
             // if new TU is requested, present new training unit
             if (LTStatus.Host[NEW_TU_FLAG] == 1)
             {
-                m_currentLearningTask.PresentNewTrainingUnitCommon();
+                CurrentLearningTask.PresentNewTrainingUnitCommon();
             }
 
             // LTStatus should be complete in this moment
@@ -316,16 +345,16 @@ namespace GoodAI.Modules.School.Worlds
             //m_currentLearningTask = Curriculum.GetNextLearningTask();
 
             // end of curriculum - there are no more LTs
-            if (m_currentLearningTask == null)
+            if (CurrentLearningTask == null)
             {
                 return false;
             }
             // inform user about new LT
             MyLog.Writer.WriteLine(MyLogLevel.INFO,
                 "Switching to LearningTask: " +
-                m_currentLearningTask.GetTypeName());
+                CurrentLearningTask.GetTypeName());
 
-            m_currentLearningTask.Init();
+            CurrentLearningTask.Init();
 
             return true;
         }
@@ -368,7 +397,6 @@ namespace GoodAI.Modules.School.Worlds
 
         public void InitializeCurriculum()
         {
-            m_currentLearningTask = null;
             NotifyNewCurriculum();
         }
 
@@ -421,7 +449,6 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-
                 Owner.InitializeCurriculum();
             }
         }
@@ -472,24 +499,15 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                if (Owner.m_currentLearningTask == null)
+                if (Owner.CurrentLearningTask == null)
                 {
-                    Owner.m_currentLearningTask = Owner.Curriculum.GetNextLearningTask();
-                    if (Owner.m_currentLearningTask == null)
-                    {
-                        if (Owner.Owner.SimulationHandler.CanPause)
-                        {
-                            Owner.Owner.SimulationHandler.PauseSimulation();
-                        }
-                        return;
-                    }
+                    //Debug.Assert(false);
+                    return;
                 }
                 else
                 {
                     Owner.ExecuteLearningTaskStep();
                 }
-                if (SimulationStep == 0)
-                    Owner.ExecuteLearningTaskStep();
             }
         }
     }

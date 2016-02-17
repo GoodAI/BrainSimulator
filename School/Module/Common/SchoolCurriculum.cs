@@ -30,33 +30,30 @@ namespace GoodAI.Modules.School.Common
         /// Provides next LearningTask if there is any, null otherwise
         /// </summary>
         /// <returns></returns>
-        public ILearningTask GetNextLearningTask()
+        public ILearningTask GetNext()
         {
             if (m_taskEnumerator == null)
+            {
                 m_taskEnumerator = Tasks.GetEnumerator();
+                m_taskEnumerator.Reset();
+            }
             if (m_taskEnumerator.MoveNext())
                 return m_taskEnumerator.Current;
             return null;
         }
 
-        public Type GetWorldForNextLT()
+        public bool IsLast()
         {
-            if (m_taskEnumerator == null && Tasks.First() != null)
-                return Tasks.First().RequiredWorld;
-            else
+            if (m_taskEnumerator == null)
             {
-                int idx = Tasks.IndexOf(m_taskEnumerator.Current);
-                if (Tasks.ElementAt(idx + 1) != null)
-                    return Tasks.ElementAt(idx + 1).RequiredWorld;
+                return (Tasks.Count == 0);
             }
-
-            return null;
+            return Tasks.LastIndexOf(m_taskEnumerator.Current) == Tasks.Count - 1;
         }
 
-        public void ResetLearningProgress()
+        public void Reset()
         {
-            if (m_taskEnumerator != null)
-                m_taskEnumerator.Reset();
+            m_taskEnumerator = null;
         }
 
         public void Add(ILearningTask task)
@@ -68,22 +65,6 @@ namespace GoodAI.Modules.School.Common
         {
             foreach (ILearningTask task in curr)
                 Add(task);
-        }
-
-        public void AddLearningTask(ILearningTask task, Type worldType)
-        {
-            // TODO: if tasks are added by a caller in random order, insert the task after tasks that train the required abilities
-            Tasks.Add(task);
-        }
-
-        public void AddLearningTask(SchoolWorld world, Type learningTaskType, Type worldType)
-        {
-            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), worldType);
-        }
-
-        public void AddLearningTask(SchoolWorld world, Type learningTaskType)
-        {
-            AddLearningTask(LearningTaskFactory.CreateLearningTask(learningTaskType, world), LearningTaskFactory.GetGenericType(learningTaskType));
         }
     }
 }

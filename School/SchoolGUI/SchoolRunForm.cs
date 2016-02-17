@@ -67,7 +67,7 @@ namespace GoodAI.School.GUI
         {
             if (m_school == null)
                 return;
-            ILearningTask actualTask = m_school.m_currentLearningTask;
+            ILearningTask actualTask = m_school.CurrentLearningTask;
             if (actualTask == null)
                 return;
             if (m_ltStart == null)  // for the first LT
