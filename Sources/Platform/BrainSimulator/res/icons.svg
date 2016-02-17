@@ -5027,6 +5027,30 @@
          x="245.76938"
          y="703.67651"
          style="font-weight:bold;fill:#ffffff;fill-opacity:1">&gt;_</tspan></text>
+    <g
+       style="stroke:#424242;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="g3913-7-1"
+       transform="matrix(1.3913042,0,0,1.3913042,-18.782611,-25.427444)">
+      <path
+         style="fill:none;stroke:#424242;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 38,16 C 43.833631,8.9168155 52.166369,8.9289321 58,16"
+         id="path3885-4-5"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc"
+         transform="translate(0,540.36218)" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path3887-0-1"
+         d="m 38,556.36218 c 5.833631,7.08319 14.166369,7.07107 20,0"
+         style="fill:none;stroke:#424242;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <circle
+       r="4.3771338"
+       cy="748.6416"
+       cx="47.999985"
+       id="path3911-9-0"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#424242;fill-opacity:1;stroke:none;stroke-width:4.30204916;marker:none;enable-background:accumulate" />
   </g>
   <g
      inkscape:groupmode="layer"
