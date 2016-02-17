@@ -284,6 +284,7 @@
     <Compile Include="Utils\CueToolStripTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Utils\DataGridViewProgressColumn.cs" />
     <Compile Include="Utils\MruStripMenu.cs" />
     <Compile Include="Utils\MyCamera.cs" />
     <Compile Include="Utils\MyDocProvider.cs" />
