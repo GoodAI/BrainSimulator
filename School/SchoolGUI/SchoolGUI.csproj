@@ -200,6 +200,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\observer_icon.png" />
     <None Include="Resources\Symbols_Information_16xLG.png" />
     <None Include="Resources\autosave.png" />
     <None Include="Resources\delete_12x12.png" />
