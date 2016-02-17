@@ -22,7 +22,7 @@ namespace GoodAI.School.GUI
         private readonly MainForm m_mainForm;
         private string m_runName;
         private SchoolWorld m_school;
-        private bool m_showObserver;
+        private bool m_showObserver { get { return observerCheckBox.Checked; } }
         private ObserverForm m_observer;
 
         private int m_currentRow = -1;
@@ -49,7 +49,6 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             observerCheckBox.Checked = Properties.School.Default.ShowVisual;
-            m_showObserver = observerCheckBox.Checked;
 
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
@@ -61,12 +60,6 @@ namespace GoodAI.School.GUI
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             UpdateButtons(null, null);
-        }
-
-        // if LTs would like to have some more specific "Progress" definition -> move to AbstractLT; right now this understanding is good
-        private int GetProgressForLT(ILearningTask task)
-        {
-            return 100 * task.CurrentLevel / task.NumberOfLevels;
         }
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -96,7 +89,7 @@ namespace GoodAI.School.GUI
 
             LearningTaskNode node = Data.ElementAt(m_currentRow);
             node.Steps = simStep - m_stepOffset;
-            node.Progress = GetProgressForLT(actualTask);
+            node.Progress = (int)actualTask.Progress;
             TimeSpan? diff = DateTime.UtcNow - m_ltStart;
             if (diff != null)
                 node.Time = (float)Math.Round(diff.Value.TotalSeconds, 2);
@@ -268,8 +261,6 @@ namespace GoodAI.School.GUI
             Properties.School.Default.ShowVisual = (sender as CheckBox).Checked;
             Properties.School.Default.Save();
 
-            CheckBox c = (CheckBox)sender;
-            m_showObserver = c.Checked;
             SetObserver();
         }
 
