@@ -213,7 +213,7 @@ namespace GoodAI.School.GUI
 
             // gui
             m_stepOffset = 0;
-            //HighlightCurrentTask();
+            m_currentRow = -1;
             Data.ForEach(x => x.Steps = 0);
             Data.ForEach(x => x.Time = 0f);
             Data.ForEach(x => x.Progress = 0);
