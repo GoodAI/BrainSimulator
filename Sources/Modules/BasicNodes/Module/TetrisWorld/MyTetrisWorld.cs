@@ -1,13 +1,4 @@
-﻿using GoodAI.Core;
-using GoodAI.Core.Memory;
-using GoodAI.Core.Nodes;
-using GoodAI.Core.Signals;
-using GoodAI.Core.Task;
-using GoodAI.Core.Utils;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -15,10 +6,18 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using YAXLib;
+using GoodAI.Core;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Nodes;
+using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
+using ManagedCuda;
+using ManagedCuda.BasicTypes;
+using ManagedCuda.VectorTypes;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using YAXLib;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.TetrisWorld
@@ -148,7 +147,7 @@ namespace GoodAI.Modules.TetrisWorld
             set { SetOutput(6, value); }
         }
 
-        [MyOutputBlock(7)]
+        [MyOutputBlock(7), MyUnmanaged]
         public MyMemoryBlock<float> VisualOutput
         {
             get { return GetOutput(7); }
@@ -167,7 +166,7 @@ namespace GoodAI.Modules.TetrisWorld
 
         #endregion
 
-        private Dictionary<TetrisWorld.TextureType, Bitmap> m_bitmapTable = new Dictionary<TetrisWorld.TextureType, Bitmap>();
+        private Dictionary<TextureType, Bitmap> m_bitmapTable = new Dictionary<TextureType, Bitmap>();
 
         public TetrisWorldEngine Engine;
         public WorldEngineParams EngineParams = new WorldEngineParams();
@@ -372,14 +371,14 @@ namespace GoodAI.Modules.TetrisWorld
         /// </summary>
         /// <param name="textureType"></param>
         /// <returns></returns>
-        protected int GetBitmapSize(TetrisWorld.TextureType textureType)
+        protected int GetBitmapSize(TextureType textureType)
         {
             if (!m_bitmapTable.ContainsKey(textureType))
             {
-                MyLog.WARNING.WriteLine("No bitmap was loaded for texture {0}", textureType.ToString());
+                MyLog.WARNING.WriteLine("No bitmap was loaded for texture {0}", textureType);
                 return 0;
             }
-            else return m_bitmapTable[textureType].Width * m_bitmapTable[textureType].Height * SOURCE_VALUES_PER_PIXEL;
+            return m_bitmapTable[textureType].Width * m_bitmapTable[textureType].Height * SOURCE_VALUES_PER_PIXEL;
         }
 
         /// <summary>
@@ -529,9 +528,9 @@ namespace GoodAI.Modules.TetrisWorld
             uint m_fboHandle;
             uint m_scoreTextHandle;
 
-            bool m_texturesLoaded = false;
-            INativeWindow m_window = null;
-            IGraphicsContext m_context = null;
+            bool m_texturesLoaded;
+            INativeWindow m_window;
+            IGraphicsContext m_context;
             Dictionary<TextureType, int> m_textureHandles;
 
             // CUDA interop
@@ -543,9 +542,39 @@ namespace GoodAI.Modules.TetrisWorld
             {
                 m_lastScore = -1;
                 m_AddRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
+
+                m_texturesLoaded = false;
+
+                // A hack to prevent BS from crashing after init
+                Owner.VisualOutput.ExternalPointer =
+                    MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU, () => new float[Owner.VisualOutput.Count]).DevicePointer.Pointer;
             }
 
-            void initGL()
+            /// <summary>
+            /// draws tetris game board into Owner's VisualOutput memory block
+            /// data is ready for rendering thanks to updateTask (score, level, brickarea, ...)
+            /// </summary>
+            public override void Execute()
+            {
+                if (!m_texturesLoaded)
+                {
+                    MyMemoryManager.Instance.ClearGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU);
+                    InitGL();
+                    LoadTextures();
+                    m_texturesLoaded = true;
+                }
+
+                setupView();
+
+                renderBackground();
+                renderBricks();
+                renderHint();
+                renderText();
+
+                copyPixels();
+            }
+
+            void InitGL()
             {
                 if (m_context != null)
                     m_context.Dispose();
@@ -663,9 +692,9 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.BindTexture(TextureTarget.Texture2D, texHandle);
                 GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2((float)Owner.VisualWidth, 0f);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(Owner.VisualWidth, 0f);
                 GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(Owner.VisualWidth, Owner.VisualHeight);
-                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, (float)Owner.VisualHeight);
+                GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(0f, Owner.VisualHeight);
                 GL.End();
 
                 GL.PopMatrix();
@@ -773,7 +802,7 @@ namespace GoodAI.Modules.TetrisWorld
                     GL.BindTexture(TextureTarget.Texture2D, m_scoreTextHandle);
                     GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
                     GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
-                    BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                     GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
                     bitmap.UnlockBits(data);
                 }
@@ -802,6 +831,9 @@ namespace GoodAI.Modules.TetrisWorld
             void copyPixels()
             {
                 // Prepare the results for CUDA
+                // deinit CUDA interop to enable copying
+                if (m_renderResource.IsMapped)
+                    m_renderResource.UnMap();
 
                 // bind pixel buffer object
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
@@ -811,23 +843,18 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.ReadPixels(0, 0, Owner.VisualWidth, Owner.VisualHeight, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
                 GL.ReadBuffer(ReadBufferMode.None);
 
-                if (m_renderResource != null && m_renderResource.IsRegistered && !m_renderResource.IsMapped)
-                {
-                    // map the interop resource
-                    m_renderResource.Map();
-                }
-
-                int size = Owner.VisualHeight * Owner.VisualWidth * Marshal.SizeOf(typeof(uint));
-                Owner.VisualOutput.GetDevice(Owner).CopyToDevice(m_renderResource.GetMappedPointer<uint>().DevicePointer, 0, 0, size);
-
-                // deinit CUDA interop
-                m_renderResource.UnMap();
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                // Update the pointer for other usage in BS
+                m_renderResource.Map();
+                Owner.VisualOutput.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                Owner.VisualOutput.FreeDevice();
+                Owner.VisualOutput.AllocateDevice();
 
                 // add noise over POW
                 if (Owner.IsImageNoise)
                 {
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, (SizeT)(Owner.AgentVisualTemp.Count), Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
                     m_AddRgbNoiseKernel.SetupExecution(Owner.VisualWidth * Owner.VisualHeight);
                     m_AddRgbNoiseKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, Owner.AgentVisualTemp);
@@ -849,29 +876,6 @@ namespace GoodAI.Modules.TetrisWorld
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 g.DrawString(text, new Font("Segoe UI", 12, FontStyle.Bold), Brushes.Black, textRect);
                 g.Flush();
-            }
-
-            /// <summary>
-            /// draws tetris game board into Owner's VisualOutput memory block
-            /// data is ready for rendering thanks to updateTask (score, level, brickarea, ...)
-            /// </summary>
-            public override void Execute()
-            {
-                if (!m_texturesLoaded)
-                {
-                    initGL();
-                    LoadTextures();
-                    m_texturesLoaded = true;
-                }
-
-                setupView();
-                
-                renderBackground();
-                renderBricks();
-                renderHint();
-                renderText();
-
-                copyPixels();
             }
 
             internal void Dispose()
@@ -988,20 +992,17 @@ namespace GoodAI.Modules.TetrisWorld
                         action = 0;
                     return (ActionInputType)action;
                 }
-                else // action is the most preferred action from the input vector of action selections
+                int maxIndex = 0;
+                float max = float.NegativeInfinity;
+                for (int i = 0; i < 6; i++)
                 {
-                    int maxIndex = 0;
-                    float max = float.NegativeInfinity;
-                    for (int i = 0; i < 6; i++)
+                    if (Owner.ActionInput.Host[i] > max)
                     {
-                        if (Owner.ActionInput.Host[i] > max)
-                        {
-                            maxIndex = i;
-                            max = Owner.ActionInput.Host[i];
-                        }
+                        maxIndex = i;
+                        max = Owner.ActionInput.Host[i];
                     }
-                    return (ActionInputType)maxIndex;
                 }
+                return (ActionInputType)maxIndex;
             }
         }
     }
