@@ -165,7 +165,11 @@ namespace GoodAI.Modules.School.Worlds
         {
             // Notify BS that the model has changed -- it will reuse the old model otherwise and won't call inits on CurrentWorld's tasks when run
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
+            {
+                m_shouldRunFullInit = true;
                 m_isNewLearningTask = true;
+                Curriculum.Reset(); 
+            }
         }
 
         public SchoolWorld()
@@ -175,7 +179,10 @@ namespace GoodAI.Modules.School.Worlds
 
         Random m_rndGen = new Random();
 
+        private bool m_shouldRunFullInit = true;
         private bool m_isNewLearningTask = true;
+        private bool m_isAfterChangeModelInit = false;
+        private bool m_isAfterChangeModelExecute = false;
 
         public SchoolCurriculum Curriculum { get; set; }
         private ILearningTask m_currentLearningTask;
@@ -224,9 +231,11 @@ namespace GoodAI.Modules.School.Worlds
                 CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
                 CurrentWorld.World.EnableDefaultTasks();
                 changes.AddNode(CurrentWorld.World);
-                //changes.AddNode(this);
+                changes.AddNode(this);
 
                 m_isNewLearningTask = false;
+                m_isAfterChangeModelExecute = true;
+                m_isAfterChangeModelInit = true;
                 return true;
             }
             
@@ -235,20 +244,36 @@ namespace GoodAI.Modules.School.Worlds
 
         public virtual MyExecutionBlock CreateCustomInitPhasePlan(MyExecutionBlock defaultInitPhasePlan)
         {
-            if (CurrentWorld == null)
+            if (!m_isAfterChangeModelInit)
+            {
+                // this if is true at the beginning of simulation
                 return defaultInitPhasePlan;
+            }
+
+            m_isAfterChangeModelInit = false;
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
             MyExecutionBlock plan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, true);
 
-            return new MyExecutionBlock(defaultInitPhasePlan, plan);
+            // add init tasks that initialize the adapter:
+            //public InputAdapterTask AdapterInputStep { get; protected set; }
+            //public LearningStepTask LearningStep { get; protected set; }
+            //public OutputAdapterTask AdapterOutputStep { get; protected set; }
+
+            var blocks = new List<IMyExecutable>();
+            blocks.AddRange(defaultInitPhasePlan.Children.Where(x => x != InitSchool));
+            MyExecutionBlock initPhasePlanPruned = new MyExecutionBlock(blocks.ToArray());
+
+            return new MyExecutionBlock(initPhasePlanPruned, plan, AdapterInputStep, AdapterOutputStep, LearningStep);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
-            if (CurrentWorld == null)
+            if (!m_isAfterChangeModelExecute)
                 return defaultPlan;
+
+            m_isAfterChangeModelExecute = false;
 
             var executionPlanner = TypeMap.GetInstance<IMyExecutionPlanner>();
 
@@ -372,7 +397,6 @@ namespace GoodAI.Modules.School.Worlds
 
         public void InitializeCurriculum()
         {
-            Curriculum.Reset();
             NotifyNewCurriculum();
         }
 
