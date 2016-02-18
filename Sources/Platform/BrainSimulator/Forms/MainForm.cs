@@ -135,6 +135,7 @@ namespace GoodAI.BrainSimulator.Forms
             stopToolButton.Enabled = SimulationHandler.CanStop;
             stopToolStripMenuItem.Enabled = SimulationHandler.CanStop;
 
+
             debugToolButton.Enabled = SimulationHandler.CanStartDebugging;
             debugToolStripMenuItem.Enabled = SimulationHandler.CanStartDebugging;
 
@@ -359,6 +360,8 @@ namespace GoodAI.BrainSimulator.Forms
 
                 if (Project.World == null || wc.NodeType != Project.World.GetType())
                 {
+                    var oldWorld = Project.World;
+
                     Project.CreateWorld(wc.NodeType);
                     Project.World.EnableDefaultTasks();
                     NodePropertyView.Target = null;
@@ -375,6 +378,9 @@ namespace GoodAI.BrainSimulator.Forms
                     }
 
                     ProjectStateChanged("World selected");
+
+                    if (WorldChanged != null)
+                        WorldChanged(this, new WorldChangedEventArgs(oldWorld, Project.World));
                 }
             }
         }

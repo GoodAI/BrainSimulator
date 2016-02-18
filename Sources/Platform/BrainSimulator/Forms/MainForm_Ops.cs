@@ -39,6 +39,20 @@ namespace GoodAI.BrainSimulator.Forms
 
         public UndoManager UndoManager { get; set; }
 
+        public class WorldChangedEventArgs : EventArgs
+        {
+            public WorldChangedEventArgs(MyWorld oldWorld, MyWorld newWorld)
+            {
+                OldWorld = oldWorld;
+                NewWorld = newWorld;
+            }
+
+            public MyWorld OldWorld { get; private set; }
+            public MyWorld NewWorld { get; private set; }
+        }
+
+        public event EventHandler<WorldChangedEventArgs> WorldChanged;
+
         #region Project
 
         private MyProject m_project;
@@ -62,6 +76,8 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void CreateNewProject()
         {
+            var oldProject = Project;
+
             Project = new MyProject();
             Project.Network = Project.CreateNode<MyNetwork>();
             Project.Network.Name = "Network";
@@ -946,6 +962,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void LoadSerializedContent(string content, string projectPath, string projectName = null)
         {
+            MyWorld oldWorld = Project == null ? null : Project.World;
             using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
             {
                 string projectDirectory = string.IsNullOrEmpty(projectPath) ? "" : Path.GetDirectoryName(projectPath);
@@ -970,6 +987,9 @@ namespace GoodAI.BrainSimulator.Forms
             RestoreDashboardForm();
 
             RefreshUndoRedoButtons();
+
+            if (WorldChanged != null)
+                WorldChanged(this, new WorldChangedEventArgs(oldWorld, Project.World));
         }
 
         private void RestoreObserverForms(MyProject project = null)
