@@ -17,7 +17,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private const int N_BACK = 2;
 
-        public LT2BackBinaryTest() : base(null) { }
+        public LT2BackBinaryTest() : this(null) { }
 
         public LT2BackBinaryTest(SchoolWorld w)
             : base(w)

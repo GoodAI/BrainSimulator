@@ -29,7 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private List<GameObject> GameObjectReferences = new List<GameObject>();     // Create a vector of references to GameObjects, we will need the index for the sequence order
         public int currentIndex = 0;                                        // Represents current index of the sequence
 
-        public LTMultipleTargetsSequence() : base(null) { }
+        public LTMultipleTargetsSequence() : this(null) { }
 
         public LTMultipleTargetsSequence(SchoolWorld w)
             : base(w)

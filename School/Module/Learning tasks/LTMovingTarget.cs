@@ -27,7 +27,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private readonly TSHintAttribute STEPS_TAKEN_FOR_ONE_CIRCLE = new TSHintAttribute("Steps for ellipse", "", typeof(float), 0, 1);    // How many steps it takes for one complete cycle of the ellipse
         private readonly TSHintAttribute AVOIDING_AGENT = new TSHintAttribute("If avoiding agent or not", "", typeof(float), 0, 1);         // Either 0 or 1, If it's 1, the target tries to move away from the agent instead of moving ina  circular way
 
-        public LTMovingTarget() : base(null) { }
+        public LTMovingTarget() : this(null) { }
 
         public LTMovingTarget(SchoolWorld w)
             : base(w)

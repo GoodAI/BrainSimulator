@@ -87,15 +87,15 @@ namespace GoodAI.School.Worlds
 
             ScoreDeltaOutput.CopyToMemoryBlock(School.Reward, 0, 0, 1);
         }
-
+               
         public void ClearWorld()
         {
             Engine.Reset();
         }
-
+        
         public void SetHint(TSHintAttribute attr, float value)
         {
-            // some TSHints related to Tetris?
+        // some TSHints related to Tetris?
         }
 
 

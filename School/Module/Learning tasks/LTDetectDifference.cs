@@ -13,7 +13,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
-        public LTDetectDifference() : base(null) { }
+        public LTDetectDifference() : this(null) { }
 
         public LTDetectDifference(SchoolWorld w)
             : base(w)

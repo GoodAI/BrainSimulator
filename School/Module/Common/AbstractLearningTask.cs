@@ -25,14 +25,14 @@ namespace GoodAI.Modules.School.Common
         int NumberOfLevels { get; set; }
         int CurrentLevel { get; set; }
         int NumberOfSuccessesRequired { get; }
+        float Progress { get; }
 
         void ExecuteStep();
         TrainingResult EvaluateStep();
         void PresentNewTrainingUnitCommon();
 
         SchoolWorld SchoolWorld { get; set; }
-        Type RequiredWorld { get; set; }
-        string Description { get; set; }
+        Type RequiredWorldType { get; set; }
         string GetTypeName();
 
         void Init();
@@ -74,6 +74,7 @@ namespace GoodAI.Modules.School.Common
 
         // Number of levels of increasing difficulty
         private int m_numberOfLevels = -1;
+
         public int NumberOfLevels
         {
             get
@@ -103,9 +104,12 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-        public Type RequiredWorld { get; set; }
+        public Type RequiredWorldType { get; set; }
 
-        public string Description { get; set; }
+        public virtual float Progress
+        {
+            get { return 100 * CurrentLevel / NumberOfLevels; }
+        }
 
         // Implement to manage challenge levels and training set hints
         protected virtual bool IncreaseLevel()

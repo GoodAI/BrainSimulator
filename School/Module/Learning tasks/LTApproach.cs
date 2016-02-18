@@ -20,7 +20,7 @@ namespace GoodAI.Modules.School.LearningTasks
         // the unit fails unless the agent goes just to the right direction (towards the target) from the beginning.
         // DISTANCE_BONUS_COEFFICENT's default value is 1, and if it's 2 the amount of available steps to reach the target is doubled, new formula : "return m_stepsSincePresented > (m_initialDistance * (int)TSHints[MULTIPLY_COEFFICENT]);"
 
-        public LTApproach() : base(null) { }
+        public LTApproach() : this(null) { }
 
         public LTApproach(SchoolWorld w)
             : base(w)

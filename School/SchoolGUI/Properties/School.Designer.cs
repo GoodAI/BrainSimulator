@@ -25,7 +25,7 @@ namespace GoodAI.School.GUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutosaveEnabled {
             get {
                 return ((bool)(this["AutosaveEnabled"]));
@@ -44,6 +44,30 @@ namespace GoodAI.School.GUI.Properties {
             }
             set {
                 this["LastOpenedFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutorunEnabled {
+            get {
+                return ((bool)(this["AutorunEnabled"]));
+            }
+            set {
+                this["AutorunEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowVisual {
+            get {
+                return ((bool)(this["ShowVisual"]));
+            }
+            set {
+                this["ShowVisual"] = value;
             }
         }
     }

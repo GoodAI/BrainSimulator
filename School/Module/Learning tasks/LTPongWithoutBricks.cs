@@ -16,7 +16,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Pong without bricks")]
     public class LTPongWithoutBricks : AbstractLearningTask<PongAdapterWorld>
     {
-        public LTPongWithoutBricks() : base(null) { }
+        public LTPongWithoutBricks() : this(null) { }
 
         private float ballHitSum;
         private float ballMissSum;

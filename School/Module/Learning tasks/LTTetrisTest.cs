@@ -8,7 +8,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Tetris test")]
     public class LTTetrisTest : AbstractLearningTask<TetrisAdapterWorld>
     {
-        public LTTetrisTest() : base(null) { }
+        public LTTetrisTest() : this(null) { }
 
         public LTTetrisTest(SchoolWorld w)
             : base(w)

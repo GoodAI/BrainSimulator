@@ -45,7 +45,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LabelDescriptionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LabelDescriptionControl.Designer.cs">
+      <DependentUpon>LabelDescriptionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LearningTaskSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LearningTaskSelectionForm.Designer.cs">
+      <DependentUpon>LearningTaskSelectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\School.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -56,6 +73,12 @@
     </Compile>
     <Compile Include="SchoolAddTaskForm.Designer.cs">
       <DependentUpon>SchoolAddTaskForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SchoolCurrDetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SchoolCurrDetailsForm.Designer.cs">
+      <DependentUpon>SchoolCurrDetailsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SchoolGUIClasses.cs" />
     <Compile Include="SchoolMainForm.cs">
@@ -69,6 +92,18 @@
     </Compile>
     <Compile Include="SchoolRunForm.Designer.cs">
       <DependentUpon>SchoolRunForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SchoolTaskDetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SchoolTaskDetailsForm.Designer.cs">
+      <DependentUpon>SchoolTaskDetailsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LearningTaskDetailsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LearningTaskDetailsControl.Designer.cs">
+      <DependentUpon>LearningTaskDetailsControl.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +132,10 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
+    <None Include="Properties\DataSources\AttributeNode.datasource" />
+    <None Include="Properties\DataSources\GoodAI.Modules.School.Worlds.SchoolWorld.datasource" />
+    <None Include="Properties\DataSources\LearningTaskNode.datasource" />
+    <None Include="Properties\DataSources\LevelNode.datasource" />
     <None Include="Properties\DataSources\SchoolMainForm.LearningTaskNode.datasource" />
     <None Include="Properties\School.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -104,12 +143,184 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="LabelDescriptionControl.resx">
+      <DependentUpon>LabelDescriptionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LearningTaskSelectionForm.resx">
+      <DependentUpon>LearningTaskSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SchoolCurrDetailsForm.resx">
+      <DependentUpon>SchoolCurrDetailsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SchoolMainForm.resx">
       <DependentUpon>SchoolMainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SchoolRunForm.resx">
       <DependentUpon>SchoolRunForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SchoolTaskDetailsForm.resx">
+      <DependentUpon>SchoolTaskDetailsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LearningTaskDetailsControl.resx">
+      <DependentUpon>LearningTaskDetailsControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AddNewItem_6273.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Open_6529.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\save_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StepOver_6328.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StatusAnnotations_Pause_16xLG_color.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StatusAnnotations_Play_16xLG_color.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StatusAnnotations_Stop_16xLG_color.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AddExistingItem_6269.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SaveFileDialogControl_703.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\debug.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\observer_icon.png" />
+    <None Include="Resources\Symbols_Information_16xLG.png" />
+    <None Include="Resources\autosave.png" />
+    <None Include="Resources\delete_12x12.png" />
+    <None Include="Resources\action_Cancel_16xMD.png" />
+    <None Include="Resources\action_add_16xMD.png" />
+    <Content Include="Resources\html\LT2BackBinaryTest.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTActionWCooldown.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTApproach.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTClassComposition.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTCompareLayouts.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTCompatibilityMatching.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTConditionalTarget.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTCopyAction.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTCopySequence.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDebugging.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectBlackAndWhite.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectColor.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectDifference.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectShape.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectShapeColor.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectSimilarity.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTDetectWhite.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTHiddenTarget.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTMovingTarget.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTMultipleTargetsInSequence.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTObstacles.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTObstaclesTargetOnSight.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTPongTest.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTPongWithBricks.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTPongWithoutBricks.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTRotateAndMoveToFit.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTShapeSorting.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTSimpleAngle.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTSimpleDistance.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTSimpleRhythm.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTSimpleSize.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTTetrisFull.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTTetrisTest.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTVisualEquivalence.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTSimpleSize_files\filelist.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTSimpleSize_files\image001.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\resources\220px-The_Imitation_Game.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\resources\sheet.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,7 +1,9 @@
 ﻿using Aga.Controls.Tree;
 using GoodAI.Modules.School.Common;
+using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using YAXLib;
 
@@ -12,36 +14,91 @@ namespace GoodAI.School.GUI
     public class SchoolTreeNode : Node
     {
         public bool Enabled { get; set; }
-        public SchoolTreeNode() { Enabled = true; }
+
+        public SchoolTreeNode()
+        {
+            Enabled = true;
+        }
     }
 
-    public class CurriculumNode : SchoolTreeNode { }
+    public class CurriculumNode : SchoolTreeNode
+    {
+        public string Description { get; set; }
+    }
 
     public class LearningTaskNode : SchoolTreeNode
     {
         public Type TaskType { get; private set; }
         public Type WorldType { get; private set; }
-        // for data grid
+
+        public bool IsActive { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
         public int Steps { get; set; }
         public float Time { get; set; }
-        public string Status { get; set; }
+
+        public override string Text
+        {
+            get
+            {
+                DisplayNameAttribute displayNameAttTask = TaskType.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                DisplayNameAttribute displayNameAttWorld = WorldType.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+
+                string taskDisplayName = displayNameAttTask != null ? displayNameAttTask.DisplayName : TaskType.Name;
+                string worldDisplayName = displayNameAttWorld != null ? displayNameAttWorld.DisplayName : WorldType.Name;
+
+                return taskDisplayName + " (" + worldDisplayName + ")";
+            }
+        }
 
         public LearningTaskNode(Type taskType, Type worldType)
         {
             TaskType = taskType;
             WorldType = worldType;
         }
+    }
+
+    public class LevelNode : Node
+    {
+        public int Level { get; set; }
+
+        public LevelNode(int level)
+        {
+            Level = level;
+        }
 
         public override string Text
         {
             get
             {
-                return TaskType.Name + " (" + WorldType.Name + ")";
+                return "Level " + Level;
             }
         }
     }
 
-    #endregion
+    public class AttributeNode : Node
+    {
+        public string Name { get; set; }
+        public float Value { get; set; }
+        public Type Type { get; set; }
+
+        public AttributeNode(string name, float value, Type type)
+        {
+            this.Name = name;
+            this.Value = value;
+            this.Type = type;
+        }
+
+        public override string Text
+        {
+            get
+            {
+                return Name;
+            }
+        }
+    }
+
+    #endregion UI classes
 
     // mediator between view (CurriculumNode) and model (SchoolCurriculum) - is also used for serialization
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
@@ -50,14 +107,18 @@ namespace GoodAI.School.GUI
         [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
         private class LTDesign
         {
-            [YAXSerializeAs("Enabled"), YAXAttributeForClass]
+            [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
             private readonly bool m_enabled;
-            [YAXSerializeAs("TaskType")]
+
+            [YAXSerializeAs("TaskType"), YAXSerializableField(DefaultValue = "")]
             private readonly string m_taskType;
-            [YAXSerializeAs("WorldType")]
+
+            [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
             private readonly string m_worldType;
 
-            public LTDesign() { }
+            public LTDesign()
+            {
+            }
 
             public LTDesign(LearningTaskNode node)
             {
@@ -68,16 +129,23 @@ namespace GoodAI.School.GUI
 
             public static explicit operator LearningTaskNode(LTDesign design)
             {
-                return new LearningTaskNode(Type.GetType(design.m_taskType), Type.GetType(design.m_worldType)) { Enabled = design.m_enabled };
+                Type taskType = Type.GetType(design.m_taskType);
+                Type worldType = Type.GetType(design.m_worldType);
+                if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
+                    return null;
+                return new LearningTaskNode(taskType, worldType) { Enabled = design.m_enabled };
             }
 
-            public ILearningTask AsILearningTask()
+            public ILearningTask AsILearningTask(SchoolWorld world = null)
             {
                 if (!m_enabled)
                     return null;    //there is no placeholder for empty task, therefore null
-
-                ILearningTask task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
-                task.RequiredWorld = Type.GetType(m_worldType);
+                ILearningTask task;
+                if (world != null)
+                    task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType), world);
+                else
+                    task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
+                task.RequiredWorldType = Type.GetType(m_worldType);
                 return task;
             }
         }
@@ -87,12 +155,19 @@ namespace GoodAI.School.GUI
         {
             [YAXSerializeAs("Tasks")]
             private readonly List<LTDesign> m_tasks;
-            [YAXSerializeAs("Enabled"), YAXAttributeForClass]
+
+            [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
             private readonly bool m_enabled;
-            [YAXSerializeAs("Name"), YAXAttributeForClass]
+
+            [YAXSerializeAs("Name"), YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
             private readonly string m_name;
 
-            public CurriculumDesign() { }
+            [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
+            private readonly string m_description;
+
+            public CurriculumDesign()
+            {
+            }
 
             public CurriculumDesign(CurriculumNode node)
             {
@@ -102,13 +177,14 @@ namespace GoodAI.School.GUI
                     ToList();
                 m_enabled = node.Enabled;
                 m_name = node.Text;
+                m_description = node.Description;
             }
 
             public static explicit operator CurriculumNode(CurriculumDesign design)
             {
-                CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled };
+                CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled, Description = design.m_description };
 
-                design.m_tasks.Where(x => x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+                design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
 
                 return node;
             }
@@ -127,12 +203,29 @@ namespace GoodAI.School.GUI
 
                 return curriculum;
             }
+
+            public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
+            {
+                SchoolCurriculum curriculum = new SchoolCurriculum();
+                if (!m_enabled)
+                    return curriculum;
+
+                m_tasks.
+                    Select(x => x.AsILearningTask(world)).
+                    Where(x => x != null).
+                    ToList().
+                    ForEach(x => curriculum.Add(x));
+
+                return curriculum;
+            }
         }
 
         [YAXSerializeAs("Curricula")]
         private List<CurriculumDesign> m_curricula;
 
-        public PlanDesign() { }
+        public PlanDesign()
+        {
+        }
 
         public PlanDesign(List<CurriculumNode> nodes)
         {
@@ -149,6 +242,15 @@ namespace GoodAI.School.GUI
             SchoolCurriculum result = new SchoolCurriculum();
             foreach (CurriculumDesign curr in design.m_curricula)
                 result.Add((SchoolCurriculum)curr);
+
+            return result;
+        }
+
+        public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
+        {
+            SchoolCurriculum result = new SchoolCurriculum();
+            foreach (CurriculumDesign curr in m_curricula)
+                result.Add(curr.AsSchoolCurriculum(world));
 
             return result;
         }

@@ -17,11 +17,17 @@ namespace GoodAI.School.GUI
     [BrainSimUIExtension]
     public partial class SchoolMainForm : DockContent
     {
-        public SchoolAddTaskForm AddTaskView { get; private set; }
-        public SchoolRunForm RunView { get; private set; }
+        private const string DEFAULT_FORM_NAME = "School for AI";
+
+        private readonly MainForm m_mainForm;
         private YAXSerializer m_serializer;
         private TreeModel m_model;
         private string m_lastOpenedFile;
+        private string m_savedRepresentation;
+        private string m_currentFile;
+
+        public SchoolAddTaskForm AddTaskView { get; private set; }
+        public SchoolRunForm RunView { get; private set; }
 
         private PlanDesign m_design
         {
@@ -31,14 +37,11 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private readonly MainForm m_mainForm;
-
         public SchoolMainForm(MainForm mainForm)
         {
             m_serializer = new YAXSerializer(typeof(PlanDesign));
-            AddTaskView = new SchoolAddTaskForm();
-            RunView = new SchoolRunForm(mainForm);
             m_mainForm = mainForm;
+            RunView = new SchoolRunForm(m_mainForm);
 
             InitializeComponent();
 
@@ -46,7 +49,8 @@ namespace GoodAI.School.GUI
             tree.Model = m_model;
             tree.Refresh();
 
-            checkBoxAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            btnAutorun.Checked = Properties.School.Default.AutorunEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
             if (LoadCurriculum(m_lastOpenedFile))
                 saveFileDialog1.FileName = m_lastOpenedFile;
@@ -56,49 +60,27 @@ namespace GoodAI.School.GUI
 
         private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
 
-        #region Curricula
-
-        private CurriculumNode AddCurriculum()
+        private void UpdateWindowName(object sender, EventArgs e)
         {
-            CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
-            m_model.Nodes.Add(node);
-            return node;
+            if (!Visible)
+            {
+                Text = DEFAULT_FORM_NAME;
+                return;
+            }
+            string lof = Properties.School.Default.LastOpenedFile;
+            string filename = String.IsNullOrEmpty(Properties.School.Default.LastOpenedFile) ? "Unsaved workspace" : Path.GetFileName(Properties.School.Default.LastOpenedFile);
+            Text = DEFAULT_FORM_NAME + " - " + filename;
+            if (!IsWorkspaceSaved())
+                Text += '*';
         }
 
-        private bool LoadCurriculum(string filePath)
+        private bool IsWorkspaceSaved()
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (m_savedRepresentation == null)
                 return false;
-
-            string xmlCurr;
-            try { xmlCurr = File.ReadAllText(filePath); }
-            catch (IOException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
-                return false;
-            }
-
-            try
-            {
-                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
-
-                foreach (CurriculumNode curr in currs)
-                    m_model.Nodes.Add(curr);
-            }
-            catch (YAXException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
-                return false;
-            }
-
-            Properties.School.Default.LastOpenedFile = filePath;
-            Properties.School.Default.Save();
-
-            return false;
+            string currentRepresentation = m_serializer.Serialize(m_design);
+            return m_savedRepresentation.Equals(currentRepresentation);
         }
-
-        #endregion
 
         #region UI
 
@@ -123,9 +105,19 @@ namespace GoodAI.School.GUI
             ApplyToAll(control, setBtns);
         }
 
+        private void SetToolstripButtonsEnabled(Control control, bool value)
+        {
+            ToolStrip tools = control as ToolStrip;
+            if (tools != null)
+                foreach (ToolStripItem item in tools.Items)
+                    if (item as ToolStripButton != null)
+                        item.Enabled = value;
+        }
+
         private void DisableButtons(Control control)
         {
             SetButtonsEnabled(control, false);
+            SetToolstripButtonsEnabled(control, false);
         }
 
         private void EnableButtons(Control control)
@@ -133,17 +125,24 @@ namespace GoodAI.School.GUI
             SetButtonsEnabled(control, true);
         }
 
+        private void EnableToolstripButtons(ToolStrip toolstrip)
+        {
+            SetToolstripButtonsEnabled(toolstrip, true);
+        }
+
         private void UpdateButtons()
         {
             EnableButtons(this);
+            EnableToolstripButtons(toolStrip1);
+
 
             if (!tree.AllNodes.Any())
                 btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
 
             if (tree.SelectedNode == null)
             {
-                btnDeleteCurr.Enabled = btnDetailsCurr.Enabled = false;
-                DisableButtons(groupBoxTask);
+                btnDetailsCurr.Enabled = false;
+                btnNewTask.Enabled = btnDetailsTask.Enabled = false;
                 return;
             }
 
@@ -151,13 +150,10 @@ namespace GoodAI.School.GUI
             Debug.Assert(selected != null);
 
             if (selected is CurriculumNode)
-                btnDeleteTask.Enabled = btnDetailsTask.Enabled = false;
-
-            // to be removed
-            btnDetailsCurr.Enabled = btnDetailsTask.Enabled = false;
+                btnDetailsTask.Enabled = false;
         }
 
-        #endregion
+        #endregion UI
 
         #region DragDrop
 
@@ -170,32 +166,38 @@ namespace GoodAI.School.GUI
         {
             if (e.Data.GetDataPresent(typeof(TreeNodeAdv[])) && tree.DropPosition.Node != null)
             {
-                TreeNodeAdv[] nodes = e.Data.GetData(typeof(TreeNodeAdv[])) as TreeNodeAdv[];
+                TreeNodeAdv draggedNode = (e.Data.GetData(typeof(TreeNodeAdv[])) as TreeNodeAdv[]).First();
                 TreeNodeAdv parent = tree.DropPosition.Node;
                 if (tree.DropPosition.Position != NodePosition.Inside)
                     parent = parent.Parent;
 
-                foreach (TreeNodeAdv node in nodes)
-                    if (!CheckNodeParent(parent, node))
-                    {
-                        e.Effect = DragDropEffects.None;
-                        return;
-                    }
+                if (IsNodeAncestor(draggedNode, parent))
+                {
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
 
-                e.Effect = e.AllowedEffect;
+                CurriculumNode curr = draggedNode.Tag as CurriculumNode;
+                LearningTaskNode lt = draggedNode.Tag as LearningTaskNode;
+
+                if (curr != null && parent.Level > 0) // curriculum can only be moved - not set as someone's child
+                    e.Effect = DragDropEffects.None;
+                else if (lt != null && parent.Level != 1)    //LT can only be in curriculum. Not in root, not in other LT
+                    e.Effect = DragDropEffects.None;
+                else
+                    e.Effect = e.AllowedEffect;
             }
         }
 
-        private bool CheckNodeParent(TreeNodeAdv parent, TreeNodeAdv node)
+        private bool IsNodeAncestor(TreeNodeAdv node, TreeNodeAdv examine)
         {
-            while (parent != null)
+            while (examine != null)
             {
-                if (node == parent)
-                    return false;
-                else
-                    parent = parent.Parent;
+                if (node == examine)
+                    return true;
+                examine = examine.Parent;
             }
-            return true;
+            return false;
         }
 
         private void tree_DragDrop(object sender, DragEventArgs e)
@@ -203,6 +205,8 @@ namespace GoodAI.School.GUI
             tree.BeginUpdate();
 
             TreeNodeAdv[] nodes = (TreeNodeAdv[])e.Data.GetData(typeof(TreeNodeAdv[]));
+            if (tree.DropPosition.Node == null)
+                return;
             Node dropNode = tree.DropPosition.Node.Tag as Node;
             if (tree.DropPosition.Position == NodePosition.Inside)
             {
@@ -238,22 +242,41 @@ namespace GoodAI.School.GUI
             }
 
             tree.EndUpdate();
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
-        #endregion
+        #endregion DragDrop
 
         #region Button clicks
 
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            Properties.School.Default.LastOpenedFile = null;
+            Properties.School.Default.Save();
+            m_currentFile = null;
+            m_lastOpenedFile = null;
+            m_savedRepresentation = null;
+            m_model.Nodes.Clear();
+            UpdateWindowName(null, EventArgs.Empty);
+        }
+
         private void btnNewCurr_Click(object sender, EventArgs e)
         {
-            CurriculumNode newCurr = AddCurriculum();
+            CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
+            m_model.Nodes.Add(node);
+            UpdateButtons();    //for activating Run button - workaround because events of tree model are not working as expected
+
+            // Curriculum name directly editable upon creation
+            tree.SelectedNode = tree.FindNodeByTag(node);
+            NodeTextBox control = (NodeTextBox)tree.NodeControls.ElementAt(1);
+            control.BeginEdit();
         }
 
         private void btnDeleteCurr_Click(object sender, EventArgs e)
         {
             if (tree.SelectedNode.Tag is CurriculumNode)
             {
-                DeleteNode(sender, e);
+                DeleteNodes(sender, e);
                 return;
             }
             Node parent = (tree.SelectedNode.Tag as Node).Parent;
@@ -266,6 +289,8 @@ namespace GoodAI.School.GUI
             if (tree.SelectedNode == null)
                 return;
 
+            AddTaskView = new SchoolAddTaskForm();
+            AddTaskView.StartPosition = FormStartPosition.CenterParent;
             AddTaskView.ShowDialog(this);
             if (AddTaskView.ResultTask == null)
                 return;
@@ -284,14 +309,35 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void DeleteNode(object sender, EventArgs e)
+        private void DeleteNodes(object sender, EventArgs e)
         {
-            (tree.SelectedNode.Tag as Node).Parent = null;
+            // Walking through the nodes backwards. That way the index doesn't increase past the node size
+            for (int i = tree.SelectedNodes.Count - 1; i >= 0; i--)
+            {
+                // After 1/many nodes are deleted, select the node that was after it/them
+                if (i == tree.SelectedNodes.Count - 1)
+                {
+                    TreeNodeAdv nextone = tree.SelectedNode.NextNode;
+                    if (nextone != null)
+                    {
+                        nextone.IsSelected = true;
+                    }
+                }
+
+                TreeNodeAdv n = (TreeNodeAdv)tree.SelectedNodes[i];
+                (n.Tag as Node).Parent = null;
+            }
         }
 
         private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.School.Default.AutosaveEnabled = checkBoxAutosave.Checked;
+            Properties.School.Default.AutosaveEnabled = (sender as CheckBox).Checked;
+            Properties.School.Default.Save();
+        }
+
+        private void checkBoxAutorun_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.School.Default.AutorunEnabled = (sender as CheckBox).Checked;
             Properties.School.Default.Save();
         }
 
@@ -315,7 +361,11 @@ namespace GoodAI.School.GUI
                 data.Add(ltNode);
             RunView.Data = data;
             RunView.Design = m_design;
-            RunView.UpdateData();
+            if (activeCurricula.Count() == 1)
+                RunView.RunName = activeCurricula.First().Text;
+            else
+                RunView.RunName = Path.GetFileNameWithoutExtension(m_currentFile);
+            RunView.Ready();
         }
 
         private bool AddFileContent(bool clearWorkspace = false)
@@ -335,10 +385,10 @@ namespace GoodAI.School.GUI
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.FileName != string.Empty)
-                SaveProject(saveFileDialog1.FileName);
-            else
+            if (String.IsNullOrEmpty(m_currentFile))
                 SaveProjectAs(sender, e);  // ask for file name and then save the project
+            else
+                SaveProject(m_currentFile);
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -346,7 +396,41 @@ namespace GoodAI.School.GUI
             AddFileContent();
         }
 
-        #endregion
+        private void btnDetailsTask_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode == null)
+                return;
+
+            LearningTaskNode node = tree.SelectedNode.Tag as LearningTaskNode;
+            if (node == null)
+                return;
+
+            SchoolTaskDetailsForm detailsForm = new SchoolTaskDetailsForm(node.TaskType);
+            OpenFloatingOrActivate(detailsForm, DockPanel);
+        }
+
+        private void btnDetailsCurr_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode == null)
+                return;
+
+            CurriculumNode curr = tree.SelectedNode.Tag as CurriculumNode;
+            if (curr == null)
+            {
+                curr = tree.SelectedNode.Parent.Tag as CurriculumNode;
+                if (curr == null)
+                    return;
+            }
+            SchoolCurrDetailsForm detailsForm = new SchoolCurrDetailsForm(curr);
+            OpenFloatingOrActivate(detailsForm, DockPanel);
+        }
+
+        private void btnToggleCheck(object sender, EventArgs e)
+        {
+            (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
+        }
+
+        #endregion Button clicks
 
         #region (De)serialization
 
@@ -354,6 +438,10 @@ namespace GoodAI.School.GUI
         {
             string xmlResult = m_serializer.Serialize(m_design);
             File.WriteAllText(path, xmlResult);
+            MyLog.Writer.WriteLine(MyLogLevel.INFO, "School project saved to: " + path);
+            m_savedRepresentation = xmlResult;
+            m_currentFile = path;
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
         private void SaveProjectAs(object sender, EventArgs e)
@@ -364,9 +452,46 @@ namespace GoodAI.School.GUI
             SaveProject(saveFileDialog1.FileName);
             Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
             Properties.School.Default.Save();
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
-        #endregion
+        private bool LoadCurriculum(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return false;
+
+            string xmlCurr;
+            try { xmlCurr = File.ReadAllText(filePath); }
+            catch (IOException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
+                return false;
+            }
+
+            try
+            {
+                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
+                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
+
+                foreach (CurriculumNode curr in currs)
+                    m_model.Nodes.Add(curr);
+            }
+            catch (YAXException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
+                return false;
+            }
+
+            Properties.School.Default.LastOpenedFile = filePath;
+            Properties.School.Default.Save();
+            m_savedRepresentation = xmlCurr;
+            m_currentFile = filePath;
+            UpdateWindowName(null, EventArgs.Empty);
+            UpdateButtons();
+            return false;
+        }
+
+        #endregion (De)serialization
 
         // almost same as Mainform.OpenFloatingOrActivate - refactor?
         private void OpenFloatingOrActivate(DockContent view, DockPanel panel)
@@ -397,7 +522,7 @@ namespace GoodAI.School.GUI
         private void SchoolMainForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                DeleteNode(sender, null);
+                DeleteNodes(sender, null);
         }
     }
 }
