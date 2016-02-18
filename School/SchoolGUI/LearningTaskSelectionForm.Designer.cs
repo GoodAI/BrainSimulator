@@ -65,9 +65,9 @@
             this.learningTaskList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.learningTaskList.FormattingEnabled = true;
-            this.learningTaskList.Location = new System.Drawing.Point(-1, 105);
+            this.learningTaskList.Location = new System.Drawing.Point(-1, 75);
             this.learningTaskList.Name = "learningTaskList";
-            this.learningTaskList.Size = new System.Drawing.Size(224, 304);
+            this.learningTaskList.Size = new System.Drawing.Size(224, 334);
             this.learningTaskList.TabIndex = 2;
             this.learningTaskList.SelectedValueChanged += new System.EventHandler(this.learningTaskList_SelectedValueChanged);
             // 
@@ -76,16 +76,16 @@
             this.learningTaskDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.learningTaskDescription.Location = new System.Drawing.Point(223, 105);
+            this.learningTaskDescription.Location = new System.Drawing.Point(223, 75);
             this.learningTaskDescription.MinimumSize = new System.Drawing.Size(20, 20);
             this.learningTaskDescription.Name = "learningTaskDescription";
-            this.learningTaskDescription.Size = new System.Drawing.Size(625, 311);
+            this.learningTaskDescription.Size = new System.Drawing.Size(625, 341);
             this.learningTaskDescription.TabIndex = 3;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 26);
+            this.label1.Location = new System.Drawing.Point(13, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 5;
@@ -95,9 +95,9 @@
             // 
             this.worldList.DisplayMember = "DisplayName";
             this.worldList.FormattingEnabled = true;
-            this.worldList.Location = new System.Drawing.Point(56, 26);
+            this.worldList.Location = new System.Drawing.Point(57, 12);
             this.worldList.Name = "worldList";
-            this.worldList.Size = new System.Drawing.Size(185, 69);
+            this.worldList.Size = new System.Drawing.Size(185, 56);
             this.worldList.TabIndex = 6;
             this.worldList.SelectedIndexChanged += new System.EventHandler(this.worldList_SelectedIndexChanged);
             // 
