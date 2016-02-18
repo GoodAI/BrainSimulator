@@ -1511,7 +1511,7 @@ namespace GoodAI.Modules.School.Worlds
                     GL.DeleteTextures(1, ref m_renderTextureHandle);
                 }
 
-                // delete FbO
+                // delete FBO
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
                 if (m_fboHandle != 0)
                 {
@@ -1528,15 +1528,25 @@ namespace GoodAI.Modules.School.Worlds
                 // delete CUDA <-> GL interop
                 if (m_renderResource != null)
                 {
-                    if (m_renderResource.IsMapped)
+                    try
                     {
-                        m_renderResource.UnMap();
+                        if (m_renderResource.IsMapped)
+                        {
+                            m_renderResource.UnMap();
+                        }
+                        if (m_renderResource.IsRegistered)
+                        {
+                            m_renderResource.Unregister();
+                        }
                     }
-                    if (m_renderResource.IsRegistered)
+                    catch (Exception e)
                     {
-                        m_renderResource.Unregister();
+                        MyLog.DEBUG.WriteLine(Name + ": " + e.Message);
                     }
-                    m_renderResource.Dispose();
+                    finally
+                    {
+                        m_renderResource.Dispose();
+                    }
                 }
 
                 if (m_context != null)
