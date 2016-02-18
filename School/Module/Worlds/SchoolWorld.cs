@@ -169,7 +169,7 @@ namespace GoodAI.Modules.School.Worlds
                 m_shouldRunFullInit = true;
                 m_isNewLearningTask = true;
                 Curriculum.Reset();
-        }
+            }
         }
 
         public SchoolWorld()
