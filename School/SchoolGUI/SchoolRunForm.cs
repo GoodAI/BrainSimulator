@@ -19,6 +19,7 @@ namespace GoodAI.School.GUI
         public List<LearningTaskNode> Data;
         public List<LevelNode> Levels;
         public List<List<AttributeNode>> Attributes;
+        public List<List<int>> AttributesChange;
         public PlanDesign Design;
 
         private List<DataGridView> LevelGrids;
@@ -308,16 +309,17 @@ namespace GoodAI.School.GUI
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            LearningTaskNode ltNode = SelectedLearningTask;
-            Type ltType = ltNode.TaskType;
-            ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
-            
-            TrainingSetHints hints = lt.TSProgression[0];
             Invoke((MethodInvoker)(() =>
                 {
+                    LearningTaskNode ltNode = SelectedLearningTask;
+                    Type ltType = ltNode.TaskType;
+                    ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
+                    TrainingSetHints hints = lt.TSProgression[0];
+
                     Levels = new List<LevelNode>();
                     LevelGrids = new List<DataGridView>();
                     Attributes = new List<List<AttributeNode>>();
+                    AttributesChange = new List<List<int>>();
                     tabControl1.TabPages.Clear();
 
                     for (int i = 0; i < lt.TSProgression.Count; i++)
@@ -359,33 +361,51 @@ namespace GoodAI.School.GUI
                         dgv.Columns[0].ReadOnly = true;
                         dgv.Columns[1].ReadOnly = true;
 
+                        AttributesChange.Add(new List<int>());
                         if (i > 0)
                         {
                             foreach (var attribute in lt.TSProgression[i])
                             {
                                 int attributeIdx = Attributes[i].IndexOf(new AttributeNode(attribute.Key.Name));
-                                dgv.Rows[attributeIdx].DefaultCellStyle.BackColor = Color.LightGreen;
+                                AttributesChange[i].Add(attributeIdx);
                             }
                         }
 
                         LevelGrids.Add(dgv);
                         dgv.ColumnWidthChanged += levelGridColumnSizeChanged;
+                        dgv.CellFormatting += lGrid_CellFormatting;
 
                         tabControl1.Update();
                     }
                 }
             ));
-            
+        }
+
+        private void lGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs args)
+        {
+            DataGridView dgv = sender as DataGridView;
+            int i = LevelGrids.IndexOf(dgv);
+            if (AttributesChange.Count == 0)
+            {
+                return;
+            }
+            if (AttributesChange[i].Contains(args.RowIndex))
+            {
+                args.CellStyle.BackColor = Color.LightGreen;
+            }
         }
 
         private void levelGridColumnSizeChanged(object sender, DataGridViewColumnEventArgs e)
         {
             DataGridView dg = sender as DataGridView;
-            int width = dg.Columns[0].Width;
-            foreach (var levelGrid in LevelGrids)
+            for (int i = 0; i < dg.Columns.Count; i++)
             {
-                if (dg == levelGrid) continue;
-                levelGrid.Columns[0].Width = width;
+                int width = dg.Columns[i].Width;
+                foreach (var levelGrid in LevelGrids)
+                {
+                    if (dg == levelGrid) continue;
+                    levelGrid.Columns[i].Width = width;
+                }
             }
         }
 
