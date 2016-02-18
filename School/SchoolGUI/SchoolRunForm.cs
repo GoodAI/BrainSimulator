@@ -327,15 +327,17 @@ namespace GoodAI.School.GUI
                         attribute.Key.Name,
                         attribute.Value,
                         attribute.Key.TypeOfValue);
-                    Attributes.Last().Add(an);
+                    Attributes[i].Add(an);
                 }
 
-                dgv.DataSource = Attributes.Last();
-                for (int k = 13; k > 2; k--)
-                {
-                    dgv.Columns.RemoveAt(k);
-                }
+                Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
+
+                dgv.DataSource = Attributes[i];
+
+                //dgv.Sort(Comparer<AttributeNode>.Create((x,y) => x.Name.CompareTo(y.Name)));
+
                 dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
                 tabControl1.Update();
             }
             

@@ -58,7 +58,7 @@ namespace GoodAI.School.GUI
         }
     }
 
-    public class LevelNode : Node
+    public class LevelNode
     {
         public int Level { get; set; }
 
@@ -67,7 +67,7 @@ namespace GoodAI.School.GUI
             Level = level;
         }
 
-        public override string Text
+        public string Text
         {
             get
             {
@@ -76,7 +76,7 @@ namespace GoodAI.School.GUI
         }
     }
 
-    public class AttributeNode : Node
+    public class AttributeNode
     {
         public string Name { get; set; }
         public float Value { get; set; }
@@ -87,14 +87,6 @@ namespace GoodAI.School.GUI
             this.Name = name;
             this.Value = value;
             this.Type = type;
-        }
-
-        public override string Text
-        {
-            get
-            {
-                return Name;
-            }
         }
     }
 

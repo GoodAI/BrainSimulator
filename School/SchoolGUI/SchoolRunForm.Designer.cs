@@ -45,18 +45,6 @@
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ProgressColumn = new GoodAI.BrainSimulator.Utils.DataGridViewProgressColumn();
-            this.statusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.isHiddenDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.checkStateDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.imageDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.isCheckedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.learningTaskNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -69,6 +57,18 @@
             this.btnObserver = new System.Windows.Forms.ToolStripButton();
             this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProgressColumn = new GoodAI.BrainSimulator.Utils.DataGridViewProgressColumn();
+            this.statusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.isHiddenDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.checkStateDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.imageDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.isCheckedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
             this.toolStrip1.SuspendLayout();
@@ -78,7 +78,6 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -110,87 +109,6 @@
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
-            // 
-            // TaskType
-            // 
-            this.TaskType.DataPropertyName = "TaskType";
-            this.TaskType.HeaderText = "Task";
-            this.TaskType.Name = "TaskType";
-            this.TaskType.ReadOnly = true;
-            // 
-            // WorldType
-            // 
-            this.WorldType.DataPropertyName = "WorldType";
-            this.WorldType.HeaderText = "World";
-            this.WorldType.Name = "WorldType";
-            this.WorldType.ReadOnly = true;
-            // 
-            // stepsDataGridViewTextBoxColumn
-            // 
-            this.stepsDataGridViewTextBoxColumn.DataPropertyName = "Steps";
-            this.stepsDataGridViewTextBoxColumn.HeaderText = "Steps";
-            this.stepsDataGridViewTextBoxColumn.Name = "stepsDataGridViewTextBoxColumn";
-            // 
-            // timeDataGridViewTextBoxColumn
-            // 
-            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
-            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
-            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
-            // 
-            // ProgressColumn
-            // 
-            this.ProgressColumn.DataPropertyName = "Progress";
-            this.ProgressColumn.HeaderText = "Progress";
-            this.ProgressColumn.Name = "ProgressColumn";
-            // 
-            // statusDataGridViewTextBoxColumn
-            // 
-            this.statusDataGridViewTextBoxColumn.DataPropertyName = "Status";
-            this.statusDataGridViewTextBoxColumn.HeaderText = "Status";
-            this.statusDataGridViewTextBoxColumn.Name = "statusDataGridViewTextBoxColumn";
-            // 
-            // isHiddenDataGridViewCheckBoxColumn
-            // 
-            this.isHiddenDataGridViewCheckBoxColumn.DataPropertyName = "IsHidden";
-            this.isHiddenDataGridViewCheckBoxColumn.HeaderText = "IsHidden";
-            this.isHiddenDataGridViewCheckBoxColumn.Name = "isHiddenDataGridViewCheckBoxColumn";
-            this.isHiddenDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // checkStateDataGridViewCheckBoxColumn
-            // 
-            this.checkStateDataGridViewCheckBoxColumn.DataPropertyName = "CheckState";
-            this.checkStateDataGridViewCheckBoxColumn.HeaderText = "CheckState";
-            this.checkStateDataGridViewCheckBoxColumn.Name = "checkStateDataGridViewCheckBoxColumn";
-            this.checkStateDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // imageDataGridViewImageColumn
-            // 
-            this.imageDataGridViewImageColumn.DataPropertyName = "Image";
-            this.imageDataGridViewImageColumn.HeaderText = "Image";
-            this.imageDataGridViewImageColumn.Name = "imageDataGridViewImageColumn";
-            this.imageDataGridViewImageColumn.Visible = false;
-            // 
-            // isCheckedDataGridViewCheckBoxColumn
-            // 
-            this.isCheckedDataGridViewCheckBoxColumn.DataPropertyName = "IsChecked";
-            this.isCheckedDataGridViewCheckBoxColumn.HeaderText = "IsChecked";
-            this.isCheckedDataGridViewCheckBoxColumn.Name = "isCheckedDataGridViewCheckBoxColumn";
-            this.isCheckedDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // isLeafDataGridViewCheckBoxColumn
-            // 
-            this.isLeafDataGridViewCheckBoxColumn.DataPropertyName = "IsLeaf";
-            this.isLeafDataGridViewCheckBoxColumn.HeaderText = "IsLeaf";
-            this.isLeafDataGridViewCheckBoxColumn.Name = "isLeafDataGridViewCheckBoxColumn";
-            this.isLeafDataGridViewCheckBoxColumn.ReadOnly = true;
-            this.isLeafDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // tagDataGridViewTextBoxColumn
-            // 
-            this.tagDataGridViewTextBoxColumn.DataPropertyName = "Tag";
-            this.tagDataGridViewTextBoxColumn.HeaderText = "Tag";
-            this.tagDataGridViewTextBoxColumn.Name = "tagDataGridViewTextBoxColumn";
-            this.tagDataGridViewTextBoxColumn.Visible = false;
             // 
             // learningTaskNodeBindingSource
             // 
@@ -345,6 +263,88 @@
             this.tabControl1.Size = new System.Drawing.Size(360, 514);
             this.tabControl1.TabIndex = 10;
             // 
+            // TaskType
+            // 
+            this.TaskType.DataPropertyName = "TaskType";
+            this.TaskType.HeaderText = "Task";
+            this.TaskType.Name = "TaskType";
+            this.TaskType.ReadOnly = true;
+            // 
+            // WorldType
+            // 
+            this.WorldType.DataPropertyName = "WorldType";
+            this.WorldType.HeaderText = "World";
+            this.WorldType.Name = "WorldType";
+            this.WorldType.ReadOnly = true;
+            // 
+            // stepsDataGridViewTextBoxColumn
+            // 
+            this.stepsDataGridViewTextBoxColumn.DataPropertyName = "Steps";
+            this.stepsDataGridViewTextBoxColumn.HeaderText = "Steps";
+            this.stepsDataGridViewTextBoxColumn.Name = "stepsDataGridViewTextBoxColumn";
+            this.stepsDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // timeDataGridViewTextBoxColumn
+            // 
+            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
+            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
+            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
+            // 
+            // ProgressColumn
+            // 
+            this.ProgressColumn.DataPropertyName = "Progress";
+            this.ProgressColumn.HeaderText = "Progress";
+            this.ProgressColumn.Name = "ProgressColumn";
+            // 
+            // statusDataGridViewTextBoxColumn
+            // 
+            this.statusDataGridViewTextBoxColumn.DataPropertyName = "Status";
+            this.statusDataGridViewTextBoxColumn.HeaderText = "Status";
+            this.statusDataGridViewTextBoxColumn.Name = "statusDataGridViewTextBoxColumn";
+            // 
+            // isHiddenDataGridViewCheckBoxColumn
+            // 
+            this.isHiddenDataGridViewCheckBoxColumn.DataPropertyName = "IsHidden";
+            this.isHiddenDataGridViewCheckBoxColumn.HeaderText = "IsHidden";
+            this.isHiddenDataGridViewCheckBoxColumn.Name = "isHiddenDataGridViewCheckBoxColumn";
+            this.isHiddenDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // checkStateDataGridViewCheckBoxColumn
+            // 
+            this.checkStateDataGridViewCheckBoxColumn.DataPropertyName = "CheckState";
+            this.checkStateDataGridViewCheckBoxColumn.HeaderText = "CheckState";
+            this.checkStateDataGridViewCheckBoxColumn.Name = "checkStateDataGridViewCheckBoxColumn";
+            this.checkStateDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // imageDataGridViewImageColumn
+            // 
+            this.imageDataGridViewImageColumn.DataPropertyName = "Image";
+            this.imageDataGridViewImageColumn.HeaderText = "Image";
+            this.imageDataGridViewImageColumn.Name = "imageDataGridViewImageColumn";
+            this.imageDataGridViewImageColumn.Visible = false;
+            // 
+            // isCheckedDataGridViewCheckBoxColumn
+            // 
+            this.isCheckedDataGridViewCheckBoxColumn.DataPropertyName = "IsChecked";
+            this.isCheckedDataGridViewCheckBoxColumn.HeaderText = "IsChecked";
+            this.isCheckedDataGridViewCheckBoxColumn.Name = "isCheckedDataGridViewCheckBoxColumn";
+            this.isCheckedDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // isLeafDataGridViewCheckBoxColumn
+            // 
+            this.isLeafDataGridViewCheckBoxColumn.DataPropertyName = "IsLeaf";
+            this.isLeafDataGridViewCheckBoxColumn.HeaderText = "IsLeaf";
+            this.isLeafDataGridViewCheckBoxColumn.Name = "isLeafDataGridViewCheckBoxColumn";
+            this.isLeafDataGridViewCheckBoxColumn.ReadOnly = true;
+            this.isLeafDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // tagDataGridViewTextBoxColumn
+            // 
+            this.tagDataGridViewTextBoxColumn.DataPropertyName = "Tag";
+            this.tagDataGridViewTextBoxColumn.HeaderText = "Tag";
+            this.tagDataGridViewTextBoxColumn.Name = "tagDataGridViewTextBoxColumn";
+            this.tagDataGridViewTextBoxColumn.Visible = false;
+            // 
             // SchoolRunForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -396,6 +396,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton btnObserver;
         private System.Windows.Forms.DataGridViewTextBoxColumn TaskType;
         private System.Windows.Forms.DataGridViewTextBoxColumn WorldType;
         private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn;
@@ -408,7 +410,5 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton btnObserver;
     }
 }
