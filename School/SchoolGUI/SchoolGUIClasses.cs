@@ -82,6 +82,11 @@ namespace GoodAI.School.GUI
         public string Value { get; set; }
         private Type Type { get; set; }
 
+        public AttributeNode(string name)
+        {
+            this.Name = name;
+        }
+
         public AttributeNode(string name, float value, Type type)
         {
             this.Name = name;
@@ -93,6 +98,15 @@ namespace GoodAI.School.GUI
             }else{
                 this.Value = Convert.ChangeType(value, type).ToString();
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (Name == (obj as AttributeNode).Name)
+            {
+                return true;
+            }
+            return false;
         }
     }
 
