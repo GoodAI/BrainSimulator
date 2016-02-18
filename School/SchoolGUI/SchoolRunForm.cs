@@ -282,7 +282,7 @@ namespace GoodAI.School.GUI
         {
             DataGridView senderT = sender as DataGridView;
             int dataIndex;
-            if (senderT.SelectedRows != null)
+            if (senderT.SelectedRows != null && senderT.SelectedRows.Count > 0)
             {
                 DataGridViewRow row = senderT.SelectedRows[0];
                 dataIndex = row.Index;
@@ -320,6 +320,10 @@ namespace GoodAI.School.GUI
                 dgv.RowHeadersVisible = false;
                 // create attributes
                 Attributes.Add(new List<AttributeNode>());
+                if (i > 0)
+                {
+                Attributes.Add(Attributes[0]);
+                }
                 foreach (var attribute in lt.TSProgression[i])
                 {
                     
@@ -331,10 +335,7 @@ namespace GoodAI.School.GUI
                 }
 
                 Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
-
                 dgv.DataSource = Attributes[i];
-
-                //dgv.Sort(Comparer<AttributeNode>.Create((x,y) => x.Name.CompareTo(y.Name)));
 
                 dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 

@@ -79,14 +79,20 @@ namespace GoodAI.School.GUI
     public class AttributeNode
     {
         public string Name { get; set; }
-        public float Value { get; set; }
-        public Type Type { get; set; }
+        public string Value { get; set; }
+        private Type Type { get; set; }
 
         public AttributeNode(string name, float value, Type type)
         {
             this.Name = name;
-            this.Value = value;
+            
             this.Type = type;
+            if (type == typeof(Single) || type == typeof(Double))
+            {
+                this.Value = ((Single)value).ToString("F");
+            }else{
+                this.Value = Convert.ChangeType(value, type).ToString();
+            }
         }
     }
 
