@@ -906,7 +906,7 @@ namespace GoodAI.Modules.TetrisWorld
                     GL.DeleteTextures(1, ref m_scoreTextHandle);
                 }
 
-                // delete FbO
+                // delete FBO
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
                 if (m_fboHandle != 0)
                 {
@@ -921,16 +921,28 @@ namespace GoodAI.Modules.TetrisWorld
                 }
 
                 // delete CUDA <-> GL interop
-                if (m_renderResource.IsMapped)
+                if (m_renderResource != null)
                 {
-                    m_renderResource.UnMap();
+                    try
+                    {
+                        if (m_renderResource.IsMapped)
+                        {
+                            m_renderResource.UnMap();
+                        }
+                        if (m_renderResource.IsRegistered)
+                        {
+                            m_renderResource.Unregister();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MyLog.DEBUG.WriteLine(Name + ": " + e.Message);
+                    }
+                    finally
+                    {
+                        m_renderResource.Dispose();
+                    }
                 }
-                if (m_renderResource.IsRegistered)
-                {
-                    m_renderResource.Unregister();
-                }
-
-                m_renderResource.Dispose();
 
                 if (m_context != null)
                 {
