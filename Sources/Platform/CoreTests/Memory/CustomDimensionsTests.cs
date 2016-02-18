@@ -100,6 +100,7 @@ namespace CoreTests.Memory
             
             bool didApply = hint.TryToApply(originalDims, out resultDims);
 
+            Assert.Equal(originalDims, resultDims);
             Assert.False(didApply);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Reflection;
 using GoodAI.Core.Memory;
 using YAXLib;
@@ -99,9 +100,27 @@ namespace GoodAI.Core.Observers
                     throw new ArgumentException("Vector element count must be greater than zero.");
 
                 m_elements = value;
+                TriggerReset();
             }
         }
         private int m_elements;
+
+        [YAXSerializableField(DefaultValue = "")]
+        [MyBrowsable, Category("Texture"), DisplayName("Custom Dimensions")]
+        [Description("Comma separated dimensions, such as \"2, 3, *\".")]
+        public string CustomDimensions
+        {
+            get
+            {
+                return m_customDimensions.PrintSource();
+            }
+            set
+            {
+                m_customDimensions = CustomDimensionsHint.Parse(value);
+                TriggerReset();
+            }
+        }
+        private CustomDimensionsHint m_customDimensions = CustomDimensionsHint.Empty;
 
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Temporal")]
@@ -121,6 +140,8 @@ namespace GoodAI.Core.Observers
 
         private bool m_showCoordinatesSelected;
         private bool m_showCoordinates;
+
+        private const short SmallVectorLimit = 10;
 
         protected MyCudaKernel m_vectorKernel;
         protected MyCudaKernel m_rgbKernel;
@@ -193,35 +214,105 @@ namespace GoodAI.Core.Observers
         {
             base.Reset();
             ResetBounds();
+            
+            SetTextureDimensions();
+        }
 
-            if (Method == RenderingMethod.Vector)
-            {
-                SetDefaultTextureDimensions(Target.Count / Elements);
-            }
-            else if (Method == RenderingMethod.RGB)
-            {
-                SetDefaultTextureDimensions(Target.Count / 3);
-            }
-            else
-            {
-                SetDefaultTextureDimensions(Target.Count);
-            }
-        }        
-
-        protected override void SetDefaultTextureDimensions(int pixelCount)  
+        private void SetTextureDimensions()
         {
-            if (Target.ColumnHint > 1)
+            string warning;
+            Size textureSize = ComputeCustomTextureSize(Target.Dims, m_customDimensions, Method, Elements, out warning);
+
+            if (!string.IsNullOrEmpty(warning))
+                MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name, warning);
+
+            TextureWidth = textureSize.Width;
+            TextureHeight = textureSize.Height;
+        }
+
+        // TODO(Premek): Report warnings using a logger interface.
+        internal static Size ComputeCustomTextureSize(TensorDimensions dims, CustomDimensionsHint customDims,
+            RenderingMethod method, int vectorElements, out string warning)
+        {
+            warning = "";
+
+            if (dims.IsEmpty)
+                return Size.Empty;
+
+            bool isDivisible;
+            string divisorName = (method == RenderingMethod.RGB) ? "3 (RGB channel count)" : "vector element count";
+
+            bool isRowVector    = (dims.Rank == 1) || (dims.Rank == 2 && dims[1] == 1);
+            bool isColumnVector = !isRowVector && (dims.Rank == 2) && (dims[0] == 1);
+            
+            TensorDimensions adjustedDims;
+            bool didApplyCustomDims = customDims.TryToApply(dims, out adjustedDims);
+            if (!customDims.IsEmpty && !didApplyCustomDims)
+                warning = "Could not apply custom dimensions (the element count must match the original).";
+
+            if (!didApplyCustomDims && (isRowVector || isColumnVector))
             {
-                TextureWidth = Target.ColumnHint;
-                TextureHeight =
-                    pixelCount % Target.ColumnHint == 0 ?
-                    pixelCount / Target.ColumnHint :
-                    pixelCount / Target.ColumnHint + 1;
+                return ComputeTextureSizeForVector(dims.ElementCount, isRowVector, method, vectorElements, divisorName,
+                    ref warning);
             }
-            else
+
+            int shrinkedLastDim = ShrinkSizeForRenderingMethod(adjustedDims[adjustedDims.Rank - 1], method,
+                vectorElements, out isDivisible);
+
+            if (!isDivisible || (shrinkedLastDim == 0))
             {
-                base.SetDefaultTextureDimensions(pixelCount);
+                if (string.IsNullOrEmpty(warning))
+                    warning = string.Format("The last dimension is {0} {1}. Ignoring dimensions.",
+                        (!isDivisible) ? "not divisible by" : "smaller than", divisorName);
+
+                return ComputeTextureSize(
+                    ShrinkSizeForRenderingMethod(dims.ElementCount, method, vectorElements, out isDivisible));
             }
+
+            // Squash all dimensions except the first one together.
+            // TODO(Premek): Decide according to actual sizes of the dimensions.
+            int squashedOtherDims = shrinkedLastDim;
+            for (int i = 1; i < adjustedDims.Rank - 1; i++)
+                squashedOtherDims *= adjustedDims[i];
+
+            return new Size(adjustedDims[0], squashedOtherDims);
+        }
+
+        private static Size ComputeTextureSizeForVector(int elementCount, bool isRowVector, RenderingMethod method,
+            int vectorElements, string divisorName, ref string warning)
+        {
+            bool isDivisible;
+            int shrinkedSize = ShrinkSizeForRenderingMethod(elementCount, method, vectorElements, out isDivisible);
+            if (!isDivisible && string.IsNullOrEmpty(warning))
+                warning = string.Format("Total count is not divisible by {0}.", divisorName);
+
+            return elementCount <= SmallVectorLimit // Don't wrap small vectors.
+                ? new Size(isRowVector ? shrinkedSize : 1, !isRowVector ? shrinkedSize : 1)
+                : ComputeTextureSize(elementCount);
+        }
+
+        private static int ShrinkSizeForRenderingMethod(int size, RenderingMethod method, int vectorElements, out bool isDivisible)
+        {
+            int divisor = 1;
+
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (method == RenderingMethod.RGB)
+            {
+                divisor = 3;
+            }
+            else if (method == RenderingMethod.Vector)
+            {
+                if (vectorElements < 1)
+                    throw new ArgumentException("Vector element count must be greater then zero.", "vectorElements");
+ 
+                divisor = vectorElements;
+            }
+
+            int result = size/divisor;
+
+            isDivisible = (result*divisor == size);
+
+            return result;
         }
     }
 }
