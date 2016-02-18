@@ -8,11 +8,11 @@ namespace GoodAI.Modules.School.Common
 {
     public enum TrainingResult
     {
-        InProgress,
-        Completed,
-        Failed,
-        LevelUp, // Implies Completed
-        Finished, // Implies Completed
+        TUInProgress,
+        FinishedTU,
+        FailedLT,
+        LevelUp, // Implies FinishedTU
+        FinishedLT, // Implies FinishedTU (and LevelUp)
     }
 
     public interface ILearningTask
@@ -148,26 +148,26 @@ namespace GoodAI.Modules.School.Common
 
         public TrainingResult EvaluateStep()
         {
-            // Check for task failure
+            // Check for unit completion
+            bool wasUnitSuccessful = false;
+            bool inProgress = (SchoolWorld.IsEmulatingUnitCompletion() && !SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful))
+                             || (!SchoolWorld.IsEmulatingUnitCompletion() && !DidTrainingUnitComplete(ref wasUnitSuccessful));
+
+            if (inProgress)
+            {
+                // The unit is still in progress
+                return TrainingResult.TUInProgress;
+            }
+            // otherwise the unit is over
+
             CurrentNumberOfAttempts++;
 
+            // Check for task failure
             if (TSHints.ContainsKey(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS)
                 && CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS])
             {
                 // Too many attempts
-                return TrainingResult.Failed;
-            }
-
-
-            // Check for unit completion
-            bool wasUnitSuccessful = false;
-            bool completed = (SchoolWorld.IsEmulatingUnitCompletion() && !SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful))
-                             || (!SchoolWorld.IsEmulatingUnitCompletion() && !DidTrainingUnitComplete(ref wasUnitSuccessful));
-
-            if (completed)
-            {
-                // The unit is still in progress
-                return TrainingResult.InProgress;
+                return TrainingResult.FailedLT;
             }
 
             if (wasUnitSuccessful)
@@ -175,7 +175,6 @@ namespace GoodAI.Modules.School.Common
             else
                 CurrentNumberOfSuccesses = 0;
 
-            // The unit was completed
             MyLog.Writer.WriteLine(
                 MyLogLevel.INFO,
                 GetTypeName() +
@@ -189,11 +188,11 @@ namespace GoodAI.Modules.School.Common
             // Check for level completion
             if (CurrentNumberOfSuccesses < NumberOfSuccessesRequired)
                 // The level is still in progress
-                return TrainingResult.Completed;
+                return TrainingResult.FinishedTU;
 
             if (!IncreaseLevel())
                 // The task with all its units have been completed
-                return TrainingResult.Finished;
+                return TrainingResult.FinishedLT;
 
             // Level completed
             MyLog.Writer.WriteLine(MyLogLevel.INFO,

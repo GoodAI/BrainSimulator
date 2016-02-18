@@ -188,6 +188,7 @@ namespace GoodAI.Modules.School.Worlds
         ILearningTask m_currentLearningTask;
 
         private TrainingResult m_taskResult;
+        private bool m_drawBlackscreen = false;
 
         // The curriculum to use.
         [MyBrowsable, Category("Curriculum"), Description("Choose which type of curriculum you want to use.")]
@@ -258,13 +259,10 @@ namespace GoodAI.Modules.School.Worlds
             ResetLTStatusFlags();
 
             if (ShowBlackscreen)
-                switch (m_taskResult)
+                if (m_drawBlackscreen)
                 {
-                    case TrainingResult.Completed:
-                    case TrainingResult.LevelUp:
-                    case TrainingResult.Finished:
-                        // Skip task evaluation, a blackscreen will show up this step
-                        return;
+                    // Skip task evaluation, a blackscreen will show up this step
+                    return;
                 }
 
             if (!m_currentLearningTask.IsInitialized)
@@ -282,14 +280,14 @@ namespace GoodAI.Modules.School.Worlds
 
                 switch (m_taskResult)
                 {
-                    case TrainingResult.InProgress:
+                    case TrainingResult.TUInProgress:
                         break;
 
-                    case TrainingResult.Completed:
+                    case TrainingResult.FinishedTU:
                         NotifyNewTrainingUnit();
                         break;
 
-                    case TrainingResult.Failed:
+                    case TrainingResult.FailedLT:
                         if (Owner.SimulationHandler.CanPause)
                             Owner.SimulationHandler.PauseSimulation();
                         return;
@@ -298,7 +296,7 @@ namespace GoodAI.Modules.School.Worlds
                         NotifyNewLevel();
                         break;
 
-                    case TrainingResult.Finished:
+                    case TrainingResult.FinishedLT:
                         NotifyNewLearningTask();
                         break;
 
@@ -419,15 +417,6 @@ namespace GoodAI.Modules.School.Worlds
             return m_rndGen.NextDouble() < EmulatedUnitSuccessProbability;
         }
 
-        public bool EmulateIsTrainingUnitCompleted(out TrainingResult result)
-        {
-            bool res = m_rndGen.NextDouble() < EmulatedUnitSuccessProbability;
-
-            result = res ? TrainingResult.Completed : TrainingResult.InProgress;
-
-            return res;
-        }
-
         public InitSchoolWorldTask InitSchool { get; protected set; }
         public InputAdapterTask AdapterInputStep { get; protected set; }
         public LearningStepTask LearningStep { get; protected set; }
@@ -454,8 +443,6 @@ namespace GoodAI.Modules.School.Worlds
         /// </summary>
         public class OutputAdapterTask : MyTask<SchoolWorld>
         {
-            private bool drawBlackscreen = false;
-
             public override void Init(int nGPU)
             {
                 Owner.CurrentWorld.InitWorldOutputs(nGPU);
@@ -463,23 +450,23 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                if (drawBlackscreen)
+                if (Owner.m_drawBlackscreen)
                 {
-                    drawBlackscreen = false;
+                    Owner.m_drawBlackscreen = false;
                     Owner.Visual.Fill(0);
-                    Owner.m_taskResult = TrainingResult.InProgress;
+                    Owner.m_taskResult = TrainingResult.TUInProgress;
                     return;
                 }
 
                 if (Owner.ShowBlackscreen)
                     switch (Owner.m_taskResult)
                     {
-                        case TrainingResult.Completed:
+                        case TrainingResult.FinishedTU:
                         case TrainingResult.LevelUp:
-                        case TrainingResult.Finished:
+                        case TrainingResult.FinishedLT:
                             // Display a blackscreen as a notification about the agent's success    
                             // delay it to the next step -- the learning tasks won't execute next step aswell
-                            drawBlackscreen = true;
+                            Owner.m_drawBlackscreen = true;
                             break;
                     }
 
