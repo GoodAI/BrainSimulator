@@ -13,6 +13,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -30,6 +31,7 @@ namespace GoodAI.Modules.School.Worlds
     /// <description>
     /// Implementation of a configurable 2D world
     /// </description>
+    [DisplayName("2D worlds")]
     public abstract class ManInWorld : MyWorld, IWorldAdapter
     {
         public int DegreesOfFreedom { get; set; }

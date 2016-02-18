@@ -11,10 +11,10 @@ using WeifenLuo.WinFormsUI.Docking;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Modules.School.Common;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.School.GUI
 {
-
     [BrainSimUIExtension]
     public partial class LearningTaskSelectionForm : DockContent
     {
@@ -22,6 +22,7 @@ namespace GoodAI.School.GUI
         {
             InitializeComponent();
             learningTaskList.DisplayMember = "DisplayName";
+            worldList.DisplayMember = "DisplayName";
         }
 
         private void LearningTaskSelectionForm_Load(object sender, EventArgs e)
@@ -32,21 +33,47 @@ namespace GoodAI.School.GUI
 
         private void PopulateWorldList()
         {
-            // TODO 
-            throw new NotImplementedException();
+            var interfaceType = typeof(IWorldAdapter);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => interfaceType.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
+            foreach (Type type in types)
+            {
+                worldList.Items.Add(new TypeListItem(type));
+            }
+            if (worldList.Items.Count > 0)
+                worldList.SelectedIndex = 0;
         }
 
         private void PopulateLearningTaskList()
         {
             learningTaskList.Items.Clear();
-            foreach (Type type in LearningTaskFactory.KnownLearningTasks.Keys)
+            Type selectedWorldType = (worldList.SelectedItem as TypeListItem).Type;
+            foreach (var entry in LearningTaskFactory.KnownLearningTasks)
             {
-                // TODO check if supports world
-                learningTaskList.Items.Add(new LearningTaskListItem(type));
+                Type learningTaskType = entry.Key;
+                List<Type> worldTypes = entry.Value;
+                if (ContainsType(worldTypes, selectedWorldType))
+                if (worldTypes.Contains(selectedWorldType))
+                { 
+                    learningTaskList.Items.Add(new LearningTaskListItem(learningTaskType));
+                }
             }
 
             if (learningTaskList.Items.Count > 0)
                 learningTaskList.SelectedIndex = 0;
+        }
+
+        private bool ContainsType(List<Type> worldTypes, Type selectedWorldType)
+        {
+            foreach (Type type in worldTypes)
+            {
+                if (selectedWorldType == type || selectedWorldType.IsSubclassOf(type))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void okButton_Click(object sender, EventArgs e)
@@ -81,22 +108,18 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void comboWorlds_SelectedIndexChanged(object sender, EventArgs e)
+        private void worldList_SelectedIndexChanged(object sender, EventArgs e)
         {
             PopulateLearningTaskList();
+
         }
     }
 
-    class LearningTaskListItem
+    class TypeListItem
     {
         public Type Type { get; set; }
 
-        public LearningTaskListItem(Type type)
+        public TypeListItem(Type type)
         {
             Type = type;
         }
@@ -108,6 +131,13 @@ namespace GoodAI.School.GUI
                 DisplayNameAttribute attribute = Type.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
                 return attribute != null ? attribute.DisplayName : "Display name missing!";
             }
+        }
+    }
+
+    class LearningTaskListItem : TypeListItem
+    {
+        public LearningTaskListItem(Type type) : base(type)
+        {
         }
 
         public string HTMLFileName 

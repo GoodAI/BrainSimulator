@@ -4,11 +4,13 @@ using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.Modules.GameBoy;
 using System;
+using System.ComponentModel;
 using GoodAI.Core.Task;
 using GoodAI.Core;
 
 namespace GoodAI.School.Worlds
 {
+    [DisplayName("Pong")]
     public class PongAdapterWorld : MyCustomPongWorld, IWorldAdapter
     {
         private MyCudaKernel m_kernel;

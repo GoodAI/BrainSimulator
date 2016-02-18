@@ -4,12 +4,14 @@ using GoodAI.Core.Memory;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
+using System.ComponentModel;
 using GoodAI.Core.Utils;
 using GoodAI.Core;
 using GoodAI.Core.Task;
 
 namespace GoodAI.School.Worlds
 {
+    [DisplayName("Tetris")]
     public class TetrisAdapterWorld : TetrisWorld, IWorldAdapter
     {
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
