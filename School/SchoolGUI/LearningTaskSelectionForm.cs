@@ -26,13 +26,22 @@ namespace GoodAI.School.GUI
 
         private void LearningTaskSelectionForm_Load(object sender, EventArgs e)
         {
+            PopulateWorldList();
             PopulateLearningTaskList();
+        }
+
+        private void PopulateWorldList()
+        {
+            // TODO 
+            throw new NotImplementedException();
         }
 
         private void PopulateLearningTaskList()
         {
+            learningTaskList.Items.Clear();
             foreach (Type type in LearningTaskFactory.KnownLearningTasks.Keys)
             {
+                // TODO check if supports world
                 learningTaskList.Items.Add(new LearningTaskListItem(type));
             }
 
@@ -71,6 +80,16 @@ namespace GoodAI.School.GUI
                 learningTaskDescription.Navigate(fullPath);
             }
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboWorlds_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PopulateLearningTaskList();
+        }
     }
 
     class LearningTaskListItem
@@ -91,7 +110,8 @@ namespace GoodAI.School.GUI
             }
         }
 
-        public string HTMLFileName { 
+        public string HTMLFileName 
+        { 
             get
             {
                 return Type.Name + ".html";
