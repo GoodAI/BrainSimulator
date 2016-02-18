@@ -25,6 +25,9 @@ namespace GoodAI.School.GUI
             worldList.DisplayMember = "DisplayName";
         }
 
+        public List<Type> ResultLearningTaskTypes { get; set; }
+        public Type ResultWorldType { get; set; }
+
         private void LearningTaskSelectionForm_Load(object sender, EventArgs e)
         {
             PopulateWorldList();
@@ -79,12 +82,20 @@ namespace GoodAI.School.GUI
         private void okButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
+            ResultLearningTaskTypes = new List<Type>();
+            foreach (var item in learningTaskList.CheckedItems)
+            {
+                ResultLearningTaskTypes.Add((item as TypeListItem).Type);
+            }
+            ResultWorldType = (worldList.SelectedItem as TypeListItem).Type;
             Close();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+            ResultLearningTaskTypes = null;
+            ResultWorldType = null;
             Close();
         }
 

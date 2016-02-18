@@ -26,7 +26,7 @@ namespace GoodAI.School.GUI
         private string m_savedRepresentation;
         private string m_currentFile;
 
-        public SchoolAddTaskForm AddTaskView { get; private set; }
+        public LearningTaskSelectionForm AddTaskView { get; private set; }
         public SchoolRunForm RunView { get; private set; }
 
         private PlanDesign m_design
@@ -289,23 +289,38 @@ namespace GoodAI.School.GUI
             if (tree.SelectedNode == null)
                 return;
 
-            AddTaskView = new SchoolAddTaskForm();
+            AddTaskView = new LearningTaskSelectionForm();
             AddTaskView.StartPosition = FormStartPosition.CenterParent;
             AddTaskView.ShowDialog(this);
-            if (AddTaskView.ResultTask == null)
+            if (AddTaskView.ResultLearningTaskTypes == null)
                 return;
 
-            LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
-            if (tree.SelectedNode.Tag is CurriculumNode)
+            List<LearningTaskNode> newLearningTaskNodes = new List<LearningTaskNode>();
+            foreach (Type learningTaskType in AddTaskView.ResultLearningTaskTypes)
             {
-                (tree.SelectedNode.Tag as Node).Nodes.Add(task);
-                tree.SelectedNode.IsExpanded = true;
+                newLearningTaskNodes.Add(new LearningTaskNode(learningTaskType, AddTaskView.ResultWorldType));
             }
-            else if (tree.SelectedNode.Tag is LearningTaskNode)
-            {
-                LearningTaskNode source = tree.SelectedNode.Tag as LearningTaskNode;
-                int targetPositon = source.Parent.Nodes.IndexOf(source);
-                source.Parent.Nodes.Insert(targetPositon + 1, task);
+            //LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
+
+            if (newLearningTaskNodes.Count > 0)
+            { 
+                if (tree.SelectedNode.Tag is CurriculumNode)
+                {
+                    foreach (LearningTaskNode node in newLearningTaskNodes)
+                    {
+                        (tree.SelectedNode.Tag as Node).Nodes.Add(node);
+                    }
+                    tree.SelectedNode.IsExpanded = true;
+                }
+                else if (tree.SelectedNode.Tag is LearningTaskNode)
+                {
+                    LearningTaskNode source = tree.SelectedNode.Tag as LearningTaskNode;
+                    int targetPosition = source.Parent.Nodes.IndexOf(source);
+                    foreach (LearningTaskNode node in newLearningTaskNodes)
+                    {
+                        source.Parent.Nodes.Insert(++targetPosition, node);
+                    }
+                }
             }
         }
 
