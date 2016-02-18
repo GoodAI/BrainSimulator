@@ -163,11 +163,10 @@
             // 
             // btnSaveAs
             // 
-            this.btnSaveAs.Image = global::GoodAI.School.GUI.Properties.Resources.save_16xLG;
+            this.btnSaveAs.Image = global::GoodAI.School.GUI.Properties.Resources.saveas_16xLG;
             this.btnSaveAs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveAs.Name = "btnSaveAs";
-            this.btnSaveAs.Size = new System.Drawing.Size(36, 22);
-            this.btnSaveAs.Text = "...";
+            this.btnSaveAs.Size = new System.Drawing.Size(23, 22);
             this.btnSaveAs.ToolTipText = "Save Project As";
             this.btnSaveAs.Click += new System.EventHandler(this.SaveProjectAs);
             // 
