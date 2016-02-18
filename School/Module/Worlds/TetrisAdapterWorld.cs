@@ -46,10 +46,6 @@ namespace GoodAI.School.Worlds
                 VisualWidth = School.Visual.Dims[0];
                 VisualHeight = School.Visual.Dims[1];
             }
-            else
-            {
-                VisualHeight = VisualWidth = 256;
-            }
 
             base.UpdateMemoryBlocks();
         }
@@ -90,7 +86,7 @@ namespace GoodAI.School.Worlds
         public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualOutput.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualOutput.Count, School.VisualSize));
+            VisualOutput.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualOutput.Count, School.Visual.Count));
 
             if (BrickAreaOutput.Count > 0)
                 BrickAreaOutput.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(BrickAreaOutput.Count, School.DataSize));

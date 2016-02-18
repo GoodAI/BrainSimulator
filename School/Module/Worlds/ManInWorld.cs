@@ -205,7 +205,7 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.VisualSize));
+            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.Visual.Count));
             if (Objects.Count > 0)
                 Objects.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(Objects.Count, School.DataSize));
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
