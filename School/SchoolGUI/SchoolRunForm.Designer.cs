@@ -65,25 +65,30 @@
             this.btnPause = new System.Windows.Forms.ToolStripButton();
             this.btnStepOver = new System.Windows.Forms.ToolStripButton();
             this.btnDebug = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnObserver = new System.Windows.Forms.ToolStripButton();
             this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.observerCheckBox = new System.Windows.Forms.CheckBox();
+            this.levelNodesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.attributeNodesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.levelNodesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.attributeNodesBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TaskType,
@@ -208,7 +213,9 @@
             this.btnStop,
             this.btnPause,
             this.btnStepOver,
-            this.btnDebug});
+            this.btnDebug,
+            this.toolStripSeparator1,
+            this.btnObserver});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1130, 25);
@@ -261,6 +268,21 @@
             this.btnDebug.Name = "btnDebug";
             this.btnDebug.Size = new System.Drawing.Size(23, 22);
             this.btnDebug.Text = "Debug Simulation";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnObserver
+            // 
+            this.btnObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnObserver.Image = global::GoodAI.School.GUI.Properties.Resources.observer_icon;
+            this.btnObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnObserver.Name = "btnObserver";
+            this.btnObserver.Size = new System.Drawing.Size(23, 22);
+            this.btnObserver.Text = "toolStripButton1";
+            this.btnObserver.Click += new System.EventHandler(this.btnObserver_Click);
             // 
             // observerDockPanel
             // 
@@ -317,24 +339,23 @@
             this.observerDockPanel.Skin = dockPanelSkin1;
             this.observerDockPanel.TabIndex = 6;
             // 
-            // observerCheckBox
+            // levelNodesBindingSource
             // 
-            this.observerCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.observerCheckBox.AutoSize = true;
-            this.observerCheckBox.Checked = true;
-            this.observerCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.observerCheckBox.Location = new System.Drawing.Point(738, 414);
-            this.observerCheckBox.Name = "observerCheckBox";
-            this.observerCheckBox.Size = new System.Drawing.Size(69, 17);
-            this.observerCheckBox.TabIndex = 8;
-            this.observerCheckBox.Text = "Observer";
-            this.observerCheckBox.UseVisualStyleBackColor = true;
-            this.observerCheckBox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.levelNodesBindingSource.AllowNew = false;
+            this.levelNodesBindingSource.DataSource = typeof(GoodAI.School.GUI.LevelNode);
+            // 
+            // attributeNodesBindingSource
+            // 
+            this.attributeNodesBindingSource.AllowNew = false;
+            this.attributeNodesBindingSource.DataSource = typeof(GoodAI.School.GUI.LearningTaskNode);
             // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.DataBindings.Add(new System.Windows.Forms.Binding("Name", this.attributeNodesBindingSource, "Text", true));
+            this.tabControl1.DataBindings.Add(new System.Windows.Forms.Binding("Tag", this.levelNodesBindingSource, "Text", true));
+            this.tabControl1.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", this.levelNodesBindingSource, "Index", true));
             this.tabControl1.Location = new System.Drawing.Point(372, 29);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -347,7 +368,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1130, 555);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.observerCheckBox);
             this.Controls.Add(this.observerDockPanel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.dataGridView1);
@@ -361,6 +381,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.levelNodesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.attributeNodesBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -370,6 +392,8 @@
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource learningTaskNodeBindingSource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn worldDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnRun;
@@ -378,8 +402,21 @@
         private System.Windows.Forms.ToolStripButton btnStepOver;
         private System.Windows.Forms.ToolStripButton btnDebug;
         private WeifenLuo.WinFormsUI.Docking.DockPanel observerDockPanel;
-        private System.Windows.Forms.CheckBox observerCheckBox;
+        private System.Windows.Forms.BindingSource levelNodesBindingSource;
+        private System.Windows.Forms.BindingSource attributeNodesBindingSource;
         private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskTypeDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn worldTypeDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn timeDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn statusDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn enabledDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn TaskType;
         private System.Windows.Forms.DataGridViewTextBoxColumn WorldType;
         private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn;
@@ -392,5 +429,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton btnObserver;
     }
 }

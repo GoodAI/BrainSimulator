@@ -32,7 +32,7 @@ namespace GoodAI.School.GUI
         private int m_stepOffset = 0;
         private DateTime m_ltStart;
 
-        private bool m_showObserver { get { return observerCheckBox.Checked; } }
+        private bool m_showObserver { get { return btnObserver.Checked; } }
 
         public string RunName
         {
@@ -59,7 +59,7 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
             InitializeComponent();
 
-            observerCheckBox.Checked = Properties.School.Default.ShowVisual;
+            btnObserver.Checked = Properties.School.Default.ShowVisual;
 
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
@@ -272,13 +272,6 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            Properties.School.Default.ShowVisual = (sender as CheckBox).Checked;
-            Properties.School.Default.Save();
-            SetObserver();
-        }
-
         private void simulationStart(object sender, EventArgs e)
         {
             if (m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
@@ -341,12 +334,18 @@ namespace GoodAI.School.GUI
                 for (int k = 13; k > 2; k--)
                 {
                     dgv.Columns.RemoveAt(k);
-                    Console.WriteLine(dgv.Columns.Count);
                 }
                 dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 tabControl1.Update();
             }
             
+        }
+
+        private void btnObserver_Click(object sender, EventArgs e)
+        {
+            Properties.School.Default.ShowVisual = (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
+            Properties.School.Default.Save();
+            SetObserver();
         }
     }
 }

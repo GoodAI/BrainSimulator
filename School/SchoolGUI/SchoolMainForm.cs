@@ -265,6 +265,11 @@ namespace GoodAI.School.GUI
             CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
             m_model.Nodes.Add(node);
             UpdateButtons();    //for activating Run button - workaround because events of tree model are not working as expected
+
+            // Curriculum name directly editable upon creation
+            tree.SelectedNode = tree.FindNodeByTag(node);
+            NodeTextBox control = (NodeTextBox)tree.NodeControls.ElementAt(1);
+            control.BeginEdit();
         }
 
         private void btnDeleteCurr_Click(object sender, EventArgs e)
