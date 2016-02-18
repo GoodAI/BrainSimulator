@@ -39,13 +39,23 @@ namespace GoodAI.School.GUI
             var interfaceType = typeof(IWorldAdapter);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => interfaceType.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
+                .Where(p => interfaceType.IsAssignableFrom(p) 
+                    && !p.IsInterface 
+                    && !p.IsAbstract
+                    && IsAdmitted(p));
             foreach (Type type in types)
             {
                 worldList.Items.Add(new TypeListItem(type));
             }
             if (worldList.Items.Count > 0)
                 worldList.SelectedIndex = 0;
+        }
+
+        // True if the world should appear in the GUI
+        // Used to suppress worlds that should not be used
+        private bool IsAdmitted(Type p)
+        {
+            return p != typeof(PlumberWorld);
         }
 
         private void PopulateLearningTaskList()
