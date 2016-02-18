@@ -68,14 +68,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnObserver = new System.Windows.Forms.ToolStripButton();
             this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.levelNodesBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.attributeNodesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
             this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.levelNodesBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.attributeNodesBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -339,23 +335,10 @@
             this.observerDockPanel.Skin = dockPanelSkin1;
             this.observerDockPanel.TabIndex = 6;
             // 
-            // levelNodesBindingSource
-            // 
-            this.levelNodesBindingSource.AllowNew = false;
-            this.levelNodesBindingSource.DataSource = typeof(GoodAI.School.GUI.LevelNode);
-            // 
-            // attributeNodesBindingSource
-            // 
-            this.attributeNodesBindingSource.AllowNew = false;
-            this.attributeNodesBindingSource.DataSource = typeof(GoodAI.School.GUI.LearningTaskNode);
-            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.DataBindings.Add(new System.Windows.Forms.Binding("Name", this.attributeNodesBindingSource, "Text", true));
-            this.tabControl1.DataBindings.Add(new System.Windows.Forms.Binding("Tag", this.levelNodesBindingSource, "Text", true));
-            this.tabControl1.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", this.levelNodesBindingSource, "Index", true));
             this.tabControl1.Location = new System.Drawing.Point(372, 29);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -381,8 +364,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.levelNodesBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.attributeNodesBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -402,8 +383,6 @@
         private System.Windows.Forms.ToolStripButton btnStepOver;
         private System.Windows.Forms.ToolStripButton btnDebug;
         private WeifenLuo.WinFormsUI.Docking.DockPanel observerDockPanel;
-        private System.Windows.Forms.BindingSource levelNodesBindingSource;
-        private System.Windows.Forms.BindingSource attributeNodesBindingSource;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskTypeDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn worldTypeDataGridViewTextBoxColumn;
