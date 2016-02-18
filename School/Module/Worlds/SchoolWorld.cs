@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using YAXLib;
 using GoodAI.School.Worlds;
+using System.Windows.Forms;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -219,8 +220,17 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void Validate(MyValidator validator)
         {
-            validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
-            validator.AssertError(Curriculum != null, this, "Curriculum must not be null. Start the simulation from School GUI.");
+            if (ActionInput == null)
+            {
+                validator.AssertError(false, this, "ActionInput must not be null");
+                MessageBox.Show("The simulation cannot start because no inputs are provided to ActionInput", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            if (Curriculum == null)
+            {
+                validator.AssertError(false, this, "Curriculum must not be null. Start the simulation from School GUI.");
+                MessageBox.Show("The simulation cannot start because Curriculum is null, it cannot be null. Start the simulation from School GUI.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public MyNode AffectedNode { get { return this; } }
