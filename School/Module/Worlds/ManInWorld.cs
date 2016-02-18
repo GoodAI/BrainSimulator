@@ -1,4 +1,12 @@
-﻿using GoodAI.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using GoodAI.Core;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
@@ -43,7 +51,7 @@ namespace GoodAI.Modules.School.Worlds
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1)]
+        [MyOutputBlock(1), MyUnmanaged]
         public MyMemoryBlock<float> VisualPOW
         {
             get { return GetOutput(1); }
@@ -98,7 +106,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public float Time = 1f;
 
-        private bool m_IsWorldFrozen = false;
+        private bool m_IsWorldFrozen;
         public bool IsWorldFrozen { get { return m_IsWorldFrozen; } } // nothing moves in a frozen world
 
         // noise:
@@ -142,8 +150,7 @@ namespace GoodAI.Modules.School.Worlds
         public override MyMemoryBlock<float> GetInput(int index)
         {
             if (ControlsAdapterTemp != null)  //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
-                return ControlsAdapterTemp as MyMemoryBlock<float>;
-            else
+                return ControlsAdapterTemp;
                 return base.GetInput<float>(index);
         }
 
@@ -151,7 +158,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (ControlsAdapterTemp != null) //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
                 return ControlsAdapterTemp as MyMemoryBlock<T>;
-            else
                 return base.GetInput<T>(index);
         }
 
@@ -159,7 +165,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (ControlsAdapterTemp != null) //HACK which checks if World is standalone or in SchoolWorld. TODO fix it somehow.
                 return ControlsAdapterTemp;
-            else
                 return base.GetAbstractInput(index);
         }
 
@@ -200,7 +205,7 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.VisualSize));
+            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.Visual.Count));
             if (Objects.Count > 0)
                 Objects.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(Objects.Count, School.DataSize));
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
@@ -236,14 +241,14 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            //if (School != null)
-            //{
-            //    POW_WIDTH = School.Visual.Dims[0];
-            //    POW_HEIGHT = School.Visual.Dims[1];
+            if (School != null)
+            {
+                POW_WIDTH = School.Visual.Dims[0];
+                POW_HEIGHT = School.Visual.Dims[1];
 
-            //    FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
-            //    FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
-            //}
+                FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
+                FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
+            }
 
             VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT;
             VisualFOW.ColumnHint = FOW_WIDTH;
@@ -370,7 +375,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public Point RandomPositionInsidePowNonCovering(Random rndGen, Size size, int objectMargin = 1)
         {
-            return RandomPositionInsideRectangleNonCovering(rndGen, size, this.GetPowGeometry(), objectMargin);
+            return RandomPositionInsideRectangleNonCovering(rndGen, size, GetPowGeometry(), objectMargin);
         }
 
 
@@ -453,7 +458,7 @@ namespace GoodAI.Modules.School.Worlds
             if (m_bitmapTable.ContainsKey(path))
                 return m_bitmapTable[path].Item1.Width * m_bitmapTable[path].Item1.Height * PIXEL_SIZE;
 
-            foreach (string dir in new string[] { TEXTURE_DIR, TEXTURE_DIR_COMMON })
+            foreach (string dir in new[] { TEXTURE_DIR, TEXTURE_DIR_COMMON })
             {
                 try
                 {
@@ -1021,8 +1026,8 @@ namespace GoodAI.Modules.School.Worlds
 
             private MyCudaKernel m_AddRgbNoiseKernel;
 
-            INativeWindow m_window = null;
-            IGraphicsContext m_context = null;
+            INativeWindow m_window;
+            IGraphicsContext m_context;
 
             private Dictionary<String, int> m_textureHandles;
             bool m_glInitialized;
@@ -1033,14 +1038,19 @@ namespace GoodAI.Modules.School.Worlds
 
                 m_textureHandles = new Dictionary<string, int>();
                 m_glInitialized = false;
+
+                // A hack to prevent BS from crashing after init
+                Owner.VisualPOW.ExternalPointer =
+                    MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU, () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
             }
 
             public override void Execute()
             {
                 if (!m_glInitialized)
                 {
-                    //Dispose();
-                    onlyOnce();
+                    // Clean the residual memory from init
+                    MyMemoryManager.Instance.ClearGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU);
+                    InitGL();
                     m_glInitialized = true;
                 }
 
@@ -1062,7 +1072,7 @@ namespace GoodAI.Modules.School.Worlds
                 copyPixelsPOW();
             }
 
-            void onlyOnce()
+            void InitGL()
             {
                 if (m_context != null)
                     m_context.Dispose();
@@ -1107,7 +1117,6 @@ namespace GoodAI.Modules.School.Worlds
                 m_fboHandle = (uint)GL.GenFramebuffer();
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_fboHandle);
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, m_renderTextureHandle, 0);
-
 
                 // Setup Cuda <-> OpenGL interop
                 int length = Owner.POW_HEIGHT * Owner.POW_WIDTH * sizeof(uint);
@@ -1208,42 +1217,6 @@ namespace GoodAI.Modules.School.Worlds
                 GL.End();
             }
 
-            void copyPixelsPOW()
-            {
-                // Prepare the results for CUDA
-
-                // bind pixel buffer object
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
-                // bind buffer from which data will be read
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                // read data to PBO (IntPtr.Zero means offset is 0)
-                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
-                GL.ReadBuffer(ReadBufferMode.None);
-
-                if (m_renderResource != null && m_renderResource.IsRegistered && !m_renderResource.IsMapped)
-                {
-                    // map the interop resource
-                    m_renderResource.Map();
-                }
-
-                int size = Owner.POW_HEIGHT * Owner.POW_WIDTH * Marshal.SizeOf(typeof(uint));
-                var ptr = m_renderResource.GetMappedPointer<uint>().DevicePointer;
-                Owner.VisualPOW.GetDevice(Owner).CopyToDevice(ptr, 0, 0, size);
-
-                // deinit CUDA interop
-                m_renderResource.UnMap();
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-
-                // add noise over POW
-                if (Owner.IsImageNoise)
-                {
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, (SizeT)(Owner.AgentVisualTemp.Count), Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
-
-                    m_AddRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
-                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
-                }
-            }
-
             void renderBackground()
             {
                 GL.PushMatrix();
@@ -1253,9 +1226,9 @@ namespace GoodAI.Modules.School.Worlds
                     GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
                     GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2((float)Owner.FOW_WIDTH, 0f);
+                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2(Owner.FOW_WIDTH, 0f);
                     GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
-                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, (float)Owner.FOW_HEIGHT);
+                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, Owner.FOW_HEIGHT);
                     GL.BindTexture(TextureTarget.Texture2D, 0);
                 }
                 else
@@ -1283,13 +1256,12 @@ namespace GoodAI.Modules.School.Worlds
                 // TODO: object rendering order -- environment first, then creatures and active objects
                 foreach (var gameObject in Owner.gameObjects)
                 {
-
                     GL.PushMatrix();
 
                     // translate object to its position in the scene
-                    GL.Translate((float)gameObject.X, (float)gameObject.Y, 0.0f);
+                    GL.Translate(gameObject.X, gameObject.Y, 0.0f);
 
-                    GL.Scale((float)gameObject.Width, (float)gameObject.Height, 1f);
+                    GL.Scale(gameObject.Width, gameObject.Height, 1f);
 
                     // translate back
                     GL.Translate(0.5f, 0.5f, 0.0f);
@@ -1328,6 +1300,39 @@ namespace GoodAI.Modules.School.Worlds
                 GL.Disable(EnableCap.Blend);
 
                 //GL.PopAttrib(); // restores GL.Viewport() parameters
+            }
+
+            void copyPixelsPOW()
+            {
+                // Prepare the results for CUDA
+                // deinit CUDA interop to enable copying
+                if (m_renderResource.IsMapped)
+                    m_renderResource.UnMap();
+
+                // bind pixel buffer object
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                // bind buffer from which data will be read
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                // read data to PBO (IntPtr.Zero means offset is 0)
+                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
+                GL.ReadBuffer(ReadBufferMode.None);
+
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                // Update the pointer for other usage in BS
+                m_renderResource.Map();
+                Owner.VisualPOW.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                Owner.VisualPOW.FreeDevice();
+                Owner.VisualPOW.AllocateDevice();
+
+                // add noise over POW
+                if (Owner.IsImageNoise)
+                {
+                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
+
+                    m_AddRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
+                    m_AddRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
+                }
             }
 
             public void drawShape(GameObject gameObject)
@@ -1506,7 +1511,7 @@ namespace GoodAI.Modules.School.Worlds
                     GL.DeleteTextures(1, ref m_renderTextureHandle);
                 }
 
-                // delete FbO
+                // delete FBO
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
                 if (m_fboHandle != 0)
                 {
@@ -1523,15 +1528,25 @@ namespace GoodAI.Modules.School.Worlds
                 // delete CUDA <-> GL interop
                 if (m_renderResource != null)
                 {
-                    if (m_renderResource.IsMapped)
+                    try
                     {
-                        m_renderResource.UnMap();
+                        if (m_renderResource.IsMapped)
+                        {
+                            m_renderResource.UnMap();
+                        }
+                        if (m_renderResource.IsRegistered)
+                        {
+                            m_renderResource.Unregister();
+                        }
                     }
-                    if (m_renderResource.IsRegistered)
+                    catch (Exception e)
                     {
-                        m_renderResource.Unregister();
+                        MyLog.DEBUG.WriteLine(Name + ": " + e.Message);
                     }
-                    m_renderResource.Dispose();
+                    finally
+                    {
+                        m_renderResource.Dispose();
+                    }
                 }
 
                 if (m_context != null)

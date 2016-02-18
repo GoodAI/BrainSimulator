@@ -34,7 +34,7 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        
+
         public MyWorkingNode World { get { return this; } }
         public SchoolWorld School { get; set; }
 
@@ -43,12 +43,15 @@ namespace GoodAI.School.Worlds
             return RenderGameTask;
         }
 
-        void IWorldAdapter.UpdateMemoryBlocks()
+        public override void UpdateMemoryBlocks()
         {
-        //    DISPLAY_WIDTH = School.Visual.Dims[0];
-        //    DISPLAY_HEIGHT = School.Visual.Dims[1];
+            if (School != null)
+            {
+                DISPLAY_WIDTH = School.Visual.Dims[0];
+                DISPLAY_HEIGHT = School.Visual.Dims[1];
+            }
 
-            UpdateMemoryBlocks();
+            base.UpdateMemoryBlocks();
         }
 
         public void InitAdapterMemory()
@@ -80,17 +83,17 @@ namespace GoodAI.School.Worlds
         public void InitWorldOutputs(int nGPU)
         {
             m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
-            m_kernel.SetupExecution(256 * 256);
+            m_kernel.SetupExecution(DISPLAY_WIDTH * DISPLAY_HEIGHT);
 
             m_grayscaleKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawGrayscaleKernel");
-            m_grayscaleKernel.SetupExecution(256 * 256);
+            m_grayscaleKernel.SetupExecution(DISPLAY_WIDTH * DISPLAY_HEIGHT);
         }
 
         public void MapWorldOutputs()
         {
             // Rescale data from world to wrapper
-            m_kernel.Run(Visual, School.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
-            m_grayscaleKernel.Run(School.Visual, School.Visual, 256 * 256);
+            //m_kernel.Run(Visual, School.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
+            m_grayscaleKernel.Run(Visual, School.Visual, DISPLAY_WIDTH * DISPLAY_HEIGHT);
 
             //            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
 

@@ -90,21 +90,66 @@ namespace GoodAI.Modules.School.Worlds
 
         #region MemoryBlocks sizes
 
-        [MyBrowsable, Category("World Sizes")]
-        [YAXSerializableField(DefaultValue = 65536)] // 196608 768 * 256
-        public int VisualSize { get; set; }
+        private float m_aspectRatio;
+        private int m_width;
+        private int m_height;
 
-        [MyBrowsable, Category("World Sizes")]
+        [MyBrowsable, Category("Sizes - Visual"), DisplayName("\tAspectRatio"), ReadOnly(true)]
+        [YAXSerializableField(DefaultValue = 1)]
+        public float AspectRatio
+        {
+            get { return m_aspectRatio; }
+            set
+            {
+                m_aspectRatio = value;
+                int count = Width * Height;
+
+                // Get sizes that have the same count of pixels but a different aspect ratio -- wh=c & w/h=r
+                m_width = (int)Math.Sqrt(m_aspectRatio * count);
+                if (Width > 0)
+                    m_height = count / Width; // may leave out a few pixels from count due to integer division
+            }
+        }
+
+        [MyBrowsable, Category("Sizes - Visual"), DisplayName("\tWidth")]
+        [YAXSerializableField(DefaultValue = 256)]
+        public int Width
+        {
+            get { return m_width; }
+            set
+            {
+                if (value == 0)
+                    return;
+                m_width = Math.Max(0, value);
+                m_height = (int)(m_width / AspectRatio);
+            }
+        }
+
+        [MyBrowsable, Category("Sizes - Visual")]
+        [YAXSerializableField(DefaultValue = 256)]
+        public int Height
+        {
+            get { return m_height; }
+            set
+            {
+                if (value == 0)
+                    return;
+                m_height = Math.Max(0, value);
+                m_width = (int)(m_height * AspectRatio);
+            }
+        }
+
+        [MyBrowsable, Category("Sizes - World")]
         [YAXSerializableField(DefaultValue = 1000)]
         public int TextSize { get; set; }
 
-        [MyBrowsable, Category("World Sizes")]
+        [MyBrowsable, Category("Sizes - World")]
         [YAXSerializableField(DefaultValue = 100)]
         public int DataSize { get; set; }
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Dims = GetShape(VisualSize);
+            Visual.Dims = new TensorDimensions(Width, Height);
             Text.Count = TextSize;
             Data.Count = DataSize;
             DataLength.Count = 1;
@@ -115,34 +160,10 @@ namespace GoodAI.Modules.School.Worlds
                 CurrentWorld.UpdateMemoryBlocks();
         }
 
-        static TensorDimensions GetShape(int pixelCount)
-        {
-            // Borrowed from MyAbstractObserver
-            int root = (int)Math.Sqrt(pixelCount);
-            int i = root;
-            int width = pixelCount / root;
-            int height = root + 1;
-
-            while (i > root / 2)
-            {
-                if (pixelCount % root == 0)
-                {
-                    width = pixelCount / root;
-                    height = root;
-                    break;
-                }
-
-                root--;
-            }
-
-            return new TensorDimensions(width, height);
-        }
-
         #endregion
 
 
         private IWorldAdapter m_currentWorld;
-        //private bool m_switchModel = true;
 
         [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter)), YAXDontSerialize]
         public IWorldAdapter CurrentWorld
@@ -166,7 +187,6 @@ namespace GoodAI.Modules.School.Worlds
             // Notify BS that the model has changed -- it will reuse the old model otherwise and won't call inits on CurrentWorld's tasks when run
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
             {
-                m_shouldRunFullInit = true;
                 m_isNewLearningTask = true;
                 Curriculum.Reset();
             }
@@ -180,7 +200,6 @@ namespace GoodAI.Modules.School.Worlds
 
         Random m_rndGen = new Random();
 
-        private bool m_shouldRunFullInit = true;
         private bool m_isNewLearningTask = true;
         private bool m_isAfterChangeModelInit = false;
         private bool m_isAfterChangeModelExecute = false;
