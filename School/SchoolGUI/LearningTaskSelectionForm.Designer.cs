@@ -33,7 +33,7 @@
             this.learningTaskList = new System.Windows.Forms.CheckedListBox();
             this.learningTaskDescription = new System.Windows.Forms.WebBrowser();
             this.label1 = new System.Windows.Forms.Label();
-            this.worldList = new System.Windows.Forms.ListBox();
+            this.worldList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // button1
@@ -65,9 +65,9 @@
             this.learningTaskList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.learningTaskList.FormattingEnabled = true;
-            this.learningTaskList.Location = new System.Drawing.Point(-1, 75);
+            this.learningTaskList.Location = new System.Drawing.Point(-1, 45);
             this.learningTaskList.Name = "learningTaskList";
-            this.learningTaskList.Size = new System.Drawing.Size(224, 334);
+            this.learningTaskList.Size = new System.Drawing.Size(224, 364);
             this.learningTaskList.TabIndex = 2;
             this.learningTaskList.SelectedValueChanged += new System.EventHandler(this.learningTaskList_SelectedValueChanged);
             // 
@@ -76,10 +76,10 @@
             this.learningTaskDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.learningTaskDescription.Location = new System.Drawing.Point(223, 75);
+            this.learningTaskDescription.Location = new System.Drawing.Point(223, 45);
             this.learningTaskDescription.MinimumSize = new System.Drawing.Size(20, 20);
             this.learningTaskDescription.Name = "learningTaskDescription";
-            this.learningTaskDescription.Size = new System.Drawing.Size(625, 341);
+            this.learningTaskDescription.Size = new System.Drawing.Size(625, 371);
             this.learningTaskDescription.TabIndex = 3;
             // 
             // label1
@@ -93,12 +93,12 @@
             // 
             // worldList
             // 
-            this.worldList.DisplayMember = "DisplayName";
+            this.worldList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.worldList.FormattingEnabled = true;
-            this.worldList.Location = new System.Drawing.Point(57, 12);
+            this.worldList.Location = new System.Drawing.Point(57, 8);
             this.worldList.Name = "worldList";
-            this.worldList.Size = new System.Drawing.Size(185, 56);
-            this.worldList.TabIndex = 6;
+            this.worldList.Size = new System.Drawing.Size(174, 21);
+            this.worldList.TabIndex = 7;
             this.worldList.SelectedIndexChanged += new System.EventHandler(this.worldList_SelectedIndexChanged);
             // 
             // LearningTaskSelectionForm
@@ -131,6 +131,6 @@
         private System.Windows.Forms.CheckedListBox learningTaskList;
         private System.Windows.Forms.WebBrowser learningTaskDescription;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox worldList;
+        private System.Windows.Forms.ComboBox worldList;
     }
 }

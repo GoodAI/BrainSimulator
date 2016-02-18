@@ -111,7 +111,6 @@ namespace GoodAI.School.GUI
         private void worldList_SelectedIndexChanged(object sender, EventArgs e)
         {
             PopulateLearningTaskList();
-
         }
     }
 
