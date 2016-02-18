@@ -58,7 +58,7 @@ namespace GoodAI.School.GUI
         }
     }
 
-    public class LevelNode : Node
+    public class LevelNode
     {
         public int Level { get; set; }
 
@@ -67,7 +67,7 @@ namespace GoodAI.School.GUI
             Level = level;
         }
 
-        public override string Text
+        public string Text
         {
             get
             {
@@ -76,24 +76,22 @@ namespace GoodAI.School.GUI
         }
     }
 
-    public class AttributeNode : Node
+    public class AttributeNode
     {
         public string Name { get; set; }
-        public float Value { get; set; }
-        public Type Type { get; set; }
+        public string Value { get; set; }
+        private Type Type { get; set; }
 
         public AttributeNode(string name, float value, Type type)
         {
             this.Name = name;
-            this.Value = value;
+            
             this.Type = type;
-        }
-
-        public override string Text
-        {
-            get
+            if (type == typeof(Single) || type == typeof(Double))
             {
-                return Name;
+                this.Value = ((Single)value).ToString("F");
+            }else{
+                this.Value = Convert.ChangeType(value, type).ToString();
             }
         }
     }

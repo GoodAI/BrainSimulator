@@ -32,6 +32,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.learningTaskList = new System.Windows.Forms.CheckedListBox();
             this.learningTaskDescription = new System.Windows.Forms.WebBrowser();
+            this.comboWorlds = new System.Windows.Forms.ComboBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -63,9 +65,9 @@
             this.learningTaskList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.learningTaskList.FormattingEnabled = true;
-            this.learningTaskList.Location = new System.Drawing.Point(-1, 0);
+            this.learningTaskList.Location = new System.Drawing.Point(-1, 60);
             this.learningTaskList.Name = "learningTaskList";
-            this.learningTaskList.Size = new System.Drawing.Size(224, 334);
+            this.learningTaskList.Size = new System.Drawing.Size(224, 274);
             this.learningTaskList.TabIndex = 2;
             this.learningTaskList.SelectedValueChanged += new System.EventHandler(this.learningTaskList_SelectedValueChanged);
             // 
@@ -74,11 +76,28 @@
             this.learningTaskDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.learningTaskDescription.Location = new System.Drawing.Point(223, 0);
+            this.learningTaskDescription.Location = new System.Drawing.Point(223, 60);
             this.learningTaskDescription.MinimumSize = new System.Drawing.Size(20, 20);
             this.learningTaskDescription.Name = "learningTaskDescription";
-            this.learningTaskDescription.Size = new System.Drawing.Size(625, 338);
+            this.learningTaskDescription.Size = new System.Drawing.Size(625, 278);
             this.learningTaskDescription.TabIndex = 3;
+            // 
+            // comboWorlds
+            // 
+            this.comboWorlds.FormattingEnabled = true;
+            this.comboWorlds.Location = new System.Drawing.Point(57, 23);
+            this.comboWorlds.Name = "comboWorlds";
+            this.comboWorlds.Size = new System.Drawing.Size(123, 21);
+            this.comboWorlds.TabIndex = 4;
+            this.comboWorlds.SelectedIndexChanged += new System.EventHandler(this.comboWorlds_SelectedIndexChanged);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(1, 24);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(50, 20);
+            this.textBox1.TabIndex = 5;
+            this.textBox1.Text = "World:";
             // 
             // LearningTaskSelectionForm
             // 
@@ -87,6 +106,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
             this.ClientSize = new System.Drawing.Size(849, 391);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.comboWorlds);
             this.Controls.Add(this.learningTaskDescription);
             this.Controls.Add(this.learningTaskList);
             this.Controls.Add(this.button2);
@@ -97,6 +118,7 @@
             this.Text = "Learning Task Selection Form";
             this.Load += new System.EventHandler(this.LearningTaskSelectionForm_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -106,5 +128,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckedListBox learningTaskList;
         private System.Windows.Forms.WebBrowser learningTaskDescription;
+        private System.Windows.Forms.ComboBox comboWorlds;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
