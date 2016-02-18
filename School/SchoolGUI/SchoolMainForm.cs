@@ -358,7 +358,7 @@ namespace GoodAI.School.GUI
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            OpenFloatingOrActivate(RunView, DockPanel);
+            //OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
 
             //PlanDesign design = new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode));
@@ -372,15 +372,24 @@ namespace GoodAI.School.GUI
                 Select(x => x as LearningTaskNode).
                 Where(x => x.Enabled == true);
 
-            foreach (LearningTaskNode ltNode in ltNodes)
-                data.Add(ltNode);
-            RunView.Data = data;
-            RunView.Design = m_design;
-            if (activeCurricula.Count() == 1)
-                RunView.RunName = activeCurricula.First().Text;
+            if (ltNodes.Count() <= 0)
+            {
+                MessageBox.Show("The simulation cannot start because no active learning tasks were found, add at least one learning task", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             else
-                RunView.RunName = Path.GetFileNameWithoutExtension(m_currentFile);
-            RunView.Ready();
+            { 
+                OpenFloatingOrActivate(RunView, DockPanel);
+         
+                foreach (LearningTaskNode ltNode in ltNodes)
+                    data.Add(ltNode);
+                RunView.Data = data;
+                RunView.Design = m_design;
+                if (activeCurricula.Count() == 1)
+                    RunView.RunName = activeCurricula.First().Text;
+                else
+                    RunView.RunName = Path.GetFileNameWithoutExtension(m_currentFile);
+                RunView.Ready();
+            }
         }
 
         private bool AddFileContent(bool clearWorkspace = false)
