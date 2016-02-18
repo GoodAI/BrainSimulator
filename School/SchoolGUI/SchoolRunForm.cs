@@ -33,6 +33,14 @@ namespace GoodAI.School.GUI
         private DateTime m_ltStart;
 
         private bool m_showObserver { get { return btnObserver.Checked; } }
+        private bool m_emulateSuccess
+        {
+            set
+            {
+                if (m_school != null)
+                    m_school.EmulatedUnitSuccessProbability = value ? 1f : 0f;
+            }
+        }
 
         public string RunName
         {
@@ -185,6 +193,7 @@ namespace GoodAI.School.GUI
         {
             m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
             m_school = (SchoolWorld)m_mainForm.Project.World;
+            m_emulateSuccess = btnEmulateSuccess.Checked;   //set value AFTER the SchoolWorld creation
         }
 
         private void CreateCurriculum()
@@ -204,6 +213,7 @@ namespace GoodAI.School.GUI
             DataGridViewCellStyle highlightStyle = new DataGridViewCellStyle();
             highlightStyle.BackColor = Color.PaleGreen;
 
+            dataGridView1.Rows[m_currentRow].Selected = true;
             foreach (DataGridViewRow row in dataGridView1.Rows)
                 foreach (DataGridViewCell cell in row.Cells)
                     if (row.Index == m_currentRow)
@@ -295,53 +305,56 @@ namespace GoodAI.School.GUI
             Type ltType = ltNode.TaskType;
             Type ltWorld = ltNode.WorldType;
             ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
-            
+
             TrainingSetHints hint = lt.TSProgression[0];
 
             Levels = new List<LevelNode>();
             LevelGrids = new List<DataGridView>();
             Attributes = new List<List<AttributeNode>>();
-            tabControl1.TabPages.Clear();
 
-            for (int i = 0; i < lt.TSProgression.Count; i++)
+            Invoke((MethodInvoker)(() =>
             {
-                // create tab
-                LevelNode ln = new LevelNode(i + 1);
-                Levels.Add(ln);
-                TabPage tp = new TabPage(ln.Text);
-                tabControl1.TabPages.Add(tp);
-                
-                // create grid
-                DataGridView dgv = new DataGridView();
-                LevelGrids.Add(dgv);
-                dgv.Parent = tp;
-                dgv.Margin = new Padding(3);
-                dgv.Dock = DockStyle.Fill;
-                dgv.RowHeadersVisible = false;
-                // create attributes
-                Attributes.Add(new List<AttributeNode>());
-                if (i > 0)
+                tabControl1.TabPages.Clear();
+
+                for (int i = 0; i < lt.TSProgression.Count; i++)
                 {
-                Attributes.Add(Attributes[0]);
+                    // create tab
+                    LevelNode ln = new LevelNode(i + 1);
+                    Levels.Add(ln);
+                    TabPage tp = new TabPage(ln.Text);
+                    tabControl1.TabPages.Add(tp);
+
+                    // create grid
+                    DataGridView dgv = new DataGridView();
+                    LevelGrids.Add(dgv);
+                    dgv.Parent = tp;
+                    dgv.Margin = new Padding(3);
+                    dgv.Dock = DockStyle.Fill;
+                    dgv.RowHeadersVisible = false;
+                    // create attributes
+                    Attributes.Add(new List<AttributeNode>());
+                    if (i > 0)
+                    {
+                        Attributes.Add(Attributes[0]);
+                    }
+                    foreach (var attribute in lt.TSProgression[i])
+                    {
+
+                        AttributeNode an = new AttributeNode(
+                            attribute.Key.Name,
+                            attribute.Value,
+                            attribute.Key.TypeOfValue);
+                        Attributes[i].Add(an);
+                    }
+
+                    Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
+                    dgv.DataSource = Attributes[i];
+
+                    dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                    tabControl1.Update();
                 }
-                foreach (var attribute in lt.TSProgression[i])
-                {
-                    
-                    AttributeNode an = new AttributeNode(
-                        attribute.Key.Name,
-                        attribute.Value,
-                        attribute.Key.TypeOfValue);
-                    Attributes[i].Add(an);
-                }
-
-                Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
-                dgv.DataSource = Attributes[i];
-
-                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-                tabControl1.Update();
-            }
-            
+            }));
         }
 
         private void btnObserver_Click(object sender, EventArgs e)
@@ -349,6 +362,11 @@ namespace GoodAI.School.GUI
             Properties.School.Default.ShowVisual = (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
             Properties.School.Default.Save();
             SetObserver();
+        }
+
+        private void btnEmulateSuccess_Click(object sender, EventArgs e)
+        {
+            m_emulateSuccess = (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
         }
     }
 }

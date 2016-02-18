@@ -186,24 +186,11 @@ namespace GoodAI.Modules.School.Worlds
         private bool m_isAfterChangeModelExecute = false;
 
         public SchoolCurriculum Curriculum { get; set; }
-        private ILearningTask m_currentLearningTask;
-        public ILearningTask CurrentLearningTask
-        {
-            get { return m_currentLearningTask; }
-            set
-            {
-                m_currentLearningTask = value;
-            }
-        }
+        public ILearningTask CurrentLearningTask { get; set; }
 
         private TrainingResult m_taskResult;
         private bool m_drawBlackscreen = false;
 
-        // For testing the progression of learning tasks when we don't have an agent or
-        // available agents can't complete the task, we can emulate training unit success
-        // with the probability set by this parameter.
-        [MyBrowsable, Category("World"), Description("Set to 0 < p <= 1 to emulate the success (with probability p) of training units.")]
-        [YAXSerializableField(DefaultValue = 0)]
         public float EmulatedUnitSuccessProbability { get; set; }
 
         [MyBrowsable, Category("World"), Description("If true, a black screen will be presented for one step after each success.")]
@@ -314,7 +301,7 @@ namespace GoodAI.Modules.School.Worlds
                     return;
                 }
 
-            if (!m_currentLearningTask.IsInitialized)
+            if (!CurrentLearningTask.IsInitialized)
             {
                 InitNewLearningTask();
             }
@@ -325,7 +312,7 @@ namespace GoodAI.Modules.School.Worlds
 
                 // set new level, training unit or step
                 // this also partially sets LTStatus
-                m_taskResult = m_currentLearningTask.EvaluateStep();
+                m_taskResult = CurrentLearningTask.EvaluateStep();
 
                 switch (m_taskResult)
                 {
@@ -382,7 +369,7 @@ namespace GoodAI.Modules.School.Worlds
                 return false;
             }
             // inform user about new LT
-            MyLog.Writer.WriteLine(MyLogLevel.INFO, "Switching to LearningTask: " + m_currentLearningTask.GetTypeName());
+            MyLog.Writer.WriteLine(MyLogLevel.INFO, "Switching to LearningTask: " + CurrentLearningTask.GetTypeName());
 
             CurrentLearningTask.Init();
 
@@ -494,7 +481,7 @@ namespace GoodAI.Modules.School.Worlds
             public override void Init(int nGPU)
             {
                 if (Owner.CurrentWorld != null)
-                Owner.CurrentWorld.InitWorldOutputs(nGPU);
+                    Owner.CurrentWorld.InitWorldOutputs(nGPU);
             }
 
             public override void Execute()
@@ -513,7 +500,7 @@ namespace GoodAI.Modules.School.Worlds
                         case TrainingResult.FinishedTU:
                         case TrainingResult.LevelUp:
                         case TrainingResult.FinishedLT:
-                            // Display a blackscreen as a notification about the agent's success    
+                            // Display a blackscreen as a notification about the agent's success
                             // delay it to the next step -- the learning tasks won't execute next step aswell
                             Owner.m_drawBlackscreen = true;
                             break;
@@ -531,7 +518,7 @@ namespace GoodAI.Modules.School.Worlds
             public override void Init(int nGPU)
             {
                 if (Owner.CurrentWorld != null)
-                Owner.CurrentWorld.InitWorldInputs(nGPU);
+                    Owner.CurrentWorld.InitWorldInputs(nGPU);
             }
 
             public override void Execute()
@@ -552,15 +539,10 @@ namespace GoodAI.Modules.School.Worlds
             public override void Execute()
             {
                 if (Owner.CurrentLearningTask == null)
-                {
-                    //Debug.Assert(false);
-                        return;
-                    }
+                    return;
                 else
-                {
-                Owner.ExecuteLearningTaskStep();
+                    Owner.ExecuteLearningTaskStep();
             }
         }
     }
-}
 }

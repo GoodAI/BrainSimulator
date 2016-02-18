@@ -193,6 +193,16 @@ namespace GoodAI.School.GUI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Symbols_Complete_and_ok_16xLG {
+            get {
+                object obj = ResourceManager.GetObject("Symbols_Complete_and_ok_16xLG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Symbols_Information_16xLG {
             get {
                 object obj = ResourceManager.GetObject("Symbols_Information_16xLG", resourceCulture);

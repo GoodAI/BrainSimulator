@@ -201,6 +201,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\Symbols_Complete_and_ok_16xLG.png" />
     <None Include="Resources\observer_icon.png" />
     <None Include="Resources\Symbols_Information_16xLG.png" />
     <None Include="Resources\autosave.png" />

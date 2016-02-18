@@ -66,6 +66,7 @@
             this.btnStepOver = new System.Windows.Forms.ToolStripButton();
             this.btnDebug = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnEmulateSuccess = new System.Windows.Forms.ToolStripButton();
             this.btnObserver = new System.Windows.Forms.ToolStripButton();
             this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -211,6 +212,7 @@
             this.btnStepOver,
             this.btnDebug,
             this.toolStripSeparator1,
+            this.btnEmulateSuccess,
             this.btnObserver});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -269,6 +271,16 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnEmulateSuccess
+            // 
+            this.btnEmulateSuccess.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnEmulateSuccess.Image = global::GoodAI.School.GUI.Properties.Resources.Symbols_Complete_and_ok_16xLG;
+            this.btnEmulateSuccess.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnEmulateSuccess.Name = "btnEmulateSuccess";
+            this.btnEmulateSuccess.Size = new System.Drawing.Size(23, 22);
+            this.btnEmulateSuccess.Text = "Emulate Success";
+            this.btnEmulateSuccess.Click += new System.EventHandler(this.btnEmulateSuccess_Click);
             // 
             // btnObserver
             // 
@@ -410,5 +422,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
+        private System.Windows.Forms.ToolStripButton btnEmulateSuccess;
     }
 }
