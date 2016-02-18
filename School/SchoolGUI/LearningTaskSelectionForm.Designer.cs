@@ -64,6 +64,7 @@
             // 
             this.learningTaskList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.learningTaskList.CheckOnClick = true;
             this.learningTaskList.FormattingEnabled = true;
             this.learningTaskList.Location = new System.Drawing.Point(-1, 45);
             this.learningTaskList.Name = "learningTaskList";
