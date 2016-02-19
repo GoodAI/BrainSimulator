@@ -452,6 +452,7 @@ namespace GoodAI.School.GUI
         private void btnToggleCheck(object sender, EventArgs e)
         {
             (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
+            Properties.School.Default.AutorunEnabled = btnAutorun.Checked;
         }
 
         #endregion Button clicks
