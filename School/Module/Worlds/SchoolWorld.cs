@@ -199,6 +199,7 @@ namespace GoodAI.Modules.School.Worlds
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
             {
                 m_isNewLearningTask = true;
+                CurrentLearningTask = null;
                 Curriculum.Reset();
             }
         }
@@ -269,7 +270,11 @@ namespace GoodAI.Modules.School.Worlds
                 }
                 return false;
             }
+            if (CurrentLearningTask == null)
+                CurriculumStarting(this, EventArgs.Empty);
             CurrentLearningTask = Curriculum.GetNext();
+            LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
+
             CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
             CurrentWorld.World.EnableDefaultTasks();
             changes.AddNode(CurrentWorld.World);
@@ -426,7 +431,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             // Will be incremented when LT is presented
             LTStatus.Host[LT_IDENTIFIER] = -1;
-            CurriculumStarting(this, EventArgs.Empty);
         }
 
         public void ResetLTStatusFlags()
@@ -443,7 +447,6 @@ namespace GoodAI.Modules.School.Worlds
             LTStatus.Host[LT_IDENTIFIER]++;
             LTStatus.Host[TU_INDEX] = 0;
             LTStatus.Host[LEVEL_INDEX] = 0;
-            LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
         public void NotifyNewLevel()
