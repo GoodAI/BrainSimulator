@@ -69,10 +69,18 @@ namespace GoodAI.Core.Memory
 
         #region Public
 
-        // TODO: report whether or not was the hint successfully applied
         public TensorDimensions TryToApply(TensorDimensions originalDims)
         {
             return ComputeDimensions(originalDims.ElementCount) ?? originalDims;
+        }
+
+        public bool TryToApply(TensorDimensions originalDims, out TensorDimensions customDims)
+        {
+            TensorDimensions adjustedDims = ComputeDimensions(originalDims.ElementCount);
+
+            customDims = adjustedDims ?? originalDims;
+
+            return (adjustedDims != null);
         }
 
         public string PrintSource()
