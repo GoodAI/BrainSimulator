@@ -211,7 +211,12 @@ namespace GoodAI.Core.Nodes
                     break;
             }
 
-            Output.Dims = m_outputDimsHint.TryToApply(Output.Dims);  // Returns original dims when the hint is empty.
+            TensorDimensions adjustedDims;
+
+            if(!m_outputDimsHint.TryToApply(Output.Dims, out adjustedDims))
+                MyLog.WARNING.WriteLine("Join node: Could not apply OutputDimensions.");  // TODO(Premek): Be specific.
+
+            Output.Dims = adjustedDims;  // Adjusted or original.
         }
 
         public override void Validate(MyValidator validator)
