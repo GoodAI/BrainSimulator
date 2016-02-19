@@ -68,6 +68,8 @@ namespace GoodAI.School.GUI
         {
             get
             {
+                if (m_currentRow < 0 || m_currentRow >= Data.Count)
+                    return null;
                 return Data.ElementAt(m_currentRow);
             }
         }
@@ -97,28 +99,15 @@ namespace GoodAI.School.GUI
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (m_school == null)
-                return;
-
             ILearningTask runningTask = m_school.CurrentLearningTask;
-            if (runningTask == null)
-                return;
-
-            if (m_currentRow < 0 || runningTask.GetType() != Data.ElementAt(m_currentRow).TaskType) // next LT
-                GoToNextTask();
-
-            if (runningTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
-            {
-                MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
-                return;
-            }
-
-            UpdateTaskData(runningTask);
+            if (runningTask != null && CurrentTask != null)
+                UpdateTaskData(runningTask);
         }
 
         private void UpdateWorldHandlers(object sender, EventArgs e)
         {
             m_school.CurriculumStarting += PrepareSimulation;
+            m_school.LearningTaskNew += GoToNextTask;
         }
 
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
@@ -153,7 +142,7 @@ namespace GoodAI.School.GUI
             UpdateGridData();
         }
 
-        private void GoToNextTask()
+        private void GoToNextTask(object sender, EventArgs e)
         {
             m_currentRow++;
             m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
@@ -208,19 +197,8 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void CreateCurriculum()
-        {
-            m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
-            // TODO: next two lines are probably not necessary
-            foreach (ILearningTask task in m_school.Curriculum)
-                task.SchoolWorld = m_school;
-        }
-
         private void HighlightCurrentTask()
         {
-            if (m_currentRow < 0)
-                return;
-
             DataGridViewCellStyle defaultStyle = new DataGridViewCellStyle();
             DataGridViewCellStyle highlightStyle = new DataGridViewCellStyle();
             highlightStyle.BackColor = Color.PaleGreen;
@@ -237,14 +215,12 @@ namespace GoodAI.School.GUI
         private void PrepareSimulation(object sender, EventArgs e)
         {
             // data
-            CreateCurriculum();
+            m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
 
             // gui
             m_stepOffset = 0;
             m_currentRow = -1;
-            Data.ForEach(x => x.Steps = 0);
-            Data.ForEach(x => x.Time = 0f);
-            Data.ForEach(x => x.Progress = 0);
+            Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; });
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
