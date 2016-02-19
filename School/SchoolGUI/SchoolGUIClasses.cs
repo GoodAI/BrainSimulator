@@ -33,7 +33,7 @@ namespace GoodAI.School.GUI
 
         public bool IsActive { get; set; }
         public int Progress { get; set; }
-        public string Status { get; set; }
+        public TrainingResult Status { get; set; }
         public int Steps { get; set; }
         public float Time { get; set; }
 
@@ -90,12 +90,14 @@ namespace GoodAI.School.GUI
         public AttributeNode(string name, float value, Type type)
         {
             this.Name = name;
-            
+
             this.Type = type;
             if (type == typeof(Single) || type == typeof(Double))
             {
                 this.Value = ((Single)value).ToString("F");
-            }else{
+            }
+            else
+            {
                 this.Value = Convert.ChangeType(value, type).ToString();
             }
         }

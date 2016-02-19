@@ -275,6 +275,7 @@
             this.btnAutorun.Name = "btnAutorun";
             this.btnAutorun.Size = new System.Drawing.Size(55, 22);
             this.btnAutorun.Text = "Autorun";
+            this.btnAutorun.CheckedChanged += new System.EventHandler(this.btnAutorun_CheckedChanged);
             this.btnAutorun.Click += new System.EventHandler(this.btnToggleCheck);
             // 
             // btnAutosave
@@ -285,6 +286,7 @@
             this.btnAutosave.Name = "btnAutosave";
             this.btnAutosave.Size = new System.Drawing.Size(23, 22);
             this.btnAutosave.Text = "Autosave Results";
+            this.btnAutosave.CheckedChanged += new System.EventHandler(this.btnAutosave_CheckedChanged);
             this.btnAutosave.Click += new System.EventHandler(this.btnToggleCheck);
             // 
             // btnUpload

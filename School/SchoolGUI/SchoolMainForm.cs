@@ -303,7 +303,7 @@ namespace GoodAI.School.GUI
             //LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
 
             if (newLearningTaskNodes.Count > 0)
-            { 
+            {
                 if (tree.SelectedNode.Tag is CurriculumNode)
                 {
                     foreach (LearningTaskNode node in newLearningTaskNodes)
@@ -344,15 +344,15 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void checkBoxAutosave_CheckedChanged(object sender, EventArgs e)
+        private void btnAutosave_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.School.Default.AutosaveEnabled = (sender as CheckBox).Checked;
+            Properties.School.Default.AutosaveEnabled = (sender as ToolStripButton).Checked;
             Properties.School.Default.Save();
         }
 
-        private void checkBoxAutorun_CheckedChanged(object sender, EventArgs e)
+        private void btnAutorun_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.School.Default.AutorunEnabled = (sender as CheckBox).Checked;
+            Properties.School.Default.AutorunEnabled = (sender as ToolStripButton).Checked;
             Properties.School.Default.Save();
         }
 
@@ -377,9 +377,9 @@ namespace GoodAI.School.GUI
                 MessageBox.Show("The simulation cannot start because no active learning tasks were found, add at least one learning task", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
-            { 
+            {
                 OpenFloatingOrActivate(RunView, DockPanel);
-         
+
                 foreach (LearningTaskNode ltNode in ltNodes)
                     data.Add(ltNode);
                 RunView.Data = data;

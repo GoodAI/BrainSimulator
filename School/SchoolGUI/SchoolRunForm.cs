@@ -70,6 +70,8 @@ namespace GoodAI.School.GUI
         {
             get
             {
+                if (m_currentRow < 0 || m_currentRow >= Data.Count)
+                    return null;
                 return Data.ElementAt(m_currentRow);
             }
         }
@@ -99,31 +101,18 @@ namespace GoodAI.School.GUI
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (m_school == null)
-                return;
-
             ILearningTask runningTask = m_school.CurrentLearningTask;
-            if (runningTask == null)
-                return;
-
-            if (m_currentRow < 0 || runningTask.GetType() != Data.ElementAt(m_currentRow).TaskType) // next LT
-                GoToNextTask();
-
-            if (runningTask.GetType() != Data.ElementAt(m_currentRow).TaskType) //should not happen at all - just a safeguard
-            {
-                MyLog.ERROR.WriteLine("One of the Learning Tasks was skipped. Stopping simulation.");
-                return;
-            }
-
-            UpdateTaskData(runningTask);
+            if (runningTask != null && CurrentTask != null)
+                UpdateTaskData(runningTask);
         }
 
         private void UpdateWorldHandlers(object sender, EventArgs e)
         {
             m_school.CurriculumStarting += PrepareSimulation;
+            m_school.LearningTaskFinished += GoToNextTask;
             m_school.LearningTaskNewLevel += UpdateLTLevel;
             m_school.LearningTaskFinished += LearningTaskFinished;
-            m_school.TrainingUnitUpdated += UpdateTUStatus;
+            m_school.TrainingUnitFinished += UpdateTUStatus;
             m_school.TrainingUnitFinished += UpdateTrainingUnitNumber;
         }
 
@@ -187,15 +176,18 @@ namespace GoodAI.School.GUI
 
         private void UpdateTaskData(ILearningTask runningTask)
         {
+            if (CurrentTask == null)
+                return;
             CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
             CurrentTask.Progress = (int)runningTask.Progress;
             TimeSpan diff = DateTime.UtcNow - m_ltStart;
             CurrentTask.Time = (float)Math.Round(diff.TotalSeconds, 2);
+            CurrentTask.Status = m_school.TaskResult;
 
             UpdateGridData();
         }
 
-        private void GoToNextTask()
+        private void GoToNextTask(object sender, SchoolEventArgs e)
         {
             m_currentRow++;
             m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
@@ -250,19 +242,8 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void CreateCurriculum()
-        {
-            m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
-            // TODO: next two lines are probably not necessary
-            foreach (ILearningTask task in m_school.Curriculum)
-                task.SchoolWorld = m_school;
-        }
-
         private void HighlightCurrentTask()
         {
-            if (m_currentRow < 0)
-                return;
-
             DataGridViewCellStyle defaultStyle = new DataGridViewCellStyle();
             DataGridViewCellStyle highlightStyle = new DataGridViewCellStyle();
             highlightStyle.BackColor = Color.PaleGreen;
@@ -279,32 +260,35 @@ namespace GoodAI.School.GUI
         private void PrepareSimulation(object sender, EventArgs e)
         {
             // data
-            CreateCurriculum();
+            m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
 
             // gui
             m_stepOffset = 0;
             m_currentRow = -1;
-            Data.ForEach(x => x.Steps = 0);
-            Data.ForEach(x => x.Time = 0f);
-            Data.ForEach(x => x.Progress = 0);
+            Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; x.Status = TrainingResult.None; });
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
-            if (columnName.Equals(TaskType.Name) || columnName.Equals(WorldType.Name))
+            DataGridViewColumn column = dataGridView1.Columns[e.ColumnIndex];
+
+            if ((column == TaskType || column == WorldType) && e.Value != null)
             {
                 // I am not sure about how bad this approach is, but it get things done
-                if (e.Value != null)
-                {
-                    Type typeValue = e.Value as Type;
+                Type typeValue = e.Value as Type;
 
-                    DisplayNameAttribute displayNameAtt = typeValue.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
-                    if (displayNameAtt != null)
-                        e.Value = displayNameAtt.DisplayName;
-                    else
-                        e.Value = typeValue.Name;
-                }
+                DisplayNameAttribute displayNameAtt = typeValue.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                if (displayNameAtt != null)
+                    e.Value = displayNameAtt.DisplayName;
+                else
+                    e.Value = typeValue.Name;
+            }
+            else if (column == statusDataGridViewTextBoxColumn)
+            {
+                TrainingResult result = (TrainingResult)e.Value;
+                DescriptionAttribute displayNameAtt = result.GetType().GetMember(result.ToString())[0].GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault() as DescriptionAttribute;
+                if (displayNameAtt != null)
+                    e.Value = displayNameAtt.Description;
             }
         }
 
