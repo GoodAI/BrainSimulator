@@ -227,7 +227,7 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = false)]
         public bool ShowBlackscreen { get; set; }
 
-        public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
+        public event EventHandler<SchoolEventArgs> LearningTaskNew = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
         public event EventHandler CurriculumStarting = delegate { };
 
@@ -443,7 +443,7 @@ namespace GoodAI.Modules.School.Worlds
             LTStatus.Host[LT_IDENTIFIER]++;
             LTStatus.Host[TU_INDEX] = 0;
             LTStatus.Host[LEVEL_INDEX] = 0;
-            LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
+            LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
         public void NotifyNewLevel()
