@@ -219,7 +219,7 @@ namespace GoodAI.Modules.School.Worlds
         public SchoolCurriculum Curriculum { get; set; }
         public ILearningTask CurrentLearningTask { get; set; }
 
-        private TrainingResult m_taskResult;
+        public TrainingResult TaskResult { get; private set; }
         private bool m_drawBlackscreen = false;
 
         public float EmulatedUnitSuccessProbability { get; set; }
@@ -229,8 +229,10 @@ namespace GoodAI.Modules.School.Worlds
         public bool ShowBlackscreen { get; set; }
 
         public event EventHandler<SchoolEventArgs> LearningTaskNew = delegate { };
+        public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
         public event EventHandler CurriculumStarting = delegate { };
+        public event EventHandler<SchoolEventArgs> CurriculumFinished = delegate { };
 
         public override void Validate(MyValidator validator)
         {
@@ -263,6 +265,8 @@ namespace GoodAI.Modules.School.Worlds
             if (Curriculum.IsLast())
             {
                 // stop execution
+                CurriculumFinished(this, new SchoolEventArgs(CurrentLearningTask));
+                LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
                 CurrentLearningTask = null;
                 if (Owner.SimulationHandler.CanPause)
                 {
@@ -272,6 +276,8 @@ namespace GoodAI.Modules.School.Worlds
             }
             if (CurrentLearningTask == null)
                 CurriculumStarting(this, EventArgs.Empty);
+
+            LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
             CurrentLearningTask = Curriculum.GetNext();
             LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
 
@@ -341,12 +347,9 @@ namespace GoodAI.Modules.School.Worlds
         {
             ResetLTStatusFlags();
 
-            if (ShowBlackscreen)
-                if (m_drawBlackscreen)
-                {
-                    // Skip task evaluation, a blackscreen will show up this step
-                    return;
-                }
+            if (ShowBlackscreen && m_drawBlackscreen)
+                // Skip task evaluation, a blackscreen will show up this step
+                return;
 
             if (!CurrentLearningTask.IsInitialized)
             {
@@ -359,9 +362,9 @@ namespace GoodAI.Modules.School.Worlds
 
                 // set new level, training unit or step
                 // this also partially sets LTStatus
-                m_taskResult = CurrentLearningTask.EvaluateStep();
+                TaskResult = CurrentLearningTask.EvaluateStep();
 
-                switch (m_taskResult)
+                switch (TaskResult)
                 {
                     case TrainingResult.TUInProgress:
                         break;
@@ -538,12 +541,12 @@ namespace GoodAI.Modules.School.Worlds
                 {
                     Owner.m_drawBlackscreen = false;
                     Owner.Visual.Fill(0);
-                    Owner.m_taskResult = TrainingResult.TUInProgress;
+                    Owner.TaskResult = TrainingResult.TUInProgress;
                     return;
                 }
 
                 if (Owner.ShowBlackscreen)
-                    switch (Owner.m_taskResult)
+                    switch (Owner.TaskResult)
                     {
                         case TrainingResult.FinishedTU:
                         case TrainingResult.LevelUp:

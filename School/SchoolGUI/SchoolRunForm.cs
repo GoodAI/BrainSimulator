@@ -107,7 +107,13 @@ namespace GoodAI.School.GUI
         private void UpdateWorldHandlers(object sender, EventArgs e)
         {
             m_school.CurriculumStarting += PrepareSimulation;
+            m_school.LearningTaskFinished += m_school_LearningTaskFinished;
             m_school.LearningTaskNew += GoToNextTask;
+        }
+
+        private void m_school_LearningTaskFinished(object sender, SchoolEventArgs e)
+        {
+            UpdateTaskData(e.Task);
         }
 
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
@@ -134,15 +140,18 @@ namespace GoodAI.School.GUI
 
         private void UpdateTaskData(ILearningTask runningTask)
         {
+            if (CurrentTask == null)
+                return;
             CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
             CurrentTask.Progress = (int)runningTask.Progress;
             TimeSpan diff = DateTime.UtcNow - m_ltStart;
             CurrentTask.Time = (float)Math.Round(diff.TotalSeconds, 2);
+            CurrentTask.Status = m_school.TaskResult;
 
             UpdateGridData();
         }
 
-        private void GoToNextTask(object sender, EventArgs e)
+        private void GoToNextTask(object sender, SchoolEventArgs e)
         {
             m_currentRow++;
             m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
@@ -220,25 +229,30 @@ namespace GoodAI.School.GUI
             // gui
             m_stepOffset = 0;
             m_currentRow = -1;
-            Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; });
+            Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; x.Status = TrainingResult.None; });
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
-            if (columnName.Equals(TaskType.Name) || columnName.Equals(WorldType.Name))
+            DataGridViewColumn column = dataGridView1.Columns[e.ColumnIndex];
+
+            if ((column == TaskType || column == WorldType) && e.Value != null)
             {
                 // I am not sure about how bad this approach is, but it get things done
-                if (e.Value != null)
-                {
-                    Type typeValue = e.Value as Type;
+                Type typeValue = e.Value as Type;
 
-                    DisplayNameAttribute displayNameAtt = typeValue.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
-                    if (displayNameAtt != null)
-                        e.Value = displayNameAtt.DisplayName;
-                    else
-                        e.Value = typeValue.Name;
-                }
+                DisplayNameAttribute displayNameAtt = typeValue.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                if (displayNameAtt != null)
+                    e.Value = displayNameAtt.DisplayName;
+                else
+                    e.Value = typeValue.Name;
+            }
+            else if (column == statusDataGridViewTextBoxColumn)
+            {
+                TrainingResult result = (TrainingResult)e.Value;
+                DescriptionAttribute displayNameAtt = result.GetType().GetMember(result.ToString())[0].GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault() as DescriptionAttribute;
+                if (displayNameAtt != null)
+                    e.Value = displayNameAtt.Description;
             }
         }
 

@@ -1,17 +1,25 @@
-﻿using System;
-using System.Linq;
-using GoodAI.Core.Nodes;
+﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Worlds;
+using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace GoodAI.Modules.School.Common
 {
     public enum TrainingResult
     {
+        [Description("")]
+        None,
+        [Description("Running")]
         TUInProgress,
+        [Description("Running")]
         FinishedTU,
+        [Description("Failed")]
         FailedLT,
+        [Description("Running")]
         LevelUp, // Implies FinishedTU
+        [Description("Success")]
         FinishedLT, // Implies FinishedTU (and LevelUp)
     }
 
