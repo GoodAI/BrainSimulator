@@ -277,7 +277,8 @@ namespace GoodAI.Modules.School.Worlds
             if (CurrentLearningTask == null)
                 CurriculumStarting(this, EventArgs.Empty);
 
-            LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
+            if (CurrentLearningTask != null)
+                LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
             CurrentLearningTask = Curriculum.GetNext();
             LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
 
