@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModelCreationTests.cs" />
     <Compile Include="MyConversionTests.cs" />
     <Compile Include="MyCsvFileWriterNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,15 +79,24 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
       <Project>{86955C47-2A02-41A4-AB32-C9E592EB2971}</Project>
       <Name>TypeMap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Platform\CoreTests\CoreTests.csproj">
+      <Project>{7D292A38-6B3B-4DF3-A2EB-E2056FE36CEE}</Project>
+      <Name>CoreTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MNIST\Module\MNIST.csproj">
+      <Project>{EDC96485-A8A9-414C-A7D9-65EC0B817732}</Project>
+      <Name>MNIST</Name>
     </ProjectReference>
     <ProjectReference Include="..\Module\BasicNodes.csproj">
       <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
@@ -104,6 +114,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

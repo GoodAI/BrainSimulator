@@ -9,7 +9,7 @@ namespace GoodAI.TypeMapping
 {
     public static class TypeMap
     {
-        private static Container SimpleInjectorContainer
+        public static Container SimpleInjectorContainer
         {
             get
             {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CoreTests;
 using GoodAI.Core;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
@@ -17,7 +18,7 @@ using GoodAI.Modules.Transforms;
 using MNIST;
 using Xunit;
 
-namespace CoreTests
+namespace BasicNodesTests
 {
     public class ModelCreationTests : CoreTestBase
     {
