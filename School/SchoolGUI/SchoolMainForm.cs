@@ -151,6 +151,8 @@ namespace GoodAI.School.GUI
 
             if (selected is CurriculumNode)
                 btnDetailsTask.Enabled = false;
+
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
         #endregion UI
