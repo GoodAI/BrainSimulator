@@ -374,11 +374,18 @@ namespace GoodAI.School.GUI
                         LevelGrids.Add(dgv);
                         dgv.ColumnWidthChanged += levelGridColumnSizeChanged;
                         dgv.CellFormatting += lGrid_CellFormatting;
+                        dgv.SelectionChanged += levelGridSelectionChanged;
 
                         tabControl1.Update();
                     }
                 }
             ));
+        }
+
+        private void levelGridSelectionChanged(object sender, EventArgs e)
+        {
+            DataGridView dgv = sender as DataGridView;
+            dgv.ClearSelection();
         }
 
         private void lGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs args)
@@ -393,6 +400,9 @@ namespace GoodAI.School.GUI
             {
                 args.CellStyle.BackColor = Color.LightGreen;
             }
+
+            // unselect dgv
+            dgv.ClearSelection();
         }
 
         private void levelGridColumnSizeChanged(object sender, DataGridViewColumnEventArgs e)
