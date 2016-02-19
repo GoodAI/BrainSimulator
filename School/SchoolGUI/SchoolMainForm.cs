@@ -324,6 +324,8 @@ namespace GoodAI.School.GUI
                     }
                 }
             }
+
+            UpdateWindowName(null, EventArgs.Empty);
         }
 
         private void DeleteNodes(object sender, EventArgs e)
