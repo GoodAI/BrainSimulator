@@ -210,7 +210,7 @@ namespace GoodAI.Modules.School.Worlds
                 Objects.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(Objects.Count, School.DataSize));
             //schoolWorld.Visual.Dims = VisualPOW.Dims;
             School.DataLength.Fill(Math.Min(Objects.Count, School.DataSize));
-            Reward.CopyToMemoryBlock(School.Reward, 0, 0, 1);
+            Reward.CopyToMemoryBlock(School.RewardMB, 0, 0, 1);
         }
 
         public virtual void ClearWorld()

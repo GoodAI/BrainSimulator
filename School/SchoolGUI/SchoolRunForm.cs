@@ -32,6 +32,8 @@ namespace GoodAI.School.GUI
         private int m_stepOffset = 0;
         private DateTime m_ltStart;
 
+        private int m_numberOfTU;
+
         private bool m_showObserver { get { return btnObserver.Checked; } }
         private bool m_emulateSuccess
         {
@@ -119,6 +121,46 @@ namespace GoodAI.School.GUI
         private void UpdateWorldHandlers(object sender, EventArgs e)
         {
             m_school.CurriculumStarting += PrepareSimulation;
+            m_school.LearningTaskNewLevel += UpdateLTLevel;
+            m_school.LearningTaskFinished += LearningTaskFinished;
+            m_school.TrainingUnitUpdated += UpdateTUStatus;
+            m_school.TrainingUnitFinished += UpdateTrainingUnitNumber;
+        }
+
+        private void LearningTaskFinished(object sender, SchoolEventArgs e)
+        {
+            m_numberOfTU = 0;
+        }
+
+        private void UpdateTrainingUnitNumber(object sender, SchoolEventArgs e)
+        {
+            Invoke((MethodInvoker)(() =>
+            {
+                unitNumberTextBox.Text = m_numberOfTU++.ToString();
+            }
+            ));
+        }
+
+        private void UpdateLTLevel(object sender, SchoolEventArgs e)
+        {
+            if (tabControl1 != null && tabControl1.TabCount > 0)
+            {
+                Invoke((MethodInvoker)(() =>
+                {
+                    tabControl1.SelectedIndex = m_school.Level - 1;
+                    currentLevelTextBox.Text = m_school.Level.ToString();
+                }
+                ));
+            }
+        }
+
+        private void UpdateTUStatus(object sender, EventArgs e)
+        {
+            Invoke((MethodInvoker)(() =>
+            {
+                actualRewardTextBox.Text = m_school.Reward.ToString("F");
+            }
+            ));
         }
 
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
@@ -433,6 +475,11 @@ namespace GoodAI.School.GUI
         private void btnEmulateSuccess_Click(object sender, EventArgs e)
         {
             m_emulateSuccess = (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -92,7 +92,7 @@ namespace GoodAI.School.Worlds
                 BrickAreaOutput.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(BrickAreaOutput.Count, School.DataSize));
             School.DataLength.Fill(Math.Min(BrickAreaOutput.Count, School.DataSize));
 
-            ScoreDeltaOutput.CopyToMemoryBlock(School.Reward, 0, 0, 1);
+            ScoreDeltaOutput.CopyToMemoryBlock(School.RewardMB, 0, 0, 1);
         }
                
         public void ClearWorld()

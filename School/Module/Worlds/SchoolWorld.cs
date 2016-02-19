@@ -76,7 +76,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         [MyOutputBlock(4)]
-        public MyMemoryBlock<float> Reward
+        public MyMemoryBlock<float> RewardMB
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
@@ -164,7 +164,7 @@ namespace GoodAI.Modules.School.Worlds
             Text.Count = TextSize;
             Data.Count = DataSize;
             DataLength.Count = 1;
-            Reward.Count = 1;
+            RewardMB.Count = 1;
             LTStatus.Count = LT_STATUS_COUNT;
 
             if (CurrentWorld != null)
@@ -172,7 +172,6 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         #endregion
-
 
         private IWorldAdapter m_currentWorld;
 
@@ -227,7 +226,11 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = false)]
         public bool ShowBlackscreen { get; set; }
 
+        public event EventHandler<SchoolEventArgs> TrainingUnitUpdated = delegate { };
+        public event EventHandler<SchoolEventArgs> TrainingUnitFinished = delegate { };
+        public event EventHandler<SchoolEventArgs> LearningTaskUpdated = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
+        public event EventHandler<SchoolEventArgs> LearningTaskLevelFinished = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
         public event EventHandler CurriculumStarting = delegate { };
 
@@ -381,6 +384,8 @@ namespace GoodAI.Modules.School.Worlds
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                TrainingUnitUpdated(this, new SchoolEventArgs(CurrentLearningTask));
             }
 
             // set new learning task or stop simulation
@@ -458,6 +463,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             LTStatus.Host[NEW_TU_FLAG] = 1;
             LTStatus.Host[TU_INDEX]++;
+            TrainingUnitFinished(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
         public void InitializeCurriculum()
@@ -585,6 +591,38 @@ namespace GoodAI.Modules.School.Worlds
             {
                 if (Owner.CurrentLearningTask != null)
                     Owner.ExecuteLearningTaskStep();
+            }
+        }
+
+        public int Level
+        {
+            get
+            {
+                if (LTStatus != null && LTStatus.Host != null)
+                {
+                    return (int)LTStatus.Host[LEVEL_INDEX];
+                }
+                return 0;
+            }
+            set
+            {
+                LTStatus.Host[LEVEL_INDEX] = value;
+            }
+        }
+
+        public float Reward
+        {
+            get
+            {
+                if (LTStatus != null && LTStatus.Host != null)
+                {
+                    return (int)RewardMB.Host[0];
+                }
+                return 0;
+            }
+            set
+            {
+                RewardMB.Host[0] = value;
             }
         }
     }

@@ -26,6 +26,9 @@ namespace GoodAI.Modules.School.Common
         int CurrentLevel { get; set; }
         int NumberOfSuccessesRequired { get; }
         float Progress { get; }
+        float Reward { get; set; }
+        int Level { get; set; }
+        int CurrentNumberOfAttempts { get; set; }
 
         void ExecuteStep();
         TrainingResult EvaluateStep();
@@ -49,10 +52,10 @@ namespace GoodAI.Modules.School.Common
         public AbilityNameEnum[] RequiredAbilities { get; set; }
 
         // The number of consecutive examples in the training set classified correctly
-        protected int CurrentNumberOfSuccesses { get; set; }
+        public int CurrentNumberOfSuccesses { get; set; }
 
         // The number of training units so far in the training set
-        protected int CurrentNumberOfAttempts { get; set; }
+        public int CurrentNumberOfAttempts { get; set; }
 
         // Number of consecutive successful classifications required to complete a level
         public virtual int NumberOfSuccessesRequired
@@ -175,9 +178,14 @@ namespace GoodAI.Modules.School.Common
             }
 
             if (wasUnitSuccessful)
+            {
+                Reward = 1.0f;
                 CurrentNumberOfSuccesses++;
+            }
             else
+            {
                 CurrentNumberOfSuccesses = 0;
+            }
 
             MyLog.Writer.WriteLine(
                 MyLogLevel.INFO,
@@ -215,6 +223,7 @@ namespace GoodAI.Modules.School.Common
         {
             SchoolWorld.ClearWorld();
             SchoolWorld.SetHints(TSHints);
+            Reward = 0.0f;
 
             PresentNewTrainingUnit();
         }
@@ -237,6 +246,30 @@ namespace GoodAI.Modules.School.Common
         public virtual bool Solve(bool successfully)
         {
             throw new NotImplementedException();
+        }
+
+        public float Reward
+        {
+            get
+            {
+                return SchoolWorld.Reward;
+            }
+            set
+            {
+                SchoolWorld.Reward = value;
+            }
+        }
+
+        public int Level
+        {
+            get
+            {
+                return SchoolWorld.Level;
+            }
+            set
+            {
+                SchoolWorld.Level = value;
+            }
         }
     }
 }
