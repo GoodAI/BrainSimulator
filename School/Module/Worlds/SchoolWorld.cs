@@ -228,6 +228,7 @@ namespace GoodAI.Modules.School.Worlds
         public bool ShowBlackscreen { get; set; }
 
         public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
+        public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
         public event EventHandler CurriculumStarting = delegate { };
 
         public override void Validate(MyValidator validator)
@@ -450,6 +451,7 @@ namespace GoodAI.Modules.School.Worlds
             LTStatus.Host[NEW_LEVEL_FLAG] = 1;
             LTStatus.Host[LEVEL_INDEX]++;
             LTStatus.Host[TU_INDEX] = 0;
+            LearningTaskNewLevel(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
         public void NotifyNewTrainingUnit()
