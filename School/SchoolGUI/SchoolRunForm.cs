@@ -26,7 +26,6 @@ namespace GoodAI.School.GUI
 
         private readonly MainForm m_mainForm;
         private string m_runName;
-        private SchoolWorld m_school;
         private ObserverForm m_observer;
 
         private int m_currentRow = -1;
@@ -40,6 +39,17 @@ namespace GoodAI.School.GUI
             {
                 if (m_school != null)
                     m_school.EmulatedUnitSuccessProbability = value ? 1f : 0f;
+            }
+        }
+
+        private SchoolWorld m_school
+        {
+            get
+            {
+                if (!(m_mainForm.Project.World is SchoolWorld))
+                    m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+
+                return (SchoolWorld)m_mainForm.Project.World;
             }
         }
 
@@ -69,6 +79,7 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             btnObserver.Checked = Properties.School.Default.ShowVisual;
+            m_emulateSuccess = btnEmulateSuccess.Checked;
 
             // here so it does not interfere with designer generated code
             btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
@@ -79,6 +90,8 @@ namespace GoodAI.School.GUI
 
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
+            m_mainForm.WorldChanged += UpdateWorldHandlers;
+
             UpdateButtons(null, null);
         }
 
@@ -103,6 +116,11 @@ namespace GoodAI.School.GUI
             UpdateTaskData(runningTask);
         }
 
+        private void UpdateWorldHandlers(object sender, EventArgs e)
+        {
+            m_school.CurriculumStarting += PrepareSimulation;
+        }
+
         private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
         {
             btnRun.Enabled = m_mainForm.runToolButton.Enabled;
@@ -113,7 +131,7 @@ namespace GoodAI.School.GUI
         public void Ready()
         {
             UpdateGridData();
-            PrepareSimulation();
+            PrepareSimulation(null, EventArgs.Empty);
             SetObserver();
             if (Properties.School.Default.AutorunEnabled && Data != null)
                 btnRun.PerformClick();
@@ -190,13 +208,6 @@ namespace GoodAI.School.GUI
             }
         }
 
-        private void SelectSchoolWorld()
-        {
-            m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
-            m_school = (SchoolWorld)m_mainForm.Project.World;
-            m_emulateSuccess = btnEmulateSuccess.Checked;   //set value AFTER the SchoolWorld creation
-        }
-
         private void CreateCurriculum()
         {
             m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
@@ -223,10 +234,9 @@ namespace GoodAI.School.GUI
                         cell.Style = defaultStyle;
         }
 
-        private void PrepareSimulation()
+        private void PrepareSimulation(object sender, EventArgs e)
         {
             // data
-            SelectSchoolWorld();
             CreateCurriculum();
 
             // gui
@@ -281,12 +291,6 @@ namespace GoodAI.School.GUI
                         break;
                     }
             }
-        }
-
-        private void simulationStart(object sender, EventArgs e)
-        {
-            if (m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED)
-                PrepareSimulation();
         }
 
         private LearningTaskNode SelectedLearningTask

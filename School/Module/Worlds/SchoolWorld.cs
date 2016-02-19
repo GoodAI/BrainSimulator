@@ -17,6 +17,16 @@ using System.Windows.Forms;
 
 namespace GoodAI.Modules.School.Worlds
 {
+    public class SchoolEventArgs : EventArgs
+    {
+        public ILearningTask Task { get; private set; }
+
+        public SchoolEventArgs(ILearningTask task)
+        {
+            Task = task;
+        }
+    }
+
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
         #region Constants
@@ -217,6 +227,8 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = false)]
         public bool ShowBlackscreen { get; set; }
 
+        public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
+        public event EventHandler CurriculumStarting = delegate { };
 
         public override void Validate(MyValidator validator)
         {
@@ -413,6 +425,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             // Will be incremented when LT is presented
             LTStatus.Host[LT_IDENTIFIER] = -1;
+            CurriculumStarting(this, EventArgs.Empty);
         }
 
         public void ResetLTStatusFlags()
@@ -429,6 +442,7 @@ namespace GoodAI.Modules.School.Worlds
             LTStatus.Host[LT_IDENTIFIER]++;
             LTStatus.Host[TU_INDEX] = 0;
             LTStatus.Host[LEVEL_INDEX] = 0;
+            LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
         public void NotifyNewLevel()
@@ -567,9 +581,7 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
-                if (Owner.CurrentLearningTask == null)
-                    return;
-                else
+                if (Owner.CurrentLearningTask != null)
                     Owner.ExecuteLearningTaskStep();
             }
         }

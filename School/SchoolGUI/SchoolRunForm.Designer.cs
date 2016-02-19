@@ -228,7 +228,6 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(23, 22);
             this.btnRun.Text = "Run Simulation";
-            this.btnRun.Click += new System.EventHandler(this.simulationStart);
             // 
             // btnStop
             // 
@@ -256,7 +255,6 @@
             this.btnStepOver.Name = "btnStepOver";
             this.btnStepOver.Size = new System.Drawing.Size(23, 22);
             this.btnStepOver.Text = "Step Over";
-            this.btnStepOver.Click += new System.EventHandler(this.simulationStart);
             // 
             // btnDebug
             // 
