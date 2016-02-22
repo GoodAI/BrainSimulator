@@ -298,7 +298,6 @@
             this.btnUpload.Name = "btnUpload";
             this.btnUpload.Size = new System.Drawing.Size(103, 22);
             this.btnUpload.Text = "Upload to Project";
-            this.btnUpload.Click += new System.EventHandler(this.btnUpload_Click);
             // 
             // btnRun
             // 
