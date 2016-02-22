@@ -45,18 +45,6 @@
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ProgressColumn = new GoodAI.BrainSimulator.Utils.DataGridViewProgressColumn();
-            this.statusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.isHiddenDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.checkStateDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.imageDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.isCheckedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.learningTaskNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -71,15 +59,27 @@
             this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.currentLevelLabel = new System.Windows.Forms.Label();
+            this.actualRewardLabel = new System.Windows.Forms.Label();
+            this.unitNumberLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.unitNumberLabel = new System.Windows.Forms.Label();
-            this.actualRewardLabel = new System.Windows.Forms.Label();
-            this.currentLevelLabel = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProgressColumn = new GoodAI.BrainSimulator.Utils.DataGridViewProgressColumn();
+            this.statusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.isHiddenDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.checkStateDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.imageDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.isCheckedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
             this.toolStrip1.SuspendLayout();
@@ -99,8 +99,8 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -129,88 +129,6 @@
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
-            // 
-            // TaskType
-            // 
-            this.TaskType.DataPropertyName = "TaskType";
-            this.TaskType.HeaderText = "Task";
-            this.TaskType.Name = "TaskType";
-            this.TaskType.ReadOnly = true;
-            // 
-            // WorldType
-            // 
-            this.WorldType.DataPropertyName = "WorldType";
-            this.WorldType.HeaderText = "World";
-            this.WorldType.Name = "WorldType";
-            this.WorldType.ReadOnly = true;
-            // 
-            // stepsDataGridViewTextBoxColumn
-            // 
-            this.stepsDataGridViewTextBoxColumn.DataPropertyName = "Steps";
-            this.stepsDataGridViewTextBoxColumn.HeaderText = "Steps";
-            this.stepsDataGridViewTextBoxColumn.Name = "stepsDataGridViewTextBoxColumn";
-            this.stepsDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // timeDataGridViewTextBoxColumn
-            // 
-            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
-            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
-            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
-            // 
-            // ProgressColumn
-            // 
-            this.ProgressColumn.DataPropertyName = "Progress";
-            this.ProgressColumn.HeaderText = "Progress";
-            this.ProgressColumn.Name = "ProgressColumn";
-            // 
-            // statusDataGridViewTextBoxColumn
-            // 
-            this.statusDataGridViewTextBoxColumn.DataPropertyName = "Status";
-            this.statusDataGridViewTextBoxColumn.HeaderText = "Status";
-            this.statusDataGridViewTextBoxColumn.Name = "statusDataGridViewTextBoxColumn";
-            // 
-            // isHiddenDataGridViewCheckBoxColumn
-            // 
-            this.isHiddenDataGridViewCheckBoxColumn.DataPropertyName = "IsHidden";
-            this.isHiddenDataGridViewCheckBoxColumn.HeaderText = "IsHidden";
-            this.isHiddenDataGridViewCheckBoxColumn.Name = "isHiddenDataGridViewCheckBoxColumn";
-            this.isHiddenDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // checkStateDataGridViewCheckBoxColumn
-            // 
-            this.checkStateDataGridViewCheckBoxColumn.DataPropertyName = "CheckState";
-            this.checkStateDataGridViewCheckBoxColumn.HeaderText = "CheckState";
-            this.checkStateDataGridViewCheckBoxColumn.Name = "checkStateDataGridViewCheckBoxColumn";
-            this.checkStateDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // imageDataGridViewImageColumn
-            // 
-            this.imageDataGridViewImageColumn.DataPropertyName = "Image";
-            this.imageDataGridViewImageColumn.HeaderText = "Image";
-            this.imageDataGridViewImageColumn.Name = "imageDataGridViewImageColumn";
-            this.imageDataGridViewImageColumn.Visible = false;
-            // 
-            // isCheckedDataGridViewCheckBoxColumn
-            // 
-            this.isCheckedDataGridViewCheckBoxColumn.DataPropertyName = "IsChecked";
-            this.isCheckedDataGridViewCheckBoxColumn.HeaderText = "IsChecked";
-            this.isCheckedDataGridViewCheckBoxColumn.Name = "isCheckedDataGridViewCheckBoxColumn";
-            this.isCheckedDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // isLeafDataGridViewCheckBoxColumn
-            // 
-            this.isLeafDataGridViewCheckBoxColumn.DataPropertyName = "IsLeaf";
-            this.isLeafDataGridViewCheckBoxColumn.HeaderText = "IsLeaf";
-            this.isLeafDataGridViewCheckBoxColumn.Name = "isLeafDataGridViewCheckBoxColumn";
-            this.isLeafDataGridViewCheckBoxColumn.ReadOnly = true;
-            this.isLeafDataGridViewCheckBoxColumn.Visible = false;
-            // 
-            // tagDataGridViewTextBoxColumn
-            // 
-            this.tagDataGridViewTextBoxColumn.DataPropertyName = "Tag";
-            this.tagDataGridViewTextBoxColumn.HeaderText = "Tag";
-            this.tagDataGridViewTextBoxColumn.Name = "tagDataGridViewTextBoxColumn";
-            this.tagDataGridViewTextBoxColumn.Visible = false;
             // 
             // learningTaskNodeBindingSource
             // 
@@ -368,8 +286,8 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
@@ -379,7 +297,7 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.currentLevelLabel);
             this.panel1.Controls.Add(this.actualRewardLabel);
@@ -392,6 +310,29 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(380, 175);
             this.panel1.TabIndex = 13;
+            // 
+            // currentLevelLabel
+            // 
+            this.currentLevelLabel.Location = new System.Drawing.Point(0, 0);
+            this.currentLevelLabel.Name = "currentLevelLabel";
+            this.currentLevelLabel.Size = new System.Drawing.Size(100, 23);
+            this.currentLevelLabel.TabIndex = 0;
+            // 
+            // actualRewardLabel
+            // 
+            this.actualRewardLabel.Location = new System.Drawing.Point(0, 0);
+            this.actualRewardLabel.Name = "actualRewardLabel";
+            this.actualRewardLabel.Size = new System.Drawing.Size(100, 23);
+            this.actualRewardLabel.TabIndex = 1;
+            // 
+            // unitNumberLabel
+            // 
+            this.unitNumberLabel.AutoSize = true;
+            this.unitNumberLabel.Location = new System.Drawing.Point(115, 31);
+            this.unitNumberLabel.Name = "unitNumberLabel";
+            this.unitNumberLabel.Size = new System.Drawing.Size(13, 13);
+            this.unitNumberLabel.TabIndex = 20;
+            this.unitNumberLabel.Text = "0";
             // 
             // label4
             // 
@@ -433,8 +374,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
@@ -443,14 +384,6 @@
             // 
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
             // 
-            // unitNumberLabel
-            //
-            this.unitNumberLabel.AutoSize = true;
-            this.unitNumberLabel.Location = new System.Drawing.Point(115, 31);
-            this.unitNumberLabel.Name = "unitNumberLabel";
-            this.unitNumberLabel.Size = new System.Drawing.Size(13, 13);
-            this.unitNumberLabel.TabIndex = 20;
-            this.unitNumberLabel.Text = "0";
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
@@ -460,37 +393,110 @@
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 28);
             this.splitContainer2.Name = "splitContainer2";
             // 
-            // actualRewardLabel
+            // splitContainer2.Panel1
             // 
-            this.actualRewardLabel.AutoSize = true;
-            this.actualRewardLabel.Location = new System.Drawing.Point(115, 83);
-            this.actualRewardLabel.Name = "actualRewardLabel";
-            this.actualRewardLabel.Size = new System.Drawing.Size(13, 13);
-            this.actualRewardLabel.TabIndex = 21;
-            this.actualRewardLabel.Text = "0";
             this.splitContainer2.Panel1.Controls.Add(this.splitContainer1);
             // 
-            // currentLevelLabel
+            // splitContainer2.Panel2
             // 
-            this.currentLevelLabel.AutoSize = true;
-            this.currentLevelLabel.Location = new System.Drawing.Point(115, 57);
-            this.currentLevelLabel.Name = "currentLevelLabel";
-            this.currentLevelLabel.Size = new System.Drawing.Size(13, 13);
-            this.currentLevelLabel.TabIndex = 22;
-            this.currentLevelLabel.Text = "0";
             this.splitContainer2.Panel2.Controls.Add(this.panel1);
             this.splitContainer2.Panel2.Controls.Add(this.observerDockPanel);
             this.splitContainer2.Size = new System.Drawing.Size(1092, 567);
             this.splitContainer2.SplitterDistance = 700;
             this.splitContainer2.TabIndex = 16;
+            // 
+            // TaskType
+            // 
+            this.TaskType.DataPropertyName = "TaskType";
+            this.TaskType.HeaderText = "Task";
+            this.TaskType.Name = "TaskType";
+            this.TaskType.ReadOnly = true;
+            // 
+            // WorldType
+            // 
+            this.WorldType.DataPropertyName = "WorldType";
+            this.WorldType.HeaderText = "World";
+            this.WorldType.Name = "WorldType";
+            this.WorldType.ReadOnly = true;
+            // 
+            // stepsDataGridViewTextBoxColumn
+            // 
+            this.stepsDataGridViewTextBoxColumn.DataPropertyName = "Steps";
+            this.stepsDataGridViewTextBoxColumn.HeaderText = "Steps";
+            this.stepsDataGridViewTextBoxColumn.Name = "stepsDataGridViewTextBoxColumn";
+            this.stepsDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // timeDataGridViewTextBoxColumn
+            // 
+            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
+            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
+            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
+            this.timeDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // ProgressColumn
+            // 
+            this.ProgressColumn.DataPropertyName = "Progress";
+            this.ProgressColumn.HeaderText = "Progress";
+            this.ProgressColumn.Name = "ProgressColumn";
+            this.ProgressColumn.ReadOnly = true;
+            // 
+            // statusDataGridViewTextBoxColumn
+            // 
+            this.statusDataGridViewTextBoxColumn.DataPropertyName = "Status";
+            this.statusDataGridViewTextBoxColumn.HeaderText = "Status";
+            this.statusDataGridViewTextBoxColumn.Name = "statusDataGridViewTextBoxColumn";
+            this.statusDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // isHiddenDataGridViewCheckBoxColumn
+            // 
+            this.isHiddenDataGridViewCheckBoxColumn.DataPropertyName = "IsHidden";
+            this.isHiddenDataGridViewCheckBoxColumn.HeaderText = "IsHidden";
+            this.isHiddenDataGridViewCheckBoxColumn.Name = "isHiddenDataGridViewCheckBoxColumn";
+            this.isHiddenDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // checkStateDataGridViewCheckBoxColumn
+            // 
+            this.checkStateDataGridViewCheckBoxColumn.DataPropertyName = "CheckState";
+            this.checkStateDataGridViewCheckBoxColumn.HeaderText = "CheckState";
+            this.checkStateDataGridViewCheckBoxColumn.Name = "checkStateDataGridViewCheckBoxColumn";
+            this.checkStateDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // imageDataGridViewImageColumn
+            // 
+            this.imageDataGridViewImageColumn.DataPropertyName = "Image";
+            this.imageDataGridViewImageColumn.HeaderText = "Image";
+            this.imageDataGridViewImageColumn.Name = "imageDataGridViewImageColumn";
+            this.imageDataGridViewImageColumn.Visible = false;
+            // 
+            // isCheckedDataGridViewCheckBoxColumn
+            // 
+            this.isCheckedDataGridViewCheckBoxColumn.DataPropertyName = "IsChecked";
+            this.isCheckedDataGridViewCheckBoxColumn.HeaderText = "IsChecked";
+            this.isCheckedDataGridViewCheckBoxColumn.Name = "isCheckedDataGridViewCheckBoxColumn";
+            this.isCheckedDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // isLeafDataGridViewCheckBoxColumn
+            // 
+            this.isLeafDataGridViewCheckBoxColumn.DataPropertyName = "IsLeaf";
+            this.isLeafDataGridViewCheckBoxColumn.HeaderText = "IsLeaf";
+            this.isLeafDataGridViewCheckBoxColumn.Name = "isLeafDataGridViewCheckBoxColumn";
+            this.isLeafDataGridViewCheckBoxColumn.ReadOnly = true;
+            this.isLeafDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // tagDataGridViewTextBoxColumn
+            // 
+            this.tagDataGridViewTextBoxColumn.DataPropertyName = "Tag";
+            this.tagDataGridViewTextBoxColumn.HeaderText = "Tag";
+            this.tagDataGridViewTextBoxColumn.Name = "tagDataGridViewTextBoxColumn";
+            this.tagDataGridViewTextBoxColumn.Visible = false;
             // 
             // SchoolRunForm
             // 
@@ -554,6 +560,17 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnObserver;
+        private System.Windows.Forms.ToolStripButton btnEmulateSuccess;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label unitNumberLabel;
+        private System.Windows.Forms.Label currentLevelLabel;
+        private System.Windows.Forms.Label actualRewardLabel;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.DataGridViewTextBoxColumn TaskType;
         private System.Windows.Forms.DataGridViewTextBoxColumn WorldType;
         private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn;
@@ -566,16 +583,5 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
-        private System.Windows.Forms.ToolStripButton btnEmulateSuccess;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label unitNumberLabel;
-        private System.Windows.Forms.Label currentLevelLabel;
-        private System.Windows.Forms.Label actualRewardLabel;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }
