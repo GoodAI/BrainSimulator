@@ -60,11 +60,11 @@ namespace GoodAI.Modules.School.Worlds
         protected new int m_POW_WIDTH = 300;
         protected new int m_POW_HEIGHT = 200;
 
-        public override int FOW_WIDTH { get { return m_FOW_WIDTH; } set { m_FOW_WIDTH = value; } }
-        public override int FOW_HEIGHT { get { return m_FOW_HEIGHT; } set { m_FOW_HEIGHT = value; } }
+        public override int FOW_WIDTH { get { return m_FOW_WIDTH; } protected set { m_FOW_WIDTH = value; } }
+        public override int FOW_HEIGHT { get { return m_FOW_HEIGHT; } protected set { m_FOW_HEIGHT = value; } }
 
-        public override int POW_WIDTH { get { return m_POW_WIDTH; } set { m_POW_WIDTH = value; } }
-        public override int POW_HEIGHT { get { return m_POW_HEIGHT; } set { m_POW_HEIGHT = value; } }
+        public override int POW_WIDTH { get { return m_POW_WIDTH; } protected set { m_POW_WIDTH = value; } }
+        public override int POW_HEIGHT { get { return m_POW_HEIGHT; } protected set { m_POW_HEIGHT = value; } }
 
         public class GetPlumberInputTask : InputTask
         {
@@ -168,11 +168,11 @@ namespace GoodAI.Modules.School.Worlds
                     return;
 
                 // Compute Gravity step for all objects affected by physics
-                for (int i = 0; i < PlumberOwner.gameObjects.Count; i++)
+                for (int i = 0; i < PlumberOwner.GameObjects.Count; i++)
                 {
-                    if (PlumberOwner.gameObjects[i] is MovableGameObject)
+                    if (PlumberOwner.GameObjects[i] is MovableGameObject)
                     {
-                        GameObject obj = Owner.gameObjects[i];
+                        GameObject obj = Owner.GameObjects[i];
                         MovableGameObject mobj = obj as MovableGameObject;
 
                         if (mobj.IsAffectedByGravity)

@@ -42,7 +42,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void PresentNewTrainingUnit()
         {
             WrappedWorld.CreateNonVisibleAgent();
-            WrappedWorld.FreezeWorld(true);
+            WrappedWorld.IsWorldFrozen = true;
 
             // with Pr=.5 show object
             if (LearningTaskHelpers.FlipCoin(m_rndGen))

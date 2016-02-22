@@ -204,7 +204,7 @@ namespace GoodAI.Modules.School.LearningTasks
             float dist = m_agent.DistanceTo(GameObjectReferences[currentIndex]);        // Check if the agent reached the GameObject corresponding to the current index of the sequence, this is done by reference
             if (dist < 1)
             {
-                WrappedWorld.gameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
+                WrappedWorld.GameObjects.Remove(GameObjectReferences[currentIndex]);    // If agent reached the right object (the one corresponding to the current index sequence), delete corresponding object
                 currentIndex++;                                                         // And now change the index (the index will denote a reference to the GameObject that needs to be reached next)
             }
 

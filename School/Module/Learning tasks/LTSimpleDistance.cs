@@ -54,7 +54,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            WrappedWorld.FreezeWorld(true);
+            WrappedWorld.IsWorldFrozen = true;
 
             CreateAgent();
             CreateTarget();

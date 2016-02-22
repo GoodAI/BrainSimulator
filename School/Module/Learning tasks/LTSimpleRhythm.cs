@@ -94,7 +94,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             m_currentStep++;
             base.ExecuteStep();
-            WrappedWorld.gameObjects.Clear();
+            WrappedWorld.GameObjects.Clear();
             if (m_timeplan[m_currentStep] == TimeActions.GiveHint)
             {
                 Point p;
