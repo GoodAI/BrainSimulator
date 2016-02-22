@@ -86,6 +86,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                         Owner.InputGateDeltas.GetTimeShiftedBlock(+1),
                         Owner.CellInputDeltas,
 
+                        Owner.CellInputActivations,
                         Owner.CellStateActivations,
                         Owner.OutputGateActivations,
                         Owner.ForgetGateActivations.GetTimeShiftedBlock(+1),
@@ -140,7 +141,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                 }
             }
 
-            MyNode node = Owner.Input.Owner;
+            MyNode node = Owner.GetInput(0).Owner;
 
             if (node is MyAbstractLayer)
             {
@@ -149,8 +150,10 @@ namespace GoodAI.Modules.LSTM.Tasks
                 CUdeviceptr prevInputPtr = nullCUdeviceptr;
 
                 // reset delta
-                // TODO - batch checking? if (Owner.ParentNetwork.NewBatch())
-                previousLayer.Delta.Fill(0);
+                if (Owner.ParentNetwork.TimeStep == 0)
+                {
+                    previousLayer.Delta.Fill(0);
+                }
 
                 // determine input to previous layer
                 prevInputPtr = MyAbstractLayer.DetermineInput(previousLayer);
@@ -189,6 +192,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                         m_deltaBackKernel.SetupExecution(previousLayer.Neurons);
                         m_deltaBackKernel.Run(
                             (int)previousLayer.ActivationFunction,
+                            prevInputPtr,
                             previousLayer.Delta,
 
                             Owner.CellInputDeltas,
