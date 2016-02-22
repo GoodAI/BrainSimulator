@@ -459,6 +459,13 @@ namespace GoodAI.School.GUI
             (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
         }
 
+        private void btnUpload_Click(object sender, EventArgs e)
+        {
+            if (!(m_mainForm.Project.World is SchoolWorld))
+                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+            (m_mainForm.Project.World as SchoolWorld).Curriculum = m_design.AsSchoolCurriculum(m_mainForm.Project.World as SchoolWorld);
+        }
+
         #endregion Button clicks
 
         #region (De)serialization
@@ -550,15 +557,19 @@ namespace GoodAI.School.GUI
 
         private void SchoolMainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
-                DeleteNodes(sender, null);
-        }
-
-        private void btnUpload_Click(object sender, EventArgs e)
-        {
-            if (!(m_mainForm.Project.World is SchoolWorld))
-                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
-            (m_mainForm.Project.World as SchoolWorld).Curriculum = m_design.AsSchoolCurriculum(m_mainForm.Project.World as SchoolWorld);
+            switch (e.KeyCode)
+            {
+                case Keys.Delete:
+                    {
+                        DeleteNodes(sender, null);
+                        break;
+                    }
+                case Keys.F5:
+                    {
+                        btnRun.PerformClick();
+                        break;
+                    }
+            }
         }
     }
 }
