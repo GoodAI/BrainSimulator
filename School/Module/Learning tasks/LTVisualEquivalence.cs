@@ -70,7 +70,6 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTVisualEquivalence : AbstractLearningTask<RoguelikeWorld>
     {
         // Attributes
-        protected readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("Max number of attempts", "", typeof(int), 10000, 10000);
         protected readonly TSHintAttribute NUMBER_OF_DIFFERENT_OBJECTS = new TSHintAttribute("Number of different objects", "", typeof(int), 1, 4);
         protected readonly TSHintAttribute ROTATE_SHAPE = new TSHintAttribute("Rotate shape", "", typeof(bool), 0, 1);
         protected readonly TSHintAttribute SCALE_SHAPE = new TSHintAttribute("Scale shape", "", typeof(bool), 0, 1);
@@ -94,7 +93,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 {TSHintAttributes.IMAGE_NOISE, 0},
-                { MAX_NUMBER_OF_ATTEMPTS, 10000 },
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 { NUMBER_OF_DIFFERENT_OBJECTS, 2 },
                 { ROTATE_SHAPE, 0 },
                 { SCALE_SHAPE, 0 }

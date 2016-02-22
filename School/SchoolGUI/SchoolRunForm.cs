@@ -109,7 +109,7 @@ namespace GoodAI.School.GUI
         private void UpdateWorldHandlers(object sender, EventArgs e)
         {
             m_school.CurriculumStarting += PrepareSimulation;
-            m_school.LearningTaskFinished += GoToNextTask;
+            m_school.LearningTaskNew += GoToNextTask;
             m_school.LearningTaskNewLevel += UpdateLTLevel;
             m_school.LearningTaskFinished += LearningTaskFinished;
             m_school.TrainingUnitFinished += UpdateTUStatus;
@@ -119,6 +119,7 @@ namespace GoodAI.School.GUI
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
         {
             m_numberOfTU = 0;
+            UpdateTaskData(e.Task);
         }
 
         private void UpdateTrainingUnitNumber(object sender, SchoolEventArgs e)

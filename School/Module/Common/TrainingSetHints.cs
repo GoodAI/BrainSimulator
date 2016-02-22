@@ -38,7 +38,7 @@ namespace GoodAI.Modules.School.Common
     {
         // A value [0, 1] measuring the amount of noise in the image
         public static readonly TSHintAttribute IMAGE_NOISE = new TSHintAttribute(
-            "Image noise", 
+            "Image noise",
             "Adding noise to agent's POW. Color of each pixel is slightly randomly changed",
             typeof(bool),
             0, 1);
@@ -50,7 +50,7 @@ namespace GoodAI.Modules.School.Common
             0, 1);
 
         // Initially set this to some large number (10 000). Do not change it later!
-        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("MAX_NUMBER_OF_ATTEMPTS", "", typeof(int), 0, 1);
+        public static readonly TSHintAttribute MAX_NUMBER_OF_ATTEMPTS = new TSHintAttribute("Max number of attempts", "", typeof(int), 0, 1);
 
         public static readonly TSHintAttribute IS_VARIABLE_POSITION = new TSHintAttribute(
             "Variable position of objects",
@@ -76,7 +76,7 @@ namespace GoodAI.Modules.School.Common
         // The target size is obtained by multiplying with 2^s,
         // where s is normally distributed with mean = 0 and
         // standard deviation as specified
-        // 
+        //
         // replaced with VARIABLE_SIZE (binary)
         public static readonly TSHintAttribute DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION = new TSHintAttribute("DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION", "", typeof(float), 0, 1);
 
@@ -112,7 +112,8 @@ namespace GoodAI.Modules.School.Common
     /// </summary>
     public class TrainingSetHints : Dictionary<TSHintAttribute, float>
     {
-        public TrainingSetHints() : base()
+        public TrainingSetHints()
+            : base()
         {
         }
 
@@ -142,16 +143,16 @@ namespace GoodAI.Modules.School.Common
             sb.Append("{\n");
 
             foreach (var item in this)
-	        {
+            {
                 sb.Append(item.Key.Name).Append(": ").Append(item.Value).Append("\n");
-	        }
+            }
 
             sb.Append("}");
             return sb.ToString();
         }
     }
 
-    // Records the parameters to change at each step in the 
+    // Records the parameters to change at each step in the
     // learning challenge progression.
     public class TrainingSetProgression : List<TrainingSetHints>
     {
