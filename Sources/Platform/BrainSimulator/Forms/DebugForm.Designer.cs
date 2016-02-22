@@ -73,6 +73,8 @@
             this.debugTreeView.DragDropMarkColor = System.Drawing.Color.Black;
             this.debugTreeView.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.debugTreeView.FullRowSelect = true;
+            this.debugTreeView.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.debugTreeView.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
             this.debugTreeView.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Vertical;
             this.debugTreeView.Indent = 10;
             this.debugTreeView.LineColor = System.Drawing.Color.DarkGray;
@@ -85,6 +87,7 @@
             this.debugTreeView.NodeControls.Add(this.nodeTextBox2);
             this.debugTreeView.NodeControls.Add(this.breakpointCheckBox);
             this.debugTreeView.NodeControls.Add(this.profilerTimeValue);
+            this.debugTreeView.NodeFilter = null;
             this.debugTreeView.RowHeight = 19;
             this.debugTreeView.SelectedNode = null;
             this.debugTreeView.ShowNodeToolTips = true;
@@ -132,6 +135,7 @@
             // checkEnabled
             // 
             this.checkEnabled.DataPropertyName = "Checked";
+            this.checkEnabled.EditEnabled = true;
             this.checkEnabled.LeftMargin = 20;
             this.checkEnabled.ParentColumn = this.enabled;
             this.checkEnabled.IsVisibleValueNeeded += new System.EventHandler<Aga.Controls.Tree.NodeControls.NodeControlValueEventArgs>(this.nodeCheckBox1_IsVisibleValueNeeded);

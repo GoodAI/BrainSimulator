@@ -25,7 +25,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             if (executable is MyTask)
             {
-                result = new MyDebugTaskNode(executable as MyTask);
+                result = new MyDebugTaskNode(executable as MyTask, () => m_mainForm.TaskView.RefreshView());
             }
             else
             {
@@ -413,12 +413,25 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 return Executable.Enabled;
             }
+            set
+            {
+                var task = Executable as MyTask;
+                if (task != null)
+                {
+                    task.Enabled = value;
+                    if (m_enabledCallback != null)
+                        m_enabledCallback();
+                }
+            }
         }
 
-        public MyDebugTaskNode(MyTask task): base(task)
+        public MyDebugTaskNode(MyTask task, Action enabledCallback): base(task)
         {
             Icon = Properties.Resources.gears;
             OwnerName = task.GetType().Name;
+            m_enabledCallback = enabledCallback;
         }
+
+        private readonly Action m_enabledCallback;
     }
 }
