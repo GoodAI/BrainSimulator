@@ -54,6 +54,10 @@ namespace GoodAI.Modules.School.Common
         public void Reset()
         {
             m_taskEnumerator = null;
+            for(int i = 0; i < Tasks.Count; i++)
+            {
+                Tasks[i].Init();
+            }
         }
 
         public void Add(ILearningTask task)
