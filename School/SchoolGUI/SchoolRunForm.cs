@@ -48,9 +48,6 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                if (!(m_mainForm.Project.World is SchoolWorld))
-                    m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
-
                 return (SchoolWorld)m_mainForm.Project.World;
             }
         }
@@ -82,21 +79,31 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
             InitializeComponent();
 
+            SelectSchoolWorld(null, EventArgs.Empty);
             btnObserver.Checked = Properties.School.Default.ShowVisual;
             m_emulateSuccess = btnEmulateSuccess.Checked;
 
             // here so it does not interfere with designer generated code
-            btnRun.Click += new System.EventHandler(m_mainForm.runToolButton_Click);
-            btnStop.Click += new System.EventHandler(m_mainForm.stopToolButton_Click);
-            btnPause.Click += new System.EventHandler(m_mainForm.pauseToolButton_Click);
-            btnStepOver.Click += new System.EventHandler(m_mainForm.stepOverToolButton_Click);
-            btnDebug.Click += new System.EventHandler(m_mainForm.debugToolButton_Click);
+            btnRun.Click += m_mainForm.runToolButton_Click;
+            btnStop.Click += m_mainForm.stopToolButton_Click;
+            btnPause.Click += m_mainForm.pauseToolButton_Click;
+            btnStepOver.Click += m_mainForm.stepOverToolButton_Click;
+            btnDebug.Click += m_mainForm.debugToolButton_Click;
 
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             m_mainForm.WorldChanged += UpdateWorldHandlers;
+            m_mainForm.WorldChanged += SelectSchoolWorld;
 
             UpdateButtons(null, null);
+        }
+
+        private void SelectSchoolWorld(object sender, EventArgs e)
+        {
+            if (!(m_mainForm.Project.World is SchoolWorld))
+                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+            if (Design != null)
+                PrepareSimulation(null, EventArgs.Empty);
         }
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -106,14 +113,34 @@ namespace GoodAI.School.GUI
                 UpdateTaskData(runningTask);
         }
 
-        private void UpdateWorldHandlers(object sender, EventArgs e)
+        private void AddWorldHandlers(SchoolWorld world)
         {
-            m_school.CurriculumStarting += PrepareSimulation;
-            m_school.LearningTaskNew += GoToNextTask;
-            m_school.LearningTaskNewLevel += UpdateLTLevel;
-            m_school.LearningTaskFinished += LearningTaskFinished;
-            m_school.TrainingUnitFinished += UpdateTUStatus;
-            m_school.TrainingUnitFinished += UpdateTrainingUnitNumber;
+            if (world == null)
+                return;
+            world.CurriculumStarting += PrepareSimulation;
+            world.LearningTaskNew += GoToNextTask;
+            world.LearningTaskNewLevel += UpdateLTLevel;
+            world.LearningTaskFinished += LearningTaskFinished;
+            world.TrainingUnitFinished += UpdateTUStatus;
+            world.TrainingUnitFinished += UpdateTrainingUnitNumber;
+        }
+
+        private void RemoveWorldHandlers(SchoolWorld world)
+        {
+            if (world == null)
+                return;
+            world.CurriculumStarting -= PrepareSimulation;
+            world.LearningTaskNew -= GoToNextTask;
+            world.LearningTaskNewLevel -= UpdateLTLevel;
+            world.LearningTaskFinished -= LearningTaskFinished;
+            world.TrainingUnitFinished -= UpdateTUStatus;
+            world.TrainingUnitFinished -= UpdateTrainingUnitNumber;
+        }
+
+        private void UpdateWorldHandlers(object sender, GoodAI.BrainSimulator.Forms.MainForm.WorldChangedEventArgs e)
+        {
+            RemoveWorldHandlers(e.OldWorld as SchoolWorld);
+            AddWorldHandlers(e.NewWorld as SchoolWorld);
         }
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)

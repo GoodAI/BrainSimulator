@@ -227,9 +227,9 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = false)]
         public bool ShowBlackscreen { get; set; }
 
-        public event EventHandler<SchoolEventArgs> LearningTaskNew = delegate { };        
+        public event EventHandler<SchoolEventArgs> LearningTaskNew = delegate { };
         public event EventHandler<SchoolEventArgs> TrainingUnitFinished = delegate { };
-        public event EventHandler<SchoolEventArgs> LearningTaskUpdated = delegate { };        
+        public event EventHandler<SchoolEventArgs> LearningTaskUpdated = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskLevelFinished = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
@@ -267,8 +267,11 @@ namespace GoodAI.Modules.School.Worlds
             if (Curriculum.IsLast())
             {
                 // stop execution
-                CurriculumFinished(this, new SchoolEventArgs(CurrentLearningTask));
-                LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
+                if (CurrentLearningTask != null)
+                {
+                    CurriculumFinished(this, new SchoolEventArgs(CurrentLearningTask));
+                    LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
+                }
                 CurrentLearningTask = null;
                 if (Owner.SimulationHandler.CanPause)
                 {
