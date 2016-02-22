@@ -79,10 +79,6 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
             InitializeComponent();
 
-            SelectSchoolWorld(null, EventArgs.Empty);
-            btnObserver.Checked = Properties.School.Default.ShowVisual;
-            m_emulateSuccess = btnEmulateSuccess.Checked;
-
             // here so it does not interfere with designer generated code
             btnRun.Click += m_mainForm.runToolButton_Click;
             btnStop.Click += m_mainForm.stopToolButton_Click;
@@ -92,14 +88,21 @@ namespace GoodAI.School.GUI
 
             m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
-            m_mainForm.WorldChanged += UpdateWorldHandlers;
+            m_mainForm.WorldChanged += m_mainForm_WorldChanged;
             m_mainForm.WorldChanged += SelectSchoolWorld;
 
             UpdateButtons(null, null);
         }
 
+        void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
+        {
+            UpdateWorldHandlers(e.OldWorld as SchoolWorld, e.NewWorld as SchoolWorld);
+        }
+
         private void SelectSchoolWorld(object sender, EventArgs e)
         {
+            if (!Visible)
+                return;
             if (!(m_mainForm.Project.World is SchoolWorld))
                 m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
             if (Design != null)
@@ -108,6 +111,8 @@ namespace GoodAI.School.GUI
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            if (!Visible)
+                return;
             ILearningTask runningTask = m_school.CurrentLearningTask;
             if (runningTask != null && CurrentTask != null)
                 UpdateTaskData(runningTask);
@@ -115,7 +120,7 @@ namespace GoodAI.School.GUI
 
         private void AddWorldHandlers(SchoolWorld world)
         {
-            if (world == null || !Visible)
+            if (world == null)
                 return;
             world.CurriculumStarting += PrepareSimulation;
             world.LearningTaskNew += GoToNextTask;
@@ -137,10 +142,14 @@ namespace GoodAI.School.GUI
             world.TrainingUnitFinished -= UpdateTrainingUnitNumber;
         }
 
-        private void UpdateWorldHandlers(object sender, GoodAI.BrainSimulator.Forms.MainForm.WorldChangedEventArgs e)
+        private void UpdateWorldHandlers(SchoolWorld oldWorld, SchoolWorld newWorld)
         {
-            RemoveWorldHandlers(e.OldWorld as SchoolWorld);
-            AddWorldHandlers(e.NewWorld as SchoolWorld);
+            if (!Visible)
+                return;
+            if (oldWorld != null)
+                RemoveWorldHandlers(oldWorld as SchoolWorld);
+            if (newWorld != null)
+                AddWorldHandlers(newWorld as SchoolWorld);
         }
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
@@ -492,6 +501,16 @@ namespace GoodAI.School.GUI
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void SchoolRunForm_VisibleChanged(object sender, EventArgs e)
+        {
+            if (!Visible)
+                return;
+            SelectSchoolWorld(null, EventArgs.Empty);
+            btnObserver.Checked = Properties.School.Default.ShowVisual;
+            m_emulateSuccess = btnEmulateSuccess.Checked;
+            UpdateWorldHandlers(null, m_mainForm.Project.World as SchoolWorld);
         }
     }
 }
