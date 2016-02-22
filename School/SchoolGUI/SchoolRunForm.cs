@@ -162,7 +162,7 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
-                unitNumberTextBox.Text = m_numberOfTU++.ToString();
+                unitNumberLabel.Text = m_numberOfTU++.ToString();
             }
             ));
         }
@@ -174,7 +174,7 @@ namespace GoodAI.School.GUI
                 Invoke((MethodInvoker)(() =>
                 {
                     tabControl1.SelectedIndex = m_school.Level - 1;
-                    currentLevelTextBox.Text = m_school.Level.ToString();
+                    currentLevelLabel.Text = m_school.Level.ToString();
                 }
                 ));
             }
@@ -184,7 +184,7 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
-                actualRewardTextBox.Text = m_school.Reward.ToString("F");
+                actualRewardLabel.Text = m_school.Reward.ToString("F");
             }
             ));
         }
@@ -414,15 +414,14 @@ namespace GoodAI.School.GUI
                         }
                         foreach (var attribute in hints)
                         {
-                            AttributeNode an = new AttributeNode(
-                                attribute.Key.Name,
-                                attribute.Value,
-                                attribute.Key.TypeOfValue);
+                            AttributeNode an = new AttributeNode(attribute.Key, attribute.Value);
                             Attributes[i].Add(an);
+                            // create tooltips
                         }
 
                         Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
                         dgv.DataSource = Attributes[i];
+
 
                         dgv.Columns[0].Width = 249;
                         dgv.Columns[0].ReadOnly = true;
@@ -457,16 +456,22 @@ namespace GoodAI.School.GUI
 
         private void lGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs args)
         {
+            // colouring changes between levels
             DataGridView dgv = sender as DataGridView;
-            int i = LevelGrids.IndexOf(dgv);
+            int level = LevelGrids.IndexOf(dgv);
             if (AttributesChange.Count == 0)
             {
                 return;
             }
-            if (AttributesChange[i].Contains(args.RowIndex))
+            if (AttributesChange[level].Contains(args.RowIndex))
             {
                 args.CellStyle.BackColor = Color.LightGreen;
             }
+
+            // set tooltip text
+            int row = args.RowIndex;
+            int column = args.ColumnIndex;
+            dgv.Rows[row].Cells[column].ToolTipText = Attributes[level][row].GetAnotation();
 
             // unselect dgv
             dgv.ClearSelection();

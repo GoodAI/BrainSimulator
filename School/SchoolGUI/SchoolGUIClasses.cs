@@ -81,25 +81,28 @@ namespace GoodAI.School.GUI
         public string Name { get; set; }
         public string Value { get; set; }
         private Type Type { get; set; }
+        private string Annotation;
 
         public AttributeNode(string name)
         {
             this.Name = name;
         }
 
-        public AttributeNode(string name, float value, Type type)
+        public AttributeNode(TSHintAttribute attribute, float value)
         {
-            this.Name = name;
+            this.Name = attribute.Name;
 
-            this.Type = type;
-            if (type == typeof(Single) || type == typeof(Double))
+            this.Type = attribute.TypeOfValue;
+            if (Type == typeof(Single) || Type == typeof(Double))
             {
                 this.Value = ((Single)value).ToString("F");
             }
             else
             {
-                this.Value = Convert.ChangeType(value, type).ToString();
+                this.Value = Convert.ChangeType(value, Type).ToString();
             }
+
+            Annotation = attribute.Annotation;
         }
 
         public override bool Equals(object obj)
@@ -109,6 +112,12 @@ namespace GoodAI.School.GUI
                 return true;
             }
             return false;
+        }
+
+        // Annotation is not public property because DataGridView automaticly generates
+        // columns for all public properties, while this should not be column
+        public string GetAnotation(){
+            return Annotation;
         }
     }
 
