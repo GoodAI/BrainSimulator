@@ -78,10 +78,20 @@
             this.unitNumberLabel = new System.Windows.Forms.Label();
             this.actualRewardLabel = new System.Windows.Forms.Label();
             this.currentLevelLabel = new System.Windows.Forms.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -109,12 +119,12 @@
             this.isLeafDataGridViewCheckBoxColumn,
             this.tagDataGridViewTextBoxColumn});
             this.dataGridView1.DataSource = this.learningTaskNodeBindingSource;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 28);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 3);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(370, 552);
+            this.dataGridView1.Size = new System.Drawing.Size(339, 555);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
@@ -225,7 +235,7 @@
             this.btnObserver});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1147, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1092, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -291,6 +301,8 @@
             // 
             // btnObserver
             // 
+            this.btnObserver.Checked = true;
+            this.btnObserver.CheckState = System.Windows.Forms.CheckState.Checked;
             this.btnObserver.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnObserver.Image = global::GoodAI.School.GUI.Properties.Resources.observer_icon;
             this.btnObserver.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -303,7 +315,7 @@
             // 
             this.observerDockPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.observerDockPanel.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            this.observerDockPanel.Location = new System.Drawing.Point(755, 28);
+            this.observerDockPanel.Location = new System.Drawing.Point(5, 3);
             this.observerDockPanel.Name = "observerDockPanel";
             this.observerDockPanel.Size = new System.Drawing.Size(380, 380);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
@@ -356,12 +368,13 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Location = new System.Drawing.Point(389, 29);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(360, 551);
+            this.tabControl1.Size = new System.Drawing.Size(342, 555);
             this.tabControl1.TabIndex = 10;
             // 
             // panel1
@@ -375,9 +388,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(755, 414);
+            this.panel1.Location = new System.Drawing.Point(5, 389);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(380, 166);
+            this.panel1.Size = new System.Drawing.Size(380, 175);
             this.panel1.TabIndex = 13;
             // 
             // label4
@@ -418,14 +431,42 @@
             this.label1.TabIndex = 13;
             this.label1.Text = "Status";
             // 
-            // unitNumberLabel
+            // splitContainer1
             // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            // 
+            // unitNumberLabel
+            //
             this.unitNumberLabel.AutoSize = true;
             this.unitNumberLabel.Location = new System.Drawing.Point(115, 31);
             this.unitNumberLabel.Name = "unitNumberLabel";
             this.unitNumberLabel.Size = new System.Drawing.Size(13, 13);
             this.unitNumberLabel.TabIndex = 20;
             this.unitNumberLabel.Text = "0";
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Size = new System.Drawing.Size(694, 561);
+            this.splitContainer1.SplitterDistance = 342;
+            this.splitContainer1.TabIndex = 15;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer2.IsSplitterFixed = true;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 28);
+            this.splitContainer2.Name = "splitContainer2";
             // 
             // actualRewardLabel
             // 
@@ -435,6 +476,7 @@
             this.actualRewardLabel.Size = new System.Drawing.Size(13, 13);
             this.actualRewardLabel.TabIndex = 21;
             this.actualRewardLabel.Text = "0";
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainer1);
             // 
             // currentLevelLabel
             // 
@@ -444,17 +486,19 @@
             this.currentLevelLabel.Size = new System.Drawing.Size(13, 13);
             this.currentLevelLabel.TabIndex = 22;
             this.currentLevelLabel.Text = "0";
+            this.splitContainer2.Panel2.Controls.Add(this.panel1);
+            this.splitContainer2.Panel2.Controls.Add(this.observerDockPanel);
+            this.splitContainer2.Size = new System.Drawing.Size(1092, 567);
+            this.splitContainer2.SplitterDistance = 700;
+            this.splitContainer2.TabIndex = 16;
             // 
             // SchoolRunForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1147, 592);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.observerDockPanel);
+            this.ClientSize = new System.Drawing.Size(1092, 592);
+            this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.dataGridView1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
             this.MinimumSize = new System.Drawing.Size(410, 410);
@@ -467,6 +511,14 @@
             this.toolStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -522,5 +574,7 @@
         private System.Windows.Forms.Label unitNumberLabel;
         private System.Windows.Forms.Label currentLevelLabel;
         private System.Windows.Forms.Label actualRewardLabel;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }

@@ -495,6 +495,8 @@ namespace GoodAI.School.GUI
         {
             Properties.School.Default.ShowVisual = (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
             Properties.School.Default.Save();
+
+            splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
             SetObserver();
         }
 
@@ -514,6 +516,7 @@ namespace GoodAI.School.GUI
                 return;
             SelectSchoolWorld(null, EventArgs.Empty);
             btnObserver.Checked = Properties.School.Default.ShowVisual;
+            splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
             m_emulateSuccess = btnEmulateSuccess.Checked;
             UpdateWorldHandlers(null, m_mainForm.Project.World as SchoolWorld);
         }
