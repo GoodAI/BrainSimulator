@@ -67,9 +67,6 @@ namespace GoodAI.BrainSimulator.Forms
             var node = propertyGrid.SelectedObject as MyNode;
             if (node != null)
             {
-                if (node.AnyOutputSizeChanged())
-                    m_mainForm.CloseObservers(node);
-
                 var nodeGroup = node as MyNodeGroup;
                 if (nodeGroup != null)
                     m_mainForm.ReloadGraphLayout(nodeGroup);
