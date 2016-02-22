@@ -27,6 +27,18 @@ namespace GoodAI.Modules.School.Worlds
         }
     }
 
+    public class SchoolStatus
+    {
+        public bool m_isNewCurriculum = false;
+        public bool m_isNewLT = false;
+        public bool m_isNewTU = false;
+        public bool m_isNewLevel = false;
+
+        public int m_counterLT = 0;
+        public int m_counterLevel = 0;
+        public int m_counterTU = 0;
+    }
+
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
         #region Constants
@@ -34,8 +46,8 @@ namespace GoodAI.Modules.School.Worlds
         private const int NEW_LT_FLAG = 0;
         private const int NEW_LEVEL_FLAG = NEW_LT_FLAG + 1;
         private const int NEW_TU_FLAG = NEW_LEVEL_FLAG + 1;
-        private const int LT_IDENTIFIER = NEW_TU_FLAG + 1;
-        private const int LEVEL_INDEX = LT_IDENTIFIER + 1;
+        private const int LT_INDEX = NEW_TU_FLAG + 1;
+        private const int LEVEL_INDEX = LT_INDEX + 1;
         private const int TU_INDEX = LEVEL_INDEX + 1;
         private const int LT_STATUS_COUNT = TU_INDEX + 1;
         #endregion
@@ -197,7 +209,7 @@ namespace GoodAI.Modules.School.Worlds
             // Notify BS that the model has changed -- it will reuse the old model otherwise and won't call inits on CurrentWorld's tasks when run
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
             {
-                m_isNewLearningTask = true;
+                m_shouldShowNewLearningTask = true;
                 CurrentLearningTask = null;
                 Curriculum.Reset();
             }
@@ -211,9 +223,11 @@ namespace GoodAI.Modules.School.Worlds
 
         Random m_rndGen = new Random();
 
-        private bool m_isNewLearningTask = true;
+        private bool m_shouldShowNewLearningTask = true;
         private bool m_isAfterChangeModelInit = false;
         private bool m_isAfterChangeModelExecute = false;
+
+        private SchoolStatus m_schoolStatus = new SchoolStatus();
 
         public SchoolCurriculum Curriculum { get; set; }
         public ILearningTask CurrentLearningTask { get; set; }
@@ -255,7 +269,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public bool ChangeModel(IModelChanges changes)
         {
-            if (!m_isNewLearningTask)
+            if (!m_shouldShowNewLearningTask)
             {
                 return false;
             }
@@ -292,7 +306,7 @@ namespace GoodAI.Modules.School.Worlds
             changes.AddNode(CurrentWorld.World);
             changes.AddNode(this);
 
-            m_isNewLearningTask = false;
+            m_shouldShowNewLearningTask = false;
             m_isAfterChangeModelExecute = true;
             m_isAfterChangeModelInit = true;
             return true;
@@ -354,8 +368,11 @@ namespace GoodAI.Modules.School.Worlds
             ResetLTStatusFlags();
 
             if (ShowBlackscreen && m_drawBlackscreen)
+            {
                 // Skip task evaluation, a blackscreen will show up this step
+                MoveLTStatusToDevice();
                 return;
+            }
 
             if (!CurrentLearningTask.IsInitialized)
             {
@@ -384,12 +401,16 @@ namespace GoodAI.Modules.School.Worlds
                             Owner.SimulationHandler.PauseSimulation();
                         return;
 
-                    case TrainingResult.LevelUp:
-                        NotifyNewLevel();
-                        break;
-
-                    case TrainingResult.FinishedLT:
-                        NotifyNewLearningTask();
+                    case TrainingResult.FinishedLevel:
+                        if (CurrentLearningTask.CurrentLevel + 1 >= CurrentLearningTask.NumberOfLevels)
+                        {
+                            NotifyNewLearningTask();
+                        }
+                        else
+                        {
+                            CurrentLearningTask.IncreaseLevel();
+                            NotifyNewLevel();
+                        }
                         break;
 
                     default:
@@ -397,22 +418,18 @@ namespace GoodAI.Modules.School.Worlds
                 }
             }
 
-            // set new learning task or stop simulation
-            if (LTStatus.Host[NEW_LT_FLAG] == 1)
+            // set new learning task
+            if (m_schoolStatus.m_isNewLT)
             {
-                m_isNewLearningTask = true;
-                //CurrentLearningTask = null;
-                return;
+                m_shouldShowNewLearningTask = true;
             }
-
             // if new TU is requested, present new training unit
-            if (LTStatus.Host[NEW_TU_FLAG] == 1)
+            else if (m_schoolStatus.m_isNewTU)
             {
                 CurrentLearningTask.PresentNewTrainingUnitCommon();
             }
 
-            // LTStatus should be complete in this moment
-            LTStatus.SafeCopyToDevice();
+            MoveLTStatusToDevice();
         }
 
         private bool InitNewLearningTask()
@@ -438,38 +455,52 @@ namespace GoodAI.Modules.School.Worlds
         // Notify of the start of a new curriculum
         private void NotifyNewCurriculum()
         {
-            // Will be incremented when LT is presented
-            LTStatus.Host[LT_IDENTIFIER] = -1;
+            m_schoolStatus = new SchoolStatus();
         }
 
         public void ResetLTStatusFlags()
         {
-            LTStatus.Host[NEW_LT_FLAG] = 0;
-            LTStatus.Host[NEW_LEVEL_FLAG] = 0;
-            LTStatus.Host[NEW_TU_FLAG] = 0;
+            m_schoolStatus.m_isNewLT = false;
+            m_schoolStatus.m_isNewLevel = false;
+            m_schoolStatus.m_isNewTU = false;
+        }
+
+        public void MoveLTStatusToDevice()
+        {
+            LTStatus.Host[NEW_LT_FLAG] = (m_schoolStatus.m_isNewLT) ? 1 : 0;
+            LTStatus.Host[NEW_LEVEL_FLAG] = (m_schoolStatus.m_isNewLevel) ? 1 : 0;
+            LTStatus.Host[NEW_TU_FLAG] = (m_schoolStatus.m_isNewTU) ? 1 : 0;
+
+            LTStatus.Host[LT_INDEX] = m_schoolStatus.m_counterLT;
+            LTStatus.Host[TU_INDEX] = m_schoolStatus.m_counterTU;
+            LTStatus.Host[LEVEL_INDEX] = m_schoolStatus.m_counterLevel;
+
+            LTStatus.SafeCopyToDevice();
         }
 
         // Notify of the start of a new learning task
         public void NotifyNewLearningTask()
         {
-            LTStatus.Host[NEW_LT_FLAG] = 1;
-            LTStatus.Host[LT_IDENTIFIER]++;
-            LTStatus.Host[TU_INDEX] = 0;
-            LTStatus.Host[LEVEL_INDEX] = 0;
+            m_schoolStatus.m_isNewLT = true;
+            m_schoolStatus.m_counterLT++;
+            m_schoolStatus.m_counterTU = 0;
+            m_schoolStatus.m_counterLevel = 0;
         }
 
         public void NotifyNewLevel()
         {
-            LTStatus.Host[NEW_LEVEL_FLAG] = 1;
-            LTStatus.Host[LEVEL_INDEX]++;
-            LTStatus.Host[TU_INDEX] = 0;
+            m_schoolStatus.m_isNewLevel = true;
+            m_schoolStatus.m_counterLevel++;
+            m_schoolStatus.m_counterTU = 0;
+
             LearningTaskNewLevel(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
         public void NotifyNewTrainingUnit()
         {
-            LTStatus.Host[NEW_TU_FLAG] = 1;
-            LTStatus.Host[TU_INDEX]++;
+            m_schoolStatus.m_isNewTU = true;
+            m_schoolStatus.m_counterTU++;
+
             TrainingUnitFinished(this, new SchoolEventArgs(CurrentLearningTask));
         }
 
@@ -553,16 +584,17 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 if (Owner.ShowBlackscreen)
+                {
                     switch (Owner.TaskResult)
                     {
                         case TrainingResult.FinishedTU:
-                        case TrainingResult.LevelUp:
-                        case TrainingResult.FinishedLT:
+                        case TrainingResult.FinishedLevel:
                             // Display a blackscreen as a notification about the agent's success
-                            // delay it to the next step -- the learning tasks won't execute next step aswell
+                            // delay it to the next step -- the learning tasks won't execute next step as well
                             Owner.m_drawBlackscreen = true;
                             break;
                     }
+                }
 
                 Owner.CurrentWorld.MapWorldOutputs();
             }
@@ -605,15 +637,11 @@ namespace GoodAI.Modules.School.Worlds
         {
             get
             {
-                if (LTStatus != null && LTStatus.Host != null)
+                if (m_schoolStatus != null)
                 {
-                    return (int)LTStatus.Host[LEVEL_INDEX];
+                    return m_schoolStatus.m_counterLevel;
                 }
                 return 0;
-            }
-            set
-            {
-                LTStatus.Host[LEVEL_INDEX] = value;
             }
         }
 
@@ -621,7 +649,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             get
             {
-                if (LTStatus != null && LTStatus.Host != null)
+                if (RewardMB != null && RewardMB.Host != null)
                 {
                     return (int)RewardMB.Host[0];
                 }

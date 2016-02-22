@@ -3,6 +3,7 @@ using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GoodAI.Modules.School.Common
@@ -17,10 +18,8 @@ namespace GoodAI.Modules.School.Common
         FinishedTU,
         [Description("Failed")]
         FailedLT,
-        [Description("Running")]
-        LevelUp, // Implies FinishedTU
-        [Description("Success")]
-        FinishedLT, // Implies FinishedTU (and LevelUp)
+        [Description("Running/Success")]
+        FinishedLevel, // Implies FinishedTU
     }
 
     public interface ILearningTask
@@ -31,16 +30,16 @@ namespace GoodAI.Modules.School.Common
         TrainingSetHints TSHints { get; set; }
         TrainingSetProgression TSProgression { get; set; }
         int NumberOfLevels { get; set; }
-        int CurrentLevel { get; set; }
+        int CurrentLevel { get; set;  }
         int NumberOfSuccessesRequired { get; }
         float Progress { get; }
         float Reward { get; set; }
-        int Level { get; set; }
         int CurrentNumberOfAttempts { get; set; }
 
         void ExecuteStep();
         TrainingResult EvaluateStep();
         void PresentNewTrainingUnitCommon();
+        void IncreaseLevel();
 
         SchoolWorld SchoolWorld { get; set; }
         Type RequiredWorldType { get; set; }
@@ -123,23 +122,25 @@ namespace GoodAI.Modules.School.Common
         }
 
         // Implement to manage challenge levels and training set hints
-        protected virtual bool IncreaseLevel()
+        public virtual void IncreaseLevel()
         {
-            // We assume that levels are traversed sequentially.
-            // Random access of levels would require a change of
-            // implementation.
             CurrentLevel++;
             if (CurrentLevel >= NumberOfLevels)
             {
-                return false;
+                Debug.Assert(false);
             }
+            // We assume that levels are traversed sequentially.
+            // Random access of levels would require a change of
+            // implementation.
             CurrentNumberOfAttempts = 0;
             CurrentNumberOfSuccesses = 0;
 
             TSHints.Set(TSProgression[CurrentLevel]);
             SetHints(TSHints);
 
-            return true;
+            MyLog.Writer.WriteLine(MyLogLevel.INFO,
+                "Next level settings: \n" +
+                TSHints);
         }
 
         protected virtual void SetHints(TrainingSetHints trainingSetHints)
@@ -210,16 +211,7 @@ namespace GoodAI.Modules.School.Common
                 // The level is still in progress
                 return TrainingResult.FinishedTU;
 
-            if (!IncreaseLevel())
-                // The task with all its units have been completed
-                return TrainingResult.FinishedLT;
-
-            // Level completed
-            MyLog.Writer.WriteLine(MyLogLevel.INFO,
-                "Next level settings: \n" +
-                TSHints);
-
-            return TrainingResult.LevelUp;
+            return TrainingResult.FinishedLevel;
         }
 
         public string GetTypeName()
@@ -242,8 +234,8 @@ namespace GoodAI.Modules.School.Common
         public void Init()
         {
             CurrentNumberOfAttempts = 0;
-            CurrentLevel = 0;
             CurrentNumberOfSuccesses = 0;
+            CurrentLevel = 0;
 
             TSHints.Set(TSProgression[CurrentLevel]);
             SetHints(TSHints);
@@ -265,18 +257,6 @@ namespace GoodAI.Modules.School.Common
             set
             {
                 SchoolWorld.Reward = value;
-            }
-        }
-
-        public int Level
-        {
-            get
-            {
-                return SchoolWorld.Level;
-            }
-            set
-            {
-                SchoolWorld.Level = value;
             }
         }
     }
