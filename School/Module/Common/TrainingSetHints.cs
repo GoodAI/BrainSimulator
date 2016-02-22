@@ -91,7 +91,7 @@ namespace GoodAI.Modules.School.Common
         // True if the agent is rewarded at each step for approaching the target
         public static readonly TSHintAttribute GIVE_PARTIAL_REWARDS = new TSHintAttribute(
             "Give partial rewards",
-            "Partial rewards are submitting during training unit.",
+            "Partial rewards are submitting during run of training unit.",
             typeof(bool),
             0, 1);
 

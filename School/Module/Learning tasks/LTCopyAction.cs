@@ -34,14 +34,14 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.DEGREES_OF_FREEDOM, 1 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TEACHER_ON_DIFF_START_POSITION, 0},
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
+                { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1 },
             };
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TEACHER_ON_DIFF_START_POSITION, 1);
-            TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1);
         }
 
         public override void PresentNewTrainingUnit()
