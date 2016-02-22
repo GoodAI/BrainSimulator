@@ -60,9 +60,11 @@ namespace CoreTests.Memory
         [Fact]
         public void CustomDimensionsAreSameAsHintWhenCountMatches()
         {
-            TensorDimensions dims = CustomDimensionsHint.Parse("2, 3, 5").TryToApply(new TensorDimensions(30));
+            TensorDimensions dims;
+            bool didApply = CustomDimensionsHint.Parse("2, 3, 5").TryToApply(new TensorDimensions(30), out dims);
 
             Assert.Equal(new TensorDimensions(2, 3, 5), dims);
+            Assert.True(didApply);
         }
 
         [Fact]
@@ -94,10 +96,12 @@ namespace CoreTests.Memory
         [Theory, MemberData("ApplyFallbackData")]
         public void ApplyFallbackTheory(CustomDimensionsHint hint, TensorDimensions originalDims)
         {
-            // TODO(Premek): Test that the fallback is logged.
-            TensorDimensions resultDims = hint.TryToApply(originalDims);
+            TensorDimensions resultDims;
+            
+            bool didApply = hint.TryToApply(originalDims, out resultDims);
 
             Assert.Equal(originalDims, resultDims);
+            Assert.False(didApply);
         }
     }
 }

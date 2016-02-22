@@ -396,28 +396,32 @@ namespace GoodAI.Core.Observers
             m_texture_id = 0;
         }
 
-
+        // TODO: Define in all derived observers and actually call from somewhere.
         protected virtual void SetDefaultTextureDimensions(int pixelCount)
         {
-            //TODO: this is not optimal, should be done by prime factorization
-            int root = (int)Math.Sqrt(pixelCount);
-            int i = root;
-            TextureWidth = pixelCount / root;
-            TextureHeight = root + 1;
+            Size textureSize = ComputeTextureSize(pixelCount);
 
-            while (i > root / 2)
+            TextureWidth = textureSize.Width;
+            TextureHeight = textureSize.Height;
+        }
+
+        protected static Size ComputeTextureSize(int pixelCount)
+        {
+            //TODO: this is not optimal, should be done by prime factorization
+            int root = (int) Math.Sqrt(pixelCount);
+            int originalRoot = root;
+
+            while (root > originalRoot / 2)
             {
                 if (pixelCount % root == 0)
                 {
-                    TextureWidth = pixelCount / root;
-                    TextureHeight = root;
-                    break;
+                    return new Size(pixelCount/root, root);
                 }
-                else
-                {
-                    root--;
-                }
+
+                root--;
             }
+
+            return new Size(pixelCount/root, root + 1);
         }
 
         #endregion
