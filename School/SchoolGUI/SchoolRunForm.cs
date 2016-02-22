@@ -7,6 +7,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -30,7 +31,7 @@ namespace GoodAI.School.GUI
 
         private int m_currentRow = -1;
         private int m_stepOffset = 0;
-        private DateTime m_ltStart;
+        private Stopwatch m_currentLtStopwatch;
 
         private int m_numberOfTU;
 
@@ -86,12 +87,24 @@ namespace GoodAI.School.GUI
             btnStepOver.Click += m_mainForm.stepOverToolButton_Click;
             btnDebug.Click += m_mainForm.debugToolButton_Click;
 
-            m_mainForm.SimulationHandler.StateChanged += UpdateButtons;
+            m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             m_mainForm.WorldChanged += m_mainForm_WorldChanged;
             m_mainForm.WorldChanged += SelectSchoolWorld;
 
-            UpdateButtons(null, null);
+            UpdateButtons();
+        }
+
+        void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
+        {
+            if (m_currentLtStopwatch != null)
+                if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
+                    m_currentLtStopwatch.Stop();
+                else if (e.NewState == MySimulationHandler.SimulationState.RUNNING ||
+                    e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP)
+                    m_currentLtStopwatch.Start();
+
+            UpdateButtons();
         }
 
         void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
@@ -189,7 +202,7 @@ namespace GoodAI.School.GUI
             ));
         }
 
-        private void UpdateButtons(object sender, MySimulationHandler.StateEventArgs e)
+        private void UpdateButtons()
         {
             btnRun.Enabled = m_mainForm.runToolButton.Enabled;
             btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
@@ -217,7 +230,7 @@ namespace GoodAI.School.GUI
                 return;
             CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
             CurrentTask.Progress = (int)runningTask.Progress;
-            TimeSpan diff = DateTime.UtcNow - m_ltStart;
+            TimeSpan diff = m_currentLtStopwatch.Elapsed;
             CurrentTask.Time = (float)Math.Round(diff.TotalSeconds, 2);
             CurrentTask.Status = m_school.TaskResult;
 
@@ -228,7 +241,8 @@ namespace GoodAI.School.GUI
         {
             m_currentRow++;
             m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
-            m_ltStart = DateTime.UtcNow; ;
+            m_currentLtStopwatch = new Stopwatch();
+            m_currentLtStopwatch.Start();
 
             HighlightCurrentTask();
         }
