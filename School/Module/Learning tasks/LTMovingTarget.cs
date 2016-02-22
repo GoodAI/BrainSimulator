@@ -50,12 +50,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(
                 new TrainingSetHints {
                     { ELLIPSE_SIZE, 0.55f },
-                    { STEPS_TAKEN_FOR_ONE_CIRCLE, 600 },
-            });
-
-            TSProgression.Add(
-                new TrainingSetHints {
-                    { ELLIPSE_SIZE, 0.55f },
                     { STEPS_TAKEN_FOR_ONE_CIRCLE, 500 }
             });
 
