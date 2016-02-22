@@ -2,6 +2,7 @@
 using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,6 +35,17 @@ namespace GoodAI.School.GUI
             get
             {
                 return new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
+            }
+        }
+
+        private SchoolWorld m_school
+        {
+            get
+            {
+                if (!(m_mainForm.Project.World is SchoolWorld))
+                    m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+
+                return (SchoolWorld)m_mainForm.Project.World;
             }
         }
 
@@ -456,6 +468,11 @@ namespace GoodAI.School.GUI
         private void btnToggleCheck(object sender, EventArgs e)
         {
             (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
+        }
+
+        private void btnUpload_Click(object sender, EventArgs e)
+        {
+            m_school.Curriculum = m_design.AsSchoolCurriculum(m_school);
         }
 
         #endregion Button clicks

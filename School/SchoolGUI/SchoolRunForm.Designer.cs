@@ -457,6 +457,7 @@
             this.MinimumSize = new System.Drawing.Size(410, 410);
             this.Name = "SchoolRunForm";
             this.Text = "School Run Controller";
+            this.VisibleChanged += new System.EventHandler(this.SchoolRunForm_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();

@@ -28,6 +28,7 @@ namespace GoodAI.School.GUI
         private string m_runName;
         private ObserverForm m_observer;
 
+        private bool m_handlersRegistered = false;
         private int m_currentRow = -1;
         private int m_stepOffset = 0;
         private DateTime m_ltStart;
@@ -96,6 +97,7 @@ namespace GoodAI.School.GUI
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             m_mainForm.WorldChanged += UpdateWorldHandlers;
 
+            SchoolRunForm_VisibleChanged(null, EventArgs.Empty);
             UpdateButtons(null, null);
         }
 
@@ -106,14 +108,34 @@ namespace GoodAI.School.GUI
                 UpdateTaskData(runningTask);
         }
 
-        private void UpdateWorldHandlers(object sender, EventArgs e)
+        private void AddWorldHandlers(SchoolWorld world)
         {
-            m_school.CurriculumStarting += PrepareSimulation;
-            m_school.LearningTaskNew += GoToNextTask;
-            m_school.LearningTaskNewLevel += UpdateLTLevel;
-            m_school.LearningTaskFinished += LearningTaskFinished;
-            m_school.TrainingUnitFinished += UpdateTUStatus;
-            m_school.TrainingUnitFinished += UpdateTrainingUnitNumber;
+            if (world == null)
+                return;
+            world.CurriculumStarting += PrepareSimulation;
+            world.LearningTaskNew += GoToNextTask;
+            world.LearningTaskNewLevel += UpdateLTLevel;
+            world.LearningTaskFinished += LearningTaskFinished;
+            world.TrainingUnitFinished += UpdateTUStatus;
+            world.TrainingUnitFinished += UpdateTrainingUnitNumber;
+        }
+
+        private void RemoveWorldHandlers(SchoolWorld world)
+        {
+            if (world == null)
+                return;
+            world.CurriculumStarting -= PrepareSimulation;
+            world.LearningTaskNew -= GoToNextTask;
+            world.LearningTaskNewLevel -= UpdateLTLevel;
+            world.LearningTaskFinished -= LearningTaskFinished;
+            world.TrainingUnitFinished -= UpdateTUStatus;
+            world.TrainingUnitFinished -= UpdateTrainingUnitNumber;
+        }
+
+        private void UpdateWorldHandlers(object sender, GoodAI.BrainSimulator.Forms.MainForm.WorldChangedEventArgs e)
+        {
+            RemoveWorldHandlers(e.OldWorld as SchoolWorld);
+            AddWorldHandlers(e.NewWorld as SchoolWorld);
         }
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
@@ -465,6 +487,14 @@ namespace GoodAI.School.GUI
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void SchoolRunForm_VisibleChanged(object sender, EventArgs e)
+        {
+            if (Visible)
+                AddWorldHandlers(m_school);
+            else
+                RemoveWorldHandlers(m_school);
         }
     }
 }
