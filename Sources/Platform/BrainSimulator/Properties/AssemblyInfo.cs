@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GoodAI")]
 [assembly: AssemblyProduct("Brain Simulator")]
-[assembly: AssemblyCopyright("Copyright ©  2014-2015")]
+[assembly: AssemblyCopyright("Copyright © 2014-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,6 +1,7 @@
 ﻿using GoodAI.BrainSimulator.Utils;
 using GoodAI.Core.Utils;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -38,14 +39,35 @@ namespace GoodAI.BrainSimulator.Forms
             try
             {
                 if (Path.GetExtension(item.FileName).Equals(".rtf"))
+                {
                     licenseText.LoadFile(item.FileName);
+                }
                 else
-                    licenseText.Text = File.ReadAllText(item.FileName);
+                {
+                    ShowPlainTextLicense(File.ReadAllText(item.FileName));
+                }
             }
             catch (Exception exc)
             {
                 licenseText.Text = "Error reading file " + item.FileName + "\n\n" + exc.Message;
             }
+        }
+
+        private void ShowPlainTextLicense(string text)
+        {
+            // Always reset font before loading a text file.
+            licenseText.Text = "";
+            licenseText.Font = new Font("Georgia", 10.5f); // Same as we use in our license RTF file.
+
+            // Show the text.
+            licenseText.Text = text;
+            
+            // Add some hackish margins.
+            const int margin = 5;
+            licenseText.SelectAll();
+            licenseText.SelectionIndent += margin;
+            licenseText.SelectionRightIndent += margin;
+            licenseText.DeselectAll();
         }
 
         private void LoadLicensesList()
