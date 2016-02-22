@@ -532,7 +532,8 @@ namespace GoodAI.School.GUI
             btnObserver.Checked = Properties.School.Default.ShowVisual;
             splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
             m_emulateSuccess = btnEmulateSuccess.Checked;
-            UpdateWorldHandlers(null, m_mainForm.Project.World as SchoolWorld);
+            SchoolWorld school = m_mainForm.Project.World as SchoolWorld;
+            UpdateWorldHandlers(school, school);
         }
     }
 }
