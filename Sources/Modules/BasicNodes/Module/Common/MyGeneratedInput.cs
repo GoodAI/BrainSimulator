@@ -40,7 +40,16 @@ namespace GoodAI.Modules.Common
 
         [YAXSerializableField(DefaultValue = 1), YAXElementFor("IO")]
         [MyBrowsable, Category("I/O")]
-        public int OutputSize { get; set; }
+        public int OutputSize
+        {
+            get { return m_outputSize; }
+            set
+            {
+                m_outputSize = value;
+                UpdateOutput();
+            }
+        }
+        private int m_outputSize;
 
         [YAXSerializableField(DefaultValue = 1)]
         [MyBrowsable, Category("I/O")]
@@ -53,19 +62,17 @@ namespace GoodAI.Modules.Common
             get { return m_userInput; }
             set
             {
-                if (value.Length > 0)
-                {
-                    UserInput_parsed = value.Trim().Split(',', ' ').Select(a => float.Parse(a, CultureInfo.InvariantCulture)).ToList();
-                }
-                else
-                {
-                    UserInput_parsed = null;
-                }
+                m_userDataList = (value.Length > 0)
+                    ? value.Trim().Split(',', ' ').Select(a => float.Parse(a, CultureInfo.InvariantCulture)).ToList()
+                    : null;
+
                 m_userInput = value;
+                UpdateOutput();
             }
         }
         private string m_userInput;
-        List<float> UserInput_parsed;// = new List<float>();
+
+        private List<float> m_userDataList;
 
         [YAXSerializableField(DefaultValue = MyGenerateType.Linear)]
         [MyBrowsable, Category("User Data Input")]
@@ -105,17 +112,29 @@ namespace GoodAI.Modules.Common
 
         public override void UpdateMemoryBlocks()
         {
-            Output.ColumnHint = ColumnHint > 0 ? ColumnHint : 1;
-            if (!(GenerateType == MyGenerateType.Linear || GenerateType == MyGenerateType.UserData))
+            UpdateOutput();
+        }
+
+        private void UpdateOutput()
+        {
+            Output.ColumnHint = (ColumnHint > 0) ? ColumnHint : 1;
+
+            Output.Count = GetOutputSize();
+        }
+
+        private int GetOutputSize()
+        {
+            if ((GenerateType != MyGenerateType.Linear) && (GenerateType != MyGenerateType.UserData))
             {
-                OutputSize = 1;
+                return 1;
             }
-            Output.Count = OutputSize;
+            
             if (GenerateType == MyGenerateType.UserData)
             {
-                Output.Count = UserInput_parsed != null ? UserInput_parsed.Count : OutputSize;
-                OutputSize = Output.Count;
+                return (m_userDataList != null) ? m_userDataList.Count : OutputSize;
             }
+
+            return OutputSize;
         }
 
         public override void Validate(MyValidator validator)
@@ -176,17 +195,17 @@ namespace GoodAI.Modules.Common
                         m_kernel.Run(MinValue, MaxValue, Owner.Output, Owner.OutputSize, ShiftSpeed * SimulationStep);
                         break;
                     case MyGenerateType.Sine:
-                        Owner.Output.Host[0] = (float)Math.Sin(this.SimulationStep * 2 * Math.PI * Owner.UserInput_parsed[0]);
+                        Owner.Output.Host[0] = (float)Math.Sin(this.SimulationStep * 2 * Math.PI * Owner.m_userDataList[0]);
                         Owner.Output.SafeCopyToDevice();
                         break;
                     case MyGenerateType.Cosine:
-                        Owner.Output.Host[0] = (float)Math.Cos(this.SimulationStep * 2 * Math.PI * Owner.UserInput_parsed[0]);
+                        Owner.Output.Host[0] = (float)Math.Cos(this.SimulationStep * 2 * Math.PI * Owner.m_userDataList[0]);
                         Owner.Output.SafeCopyToDevice();
                         break;
                     case MyGenerateType.UserData:
-                        for (int a = 0; a < Owner.UserInput_parsed.Count; a++)
+                        for (int a = 0; a < Owner.m_userDataList.Count; a++)
                         {
-                            Owner.Output.Host[a] = Owner.UserInput_parsed[a];
+                            Owner.Output.Host[a] = Owner.m_userDataList[a];
                         }
                         Owner.Output.SafeCopyToDevice();
                         break;
@@ -195,8 +214,8 @@ namespace GoodAI.Modules.Common
                         Owner.Output.SafeCopyToDevice();
                         break;
                     case MyGenerateType.SimulationStepFce:
-                        int stepMod = (int)SimulationStep % Owner.UserInput_parsed.Count;
-                        Owner.Output.Host[0] = Owner.UserInput_parsed[stepMod];
+                        int stepMod = (int)SimulationStep % Owner.m_userDataList.Count;
+                        Owner.Output.Host[0] = Owner.m_userDataList[stepMod];
                         Owner.Output.SafeCopyToDevice();
                         break;
                 }
