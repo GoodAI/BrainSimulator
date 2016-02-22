@@ -2,6 +2,7 @@
 using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -551,6 +552,13 @@ namespace GoodAI.School.GUI
         {
             if (e.KeyCode == Keys.Delete)
                 DeleteNodes(sender, null);
+        }
+
+        private void btnUpload_Click(object sender, EventArgs e)
+        {
+            if (!(m_mainForm.Project.World is SchoolWorld))
+                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+            (m_mainForm.Project.World as SchoolWorld).Curriculum = m_design.AsSchoolCurriculum(m_mainForm.Project.World as SchoolWorld);
         }
     }
 }

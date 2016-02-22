@@ -115,7 +115,7 @@ namespace GoodAI.School.GUI
 
         private void AddWorldHandlers(SchoolWorld world)
         {
-            if (world == null)
+            if (world == null || !Visible)
                 return;
             world.CurriculumStarting += PrepareSimulation;
             world.LearningTaskNew += GoToNextTask;
