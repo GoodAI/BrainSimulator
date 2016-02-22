@@ -43,7 +43,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TEACHER_ON_DIFF_START_POSITION, 1);
-            TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 1.5f);
             TSProgression.Add(STOP_REQUEST, 1);
             TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 1);
         }

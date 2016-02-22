@@ -18,6 +18,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Tolerance in rads", "", typeof(float), 0, 1); //check needed;
         private readonly TSHintAttribute IS_VARIABLE_DISTANCE = new TSHintAttribute("Is fixed distance to target?", "", typeof(bool), 0, 1); //check needed;
+        private readonly TSHintAttribute RANDOMNESS_LEVEL = new TSHintAttribute(
+            "Randomness level",
+            "Higher value makes initial positions of objects more random",
+            typeof(float),
+            1, 1.4f);
 
         protected readonly Random m_rndGen = new Random();
         protected MovableGameObject m_agent;
@@ -54,7 +59,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.IS_VARIABLE_COLOR, 0},
                 // Random distance from origin
                 { IS_VARIABLE_DISTANCE, 0},
-                { TSHintAttributes.RANDOMNESS_LEVEL, 1 },
+                { RANDOMNESS_LEVEL, 1 },
             };
 
             base.SetHints(TSHints);
@@ -73,11 +78,11 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 4);
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_POSITION, 1);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.2f);
+            TSProgression.Add(RANDOMNESS_LEVEL, 1.2f);
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 5);
-            TSProgression.Add(TSHintAttributes.RANDOMNESS_LEVEL, 1.4f);
+            TSProgression.Add(RANDOMNESS_LEVEL, 1.4f);
         }
 
         #endregion Initialization
@@ -90,7 +95,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             // Scale the noise in the world base on randomness_level
             {
-                float randomness = TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
+                float randomness = TSHints[RANDOMNESS_LEVEL];
                 WrappedWorld.ImageNoiseStandardDeviation = 7 * randomness * randomness;
             }
 
@@ -132,7 +137,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 // Determine shape position
                 if (TSHints[IS_VARIABLE_DISTANCE] > 0)
-                    distance *= 1 + 0.04f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
+                    distance *= 1 + 0.04f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[RANDOMNESS_LEVEL];
 
                 Point pos = new Point((int)(Math.Cos(angle) * distance), (int)(Math.Sin(angle) * distance));
 
@@ -140,7 +145,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 float scale = 1.4f;
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] > 0)
-                    scale = scale + 0.2f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[TSHintAttributes.RANDOMNESS_LEVEL];
+                    scale = scale + 0.2f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[RANDOMNESS_LEVEL];
 
                 Size size = new Size((int)(16 * scale), (int)(16 * scale));
 
@@ -177,7 +182,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             // Don't let the agent wander around for too long
-            if (m_stepCount++ > 35 / TSHints[TSHintAttributes.RANDOMNESS_LEVEL])
+            if (m_stepCount++ > 35 / TSHints[RANDOMNESS_LEVEL])
                 return true;
 
             // Move the question shape with the invisible agent

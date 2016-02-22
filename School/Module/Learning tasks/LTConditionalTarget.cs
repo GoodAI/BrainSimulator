@@ -191,7 +191,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { MOVING_CONDITION, 0 },
-                { TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, 0 },
+                { TSHintAttributes.IS_VARIABLE_SIZE, 0 },
                 { TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { CONDITION_SALIENCE, 1 },
@@ -207,8 +207,7 @@ namespace GoodAI.Modules.School.LearningTasks
             //TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
             //TSProgression.Add(TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, .3f);
-            TSProgression.Add(TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION, .5f);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1 );
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(CONDITION_SALIENCE, .5f);
@@ -230,10 +229,15 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected ConditionalTarget CreateTarget(bool isWhiteConditionTarget)
         {
+            float stdDev = 0;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] > 0)
+            {
+                stdDev = 0.5f;
+            }
             return new ConditionalTarget(
                 WrappedWorld,
                 isWhiteConditionTarget,
-                TSHints[TSHintAttributes.DEPRECATED_TARGET_SIZE_STANDARD_DEVIATION],
+                stdDev,
                 (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS] /*,
                 (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] */);
         }
