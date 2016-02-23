@@ -402,14 +402,14 @@ namespace GoodAI.Modules.School.Worlds
                         return;
 
                     case TrainingResult.FinishedLevel:
-                        if (CurrentLearningTask.CurrentLevel + 1 >= CurrentLearningTask.NumberOfLevels)
+                        CurrentLearningTask.IncreaseLevel();
+                        if (CurrentLearningTask.CurrentLevel >= CurrentLearningTask.NumberOfLevels)
                         {
                             TaskResult = TrainingResult.FinishedLT;
                             NotifyNewLearningTask();
                         }
                         else
                         {
-                            CurrentLearningTask.IncreaseLevel();
                             NotifyNewLevel();
                         }
                         break;

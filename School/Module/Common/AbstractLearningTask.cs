@@ -130,7 +130,14 @@ namespace GoodAI.Modules.School.Common
             CurrentLevel++;
             if (CurrentLevel >= NumberOfLevels)
             {
-                Debug.Assert(false);
+                // this case happens when the task is finished
+                if(CurrentLevel > NumberOfLevels)
+                {
+                    // this case should not happen
+                    Debug.Assert(false);
+                }
+                CurrentLevel = NumberOfLevels;
+                return;
             }
             // We assume that levels are traversed sequentially.
             // Random access of levels would require a change of
