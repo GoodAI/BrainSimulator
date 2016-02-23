@@ -126,9 +126,13 @@ namespace GoodAI.School.GUI
         {
             if (!Visible)
                 return;
-            ILearningTask runningTask = m_school.CurrentLearningTask;
-            if (runningTask != null && CurrentTask != null)
-                UpdateTaskData(runningTask);
+
+            Invoke((MethodInvoker)(() =>
+            {
+                ILearningTask runningTask = m_school.CurrentLearningTask;
+                if (runningTask != null && CurrentTask != null)
+                    UpdateTaskData(runningTask);
+            }));
         }
 
         private void AddWorldHandlers(SchoolWorld world)
