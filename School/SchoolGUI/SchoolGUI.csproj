@@ -405,19 +405,22 @@
     <Content Include="Resources\html\LTMultipleTargetsSequence_files\image004.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTObstaclesPOW_files\filelist.xml">
+    <Content Include="Resources\html\LTObstaclesTargetInSight.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTObstaclesPOW_files\image001.png">
+    <Content Include="Resources\html\LTObstaclesTargetInSight_files\filelist.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTObstaclesPOW_files\image002.png">
+    <Content Include="Resources\html\LTObstaclesTargetInSight_files\image001.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTObstaclesPOW_files\image003.png">
+    <Content Include="Resources\html\LTObstaclesTargetInSight_files\image002.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTObstaclesPOW_files\image004.png">
+    <Content Include="Resources\html\LTObstaclesTargetInSight_files\image003.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\html\LTObstaclesTargetInSight_files\image004.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\html\LTPongTest_files\filelist.xml">
