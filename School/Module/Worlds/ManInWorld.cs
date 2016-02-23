@@ -28,6 +28,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using YAXLib;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.School.Worlds
@@ -104,7 +105,6 @@ namespace GoodAI.Modules.School.Worlds
         public const float DUMMY_PIXEL = float.NaN;
         private const int PIXEL_SIZE = 4; // RGBA: 4 floats per pixel
 
-        // noise:
         // R/G/B intensity value range is 0-256
         public float ImageNoiseStandardDeviation = 20.0f; // the noise follows a normal distribution (maybe can be simpler?)
         public float ImageNoiseMean = 0; // the average value that is added to each pixel in the image
@@ -137,8 +137,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public ManInWorld()
         {
-            Fow = new Size(1024, 1024);
-            Pow = new Size(256, 256);
+            Scene = Fow = new Size(1024, 1024);
+            Viewport = Pow = new Size(256, 256);
 
             BackgroundColor = Color.FromArgb(77, 174, 255);
             m_bitmapTable = new Dictionary<string, Tuple<Bitmap, int>>();
@@ -177,7 +177,7 @@ namespace GoodAI.Modules.School.Worlds
             if (School != null)
             {
                 Pow = new Size(School.Visual.Dims[0], School.Visual.Dims[1]);
-                Fow = new Size(Math.Max(Fow.Width, Pow.Width), Math.Max(Fow.Height, Pow.Height));
+                Fow = new Size(Math.Max(Fow.Width, Pow.Width), Math.Max(Fow.Height, Pow.Height)); // TODO: does not really make sense, make it independent
             }
 
             VisualPOW.Dims = new TensorDimensions(Pow.Width, Pow.Height);
@@ -221,23 +221,21 @@ namespace GoodAI.Modules.School.Worlds
 
         #region IWorldAdapter overrides
 
-        public MyWorkingNode World { get { return this; } }
         public SchoolWorld School { get; set; }
+        public MyWorkingNode World { get { return this; } }
+        public MyTask WorldRenderTask { get { return RenderGLWorldTask; } }
 
         public void InitAdapterMemory()
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 128;
+
+            School.AspectRatio = Viewport.Width / Viewport.Height;
         }
 
-        public MyTask GetWorldRenderTask()
-        {
-            return RenderGLWorldTask;
-        }
 
         public virtual void InitWorldInputs(int nGPU)
-        {
-        }
+        { }
 
         public virtual void MapWorldInputs()
         {
@@ -258,9 +256,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         public virtual void InitWorldOutputs(int nGPU)
-        {
-
-        }
+        { }
 
         public virtual void MapWorldOutputs()
         {
@@ -915,12 +911,11 @@ namespace GoodAI.Modules.School.Worlds
                 m_renderTextureHandle = (uint)GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
                 GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.Fow.Width, Owner.Fow.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.Pow.Width, Owner.Pow.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
                 // Setup background texture
                 m_backgroundTexHandle = (uint)GL.GenTexture();
@@ -952,7 +947,7 @@ namespace GoodAI.Modules.School.Worlds
                 //create buffer
                 GL.GenBuffers(1, out m_sharedBufferHandle);
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
-                GL.BufferData(BufferTarget.PixelPackBuffer, (IntPtr)(length), IntPtr.Zero, BufferUsageHint.StaticRead);  // use data instead of IntPtr.Zero if needed
+                GL.BufferData(BufferTarget.PixelPackBuffer, (IntPtr)length, IntPtr.Zero, BufferUsageHint.StaticRead);  // use data instead of IntPtr.Zero if needed
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
 
                 try
@@ -1021,8 +1016,8 @@ namespace GoodAI.Modules.School.Worlds
 
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
-                SizeF powSize = new SizeF(Owner.Viewport.Width / 2, Owner.Viewport.Height / 2);
-                GL.Ortho(powCenter.X - powSize.Width, powCenter.X + powSize.Width, powCenter.Y - powSize.Height, powCenter.Y + powSize.Height, -1, 1);
+                SizeF viewportSize = new SizeF(Owner.Viewport.Width / 2, Owner.Viewport.Height / 2);
+                GL.Ortho(powCenter.X - viewportSize.Width, powCenter.X + viewportSize.Width, powCenter.Y - viewportSize.Height, powCenter.Y + viewportSize.Height, -1, 1);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.LoadIdentity();
 
@@ -1070,9 +1065,6 @@ namespace GoodAI.Modules.School.Worlds
 
             void RenderGl()
             {
-                // maybe unnecessary fix of the bug with garbage collected old m_windows:
-                //m_window.ProcessEvents();
-
                 m_context.MakeCurrent(m_window.WindowInfo);
                 GL.Finish();
 
@@ -1084,24 +1076,23 @@ namespace GoodAI.Modules.School.Worlds
 
                     // translate object to its position in the scene
                     GL.Translate(gameObject.Position.X, gameObject.Position.Y, 0.0f);
-
                     GL.Scale(gameObject.Size.Width, gameObject.Size.Height, 1f);
 
                     // translate back
                     GL.Translate(0.5f, 0.5f, 0.0f);
-
                     // rotate around center (origin)
                     GL.Rotate(gameObject.Rotation, 0.0f, 0.0f, 1.0f);
-
                     // translate s.t. object center in origin
                     GL.Translate(-0.5f, -0.5f, 0.0f);
 
-                    if (gameObject.IsBitmapAsMask)
+                    Shape shape = gameObject as Shape;
+
+                    if (shape != null && gameObject.IsBitmapAsMask)
                     {
                         // gameObject is a shape -> draw it directly
                         //((Shape)gameObject).ShapeType = Shape.Shapes.Triangle;
                         GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
-                        DrawShape(gameObject);
+                        DrawShape(shape);
                     }
                     else if (gameObject.BitmapPath != null)
                     {
@@ -1159,14 +1150,12 @@ namespace GoodAI.Modules.School.Worlds
                 }
             }
 
-            void DrawShape(GameObject gameObject)
+            void DrawShape(Shape shape)
             {
-                Shape s = (Shape)gameObject;
-
-                GL.Color4(gameObject.ColorMask);
+                GL.Color4(shape.ColorMask);
                 GL.Begin(PrimitiveType.Polygon);
 
-                switch (s.ShapeType)
+                switch (shape.ShapeType)
                 {
                     case Shape.Shapes.Circle:
                         DrawCircle();
@@ -1309,54 +1298,65 @@ namespace GoodAI.Modules.School.Worlds
 
             internal void Dispose()
             {
-                // delete textures
-                if (m_textureHandles != null)
+                try
                 {
-                    foreach (int handle in m_textureHandles.Values)
+                    ErrorCode err = GL.GetError();
+                    if (err != ErrorCode.NoError)
+                        MyLog.WARNING.WriteLine(Owner.Name + ": OpenGL error detected when disposing stuff, code: " + err);
+
+                    // delete textures
+                    if (m_textureHandles != null)
                     {
-                        int h = handle;
-                        GL.DeleteTextures(1, ref h);
+                        foreach (int handle in m_textureHandles.Values)
+                        {
+                            int h = handle;
+                            GL.DeleteTextures(1, ref h);
+                        }
+
+                        m_textureHandles.Clear();
                     }
 
-                    m_textureHandles.Clear();
-                }
+                    if (m_renderTextureHandle != 0)
+                    {
+                        GL.DeleteTextures(1, ref m_renderTextureHandle);
+                        m_renderTextureHandle = 0;
+                    }
 
-                if (m_renderTextureHandle != 0)
-                {
-                    GL.DeleteTextures(1, ref m_renderTextureHandle);
-                    m_renderTextureHandle = 0;
-                }
+                    // delete FBO
+                    if (m_fboHandle != 0)
+                    {
+                        GL.DeleteFramebuffers(1, ref m_fboHandle);
+                        m_fboHandle = 0;
+                    }
 
-                // delete FBO
-                if (m_fboHandle != 0)
-                {
-                    GL.DeleteFramebuffers(1, ref m_fboHandle);
-                    m_fboHandle = 0;
-                }
+                    // delete PBO
+                    if (m_sharedBufferHandle != 0)
+                    {
+                        GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                        m_sharedBufferHandle = 0;
+                    }
 
-                // delete PBO
-                if (m_sharedBufferHandle != 0)
-                {
-                    GL.DeleteBuffers(1, ref m_sharedBufferHandle);
-                    m_sharedBufferHandle = 0;
-                }
+                    // delete CUDA <-> GL interop
+                    if (m_renderResource != null)
+                    {
+                        m_renderResource.Dispose();
+                        m_renderResource = null;
+                    }
 
-                // delete CUDA <-> GL interop
-                if (m_renderResource != null)
-                {
-                    m_renderResource.Dispose();
-                    m_renderResource = null;
+                    if (m_context != null)
+                    {
+                        m_context.Dispose();
+                        m_context = null;
+                    }
+                    if (m_window != null)
+                    {
+                        m_window.Dispose();
+                        m_window = null;
+                    }
                 }
-
-                if (m_context != null)
+                catch (AccessViolationException e)
                 {
-                    m_context.Dispose();
-                    m_context = null;
-                }
-                if (m_window != null)
-                {
-                    m_window.Dispose();
-                    m_window = null;
+                    MyLog.WARNING.WriteLine(Owner.Name + ": Failed when disposing OpenGL stuff. Cautious progress advised.");
                 }
             }
         }

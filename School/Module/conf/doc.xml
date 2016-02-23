@@ -204,11 +204,6 @@
             Initialize the world's curriculum
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.OutputAdapterTask">
-            <summary>
-            Performs Output memory blocks mapping
-            </summary>
-        </member>
         <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.InputAdapterTask">
             <summary>
             Performs Input memory blocks mapping
@@ -217,6 +212,11 @@
         <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.LearningStepTask">
             <summary>
             Update the state of the training task(s)
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.OutputAdapterTask">
+            <summary>
+            Performs Output memory blocks mapping
             </summary>
         </member>
     </members>

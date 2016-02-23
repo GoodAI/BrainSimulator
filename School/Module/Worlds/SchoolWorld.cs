@@ -188,7 +188,7 @@ namespace GoodAI.Modules.School.Worlds
 
         private IWorldAdapter m_currentWorld;
 
-        [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter)), YAXDontSerialize]
+        [MyBrowsable, Category("World"), TypeConverter(typeof(WorldAdapterConverter)), YAXDontSerialize]
         public IWorldAdapter CurrentWorld
         {
             get
@@ -222,7 +222,7 @@ namespace GoodAI.Modules.School.Worlds
             Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
         }
 
-        Random m_rndGen = new Random();
+        readonly Random m_rndGen = new Random();
 
         private bool m_shouldShowNewLearningTask = true;
         private bool m_isAfterChangeModelInit = false;
@@ -354,9 +354,9 @@ namespace GoodAI.Modules.School.Worlds
             blocks.Add(thisWorldTasks.First());
             blocks.Add(AdapterInputStep);
             var worldPlan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false);
-            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.GetWorldRenderTask()));
+            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.WorldRenderTask));
             blocks.Add(LearningStep);
-            blocks.Add(CurrentWorld.GetWorldRenderTask());
+            blocks.Add(CurrentWorld.WorldRenderTask);
             blocks.Add(AdapterOutputStep);
             blocks.Add(thisWorldTasks.Last());
 
@@ -566,6 +566,39 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
+        /// Performs Input memory blocks mapping
+        /// </summary>
+        public class InputAdapterTask : MyTask<SchoolWorld>
+        {
+            public override void Init(int nGPU)
+            {
+                if (Owner.CurrentWorld != null)
+                    Owner.CurrentWorld.InitWorldInputs(nGPU);
+            }
+
+            public override void Execute()
+            {
+                Owner.CurrentWorld.MapWorldInputs();
+            }
+        }
+
+        /// <summary>
+        /// Update the state of the training task(s)
+        /// </summary>
+        public class LearningStepTask : MyTask<SchoolWorld>
+        {
+            public override void Init(int nGPU)
+            {
+            }
+
+            public override void Execute()
+            {
+                if (Owner.CurrentLearningTask != null)
+                    Owner.ExecuteLearningTaskStep();
+            }
+        }
+
+        /// <summary>
         /// Performs Output memory blocks mapping
         /// </summary>
         public class OutputAdapterTask : MyTask<SchoolWorld>
@@ -600,39 +633,6 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 Owner.CurrentWorld.MapWorldOutputs();
-            }
-        }
-
-        /// <summary>
-        /// Performs Input memory blocks mapping
-        /// </summary>
-        public class InputAdapterTask : MyTask<SchoolWorld>
-        {
-            public override void Init(int nGPU)
-            {
-                if (Owner.CurrentWorld != null)
-                    Owner.CurrentWorld.InitWorldInputs(nGPU);
-            }
-
-            public override void Execute()
-            {
-                Owner.CurrentWorld.MapWorldInputs();
-            }
-        }
-
-        /// <summary>
-        /// Update the state of the training task(s)
-        /// </summary>
-        public class LearningStepTask : MyTask<SchoolWorld>
-        {
-            public override void Init(int nGPU)
-            {
-            }
-
-            public override void Execute()
-            {
-                if (Owner.CurrentLearningTask != null)
-                    Owner.ExecuteLearningTaskStep();
             }
         }
 

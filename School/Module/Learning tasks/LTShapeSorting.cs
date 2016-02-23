@@ -62,8 +62,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 { RANDOMNESS_LEVEL, 1 },
             };
 
-            base.SetHints(TSHints);
-
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1);
