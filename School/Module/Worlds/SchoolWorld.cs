@@ -404,6 +404,7 @@ namespace GoodAI.Modules.School.Worlds
                     case TrainingResult.FinishedLevel:
                         if (CurrentLearningTask.CurrentLevel + 1 >= CurrentLearningTask.NumberOfLevels)
                         {
+                            TaskResult = TrainingResult.FinishedLT;
                             NotifyNewLearningTask();
                         }
                         else

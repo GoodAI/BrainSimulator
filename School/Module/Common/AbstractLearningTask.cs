@@ -10,6 +10,7 @@ namespace GoodAI.Modules.School.Common
 {
     public enum TrainingResult
     {
+        // the descriptions are used in GUI to show progress of an LT
         [Description("")]
         None,
         [Description("Running")]
@@ -18,8 +19,10 @@ namespace GoodAI.Modules.School.Common
         FinishedTU,
         [Description("Failed")]
         FailedLT,
-        [Description("Running/Success")]
+        [Description("Running")]
         FinishedLevel, // Implies FinishedTU
+        [Description("Success")]
+        FinishedLT, // Implies FinishedLevel
     }
 
     public interface ILearningTask
