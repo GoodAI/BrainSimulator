@@ -77,6 +77,10 @@ namespace GoodAI.Modules.TestingNodes
             }
         }
 
+        [MyBrowsable, Category("BrainUnit"), Description("Marks the test as failing for testing purposes of BrainUnit.")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool ExpectedToFail { get; set; }
+
         public bool ShouldStop()
         {
             if (ScriptShouldStopMethod == null)

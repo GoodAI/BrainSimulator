@@ -6,6 +6,7 @@
       <MyUserInput LoadOnStart="False" SaveOnStop="False" Id="6" Name="Node_6" yaxlib:realtype="GoodAI.Core.Nodes.MyUserInput">
         <IO>
           <OutputSize>1</OutputSize>
+          <ShowValues>False</ShowValues>
         </IO>
         <ColumnHint>1</ColumnHint>
         <MinValue>0</MinValue>
@@ -42,11 +43,12 @@
       <BrainUnitNode LoadOnStart="False" SaveOnStop="False" Id="8" Name="Node_8" yaxlib:realtype="GoodAI.Modules.TestingNodes.BrainUnitNode">
         <MaxStepCount>100</MaxStepCount>
         <InspectInterval>0</InspectInterval>
+        <ExpectedToFail>True</ExpectedToFail>
         <IO>
           <InputBranches>1</InputBranches>
         </IO>
         <DataFolder></DataFolder>
-        <Location X="422" Y="362" />
+        <Location X="423" Y="361" />
         <m_script>using System;
 using GoodAI.Core.Utils;
 using GoodAI.Core.Nodes;
@@ -90,8 +92,8 @@ namespace Runtime
     <DataFolder></DataFolder>
     <Location />
     <Connections>
-      <Connection From="6" To="7" FromIndex="0" ToIndex="0" />
-      <Connection From="7" To="8" FromIndex="0" ToIndex="0" />
+      <Connection From="6" To="7" FromIndex="0" ToIndex="0" IsLowPriority="False" IsHidden="False" />
+      <Connection From="7" To="8" FromIndex="0" ToIndex="0" IsLowPriority="False" IsHidden="False" />
     </Connections>
     <Tasks />
   </Network>
@@ -112,14 +114,13 @@ namespace Runtime
     </Tasks>
   </World>
   <Dashboard>
-    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardNodePropertyBase, GoodAI.Platform.Core, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null]]" />
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardNodePropertyBase, GoodAI.Platform.Core, Version=0.5.0.0, Culture=neutral, PublicKeyToken=null]]" />
   </Dashboard>
   <GroupedDashboard>
-    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardPropertyGroup, GoodAI.Platform.Core, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null]]" />
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardPropertyGroup, GoodAI.Platform.Core, Version=0.5.0.0, Culture=neutral, PublicKeyToken=null]]" />
   </GroupedDashboard>
-  <MemoryBlockAttributes />
   <UsedModules>
-    <Module Name="GoodAI.Platform.Core.dll" Version="11" />
+    <Module Name="GoodAI.Platform.Core.dll" Version="14" />
     <Module Name="GoodAI.BasicNodes.dll" Version="14" />
     <Module Name="GoodAI.TestingNodes.dll" Version="1" />
   </UsedModules>
