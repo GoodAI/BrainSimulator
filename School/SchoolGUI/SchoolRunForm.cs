@@ -371,6 +371,9 @@ namespace GoodAI.School.GUI
 
         private void SchoolRunForm_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Handled)
+                return;
+
             switch (e.KeyCode)
             {
                 case Keys.F5:
@@ -399,6 +402,7 @@ namespace GoodAI.School.GUI
                         break;
                     }
             }
+            e.Handled = true;
         }
 
         private LearningTaskNode SelectedLearningTask
