@@ -41,14 +41,14 @@ namespace GoodAI.Modules.School.Common
 
     public class AnimationItem
     {
-        public AnimationType type { get; private set; }
-        public ShouldContinue condition { get; private set; }
-        public float[] data { get; private set; }   // transformation-specific data (describe the transformation)
+        public AnimationType Type { get; private set; }
+        public ShouldContinue Condition { get; private set; }
+        public float[] Data { get; private set; }   // transformation-specific data (describe the transformation)
 
         public AnimationItem(AnimationType type = AnimationType.None, ShouldContinue condition = null, float[] data = null)
         {
-            this.type = type;
-            this.data = data;
+            Type = type;
+            Data = data;
             IsStarted = false;
         }
 
@@ -57,7 +57,7 @@ namespace GoodAI.Modules.School.Common
             uint t = world.ExecutionBlock.SimulationStep;
 
             // default condition - run for 1 step only
-            this.condition = condition ?? (() =>
+            Condition = Condition ?? (() =>
             {
                 if (world.ExecutionBlock.SimulationStep > t)
                     return false;
@@ -102,7 +102,7 @@ namespace GoodAI.Modules.School.Common
 
         public GameObject(string bitmapPath, PointF position = default(PointF), SizeF size = default(SizeF), GameObjectType type = GameObjectType.None, float rotation = 0, string subtype = null)
         {
-            Type = type;
+            this.Type = type;
             BitmapPath = bitmapPath;
             Subtype = subtype;
             SpriteTextureHandle = -1;

@@ -57,7 +57,7 @@ namespace GoodAI.Modules.School.Common
     /// <summary>
     /// Abstract base class for AI School exercises.
     /// </summary>
-    public abstract class AbstractLearningTask<WrappedWorldClass> : ILearningTask where WrappedWorldClass : MyWorld, IWorldAdapter
+    public abstract class AbstractLearningTask<TWrappedWorldClass> : ILearningTask where TWrappedWorldClass : MyWorld, IWorldAdapter
     {
         public AbilityNameEnum AbilityName { get; set; }
         public AbilityNameEnum[] RequiredAbilities { get; set; }
@@ -110,11 +110,11 @@ namespace GoodAI.Modules.School.Common
 
         // The wrapped world (e.g., a RoguelikeWorld or a TetrisWorld) that defines the agent's environment.
         // The learning task can access it to control the environment.
-        public WrappedWorldClass WrappedWorld
+        public TWrappedWorldClass WrappedWorld
         {
             get
             {
-                return SchoolWorld.CurrentWorld as WrappedWorldClass;
+                return SchoolWorld.CurrentWorld as TWrappedWorldClass;
             }
         }
 

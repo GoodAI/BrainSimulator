@@ -140,13 +140,13 @@ namespace GoodAI.Modules.School.Worlds
             Fow = new Size(1024, 1024);
             Pow = new Size(256, 256);
 
-            ClearWorld();
-
             BackgroundColor = Color.FromArgb(77, 174, 255);
             m_bitmapTable = new Dictionary<string, Tuple<Bitmap, int>>();
 
             GameObjects = new List<GameObject>();
-            m_conflictResolver = new StandardConflictResolver(); ;
+            m_conflictResolver = new StandardConflictResolver();
+
+            DegreesOfFreedom = 2;
         }
 
         #region MyNode overrides
@@ -731,7 +731,7 @@ namespace GoodAI.Modules.School.Worlds
                     //AnimationItem animation = animatedItem.AnimationEnumerator.Current;
                     AnimationItem animation = animatedItem.Current;
 
-                    if (animation.condition != null && !animation.condition())
+                    if (animation.Condition != null && !animation.Condition())
                     {
                         animatedItem.MoveNext();
                         animation = animatedItem.Current;
@@ -742,13 +742,13 @@ namespace GoodAI.Modules.School.Worlds
                     if (!animation.IsStarted)
                         animation.StartAnimation(item, Owner);
 
-                    switch (animation.type)
+                    switch (animation.Type)
                     {
                         case AnimationType.Translation:
                             {
-                                Debug.Assert(animation.data.Length >= 2, "Not enough data in animation data vector.");
-                                item.Position.X += (int)animation.data[0];
-                                item.Position.Y += (int)animation.data[1];
+                                Debug.Assert(animation.Data.Length >= 2, "Not enough data in animation data vector.");
+                                item.Position.X += (int)animation.Data[0];
+                                item.Position.Y += (int)animation.Data[1];
                                 break;
                             }
                         default:
@@ -1310,7 +1310,6 @@ namespace GoodAI.Modules.School.Worlds
             internal void Dispose()
             {
                 // delete textures
-                GL.BindTexture(TextureTarget.Texture2D, 0);
                 if (m_textureHandles != null)
                 {
                     foreach (int handle in m_textureHandles.Values)
@@ -1318,50 +1317,35 @@ namespace GoodAI.Modules.School.Worlds
                         int h = handle;
                         GL.DeleteTextures(1, ref h);
                     }
+
+                    m_textureHandles.Clear();
                 }
 
                 if (m_renderTextureHandle != 0)
                 {
                     GL.DeleteTextures(1, ref m_renderTextureHandle);
+                    m_renderTextureHandle = 0;
                 }
 
                 // delete FBO
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
                 if (m_fboHandle != 0)
                 {
                     GL.DeleteFramebuffers(1, ref m_fboHandle);
+                    m_fboHandle = 0;
                 }
 
                 // delete PBO
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
                 if (m_sharedBufferHandle != 0)
                 {
                     GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                    m_sharedBufferHandle = 0;
                 }
 
                 // delete CUDA <-> GL interop
                 if (m_renderResource != null)
                 {
-                    try
-                    {
-                        if (m_renderResource.IsMapped)
-                        {
-                            m_renderResource.UnMap();
-                        }
-                        if (m_renderResource.IsRegistered)
-                        {
-                            m_renderResource.Unregister();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        MyLog.DEBUG.WriteLine(Name + ": " + e.Message);
-                    }
-                    finally
-                    {
-                        m_renderResource.Dispose();
-                        m_renderResource = null;
-                    }
+                    m_renderResource.Dispose();
+                    m_renderResource = null;
                 }
 
                 if (m_context != null)
