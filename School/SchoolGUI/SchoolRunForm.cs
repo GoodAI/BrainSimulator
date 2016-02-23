@@ -107,7 +107,6 @@ namespace GoodAI.School.GUI
             // school run form //
 
             m_mainForm = mainForm;
-            InitializeComponent();
 
             // here so it does not interfere with designer generated code
             btnRun.Click += m_mainForm.runToolButton_Click;
@@ -536,12 +535,17 @@ namespace GoodAI.School.GUI
 
         private void btnObserver_Click(object sender, EventArgs e)
         {
-            Properties.School.Default.ShowVisual = (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
+            Properties.School.Default.ShowVisual = (sender as ToolStripButton).Checked;
             Properties.School.Default.Save();
 
-            splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
-            Invalidate();
-            SetObserver();
+            Invoke((MethodInvoker)(() =>
+            {
+                splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
+                SetObserver();
+                label1.Text = (!Properties.School.Default.ShowVisual).ToString();
+                toolStripLabel1.Text = (!Properties.School.Default.ShowVisual).ToString();
+                Invalidate();
+            }));
         }
 
         private void btnEmulateSuccess_Click(object sender, EventArgs e)
