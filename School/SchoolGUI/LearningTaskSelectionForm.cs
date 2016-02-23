@@ -18,6 +18,11 @@ namespace GoodAI.School.GUI
     [BrainSimUIExtension]
     public partial class LearningTaskSelectionForm : DockContent
     {
+        /// <summary>
+        /// In order to control itemcheck changes (blinds double clicking, among other things)
+        /// </summary>
+        bool AuthorizeCheck { get; set; }
+
         public LearningTaskSelectionForm()
         {
             InitializeComponent();
@@ -132,6 +137,35 @@ namespace GoodAI.School.GUI
         private void worldList_SelectedIndexChanged(object sender, EventArgs e)
         {
             PopulateLearningTaskList();
+        }
+
+        // Implements "check only when box clicked" behavior in the checkedlistbox
+        // See http://stackoverflow.com/questions/2093961/checkedlistbox-control-only-checking-the-checkbox-when-the-actual-checkbox-is
+        private void learningTaskList_MouseClick(object sender, MouseEventArgs e)
+        {
+            const int CHECK_BOX_WIDTH = 16;
+            for (int i = 0; i < this.learningTaskList.Items.Count; i++)
+            {
+                Rectangle rec = this.learningTaskList.GetItemRectangle(i);
+                rec.Width = CHECK_BOX_WIDTH;
+
+                if (rec.Contains(e.Location))
+                {
+                    AuthorizeCheck = true;
+                    bool newValue = !this.learningTaskList.GetItemChecked(i);
+                    this.learningTaskList.SetItemChecked(i, newValue);
+                    AuthorizeCheck = false;
+
+                    return;
+                }
+            }
+        }
+
+        // Implements "check only when box clicked" behavior in the checkedlistbox
+        private void learningTaskList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (!AuthorizeCheck)
+                e.NewValue = e.CurrentValue; //check state change was not through authorized actions
         }
     }
 

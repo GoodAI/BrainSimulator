@@ -70,6 +70,8 @@
             this.learningTaskList.Name = "learningTaskList";
             this.learningTaskList.Size = new System.Drawing.Size(224, 364);
             this.learningTaskList.TabIndex = 2;
+            this.learningTaskList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.learningTaskList_ItemCheck);
+            this.learningTaskList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.learningTaskList_MouseClick);
             this.learningTaskList.SelectedValueChanged += new System.EventHandler(this.learningTaskList_SelectedValueChanged);
             // 
             // learningTaskDescription
