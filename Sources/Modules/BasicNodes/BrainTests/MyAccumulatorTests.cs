@@ -64,6 +64,7 @@ namespace GoodAI.Modules.Tests
         public MyFailingAccumulatorTest()
         {
             InspectInterval = 3;
+            ExpectedToFail = true;
         }
 
         public override void Check(IBrainScan b)
