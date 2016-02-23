@@ -385,6 +385,8 @@ namespace GoodAI.School.GUI
             {
                 OpenFloatingOrActivate(RunView, DockPanel);
 
+                //m_mainForm.
+
                 foreach (LearningTaskNode ltNode in ltNodes)
                     data.Add(ltNode);
                 RunView.Data = data;

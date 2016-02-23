@@ -105,7 +105,7 @@
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
             this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
-            this.tree.Size = new System.Drawing.Size(630, 387);
+            this.tree.Size = new System.Drawing.Size(752, 430);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
@@ -137,7 +137,7 @@
             this.btnRun});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(645, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(767, 25);
             this.toolStrip1.TabIndex = 14;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -314,7 +314,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(645, 419);
+            this.ClientSize = new System.Drawing.Size(767, 462);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.tree);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
