@@ -15,7 +15,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private static readonly TSHintAttribute NUMBER_OF_FALSE_TARGETS = new TSHintAttribute("Number of false targets", "", typeof(int), 1, 3);
 
         // Random numbers
-        protected static Random m_rand = new Random();
+        protected static readonly Random m_rand = new Random();
 
         // The agent must learn to go to this target
         protected Shape m_rewardTarget;
@@ -70,22 +70,20 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected Shape CreateTarget(int imageIndex)
         {
-            Size size = new Size(15, 15);
+            SizeF size = new SizeF(15, 15);
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
             {
-                int a = m_rand.Next(10, 25);
-                size = new Size(a, a);
+                float a = (float)(10 + m_rand.NextDouble() * 15);
+                size = new SizeF(a, a);
             }
 
             // positions are reduced to keep all objects in POW
 
-            Rectangle r = WrappedWorld.GetPowGeometry();
-            r.Location = new Point(r.X + r.Width / 4, r.Y + r.Height / 4);
-            r.Size = new Size(r.Width / 2, r.Height / 2);
-
-            Point p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rand, size, r, 4);
-
-            Shape s = (Shape)WrappedWorld.CreateShape(p, (Shape.Shapes)imageIndex, Color.White, size, GameObjectType.NonColliding);
+            RectangleF r = WrappedWorld.GetPowGeometry();
+            r.Location = new PointF(r.X + r.Width / 4, r.Y + r.Height / 4);
+            r.Size = new SizeF(r.Width / 2, r.Height / 2);
+            PointF p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rand, size, r, 4);
+            Shape s = (Shape)WrappedWorld.CreateShape((Shape.Shapes)imageIndex, Color.White, p, size, type: GameObjectType.NonColliding);
 
             return s;
         }

@@ -10,17 +10,14 @@ namespace GoodAI.Modules.School.LearningTasks
     public class ComparisonShape : GameObject
     {
         // The shapes used for the targets
-        public enum Shapes { L, T, Circle, Rhombus, Mountains, Count };
+        public enum Shapes { L, T, Circle, Rhombus, Mountains, Count }
 
         // The shape of the object
         public Shapes Shape { get; protected set; }
 
-        // Random generator
-        private static Random m_rand = new Random();
-
         // Construct the object
-        public ComparisonShape(Point location, Shapes shape, Size size) :
-            base(GameObjectType.None, GetShapeAddr(shape), location.X, location.Y, size.Width, size.Height)
+        public ComparisonShape(Shapes shape, PointF location = default(PointF), SizeF size = default(SizeF), float rotation = 0)
+            : base(GetShapeAddr(shape), location, size, rotation: rotation)
         {
             Shape = shape;
         }
@@ -75,7 +72,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected readonly TSHintAttribute SCALE_SHAPE = new TSHintAttribute("Scale shape", "", typeof(bool), 0, 1);
 
         // Random generator
-        private static Random m_rand = new Random();
+        private static readonly Random m_rand = new Random();
 
         // How large a share of the examples are guaranteed to be positive -- to maintain a balance between negative and positive examples
         protected const float MIN_SHARE_OF_POSITIVE_EXAMPLES = .3f;
@@ -134,10 +131,10 @@ namespace GoodAI.Modules.School.LearningTasks
         // Create a shape
         protected ComparisonShape CreateTarget(ComparisonShape.Shapes shape)
         {
-            Size size = GetSize(TSHints[SCALE_SHAPE] == 1);
-            Point location = GetRandomLocation(size);
-            ComparisonShape target = new ComparisonShape(location, shape, size);
-            target.Rotation = GetRotation(TSHints[ROTATE_SHAPE] == 1);
+            SizeF size = GetSize(TSHints[SCALE_SHAPE] == 1);
+            PointF location = GetRandomLocation(size);
+            float rotation = GetRotation(TSHints[ROTATE_SHAPE] == 1);
+            ComparisonShape target = new ComparisonShape(shape, location, size, rotation);
             WrappedWorld.AddGameObject(target);
             return target;
         }
@@ -149,16 +146,16 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Get a target size
-        private Size GetSize(bool doScaleShape)
+        private SizeF GetSize(bool doScaleShape)
         {
-            Size size = new Size(32, 32);
+            SizeF size = new Size(32, 32);
             if (doScaleShape)
             {
                 const float MIN_SCALE_FACTOR = 1;
                 const float MAX_SCALE_FACTOR = 2;
                 float scale = GetRandom(MIN_SCALE_FACTOR, MAX_SCALE_FACTOR);
-                size.Width = (int)Math.Round(size.Width * scale);
-                size.Height = (int)Math.Round(size.Height * scale);
+                size.Width = (float)Math.Round(size.Width * scale);
+                size.Height = (float)Math.Round(size.Height * scale);
             }
             return size;
         }
@@ -176,7 +173,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Get a target location
-        private Point GetRandomLocation(Size size)
+        private PointF GetRandomLocation(SizeF size)
         {
             // Need to separate objects enough so that even large objects do not touch when
             // rotated.

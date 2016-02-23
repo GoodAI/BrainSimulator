@@ -9,10 +9,10 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Copy temporal sequence")]
     public class LTSimpleRhythm : AbstractLearningTask<ManInWorld>
     {
-        private TSHintAttribute RHYTHM_MAX_SIZE = new TSHintAttribute("Max number of steps between two ticks", "", typeof(int), 1, 8);
-        private TSHintAttribute DELAY = new TSHintAttribute("Maximum random delay between first step and period start", "", typeof(int), 0, 2);
+        private readonly TSHintAttribute RHYTHM_MAX_SIZE = new TSHintAttribute("Max number of steps between two ticks", "", typeof(int), 1, 8);
+        private readonly TSHintAttribute DELAY = new TSHintAttribute("Maximum random delay between first step and period start", "", typeof(int), 0, 2);
 
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
 
         protected enum TimeActions
         {
@@ -22,8 +22,8 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         protected TimeActions[] m_timeplan;
-        private Point m_p;
-        private Size m_size;
+        private PointF m_p;
+        private SizeF m_size;
 
         private int m_currentStep;
 
@@ -54,15 +54,12 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void PresentNewTrainingUnit()
         {
             m_p = WrappedWorld.CreateNonVisibleAgent().GetGeometry().Location;
-
             m_currentStep = 0;
 
             int rest = m_rndGen.Next(1, (int)TSHints[RHYTHM_MAX_SIZE] + 1);
-
             int delay = m_rndGen.Next(0, (int)TSHints[DELAY] + 1);
 
             m_timeplan = new TimeActions[(rest + 1) * 3 + delay + 1];
-
             m_timeplan[delay] = TimeActions.GiveHint;
             m_timeplan[delay + (rest + 1)] = TimeActions.GiveHint;
             m_timeplan[delay + (rest + 1) * 2] = TimeActions.AskAction;
@@ -72,16 +69,18 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (m_timeplan[0] == TimeActions.GiveHint)
             {
-                Point p;
+                PointF p;
+
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1)
                 {
-                    p = WrappedWorld.RandomPositionInsidePow(m_rndGen, m_size);
+                    p = WrappedWorld.RandomPositionInsideViewport(m_rndGen, m_size);
                 }
                 else
                 {
                     p = m_p;
                 }
-                WrappedWorld.CreateShape(p, Shape.Shapes.Tent, Color.White, m_size);
+
+                WrappedWorld.CreateShape(Shape.Shapes.Tent, Color.White, p, m_size);
             }
         }
 
@@ -97,18 +96,18 @@ namespace GoodAI.Modules.School.LearningTasks
             WrappedWorld.GameObjects.Clear();
             if (m_timeplan[m_currentStep] == TimeActions.GiveHint)
             {
-                Point p;
+                PointF p;
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1)
                 {
-                    p = WrappedWorld.RandomPositionInsidePow(m_rndGen, m_size);
+                    p = WrappedWorld.RandomPositionInsideViewport(m_rndGen, m_size);
                 }
                 else
                 {
                     p = m_p;
                 }
 
-                WrappedWorld.CreateShape(p, Shape.Shapes.Tent, Color.White, m_size);
+                WrappedWorld.CreateShape(Shape.Shapes.Tent, Color.White, p, m_size);
             }
         }
 
@@ -117,7 +116,7 @@ namespace GoodAI.Modules.School.LearningTasks
             wasUnitSuccessful = false;
 
             if (!((WrappedWorld.Controls.Host[0] != 0 && m_timeplan[m_currentStep] == TimeActions.AskAction)
-            || (WrappedWorld.Controls.Host[0] == 0 && m_timeplan[m_currentStep] != TimeActions.AskAction)))
+               || (WrappedWorld.Controls.Host[0] == 0 && m_timeplan[m_currentStep] != TimeActions.AskAction)))
             {
                 return true;
             }

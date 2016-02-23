@@ -10,7 +10,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Categorize object shapes")]
     public class LTDetectShape : AbstractLearningTask<ManInWorld>
     {
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
@@ -48,18 +48,18 @@ namespace GoodAI.Modules.School.LearningTasks
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 //random size
-                Size shapeSize = new Size(32, 32);
+                SizeF shapeSize = new SizeF(32, 32);
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
-                    int side = m_rndGen.Next(10, 48);
-                    shapeSize = new Size(side, side);
+                    float side = (float)(10 + m_rndGen.NextDouble() * 38);
+                    shapeSize = new SizeF(side, side);
                 }
 
                 // random position
-                Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
+                PointF shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
-                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize, 2);
+                    shapePosition = WrappedWorld.RandomPositionInsideViewport(m_rndGen, shapeSize, 2);
                 }
 
                 // random color
@@ -78,7 +78,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
 
-                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize, rotation: rotation);
+                m_target = WrappedWorld.CreateShape(m_target_type, shapeColor, shapePosition, shapeSize, rotation);
             }
             else
             {

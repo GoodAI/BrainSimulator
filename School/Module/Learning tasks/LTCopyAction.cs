@@ -8,7 +8,7 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("Imitate movement")]
-    public class LTCopyAction : AbstractLearningTask<ManInWorld>
+    public class LTCopyAction : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);
 
@@ -51,9 +51,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
             m_stepsSincePresented = 0;
             m_agentsHistory = new AgentsHistory();
-            m_agentsHistory.Add(m_agent.X, m_agent.Y);
+            m_agentsHistory.Add(m_agent.Position.X, m_agent.Position.Y);
             m_teachersHistory = new AgentsHistory();
-            m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
+            m_teachersHistory.Add(m_teacher.Position.X, m_teacher.Position.Y);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
@@ -72,22 +72,22 @@ namespace GoodAI.Modules.School.LearningTasks
                     return true;
                 }
 
-                if (!m_teacher.IsDone() && m_agent.isMoving())
+                if (!m_teacher.IsDone() && m_agent.IsMoving())
                 {
                     wasUnitSuccessful = false;
                     return true;
                 }
 
                 // save history for agent and teacher
-                m_agentsHistory.Add(m_agent.X, m_agent.Y);
-                m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
+                m_agentsHistory.Add(m_agent.Position.X, m_agent.Position.Y);
+                m_teachersHistory.Add(m_teacher.Position.X, m_teacher.Position.Y);
 
                 int numberOfTeachersSteps = m_teachersHistory.numberOfSteps();
                 int numberOfAgentsSteps = m_agentsHistory.numberOfSteps();
 
                 wasUnitSuccessful = false;
                 // simple version of the task
-                if (TSHints[LTCopyAction.STOP_REQUEST] == .0f)
+                if (TSHints[STOP_REQUEST] == .0f)
                 {
                     if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone())
                     {
@@ -117,7 +117,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            m_agent = (WrappedWorld as RoguelikeWorld).CreateAgent();
+            m_agent = WrappedWorld.CreateAgent();
         }
 
         protected void CreateTeacher()
@@ -125,20 +125,20 @@ namespace GoodAI.Modules.School.LearningTasks
             List<RogueTeacher.Actions> actions = new List<RogueTeacher.Actions>();
             actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
 
-            Rectangle restrcitedRectangle = WrappedWorld.GetPowGeometry();
+            RectangleF restrcitedRectangle = WrappedWorld.GetPowGeometry();
             restrcitedRectangle = LearningTaskHelpers.ResizeRectangleAroundCentre(restrcitedRectangle, 0.8f);
 
-            Point teachersPoint;
+            PointF teachersPoint;
             if ((int)TSHints[TEACHER_ON_DIFF_START_POSITION] != 0)
             {
                 teachersPoint = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, RogueTeacher.GetDefaultSize(), restrcitedRectangle, 10);
             }
             else
             {
-                teachersPoint = new Point(m_agent.X + WrappedWorld.POW_WIDTH / 3, m_agent.Y);
+                teachersPoint = new PointF(m_agent.Position.X + WrappedWorld.Viewport.Width / 3, m_agent.Position.Y);
             }
 
-            m_teacher = (WrappedWorld as RoguelikeWorld).CreateTeacher(teachersPoint, actions) as RogueTeacher;
+            m_teacher = WrappedWorld.CreateTeacher(teachersPoint, actions) as RogueTeacher;
         }
     }
 }

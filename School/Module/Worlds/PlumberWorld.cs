@@ -3,6 +3,7 @@ using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using YAXLib;
 
 namespace GoodAI.Modules.School.Worlds
@@ -26,11 +27,27 @@ namespace GoodAI.Modules.School.Worlds
 
         protected override string TEXTURE_DIR { get { return @"res\PlumberWorld"; } }
 
-        public override MovableGameObject CreateAgent(string iconPath, int x = 0, int y = 0)
+
+        public PlumberWorld()  // Constructor method
         {
-            base.CreateAgent(iconPath, x, y);
+            Scene = new SizeF(1000, 300);
+            Viewport = new SizeF(300, 200);
+        }
+
+
+        public override MovableGameObject CreateAgent(string iconPath, PointF position)
+        {
+            base.CreateAgent(iconPath, position);
             GameObjectInControl = Agent;
             return Agent;
+        }
+
+        public virtual void CreateTasks()
+        {
+            //InitSchool = new InitialiseWorldTask();
+            GetInputTask = new GetPlumberInputTask();
+            UpdateWorldTask = new UpdatePlumberTask();
+            RenderGLWorldTask = new RenderGLTask();
         }
 
         public override void Validate(MyValidator validator)
@@ -41,30 +58,6 @@ namespace GoodAI.Modules.School.Worlds
                 validator.AssertError(Controls.Count >= 3, this, "Size of Control input must be 3 or more");
         }
 
-        public PlumberWorld()  // Constructor method
-        {
-            //FOW_WIDTH = 1000;
-            //FOW_WIDTH = 300;
-        }
-
-        public virtual void CreateTasks()
-        {
-            //InitSchool = new InitialiseWorldTask();
-            GetInputTask = new GetPlumberInputTask();
-            UpdateWorldTask = new UpdatePlumberTask();
-            RenderWorldTask = new RenderTask();
-        }
-
-        protected new int m_FOW_WIDTH = 1000;
-        protected new int m_FOW_HEIGHT = 300;
-        protected new int m_POW_WIDTH = 300;
-        protected new int m_POW_HEIGHT = 200;
-
-        public override int FOW_WIDTH { get { return m_FOW_WIDTH; } protected set { m_FOW_WIDTH = value; } }
-        public override int FOW_HEIGHT { get { return m_FOW_HEIGHT; } protected set { m_FOW_HEIGHT = value; } }
-
-        public override int POW_WIDTH { get { return m_POW_WIDTH; } protected set { m_POW_WIDTH = value; } }
-        public override int POW_HEIGHT { get { return m_POW_HEIGHT; } protected set { m_POW_HEIGHT = value; } }
 
         public class GetPlumberInputTask : InputTask
         {
@@ -177,10 +170,10 @@ namespace GoodAI.Modules.School.Worlds
 
                         if (mobj.IsAffectedByGravity)
                         {
-                            mobj.vY += GravityAcc * Owner.Time;        // Apply gravity to vertical velocity
-                            if (mobj.vY > MaximumFallSpeed)
+                            mobj.Velocity.Y += GravityAcc * Owner.Time;        // Apply gravity to vertical velocity
+                            if (mobj.Velocity.Y > MaximumFallSpeed)
                             {
-                                mobj.vY = MaximumFallSpeed;
+                                mobj.Velocity.Y = MaximumFallSpeed;
                             }
                         }
                     }
@@ -194,35 +187,35 @@ namespace GoodAI.Modules.School.Worlds
                 // Updates agent's speed vector based on input
                 // Updates game objects by gravity
 
-                MovableGameObject magent = (PlumberOwner.GameObjectInControl as MovableGameObject);   //Create reference to the GameObject currently under User control, we need to know its onGround value
+                MovableGameObject magent = (PlumberOwner.GameObjectInControl as MovableGameObject);   //Create reference to the GameObject currently under User control, we need to know its OnGround value
                 if (magent == null)
                     return;
 
-                if (PlumberOwner.moveUpAction == 1.0f && magent.onGround == true)
+                if (PlumberOwner.moveUpAction == 1.0f && magent.OnGround == true)
                 {
-                    magent.onGround = false;                                // If the jump command request was detected, give boost to the Y velocity of the Object in control (jump)
-                    magent.vY = JumpBoost;
+                    magent.OnGround = false;                                // If the jump command request was detected, give boost to the Y velocity of the Object in control (jump)
+                    magent.Velocity.Y = JumpBoost;
                 }
                 if (PlumberOwner.moveRightAction == 1.0f)
                 {
-                    magent.vX += Acceleration;                                  // Apply acceleration while "right button" is pressed
-                    if (magent.vX > MaximumAgentSpeed)                          // Limit Max velocity
+                    magent.Velocity.X += Acceleration;                                  // Apply acceleration while "right button" is pressed
+                    if (magent.Velocity.X > MaximumAgentSpeed)                          // Limit Max velocity
                     {
-                        magent.vX = MaximumAgentSpeed;
+                        magent.Velocity.X = MaximumAgentSpeed;
                     }
                 }
                 if (PlumberOwner.moveLeftAction == 1.0f)
                 {
-                    magent.vX -= Acceleration;                                  // Apply acceleration while "left button" is pressed
-                    if (magent.vX < -MaximumAgentSpeed)                         // Limit Max velocity
+                    magent.Velocity.X -= Acceleration;                                  // Apply acceleration while "left button" is pressed
+                    if (magent.Velocity.X < -MaximumAgentSpeed)                         // Limit Max velocity
                     {
-                        magent.vX = -MaximumAgentSpeed;
+                        magent.Velocity.X = -MaximumAgentSpeed;
                     }
                 }
 
                 if (PlumberOwner.moveLeftAction == 0.0f && PlumberOwner.moveRightAction == 0.0f)
                 {
-                    magent.vX *= (1 - Deceleration);                              // Decelerate when no corresponding directional button is not pressed
+                    magent.Velocity.X *= (1 - Deceleration);                              // Decelerate when no corresponding directional button is not pressed
                 }
 
                 base.MoveWorldObjects();
@@ -237,14 +230,10 @@ namespace GoodAI.Modules.School.Worlds
                 MyLog.DEBUG.WriteLine("previousVelocityY: " + magent.previousvY);
                 MyLog.DEBUG.WriteLine("VelocityX: " + magent.vX);
                 MyLog.DEBUG.WriteLine("VelocityY: " + magent.vY);
-                MyLog.DEBUG.WriteLine("onGround: " + magent.onGround);
+                MyLog.DEBUG.WriteLine("OnGround: " + magent.OnGround);
                 */
             }
 
-            public override void HandleCollisions()
-            {
-                base.HandleCollisions();
-            }
 
             public override void Execute()
             {

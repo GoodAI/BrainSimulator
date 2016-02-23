@@ -9,9 +9,9 @@ using System.Linq;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("Detect similarity in set")]
-    public class LTDetectSimilarity : AbstractLearningTask<ManInWorld>
+    public class LTDetectSimilarity : AbstractLearningTask<RoguelikeWorld>
     {
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected bool m_sameObjectetPlaced;
 
         public LTDetectSimilarity() : this(null) { }
@@ -38,70 +38,61 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
+            WrappedWorld.CreateNonVisibleAgent();
+
+            int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
+
+            m_sameObjectetPlaced = m_rndGen.Next(2) == 0;
+            bool placeSameObject = m_sameObjectetPlaced;
+            if (m_sameObjectetPlaced)
             {
-                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
-
-                world.CreateNonVisibleAgent();
-
-                int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
-
-                m_sameObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
-                bool placeSameObject = m_sameObjectetPlaced;
-                if (m_sameObjectetPlaced)
-                {
-                    numberOfObjects--;
-                }
-
-                int numberOfShapes = Enum.GetValues(typeof(Shape.Shapes)).Length;
-                List<int> uniqueNumbers = LearningTaskHelpers.UniqueNumbers(m_rndGen, 0, numberOfShapes, numberOfObjects);
-                List<Shape.Shapes> shapes = uniqueNumbers.Select(x => (Shape.Shapes)x).ToList();
-
-                for (int i = 0; i < shapes.Count; i++)
-                {
-                    Size s;
-                    if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
-                    {
-                        int a = 10 + m_rndGen.Next(10);
-                        s = new Size(a, a);
-                    }
-                    else
-                    {
-                        s = new Size(15, 15);
-                    }
-
-                    Color color;
-                    if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
-                    {
-                        color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
-                    }
-                    else
-                    {
-                        color = Color.White;
-                    }
-
-                    Point position;
-
-                    if (placeSameObject)
-                    {
-                        placeSameObject = false;
-                        position = world.RandomPositionInsidePowNonCovering(m_rndGen, s, 2);
-                        world.CreateShape(position, shapes[i], color, size: s);
-                    }
-
-                    position = world.RandomPositionInsidePowNonCovering(m_rndGen, s, 2);
-                    world.CreateShape(position, shapes[i], color, size: s);
-                }
+                numberOfObjects--;
             }
-            else
+
+            int numberOfShapes = Enum.GetValues(typeof(Shape.Shapes)).Length;
+            List<int> uniqueNumbers = LearningTaskHelpers.UniqueNumbers(m_rndGen, 0, numberOfShapes, numberOfObjects);
+            List<Shape.Shapes> shapes = uniqueNumbers.Select(x => (Shape.Shapes)x).ToList();
+
+            foreach (Shape.Shapes shape in shapes)
             {
-                throw new NotImplementedException();
+                SizeF s;
+                if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
+                {
+                    float a = (float)(10 + m_rndGen.NextDouble() * 10);
+                    s = new SizeF(a, a);
+                }
+                else
+                {
+                    s = new Size(15, 15);
+                }
+
+                Color color;
+                if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1)
+                {
+                    color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
+                }
+                else
+                {
+                    color = Color.White;
+                }
+
+                PointF position;
+
+                if (placeSameObject)
+                {
+                    placeSameObject = false;
+                    position = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, s, 2);
+                    WrappedWorld.CreateShape(shape, color, position, s);
+                }
+
+                position = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, s, 2);
+                WrappedWorld.CreateShape(shape, color, position, s);
             }
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            if (m_sameObjectetPlaced == (WrappedWorld.Controls.Host[0] > 0))
+            if (m_sameObjectetPlaced == WrappedWorld.Controls.Host[0] > 0)
             {
                 wasUnitSuccessful = true;
             }

@@ -82,29 +82,29 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private void CreateAgent()
         {
-            WrappedWorld.CreateAgent(null, 0, 0);
+            WrappedWorld.CreateAgent(null);
             m_agent = WrappedWorld.Agent;
             // center the agent
-            m_agent.X = WrappedWorld.FOW_WIDTH / 2 - m_agent.Width / 2;
-            m_agent.Y = WrappedWorld.FOW_HEIGHT / 2 - m_agent.Height / 2;
+            m_agent.Position.X = WrappedWorld.Scene.Width / 2 - m_agent.Size.Width / 2;
+            m_agent.Position.Y = WrappedWorld.Scene.Height / 2 - m_agent.Size.Height / 2;
         }
 
         // scale and position the target:
         private void CreateTarget()
         {
-            Size size;
-            int standardSideSize = WrappedWorld.POW_WIDTH / 10;
+            SizeF size;
+            float standardSideSize = WrappedWorld.Viewport.Width / 10;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
-                int side = standardSideSize + m_rndGen.Next(standardSideSize);
-                size = new Size(side, side);
+                float side = (float)(standardSideSize + m_rndGen.NextDouble() * standardSideSize);
+                size = new SizeF(side, side);
             }
             else
             {
-                size = new Size(standardSideSize, standardSideSize);
+                size = new SizeF(standardSideSize, standardSideSize);
             }
 
-            Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, -1);
+            PointF position = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size, -1);
 
             Shape.Shapes shape;
             switch (m_rndGen.Next(0, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]))
@@ -134,10 +134,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 color = Color.White;
             }
 
-            m_target = WrappedWorld.CreateShape(position, shape, color, size);
+            m_target = WrappedWorld.CreateShape(shape, color, position, size);
 
             float distance = m_target.CenterDistanceTo(m_agent);
-            float maxDistance = (float)Math.Sqrt(Math.Pow(WrappedWorld.POW_WIDTH / 2, 2) + Math.Pow(WrappedWorld.POW_HEIGHT / 2, 2));
+            float w = WrappedWorld.Viewport.Width / 2;
+            float h = WrappedWorld.Viewport.Height / 2;
+            float maxDistance = (float)Math.Sqrt(w * w + h * h);
             m_distance = distance / maxDistance;
         }
     }

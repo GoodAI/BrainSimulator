@@ -10,7 +10,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Detect discrepancy in set")]
     public class LTDetectDifference : AbstractLearningTask<ManInWorld>
     {
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
         public LTDetectDifference() : this(null) { }
@@ -50,16 +50,16 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
 
-                m_diffObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
+                m_diffObjectetPlaced = m_rndGen.Next(2) == 0;
                 bool placeDifferentObj = m_diffObjectetPlaced;
 
                 for (int i = 0; i < numberOfObjects; i++)
                 {
-                    Size size;
+                    SizeF size;
                     if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                     {
-                        int a = 10 + m_rndGen.Next(10);
-                        size = new Size(a, a);
+                        float a = (float)(10 + m_rndGen.NextDouble() * 10);
+                        size = new SizeF(a, a);
                     }
                     else
                     {
@@ -76,16 +76,16 @@ namespace GoodAI.Modules.School.LearningTasks
                         color = Color.White;
                     }
 
-                    Point position = world.RandomPositionInsidePowNonCovering(m_rndGen, size);
+                    PointF position = world.RandomPositionInsidePowNonCovering(m_rndGen, size);
 
                     if (placeDifferentObj)
                     {
                         placeDifferentObj = false;
-                        world.CreateShape(position, alternativeShape, color, size: size);
+                        world.CreateShape(alternativeShape, color, position, size);
                     }
                     else
                     {
-                        world.CreateShape(position, standardShape, color, size: size);
+                        world.CreateShape(standardShape, color, position, size);
                     }
                 }
             }

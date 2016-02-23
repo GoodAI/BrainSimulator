@@ -86,8 +86,8 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             WrappedWorld.CreateAgent();
             m_agent = WrappedWorld.Agent;
-            m_agent.X -= m_agent.Width / 2;
-            m_agent.Y -= m_agent.Height / 2;
+            m_agent.Position.X -= m_agent.Size.Width / 2;
+            m_agent.Position.Y -= m_agent.Size.Height / 2;
         }
 
         public virtual void CreateTarget()
@@ -100,25 +100,25 @@ namespace GoodAI.Modules.School.LearningTasks
 
             m_target = WrappedWorld.CreateTarget(new Point(0, 0), scaleFactor);
 
-            Point p;
+            PointF p;
             if ((int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM] == 1)
             {
-                Rectangle POW = WrappedWorld.GetPowGeometry();
-                POW.Location = new Point(POW.X, POW.Y + POW.Height / 2 - m_agent.Height);
-                POW.Size = new Size(POW.Width, m_agent.Height * 2);
+                RectangleF POW = WrappedWorld.GetPowGeometry();
+                POW.Location = new PointF(POW.X, POW.Y + POW.Height / 2 - m_agent.Size.Height);
+                POW.Size = new SizeF(POW.Width, m_agent.Size.Height * 2);
                 p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, m_target.GetGeometry().Size, POW, 5, 20);
             }
             else
             {
-                p = WrappedWorld.RandomPositionInsidePow(m_rndGen, m_target.GetGeometry().Size, 20);
+                p = WrappedWorld.RandomPositionInsideViewport(m_rndGen, m_target.GetGeometry().Size, 20);
             }
 
-            m_target.SetPosition(p);
+            m_target.Position = p;
         }
 
         private void PutAgentOnFloor()
         {
-            m_agent.Y = WrappedWorld.FOW_HEIGHT - m_agent.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
+            m_agent.Position.Y = WrappedWorld.Scene.Height - m_agent.Size.Height - 1;  // - 1 : otherwise the agent is stuck in the floor
         }
     }
 }

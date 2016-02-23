@@ -74,45 +74,50 @@ namespace GoodAI.Modules.School.Common
 
     public class GameObject
     {
-        public int id;
-        public GameObjectType type;
+        public int ID;
+        public GameObjectType Type;
         public string Subtype;
-        public Size bitmapPixelSize;
-        public bool isBitmapAsMask; // can use bitmap's A value as mask
-        public Color maskColor; // R,G,B 
-        public string bitmapPath;
-        public CUdeviceptr bitmap;
+
+        public Size BitmapPixelSize;
+        public bool IsBitmapAsMask; // can use Bitmap's A value as mask
+        private Color m_colorMask;
+        public Color ColorMask
+        {
+            get { return m_colorMask; }
+            set
+            {
+                IsBitmapAsMask = true;
+                m_colorMask = value;
+            }
+        }
+
+        public string BitmapPath;
+        public CUdeviceptr BitmapPtr;
         public int SpriteTextureHandle;
         public int Layer = 0;
 
-        public int X { get; set; }
-        public int Y { get; set; }
-
+        public PointF Position;
+        public SizeF Size;
         public float Rotation { get; set; } // rotation in radians
 
-        public int Width { get; set; }
-        public int Height { get; set; }
-
-        public GameObject(GameObjectType type, string path, int x, int y, int width = 0, int height = 0, float rotation = 0, string subtype = null)
+        public GameObject(string bitmapPath, PointF position = default(PointF), SizeF size = default(SizeF), GameObjectType type = GameObjectType.None, float rotation = 0, string subtype = null)
         {
-            this.type = type;
-            this.bitmapPath = path;
-            this.X = x;
-            this.Y = y;
-            this.Rotation = rotation;
-            this.bitmapPixelSize = new Size(0, 0);
-            this.Width = width;
-            this.Height = height;
-            this.Subtype = subtype;
-            this.SpriteTextureHandle = -1;
+            Type = type;
+            BitmapPath = bitmapPath;
+            Subtype = subtype;
+            SpriteTextureHandle = -1;
 
-            isBitmapAsMask = false;
-            maskColor = Color.FromArgb(0, 0, 0);
+            IsBitmapAsMask = false;
+            ColorMask = Color.FromArgb(0, 0, 0);
+
+            Position = position;
+            Size = size;
+            Rotation = rotation;
         }
 
-        public int[] ToArray()
+        public float[] ToArray()
         {
-            return new int[] { id, (int)type, X, Y, Width, Height };
+            return new[] { ID, (int)Type, Position.X, Position.Y, Size.Width, Size.Height };
         }
 
         public int ArraySize
@@ -123,9 +128,9 @@ namespace GoodAI.Modules.School.Common
             }
         }
 
-        public Rectangle GetGeometry()
+        public RectangleF GetGeometry()
         {
-            return new Rectangle(new Point(X,Y), new Size(Width,Height));
+            return new RectangleF(new PointF(Position.X, Position.Y), new SizeF(Size.Width, Size.Height));
         }
 
         /// <summary>
@@ -139,54 +144,54 @@ namespace GoodAI.Modules.School.Common
             // there are also 4 configurations that have closest pixels on walls
 
             // right wall from left wall:
-            if (X + Width < target.X)
+            if (Position.X + Size.Width < target.Position.X)
             {
                 // bottom wall from top wall
-                if (Y + Height < target.Y)
+                if (Position.Y + Size.Height < target.Position.Y)
                 {
                     // distance of bottom right corner from top left corner:
-                    return (float)Math.Sqrt(Math.Pow(X + Width - target.X, 2) + Math.Pow(Y + Height - target.Y, 2));
+                    return (float)Math.Sqrt(Math.Pow(Position.X + Size.Width - target.Position.X, 2) + Math.Pow(Position.Y + Size.Height - target.Position.Y, 2));
                 }
                 // top wall from bottom wall
-                if (Y > target.Y + target.Height)
+                if (Position.Y > target.Position.Y + target.Size.Height)
                 {
                     // distance of top right corner from bottom left corner:
-                    return (float)Math.Sqrt(Math.Pow(X + Width - target.X, 2) + Math.Pow(Y - (target.Y + target.Height), 2));
+                    return (float)Math.Sqrt(Math.Pow(Position.X + Size.Width - target.Position.X, 2) + Math.Pow(Position.Y - (target.Position.Y + target.Size.Height), 2));
                 }
                 // not corners, walls are closest together
-                int rightLeftDist = target.X - (X + Width);
+                float rightLeftDist = target.Position.X - (Position.X + Size.Width);
                 return rightLeftDist;
             }
             // left wall from right wall:
-            if (X > target.X + target.Width)
+            if (Position.X > target.Position.X + target.Size.Width)
             {
                 // bottom wall from top wall
-                if (Y + Height < target.Y)
+                if (Position.Y + Size.Height < target.Position.Y)
                 {
                     // distance of bottom left corner from top right corner:
-                    return (float)Math.Sqrt(Math.Pow(X - (target.X + target.Width), 2) + Math.Pow(Y + Height - target.Y, 2));
+                    return (float)Math.Sqrt(Math.Pow(Position.X - (target.Position.X + target.Size.Width), 2) + Math.Pow(Position.Y + Size.Height - target.Position.Y, 2));
                 }
                 // top wall from bottom wall
-                if (Y > target.Y + target.Height)
+                if (Position.Y > target.Position.Y + target.Size.Height)
                 {
                     // distance of top left corner from bottom right corner:
-                    return (float)Math.Sqrt(Math.Pow(X - (target.X + target.Width), 2) + Math.Pow(Y - (target.Y + target.Height), 2));
+                    return (float)Math.Sqrt(Math.Pow(Position.X - (target.Position.X + target.Size.Width), 2) + Math.Pow(Position.Y - (target.Position.Y + target.Size.Height), 2));
                 }
                 // not corners, walls are closest together
-                int leftRightDist = X - (target.X + target.Width);
+                float leftRightDist = Position.X - (target.Position.X + target.Size.Width);
                 return leftRightDist;
             }
             // the two game objects are above or below each other. Or intersecting.
             // bottom wall from top wall
-            if (Y + Height < target.Y)
+            if (Position.Y + Size.Height < target.Position.Y)
             {
-                int bottomTopDist = target.Y - (Y + Height);
+                float bottomTopDist = target.Position.Y - (Position.Y + Size.Height);
                 return bottomTopDist;
             }
             // top wall from bottom wall
-            if (Y > target.Y + target.Height)
+            if (Position.Y > target.Position.Y + target.Size.Height)
             {
-                int topBottomDist = Y - (target.Y + target.Width);
+                float topBottomDist = Position.Y - (target.Position.Y + target.Size.Width);
                 return topBottomDist;
             }
             // the objects must intersect or touch:
@@ -195,75 +200,45 @@ namespace GoodAI.Modules.School.Common
 
         public float CenterDistanceTo(GameObject target)
         {
-            int centerX = X + this.Width / 2;
-            int centerY = Y + this.Height / 2;
-            int targetCenterX = target.X + target.Width / 2;
-            int targetCenterY = target.Y + target.Height / 2;
+            float centerX = Position.X + Size.Width / 2;
+            float centerY = Position.Y + Size.Height / 2;
+            float targetCenterX = target.Position.X + target.Size.Width / 2;
+            float targetCenterY = target.Position.Y + target.Size.Height / 2;
             return (float)Math.Sqrt(Math.Pow(centerX - targetCenterX, 2) + Math.Pow(centerY - targetCenterY, 2));
-        }
-
-        public void SetColor(int r, int g, int b)
-        {
-            this.maskColor = Color.FromArgb(r, g, b);
-            this.isBitmapAsMask = true;
-        }
-
-        public void SetColor(Color c)
-        {
-            this.maskColor = c;
-            this.isBitmapAsMask = true;
-        }
-
-        public void SetPosition(Point p)
-        {
-            X = p.X;
-            Y = p.Y;
-        }
-
-        public void SetRotation(float rotation)
-        {
-            Rotation = rotation;
         }
     }
 
     public class MovableGameObject : GameObject
     {
-        public float vX { get; set; }
-        public float vY { get; set; }
-        public int previousX { get; set; }      //previousX denotes the X position in the previous step of the simulation
-        public int previousY { get; set; }      //previousY denotes the Y position in the previous step of the simulation
-        public float previousvX { get; set; }   //previousX denotes the X velocity in the previous step of the simulation
-        public float previousvY { get; set; }   //previousY denotes the Y velocity in the previous step of the simulation
-        public bool onGround { get; set; }      //onGround tells whether a GameObject (that is IMovable) is standing on a surface or if it's in the air
+        public PointF Velocity;
+        public PointF VelocityPrevious;
+        public PointF PositionPrevious;
+
+        public bool OnGround { get; set; }      //OnGround tells whether a GameObject (that is IMovable) is standing on a surface or if it's in the air
         public GameObjectStyleType GameObjectStyle { get; set; }
         public bool IsAffectedByGravity { get; set; }
         public List<GameObject> ActualCollisions;
 
-        public MovableGameObject(GameObjectType type, string path, int x, int y, int width = 0, int height = 0)
-            : base(type, path, x, y, width, height)
+
+        public MovableGameObject(string bitmapPath, PointF position = default(PointF), SizeF size = default(SizeF), GameObjectType type = GameObjectType.None)
+            : base(bitmapPath, position, size, type: type)
         {
-            vX = vY = 0;
-            previousvX = previousvY = 0;
-            previousX = previousY = 0;
             IsAffectedByGravity = true;
             GameObjectStyle = GameObjectStyleType.Platformer;
             ActualCollisions = new List<GameObject>();
         }
 
-        public MovableGameObject(GameObjectType type, GameObjectStyleType style, string path, int x, int y, int width = 0, int height = 0)
-            : base(type, path, x, y, width, height)
+        public MovableGameObject(GameObjectType type, GameObjectStyleType style, string bitmapPath, PointF position = default(PointF), SizeF size = default(SizeF))
+            : base(bitmapPath, position, size, type: type)
         {
-            vX = vY = 0;
-            previousvX = previousvY = 0;
-            previousX = previousY = 0;
             IsAffectedByGravity = true;
             GameObjectStyle = style;
             ActualCollisions = new List<GameObject>();
         }
 
-        public bool isMoving()
+        public bool IsMoving()
         {
-            return vX != 0 || vY != 0;
+            return Velocity.X != 0 || Velocity.Y != 0;
         }
     }
 
@@ -302,8 +277,8 @@ namespace GoodAI.Modules.School.Common
 
         public void Dispose() { }
 
-        public AnimatedGameObject(GameObjectType type, string path, int x, int y, int width = 0, int height = 0)
-            : base(type, path, x, y, width, height)
+        public AnimatedGameObject(GameObjectType type, string bitmapPath, PointF position, SizeF size = default(SizeF))
+            : base(bitmapPath, position, size, type: type)
         {
             m_animation = new List<AnimationItem>();
             m_currentAnimationIndex = 0;
@@ -317,7 +292,7 @@ namespace GoodAI.Modules.School.Common
 
     public interface ISwitchable
     {
-        bool isOn { get; set; }
+        bool IsOn { get; set; }
 
         void Switch();
         void Switch(bool on);

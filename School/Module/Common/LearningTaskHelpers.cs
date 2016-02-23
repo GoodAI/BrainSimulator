@@ -14,41 +14,35 @@ namespace GoodAI.Modules.School.Common
 
         public Shapes ShapeType { get; set; }
 
-        public Shape(Shapes shapeType, int x, int y, int width = 0, int height = 0, float rotation = 0f)
-            : base(GameObjectType.None, GetShapeAddr(shapeType), x, y, width, height, rotation)
+        public Shape(Shapes shapeType, PointF position, SizeF size = default(SizeF), float rotation = 0f, GameObjectType type = GameObjectType.None)
+            : base(GetShapeAddr(shapeType), position, size, type: type, rotation: rotation)
         {
-            this.ShapeType = shapeType;
+            ShapeType = shapeType;
         }
 
-        public Shape(Shapes shapeType, int x, int y, GameObjectType type, int width = 0, int height = 0, float rotation = 0f)
-            : base(type, GetShapeAddr(shapeType), x, y, width, height, rotation)
-        {
-            this.ShapeType = shapeType;
-        }
-
-        public static string GetShapeAddr(Shape.Shapes shape)
+        public static string GetShapeAddr(Shapes shape)
         {
             switch (shape)
             {
-                case Shape.Shapes.Circle:
+                case Shapes.Circle:
                     return @"WhiteCircle50x50.png";
-                case Shape.Shapes.Square:
+                case Shapes.Square:
                     return @"White10x10.png";
-                case Shape.Shapes.Triangle:
+                case Shapes.Triangle:
                     return @"WhiteTriangle50x50.png";
-                case Shape.Shapes.Star:
+                case Shapes.Star:
                     return @"WhiteStar50x50.png";
-                case Shape.Shapes.Mountains:
+                case Shapes.Mountains:
                     return @"WhiteMountains50x50.png";
-                case Shape.Shapes.T:
+                case Shapes.T:
                     return @"WhiteT50x50.png";
-                case Shape.Shapes.Tent:
+                case Shapes.Tent:
                     return @"WhiteTent50x50.png";
-                case Shape.Shapes.Pentagon:
+                case Shapes.Pentagon:
                     return @"WhitePentagon50x50.png";
-                case Shape.Shapes.DoubleRhombus:
+                case Shapes.DoubleRhombus:
                     return @"WhiteDoubleRhombus50x50.png";
-                case Shape.Shapes.Rhombus:
+                case Shapes.Rhombus:
                     return @"WhiteRhombus50x50.png";
             }
             throw new ArgumentException("Unknown shape");
@@ -82,30 +76,32 @@ namespace GoodAI.Modules.School.Common
         public abstract int ActionsCount();
         public abstract float[] CurrentAction();
 
-        public AbstractTeacherInWorld(GameObjectType type, string path, int x, int y, int width = 0, int height = 0)
-            : base(type, path, x, y, width, height) { }
+        public AbstractTeacherInWorld(string bitmapPath, PointF position = default(PointF), SizeF size = default(SizeF), GameObjectType type = GameObjectType.None)
+            : base(bitmapPath, position, size, type)
+        { }
 
     }
 
     public class Grid
     {
-        private Size m_blockSize;
-        private Size m_size;
+        private SizeF m_blockSize;
+        private SizeF m_size;
 
-        public Grid(Size size, Size blockSize)
+        public Grid(SizeF size, SizeF blockSize)
         {
             m_size = size;
             m_blockSize = blockSize;
         }
 
-        public Point getPoint(int xGrid, int yGrid){
-            int px = xGrid * m_blockSize.Width;
-            int py = yGrid * m_blockSize.Height;
+        public PointF GetPoint(int xGrid, int yGrid)
+        {
+            float px = xGrid * m_blockSize.Width;
+            float py = yGrid * m_blockSize.Height;
             if (px > m_size.Width || py > m_size.Height)
             {
                 throw new ArgumentException("Out of Grid");
             }
-            return new Point(px, py);
+            return new PointF(px, py);
         }
     }
 
@@ -247,38 +243,38 @@ namespace GoodAI.Modules.School.Common
             return result;
         }
 
-        public static Rectangle ResizeRectangleAroundCentre(Rectangle r, float ratio)
+        public static RectangleF ResizeRectangleAroundCentre(RectangleF r, float ratio)
         {
-            Rectangle f = new Rectangle();
+            RectangleF f = new RectangleF();
 
-            int dX = (int)(((r.Width * ratio) - r.Width) / 2);
-            int dY = (int)(((r.Height * ratio) - r.Height) / 2);
+            float dX = (r.Width * ratio - r.Width) / 2;
+            float dY = (r.Height * ratio - r.Height) / 2;
 
-            int xNew = r.X - dX;
-            int yNew = r.Y - dY;
-            f.Location = new Point(xNew, yNew);
+            float xNew = r.X - dX;
+            float yNew = r.Y - dY;
+            f.Location = new PointF(xNew, yNew);
 
-            int newWidth = r.Width + 2 * dX;
-            int newHeight = r.Height + 2 * dX;
-            f.Size = new Size(newWidth, newHeight);
+            float newWidth = r.Width + 2 * dX;
+            float newHeight = r.Height + 2 * dX;
+            f.Size = new SizeF(newWidth, newHeight);
 
             return f;
         }
 
-        public static Rectangle ResizeRectangleAroundCentre(Rectangle r, int dx, int dy)
+        public static RectangleF ResizeRectangleAroundCentre(RectangleF r, float dx, float dy)
         {
-            Rectangle f = new Rectangle();
+            RectangleF f = new RectangleF();
 
-            int dX = dx;
-            int dY = dy;
+            float dX = dx;
+            float dY = dy;
 
-            int xNew = r.X - dX;
-            int yNew = r.Y - dY;
-            f.Location = new Point(xNew, yNew);
+            float xNew = r.X - dX;
+            float yNew = r.Y - dY;
+            f.Location = new PointF(xNew, yNew);
 
-            int newWidth = r.Width + 2 * dX;
-            int newHeight = r.Height + 2 * dX;
-            f.Size = new Size(newWidth, newHeight);
+            float newWidth = r.Width + 2 * dX;
+            float newHeight = r.Height + 2 * dX;
+            f.Size = new SizeF(newWidth, newHeight);
 
             return f;
         }

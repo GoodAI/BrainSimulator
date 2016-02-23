@@ -72,16 +72,16 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 world.CreateNonVisibleAgent();
 
-                Size size;
-                int standardSideSize = WrappedWorld.POW_WIDTH / 10;
+                SizeF size;
+                float standardSideSize = WrappedWorld.Scene.Width / 10;
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
-                    int a = standardSideSize + m_rndGen.Next(standardSideSize);
-                    size = new Size(a, a);
+                    float a = (float)(standardSideSize + m_rndGen.NextDouble() * standardSideSize);
+                    size = new SizeF(a, a);
                 }
                 else
                 {
-                    size = new Size(standardSideSize, standardSideSize);
+                    size = new SizeF(standardSideSize, standardSideSize);
                 }
 
                 Color color;
@@ -94,10 +94,10 @@ namespace GoodAI.Modules.School.LearningTasks
                     color = Color.White;
                 }
 
-                Point position;
+                PointF position;
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
-                    position = world.RandomPositionInsidePow(m_rndGen, size);
+                    position = world.RandomPositionInsideViewport(m_rndGen, size);
                 }
                 else
                 {
@@ -118,7 +118,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     shape = negativeExamplesRed[randShapePointer];
                 }
 
-                WrappedWorld.CreateShape(position, shape, color, size);
+                WrappedWorld.CreateShape(shape, color, position, size);
             }
             else
             {

@@ -61,19 +61,19 @@ namespace GoodAI.Modules.School.LearningTasks
             createWallRectangleWithFillProbability(world, m_rndGen, 5, 5, widthOfRectangle, heightOfRectangle, 0.8f, 1.0f);
 
             // Position agent
-            m_agent.X = 200;
-            m_agent.Y = 193;
+            m_agent.Position.X = 200;
+            m_agent.Position.Y = 193;
 
             // Position target
-            m_target.X = m_rndGen.Next(160, 280);
+            m_target.Position.X = m_rndGen.Next(160, 280);
 
             if (m_rndGen.Next(0, 2) == 0)
             {
-                m_target.Y = 120;
+                m_target.Position.Y = 120;
             }
             else
             {
-                m_target.Y = 270;
+                m_target.Position.Y = 270;
             }
         }
     }

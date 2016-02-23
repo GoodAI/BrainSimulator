@@ -33,7 +33,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 namespace GoodAI.Modules.School.Worlds
 {
     /// <author>GoodAI</author>
-    /// <meta>Mp,Mv,Os</meta>
+    /// <meta>Mp,Mv,Os,Ph,Mm</meta>
     /// <status>WIP</status>
     /// <summary> Implementation of a configurable 2D world </summary>
     /// <description>
@@ -90,20 +90,13 @@ namespace GoodAI.Modules.School.Worlds
         protected virtual string TEXTURE_DIR { get { return @"res\FILL_IN_INHERITED_CLASS"; } }
         protected string TEXTURE_DIR_COMMON = @"res\SchoolWorldCommon\";
 
-        // tuple contains the bitmap itself and its offset in Bitmaps memory block
+        // tuple contains the Bitmap itself and its offset in Bitmaps memory block
         private readonly Dictionary<string, Tuple<Bitmap, int>> m_bitmapTable;
         private int m_totalOffset;
 
-        private int m_FOW_WIDTH = 1024;
-        private int m_FOW_HEIGHT = 1024;
-        private int m_POW_WIDTH = 256;
-        private int m_POW_HEIGHT = 256;
-
-        public virtual int FOW_WIDTH { get { return m_FOW_WIDTH; } protected set { m_FOW_WIDTH = value; } }
-        public virtual int FOW_HEIGHT { get { return m_FOW_HEIGHT; } protected set { m_FOW_HEIGHT = value; } }
-
-        public virtual int POW_WIDTH { get { return m_POW_WIDTH; } protected set { m_POW_WIDTH = value; } }
-        public virtual int POW_HEIGHT { get { return m_POW_HEIGHT; } protected set { m_POW_HEIGHT = value; } }
+        // Resolutions
+        public Size Fow { get; protected set; }
+        public Size Pow { get; protected set; }
 
         public Color BackgroundColor { get; set; }
         public bool UseBackgroundTexture { get; set; }
@@ -130,6 +123,10 @@ namespace GoodAI.Modules.School.Worlds
         public List<GameObject> GameObjects { get; private set; }
         private readonly StandardConflictResolver m_conflictResolver;
 
+        // Game-space sizes
+        public SizeF Scene { get; protected set; }
+        public SizeF Viewport { get; protected set; }
+
         public bool IsWorldFrozen { get; set; } // nothing moves in a frozen world
         public int DegreesOfFreedom { get; set; }
         public float ContinuousAction { get; set; }
@@ -140,6 +137,9 @@ namespace GoodAI.Modules.School.Worlds
 
         public ManInWorld()
         {
+            Fow = new Size(1024, 1024);
+            Pow = new Size(256, 256);
+
             ClearWorld();
 
             BackgroundColor = Color.FromArgb(77, 174, 255);
@@ -176,31 +176,23 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (School != null)
             {
-                POW_WIDTH = School.Visual.Dims[0];
-                POW_HEIGHT = School.Visual.Dims[1];
-
-                FOW_WIDTH = Math.Max(FOW_WIDTH, POW_WIDTH);
-                FOW_HEIGHT = Math.Max(FOW_HEIGHT, POW_HEIGHT);
+                Pow = new Size(School.Visual.Dims[0], School.Visual.Dims[1]);
+                Fow = new Size(Math.Max(Fow.Width, Pow.Width), Math.Max(Fow.Height, Pow.Height));
             }
 
-            VisualFOW.Count = FOW_WIDTH * FOW_HEIGHT;
-            VisualFOW.ColumnHint = FOW_WIDTH;
-
-            VisualPOW.Count = POW_HEIGHT * POW_WIDTH;
-            VisualPOW.ColumnHint = POW_WIDTH;
+            VisualPOW.Dims = new TensorDimensions(Pow.Width, Pow.Height);
+            VisualFOW.Dims = new TensorDimensions(Fow.Width, Fow.Height);
 
             AgentVisualTemp.Count = VisualPOW.Count * 3;
-
             Bitmaps.Count = 0;
+
+            Objects.Count = 0;
+            Reward.Count = 1;
 
             GameObjects.Clear();
             m_bitmapTable.Clear();
 
             m_totalOffset = 0;
-
-            Objects.Count = 0;
-
-            Reward.Count = 1;
 
             UseBackgroundTexture = false;
         }
@@ -209,8 +201,14 @@ namespace GoodAI.Modules.School.Worlds
         {
             base.Validate(validator);
 
-            validator.AssertError(POW_HEIGHT <= FOW_HEIGHT, this, "POW_HEIGHT cannot be higher than FOW_HEIGHT, corresponding sizes are: " + POW_HEIGHT + ", " + FOW_HEIGHT);
-            validator.AssertError(POW_WIDTH <= FOW_WIDTH, this, "POW_WIDTH cannot be higher than FOW_WIDTH, corresponding sizes are: " + POW_WIDTH + ", " + FOW_WIDTH);
+            validator.AssertError(Pow.Width <= Fow.Width, this, "PowWidth cannot be higher than FowWidth, corresponding sizes are: " + Pow.Width + ", " + Fow.Width);
+            validator.AssertError(Pow.Height <= Fow.Height, this, "PowHeight cannot be higher than FowHeight, corresponding sizes are: " + Pow.Height + ", " + Fow.Height);
+        }
+
+        public override void Cleanup()
+        {
+            Dispose();
+            base.Cleanup();
         }
 
         public override void Dispose()
@@ -305,44 +303,42 @@ namespace GoodAI.Modules.School.Worlds
 
         #region Rendering helpers
 
-        protected Point GetPowCenter()
+        protected PointF GetPowCenter()
         {
             GameObject agent = Agent;
             if (agent == null)
             {
-                return new Point(FOW_WIDTH / 2, FOW_HEIGHT / 2);
+                return new PointF(Viewport.Width / 2, Viewport.Height / 2);
             }
-            return new Point(agent.X + agent.Width / 2, agent.Y + agent.Height / 2);
+            return new PointF(agent.Position.X + agent.Size.Width / 2, agent.Position.Y + agent.Size.Height / 2);
         }
 
-        public Rectangle GetFowGeometry()
+        public RectangleF GetFowGeometry()
         {
-            return new Rectangle(0, 0, FOW_WIDTH, FOW_HEIGHT);
+            return new RectangleF(new PointF(), Scene);
         }
 
         /// <summary>
         /// Returns POW borders rectangle reduced by 1 pixel
         /// </summary>
         /// <returns></returns>
-        public Rectangle GetPowGeometry()
+        public RectangleF GetPowGeometry()
         {
-            Point powCentre = GetPowCenter();
-            Size halfPowSize = new Size(POW_WIDTH / 2 - 1, POW_HEIGHT / 2 - 1);
-            Size powSize = new Size(POW_WIDTH - 2, POW_HEIGHT - 2);
-            return new Rectangle(powCentre - halfPowSize, powSize);
+            SizeF halfPowSize = new SizeF(Pow.Width / 2, Pow.Height / 2);
+            return new RectangleF(GetPowCenter() - halfPowSize, Viewport);
         }
 
-        public Rectangle GetAgentGeometry()
+        public RectangleF GetAgentGeometry()
         {
             return Agent.GetGeometry();
         }
 
 
-        public Point RandomPositionInsideRectangle(Random rndGen, Size size, Rectangle rectangle)
+        public PointF RandomPositionInsideRectangle(Random rndGen, SizeF size, RectangleF rectangle)
         {
-            return new Point(
-                rndGen.Next(rectangle.Width - size.Width) + rectangle.X,
-                rndGen.Next(rectangle.Height - size.Height) + rectangle.Y);
+            return new PointF(
+                rndGen.Next() * (rectangle.Width - size.Width) + rectangle.X,
+                rndGen.Next() * (rectangle.Height - size.Height) + rectangle.Y);
         }
 
         /// <summary>
@@ -353,11 +349,11 @@ namespace GoodAI.Modules.School.Worlds
         /// <param name="agentMargin"> if -1, collision is allowed</param>
         /// <param name="objectMargin"></param>
         /// <returns>Point inside POW with respect to size</returns>
-        public Point RandomPositionInsidePow(Random rndGen, Size size, int agentMargin = -1, int objectMargin = 1)
+        public PointF RandomPositionInsideViewport(Random rndGen, SizeF size, float agentMargin = -1, float objectMargin = 1)
         {
-            Rectangle pow = GetPowGeometry();
+            RectangleF pow = GetPowGeometry();
 
-            Size objectBorders = new Size(objectMargin, objectMargin);
+            SizeF objectBorders = new SizeF(objectMargin, objectMargin);
             size += objectBorders + objectBorders;
 
             if (agentMargin == -1)
@@ -365,19 +361,19 @@ namespace GoodAI.Modules.School.Worlds
                 return RandomPositionInsideRectangle(rndGen, size, pow);
             }
 
-            Rectangle agent = GetAgentGeometry();
-            Size agentBorders = new Size(agentMargin, agentMargin);
-            Rectangle agentGeometry = Agent.GetGeometry();
+            RectangleF agent = GetAgentGeometry();
+            SizeF agentBorders = new SizeF(agentMargin, agentMargin);
+            RectangleF agentGeometry = Agent.GetGeometry();
             agentGeometry.Location -= agentBorders;
             agentGeometry.Size += agentBorders + agentBorders;
 
-            Rectangle obj = new Rectangle();
+            RectangleF obj = new Rectangle();
             int randomPositionCounter = 0;
             bool intersects = true;
             while (intersects)
             {
                 intersects = false;
-                obj = new Rectangle(RandomPositionInsideRectangle(rndGen, size, pow), size);
+                obj = new RectangleF(RandomPositionInsideRectangle(rndGen, size, pow), size);
                 randomPositionCounter++;
 
                 if (randomPositionCounter > 1000)
@@ -393,35 +389,34 @@ namespace GoodAI.Modules.School.Worlds
             }
             MyLog.DEBUG.WriteLine("Number of unsuccessful attempts of random object placing: " + randomPositionCounter);
 
-            Point randPoint = obj.Location + objectBorders;
-            size -= (objectBorders + objectBorders);
+            PointF randPoint = obj.Location + objectBorders;
 
             return randPoint;
         }
 
-        public Point RandomPositionInsidePowNonCovering(Random rndGen, Size size, int objectMargin = 1)
+        public PointF RandomPositionInsidePowNonCovering(Random rndGen, SizeF size, int objectMargin = 1)
         {
             return RandomPositionInsideRectangleNonCovering(rndGen, size, GetPowGeometry(), objectMargin);
         }
 
-        public Point RandomPositionInsideRectangleNonCovering(Random rndGen, Size size, Rectangle rectangle, int objectMargin = 1, int agentMargin = 0)
+        public PointF RandomPositionInsideRectangleNonCovering(Random rndGen, SizeF size, RectangleF rectangle, float objectMargin = 1, float agentMargin = 0)
         {
-            Rectangle agent = GetAgentGeometry();
+            RectangleF agent = GetAgentGeometry();
             agent = LearningTaskHelpers.ResizeRectangleAroundCentre(agent, agentMargin, agentMargin);
 
 
-            Size borders = new Size(objectMargin, objectMargin);
+            SizeF borders = new SizeF(objectMargin, objectMargin);
             size += borders + borders;
 
             int randomPositionCounter = 0;
 
-            Rectangle obj = new Rectangle();
+            RectangleF obj = new RectangleF();
             bool intersects = true;
             while (intersects)
             {
                 intersects = false;
                 randomPositionCounter++;
-                obj = new Rectangle(RandomPositionInsideRectangle(rndGen, size, rectangle), size);
+                obj = new RectangleF(RandomPositionInsideRectangle(rndGen, size, rectangle), size);
 
                 // check intersection for all GameObjects
                 for (int i = 0; i < GameObjects.Count; i++)
@@ -430,7 +425,7 @@ namespace GoodAI.Modules.School.Worlds
                     {
                         throw new Exception("Cannot place object randomly");
                     }
-                    Rectangle gameObjectG = GameObjects[i].GetGeometry();
+                    RectangleF gameObjectG = GameObjects[i].GetGeometry();
                     if (gameObjectG.IntersectsWith(obj) ||
                         obj.IntersectsWith(gameObjectG) ||
                         agent.IntersectsWith(obj) ||
@@ -443,45 +438,28 @@ namespace GoodAI.Modules.School.Worlds
             }
             MyLog.DEBUG.WriteLine("Number of unsuccessful attempts of random object placing: " + randomPositionCounter);
 
-            Point randPoint = obj.Location + borders;
-            size = size - borders - borders;
+            PointF randPoint = obj.Location + borders;
             return randPoint;
         }
 
 
-        public GameObject CreateGameObject(Point p, GameObjectType type, string path, int width = 0, int height = 0)
+        public GameObject CreateGameObject(string bitmapPath, PointF p, SizeF size = default(SizeF), GameObjectType type = GameObjectType.None)
         {
-            GameObject rmk = new GameObject(type, path, p.X, p.Y, width, height);
+            GameObject rmk = new GameObject(bitmapPath, p, size, type);
             AddGameObject(rmk);
             return rmk;
         }
 
-        public GameObject CreateShape(Point p, Shape.Shapes shape, GameObjectType type = GameObjectType.None, int width = 0, int height = 0, float rotation = 0)
+        public GameObject CreateShape(Shape.Shapes shape, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
         {
-            Shape rmk = new Shape(shape, p.X, p.Y, type, width, height, rotation);
+            Shape rmk = new Shape(shape, p, size, rotation, type);
             AddGameObject(rmk);
             return rmk;
         }
 
-        public GameObject CreateShape(Point p, Shape.Shapes shape, Color color, Size size, GameObjectType type = GameObjectType.None, float rotation = 0)
+        public GameObject CreateShape(Shape.Shapes shape, Color color, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
         {
-            Shape rmk = new Shape(shape, p.X, p.Y, type, size.Width, size.Height, rotation);
-            rmk.SetColor(color);
-            AddGameObject(rmk);
-            return rmk;
-        }
-
-        public GameObject CreateShape(
-            Point p,
-            Shape.Shapes shape,
-            Color color,
-            GameObjectType type = GameObjectType.None,
-            int width = 0,
-            int height = 0,
-            float rotation = 0)
-        {
-            Shape rmk = new Shape(shape, p.X, p.Y, type, width, height, rotation);
-            rmk.SetColor(color);
+            Shape rmk = new Shape(shape, p, size, rotation, type) { ColorMask = color };
             AddGameObject(rmk);
             return rmk;
         }
@@ -525,7 +503,7 @@ namespace GoodAI.Modules.School.Worlds
             byte[] pixels = new byte[bitmapData.Stride];
 
             int bytesPerPixel = bitmapData.Stride / bitmapData.Width;
-            Debug.Assert(bytesPerPixel == 4); // we expect a 32-bit ARGB bitmap
+            Debug.Assert(bytesPerPixel == 4); // we expect a 32-bit ARGB Bitmap
 
             int totalPixels = bitmapData.Width * bitmapData.Height;
             int rOffset = 0;
@@ -552,9 +530,9 @@ namespace GoodAI.Modules.School.Worlds
             return bitmap.Width * bitmap.Height * PIXEL_SIZE;
         }
 
-        public virtual MovableGameObject CreateAgent(string iconPath, int x = 0, int y = 0)
+        public virtual MovableGameObject CreateAgent(string iconPath, PointF position = default(PointF))
         {
-            MovableGameObject agent = new MovableGameObject(GameObjectType.Agent, iconPath, x, y);
+            MovableGameObject agent = new MovableGameObject(iconPath, position, type: GameObjectType.Agent);
             //agent.CollisionResolution = CollisionResolutionType.LoseSpeed;
             AddGameObject(agent);
             Agent = agent;
@@ -583,31 +561,31 @@ namespace GoodAI.Modules.School.Worlds
 
             ////TODO: if two objects share the same texture, do not load it twice into memory
 
-            if (item.bitmapPath != null)
+            if (item.BitmapPath != null)
             {
-                bool isMissing = !m_bitmapTable.ContainsKey(item.bitmapPath);
-                int size = LoadAndGetBitmapSize(item.bitmapPath);
+                bool isMissing = !m_bitmapTable.ContainsKey(item.BitmapPath);
+                int size = LoadAndGetBitmapSize(item.BitmapPath);
 
-                Debug.Assert(size > 0, "Size of loaded bitmap is zero or negative.");
+                Debug.Assert(size > 0, "Size of loaded Bitmap is zero or negative.");
                 Bitmaps.SafeCopyToDevice();
                 if (isMissing)
                     Bitmaps.Reallocate(Bitmaps.Count + size);
                 CudaDeviceVariable<float> devBitmaps = Bitmaps.GetDevice(this);
 
-                Bitmap bitmap = m_bitmapTable[item.bitmapPath].Item1;
+                Bitmap bitmap = m_bitmapTable[item.BitmapPath].Item1;
 
-                item.bitmapPixelSize = new Size(bitmap.Width, bitmap.Height);
-                if (item.Width == 0 || item.Height == 0) // object can have size independent of the texture
+                item.BitmapPixelSize = new Size(bitmap.Width, bitmap.Height);
+                if (item.Size.Width == 0 || item.Size.Height == 0) // object can have size independent of the texture
                 {
-                    item.Width = item.bitmapPixelSize.Width;
-                    item.Height = item.bitmapPixelSize.Height;
+                    item.Size.Width = item.BitmapPixelSize.Width;
+                    item.Size.Height = item.BitmapPixelSize.Height;
                 }
-                item.bitmap = devBitmaps.DevicePointer + devBitmaps.TypeSize * m_bitmapTable[item.bitmapPath].Item2;
+                item.BitmapPtr = devBitmaps.DevicePointer + devBitmaps.TypeSize * m_bitmapTable[item.BitmapPath].Item2;
 
                 if (isMissing)
                 {
                     int bitOffset = FillWithChannelFromBitmap(bitmap, Bitmaps.Host, m_totalOffset);
-                    m_bitmapTable[item.bitmapPath] = new Tuple<Bitmap, int>(bitmap, m_totalOffset);
+                    m_bitmapTable[item.BitmapPath] = new Tuple<Bitmap, int>(bitmap, m_totalOffset);
                     m_totalOffset += bitOffset;
                 }
 
@@ -618,7 +596,7 @@ namespace GoodAI.Modules.School.Worlds
             Objects.Reallocate(Objects.Count + item.ArraySize);
 
             // agent should be in front in most cases
-            if (item.type == GameObjectType.Agent)
+            if (item.Type == GameObjectType.Agent)
             {
                 item.Layer = 10;
             }
@@ -633,11 +611,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public InputTask GetInputTask { get; protected set; }
         public UpdateTask UpdateWorldTask { get; protected set; }
-
-        [MyTaskGroup("Rendering")]
         public RenderGLTask RenderGLWorldTask { get; protected set; }
-        [MyTaskGroup("Rendering")]
-        public RenderTask RenderWorldTask { get; protected set; }
 
 
         public class InputTask : MyTask<ManInWorld>
@@ -657,7 +631,7 @@ namespace GoodAI.Modules.School.Worlds
         /// </summary>
         /// <returns>Agent</returns>
         public abstract MovableGameObject CreateAgent();
-        public abstract MovableGameObject CreateAgent(Point p, float size = 1.0f);
+        public abstract MovableGameObject CreateAgent(PointF p, float size = 1.0f);
 
 
         /// <summary>
@@ -666,19 +640,19 @@ namespace GoodAI.Modules.School.Worlds
         /// <returns>Agent as MovableGameObject</returns>
         public virtual MovableGameObject CreateNonVisibleAgent()
         {
-            MovableGameObject agent = CreateAgent(null, FOW_WIDTH / 2, FOW_HEIGHT / 2);
+            MovableGameObject agent = CreateAgent(null, new PointF(Scene.Width / 2, Scene.Height / 2));
             Agent.IsAffectedByGravity = false;
             return agent;
         }
 
-        public abstract GameObject CreateWall(Point p, float size = 1.0f);
-        public abstract GameObject CreateTarget(Point p, float size = 1.0f);
-        public abstract MovableGameObject CreateMovableTarget(Point p, float size = 1.0f);
-        public abstract GameObject CreateDoor(Point p, bool isClosed = true, float size = 1.0f);
-        public abstract GameObject CreateLever(Point p, bool isOn = false, float size = 1.0f);
-        public abstract GameObject CreateLever(Point p, ISwitchable obj, bool isOn = false, float size = 1.0f);
-        public abstract GameObject CreateRogueKiller(Point p, float size = 1.0f);
-        public abstract MovableGameObject CreateRogueMovableKiller(Point p, float size = 1.0f);
+        public abstract GameObject CreateWall(PointF p, float size = 1.0f);
+        public abstract GameObject CreateTarget(PointF p, float size = 1.0f);
+        public abstract MovableGameObject CreateMovableTarget(PointF p, float size = 1.0f);
+        public abstract GameObject CreateDoor(PointF p, bool isClosed = true, float size = 1.0f);
+        public abstract GameObject CreateLever(PointF p, bool isOn = false, float size = 1.0f);
+        public abstract GameObject CreateLever(PointF p, ISwitchable obj, bool isOn = false, float size = 1.0f);
+        public abstract GameObject CreateRogueKiller(PointF p, float size = 1.0f);
+        public abstract MovableGameObject CreateRogueMovableKiller(PointF p, float size = 1.0f);
 
         public virtual Grid GetGrid()
         {
@@ -701,8 +675,24 @@ namespace GoodAI.Modules.School.Worlds
 
         public class UpdateTask : MyTask<ManInWorld>
         {
-            public override void Init(int nGPU) { }
+            GameObject m_floor, m_rightSide, m_ceiling, m_leftSide;
 
+
+            public override void Init(int nGPU)
+            {
+                //Create boundaries of the world
+                PointF position = new PointF(0, Owner.Scene.Height);
+                SizeF size = new SizeF(Owner.Scene.Width, 100);
+                m_floor = new GameObject(null, position, size);
+                position.Y = -100;
+                m_ceiling = new GameObject(null, position, size);
+
+                position = new PointF(Owner.Scene.Width, 0);
+                size = new SizeF(100, Owner.Scene.Height);
+                m_rightSide = new GameObject(null, position, size);
+                position.X = -100;
+                m_leftSide = new GameObject(null, position, size);
+            }
 
             public virtual void UpdatePreviousValues()
             {
@@ -715,11 +705,11 @@ namespace GoodAI.Modules.School.Worlds
                     if (mobj == null)
                         continue;
 
-                    mobj.previousX = obj.X;
-                    mobj.previousY = obj.Y;
+                    mobj.PositionPrevious.X = obj.Position.X;
+                    mobj.PositionPrevious.Y = obj.Position.Y;
 
-                    mobj.previousvX = mobj.vX;
-                    mobj.previousvY = mobj.vY;
+                    mobj.VelocityPrevious.X = mobj.Velocity.X;
+                    mobj.VelocityPrevious.Y = mobj.Velocity.Y;
                 }
 
                 Owner.ResetReward();
@@ -757,8 +747,8 @@ namespace GoodAI.Modules.School.Worlds
                         case AnimationType.Translation:
                             {
                                 Debug.Assert(animation.data.Length >= 2, "Not enough data in animation data vector.");
-                                item.X += (int)animation.data[0];
-                                item.Y += (int)animation.data[1];
+                                item.Position.X += (int)animation.data[0];
+                                item.Position.Y += (int)animation.data[1];
                                 break;
                             }
                         default:
@@ -781,34 +771,24 @@ namespace GoodAI.Modules.School.Worlds
                         GameObject obj = Owner.GameObjects[i];
                         MovableGameObject mobj = obj as MovableGameObject;
 
-                        obj.X += (int)(mobj.vX * Owner.Time);      // Apply horizontal velocity to X position
-                        obj.Y += (int)(mobj.vY * Owner.Time);      // Apply vertical velocity to Y position
+                        obj.Position.X += (int)(mobj.Velocity.X * Owner.Time);      // Apply horizontal velocity to X position
+                        obj.Position.Y += (int)(mobj.Velocity.Y * Owner.Time);      // Apply vertical velocity to Y position
                     }
                 }
             }
 
-            public virtual void HandleCollisions()
+            public void HandleCollisions()
             {
                 // detect collisions of objects that IsMoveableByPhysics() with any other objects.
                 // When a collision is detected, handle it (do nothing, bounce, stop)
 
-                //Create boundaries of the world
-                GameObject floor = new GameObject(GameObjectType.None, null, 0, Owner.FOW_HEIGHT, Owner.FOW_WIDTH, 100);
-
-                GameObject ceiling = new GameObject(GameObjectType.None, null, 0, -100, Owner.FOW_WIDTH, 100);
-
-                GameObject rightSide = new GameObject(GameObjectType.None, null, Owner.FOW_WIDTH, 0, 100, Owner.FOW_HEIGHT);
-
-                GameObject leftSide = new GameObject(GameObjectType.None, null, -100, 0, 100, Owner.FOW_HEIGHT);
-
-                for (int i = 0; i < Owner.GameObjects.Count; i++)
+                foreach (GameObject obj in Owner.GameObjects)
                 {
-                    GameObject obj = Owner.GameObjects[i];
                     MovableGameObject mobj = obj as MovableGameObject;
                     if (mobj == null)
                         continue;
 
-                    mobj.onGround = false;
+                    mobj.OnGround = false;
                 }
 
                 // the object queue length is a constant that represents how many objects are allowed to push on each other
@@ -838,11 +818,11 @@ namespace GoodAI.Modules.School.Worlds
                         }
 
                         // collisions with world boundaries
-                        if (CheckCollision(mobj, floor)) Owner.m_conflictResolver.Resolve(mobj, floor);
-                        if (CheckCollision(mobj, ceiling)) Owner.m_conflictResolver.Resolve(mobj, ceiling);
-                        if (CheckCollision(mobj, rightSide)) Owner.m_conflictResolver.Resolve(mobj, rightSide);
-                        if (CheckCollision(mobj, leftSide)) Owner.m_conflictResolver.Resolve(mobj, leftSide);
-                        //MyLog.DEBUG.WriteLine("grounded: " + PlumberOwner.onGround);
+                        if (CheckCollision(mobj, m_floor)) Owner.m_conflictResolver.Resolve(mobj, m_floor);
+                        if (CheckCollision(mobj, m_ceiling)) Owner.m_conflictResolver.Resolve(mobj, m_ceiling);
+                        if (CheckCollision(mobj, m_rightSide)) Owner.m_conflictResolver.Resolve(mobj, m_rightSide);
+                        if (CheckCollision(mobj, m_leftSide)) Owner.m_conflictResolver.Resolve(mobj, m_leftSide);
+                        //MyLog.DEBUG.WriteLine("grounded: " + PlumberOwner.OnGround);
                     }
                 }
             }
@@ -860,113 +840,15 @@ namespace GoodAI.Modules.School.Worlds
                 HandleCollisions();
             }
 
-            public static Point ReturnCoordinatesBetweenTwoPoints(Point p1, Point p2, float ratio)
+            public static PointF ReturnCoordinatesBetweenTwoPoints(PointF p1, PointF p2, float ratio)
             {
-                return new Point((int)(p1.X + ratio * (p2.Y - p1.X)), (int)(p1.Y + ratio * (p2.Y - p1.Y)));
+                return new PointF(p1.X + ratio * (p2.Y - p1.X), p1.Y + ratio * (p2.Y - p1.Y));
             }
         }
 
         #endregion
 
         #region Rendering
-
-        /// <summary>
-        /// Render the world to the visual output.
-        /// </summary>
-        public class RenderTask : MyTask<ManInWorld>
-        {
-            private MyCudaKernel m_rgbaTextureKernelNearestNeighbor;
-            private MyCudaKernel m_maskedColorKernelNearestNeighbor;
-            private MyCudaKernel m_rgbaColorKernel;
-            private MyCudaKernel m_rgbBackgroundKernel;
-            private MyCudaKernel m_addRgbNoiseKernel;
-
-            public override void Init(int nGPU)
-            {
-                m_rgbaTextureKernelNearestNeighbor = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbaTextureKernelNearestNeighbor");
-                m_maskedColorKernelNearestNeighbor = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawMaskedColorKernelNearestNeighbor");
-                m_rgbaColorKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbaColorKernel");
-                m_rgbBackgroundKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "DrawRgbBackgroundKernel");
-                m_addRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
-            }
-
-            public override void Execute()
-            {
-                Point powCenter = Owner.GetPowCenter();
-                Point worldTopLeftInPow = new Point(-powCenter.X + Owner.POW_WIDTH / 2, -powCenter.Y + Owner.POW_HEIGHT / 2);
-
-                // POW background
-                Owner.VisualPOW.Fill(DUMMY_PIXEL);
-                m_rgbaColorKernel.SetupExecution(Owner.FOW_WIDTH * Owner.FOW_HEIGHT * 3);
-                m_rgbaColorKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, worldTopLeftInPow.X, worldTopLeftInPow.Y,
-                    Owner.FOW_WIDTH, Owner.FOW_HEIGHT, ((float)Owner.BackgroundColor.R) / 255.0f, ((float)Owner.BackgroundColor.G) / 255.0f, ((float)Owner.BackgroundColor.B) / 255.0f);
-
-                int blockDimX = Owner.FOW_WIDTH;
-                int gridDimZ = 1;
-                if (blockDimX > 1024)
-                {
-                    gridDimZ = (int)Math.Ceiling(blockDimX / 1024.0);
-                    blockDimX = 1024;
-                }
-
-                m_rgbBackgroundKernel.SetupExecution(new dim3(blockDimX, 1, 1), new dim3(Owner.FOW_HEIGHT, 3, gridDimZ));
-                m_rgbBackgroundKernel.Run(Owner.VisualFOW, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, ((float)Owner.BackgroundColor.R) / 255.0f, ((float)Owner.BackgroundColor.G) / 255.0f, ((float)Owner.BackgroundColor.B) / 255.0f);
-
-                int offset = 0;
-                foreach (GameObject g in Owner.GameObjects)
-                {
-                    if (g.bitmapPath == null)
-                        continue;
-
-                    // texture scaling - nearest neighbor
-                    {
-                        if (g.isBitmapAsMask)
-                        {
-                            m_maskedColorKernelNearestNeighbor.SetupExecution(g.Width * g.Height * 3);
-                            m_maskedColorKernelNearestNeighbor.Run(Owner.VisualFOW, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, g.X, g.Y,
-                                g.bitmap, g.bitmapPixelSize.Width, g.bitmapPixelSize.Height,
-                                g.Width, g.Height, ((float)g.maskColor.B) / 255.0f, ((float)g.maskColor.G) / 255.0f, ((float)g.maskColor.R) / 255.0f);
-
-                            Point powTopLeft = new Point(powCenter.X - Owner.POW_WIDTH / 2,
-                                powCenter.Y - Owner.POW_HEIGHT / 2);
-                            m_maskedColorKernelNearestNeighbor.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT,
-                                g.X - powTopLeft.X, g.Y - powTopLeft.Y, g.bitmap, g.bitmapPixelSize.Width, g.bitmapPixelSize.Height,
-                                g.Width, g.Height, ((float)g.maskColor.B) / 255.0f, ((float)g.maskColor.G) / 255.0f, ((float)g.maskColor.R) / 255.0f);
-                        }
-                        else
-                        {
-                            m_rgbaTextureKernelNearestNeighbor.SetupExecution(g.Width * g.Height * 3);
-                            m_rgbaTextureKernelNearestNeighbor.Run(Owner.VisualFOW, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, g.X, g.Y,
-                                g.bitmap, g.bitmapPixelSize.Width, g.bitmapPixelSize.Height,
-                                g.Width, g.Height);
-
-                            Point powTopLeft = new Point(powCenter.X - Owner.POW_WIDTH / 2,
-                                powCenter.Y - Owner.POW_HEIGHT / 2);
-                            m_rgbaTextureKernelNearestNeighbor.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT,
-                                g.X - powTopLeft.X, g.Y - powTopLeft.Y, g.bitmap, g.bitmapPixelSize.Width, g.bitmapPixelSize.Height,
-                                g.Width, g.Height);
-                        }
-                    }
-
-
-                    Array.Copy(g.ToArray(), 0, Owner.Objects.Host, offset, g.ArraySize);
-                    offset += g.ArraySize;
-                }
-                Owner.Objects.SafeCopyToDevice();
-
-                // add noise over POW
-                if (Owner.IsImageNoise)
-                {
-                    MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal(Owner.AgentVisualTemp.GetDevice(Owner),
-                        Owner.ImageNoiseMean / 256.0f, Owner.ImageNoiseStandardDeviation / 256.0f);
-
-                    Owner.AgentVisualTemp.SafeCopyToHost();
-
-                    m_addRgbNoiseKernel.SetupExecution(new dim3(Owner.POW_WIDTH, 1, 1), new dim3(Owner.POW_HEIGHT, 3, 1));
-                    m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp.GetDevicePtr(Owner));
-                }
-            }
-        }
 
         /// <summary>
         /// Render the world to the visual output.
@@ -1014,13 +896,6 @@ namespace GoodAI.Modules.School.Worlds
                 // init textures
                 UpdateTextures();
 
-                /* FOW currently unused
-                // fow
-                setupFOWview();
-                RenderGL();
-                copyPixelsFOW();*/
-
-                // pow
                 SetupPoWview();
 
                 RenderBackground();
@@ -1031,11 +906,6 @@ namespace GoodAI.Modules.School.Worlds
 
             void InitGL()
             {
-                if (m_context != null)
-                    m_context.Dispose();
-                if (m_window != null)
-                    m_window.Dispose();
-
                 m_window = new NativeWindow();
                 m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
                 m_context.MakeCurrent(m_window.WindowInfo);
@@ -1050,7 +920,7 @@ namespace GoodAI.Modules.School.Worlds
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.FOW_WIDTH, Owner.FOW_HEIGHT, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Owner.Fow.Width, Owner.Fow.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
                 // Setup background texture
                 m_backgroundTexHandle = (uint)GL.GenTexture();
@@ -1076,7 +946,7 @@ namespace GoodAI.Modules.School.Worlds
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, m_renderTextureHandle, 0);
 
                 // Setup Cuda <-> OpenGL interop
-                int length = Owner.POW_HEIGHT * Owner.POW_WIDTH * sizeof(uint);
+                int length = Owner.Pow.Width * Owner.Pow.Height * sizeof(uint);
                 //unbind - just in case this is causing us the invalid exception problems
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
                 //create buffer
@@ -1105,57 +975,54 @@ namespace GoodAI.Modules.School.Worlds
 
             void UpdateTextures()
             {
-                for (int i = 0; i < Owner.GameObjects.Count; i++)
+                foreach (var gameObject in Owner.GameObjects.Where(gameObject => !gameObject.IsBitmapAsMask && gameObject.BitmapPath != null))
                 {
-                    var gameObject = Owner.GameObjects[i];
-                    // masks currently not supported, loading disabled
-                    // shapes are drawn directly through vertices
-                    if (!gameObject.isBitmapAsMask && gameObject.bitmapPath != null)
+                    int loadedTextureHandle;
+
+                    // We are assuming the gameObject.BitmapPath is the most up-to-date information about what should be rendered
+                    if (!m_textureHandles.TryGetValue(gameObject.BitmapPath, out loadedTextureHandle))
                     {
-                        int loadedTextureHandle;
-                        // We are assuming the gameObject.bitmapPath is the most up-to-date information about what should be rendered
-                        bool loaded = m_textureHandles.TryGetValue(gameObject.bitmapPath, out loadedTextureHandle);    // returns null if not present?
-                        if (!loaded)
-                        {
-                            // generate handle for new texture
-                            GL.GenTextures(1, out loadedTextureHandle);
-                            m_textureHandles.Add(gameObject.bitmapPath, loadedTextureHandle);
+                        // generate handle for new texture
+                        GL.GenTextures(1, out loadedTextureHandle);
+                        m_textureHandles.Add(gameObject.BitmapPath, loadedTextureHandle);
 
-                            // load the bitmap for the texture here
-                            GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
-                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-                            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+                        // load the Bitmap for the texture here
+                        GL.BindTexture(TextureTarget.Texture2D, loadedTextureHandle);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
 
-                            Owner.LoadAndGetBitmapSize(gameObject.bitmapPath);
-                            Bitmap bmp = Owner.m_bitmapTable[gameObject.bitmapPath].Item1;
-                            BitmapData data = bmp.LockBits(
-                                new Rectangle(0, 0, gameObject.bitmapPixelSize.Width, gameObject.bitmapPixelSize.Height),
-                                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                        Owner.LoadAndGetBitmapSize(gameObject.BitmapPath);
+                        Bitmap bmp = Owner.m_bitmapTable[gameObject.BitmapPath].Item1;
+                        BitmapData data = bmp.LockBits(
+                            new Rectangle(0, 0, gameObject.BitmapPixelSize.Width, gameObject.BitmapPixelSize.Height),
+                            ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-                            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 
-                            bmp.UnlockBits(data);
-                            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-                        }
-
-                        // update texture for the gameObject
-                        gameObject.SpriteTextureHandle = loadedTextureHandle;
+                        bmp.UnlockBits(data);
+                        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
                     }
+
+                    // update texture for the gameObject
+                    gameObject.SpriteTextureHandle = loadedTextureHandle;
                 }
+
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
 
             void SetupPoWview()
             {
-                Point powCenter = Owner.GetPowCenter();
+                PointF powCenter = Owner.GetPowCenter();
+
                 // Setup view
-                GL.Viewport(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT);
+                GL.Viewport(0, 0, Owner.Pow.Width, Owner.Pow.Height);
 
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
-                GL.Ortho(powCenter.X - (float)Owner.POW_WIDTH / 2, powCenter.X + (float)Owner.POW_WIDTH / 2, powCenter.Y - (float)Owner.POW_HEIGHT / 2, powCenter.Y + (float)Owner.POW_HEIGHT / 2, -1, 1);
+                SizeF powSize = new SizeF(Owner.Viewport.Width / 2, Owner.Viewport.Height / 2);
+                GL.Ortho(powCenter.X - powSize.Width, powCenter.X + powSize.Width, powCenter.Y - powSize.Height, powCenter.Y + powSize.Height, -1, 1);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.LoadIdentity();
 
@@ -1183,9 +1050,9 @@ namespace GoodAI.Modules.School.Worlds
                     GL.BindTexture(TextureTarget.Texture2D, m_backgroundTexHandle);
                     GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(0f, 0f);
-                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2(Owner.FOW_WIDTH, 0f);
-                    GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.FOW_WIDTH, Owner.FOW_HEIGHT);
-                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, Owner.FOW_HEIGHT);
+                    GL.TexCoord2(0.5f, 0.0f); GL.Vertex2(Owner.Scene.Width, 0f);
+                    GL.TexCoord2(0.5f, 0.5f); GL.Vertex2(Owner.Scene.Width, Owner.Scene.Height);
+                    GL.TexCoord2(0.0f, 0.5f); GL.Vertex2(0f, Owner.Scene.Height);
                     GL.BindTexture(TextureTarget.Texture2D, 0);
                 }
                 else
@@ -1216,9 +1083,9 @@ namespace GoodAI.Modules.School.Worlds
                     GL.PushMatrix();
 
                     // translate object to its position in the scene
-                    GL.Translate(gameObject.X, gameObject.Y, 0.0f);
+                    GL.Translate(gameObject.Position.X, gameObject.Position.Y, 0.0f);
 
-                    GL.Scale(gameObject.Width, gameObject.Height, 1f);
+                    GL.Scale(gameObject.Size.Width, gameObject.Size.Height, 1f);
 
                     // translate back
                     GL.Translate(0.5f, 0.5f, 0.0f);
@@ -1229,14 +1096,14 @@ namespace GoodAI.Modules.School.Worlds
                     // translate s.t. object center in origin
                     GL.Translate(-0.5f, -0.5f, 0.0f);
 
-                    if (gameObject.isBitmapAsMask)
+                    if (gameObject.IsBitmapAsMask)
                     {
                         // gameObject is a shape -> draw it directly
                         //((Shape)gameObject).ShapeType = Shape.Shapes.Triangle;
                         GL.BindTexture(TextureTarget.Texture2D, m_renderTextureHandle);
                         DrawShape(gameObject);
                     }
-                    else if (gameObject.bitmapPath != null)
+                    else if (gameObject.BitmapPath != null)
                     {
                         // gameObject has a texture -> draw it
                         GL.BindTexture(TextureTarget.Texture2D, gameObject.SpriteTextureHandle);
@@ -1271,7 +1138,7 @@ namespace GoodAI.Modules.School.Worlds
                 // bind buffer from which data will be read
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
                 // read data to PBO (IntPtr.Zero means offset is 0)
-                GL.ReadPixels(0, 0, Owner.POW_WIDTH, Owner.POW_HEIGHT, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
+                GL.ReadPixels(0, 0, Owner.Pow.Width, Owner.Pow.Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
                 GL.ReadBuffer(ReadBufferMode.None);
 
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
@@ -1287,8 +1154,8 @@ namespace GoodAI.Modules.School.Worlds
                 {
                     MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
-                    m_addRgbNoiseKernel.SetupExecution(Owner.POW_HEIGHT * Owner.POW_WIDTH);
-                    m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.POW_WIDTH, Owner.POW_HEIGHT, Owner.AgentVisualTemp);
+                    m_addRgbNoiseKernel.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
+                    m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp);
                 }
             }
 
@@ -1296,7 +1163,7 @@ namespace GoodAI.Modules.School.Worlds
             {
                 Shape s = (Shape)gameObject;
 
-                GL.Color4(gameObject.maskColor);
+                GL.Color4(gameObject.ColorMask);
                 GL.Begin(PrimitiveType.Polygon);
 
                 switch (s.ShapeType)
@@ -1442,18 +1309,8 @@ namespace GoodAI.Modules.School.Worlds
 
             internal void Dispose()
             {
-                if (m_context != null)
-                    m_context.Dispose();
-                if (m_window != null)
-                    m_window.Dispose();
-
-                m_window = new NativeWindow();
-                m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
-                m_context.MakeCurrent(m_window.WindowInfo);
-                m_context.LoadAll();
-
-                GL.BindTexture(TextureTarget.Texture2D, 0);
                 // delete textures
+                GL.BindTexture(TextureTarget.Texture2D, 0);
                 if (m_textureHandles != null)
                 {
                     foreach (int handle in m_textureHandles.Values)
@@ -1510,10 +1367,12 @@ namespace GoodAI.Modules.School.Worlds
                 if (m_context != null)
                 {
                     m_context.Dispose();
+                    m_context = null;
                 }
                 if (m_window != null)
                 {
                     m_window.Dispose();
+                    m_window = null;
                 }
             }
         }
