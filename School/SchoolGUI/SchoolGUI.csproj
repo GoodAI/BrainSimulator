@@ -390,19 +390,19 @@
     <Content Include="Resources\html\LTMovingTarget_files\image002.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTMultipleTargetsInSequence_files\filelist.xml">
+    <Content Include="Resources\html\LTMultipleTargetsSequence_files\filelist.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTMultipleTargetsInSequence_files\image001.png">
+    <Content Include="Resources\html\LTMultipleTargetsSequence_files\image001.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTMultipleTargetsInSequence_files\image002.png">
+    <Content Include="Resources\html\LTMultipleTargetsSequence_files\image002.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTMultipleTargetsInSequence_files\image003.png">
+    <Content Include="Resources\html\LTMultipleTargetsSequence_files\image003.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTMultipleTargetsInSequence_files\image004.png">
+    <Content Include="Resources\html\LTMultipleTargetsSequence_files\image004.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\html\LTObstaclesPOW_files\filelist.xml">
@@ -647,7 +647,7 @@
     <Content Include="Resources\html\LTMovingTarget.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTMultipleTargetsInSequence.html">
+    <Content Include="Resources\html\LTMultipleTargetsSequence.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\html\LTObstacles.html">
