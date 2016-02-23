@@ -48,10 +48,8 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Time = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProgressColumn = new GoodAI.BrainSimulator.Utils.DataGridViewProgressColumn();
-            this.statusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.isHiddenDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.checkStateDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.imageDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -142,10 +140,8 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TaskType,
             this.WorldType,
-            this.stepsDataGridViewTextBoxColumn,
-            this.timeDataGridViewTextBoxColumn,
+            this.Time,
             this.ProgressColumn,
-            this.statusDataGridViewTextBoxColumn,
             this.isHiddenDataGridViewCheckBoxColumn,
             this.checkStateDataGridViewCheckBoxColumn,
             this.imageDataGridViewImageColumn,
@@ -158,7 +154,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(297, 719);
+            this.dataGridView1.Size = new System.Drawing.Size(294, 690);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
@@ -178,19 +174,12 @@
             this.WorldType.Name = "WorldType";
             this.WorldType.ReadOnly = true;
             // 
-            // stepsDataGridViewTextBoxColumn
+            // Time
             // 
-            this.stepsDataGridViewTextBoxColumn.DataPropertyName = "Steps";
-            this.stepsDataGridViewTextBoxColumn.HeaderText = "Steps";
-            this.stepsDataGridViewTextBoxColumn.Name = "stepsDataGridViewTextBoxColumn";
-            this.stepsDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // timeDataGridViewTextBoxColumn
-            // 
-            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
-            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
-            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
-            this.timeDataGridViewTextBoxColumn.ReadOnly = true;
+            this.Time.DataPropertyName = "Time";
+            this.Time.HeaderText = "Time";
+            this.Time.Name = "Time";
+            this.Time.ReadOnly = true;
             // 
             // ProgressColumn
             // 
@@ -198,13 +187,6 @@
             this.ProgressColumn.HeaderText = "Progress";
             this.ProgressColumn.Name = "ProgressColumn";
             this.ProgressColumn.ReadOnly = true;
-            // 
-            // statusDataGridViewTextBoxColumn
-            // 
-            this.statusDataGridViewTextBoxColumn.DataPropertyName = "Status";
-            this.statusDataGridViewTextBoxColumn.HeaderText = "Status";
-            this.statusDataGridViewTextBoxColumn.Name = "statusDataGridViewTextBoxColumn";
-            this.statusDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // isHiddenDataGridViewCheckBoxColumn
             // 
@@ -322,7 +304,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(324, 719);
+            this.tabControl1.Size = new System.Drawing.Size(321, 690);
             this.tabControl1.TabIndex = 10;
             // 
             // panel1
@@ -336,9 +318,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(0, 386);
+            this.panel1.Location = new System.Drawing.Point(1, 386);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(381, 970);
+            this.panel1.Size = new System.Drawing.Size(390, 310);
             this.panel1.TabIndex = 13;
             // 
             // currentLevelLabel
@@ -420,8 +402,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(637, 725);
-            this.splitContainer1.SplitterDistance = 303;
+            this.splitContainer1.Size = new System.Drawing.Size(631, 696);
+            this.splitContainer1.SplitterDistance = 300;
             this.splitContainer1.TabIndex = 15;
             // 
             // splitContainer2
@@ -443,8 +425,8 @@
             this.splitContainer2.Panel2.Controls.Add(this.observerDockPanel);
             this.splitContainer2.Panel2MinSize = 381;
             this.splitContainer2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer2.Size = new System.Drawing.Size(1041, 728);
-            this.splitContainer2.SplitterDistance = 643;
+            this.splitContainer2.Size = new System.Drawing.Size(1035, 699);
+            this.splitContainer2.SplitterDistance = 637;
             this.splitContainer2.TabIndex = 16;
             // 
             // splitContainer3
@@ -462,8 +444,8 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer3.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer3.Size = new System.Drawing.Size(1365, 753);
-            this.splitContainer3.SplitterDistance = 320;
+            this.splitContainer3.Size = new System.Drawing.Size(1356, 724);
+            this.splitContainer3.SplitterDistance = 317;
             this.splitContainer3.TabIndex = 1;
             // 
             // tree
@@ -488,7 +470,7 @@
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
             this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
-            this.tree.Size = new System.Drawing.Size(320, 725);
+            this.tree.Size = new System.Drawing.Size(317, 696);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
@@ -535,7 +517,7 @@
             this.btnDelete});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(320, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(317, 25);
             this.toolStrip2.TabIndex = 15;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -636,7 +618,7 @@
             this.btnNewTask.Image = global::GoodAI.School.GUI.Properties.Resources.action_add_16xMD;
             this.btnNewTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNewTask.Name = "btnNewTask";
-            this.btnNewTask.Size = new System.Drawing.Size(23, 20);
+            this.btnNewTask.Size = new System.Drawing.Size(23, 22);
             this.btnNewTask.Text = "New Learning Task";
             this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
             // 
@@ -646,7 +628,7 @@
             this.btnDetailsTask.Image = global::GoodAI.School.GUI.Properties.Resources.Symbols_Information_16xLG;
             this.btnDetailsTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDetailsTask.Name = "btnDetailsTask";
-            this.btnDetailsTask.Size = new System.Drawing.Size(23, 20);
+            this.btnDetailsTask.Size = new System.Drawing.Size(23, 22);
             this.btnDetailsTask.Text = "Learning Task Details";
             this.btnDetailsTask.Click += new System.EventHandler(this.btnDetailsTask_Click);
             // 
@@ -729,7 +711,7 @@
             this.btnObserver});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1041, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1035, 25);
             this.toolStrip1.TabIndex = 6;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -818,7 +800,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1365, 753);
+            this.ClientSize = new System.Drawing.Size(1356, 724);
             this.Controls.Add(this.splitContainer3);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
@@ -885,18 +867,6 @@
         private System.Windows.Forms.Label actualRewardLabel;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TaskType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn WorldType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn timeDataGridViewTextBoxColumn;
-        private BrainSimulator.Utils.DataGridViewProgressColumn ProgressColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn statusDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn isHiddenDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn checkStateDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewImageColumn imageDataGridViewImageColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnRun;
@@ -934,5 +904,15 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TaskType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn WorldType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Time;
+        private BrainSimulator.Utils.DataGridViewProgressColumn ProgressColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn isHiddenDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn checkStateDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewImageColumn imageDataGridViewImageColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
     }
 }

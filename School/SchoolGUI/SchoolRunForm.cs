@@ -358,7 +358,7 @@ namespace GoodAI.School.GUI
                 else
                     e.Value = typeValue.Name;
             }
-            else if (column == statusDataGridViewTextBoxColumn)
+            else if (column == statusDataGridViewTextBoxColumn1)
             {
                 TrainingResult result = (TrainingResult)e.Value;
                 DescriptionAttribute displayNameAtt = result.GetType().GetMember(result.ToString())[0].GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault() as DescriptionAttribute;
@@ -921,19 +921,15 @@ namespace GoodAI.School.GUI
             }
             else
             {
-                /*OpenFloatingOrActivate(RunView, DockPanel);
-
-                //m_mainForm.
-
                 foreach (LearningTaskNode ltNode in ltNodes)
                     data.Add(ltNode);
-                RunView.Data = data;
-                RunView.Design = m_design;
+                Data = data;
+                Design = m_design;
                 if (activeCurricula.Count() == 1)
-                    RunView.RunName = activeCurricula.First().Text;
+                    RunName = activeCurricula.First().Text;
                 else
-                    RunView.RunName = Path.GetFileNameWithoutExtension(m_currentFile);
-                RunView.Ready();*/
+                    RunName = Path.GetFileNameWithoutExtension(m_currentFile);
+                Ready();
             }
         }
 
