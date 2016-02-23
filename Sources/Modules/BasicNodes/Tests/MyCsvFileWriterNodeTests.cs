@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CoreTests;
 using GoodAI.Core;
 using GoodAI.Core.Configuration;
 using GoodAI.Core.Execution;
@@ -20,17 +21,16 @@ using GoodAI.TypeMapping;
 
 namespace BasicNodesTests
 {
-    public class MyCsvFileWriterNodeTests
+    public class MyCsvFileWriterNodeTests : CoreTestBase
     {
         private int m_openCount;
 
-        private AutoResetEvent m_continueEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent m_continueEvent = new AutoResetEvent(false);
         private string m_outputFileFullPath;
         private MyValidator m_validator;
 
         public MyCsvFileWriterNodeTests()
         {
-            TypeMap.InitializeConfiguration<CoreContainerConfiguration>();
             m_validator = TypeMap.GetInstance<MyValidator>();
         }
 
