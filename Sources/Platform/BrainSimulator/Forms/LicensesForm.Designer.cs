@@ -51,8 +51,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.licenseText);
-            this.splitContainer1.Size = new System.Drawing.Size(858, 603);
-            this.splitContainer1.SplitterDistance = 235;
+            this.splitContainer1.Size = new System.Drawing.Size(997, 603);
+            this.splitContainer1.SplitterDistance = 223;
             this.splitContainer1.TabIndex = 0;
             // 
             // licenseList
@@ -60,10 +60,12 @@
             this.licenseList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.licenseList.Font = new System.Drawing.Font("Georgia", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.licenseList.FormattingEnabled = true;
+            this.licenseList.ItemHeight = 16;
             this.licenseList.Location = new System.Drawing.Point(3, 3);
             this.licenseList.Name = "licenseList";
-            this.licenseList.Size = new System.Drawing.Size(229, 589);
+            this.licenseList.Size = new System.Drawing.Size(217, 580);
             this.licenseList.TabIndex = 0;
             this.licenseList.SelectedIndexChanged += new System.EventHandler(this.licenseList_SelectedIndexChanged);
             // 
@@ -77,7 +79,7 @@
             this.licenseText.Location = new System.Drawing.Point(3, 3);
             this.licenseText.Name = "licenseText";
             this.licenseText.ReadOnly = true;
-            this.licenseText.Size = new System.Drawing.Size(613, 588);
+            this.licenseText.Size = new System.Drawing.Size(764, 588);
             this.licenseText.TabIndex = 0;
             this.licenseText.Text = "";
             this.licenseText.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.licenseText_LinkClicked);
@@ -86,7 +88,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(858, 603);
+            this.ClientSize = new System.Drawing.Size(997, 603);
             this.Controls.Add(this.splitContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LicensesForm";
