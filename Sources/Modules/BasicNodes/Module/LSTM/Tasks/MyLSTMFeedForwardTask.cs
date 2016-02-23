@@ -344,7 +344,7 @@ namespace GoodAI.Modules.LSTM.Tasks
                 }
             }
 
-            Owner.InnerCellStates.CopyFromMemoryBlock(Owner.CellStates, 0, 0, Owner.CellStates.Count);
+            Owner.CellStates.CopyToMemoryBlock(Owner.InnerCellStates, 0, 0, Owner.InnerCellStates.Count);
 
         }
     }
