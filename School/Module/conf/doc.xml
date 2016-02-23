@@ -103,7 +103,7 @@
             Ability Name: Navigate to the target efficiently by avoiding obstacles
             </description>
         </member>
-        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstaclesTargetOnSight">
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstaclesTargetInSight">
             <author>GoodAI</author>
             <meta>Os</meta>
             <status>WIP</status>
