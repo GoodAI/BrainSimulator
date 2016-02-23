@@ -15,7 +15,6 @@ using GoodAI.Modules.School.Worlds;
 
 namespace GoodAI.School.GUI
 {
-    [BrainSimUIExtension]
     public partial class LearningTaskSelectionForm : DockContent
     {
         /// <summary>
