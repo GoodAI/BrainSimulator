@@ -55,7 +55,7 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                return (SchoolWorld)m_mainForm.Project.World;
+                return m_mainForm.Project.World as SchoolWorld;
             }
         }
 
@@ -84,7 +84,7 @@ namespace GoodAI.School.GUI
         public SchoolRunForm(MainForm mainForm)
         {
             // school main form //
-
+            
             m_serializer = new YAXSerializer(typeof(PlanDesign));
             m_mainForm = mainForm;
             //RunView = new SchoolRunForm(m_mainForm);
@@ -96,16 +96,15 @@ namespace GoodAI.School.GUI
             tree.Refresh();
 
             btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
-            btnAutorun.Checked = Properties.School.Default.AutorunEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
             if (LoadCurriculum(m_lastOpenedFile))
                 saveFileDialog1.FileName = m_lastOpenedFile;
 
             UpdateButtonsSR();
-
+            
 
             // school run form //
-
+            
             m_mainForm = mainForm;
 
             // here so it does not interfere with designer generated code
@@ -676,7 +675,7 @@ namespace GoodAI.School.GUI
         private void UpdateButtonsSR()
         {
             EnableButtons(this);
-            EnableToolstripButtons(toolStrip1);
+            EnableToolstripButtons(toolStrip2);
 
 
             if (!tree.AllNodes.Any())
@@ -905,6 +904,11 @@ namespace GoodAI.School.GUI
 
         private void btnRun_Click(object sender, EventArgs e)
         {
+            uploadLearningTasks();
+        }
+
+        private void uploadLearningTasks()
+        {
             //OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
 
@@ -1093,6 +1097,11 @@ namespace GoodAI.School.GUI
         {
             if (e.Node.IsSelected)
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
+        }
+
+        private void tree_Click(object sender, EventArgs e)
+        {
+            uploadLearningTasks();
         }
 
         /*

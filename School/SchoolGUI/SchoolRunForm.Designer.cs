@@ -44,7 +44,6 @@
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SchoolRunForm));
             this.learningTaskNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
@@ -92,10 +91,7 @@
             this.btnDetailsTask = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.showRunPanelStripButton = new System.Windows.Forms.ToolStripButton();
-            this.btnAutorun = new System.Windows.Forms.ToolStripButton();
             this.btnAutosave = new System.Windows.Forms.ToolStripButton();
-            this.btnUpload = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnRun = new System.Windows.Forms.ToolStripButton();
@@ -198,10 +194,10 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Location = new System.Drawing.Point(3, 3);
+            this.tabControl1.Location = new System.Drawing.Point(3, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(321, 690);
+            this.tabControl1.Size = new System.Drawing.Size(276, 693);
             this.tabControl1.TabIndex = 10;
             // 
             // panel1
@@ -299,8 +295,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(631, 696);
-            this.splitContainer1.SplitterDistance = 300;
+            this.splitContainer1.Size = new System.Drawing.Size(544, 696);
+            this.splitContainer1.SplitterDistance = 258;
             this.splitContainer1.TabIndex = 15;
             // 
             // dataGridView1
@@ -333,12 +329,12 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(297, 693);
+            this.dataGridView1.Size = new System.Drawing.Size(255, 693);
             this.dataGridView1.TabIndex = 1;
             // 
             // TaskType
             // 
-            this.TaskType.DataPropertyName = "TaskType";
+            this.TaskType.DataPropertyName = "Text";
             this.TaskType.HeaderText = "Task";
             this.TaskType.Name = "TaskType";
             this.TaskType.ReadOnly = true;
@@ -349,6 +345,7 @@
             this.WorldType.HeaderText = "World";
             this.WorldType.Name = "WorldType";
             this.WorldType.ReadOnly = true;
+            this.WorldType.Visible = false;
             // 
             // stepsDataGridViewTextBoxColumn
             // 
@@ -439,14 +436,15 @@
             this.splitContainer2.Panel2.Controls.Add(this.panel1);
             this.splitContainer2.Panel2.Controls.Add(this.observerDockPanel);
             this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer2.Panel2MinSize = 381;
-            this.splitContainer2.Size = new System.Drawing.Size(1035, 699);
-            this.splitContainer2.SplitterDistance = 637;
+            this.splitContainer2.Panel2MinSize = 371;
+            this.splitContainer2.Size = new System.Drawing.Size(948, 699);
+            this.splitContainer2.SplitterDistance = 550;
             this.splitContainer2.TabIndex = 16;
             // 
             // splitContainer3
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer3.Location = new System.Drawing.Point(0, 0);
             this.splitContainer3.Name = "splitContainer3";
             // 
@@ -460,7 +458,7 @@
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer3.Panel2.Controls.Add(this.toolStrip1);
             this.splitContainer3.Size = new System.Drawing.Size(1356, 724);
-            this.splitContainer3.SplitterDistance = 317;
+            this.splitContainer3.SplitterDistance = 404;
             this.splitContainer3.TabIndex = 1;
             // 
             // tree
@@ -485,10 +483,11 @@
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
             this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
-            this.tree.Size = new System.Drawing.Size(317, 696);
+            this.tree.Size = new System.Drawing.Size(404, 696);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
+            this.tree.Click += new System.EventHandler(this.tree_Click);
             this.tree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
             this.tree.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);
             this.tree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
@@ -525,14 +524,11 @@
             this.btnDetailsTask,
             this.toolStripSeparator4,
             this.showRunPanelStripButton,
-            this.btnAutorun,
             this.btnAutosave,
-            this.btnUpload,
-            this.toolStripButton1,
             this.btnDelete});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(317, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(404, 25);
             this.toolStrip2.TabIndex = 15;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -632,7 +628,7 @@
             this.btnNewTask.Image = global::GoodAI.School.GUI.Properties.Resources.action_add_16xMD;
             this.btnNewTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNewTask.Name = "btnNewTask";
-            this.btnNewTask.Size = new System.Drawing.Size(23, 20);
+            this.btnNewTask.Size = new System.Drawing.Size(23, 22);
             this.btnNewTask.Text = "New Learning Task";
             this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
             // 
@@ -642,7 +638,7 @@
             this.btnDetailsTask.Image = global::GoodAI.School.GUI.Properties.Resources.Symbols_Information_16xLG;
             this.btnDetailsTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDetailsTask.Name = "btnDetailsTask";
-            this.btnDetailsTask.Size = new System.Drawing.Size(23, 20);
+            this.btnDetailsTask.Size = new System.Drawing.Size(23, 22);
             this.btnDetailsTask.Text = "Learning Task Details";
             this.btnDetailsTask.Click += new System.EventHandler(this.btnDetailsTask_Click);
             // 
@@ -653,23 +649,16 @@
             // 
             // showRunPanelStripButton
             // 
+            this.showRunPanelStripButton.Checked = true;
+            this.showRunPanelStripButton.CheckOnClick = true;
+            this.showRunPanelStripButton.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showRunPanelStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.showRunPanelStripButton.Image = global::GoodAI.School.GUI.Properties.Resources.observer_icon;
             this.showRunPanelStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.showRunPanelStripButton.Name = "showRunPanelStripButton";
-            this.showRunPanelStripButton.Size = new System.Drawing.Size(23, 20);
+            this.showRunPanelStripButton.Size = new System.Drawing.Size(23, 22);
             this.showRunPanelStripButton.Text = "Show Run Panel";
             this.showRunPanelStripButton.Click += new System.EventHandler(this.showRunPanelStripButton_Click);
-            // 
-            // btnAutorun
-            // 
-            this.btnAutorun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnAutorun.Image = ((System.Drawing.Image)(resources.GetObject("btnAutorun.Image")));
-            this.btnAutorun.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAutorun.Name = "btnAutorun";
-            this.btnAutorun.Size = new System.Drawing.Size(55, 19);
-            this.btnAutorun.Text = "Autorun";
-            this.btnAutorun.Click += new System.EventHandler(this.btnAutorun_CheckedChanged);
             // 
             // btnAutosave
             // 
@@ -677,30 +666,10 @@
             this.btnAutosave.Image = global::GoodAI.School.GUI.Properties.Resources.autosave;
             this.btnAutosave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAutosave.Name = "btnAutosave";
-            this.btnAutosave.Size = new System.Drawing.Size(23, 20);
+            this.btnAutosave.Size = new System.Drawing.Size(23, 22);
             this.btnAutosave.Text = "Autosave Results";
             this.btnAutosave.CheckedChanged += new System.EventHandler(this.btnAutosave_CheckedChanged);
             this.btnAutosave.Click += new System.EventHandler(this.btnToggleCheck);
-            // 
-            // btnUpload
-            // 
-            this.btnUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnUpload.Enabled = false;
-            this.btnUpload.Image = ((System.Drawing.Image)(resources.GetObject("btnUpload.Image")));
-            this.btnUpload.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnUpload.Name = "btnUpload";
-            this.btnUpload.Size = new System.Drawing.Size(103, 19);
-            this.btnUpload.Text = "Upload to Project";
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = global::GoodAI.School.GUI.Properties.Resources.StatusAnnotations_Play_16xLG_color;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 20);
-            this.toolStripButton1.Text = "Run Simulation";
-            this.toolStripButton1.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // btnDelete
             // 
@@ -708,7 +677,7 @@
             this.btnDelete.Image = global::GoodAI.School.GUI.Properties.Resources.action_Cancel_16xMD;
             this.btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(23, 20);
+            this.btnDelete.Size = new System.Drawing.Size(23, 22);
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDeleteCurr_Click);
             // 
@@ -725,7 +694,7 @@
             this.btnObserver});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1035, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(948, 25);
             this.toolStrip1.TabIndex = 6;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -907,10 +876,7 @@
         private System.Windows.Forms.ToolStripButton btnDetailsTask;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnDelete;
-        private System.Windows.Forms.ToolStripButton btnAutorun;
         private System.Windows.Forms.ToolStripButton btnAutosave;
-        private System.Windows.Forms.ToolStripButton btnUpload;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton showRunPanelStripButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
@@ -918,6 +884,7 @@
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private Aga.Controls.Tree.TreeViewAdv tree;
         private System.Windows.Forms.DataGridViewTextBoxColumn TaskType;
         private System.Windows.Forms.DataGridViewTextBoxColumn WorldType;
         private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn;
@@ -930,6 +897,5 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
-        private Aga.Controls.Tree.TreeViewAdv tree;
     }
 }
