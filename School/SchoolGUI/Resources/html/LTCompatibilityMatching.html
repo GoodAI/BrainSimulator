@@ -1,48 +1,1163 @@
-﻿<!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><link type="text/css" rel="stylesheet" href="resources/sheet.css" >
-<style type="text/css">.ritz .waffle a { color: inherit; }.ritz .waffle .s2{border-right:1px SOLID #000000;text-align:left;color:#000000;background-color:#d9d9d9;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s17{text-align:center;color:#000000;background-color:#f4c7c3;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s28{border-left: none;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s12{border-left: none;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s6{border-left: none;}.ritz .waffle .s9{text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:normal;overflow:hidden;word-wrap:break-word;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s35{border-left: none;text-align:left;color:#6aa84f;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s21{border-bottom:1px SOLID #000000;border-right:1px SOLID #000000;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s5{border-left: none;border-right: none;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:normal;overflow:hidden;word-wrap:break-word;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s0{text-align:left;font-weight:bold;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:14pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s10{border-bottom:1px SOLID #000000;}.ritz .waffle .s29{border-left: none;text-align:center;color:#6aa84f;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s31{text-align:left;color:#6aa84f;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s36{text-align:left;color:#4a86e8;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s8{border-left: none;border-right: none;}.ritz .waffle .s25{text-align:center;font-weight:bold;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s34{text-align:left;color:#ff9900;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s24{border-bottom:1px SOLID #000000;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s3{text-align:left;font-weight:bold;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:normal;overflow:hidden;word-wrap:break-word;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s16{border-left: none;border-right: none;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s26{text-align:center;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s22{border-right:1px SOLID #000000;text-align:left;font-weight:bold;color:#000000;background-color:#d9d9d9;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s32{border-bottom:1px SOLID #000000;border-right:1px SOLID #000000;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s11{border-bottom:1px SOLID #000000;border-right:1px SOLID #000000;text-align:left;color:#000000;background-color:#d9d9d9;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s19{text-align:center;color:#000000;background-color:#f4c7c3;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:normal;overflow:hidden;word-wrap:break-word;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s20{border-bottom:1px SOLID #000000;text-align:center;color:#000000;background-color:#f4c7c3;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:normal;overflow:hidden;word-wrap:break-word;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s23{border-bottom:1px SOLID #000000;border-right:1px SOLID #000000;text-align:center;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s1{text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s4{border-right: none;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s27{border-left: none;border-right: none;text-align:center;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:middle;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s33{text-align:center;color:#ff9900;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s15{border-right: none;text-align:left;color:#000000;background-color:#ffffff;font-family:'arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s30{text-align:center;color:#6aa84f;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s14{text-align:center;color:#000000;background-color:#b7e1cd;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:normal;overflow:hidden;word-wrap:break-word;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s18{border-right:1px SOLID #000000;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s7{border-right:1px SOLID #000000;text-align:left;color:#000000;background-color:#d9d9d9;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s13{border-bottom:1px SOLID #000000;text-align:left;color:#000000;background-color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}</style><div class="ritz grid-container" dir="ltr"><table class="waffle" cellspacing="0" cellpadding="0"><thead><tr><th class="row-header freezebar-origin-ltr"></th><th id="1035614986C0" style="width:100px" class="column-headers-background">A</th><th id="1035614986C1" style="width:218px" class="column-headers-background">B</th><th id="1035614986C2" style="width:91px" class="column-headers-background">C</th><th id="1035614986C3" style="width:94px" class="column-headers-background">D</th><th id="1035614986C4" style="width:90px" class="column-headers-background">E</th><th id="1035614986C5" style="width:92px" class="column-headers-background">F</th><th id="1035614986C6" style="width:100px" class="column-headers-background">G</th><th id="1035614986C7" style="width:82px" class="column-headers-background">H</th><th id="1035614986C8" style="width:242px" class="column-headers-background">I</th><th id="1035614986C9" style="width:100px" class="column-headers-background">J</th><th id="1035614986C10" style="width:100px" class="column-headers-background">K</th></tr></thead><tbody><tr style='height:20px;'><th id="1035614986R0" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">1</div></th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R1" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">2</div></th><td></td><td class="s0" dir="ltr">Learning task</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="s1" dir="ltr">Author</td></tr><tr style='height:20px;'><th id="1035614986R2" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">3</div></th><td></td><td class="s2" dir="ltr">Name</td><td class="s3" dir="ltr">Compatibility matching</td><td class="s3" dir="ltr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="s1" dir="ltr">Peter Hroššo</td></tr><tr style='height:20px;'><th id="1035614986R3" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">4</div></th><td></td><td class="s2" dir="ltr">Implementing class</td><td class="s1" dir="ltr"></td><td class="s1" dir="ltr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R4" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">5</div></th><td></td><td class="s2" dir="ltr">Ability name</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 273px; left: -1px;">Partial visual equivalence of shapes</div></td><td class="s5" dir="ltr"></td><td class="s6"></td><td class="s6"></td><td></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R5" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">6</div></th><td></td><td class="s7">Description</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 547px; left: -1px;">The agent learns which 2 shapes fit together (are compatible, can be stacked)</div></td><td class="s5" dir="ltr"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s6"></td><td class="s6"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R6" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">7</div></th><td></td><td class="s7">Child equivalent</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 889px; left: -1px;">Compatibility of objects - which pairs of objects fit together: shoe + foot, two plates one on another, shape-hole jigsaw, tetris</div></td><td class="s5" dir="ltr"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s6"></td><td class="s6"></td></tr><tr style='height:20px;'><th id="1035614986R7" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">8</div></th><td></td><td class="s7">Child age</td><td class="s1" dir="ltr">??</td><td class="s9" dir="ltr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R8" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">9</div></th><td></td><td class="s2" dir="ltr">Prerequisites</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 365px; left: -1px;">Simple Shape PD, Shape/Color PD, Visual equivalence</div></td><td class="s5" dir="ltr"></td><td class="s8"></td><td class="s6"></td><td class="s6"></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R9" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">10</div></th><td></td><td class="s2" dir="ltr">Fully observable world</td><td class="s1" dir="ltr">yes</td><td class="s9" dir="ltr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R10" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">11</div></th><td></td><td class="s2" dir="ltr">Input modalities</td><td class="s1" dir="ltr">Visual</td><td class="s9" dir="ltr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R11" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">12</div></th><td class="s10"></td><td class="s11" dir="ltr">Actuators</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 183px; left: -1px;">Single binary actuator</div></td><td class="s12" dir="ltr"></td><td class="s12"></td><td class="s13"></td><td class="s13"></td><td class="s13"></td><td class="s13"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R12" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">13</div></th><td class="s13" dir="ltr" rowspan="8"></td><td class="s2" dir="ltr">Spatial patterns</td><td class="s14" dir="ltr">yes</td><td class="s15 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 798px; left: -1px;">complexity scales proportionally to variance of shapes (starting with 0) and number of compatible counterparts</div></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s16"></td><td class="s6"></td><td class="s6"></td></tr><tr style='height:20px;'><th id="1035614986R13" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">14</div></th><td class="s2" dir="ltr">Temporal patterns</td><td class="s17" dir="ltr">no</td><td class="s1" dir="ltr"></td><td></td><td></td><td></td><td></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R14" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">15</div></th><td class="s2" dir="ltr">Motor planning</td><td class="s19" dir="ltr">no</td><td class="s1" dir="ltr"></td><td></td><td></td><td></td><td></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R15" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">16</div></th><td class="s2" dir="ltr">Amount of supervision</td><td class="s19" dir="ltr">no</td><td class="s1" dir="ltr"></td><td></td><td></td><td></td><td></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R16" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">17</div></th><td class="s2" dir="ltr">Amount of training data</td><td class="s14" dir="ltr">yes</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 374px; left: -1px;">simple = 10000 training units, hard = 100 training units</div></td><td class="s8"></td><td class="s8"></td><td class="s6"></td><td class="s6"></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R17" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">18</div></th><td class="s2" dir="ltr">Knowledge transfer</td><td class="s14" dir="ltr">yes</td><td class="s1" dir="ltr"></td><td></td><td></td><td></td><td></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R18" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">19</div></th><td class="s2" dir="ltr">Learning curve</td><td class="s14" dir="ltr">yes</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 698px; left: -1px;">simple = translation, hard = translation and rotation, hardest = scale (generalized, not necessary for Tetris)</div></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s12"></td><td class="s6"></td><td></td></tr><tr style='height:20px;'><th id="1035614986R19" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">20</div></th><td class="s11" dir="ltr">Robustness and fault tolerance</td><td class="s20" dir="ltr">no</td><td class="s13" dir="ltr"></td><td class="s13"></td><td class="s13"></td><td class="s13"></td><td class="s13"></td><td class="s21"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R20" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">21</div></th><td></td><td class="s22" dir="ltr">Training unit initial state</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 889px; left: -1px;">A training unit begins with 1 shape on different positions (translation) and 1 compatible place, gradually adding more places and shapes</div></td><td class="s16" dir="ltr"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s16"></td><td class="s6"></td><td class="s6"></td></tr><tr style='height:20px;'><th id="1035614986R21" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">22</div></th><td></td><td class="s22" dir="ltr">Training unit goal state</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 789px; left: -1px;">Agent observes input and responds with correct binary output (compatible: true / false)</div></td><td class="s16" dir="ltr"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s12"></td><td class="s6"></td><td></td></tr><tr style='height:20px;'><th id="1035614986R22" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">23</div></th><td></td><td class="s2" dir="ltr">Stopping condition</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 365px; left: -1px;">Agent successfully passed all levels of difficulty</div></td><td class="s16" dir="ltr"></td><td class="s8"></td><td class="s6"></td><td class="s6"></td><td></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R23" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">24</div></th><td></td><td class="s2" dir="ltr">Reward</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 183px; left: -1px;">Binary, each step</div></td><td class="s12" dir="ltr"></td><td class="s6"></td><td></td><td></td><td></td><td class="s18"></td><td></td><td></td></tr><tr style='height:20px;'><th id="1035614986R24" style="height: 20px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 20px;">25</div></th><td></td><td class="s2" dir="ltr">Teacher</td><td class="s4 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 547px; left: -1px;">Declares the ability learned when 10 consecutive training units are solved perfectly.</div></td><td class="s16" dir="ltr"></td><td class="s8"></td><td class="s8"></td><td class="s8"></td><td class="s6"></td><td class="s12"></td><td></td><td></td></tr><tr style='height:120px;'><th id="1035614986R25" style="height: 120px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 120px;">26</div></th><td></td><td class="s2" dir="ltr" rowspan="4">Illustrations</td><td class="s23">Translation</td><td class="s24"></td><td class="s21"></td><td class="s25" dir="ltr"></td><td class="s1"></td><td class="s26" dir="ltr">not now</td><td class="s1"></td><td></td><td></td></tr><tr style='height:106px;'><th id="1035614986R26" style="height: 106px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 106px;">27</div></th><td></td><td class="s27 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 208px; left: -26px;">Translation<br>+<br>Rotation</div></td><td class="s28"></td><td class="s29"></td><td class="s30"></td><td class="s31" dir="ltr"></td><td class="s31" dir="ltr"></td><td class="s31" dir="ltr"></td><td></td><td></td></tr><tr style='height:110px;'><th id="1035614986R27" style="height: 110px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 110px;">28</div></th><td></td><td class="s23" dir="ltr">Scale</td><td class="s32"></td><td class="s30"></td><td class="s33"></td><td class="s34" dir="ltr"></td><td class="s34" dir="ltr"></td><td></td><td></td><td></td></tr><tr style='height:108px;'><th id="1035614986R28" style="height: 108px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 108px;">29</div></th><td></td><td class="s27 softmerge" dir="ltr"><div class="softmerge-inner" style="width: 191px; left: -9px;">Scale<br>+<br>Rotation</div></td><td class="s28"></td><td class="s35" dir="ltr"></td><td class="s1"></td><td></td><td class="s36" dir="ltr"></td><td class="s1" dir="ltr"></td><td></td><td></td></tr></tbody></table></div><div id='embed_2011383030' class='waffle-embedded-object-overlay' style='width: 43px; height: 201px; display: block;'><img src='https://docs.google.com/a/keenswh.com/drawings/d/sXrs0ZQSIt1rVYKdOiTFygQ/image?w=43&h=201&rev=25&ac=1' style='display: block;' height='201' width='43'></div><div id='embed_891940467' class='waffle-embedded-object-overlay' style='width: 71px; height: 106px; display: block;'><img src='https://lh6.googleusercontent.com/Pna48l9UOq7J6KDzVjphel_yxmFOcq5T6T3ZmUt8yMcvIJcNTzYNxAmSm3c9_ix5G7qCSvaMcPpHXXq3HX3QLoCkUrInWbUjsSZTPcYktgljN-z4JxT9au0Xi5skFYah87YNu1Xa' style='display: block;' height='106' width='71'></div><div id='embed_975156440' class='waffle-embedded-object-overlay' style='width: 73px; height: 111px; display: block;'><img src='https://lh4.googleusercontent.com/AER6RwxHhw-eM_4SlKF-gF9RJLgLng_KiAbGY1Bkzv098vbFLniHITd6rluVBGy54wT4xm4QDe5yMz6Tpb9x9MZyreobnXaEoLalUm6wa_8WdQGg-USR_7tTuGMsP4rmFwWjurGw' style='display: block;' height='111' width='73'></div><div id='embed_623457050' class='waffle-embedded-object-overlay' style='width: 64px; height: 97px; display: block;'><img src='https://lh4.googleusercontent.com/8A5u7zOoepdF99lYAltwLiAETZr_1-oKnu23GsXG6Iht8ZeLIEKg3pkMmcvXel_OPsP9Gs4RizQNJrGbkj5PPnqcwvhDlgibzgvMubxDacJdkskHJx9Hf6bD7Q5AGx4OBU0JDc6F' style='display: block;' height='97' width='64'></div><div id='embed_1033618402' class='waffle-embedded-object-overlay' style='width: 75px; height: 90px; display: block;'><img src='https://lh5.googleusercontent.com/tlzFRhU8jnwmXhUWb_MRdqRaJ57pr1_rnmk0b92OXONhkL3JwG-O_hKJhaGZ8mjGhEeuI6LTT-d6NxhSloxluOEHNdgoNiHKPZHGyF-JqhSCCcCAe7X6Pu0LQL5oL4cDxiWUHYgq' style='display: block;' height='90' width='75'></div><div id='embed_134896826' class='waffle-embedded-object-overlay' style='width: 54px; height: 103px; display: block;'><img src='https://lh4.googleusercontent.com/T3jRJS91gGtAQ7wYdbBs9-7U4OQyTZMzy9pE3eeYeFgxl6Fvne5vm9sqRZxE3z4fHddGgUdI2wyZ_DobiM15IdhcGn-SBgRlgaqS80jT4AMofXk6C5uYp2ES2jNWh4BEkTfTBy9W' style='display: block;' height='103' width='54'></div><div id='embed_1094653640' class='waffle-embedded-object-overlay' style='width: 88px; height: 91px; display: block;'><img src='https://lh5.googleusercontent.com/GUetmoXvhVu0wo5pRvfmMfkmsQ9BRpkzRcED_XFZ5OF_OYdH0F0cnLxati7R2pEVYxRSJOV-u6rS6KzIUoXRfu8r5_8c-4IyaCzDhX8G86iVXhKKQid_dJa6Tq01cqy22i77Yamw' style='display: block;' height='91' width='88'></div>
-<script type='text/javascript'>
-function posObj(sheet, id, row, col, x, y) {
-  var rtl = false;
-  var sheetElement = document.getElementById(sheet);
-  if (!sheetElement) {
-    sheetElement = document.getElementById(sheet + '-grid-container');
-  }
-  if (sheetElement) {
-    rtl = sheetElement.getAttribute('dir') == 'rtl';
-  }
-  var r = document.getElementById(sheet+'R'+row);
-  var c = document.getElementById(sheet+'C'+col);
-  if (r && c) {
-    var objElement = document.getElementById(id);
-    var s = objElement.style;
-    var t = y;
-    while (r) {
-      t += r.offsetTop;
-      r = r.offsetParent;
-    }
-    var offsetX = x;
-    while (c) {
-      offsetX += c.offsetLeft;
-      c = c.offsetParent;
-    }
-    if (rtl) {
-      offsetX -= objElement.offsetWidth;
-    }
-    s.left = offsetX + 'px';
-    s.top = t + 'px';
-    s.display = 'block';
-    s.border = '1px solid #000000';
-  }
-};
-function posObjs() {
-posObj('1035614986', 'embed_2011383030', 12, 0, 47, 4);posObj('1035614986', 'embed_891940467', 25, 8, 10, 8);posObj('1035614986', 'embed_975156440', 25, 3, 12, 4);posObj('1035614986', 'embed_623457050', 26, 3, 14, 3);posObj('1035614986', 'embed_1033618402', 26, 8, 19, 8);posObj('1035614986', 'embed_134896826', 27, 8, 12, 0);posObj('1035614986', 'embed_1094653640', 28, 8, 8, 1);};
-posObjs();</script>-->
-<!DOCTYPE html>
 <html>
+
 <head>
-    <title>Hi there</title>
+<meta http-equiv=Content-Type content="text/html; charset=macintosh">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 14">
+<link rel=File-List href="LTCompatibilityMatching_files/filelist.xml">
+<!--[if !mso]>
+<style>
+\:* {behavior:url(#default#VML);}
+\:* {behavior:url(#default#VML);}
+\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<style>
+<!--table
+	{mso-displayed-decimal-separator:"\.";
+	mso-displayed-thousand-separator:\00A0;}
+@page
+	{margin:1.0in .75in 1.0in .75in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;}
+.font0
+	{color:black;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;}
+.font11
+	{color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:italic;
+	text-decoration:none;
+	font-family:Arial;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;}
+.style0
+	{mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	white-space:nowrap;
+	mso-rotate:0;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	color:black;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;
+	border:none;
+	mso-protection:locked visible;
+	mso-style-name:Normal;
+	mso-style-id:0;}
+td
+	{mso-style-parent:style0;
+	padding:0px;
+	mso-ignore:padding;
+	color:black;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	border:none;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	mso-protection:locked visible;
+	white-space:nowrap;
+	mso-rotate:0;}
+.xl65
+	{mso-style-parent:style0;
+	color:windowtext;}
+.xl66
+	{mso-style-parent:style0;
+	color:blue;
+	text-decoration:underline;
+	text-underline-style:single;}
+.xl67
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-size:14.0pt;
+	font-weight:700;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl68
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl69
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl70
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;}
+.xl71
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#F4CCCC;
+	mso-pattern:#F4CCCC none;}
+.xl72
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-style:italic;}
+.xl73
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#B7E1CD;
+	mso-pattern:#B7E1CD none;}
+.xl74
+	{mso-style-parent:style0;
+	color:windowtext;
+	white-space:normal;}
+.xl75
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-style:italic;
+	background:#B7E1CD;
+	mso-pattern:#B7E1CD none;}
+.xl76
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#FFF2CC;
+	mso-pattern:#FFF2CC none;}
+.xl77
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#D0E0E3;
+	mso-pattern:#D0E0E3 none;}
+.xl78
+	{mso-style-parent:style0;
+	font-size:11.0pt;
+	text-align:left;
+	background:#EA9999;
+	mso-pattern:#EA9999 none;}
+.xl79
+	{mso-style-parent:style0;
+	color:#222222;
+	font-weight:700;
+	background:white;
+	mso-pattern:white none;}
+.xl80
+	{mso-style-parent:style0;
+	color:#222222;
+	background:#B7E1CD;
+	mso-pattern:#B7E1CD none;}
+.xl81
+	{mso-style-parent:style0;
+	color:#222222;
+	background:white;
+	mso-pattern:white none;}
+.xl82
+	{mso-style-parent:style0;
+	font-size:11.0pt;
+	white-space:normal;}
+.xl83
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#6D9EEB;
+	mso-pattern:#6D9EEB none;
+	white-space:normal;}
+.xl84
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#F9CB9C;
+	mso-pattern:#F9CB9C none;}
+.xl85
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#FCE8B2;
+	mso-pattern:#FCE8B2 none;
+	white-space:normal;}
+.xl86
+	{mso-style-parent:style0;
+	font-weight:700;}
+.xl87
+	{mso-style-parent:style0;
+	background:#B7E1CD;
+	mso-pattern:#B7E1CD none;}
+.xl88
+	{mso-style-parent:style0;
+	text-align:left;
+	background:#B7E1CD;
+	mso-pattern:#B7E1CD none;
+	white-space:normal;}
+.xl89
+	{mso-style-parent:style0;
+	background:#D0E0E3;
+	mso-pattern:#D0E0E3 none;}
+.xl90
+	{mso-style-parent:style0;
+	font-size:11.0pt;
+	background:#EA9999;
+	mso-pattern:#EA9999 none;
+	white-space:normal;}
+.xl91
+	{mso-style-parent:style0;
+	text-align:left;
+	background:white;
+	mso-pattern:white none;}
+.xl92
+	{mso-style-parent:style0;
+	background:#F4CCCC;
+	mso-pattern:#F4CCCC none;}
+.xl93
+	{mso-style-parent:style0;
+	font-size:11.0pt;}
+.xl94
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;}
+.xl95
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;}
+.xl96
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	text-align:right;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	background:#E06666;
+	mso-pattern:#E06666 none;}
+.xl97
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-family:Monospace;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;
+	text-align:right;
+	background:white;
+	mso-pattern:white none;}
+.xl98
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:#D9EAD3;
+	mso-pattern:#D9EAD3 none;}
+.xl99
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:none;}
+.xl100
+	{mso-style-parent:style0;
+	color:windowtext;
+	background:red;
+	mso-pattern:red none;}
+.xl101
+	{mso-style-parent:style0;
+	font-size:12.0pt;
+	font-weight:700;
+	text-align:left;
+	background:#F3F3F3;
+	mso-pattern:#F3F3F3 none;}
+.xl102
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	background:#F3F3F3;
+	mso-pattern:#F3F3F3 none;}
+.xl103
+	{mso-style-parent:style0;
+	font-size:11.0pt;
+	font-weight:700;
+	font-family:Calibri;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;
+	background:#F3F3F3;
+	mso-pattern:#F3F3F3 none;}
+.xl104
+	{mso-style-parent:style0;
+	font-size:11.0pt;
+	font-family:Calibri;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;}
+.xl105
+	{mso-style-parent:style0;
+	font-size:11.0pt;
+	font-family:Calibri;
+	mso-generic-font-family:auto;
+	mso-font-charset:0;
+	white-space:normal;}
+.xl106
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-size:12.0pt;
+	font-weight:700;
+	background:#F3F3F3;
+	mso-pattern:#F3F3F3 none;}
+.xl107
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-size:14.0pt;
+	font-weight:700;}
+.xl108
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl109
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	white-space:normal;}
+.xl110
+	{mso-style-parent:style0;
+	text-align:left;
+	background:white;
+	mso-pattern:white none;
+	white-space:normal;}
+.xl111
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl112
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	white-space:normal;}
+.xl113
+	{mso-style-parent:style0;
+	text-align:left;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	background:white;
+	mso-pattern:white none;}
+.xl114
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;}
+.xl115
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	white-space:normal;}
+.xl116
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:.5pt solid black;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl117
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	border-top:none;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:none;
+	white-space:normal;}
+.xl118
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:.5pt solid black;
+	border-left:none;}
+.xl119
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl120
+	{mso-style-parent:style0;
+	color:#4A86E8;}
+.xl121
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;}
+.xl122
+	{mso-style-parent:style0;
+	background:white;
+	mso-pattern:white none;}
+.xl123
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;}
+.xl124
+	{mso-style-parent:style0;
+	text-align:center;
+	background:white;
+	mso-pattern:white none;}
+.xl125
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	white-space:normal;}
+.xl126
+	{mso-style-parent:style0;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	background:white;
+	mso-pattern:white none;
+	white-space:normal;}
+.xl127
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:none;
+	white-space:normal;}
+.xl128
+	{mso-style-parent:style0;
+	color:#6AA84F;}
+.xl129
+	{mso-style-parent:style0;
+	color:#6AA84F;
+	text-align:center;}
+.xl130
+	{mso-style-parent:style0;
+	color:#6AA84F;
+	text-align:center;
+	background:white;
+	mso-pattern:white none;}
+.xl131
+	{mso-style-parent:style0;
+	color:#FF9900;
+	text-align:center;}
+.xl132
+	{mso-style-parent:style0;
+	color:#FF9900;}
+.xl133
+	{mso-style-parent:style0;
+	color:#FF9900;
+	text-align:center;
+	background:white;
+	mso-pattern:white none;}
+.xl134
+	{mso-style-parent:style0;
+	color:#FFD966;}
+.xl135
+	{mso-style-parent:style0;
+	color:#FFD966;}
+.xl136
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl137
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl138
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;}
+.xl139
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;}
+.xl140
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border:.5pt solid black;}
+.xl141
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border:.5pt solid black;}
+.xl142
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl143
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:.5pt solid black;}
+.xl144
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:.5pt solid black;}
+.xl145
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:.5pt solid black;
+	border-left:none;}
+.xl146
+	{mso-style-parent:style0;
+	color:#6AA84F;
+	text-align:center;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:.5pt solid black;
+	border-left:none;}
+.xl147
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:.5pt solid black;
+	border-left:.5pt solid black;}
+.xl148
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	text-align:center;
+	vertical-align:middle;
+	white-space:normal;}
+.xl149
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	white-space:normal;}
+.xl150
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	white-space:normal;}
+.xl151
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl152
+	{mso-style-parent:style0;
+	color:#6AA84F;
+	text-align:center;
+	vertical-align:middle;
+	white-space:normal;}
+.xl153
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	background:white;
+	mso-pattern:white none;
+	white-space:normal;}
+.xl154
+	{mso-style-parent:style0;
+	color:#FF9900;
+	text-align:center;
+	vertical-align:middle;
+	white-space:normal;}
+.xl155
+	{mso-style-parent:style0;
+	color:#4A86E8;
+	text-align:center;
+	vertical-align:middle;
+	white-space:normal;}
+.xl156
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	text-align:center;
+	vertical-align:middle;}
+.xl157
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl158
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;}
+.xl159
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:none;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl160
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;}
+.xl161
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:none;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:.5pt solid black;}
+.xl162
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:.5pt solid black;
+	border-left:none;}
+.xl163
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:.5pt solid black;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;}
+.xl164
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl165
+	{mso-style-parent:style0;
+	font-weight:700;
+	text-align:left;
+	background:white;
+	mso-pattern:white none;
+	white-space:normal;}
+.xl166
+	{mso-style-parent:style0;
+	color:windowtext;
+	font-weight:700;
+	white-space:normal;}
+.xl167
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:left;
+	white-space:normal;}
+.xl168
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:none;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:.5pt solid black;}
+.xl169
+	{mso-style-parent:style0;
+	text-align:left;
+	border-top:none;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;
+	background:white;
+	mso-pattern:white none;}
+.xl170
+	{mso-style-parent:style0;
+	text-align:left;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;
+	background:white;
+	mso-pattern:white none;}
+.xl171
+	{mso-style-parent:style0;
+	color:windowtext;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:none;
+	border-left:.5pt solid black;}
+.xl172
+	{mso-style-parent:style0;
+	color:windowtext;
+	vertical-align:middle;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;}
+.xl173
+	{mso-style-parent:style0;
+	color:windowtext;
+	text-align:center;
+	vertical-align:middle;
+	border-top:.5pt solid black;
+	border-right:none;
+	border-bottom:.5pt solid black;
+	border-left:.5pt solid black;
+	white-space:normal;}
+-->
+</style>
 </head>
-<body>
-    This is an empty page
+
+<body link=blue vlink=purple>
+
+<table border=0 cellpadding=0 cellspacing=0 width=1133 style='border-collapse:
+ collapse;table-layout:fixed;width:1133pt'>
+ <col width=87 style='width:87pt'>
+ <col width=188 style='mso-width-source:userset;mso-width-alt:8021;width:188pt'>
+ <col width=79 style='mso-width-source:userset;mso-width-alt:3370;width:79pt'>
+ <col width=81 style='mso-width-source:userset;mso-width-alt:3456;width:81pt'>
+ <col width=78 style='mso-width-source:userset;mso-width-alt:3328;width:78pt'>
+ <col width=80 style='mso-width-source:userset;mso-width-alt:3413;width:80pt'>
+ <col width=87 style='width:87pt'>
+ <col width=71 style='mso-width-source:userset;mso-width-alt:3029;width:71pt'>
+ <col width=208 style='mso-width-source:userset;mso-width-alt:8874;width:208pt'>
+ <col width=87 span=2 style='width:87pt'>
+ <tr height=15 style='height:15.75pt'>
+  <td height=15 width=87 style='height:15.75pt;width:87pt'></td>
+  <td width=188 style='width:188pt'></td>
+  <td width=79 style='width:79pt'></td>
+  <td width=81 style='width:81pt'></td>
+  <td width=78 style='width:78pt'></td>
+  <td width=80 style='width:80pt'></td>
+  <td width=87 style='width:87pt'></td>
+  <td width=71 style='width:71pt'></td>
+  <td width=208 style='width:208pt'></td>
+  <td width=87 style='width:87pt'></td>
+  <td width=87 style='width:87pt'></td>
+ </tr>
+ <tr height=17 style='height:17.0pt'>
+  <td height=17 style='height:17.0pt'></td>
+  <td class=xl107>Learning task</td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+  <td class=xl65></td>
+ </tr>
+ <tr height=24 style='height:24.0pt'>
+  <td height=24 style='height:24.0pt'></td>
+  <td class=xl108>Name</td>
+  <td class=xl109 width=79 style='width:79pt'>Compatibility matching</td>
+  <td class=xl109 width=81 style='width:81pt'></td>
+  <td colspan=6 style='mso-ignore:colspan'></td>
+  <td class=xl65></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Implementing class</td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Ability name</td>
+  <td class=xl91 colspan=2 style='mso-ignore:colspan'>Partial visual
+  equivalence of shape<span style='display:none'>s</span></td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl68>Description</td>
+  <td class=xl65 colspan=5 style='mso-ignore:colspan'>The agent learns which 2
+  shapes fit together (are compatible, can be stacked)</td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl68>Child equivalent</td>
+  <td class=xl65 colspan=7 style='mso-ignore:colspan'>Compatibility of objects
+  - which pairs of objects fit together: shoe + foot, two plates one on
+  another, shape-hole jigsaw, tetris</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl68>Child age</td>
+  <td class=xl65>??</td>
+  <td class=xl74 width=81 style='width:81pt'></td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Prerequisites</td>
+  <td class=xl65 colspan=4 style='mso-ignore:colspan'>Simple Shape PD,
+  Shape/Color PD, Visual equivalence</td>
+  <td colspan=5 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Fully observable world</td>
+  <td class=xl65>yes</td>
+  <td class=xl74 width=81 style='width:81pt'></td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Input modalities</td>
+  <td class=xl65>Visual</td>
+  <td class=xl74 width=81 style='width:81pt'></td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Actuators</td>
+  <td class=xl99 colspan=2 style='mso-ignore:colspan'>Single binary actuator</td>
+  <td class=xl99>&nbsp;</td>
+  <td class=xl99>&nbsp;</td>
+  <td class=xl99>&nbsp;</td>
+  <td class=xl99>&nbsp;</td>
+  <td class=xl99>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td rowspan=4 height=48 class=xl121 style='height:48.0pt'>Diff. dim</td>
+  <td class=xl108>Spatial patterns</td>
+  <td class=xl65 style='font-size:10.0pt;color:windowtext;font-weight:400;
+  text-decoration:none;text-underline-style:none;text-line-through:none;
+  font-family:Arial;border:none;background:#B7E1CD;mso-pattern:#B7E1CD none'>yes</td>
+  <td class=xl122>&nbsp;</td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl108 style='height:12.0pt'>Temporal patterns</td>
+  <td class=xl65 style='font-size:10.0pt;color:windowtext;font-weight:400;
+  text-decoration:none;text-underline-style:none;text-line-through:none;
+  font-family:Arial;border:none;background:#F4C7C3;mso-pattern:#F4C7C3 none'>no</td>
+  <td colspan=5 style='mso-ignore:colspan'></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl108 style='height:12.0pt'>Amount of supervision</td>
+  <td class=xl73>RL</td>
+  <td class=xl65><span style="mso-spacerun:yes">&nbsp;&nbsp;</span></td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl108 style='height:12.0pt'>Distraction</td>
+  <td class=xl65 style='font-size:10.0pt;color:windowtext;font-weight:400;
+  text-decoration:none;text-underline-style:none;text-line-through:none;
+  font-family:Arial;border:none;background:#B7E1CD;mso-pattern:#B7E1CD none'>yes</td>
+  <td class=xl65>noise</td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl119>Training unit initial state</td>
+  <td class=xl65 colspan=7 style='mso-ignore:colspan;border-right:.5pt solid black'>A
+  training unit begins with 1 shape on different positions (translation) and 1
+  compatible place, gradually adding more places and shapes</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl119>Training unit goal state</td>
+  <td class=xl65 colspan=5 style='mso-ignore:colspan'>Agent observes input and
+  responds with correct binary output (compatible: true / false)</td>
+  <td></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Stopping condition</td>
+  <td class=xl65 colspan=3 style='mso-ignore:colspan'>Agent successfully passed
+  all levels of difficulty</td>
+  <td colspan=3 style='mso-ignore:colspan'></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Reward</td>
+  <td class=xl65 colspan=2 style='mso-ignore:colspan'>Binary, each step</td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl108>Teacher</td>
+  <td class=xl65 colspan=5 style='mso-ignore:colspan'>Declares the ability
+  learned when 10 consecutive training units are solved perfectly.</td>
+  <td></td>
+  <td class=xl114>&nbsp;</td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=90 style='mso-height-source:userset;height:90.75pt'>
+  <td height=90 style='height:90.75pt'></td>
+  <td rowspan=4 class=xl108>Illustrations</td>
+  <td class=xl136 style='border-left:none'>Translation</td>
+  <td height=90 class=xl142 width=81 style='height:90.75pt;border-left:none;
+  width:81pt'>
+  <table cellpadding=0 cellspacing=0>
+   <tr>
+    <td width=8 height=2></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td><img width=57 height=86
+    src="LTCompatibilityMatching_files/image001.png"></td>
+    <td width=16></td>
+   </tr>
+   <tr>
+    <td height=2></td>
+   </tr>
+  </table>
+  </td>
+  <td class=xl145>&nbsp;</td>
+  <td class=xl138>&nbsp;</td>
+  <td class=xl94>&nbsp;</td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=80 style='mso-height-source:userset;height:80.25pt'>
+  <td height=80 style='height:80.25pt'></td>
+  <td class=xl143 style='border-left:none'>Translation<br>
+  +<br>
+  Rotation</td>
+  <td height=80 class=xl144 width=81 style='height:80.25pt;width:81pt'>
+  <table cellpadding=0 cellspacing=0>
+   <tr>
+    <td width=9 height=1></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td><img width=51 height=75
+    src="LTCompatibilityMatching_files/image002.png"></td>
+    <td width=21></td>
+   </tr>
+   <tr>
+    <td height=4></td>
+   </tr>
+  </table>
+  </td>
+  <td class=xl146 style='border-top:none'>&nbsp;</td>
+  <td class=xl129></td>
+  <td class=xl128></td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=83 style='mso-height-source:userset;height:83.25pt'>
+  <td height=83 style='height:83.25pt'></td>
+  <td class=xl141 style='border-top:none;border-left:none'>Scale</td>
+  <td class=xl147 style='border-left:none'>&nbsp;</td>
+  <td class=xl129></td>
+  <td class=xl133>&nbsp;</td>
+  <td class=xl132></td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=81 style='mso-height-source:userset;height:81.75pt'>
+  <td height=81 style='height:81.75pt'></td>
+  <td class=xl141 style='border-top:none;border-left:none'>Scale<br>
+  +<br>
+  Rotation</td>
+  <td class=xl147 style='border-left:none'>&nbsp;</td>
+  <td class=xl128></td>
+  <td class=xl65></td>
+  <td colspan=5 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td></td>
+  <td class=xl65></td>
+  <td colspan=2 style='mso-ignore:colspan'></td>
+  <td class=xl120></td>
+  <td colspan=3 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=4 style='mso-ignore:colspan'></td>
+  <td class=xl65></td>
+  <td colspan=3 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 class=xl65 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td class=xl65></td>
+  <td colspan=8 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=12 style='height:12.0pt'>
+  <td height=12 style='height:12.0pt'></td>
+  <td class=xl65></td>
+  <td colspan=9 style='mso-ignore:colspan'></td>
+ </tr>
+</table>
+
 </body>
+
 </html>
