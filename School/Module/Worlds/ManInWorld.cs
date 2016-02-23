@@ -1546,6 +1546,7 @@ namespace GoodAI.Modules.School.Worlds
                     finally
                     {
                         m_renderResource.Dispose();
+                        m_renderResource = null;
                     }
                 }
 
