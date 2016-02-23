@@ -97,11 +97,11 @@ namespace GoodAI.Modules.GameBoy
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 160)]
-        public int DISPLAY_WIDTH { get; set; }
+        public int DisplayWidth { get; set; }
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 140)]
-        public int DISPLAY_HEIGHT { get; set; }
+        public int DisplayHeight { get; set; }
 
         public MyMemoryBlock<float> Bitmaps { get; protected set; }
 
@@ -127,8 +127,8 @@ namespace GoodAI.Modules.GameBoy
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Count = DISPLAY_WIDTH * DISPLAY_HEIGHT;
-            Visual.ColumnHint = DISPLAY_WIDTH;
+            Visual.Count = DisplayWidth * DisplayHeight;
+            Visual.ColumnHint = DisplayWidth;
 
             Bitmaps.Count = 0;
 
@@ -297,7 +297,7 @@ namespace GoodAI.Modules.GameBoy
                     MyGameObject brick = Owner.m_brickPrototype;
 
                     m_bricksKernel.SetupExecution(brick.pixelSize.x * brick.pixelSize.y);
-                    m_bricksKernel.Run(Owner.Visual, Owner.DISPLAY_WIDTH, Owner.DISPLAY_HEIGHT,
+                    m_bricksKernel.Run(Owner.Visual, Owner.DisplayWidth, Owner.DisplayHeight,
                         Owner.Bricks, BRICKS_COUNT_X, BRICKS_COUNT_Y,
                         brick.bitmap, brick.position, brick.pixelSize);
                 }
@@ -307,7 +307,7 @@ namespace GoodAI.Modules.GameBoy
                     MyGameObject g = Owner.m_gameObjects[i];
 
                     m_kernel.SetupExecution(g.pixelSize.x * g.pixelSize.y);
-                    m_kernel.Run(Owner.Visual, Owner.DISPLAY_WIDTH, Owner.DISPLAY_HEIGHT, g.bitmap, g.position, g.pixelSize);
+                    m_kernel.Run(Owner.Visual, Owner.DisplayWidth, Owner.DisplayHeight, g.bitmap, g.position, g.pixelSize);
                 }
 
                 MyGameObject life = Owner.m_lifePrototype;
@@ -451,8 +451,8 @@ namespace GoodAI.Modules.GameBoy
                 MyGameObject ball = Owner.m_gameObjects[0];
                 MyGameObject paddle = Owner.m_gameObjects[1];
 
-                ball.position.x = (Owner.DISPLAY_WIDTH - ball.pixelSize.x) * 0.5f;
-                ball.position.y = Owner.DISPLAY_HEIGHT - 22;
+                ball.position.x = (Owner.DisplayWidth - ball.pixelSize.x) * 0.5f;
+                ball.position.y = Owner.DisplayHeight - 22;
 
                 if (RandomBallDir)
                 {
@@ -468,8 +468,8 @@ namespace GoodAI.Modules.GameBoy
                 ball.velocity /= (float)Math.Sqrt(ball.velocity.x * ball.velocity.x + ball.velocity.y * ball.velocity.y);
                 ball.velocity *= INIT_BALL_VELOCITY;
 
-                paddle.position.x = (Owner.DISPLAY_WIDTH - paddle.pixelSize.x) * 0.5f;
-                paddle.position.y = Owner.DISPLAY_HEIGHT - 14;
+                paddle.position.x = (Owner.DisplayWidth - paddle.pixelSize.x) * 0.5f;
+                paddle.position.y = Owner.DisplayHeight - 14;
 
                 paddle.velocity.x = 0;
                 paddle.velocity.y = 0;
@@ -501,13 +501,13 @@ namespace GoodAI.Modules.GameBoy
                     ball.velocity.x = -ball.velocity.x;
                 }
                 //rightSide
-                if (futurePos.x + ball.pixelSize.x > Owner.DISPLAY_WIDTH && ball.velocity.x > 0)
+                if (futurePos.x + ball.pixelSize.x > Owner.DisplayWidth && ball.velocity.x > 0)
                 {
                     ball.velocity.x = -ball.velocity.x;
                 }
 
                 //bottom side
-                if (futurePos.y + ball.pixelSize.y > Owner.DISPLAY_HEIGHT && ball.velocity.y > 0)
+                if (futurePos.y + ball.pixelSize.y > Owner.DisplayHeight && ball.velocity.y > 0)
                 {
                     if (stepsFrozen == 0)
                     {
@@ -559,7 +559,7 @@ namespace GoodAI.Modules.GameBoy
 
                 float2 futurePos = paddle.position + paddle.velocity;
 
-                if (futurePos.x < 0 || futurePos.x + paddle.pixelSize.x > Owner.DISPLAY_WIDTH)
+                if (futurePos.x < 0 || futurePos.x + paddle.pixelSize.x > Owner.DisplayWidth)
                 {
                     paddle.velocity.x = 0;
                 }
