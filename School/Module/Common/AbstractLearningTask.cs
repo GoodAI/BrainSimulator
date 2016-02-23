@@ -193,6 +193,7 @@ namespace GoodAI.Modules.School.Common
                 && CurrentNumberOfAttempts >= TSHints[TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS])
             {
                 // Too many attempts
+                Reward = -1.0f;
                 return TrainingResult.FailedLT;
             }
 
@@ -203,6 +204,7 @@ namespace GoodAI.Modules.School.Common
             }
             else
             {
+                Reward = -1.0f;
                 CurrentNumberOfSuccesses = 0;
             }
 
@@ -233,7 +235,6 @@ namespace GoodAI.Modules.School.Common
         {
             SchoolWorld.ClearWorld();
             SchoolWorld.SetHints(TSHints);
-            Reward = 0.0f;
 
             PresentNewTrainingUnit();
         }
@@ -258,6 +259,7 @@ namespace GoodAI.Modules.School.Common
             throw new NotImplementedException();
         }
 
+        // is re-set to 0 by SchoolWorld before every ExecuteStep.
         public float Reward
         {
             get

@@ -366,6 +366,7 @@ namespace GoodAI.Modules.School.Worlds
         private void ExecuteLearningTaskStep()
         {
             ResetLTStatusFlags();
+            Reward = 0.0f; // resets reward signal
 
             if (ShowBlackscreen && m_drawBlackscreen)
             {
