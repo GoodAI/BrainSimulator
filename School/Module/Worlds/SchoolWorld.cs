@@ -37,6 +37,7 @@ namespace GoodAI.Modules.School.Worlds
         public int m_counterLT = 0;
         public int m_counterLevel = 0;
         public int m_counterTU = 0;
+        public int m_counterSuccesses = 0;
     }
 
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner

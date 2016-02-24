@@ -38,6 +38,7 @@ namespace GoodAI.Modules.School.Common
         float Progress { get; }
         float Reward { get; set; }
         int CurrentNumberOfAttempts { get; set; }
+        int CurrentNumberOfSuccesses { get; set; }
 
         void ExecuteStep();
         TrainingResult EvaluateStep();

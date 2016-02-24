@@ -40,6 +40,7 @@ namespace GoodAI.School.GUI
         private Stopwatch m_currentLtStopwatch;
 
         private int m_numberOfTU;
+        private int m_numberOfSuccessfulTU;
 
         private bool m_showObserver { get { return btnObserver.Checked; } }
         private bool m_emulateSuccess
@@ -132,12 +133,19 @@ namespace GoodAI.School.GUI
                     e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP)
                 {
                     m_currentLtStopwatch.Start();
-                    disableLearningTaskPanel();
+                    
                 }
-                else if (e.NewState == MySimulationHandler.SimulationState.STOPPED)
-                {
-                    enableLearningTaskPanel();
-                }
+            }
+
+            if (e.NewState == MySimulationHandler.SimulationState.RUNNING ||
+                    e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP ||
+                    e.NewState == MySimulationHandler.SimulationState.PAUSED)
+            {
+                disableLearningTaskPanel();
+            }
+            else
+            {
+                enableLearningTaskPanel();
             }
 
             UpdateButtons();
@@ -208,11 +216,13 @@ namespace GoodAI.School.GUI
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
         {
             m_numberOfTU = 0;
+            m_numberOfSuccessfulTU = 0;
             UpdateTaskData(e.Task);
         }
 
         private void UpdateTrainingUnitNumber(object sender, SchoolEventArgs e)
         {
+            
             Invoke((MethodInvoker)(() =>
             {
                 unitNumberLabel.Text = m_numberOfTU++.ToString();
@@ -222,6 +232,7 @@ namespace GoodAI.School.GUI
 
         private void UpdateLTLevel(object sender, SchoolEventArgs e)
         {
+            m_numberOfSuccessfulTU = 0;
             if (tabControl1 != null && tabControl1.TabCount > 0)
             {
                 Invoke((MethodInvoker)(() =>
@@ -628,6 +639,7 @@ namespace GoodAI.School.GUI
         private string m_uploadedRepresentation;
         private string m_savedRepresentation;
         private string m_currentFile;
+        private int m_numberOfSA;
 
         private PlanDesign m_design
         {
