@@ -900,7 +900,7 @@ namespace GoodAI.School.GUI
 
         private void btnDeleteCurr_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode.Tag is CurriculumNode)
+            if (tree.SelectedNode.Tag is LearningTaskNode)
             {
                 DeleteNodes(sender, e);
                 return;
