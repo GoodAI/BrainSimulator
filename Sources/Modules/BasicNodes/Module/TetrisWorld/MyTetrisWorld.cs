@@ -453,6 +453,12 @@ namespace GoodAI.Modules.TetrisWorld
             }
         }
 
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Dispose();
+        }
+
         public override void Dispose()
         {
             RenderGameTask.Dispose();
@@ -515,13 +521,76 @@ namespace GoodAI.Modules.TetrisWorld
         }
 
         /// <summary>
+        /// Update the world state based on actions, publish the new state.
+        /// </summary>
+        public class UpdateTask : MyTask<TetrisWorld>
+        {
+
+            // use this variable to avoid interpreting unitialized data at the first step of the simulation as input
+            private bool m_firstStep;
+
+            public override void Init(int nGPU)
+            {
+                m_firstStep = true;
+            }
+
+            public override void Execute()
+            {
+                // reset the world event output; the engine can set a new world event output, but it will only last 1 step
+                Owner.WorldEventOutput.Fill(0.0f);
+
+                ActionInputType input = DecodeAction();
+
+                // The engine updates the world's memory blocks based on agent's input
+                Owner.Engine.Step(input);
+            }
+
+            protected ActionInputType DecodeAction()
+            {
+                if (m_firstStep)
+                {
+                    m_firstStep = false;
+                    return ActionInputType.NoAction;
+                }
+
+                if (Owner.ActionInput == null || Owner.ActionInput.Count == 0)
+                {
+                    return ActionInputType.NoAction;
+                }
+
+                Owner.ActionInput.SafeCopyToHost();
+
+                // there are 6 actions possible
+                if (Owner.ActionInputModality == InputModality.Number) // input is an index into the table of actions
+                {
+                    float fAct = Owner.ActionInput.Host[0];
+                    int action = (int)Math.Round(fAct);
+                    if (action > 5 || action < 0)
+                        action = 0;
+                    return (ActionInputType)action;
+                }
+                int maxIndex = 0;
+                float max = float.NegativeInfinity;
+                for (int i = 0; i < 6; i++)
+                {
+                    if (Owner.ActionInput.Host[i] > max)
+                    {
+                        maxIndex = i;
+                        max = Owner.ActionInput.Host[i];
+                    }
+                }
+                return (ActionInputType)maxIndex;
+            }
+        }
+
+        /// <summary>
         /// Renders the visible area. Not needed for simulation.
         /// </summary>
         public class RenderTask : MyTask<TetrisWorld>
         {
             private int m_lastScore;
 
-            private MyCudaKernel m_AddRgbNoiseKernel;
+            private MyCudaKernel m_addRgbNoiseKernel;
 
             // GL
             uint m_renderTextureHandle;
@@ -541,7 +610,7 @@ namespace GoodAI.Modules.TetrisWorld
             public override void Init(int nGPU)
             {
                 m_lastScore = -1;
-                m_AddRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
+                m_addRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
 
                 m_texturesLoaded = false;
 
@@ -564,14 +633,14 @@ namespace GoodAI.Modules.TetrisWorld
                     m_texturesLoaded = true;
                 }
 
-                setupView();
+                SetupView();
 
-                renderBackground();
-                renderBricks();
-                renderHint();
-                renderText();
+                RenderBackground();
+                RenderBricks();
+                RenderHint();
+                RenderText();
 
-                copyPixels();
+                CopyPixels();
             }
 
             void InitGL()
@@ -659,7 +728,7 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
 
-            void setupView()
+            void SetupView()
             {
                 Point powCenter = new Point(Owner.VisualWidth / 2, Owner.VisualHeight / 2);
                 // Setup view
@@ -684,7 +753,7 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.End();
             }
 
-            void renderBackground()
+            void RenderBackground()
             {
                 GL.PushMatrix();
 
@@ -700,7 +769,7 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.PopMatrix();
             }
 
-            void renderBricks()
+            void RenderBricks()
             {
                 for (int iRow = 2; iRow < Owner.BrickAreaRows; iRow++) // do not render rows 0 and 1
                 {
@@ -716,7 +785,7 @@ namespace GoodAI.Modules.TetrisWorld
                 }
             }
 
-            void renderHint()
+            void RenderHint()
             {
                 for (int iRow = 0; iRow < Owner.HintAreaRows; iRow++)
                 {
@@ -774,7 +843,7 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.PopMatrix();
             }
 
-            void renderText()
+            void RenderText()
             {
                 // 1) update text if score changed
                 int score = (int)Math.Round(Owner.ScoreOutput.Host[0]);
@@ -828,7 +897,7 @@ namespace GoodAI.Modules.TetrisWorld
                 GL.PopMatrix();
             }
 
-            void copyPixels()
+            void CopyPixels()
             {
                 // Prepare the results for CUDA
                 // deinit CUDA interop to enable copying
@@ -856,8 +925,8 @@ namespace GoodAI.Modules.TetrisWorld
                 {
                     MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
-                    m_AddRgbNoiseKernel.SetupExecution(Owner.VisualWidth * Owner.VisualHeight);
-                    m_AddRgbNoiseKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, Owner.AgentVisualTemp);
+                    m_addRgbNoiseKernel.SetupExecution(Owner.VisualWidth * Owner.VisualHeight);
+                    m_addRgbNoiseKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, Owner.AgentVisualTemp);
                 }
             }
 
@@ -880,141 +949,83 @@ namespace GoodAI.Modules.TetrisWorld
 
             internal void Dispose()
             {
-                if (m_context != null)
-                    m_context.Dispose();
-                if (m_window != null)
-                    m_window.Dispose();
+                if (m_window == null)
+                    return;
 
-                m_window = new NativeWindow();
-                m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
-                m_context.MakeCurrent(m_window.WindowInfo);
-                m_context.LoadAll();
+                try
+                {
+                    if (!m_context.IsDisposed && !m_context.IsCurrent && !m_window.Exists)
+                        return;
 
-                GL.BindTexture(TextureTarget.Texture2D, 0);
-                // delete textures
-                foreach (int handle in m_textureHandles.Values)
-                {
-                    int h = handle;
-                    GL.DeleteTextures(1, ref h);
-                }
-                if (m_renderTextureHandle != 0)
-                {
-                    GL.DeleteTextures(1, ref m_renderTextureHandle);
-                }
-                if (m_scoreTextHandle != 0)
-                {
-                    GL.DeleteTextures(1, ref m_scoreTextHandle);
-                }
+                    m_context.MakeCurrent(m_window.WindowInfo);
 
-                // delete FBO
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                if (m_fboHandle != 0)
-                {
-                    GL.DeleteFramebuffers(1, ref m_fboHandle);
-                }
+                    ErrorCode err = GL.GetError();
+                    if (err != ErrorCode.NoError)
+                        MyLog.WARNING.WriteLine(Owner.Name + ": OpenGL error detected when disposing stuff, code: " + err);
 
-                // delete PBO
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-                if (m_sharedBufferHandle != 0)
-                {
-                    GL.DeleteBuffers(1, ref m_sharedBufferHandle);
-                }
-
-                // delete CUDA <-> GL interop
-                if (m_renderResource != null)
-                {
-                    try
+                    // delete textures
+                    if (m_textureHandles != null)
                     {
-                        if (m_renderResource.IsMapped)
+                        foreach (int handle in m_textureHandles.Values)
                         {
-                            m_renderResource.UnMap();
+                            int h = handle;
+                            GL.DeleteTextures(1, ref h);
                         }
-                        if (m_renderResource.IsRegistered)
-                        {
-                            m_renderResource.Unregister();
-                        }
+
+                        m_textureHandles.Clear();
                     }
-                    catch (Exception e)
+
+                    if (m_renderTextureHandle != 0)
                     {
-                        MyLog.DEBUG.WriteLine(Name + ": " + e.Message);
+                        GL.DeleteTextures(1, ref m_renderTextureHandle);
+                        m_renderTextureHandle = 0;
                     }
-                    finally
+                    if (m_scoreTextHandle != 0)
+                    {
+                        GL.DeleteTextures(1, ref m_scoreTextHandle);
+                        m_scoreTextHandle = 0;
+                    }
+
+                    // delete FBO
+                    if (m_fboHandle != 0)
+                    {
+                        GL.DeleteFramebuffers(1, ref m_fboHandle);
+                        m_fboHandle = 0;
+                    }
+
+                    // delete PBO
+                    if (m_sharedBufferHandle != 0)
+                    {
+                        GL.DeleteBuffers(1, ref m_sharedBufferHandle);
+                        m_sharedBufferHandle = 0;
+                    }
+
+                    // delete CUDA <-> GL interop
+                    if (m_renderResource != null)
                     {
                         m_renderResource.Dispose();
+                        m_renderResource = null;
                     }
-                }
 
-                if (m_context != null)
-                {
-                    m_context.Dispose();
-                }
-                if (m_window != null)
-                {
-                    m_window.Dispose();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Update the world state based on actions, publish the new state.
-        /// </summary>
-        public class UpdateTask : MyTask<TetrisWorld>
-        {
-
-            // use this variable to avoid interpreting unitialized data at the first step of the simulation as input
-            private bool m_firstStep;
-
-            public override void Init(int nGPU)
-            {
-                m_firstStep = true;
-            }
-
-            public override void Execute()
-            {
-                // reset the world event output; the engine can set a new world event output, but it will only last 1 step
-                Owner.WorldEventOutput.Fill(0.0f);
-
-                ActionInputType input = DecodeAction();
-
-                // The engine updates the world's memory blocks based on agent's input
-                Owner.Engine.Step(input);
-            }
-
-            protected ActionInputType DecodeAction()
-            {
-                if (m_firstStep)
-                {
-                    m_firstStep = false;
-                    return ActionInputType.NoAction;
-                }
-
-                if (Owner.ActionInput == null || Owner.ActionInput.Count == 0)
-                {
-                    return ActionInputType.NoAction;
-                }
-
-                Owner.ActionInput.SafeCopyToHost();
-
-                // there are 6 actions possible
-                if (Owner.ActionInputModality == InputModality.Number) // input is an index into the table of actions
-                {
-                    float fAct = Owner.ActionInput.Host[0];
-                    int action = (int)Math.Round(fAct);
-                    if (action > 5 || action < 0)
-                        action = 0;
-                    return (ActionInputType)action;
-                }
-                int maxIndex = 0;
-                float max = float.NegativeInfinity;
-                for (int i = 0; i < 6; i++)
-                {
-                    if (Owner.ActionInput.Host[i] > max)
+                    if (m_context != null)
                     {
-                        maxIndex = i;
-                        max = Owner.ActionInput.Host[i];
+                        m_context.Dispose();
+                        m_context = null;
+                    }
+                    if (m_window != null)
+                    {
+                        m_window.Dispose();
+                        m_window = null;
                     }
                 }
-                return (ActionInputType)maxIndex;
+                catch (AccessViolationException e)
+                {
+                    MyLog.WARNING.WriteLine(Owner.Name + ": Failed when disposing OpenGL stuff. Cautious progress advised. Error: " + e.Message);
+                }
+                catch (Exception e)
+                {
+                    MyLog.WARNING.WriteLine(Owner.Name + ": Failed when disposing OpenGL. Error: " + e.Message);
+                }
             }
         }
     }
