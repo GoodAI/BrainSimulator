@@ -244,7 +244,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public event EventHandler<SchoolEventArgs> LearningTaskNew = delegate { };
         public event EventHandler<SchoolEventArgs> TrainingUnitFinished = delegate { };
-        public event EventHandler<SchoolEventArgs> LearningTaskUpdated = delegate { };
+        public event EventHandler<SchoolEventArgs> TrainingUnitUpdated = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskFinished = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskLevelFinished = delegate { };
         public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
@@ -391,6 +391,7 @@ namespace GoodAI.Modules.School.Worlds
                 switch (TaskResult)
                 {
                     case TrainingResult.TUInProgress:
+                        TrainingUnitUpdated(this, new SchoolEventArgs(CurrentLearningTask));
                         break;
 
                     case TrainingResult.FinishedTU:
