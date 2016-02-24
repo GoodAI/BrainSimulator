@@ -39,6 +39,8 @@ namespace GoodAI.School.GUI
         private int m_stepOffset = 0;
         private Stopwatch m_currentLtStopwatch;
 
+        private string m_autosaveFilePath;
+
         private bool m_showObserver { get { return btnObserver.Checked; } }
         private bool m_emulateSuccess
         {
@@ -75,6 +77,22 @@ namespace GoodAI.School.GUI
                 if (m_currentRow < 0 || m_currentRow >= Data.Count)
                     return null;
                 return Data.ElementAt(m_currentRow);
+            }
+        }
+
+        private IEnumerable<CurriculumNode> ActiveCurricula
+        {
+            get
+            {
+                return m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).Where(x => x.Enabled == true);
+            }
+        }
+
+        private string CurrentProjectName
+        {
+            get
+            {
+                return ActiveCurricula.Count() == 1 ? ActiveCurricula.First().Text : Path.GetFileNameWithoutExtension(m_currentFile);
             }
         }
 
@@ -120,19 +138,19 @@ namespace GoodAI.School.GUI
             UpdateButtons();
         }
 
+        private string GetAutosaveFilename()
+        {
+            return CurrentProjectName + DateTime.Now.ToString("yyyy-MM-ddTHHmmss");
+        }
+
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
             if (m_currentLtStopwatch != null)
-            {
                 if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
                     m_currentLtStopwatch.Stop();
                 else if (e.NewState == MySimulationHandler.SimulationState.RUNNING ||
                     e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP)
-                {
                     m_currentLtStopwatch.Start();
-                    
-                }
-            }
 
             if (e.NewState == MySimulationHandler.SimulationState.RUNNING ||
                     e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP ||
@@ -144,6 +162,21 @@ namespace GoodAI.School.GUI
             {
                 enableLearningTaskPanel();
             }
+
+            if (e.NewState == MySimulationHandler.SimulationState.PAUSED ||
+                e.NewState == MySimulationHandler.SimulationState.STOPPED)
+                if (Properties.School.Default.AutosaveEnabled)
+                {
+                    if (String.IsNullOrEmpty(m_autosaveFilePath))
+                    {
+                        string filename = GetAutosaveFilename();
+                        m_autosaveFilePath = Path.Combine(Properties.School.Default.AutosaveFolder, filename);
+                    }
+                    ExportDataGridViewData(m_autosaveFilePath);
+                }
+
+            if (e.NewState == MySimulationHandler.SimulationState.STOPPED)
+                m_autosaveFilePath = null;
 
             UpdateButtons();
         }
@@ -466,8 +499,8 @@ namespace GoodAI.School.GUI
                 {
                     dataIndex = 0;
                 }
-                
-                if(Data.Count > dataIndex)
+
+                if (Data.Count > dataIndex)
                     return Data[dataIndex];
 
                 return null;
@@ -975,7 +1008,20 @@ namespace GoodAI.School.GUI
 
         private void btnAutosave_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.School.Default.AutosaveEnabled = (sender as ToolStripButton).Checked;
+            bool check = (sender as ToolStripButton).Checked;
+            Properties.School.Default.AutosaveEnabled = check;
+            Properties.School.Default.Save();
+
+            if (!check)
+            {
+                Properties.School.Default.AutosaveFolder = null;
+                Properties.School.Default.Save();
+                return;
+            }
+
+            if (!String.IsNullOrEmpty(Properties.School.Default.AutosaveFolder))
+                return;
+
             if (folderBrowserAutosave.ShowDialog() != DialogResult.OK)
                 return;
 
@@ -988,13 +1034,7 @@ namespace GoodAI.School.GUI
             //OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
 
-            //PlanDesign design = new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode));
-            IEnumerable<CurriculumNode> activeCurricula = m_model.Nodes.
-                Where(x => x is CurriculumNode).
-                Select(x => x as CurriculumNode).
-                Where(x => x.Enabled == true);
-
-            IEnumerable<LearningTaskNode> ltNodes = activeCurricula.
+            IEnumerable<LearningTaskNode> ltNodes = ActiveCurricula.
                 SelectMany(x => (x as CurriculumNode).Nodes).
                 Select(x => x as LearningTaskNode).
                 Where(x => x.Enabled == true);
@@ -1003,10 +1043,6 @@ namespace GoodAI.School.GUI
                 data.Add(ltNode);
             Data = data;
             Design = m_design;
-            /*if (activeCurricula.Count() == 1)
-                RunName = activeCurricula.First().Text;
-            else
-                RunName = Path.GetFileNameWithoutExtension(m_currentFile);*/
             Ready();
         }
 

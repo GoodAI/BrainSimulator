@@ -25,7 +25,7 @@ namespace GoodAI.School.GUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutosaveEnabled {
             get {
                 return ((bool)(this["AutosaveEnabled"]));
