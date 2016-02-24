@@ -14,6 +14,17 @@ namespace GoodAI.School.Worlds
     [DisplayName("Pong")]
     public class PongAdapterWorld : MyCustomPongWorld, IWorldAdapter
     {
+        public Size Viewport
+        {
+            get { return new Size(DisplayWidth, DisplayHeight); }
+            protected set
+            {
+                DisplayWidth = value.Width;
+                DisplayHeight = value.Height;
+            }
+        }
+
+
         private MyCudaKernel m_kernel;
         private MyCudaKernel m_grayscaleKernel;
 
@@ -93,9 +104,7 @@ namespace GoodAI.School.Worlds
         {
             // Rescale data from world to wrapper
             m_kernel.Run(Visual, School.Visual, Scene.Width, Scene.Height, Viewport.Width, Viewport.Height);
-            m_grayscaleKernel.Run(Visual, School.Visual, Viewport.Width * Viewport.Height);
-
-            //            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
+            m_grayscaleKernel.Run(School.Visual, School.Visual, Viewport.Width * Viewport.Height);
 
             // Copy of structured data
             Event.CopyToMemoryBlock(School.Data, 0, 0, 1);
