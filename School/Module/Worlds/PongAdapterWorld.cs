@@ -5,6 +5,7 @@ using GoodAI.Modules.School.Worlds;
 using GoodAI.Modules.GameBoy;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using GoodAI.Core.Task;
 using GoodAI.Core;
 
@@ -47,8 +48,7 @@ namespace GoodAI.School.Worlds
         {
             if (School != null)
             {
-                DisplayWidth = School.Visual.Dims[0];
-                DisplayHeight = School.Visual.Dims[1];
+                Viewport = new Size(School.Visual.Dims[0], School.Visual.Dims[1]);
             }
 
             base.UpdateMemoryBlocks();
@@ -83,17 +83,17 @@ namespace GoodAI.School.Worlds
         public void InitWorldOutputs(int nGPU)
         {
             m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
-            m_kernel.SetupExecution(DisplayWidth * DisplayHeight);
+            m_kernel.SetupExecution(Viewport.Width * Viewport.Height);
 
             m_grayscaleKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawGrayscaleKernel");
-            m_grayscaleKernel.SetupExecution(DisplayWidth * DisplayHeight);
+            m_grayscaleKernel.SetupExecution(Viewport.Width * Viewport.Height);
         }
 
         public void MapWorldOutputs()
         {
             // Rescale data from world to wrapper
-            //m_kernel.Run(Visual, School.Visual, DISPLAY_WIDTH, DISPLAY_HEIGHT, 256, 256);
-            m_grayscaleKernel.Run(Visual, School.Visual, DisplayWidth * DisplayHeight);
+            m_kernel.Run(Visual, School.Visual, Scene.Width, Scene.Height, Viewport.Width, Viewport.Height);
+            m_grayscaleKernel.Run(Visual, School.Visual, Viewport.Width * Viewport.Height);
 
             //            Visual.CopyToMemoryBlock(schoolWorld.Visual, 0, 0, Math.Min(Visual.Count, schoolWorld.VisualSize));
 
