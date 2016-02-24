@@ -258,11 +258,10 @@ namespace GoodAI.Modules.School.Worlds
                 validator.AssertError(false, this, "ActionInput must not be null");
                 MessageBox.Show("The simulation cannot start because no inputs are provided to ActionInput", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            if (Curriculum == null)
+            else if (Curriculum == null || Curriculum.TasksCount == 0)
             {
-                validator.AssertError(false, this, "Curriculum must not be null. Start the simulation from School GUI.");
-                MessageBox.Show("The simulation cannot start because Curriculum is null. Start the simulation from School GUI (View -> School for AI).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                validator.AssertError(false, this, "Curriculum must not be empty. Add or enable some learning tasks. Use AI School GUI from menu View->AI School.");
+                MessageBox.Show("Curriculum must not be empty. Add or enable at least one learning task.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
