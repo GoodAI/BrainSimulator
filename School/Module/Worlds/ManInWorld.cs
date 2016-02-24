@@ -870,6 +870,8 @@ namespace GoodAI.Modules.School.Worlds
             private Dictionary<String, int> m_textureHandles;
             bool m_glInitialized;
 
+            private static bool m_isToolkitInitialized;
+
 
             public override void Init(int nGPU)
             {
@@ -887,11 +889,20 @@ namespace GoodAI.Modules.School.Worlds
             {
                 if (!m_glInitialized)
                 {
+                    if (!m_isToolkitInitialized)
+                    {
+                        Toolkit.Init();
+                        m_isToolkitInitialized = true;
+                    }
+
                     // Clean the residual memory from init
                     MyMemoryManager.Instance.ClearGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU);
                     InitGL();
                     m_glInitialized = true;
                 }
+
+                m_context.MakeCurrent(m_window.WindowInfo);
+                GL.Finish();
 
                 // init textures
                 UpdateTextures();
@@ -902,6 +913,8 @@ namespace GoodAI.Modules.School.Worlds
                 RenderGl();
 
                 CopyPixelsPow();
+
+                m_context.MakeCurrent(null);
             }
 
             void InitGL()
@@ -1069,9 +1082,6 @@ namespace GoodAI.Modules.School.Worlds
 
             void RenderGl()
             {
-                m_context.MakeCurrent(m_window.WindowInfo);
-                GL.Finish();
-
                 // Render game objects
                 // TODO: object rendering order -- environment first, then creatures and active objects
                 foreach (var gameObject in Owner.GameObjects)
@@ -1302,8 +1312,16 @@ namespace GoodAI.Modules.School.Worlds
 
             internal void Dispose()
             {
+                if (m_window == null)
+                    return;
+
                 try
                 {
+                    if (!m_context.IsDisposed && !m_context.IsCurrent && !m_window.Exists)
+                        return;
+
+                    m_context.MakeCurrent(m_window.WindowInfo);
+
                     ErrorCode err = GL.GetError();
                     if (err != ErrorCode.NoError)
                         MyLog.WARNING.WriteLine(Owner.Name + ": OpenGL error detected when disposing stuff, code: " + err);
@@ -1360,7 +1378,11 @@ namespace GoodAI.Modules.School.Worlds
                 }
                 catch (AccessViolationException e)
                 {
-                    MyLog.WARNING.WriteLine(Owner.Name + ": Failed when disposing OpenGL stuff. Cautious progress advised.");
+                    MyLog.WARNING.WriteLine(Owner.Name + ": Failed when disposing OpenGL stuff. Cautious progress advised. Error: " + e.Message);
+                }
+                catch (Exception e)
+                {
+                    MyLog.WARNING.WriteLine(Owner.Name + ": Failed when disposing OpenGL. Error: " + e.Message);
                 }
             }
         }

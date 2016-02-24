@@ -80,7 +80,7 @@ namespace GoodAI.Modules.School.Common
 
         public Size BitmapPixelSize;
         public bool IsBitmapAsMask; // can use Bitmap's A value as mask
-        private Color m_colorMask;
+        protected Color m_colorMask;
         public Color ColorMask
         {
             get { return m_colorMask; }
@@ -102,13 +102,12 @@ namespace GoodAI.Modules.School.Common
 
         public GameObject(string bitmapPath, PointF position = default(PointF), SizeF size = default(SizeF), GameObjectType type = GameObjectType.None, float rotation = 0, string subtype = null)
         {
-            this.Type = type;
+            Type = type;
             BitmapPath = bitmapPath;
             Subtype = subtype;
             SpriteTextureHandle = -1;
 
-            IsBitmapAsMask = false;
-            ColorMask = Color.FromArgb(0, 0, 0);
+            m_colorMask = Color.FromArgb(0, 0, 0);
 
             Position = position;
             Size = size;

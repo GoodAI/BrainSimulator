@@ -27,7 +27,7 @@ namespace GoodAI.Modules.School.LearningTasks
             base(Shapes.Square, PointF.Empty)
         {
             IsWhite = LearningTaskHelpers.FlipCoin(m_rand);
-            ColorMask = IsWhite ? Color.White : Color.Black;
+            m_colorMask = IsWhite ? Color.White : Color.Black;
 
             float size1D = DetermineSize(salience);
             PointF location = PickLocation(world, movingCondition, new SizeF(size1D, size1D));
