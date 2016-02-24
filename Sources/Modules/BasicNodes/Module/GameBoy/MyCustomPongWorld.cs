@@ -104,13 +104,13 @@ namespace GoodAI.Modules.GameBoy
 
         #region BS properties
 
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 256)]
-        public int DisplayWidth { get { return m_viewport.Width; } set { m_viewport.Width = value; } }
+        [MyBrowsable, Category("Visual")]
+        [YAXSerializableField(DefaultValue = 256), DisplayName("\tDisplayWidth")]
+        public int DisplayWidth { get; protected set; }
 
-        [MyBrowsable, Category("Params")]
+        [MyBrowsable, Category("Visual")]
         [YAXSerializableField(DefaultValue = 224)]
-        public int DisplayHeight { get { return m_viewport.Height; } set { m_viewport.Height = value; } }
+        public int DisplayHeight { get; protected set; }
 
 
         [MyBrowsable, Category("Params")]
@@ -133,10 +133,7 @@ namespace GoodAI.Modules.GameBoy
         private int m_lifes = 0;
         private int m_bricksRemains = 0;
 
-        public SizeF Scene { get; protected set; }
-
-        private Size m_viewport;
-        public Size Viewport { get { return m_viewport; } protected set { m_viewport = value; } }
+        public Size Scene { get; protected set; }
 
         protected readonly Dictionary<string, Bitmap> m_bitmapTable = new Dictionary<string, Bitmap>();
         private string m_errorMessage;
@@ -145,16 +142,16 @@ namespace GoodAI.Modules.GameBoy
 
         public MyCustomPongWorld()
         {
-        m_viewport = new Size(256, 224);
-        Scene = new Size(160, 140);
-            
+            DisplayWidth = 256;
+            DisplayHeight = 224;
+            Scene = new Size(160, 140);
         }
 
         #region MyNode overrides
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Dims = new TensorDimensions(Viewport.Width, Viewport.Height);
+            Visual.Dims = new TensorDimensions(Scene.Width, Scene.Height);
 
             Bitmaps.Count = 0;
 
@@ -327,7 +324,7 @@ namespace GoodAI.Modules.GameBoy
                     MyGameObject brick = Owner.m_brickPrototype;
 
                     m_bricksKernel.SetupExecution(brick.pixelSize.x * brick.pixelSize.y);
-                    m_bricksKernel.Run(Owner.Visual, (int)Owner.Scene.Width, (int)Owner.Scene.Height,
+                    m_bricksKernel.Run(Owner.Visual, Owner.Scene.Width, Owner.Scene.Height,
                         Owner.Bricks, BRICKS_COUNT_X, BRICKS_COUNT_Y,
                         brick.bitmap, brick.position, brick.pixelSize);
                 }
@@ -337,7 +334,7 @@ namespace GoodAI.Modules.GameBoy
                     MyGameObject g = Owner.m_gameObjects[i];
 
                     m_spriteKernel.SetupExecution(g.pixelSize.x * g.pixelSize.y);
-                    m_spriteKernel.Run(Owner.Visual, (int)Owner.Scene.Width, (int)Owner.Scene.Height, g.bitmap, g.position, g.pixelSize);
+                    m_spriteKernel.Run(Owner.Visual, Owner.Scene.Width, Owner.Scene.Height, g.bitmap, g.position, g.pixelSize);
                 }
 
                 MyGameObject life = Owner.m_lifePrototype;
