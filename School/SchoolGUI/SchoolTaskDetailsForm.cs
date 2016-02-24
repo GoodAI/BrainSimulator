@@ -8,7 +8,7 @@ namespace GoodAI.School.GUI
         public SchoolTaskDetailsForm(Type taskType)
         {
             InitializeComponent();
-            this.learningTaskDetailsControl1.TaskType = taskType;
+            this.learningTaskDescription.LearningTaskType = taskType;
         }
     }
 }

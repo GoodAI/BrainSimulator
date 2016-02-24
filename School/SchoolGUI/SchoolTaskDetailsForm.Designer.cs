@@ -28,23 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.learningTaskDetailsControl1 = new GoodAI.School.GUI.LearningTaskDetailsControl();
+            this.learningTaskDescription = new GoodAI.School.GUI.LearningTaskBrowser();
             this.SuspendLayout();
             // 
-            // learningTaskDetailsControl1
+            // learningTaskDescription
             // 
-            this.learningTaskDetailsControl1.Location = new System.Drawing.Point(12, 6);
-            this.learningTaskDetailsControl1.Name = "learningTaskDetailsControl1";
-            this.learningTaskDetailsControl1.Size = new System.Drawing.Size(232, 272);
-            this.learningTaskDetailsControl1.TabIndex = 0;
-            this.learningTaskDetailsControl1.TaskType = null;
+            this.learningTaskDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.learningTaskDescription.LearningTaskType = null;
+            this.learningTaskDescription.Location = new System.Drawing.Point(0, 0);
+            this.learningTaskDescription.MinimumSize = new System.Drawing.Size(20, 20);
+            this.learningTaskDescription.Name = "learningTaskDescription";
+            this.learningTaskDescription.Size = new System.Drawing.Size(819, 506);
+            this.learningTaskDescription.TabIndex = 0;
             // 
             // SchoolTaskDetailsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(254, 395);
-            this.Controls.Add(this.learningTaskDetailsControl1);
+            this.ClientSize = new System.Drawing.Size(819, 506);
+            this.Controls.Add(this.learningTaskDescription);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
             this.Name = "SchoolTaskDetailsForm";
@@ -55,7 +57,9 @@
 
         #endregion
 
-        private LearningTaskDetailsControl learningTaskDetailsControl1;
+        private LearningTaskBrowser learningTaskDescription;
+
+
 
     }
 }

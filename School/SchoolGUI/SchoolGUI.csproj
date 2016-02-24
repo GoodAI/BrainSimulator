@@ -45,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LearningTaskBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LearningTaskBrowser.Designer.cs">
+      <DependentUpon>LearningTaskBrowser.cs</DependentUpon>
+    </Compile>
     <Compile Include="LabelDescriptionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
