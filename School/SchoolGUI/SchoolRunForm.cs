@@ -1155,7 +1155,7 @@ namespace GoodAI.School.GUI
 
         private void tree_Click(object sender, EventArgs e)
         {
-            uploadLearningTasks();
+            UpdateButtonsSR();
         }
 
         private void disableLearningTaskPanel()
