@@ -561,7 +561,6 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(23, 22);
             this.btnRun.Text = "Run Simulation";
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // btnStop
             // 
@@ -571,7 +570,6 @@
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(23, 22);
             this.btnStop.Text = "Stop Simulation";
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // btnPause
             // 

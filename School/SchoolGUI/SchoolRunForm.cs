@@ -108,6 +108,8 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
 
             // here so it does not interfere with designer generated code
+            btnRun.Click += m_mainForm.runToolButton_Click;
+            btnStop.Click += m_mainForm.stopToolButton_Click;
             btnPause.Click += m_mainForm.pauseToolButton_Click;
             btnStepOver.Click += m_mainForm.stepOverToolButton_Click;
             btnDebug.Click += m_mainForm.debugToolButton_Click;
@@ -123,11 +125,20 @@ namespace GoodAI.School.GUI
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
             if (m_currentLtStopwatch != null)
+            {
                 if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
                     m_currentLtStopwatch.Stop();
                 else if (e.NewState == MySimulationHandler.SimulationState.RUNNING ||
                     e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP)
+                {
                     m_currentLtStopwatch.Start();
+                    disableLearningTaskPanel();
+                }
+                else if (e.NewState == MySimulationHandler.SimulationState.STOPPED)
+                {
+                    enableLearningTaskPanel();
+                }
+            }
 
             UpdateButtons();
         }
@@ -437,7 +448,11 @@ namespace GoodAI.School.GUI
                 {
                     dataIndex = 0;
                 }
-                return Data[dataIndex];
+                
+                if(Data.Count > dataIndex)
+                    return Data[dataIndex];
+
+                return null;
             }
         }
 
@@ -446,6 +461,11 @@ namespace GoodAI.School.GUI
             Invoke((MethodInvoker)(() =>
             {
                 LearningTaskNode ltNode = SelectedLearningTask;
+                tabControl1.TabPages.Clear();
+                if (ltNode == null)
+                {
+                    return;
+                }
                 Type ltType = ltNode.TaskType;
                 ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
                 TrainingSetHints hints = lt.TSProgression[0];
@@ -454,7 +474,6 @@ namespace GoodAI.School.GUI
                 LevelGrids = new List<DataGridView>();
                 Attributes = new List<List<AttributeNode>>();
                 AttributesChange = new List<List<int>>();
-                tabControl1.TabPages.Clear();
 
                 for (int i = 0; i < lt.TSProgression.Count; i++)
                 {
@@ -1127,27 +1146,9 @@ namespace GoodAI.School.GUI
             uploadLearningTasks();
         }
 
-        private void btnRun_Click(object sender, EventArgs e)
-        {
-            m_mainForm.runToolButton_Click(sender, e);
-            if (m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING ||
-                m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING_STEP ||
-                m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.PAUSED)
-            {
-                disableLearningTaskPanel();
-            }
-        }
-
-
         private void disableLearningTaskPanel()
         {
             splitContainer3.Panel1.Enabled = false;
-        }
-
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            m_mainForm.stopToolButton_Click(sender, e);
-            enableLearningTaskPanel();
         }
 
         private void enableLearningTaskPanel()
