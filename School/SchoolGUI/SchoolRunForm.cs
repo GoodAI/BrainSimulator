@@ -976,6 +976,10 @@ namespace GoodAI.School.GUI
         private void btnAutosave_CheckedChanged(object sender, EventArgs e)
         {
             Properties.School.Default.AutosaveEnabled = (sender as ToolStripButton).Checked;
+            if (folderBrowserAutosave.ShowDialog() != DialogResult.OK)
+                return;
+
+            Properties.School.Default.AutosaveFolder = folderBrowserAutosave.SelectedPath;
             Properties.School.Default.Save();
         }
 
@@ -1173,6 +1177,32 @@ namespace GoodAI.School.GUI
         private void enableLearningTaskPanel()
         {
             splitContainer3.Panel1.Enabled = true;
+        }
+
+        private void ExportDataGridViewData(string filename, TextDataFormat format = TextDataFormat.CommaSeparatedValue)
+        {
+            IDataObject objectSave = Clipboard.GetDataObject();
+            bool multiSelectAllowed = dataGridView1.MultiSelect;
+            DataGridViewClipboardCopyMode copyMode = dataGridView1.ClipboardCopyMode;
+
+            dataGridView1.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            dataGridView1.MultiSelect = true;
+            dataGridView1.SelectAll();
+            Clipboard.SetDataObject(dataGridView1.GetClipboardContent());
+            File.WriteAllText(filename, Clipboard.GetText(format));
+
+            dataGridView1.MultiSelect = multiSelectAllowed;
+            dataGridView1.ClipboardCopyMode = copyMode;
+            if (objectSave != null)
+                Clipboard.SetDataObject(objectSave);
+        }
+
+        private void btnSaveResults_Click(object sender, EventArgs e)
+        {
+            if (saveResultsDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            ExportDataGridViewData(saveResultsDialog.FileName);
         }
 
         /*

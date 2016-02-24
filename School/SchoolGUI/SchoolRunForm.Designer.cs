@@ -96,12 +96,14 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnEmulateSuccess = new System.Windows.Forms.ToolStripButton();
             this.btnObserver = new System.Windows.Forms.ToolStripButton();
+            this.btnSaveResults = new System.Windows.Forms.ToolStripButton();
             this.btnAutosave = new System.Windows.Forms.ToolStripButton();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.successefulAttempts = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.saveResultsDialog = new System.Windows.Forms.SaveFileDialog();
+            this.folderBrowserAutosave = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -635,6 +637,7 @@
             this.toolStripSeparator1,
             this.btnEmulateSuccess,
             this.btnObserver,
+            this.btnSaveResults,
             this.btnAutosave});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -715,6 +718,15 @@
             this.btnObserver.Text = "Show Observer";
             this.btnObserver.CheckedChanged += new System.EventHandler(this.btnObserver_Click);
             // 
+            // btnSaveResults
+            // 
+            this.btnSaveResults.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnSaveResults.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSaveResults.Name = "btnSaveResults";
+            this.btnSaveResults.Size = new System.Drawing.Size(75, 22);
+            this.btnSaveResults.Text = "Save Results";
+            this.btnSaveResults.Click += new System.EventHandler(this.btnSaveResults_Click);
+            // 
             // btnAutosave
             // 
             this.btnAutosave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -751,6 +763,8 @@
             this.label6.Size = new System.Drawing.Size(140, 13);
             this.label6.TabIndex = 22;
             this.label6.Text = "Number of successes in row";
+            this.saveResultsDialog.DefaultExt = "csv";
+            this.saveResultsDialog.Filter = "Comma-separated values|*.csv|All files|*.*";
             // 
             // SchoolRunForm
             // 
@@ -834,7 +848,6 @@
         private System.Windows.Forms.ToolStripButton btnObserver;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
         private System.Windows.Forms.DataGridView dataGridView1;
@@ -866,5 +879,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
         private System.Windows.Forms.Label successefulAttempts;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ToolStripButton btnSaveResults;
+        private System.Windows.Forms.SaveFileDialog saveResultsDialog;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserAutosave;
     }
 }

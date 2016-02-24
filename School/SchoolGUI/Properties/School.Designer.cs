@@ -70,5 +70,17 @@ namespace GoodAI.School.GUI.Properties {
                 this["ShowVisual"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutosaveFolder {
+            get {
+                return ((string)(this["AutosaveFolder"]));
+            }
+            set {
+                this["AutosaveFolder"] = value;
+            }
+        }
     }
 }
