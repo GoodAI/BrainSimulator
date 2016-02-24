@@ -39,9 +39,6 @@ namespace GoodAI.School.GUI
         private int m_stepOffset = 0;
         private Stopwatch m_currentLtStopwatch;
 
-        private int m_numberOfTU;
-        private int m_numberOfSuccessfulTU;
-
         private bool m_showObserver { get { return btnObserver.Checked; } }
         private bool m_emulateSuccess
         {
@@ -215,24 +212,29 @@ namespace GoodAI.School.GUI
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
         {
-            m_numberOfTU = 0;
-            m_numberOfSuccessfulTU = 0;
             UpdateTaskData(e.Task);
         }
 
         private void UpdateTrainingUnitNumber(object sender, SchoolEventArgs e)
         {
-            
+            /*if (wasSuccessful)
+            {
+                m_numberOfTU++;
+            }
+            else
+            {
+                m_numberOfTU = 0;
+            }*/
             Invoke((MethodInvoker)(() =>
             {
-                unitNumberLabel.Text = m_numberOfTU++.ToString();
+                unitNumberLabel.Text = e.Task.CurrentNumberOfAttempts.ToString();
+                successefulAttempts.Text = e.Task.CurrentNumberOfSuccesses.ToString();
             }
             ));
         }
 
         private void UpdateLTLevel(object sender, SchoolEventArgs e)
         {
-            m_numberOfSuccessfulTU = 0;
             if (tabControl1 != null && tabControl1.TabCount > 0)
             {
                 Invoke((MethodInvoker)(() =>
@@ -382,7 +384,9 @@ namespace GoodAI.School.GUI
                 // I am not sure about how bad this approach is, but it get things done
                 Type typeValue = e.Value as Type;
 
-                DisplayNameAttribute displayNameAtt = typeValue.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+                DisplayNameAttribute displayNameAtt = typeValue.
+                    GetCustomAttributes(typeof(DisplayNameAttribute), true).
+                    FirstOrDefault() as DisplayNameAttribute;
                 if (displayNameAtt != null)
                     e.Value = displayNameAtt.DisplayName;
                 else
@@ -391,7 +395,10 @@ namespace GoodAI.School.GUI
             else if (column == statusDataGridViewTextBoxColumn)
             {
                 TrainingResult result = (TrainingResult)e.Value;
-                DescriptionAttribute displayNameAtt = result.GetType().GetMember(result.ToString())[0].GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault() as DescriptionAttribute;
+                DescriptionAttribute displayNameAtt = result.GetType().
+                    GetMember(result.ToString())[0].
+                    GetCustomAttributes(typeof(DescriptionAttribute), true).
+                    FirstOrDefault() as DescriptionAttribute;
                 if (displayNameAtt != null)
                     e.Value = displayNameAtt.Description;
             }
