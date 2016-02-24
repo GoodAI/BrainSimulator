@@ -21,7 +21,7 @@
     <WixVariable Id="ModulesSourceDirectory" Value="$(var.BrainSimulator.TargetDir)modules"/>
     <WixVariable Id="ExamplesSourceDirectory" Value="$(var.BrainSimulator.ProjectDir)..\..\..\..\BrainSimulatorSampleProjects"/>
 
-    <WixVariable Id="WixUILicenseRtf" Value="Resources\EULA.rtf" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.BrainSimulator.ProjectDir)\EULA.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="Resources\brainSim_installBanner_owl.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="Resources\brainSim_installBanner_splash.bmp" />
 

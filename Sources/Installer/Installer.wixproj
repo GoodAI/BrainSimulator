@@ -39,7 +39,6 @@
     <Content Include="HeatFilterModules.xslt" />
     <Content Include="Resources\brainSim_installBanner_owl.bmp" />
     <Content Include="Resources\brainSim_installBanner_splash.bmp" />
-    <Content Include="Resources\EULA.rtf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libs\3rd\Graph\Graph.csproj">
