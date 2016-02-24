@@ -480,7 +480,7 @@ namespace GoodAI.School.GUI
                     }
                 case Keys.Delete:
                     {
-                        DeleteNodes(sender, null);
+                        btnDelete.PerformClick();
                         break;
                     }
                 default:
@@ -906,6 +906,8 @@ namespace GoodAI.School.GUI
             tree.EndUpdate();
             UpdateWindowName(null, EventArgs.Empty);
             UpdateUploadState(null, EventArgs.Empty);
+
+            uploadLearningTasks();
         }
 
         #endregion DragDrop
@@ -990,6 +992,8 @@ namespace GoodAI.School.GUI
 
             UpdateWindowName(null, EventArgs.Empty);
             UpdateUploadState(null, EventArgs.Empty);
+
+            uploadLearningTasks();
         }
 
         private void DeleteNodes(object sender, EventArgs e)
@@ -1037,7 +1041,6 @@ namespace GoodAI.School.GUI
 
         private void uploadLearningTasks()
         {
-            //OpenFloatingOrActivate(RunView, DockPanel);
             List<LearningTaskNode> data = new List<LearningTaskNode>();
 
             IEnumerable<LearningTaskNode> ltNodes = ActiveCurricula.
@@ -1198,6 +1201,8 @@ namespace GoodAI.School.GUI
         private void tree_SelectionChanged(object sender, EventArgs e)
         {
             UpdateButtonsSR();
+            uploadLearningTasks();
+            tree.Focus();
         }
 
         private void nodeTextBox1_DrawText(object sender, DrawTextEventArgs e)
@@ -1247,22 +1252,10 @@ namespace GoodAI.School.GUI
             ExportDataGridViewData(saveResultsDialog.FileName);
         }
 
-        /*
-        private void SchoolMainForm_KeyDown(object sender, KeyEventArgs e)
+        private void tree_NodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Delete:
-                    {
-                        DeleteNodes(sender, null);
-                        break;
-                    }
-                case Keys.F5:
-                    {
-                        btnRun.PerformClick();
-                        break;
-                    }
-            }
-        }*/
+            uploadLearningTasks();
+            tree.Focus();
+        }
     }
 }

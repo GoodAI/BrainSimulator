@@ -365,7 +365,7 @@ namespace GoodAI.Modules.School.Worlds
                     intersects = true;
                 }
             }
-            MyLog.Writer.WriteLine(MyLogLevel.DEBUG, "Number of unsuccessful attempts of random object placing: " + randomPositionCounter);
+            MyLog.DEBUG.WriteLine("Number of unsuccessful attempts of random object placing: " + randomPositionCounter);
 
             Point randPoint = obj.Location + objectBorders;
             size -= (objectBorders + objectBorders);
@@ -416,7 +416,7 @@ namespace GoodAI.Modules.School.Worlds
                     }
                 }
             }
-            MyLog.Writer.WriteLine(MyLogLevel.DEBUG, "Number of unsuccessful attempts of random object placing: " + randomPositionCounter);
+            MyLog.DEBUG.WriteLine("Number of unsuccessful attempts of random object placing: " + randomPositionCounter);
 
             Point randPoint = obj.Location + borders;
             size = size - borders - borders;
