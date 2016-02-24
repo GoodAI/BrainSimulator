@@ -79,9 +79,10 @@ namespace GoodAI.Core.Nodes
             get { return base.OutputBranches; }
             set
             {
-                base.OutputBranches = value;
+                // If GroupOutputNodes is set, it has preference over OutputBranches because of deserialization.
+                int nodesToCopy = Math.Min(value, GroupOutputNodes == null ? OutputBranches : GroupOutputNodes.Length);
 
-                int nodesToCopy = Math.Min(value, OutputBranches);
+                base.OutputBranches = value;
 
                 MyOutput[] oldOutputs = GroupOutputNodes;
                 GroupOutputNodes = new MyOutput[value];
