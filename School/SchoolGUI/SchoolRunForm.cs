@@ -896,12 +896,6 @@ namespace GoodAI.School.GUI
             Properties.School.Default.Save();
         }
 
-        private void btnAutorun_CheckedChanged(object sender, EventArgs e)
-        {
-            Properties.School.Default.AutorunEnabled = (sender as ToolStripButton).Checked;
-            Properties.School.Default.Save();
-        }
-
         private void uploadLearningTasks()
         {
             //OpenFloatingOrActivate(RunView, DockPanel);
