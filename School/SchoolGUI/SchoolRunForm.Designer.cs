@@ -82,11 +82,9 @@
             this.btnOpen = new System.Windows.Forms.ToolStripButton();
             this.btnImport = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.btnNewCurr = new System.Windows.Forms.ToolStripButton();
             this.btnDetailsCurr = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.btnNewTask = new System.Windows.Forms.ToolStripButton();
             this.btnDetailsTask = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -191,8 +189,8 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Location = new System.Drawing.Point(3, 0);
             this.tabControl1.Name = "tabControl1";
@@ -202,7 +200,7 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.Controls.Add(this.currentLevelLabel);
             this.panel1.Controls.Add(this.actualRewardLabel);
@@ -280,8 +278,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
@@ -304,8 +302,8 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -465,8 +463,8 @@
             // tree
             // 
             this.tree.AllowDrop = true;
-            this.tree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tree.BackColor = System.Drawing.SystemColors.Window;
             this.tree.ColumnHeaderHeight = 0;
@@ -516,11 +514,9 @@
             this.btnOpen,
             this.btnImport,
             this.toolStripSeparator2,
-            this.toolStripLabel1,
             this.btnNewCurr,
             this.btnDetailsCurr,
             this.toolStripSeparator3,
-            this.toolStripLabel2,
             this.btnNewTask,
             this.btnDetailsTask,
             this.toolStripSeparator4,
@@ -586,20 +582,15 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(67, 22);
-            this.toolStripLabel1.Text = "Curriculum";
-            // 
             // btnNewCurr
             // 
-            this.btnNewCurr.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnNewCurr.Image = global::GoodAI.School.GUI.Properties.Resources.action_add_16xMD;
             this.btnNewCurr.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNewCurr.Name = "btnNewCurr";
-            this.btnNewCurr.Size = new System.Drawing.Size(23, 22);
-            this.btnNewCurr.Text = "New Curriculum";
+            this.btnNewCurr.Size = new System.Drawing.Size(87, 22);
+            this.btnNewCurr.Text = "Curriculum";
+            this.btnNewCurr.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btnNewCurr.ToolTipText = "New Curriculum";
             this.btnNewCurr.Click += new System.EventHandler(this.btnNewCurr_Click);
             // 
             // btnDetailsCurr
@@ -617,20 +608,14 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripLabel2
-            // 
-            this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(31, 22);
-            this.toolStripLabel2.Text = "Task";
-            // 
             // btnNewTask
             // 
-            this.btnNewTask.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnNewTask.Image = global::GoodAI.School.GUI.Properties.Resources.action_add_16xMD;
             this.btnNewTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNewTask.Name = "btnNewTask";
-            this.btnNewTask.Size = new System.Drawing.Size(23, 22);
-            this.btnNewTask.Text = "New Learning Task";
+            this.btnNewTask.Size = new System.Drawing.Size(51, 22);
+            this.btnNewTask.Text = "Task";
+            this.btnNewTask.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.btnNewTask.Click += new System.EventHandler(this.btnNewTask_Click);
             // 
             // btnDetailsTask
@@ -678,7 +663,7 @@
             this.btnDelete.Image = global::GoodAI.School.GUI.Properties.Resources.action_Cancel_16xMD;
             this.btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(23, 22);
+            this.btnDelete.Size = new System.Drawing.Size(23, 20);
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDeleteCurr_Click);
             // 
@@ -868,11 +853,9 @@
         private System.Windows.Forms.ToolStripButton btnOpen;
         private System.Windows.Forms.ToolStripButton btnImport;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripButton btnNewCurr;
         private System.Windows.Forms.ToolStripButton btnDetailsCurr;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripButton btnNewTask;
         private System.Windows.Forms.ToolStripButton btnDetailsTask;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;

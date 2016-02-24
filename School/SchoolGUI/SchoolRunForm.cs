@@ -84,7 +84,7 @@ namespace GoodAI.School.GUI
         public SchoolRunForm(MainForm mainForm)
         {
             // school main form //
-            
+
             m_serializer = new YAXSerializer(typeof(PlanDesign));
             m_mainForm = mainForm;
             //RunView = new SchoolRunForm(m_mainForm);
@@ -101,10 +101,10 @@ namespace GoodAI.School.GUI
                 saveFileDialog1.FileName = m_lastOpenedFile;
 
             UpdateButtonsSR();
-            
+
 
             // school run form //
-            
+
             m_mainForm = mainForm;
 
             // here so it does not interfere with designer generated code
@@ -549,8 +549,6 @@ namespace GoodAI.School.GUI
             {
                 splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
                 SetObserver();
-                label1.Text = (!Properties.School.Default.ShowVisual).ToString();
-                toolStripLabel1.Text = (!Properties.School.Default.ShowVisual).ToString();
                 Invalidate();
             }));
         }
