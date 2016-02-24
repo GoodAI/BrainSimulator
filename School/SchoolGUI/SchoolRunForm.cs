@@ -139,7 +139,12 @@ namespace GoodAI.School.GUI
 
         private void SelectSchoolWorld(object sender, EventArgs e)
         {
-
+            if (!Visible)
+                return;
+            if (!(m_mainForm.Project.World is SchoolWorld))
+                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+            if (Design != null)
+                PrepareSimulation(null, EventArgs.Empty);
         }
 
         private void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -439,74 +444,74 @@ namespace GoodAI.School.GUI
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             Invoke((MethodInvoker)(() =>
+            {
+                LearningTaskNode ltNode = SelectedLearningTask;
+                Type ltType = ltNode.TaskType;
+                ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
+                TrainingSetHints hints = lt.TSProgression[0];
+
+                Levels = new List<LevelNode>();
+                LevelGrids = new List<DataGridView>();
+                Attributes = new List<List<AttributeNode>>();
+                AttributesChange = new List<List<int>>();
+                tabControl1.TabPages.Clear();
+
+                for (int i = 0; i < lt.TSProgression.Count; i++)
                 {
-                    LearningTaskNode ltNode = SelectedLearningTask;
-                    Type ltType = ltNode.TaskType;
-                    ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
-                    TrainingSetHints hints = lt.TSProgression[0];
+                    // create tab
+                    LevelNode ln = new LevelNode(i + 1);
+                    Levels.Add(ln);
+                    TabPage tp = new TabPage(ln.Text);
+                    tabControl1.TabPages.Add(tp);
 
-                    Levels = new List<LevelNode>();
-                    LevelGrids = new List<DataGridView>();
-                    Attributes = new List<List<AttributeNode>>();
-                    AttributesChange = new List<List<int>>();
-                    tabControl1.TabPages.Clear();
+                    // create grid
+                    DataGridView dgv = new DataGridView();
 
-                    for (int i = 0; i < lt.TSProgression.Count; i++)
+                    dgv.Parent = tp;
+                    dgv.Margin = new Padding(3);
+                    dgv.Dock = DockStyle.Fill;
+                    dgv.RowHeadersVisible = false;
+                    dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                    dgv.AllowUserToResizeRows = false;
+                    // create attributes
+                    Attributes.Add(new List<AttributeNode>());
+                    if (i > 0)
                     {
-                        // create tab
-                        LevelNode ln = new LevelNode(i + 1);
-                        Levels.Add(ln);
-                        TabPage tp = new TabPage(ln.Text);
-                        tabControl1.TabPages.Add(tp);
-
-                        // create grid
-                        DataGridView dgv = new DataGridView();
-
-                        dgv.Parent = tp;
-                        dgv.Margin = new Padding(3);
-                        dgv.Dock = DockStyle.Fill;
-                        dgv.RowHeadersVisible = false;
-                        dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                        dgv.AllowUserToResizeRows = false;
-                        // create attributes
-                        Attributes.Add(new List<AttributeNode>());
-                        if (i > 0)
-                        {
-                            hints.Set(lt.TSProgression[i]);
-                        }
-                        foreach (var attribute in hints)
-                        {
-                            AttributeNode an = new AttributeNode(attribute.Key, attribute.Value);
-                            Attributes[i].Add(an);
-                            // create tooltips
-                        }
-
-                        Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
-                        dgv.DataSource = Attributes[i];
-
-
-                        dgv.Columns[0].Width = 249;
-                        dgv.Columns[0].ReadOnly = true;
-                        dgv.Columns[1].ReadOnly = true;
-
-                        AttributesChange.Add(new List<int>());
-                        if (i > 0)
-                        {
-                            foreach (var attribute in lt.TSProgression[i])
-                            {
-                                int attributeIdx = Attributes[i].IndexOf(new AttributeNode(attribute.Key.Name));
-                                AttributesChange[i].Add(attributeIdx);
-                            }
-                        }
-
-                        LevelGrids.Add(dgv);
-                        dgv.ColumnWidthChanged += levelGridColumnSizeChanged;
-                        dgv.CellFormatting += lGrid_CellFormatting;
-                        dgv.SelectionChanged += levelGridSelectionChanged;
-
-                        tabControl1.Update();
+                        hints.Set(lt.TSProgression[i]);
                     }
+                    foreach (var attribute in hints)
+                    {
+                        AttributeNode an = new AttributeNode(attribute.Key, attribute.Value);
+                        Attributes[i].Add(an);
+                        // create tooltips
+                    }
+
+                    Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
+                    dgv.DataSource = Attributes[i];
+
+
+                    dgv.Columns[0].Width = 249;
+                    dgv.Columns[0].ReadOnly = true;
+                    dgv.Columns[1].ReadOnly = true;
+
+                    AttributesChange.Add(new List<int>());
+                    if (i > 0)
+                    {
+                        foreach (var attribute in lt.TSProgression[i])
+                        {
+                            int attributeIdx = Attributes[i].IndexOf(new AttributeNode(attribute.Key.Name));
+                            AttributesChange[i].Add(attributeIdx);
+                        }
+                    }
+
+                    LevelGrids.Add(dgv);
+                    dgv.ColumnWidthChanged += levelGridColumnSizeChanged;
+                    dgv.CellFormatting += lGrid_CellFormatting;
+                    dgv.SelectionChanged += levelGridSelectionChanged;
+
+                    tabControl1.Update();
                 }
+            }
             ));
         }
 
