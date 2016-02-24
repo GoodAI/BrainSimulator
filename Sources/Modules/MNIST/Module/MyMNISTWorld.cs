@@ -43,12 +43,12 @@ namespace MNIST
 
         public MyEOFSignal EOFSignal { get; private set; }
         public MyInitMNISTTask InitMNIST { get; private set; }
-        public MySendMNISTTask SendMNISTData { get; private set; }
 
-        public int ImagesCnt
-        {
-            get { return InitMNIST.ImagesCnt; }
-        }
+        // mutually exclusive tasks
+        [MyTaskGroup("SendData")]
+        public MySendTrainingMNISTTask SendTrainingMNISTData { get; protected set; }
+        [MyTaskGroup("SendData")]
+        public MySendTestMNISTTask SendTestMNISTData { get; protected set; }
 
         public override void UpdateMemoryBlocks()
         {
@@ -84,47 +84,62 @@ namespace MNIST
         [YAXSerializableField(DefaultValue = MNISTLastImageMethod.ResetToStart)]
         public MNISTLastImageMethod AfterLastImage { get; set; }
 
-        private int m_imgsCnt = 2000;
         [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 2000)]
-        public int ImagesCnt
+        [YAXSerializableField(DefaultValue = 60000)]
+        public int TrainingImagesCnt
         {
             get
             {
-                return m_imgsCnt;
+                return m_trainingImgsCnt;
             }
             set
             {
-                m_imgsCnt = value;
+                m_trainingImgsCnt = value;
                 if (Owner != null && Owner.MNISTManager != null)
                 {
-                    Owner.MNISTManager.m_imagesDemand = value;
+                    Owner.MNISTManager.m_trainingImagesDemand = value;
+                }
+            }
+        }
+
+        [MyBrowsable, Category("Params")]
+        [YAXSerializableField(DefaultValue = 10000)]
+        public int TestImagesCnt
+        {
+            get
+            {
+                return m_testImgsCnt;
+            }
+            set
+            {
+                m_testImgsCnt = value;
+                if (Owner != null && Owner.MNISTManager != null)
+                {
+                    Owner.MNISTManager.m_testImagesDemand = value;
                 }
             }
         }
 
         public override void Init(int nGPU)
         {
-            Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\", ImagesCnt, false, AfterLastImage);
+            Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\",
+                TrainingImagesCnt, TestImagesCnt, false, AfterLastImage);
         }
 
         public override void Execute()
         {
         }
+
+        private int m_trainingImgsCnt;
+        private int m_testImgsCnt;
     }
 
-    /// <summary>
-    /// Sends MNIST image patch to the world output.
-    /// <ul>
-    /// <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output</li>
-    /// <li><b>Send Numbers</b> - All or enumeration of numbers requested on the output</li>
-    /// <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file</li>
-    /// <li><b>Sequence Ordered</b> - Sends pathes in order defined in <b>Send Numbers</b> property</li>
-    /// </ul>
-    /// </summary>
-    [Description("Send MNIST Data"), MyTaskInfo(OneShot = false)]
+    // Parent class ment to be derived from MySendTrainingMNISTTask and MySendTestMNISTTask (below)
+    // Its done in this manner so each set (training/test) can be set-up independently and its easilly switchable in the GUI
     public class MySendMNISTTask : MyTask<MyMNISTWorld>
     {
+        protected MNIST.MNISTSetType m_setType;
+
         private int[] m_numsToSend;
         private string m_send;
 
@@ -182,7 +197,7 @@ namespace MNIST
             //if ((SimulationStep <= ExpositionTime * Owner.ImagesCnt) && (SimulationStep % ExpositionTime == 0))
             if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
             {
-                MyMNISTImage im = Owner.MNISTManager.GetNextImage(m_numsToSend);
+                MyMNISTImage im = Owner.MNISTManager.GetNextImage(m_numsToSend, m_setType);
 
                 if (Owner.BinaryPixels)
                     im.ToBinary();
@@ -204,4 +219,36 @@ namespace MNIST
             }
         }
     }
+
+    /// <summary>
+    /// Sends MNIST TRAINING image patch to the world output.
+    /// <ul>
+    /// <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output</li>
+    /// <li><b>Send Numbers</b> - All or enumeration of numbers requested on the output</li>
+    /// <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file</li>
+    /// <li><b>Sequence Ordered</b> - Sends pathes in order defined in <b>Send Numbers</b> property</li>
+    /// </ul>
+    /// </summary>
+    [Description("Send Training Data"), MyTaskInfo(OneShot = false)]
+    public class MySendTrainingMNISTTask : MySendMNISTTask
+    {
+        public MySendTrainingMNISTTask()
+            : base()
+        {
+            m_setType = MNIST.MNISTSetType.Training;
+        }
+    }
+
+    /// <summary>
+    /// Sends MNIST TEST image patch to the world output. Otherwise same to the MySendTrainingMNISTTask
+    [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
+    public class MySendTestMNISTTask : MySendMNISTTask
+    {
+        public MySendTestMNISTTask()
+            : base()
+        {
+            m_setType = MNIST.MNISTSetType.Test;
+        }
+    }
+
 }
