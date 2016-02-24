@@ -689,16 +689,12 @@ namespace GoodAI.School.GUI
 
             if (tree.SelectedNode == null)
             {
-                btnDetailsCurr.Enabled = false;
-                btnNewTask.Enabled = btnDetailsTask.Enabled = false;
+                btnNewTask.Enabled = btnDetails.Enabled = false;
                 return;
             }
 
             SchoolTreeNode selected = tree.SelectedNode.Tag as SchoolTreeNode;
             Debug.Assert(selected != null);
-
-            if (selected is CurriculumNode)
-                btnDetailsTask.Enabled = false;
 
             UpdateWindowName(null, EventArgs.Empty);
         }
@@ -970,33 +966,24 @@ namespace GoodAI.School.GUI
             AddFileContent();
         }
 
-        private void btnDetailsTask_Click(object sender, EventArgs e)
+        private void btnDetails_Click(object sender, EventArgs e)
         {
             if (tree.SelectedNode == null)
                 return;
 
-            LearningTaskNode node = tree.SelectedNode.Tag as LearningTaskNode;
-            if (node == null)
-                return;
-
-            SchoolTaskDetailsForm detailsForm = new SchoolTaskDetailsForm(node.TaskType);
-            OpenFloatingOrActivate(detailsForm, DockPanel);
-        }
-
-        private void btnDetailsCurr_Click(object sender, EventArgs e)
-        {
-            if (tree.SelectedNode == null)
-                return;
-
-            CurriculumNode curr = tree.SelectedNode.Tag as CurriculumNode;
-            if (curr == null)
+            DockContent detailsForm = null;
+            if (tree.SelectedNode.Tag is CurriculumNode)
             {
-                curr = tree.SelectedNode.Parent.Tag as CurriculumNode;
-                if (curr == null)
-                    return;
+                CurriculumNode curr = tree.SelectedNode.Tag as CurriculumNode;
+                detailsForm = new SchoolCurrDetailsForm(curr);
             }
-            SchoolCurrDetailsForm detailsForm = new SchoolCurrDetailsForm(curr);
-            OpenFloatingOrActivate(detailsForm, DockPanel);
+            else if (tree.SelectedNode.Tag is LearningTaskNode)
+            {
+                LearningTaskNode node = tree.SelectedNode.Tag as LearningTaskNode;
+                detailsForm = new SchoolTaskDetailsForm(node.TaskType);
+            }
+            if (detailsForm != null)
+                OpenFloatingOrActivate(detailsForm, DockPanel);
         }
 
         private void btnToggleCheck(object sender, EventArgs e)
