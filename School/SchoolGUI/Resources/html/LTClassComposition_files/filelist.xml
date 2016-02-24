@@ -1,5 +1,8 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTClassComposition.htm"/>
- <o:File HRef="image001.png"/>
+ <o:MainFile HRef="../LTClassComposition.html"/>
+ <o:File HRef="16550224%2016ii30_496_image001.png"
+  PublicationID="16550224 16ii30_496"/>
+ <o:File HRef="16550224%2016ii30_496_image002.png"
+  PublicationID="16550224 16ii30_496"/>
  <o:File HRef="filelist.xml"/>
 </xml>

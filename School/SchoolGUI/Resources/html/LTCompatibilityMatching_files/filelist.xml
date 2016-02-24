@@ -1,6 +1,12 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTCompatibilityMatching.htm"/>
- <o:File HRef="image001.png"/>
- <o:File HRef="image002.png"/>
+ <o:MainFile HRef="../LTCompatibilityMatching.html"/>
+ <o:File HRef="16550224%2016ii33_929_image001.png"
+  PublicationID="16550224 16ii33_929"/>
+ <o:File HRef="16550224%2016ii33_929_image002.png"
+  PublicationID="16550224 16ii33_929"/>
+ <o:File HRef="16550224%2016ii33_929_image003.png"
+  PublicationID="16550224 16ii33_929"/>
+ <o:File HRef="16550224%2016ii33_929_image004.png"
+  PublicationID="16550224 16ii33_929"/>
  <o:File HRef="filelist.xml"/>
 </xml>

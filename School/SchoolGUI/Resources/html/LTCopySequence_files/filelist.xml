@@ -1,7 +1,14 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTCopySequence.htm"/>
- <o:File HRef="image001.png"/>
- <o:File HRef="image002.png"/>
- <o:File HRef="image003.png"/>
+ <o:MainFile HRef="../LTCopySequence.html"/>
+ <o:File HRef="16550224%2016ii32_394_image001.png"
+  PublicationID="16550224 16ii32_394"/>
+ <o:File HRef="16550224%2016ii32_394_image002.png"
+  PublicationID="16550224 16ii32_394"/>
+ <o:File HRef="16550224%2016ii32_394_image003.png"
+  PublicationID="16550224 16ii32_394"/>
+ <o:File HRef="16550224%2016ii32_394_image004.png"
+  PublicationID="16550224 16ii32_394"/>
+ <o:File HRef="16550224%2016ii32_394_image005.png"
+  PublicationID="16550224 16ii32_394"/>
  <o:File HRef="filelist.xml"/>
 </xml>

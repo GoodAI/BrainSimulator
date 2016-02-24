@@ -1,5 +1,8 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTRotateAndMoveToFit.htm"/>
- <o:File HRef="image001.png"/>
+ <o:MainFile HRef="../LTRotateAndMoveToFit.html"/>
+ <o:File HRef="16550224%2016ii33_994_image001.png"
+  PublicationID="16550224 16ii33_994"/>
+ <o:File HRef="16550224%2016ii33_994_image002.png"
+  PublicationID="16550224 16ii33_994"/>
  <o:File HRef="filelist.xml"/>
 </xml>

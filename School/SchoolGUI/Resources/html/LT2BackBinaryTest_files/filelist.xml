@@ -1,8 +1,20 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LT2BackBinaryTest.htm"/>
- <o:File HRef="image001.png"/>
- <o:File HRef="image002.png"/>
- <o:File HRef="image003.png"/>
- <o:File HRef="image004.png"/>
+ <o:MainFile HRef="../LT2BackBinaryTask.html"/>
+ <o:File HRef="16550224%2016ii33_913_image001.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image002.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image003.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image004.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image005.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image006.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image007.png"
+  PublicationID="16550224 16ii33_913"/>
+ <o:File HRef="16550224%2016ii33_913_image008.png"
+  PublicationID="16550224 16ii33_913"/>
  <o:File HRef="filelist.xml"/>
 </xml>

@@ -1,8 +1,14 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTObstaclesPOW.htm"/>
- <o:File HRef="image001.png"/>
- <o:File HRef="image002.png"/>
- <o:File HRef="image003.png"/>
- <o:File HRef="image004.png"/>
+ <o:MainFile HRef="../LTObstacles.html"/>
+ <o:File HRef="16550224%2016ii32_717_image001.png"
+  PublicationID="16550224 16ii32_717"/>
+ <o:File HRef="16550224%2016ii32_717_image002.png"
+  PublicationID="16550224 16ii32_717"/>
+ <o:File HRef="16550224%2016ii32_717_image003.png"
+  PublicationID="16550224 16ii32_717"/>
+ <o:File HRef="16550224%2016ii32_717_image004.png"
+  PublicationID="16550224 16ii32_717"/>
+ <o:File HRef="16550224%2016ii32_717_image005.png"
+  PublicationID="16550224 16ii32_717"/>
  <o:File HRef="filelist.xml"/>
 </xml>

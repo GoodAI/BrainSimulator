@@ -1,7 +1,14 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTApproach.htm"/>
- <o:File HRef="image001.png"/>
- <o:File HRef="image002.png"/>
- <o:File HRef="image003.png"/>
+ <o:MainFile HRef="../LTApproach.html"/>
+ <o:File HRef="16550224%2016ii31_718_image001.png"
+  PublicationID="16550224 16ii31_718"/>
+ <o:File HRef="16550224%2016ii31_718_image002.png"
+  PublicationID="16550224 16ii31_718"/>
+ <o:File HRef="16550224%2016ii31_718_image003.png"
+  PublicationID="16550224 16ii31_718"/>
+ <o:File HRef="16550224%2016ii31_718_image004.png"
+  PublicationID="16550224 16ii31_718"/>
+ <o:File HRef="16550224%2016ii31_718_image005.png"
+  PublicationID="16550224 16ii31_718"/>
  <o:File HRef="filelist.xml"/>
 </xml>

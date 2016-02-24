@@ -1,5 +1,8 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTCompareLayouts.htm"/>
- <o:File HRef="image001.png"/>
+ <o:MainFile HRef="../LTCompareLayouts.html"/>
+ <o:File HRef="16550224%2016ii32_948_image001.png"
+  PublicationID="16550224 16ii32_948"/>
+ <o:File HRef="16550224%2016ii32_948_image002.png"
+  PublicationID="16550224 16ii32_948"/>
  <o:File HRef="filelist.xml"/>
 </xml>

@@ -1,5 +1,8 @@
 <xml xmlns:o="urn:schemas-microsoft-com:office:office">
- <o:MainFile HRef="::LTPongWithoutBricks.htm"/>
- <o:File HRef="image001.png"/>
+ <o:MainFile HRef="../LTPongWithoutBricks.html"/>
+ <o:File HRef="16550224%2016ii34_650_image001.png"
+  PublicationID="16550224 16ii34_650"/>
+ <o:File HRef="16550224%2016ii34_650_image002.png"
+  PublicationID="16550224 16ii34_650"/>
  <o:File HRef="filelist.xml"/>
 </xml>
