@@ -108,8 +108,6 @@ namespace GoodAI.School.GUI
             m_mainForm = mainForm;
 
             // here so it does not interfere with designer generated code
-            btnRun.Click += m_mainForm.runToolButton_Click;
-            btnStop.Click += m_mainForm.stopToolButton_Click;
             btnPause.Click += m_mainForm.pauseToolButton_Click;
             btnStepOver.Click += m_mainForm.stepOverToolButton_Click;
             btnDebug.Click += m_mainForm.debugToolButton_Click;
@@ -240,8 +238,8 @@ namespace GoodAI.School.GUI
             UpdateGridData();
             PrepareSimulation(null, EventArgs.Empty);
             SetObserver();
-            if (Properties.School.Default.AutorunEnabled && Data != null)
-                btnRun.PerformClick();
+            /*if (Properties.School.Default.AutorunEnabled && Data != null)
+                btnRun.PerformClick();*/
         }
 
         public void UpdateGridData()
@@ -1090,6 +1088,34 @@ namespace GoodAI.School.GUI
         private void tree_Click(object sender, EventArgs e)
         {
             uploadLearningTasks();
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            m_mainForm.runToolButton_Click(sender, e);
+            if (m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING ||
+                m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.RUNNING_STEP ||
+                m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.PAUSED)
+            {
+                disableLearningTaskPanel();
+            }
+        }
+
+
+        private void disableLearningTaskPanel()
+        {
+            splitContainer3.Panel1.Enabled = false;
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            m_mainForm.stopToolButton_Click(sender, e);
+            enableLearningTaskPanel();
+        }
+
+        private void enableLearningTaskPanel()
+        {
+            splitContainer3.Panel1.Enabled = true;
         }
 
         /*
