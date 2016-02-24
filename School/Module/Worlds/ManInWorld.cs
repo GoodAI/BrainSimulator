@@ -207,8 +207,8 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void Cleanup()
         {
-            Dispose();
             base.Cleanup();
+            Dispose();
         }
 
         public override void Dispose()
@@ -308,7 +308,7 @@ namespace GoodAI.Modules.School.Worlds
             GameObject agent = Agent;
             if (agent == null)
             {
-                return new PointF(Viewport.Width / 2, Viewport.Height / 2);
+                return new PointF(Scene.Width / 2, Scene.Height / 2);
             }
             return new PointF(agent.Position.X + agent.Size.Width / 2, agent.Position.Y + agent.Size.Height / 2);
         }
@@ -324,7 +324,7 @@ namespace GoodAI.Modules.School.Worlds
         /// <returns></returns>
         public RectangleF GetPowGeometry()
         {
-            SizeF halfPowSize = new SizeF(Pow.Width / 2, Pow.Height / 2);
+            SizeF halfPowSize = new SizeF(Pow.Width / 2f, Pow.Height / 2f);
             return new RectangleF(GetPowCenter() - halfPowSize, Viewport);
         }
 
@@ -337,8 +337,8 @@ namespace GoodAI.Modules.School.Worlds
         public PointF RandomPositionInsideRectangle(Random rndGen, SizeF size, RectangleF rectangle)
         {
             return new PointF(
-                rndGen.Next() * (rectangle.Width - size.Width) + rectangle.X,
-                rndGen.Next() * (rectangle.Height - size.Height) + rectangle.Y);
+                (float)rndGen.NextDouble() * (rectangle.Width - size.Width) + rectangle.X,
+                (float)rndGen.NextDouble() * (rectangle.Height - size.Height) + rectangle.Y);
         }
 
         /// <summary>

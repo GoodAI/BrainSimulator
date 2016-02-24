@@ -8,7 +8,7 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("Categorize to arbitrary sets")]
-    public class LTClassComposition : AbstractLearningTask<ManInWorld>
+    public class LTClassComposition : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1); //check needed;
 
@@ -66,64 +66,55 @@ namespace GoodAI.Modules.School.LearningTasks
                 negativeExamplesRed.Add(m_negativeExamples[i]);
             }
 
-            if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
+            WrappedWorld.CreateNonVisibleAgent();
+
+            SizeF size;
+            float standardSideSize = WrappedWorld.Scene.Width / 10;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
             {
-                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
-
-                world.CreateNonVisibleAgent();
-
-                SizeF size;
-                float standardSideSize = WrappedWorld.Scene.Width / 10;
-                if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
-                {
-                    float a = (float)(standardSideSize + m_rndGen.NextDouble() * standardSideSize);
-                    size = new SizeF(a, a);
-                }
-                else
-                {
-                    size = new SizeF(standardSideSize, standardSideSize);
-                }
-
-                Color color;
-                if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1.0f)
-                {
-                    color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
-                }
-                else
-                {
-                    color = Color.White;
-                }
-
-                PointF position;
-                if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
-                {
-                    position = world.RandomPositionInsideViewport(m_rndGen, size);
-                }
-                else
-                {
-                    position = world.Agent.GetGeometry().Location;
-                }
-
-                m_positiveExamplePlaced = LearningTaskHelpers.FlipCoin(m_rndGen);
-
-                Shape.Shapes shape;
-                if (m_positiveExamplePlaced)
-                {
-                    int randShapePointer = m_rndGen.Next(0, positiveExamplesRed.Count);
-                    shape = positiveExamplesRed[randShapePointer];
-                }
-                else
-                {
-                    int randShapePointer = m_rndGen.Next(0, negativeExamplesRed.Count);
-                    shape = negativeExamplesRed[randShapePointer];
-                }
-
-                WrappedWorld.CreateShape(shape, color, position, size);
+                float a = (float)(standardSideSize + m_rndGen.NextDouble() * standardSideSize);
+                size = new SizeF(a, a);
             }
             else
             {
-                throw new NotImplementedException();
+                size = new SizeF(standardSideSize, standardSideSize);
             }
+
+            Color color;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1.0f)
+            {
+                color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
+            }
+            else
+            {
+                color = Color.White;
+            }
+
+            PointF position;
+            if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
+            {
+                position = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size);
+            }
+            else
+            {
+                position = WrappedWorld.Agent.GetGeometry().Location;
+            }
+
+            m_positiveExamplePlaced = LearningTaskHelpers.FlipCoin(m_rndGen);
+
+            Shape.Shapes shape;
+            if (m_positiveExamplePlaced)
+            {
+                int randShapePointer = m_rndGen.Next(0, positiveExamplesRed.Count);
+                shape = positiveExamplesRed[randShapePointer];
+            }
+            else
+            {
+                int randShapePointer = m_rndGen.Next(0, negativeExamplesRed.Count);
+                shape = negativeExamplesRed[randShapePointer];
+            }
+
+            WrappedWorld.CreateShape(shape, color, position, size);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)

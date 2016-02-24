@@ -84,11 +84,7 @@ namespace GoodAI.Modules.School.Common
         public Color ColorMask
         {
             get { return m_colorMask; }
-            set
-            {
-                IsBitmapAsMask = true;
-                m_colorMask = value;
-            }
+            set { m_colorMask = value; }
         }
 
         public string BitmapPath;

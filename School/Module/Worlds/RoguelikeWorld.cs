@@ -45,7 +45,7 @@ namespace GoodAI.Modules.School.Worlds
                 ? RogueAgent.GetDefaultSize()
                 : Agent.Size;
 
-            return new PointF(Scene.Width / 2 - agentPos.Width / 2, Scene.Height / 2 - agentPos.Height / 2);
+            return new PointF((Scene.Width - agentPos.Width) / 2, (Scene.Height - agentPos.Height) / 2);
         }
 
         public override Grid GetGrid()
