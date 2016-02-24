@@ -341,6 +341,9 @@ namespace GoodAI.School.GUI
             m_stepOffset = 0;
             m_currentRow = -1;
             Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; x.Status = TrainingResult.None; });
+
+            string xmlResult = m_serializer.Serialize(m_design);
+            m_uploadedRepresentation = xmlResult;
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -376,21 +379,29 @@ namespace GoodAI.School.GUI
             {
                 case Keys.F5:
                     {
+                        if (!m_mainForm.runToolButton.Enabled)
+                            return;
                         btnRun.PerformClick();
                         break;
                     }
                 case Keys.F7:
                     {
+                        if (!m_mainForm.pauseToolButton.Enabled)
+                            return;
                         btnPause.PerformClick();
                         break;
                     }
                 case Keys.F8:
                     {
+                        if (!m_mainForm.stopToolButton.Enabled)
+                            return;
                         btnStop.PerformClick();
                         break;
                     }
                 case Keys.F10:
                     {
+                        if (!m_mainForm.stepOverToolButton.Enabled)
+                            return;
                         btnStepOver.PerformClick();
                         break;
                     }
@@ -398,6 +409,10 @@ namespace GoodAI.School.GUI
                     {
                         DeleteNodes(sender, null);
                         break;
+                    }
+                default:
+                    {
+                        return;
                     }
             }
             e.Handled = true;
@@ -568,6 +583,7 @@ namespace GoodAI.School.GUI
             UpdateWorldHandlers(school, school);
 
             UpdateWindowName(sender, e);
+            UpdateUploadState(sender, e);
         }
 
         private void showRunPanelStripButton_Click(object sender, EventArgs e)
@@ -590,6 +606,7 @@ namespace GoodAI.School.GUI
         private YAXSerializer m_serializer;
         private TreeModel m_model;
         private string m_lastOpenedFile;
+        private string m_uploadedRepresentation;
         private string m_savedRepresentation;
         private string m_currentFile;
 
@@ -620,12 +637,35 @@ namespace GoodAI.School.GUI
                 Text += '*';
         }
 
+
+        private void UpdateUploadState(object sender, EventArgs e)
+        {
+            if (!Visible)
+            {
+                return;
+            }
+
+            if (!IsProjectUploaded())
+            {
+                uploadLearningTasks();
+            }
+
+        }
+
         private bool IsWorkspaceSaved()
         {
             if (m_savedRepresentation == null)
                 return false;
             string currentRepresentation = m_serializer.Serialize(m_design);
             return m_savedRepresentation.Equals(currentRepresentation);
+        }
+
+        private bool IsProjectUploaded()
+        {
+            if (m_uploadedRepresentation == null)
+                return false;
+            string currentRepresentation = m_serializer.Serialize(m_design);
+            return m_uploadedRepresentation.Equals(currentRepresentation);
         }
 
         #region UI
@@ -695,6 +735,7 @@ namespace GoodAI.School.GUI
             Debug.Assert(selected != null);
 
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
         }
 
         #endregion UI
@@ -787,6 +828,7 @@ namespace GoodAI.School.GUI
 
             tree.EndUpdate();
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
         }
 
         #endregion DragDrop
@@ -800,8 +842,10 @@ namespace GoodAI.School.GUI
             m_currentFile = null;
             m_lastOpenedFile = null;
             m_savedRepresentation = null;
+            m_uploadedRepresentation = null;
             m_model.Nodes.Clear();
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
         }
 
         private void btnNewCurr_Click(object sender, EventArgs e)
@@ -868,6 +912,7 @@ namespace GoodAI.School.GUI
             }
 
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
         }
 
         private void DeleteNodes(object sender, EventArgs e)
@@ -912,22 +957,15 @@ namespace GoodAI.School.GUI
                 Select(x => x as LearningTaskNode).
                 Where(x => x.Enabled == true);
 
-            if (ltNodes.Count() <= 0)
-            {
-                MessageBox.Show("The simulation cannot start because no active learning tasks were found, add at least one learning task", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            foreach (LearningTaskNode ltNode in ltNodes)
+                data.Add(ltNode);
+            Data = data;
+            Design = m_design;
+            /*if (activeCurricula.Count() == 1)
+                RunName = activeCurricula.First().Text;
             else
-            {
-                foreach (LearningTaskNode ltNode in ltNodes)
-                    data.Add(ltNode);
-                Data = data;
-                Design = m_design;
-                if (activeCurricula.Count() == 1)
-                    RunName = activeCurricula.First().Text;
-                else
-                    RunName = Path.GetFileNameWithoutExtension(m_currentFile);
-                Ready();
-            }
+                RunName = Path.GetFileNameWithoutExtension(m_currentFile);*/
+            Ready();
         }
 
         private bool AddFileContent(bool clearWorkspace = false)
@@ -1002,6 +1040,7 @@ namespace GoodAI.School.GUI
             m_savedRepresentation = xmlResult;
             m_currentFile = path;
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
         }
 
         private void SaveProjectAs(object sender, EventArgs e)
@@ -1013,6 +1052,7 @@ namespace GoodAI.School.GUI
             Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
             Properties.School.Default.Save();
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
         }
 
         private bool LoadCurriculum(string filePath)
@@ -1047,6 +1087,7 @@ namespace GoodAI.School.GUI
             m_savedRepresentation = xmlCurr;
             m_currentFile = filePath;
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateUploadState(null, EventArgs.Empty);
             UpdateButtonsSR();
             return false;
         }
