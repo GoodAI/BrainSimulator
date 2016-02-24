@@ -908,11 +908,6 @@ namespace GoodAI.School.GUI
             Properties.School.Default.Save();
         }
 
-        private void btnRun_Click(object sender, EventArgs e)
-        {
-            uploadLearningTasks();
-        }
-
         private void uploadLearningTasks()
         {
             //OpenFloatingOrActivate(RunView, DockPanel);
