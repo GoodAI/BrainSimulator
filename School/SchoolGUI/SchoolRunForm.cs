@@ -243,6 +243,8 @@ namespace GoodAI.School.GUI
                 RemoveWorldHandlers(oldWorld as SchoolWorld);
             if (newWorld != null)
                 AddWorldHandlers(newWorld as SchoolWorld);
+
+            SetObserver();
         }
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
@@ -370,6 +372,8 @@ namespace GoodAI.School.GUI
                 {
                     m_observer.Show();
                     observerDockPanel.Show();
+
+                    m_observer.Observer.GenericTarget = m_school.Visual;
                 }
             }
             else
