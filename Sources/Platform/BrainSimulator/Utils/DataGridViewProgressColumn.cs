@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-// move to BrainSim utils?
 namespace GoodAI.BrainSimulator.Utils
 {
     public class DataGridViewProgressColumn : DataGridViewImageColumn
@@ -16,25 +15,18 @@ namespace GoodAI.BrainSimulator.Utils
 
     public class DataGridViewProgressCell : DataGridViewImageCell
     {
-        // Used to make custom cell consistent with a DataGridViewImageCell
-        static Image emptyImage;
-        static DataGridViewProgressCell()
-        {
-            emptyImage = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        }
         public DataGridViewProgressCell()
         {
             this.ValueType = typeof(int);
         }
-        // Method required to make the Progress Cell consistent with the default Image Cell.
-        // The default Image Cell assumes an Image as a value, although the value of the Progress Cell is an int.
+
         protected override object GetFormattedValue(object value,
                             int rowIndex, ref DataGridViewCellStyle cellStyle,
                             TypeConverter valueTypeConverter,
                             TypeConverter formattedValueTypeConverter,
                             DataGridViewDataErrorContexts context)
         {
-            return emptyImage;
+            return (int)value;
         }
 
         protected override void Paint(System.Drawing.Graphics g, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
