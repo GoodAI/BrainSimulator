@@ -366,7 +366,7 @@ namespace GoodAI.School.GUI
                 else
                     e.Value = typeValue.Name;
             }
-            else if (column == statusDataGridViewTextBoxColumn1)
+            else if (column == statusDataGridViewTextBoxColumn)
             {
                 TrainingResult result = (TrainingResult)e.Value;
                 DescriptionAttribute displayNameAtt = result.GetType().GetMember(result.ToString())[0].GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault() as DescriptionAttribute;
@@ -589,11 +589,6 @@ namespace GoodAI.School.GUI
 
             UpdateWindowName(sender, e);
             UpdateUploadState(sender, e);
-        }
-
-        private void showRunPanelStripButton_Click(object sender, EventArgs e)
-        {
-            splitContainer3.Panel2Collapsed = (sender as ToolStripButton).Checked;
         }
 
 
