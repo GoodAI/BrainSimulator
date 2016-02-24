@@ -223,7 +223,11 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolWorld School { get; set; }
         public MyWorkingNode World { get { return this; } }
-        public MyTask WorldRenderTask { get { return RenderGLWorldTask; } }
+
+        public MyTask GetWorldRenderTask()
+        {
+            return RenderGLWorldTask;
+        }
 
         public void InitAdapterMemory()
         {

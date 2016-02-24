@@ -354,9 +354,9 @@ namespace GoodAI.Modules.School.Worlds
             blocks.Add(thisWorldTasks.First());
             blocks.Add(AdapterInputStep);
             var worldPlan = executionPlanner.CreateNodeExecutionPlan(CurrentWorld.World, false);
-            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.WorldRenderTask));
+            blocks.AddRange(worldPlan.Children.Where(x => x != CurrentWorld.GetWorldRenderTask()));
             blocks.Add(LearningStep);
-            blocks.Add(CurrentWorld.WorldRenderTask);
+            blocks.Add(CurrentWorld.GetWorldRenderTask());
             blocks.Add(AdapterOutputStep);
             blocks.Add(thisWorldTasks.Last());
 

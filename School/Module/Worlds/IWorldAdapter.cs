@@ -12,7 +12,9 @@ namespace GoodAI.Modules.School.Worlds
     {
         SchoolWorld School { set; }
         MyWorkingNode World { get; }
-        MyTask WorldRenderTask { get; }
+
+        // Must be a method; BS would try to instantiate it if it were a property
+        MyTask GetWorldRenderTask();
 
         void InitAdapterMemory();
         void InitWorldInputs(int nGPU);

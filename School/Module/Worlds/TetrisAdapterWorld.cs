@@ -43,7 +43,11 @@ namespace GoodAI.School.Worlds
 
         public SchoolWorld School { get; set; }
         public MyWorkingNode World { get { return this; } }
-        public MyTask WorldRenderTask { get { return RenderGameTask; } }
+
+        public MyTask GetWorldRenderTask()
+        {
+            return RenderGameTask;
+        }
 
         public override void UpdateMemoryBlocks()
         {
