@@ -1006,11 +1006,13 @@ namespace GoodAI.School.GUI
             {
                 CurriculumNode curr = tree.SelectedNode.Tag as CurriculumNode;
                 detailsForm = new SchoolCurrDetailsForm(curr);
+                detailsForm.Text = curr.Text;
             }
             else if (tree.SelectedNode.Tag is LearningTaskNode)
             {
                 LearningTaskNode node = tree.SelectedNode.Tag as LearningTaskNode;
                 detailsForm = new SchoolTaskDetailsForm(node.TaskType);
+                detailsForm.Text = node.Text;
             }
             if (detailsForm != null)
                 OpenFloatingOrActivate(detailsForm, DockPanel);
