@@ -2,6 +2,12 @@
 <Configuration RootNamespace="GoodAI.Modules">  
   <KnownNodes>
 
+    <Node type="GoodAI.Modules.Vision.MaskCreationNode" CanBeAdded="true" BigIcon="mask_big.png" SmallIcon="mask.png">
+      <Label>Transformations</Label>
+      <Label>Vision</Label>
+    </Node>
+
+
     <Node type="GoodAI.Modules.Transforms.MyFilter2D" CanBeAdded="true" BigIcon="transform_big.png" SmallIcon="transform.png">
       <Label>Vision</Label>
     </Node>

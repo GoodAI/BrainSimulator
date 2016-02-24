@@ -309,6 +309,7 @@
     <Compile Include="Transforms\MyFilter2D.cs" />
     <Compile Include="Transforms\MyHash.cs" />
     <Compile Include="Transforms\MyResize2D.cs" />
+    <Compile Include="Vision\MaskCreationNode.cs" />
     <Compile Include="Transforms\VectorOps.cs" />
     <Compile Include="Transforms\VectorOpsNode.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
@@ -491,6 +492,8 @@
     <EmbeddedResource Include="res\textInput_big.png" />
     <EmbeddedResource Include="res\textOutput.png" />
     <EmbeddedResource Include="res\textOutput_big.png" />
+    <EmbeddedResource Include="res\mask.png" />
+    <EmbeddedResource Include="res\mask_big.png" />
     <Content Include="res\mastermindworld\bull.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
