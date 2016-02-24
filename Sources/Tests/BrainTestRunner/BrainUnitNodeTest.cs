@@ -75,6 +75,9 @@ namespace GoodAI.Tests.BrainTestRunner
                 
                 PropertyInfo inspectIntervalProperty = m_brainUnitNode.GetType().GetProperty("InspectInterval", typeof(int));
                 InspectInterval = (int) inspectIntervalProperty.GetValue(m_brainUnitNode);
+                
+                PropertyInfo expectedToFailProperty = m_brainUnitNode.GetType().GetProperty("ExpectedToFail", typeof(bool));
+                ExpectedToFail = (bool) expectedToFailProperty.GetValue(m_brainUnitNode);
             }
             catch (Exception e)
             {

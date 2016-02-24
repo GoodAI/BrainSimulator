@@ -10,6 +10,7 @@ namespace GoodAI.Testing.BrainUnit
     {
         public string BrainFileName { get; protected set; }
         public int MaxStepCount { get; protected set; }
+        public bool ExpectedToFail { get; protected set; }
 
         public virtual int InspectInterval
         {
