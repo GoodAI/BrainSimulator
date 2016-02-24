@@ -93,6 +93,9 @@
     <Compile Include="SchoolRunForm.Designer.cs">
       <DependentUpon>SchoolRunForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SchoolRunForm_Ops.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="SchoolTaskDetailsForm.cs">
       <SubType>Form</SubType>
     </Compile>

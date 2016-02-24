@@ -2,8 +2,6 @@
 using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Execution;
-using GoodAI.Core.Observers;
-using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
@@ -15,135 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using YAXLib;
 
 namespace GoodAI.School.GUI
 {
-
     [BrainSimUIExtension]
     public partial class SchoolRunForm : DockContent
     {
-        public List<LearningTaskNode> Data;
-        public List<LevelNode> Levels;
-        public List<List<AttributeNode>> Attributes;
-        public List<List<int>> AttributesChange;
-        public PlanDesign Design;
-
-        private List<DataGridView> LevelGrids;
-
-        private readonly MainForm m_mainForm;
-        private string m_runName;
-        private ObserverForm m_observer;
-
-        private int m_currentRow = -1;
-        private int m_stepOffset = 0;
-        private Stopwatch m_currentLtStopwatch;
-
-        private string m_autosaveFilePath;
-
-        private bool m_showObserver { get { return btnObserver.Checked; } }
-        private bool m_emulateSuccess
-        {
-            set
-            {
-                if (m_school != null)
-                    m_school.EmulatedUnitSuccessProbability = value ? 1f : 0f;
-            }
-        }
-
-        private SchoolWorld m_school
-        {
-            get
-            {
-                return m_mainForm.Project.World as SchoolWorld;
-            }
-        }
-
-        public string RunName
-        {
-            get { return m_runName; }
-            set
-            {
-                m_runName = value;
-
-                Text = String.IsNullOrEmpty(m_runName) ? "School run" : "School run - " + m_runName;
-            }
-        }
-
-        private LearningTaskNode CurrentTask
-        {
-            get
-            {
-                if (m_currentRow < 0 || m_currentRow >= Data.Count)
-                    return null;
-                return Data.ElementAt(m_currentRow);
-            }
-        }
-
-        private IEnumerable<CurriculumNode> ActiveCurricula
-        {
-            get
-            {
-                return m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).Where(x => x.Enabled == true);
-            }
-        }
-
-        private string CurrentProjectName
-        {
-            get
-            {
-                return ActiveCurricula.Count() == 1 ? ActiveCurricula.First().Text : Path.GetFileNameWithoutExtension(m_currentFile);
-            }
-        }
-
-
-        public SchoolRunForm(MainForm mainForm)
-        {
-            // school main form //
-
-            m_serializer = new YAXSerializer(typeof(PlanDesign));
-            m_mainForm = mainForm;
-            //RunView = new SchoolRunForm(m_mainForm);
-
-            InitializeComponent();
-
-            m_model = new TreeModel();
-            tree.Model = m_model;
-            tree.Refresh();
-
-            btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
-            m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
-            if (LoadCurriculum(m_lastOpenedFile))
-                saveFileDialog1.FileName = m_lastOpenedFile;
-
-            UpdateButtonsSR();
-
-
-            // school run form //
-
-            m_mainForm = mainForm;
-
-            // here so it does not interfere with designer generated code
-            btnRun.Click += m_mainForm.runToolButton_Click;
-            btnStop.Click += m_mainForm.stopToolButton_Click;
-            btnPause.Click += m_mainForm.pauseToolButton_Click;
-            btnStepOver.Click += m_mainForm.stepOverToolButton_Click;
-            btnDebug.Click += m_mainForm.debugToolButton_Click;
-
-            m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
-            m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
-            m_mainForm.WorldChanged += m_mainForm_WorldChanged;
-            m_mainForm.WorldChanged += SelectSchoolWorld;
-
-            UpdateButtons();
-        }
-
-        private string GetAutosaveFilename()
-        {
-            return CurrentProjectName + DateTime.Now.ToString("yyyy-MM-ddTHHmmss");
-        }
-
-        void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
+        private void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
             if (m_currentLtStopwatch != null)
                 if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
@@ -181,7 +57,7 @@ namespace GoodAI.School.GUI
             UpdateButtons();
         }
 
-        void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
+        private void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
         {
             UpdateWorldHandlers(e.OldWorld as SchoolWorld, e.NewWorld as SchoolWorld);
         }
@@ -207,44 +83,6 @@ namespace GoodAI.School.GUI
                 if (runningTask != null && CurrentTask != null)
                     UpdateTaskData(runningTask);
             }));
-        }
-
-        private void AddWorldHandlers(SchoolWorld world)
-        {
-            if (world == null)
-                return;
-            world.CurriculumStarting += PrepareSimulation;
-            world.LearningTaskNew += GoToNextTask;
-            world.LearningTaskNewLevel += UpdateLTLevel;
-            world.LearningTaskFinished += LearningTaskFinished;
-            world.TrainingUnitUpdated += UpdateTUStatus;
-            world.TrainingUnitFinished += UpdateTUStatus;
-            world.TrainingUnitFinished += UpdateTrainingUnitNumber;
-        }
-
-        private void RemoveWorldHandlers(SchoolWorld world)
-        {
-            if (world == null)
-                return;
-            world.CurriculumStarting -= PrepareSimulation;
-            world.LearningTaskNew -= GoToNextTask;
-            world.LearningTaskNewLevel -= UpdateLTLevel;
-            world.LearningTaskFinished -= LearningTaskFinished;
-            world.TrainingUnitUpdated -= UpdateTUStatus;
-            world.TrainingUnitFinished -= UpdateTUStatus;
-            world.TrainingUnitFinished -= UpdateTrainingUnitNumber;
-        }
-
-        private void UpdateWorldHandlers(SchoolWorld oldWorld, SchoolWorld newWorld)
-        {
-            if (!Visible)
-                return;
-            if (oldWorld != null)
-                RemoveWorldHandlers(oldWorld as SchoolWorld);
-            if (newWorld != null)
-                AddWorldHandlers(newWorld as SchoolWorld);
-
-            SetObserver();
         }
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
@@ -292,41 +130,6 @@ namespace GoodAI.School.GUI
             ));
         }
 
-        private void UpdateButtons()
-        {
-            btnRun.Enabled = m_mainForm.runToolButton.Enabled;
-            btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
-            btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
-        }
-
-        public void Ready()
-        {
-            UpdateGridData();
-            PrepareSimulation(null, EventArgs.Empty);
-            SetObserver();
-            /*if (Properties.School.Default.AutorunEnabled && Data != null)
-                btnRun.PerformClick();*/
-        }
-
-        public void UpdateGridData()
-        {
-            dataGridView1.DataSource = Data;
-            dataGridView1.Invalidate();
-        }
-
-        private void UpdateTaskData(ILearningTask runningTask)
-        {
-            if (CurrentTask == null)
-                return;
-            CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
-            CurrentTask.Progress = (int)runningTask.Progress;
-            TimeSpan diff = m_currentLtStopwatch.Elapsed;
-            CurrentTask.Time = (float)Math.Round(diff.TotalSeconds, 2);
-            CurrentTask.Status = m_school.TaskResult;
-
-            UpdateGridData();
-        }
-
         private void GoToNextTask(object sender, SchoolEventArgs e)
         {
             m_currentRow++;
@@ -335,69 +138,6 @@ namespace GoodAI.School.GUI
             m_currentLtStopwatch.Start();
 
             HighlightCurrentTask();
-        }
-
-        private void SetObserver()
-        {
-            if (m_showObserver)
-            {
-                if (m_observer == null)
-                {
-                    try
-                    {
-                        MyMemoryBlockObserver observer = new MyMemoryBlockObserver();
-                        observer.Target = m_school.Visual;
-
-                        if (observer == null)
-                            throw new InvalidOperationException("No observer was initialized");
-
-                        m_observer = new ObserverForm(m_mainForm, observer, m_school);
-
-                        m_observer.TopLevel = false;
-                        observerDockPanel.Controls.Add(m_observer);
-
-                        m_observer.CloseButtonVisible = false;
-                        m_observer.MaximizeBox = false;
-                        m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
-                        m_observer.Location = new System.Drawing.Point(-8, -30);
-
-                        m_observer.Show();
-                    }
-                    catch (Exception e)
-                    {
-                        MyLog.ERROR.WriteLine("Error creating observer: " + e.Message);
-                    }
-                }
-                else
-                {
-                    m_observer.Show();
-                    observerDockPanel.Show();
-
-                    m_observer.Observer.GenericTarget = m_school.Visual;
-                }
-            }
-            else
-            {
-                if (m_observer != null)
-                {
-                    observerDockPanel.Hide();
-                }
-            }
-        }
-
-        private void HighlightCurrentTask()
-        {
-            DataGridViewCellStyle defaultStyle = new DataGridViewCellStyle();
-            DataGridViewCellStyle highlightStyle = new DataGridViewCellStyle();
-            highlightStyle.BackColor = Color.PaleGreen;
-
-            dataGridView1.Rows[m_currentRow].Selected = true;
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-                foreach (DataGridViewCell cell in row.Cells)
-                    if (row.Index == m_currentRow)
-                        cell.Style = highlightStyle;
-                    else
-                        cell.Style = defaultStyle;
         }
 
         private void PrepareSimulation(object sender, EventArgs e)
@@ -491,28 +231,6 @@ namespace GoodAI.School.GUI
             e.Handled = true;
         }
 
-        private LearningTaskNode SelectedLearningTask
-        {
-            get
-            {
-                int dataIndex;
-                if (dataGridView1.SelectedRows != null && dataGridView1.SelectedRows.Count > 0)
-                {
-                    DataGridViewRow row = dataGridView1.SelectedRows[0];
-                    dataIndex = row.Index;
-                }
-                else
-                {
-                    dataIndex = 0;
-                }
-
-                if (Data.Count > dataIndex)
-                    return Data[dataIndex];
-
-                return null;
-            }
-        }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             Invoke((MethodInvoker)(() =>
@@ -564,7 +282,6 @@ namespace GoodAI.School.GUI
 
                     Attributes[i].Sort(Comparer<AttributeNode>.Create((x, y) => x.Name.CompareTo(y.Name)));
                     dgv.DataSource = Attributes[i];
-
 
                     dgv.Columns[0].Width = 249;
                     dgv.Columns[0].ReadOnly = true;
@@ -667,7 +384,6 @@ namespace GoodAI.School.GUI
             UpdateUploadState(sender, e);
         }
 
-
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
@@ -675,28 +391,6 @@ namespace GoodAI.School.GUI
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
-
-
-        private const string DEFAULT_FORM_NAME = "School for AI";
-
-        private YAXSerializer m_serializer;
-        private TreeModel m_model;
-        private string m_lastOpenedFile;
-        private string m_uploadedRepresentation;
-        private string m_savedRepresentation;
-        private string m_currentFile;
-        private int m_numberOfSA;
-
-        private PlanDesign m_design
-        {
-            get
-            {
-                return new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
-            }
-        }
-
-        public LearningTaskSelectionForm AddTaskView { get; private set; }
-        //public SchoolRunForm RunView { get; private set; }
 
         private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
 
@@ -714,7 +408,6 @@ namespace GoodAI.School.GUI
                 Text += '*';
         }
 
-
         private void UpdateUploadState(object sender, EventArgs e)
         {
             if (!Visible)
@@ -726,96 +419,7 @@ namespace GoodAI.School.GUI
             {
                 uploadLearningTasks();
             }
-
         }
-
-        private bool IsWorkspaceSaved()
-        {
-            if (m_savedRepresentation == null)
-                return false;
-            string currentRepresentation = m_serializer.Serialize(m_design);
-            return m_savedRepresentation.Equals(currentRepresentation);
-        }
-
-        private bool IsProjectUploaded()
-        {
-            if (m_uploadedRepresentation == null)
-                return false;
-            string currentRepresentation = m_serializer.Serialize(m_design);
-            return m_uploadedRepresentation.Equals(currentRepresentation);
-        }
-
-        #region UI
-
-        private void ApplyToAll(Control parent, Action<Control> apply)
-        {
-            foreach (Control control in parent.Controls)
-            {
-                if (control.HasChildren)
-                    ApplyToAll(control, apply);
-                apply(control);
-            }
-        }
-
-        private void SetButtonsEnabled(Control control, bool value)
-        {
-            Action<Control> setBtns = (x) =>
-            {
-                Button b = x as Button;
-                if (b != null)
-                    b.Enabled = value;
-            };
-            ApplyToAll(control, setBtns);
-        }
-
-        private void SetToolstripButtonsEnabled(Control control, bool value)
-        {
-            ToolStrip tools = control as ToolStrip;
-            if (tools != null)
-                foreach (ToolStripItem item in tools.Items)
-                    if (item as ToolStripButton != null)
-                        item.Enabled = value;
-        }
-
-        private void DisableButtons(Control control)
-        {
-            SetButtonsEnabled(control, false);
-            SetToolstripButtonsEnabled(control, false);
-        }
-
-        private void EnableButtons(Control control)
-        {
-            SetButtonsEnabled(control, true);
-        }
-
-        private void EnableToolstripButtons(ToolStrip toolstrip)
-        {
-            SetToolstripButtonsEnabled(toolstrip, true);
-        }
-
-        private void UpdateButtonsSR()
-        {
-            EnableButtons(this);
-            EnableToolstripButtons(toolStrip2);
-
-
-            if (!tree.AllNodes.Any())
-                btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
-
-            if (tree.SelectedNode == null)
-            {
-                btnNewTask.Enabled = btnDetails.Enabled = false;
-                return;
-            }
-
-            SchoolTreeNode selected = tree.SelectedNode.Tag as SchoolTreeNode;
-            Debug.Assert(selected != null);
-
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
-        }
-
-        #endregion UI
 
         #region DragDrop
 
@@ -998,7 +602,8 @@ namespace GoodAI.School.GUI
 
         private void DeleteNodes(object sender, EventArgs e)
         {
-            // Walking through the nodes backwards. That way the index doesn't increase past the node size
+            // Walking through the nodes backwards. That way the index doesn't increase past the
+            // node size
             for (int i = tree.SelectedNodes.Count - 1; i >= 0; i--)
             {
                 // After 1/many nodes are deleted, select the node that was after it/them
@@ -1037,32 +642,6 @@ namespace GoodAI.School.GUI
 
             Properties.School.Default.AutosaveFolder = folderBrowserAutosave.SelectedPath;
             Properties.School.Default.Save();
-        }
-
-        private void uploadLearningTasks()
-        {
-            List<LearningTaskNode> data = new List<LearningTaskNode>();
-
-            IEnumerable<LearningTaskNode> ltNodes = ActiveCurricula.
-                SelectMany(x => (x as CurriculumNode).Nodes).
-                Select(x => x as LearningTaskNode).
-                Where(x => x.Enabled == true);
-
-            foreach (LearningTaskNode ltNode in ltNodes)
-                data.Add(ltNode);
-            Data = data;
-            Design = m_design;
-            Ready();
-        }
-
-        private bool AddFileContent(bool clearWorkspace = false)
-        {
-            if (openFileDialog1.ShowDialog() != DialogResult.OK)
-                return false;
-            if (clearWorkspace)
-                m_model.Nodes.Clear();
-            LoadCurriculum(openFileDialog1.FileName);
-            return true;
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -1119,19 +698,6 @@ namespace GoodAI.School.GUI
 
         #endregion Button clicks
 
-        #region (De)serialization
-
-        private void SaveProject(string path)
-        {
-            string xmlResult = m_serializer.Serialize(m_design);
-            File.WriteAllText(path, xmlResult);
-            MyLog.Writer.WriteLine(MyLogLevel.INFO, "School project saved to: " + path);
-            m_savedRepresentation = xmlResult;
-            m_currentFile = path;
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
-        }
-
         private void SaveProjectAs(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
@@ -1143,45 +709,6 @@ namespace GoodAI.School.GUI
             UpdateWindowName(null, EventArgs.Empty);
             UpdateUploadState(null, EventArgs.Empty);
         }
-
-        private bool LoadCurriculum(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-                return false;
-
-            string xmlCurr;
-            try { xmlCurr = File.ReadAllText(filePath); }
-            catch (IOException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
-                return false;
-            }
-
-            try
-            {
-                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
-
-                foreach (CurriculumNode curr in currs)
-                    m_model.Nodes.Add(curr);
-            }
-            catch (YAXException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
-                return false;
-            }
-
-            Properties.School.Default.LastOpenedFile = filePath;
-            Properties.School.Default.Save();
-            m_savedRepresentation = xmlCurr;
-            m_currentFile = filePath;
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
-            UpdateButtonsSR();
-            return false;
-        }
-
-        #endregion (De)serialization
 
         // almost same as Mainform.OpenFloatingOrActivate - refactor?
         private void OpenFloatingOrActivate(DockContent view, DockPanel panel)
@@ -1214,34 +741,6 @@ namespace GoodAI.School.GUI
         private void tree_Click(object sender, EventArgs e)
         {
             UpdateButtonsSR();
-        }
-
-        private void disableLearningTaskPanel()
-        {
-            splitContainer3.Panel1.Enabled = false;
-        }
-
-        private void enableLearningTaskPanel()
-        {
-            splitContainer3.Panel1.Enabled = true;
-        }
-
-        private void ExportDataGridViewData(string filename, TextDataFormat format = TextDataFormat.CommaSeparatedValue)
-        {
-            IDataObject objectSave = Clipboard.GetDataObject();
-            bool multiSelectAllowed = dataGridView1.MultiSelect;
-            DataGridViewClipboardCopyMode copyMode = dataGridView1.ClipboardCopyMode;
-
-            dataGridView1.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
-            dataGridView1.MultiSelect = true;
-            dataGridView1.SelectAll();
-            Clipboard.SetDataObject(dataGridView1.GetClipboardContent());
-            File.WriteAllText(filename, Clipboard.GetText(format));
-
-            dataGridView1.MultiSelect = multiSelectAllowed;
-            dataGridView1.ClipboardCopyMode = copyMode;
-            if (objectSave != null)
-                Clipboard.SetDataObject(objectSave);
         }
 
         private void btnSaveResults_Click(object sender, EventArgs e)
