@@ -13,6 +13,11 @@ namespace GoodAI.School.GUI
 
     public class CurriculumNode : Node
     {
+        public CurriculumNode()
+        {
+            IsChecked = true;
+        }
+
         public string Description { get; set; }
     }
 
@@ -45,6 +50,7 @@ namespace GoodAI.School.GUI
         {
             TaskType = taskType;
             WorldType = worldType;
+            IsChecked = true;
         }
     }
 
