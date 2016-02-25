@@ -11,22 +11,12 @@ namespace GoodAI.School.GUI
 {
     #region UI classes
 
-    public class SchoolTreeNode : Node
-    {
-        public bool Enabled { get; set; }
-
-        public SchoolTreeNode()
-        {
-            Enabled = true;
-        }
-    }
-
-    public class CurriculumNode : SchoolTreeNode
+    public class CurriculumNode : Node
     {
         public string Description { get; set; }
     }
 
-    public class LearningTaskNode : SchoolTreeNode
+    public class LearningTaskNode : Node
     {
         public Type TaskType { get; private set; }
         public Type WorldType { get; private set; }
@@ -62,11 +52,6 @@ namespace GoodAI.School.GUI
     {
         public int Level { get; set; }
 
-        public LevelNode(int level)
-        {
-            Level = level;
-        }
-
         public string Text
         {
             get
@@ -74,14 +59,19 @@ namespace GoodAI.School.GUI
                 return "Level " + Level;
             }
         }
+
+        public LevelNode(int level)
+        {
+            Level = level;
+        }
     }
 
     public class AttributeNode
     {
+        private string Annotation;
         public string Name { get; set; }
         public string Value { get; set; }
         private Type Type { get; set; }
-        private string Annotation;
 
         public AttributeNode(string name)
         {
@@ -114,9 +104,10 @@ namespace GoodAI.School.GUI
             return false;
         }
 
-        // Annotation is not public property because DataGridView automaticly generates
-        // columns for all public properties, while this should not be column
-        public string GetAnotation(){
+        // Annotation is not public property because DataGridView automaticly generates columns for
+        // all public properties, while this should not be column
+        public string GetAnotation()
+        {
             return Annotation;
         }
     }
@@ -147,7 +138,7 @@ namespace GoodAI.School.GUI
             {
                 m_taskType = node.TaskType.AssemblyQualifiedName;
                 m_worldType = node.WorldType.AssemblyQualifiedName;
-                m_enabled = node.Enabled;
+                m_enabled = node.IsChecked;
             }
 
             public static explicit operator LearningTaskNode(LTDesign design)
@@ -156,7 +147,7 @@ namespace GoodAI.School.GUI
                 Type worldType = Type.GetType(design.m_worldType);
                 if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
                     return null;
-                return new LearningTaskNode(taskType, worldType) { Enabled = design.m_enabled };
+                return new LearningTaskNode(taskType, worldType) { IsChecked = design.m_enabled };
             }
 
             public ILearningTask AsILearningTask(SchoolWorld world = null)
@@ -198,14 +189,14 @@ namespace GoodAI.School.GUI
                     Where(x => x is LearningTaskNode).
                     Select(x => new LTDesign(x as LearningTaskNode)).
                     ToList();
-                m_enabled = node.Enabled;
+                m_enabled = node.IsChecked;
                 m_name = node.Text;
                 m_description = node.Description;
             }
 
             public static explicit operator CurriculumNode(CurriculumDesign design)
             {
-                CurriculumNode node = new CurriculumNode { Text = design.m_name, Enabled = design.m_enabled, Description = design.m_description };
+                CurriculumNode node = new CurriculumNode { Text = design.m_name, IsChecked = design.m_enabled, Description = design.m_description };
 
                 design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
 

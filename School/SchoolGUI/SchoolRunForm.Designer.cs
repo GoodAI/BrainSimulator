@@ -512,7 +512,7 @@
             // 
             // nodeCheckBox1
             // 
-            this.nodeCheckBox1.DataPropertyName = "Enabled";
+            this.nodeCheckBox1.DataPropertyName = "IsChecked";
             this.nodeCheckBox1.EditEnabled = true;
             this.nodeCheckBox1.LeftMargin = 0;
             this.nodeCheckBox1.ParentColumn = null;

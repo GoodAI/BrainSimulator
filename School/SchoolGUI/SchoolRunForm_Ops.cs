@@ -88,7 +88,7 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                return m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).Where(x => x.Enabled == true);
+                return m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).Where(x => x.IsChecked == true);
             }
         }
 
@@ -392,7 +392,7 @@ namespace GoodAI.School.GUI
                 return;
             }
 
-            SchoolTreeNode selected = tree.SelectedNode.Tag as SchoolTreeNode;
+            Node selected = tree.SelectedNode.Tag as Node;
             Debug.Assert(selected != null);
 
             UpdateWindowName(null, EventArgs.Empty);
@@ -408,7 +408,7 @@ namespace GoodAI.School.GUI
             IEnumerable<LearningTaskNode> ltNodes = ActiveCurricula.
                 SelectMany(x => (x as CurriculumNode).Nodes).
                 Select(x => x as LearningTaskNode).
-                Where(x => x.Enabled == true);
+                Where(x => x.IsChecked == true);
 
             foreach (LearningTaskNode ltNode in ltNodes)
                 data.Add(ltNode);
