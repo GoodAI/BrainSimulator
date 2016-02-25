@@ -157,7 +157,11 @@ namespace GoodAI.School.GUI
             tree.Model = m_model;
             tree.Refresh();
 
-            btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            if (!String.IsNullOrEmpty(Properties.School.Default.AutosaveFolder))
+                btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
+            else
+                btnAutosave.Checked = false;
+
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
             LoadCurriculum(m_lastOpenedFile);
 
