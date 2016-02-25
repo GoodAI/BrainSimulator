@@ -380,7 +380,7 @@ namespace GoodAI.School.GUI
             UpdateWorldHandlers(school, school);
 
             UpdateWindowName(sender, e);
-            UpdateUploadState(sender, e);
+            UpdateData();
         }
 
         // /////////////////////////////////////////////////////////////////////////////////// //
@@ -390,7 +390,6 @@ namespace GoodAI.School.GUI
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
-
 
         private void UpdateWindowName(object sender, EventArgs e)
         {
@@ -402,21 +401,8 @@ namespace GoodAI.School.GUI
             string lof = Properties.School.Default.LastOpenedFile;
             string filename = String.IsNullOrEmpty(Properties.School.Default.LastOpenedFile) ? "Unsaved workspace" : Path.GetFileName(Properties.School.Default.LastOpenedFile);
             Text = DEFAULT_FORM_NAME + " - " + filename;
-            if (!IsWorkspaceSaved())
+            if (!IsWorkspaceSaved)
                 Text += '*';
-        }
-
-        private void UpdateUploadState(object sender, EventArgs e)
-        {
-            if (!Visible)
-            {
-                return;
-            }
-
-            if (!IsProjectUploaded())
-            {
-                uploadLearningTasks();
-            }
         }
 
         #region DragDrop
@@ -506,10 +492,6 @@ namespace GoodAI.School.GUI
             }
 
             tree.EndUpdate();
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
-
-            uploadLearningTasks();
         }
 
         #endregion DragDrop
@@ -525,8 +507,6 @@ namespace GoodAI.School.GUI
             m_savedRepresentation = null;
             m_uploadedRepresentation = null;
             m_model.Nodes.Clear();
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
         }
 
         private void btnNewCurr_Click(object sender, EventArgs e)
@@ -591,11 +571,6 @@ namespace GoodAI.School.GUI
                     }
                 }
             }
-
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
-
-            uploadLearningTasks();
         }
 
         private void DeleteNodes(object sender, EventArgs e)
@@ -687,13 +662,6 @@ namespace GoodAI.School.GUI
             (sender as ToolStripButton).Checked = !(sender as ToolStripButton).Checked;
         }
 
-        private void btnUpload_Click(object sender, EventArgs e)
-        {
-            if (!(m_mainForm.Project.World is SchoolWorld))
-                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
-            (m_mainForm.Project.World as SchoolWorld).Curriculum = m_design.AsSchoolCurriculum(m_mainForm.Project.World as SchoolWorld);
-        }
-
         #endregion Button clicks
 
         private void SaveProjectAs(object sender, EventArgs e)
@@ -704,8 +672,6 @@ namespace GoodAI.School.GUI
             SaveProject(saveFileDialog1.FileName);
             Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
             Properties.School.Default.Save();
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
         }
 
         // almost same as Mainform.OpenFloatingOrActivate - refactor?
@@ -726,7 +692,6 @@ namespace GoodAI.School.GUI
         private void tree_SelectionChanged(object sender, EventArgs e)
         {
             UpdateButtonsSR();
-            uploadLearningTasks();
             tree.Focus();
         }
 
@@ -747,12 +712,6 @@ namespace GoodAI.School.GUI
                 return;
 
             ExportDataGridViewData(saveResultsDialog.FileName);
-        }
-
-        private void tree_NodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
-        {
-            uploadLearningTasks();
-            tree.Focus();
         }
     }
 }

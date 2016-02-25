@@ -504,7 +504,6 @@
             this.tree.Size = new System.Drawing.Size(325, 696);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
-            this.tree.NodeMouseClick += new System.EventHandler<Aga.Controls.Tree.TreeNodeAdvMouseEventArgs>(this.tree_NodeMouseClick);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
             this.tree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
             this.tree.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);

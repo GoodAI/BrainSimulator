@@ -41,7 +41,8 @@ namespace GoodAI.School.GUI
         private string m_uploadedRepresentation;
         private string m_savedRepresentation;
         private string m_currentFile;
-        private int m_numberOfSA;
+
+        public event EventHandler WorkspaceChanged = delegate { };
 
         public string RunName
         {
@@ -132,6 +133,28 @@ namespace GoodAI.School.GUI
 
         //public SchoolRunForm RunView { get; private set; }
 
+        private bool IsProjectUploaded
+        {
+            get
+            {
+                if (m_uploadedRepresentation == null)
+                    return false;
+                string currentRepresentation = m_serializer.Serialize(m_design);
+                return m_uploadedRepresentation.Equals(currentRepresentation);
+            }
+        }
+
+        private bool IsWorkspaceSaved
+        {
+            get
+            {
+                if (m_savedRepresentation == null)
+                    return false;
+                string currentRepresentation = m_serializer.Serialize(m_design);
+                return m_savedRepresentation.Equals(currentRepresentation);
+            }
+        }
+
         public SchoolRunForm(MainForm mainForm)
         {
             // school main form //
@@ -170,6 +193,13 @@ namespace GoodAI.School.GUI
             m_mainForm.WorldChanged += SelectSchoolWorld;
 
             nodeTextBox1.DrawText += nodeTextBox1_DrawText;
+
+            m_model.NodesChanged += ModelChanged;
+            m_model.NodesInserted += ModelChanged;
+            m_model.NodesRemoved += ModelChanged;
+
+            WorkspaceChanged += SchoolRunForm_WorkspaceChanged;
+
             UpdateButtons();
         }
 
@@ -186,6 +216,41 @@ namespace GoodAI.School.GUI
         {
             dataGridView1.DataSource = Data;
             dataGridView1.Invalidate();
+        }
+
+        private void SchoolRunForm_WorkspaceChanged(object sender, EventArgs e)
+        {
+            UpdateData();
+            UpdateWindowName(null, EventArgs.Empty);
+        }
+
+        private void UpdateData()
+        {
+            if (!Visible || IsProjectUploaded)
+                return;
+
+            // update SchoolWorld
+            SelectSchoolWorld(null, EventArgs.Empty);
+            (m_mainForm.Project.World as SchoolWorld).Curriculum = m_design.AsSchoolCurriculum(m_mainForm.Project.World as SchoolWorld);
+
+            // update curriculum detail grid
+            List<LearningTaskNode> data = new List<LearningTaskNode>();
+            IEnumerable<LearningTaskNode> ltNodes = ActiveCurricula.
+                SelectMany(x => (x as CurriculumNode).Nodes).
+                Select(x => x as LearningTaskNode).
+                Where(x => x.IsChecked == true);
+
+            foreach (LearningTaskNode ltNode in ltNodes)
+                data.Add(ltNode);
+            Data = data;
+            Design = m_design;
+            Ready();
+        }
+
+        // thanks to this, form will be emitter of event - not the underlying model (which could be confusing for subscribers)
+        private void ModelChanged(object sender, EventArgs e)
+        {
+            WorkspaceChanged(this, EventArgs.Empty);
         }
 
         private string GetAutosaveFilename()
@@ -314,22 +379,6 @@ namespace GoodAI.School.GUI
                         cell.Style = defaultStyle;
         }
 
-        private bool IsWorkspaceSaved()
-        {
-            if (m_savedRepresentation == null)
-                return false;
-            string currentRepresentation = m_serializer.Serialize(m_design);
-            return m_savedRepresentation.Equals(currentRepresentation);
-        }
-
-        private bool IsProjectUploaded()
-        {
-            if (m_uploadedRepresentation == null)
-                return false;
-            string currentRepresentation = m_serializer.Serialize(m_design);
-            return m_uploadedRepresentation.Equals(currentRepresentation);
-        }
-
         #region UI
 
         private void ApplyToAll(Control parent, Action<Control> apply)
@@ -396,26 +445,10 @@ namespace GoodAI.School.GUI
             Debug.Assert(selected != null);
 
             UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
+            UpdateData();
         }
 
         #endregion UI
-
-        private void uploadLearningTasks()
-        {
-            List<LearningTaskNode> data = new List<LearningTaskNode>();
-
-            IEnumerable<LearningTaskNode> ltNodes = ActiveCurricula.
-                SelectMany(x => (x as CurriculumNode).Nodes).
-                Select(x => x as LearningTaskNode).
-                Where(x => x.IsChecked == true);
-
-            foreach (LearningTaskNode ltNode in ltNodes)
-                data.Add(ltNode);
-            Data = data;
-            Design = m_design;
-            Ready();
-        }
 
         private bool AddFileContent(bool clearWorkspace = false)
         {
@@ -437,7 +470,7 @@ namespace GoodAI.School.GUI
             m_savedRepresentation = xmlResult;
             m_currentFile = path;
             UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
+            UpdateData();
         }
 
         private bool LoadCurriculum(string filePath)
@@ -471,8 +504,6 @@ namespace GoodAI.School.GUI
             Properties.School.Default.Save();
             m_savedRepresentation = xmlCurr;
             m_currentFile = filePath;
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateUploadState(null, EventArgs.Empty);
             UpdateButtonsSR();
             return false;
         }
