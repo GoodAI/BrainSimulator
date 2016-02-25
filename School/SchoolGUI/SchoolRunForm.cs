@@ -21,6 +21,7 @@ namespace GoodAI.School.GUI
     {
         private void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
+            // time measurements
             if (m_currentLtStopwatch != null)
                 if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
                     m_currentLtStopwatch.Stop();
@@ -28,6 +29,7 @@ namespace GoodAI.School.GUI
                     e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP)
                     m_currentLtStopwatch.Start();
 
+            // workspace panel enable/disable
             if (e.NewState == MySimulationHandler.SimulationState.RUNNING ||
                     e.NewState == MySimulationHandler.SimulationState.RUNNING_STEP ||
                     e.NewState == MySimulationHandler.SimulationState.PAUSED)
@@ -39,6 +41,7 @@ namespace GoodAI.School.GUI
                 enableLearningTaskPanel();
             }
 
+            // autosave
             if (e.NewState == MySimulationHandler.SimulationState.PAUSED ||
                 e.NewState == MySimulationHandler.SimulationState.STOPPED)
                 if (Properties.School.Default.AutosaveEnabled)
@@ -54,6 +57,7 @@ namespace GoodAI.School.GUI
             if (e.NewState == MySimulationHandler.SimulationState.STOPPED)
                 m_autosaveFilePath = null;
 
+            // buttons
             UpdateButtons();
         }
 
@@ -513,7 +517,6 @@ namespace GoodAI.School.GUI
         {
             CurriculumNode node = new CurriculumNode { Text = "Curr" + m_model.Nodes.Count.ToString() };
             m_model.Nodes.Add(node);
-            UpdateButtonsSR();    //for activating Run button - workaround because events of tree model are not working as expected
 
             // Curriculum name directly editable upon creation
             tree.SelectedNode = tree.FindNodeByTag(node);
@@ -691,19 +694,13 @@ namespace GoodAI.School.GUI
 
         private void tree_SelectionChanged(object sender, EventArgs e)
         {
-            UpdateButtonsSR();
-            tree.Focus();
+            UpdateButtons();
         }
 
         private void nodeTextBox1_DrawText(object sender, DrawTextEventArgs e)
         {
             if (e.Node.IsSelected)
                 e.Font = new System.Drawing.Font(e.Font, FontStyle.Bold);
-        }
-
-        private void tree_Click(object sender, EventArgs e)
-        {
-            UpdateButtonsSR();
         }
 
         private void btnSaveResults_Click(object sender, EventArgs e)

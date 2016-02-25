@@ -27,7 +27,6 @@ namespace GoodAI.School.GUI
         private const string DEFAULT_FORM_NAME = "School for AI";
         private readonly MainForm m_mainForm;
         private List<DataGridView> LevelGrids;
-        private string m_runName;
         private ObserverForm m_observer;
 
         private int m_currentRow = -1;
@@ -43,17 +42,6 @@ namespace GoodAI.School.GUI
         private string m_currentFile;
 
         public event EventHandler WorkspaceChanged = delegate { };
-
-        public string RunName
-        {
-            get { return m_runName; }
-            set
-            {
-                m_runName = value;
-
-                Text = String.IsNullOrEmpty(m_runName) ? "School run" : "School run - " + m_runName;
-            }
-        }
 
         public LearningTaskSelectionForm AddTaskView { get; private set; }
         private bool m_showObserver { get { return btnObserver.Checked; } }
@@ -171,14 +159,9 @@ namespace GoodAI.School.GUI
 
             btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
             m_lastOpenedFile = Properties.School.Default.LastOpenedFile;
-            if (LoadCurriculum(m_lastOpenedFile))
-                saveFileDialog1.FileName = m_lastOpenedFile;
-
-            UpdateButtonsSR();
+            LoadCurriculum(m_lastOpenedFile);
 
             // school run form //
-
-            m_mainForm = mainForm;
 
             // here so it does not interfere with designer generated code
             btnRun.Click += m_mainForm.runToolButton_Click;
@@ -222,6 +205,7 @@ namespace GoodAI.School.GUI
         {
             UpdateData();
             UpdateWindowName(null, EventArgs.Empty);
+            UpdateButtons();
         }
 
         private void UpdateData()
@@ -301,6 +285,21 @@ namespace GoodAI.School.GUI
             btnRun.Enabled = m_mainForm.runToolButton.Enabled;
             btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
             btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
+
+            EnableButtons(this);
+            EnableToolstripButtons(toolStrip2);
+
+            if (!tree.AllNodes.Any())
+                btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
+
+            if (tree.SelectedNode == null)
+            {
+                btnNewTask.Enabled = btnDetails.Enabled = false;
+                return;
+            }
+
+            Node selected = tree.SelectedNode.Tag as Node;
+            Debug.Assert(selected != null);
         }
 
         private void UpdateTaskData(ILearningTask runningTask)
@@ -427,27 +426,6 @@ namespace GoodAI.School.GUI
             SetToolstripButtonsEnabled(toolstrip, true);
         }
 
-        private void UpdateButtonsSR()
-        {
-            EnableButtons(this);
-            EnableToolstripButtons(toolStrip2);
-
-            if (!tree.AllNodes.Any())
-                btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
-
-            if (tree.SelectedNode == null)
-            {
-                btnNewTask.Enabled = btnDetails.Enabled = false;
-                return;
-            }
-
-            Node selected = tree.SelectedNode.Tag as Node;
-            Debug.Assert(selected != null);
-
-            UpdateWindowName(null, EventArgs.Empty);
-            UpdateData();
-        }
-
         #endregion UI
 
         private bool AddFileContent(bool clearWorkspace = false)
@@ -473,17 +451,17 @@ namespace GoodAI.School.GUI
             UpdateData();
         }
 
-        private bool LoadCurriculum(string filePath)
+        private void LoadCurriculum(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
-                return false;
+                return;
 
             string xmlCurr;
             try { xmlCurr = File.ReadAllText(filePath); }
             catch (IOException e)
             {
                 MyLog.WARNING.WriteLine("Unable to read file " + filePath);
-                return false;
+                return;
             }
 
             try
@@ -497,15 +475,13 @@ namespace GoodAI.School.GUI
             catch (YAXException e)
             {
                 MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
-                return false;
+                return;
             }
 
             Properties.School.Default.LastOpenedFile = filePath;
             Properties.School.Default.Save();
             m_savedRepresentation = xmlCurr;
             m_currentFile = filePath;
-            UpdateButtonsSR();
-            return false;
         }
 
         #endregion (De)serialization
