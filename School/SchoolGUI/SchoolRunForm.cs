@@ -64,10 +64,9 @@ namespace GoodAI.School.GUI
 
         private void SelectSchoolWorld(object sender, EventArgs e)
         {
-            if (!Visible)
+            if (!Visible || (m_mainForm.Project.World is SchoolWorld))
                 return;
-            if (!(m_mainForm.Project.World is SchoolWorld))
-                m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
+            m_mainForm.SelectWorldInWorldList(typeof(SchoolWorld));
             if (Design != null)
                 PrepareSimulation(null, EventArgs.Empty);
         }
@@ -392,7 +391,6 @@ namespace GoodAI.School.GUI
         // /////////////////////////////////////////////////////////////////////////////////// //
         // /////////////////////////////////////////////////////////////////////////////////// //
 
-        private void SchoolMainForm_Load(object sender, System.EventArgs e) { }
 
         private void UpdateWindowName(object sender, EventArgs e)
         {

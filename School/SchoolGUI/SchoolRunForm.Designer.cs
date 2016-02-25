@@ -783,7 +783,6 @@
             this.MinimumSize = new System.Drawing.Size(410, 410);
             this.Name = "SchoolRunForm";
             this.Text = "AI School";
-            this.Load += new System.EventHandler(this.SchoolMainForm_Load);
             this.VisibleChanged += new System.EventHandler(this.SchoolRunForm_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();
