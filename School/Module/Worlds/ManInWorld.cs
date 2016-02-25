@@ -201,6 +201,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             base.Validate(validator);
 
+            // TODO: should not be a problem to see a whole scene smaller than viewport
             validator.AssertError(Pow.Width <= Fow.Width, this, "PowWidth cannot be higher than FowWidth, corresponding sizes are: " + Pow.Width + ", " + Fow.Width);
             validator.AssertError(Pow.Height <= Fow.Height, this, "PowHeight cannot be higher than FowHeight, corresponding sizes are: " + Pow.Height + ", " + Fow.Height);
         }
@@ -324,7 +325,7 @@ namespace GoodAI.Modules.School.Worlds
         /// <returns></returns>
         public RectangleF GetPowGeometry()
         {
-            SizeF halfPowSize = new SizeF(Pow.Width / 2f, Pow.Height / 2f);
+            SizeF halfPowSize = new SizeF(Viewport.Width / 2f, Viewport.Height / 2f);
             return new RectangleF(GetPowCenter() - halfPowSize, Viewport);
         }
 
@@ -423,8 +424,10 @@ namespace GoodAI.Modules.School.Worlds
                 {
                     if (randomPositionCounter > 1000)
                     {
-                        throw new Exception("Cannot place object randomly");
+                        Debug.Assert(false, "Cannot place object randomly");
+                        break;
                     }
+
                     RectangleF gameObjectG = GameObjects[i].GetGeometry();
                     if (gameObjectG.IntersectsWith(obj) ||
                         obj.IntersectsWith(gameObjectG) ||

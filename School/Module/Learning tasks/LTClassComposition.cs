@@ -69,7 +69,7 @@ namespace GoodAI.Modules.School.LearningTasks
             WrappedWorld.CreateNonVisibleAgent();
 
             SizeF size;
-            float standardSideSize = WrappedWorld.Scene.Width / 10;
+            float standardSideSize = WrappedWorld.Viewport.Width / 10;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
             {
                 float a = (float)(standardSideSize + m_rndGen.NextDouble() * standardSideSize);
