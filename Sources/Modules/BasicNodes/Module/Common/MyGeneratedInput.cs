@@ -117,7 +117,7 @@ namespace GoodAI.Modules.Common
 
         private void UpdateOutput()
         {
-            Output.ColumnHint = (ColumnHint > 0) ? ColumnHint : 1;
+            Output.ColumnHint = ColumnHint;
 
             Output.Count = GetOutputSize();
         }
