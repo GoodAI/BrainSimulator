@@ -40,6 +40,8 @@ namespace GoodAI.Modules.GameBoy
             public CUdeviceptr bitmap;
         };
 
+        #region Memory blocks
+
         [MyInputBlock]
         public virtual MyMemoryBlock<float> Controls
         {
@@ -95,22 +97,32 @@ namespace GoodAI.Modules.GameBoy
             set { SetOutput(6, value); }
         }
 
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 160)]
-        public int DisplayWidth { get; set; }
-
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 140)]
-        public int DisplayHeight { get; set; }
-
         public MyMemoryBlock<float> Bitmaps { get; protected set; }
+        public MyMemoryBlock<int> Bricks { get; protected set; }
 
-        protected Dictionary<string, Bitmap> m_bitmapTable = new Dictionary<string, Bitmap>();
-        private string m_errorMessage;
+        #endregion
+
+        #region BS properties
+
+        [MyBrowsable, Category("Visual")]
+        [YAXSerializableField(DefaultValue = 256), DisplayName("\tDisplayWidth")]
+        public int DisplayWidth { get; protected set; }
+
+        [MyBrowsable, Category("Visual")]
+        [YAXSerializableField(DefaultValue = 224)]
+        public int DisplayHeight { get; protected set; }
+
+
+        [MyBrowsable, Category("Params")]
+        [YAXSerializableField(DefaultValue = false)]
+        public virtual bool BricksEnabled { get; set; }
+
+        #endregion
+
+        #region Fields
 
         protected List<MyGameObject> m_gameObjects;
 
-        public MyMemoryBlock<int> Bricks { get; protected set; }
         private MyGameObject m_brickPrototype;
         private MyGameObject m_lifePrototype;
 
@@ -121,14 +133,25 @@ namespace GoodAI.Modules.GameBoy
         private int m_lifes = 0;
         private int m_bricksRemains = 0;
 
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = false)]
-        public virtual bool BricksEnabled { get; set; }
+        public Size Scene { get; protected set; }
+
+        protected readonly Dictionary<string, Bitmap> m_bitmapTable = new Dictionary<string, Bitmap>();
+        private string m_errorMessage;
+
+        #endregion
+
+        public MyCustomPongWorld()
+        {
+            DisplayWidth = 256;
+            DisplayHeight = 224;
+            Scene = new Size(160, 140);
+        }
+
+        #region MyNode overrides
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Count = DisplayWidth * DisplayHeight;
-            Visual.ColumnHint = DisplayWidth;
+            Visual.Dims = new TensorDimensions(Scene.Width, Scene.Height);
 
             Bitmaps.Count = 0;
 
@@ -145,17 +168,6 @@ namespace GoodAI.Modules.GameBoy
             BinaryEvent.Count = 3;
 
             Bricks.Count = BRICKS_COUNT_X * BRICKS_COUNT_Y;
-        }
-
-        public override void Validate(MyValidator validator)
-        {
-            base.Validate(validator);
-            if (Controls != null)
-            {
-                validator.AssertError(Controls.Count >= 3, this, "Not enough controls (3 expected)");
-            }
-
-            validator.AssertError(Bitmaps.Count != 0, this, "Node cannot be executed. Some resources are missing: " + m_errorMessage);
         }
 
         private int LoadAndGetBitmapSize(string path)
@@ -176,6 +188,21 @@ namespace GoodAI.Modules.GameBoy
             }
             else return m_bitmapTable[path].Width * m_bitmapTable[path].Height;
         }
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+            if (Controls != null)
+            {
+                validator.AssertError(Controls.Count >= 3, this, "Not enough controls (3 expected)");
+            }
+
+            validator.AssertError(Bitmaps.Count != 0, this, "Node cannot be executed. Some resources are missing: " + m_errorMessage);
+        }
+
+        #endregion
+
+        #region Tasks
 
         public virtual MyInitTask InitGameTask { get; protected set; }
         public virtual MyUpdateTask UpdateTask { get; protected set; }
@@ -279,13 +306,13 @@ namespace GoodAI.Modules.GameBoy
         /// </summary>
         public class MyRenderTask : MyTask<MyCustomPongWorld>
         {
-            private MyCudaKernel m_kernel;
             private MyCudaKernel m_bricksKernel;
+            private MyCudaKernel m_spriteKernel;
 
             public override void Init(int nGPU)
             {
-                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "DrawSpriteKernel");
                 m_bricksKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\CustomPong", "DrawBricksKernel");
+                m_spriteKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "DrawSpriteKernel");
             }
 
             public override void Execute()
@@ -297,7 +324,7 @@ namespace GoodAI.Modules.GameBoy
                     MyGameObject brick = Owner.m_brickPrototype;
 
                     m_bricksKernel.SetupExecution(brick.pixelSize.x * brick.pixelSize.y);
-                    m_bricksKernel.Run(Owner.Visual, Owner.DisplayWidth, Owner.DisplayHeight,
+                    m_bricksKernel.Run(Owner.Visual, Owner.Scene.Width, Owner.Scene.Height,
                         Owner.Bricks, BRICKS_COUNT_X, BRICKS_COUNT_Y,
                         brick.bitmap, brick.position, brick.pixelSize);
                 }
@@ -306,12 +333,12 @@ namespace GoodAI.Modules.GameBoy
                 {
                     MyGameObject g = Owner.m_gameObjects[i];
 
-                    m_kernel.SetupExecution(g.pixelSize.x * g.pixelSize.y);
-                    m_kernel.Run(Owner.Visual, Owner.DisplayWidth, Owner.DisplayHeight, g.bitmap, g.position, g.pixelSize);
+                    m_spriteKernel.SetupExecution(g.pixelSize.x * g.pixelSize.y);
+                    m_spriteKernel.Run(Owner.Visual, Owner.Scene.Width, Owner.Scene.Height, g.bitmap, g.position, g.pixelSize);
                 }
 
                 MyGameObject life = Owner.m_lifePrototype;
-                m_kernel.SetupExecution(life.pixelSize.x * life.pixelSize.y);
+                m_spriteKernel.SetupExecution(life.pixelSize.x * life.pixelSize.y);
 
                 /*
                 for (int i = 0; i < Owner.m_lifes; i++)
@@ -353,7 +380,7 @@ namespace GoodAI.Modules.GameBoy
             protected static readonly int BOUNCE_BALL_I = 0;
             protected static readonly int BRICK_DESTROYED_I = 1;
             protected static readonly int LOST_LIFE_I = 2;
-            
+
             protected const float MAX_PADDLE_VELOCITY = 4.0f;
 
             protected const float INIT_BALL_VELOCITY = 1.3f;
@@ -451,8 +478,8 @@ namespace GoodAI.Modules.GameBoy
                 MyGameObject ball = Owner.m_gameObjects[0];
                 MyGameObject paddle = Owner.m_gameObjects[1];
 
-                ball.position.x = (Owner.DisplayWidth - ball.pixelSize.x) * 0.5f;
-                ball.position.y = Owner.DisplayHeight - 22;
+                ball.position.x = (Owner.Scene.Width - ball.pixelSize.x) * 0.5f;
+                ball.position.y = Owner.Scene.Height - 22;
 
                 if (RandomBallDir)
                 {
@@ -468,8 +495,8 @@ namespace GoodAI.Modules.GameBoy
                 ball.velocity /= (float)Math.Sqrt(ball.velocity.x * ball.velocity.x + ball.velocity.y * ball.velocity.y);
                 ball.velocity *= INIT_BALL_VELOCITY;
 
-                paddle.position.x = (Owner.DisplayWidth - paddle.pixelSize.x) * 0.5f;
-                paddle.position.y = Owner.DisplayHeight - 14;
+                paddle.position.x = (Owner.Scene.Width - paddle.pixelSize.x) * 0.5f;
+                paddle.position.y = Owner.Scene.Height - 14;
 
                 paddle.velocity.x = 0;
                 paddle.velocity.y = 0;
@@ -501,13 +528,13 @@ namespace GoodAI.Modules.GameBoy
                     ball.velocity.x = -ball.velocity.x;
                 }
                 //rightSide
-                if (futurePos.x + ball.pixelSize.x > Owner.DisplayWidth && ball.velocity.x > 0)
+                if (futurePos.x + ball.pixelSize.x > Owner.Scene.Width && ball.velocity.x > 0)
                 {
                     ball.velocity.x = -ball.velocity.x;
                 }
 
                 //bottom side
-                if (futurePos.y + ball.pixelSize.y > Owner.DisplayHeight && ball.velocity.y > 0)
+                if (futurePos.y + ball.pixelSize.y > Owner.Scene.Height && ball.velocity.y > 0)
                 {
                     if (stepsFrozen == 0)
                     {
@@ -559,7 +586,7 @@ namespace GoodAI.Modules.GameBoy
 
                 float2 futurePos = paddle.position + paddle.velocity;
 
-                if (futurePos.x < 0 || futurePos.x + paddle.pixelSize.x > Owner.DisplayWidth)
+                if (futurePos.x < 0 || futurePos.x + paddle.pixelSize.x > Owner.Scene.Width)
                 {
                     paddle.velocity.x = 0;
                 }
@@ -706,5 +733,7 @@ namespace GoodAI.Modules.GameBoy
             private static readonly int[][] LEVELS = { LEVEL_0, LEVEL_1, LEVEL_2 };
             private static readonly int[] LEVELS_BRICKS = { 40, 40, 36 };
         }
+
+        #endregion
     }
 }

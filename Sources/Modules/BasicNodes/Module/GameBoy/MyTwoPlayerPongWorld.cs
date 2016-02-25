@@ -280,7 +280,7 @@ namespace GoodAI.Modules.GameBoy
                     ball.velocity.y = 1f;
                 }
 
-                paddleB.position.x = (Owner.DisplayWidth - paddleB.pixelSize.x) * 0.5f;
+                paddleB.position.x = (Owner.Scene.Width - paddleB.pixelSize.x) * 0.5f;
                 paddleB.position.y = 14 - paddleB.pixelSize.y;
 
                 paddleB.velocity.x = 0;
@@ -301,13 +301,13 @@ namespace GoodAI.Modules.GameBoy
                     ball.velocity.x = -ball.velocity.x;
                 }
                 //rightSide
-                if (futurePos.x + ball.pixelSize.x > Owner.DisplayWidth && ball.velocity.x > 0)
+                if (futurePos.x + ball.pixelSize.x > Owner.Scene.Width && ball.velocity.x > 0)
                 {
                     ball.velocity.x = -ball.velocity.x;
                 }
 
                 //bottom side
-                if (futurePos.y + ball.pixelSize.y > Owner.DisplayHeight && ball.velocity.y > 0)
+                if (futurePos.y + ball.pixelSize.y > Owner.Scene.Height && ball.velocity.y > 0)
                 {
                     if (stepsFrozen == 0)
                     {
