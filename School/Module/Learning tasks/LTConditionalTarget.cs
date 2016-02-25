@@ -26,6 +26,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public ConditionGameObject(ManInWorld world, bool movingCondition, float salience) :
             base(Shapes.Square, PointF.Empty)
         {
+            IsBitmapAsMask = true;
             IsWhite = LearningTaskHelpers.FlipCoin(m_rand);
             m_colorMask = IsWhite ? Color.White : Color.Black;
 
