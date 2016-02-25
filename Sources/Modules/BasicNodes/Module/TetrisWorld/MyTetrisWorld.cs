@@ -32,20 +32,20 @@ namespace GoodAI.Modules.TetrisWorld
     /// The area where tetrominos fall is 10 cells wide and 22 cells high, with the top two cells obscured.<br />
     /// The tetrominos are spawned randomly at the top. When a row is cleared, all the rows above it are shifted down. <br />
     /// The score is calculated as &#931;(lines cleared<sub>t</sub>)<sup>2</sup> for all time steps t. <br />
-    /// Every time an n-th row is cleared, the game advances the level. By default, n is 50. 
+    /// Every time an n-th row is cleared, the game advances the level. By default, n is 50.
     /// The levels differ in the speed of the falling tetrominos. <br />
     /// For each successive level, the tetrominos wait 1 step less before falling down one cell.<br />
     /// The game is controlled via left, right, rotate left, rotate right and down actions.
     /// </p>
-    /// 
+    ///
     /// <p>
     /// The agent can, at any timestep:
     /// <ul>
-    ///     <li>Output the action he wants to make. The action can be given to the world either as a vector or 
+    ///     <li>Output the action he wants to make. The action can be given to the world either as a vector or
     ///     as an index into the table of actions, depending on the ActionInputModality parameter.</li>
     /// </ul>
     /// </p>
-    /// 
+    ///
     /// The world is composed of:
     /// <ul>
     ///     <li>An area where tetrominos fall.</li>
@@ -53,24 +53,24 @@ namespace GoodAI.Modules.TetrisWorld
     ///     <li>A score counter.</li>
     ///     <li>A level indication.</li>
     /// </ul>
-    /// 
+    ///
     /// The world resets when the agent tops out, i.e. the spawned tetromino overlaps a previously placed tetromino.
-    /// 
+    ///
     /// <h3>Parameters</h3>
     /// <ul>
-    ///     <li><b>ClearedLinesPerLevel:</b> number of cleared lines required to increment the game's level (and speed). 
+    ///     <li><b>ClearedLinesPerLevel:</b> number of cleared lines required to increment the game's level (and speed).
     ///     It is 50 by default.</li>
-    ///     <li><b>AlmostFullLinesAtStart:</b> number of almost full rows that the game begins with. 
+    ///     <li><b>AlmostFullLinesAtStart:</b> number of almost full rows that the game begins with.
     ///     Keeping this parameter non-zero may help the training.</li>
     ///     <li><b>WaitStepsPerFall:</b> number of timesteps the tetromino waits before moving down by one cell.</li>
     /// </ul>
-    /// 
+    ///
     /// <h3>Inputs</h3>
     /// <ul>
     ///     <li><b>ActionInput:</b> the action applied upon the falling tetromino in the next time step. The possible actions are:
     ///     No action (0), Move left (1), Move right (2), Move down (3), Rotate left (4), Rotate right (5).</li>
     /// </ul>
-    /// 
+    ///
     /// <h3>Outputs</h3>
     /// <ul>
     ///     <li><b>BrickAreaOutput:</b> the area where bricks fall (10x22), with empty cell represented as 0 and the rest with numbers (1-7).</li>
@@ -79,11 +79,11 @@ namespace GoodAI.Modules.TetrisWorld
     ///     <li><b>ScoreOutput:</b> the game's score, as a single number.</li>
     ///     <li><b>ScoreDeltaOutput:</b> the increase of the game's score from the previous time step, useful as a reward.</li>
     ///     <li><b>LevelOutput:</b> current level, starting at 0.</li>
-    ///     <li><b>WorldEventOutput:</b> a number that indicates different world events that occur at each time step: 
+    ///     <li><b>WorldEventOutput:</b> a number that indicates different world events that occur at each time step:
     ///         0 = no event, 1 = lines were cleared, -1 = game over + reset</li>
     ///     <li><b>VisualOutput:</b> a bitmap that represents the complete game board.</li>
     /// </ul>
-    /// 
+    ///
     /// </description>
     public class TetrisWorld : MyWorld
     {
@@ -339,7 +339,7 @@ namespace GoodAI.Modules.TetrisWorld
         }
 
         /// <summary>
-        /// Loads a bitmap from a file and stores it in a dictionary. Checks for ARGB color format (e.g. 32bit png). 
+        /// Loads a bitmap from a file and stores it in a dictionary. Checks for ARGB color format (e.g. 32bit png).
         /// Implementation same as in MyMastermindWorld (TODO: refactor once TetrisWorld gets moved to BasicNodes).
         /// </summary>
         /// <param name="path"></param>
@@ -499,9 +499,9 @@ namespace GoodAI.Modules.TetrisWorld
 
                 // load bitmaps to Bitmaps memory block; remembers their offsets in Owner's texture variables
                 CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);
-                TextureType[] textureTypes = { TextureType.Background, TextureType.BrickOverlay, 
+                TextureType[] textureTypes = { TextureType.Background, TextureType.BrickOverlay,
                                              TextureType.BrickMask, TextureType.TextArea};
-                CudaTexture[] textures = { Owner.m_textureBackground, Owner.m_textureBrickOverlay, 
+                CudaTexture[] textures = { Owner.m_textureBackground, Owner.m_textureBrickOverlay,
                                            Owner.m_textureBrickMask, Owner.m_textureText};
                 int offset = 0;
 
@@ -633,6 +633,9 @@ namespace GoodAI.Modules.TetrisWorld
                     m_texturesLoaded = true;
                 }
 
+                m_context.MakeCurrent(m_window.WindowInfo);
+                GL.Finish();
+
                 SetupView();
 
                 RenderBackground();
@@ -641,6 +644,8 @@ namespace GoodAI.Modules.TetrisWorld
                 RenderText();
 
                 CopyPixels();
+
+                m_context.MakeCurrent(null);
             }
 
             void InitGL()
