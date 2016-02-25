@@ -63,7 +63,10 @@ namespace GoodAI.School.GUI
 
         private void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
         {
+            m_uploadedRepresentation = null;
             UpdateWorldHandlers(e.OldWorld as SchoolWorld, e.NewWorld as SchoolWorld);
+            SelectSchoolWorld(null, EventArgs.Empty);
+            UpdateData();
         }
 
         private void SelectSchoolWorld(object sender, EventArgs e)

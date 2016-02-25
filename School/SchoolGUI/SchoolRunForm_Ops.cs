@@ -177,7 +177,6 @@ namespace GoodAI.School.GUI
             m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
             m_mainForm.SimulationHandler.ProgressChanged += SimulationHandler_ProgressChanged;
             m_mainForm.WorldChanged += m_mainForm_WorldChanged;
-            m_mainForm.WorldChanged += SelectSchoolWorld;
 
             nodeTextBox1.DrawText += nodeTextBox1_DrawText;
 
@@ -187,7 +186,7 @@ namespace GoodAI.School.GUI
 
             WorkspaceChanged += SchoolRunForm_WorkspaceChanged;
 
-            UpdateButtons();
+            SchoolRunForm_WorkspaceChanged(null, EventArgs.Empty);
         }
 
         public void Ready()
@@ -195,8 +194,6 @@ namespace GoodAI.School.GUI
             UpdateGridData();
             PrepareSimulation(null, EventArgs.Empty);
             SetObserver();
-            /*if (Properties.School.Default.AutorunEnabled && Data != null)
-                btnRun.PerformClick();*/
         }
 
         public void UpdateGridData()
@@ -243,7 +240,7 @@ namespace GoodAI.School.GUI
 
         private string GetAutosaveFilename()
         {
-            return CurrentProjectName + DateTime.Now.ToString("yyyy-MM-ddTHHmmss");
+            return CurrentProjectName + DateTime.Now.ToString("yyyy-MM-ddTHHmmss") + ".csv"; // ISO 8601
         }
 
         private void AddWorldHandlers(SchoolWorld world)
