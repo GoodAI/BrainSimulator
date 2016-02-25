@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Rotate and move to fit")]
+    [DisplayName("Detect partial complementarity")]
     public class LTRotateAndMoveToFit : AbstractLearningTask<TetrisAdapterWorld>
     {
         public LTRotateAndMoveToFit() : this(null) { }

@@ -66,7 +66,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// Two shapes are presented; they are considered equivalent if they differ
     /// only in color, translation, scaling, and rotation.
     /// </summary>
-    [DisplayName("Visual equivalence")]
+    [DisplayName("Detect similar tranasformed objects")]
     public class LTVisualEquivalence : AbstractLearningTask<RoguelikeWorld>
     {
         // Attributes

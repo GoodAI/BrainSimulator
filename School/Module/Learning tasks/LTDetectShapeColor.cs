@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Detect shape color")]
+    [DisplayName("Categorize shape or color")]
     public class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

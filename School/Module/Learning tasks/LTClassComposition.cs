@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Class composition")]
+    [DisplayName("Categorize to arbitrary sets")]
     public class LTClassComposition : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1); //check needed;

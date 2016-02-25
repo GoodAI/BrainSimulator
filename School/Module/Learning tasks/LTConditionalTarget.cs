@@ -159,7 +159,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <summary>
     /// In this learning task, the agent must learn to choose one of two targets depending on an arbitrary visual signal (the condition).
     /// </summary>
-    [DisplayName("Conditional target")]
+    [DisplayName("Reach cued target")]
     public class LTConditionalTarget : AbstractLearningTask<RoguelikeWorld>
     {
         // In the beginning, the condition doesn't move

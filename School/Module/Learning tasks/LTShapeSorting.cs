@@ -11,7 +11,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <meta>mm</meta>
     /// <summary>
     /// </summary>
-    [DisplayName("Shape sorting")]
+    [DisplayName("Detect objects complementarity")]
     public class LTShapeSorting : AbstractLearningTask<RoguelikeWorld>
     {
         #region Fields

@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <description>
     /// Ability description: The agent learns to navigate to multiple targets in a defined sequence. One target type is always the first target, another target type is always the second and so on.
     /// </description>
-    [DisplayName("Multiple targets sequence")]
+    [DisplayName("Reach multiple targets")]
     public class LTMultipleTargetsSequence : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();

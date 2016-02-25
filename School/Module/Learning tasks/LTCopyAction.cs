@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Copy action")]
+    [DisplayName("Imitate movement")]
     public class LTCopyAction : AbstractLearningTask<ManInWorld>
     {
         private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);

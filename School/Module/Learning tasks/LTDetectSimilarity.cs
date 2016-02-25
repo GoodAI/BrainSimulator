@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Detect similarity")]
+    [DisplayName("Detect similarity in set")]
     public class LTDetectSimilarity : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

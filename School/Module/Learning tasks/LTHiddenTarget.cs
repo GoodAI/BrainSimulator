@@ -9,7 +9,7 @@ namespace GoodAI.Modules.School.LearningTasks
     /// <summary>
     /// In this learning task, the agent must learn to choose one of multiple targets without prior information as to which one to choose.
     /// </summary>
-    [DisplayName("Hidden target")]
+    [DisplayName("Reach hidden target")]
     public class LTHiddenTarget : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute NUMBER_OF_FALSE_TARGETS = new TSHintAttribute("Number of false targets", "", typeof(int), 1, 3);

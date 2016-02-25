@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Simple angle")]
+    [DisplayName("Categorize object angles")]
     public class LTSimpleAngle : AbstractLearningTask<ManInWorld>
     {
         private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Tolerance in rads", "", typeof(float), 0, 1); //check needed;

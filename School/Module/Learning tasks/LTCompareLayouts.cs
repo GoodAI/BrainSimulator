@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Compare layouts")]
+    [DisplayName("Detect similar sets")]
     public class LTCompareLayouts : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("Detect difference")]
+    [DisplayName("Detect discrepancy in set")]
     public class LTDetectDifference : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();

@@ -8,7 +8,7 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     // TODO: Currently presents target outside of POW.
 
-    [DisplayName("Detect white")]
+    [DisplayName("Detect object presence")]
     public class LTDetectWhite : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random m_rndGen = new Random();

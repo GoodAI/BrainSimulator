@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("2 back binary test")]
+    [DisplayName("Detect objects position in timeseries")]
     public class LT2BackBinaryTest : AbstractLearningTask<ManInWorld>
     {
         protected Random m_rndGen = new Random();
