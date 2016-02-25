@@ -240,7 +240,7 @@ namespace GoodAI.School.GUI
 
         private string GetAutosaveFilename()
         {
-            return CurrentProjectName + DateTime.Now.ToString("yyyy-MM-ddTHHmmss") + ".csv"; // ISO 8601
+            return CurrentProjectName + DateTime.Now.ToString("yyyy-MM-ddTHHmmss"); // ISO 8601
         }
 
         private void AddWorldHandlers(SchoolWorld world)
@@ -507,6 +507,9 @@ namespace GoodAI.School.GUI
             dataGridView1.MultiSelect = true;
             dataGridView1.SelectAll();
             Clipboard.SetDataObject(dataGridView1.GetClipboardContent());
+            if (format == TextDataFormat.CommaSeparatedValue && Path.GetExtension(filename) != ".csv")
+                filename += ".csv";
+
             File.WriteAllText(filename, Clipboard.GetText(format));
 
             dataGridView1.MultiSelect = multiSelectAllowed;
