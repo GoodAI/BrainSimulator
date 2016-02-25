@@ -779,6 +779,7 @@
             this.Controls.Add(this.splitContainer3);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(410, 410);
             this.Name = "SchoolRunForm";
             this.Text = "AI School";
