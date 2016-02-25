@@ -169,6 +169,7 @@ namespace GoodAI.School.GUI
             m_mainForm.WorldChanged += m_mainForm_WorldChanged;
             m_mainForm.WorldChanged += SelectSchoolWorld;
 
+            nodeTextBox1.DrawText += nodeTextBox1_DrawText;
             UpdateButtons();
         }
 
