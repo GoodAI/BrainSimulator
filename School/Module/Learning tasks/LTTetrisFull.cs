@@ -19,7 +19,6 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            SetHints(TSHints);
         }
 
         public override void PresentNewTrainingUnit()

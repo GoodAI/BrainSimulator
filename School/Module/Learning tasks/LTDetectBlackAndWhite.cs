@@ -11,11 +11,11 @@ namespace GoodAI.Modules.School.LearningTasks
     // Multiple parameters are incremented in the same step.
 
     [DisplayName("Detect objects presence")]
-    public class LTDetectBlackAndWhite : AbstractLearningTask<ManInWorld>
+    public class LTDetectBlackAndWhite : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute IS_TARGET_MOVING = new TSHintAttribute("Is target moving", "", typeof(bool), 0, 1);
 
-        private Random m_rndGen = new Random();
+        private readonly Random m_rndGen = new Random();
         private bool m_appears;
         private bool m_isBlack;
 
@@ -43,31 +43,26 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            if (WrappedWorld.GetType() != typeof(RoguelikeWorld))
-            {
-                throw new NotImplementedException();
-            }
-
             WrappedWorld.CreateNonVisibleAgent();
 
             m_appears = LearningTaskHelpers.FlipCoin(m_rndGen);
             if (!m_appears) return;
 
-            Size size;
+            SizeF size;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
-                int a = m_rndGen.Next(10, 20);
-                size = new Size(a, a);
+                float a = (float)(10 + m_rndGen.NextDouble() * 10);
+                size = new SizeF(a, a);
             }
             else
             {
                 size = new Size(15, 15);
             }
 
-            Point position;
+            PointF position;
             if (TSHints[IS_TARGET_MOVING] >= 1)
             {
-                position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size);
+                position = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size);
             }
             else
             {
@@ -77,7 +72,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_isBlack = LearningTaskHelpers.FlipCoin(m_rndGen);
             Color color = m_isBlack ? Color.Black : Color.White;
 
-            WrappedWorld.CreateShape(position, Shape.Shapes.Square, color, size);
+            WrappedWorld.CreateShape(Shape.Shapes.Square, color, position, size);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)

@@ -118,7 +118,7 @@ namespace GoodAI.Modules.School.Worlds
         private int m_width;
         private int m_height;
 
-        [MyBrowsable, Category("Sizes - Visual"), DisplayName("\tAspectRatio"), ReadOnly(true)]
+        [MyBrowsable, Category("Visual"), DisplayName("\tAspectRatio"), ReadOnly(true)]
         [YAXSerializableField(DefaultValue = 1)]
         public float AspectRatio
         {
@@ -135,7 +135,7 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        [MyBrowsable, Category("Sizes - Visual"), DisplayName("\tWidth")]
+        [MyBrowsable, Category("Visual"), DisplayName("\tWidth")]
         [YAXSerializableField(DefaultValue = 256)]
         public int Width
         {
@@ -149,7 +149,7 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        [MyBrowsable, Category("Sizes - Visual")]
+        [MyBrowsable, Category("Visual")]
         [YAXSerializableField(DefaultValue = 256)]
         public int Height
         {
@@ -163,13 +163,14 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        [MyBrowsable, Category("Sizes - World")]
+        [MyBrowsable, Category("World")]
         [YAXSerializableField(DefaultValue = 1000)]
         public int TextSize { get; set; }
 
-        [MyBrowsable, Category("Sizes - World")]
+        [MyBrowsable, Category("World")]
         [YAXSerializableField(DefaultValue = 100)]
         public int DataSize { get; set; }
+
 
         public override void UpdateMemoryBlocks()
         {
@@ -188,7 +189,7 @@ namespace GoodAI.Modules.School.Worlds
 
         private IWorldAdapter m_currentWorld;
 
-        [MyBrowsable, Category("World"), TypeConverter(typeof(IWorldAdapterConverter)), YAXDontSerialize]
+        [MyBrowsable, Category("World"), TypeConverter(typeof(WorldAdapterConverter)), YAXDontSerialize]
         public IWorldAdapter CurrentWorld
         {
             get
@@ -222,7 +223,7 @@ namespace GoodAI.Modules.School.Worlds
             Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
         }
 
-        Random m_rndGen = new Random();
+        readonly Random m_rndGen = new Random();
 
         private bool m_shouldShowNewLearningTask = true;
         private bool m_isAfterChangeModelInit = false;
@@ -566,6 +567,39 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
+        /// Performs Input memory blocks mapping
+        /// </summary>
+        public class InputAdapterTask : MyTask<SchoolWorld>
+        {
+            public override void Init(int nGPU)
+            {
+                if (Owner.CurrentWorld != null)
+                    Owner.CurrentWorld.InitWorldInputs(nGPU);
+            }
+
+            public override void Execute()
+            {
+                Owner.CurrentWorld.MapWorldInputs();
+            }
+        }
+
+        /// <summary>
+        /// Update the state of the training task(s)
+        /// </summary>
+        public class LearningStepTask : MyTask<SchoolWorld>
+        {
+            public override void Init(int nGPU)
+            {
+            }
+
+            public override void Execute()
+            {
+                if (Owner.CurrentLearningTask != null)
+                    Owner.ExecuteLearningTaskStep();
+            }
+        }
+
+        /// <summary>
         /// Performs Output memory blocks mapping
         /// </summary>
         public class OutputAdapterTask : MyTask<SchoolWorld>
@@ -600,39 +634,6 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 Owner.CurrentWorld.MapWorldOutputs();
-            }
-        }
-
-        /// <summary>
-        /// Performs Input memory blocks mapping
-        /// </summary>
-        public class InputAdapterTask : MyTask<SchoolWorld>
-        {
-            public override void Init(int nGPU)
-            {
-                if (Owner.CurrentWorld != null)
-                    Owner.CurrentWorld.InitWorldInputs(nGPU);
-            }
-
-            public override void Execute()
-            {
-                Owner.CurrentWorld.MapWorldInputs();
-            }
-        }
-
-        /// <summary>
-        /// Update the state of the training task(s)
-        /// </summary>
-        public class LearningStepTask : MyTask<SchoolWorld>
-        {
-            public override void Init(int nGPU)
-            {
-            }
-
-            public override void Execute()
-            {
-                if (Owner.CurrentLearningTask != null)
-                    Owner.ExecuteLearningTaskStep();
             }
         }
 

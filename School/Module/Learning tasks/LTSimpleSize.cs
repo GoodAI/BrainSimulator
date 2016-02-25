@@ -50,7 +50,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            WrappedWorld.FreezeWorld(true);
+            WrappedWorld.IsWorldFrozen = true;
 
             CreateAgent();
             CreateTarget();
@@ -82,22 +82,18 @@ namespace GoodAI.Modules.School.LearningTasks
         protected void CreateTarget()
         {
             // the number of different sizes depends on level:
-            int maxWidth = (int)(WrappedWorld.POW_WIDTH * 0.9);
-            int maxHeight = (int)(WrappedWorld.POW_HEIGHT * 0.9);
-            float fRatio = m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1) / (float)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
+            int maxSide = (int)(Math.Max(WrappedWorld.Viewport.Width, WrappedWorld.Viewport.Height) * 0.9);
 
-            int maxSide = (int)(Math.Max(WrappedWorld.POW_WIDTH, WrappedWorld.POW_HEIGHT) * 0.9);
-
-            float randomNumber = (float)(m_rndGen.Next(1, (int)TSHints[LTSimpleSize.TARGET_SIZE_LEVELS] + 1));
-            m_scale = randomNumber / TSHints[LTSimpleSize.TARGET_SIZE_LEVELS];
-            int side = (int)((float)maxSide * m_scale);
+            float randomNumber = m_rndGen.Next(1, (int)TSHints[TARGET_SIZE_LEVELS] + 1);
+            m_scale = randomNumber / TSHints[TARGET_SIZE_LEVELS];
+            float side = maxSide * m_scale;
 
             //MyLog.Writer.WriteLine(maxSide);
             //MyLog.Writer.WriteLine(side);
 
-            Size size = new Size(side, side);
+            SizeF size = new SizeF(side, side);
 
-            Point position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size, -1);
+            PointF position = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size, -1);
 
             List<Shape.Shapes> shapes = new List<Shape.Shapes>();
             switch ((int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS])
@@ -124,7 +120,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 color = Color.White;
             }
 
-            WrappedWorld.CreateShape(position, shape, color, size);
+            WrappedWorld.CreateShape(shape, color, position, size);
         }
     }
 }

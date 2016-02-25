@@ -62,8 +62,6 @@ namespace GoodAI.Modules.School.LearningTasks
                 { RANDOMNESS_LEVEL, 1 },
             };
 
-            base.SetHints(TSHints);
-
             TSProgression.Add(TSHints.Clone());
 
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_ROTATION, 1);
@@ -103,7 +101,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             // Generate an artificial invisible agent
             m_agent = WrappedWorld.CreateNonVisibleAgent();
-            Point agentPos = m_agent.GetGeometry().Location;
+            PointF agentPos = m_agent.GetGeometry().Location;
             m_agent.GameObjectStyle = GameObjectStyleType.None; // Prevent reseting movement vector when colliding with something from the top (default style is Platformer)
 
             // Generate shapes around the agent
@@ -112,13 +110,13 @@ namespace GoodAI.Modules.School.LearningTasks
             // Pick one target and duplicate it in the pow center
             m_pickIdx = m_rndGen.Next(noObjects);
             var pick = m_targets[m_pickIdx];
-            Color color = TSHints[TSHintAttributes.IS_VARIABLE_COLOR] > 0 ? LearningTaskHelpers.RandomVisibleColor(m_rndGen) : pick.maskColor;
-            m_question = WrappedWorld.CreateShape(agentPos, (Shape.Shapes)m_shapeIdcs[m_pickIdx], color, GameObjectType.None, pick.Width, pick.Height);
+            Color color = TSHints[TSHintAttributes.IS_VARIABLE_COLOR] > 0 ? LearningTaskHelpers.RandomVisibleColor(m_rndGen) : pick.ColorMask;
+            m_question = WrappedWorld.CreateShape((Shape.Shapes)m_shapeIdcs[m_pickIdx], color, agentPos, pick.Size);
         }
 
-        public virtual void CreateTargets(int noObjects, Point center)
+        public virtual void CreateTargets(int noObjects, PointF center)
         {
-            Size centerSz = new Size(center); // Is Size because there is no overload for +(Point,Point)........
+            SizeF centerSz = new SizeF(center); // Is Size because there is no overload for +(Point,Point)........
 
             // Pick random unique shapes from the available pool
             Resize(ref m_shapeIdcs, noObjects);
@@ -129,7 +127,7 @@ namespace GoodAI.Modules.School.LearningTasks
             float step = (float)(2 * Math.PI / noObjects); // rads
             float angle = TSHints[TSHintAttributes.IS_VARIABLE_POSITION] > 0
                 ? (float)(m_rndGen.NextDouble() * step) : 0;
-            float distance = Math.Min(WrappedWorld.POW_HEIGHT, WrappedWorld.POW_WIDTH) / 3f;
+            float distance = Math.Min(WrappedWorld.Viewport.Width, WrappedWorld.Viewport.Height) / 3f;
 
             Resize(ref m_targets, noObjects);
 
@@ -139,7 +137,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (TSHints[IS_VARIABLE_DISTANCE] > 0)
                     distance *= 1 + 0.04f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[RANDOMNESS_LEVEL];
 
-                Point pos = new Point((int)(Math.Cos(angle) * distance), (int)(Math.Sin(angle) * distance));
+                PointF pos = new PointF((float)(Math.Cos(angle) * distance), (float)(Math.Sin(angle) * distance));
 
                 // Determine shape size
                 float scale = 1.4f;
@@ -147,13 +145,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] > 0)
                     scale = scale + 0.2f * LearningTaskHelpers.GetRandomGaussian(m_rndGen) * TSHints[RANDOMNESS_LEVEL];
 
-                Size size = new Size((int)(16 * scale), (int)(16 * scale));
+                SizeF size = new SizeF(16 * scale, 16 * scale);
 
                 // Determine shape rotation
                 float rotation = 0;
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_ROTATION] > 0)
-                    rotation = (float)(m_rndGen.Next() * 360);
+                    rotation = (float)(m_rndGen.NextDouble() * 360);
 
                 // Determine shape color
                 Color color = Color.White;
@@ -162,8 +160,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
 
                 // Create the correct shape
-                m_targets[i] = WrappedWorld.CreateShape(pos + centerSz, (Shape.Shapes)m_shapeIdcs[i], color, size);
-                m_targets[i].Rotation = rotation;
+                m_targets[i] = WrappedWorld.CreateShape((Shape.Shapes)m_shapeIdcs[i], color, pos + centerSz, size, rotation);
 
                 angle += step;
             }
@@ -186,7 +183,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 return true;
 
             // Move the question shape with the invisible agent
-            m_question.SetPosition(new Point(m_agent.X, m_agent.Y));
+            m_question.Position = m_agent.Position;
 
             foreach (var gameObject in m_targets)
             {

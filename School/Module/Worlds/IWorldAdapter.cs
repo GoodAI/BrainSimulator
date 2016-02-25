@@ -10,10 +10,12 @@ namespace GoodAI.Modules.School.Worlds
 {
     public interface IWorldAdapter
     {
+        SchoolWorld School { set; }
         MyWorkingNode World { get; }
-        SchoolWorld School { get; set; }
 
+        // Must be a method; BS would try to instantiate it if it were a property
         MyTask GetWorldRenderTask();
+
         void InitAdapterMemory();
         void InitWorldInputs(int nGPU);
         void MapWorldInputs();
@@ -24,15 +26,15 @@ namespace GoodAI.Modules.School.Worlds
         void SetHint(TSHintAttribute attr, float value);
     }
 
-    public static class IWorldAdaptersList
+    public static class WorldAdaptersList
     {
-        public static Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
+        public static readonly Type[] Types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => typeof(IWorldAdapter).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
                 .ToArray();
     }
 
-    public class IWorldAdapterConverter : TypeConverter
+    public class WorldAdapterConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
@@ -44,9 +46,10 @@ namespace GoodAI.Modules.School.Worlds
         }
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string)
+            string s = value as string;
+            if (s != null)
             {
-                return (IWorldAdapter)(Activator.CreateInstance(Type.GetType((string)value)));
+                return (IWorldAdapter)Activator.CreateInstance(Type.GetType(s));
             }
             if (value == null)
             {
@@ -70,7 +73,7 @@ namespace GoodAI.Modules.School.Worlds
 
         protected Type[] GetValues()
         {
-            return IWorldAdaptersList.Types;
+            return WorldAdaptersList.Types;
         }
     }
 }

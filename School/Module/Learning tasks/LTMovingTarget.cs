@@ -17,10 +17,10 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Reach moving target")]
     public class LTMovingTarget : LTApproach                           // Deriving from LTApproach
     {
-        private float angle;                                                    // Used for the trajectory of the circular movement of the target
-        private Point Trajectory = new Point();
+        private float m_angle;                                                    // Used for the trajectory of the circular movement of the target
+        private PointF m_trajectory;
 
-        private int stepsTakenForOneCircle;                                     // How many steps will denote one complete cycle of the ellipse
+        private int m_stepsTakenForOneCircle;                                     // How many steps will denote one complete cycle of the ellipse
 
         private readonly TSHintAttribute MOVING_VELOCITY = new TSHintAttribute("Moving Velocity", "", typeof(float), 0, 1);                 // The velocity of the Target when it's trying to avoid the agent
         private readonly TSHintAttribute ELLIPSE_SIZE = new TSHintAttribute("Ellipse Rectangle Ratio", "", typeof(float), 0, 1);            // The size of the ellipse inside the screen it ranges from 0 to 1: 1.0f is the biggest ellipse that can fit in the POW screen
@@ -90,26 +90,26 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void ExecuteStep()                                  // UpdateState calls base's equivalent and then its own additional functions
         {
-            stepsTakenForOneCircle = (int)TSHints[STEPS_TAKEN_FOR_ONE_CIRCLE];
+            m_stepsTakenForOneCircle = (int)TSHints[STEPS_TAKEN_FOR_ONE_CIRCLE];
 
             // The movement of the moving target is circular, and this circular movement is represented by an ellipse inside a rectangle (the Screen)
 
-            angle += (float)(1f) / stepsTakenForOneCircle;                  // Increase the angle (which will produce the coordinates that will be used to generate the point to move towards to)
+            m_angle += 1f / m_stepsTakenForOneCircle;                  // Increase the m_angle (which will produce the coordinates that will be used to generate the point to move towards to)
 
-            if (angle > 1f)
+            if (m_angle > 1f)
             {
-                angle = 0;
+                m_angle = 0;
             }
 
-            Trajectory = GetPointInEllipse(angle, (float)TSHints[ELLIPSE_SIZE]);             // Find the current coordinates to follow
+            m_trajectory = GetPointInEllipse(m_angle, TSHints[ELLIPSE_SIZE]);             // Find the current coordinates to follow
 
             if ((int)TSHints[AVOIDING_AGENT] == 0)
             {
-                m_target.X = Trajectory.X;
-                m_target.Y = Trajectory.Y;
+                m_target.Position.X = m_trajectory.X;
+                m_target.Position.Y = m_trajectory.Y;
             }
 
-            // MoveTowardsPoint(Trajectory.X, Trajectory.Y, movingVelocity);    // Move target towards the desired Trajectory
+            // MoveTowardsPoint(m_trajectory.X, m_trajectory.Y, movingVelocity);    // Move target towards the desired m_trajectory
 
             if ((int)TSHints[AVOIDING_AGENT] == 1)                              // If avoidingAgent is required from the TSHints, compute additional moving step trying to avoid the agent
             {
@@ -123,67 +123,66 @@ namespace GoodAI.Modules.School.LearningTasks
 
             m_target = WrappedWorld.CreateTarget(new Point(0, 0));
 
-            m_target.Width = 30;
-            m_target.Height = 30;
+            m_target.Size.Width = 30;
+            m_target.Size.Height = 30;
 
-            Point RandomPoint = new Point();
-            float NewNumber = (float)m_rndGen.NextDouble();
+            float newNumber = (float)m_rndGen.NextDouble();
 
-            RandomPoint = GetPointInEllipse(NewNumber, (float)TSHints[ELLIPSE_SIZE]);            // Find a random point in the ellipse
-            angle = NewNumber;                                                  // Adapt the new current angle to the point generated
+            PointF randomPoint = GetPointInEllipse(newNumber, TSHints[ELLIPSE_SIZE]);
+            m_angle = newNumber;                                                  // Adapt the new current m_angle to the point generated
 
-            m_target.X = RandomPoint.X;
-            m_target.Y = RandomPoint.Y;
+            m_target.Position.X = randomPoint.X;
+            m_target.Position.Y = randomPoint.Y;
 
             WrappedWorld.AddGameObject(m_target);
         }
 
         // The ellipse's coordinates are calculated using a canonical form in polar coordinates
-        // angle varies from 0 to 360 degrees, but it's in radians, the range is from 0 to 1 (2Pi)
+        // m_angle varies from 0 to 360 degrees, but it's in radians, the range is from 0 to 1 (2Pi)
         // For details: https://en.wikipedia.org/wiki/Ellipse#Parametric_form_in_canonical_position
 
-        public Point GetPointInEllipse(float angle, float EllipseRatioSize)                     // angle ranges from 0 to 1 (2Pi), EllipseRatioSize ranges from 0 to 1  (1 being the biggest ellipse inside the screen)
+        public PointF GetPointInEllipse(float angle, float EllipseRatioSize)                     // m_angle ranges from 0 to 1 (2Pi), EllipseRatioSize ranges from 0 to 1  (1 being the biggest ellipse inside the screen)
         {
-            Point ReturnResult = new Point();
+            float width = WrappedWorld.Viewport.Width * EllipseRatioSize;                            // Width of the rectangle that will contain the ellipse
+            float height = WrappedWorld.Viewport.Height * EllipseRatioSize;                          // Height of the rectangle that will contain the ellipse
 
-            float width = WrappedWorld.POW_WIDTH * EllipseRatioSize;                            // Width of the rectangle that will contain the ellipse
-            float height = WrappedWorld.POW_HEIGHT * EllipseRatioSize;                          // Height of the rectangle that will contain the ellipse
+            float Cx = WrappedWorld.Scene.Width / 2 - m_agent.Size.Width / 2;                      // X coordinate of the center of the rectangle
+            float Cy = WrappedWorld.Scene.Height / 2 - m_agent.Size.Height / 2;                    // Y coordinate of the center of the rectangle
 
-            float Cx = (WrappedWorld.FOW_WIDTH / 2) - (m_agent.Width / 2);                      // X coordinate of the center of the rectangle
-            float Cy = (WrappedWorld.FOW_HEIGHT / 2) - (m_agent.Height / 2);                    // Y coordinate of the center of the rectangle
+            PointF returnResult = new PointF();
 
-            ReturnResult.X = (int)(Cx + (width / 2) * Math.Cos(angle * (Math.PI * 2)));         // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable angle)
-            ReturnResult.Y = (int)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));        // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable angle)
+            returnResult.X = (float)(Cx + (width / 2) * Math.Cos(angle * (Math.PI * 2)));         // Get the x coordinate of a point in the trajectory represented as an ellipse (with variable m_angle)
+            returnResult.Y = (float)(Cy + (height / 2) * Math.Sin(angle * (Math.PI * 2)));        // Get the y coordinate of a point in the trajectory represented as an ellipse (with variable m_angle)
 
-            ReturnResult.X -= (m_target.Width / 2);
-            ReturnResult.Y -= (m_target.Height / 2);
+            returnResult.X -= (m_target.Size.Width / 2);
+            returnResult.Y -= (m_target.Size.Height / 2);
 
-            return ReturnResult;
+            return returnResult;
         }
 
-        public void MoveAwayFromAgentStep(int velocity)
+        public void MoveAwayFromAgentStep(float velocity)
         {
             // At each step, the target can move only on 1 axis, so choose the axis depending on the distances
-            if (Math.Abs(m_agent.X - m_target.X) > Math.Abs(m_agent.Y - m_target.Y))    // Check what axis has the smallest difference between 2 points, the movement can happen only by 1 axis at a time
+            if (Math.Abs(m_agent.Position.X - m_target.Position.X) > Math.Abs(m_agent.Position.Y - m_target.Position.Y))    // Check what axis has the smallest difference between 2 points, the movement can happen only by 1 axis at a time
             {
-                if (m_target.X < m_agent.X)
+                if (m_target.Position.X < m_agent.Position.X)
                 {
-                    m_target.X -= velocity;
+                    m_target.Position.X -= velocity;
                 }
-                else if (m_target.X > m_agent.X)
+                else if (m_target.Position.X > m_agent.Position.X)
                 {
-                    m_target.X += velocity;
+                    m_target.Position.X += velocity;
                 }
             }
             else                                                        // Move on Y axis
             {
-                if (m_target.Y < m_agent.Y)
+                if (m_target.Position.Y < m_agent.Position.Y)
                 {
-                    m_target.Y -= velocity;
+                    m_target.Position.Y -= velocity;
                 }
-                else if (m_target.Y > m_agent.Y)
+                else if (m_target.Position.Y > m_agent.Position.Y)
                 {
-                    m_target.Y += velocity;
+                    m_target.Position.Y += velocity;
                 }
             }
         }

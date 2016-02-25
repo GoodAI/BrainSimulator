@@ -9,7 +9,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Categorize shape or color")]
     public class LTDetectShapeColor : AbstractLearningTask<ManInWorld>
     {
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected GameObject m_target;
         protected Shape.Shapes m_target_type;
 
@@ -38,26 +38,25 @@ namespace GoodAI.Modules.School.LearningTasks
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 //random size
-                Size shapeSize = new Size(32, 32);
+                SizeF shapeSize = new SizeF(32, 32);
                 if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1.0f)
                 {
-                    int side = m_rndGen.Next(10, 48);
-                    shapeSize = new Size(side, side);
+                    float side = (float)(10 + m_rndGen.NextDouble() * 38);
+                    shapeSize = new SizeF(side, side);
                 }
 
                 // random position
-                Point shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
+                PointF shapePosition = WrappedWorld.Agent.GetGeometry().Location + new Size(20, 0);
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
-                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
+                    shapePosition = WrappedWorld.RandomPositionInsideViewport(m_rndGen, shapeSize);
                 }
 
                 // random color
                 Color shapeColor = LearningTaskHelpers.FlipCoin(m_rndGen) ? Color.Cyan : Color.Yellow;
-
                 m_target_type = LearningTaskHelpers.FlipCoin(m_rndGen) ? Shape.Shapes.Circle : Shape.Shapes.Square;
 
-                m_target = WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize);
+                m_target = WrappedWorld.CreateShape(m_target_type, shapeColor, shapePosition, shapeSize);
             }
             else
             {
@@ -68,13 +67,12 @@ namespace GoodAI.Modules.School.LearningTasks
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             bool wasCircleTargetDetected = WrappedWorld.Controls.Host[(int)Shape.Shapes.Circle] != 0;
-            bool wasSquareTargetDetected = (WrappedWorld as ManInWorld).Controls.Host[(int)Shape.Shapes.Square] != 0;
+            bool wasSquareTargetDetected = WrappedWorld.Controls.Host[(int)Shape.Shapes.Square] != 0;
 
             // both target detected
             if (wasCircleTargetDetected && wasSquareTargetDetected)
             {
                 wasUnitSuccessful = false;
-                GoodAI.Core.Utils.MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
                 return true;
             }
 
@@ -89,14 +87,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 {
                     wasUnitSuccessful = true;
                 }
-                GoodAI.Core.Utils.MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
                 return true;
             }
 
-            wasUnitSuccessful = (wasCircleTargetDetected && m_target_type == Shape.Shapes.Circle ||
-                wasSquareTargetDetected && m_target_type == Shape.Shapes.Square);
+            wasUnitSuccessful = wasCircleTargetDetected && m_target_type == Shape.Shapes.Circle ||
+                                wasSquareTargetDetected && m_target_type == Shape.Shapes.Square;
 
-            GoodAI.Core.Utils.MyLog.INFO.WriteLine("Unit completed with " + (wasUnitSuccessful ? "success" : "failure"));
             return true;
         }
     }

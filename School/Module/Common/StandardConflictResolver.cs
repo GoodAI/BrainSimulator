@@ -30,7 +30,7 @@ namespace GoodAI.Modules.School.Common
             {
                 // TODO : Recheck this code (cases where both objects are movable) for future functionality
                 SetPinballReaction(mgo1, o2);
-                if (mgo2.type == GameObjectType.Enemy)
+                if (mgo2.Type == GameObjectType.Enemy)
                 {
                 }
                 return;
@@ -48,11 +48,11 @@ namespace GoodAI.Modules.School.Common
                 }
 
                 if (!(
-                    o2.type == GameObjectType.Agent ||
-                    o2.type == GameObjectType.ClosedDoor ||
-                    o2.type == GameObjectType.Obstacle ||
-                    o2.type == GameObjectType.Teacher ||
-                    o2.type == GameObjectType.None))
+                    o2.Type == GameObjectType.Agent ||
+                    o2.Type == GameObjectType.ClosedDoor ||
+                    o2.Type == GameObjectType.Obstacle ||
+                    o2.Type == GameObjectType.Teacher ||
+                    o2.Type == GameObjectType.None))
                 {
                     return;
                 }
@@ -77,8 +77,8 @@ namespace GoodAI.Modules.School.Common
             "Did you forget to implement overriding class for StandardConflictResolver?");
         }
 
-        // returns false if subtype combine its behavior with main type
-        // true if overrides main type or have no main type
+        // returns false if subtype combine its behavior with main Type
+        // true if overrides main Type or have no main Type
         public virtual bool ResolveSubtype(GameObject o1, GameObject o2)
         {
             return false;
@@ -87,22 +87,22 @@ namespace GoodAI.Modules.School.Common
         public void SetPlattformerReaction(MovableGameObject mgo1, GameObject o2)
         {
             int collideResult = CheckCollision(mgo1, o2);
-            Point lastUntouchingPosition = GetLastUntouchingPosition(mgo1, o2, ref collideResult); //finds the X,Y position of "source" in the closest point to "o2" before collision)
+            PointF lastUntouchingPosition = GetLastUntouchingPosition(mgo1, o2, ref collideResult); //finds the X,Y position of "source" in the closest point to "o2" before collision)
 
             if (collideResult == 4 || collideResult == 1)               // If it collided at the bottom or top
             {
-                mgo1.Y = lastUntouchingPosition.Y;                    // Reposition Y position to the last position where there was no collision
-                mgo1.vY = 0;                                          // and reset Y velocity
+                mgo1.Position.Y = lastUntouchingPosition.Y;                    // Reposition Y position to the last position where there was no collision
+                mgo1.Velocity.Y = 0;                                          // and reset Y velocity
             }
             if (collideResult == 2 || collideResult == 3)               // If it collided at the right or left reset X velocity to 0
             {
-                mgo1.X = lastUntouchingPosition.X;                    // Reposition X position to the last position where there was no collision
-                mgo1.vX = 0;                                          // and reset X velocity
+                mgo1.Position.X = lastUntouchingPosition.X;                    // Reposition X position to the last position where there was no collision
+                mgo1.Velocity.X = 0;                                          // and reset X velocity
             }
 
-            if (mgo1.previousY == mgo1.Y && collideResult == 4)     // Remember if object is on ground, collision on the bottom
+            if (mgo1.PositionPrevious.Y == mgo1.Position.Y && collideResult == 4)     // Remember if object is on ground, collision on the bottom
             {
-                mgo1.onGround = true;
+                mgo1.OnGround = true;
             }
 
         }
@@ -110,46 +110,44 @@ namespace GoodAI.Modules.School.Common
         public void SetPinballReaction(MovableGameObject mgo1, GameObject o2)
         {
             int collideResult = 0;
-            Point lastUntouchingPosition = GetLastUntouchingPosition(mgo1, o2, ref collideResult); //finds the X,Y position of "source" in the closest point to "o2" before collision)
+            PointF lastUntouchingPosition = GetLastUntouchingPosition(mgo1, o2, ref collideResult); //finds the X,Y position of "source" in the closest point to "o2" before collision)
             if (collideResult == 4 || collideResult == 1)               // If it collided at the bottom or top, reposition and invert Y velocity
             {
-                mgo1.Y = lastUntouchingPosition.Y;
-                mgo1.vY = -mgo1.vY;
+                mgo1.Position.Y = lastUntouchingPosition.Y;
+                mgo1.Velocity.Y = -mgo1.Velocity.Y;
             }
             if (collideResult == 2 || collideResult == 3)               // If it collided at the right or left, reposition and invert X velocity
             {
-                mgo1.X = lastUntouchingPosition.X;
-                mgo1.vX = -mgo1.vX;
+                mgo1.Position.X = lastUntouchingPosition.X;
+                mgo1.Velocity.X = -mgo1.Velocity.X;
             }
             if (mgo1.IsAffectedByGravity == true)                     //If it's affected by gravity, add deceleration effect
             {
-                mgo1.vX *= 0.93f;                                     //TODO: replace 0.93f constant with a variable
-                mgo1.vY *= 0.93f;
+                mgo1.Velocity.X *= 0.93f;                                     //TODO: replace 0.93f constant with a variable
+                mgo1.Velocity.Y *= 0.93f;
             }
 
         }
 
-        public static Point ReturnCoordinatesBetweenTwoPoints(int SourceX, int SourceY, int TargetX, int TargetY, float blend)
+        public static PointF ReturnCoordinatesBetweenTwoPoints(float SourceX, float SourceY, float TargetX, float TargetY, float blend)
         {
-            Point result = new Point(); ;
-            result.X = (int)(SourceX + blend * (TargetX - SourceX));
-            result.Y = (int)(SourceY + blend * (TargetY - SourceY));
-            return result;
+            return new PointF(SourceX + blend * (TargetX - SourceX),
+                              SourceY + blend * (TargetY - SourceY));
         }
 
         /*
                     * This method is called when 2 GameObjects collide, it finds the point of contact by applying a binary search where the lower side is Source's X,Y previous position and the higher side is
                     * Source's X,Y current position, and the middle (needed by the binary search) is found by returning the middle position between the 2 points.
                     */
-        public Point GetLastUntouchingPosition(MovableGameObject source, GameObject target, ref int lastCollideResult)
+        public PointF GetLastUntouchingPosition(MovableGameObject source, GameObject target, ref int lastCollideResult)
         {
             int currentCollisionResult = 0;                                             // The collision result used while iteratively repositioning the Source
-            Point lowerSide = new Point(source.previousX, source.previousY);              // Initialise the lower side for the binary search to the coordinates of the source's previous position
-            Point higherSide = new Point(source.X, source.Y);                             // Initialise the higher side for the binary search to the coordinates of the source's current position
-            Point currentMiddle = new Point(-10, -10);                                    // Declares the middle point, which will be used for the binary search
-            Point previousMiddle = new Point(0, 0);                                       // Declares the previous middle point, which will be used to decide when the binary search can't divide anymore
-            Point originalSourcePosition = new Point(source.X, source.Y);
-            Point lastUntouchingPosition = new Point(source.previousX, source.previousY); //It will be used to remember the last position encountered where there was no contact (collision) in order to apply repositioning
+            PointF lowerSide = new PointF(source.PositionPrevious.X, source.PositionPrevious.Y);              // Initialise the lower side for the binary search to the coordinates of the source's previous position
+            PointF higherSide = new PointF(source.Position.X, source.Position.Y);                             // Initialise the higher side for the binary search to the coordinates of the source's current position
+            PointF currentMiddle = new PointF(-10, -10);                                    // Declares the middle PointF, which will be used for the binary search
+            PointF previousMiddle = new PointF(0, 0);                                       // Declares the previous middle PointF, which will be used to decide when the binary search can't divide anymore
+            PointF originalSourcePosition = new PointF(source.Position.X, source.Position.Y);
+            PointF lastUntouchingPosition = new PointF(source.PositionPrevious.X, source.PositionPrevious.Y); //It will be used to remember the last position encountered where there was no contact (collision) in order to apply repositioning
             int counter = 0;
 
             //Stop the loop when the function can't divide anymore by half the distance between lowerSide and higherSide
@@ -160,8 +158,8 @@ namespace GoodAI.Modules.School.Common
 
                 //MyLog.DEBUG.WriteLine("Recomputed middle between : " + lowerSide.x + "," + lowerSide.y + " | " + higherSide.x + "," + higherSide.y + " : = " + currentMiddle.x + ", " + currentMiddle.y);
 
-                source.X = currentMiddle.X;                                 // Position source's x to the point in exam
-                source.Y = currentMiddle.Y;                                 // Position source's y to the point in exam
+                source.Position.X = currentMiddle.X;                                 // Position source's x to the point in exam
+                source.Position.Y = currentMiddle.Y;                                 // Position source's y to the point in exam
                 currentCollisionResult = CheckCollision(source, target);    // Check if there is a collision using the point in exam
 
                 //MyLog.DEBUG.WriteLine("Collision result: " + currentCollisionResult);
@@ -187,8 +185,8 @@ namespace GoodAI.Modules.School.Common
                 counter++;
             }
 
-            source.X = originalSourcePosition.X;
-            source.Y = originalSourcePosition.Y;
+            source.Position.X = originalSourcePosition.X;
+            source.Position.Y = originalSourcePosition.Y;
 
             return lastUntouchingPosition;
         }
@@ -200,11 +198,11 @@ namespace GoodAI.Modules.School.Common
 
         public static int CheckCollision(GameObject SourceGameObject, GameObject TargetGameObject)
         {
-            float w = 0.5f * (SourceGameObject.Width + TargetGameObject.Width);
-            float h = 0.5f * (SourceGameObject.Height + TargetGameObject.Height);
+            float w = 0.5f * (SourceGameObject.Size.Width + TargetGameObject.Size.Width);
+            float h = 0.5f * (SourceGameObject.Size.Height + TargetGameObject.Size.Height);
 
-            float dx = (SourceGameObject.X + (SourceGameObject.Width / 2)) - (TargetGameObject.X + (TargetGameObject.Width / 2));
-            float dy = (SourceGameObject.Y + (SourceGameObject.Height / 2)) - (TargetGameObject.Y + (TargetGameObject.Height / 2));
+            float dx = (SourceGameObject.Position.X + (SourceGameObject.Size.Width / 2)) - (TargetGameObject.Position.X + (TargetGameObject.Size.Width / 2));
+            float dy = (SourceGameObject.Position.Y + (SourceGameObject.Size.Height / 2)) - (TargetGameObject.Position.Y + (TargetGameObject.Size.Height / 2));
 
             MovableGameObject mobj = SourceGameObject as MovableGameObject;
 
@@ -218,7 +216,7 @@ namespace GoodAI.Modules.School.Common
                 {
                     if (wy < -hx)
                     {
-                        if (mobj.vX < 0)  //If you were moving on the left the collision can't be on the right side, return 1(Top)
+                        if (mobj.Velocity.X < 0)  //If you were moving on the left the collision can't be on the right side, return 1(Top)
                         {
                             return 1;
                         }
@@ -233,7 +231,7 @@ namespace GoodAI.Modules.School.Common
                 {
                     if (wy > -hx)
                     {
-                        if (mobj.vX > 0)  //If you were moving on the right the collision can't be on the left side, return 4(Bottom)
+                        if (mobj.Velocity.X > 0)  //If you were moving on the right the collision can't be on the left side, return 4(Bottom)
                         {
                             return 4;
                         }

@@ -3,6 +3,7 @@ using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 
@@ -10,42 +11,50 @@ namespace GoodAI.Modules.School.Worlds
 {
     public class RogueAgent : MovableGameObject
     {
-        public RogueAgent(Point p, float size = 1.0f)
-            : base(GameObjectType.Agent, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueAgent(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexturePath(), p, GetDefaultSize(), GameObjectType.Agent)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
-        public RogueAgent(Point p, string path, float size = 1.0f)
-            : base(GameObjectType.Agent, path, p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueAgent(PointF p, string bitmapPath, float scale = 1.0f)
+            : base(bitmapPath, p, GetDefaultSize(), GameObjectType.Agent)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
-        public static string GetDefaultTexture(){
+        public static string GetDefaultTexturePath()
+        {
             return "Agent_TOP_blue_m.png";
         }
 
-        public static Size GetDefaultSize()
+        public static SizeF GetDefaultSize()
         {
-            return new Size(28, 28);
+            return new SizeF(28, 28);
         }
     }
 
     public class RogueTeacher : AbstractTeacherInWorld
     {
-        public List<Actions> m_actionsList;
-        public enum Actions { MoveUp = 2, MoveDown = 3, MoveLeft = 0, MoveRight = 1 , NoMove = 5}
+        public readonly List<Actions> ActionsList;
+        public enum Actions { MoveUp = 2, MoveDown = 3, MoveLeft = 0, MoveRight = 1, NoMove = 5 }
 
-        public RogueTeacher(Point p, float size = 1.0f)
-            : base(GameObjectType.Teacher, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size))
+        public RogueTeacher(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexturePath(), p, GetDefaultSize(), GameObjectType.Teacher)
         {
-            m_actionsList = new List<Actions>();
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+
+            ActionsList = new List<Actions>();
             m_currentMove = -1;
         }
 
-        public RogueTeacher(Point p, List<Actions> actions, float size = 1.0f)
-            : base(GameObjectType.Teacher, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size))
+        public RogueTeacher(PointF p, List<Actions> actions, float scale = 1.0f)
+            : base(GetDefaultTexturePath(), p, GetDefaultSize(), GameObjectType.Teacher)
         {
-            m_actionsList = actions;
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+
+            Debug.Assert(actions != null);
+            ActionsList = actions;
             m_currentMove = -1;
         }
 
@@ -59,9 +68,9 @@ namespace GoodAI.Modules.School.Worlds
             if (IsDone())
             {
                 Stop();
-                return GetActionVector(Actions.NoMove);;
+                return GetActionVector(Actions.NoMove); ;
             }
-            return GetActionVector(m_actionsList[m_currentMove++]);
+            return GetActionVector(ActionsList[m_currentMove++]);
         }
 
         public static Actions GetRandomAction(Random rndGen, int degreeOfFreedom)
@@ -72,12 +81,12 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void Stop()
         {
-            bitmapPath = GetDefaultStopTexture();
+            BitmapPath = GetDefaultStopTexture();
         }
 
         public override bool IsDone()
         {
-            return m_currentMove >= m_actionsList.Count;
+            return m_currentMove >= ActionsList.Count;
         }
 
         public override void Reset()
@@ -105,10 +114,10 @@ namespace GoodAI.Modules.School.Worlds
 
         public override int ActionsCount()
         {
-            return m_actionsList.Count;
+            return ActionsList.Count;
         }
 
-        public static string GetDefaultTexture()
+        public static string GetDefaultTexturePath()
         {
             return "Agent_TOP_red_m.png";
         }
@@ -120,17 +129,19 @@ namespace GoodAI.Modules.School.Worlds
 
         public static Size GetDefaultSize()
         {
-            return new Size(24,24);
+            return new Size(24, 24);
         }
     }
 
     public class RogueWall : GameObject
     {
-        public RogueWall(Point p, float size = 1.0f)
-            : base(GameObjectType.Obstacle, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueWall(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexturePath(), p, GetDefaultSize(), GameObjectType.Obstacle)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
-        public static string GetDefaultTexture()
+        public static string GetDefaultTexturePath()
         {
             return "Armor_Block.png";
         }
@@ -143,9 +154,11 @@ namespace GoodAI.Modules.School.Worlds
 
     public class RogueTarget : GameObject
     {
-        public RogueTarget(Point p, float size = 1.0f)
-            : base(GameObjectType.NonColliding, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueTarget(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexture(), p, GetDefaultSize(), GameObjectType.NonColliding)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
         public static string GetDefaultTexture()
         {
@@ -154,15 +167,17 @@ namespace GoodAI.Modules.School.Worlds
 
         public static Size GetDefaultSize()
         {
-            return new Size(32, 32);
+            return RoguelikeWorld.DEFAULT_GRID_SIZE;
         }
     }
 
     public class RogueMovableTarget : MovableGameObject
     {
-        public RogueMovableTarget(Point p, float size = 1.0f)
-            : base(GameObjectType.NonColliding, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueMovableTarget(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexture(), p, GetDefaultSize(), GameObjectType.NonColliding)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
         public static string GetDefaultTexture()
         {
@@ -171,14 +186,14 @@ namespace GoodAI.Modules.School.Worlds
 
         public static Size GetDefaultSize()
         {
-            return new Size(32, 32);
+            return RoguelikeWorld.DEFAULT_GRID_SIZE;
         }
     }
 
     public class RogueDoor : GameObject, ISwitchable
     {
         private bool _isOn;
-        public bool isOn
+        public bool IsOn
         {
             get
             {
@@ -190,25 +205,26 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        public RogueDoor(Point p, bool isClosed = true, float size = 1.0f)
-            : base(GameObjectType.ClosedDoor, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size))
+        public RogueDoor(PointF p, bool isClosed = true, float scale = 1.0f)
+            : base(GetDefaultTexture(), p, GetDefaultSize(), GameObjectType.ClosedDoor)
         {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+
             Switch(!isClosed);
         }
 
         public void Switch(bool on)
         {
-            isOn = on;
+            IsOn = on;
             if (on)
             {
-                bitmapPath = @"Gate_Open_m.png";
-                type = GameObjectType.OpenedDoor;
+                BitmapPath = @"Gate_Open_m.png";
+                Type = GameObjectType.OpenedDoor;
             }
             else
             {
-                bitmapPath = @"Gate_Close_m.png";
-                type = GameObjectType.ClosedDoor;
+                BitmapPath = @"Gate_Close_m.png";
+                Type = GameObjectType.ClosedDoor;
 
             }
         }
@@ -239,7 +255,7 @@ namespace GoodAI.Modules.School.Worlds
         ISwitchable SwitchableObject;
 
         private bool _isOn;
-        public bool isOn
+        public bool IsOn
         {
             get
             {
@@ -251,19 +267,20 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        public RogueLever(Point p, ISwitchable switchableObject = null, bool isOn = false, float size = 1.0f)
-            : base(GameObjectType.Obstacle, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size))
+        public RogueLever(PointF p, ISwitchable switchableObject = null, bool isOn = false, float scale = 1.0f)
+            : base(GetDefaultTexture(), p, GetDefaultSize(), GameObjectType.Obstacle)
         {
-            this.SwitchableObject = switchableObject;
-            this.isOn = isOn;
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+
+            SwitchableObject = switchableObject;
+            IsOn = isOn;
             if (isOn)
             {
-                bitmapPath = @"Button_ON.png";
+                BitmapPath = @"Button_ON.png";
             }
             else
             {
-                bitmapPath = @"Button_OFF.png";
+                BitmapPath = @"Button_OFF.png";
             }
         }
 
@@ -275,14 +292,14 @@ namespace GoodAI.Modules.School.Worlds
         public void Switch(bool on)
         {
             SwitchableObject.Switch();
-            isOn = on;
+            IsOn = on;
             if (on)
             {
-                bitmapPath = @"Button_ON.png";
+                BitmapPath = @"Button_ON.png";
             }
             else
             {
-                bitmapPath = @"Button_OFF.png";
+                BitmapPath = @"Button_OFF.png";
             }
         }
 
@@ -298,15 +315,17 @@ namespace GoodAI.Modules.School.Worlds
 
         public static Size GetDefaultSize()
         {
-            return new Size(32, 32);
+            return RoguelikeWorld.DEFAULT_GRID_SIZE;
         }
     }
 
     public class RogueKiller : GameObject
     {
-        public RogueKiller(Point p, float size = 1.0f)
-            : base(GameObjectType.NonColliding, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueKiller(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexture(), p, GetDefaultSize(), GameObjectType.NonColliding)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
         public static string GetDefaultTexture()
         {
@@ -315,15 +334,17 @@ namespace GoodAI.Modules.School.Worlds
 
         public static Size GetDefaultSize()
         {
-            return new Size(32, 32);
+            return RoguelikeWorld.DEFAULT_GRID_SIZE;
         }
     }
 
     public class RogueMovableKiller : MovableGameObject
     {
-        public RogueMovableKiller(Point p, float size = 1.0f)
-            : base(GameObjectType.NonColliding, GetDefaultTexture(), p.X, p.Y,
-            (int)(GetDefaultSize().Width * size), (int)(GetDefaultSize().Height * size)) { }
+        public RogueMovableKiller(PointF p, float scale = 1.0f)
+            : base(GetDefaultTexture(), p, GetDefaultSize(), GameObjectType.NonColliding)
+        {
+            Size = new SizeF(Size.Width * scale, Size.Height * scale);
+        }
 
         public static string GetDefaultTexture()
         {
@@ -332,7 +353,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public static Size GetDefaultSize()
         {
-            return new Size(32, 32);
+            return RoguelikeWorld.DEFAULT_GRID_SIZE;
         }
     }
 }

@@ -39,15 +39,13 @@ namespace GoodAI.Modules.School.Worlds
             UpdateWorldTask = new UpdateRLTask();
         }
 
-        public Point GetInitPosition()
+        public PointF GetInitPosition()
         {
-            if (Agent == null)
-            {
-                return new Point(
-                    FOW_WIDTH / 2 - RogueAgent.GetDefaultSize().Width / 2,
-                    FOW_HEIGHT / 2 - RogueAgent.GetDefaultSize().Height / 2);
-            }
-            return new Point(FOW_WIDTH / 2 - Agent.Width / 2, FOW_HEIGHT / 2 - Agent.Height / 2);
+            SizeF agentPos = Agent == null
+                ? RogueAgent.GetDefaultSize()
+                : Agent.Size;
+
+            return new PointF((Scene.Width - agentPos.Width) / 2, (Scene.Height - agentPos.Height) / 2);
         }
 
         public override Grid GetGrid()
@@ -73,11 +71,6 @@ namespace GoodAI.Modules.School.Worlds
             public override void Init(int nGPU)
             {
                 base.Init(nGPU);
-            }
-
-            public override void HandleCollisions()
-            {
-                base.HandleCollisions();
             }
 
             public override void Execute()
@@ -107,20 +100,20 @@ namespace GoodAI.Modules.School.Worlds
 
             public void MoveAgent(MovableGameObject a, float[] controls)
             {
-                a.vX = a.vY = 0;
+                a.Velocity.X = a.Velocity.Y = 0;
 
                 if (!Owner.IsWorldFrozen)
                 {
                     if (controls[0] > 0)
-                        a.vX += 4;
+                        a.Velocity.X += 4;
                     if (controls[1] > 0)
-                        a.vX += -4;
+                        a.Velocity.X += -4;
                     if (Owner.DegreesOfFreedom == 2)
                     {
                         if (controls[2] > 0)
-                            a.vY += 4;
+                            a.Velocity.Y += 4;
                         if (controls[3] > 0)
-                            a.vY += -4;
+                            a.Velocity.Y += -4;
                     }
                 }
 

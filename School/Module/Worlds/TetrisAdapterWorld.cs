@@ -16,6 +16,7 @@ namespace GoodAI.School.Worlds
     {
         private MyMemoryBlock<float> ControlsAdapterTemp { get; set; }
 
+
         public override MyMemoryBlock<float> GetInput(int index)
         {
             return ControlsAdapterTemp;
@@ -31,8 +32,17 @@ namespace GoodAI.School.Worlds
             return ControlsAdapterTemp;
         }
 
-        public MyWorkingNode World { get { return this; } }
+        public override void Validate(MyValidator validator)
+        {
+            validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
+            if (ActionInput != null)
+                validator.AssertError(ActionInput.Count == 6, this, "Size of ActionInput must be 6");
+            //base.Validate(validator);
+        }
+
+
         public SchoolWorld School { get; set; }
+        public MyWorkingNode World { get { return this; } }
 
         public MyTask GetWorldRenderTask()
         {
@@ -94,26 +104,15 @@ namespace GoodAI.School.Worlds
 
             ScoreDeltaOutput.CopyToMemoryBlock(School.RewardMB, 0, 0, 1);
         }
-               
+
         public void ClearWorld()
         {
             Engine.Reset();
         }
-        
+
         public void SetHint(TSHintAttribute attr, float value)
         {
-        // some TSHints related to Tetris?
+            // some TSHints related to Tetris?
         }
-
-
-        public override void Validate(MyValidator validator)
-        {
-            validator.AssertError(ActionInput != null, this, "ActionInput must not be null");
-            if (ActionInput != null)
-                validator.AssertError(ActionInput.Count == 6, this, "Size of ActionInput must be 6");
-            //base.Validate(validator);
-        }
-
-
     }
 }

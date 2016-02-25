@@ -83,12 +83,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
                 // Position agent
-                m_agent.X = 50;
-                m_agent.Y = 50;
+                m_agent.Position.X = 50;
+                m_agent.Position.Y = 50;
 
                 // Position target
-                m_target.X = 280;
-                m_target.Y = 120;
+                m_target.Position.X = 280;
+                m_target.Position.Y = 120;
             }
 
             if (level == 2)                                                                     // Like level 1, but inverted
@@ -101,12 +101,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
                 // Position agent
-                m_agent.X = 280;
-                m_agent.Y = 120;
+                m_agent.Position.X = 280;
+                m_agent.Position.Y = 120;
 
                 // Position target
-                m_target.X = 50;
-                m_target.Y = 50;
+                m_target.Position.X = 50;
+                m_target.Position.Y = 50;
             }
 
             if (level == 3)
@@ -118,17 +118,17 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
-                world.CreateWall(g.getPoint(14, 4));
-                world.CreateWall(g.getPoint(14, 3));
-                world.CreateWall(g.getPoint(14, 2));
+                world.CreateWall(g.GetPoint(14, 4));
+                world.CreateWall(g.GetPoint(14, 3));
+                world.CreateWall(g.GetPoint(14, 2));
 
                 // Position agent
-                m_agent.X = 80;
-                m_agent.Y = 120;
+                m_agent.Position.X = 80;
+                m_agent.Position.Y = 120;
 
                 // Position target
-                m_target.X = 550;
-                m_target.Y = 110;
+                m_target.Position.X = 550;
+                m_target.Position.Y = 110;
             }
 
             if (level == 4)
@@ -140,30 +140,30 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 createWallRectangle(world, widthOfRectangle, heightOfRectangle);
 
-                world.CreateWall(g.getPoint(14, 9));
-                world.CreateWall(g.getPoint(14, 8));
-                world.CreateWall(g.getPoint(14, 7));
-                world.CreateWall(g.getPoint(14, 6));
-                world.CreateWall(g.getPoint(14, 5));
-                world.CreateWall(g.getPoint(14, 4));
-                world.CreateWall(g.getPoint(14, 3));
+                world.CreateWall(g.GetPoint(14, 9));
+                world.CreateWall(g.GetPoint(14, 8));
+                world.CreateWall(g.GetPoint(14, 7));
+                world.CreateWall(g.GetPoint(14, 6));
+                world.CreateWall(g.GetPoint(14, 5));
+                world.CreateWall(g.GetPoint(14, 4));
+                world.CreateWall(g.GetPoint(14, 3));
 
-                world.CreateWall(g.getPoint(8, 1));
-                world.CreateWall(g.getPoint(8, 2));
-                world.CreateWall(g.getPoint(8, 3));
-                world.CreateWall(g.getPoint(8, 4));
-                world.CreateWall(g.getPoint(8, 5));
-                world.CreateWall(g.getPoint(8, 6));
-                world.CreateWall(g.getPoint(8, 7));
-                world.CreateWall(g.getPoint(8, 8));
+                world.CreateWall(g.GetPoint(8, 1));
+                world.CreateWall(g.GetPoint(8, 2));
+                world.CreateWall(g.GetPoint(8, 3));
+                world.CreateWall(g.GetPoint(8, 4));
+                world.CreateWall(g.GetPoint(8, 5));
+                world.CreateWall(g.GetPoint(8, 6));
+                world.CreateWall(g.GetPoint(8, 7));
+                world.CreateWall(g.GetPoint(8, 8));
 
                 // Position agent
-                m_agent.X = 80;
-                m_agent.Y = 60;
+                m_agent.Position.X = 80;
+                m_agent.Position.Y = 60;
 
                 // Position target
-                m_target.X = 550;
-                m_target.Y = 250;
+                m_target.Position.X = 550;
+                m_target.Position.Y = 250;
             }
 
             if (level == 5)
@@ -181,13 +181,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 createWallVerticalLine(world, 8, m_rndGen.Next(1, 3), 3);
 
                 // Position agent
-                m_agent.X = 50;
-                m_agent.Y = 50;
+                m_agent.Position.X = 50;
+                m_agent.Position.Y = 50;
 
                 // Position target according to the wall rectangle that was generated with random size
-                m_target.X = 350;
+                m_target.Position.X = 350;
                 //m_target.Y = 110;
-                m_target.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
+                m_target.Position.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
             }
 
             if (level == 6)
@@ -205,13 +205,13 @@ namespace GoodAI.Modules.School.LearningTasks
                 createWallVerticalLine(world, 8, m_rndGen.Next(1, 3), 3);
 
                 // Position agent
-                m_agent.X = 50;
-                m_agent.Y = 50;
+                m_agent.Position.X = 50;
+                m_agent.Position.Y = 50;
 
                 // Position target according to the wall rectangle that was generated with random size
-                m_target.X = 350;
+                m_target.Position.X = 350;
                 //m_target.Y = 110;
-                m_target.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
+                m_target.Position.Y = m_rndGen.Next(70, 110);   // Randomize Y position of target
             }
         }
 
@@ -221,13 +221,13 @@ namespace GoodAI.Modules.School.LearningTasks
 
             for (int k = 1; k < heightOfRectangle; k++)
             {
-                world.CreateWall(g.getPoint(0, k));
-                world.CreateWall(g.getPoint(widthOfRectangle, k));
+                world.CreateWall(g.GetPoint(0, k));
+                world.CreateWall(g.GetPoint(widthOfRectangle, k));
             }
             for (int k = 1; k < widthOfRectangle; k++)
             {
-                world.CreateWall(g.getPoint(k, 0));
-                world.CreateWall(g.getPoint(k, heightOfRectangle));
+                world.CreateWall(g.GetPoint(k, 0));
+                world.CreateWall(g.GetPoint(k, heightOfRectangle));
             }
         }
 
@@ -246,7 +246,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
                 {
-                    world.CreateWall(g.getPoint(gridX, k + gridY), sizeWall);
+                    world.CreateWall(g.GetPoint(gridX, k + gridY), sizeWall);
                 }
                 else
                 {
@@ -254,7 +254,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
                 if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
                 {
-                    world.CreateWall(g.getPoint(widthOfRectangle + gridX, k + gridY), sizeWall);
+                    world.CreateWall(g.GetPoint(widthOfRectangle + gridX, k + gridY), sizeWall);
                 }
                 else
                 {
@@ -266,7 +266,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 if (Convert.ToSingle(m_rndGen.NextDouble()) < wallAddProbability)
                 {
-                    world.CreateWall(g.getPoint(gridX + k, gridY), sizeWall);
+                    world.CreateWall(g.GetPoint(gridX + k, gridY), sizeWall);
                 }
                 else
                 {
@@ -281,7 +281,7 @@ namespace GoodAI.Modules.School.LearningTasks
                     }
                     else
                     {
-                        world.CreateWall(g.getPoint(gridX + k, heightOfRectangle + gridY), sizeWall);
+                        world.CreateWall(g.GetPoint(gridX + k, heightOfRectangle + gridY), sizeWall);
                     }
                 }
                 else
@@ -297,7 +297,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             for (int k = 0; k < lengthOfLine; k++)
             {
-                world.CreateWall(g.getPoint(gridX + k, gridY));
+                world.CreateWall(g.GetPoint(gridX + k, gridY));
             }
         }
 
@@ -307,7 +307,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             for (int k = 0; k < lengthOfLine; k++)
             {
-                world.CreateWall(g.getPoint(gridX, gridY + k));
+                world.CreateWall(g.GetPoint(gridX, gridY + k));
             }
         }
 

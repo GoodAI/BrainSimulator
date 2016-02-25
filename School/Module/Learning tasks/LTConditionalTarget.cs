@@ -20,27 +20,26 @@ namespace GoodAI.Modules.School.LearningTasks
         public bool IsWhite { get; set; }
 
         // Random numbers
-        private static Random m_rand = new Random();
+        private static readonly Random m_rand = new Random();
 
         // Instantiates and installs the condition
         public ConditionGameObject(ManInWorld world, bool movingCondition, float salience) :
-            base(Shapes.Square, 0, 0)
+            base(Shapes.Square, PointF.Empty)
         {
+            IsBitmapAsMask = true;
             IsWhite = LearningTaskHelpers.FlipCoin(m_rand);
-            SetColor(IsWhite ? Color.White : Color.Black);
+            m_colorMask = IsWhite ? Color.White : Color.Black;
 
-            int size1D = ConditionGameObject.DetermineSize(salience);
-            Point location = PickLocation(world, movingCondition, new Size(size1D, size1D));
-            X = location.X;
-            Y = location.Y;
-
-            Height = Width = size1D;
+            float size1D = DetermineSize(salience);
+            PointF location = PickLocation(world, movingCondition, new SizeF(size1D, size1D));
+            Position = location;
+            Size.Height = Size.Width = size1D;
 
             world.AddGameObject(this);
         }
 
         // Determine the size of the condition
-        public static int DetermineSize(float salience)
+        public static float DetermineSize(float salience)
         {
             // Currently we distinguish between two levels of
             // condition salience, corresponding to a huge condition
@@ -49,18 +48,16 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Determine the placement of the condition
-        public static Point PickLocation(ManInWorld world, bool movingCondition, Size size)
+        public static PointF PickLocation(ManInWorld world, bool movingCondition, SizeF size)
         {
             if (movingCondition)
             {
                 return world.RandomPositionInsidePowNonCovering(m_rand, size);
             }
-            else
-            {
-                const int FIXED_OFFSET = 10;
-                Rectangle powRectangle = world.GetPowGeometry();
-                return new Point(powRectangle.X + FIXED_OFFSET, powRectangle.Y + FIXED_OFFSET);
-            }
+
+            const int FIXED_OFFSET = 10;
+            RectangleF powRectangle = world.GetPowGeometry();
+            return new PointF(powRectangle.X + FIXED_OFFSET, powRectangle.Y + FIXED_OFFSET);
         }
     }
 
@@ -68,10 +65,9 @@ namespace GoodAI.Modules.School.LearningTasks
     public class ConditionalTarget : GameObject
     {
         // Random numbers
-        private static Random m_rand = new Random();
+        private static readonly Random m_rand = new Random();
 
         // True if the target is indicated by the white condition state
-        private bool m_isWhiteConditionTarget;
 
         // Instantiates and installs the target
         public ConditionalTarget(
@@ -80,16 +76,12 @@ namespace GoodAI.Modules.School.LearningTasks
             float targetSizeStandardDeviation,
             int numberOfDifferentObjects /*,
             int degreesOfFreedom */) :
-            base(GameObjectType.None, PickShape(isWhiteConditionTarget, numberOfDifferentObjects), 0, 0)
+            base(PickShapePath(isWhiteConditionTarget, numberOfDifferentObjects))
         {
-            m_isWhiteConditionTarget = isWhiteConditionTarget;
-
             int size1D = GetSize(targetSizeStandardDeviation);
-            Point location = PickLocation(world, new Size(size1D, size1D) /*, degreesOfFreedom */);
-            X = location.X;
-            Y = location.Y;
-
-            Height = Width = size1D;
+            PointF location = PickLocation(world, new SizeF(size1D, size1D) /*, degreesOfFreedom */);
+            Position = location;
+            Size.Height = Size.Width = size1D;
 
             world.AddGameObject(this);
         }
@@ -108,7 +100,7 @@ namespace GoodAI.Modules.School.LearningTasks
             return size;
         }
 
-        private static string PickShape(bool isWhiteConditionTarget, int numberOfDifferentObjects)
+        private static string PickShapePath(bool isWhiteConditionTarget, int numberOfDifferentObjects)
         {
             return GetShapeAddr(isWhiteConditionTarget, m_rand.Next(0, numberOfDifferentObjects));
         }
@@ -148,7 +140,7 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         // Determine the placement of the target
-        public static Point PickLocation(ManInWorld world, Size size /*, int degreesOfFreedom */)
+        public static PointF PickLocation(ManInWorld world, SizeF size /*, int degreesOfFreedom */)
         {
             // TODO Currently, degrees of freedom is not taken into account
             // And distance to target is the same throughout the learning task
@@ -207,7 +199,7 @@ namespace GoodAI.Modules.School.LearningTasks
             //TSProgression.Add(TSHintAttributes.DEGREES_OF_FREEDOM, 2);
             //TSProgression.Add(TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, -1);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
-            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1 );
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_SIZE, 1);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 2);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 3);
             TSProgression.Add(CONDITION_SALIENCE, .5f);
@@ -218,7 +210,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public override void PresentNewTrainingUnit()
         {
             WrappedWorld.CreateAgent();
-            ConditionGameObject condition = new ConditionGameObject(WrappedWorld, TSHints[MOVING_CONDITION] == 1, TSHints[CONDITION_SALIENCE]);
+            condition = new ConditionGameObject(WrappedWorld, TSHints[MOVING_CONDITION] == 1, TSHints[CONDITION_SALIENCE]);
             ConditionalTarget blackConditionTarget = CreateTarget(/* isWhiteConditionalTarget: */ false);
             ConditionalTarget whiteConditionTarget = CreateTarget(/* isWhiteConditionalTarget: */ true);
             dummyTarget = condition.IsWhite ? blackConditionTarget : whiteConditionTarget;

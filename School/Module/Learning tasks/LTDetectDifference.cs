@@ -8,9 +8,9 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("Detect discrepancy in set")]
-    public class LTDetectDifference : AbstractLearningTask<ManInWorld>
+    public class LTDetectDifference : AbstractLearningTask<RoguelikeWorld>
     {
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected bool m_diffObjectetPlaced;
 
         public LTDetectDifference() : this(null) { }
@@ -37,61 +37,52 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
+            WrappedWorld.CreateNonVisibleAgent();
+
+            int numberOfShapes = Enum.GetValues(typeof(Shape.Shapes)).Length;
+            List<int> uniqueCouple = LearningTaskHelpers.UniqueNumbers(m_rndGen, 0, numberOfShapes, 2);
+            Shape.Shapes standardShape = (Shape.Shapes)uniqueCouple[0];
+            Shape.Shapes alternativeShape = (Shape.Shapes)uniqueCouple[1];
+
+            int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
+
+            m_diffObjectetPlaced = m_rndGen.Next(2) == 0;
+            bool placeDifferentObj = m_diffObjectetPlaced;
+
+            for (int i = 0; i < numberOfObjects; i++)
             {
-                RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
-
-                world.CreateNonVisibleAgent();
-
-                int numberOfShapes = Enum.GetValues(typeof(Shape.Shapes)).Length;
-                List<int> uniqueCouple = LearningTaskHelpers.UniqueNumbers(m_rndGen, 0, numberOfShapes, 2);
-                Shape.Shapes standardShape = (Shape.Shapes)uniqueCouple[0];
-                Shape.Shapes alternativeShape = (Shape.Shapes)uniqueCouple[1];
-
-                int numberOfObjects = (int)TSHints[TSHintAttributes.NUMBER_OBJECTS];
-
-                m_diffObjectetPlaced = m_rndGen.Next(2) == 0 ? true : false;
-                bool placeDifferentObj = m_diffObjectetPlaced;
-
-                for (int i = 0; i < numberOfObjects; i++)
+                SizeF size;
+                if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
                 {
-                    Size size;
-                    if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1f)
-                    {
-                        int a = 10 + m_rndGen.Next(10);
-                        size = new Size(a, a);
-                    }
-                    else
-                    {
-                        size = new Size(15, 15);
-                    }
-
-                    Color color;
-                    if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1f)
-                    {
-                        color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
-                    }
-                    else
-                    {
-                        color = Color.White;
-                    }
-
-                    Point position = world.RandomPositionInsidePowNonCovering(m_rndGen, size);
-
-                    if (placeDifferentObj)
-                    {
-                        placeDifferentObj = false;
-                        world.CreateShape(position, alternativeShape, color, size: size);
-                    }
-                    else
-                    {
-                        world.CreateShape(position, standardShape, color, size: size);
-                    }
+                    float a = (float)(10 + m_rndGen.NextDouble() * 10);
+                    size = new SizeF(a, a);
                 }
-            }
-            else
-            {
-                throw new NotImplementedException();
+                else
+                {
+                    size = new Size(15, 15);
+                }
+
+                Color color;
+                if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] >= 1f)
+                {
+                    color = LearningTaskHelpers.RandomVisibleColor(m_rndGen);
+                }
+                else
+                {
+                    color = Color.White;
+                }
+
+                PointF position = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+
+                if (placeDifferentObj)
+                {
+                    placeDifferentObj = false;
+                    WrappedWorld.CreateShape(alternativeShape, color, position, size);
+                }
+                else
+                {
+                    WrappedWorld.CreateShape(standardShape, color, position, size);
+                }
             }
         }
 

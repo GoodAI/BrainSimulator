@@ -91,7 +91,7 @@
             <status>WIP</status>
             <summary>"Multiple targets in a sequence" learning task</summary>
             <description>
-            Ability description: The agent learns to navigate to multiple targets in a defined sequence. One target type is always the first target, another target type is always the second and so on.
+            Ability description: The agent learns to navigate to multiple targets in a defined sequence. One target Type is always the first target, another target Type is always the second and so on.
             </description>
         </member>
         <member name="T:GoodAI.Modules.School.LearningTasks.LTObstacles">
@@ -129,7 +129,7 @@
         </member>
         <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
             <author>GoodAI</author>
-            <meta>Mp,Mv,Os</meta>
+            <meta>Mp,Mv,Os,Ph,Mm</meta>
             <status>WIP</status>
             <summary> Implementation of a configurable 2D world </summary>
             <description>
@@ -142,7 +142,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsidePow(System.Random,System.Drawing.Size,System.Int32,System.Int32)">
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsideViewport(System.Random,System.Drawing.SizeF,System.Single,System.Single)">
              <summary>
             
              </summary>
@@ -180,11 +180,6 @@
             </summary>
             <param name="reward">Should be between 1 and -1</param>
         </member>
-        <member name="T:GoodAI.Modules.School.Worlds.ManInWorld.RenderTask">
-            <summary>
-            Render the world to the visual output.
-            </summary>
-        </member>
         <member name="T:GoodAI.Modules.School.Worlds.ManInWorld.RenderGLTask">
             <summary>
             Render the world to the visual output.
@@ -209,11 +204,6 @@
             Initialize the world's curriculum
             </summary>
         </member>
-        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.OutputAdapterTask">
-            <summary>
-            Performs Output memory blocks mapping
-            </summary>
-        </member>
         <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.InputAdapterTask">
             <summary>
             Performs Input memory blocks mapping
@@ -222,6 +212,11 @@
         <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.LearningStepTask">
             <summary>
             Update the state of the training task(s)
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.OutputAdapterTask">
+            <summary>
+            Performs Output memory blocks mapping
             </summary>
         </member>
     </members>

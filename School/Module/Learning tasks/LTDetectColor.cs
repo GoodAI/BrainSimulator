@@ -66,11 +66,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void SetTargetColor()
         {
-            m_target.isBitmapAsMask = true;
+            m_target.IsBitmapAsMask = true;
 
             m_colorIndex = m_rndGen.Next((int)TSHints[NUMBER_OF_COLORS]);
             Color color = LearningTaskHelpers.GetVisibleColor(m_colorIndex);
-            m_target.maskColor = Color.FromArgb(
+            m_target.ColorMask = Color.FromArgb(
                 AddRandomColorOffset(color.R),
                 AddRandomColorOffset(color.G),
                 AddRandomColorOffset(color.B));
@@ -79,23 +79,22 @@ namespace GoodAI.Modules.School.LearningTasks
         protected byte AddRandomColorOffset(byte colorComponent)
         {
             const int MAX_RANDOM_OFFSET = 10;
-            return (byte)Math.Max(0, Math.Min(255,
-                (int)colorComponent + m_rndGen.Next(-MAX_RANDOM_OFFSET, MAX_RANDOM_OFFSET + 1)));
+            return (byte)Math.Max(0, Math.Min(255, colorComponent + m_rndGen.Next(-MAX_RANDOM_OFFSET, MAX_RANDOM_OFFSET + 1)));
         }
 
         protected void CreateTarget()
         {
             const int TARGET_SIZE = 64;
 
-            m_target = new Shape(Shape.Shapes.Square, 0, 0, TARGET_SIZE, TARGET_SIZE);
+            m_target = new Shape(Shape.Shapes.Square, PointF.Empty, new SizeF(TARGET_SIZE, TARGET_SIZE));
             WrappedWorld.AddGameObject(m_target);
-            // POW is assumed to be centered
-            int minX = (WrappedWorld.FOW_WIDTH - WrappedWorld.POW_WIDTH) / 2;
-            int maxX = (WrappedWorld.FOW_WIDTH + WrappedWorld.POW_WIDTH) / 2 - m_target.Width;
-            m_target.X = m_rndGen.Next(minX, maxX + 1);
-            int minY = (WrappedWorld.FOW_HEIGHT - WrappedWorld.POW_HEIGHT) / 2;
-            int maxY = (WrappedWorld.FOW_HEIGHT + WrappedWorld.POW_HEIGHT) / 2 - m_target.Height;
-            m_target.Y = m_rndGen.Next(minY, maxY + 1);
+            // Viewport is assumed to be centered
+            float minX = (WrappedWorld.Scene.Width - WrappedWorld.Viewport.Width) / 2;
+            float maxX = (WrappedWorld.Scene.Width + WrappedWorld.Viewport.Width) / 2 - m_target.Size.Width;
+            m_target.Position.X = (float)(minX + m_rndGen.NextDouble() * (maxX - minX));
+            float minY = (WrappedWorld.Scene.Height - WrappedWorld.Viewport.Height) / 2;
+            float maxY = (WrappedWorld.Scene.Height + WrappedWorld.Viewport.Height) / 2 - m_target.Size.Height;
+            m_target.Position.Y = (float)(minY + m_rndGen.NextDouble() * (maxY - minY));
         }
 
         public override bool Solve(bool successfully)

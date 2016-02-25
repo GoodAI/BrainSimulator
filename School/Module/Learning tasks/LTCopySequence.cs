@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("Imitate sequence")]
-    public class LTCopySequence : AbstractLearningTask<ManInWorld>
+    public class LTCopySequence : AbstractLearningTask<RoguelikeWorld>
     {
         private static readonly TSHintAttribute STOP_REQUEST = new TSHintAttribute("Stop request", "", typeof(bool), 0, 1);
 
@@ -53,10 +56,8 @@ namespace GoodAI.Modules.School.LearningTasks
             CreateTeacher();
 
             m_stepsSincePresented = 0;
-            m_agentsHistory = new AgentsHistory();
-            m_agentsHistory.Add(m_agent.X, m_agent.Y);
-            m_teachersHistory = new AgentsHistory();
-            m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
+            m_agentsHistory = new AgentsHistory { m_agent.Position };
+            m_teachersHistory = new AgentsHistory { m_teacher.Position };
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
@@ -75,15 +76,15 @@ namespace GoodAI.Modules.School.LearningTasks
                     return true;
                 }
 
-                if (!m_teacher.IsDone() && m_agent.isMoving())
+                if (!m_teacher.IsDone() && m_agent.IsMoving())
                 {
                     wasUnitSuccessful = false;
                     return true;
                 }
 
                 // save history for agent and teacher
-                m_agentsHistory.Add(m_agent.X, m_agent.Y);
-                m_teachersHistory.Add(m_teacher.X, m_teacher.Y);
+                m_agentsHistory.Add(m_agent.Position.X, m_agent.Position.Y);
+                m_teachersHistory.Add(m_teacher.Position.X, m_teacher.Position.Y);
 
                 wasUnitSuccessful = false;
 
@@ -91,7 +92,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 int numberOfAgentsSteps = m_agentsHistory.numberOfSteps();
 
                 // simple version of the task
-                if (TSHints[LTCopySequence.STOP_REQUEST] == .0f)
+                if (TSHints[STOP_REQUEST] == .0f)
                 {
                     if (numberOfTeachersSteps == numberOfAgentsSteps && m_teacher.IsDone())
                     {
@@ -124,45 +125,47 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected void CreateAgent()
         {
-            m_agent = (WrappedWorld as RoguelikeWorld).CreateAgent();
+            m_agent = WrappedWorld.CreateAgent();
         }
 
         protected void CreateTeacher()
         {
-            List<RogueTeacher.Actions> actions = new List<RogueTeacher.Actions>();
-            actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
-            actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
-            actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
-            actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
-            actions.Add(RogueTeacher.GetRandomAction(m_rndGen, (int)TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]));
+            List<RogueTeacher.Actions> actions = new List<RogueTeacher.Actions>
+            {
+                RogueTeacher.GetRandomAction(m_rndGen, (int) TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]),
+                RogueTeacher.GetRandomAction(m_rndGen, (int) TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]),
+                RogueTeacher.GetRandomAction(m_rndGen, (int) TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]),
+                RogueTeacher.GetRandomAction(m_rndGen, (int) TSHints[TSHintAttributes.DEGREES_OF_FREEDOM]),
+                RogueTeacher.GetRandomAction(m_rndGen, (int) TSHints[TSHintAttributes.DEGREES_OF_FREEDOM])
+            };
 
-            Rectangle restrcitedRectangle = WrappedWorld.GetPowGeometry();
+            RectangleF restrcitedRectangle = WrappedWorld.GetPowGeometry();
             restrcitedRectangle = LearningTaskHelpers.ResizeRectangleAroundCentre(restrcitedRectangle, 0.8f);
 
-            Point teachersPoint;
+            PointF teachersPoint;
             if ((int)TSHints[TEACHER_ON_DIFF_START_POSITION] != 0)
             {
                 teachersPoint = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rndGen, RogueTeacher.GetDefaultSize(), restrcitedRectangle, 10);
             }
             else
             {
-                teachersPoint = new Point(m_agent.X + WrappedWorld.POW_WIDTH / 3, m_agent.Y);
+                teachersPoint = new PointF(m_agent.Position.X + WrappedWorld.Viewport.Width / 3, m_agent.Position.Y);
             }
 
-            m_teacher = (WrappedWorld as RoguelikeWorld).CreateTeacher(teachersPoint, actions) as RogueTeacher;
+            m_teacher = WrappedWorld.CreateTeacher(teachersPoint, actions) as RogueTeacher;
         }
     }
 
-    public class AgentsHistory : LinkedList<Point>
+    public class AgentsHistory : LinkedList<PointF>
     {
-        public void Add(Point position)
+        public void Add(PointF position)
         {
             this.AddLast(position);
         }
 
-        public void Add(int x, int y)
+        public void Add(float x, float y)
         {
-            this.AddLast(new Point(x, y));
+            this.AddLast(new PointF(x, y));
         }
 
         // compare two histories. Second can be shifted forward
@@ -173,20 +176,19 @@ namespace GoodAI.Modules.School.LearningTasks
                 throw new ArgumentException();
             }
 
-            LinkedList<Point>.Enumerator h1 = this.GetEnumerator();
-            LinkedList<Point>.Enumerator h2 = h.GetEnumerator();
+            Enumerator h1 = this.GetEnumerator();
+            Enumerator h2 = h.GetEnumerator();
 
             h1.MoveNext();
             h2.MoveNext();
 
-            Size diff = Size.Subtract(new Size(h2.Current), new Size(h1.Current));
+            SizeF diff = SizeF.Subtract(new SizeF(h2.Current), new SizeF(h1.Current));
 
             for (int i = 0; i < numberOfMoves; i++)
             {
-                Point norm;
                 while (true)
                 {
-                    norm = h2.Current - diff;
+                    PointF norm = h2.Current - diff;
                     if (h1.Current == norm) break;
                     bool moves = h2.MoveNext();
                     if (!moves) return false;
@@ -208,7 +210,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public int numberOfUniquePositions()
         {
-            HashSet<Point> h = new HashSet<Point>(this);
+            HashSet<PointF> h = new HashSet<PointF>(this);
             return h.Count;
         }
 

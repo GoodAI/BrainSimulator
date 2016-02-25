@@ -48,8 +48,8 @@ namespace GoodAI.Modules.School.LearningTasks
             WrappedWorld.CreateNonVisibleAgent();
 
             //random size
-            Size shapeSize = new Size(120, 120);
-            Point shapePosition = new Point(WrappedWorld.FOW_WIDTH / 2, WrappedWorld.FOW_HEIGHT / 2);
+            SizeF shapeSize = new SizeF(120, 120);
+            PointF shapePosition = new PointF(WrappedWorld.Scene.Width / 2, WrappedWorld.Scene.Height / 2);
             Color shapeColor = Color.White;
             float rotation = 0;
 
@@ -57,10 +57,10 @@ namespace GoodAI.Modules.School.LearningTasks
             if (nthShape != null && m_rndGen.NextDouble() < 0.5)
             {
                 // with probability 0.5 copy the same
-                shapeSize = new Size(nthShape.Width, nthShape.Height);
-                shapePosition.X = nthShape.X;
-                shapePosition.Y = nthShape.Y;
-                shapeColor = nthShape.maskColor;
+                shapeSize = new SizeF(nthShape.Size.Width, nthShape.Size.Height);
+                shapePosition.X = nthShape.Position.X;
+                shapePosition.Y = nthShape.Position.Y;
+                shapeColor = nthShape.ColorMask;
                 rotation = nthShape.Rotation;
                 m_target_type = nthShape.ShapeType;
             }
@@ -81,7 +81,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
                 if (TSHints[TSHintAttributes.IS_VARIABLE_POSITION] >= 1.0f)
                 {
-                    shapePosition = WrappedWorld.RandomPositionInsidePow(m_rndGen, shapeSize);
+                    shapePosition = WrappedWorld.RandomPositionInsideViewport(m_rndGen, shapeSize);
                 }
 
                 // random color
@@ -100,12 +100,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_target_type = Shape.GetRandomShape(m_rndGen, (int)TSHints[TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS]);
             }
 
-            m_target = (Shape)WrappedWorld.CreateShape(shapePosition, m_target_type, shapeColor, shapeSize, rotation: rotation);
+            m_target = (Shape)WrappedWorld.CreateShape(m_target_type, shapeColor, shapePosition, shapeSize, rotation);
 
-            push(m_target);
+            Push(m_target);
         }
 
-        private void push(Shape pushedObject)
+        private void Push(Shape pushedObject)
         {
             for (int i = m_lastNShapes.Length - 1; i > 0; i--)
             {
@@ -147,9 +147,9 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             bool shapeTypes = s1.ShapeType == s2.ShapeType;
-            bool colors = s1.maskColor == s2.maskColor;
-            bool positions = s1.X == s2.X && s1.Y == s2.Y;
-            bool sizes = s1.Width == s2.Width && s1.Height == s2.Height;
+            bool colors = s1.ColorMask == s2.ColorMask;
+            bool positions = s1.Position.X == s2.Position.X && s1.Position.Y == s2.Position.Y;
+            bool sizes = s1.Size.Width == s2.Size.Width && s1.Size.Height == s2.Size.Height;
             bool rotations = s1.Rotation == s2.Rotation;
 
             return shapeTypes && colors && positions && sizes && rotations;

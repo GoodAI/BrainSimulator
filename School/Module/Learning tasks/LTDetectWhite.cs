@@ -6,12 +6,10 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    // TODO: Currently presents target outside of POW.
-
     [DisplayName("Detect object presence")]
     public class LTDetectWhite : AbstractLearningTask<RoguelikeWorld>
     {
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected GameObject m_target;
 
         public LTDetectWhite() : this(null) { }
@@ -53,15 +51,15 @@ namespace GoodAI.Modules.School.LearningTasks
         protected void CreateTarget()
         {
             const int TARGET_SIZE = 32;
-            Size size = new Size(TARGET_SIZE, TARGET_SIZE);
-            Point location = WrappedWorld.RandomPositionInsidePow(m_rndGen, size);
-            m_target = WrappedWorld.CreateGameObject(location, GameObjectType.None, @"White10x10.png", size.Width, size.Height);
+            SizeF size = new SizeF(TARGET_SIZE, TARGET_SIZE);
+            PointF location = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size);
+            m_target = WrappedWorld.CreateGameObject(@"White10x10.png", location, size);
             // Plumber:
-            //m_target.X = m_rndGen.Next(0, World.FOW_WIDTH - m_target.Width + 1);
-            //m_target.Y = World.FOW_HEIGHT - m_target.Height;
+            //m_target.X = m_rndGen.Next(0, World.Scene.Width - m_target.Width + 1);
+            //m_target.Y = World.Scene.Height - m_target.Height;
             // Roguelike:
-            //m_target.X = m_rndGen.Next(0, WrappedWorld.POW_WIDTH - m_target.Width + 1);
-            //m_target.Y = m_rndGen.Next(0, WrappedWorld.POW_HEIGHT - m_target.Height + 1);
+            //m_target.X = m_rndGen.Next(0, WrappedWorld.Viewport.Width - m_target.Width + 1);
+            //m_target.Y = m_rndGen.Next(0, WrappedWorld.Viewport.Height - m_target.Height + 1);
         }
     }
 }

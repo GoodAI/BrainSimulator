@@ -7,12 +7,12 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("Categorize object angles")]
-    public class LTSimpleAngle : AbstractLearningTask<ManInWorld>
+    public class LTSimpleAngle : AbstractLearningTask<RoguelikeWorld>
     {
         private readonly TSHintAttribute ERROR_TOLERANCE = new TSHintAttribute("Tolerance in rads", "", typeof(float), 0, 1); //check needed;
         private readonly TSHintAttribute FIXED_DISTANCE = new TSHintAttribute("Fixed distance to target", "", typeof(bool), 0, 1); //check needed;
 
-        protected Random m_rndGen = new Random();
+        protected readonly Random m_rndGen = new Random();
         protected MovableGameObject m_agent;
         private GameObject m_target;
 
@@ -43,18 +43,13 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            if (WrappedWorld.GetType() != typeof(RoguelikeWorld))
-            {
-                throw new NotImplementedException();
-            }
-
             m_agent = WrappedWorld.CreateNonVisibleAgent();
 
-            Size size;
+            SizeF size;
             if (TSHints[TSHintAttributes.IS_VARIABLE_SIZE] >= 1)
             {
-                int side = m_rndGen.Next(8, 24);
-                size = new Size(side, side);
+                float side = (float)(8 + m_rndGen.NextDouble() * 16);
+                size = new SizeF(side, side);
             }
             else
             {
@@ -62,17 +57,17 @@ namespace GoodAI.Modules.School.LearningTasks
                 size = new Size(side, side);
             }
 
-            Point position;
-            float radius = Math.Min(WrappedWorld.POW_HEIGHT, WrappedWorld.POW_WIDTH) / 3;
+            PointF position;
+            float radius = Math.Min(WrappedWorld.Viewport.Height, WrappedWorld.Viewport.Width) / 3;
             if (TSHints[FIXED_DISTANCE] >= 1)
             {
                 double angle = m_rndGen.NextDouble() * Math.PI * 2;
-                position = new Point((int)(Math.Cos(angle) * radius), (int)(Math.Sin(angle) * radius));
-                position += new Size(m_agent.X, m_agent.Y);
+                position = new PointF((float)(Math.Cos(angle) * radius), (float)(Math.Sin(angle) * radius));
+                position += new SizeF(m_agent.Position.X, m_agent.Position.Y);
             }
             else
             {
-                position = WrappedWorld.RandomPositionInsidePow(m_rndGen, size);
+                position = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size);
             }
 
             Shape.Shapes shape;
@@ -110,20 +105,22 @@ namespace GoodAI.Modules.School.LearningTasks
                 color = Color.White;
             }
 
-            m_target = WrappedWorld.CreateShape(position, shape, color, size);
+            m_target = WrappedWorld.CreateShape(shape, color, position, size);
         }
 
-        public static float EuclideanDistance(Point p1, Point p2)
+        public static float EuclideanDistance(PointF p1, PointF p2)
         {
-            return (float)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+            float dx = p1.X - p2.X;
+            float dy = p1.Y - p2.Y;
+            return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public static float RelativeSin(Point point, Point related)
+        public static float RelativeSin(PointF point, PointF related)
         {
             return (point.Y - related.Y) / EuclideanDistance(point, related);
         }
 
-        public static float RelativeCos(Point point, Point related)
+        public static float RelativeCos(PointF point, PointF related)
         {
             return (point.X - related.X) / EuclideanDistance(point, related);
         }
