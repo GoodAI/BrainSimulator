@@ -650,11 +650,6 @@ namespace GoodAI.Modules.TetrisWorld
 
             void InitGL()
             {
-                if (m_context != null)
-                    m_context.Dispose();
-                if (m_window != null)
-                    m_window.Dispose();
-
                 m_window = new NativeWindow();
                 m_context = new GraphicsContext(GraphicsMode.Default, m_window.WindowInfo);
                 m_context.MakeCurrent(m_window.WindowInfo);
