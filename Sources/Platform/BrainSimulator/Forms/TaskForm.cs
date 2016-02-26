@@ -96,6 +96,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             foreach (ListViewItem item in listView.Items)
             {
+                if (item == null) continue;
                 MyTask task = item.Tag as MyTask;
                 item.Checked = task.Enabled;
             }
