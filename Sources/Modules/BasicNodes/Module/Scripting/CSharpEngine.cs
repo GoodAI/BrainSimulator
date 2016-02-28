@@ -65,6 +65,10 @@ namespace GoodAI.Modules.Scripting
 
             parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
             parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
+
+            parameters.ReferencedAssemblies.Add("modules\\PredictionModule\\PredictionModule.dll");
+            parameters.ReferencedAssemblies.Add("modules\\GoodAI.MNIST\\GoodAI.MNIST.dll");
+
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
