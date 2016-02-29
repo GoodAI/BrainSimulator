@@ -59,8 +59,14 @@ namespace GoodAI.Core.Memory
 
         public TensorDimensions Transpose()
         {
-            if (Rank <= 1)
-                return this;
+            if (IsEmpty)
+                return TensorDimensions.Empty;
+
+            if (Rank == 1)
+                return new TensorDimensions(1, m_dims[0]);  // Row vector -> column vector.
+
+            if (Rank < 2)
+                throw new InvalidOperationException(string.Format("Invalid Rank value {0}", Rank));
 
             var transposed = new int[Rank];
 

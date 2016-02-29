@@ -198,10 +198,10 @@ namespace CoreTests.Memory
         public static readonly TheoryData<TensorDimensions, TensorDimensions> TranspositionData
             = new TheoryData<TensorDimensions, TensorDimensions>
         {
-            { new TensorDimensions(1, 4), new TensorDimensions(4, 1) },
+            { new TensorDimensions(2, 4), new TensorDimensions(4, 2) },
             { new TensorDimensions(1, 4, 3), new TensorDimensions(4, 1, 3) },
-            { new TensorDimensions(4), new TensorDimensions(4) },
-            { new TensorDimensions(), new TensorDimensions() }
+            { new TensorDimensions(4), new TensorDimensions(1, 4) },  // Transpose row vector to a column one.
+            { TensorDimensions.Empty, TensorDimensions.Empty }
         };
 
         [Theory, MemberData("TranspositionData")]
