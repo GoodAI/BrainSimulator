@@ -213,8 +213,8 @@ namespace GoodAI.Core.Nodes
 
             TensorDimensions adjustedDims;
 
-            if(!m_outputDimsHint.TryToApply(Output.Dims, out adjustedDims))
-                MyLog.WARNING.WriteLine("Join node: Could not apply OutputDimensions.");  // TODO(Premek): Be specific.
+            if(!m_outputDimsHint.TryToApply(Output.Dims, out adjustedDims) && !m_outputDimsHint.IsEmpty)
+                MyLog.WARNING.WriteLine("Join node '{0}': Could not apply OutputDimensions.", Name);  // TODO(Premek): Be specific.
 
             Output.Dims = adjustedDims;  // Adjusted or original.
         }
