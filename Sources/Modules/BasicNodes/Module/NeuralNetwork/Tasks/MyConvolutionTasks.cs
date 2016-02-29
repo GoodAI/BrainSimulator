@@ -127,11 +127,11 @@ namespace CustomModels.NeuralNetwork.Tasks
 
 
 
-            if (Owner.Input == null)
+          /*  if (Owner.Input == null)
             {
                 MyLog.ERROR.WriteLine("Convolution forward error: Input to " + Owner.Name + " is null.");
                 return;
-            }
+            }*/
 
 
             // first perform zero padding
