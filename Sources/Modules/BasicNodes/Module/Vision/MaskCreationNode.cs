@@ -56,9 +56,9 @@ namespace GoodAI.Modules.Vision
         // :: INITS  ::
         public override void UpdateMemoryBlocks()
         {
-            int dim0 = (Image != null && Image.Dims.Rank == 4) ? Image.Dims[0] : 1;
-            int dim1 = (Image != null && Image.Dims.Rank == 4) ? Image.Dims[1] : 1;
-            int dim2 = (Image != null && Image.Dims.Rank == 4) ? Image.Dims[2] : 1;
+            int dim0 = (Image != null && Image.Dims.Rank >= 3) ? Image.Dims[0] : 1;
+            int dim1 = (Image != null && Image.Dims.Rank >= 3) ? Image.Dims[1] : 1;
+            int dim2 = (Image != null && Image.Dims.Rank >= 3) ? Image.Dims[2] : 1;
 
 
             Output.Dims = new TensorDimensions(dim0, dim1, dim2);
@@ -68,7 +68,7 @@ namespace GoodAI.Modules.Vision
         {
             //base.Validate(validator); /// base checking 
             validator.AssertError(Image != null, this, "No input image available");
-            validator.AssertError(Image.Dims.Rank == 4, this, "Input image should have rank of 4 (4 dimensions)");
+            validator.AssertError(Image.Dims.Rank >= 4, this, "Input image should have rank at least 3 (3 dimensions)");
         }
 
 
