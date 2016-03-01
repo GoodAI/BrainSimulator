@@ -21,6 +21,8 @@ namespace GoodAI.School.GUI
     {
         private void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
+            if (!Visible && !(m_mainForm.Project.World is SchoolWorld))
+                return;
             // time measurements
             if (m_currentLtStopwatch != null)
                 if (e.NewState == MySimulationHandler.SimulationState.PAUSED)
