@@ -453,14 +453,14 @@ namespace GoodAI.Modules.School.Worlds
             return rmk;
         }
 
-        public GameObject CreateShape(Shape.Shapes shape, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
+        public Shape CreateShape(Shape.Shapes shape, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
         {
             Shape rmk = new Shape(shape, p, size, rotation, type);
             AddGameObject(rmk);
             return rmk;
         }
 
-        public GameObject CreateShape(Shape.Shapes shape, Color colorMask, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
+        public Shape CreateShape(Shape.Shapes shape, Color colorMask, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
         {
             Shape rmk = new Shape(shape, p, size, rotation, type)
             {
