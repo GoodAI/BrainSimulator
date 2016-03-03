@@ -9,7 +9,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("Categorize object colors")]
     public class LTDetectColor : AbstractLearningTask<RoguelikeWorld>
     {
-        private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Condition salience", "", typeof(int), 0, 8);
+        private static readonly TSHintAttribute NUMBER_OF_COLORS = new TSHintAttribute("Number of colors", "", typeof(int), 2, 8);
 
         protected GameObject m_target;
         protected Random m_rndGen = new Random();

@@ -155,10 +155,10 @@ namespace GoodAI.Modules.School.LearningTasks
     public class LTConditionalTarget : AbstractLearningTask<RoguelikeWorld>
     {
         // In the beginning, the condition doesn't move
-        private static readonly TSHintAttribute MOVING_CONDITION = new TSHintAttribute("Moving condition", "", typeof(bool), 0, 1);
+        private static readonly TSHintAttribute MOVING_CONDITION = new TSHintAttribute("Moving condition", "If true, conditional square is placed randomly, otherwise in upper lef corner.", typeof(bool), 0, 1);
 
         // The condition can be more or less salient
-        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition salience", "", typeof(float), 0, 1);
+        private static readonly TSHintAttribute CONDITION_SALIENCE = new TSHintAttribute("Condition square size", "", typeof(float), 1f, 0.5f);
 
         // Visual condition
         protected ConditionGameObject condition;
