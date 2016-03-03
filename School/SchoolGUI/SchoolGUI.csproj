@@ -807,9 +807,6 @@
     <Content Include="Resources\html\LTTetrisFull.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\html\LTTetrisTest.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\html\LTVisualEquivalence.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
