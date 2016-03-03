@@ -176,7 +176,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (School != null)
             {
-                Pow = new Size(School.Visual.Dims[0], School.Visual.Dims[1]);
+                Pow = new Size(School.VisualDimensions.Width, School.VisualDimensions.Height);
                 Fow = new Size(Math.Max(Fow.Width, Pow.Width), Math.Max(Fow.Height, Pow.Height)); // TODO: does not really make sense, make it independent
             }
 
@@ -266,7 +266,7 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.Visual.Count));
+            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.VisualDimensions.Width * School.VisualDimensions.Height));
             if (Objects.Count > 0)
                 Objects.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(Objects.Count, School.DataSize));
             //schoolWorld.Visual.Dims = VisualPOW.Dims;

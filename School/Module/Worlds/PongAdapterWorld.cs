@@ -59,7 +59,7 @@ namespace GoodAI.School.Worlds
         {
             if (School != null)
             {
-                Viewport = new Size(School.Visual.Dims[0], School.Visual.Dims[1]);
+                Viewport = new Size(School.VisualDimensions.Width, School.VisualDimensions.Height);
             }
 
             base.UpdateMemoryBlocks();
