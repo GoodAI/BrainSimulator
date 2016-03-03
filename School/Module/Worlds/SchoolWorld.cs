@@ -14,6 +14,8 @@ using System.Linq;
 using YAXLib;
 using GoodAI.School.Worlds;
 using System.Windows.Forms;
+using System.Drawing;
+using GoodAI.Core;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -149,7 +151,7 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
-        [MyBrowsable, Category("Visual")]
+        [MyBrowsable, Category("Visual"), DisplayName("Height")]
         [YAXSerializableField(DefaultValue = 256)]
         public int Height
         {
@@ -171,10 +173,51 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = 100)]
         public int DataSize { get; set; }
 
+        public enum VisualFormat
+        {
+            Raw,
+            RGB,
+        }
+
+        private VisualFormat m_format;
+
+        [MyBrowsable, Category("Visual"), DisplayName("\tFormat")]
+        [YAXSerializableField(DefaultValue = VisualFormat.Raw)]
+        public VisualFormat Format { 
+            get { return m_format; }
+            set
+            {
+                m_format = value;
+                switch(m_format)
+                { 
+                    case VisualFormat.RGB:
+                        Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.RGB;
+                        Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = false;
+                        FloatsPerPixel = 3;
+                        break;
+                    case VisualFormat.Raw:
+                    default:
+                        Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
+                        Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
+                        FloatsPerPixel = 1;
+                        break;
+                }
+            }
+        }
+
+        public int FloatsPerPixel { get; private set; }
+
+        public Size VisualDimensions
+        {
+            get
+            {
+                return new Size(Width, Height);
+            }
+        }
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Dims = new TensorDimensions(Width, Height);
+            Visual.Dims = new TensorDimensions(Width, Height * FloatsPerPixel);
             Text.Count = TextSize;
             Data.Count = DataSize;
             DataLength.Count = 1;
@@ -219,8 +262,6 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolWorld()
         {
-            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
-            Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
         }
 
         readonly Random m_rndGen = new Random();
@@ -604,10 +645,14 @@ namespace GoodAI.Modules.School.Worlds
         /// </summary>
         public class OutputAdapterTask : MyTask<SchoolWorld>
         {
+            private MyCudaKernel m_extractRawComponentsToRgbKernel;
+
             public override void Init(int nGPU)
             {
                 if (Owner.CurrentWorld != null)
                     Owner.CurrentWorld.InitWorldOutputs(nGPU);
+
+                m_extractRawComponentsToRgbKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "ExtractRawComponentsToRgbKernel");
             }
 
             public override void Execute()
@@ -634,6 +679,13 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 Owner.CurrentWorld.MapWorldOutputs();
+
+                // visual contains Raw data. We might want RGB data
+                if (Owner.Format == VisualFormat.RGB)
+                {
+                    m_extractRawComponentsToRgbKernel.SetupExecution(Owner.VisualDimensions.Width * Owner.VisualDimensions.Height);
+                    m_extractRawComponentsToRgbKernel.Run(Owner.Visual, Owner.VisualDimensions.Width, Owner.VisualDimensions.Height);
+                }
             }
         }
 
