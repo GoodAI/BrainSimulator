@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using OpenTK;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -78,14 +79,12 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             // positions are reduced to keep all objects in POW
-
             RectangleF r = WrappedWorld.GetPowGeometry();
-            r.Location = new PointF(r.X + r.Width / 4, r.Y + r.Height / 4);
-            r.Size = new SizeF(r.Width / 2, r.Height / 2);
-            PointF p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rand, size, r, 4);
-            Shape s = (Shape)WrappedWorld.CreateShape((Shape.Shapes)imageIndex, Color.White, p, size, type: GameObjectType.NonColliding);
+            r.Location = new PointF(r.X + r.Width / 8, r.Y + r.Height / 8);
+            r.Size = new SizeF(r.Width * 3 / 4, r.Height * 3 / 4);
+            PointF p = WrappedWorld.RandomPositionInsideRectangleNonCovering(m_rand, size, r, 10, 18);
 
-            return s;
+            return WrappedWorld.CreateShape((Shape.Shapes)imageIndex, Color.White, p, size, type: GameObjectType.NonColliding);
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
