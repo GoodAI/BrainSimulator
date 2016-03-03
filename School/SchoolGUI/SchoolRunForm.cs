@@ -677,9 +677,10 @@ namespace GoodAI.School.GUI
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
                 return;
 
-            SaveProject(saveFileDialog1.FileName);
+            // set LOF before saving because after save, window name is updated and that process uses LOF value
             Properties.School.Default.LastOpenedFile = saveFileDialog1.FileName;
             Properties.School.Default.Save();
+            SaveProject(saveFileDialog1.FileName);
         }
 
         // almost same as Mainform.OpenFloatingOrActivate - refactor?
