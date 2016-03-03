@@ -461,4 +461,30 @@ extern "C"
 		}
 	}
 
+	/*
+	Convert Raw to RGB
+	*/
+	__global__ void ExtractRawComponentsToRgbKernel(float *target, int inputWidth, int inputHeight)
+	{
+		int pixelId = blockDim.x*blockIdx.y*gridDim.x
+			+ blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		int imagePixels = inputWidth * inputHeight;
+
+		if (pixelId >= imagePixels)
+			return;
+
+		unsigned int* uTarget = (unsigned int*)target;
+
+		for (int i = 2; i >= 0; i--)
+		{
+			unsigned int component = uTarget[pixelId];
+			component = component >> (8 * (2-i)); // 2-i == RGB -> BGR
+			component = component & 0xFF;
+			target[imagePixels * i + pixelId] = ((float)component)/255.0f;
+			__syncthreads();
+		}
+	}
+
 }
