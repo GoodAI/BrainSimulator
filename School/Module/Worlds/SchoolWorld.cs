@@ -175,11 +175,11 @@ namespace GoodAI.Modules.School.Worlds
 
         public enum VisualFormat
         {
-            Raw,
-            RGB,
+            Raw = 1,
+            RGB = 2,
         }
 
-        private VisualFormat m_format;
+        private VisualFormat m_format = 0;
 
         [MyBrowsable, Category("Visual"), DisplayName("\tFormat")]
         [YAXSerializableField(DefaultValue = VisualFormat.Raw)]
@@ -187,20 +187,24 @@ namespace GoodAI.Modules.School.Worlds
             get { return m_format; }
             set
             {
-                m_format = value;
-                switch(m_format)
-                { 
-                    case VisualFormat.RGB:
-                        Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.RGB;
-                        Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = false;
-                        FloatsPerPixel = 3;
-                        break;
-                    case VisualFormat.Raw:
-                    default:
-                        Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
-                        Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
-                        FloatsPerPixel = 1;
-                        break;
+                if (m_format != value)
+                {
+                    m_format = value;
+                    VisualFormatChanged(this, null);
+                    switch (m_format)
+                    {
+                        case VisualFormat.RGB:
+                            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.RGB;
+                            Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = false;
+                            FloatsPerPixel = 3;
+                            break;
+                        case VisualFormat.Raw:
+                        default:
+                            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
+                            Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
+                            FloatsPerPixel = 1;
+                            break;
+                    }
                 }
             }
         }
@@ -292,6 +296,7 @@ namespace GoodAI.Modules.School.Worlds
         public event EventHandler<SchoolEventArgs> LearningTaskNewLevel = delegate { };
         public event EventHandler CurriculumStarting = delegate { };
         public event EventHandler<SchoolEventArgs> CurriculumFinished = delegate { };
+        public event EventHandler<SchoolEventArgs> VisualFormatChanged = delegate { };
 
         public override void Validate(MyValidator validator)
         {

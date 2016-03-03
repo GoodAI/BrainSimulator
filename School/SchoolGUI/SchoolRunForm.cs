@@ -2,6 +2,8 @@
 using Aga.Controls.Tree.NodeControls;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Execution;
+using GoodAI.Core.Memory;
+using GoodAI.Core.Observers;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
@@ -96,6 +98,26 @@ namespace GoodAI.School.GUI
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
         {
             UpdateTaskData(e.Task);
+        }
+
+        private void VisualFormatChanged(object sender, SchoolEventArgs e)
+        {
+            Invoke((MethodInvoker)(() =>
+            {
+                if(m_observer != null)
+                {
+                    MyMemoryBlockObserver mbObserver = (m_observer.Observer as MyMemoryBlockObserver);
+                    switch(m_school.Format)
+                    {
+                        case SchoolWorld.VisualFormat.Raw:
+                            mbObserver.Method = RenderingMethod.Raw;
+                            break;
+                        case SchoolWorld.VisualFormat.RGB:
+                            mbObserver.Method = RenderingMethod.RGB;
+                            break;
+                    }
+                }
+            }));
         }
 
         private void UpdateTrainingUnitNumber(object sender, SchoolEventArgs e)

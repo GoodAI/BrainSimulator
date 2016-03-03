@@ -251,6 +251,7 @@ namespace GoodAI.School.GUI
             world.LearningTaskNew += GoToNextTask;
             world.LearningTaskNewLevel += UpdateLTLevel;
             world.LearningTaskFinished += LearningTaskFinished;
+            world.VisualFormatChanged += VisualFormatChanged;
             world.TrainingUnitUpdated += UpdateTUStatus;
             world.TrainingUnitFinished += UpdateTUStatus;
             world.TrainingUnitFinished += UpdateTrainingUnitNumber;
@@ -264,6 +265,7 @@ namespace GoodAI.School.GUI
             world.LearningTaskNew -= GoToNextTask;
             world.LearningTaskNewLevel -= UpdateLTLevel;
             world.LearningTaskFinished -= LearningTaskFinished;
+            world.VisualFormatChanged -= VisualFormatChanged;
             world.TrainingUnitUpdated -= UpdateTUStatus;
             world.TrainingUnitFinished -= UpdateTUStatus;
             world.TrainingUnitFinished -= UpdateTrainingUnitNumber;
