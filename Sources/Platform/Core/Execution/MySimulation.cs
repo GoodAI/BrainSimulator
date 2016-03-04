@@ -662,6 +662,9 @@ namespace GoodAI.Core.Execution
             // Clean up memory.
             IterateNodes(modelChanges.RemovedNodes, DestroyNode);
 
+            // This must happen before UpdateMemoryModel() because some nodes touch kernels in UpdateMemoryBlocks().
+            MyKernelFactory.Instance.SetCurrent(0);
+
             // Refresh topological ordering.
             List<MyNode> orderedNodes = MySimulationHandler.OrderNetworkNodes(m_project.Network);
 
@@ -684,26 +687,30 @@ namespace GoodAI.Core.Execution
             // Reschedule.
             Schedule(m_project, modelChanges.AddedNodes);
 
-            // Allocate memory and init nodes
+            // Init nodes
+            IterateNodes(modelChanges.AddedNodes, InitNode);
+
+            // Allocate memory
             IEnumerable<MyWorkingNode> nodesToAllocate =
                 modelChanges.AddedNodes.Where(node => MyMemoryManager.Instance.IsRegistered(node));
-            IterateNodes(nodesToAllocate, InitAndAllocateNode);
+            IterateNodes(nodesToAllocate, AllocateNode);
 
             foreach (MyNode node in changersActivated)
                 EmitModelChanged(node);
         }
 
-        private static void InitAndAllocateNode(MyNode node)
+        private static void InitNode(MyNode node)
         {
             var workingNode = node as MyWorkingNode;
             if (workingNode == null)
                 return;
 
-            MyKernelFactory.Instance.SetCurrent(0);
-
             workingNode.ClearSignals();
             workingNode.InitTasks();
+        }
 
+        private static void AllocateNode(MyNode node)
+        {
             // TODO(HonzaS): Does the allocation need to be done in a separate loop?
             MyMemoryManager.Instance.AllocateBlocks(node, false);
         }
