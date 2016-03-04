@@ -374,7 +374,15 @@ namespace GoodAI.School.GUI
             DataGridViewCellStyle highlightStyle = new DataGridViewCellStyle();
             highlightStyle.BackColor = Color.PaleGreen;
 
+            var focus = GetFocusedControl();
+            
             dataGridView1.Rows[m_currentRow].Selected = true;
+
+            if (focus != null)
+            {
+                focus.Focus();
+            }
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
                 foreach (DataGridViewCell cell in row.Cells)
                     if (row.Index == m_currentRow)

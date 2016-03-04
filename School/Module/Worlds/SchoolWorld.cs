@@ -548,6 +548,8 @@ namespace GoodAI.Modules.School.Worlds
             m_schoolStatus.m_counterTU = 0;
 
             LearningTaskNewLevel(this, new SchoolEventArgs(CurrentLearningTask));
+
+            NotifyNewTrainingUnit();
         }
 
         public void NotifyNewTrainingUnit()
