@@ -282,16 +282,30 @@ namespace GoodAI.School.GUI
             e.Handled = true;
         }
 
+        private LearningTaskNode prevGridViewSelection;
+
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             Invoke((MethodInvoker)(() =>
             {
                 LearningTaskNode ltNode = SelectedLearningTask;
-                tabControl1.TabPages.Clear();
+
+                // if no selection, clear table and return
                 if (ltNode == null)
+                {
+                    tabControl1.TabPages.Clear();
+                    return;
+                }
+                // if there is no change, do nothing
+                if (ltNode.Equals(prevGridViewSelection))
                 {
                     return;
                 }
+                prevGridViewSelection = ltNode;
+
+                // otherwise clear everything
+                tabControl1.TabPages.Clear();
+
                 Type ltType = ltNode.TaskType;
                 ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
                 TrainingSetHints hints = lt.TSProgression[0];

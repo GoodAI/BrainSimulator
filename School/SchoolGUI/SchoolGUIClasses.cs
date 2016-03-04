@@ -52,6 +52,19 @@ namespace GoodAI.School.GUI
             WorldType = worldType;
             IsChecked = true;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj as LearningTaskNode == null)
+            {
+                return false;
+            }
+            if (TaskType == (obj as LearningTaskNode).TaskType && WorldType == (obj as LearningTaskNode).WorldType)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     public class LevelNode
