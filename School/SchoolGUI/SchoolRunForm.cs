@@ -127,18 +127,10 @@ namespace GoodAI.School.GUI
 
         private void UpdateTrainingUnitNumber(object sender, SchoolEventArgs e)
         {
-            /*if (wasSuccessful)
-            {
-                m_numberOfTU++;
-            }
-            else
-            {
-                m_numberOfTU = 0;
-            }*/
             Invoke((MethodInvoker)(() =>
             {
-                unitNumberLabel.Text = e.Task.CurrentNumberOfAttempts.ToString();
-                successefulAttempts.Text = e.Task.CurrentNumberOfSuccesses.ToString();
+                labelTrainingUnitValue.Text = e.Task.CurrentNumberOfAttempts.ToString();
+                labelSuccessefulAttemptsValue.Text = e.Task.CurrentNumberOfSuccesses.ToString() + " / " + e.Task.NumberOfSuccessesRequired;
             }
             ));
         }
@@ -147,21 +139,21 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
-                if (tabControl1 != null && tabControl1.TabCount > 0)
+                if (tabControlLevels != null && tabControlLevels.TabCount > 0)
                 {
                     var focus = GetFocusedControl();
                     if (m_currentRow >= 0)
                     {
-                        dataGridView1.Rows[m_currentRow].Selected = true;
+                        dataGridViewLearningTasks.Rows[m_currentRow].Selected = true;
                     }
-                    tabControl1.SelectedIndex = m_school.Level - 1;
-                    currentLevelLabel.Text = m_school.Level.ToString();
+                    tabControlLevels.SelectedIndex = m_school.Level - 1;
+                    labelCurrentLevelValue.Text = m_school.Level.ToString();
 
                     if (focus != null)
                     {
                         focus.Focus();
                     }
-                    (tabControl1.SelectedTab.Controls[0] as DataGridView).ClearSelection();
+                    (tabControlLevels.SelectedTab.Controls[0] as DataGridView).ClearSelection();
                 }
              }));
         }
@@ -184,7 +176,7 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
-                actualRewardLabel.Text = m_school.Reward.ToString("F");
+                labelPreviousStepRewardValue.Text = m_school.Reward.ToString("F");
             }
             ));
         }
@@ -221,7 +213,7 @@ namespace GoodAI.School.GUI
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            DataGridViewColumn column = dataGridView1.Columns[e.ColumnIndex];
+            DataGridViewColumn column = dataGridViewLearningTasks.Columns[e.ColumnIndex];
 
             if ((column == TaskType || column == WorldType) && e.Value != null)
             {
@@ -308,7 +300,7 @@ namespace GoodAI.School.GUI
                 // if no selection, clear table and return
                 if (ltNode == null)
                 {
-                    tabControl1.TabPages.Clear();
+                    tabControlLevels.TabPages.Clear();
                     return;
                 }
                 // if there is no change, do nothing
@@ -352,7 +344,7 @@ namespace GoodAI.School.GUI
                 //
                 // LVL tab
                 //
-                tabControl1.TabPages.Clear();
+                tabControlLevels.TabPages.Clear();
 
                 Type ltType = ltNode.TaskType;
                 ILearningTask lt = LearningTaskFactory.CreateLearningTask(ltType);
@@ -369,7 +361,7 @@ namespace GoodAI.School.GUI
                     LevelNode ln = new LevelNode(i + 1);
                     Levels.Add(ln);
                     TabPage tp = new TabPage(ln.Text);
-                    tabControl1.TabPages.Add(tp);
+                    tabControlLevels.TabPages.Add(tp);
 
                     // create grid
                     DataGridView dgv = new DataGridView();
@@ -416,7 +408,7 @@ namespace GoodAI.School.GUI
                     dgv.SelectionChanged += levelGrid_SelectionChanged;
                     dgv.ClearSelection();
 
-                    tabControl1.Update();
+                    tabControlLevels.Update();
                 }
             }
             ));
@@ -424,7 +416,7 @@ namespace GoodAI.School.GUI
 
         private void levelGrid_SelectionChanged(object sender, EventArgs a)
         {
-            richTextBoxLTLevel.Clear();
+            richTextBoxLTLevelInfo.Clear();
             DataGridView dgv = sender as DataGridView;
             int level = LevelGrids.IndexOf(dgv);
             if (dgv.SelectedRows.Count == 0)
@@ -432,7 +424,7 @@ namespace GoodAI.School.GUI
                 return;
             }
             int row = dgv.SelectedRows[0].Index;
-            richTextBoxLTLevel.AppendText(Attributes[level][row].GetAnotation());
+            richTextBoxLTLevelInfo.AppendText(Attributes[level][row].GetAnotation());
         }
 
         private void levelGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs args)
@@ -528,16 +520,16 @@ namespace GoodAI.School.GUI
 
         private void tree_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
         {
-            tree.DoDragDropSelectedNodes(DragDropEffects.Move);
+            treeViewLTList.DoDragDropSelectedNodes(DragDropEffects.Move);
         }
 
         private void tree_DragOver(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(TreeNodeAdv[])) && tree.DropPosition.Node != null)
+            if (e.Data.GetDataPresent(typeof(TreeNodeAdv[])) && treeViewLTList.DropPosition.Node != null)
             {
                 TreeNodeAdv draggedNode = (e.Data.GetData(typeof(TreeNodeAdv[])) as TreeNodeAdv[]).First();
-                TreeNodeAdv parent = tree.DropPosition.Node;
-                if (tree.DropPosition.Position != NodePosition.Inside)
+                TreeNodeAdv parent = treeViewLTList.DropPosition.Node;
+                if (treeViewLTList.DropPosition.Position != NodePosition.Inside)
                     parent = parent.Parent;
 
                 if (IsNodeAncestor(draggedNode, parent))
@@ -571,25 +563,25 @@ namespace GoodAI.School.GUI
 
         private void tree_DragDrop(object sender, DragEventArgs e)
         {
-            tree.BeginUpdate();
+            treeViewLTList.BeginUpdate();
 
             TreeNodeAdv[] nodes = (TreeNodeAdv[])e.Data.GetData(typeof(TreeNodeAdv[]));
-            if (tree.DropPosition.Node == null)
+            if (treeViewLTList.DropPosition.Node == null)
                 return;
-            Node dropNode = tree.DropPosition.Node.Tag as Node;
-            if (tree.DropPosition.Position == NodePosition.Inside)
+            Node dropNode = treeViewLTList.DropPosition.Node.Tag as Node;
+            if (treeViewLTList.DropPosition.Position == NodePosition.Inside)
             {
                 foreach (TreeNodeAdv n in nodes)
                 {
                     (n.Tag as Node).Parent = dropNode;
                 }
-                tree.DropPosition.Node.IsExpanded = true;
+                treeViewLTList.DropPosition.Node.IsExpanded = true;
             }
             else
             {
                 Node parent = dropNode.Parent;
                 Node nextItem = dropNode;
-                if (tree.DropPosition.Position == NodePosition.After)
+                if (treeViewLTList.DropPosition.Position == NodePosition.After)
                     nextItem = dropNode.NextNode;
 
                 foreach (TreeNodeAdv node in nodes)
@@ -610,7 +602,7 @@ namespace GoodAI.School.GUI
                 }
             }
 
-            tree.EndUpdate();
+            treeViewLTList.EndUpdate();
         }
 
         #endregion DragDrop
@@ -634,30 +626,30 @@ namespace GoodAI.School.GUI
             m_model.Nodes.Add(node);
 
             // Curriculum name directly editable upon creation
-            tree.SelectedNode = tree.FindNodeByTag(node);
-            NodeTextBox control = (NodeTextBox)tree.NodeControls.ElementAt(1);
+            treeViewLTList.SelectedNode = treeViewLTList.FindNodeByTag(node);
+            NodeTextBox control = (NodeTextBox)treeViewLTList.NodeControls.ElementAt(1);
             control.BeginEdit();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode == null)
+            if (treeViewLTList.SelectedNode == null)
             {
                 return;
             }
-            if (tree.SelectedNode.Tag is LearningTaskNode || tree.SelectedNode.Tag is CurriculumNode)
+            if (treeViewLTList.SelectedNode.Tag is LearningTaskNode || treeViewLTList.SelectedNode.Tag is CurriculumNode)
             {
                 DeleteNodes(sender, e);
                 return;
             }
-            Node parent = (tree.SelectedNode.Tag as Node).Parent;
+            Node parent = (treeViewLTList.SelectedNode.Tag as Node).Parent;
             if (parent != null && parent is CurriculumNode)
                 parent.Parent = null;
         }
 
         private void btnNewTask_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode == null)
+            if (treeViewLTList.SelectedNode == null)
                 return;
 
             AddTaskView = new LearningTaskSelectionForm();
@@ -675,17 +667,17 @@ namespace GoodAI.School.GUI
 
             if (newLearningTaskNodes.Count > 0)
             {
-                if (tree.SelectedNode.Tag is CurriculumNode)
+                if (treeViewLTList.SelectedNode.Tag is CurriculumNode)
                 {
                     foreach (LearningTaskNode node in newLearningTaskNodes)
                     {
-                        (tree.SelectedNode.Tag as Node).Nodes.Add(node);
+                        (treeViewLTList.SelectedNode.Tag as Node).Nodes.Add(node);
                     }
-                    tree.SelectedNode.IsExpanded = true;
+                    treeViewLTList.SelectedNode.IsExpanded = true;
                 }
-                else if (tree.SelectedNode.Tag is LearningTaskNode)
+                else if (treeViewLTList.SelectedNode.Tag is LearningTaskNode)
                 {
-                    LearningTaskNode source = tree.SelectedNode.Tag as LearningTaskNode;
+                    LearningTaskNode source = treeViewLTList.SelectedNode.Tag as LearningTaskNode;
                     int targetPosition = source.Parent.Nodes.IndexOf(source);
                     foreach (LearningTaskNode node in newLearningTaskNodes)
                     {
@@ -699,19 +691,19 @@ namespace GoodAI.School.GUI
         {
             // Walking through the nodes backwards. That way the index doesn't increase past the
             // node size
-            for (int i = tree.SelectedNodes.Count - 1; i >= 0; i--)
+            for (int i = treeViewLTList.SelectedNodes.Count - 1; i >= 0; i--)
             {
                 // After 1/many nodes are deleted, select the node that was after it/them
-                if (i == tree.SelectedNodes.Count - 1)
+                if (i == treeViewLTList.SelectedNodes.Count - 1)
                 {
-                    TreeNodeAdv nextone = tree.SelectedNode.NextNode;
+                    TreeNodeAdv nextone = treeViewLTList.SelectedNode.NextNode;
                     if (nextone != null)
                     {
                         nextone.IsSelected = true;
                     }
                 }
 
-                TreeNodeAdv n = (TreeNodeAdv)tree.SelectedNodes[i];
+                TreeNodeAdv n = (TreeNodeAdv)treeViewLTList.SelectedNodes[i];
                 (n.Tag as Node).Parent = null;
             }
         }
@@ -759,19 +751,19 @@ namespace GoodAI.School.GUI
 
         private void btnDetails_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode == null)
+            if (treeViewLTList.SelectedNode == null)
                 return;
 
             DockContent detailsForm = null;
-            if (tree.SelectedNode.Tag is CurriculumNode)
+            if (treeViewLTList.SelectedNode.Tag is CurriculumNode)
             {
-                CurriculumNode curr = tree.SelectedNode.Tag as CurriculumNode;
+                CurriculumNode curr = treeViewLTList.SelectedNode.Tag as CurriculumNode;
                 detailsForm = new SchoolCurrDetailsForm(curr);
                 detailsForm.Text = curr.Text;
             }
-            else if (tree.SelectedNode.Tag is LearningTaskNode)
+            else if (treeViewLTList.SelectedNode.Tag is LearningTaskNode)
             {
-                LearningTaskNode node = tree.SelectedNode.Tag as LearningTaskNode;
+                LearningTaskNode node = treeViewLTList.SelectedNode.Tag as LearningTaskNode;
                 detailsForm = new SchoolTaskDetailsForm(node.TaskType);
                 detailsForm.Text = node.Text;
             }

@@ -29,38 +29,38 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
-            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin1 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient1 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient2 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient3 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient4 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient5 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
+            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin2 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient4 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient8 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient9 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient5 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient10 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient11 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient12 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient6 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient13 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient14 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.learningTaskNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.observerDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.successefulAttempts = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.currentLevelLabel = new System.Windows.Forms.Label();
-            this.actualRewardLabel = new System.Windows.Forms.Label();
-            this.unitNumberLabel = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.dockPanelObserver = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.tabControlLevels = new System.Windows.Forms.TabControl();
+            this.panelLearningTaskStatus = new System.Windows.Forms.Panel();
+            this.labelSuccessefulAttemptsValue = new System.Windows.Forms.Label();
+            this.labelSuccessefulAttempts = new System.Windows.Forms.Label();
+            this.labelCurrentLevelValue = new System.Windows.Forms.Label();
+            this.labelPreviousStepRewardValue = new System.Windows.Forms.Label();
+            this.labelTrainingUnitValue = new System.Windows.Forms.Label();
+            this.labelCurrentLevel = new System.Windows.Forms.Label();
+            this.labelPreviusStepReward = new System.Windows.Forms.Label();
+            this.labelTrainingUnit = new System.Windows.Forms.Label();
+            this.labelLearningTaskStatus = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.richTextBoxLTInfo = new System.Windows.Forms.RichTextBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewLearningTasks = new System.Windows.Forms.DataGridView();
             this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.stepsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -73,10 +73,10 @@
             this.isCheckedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.richTextBoxLTLevel = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxLTLevelInfo = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.tree = new Aga.Controls.Tree.TreeViewAdv();
+            this.treeViewLTList = new Aga.Controls.Tree.TreeViewAdv();
             this.nodeCheckBox1 = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
@@ -107,12 +107,12 @@
             this.saveResultsDialog = new System.Windows.Forms.SaveFileDialog();
             this.folderBrowserAutosave = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).BeginInit();
-            this.panel1.SuspendLayout();
+            this.panelLearningTaskStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLearningTasks)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -135,169 +135,169 @@
             this.dataGridViewTextBoxColumn1.HeaderText = "Tag";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             // 
-            // observerDockPanel
+            // dockPanelObserver
             // 
-            this.observerDockPanel.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            this.observerDockPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.observerDockPanel.Location = new System.Drawing.Point(0, 0);
-            this.observerDockPanel.Name = "observerDockPanel";
-            this.observerDockPanel.Size = new System.Drawing.Size(394, 380);
-            dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
-            autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
-            tabGradient1.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient1.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient1.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            autoHideStripSkin1.TabGradient = tabGradient1;
-            autoHideStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
-            tabGradient2.EndColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient2.StartColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient2.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
-            dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
-            dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
-            dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
-            tabGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient3.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
-            dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
-            dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
-            tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
-            tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
-            dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
-            tabGradient5.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient5.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient5.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
-            dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
-            dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
-            tabGradient6.EndColor = System.Drawing.SystemColors.InactiveCaption;
-            tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            tabGradient6.TextColor = System.Drawing.SystemColors.InactiveCaptionText;
-            dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
-            tabGradient7.EndColor = System.Drawing.Color.Transparent;
-            tabGradient7.StartColor = System.Drawing.Color.Transparent;
-            tabGradient7.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
-            dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
-            dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
-            this.observerDockPanel.Skin = dockPanelSkin1;
-            this.observerDockPanel.TabIndex = 6;
+            this.dockPanelObserver.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.dockPanelObserver.Dock = System.Windows.Forms.DockStyle.Top;
+            this.dockPanelObserver.Location = new System.Drawing.Point(0, 0);
+            this.dockPanelObserver.Name = "dockPanelObserver";
+            this.dockPanelObserver.Size = new System.Drawing.Size(394, 380);
+            dockPanelGradient4.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient4.StartColor = System.Drawing.SystemColors.ControlLight;
+            autoHideStripSkin2.DockStripGradient = dockPanelGradient4;
+            tabGradient8.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient8.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient8.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            autoHideStripSkin2.TabGradient = tabGradient8;
+            autoHideStripSkin2.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            dockPanelSkin2.AutoHideStripSkin = autoHideStripSkin2;
+            tabGradient9.EndColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient9.StartColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient9.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient2.ActiveTabGradient = tabGradient9;
+            dockPanelGradient5.EndColor = System.Drawing.SystemColors.Control;
+            dockPanelGradient5.StartColor = System.Drawing.SystemColors.Control;
+            dockPaneStripGradient2.DockStripGradient = dockPanelGradient5;
+            tabGradient10.EndColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient10.StartColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient10.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient2.InactiveTabGradient = tabGradient10;
+            dockPaneStripSkin2.DocumentGradient = dockPaneStripGradient2;
+            dockPaneStripSkin2.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            tabGradient11.EndColor = System.Drawing.SystemColors.ActiveCaption;
+            tabGradient11.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient11.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
+            tabGradient11.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
+            dockPaneStripToolWindowGradient2.ActiveCaptionGradient = tabGradient11;
+            tabGradient12.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient12.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient12.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient2.ActiveTabGradient = tabGradient12;
+            dockPanelGradient6.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient6.StartColor = System.Drawing.SystemColors.ControlLight;
+            dockPaneStripToolWindowGradient2.DockStripGradient = dockPanelGradient6;
+            tabGradient13.EndColor = System.Drawing.SystemColors.InactiveCaption;
+            tabGradient13.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient13.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient13.TextColor = System.Drawing.SystemColors.InactiveCaptionText;
+            dockPaneStripToolWindowGradient2.InactiveCaptionGradient = tabGradient13;
+            tabGradient14.EndColor = System.Drawing.Color.Transparent;
+            tabGradient14.StartColor = System.Drawing.Color.Transparent;
+            tabGradient14.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            dockPaneStripToolWindowGradient2.InactiveTabGradient = tabGradient14;
+            dockPaneStripSkin2.ToolWindowGradient = dockPaneStripToolWindowGradient2;
+            dockPanelSkin2.DockPaneStripSkin = dockPaneStripSkin2;
+            this.dockPanelObserver.Skin = dockPanelSkin2;
+            this.dockPanelObserver.TabIndex = 6;
             // 
-            // tabControl1
+            // tabControlLevels
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabControlLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Location = new System.Drawing.Point(3, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(358, 471);
-            this.tabControl1.TabIndex = 10;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            this.tabControlLevels.Location = new System.Drawing.Point(3, 0);
+            this.tabControlLevels.Name = "tabControlLevels";
+            this.tabControlLevels.SelectedIndex = 0;
+            this.tabControlLevels.Size = new System.Drawing.Size(358, 471);
+            this.tabControlLevels.TabIndex = 10;
+            this.tabControlLevels.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
-            // panel1
+            // panelLearningTaskStatus
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panelLearningTaskStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel1.Controls.Add(this.successefulAttempts);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.currentLevelLabel);
-            this.panel1.Controls.Add(this.actualRewardLabel);
-            this.panel1.Controls.Add(this.unitNumberLabel);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(1, 386);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(390, 310);
-            this.panel1.TabIndex = 13;
+            this.panelLearningTaskStatus.Controls.Add(this.labelSuccessefulAttemptsValue);
+            this.panelLearningTaskStatus.Controls.Add(this.labelSuccessefulAttempts);
+            this.panelLearningTaskStatus.Controls.Add(this.labelCurrentLevelValue);
+            this.panelLearningTaskStatus.Controls.Add(this.labelPreviousStepRewardValue);
+            this.panelLearningTaskStatus.Controls.Add(this.labelTrainingUnitValue);
+            this.panelLearningTaskStatus.Controls.Add(this.labelCurrentLevel);
+            this.panelLearningTaskStatus.Controls.Add(this.labelPreviusStepReward);
+            this.panelLearningTaskStatus.Controls.Add(this.labelTrainingUnit);
+            this.panelLearningTaskStatus.Controls.Add(this.labelLearningTaskStatus);
+            this.panelLearningTaskStatus.Location = new System.Drawing.Point(1, 386);
+            this.panelLearningTaskStatus.Name = "panelLearningTaskStatus";
+            this.panelLearningTaskStatus.Size = new System.Drawing.Size(390, 310);
+            this.panelLearningTaskStatus.TabIndex = 13;
             // 
-            // successefulAttempts
+            // labelSuccessefulAttemptsValue
             // 
-            this.successefulAttempts.Location = new System.Drawing.Point(150, 76);
-            this.successefulAttempts.Name = "successefulAttempts";
-            this.successefulAttempts.Size = new System.Drawing.Size(58, 23);
-            this.successefulAttempts.TabIndex = 21;
-            this.successefulAttempts.Text = "0";
+            this.labelSuccessefulAttemptsValue.Location = new System.Drawing.Point(150, 76);
+            this.labelSuccessefulAttemptsValue.Name = "labelSuccessefulAttemptsValue";
+            this.labelSuccessefulAttemptsValue.Size = new System.Drawing.Size(58, 23);
+            this.labelSuccessefulAttemptsValue.TabIndex = 21;
+            this.labelSuccessefulAttemptsValue.Text = "0";
             // 
-            // label6
+            // labelSuccessefulAttempts
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 75);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(140, 13);
-            this.label6.TabIndex = 22;
-            this.label6.Text = "Number of successes in row";
+            this.labelSuccessefulAttempts.AutoSize = true;
+            this.labelSuccessefulAttempts.Location = new System.Drawing.Point(4, 75);
+            this.labelSuccessefulAttempts.Name = "labelSuccessefulAttempts";
+            this.labelSuccessefulAttempts.Size = new System.Drawing.Size(140, 13);
+            this.labelSuccessefulAttempts.TabIndex = 22;
+            this.labelSuccessefulAttempts.Text = "Number of successes in row";
             // 
-            // currentLevelLabel
+            // labelCurrentLevelValue
             // 
-            this.currentLevelLabel.Location = new System.Drawing.Point(150, 53);
-            this.currentLevelLabel.Name = "currentLevelLabel";
-            this.currentLevelLabel.Size = new System.Drawing.Size(58, 23);
-            this.currentLevelLabel.TabIndex = 0;
-            this.currentLevelLabel.Text = "0";
+            this.labelCurrentLevelValue.Location = new System.Drawing.Point(150, 53);
+            this.labelCurrentLevelValue.Name = "labelCurrentLevelValue";
+            this.labelCurrentLevelValue.Size = new System.Drawing.Size(58, 23);
+            this.labelCurrentLevelValue.TabIndex = 0;
+            this.labelCurrentLevelValue.Text = "0";
             // 
-            // actualRewardLabel
+            // labelPreviousStepRewardValue
             // 
-            this.actualRewardLabel.Location = new System.Drawing.Point(150, 99);
-            this.actualRewardLabel.Name = "actualRewardLabel";
-            this.actualRewardLabel.Size = new System.Drawing.Size(58, 23);
-            this.actualRewardLabel.TabIndex = 1;
-            this.actualRewardLabel.Text = "0";
+            this.labelPreviousStepRewardValue.Location = new System.Drawing.Point(150, 99);
+            this.labelPreviousStepRewardValue.Name = "labelPreviousStepRewardValue";
+            this.labelPreviousStepRewardValue.Size = new System.Drawing.Size(58, 23);
+            this.labelPreviousStepRewardValue.TabIndex = 1;
+            this.labelPreviousStepRewardValue.Text = "0";
             // 
-            // unitNumberLabel
+            // labelTrainingUnitValue
             // 
-            this.unitNumberLabel.AutoSize = true;
-            this.unitNumberLabel.Location = new System.Drawing.Point(150, 31);
-            this.unitNumberLabel.Name = "unitNumberLabel";
-            this.unitNumberLabel.Size = new System.Drawing.Size(13, 13);
-            this.unitNumberLabel.TabIndex = 20;
-            this.unitNumberLabel.Text = "0";
+            this.labelTrainingUnitValue.AutoSize = true;
+            this.labelTrainingUnitValue.Location = new System.Drawing.Point(150, 31);
+            this.labelTrainingUnitValue.Name = "labelTrainingUnitValue";
+            this.labelTrainingUnitValue.Size = new System.Drawing.Size(13, 13);
+            this.labelTrainingUnitValue.TabIndex = 20;
+            this.labelTrainingUnitValue.Text = "0";
             // 
-            // label4
+            // labelCurrentLevel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 53);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 13);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "Current level";
+            this.labelCurrentLevel.AutoSize = true;
+            this.labelCurrentLevel.Location = new System.Drawing.Point(4, 53);
+            this.labelCurrentLevel.Name = "labelCurrentLevel";
+            this.labelCurrentLevel.Size = new System.Drawing.Size(66, 13);
+            this.labelCurrentLevel.TabIndex = 18;
+            this.labelCurrentLevel.Text = "Current level";
             // 
-            // label3
+            // labelPreviusStepReward
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 97);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 13);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "Previus step reward";
+            this.labelPreviusStepReward.AutoSize = true;
+            this.labelPreviusStepReward.Location = new System.Drawing.Point(4, 97);
+            this.labelPreviusStepReward.Name = "labelPreviusStepReward";
+            this.labelPreviusStepReward.Size = new System.Drawing.Size(100, 13);
+            this.labelPreviusStepReward.TabIndex = 16;
+            this.labelPreviusStepReward.Text = "Previus step reward";
             // 
-            // label2
+            // labelTrainingUnit
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 31);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 13);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Training unit";
+            this.labelTrainingUnit.AutoSize = true;
+            this.labelTrainingUnit.Location = new System.Drawing.Point(4, 31);
+            this.labelTrainingUnit.Name = "labelTrainingUnit";
+            this.labelTrainingUnit.Size = new System.Drawing.Size(65, 13);
+            this.labelTrainingUnit.TabIndex = 14;
+            this.labelTrainingUnit.Text = "Training unit";
             // 
-            // label1
+            // labelLearningTaskStatus
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 13);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Learning Task Status";
+            this.labelLearningTaskStatus.AutoSize = true;
+            this.labelLearningTaskStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLearningTaskStatus.Location = new System.Drawing.Point(3, 5);
+            this.labelLearningTaskStatus.Name = "labelLearningTaskStatus";
+            this.labelLearningTaskStatus.Size = new System.Drawing.Size(108, 13);
+            this.labelLearningTaskStatus.TabIndex = 13;
+            this.labelLearningTaskStatus.Text = "Learning Task Status";
             // 
             // splitContainer1
             // 
@@ -310,13 +310,13 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.richTextBoxLTInfo);
-            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            this.splitContainer1.Panel1.Controls.Add(this.dataGridViewLearningTasks);
             this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.richTextBoxLTLevel);
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.richTextBoxLTLevelInfo);
+            this.splitContainer1.Panel2.Controls.Add(this.tabControlLevels);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer1.Size = new System.Drawing.Size(919, 696);
             this.splitContainer1.SplitterDistance = 551;
@@ -333,18 +333,18 @@
             this.richTextBoxLTInfo.TabIndex = 3;
             this.richTextBoxLTInfo.Text = "";
             // 
-            // dataGridView1
+            // dataGridViewLearningTasks
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridViewLearningTasks.AllowUserToAddRows = false;
+            this.dataGridViewLearningTasks.AllowUserToDeleteRows = false;
+            this.dataGridViewLearningTasks.AllowUserToResizeRows = false;
+            this.dataGridViewLearningTasks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView1.AutoGenerateColumns = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewLearningTasks.AutoGenerateColumns = false;
+            this.dataGridViewLearningTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridViewLearningTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewLearningTasks.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TaskType,
             this.WorldType,
             this.stepsDataGridViewTextBoxColumn,
@@ -357,17 +357,17 @@
             this.isCheckedDataGridViewCheckBoxColumn,
             this.isLeafDataGridViewCheckBoxColumn,
             this.tagDataGridViewTextBoxColumn});
-            this.dataGridView1.DataSource = this.learningTaskNodeBindingSource;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(548, 471);
-            this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
-            this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            this.dataGridViewLearningTasks.DataSource = this.learningTaskNodeBindingSource;
+            this.dataGridViewLearningTasks.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewLearningTasks.MultiSelect = false;
+            this.dataGridViewLearningTasks.Name = "dataGridViewLearningTasks";
+            this.dataGridViewLearningTasks.RowHeadersVisible = false;
+            this.dataGridViewLearningTasks.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dataGridViewLearningTasks.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewLearningTasks.Size = new System.Drawing.Size(548, 471);
+            this.dataGridViewLearningTasks.TabIndex = 1;
+            this.dataGridViewLearningTasks.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
+            this.dataGridViewLearningTasks.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
             // TaskType
             // 
@@ -454,16 +454,16 @@
             this.tagDataGridViewTextBoxColumn.Name = "tagDataGridViewTextBoxColumn";
             this.tagDataGridViewTextBoxColumn.Visible = false;
             // 
-            // richTextBoxLTLevel
+            // richTextBoxLTLevelInfo
             // 
-            this.richTextBoxLTLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.richTextBoxLTLevelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBoxLTLevel.Location = new System.Drawing.Point(3, 472);
-            this.richTextBoxLTLevel.Name = "richTextBoxLTLevel";
-            this.richTextBoxLTLevel.ReadOnly = true;
-            this.richTextBoxLTLevel.Size = new System.Drawing.Size(358, 221);
-            this.richTextBoxLTLevel.TabIndex = 4;
-            this.richTextBoxLTLevel.Text = "";
+            this.richTextBoxLTLevelInfo.Location = new System.Drawing.Point(3, 472);
+            this.richTextBoxLTLevelInfo.Name = "richTextBoxLTLevelInfo";
+            this.richTextBoxLTLevelInfo.ReadOnly = true;
+            this.richTextBoxLTLevelInfo.Size = new System.Drawing.Size(358, 221);
+            this.richTextBoxLTLevelInfo.TabIndex = 4;
+            this.richTextBoxLTLevelInfo.Text = "";
             // 
             // splitContainer2
             // 
@@ -480,8 +480,8 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.panel1);
-            this.splitContainer2.Panel2.Controls.Add(this.observerDockPanel);
+            this.splitContainer2.Panel2.Controls.Add(this.panelLearningTaskStatus);
+            this.splitContainer2.Panel2.Controls.Add(this.dockPanelObserver);
             this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer2.Panel2MinSize = 371;
             this.splitContainer2.Size = new System.Drawing.Size(1323, 699);
@@ -496,7 +496,7 @@
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.tree);
+            this.splitContainer3.Panel1.Controls.Add(this.treeViewLTList);
             this.splitContainer3.Panel1.Controls.Add(this.toolStrip2);
             // 
             // splitContainer3.Panel2
@@ -507,35 +507,35 @@
             this.splitContainer3.SplitterDistance = 417;
             this.splitContainer3.TabIndex = 1;
             // 
-            // tree
+            // treeViewLTList
             // 
-            this.tree.AllowDrop = true;
-            this.tree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.treeViewLTList.AllowDrop = true;
+            this.treeViewLTList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tree.BackColor = System.Drawing.SystemColors.Window;
-            this.tree.ColumnHeaderHeight = 0;
-            this.tree.DefaultToolTipProvider = null;
-            this.tree.DisplayDraggingNodes = true;
-            this.tree.DragDropMarkColor = System.Drawing.Color.Black;
-            this.tree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
-            this.tree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
-            this.tree.LineColor = System.Drawing.SystemColors.ControlDark;
-            this.tree.Location = new System.Drawing.Point(0, 28);
-            this.tree.Model = null;
-            this.tree.Name = "tree";
-            this.tree.NodeControls.Add(this.nodeCheckBox1);
-            this.tree.NodeControls.Add(this.nodeTextBox1);
-            this.tree.NodeFilter = null;
-            this.tree.SelectedNode = null;
-            this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
-            this.tree.Size = new System.Drawing.Size(417, 696);
-            this.tree.TabIndex = 0;
-            this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
-            this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
-            this.tree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
-            this.tree.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);
-            this.tree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
+            this.treeViewLTList.BackColor = System.Drawing.SystemColors.Window;
+            this.treeViewLTList.ColumnHeaderHeight = 0;
+            this.treeViewLTList.DefaultToolTipProvider = null;
+            this.treeViewLTList.DisplayDraggingNodes = true;
+            this.treeViewLTList.DragDropMarkColor = System.Drawing.Color.Black;
+            this.treeViewLTList.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.treeViewLTList.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
+            this.treeViewLTList.LineColor = System.Drawing.SystemColors.ControlDark;
+            this.treeViewLTList.Location = new System.Drawing.Point(0, 28);
+            this.treeViewLTList.Model = null;
+            this.treeViewLTList.Name = "treeViewLTList";
+            this.treeViewLTList.NodeControls.Add(this.nodeCheckBox1);
+            this.treeViewLTList.NodeControls.Add(this.nodeTextBox1);
+            this.treeViewLTList.NodeFilter = null;
+            this.treeViewLTList.SelectedNode = null;
+            this.treeViewLTList.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
+            this.treeViewLTList.Size = new System.Drawing.Size(417, 696);
+            this.treeViewLTList.TabIndex = 0;
+            this.treeViewLTList.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
+            this.treeViewLTList.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
+            this.treeViewLTList.DragDrop += new System.Windows.Forms.DragEventHandler(this.tree_DragDrop);
+            this.treeViewLTList.DragOver += new System.Windows.Forms.DragEventHandler(this.tree_DragOver);
+            this.treeViewLTList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
             // 
             // nodeCheckBox1
             // 
@@ -813,13 +813,13 @@
             this.VisibleChanged += new System.EventHandler(this.SchoolRunForm_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SchoolRunForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.learningTaskNodeBindingSource)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.panelLearningTaskStatus.ResumeLayout(false);
+            this.panelLearningTaskStatus.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLearningTasks)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -844,8 +844,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn worldDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private WeifenLuo.WinFormsUI.Docking.DockPanel observerDockPanel;
-        private System.Windows.Forms.TabControl tabControl1;
+        private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanelObserver;
+        private System.Windows.Forms.TabControl tabControlLevels;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskTypeDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn worldTypeDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn stepsDataGridViewTextBoxColumn1;
@@ -858,14 +858,14 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label unitNumberLabel;
-        private System.Windows.Forms.Label currentLevelLabel;
-        private System.Windows.Forms.Label actualRewardLabel;
+        private System.Windows.Forms.Panel panelLearningTaskStatus;
+        private System.Windows.Forms.Label labelLearningTaskStatus;
+        private System.Windows.Forms.Label labelPreviusStepReward;
+        private System.Windows.Forms.Label labelTrainingUnit;
+        private System.Windows.Forms.Label labelCurrentLevel;
+        private System.Windows.Forms.Label labelTrainingUnitValue;
+        private System.Windows.Forms.Label labelCurrentLevelValue;
+        private System.Windows.Forms.Label labelPreviousStepRewardValue;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
@@ -882,8 +882,8 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox1;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private Aga.Controls.Tree.TreeViewAdv tree;
+        private System.Windows.Forms.DataGridView dataGridViewLearningTasks;
+        private Aga.Controls.Tree.TreeViewAdv treeViewLTList;
         private System.Windows.Forms.ToolStripButton btnAutosave;
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripButton btnNew;
@@ -909,12 +909,12 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn isCheckedDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn isLeafDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn tagDataGridViewTextBoxColumn;
-        private System.Windows.Forms.Label successefulAttempts;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labelSuccessefulAttemptsValue;
+        private System.Windows.Forms.Label labelSuccessefulAttempts;
         private System.Windows.Forms.ToolStripButton btnSaveResults;
         private System.Windows.Forms.SaveFileDialog saveResultsDialog;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserAutosave;
         private System.Windows.Forms.RichTextBox richTextBoxLTInfo;
-        private System.Windows.Forms.RichTextBox richTextBoxLTLevel;
+        private System.Windows.Forms.RichTextBox richTextBoxLTLevelInfo;
     }
 }

@@ -94,9 +94,9 @@ namespace GoodAI.School.GUI
             get
             {
                 int dataIndex;
-                if (dataGridView1.SelectedRows != null && dataGridView1.SelectedRows.Count > 0)
+                if (dataGridViewLearningTasks.SelectedRows != null && dataGridViewLearningTasks.SelectedRows.Count > 0)
                 {
-                    DataGridViewRow row = dataGridView1.SelectedRows[0];
+                    DataGridViewRow row = dataGridViewLearningTasks.SelectedRows[0];
                     dataIndex = row.Index;
                 }
                 else
@@ -154,8 +154,8 @@ namespace GoodAI.School.GUI
             InitializeComponent();
 
             m_model = new TreeModel();
-            tree.Model = m_model;
-            tree.Refresh();
+            treeViewLTList.Model = m_model;
+            treeViewLTList.Refresh();
 
             if (!String.IsNullOrEmpty(Properties.School.Default.AutosaveFolder))
                 btnAutosave.Checked = Properties.School.Default.AutosaveEnabled;
@@ -198,8 +198,8 @@ namespace GoodAI.School.GUI
 
         public void UpdateGridData()
         {
-            dataGridView1.DataSource = Data;
-            dataGridView1.Invalidate();
+            dataGridViewLearningTasks.DataSource = Data;
+            dataGridViewLearningTasks.Invalidate();
         }
 
         private void SchoolRunForm_WorkspaceChanged(object sender, EventArgs e)
@@ -294,16 +294,16 @@ namespace GoodAI.School.GUI
             EnableButtons(this);
             EnableToolstripButtons(toolStrip2);
 
-            if (!tree.AllNodes.Any())
+            if (!treeViewLTList.AllNodes.Any())
                 btnSave.Enabled = btnSaveAs.Enabled = btnRun.Enabled = false;
 
-            if (tree.SelectedNode == null)
+            if (treeViewLTList.SelectedNode == null)
             {
                 btnNewTask.Enabled = btnDetails.Enabled = false;
                 return;
             }
 
-            Node selected = tree.SelectedNode.Tag as Node;
+            Node selected = treeViewLTList.SelectedNode.Tag as Node;
             Debug.Assert(selected != null);
         }
 
@@ -337,11 +337,11 @@ namespace GoodAI.School.GUI
                         m_observer = new ObserverForm(m_mainForm, observer, m_school);
 
                         m_observer.TopLevel = false;
-                        observerDockPanel.Controls.Add(m_observer);
+                        dockPanelObserver.Controls.Add(m_observer);
 
                         m_observer.CloseButtonVisible = false;
                         m_observer.MaximizeBox = false;
-                        m_observer.Size = observerDockPanel.Size + new System.Drawing.Size(16, 38);
+                        m_observer.Size = dockPanelObserver.Size + new System.Drawing.Size(16, 38);
                         m_observer.Location = new System.Drawing.Point(-8, -30);
 
                         m_observer.Show();
@@ -354,7 +354,7 @@ namespace GoodAI.School.GUI
                 else
                 {
                     m_observer.Show();
-                    observerDockPanel.Show();
+                    dockPanelObserver.Show();
 
                     m_observer.Observer.GenericTarget = m_school.Visual;
                 }
@@ -363,7 +363,7 @@ namespace GoodAI.School.GUI
             {
                 if (m_observer != null)
                 {
-                    observerDockPanel.Hide();
+                    dockPanelObserver.Hide();
                 }
             }
         }
@@ -376,14 +376,14 @@ namespace GoodAI.School.GUI
 
             var focus = GetFocusedControl();
             
-            dataGridView1.Rows[m_currentRow].Selected = true;
+            dataGridViewLearningTasks.Rows[m_currentRow].Selected = true;
 
             if (focus != null)
             {
                 focus.Focus();
             }
 
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            foreach (DataGridViewRow row in dataGridViewLearningTasks.Rows)
                 foreach (DataGridViewCell cell in row.Cells)
                     if (row.Index == m_currentRow)
                         cell.Style = highlightStyle;
@@ -512,20 +512,20 @@ namespace GoodAI.School.GUI
         private void ExportDataGridViewData(string filename, TextDataFormat format = TextDataFormat.CommaSeparatedValue)
         {
             IDataObject objectSave = Clipboard.GetDataObject();
-            bool multiSelectAllowed = dataGridView1.MultiSelect;
-            DataGridViewClipboardCopyMode copyMode = dataGridView1.ClipboardCopyMode;
+            bool multiSelectAllowed = dataGridViewLearningTasks.MultiSelect;
+            DataGridViewClipboardCopyMode copyMode = dataGridViewLearningTasks.ClipboardCopyMode;
 
-            dataGridView1.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
-            dataGridView1.MultiSelect = true;
-            dataGridView1.SelectAll();
-            Clipboard.SetDataObject(dataGridView1.GetClipboardContent());
+            dataGridViewLearningTasks.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            dataGridViewLearningTasks.MultiSelect = true;
+            dataGridViewLearningTasks.SelectAll();
+            Clipboard.SetDataObject(dataGridViewLearningTasks.GetClipboardContent());
             if (format == TextDataFormat.CommaSeparatedValue && Path.GetExtension(filename) != ".csv")
                 filename += ".csv";
 
             File.WriteAllText(filename, Clipboard.GetText(format));
 
-            dataGridView1.MultiSelect = multiSelectAllowed;
-            dataGridView1.ClipboardCopyMode = copyMode;
+            dataGridViewLearningTasks.MultiSelect = multiSelectAllowed;
+            dataGridViewLearningTasks.ClipboardCopyMode = copyMode;
             if (objectSave != null)
                 Clipboard.SetDataObject(objectSave);
         }
