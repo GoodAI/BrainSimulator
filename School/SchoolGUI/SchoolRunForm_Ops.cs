@@ -288,6 +288,8 @@ namespace GoodAI.School.GUI
             btnRun.Enabled = m_mainForm.runToolButton.Enabled;
             btnPause.Enabled = m_mainForm.pauseToolButton.Enabled;
             btnStop.Enabled = m_mainForm.stopToolButton.Enabled;
+            btnStepOver.Enabled = m_mainForm.stepOverToolButton.Enabled;
+            btnDebug.Enabled = m_mainForm.debugToolButton.Enabled;
 
             EnableButtons(this);
             EnableToolstripButtons(toolStrip2);
