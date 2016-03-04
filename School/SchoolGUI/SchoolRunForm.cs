@@ -4,6 +4,7 @@ using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System;
@@ -144,13 +145,16 @@ namespace GoodAI.School.GUI
 
         private void UpdateLTLevel(object sender, SchoolEventArgs e)
         {
-            
             Invoke((MethodInvoker)(() =>
             {
                 if (tabControl1 != null && tabControl1.TabCount > 0)
                 {
                     var focus = GetFocusedControl();
-
+                    dataGridView1.ClearSelection();
+                    /*if (m_currentRow >= 0)
+                    {
+                        dataGridView1.Rows[m_currentRow].Selected = true;
+                    }*/
                     tabControl1.SelectedIndex = m_school.Level - 1;
                     currentLevelLabel.Text = m_school.Level.ToString();
 
@@ -158,9 +162,9 @@ namespace GoodAI.School.GUI
                     {
                         focus.Focus();
                     }
+                    (tabControl1.SelectedTab.Controls[0] as DataGridView).ClearSelection();
                 }
-            }));
-            
+             }));
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
@@ -299,6 +303,7 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
+
                 LearningTaskNode ltNode = SelectedLearningTask;
 
                 // if no selection, clear table and return
@@ -314,7 +319,40 @@ namespace GoodAI.School.GUI
                 }
                 prevGridViewSelection = ltNode;
 
-                // otherwise clear everything
+                //
+                // LT text hint
+                //
+
+                richTextBoxLTInfo.Clear();
+
+                const string HTML_DIRECTORY = @"Resources\html";
+                string htmlFileName = (ltNode as LearningTaskNode).TaskType.Name + ".html";
+                string fullPath = MyResources.GetMyAssemblyPath() + "\\" + HTML_DIRECTORY + "\\" + htmlFileName;
+
+                
+                if (File.Exists(fullPath))
+                {
+                    // Create a file to write to.
+                    string htmlPage = File.ReadAllText(fullPath);
+                    
+                    string name = System.Text.RegularExpressions.Regex.Match(htmlPage, "<title>.*</title>").ToString();
+                    name = name.Split('>', '<')[2];
+                    richTextBoxLTInfo.AppendText(name + "\r\n\r\n");
+                    richTextBoxLTInfo.SelectAll();
+                    richTextBoxLTInfo.SelectionFont = new Font(richTextBoxLTInfo.Font, FontStyle.Bold);
+
+                    string description = System.Text.RegularExpressions.Regex.Match(htmlPage,
+                        "Description(.*?)<td(.*?)</td>", System.Text.RegularExpressions.RegexOptions.Singleline).ToString();
+                    if(description.Length > 0){
+                        description = description.Split('>', '<')[4];
+                    }
+                    description = description.Replace(System.Environment.NewLine, "");
+                    richTextBoxLTInfo.AppendText(description);
+                }
+
+                //
+                // LVL tab
+                //
                 tabControl1.TabPages.Clear();
 
                 Type ltType = ltNode.TaskType;
@@ -375,8 +413,9 @@ namespace GoodAI.School.GUI
 
                     LevelGrids.Add(dgv);
                     dgv.ColumnWidthChanged += levelGridColumnSizeChanged;
-                    dgv.CellFormatting += lGrid_CellFormatting;
-                    dgv.SelectionChanged += levelGridSelectionChanged;
+                    dgv.CellFormatting += levelGrid_CellFormatting;
+                    dgv.SelectionChanged += levelGrid_SelectionChanged;
+                    dgv.ClearSelection();
 
                     tabControl1.Update();
                 }
@@ -384,13 +423,20 @@ namespace GoodAI.School.GUI
             ));
         }
 
-        private void levelGridSelectionChanged(object sender, EventArgs e)
+        private void levelGrid_SelectionChanged(object sender, EventArgs a)
         {
+            richTextBoxLTLevel.Clear();
             DataGridView dgv = sender as DataGridView;
-            dgv.ClearSelection();
+            int level = LevelGrids.IndexOf(dgv);
+            if (dgv.SelectedRows.Count == 0)
+            {
+                return;
+            }
+            int row = dgv.SelectedRows[0].Index;
+            richTextBoxLTLevel.AppendText(Attributes[level][row].GetAnotation());
         }
 
-        private void lGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs args)
+        private void levelGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs args)
         {
             // colouring changes between levels
             DataGridView dgv = sender as DataGridView;
@@ -405,12 +451,9 @@ namespace GoodAI.School.GUI
             }
 
             // set tooltip text
-            int row = args.RowIndex;
+            /*int row = args.RowIndex;
             int column = args.ColumnIndex;
-            dgv.Rows[row].Cells[column].ToolTipText = Attributes[level][row].GetAnotation();
-
-            // unselect dgv
-            dgv.ClearSelection();
+            dgv.Rows[row].Cells[column].ToolTipText = Attributes[level][row].GetAnotation();*/
         }
 
         private void levelGridColumnSizeChanged(object sender, DataGridViewColumnEventArgs e)
@@ -787,6 +830,15 @@ namespace GoodAI.School.GUI
                 return;
 
             ExportDataGridViewData(saveResultsDialog.FileName);
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((sender as TabControl).SelectedTab == null)
+            {
+                return;
+            }
+            ((sender as TabControl).SelectedTab.Controls[0] as DataGridView).ClearSelection();
         }
     }
 }
