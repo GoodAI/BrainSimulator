@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -144,11 +145,31 @@ namespace GoodAI.School.GUI
             {
                 Invoke((MethodInvoker)(() =>
                 {
+                    var focus = GetFocusedControl();
+                    
                     tabControl1.SelectedIndex = m_school.Level - 1;
                     currentLevelLabel.Text = m_school.Level.ToString();
-                }
-                ));
+
+                    if (focus != null)
+                    {
+                        focus.Focus();
+                    }
+                }));
             }
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+        internal static extern IntPtr GetFocus();
+
+        private Control GetFocusedControl()
+        {
+            Control focusedControl = null;
+            // To get hold of the focused control:
+            IntPtr focusedHandle = GetFocus();
+            if (focusedHandle != IntPtr.Zero)
+                // Note that if the focused Control is not a .Net control, then this will return null.
+                focusedControl = Control.FromHandle(focusedHandle);
+            return focusedControl;
         }
 
         private void UpdateTUStatus(object sender, EventArgs e)
@@ -553,6 +574,10 @@ namespace GoodAI.School.GUI
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+            if (tree.SelectedNode == null)
+            {
+                return;
+            }
             if (tree.SelectedNode.Tag is LearningTaskNode || tree.SelectedNode.Tag is CurriculumNode)
             {
                 DeleteNodes(sender, e);
