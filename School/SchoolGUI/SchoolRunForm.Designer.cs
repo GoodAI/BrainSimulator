@@ -59,6 +59,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.richTextBoxLTInfo = new System.Windows.Forms.RichTextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.TaskType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WorldType = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -72,6 +73,7 @@
             this.isCheckedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.isLeafDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tagDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.richTextBoxLTLevel = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tree = new Aga.Controls.Tree.TreeViewAdv();
@@ -196,8 +198,9 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(324, 693);
+            this.tabControl1.Size = new System.Drawing.Size(358, 471);
             this.tabControl1.TabIndex = 10;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // panel1
             // 
@@ -306,16 +309,29 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.richTextBoxLTInfo);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
             this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.richTextBoxLTLevel);
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(623, 696);
-            this.splitContainer1.SplitterDistance = 294;
+            this.splitContainer1.Size = new System.Drawing.Size(919, 696);
+            this.splitContainer1.SplitterDistance = 551;
             this.splitContainer1.TabIndex = 15;
+            // 
+            // richTextBoxLTInfo
+            // 
+            this.richTextBoxLTInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBoxLTInfo.Location = new System.Drawing.Point(3, 472);
+            this.richTextBoxLTInfo.Name = "richTextBoxLTInfo";
+            this.richTextBoxLTInfo.ReadOnly = true;
+            this.richTextBoxLTInfo.Size = new System.Drawing.Size(545, 221);
+            this.richTextBoxLTInfo.TabIndex = 3;
+            this.richTextBoxLTInfo.Text = "";
             // 
             // dataGridView1
             // 
@@ -346,8 +362,9 @@
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(295, 693);
+            this.dataGridView1.Size = new System.Drawing.Size(548, 471);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
@@ -437,6 +454,17 @@
             this.tagDataGridViewTextBoxColumn.Name = "tagDataGridViewTextBoxColumn";
             this.tagDataGridViewTextBoxColumn.Visible = false;
             // 
+            // richTextBoxLTLevel
+            // 
+            this.richTextBoxLTLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBoxLTLevel.Location = new System.Drawing.Point(3, 472);
+            this.richTextBoxLTLevel.Name = "richTextBoxLTLevel";
+            this.richTextBoxLTLevel.ReadOnly = true;
+            this.richTextBoxLTLevel.Size = new System.Drawing.Size(358, 221);
+            this.richTextBoxLTLevel.TabIndex = 4;
+            this.richTextBoxLTLevel.Text = "";
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -456,8 +484,8 @@
             this.splitContainer2.Panel2.Controls.Add(this.observerDockPanel);
             this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer2.Panel2MinSize = 371;
-            this.splitContainer2.Size = new System.Drawing.Size(1027, 699);
-            this.splitContainer2.SplitterDistance = 629;
+            this.splitContainer2.Size = new System.Drawing.Size(1323, 699);
+            this.splitContainer2.SplitterDistance = 925;
             this.splitContainer2.TabIndex = 16;
             // 
             // splitContainer3
@@ -475,8 +503,8 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer3.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer3.Size = new System.Drawing.Size(1356, 724);
-            this.splitContainer3.SplitterDistance = 325;
+            this.splitContainer3.Size = new System.Drawing.Size(1744, 724);
+            this.splitContainer3.SplitterDistance = 417;
             this.splitContainer3.TabIndex = 1;
             // 
             // tree
@@ -501,7 +529,7 @@
             this.tree.NodeFilter = null;
             this.tree.SelectedNode = null;
             this.tree.SelectionMode = Aga.Controls.Tree.TreeSelectionMode.MultiSameParent;
-            this.tree.Size = new System.Drawing.Size(325, 696);
+            this.tree.Size = new System.Drawing.Size(417, 696);
             this.tree.TabIndex = 0;
             this.tree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tree_ItemDrag);
             this.tree.SelectionChanged += new System.EventHandler(this.tree_SelectionChanged);
@@ -540,7 +568,7 @@
             this.btnDelete});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(325, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(417, 25);
             this.toolStrip2.TabIndex = 15;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -659,7 +687,7 @@
             this.btnAutosave});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1027, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1323, 25);
             this.toolStrip1.TabIndex = 6;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -774,7 +802,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1356, 724);
+            this.ClientSize = new System.Drawing.Size(1744, 724);
             this.Controls.Add(this.splitContainer3);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
@@ -886,5 +914,7 @@
         private System.Windows.Forms.ToolStripButton btnSaveResults;
         private System.Windows.Forms.SaveFileDialog saveResultsDialog;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserAutosave;
+        private System.Windows.Forms.RichTextBox richTextBoxLTInfo;
+        private System.Windows.Forms.RichTextBox richTextBoxLTLevel;
     }
 }
