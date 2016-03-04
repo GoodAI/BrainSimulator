@@ -42,6 +42,10 @@ namespace GoodAI.Modules.School.Worlds
         public int m_counterSuccesses = 0;
     }
 
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>Environment for AI School</summary>
+    /// <description>School world provides the environment necessary for running AI School. It creates it's own execution plan according to the learning tasks selected in the School curriculum. Initialization and execution of each learning task is managed by this world as well as the evaluation of agent's performance.</description>
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
         #region Constants
@@ -417,7 +421,7 @@ namespace GoodAI.Modules.School.Worlds
 
             if (ShowBlackscreen && m_drawBlackscreen)
             {
-                // Skip task evaluation, a blackscreen will show up this step
+                // Skip task evaluation, a black screen will show up this step
                 MoveLTStatusToDevice();
                 return;
             }
@@ -597,7 +601,7 @@ namespace GoodAI.Modules.School.Worlds
         public OutputAdapterTask AdapterOutputStep { get; protected set; }
 
         /// <summary>
-        /// Initialize the world's curriculum
+        /// Initializes the School world's curriculum.
         /// </summary>
         [MyTaskInfo(OneShot = true)]
         public class InitSchoolWorldTask : MyTask<SchoolWorld>
@@ -613,7 +617,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// Performs Input memory blocks mapping
+        /// Performs mapping of input memory blocks from the particular learning task's world to the School world.
         /// </summary>
         public class InputAdapterTask : MyTask<SchoolWorld>
         {
@@ -630,7 +634,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// Update the state of the training task(s)
+        /// According to AI School's execution plan, one step of current learning task is run, or a separator between tasks is presented, or a new task is initialized.
         /// </summary>
         public class LearningStepTask : MyTask<SchoolWorld>
         {
@@ -646,7 +650,7 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         /// <summary>
-        /// Performs Output memory blocks mapping
+        /// Performs mapping of output memory blocks from the particular learning task's world to the School world.
         /// </summary>
         public class OutputAdapterTask : MyTask<SchoolWorld>
         {
