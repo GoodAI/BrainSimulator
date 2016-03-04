@@ -379,7 +379,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         public IMyExecutable Executable { get; private set; }
 
-        public MyDebugNode(IMyExecutable executable): base(executable.Name)
+        public MyDebugNode(IMyExecutable executable): base(executable.Name ?? string.Empty)
         {
             BackgroundColor = Color.White;
 
