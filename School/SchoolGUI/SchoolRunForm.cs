@@ -150,11 +150,10 @@ namespace GoodAI.School.GUI
                 if (tabControl1 != null && tabControl1.TabCount > 0)
                 {
                     var focus = GetFocusedControl();
-                    dataGridView1.ClearSelection();
-                    /*if (m_currentRow >= 0)
+                    if (m_currentRow >= 0)
                     {
                         dataGridView1.Rows[m_currentRow].Selected = true;
-                    }*/
+                    }
                     tabControl1.SelectedIndex = m_school.Level - 1;
                     currentLevelLabel.Text = m_school.Level.ToString();
 
