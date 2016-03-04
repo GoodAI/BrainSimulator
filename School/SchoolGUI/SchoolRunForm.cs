@@ -147,7 +147,7 @@ namespace GoodAI.School.GUI
                         dataGridViewLearningTasks.Rows[m_currentRow].Selected = true;
                     }
                     tabControlLevels.SelectedIndex = m_school.Level - 1;
-                    labelCurrentLevelValue.Text = m_school.Level.ToString();
+                    labelCurrentLevelValue.Text = m_school.Level.ToString() + " / " + e.Task.NumberOfLevels;
 
                     if (focus != null)
                     {
