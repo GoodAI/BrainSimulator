@@ -74,12 +74,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>School.settings</DependentUpon>
     </Compile>
-    <Compile Include="SchoolAddTaskForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SchoolAddTaskForm.Designer.cs">
-      <DependentUpon>SchoolAddTaskForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="SchoolCurrDetailsForm.cs">
       <SubType>Form</SubType>
     </Compile>
