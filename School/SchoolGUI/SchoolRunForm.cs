@@ -99,10 +99,7 @@ namespace GoodAI.School.GUI
 
         private void LearningTaskFinished(object sender, SchoolEventArgs e)
         {
-            Invoke((MethodInvoker)(() =>
-            {
-                UpdateTaskData(e.Task);
-            }));
+            UpdateTaskData(e.Task);
         }
 
         private void VisualFormatChanged(object sender, SchoolEventArgs e)
@@ -145,15 +142,16 @@ namespace GoodAI.School.GUI
 
         private void UpdateLTLevel(object sender, SchoolEventArgs e)
         {
-            Invoke((MethodInvoker)(() =>
+            if (tabControl1 != null && tabControl1.TabCount > 0)
             {
-                if (tabControl1 != null && tabControl1.TabCount > 0)
+                Invoke((MethodInvoker)(() =>
                 {
                     var focus = GetFocusedControl();
-                    if (m_currentRow >= 0)
+                    dataGridView1.ClearSelection();
+                    /*if (m_currentRow >= 0)
                     {
                         dataGridView1.Rows[m_currentRow].Selected = true;
-                    }
+                    }*/
                     tabControl1.SelectedIndex = m_school.Level - 1;
                     currentLevelLabel.Text = m_school.Level.ToString();
 
@@ -161,10 +159,9 @@ namespace GoodAI.School.GUI
                     {
                         focus.Focus();
                     }
-
                     (tabControl1.SelectedTab.Controls[0] as DataGridView).ClearSelection();
-                }
-            }));
+                }));
+            }
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
@@ -192,32 +189,26 @@ namespace GoodAI.School.GUI
 
         private void GoToNextTask(object sender, SchoolEventArgs e)
         {
-            Invoke((MethodInvoker)(() =>
-                {
-                    m_currentRow++;
-                    m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
-                    m_currentLtStopwatch = new Stopwatch();
-                    m_currentLtStopwatch.Start();
+            m_currentRow++;
+            m_stepOffset = (int)m_mainForm.SimulationHandler.SimulationStep;
+            m_currentLtStopwatch = new Stopwatch();
+            m_currentLtStopwatch.Start();
 
-                    HighlightCurrentTask();
-                }));
+            HighlightCurrentTask();
         }
 
         private void PrepareSimulation(object sender, EventArgs e)
         {
-            Invoke((MethodInvoker)(() =>
-                {
-                    // data
-                    m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
+            // data
+            m_school.Curriculum = Design.AsSchoolCurriculum(m_school);
 
-                    // gui
-                    m_stepOffset = 0;
-                    m_currentRow = -1;
-                    Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; x.Status = TrainingResult.None; });
+            // gui
+            m_stepOffset = 0;
+            m_currentRow = -1;
+            Data.ForEach(x => { x.Steps = x.Progress = 0; x.Time = 0f; x.Status = TrainingResult.None; });
 
-                    string xmlResult = m_serializer.Serialize(m_design);
-                    m_uploadedRepresentation = xmlResult;
-                }));
+            string xmlResult = m_serializer.Serialize(m_design);
+            m_uploadedRepresentation = xmlResult;
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
