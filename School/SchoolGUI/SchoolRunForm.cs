@@ -327,7 +327,10 @@ namespace GoodAI.School.GUI
                     string htmlPage = File.ReadAllText(fullPath);
                     
                     string name = System.Text.RegularExpressions.Regex.Match(htmlPage, "<title>.*</title>").ToString();
-                    name = name.Split('>', '<')[2];
+                    if (name.Length > 0)
+                    {
+                        name = name.Split('>', '<')[2];
+                    }
                     richTextBoxLTInfo.AppendText(name + "\r\n\r\n");
                     richTextBoxLTInfo.SelectAll();
                     richTextBoxLTInfo.SelectionFont = new Font(richTextBoxLTInfo.Font, FontStyle.Bold);
