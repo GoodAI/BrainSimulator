@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "..\..\..\Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorld", "Module\ToyWorld.csproj", "{8C381B5A-3FD7-4311-9C42-F8115587E5FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\..\Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9C8174E7-F1C5-46EE-B64B-CCD59600506E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "..\..\BasicNodes\Module\BasicNodes.csproj", "{C8A4992F-F2CB-40E7-92AA-7D4239653517}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicNodesCuda", "..\..\BasicNodes\Cuda\BasicNodesCuda.vcxproj", "{72423431-4A15-4E8D-B987-8E684BD730FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2262019C-35C4-466B-B39E-627DD24C0CD2}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
+		Debug|1 Skip CUDA = Debug|1 Skip CUDA
+		Release|0 Default (x64 CUDA) = Release|0 Default (x64 CUDA)
+		Release|1 Skip CUDA = Release|1 Skip CUDA
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{91324E64-9B84-4312-9E55-5A77DF07DA1B}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Debug|1 Skip CUDA.ActiveCfg = Debug|x86
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Debug|1 Skip CUDA.Build.0 = Debug|x86
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Release|0 Default (x64 CUDA).ActiveCfg = Release|x86
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Release|0 Default (x64 CUDA).Build.0 = Release|x86
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Release|1 Skip CUDA.ActiveCfg = Release|x86
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517}.Release|1 Skip CUDA.Build.0 = Release|x86
+		{72423431-4A15-4E8D-B987-8E684BD730FE}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|x64
+		{72423431-4A15-4E8D-B987-8E684BD730FE}.Debug|0 Default (x64 CUDA).Build.0 = Debug|x64
+		{72423431-4A15-4E8D-B987-8E684BD730FE}.Debug|1 Skip CUDA.ActiveCfg = Debug|Win32
+		{72423431-4A15-4E8D-B987-8E684BD730FE}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Win32
+		{72423431-4A15-4E8D-B987-8E684BD730FE}.Release|1 Skip CUDA.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
