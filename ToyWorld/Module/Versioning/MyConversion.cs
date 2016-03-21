@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GoodAI.Core.Configuration;
+﻿using GoodAI.Core.Configuration;
 
-namespace MyCompany.Modules.Versioning
+namespace GoodAI.Modules.Versioning
 {
-    public class MyConversion: MyBaseConversion
+    public class MyConversion : MyBaseConversion
     {
         public override int CurrentVersion
         {
