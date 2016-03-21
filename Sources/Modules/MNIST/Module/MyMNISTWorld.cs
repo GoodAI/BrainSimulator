@@ -6,6 +6,7 @@ using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Collections.Generic;
 using YAXLib;
 
 namespace MNIST
@@ -30,6 +31,12 @@ namespace MNIST
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
+
+        [MyBrowsable, Category("ImageCount"), Description("The number of training images that will be shown to the network with respect to the image counts and sent numbers."), ReadOnly(true)]
+        public int TrainingImagesShown { get; set; }
+
+        [MyBrowsable, Category("ImageCount"), Description("The number of test images that will be shown to the network with respect to the image counts and sent numbers."), ReadOnly(true)]
+        public int TestImagesShown { get; set; }
 
         [MyBrowsable, Category("Output"), Description("If set to true, output is binary vector of size 10")]
         [YAXSerializableField(DefaultValue = false)]
@@ -72,6 +79,13 @@ namespace MNIST
             Bitmap.MinValueHint = 0;
             Bitmap.MaxValueHint = 1;
         }
+
+        public void UpdateShownCounts()
+        {
+            KeyValuePair<int, int> kv = MNISTManager.SatisfyingImagesLoaded(SendTrainingMNISTData.m_numsToSend, SendTestMNISTData.m_numsToSend);
+            TrainingImagesShown = kv.Key;
+            TestImagesShown = kv.Value;
+        } 
     }
 
     /// <summary>
@@ -98,6 +112,7 @@ namespace MNIST
                 if (Owner != null && Owner.MNISTManager != null)
                 {
                     Owner.MNISTManager.m_trainingImagesDemand = value;
+                    Owner.UpdateShownCounts();
                 }
             }
         }
@@ -116,6 +131,7 @@ namespace MNIST
                 if (Owner != null && Owner.MNISTManager != null)
                 {
                     Owner.MNISTManager.m_testImagesDemand = value;
+                    Owner.UpdateShownCounts();
                 }
             }
         }
@@ -124,6 +140,7 @@ namespace MNIST
         {
             Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\",
                 TrainingImagesCnt, TestImagesCnt, false, AfterLastImage);
+            Owner.UpdateShownCounts();
         }
 
         public override void Execute()
@@ -140,7 +157,7 @@ namespace MNIST
     {
         protected MNIST.MNISTSetType m_setType;
 
-        private int[] m_numsToSend;
+        public int[] m_numsToSend {get; protected set;}
         private string m_send;
 
         [MyBrowsable, Category("Params")]
@@ -170,6 +187,7 @@ namespace MNIST
                 if (Owner != null && Owner.MNISTManager != null)
                 {
                     Owner.MNISTManager.m_sequenceIterator = 0;
+                    Owner.UpdateShownCounts();
                 }
             }
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GoodAI.Core.Utils;
 
 using System.Diagnostics;
 
@@ -40,6 +42,9 @@ namespace MNIST
 
         public int m_sequenceIterator;
         public bool m_definedOrder;
+
+        private int m_test;
+        private int m_training;
 
         public bool RandomEnumerate = false;
         private Random rand = new Random();
@@ -128,6 +133,40 @@ namespace MNIST
             brLabels.Close();
         }
 
+        
+        public KeyValuePair<int, int> SatisfyingImagesLoaded(int[] trainingnumsToSend, int[] testnumsToSend){
+            m_training = m_test = 0;
+            int trainingToCount, testToCount;
+            if (m_trainingImagesDemand < m_trainingImages.Count)
+                trainingToCount = m_trainingImagesDemand;
+            else
+                trainingToCount = m_trainingImages.Count;
+
+            // Count training images that are satisfied by the filter
+            for (int i = 0; i < trainingToCount; i++)
+            {
+                MyMNISTImage m = m_trainingImages[i] as MyMNISTImage;
+                if (trainingnumsToSend.Contains<int>(m.Label))
+                    m_training += 1;
+            }
+
+            if (m_testImagesDemand < m_testImages.Count)
+                testToCount = m_testImagesDemand;
+            else
+                testToCount = m_testImages.Count;
+   
+            // Count test images satisfied by the filter
+            for (int i = 0; i < testToCount; i++)
+            {
+                MyMNISTImage m = m_testImages[i] as MyMNISTImage;
+                if (testnumsToSend.Contains<int>(m.Label))
+                    m_test += 1;
+            }
+
+
+            return new KeyValuePair<int, int>(m_training, m_test);
+        }
+
         /// <summary>
         /// Gets the next values
         /// </summary>
@@ -137,15 +176,21 @@ namespace MNIST
         {
             ArrayList images = null;
             IEnumerator enumerator = null;
-            int imagesDemand = 0;;
+            int imagesDemand = 0;
             if (setType == MNISTSetType.Training)
             {
+                if(m_training == 0)
+                    throw new ArgumentException("Too few training images have been loaded to satisfy the selection that can be shown.");
+                
                 images = m_trainingImages;
                 enumerator = m_trainingImagesEnumerator;
                 imagesDemand = m_trainingImagesDemand;
             }
             else if (setType == MNISTSetType.Test)
             {
+                if (m_test == 0)
+                    throw new ArgumentException("Too few test images have been loaded to satisfy the selection that can be shown.");
+                
                 images = m_testImages;
                 enumerator = m_testImagesEnumerator;
                 imagesDemand = m_testImagesDemand;
