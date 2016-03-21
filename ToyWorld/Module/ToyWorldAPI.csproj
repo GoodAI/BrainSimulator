@@ -7,8 +7,8 @@
     <ProjectGuid>{8C381B5A-3FD7-4311-9C42-F8115587E5FD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GoodAI.ToyWorld</RootNamespace>
-    <AssemblyName>GoodAI.ToyWorld</AssemblyName>
+    <RootNamespace>GoodAI.ToyWorldAPI</RootNamespace>
+    <AssemblyName>GoodAI.ToyWorldAPI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>conf\doc.xml</DocumentationFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "..\..\..\Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorld", "Module\ToyWorld.csproj", "{8C381B5A-3FD7-4311-9C42-F8115587E5FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldAPI", "Module\ToyWorldAPI.csproj", "{8C381B5A-3FD7-4311-9C42-F8115587E5FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\..\Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
 EndProject
@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{226201
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{772B1188-A00D-45FC-B352-834227ADAE96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,12 @@ Global
 		{72423431-4A15-4E8D-B987-8E684BD730FE}.Debug|1 Skip CUDA.ActiveCfg = Debug|Win32
 		{72423431-4A15-4E8D-B987-8E684BD730FE}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Win32
 		{72423431-4A15-4E8D-B987-8E684BD730FE}.Release|1 Skip CUDA.ActiveCfg = Release|Win32
+		{772B1188-A00D-45FC-B352-834227ADAE96}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{772B1188-A00D-45FC-B352-834227ADAE96}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{772B1188-A00D-45FC-B352-834227ADAE96}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{772B1188-A00D-45FC-B352-834227ADAE96}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{772B1188-A00D-45FC-B352-834227ADAE96}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{772B1188-A00D-45FC-B352-834227ADAE96}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
