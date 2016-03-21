@@ -2,9 +2,9 @@
 {
     public interface IRenderRequest
     {
-        public float Size;
-        public float Position;
-        public float Resolution;
-        public float MemAddress;
+        float Size { get; }
+        float Position { get; }
+        float Resolution { get; }
+        float MemAddress { get; }
     }
 }
