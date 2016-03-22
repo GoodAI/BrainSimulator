@@ -1,21 +1,21 @@
 ﻿using System.Data;
 using System.Linq;
 
-namespace GoodAI.ToyWorldAPI.Tiles
+namespace World.Tiles
 {
     static class TileSetTableParser
     {
-        private static DataTable _dataTable;
+        private static readonly DataTable DataTable;
 
         static TileSetTableParser()
         {
-            _dataTable = FileHelpers.CsvEngine.CsvToDataTable(@"Module\Tiles\Tilesets\TilesetTable.csv", ';');
+            DataTable = FileHelpers.CsvEngine.CsvToDataTable(@"Module\Tiles\Tilesets\TilesetTable.csv", ';');
         }
 
         public static int TileNumber(string tileName)
         {
             return int.Parse(
-                _dataTable.AsEnumerable()
+                DataTable.AsEnumerable()
                 .First(x => x[0].ToString() == tileName)
                 [1]
                 .ToString());

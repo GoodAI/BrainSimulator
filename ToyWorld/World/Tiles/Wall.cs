@@ -1,45 +1,62 @@
 ﻿using System;
-using GoodAI.ToyWorldAPI.Tiles;
 
 namespace World.Tiles
 {
     /// <summary>
-    /// 
+    /// Wall can be transformed to DamagedWall if Pickaxe is used
     /// </summary>
-    public class Wall : StaticTile
+    public class Wall : StaticTile, ITransformable
     {
-        private static int _tileSet;
-        public override int TileType
+        public AbstractTile TransformTo(GameAction gameAction)
         {
-            get
-            {
-                if (_tileSet == 0)
-                {
-                    _tileSet = TileSetTableParser.TileNumber("Wall");
-                }
-                return _tileSet;
-            }
+            if (gameAction is UsePickaxe)
+                return new DamagedWall((gameAction as UsePickaxe).Damage);
+            return null;
         }
     }
 
     /// <summary>
-    /// 
+    /// Damaged wall has health from (0,1) excl. If health leq 0, it is replaced by DestroyedWall
     /// </summary>
-    public class DamagedWall : DynamicTile
+    public class DamagedWall : DynamicTile, ITransformable
     {
-        public override int TileType
+        private float _health;
+
+        public DamagedWall()
         {
-            get { throw new NotImplementedException(); }
+            _health = 0.99f;
         }
 
-        public override void Update()
+        public DamagedWall(float damage) : this()
         {
-            throw new NotImplementedException();
+            _health -= damage;
+        }
+
+        public override void Update(GameAction gameAction)
+        {
+            if (gameAction is UsePickaxe)
+            {
+                UsePickaxe usePickaxe = gameAction as UsePickaxe;
+                _health -= usePickaxe.Damage;
+                if (_health <= 0f)
+                {
+                    TransformTo(gameAction);
+                }
+            }
         }
 
         public override void RegisterForUpdate()
         {
             throw new NotImplementedException();
+        }
+
+        public AbstractTile TransformTo(GameAction gameAction)
+        {
+            if (gameAction is UsePickaxe)
+            {
+                return new DestroyedWall();
+            }
+            return null;
         }
     }
 
@@ -48,10 +65,6 @@ namespace World.Tiles
     /// </summary>
     public class DestroyedWall : StaticTile
     {
-        public override int TileType
-        {
-            get { throw new NotImplementedException(); }
-        }
     }
 }
 

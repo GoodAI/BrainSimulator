@@ -64,6 +64,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tiles\AbstractTile.cs" />
+    <Compile Include="GameActions\GameAction.cs" />
     <Compile Include="Tiles\TileInterfaces.cs" />
     <Compile Include="Tiles\TileSetTableParser.cs" />
     <Compile Include="Tiles\Wall.cs" />
@@ -86,6 +87,7 @@
     <None Include="packages.config" />
     <None Include="Tiles\Tilesets\TilesetTable.csv" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
