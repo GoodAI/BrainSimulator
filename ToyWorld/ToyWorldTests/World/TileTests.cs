@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ToyWorldTests.World
 {
-    public class TileTests
+    public class TileTests : TestBase
     {
         [Fact]
         public void PickaxeDamageWall()
