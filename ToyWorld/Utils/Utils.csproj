@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Globals.cs" />
     <Compile Include="VRage\Lib\Exceptions\Exceptions.cs" />
     <Compile Include="VRage\Lib\Collections\CacheList.cs" />
     <Compile Include="VRage\Lib\Collections\CachingDictionary.cs" />

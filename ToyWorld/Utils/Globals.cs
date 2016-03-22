@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Utils
+{
+    public static class Globals
+    {
+        // Name of the application (NOTE that Utils, World, Rendering and Runner 
+        // should be part of the ENGINE, which could be used by different Games....)
+        public static string AppName = "Toy World";
+    }
+}
