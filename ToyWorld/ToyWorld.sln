@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrainSim", "BrainSim", "{E347A1BF-B4F0-4C85-8905-CC4E3ADA0964}"
 EndProject
@@ -54,6 +54,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeMap", "..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj", "{86955C47-2A02-41A4-AB32-C9E592EB2971}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{990B0A8D-6BF6-4618-AC1F-06D9D2D7D35C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldTests", "ToyWorldTests\ToyWorldTests.csproj", "{29936884-7FC6-4159-95C0-6E9B3C0D028A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -237,6 +239,12 @@ Global
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|2 TW GUI.ActiveCfg = Release|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|2 TW GUI.ActiveCfg = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|2 TW GUI.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -260,5 +268,6 @@ Global
 		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC} = {990B0A8D-6BF6-4618-AC1F-06D9D2D7D35C}
 		{86955C47-2A02-41A4-AB32-C9E592EB2971} = {990B0A8D-6BF6-4618-AC1F-06D9D2D7D35C}
 		{990B0A8D-6BF6-4618-AC1F-06D9D2D7D35C} = {E347A1BF-B4F0-4C85-8905-CC4E3ADA0964}
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A} = {91CAB9D9-3DFD-48E9-B2D1-1287AB378D9B}
 	EndGlobalSection
 EndGlobal
