@@ -10,7 +10,6 @@ namespace GUI
     {
         static void Main(string[] args)
         {
-            Game.Test.CallRender();
         }
     }
 }

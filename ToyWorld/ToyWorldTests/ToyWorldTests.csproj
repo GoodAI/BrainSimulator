@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="BrainSimIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Render\WindowContextTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />
     <Compile Include="World\TileTests.cs" />
@@ -96,6 +97,22 @@
     <ProjectReference Include="..\..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
       <Project>{86955c47-2a02-41a4-ab32-c9e592eb2971}</Project>
       <Name>TypeMap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Game\Game.csproj">
+      <Project>{c61db58a-5374-48f3-9457-025a1693c8cc}</Project>
+      <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GUI\GUI.csproj">
+      <Project>{48d1d233-b871-41b9-88d8-3667b93da461}</Project>
+      <Name>GUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Physics\Physics.csproj">
+      <Project>{06daad7f-ac1c-417e-a903-55ffb859e761}</Project>
+      <Name>Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Render\Render.csproj">
+      <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
+      <Name>Render</Name>
     </ProjectReference>
     <ProjectReference Include="..\World\World.csproj">
       <Project>{3831266c-24fe-4dd6-a4cc-39d0ef33c299}</Project>
