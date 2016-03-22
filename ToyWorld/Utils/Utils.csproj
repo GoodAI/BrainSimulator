@@ -42,75 +42,75 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\Exceptions.cs" />
-    <Compile Include="VRage\Collections\CacheList.cs" />
-    <Compile Include="VRage\Collections\CachingDictionary.cs" />
-    <Compile Include="VRage\Collections\CachingHashSet.cs" />
-    <Compile Include="VRage\Collections\CachingList.cs" />
-    <Compile Include="VRage\Collections\Comparers\EnumComparer.cs" />
-    <Compile Include="VRage\Collections\Comparers\InstanceComparer.cs" />
-    <Compile Include="VRage\Collections\DictionaryReader.cs" />
-    <Compile Include="VRage\Collections\EmptyArray.cs" />
-    <Compile Include="VRage\Collections\HashSetReader.cs" />
-    <Compile Include="VRage\Collections\IMyQueue.cs" />
-    <Compile Include="VRage\Collections\ListReader.cs" />
-    <Compile Include="VRage\Collections\LRUCache.cs" />
-    <Compile Include="VRage\Collections\MyBinaryHeap.cs" />
-    <Compile Include="VRage\Collections\MyBinaryStructHeap.cs" />
-    <Compile Include="VRage\Collections\MyCommitQueue.cs" />
-    <Compile Include="VRage\Collections\MyConcurrentDeque.cs" />
-    <Compile Include="VRage\Collections\MyConcurrentDictionary.cs" />
-    <Compile Include="VRage\Collections\MyConcurrentHashSet.cs" />
-    <Compile Include="VRage\Collections\MyConcurrentList.cs" />
-    <Compile Include="VRage\Collections\MyConcurrentPool.cs" />
-    <Compile Include="VRage\Collections\MyConcurrentQueue.cs" />
-    <Compile Include="VRage\Collections\MyDeque.cs" />
-    <Compile Include="VRage\Collections\MyIndexArray.cs" />
-    <Compile Include="VRage\Collections\MyIndexedComponentContainer.cs" />
-    <Compile Include="VRage\Collections\MyIndexList.cs" />
-    <Compile Include="VRage\Collections\MyIntervalList.cs" />
-    <Compile Include="VRage\Collections\MyListDictionary.cs" />
-    <Compile Include="VRage\Collections\MyMultiKeyDictionary`3.cs" />
-    <Compile Include="VRage\Collections\MyMultiKeyDictionary`4.cs" />
-    <Compile Include="VRage\Collections\MyMultiKeyIndex`3.cs" />
-    <Compile Include="VRage\Collections\MyMultiKeyIndex`4.cs" />
-    <Compile Include="VRage\Collections\MyQueue.cs" />
-    <Compile Include="VRage\Collections\MySinglyLinkedList.cs" />
-    <Compile Include="VRage\Collections\MySlidingWindow.cs" />
-    <Compile Include="VRage\Collections\MySwapQueue.cs" />
-    <Compile Include="VRage\Collections\MyTransparentQueue.cs" />
-    <Compile Include="VRage\Collections\MyUniqueList.cs" />
-    <Compile Include="VRage\Collections\ObservableCollection.cs" />
-    <Compile Include="VRage\Collections\QueueReader.cs" />
-    <Compile Include="VRage\Collections\SerializableDictionaryHack.cs" />
-    <Compile Include="VRage\Collections\SmallBitField.cs" />
-    <Compile Include="VRage\Collections\StackReader.cs" />
-    <Compile Include="VRage\Collections\ThreadSafeStore.cs" />
-    <Compile Include="VRage\Collections\UniqueListReader.cs" />
-    <Compile Include="VRage\Extensions\ArrayEnumerator.cs" />
-    <Compile Include="VRage\Extensions\ArrayExtensions.cs" />
-    <Compile Include="VRage\Extensions\ArrayOfTypeEnumerator.cs" />
-    <Compile Include="VRage\Extensions\AssemblyExtensions.cs" />
-    <Compile Include="VRage\Extensions\AttributeExtensions.cs" />
-    <Compile Include="VRage\Extensions\DateTimeExtensions.cs" />
-    <Compile Include="VRage\Extensions\DictionaryExtensions.cs" />
-    <Compile Include="VRage\Extensions\DirectoryExtensions.cs" />
-    <Compile Include="VRage\Extensions\DoubleExtensions.cs" />
-    <Compile Include="VRage\Extensions\EnabledAttribute.cs" />
-    <Compile Include="VRage\Extensions\ExpressionExtensions.cs" />
-    <Compile Include="VRage\Extensions\FieldExtensions.cs" />
-    <Compile Include="VRage\Extensions\FloatExtensions.cs" />
-    <Compile Include="VRage\Extensions\HashSetExtensions.cs" />
-    <Compile Include="VRage\Extensions\IOExceptionExtensions.cs" />
-    <Compile Include="VRage\Extensions\IPAddressExtensions.cs" />
-    <Compile Include="VRage\Extensions\LinqExtensions.cs" />
-    <Compile Include="VRage\Extensions\ListExtensions.cs" />
-    <Compile Include="VRage\Extensions\QueueExtensions.cs" />
-    <Compile Include="VRage\Extensions\StreamExtensions.cs" />
-    <Compile Include="VRage\Extensions\StringBuilderExtensions.cs" />
-    <Compile Include="VRage\Extensions\StringBuilderExtFormat.cs" />
-    <Compile Include="VRage\Extensions\StringBuilderExtNumeric.cs" />
-    <Compile Include="VRage\Extensions\StringExtensions.cs" />
-    <Compile Include="VRage\Extensions\TypeExtensions.cs" />
+    <Compile Include="VRage\Lib\Collections\CacheList.cs" />
+    <Compile Include="VRage\Lib\Collections\CachingDictionary.cs" />
+    <Compile Include="VRage\Lib\Collections\CachingHashSet.cs" />
+    <Compile Include="VRage\Lib\Collections\CachingList.cs" />
+    <Compile Include="VRage\Lib\Collections\Comparers\EnumComparer.cs" />
+    <Compile Include="VRage\Lib\Collections\Comparers\InstanceComparer.cs" />
+    <Compile Include="VRage\Lib\Collections\DictionaryReader.cs" />
+    <Compile Include="VRage\Lib\Collections\EmptyArray.cs" />
+    <Compile Include="VRage\Lib\Collections\HashSetReader.cs" />
+    <Compile Include="VRage\Lib\Collections\IMyQueue.cs" />
+    <Compile Include="VRage\Lib\Collections\ListReader.cs" />
+    <Compile Include="VRage\Lib\Collections\LRUCache.cs" />
+    <Compile Include="VRage\Lib\Collections\MyBinaryHeap.cs" />
+    <Compile Include="VRage\Lib\Collections\MyBinaryStructHeap.cs" />
+    <Compile Include="VRage\Lib\Collections\MyCommitQueue.cs" />
+    <Compile Include="VRage\Lib\Collections\MyConcurrentDeque.cs" />
+    <Compile Include="VRage\Lib\Collections\MyConcurrentDictionary.cs" />
+    <Compile Include="VRage\Lib\Collections\MyConcurrentHashSet.cs" />
+    <Compile Include="VRage\Lib\Collections\MyConcurrentList.cs" />
+    <Compile Include="VRage\Lib\Collections\MyConcurrentPool.cs" />
+    <Compile Include="VRage\Lib\Collections\MyConcurrentQueue.cs" />
+    <Compile Include="VRage\Lib\Collections\MyDeque.cs" />
+    <Compile Include="VRage\Lib\Collections\MyIndexArray.cs" />
+    <Compile Include="VRage\Lib\Collections\MyIndexedComponentContainer.cs" />
+    <Compile Include="VRage\Lib\Collections\MyIndexList.cs" />
+    <Compile Include="VRage\Lib\Collections\MyIntervalList.cs" />
+    <Compile Include="VRage\Lib\Collections\MyListDictionary.cs" />
+    <Compile Include="VRage\Lib\Collections\MyMultiKeyDictionary`3.cs" />
+    <Compile Include="VRage\Lib\Collections\MyMultiKeyDictionary`4.cs" />
+    <Compile Include="VRage\Lib\Collections\MyMultiKeyIndex`3.cs" />
+    <Compile Include="VRage\Lib\Collections\MyMultiKeyIndex`4.cs" />
+    <Compile Include="VRage\Lib\Collections\MyQueue.cs" />
+    <Compile Include="VRage\Lib\Collections\MySinglyLinkedList.cs" />
+    <Compile Include="VRage\Lib\Collections\MySlidingWindow.cs" />
+    <Compile Include="VRage\Lib\Collections\MySwapQueue.cs" />
+    <Compile Include="VRage\Lib\Collections\MyTransparentQueue.cs" />
+    <Compile Include="VRage\Lib\Collections\MyUniqueList.cs" />
+    <Compile Include="VRage\Lib\Collections\ObservableCollection.cs" />
+    <Compile Include="VRage\Lib\Collections\QueueReader.cs" />
+    <Compile Include="VRage\Lib\Collections\SerializableDictionaryHack.cs" />
+    <Compile Include="VRage\Lib\Collections\SmallBitField.cs" />
+    <Compile Include="VRage\Lib\Collections\StackReader.cs" />
+    <Compile Include="VRage\Lib\Collections\ThreadSafeStore.cs" />
+    <Compile Include="VRage\Lib\Collections\UniqueListReader.cs" />
+    <Compile Include="VRage\Lib\Extensions\ArrayEnumerator.cs" />
+    <Compile Include="VRage\Lib\Extensions\ArrayExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\ArrayOfTypeEnumerator.cs" />
+    <Compile Include="VRage\Lib\Extensions\AssemblyExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\AttributeExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\DateTimeExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\DictionaryExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\DirectoryExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\DoubleExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\EnabledAttribute.cs" />
+    <Compile Include="VRage\Lib\Extensions\ExpressionExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\FieldExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\FloatExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\HashSetExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\IOExceptionExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\IPAddressExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\LinqExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\ListExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\QueueExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\StreamExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\StringBuilderExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\StringBuilderExtFormat.cs" />
+    <Compile Include="VRage\Lib\Extensions\StringBuilderExtNumeric.cs" />
+    <Compile Include="VRage\Lib\Extensions\StringExtensions.cs" />
+    <Compile Include="VRage\Lib\Extensions\TypeExtensions.cs" />
     <Compile Include="VRage\Math\Base27Directions.cs" />
     <Compile Include="VRage\Math\Base6Directions.cs" />
     <Compile Include="VRage\Math\BoundingBox.cs" />
@@ -193,316 +193,313 @@
     <Compile Include="VRage\Math\Vector4D.cs" />
     <Compile Include="VRage\Math\Vector4I.cs" />
     <Compile Include="VRage\Math\Vector4UByte.cs" />
-    <Compile Include="VRage\Memory\BoolBlit.cs" />
-    <Compile Include="VRage\Memory\Boxed.cs" />
-    <Compile Include="VRage\Memory\ByteStream.cs" />
-    <Compile Include="VRage\Memory\MyFixedPoint.cs" />
-    <Compile Include="VRage\Memory\MyTuple.cs" />
-    <Compile Include="VRage\Memory\PreloadRequired.cs" />
-    <Compile Include="VRage\Memory\Ref.cs" />
-    <Compile Include="VRage\Parallelization\FastEvent.cs" />
-    <Compile Include="VRage\Parallelization\FastResourceLock.cs" />
-    <Compile Include="VRage\Parallelization\FastResourceLockExtensions.cs" />
-    <Compile Include="VRage\Parallelization\IResourceLock.cs" />
-    <Compile Include="VRage\Parallelization\MyPausableJob.cs" />
-    <Compile Include="VRage\Parallelization\NativeMethods.cs" />
-    <Compile Include="VRage\ParallelTasks\ActionWork.cs" />
-    <Compile Include="VRage\ParallelTasks\BackgroundWorker.cs" />
-    <Compile Include="VRage\ParallelTasks\DelegateWork.cs" />
-    <Compile Include="VRage\ParallelTasks\Deque.cs" />
-    <Compile Include="VRage\ParallelTasks\FixedPriorityScheduler.cs" />
-    <Compile Include="VRage\ParallelTasks\Future.cs" />
-    <Compile Include="VRage\ParallelTasks\Hashtable.cs" />
-    <Compile Include="VRage\ParallelTasks\IWork.cs" />
-    <Compile Include="VRage\ParallelTasks\IWorkScheduler.cs" />
-    <Compile Include="VRage\ParallelTasks\LoopWork.cs" />
-    <Compile Include="VRage\ParallelTasks\Parallel.cs" />
-    <Compile Include="VRage\ParallelTasks\Pool.cs" />
-    <Compile Include="VRage\ParallelTasks\Semaphore.cs" />
-    <Compile Include="VRage\ParallelTasks\Singleton.cs" />
-    <Compile Include="VRage\ParallelTasks\SpinLock.cs" />
-    <Compile Include="VRage\ParallelTasks\SpinLockRef.cs" />
-    <Compile Include="VRage\ParallelTasks\Task.cs" />
-    <Compile Include="VRage\ParallelTasks\TaskException.cs" />
-    <Compile Include="VRage\ParallelTasks\Worker.cs" />
-    <Compile Include="VRage\ParallelTasks\WorkItem.cs" />
-    <Compile Include="VRage\ParallelTasks\WorkOptions.cs" />
-    <Compile Include="VRage\ParallelTasks\WorkStealingScheduler.cs" />
-    <Compile Include="VRage\ProtobufNet\BclHelpers.cs">
+    <Compile Include="VRage\Lib\Memory\BoolBlit.cs" />
+    <Compile Include="VRage\Lib\Memory\Boxed.cs" />
+    <Compile Include="VRage\Lib\Memory\ByteStream.cs" />
+    <Compile Include="VRage\Lib\Memory\MyFixedPoint.cs" />
+    <Compile Include="VRage\Lib\Memory\MyTuple.cs" />
+    <Compile Include="VRage\Lib\Memory\PreloadRequired.cs" />
+    <Compile Include="VRage\Lib\Memory\Ref.cs" />
+    <Compile Include="VRage\Lib\Parallelization\FastEvent.cs" />
+    <Compile Include="VRage\Lib\Parallelization\FastResourceLock.cs" />
+    <Compile Include="VRage\Lib\Parallelization\FastResourceLockExtensions.cs" />
+    <Compile Include="VRage\Lib\Parallelization\IResourceLock.cs" />
+    <Compile Include="VRage\Lib\Parallelization\MyPausableJob.cs" />
+    <Compile Include="VRage\Lib\Parallelization\NativeMethods.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\ActionWork.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\BackgroundWorker.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\DelegateWork.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Deque.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\FixedPriorityScheduler.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Future.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Hashtable.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\IWork.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\IWorkScheduler.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\LoopWork.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Parallel.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Pool.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Semaphore.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Singleton.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\SpinLock.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\SpinLockRef.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Task.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\TaskException.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\Worker.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\WorkItem.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\WorkOptions.cs" />
+    <Compile Include="VRage\Lib\ParallelTasks\WorkStealingScheduler.cs" />
+    <Compile Include="VRage\Lib\ProtobufNet\BclHelpers.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\BufferExtension.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\BufferExtension.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\BufferPool.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\BufferPool.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\CallbackAttributes.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\CallbackAttributes.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Compiler\CompilerContext.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Compiler\CompilerContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Compiler\CompilerDelegates.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Compiler\CompilerDelegates.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Compiler\Local.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Compiler\Local.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\DataFormat.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\DataFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Extensible.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Extensible.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ExtensibleUtil.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ExtensibleUtil.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\GlobalSuppressions.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\GlobalSuppressions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Helpers.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Helpers.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\IExtensible.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\IExtensible.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\IExtension.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\IExtension.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ImplicitFields.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ImplicitFields.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\KeyValuePairProxy.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\KeyValuePairProxy.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\AttributeMap.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\AttributeMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\BasicList.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\BasicList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\CallbackSet.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\CallbackSet.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\MetaType.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\MetaType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\RuntimeTypeModel.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\RuntimeTypeModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\SubType.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\SubType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\TypeFormatEventArgs.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\TypeFormatEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\TypeModel.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\TypeModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Meta\ValueMember.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Meta\ValueMember.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\NetObjectCache.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\NetObjectCache.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\PrefixStyle.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\PrefixStyle.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoContractAttribute.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoContractAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoEnumAttribute.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoEnumAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoException.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoIgnoreAttribute.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoIgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoIncludeAttribute.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoIncludeAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoMemberAttribute.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoMemberAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoReader.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ProtoWriter.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ProtoWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\SerializationContext.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\SerializationContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\ArrayDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\ArrayDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\BlobSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\BlobSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\BooleanSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\BooleanSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\ByteSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\ByteSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\CharSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\CharSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\CompiledSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\CompiledSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\DateTimeSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\DateTimeSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\DecimalSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\DecimalSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\DefaultValueDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\DefaultValueDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\DoubleSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\DoubleSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\EnumSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\EnumSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\FieldDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\FieldDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\GuidSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\GuidSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\Int16Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\Int16Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\Int32Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\Int32Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\Int64Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\Int64Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\IProtoSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\IProtoSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\IProtoTypeSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\IProtoTypeSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\ISerializerProxy.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\ISerializerProxy.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\KeyValuePairDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\KeyValuePairDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\ListDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\ListDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\MemberSpecifiedDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\MemberSpecifiedDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\NetObjectSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\NetObjectSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\NullDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\NullDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\ParseableSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\ParseableSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\PropertyDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\PropertyDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\ProtoDecoratorBase.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\ProtoDecoratorBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\SByteSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\SByteSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\SingleSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\SingleSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\StringSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\StringSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\SubItemSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\SubItemSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\SurrogateSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\SurrogateSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\SystemTypeSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\SystemTypeSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\TagDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\TagDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\TimeSpanSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\TimeSpanSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\TupleSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\TupleSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\TypeSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\TypeSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\UInt16Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\UInt16Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\UInt32Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\UInt32Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\UInt64Serializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\UInt64Serializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\Serializers\UriDecorator.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\Serializers\UriDecorator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ServiceModel\ProtoBehaviorAttribute.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ServiceModel\ProtoBehaviorAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ServiceModel\ProtoBehaviorExtensionElement.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ServiceModel\ProtoBehaviorExtensionElement.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ServiceModel\ProtoEndpointBehavior.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ServiceModel\ProtoEndpointBehavior.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ServiceModel\ProtoOperationBehavior.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ServiceModel\ProtoOperationBehavior.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\ServiceModel\XmlProtoSerializer.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\ServiceModel\XmlProtoSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\SubItemToken.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\SubItemToken.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\ProtobufNet\WireType.cs">
+    <Compile Include="VRage\Lib\ProtobufNet\WireType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VRage\Stats\MyNameComparer.cs" />
-    <Compile Include="VRage\Stats\MyStat.cs" />
-    <Compile Include="VRage\Stats\MyStats.cs" />
-    <Compile Include="VRage\Stats\MyStatToken.cs" />
-    <Compile Include="VRage\Utils\BlittableHelper.cs" />
-    <Compile Include="VRage\Utils\Disposable.cs" />
-    <Compile Include="VRage\Utils\DontCheckAttribute.cs" />
-    <Compile Include="VRage\Utils\FixedLoop.cs" />
-    <Compile Include="VRage\Utils\GenericLoop.cs" />
-    <Compile Include="VRage\Utils\MyBrowserHelper.cs" />
-    <Compile Include="VRage\Utils\MyGameTimer.cs" />
-    <Compile Include="VRage\Utils\MyInterpolationQueue.cs" />
-    <Compile Include="VRage\Utils\MyLibraryUtils.cs" />
-    <Compile Include="VRage\Utils\MyRandom.cs" />
-    <Compile Include="VRage\Utils\MyTimer.cs" />
-    <Compile Include="VRage\Utils\MyTimeSpan.cs" />
-    <Compile Include="VRage\Utils\WaitForTargetFrameRate.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="VRage\Math\VRage.Math.csproj" />
+    <Compile Include="VRage\Lib\Stats\MyNameComparer.cs" />
+    <Compile Include="VRage\Lib\Stats\MyStat.cs" />
+    <Compile Include="VRage\Lib\Stats\MyStats.cs" />
+    <Compile Include="VRage\Lib\Stats\MyStatToken.cs" />
+    <Compile Include="VRage\Lib\Utils\BlittableHelper.cs" />
+    <Compile Include="VRage\Lib\Utils\Disposable.cs" />
+    <Compile Include="VRage\Lib\Utils\DontCheckAttribute.cs" />
+    <Compile Include="VRage\Lib\Utils\FixedLoop.cs" />
+    <Compile Include="VRage\Lib\Utils\GenericLoop.cs" />
+    <Compile Include="VRage\Lib\Utils\MyBrowserHelper.cs" />
+    <Compile Include="VRage\Lib\Utils\MyGameTimer.cs" />
+    <Compile Include="VRage\Lib\Utils\MyInterpolationQueue.cs" />
+    <Compile Include="VRage\Lib\Utils\MyLibraryUtils.cs" />
+    <Compile Include="VRage\Lib\Utils\MyRandom.cs" />
+    <Compile Include="VRage\Lib\Utils\MyTimer.cs" />
+    <Compile Include="VRage\Lib\Utils\MyTimeSpan.cs" />
+    <Compile Include="VRage\Lib\Utils\WaitForTargetFrameRate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
