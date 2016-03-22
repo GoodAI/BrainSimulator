@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUI
+namespace Game
 {
-    class Program
+    public static class Test
     {
-        static void Main(string[] args)
+        public static void CallRender()
         {
-            Game.Test.CallRender();
+            Render.Test.A();
         }
     }
 }
