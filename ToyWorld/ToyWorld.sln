@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrainSim", "BrainSim", "{E347A1BF-B4F0-4C85-8905-CC4E3ADA0964}"
 EndProject
@@ -187,16 +187,16 @@ Global
 		{48D1D233-B871-41B9-88D8-3667B93DA461}.Release|1 Skip CUDA.Build.0 = Release|x64
 		{48D1D233-B871-41B9-88D8-3667B93DA461}.Release|2 TW GUI.ActiveCfg = Release|x64
 		{48D1D233-B871-41B9-88D8-3667B93DA461}.Release|2 TW GUI.Build.0 = Release|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|0 Default (x64 CUDA).Build.0 = Debug|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|1 Skip CUDA.ActiveCfg = Debug|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|1 Skip CUDA.Build.0 = Debug|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|2 TW GUI.ActiveCfg = Debug|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|0 Default (x64 CUDA).ActiveCfg = Release|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|0 Default (x64 CUDA).Build.0 = Release|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|1 Skip CUDA.ActiveCfg = Release|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|1 Skip CUDA.Build.0 = Release|x64
-		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|2 TW GUI.ActiveCfg = Release|x64
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|2 TW GUI.ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|2 TW GUI.ActiveCfg = Release|Any CPU
 		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{F1C4D174-C948-4D18-A125-F6855EF55683}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
