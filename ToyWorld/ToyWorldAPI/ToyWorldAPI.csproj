@@ -70,7 +70,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Control\AvatarAction.cs" />
-    <Compile Include="Tiles\AbstractTile.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\IGameController.cs" />
     <Compile Include="Control\IStats.cs" />
