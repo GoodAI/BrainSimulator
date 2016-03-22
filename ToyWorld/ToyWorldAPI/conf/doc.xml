@@ -4,5 +4,148 @@
         <name>GoodAI.ToyWorldAPI</name>
     </assembly>
     <members>
+        <member name="T:GoodAI.ToyWorld.Control.AvatarActionEnum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Rotation">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Acceleration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Use">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Interact">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Pick">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.AvatarAction`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IAvatarController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetAction``1(GoodAI.ToyWorld.Control.AvatarAction{``0})">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="action"></param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetStats">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetComment">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IGameController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.InitWorld">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.Reset">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.MakeStep">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.AddRenderRequest(GoodAI.ToyWorld.Render.IRenderRequest)">
+            <summary>
+            
+            </summary>
+            <param name="renderRequest"></param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.GetAvatarController(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="avatarId"></param>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IStats">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Nodes.ToyWorldNode">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Nodes.ToyWorldNode.UpdateMemoryBlocks">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Render.IRenderRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.Size">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.Position">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.Resolution">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.MemAddress">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Versioning.MyConversion">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.Modules.Versioning.MyConversion.CurrentVersion">
+            <summary>
+            
+            </summary>
+        </member>
     </members>
 </doc>
