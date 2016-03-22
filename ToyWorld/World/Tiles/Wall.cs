@@ -1,6 +1,7 @@
 ﻿using System;
+using GoodAI.ToyWorldAPI.Tiles;
 
-namespace GoodAI.ToyWorldAPI.Tiles
+namespace World.Tiles
 {
     /// <summary>
     /// 
@@ -12,7 +13,10 @@ namespace GoodAI.ToyWorldAPI.Tiles
         {
             get
             {
-                if()
+                if (_tileSet == 0)
+                {
+                    _tileSet = TileSetTableParser.TileNumber("Wall");
+                }
                 return _tileSet;
             }
         }
