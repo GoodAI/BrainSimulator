@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BS", "BS", "{E347A1BF-B4F0-4C85-8905-CC4E3ADA0964}"
 EndProject
@@ -38,6 +38,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{C61DB58A-5374-48F3-9457-025A1693C8CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "GUI\GUI.csproj", "{48D1D233-B871-41B9-88D8-3667B93DA461}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalNodes", "..\..\InternalNodes\Module\InternalNodes.csproj", "{89A6291D-FBE8-418B-84A0-94C688168513}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,6 +154,12 @@ Global
 		{48D1D233-B871-41B9-88D8-3667B93DA461}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{48D1D233-B871-41B9-88D8-3667B93DA461}.Release|2 TW GUI.ActiveCfg = Release|Any CPU
 		{48D1D233-B871-41B9-88D8-3667B93DA461}.Release|2 TW GUI.Build.0 = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Debug|2 TW GUI.ActiveCfg = Debug|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{89A6291D-FBE8-418B-84A0-94C688168513}.Release|2 TW GUI.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -169,5 +177,6 @@ Global
 		{06DAAD7F-AC1C-417E-A903-55FFB859E761} = {91CAB9D9-3DFD-48E9-B2D1-1287AB378D9B}
 		{C61DB58A-5374-48F3-9457-025A1693C8CC} = {91CAB9D9-3DFD-48E9-B2D1-1287AB378D9B}
 		{48D1D233-B871-41B9-88D8-3667B93DA461} = {91CAB9D9-3DFD-48E9-B2D1-1287AB378D9B}
+		{89A6291D-FBE8-418B-84A0-94C688168513} = {E347A1BF-B4F0-4C85-8905-CC4E3ADA0964}
 	EndGlobalSection
 EndGlobal
