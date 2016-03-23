@@ -1,14 +1,21 @@
-﻿using World.Tiles;
+﻿using OpenTK.Graphics.OpenGL;
+using Render.Renderer;
+using World.Tiles;
 using Xunit;
 
-namespace ToyWorldTests.World
+namespace ToyWorldTests.Render
 {
     public class WindowContextTests
     {
         [Fact]
         public void CreateWindow()
         {
-            var r = new Render.GLRenderer();
+            var r = new GLRenderer();
+
+            r.CreateWindow(1024, 768);
+            r.CreateContext();
+
+            GL.Begin(BeginMode.Lines);
 
         }
     }
