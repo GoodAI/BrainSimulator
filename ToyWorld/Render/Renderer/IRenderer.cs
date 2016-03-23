@@ -15,7 +15,7 @@ namespace Render.Renderer
         IGraphicsContext Context { get; }
 
         // Allow only local creation of windows
-        void CreateWindow(int width, int height);
+        void CreateWindow(string title, int width, int height);
         // Allow only local creation of contexts
         void CreateContext();
 

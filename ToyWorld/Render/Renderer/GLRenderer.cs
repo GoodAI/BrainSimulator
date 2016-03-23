@@ -22,10 +22,11 @@ namespace Render.Renderer
         public INativeWindow Window { get; protected set; }
         public IGraphicsContext Context { get; protected set; }
 
-        public void CreateWindow(int width, int height)
+        public void CreateWindow(string title, int width, int height)
         {
-            Window = new NativeWindow(width, height, Utils.Globals.AppName, GameWindowFlags.Default, GraphicsMode.Default, DisplayDevice.Default);
+            Window = new NativeWindow(width, height, title, GameWindowFlags.Default, GraphicsMode.Default, DisplayDevice.Default);
             Window.Resize += WindowOnResize;
+            Window.Visible = true;
         }
 
         private void WindowOnResize(object sender, EventArgs args)
@@ -45,7 +46,7 @@ namespace Render.Renderer
             }
 
             Context = new GraphicsContext(GraphicsMode.Default, Window.WindowInfo);
-            // Context.LoadAll(); // Is only needed when using an external context
+            Context.LoadAll();
         }
 
         public void Init()
@@ -53,7 +54,6 @@ namespace Render.Renderer
             m_renderRequestQueue.Clear();
 
             GL.ClearColor(Color.Black);
-
         }
 
         public void Reset()
@@ -64,12 +64,14 @@ namespace Render.Renderer
 
         public void EnqueueRequest(IRenderRequest request)
         {
-            Debug.Assert(request != null);
+            //Debug.Assert(request != null);
             m_renderRequestQueue.Enqueue(request);
         }
 
         public void ProcessRequests()
         {
+            Debug.Assert(Context != null);
+
             Context.MakeCurrent(Window.WindowInfo);
 
             foreach (var renderRequest in m_renderRequestQueue)
@@ -90,18 +92,37 @@ namespace Render.Renderer
             Context.Dispose();
             Context = null;
 
+            Window.Close();
             Window.Dispose();
             Window = null;
         }
 
         #endregion
 
+        private bool m_odd;
 
         void Draw(IRenderRequest request)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Begin(PrimitiveType.Lines);
 
-            // Context.SwapBuffers();
+            if (m_odd)
+            {
+                GL.Color3(Color.Red);
+                GL.Vertex3(0, 0, 0);
+                GL.Vertex3(1, 1, 1);
+            }
+            else
+            {
+                GL.Color3(Color.Green);
+                GL.Vertex3(0, 0, 0);
+                GL.Vertex3(-1, -1, -1);
+            }
+
+            GL.End();
+
+            m_odd = !m_odd;
+            Context.SwapBuffers();
         }
 
     }

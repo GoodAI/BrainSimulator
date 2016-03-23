@@ -10,6 +10,6 @@ namespace Utils
     {
         // Name of the application (NOTE that Utils, World, Rendering and Runner 
         // should be part of the ENGINE, which could be used by different Games....)
-        public static string AppName = "Toy World";
+        public const string AppName = "Toy World";
     }
 }
