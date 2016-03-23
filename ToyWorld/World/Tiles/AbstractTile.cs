@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using World.GameActions;
 
 namespace World.Tiles
 {
     /// <summary>
     /// All tiles (objects fixed to the grid) are derived from this abstract class.
     /// </summary>
-    public abstract class AbstractTile
+    public abstract class AbstractTile : GameObject
     {
         private int _tileType = int.MinValue;
 
@@ -27,10 +26,7 @@ namespace World.Tiles
 
         private int GetTileType()
         {
-            return TileSetTableParser.TileNumber(
-                this.GetType().ToString().
-                    Split('.').
-                    Last());
+            return TileSetTableParser.TileNumber(GetType().Name);
         }
     }
 
@@ -39,6 +35,7 @@ namespace World.Tiles
     /// </summary>
     public abstract class StaticTile : AbstractTile
     {
+        
     }
 
     /// <summary>
@@ -46,14 +43,6 @@ namespace World.Tiles
     /// </summary>
     public abstract class DynamicTile : AbstractTile
     {
-        /// <summary>
-        /// Method will be called once upon a time according to previus registration
-        /// </summary>
-        public abstract void Update(GameAction gameAction);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public abstract void RegisterForUpdate();
     }
 }

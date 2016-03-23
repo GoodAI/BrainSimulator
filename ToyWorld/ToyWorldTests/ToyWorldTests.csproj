@@ -95,7 +95,7 @@
     <Compile Include="Render\WindowContextTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />
-    <Compile Include="World\TileTests.cs" />
+    <Compile Include="World\WallsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">

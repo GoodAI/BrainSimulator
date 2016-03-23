@@ -1,16 +1,25 @@
-﻿using System;
+﻿using World.GameActions;
 
 namespace World.Tiles
 {
-    public interface ITransformable
-    {
-        AbstractTile TransformTo(GameAction gameAction);
-    }
     /// <summary>
-    /// Objects which interacts with Pickaxe should implement this
+    /// 
     /// </summary>
-    public interface IActionReciever
+    public interface Autoupdateable
     {
-        void RecieveAction(float damage);
+        void RegisterForUpdate();
+
+        void Update();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface Interactable
+    {
+        /// <summary>
+        /// Method is called when something apply GameAction on it.
+        /// </summary>
+        AbstractTile ApplyGameAction(GameAction gameAction);
     }
 }

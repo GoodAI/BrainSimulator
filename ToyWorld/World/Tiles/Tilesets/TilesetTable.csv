@@ -1,31 +1,4 @@
-________Static Tiles_________;
-Wall;
-DestroyedWall;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-________Dynamic Tiles_________;
-DamagedWall;
+Tiles;Values
+Wall;1
+DestroyedWall;2
+DamagedWall;3
