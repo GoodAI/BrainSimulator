@@ -62,8 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Buffers\VBO.cs" />
+    <Compile Include="RenderObjects\Buffers\VAO.cs" />
+    <Compile Include="RenderObjects\Buffers\VBO.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="RenderObjects\Geometries\Square.cs" />
+    <Compile Include="RenderObjects\Geometries\GeometryBase.cs" />
+    <Compile Include="RenderObjects\RenderObjecManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer\IRenderer.cs" />
     <Compile Include="Renderer\RenderMessageBase.cs" />

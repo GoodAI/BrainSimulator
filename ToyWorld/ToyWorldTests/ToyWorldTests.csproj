@@ -92,6 +92,8 @@
   <ItemGroup>
     <Compile Include="BrainSimIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Render\RenderingTestBase.cs" />
+    <Compile Include="Render\GeometryTests.cs" />
     <Compile Include="Render\WindowContextTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />

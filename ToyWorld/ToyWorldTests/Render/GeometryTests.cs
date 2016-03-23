@@ -10,12 +10,29 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
-    public class WindowContextTests : RenderingTestBase
+    public class GeometryTests : RenderingTestBase
     {
-        [Fact(Skip = "Manual input needed")]
-        public void CreateRenderWindowAndContext()
+        [Fact]
+        public void BuildSimpleGeometry()
         {
-            ManualDebugDraw(r => r.EnqueueRequest(null), "CreateRenderWindowAndContext");
+            
+        }
+
+        [Fact]
+        public void BuildGeometries()
+        {
+            
+        }
+
+        [Fact(Skip = "Manual input needed")]
+        public void RenderSimpleShape()
+        {
+            ManualDebugDraw(RenderSimpleShapeInternal, "CreateRenderWindowAndContext");
+        }
+
+        void RenderSimpleShapeInternal(IRenderer r)
+        {
+
         }
 
         [Fact(Skip = "Manual input needed")]
