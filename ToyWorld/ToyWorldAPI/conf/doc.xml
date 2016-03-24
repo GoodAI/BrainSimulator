@@ -84,11 +84,16 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.AddRenderRequest(GoodAI.ToyWorld.Render.IRenderRequest)">
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterAgentRenderRequest``1(System.Int32)">
             <summary>
             
             </summary>
-            <param name="renderRequest"></param>
+            <param name="agentID"></param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterRenderRequest``1">
+            <summary>
+            
+            </summary>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.GetAvatarController(System.Int32)">
             <summary>
@@ -102,27 +107,57 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Render.IRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Render.IAgentRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.Size">
+        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.AgentID">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.Position">
+        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.Size">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.Resolution">
+        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.Position">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IRenderRequest.MemAddress">
+        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.Resolution">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.MemAddress">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest.Size">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest.Position">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest.Resolution">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Render.RenderRequests.IFreeRenderRequest">
             <summary>
             
             </summary>

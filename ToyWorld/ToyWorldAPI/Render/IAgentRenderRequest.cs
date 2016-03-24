@@ -1,10 +1,16 @@
-﻿namespace GoodAI.ToyWorld.Render
+﻿using GoodAI.ToyWorld.Render.RenderRequests;
+
+namespace GoodAI.ToyWorld.Render
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IRenderRequest
+    public interface IAgentRenderRequest
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        float AgentID { get; }
         /// <summary>
         /// 
         /// </summary>

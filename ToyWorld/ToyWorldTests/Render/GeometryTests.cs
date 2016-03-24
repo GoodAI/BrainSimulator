@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.Renderer;
+using Render.RenderObjects.Geometries;
 using Utils;
 using World.Tiles;
 using Xunit;
@@ -13,9 +14,13 @@ namespace ToyWorldTests.Render
     public class GeometryTests : RenderingTestBase
     {
         [Fact]
-        public void BuildSimpleGeometry()
+        public void InitGeometry()
         {
-            
+            ManualDebugDraw("CreateRenderWindowAndContext");
+        }
+
+        void BuildSimpleGeometryInternal(GLRenderer r)
+        {
         }
 
         [Fact]
@@ -27,10 +32,10 @@ namespace ToyWorldTests.Render
         [Fact(Skip = "Manual input needed")]
         public void RenderSimpleShape()
         {
-            ManualDebugDraw(RenderSimpleShapeInternal, "CreateRenderWindowAndContext");
+            ManualDebugDraw("CreateRenderWindowAndContext");
         }
 
-        void RenderSimpleShapeInternal(IRenderer r)
+        void RenderSimpleShapeInternal(GLRenderer r)
         {
 
         }

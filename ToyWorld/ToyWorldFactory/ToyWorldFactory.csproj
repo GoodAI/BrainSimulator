@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C1527127-DD8C-4076-A0A7-39EB2EF23787}</ProjectGuid>
+    <ProjectGuid>{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Render</RootNamespace>
-    <AssemblyName>Render</AssemblyName>
+    <RootNamespace>ToyWorldFactory</RootNamespace>
+    <AssemblyName>ToyWorldFactory</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -29,32 +29,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,37 +39,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RenderRequests\Setup\IRenderRequestTest.cs" />
-    <Compile Include="RenderObjects\Buffers\VAO.cs" />
-    <Compile Include="RenderObjects\Buffers\VBO.cs" />
-    <Compile Include="RenderObjects\Geometries\Square.cs" />
-    <Compile Include="RenderObjects\Geometries\GeometryBase.cs" />
-    <Compile Include="RenderObjects\RenderObjecManager.cs" />
+    <Compile Include="GameControlFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderer\IRenderer.cs" />
-    <Compile Include="RenderRequests\Setup\RenderRequestBase.cs" />
-    <Compile Include="Renderer\GLRenderer.cs" />
-    <Compile Include="RenderRequests\Setup\RenderRequestFactory.cs" />
-    <Compile Include="RenderRequests\Setup\TestRR.cs" />
+    <Compile Include="RenderRequestFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Game\Game.csproj">
+      <Project>{c61db58a-5374-48f3-9457-025a1693c8cc}</Project>
+      <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Render\Render.csproj">
+      <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
+      <Name>Render</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>ToyWorldAPI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\World\World.csproj">
-      <Project>{3831266c-24fe-4dd6-a4cc-39d0ef33c299}</Project>
-      <Name>World</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

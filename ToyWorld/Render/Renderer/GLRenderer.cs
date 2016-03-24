@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using GoodAI.ToyWorld.Render;
+using GoodAI.ToyWorld.Render.RenderRequests;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using VRage.Collections;
 
 namespace Render.Renderer
 {
@@ -13,7 +14,7 @@ namespace Render.Renderer
     {
         #region Fields
 
-        private readonly Queue<IRenderRequest> m_renderRequestQueue = new Queue<IRenderRequest>();
+        private readonly IterableQueue<RenderRequestBase> m_renderRequestQueue = new IterableQueue<RenderRequestBase>();
 
         #endregion
 
@@ -64,8 +65,9 @@ namespace Render.Renderer
 
         public void EnqueueRequest(IRenderRequest request)
         {
-            //Debug.Assert(request != null);
-            m_renderRequestQueue.Enqueue(request);
+            Debug.Assert(request != null);
+            Debug.Assert(request is RenderRequestBase);
+            m_renderRequestQueue.Enqueue((RenderRequestBase)request);
         }
 
         public void ProcessRequests()
@@ -75,11 +77,14 @@ namespace Render.Renderer
             Context.MakeCurrent(Window.WindowInfo);
 
             foreach (var renderRequest in m_renderRequestQueue)
-            {
-                Draw(renderRequest);
-            }
+                Process(renderRequest);
 
             Context.MakeCurrent(null);
+        }
+
+        void Process(RenderRequestBase request)
+        {
+            request.Draw(this);
         }
 
         #endregion
@@ -98,32 +103,5 @@ namespace Render.Renderer
         }
 
         #endregion
-
-        private bool m_odd;
-
-        void Draw(IRenderRequest request)
-        {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Begin(PrimitiveType.Lines);
-
-            if (m_odd)
-            {
-                GL.Color3(Color.Red);
-                GL.Vertex3(0, 0, 0);
-                GL.Vertex3(1, 1, 1);
-            }
-            else
-            {
-                GL.Color3(Color.Green);
-                GL.Vertex3(0, 0, 0);
-                GL.Vertex3(-1, -1, -1);
-            }
-
-            GL.End();
-
-            m_odd = !m_odd;
-            Context.SwapBuffers();
-        }
-
     }
 }

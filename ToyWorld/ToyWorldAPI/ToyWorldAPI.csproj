@@ -66,21 +66,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Render\RenderRequestFactory.cs" />
     <EmbeddedResource Include="conf\nodes.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Control\AvatarAction.cs" />
+    <Compile Include="Control\GameControlFactory.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\IGameController.cs" />
     <Compile Include="Control\IStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Render\IRenderRequest.cs" />
+    <Compile Include="Render\IAgentRenderRequest.cs" />
+    <Compile Include="Render\IRenderRequests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conf\doc.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+      <Project>{86955c47-2a02-41a4-ab32-c9e592eb2971}</Project>
+      <Name>TypeMap</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
