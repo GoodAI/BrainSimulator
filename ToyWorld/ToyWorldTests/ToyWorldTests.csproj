@@ -74,10 +74,13 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BrainSimIntegrationTests.cs" />
+    <Compile Include="Game\ControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Render\RenderingTestBase.cs" />
     <Compile Include="Render\GeometryTests.cs" />
-    <Compile Include="Render\WindowContextTests.cs" />
+    <Compile Include="Render\RenderingTestBase.cs" />
+    <Compile Include="Render\WindowContextTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />
     <Compile Include="World\WallsTests.cs" />
@@ -91,14 +94,6 @@
       <Project>{c61db58a-5374-48f3-9457-025a1693c8cc}</Project>
       <Name>Game</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GUI\GUI.csproj">
-      <Project>{48d1d233-b871-41b9-88d8-3667b93da461}</Project>
-      <Name>GUI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{06daad7f-ac1c-417e-a903-55ffb859e761}</Project>
-      <Name>Physics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Render\Render.csproj">
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
       <Name>Render</Name>
@@ -106,6 +101,10 @@
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>ToyWorldAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ToyWorldFactory\ToyWorldFactory.csproj">
+      <Project>{f59c62c1-a4e9-4ce7-b1c8-17375d4491d6}</Project>
+      <Name>ToyWorldFactory</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>

@@ -8,7 +8,7 @@
         /// <summary>
         /// 
         /// </summary>
-        void InitWorld();
+        void InitWorld(GameSetup setup);
 
         /// <summary>
         /// 
@@ -23,8 +23,8 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="agentID"></param>
-        T RegisterAgentRenderRequest<T>(int agentID)
+        /// <param name="avatarID"></param>
+        T RegisterAgentRenderRequest<T>(int avatarID)
             where T : class, IAgentRenderRequest;
 
         /// <summary>

@@ -17,6 +17,5 @@ namespace ToyWorldTests.Render
         {
             ManualDebugDraw("CreateRenderWindowAndContext");
         }
-
     }
 }

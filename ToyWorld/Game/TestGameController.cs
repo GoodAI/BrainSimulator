@@ -6,17 +6,20 @@ using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
-using Render.RenderRequests.Setup;
 
 namespace Game
 {
-    internal class TestGameController : BasicGameController
+    internal class TestGameController : GameControllerBase
     {
-        private readonly IRenderer m_renderer = new GLRenderer();
+        #region GameControllerBase overrides
+
+        public TestGameController()
+            : base(new GLRenderer())
+        { }
 
 
-        #region IGameController overrides
-
+        public override void MakeStep()
+        { }
 
         #endregion
     }

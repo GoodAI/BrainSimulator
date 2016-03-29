@@ -47,6 +47,7 @@
     </EmbeddedResource>
     <Compile Include="Control\IAvatarAction.cs" />
     <Compile Include="Control\IAvatarController.cs" />
+    <Compile Include="Control\GameSetup.cs" />
     <Compile Include="Control\IGameController.cs" />
     <Compile Include="Control\IStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

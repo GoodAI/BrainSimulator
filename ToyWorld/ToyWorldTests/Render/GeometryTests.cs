@@ -1,50 +1,41 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using Render.Renderer;
-using Render.RenderObjects.Geometries;
+using Render.RenderRequests;
 using Utils;
 using World.Tiles;
 using Xunit;
 
 namespace ToyWorldTests.Render
 {
-    public class GeometryTests : RenderingTestBase
+    public class GeometryTests
     {
-        [Fact]
-        public void InitGeometry()
-        {
-            ManualDebugDraw("CreateRenderWindowAndContext");
-        }
-
-        void BuildSimpleGeometryInternal(GLRenderer r)
-        {
-        }
-
         [Fact]
         public void BuildGeometries()
         {
-            
-        }
-
-        [Fact(Skip = "Manual input needed")]
-        public void RenderSimpleShape()
-        {
-            ManualDebugDraw("CreateRenderWindowAndContext");
-        }
-
-        void RenderSimpleShapeInternal(GLRenderer r)
-        {
 
         }
 
         [Fact(Skip = "Manual input needed")]
-        public void CreateWindow()
+        public void DrawBasicGeometry()
         {
-            Thread.Sleep(5000);
+            var gc = ControllerFactory.GetController();
+            gc.InitWorld(null);
 
+            var RRTest = gc.RegisterRenderRequest<IRRTest>();
+
+
+            while (RRTest.WindowKeypressResult == default(Key))
+            {
+                gc.MakeStep();
+            }
+
+
+            Assert.True(RRTest.WindowKeypressResult == Key.A);
         }
+
     }
 }

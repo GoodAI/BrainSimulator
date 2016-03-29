@@ -66,12 +66,22 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:GoodAI.ToyWorld.Control.GameSetup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Control.GameSetup.PathToSaveFile">
+            <summary>
+            The path to a .TMX (fresh world) or a world save.
+            </summary>
+        </member>
         <member name="T:GoodAI.ToyWorld.Control.IGameController">
             <summary>
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.InitWorld">
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.InitWorld(GoodAI.ToyWorld.Control.GameSetup)">
             <summary>
             
             </summary>
@@ -90,7 +100,7 @@
             <summary>
             
             </summary>
-            <param name="agentID"></param>
+            <param name="avatarID"></param>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterRenderRequest``1">
             <summary>

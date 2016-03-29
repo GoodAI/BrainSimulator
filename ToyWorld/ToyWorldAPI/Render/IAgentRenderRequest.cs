@@ -20,17 +20,17 @@
         /// <summary>
         /// 
         /// </summary>
-        float Resolution { get; }
+        float Resolution { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        float MemAddress { get; }
+        float MemAddress { get; set; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public interface IRenderRequestFoV : IRenderRequest
+    public interface IRenderRequestFoV : IAgentRenderRequest
     {
 
     }

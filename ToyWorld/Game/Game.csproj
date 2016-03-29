@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameControllerBase.cs" />
     <Compile Include="BasicGameController.cs" />
     <Compile Include="ControllerFactory.cs" />
     <Compile Include="TestGameController.cs" />
