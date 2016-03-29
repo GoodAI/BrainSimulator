@@ -81,7 +81,7 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.InitWorld(GoodAI.ToyWorld.Control.GameSetup)">
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.Init(GoodAI.ToyWorld.Control.GameSetup)">
             <summary>
             
             </summary>

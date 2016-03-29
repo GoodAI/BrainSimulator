@@ -17,10 +17,6 @@ namespace Game
             : base(new GLRenderer())
         { }
 
-
-        public override void MakeStep()
-        { }
-
         #endregion
     }
 }

@@ -1,14 +1,15 @@
 ﻿using GoodAI.ToyWorld.Control;
-using Render.Renderer;
 
-namespace Render.RenderRequests
+namespace Render.RenderRequests.RenderRequests
 {
-    internal abstract class RenderRequestBase : IRenderRequest
+    public abstract class RenderRequestBase : RenderRequest, IRenderRequest
     {
+        #region IRenderRequest overrides
+
         public virtual float Size { get; set; }
         public virtual float Position { get; set; }
         public virtual float Resolution { get; set; }
 
-        public abstract void Draw(GLRenderer renderer);
+        #endregion
     }
 }

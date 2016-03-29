@@ -16,7 +16,6 @@ namespace Render.RenderRequests.RenderRequests
         public RRTest()
         {
             WindowKeypressResult = default(Key);
-            m_sq.Init();
         }
 
 
@@ -29,6 +28,14 @@ namespace Render.RenderRequests.RenderRequests
         #endregion
 
         #region RenderRequestBase overrides
+
+        public override void Init(IRenderer renderer)
+        {
+            m_sq.Init();
+
+            renderer.Window.KeyDown += (sender, args) => WindowKeypressResult = args.Key;
+            renderer.Window.Visible = true;
+        }
 
         public override void Draw(GLRenderer renderer)
         {
@@ -59,12 +66,6 @@ namespace Render.RenderRequests.RenderRequests
 
         void HandleWindow(GLRenderer renderer)
         {
-            renderer.CreateWindow("TestGameWindow", 1024, 768);
-            renderer.CreateContext();
-            renderer.Init();
-
-            renderer.Window.KeyDown += (sender, args) => WindowKeypressResult = args.Key;
-
             renderer.ProcessRequests();
             renderer.Window.ProcessEvents();
         }

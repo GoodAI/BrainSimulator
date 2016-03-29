@@ -5,6 +5,7 @@ using Render.RenderRequests.RenderRequests;
 
 namespace Render.RenderRequests
 {
+    // NOTE: All renderRequests must inherit from RenderRequest
     public static class RenderRequestFactory
     {
         private static readonly TypeSwitch<IRenderRequest> RRSwitch = new TypeSwitch<IRenderRequest>();

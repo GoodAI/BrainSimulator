@@ -7,6 +7,8 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderRequests;
+using Render.RenderRequests.AgentRenderRequests;
+using Render.RenderRequests.RenderRequests;
 using VRage.Collections;
 
 namespace Render.Renderer
@@ -15,7 +17,7 @@ namespace Render.Renderer
     {
         #region Fields
 
-        private readonly IterableQueue<RenderRequestBase> m_renderRequestQueue = new IterableQueue<RenderRequestBase>();
+        private readonly IterableQueue<RenderRequest> m_renderRequestQueue = new IterableQueue<RenderRequest>();
 
         #endregion
 
@@ -73,7 +75,9 @@ namespace Render.Renderer
 
         public void EnqueueRequest(IAgentRenderRequest request)
         {
-            // TODO
+            Debug.Assert(request != null);
+            Debug.Assert(request is AgentRenderRequestBase);
+            m_renderRequestQueue.Enqueue((AgentRenderRequestBase)request);
         }
 
         public void ProcessRequests()
@@ -88,7 +92,7 @@ namespace Render.Renderer
             Context.MakeCurrent(null);
         }
 
-        void Process(RenderRequestBase request)
+        void Process(RenderRequest request)
         {
             request.Draw(this);
         }

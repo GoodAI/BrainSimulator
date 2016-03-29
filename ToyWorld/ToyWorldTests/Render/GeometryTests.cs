@@ -23,7 +23,7 @@ namespace ToyWorldTests.Render
         public void DrawBasicGeometry()
         {
             var gc = ControllerFactory.GetController();
-            gc.InitWorld(null);
+            gc.Init(null);
 
             var RRTest = gc.RegisterRenderRequest<IRRTest>();
 
@@ -36,6 +36,5 @@ namespace ToyWorldTests.Render
 
             Assert.True(RRTest.WindowKeypressResult == Key.A);
         }
-
     }
 }

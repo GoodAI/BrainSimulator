@@ -23,16 +23,24 @@ namespace Game
 
         #region IGameController overrides
 
-        public virtual void InitWorld(GameSetup setup)
-        { }
+        public virtual void Init(GameSetup setup)
+        {
+            // TODO: world
+
+            Renderer.CreateWindow("TestGameWindow", 1024, 768);
+            Renderer.CreateContext();
+            Renderer.Init();
+        }
 
         public virtual void Reset()
         { }
 
+
         public virtual void MakeStep()
         {
-            //if (World == null)
-            //    throw new 
+            // Assume Init has been called, we don't want to check for consistency every step
+
+            Renderer.ProcessRequests();
         }
 
 
@@ -40,6 +48,7 @@ namespace Game
             where T : class, IRenderRequest
         {
             var rr = RenderRequestFactory.CreateRenderRequest<T>();
+            InitRR(rr);
             Renderer.EnqueueRequest(rr);
 
             return rr;
@@ -51,9 +60,21 @@ namespace Game
             // TODO: check agentID or make the param an AgentController?
 
             var rr = RenderRequestFactory.CreateAgentRenderRequest<T>(avatarID);
+            InitRR(rr);
             Renderer.EnqueueRequest(rr);
 
             return rr;
+        }
+
+        void InitRR<T>(T rr)
+            where T : class
+        {
+            var rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
+
+            if (rrBase == null)
+                throw new ArgumentException(string.Format("Incorrect type argument; the type {0} is not registered for use in this version.", typeof(T).Name));
+
+            rrBase.Init(Renderer);
         }
 
 

@@ -12,7 +12,7 @@ namespace ToyWorldTests.Game
         public void SetupController()
         {
             var gc = ControllerFactory.GetController();
-            gc.InitWorld(null);
+            gc.Init(null);
 
             var RRTest = gc.RegisterRenderRequest<IRRTest>();
             gc.RegisterAgentRenderRequest<IRenderRequestFoV>(0);

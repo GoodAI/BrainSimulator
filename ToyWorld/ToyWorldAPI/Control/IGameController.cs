@@ -8,7 +8,7 @@
         /// <summary>
         /// 
         /// </summary>
-        void InitWorld(GameSetup setup);
+        void Init(GameSetup setup);
 
         /// <summary>
         /// 
