@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GoodAI.ToyWorld.Render;
-using GoodAI.ToyWorld.Render.RenderRequests;
+using GoodAI.ToyWorld.Control;
 
 namespace Render.Renderer
 {

@@ -1,7 +1,4 @@
-﻿using GoodAI.ToyWorld.Render;
-using GoodAI.ToyWorld.Render.RenderRequests;
-
-namespace GoodAI.ToyWorld.Control
+﻿namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
@@ -28,13 +25,13 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         /// <param name="agentID"></param>
         T RegisterAgentRenderRequest<T>(int agentID)
-            where T : IAgentRenderRequest;
+            where T : class, IAgentRenderRequest;
 
         /// <summary>
         /// 
         /// </summary>
         T RegisterRenderRequest<T>()
-            where T : IRenderRequest;
+            where T : class, IRenderRequest;
 
         /// <summary>
         /// 

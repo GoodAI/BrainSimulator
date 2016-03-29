@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using GoodAI.ToyWorld.Render.RenderRequests;
+using GoodAI.ToyWorld.Control;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -68,6 +68,11 @@ namespace Render.Renderer
             Debug.Assert(request != null);
             Debug.Assert(request is RenderRequestBase);
             m_renderRequestQueue.Enqueue((RenderRequestBase)request);
+        }
+
+        public void EnqueueRequest(IAgentRenderRequest request)
+        {
+            // TODO
         }
 
         public void ProcessRequests()

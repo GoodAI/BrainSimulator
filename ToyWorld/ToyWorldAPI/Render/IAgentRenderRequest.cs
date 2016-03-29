@@ -1,6 +1,4 @@
-﻿using GoodAI.ToyWorld.Render.RenderRequests;
-
-namespace GoodAI.ToyWorld.Render
+﻿namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
@@ -27,5 +25,13 @@ namespace GoodAI.ToyWorld.Render
         /// 
         /// </summary>
         float MemAddress { get; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IRenderRequestFoV : IRenderRequest
+    {
+
     }
 }

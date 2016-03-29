@@ -2,11 +2,12 @@
 
 namespace GoodAI.ToyWorld.Control
 {
-    public static class GameControlFactory
+    public static class ControllerFactory
     {
         public static IGameController GetController()
         {
-            return new TestGameController();
+            //return new TestGameController();
+            return new BasicGameController();
         }
     }
 }

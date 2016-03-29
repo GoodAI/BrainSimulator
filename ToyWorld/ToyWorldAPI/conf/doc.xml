@@ -4,53 +4,55 @@
         <name>GoodAI.ToyWorldAPI</name>
     </assembly>
     <members>
-        <member name="T:GoodAI.ToyWorld.Control.AvatarActionEnum">
+        <member name="T:GoodAI.ToyWorld.Control.IAvatarAction">
             <summary>
             
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Rotation">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Acceleration">
+            <summary>
+            
+            Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Rotation">
+            <summary>
+            
+            Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Use">
             <summary>
             
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Acceleration">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Interact">
             <summary>
             
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Use">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Pick">
             <summary>
             
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Interact">
+        <member name="T:GoodAI.ToyWorld.Control.ActionPriority">
             <summary>
             
             </summary>
-        </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarActionEnum.Pick">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:GoodAI.ToyWorld.Control.AvatarAction`1">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IAvatarController">
             <summary>
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetAction``1(GoodAI.ToyWorld.Control.AvatarAction{``0})">
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetActions(GoodAI.ToyWorld.Control.ActionPriority)">
             <summary>
             
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="action"></param>
+            <param name="priority">Specifies the priority with which the actions will be set on the returned object.
+            For every action, only the highest-priority setting will be kept.</param>
+            <returns>The object through which to set the Avatar's action.</returns>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetStats">
             <summary>
@@ -107,57 +109,62 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Render.IAgentRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IAgentRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.AgentID">
+        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.AgentID">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.Size">
+        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.Size">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.Position">
+        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.Position">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.Resolution">
+        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.Resolution">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.IAgentRenderRequest.MemAddress">
+        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.MemAddress">
             <summary>
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IRenderRequestFoV">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest.Size">
+        <member name="T:GoodAI.ToyWorld.Control.IRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest.Position">
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Size">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Render.RenderRequests.IRenderRequest.Resolution">
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Position">
             <summary>
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Render.RenderRequests.IFreeRenderRequest">
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Resolution">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IFreeRenderRequest">
             <summary>
             
             </summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GoodAI.ToyWorld.Render.RenderRequests;
+using GoodAI.ToyWorld.Control;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -23,6 +23,7 @@ namespace Render.Renderer
         void Reset();
 
         void EnqueueRequest(IRenderRequest request);
+        void EnqueueRequest(IAgentRenderRequest request);
         void ProcessRequests(); // Each message is a render pass in general...
     }
 }

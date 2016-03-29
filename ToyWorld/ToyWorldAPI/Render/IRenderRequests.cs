@@ -1,4 +1,4 @@
-﻿namespace GoodAI.ToyWorld.Render.RenderRequests
+﻿namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 

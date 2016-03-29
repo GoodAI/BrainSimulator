@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
-using GoodAI.ToyWorld.Render;
-using GoodAI.ToyWorld.Render.RenderRequests;
 using Render.Renderer;
 using Render.RenderRequests;
 using Render.RenderRequests.Setup;
 
 namespace Game
 {
-    public class TestGameController : IGameController
+    public class BasicGameController : IGameController
     {
         private readonly IRenderer m_renderer = new GLRenderer();
 
@@ -28,18 +26,21 @@ namespace Game
         public void MakeStep()
         { }
 
-        public T RegisterAgentRenderRequest<T>(int agentID)
-            where T : IAgentRenderRequest
-        {
-            throw new NotImplementedException();
-        }
-
         public T RegisterRenderRequest<T>()
-            where T : IRenderRequest
+            where T : class, IRenderRequest
         {
             var rr = RenderRequestFactory.CreateRenderRequest<T>();
             m_renderer.EnqueueRequest(rr);
-            
+
+            return rr;
+        }
+
+        public T RegisterAgentRenderRequest<T>(int agentID)
+            where T : class, IAgentRenderRequest
+        {
+            var rr = RenderRequestFactory.CreateAgentRenderRequest<T>();
+            m_renderer.EnqueueRequest(rr);
+
             return rr;
         }
 
