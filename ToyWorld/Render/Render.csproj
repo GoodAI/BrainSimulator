@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RenderRequests\AgentRenderRequests\AgentRenderRequestBase.cs" />
+    <Compile Include="RenderRequests\AgentRenderRequests\AvatarRenderRequestBase.cs" />
+    <Compile Include="RenderRequests\Tests\IARRTest.cs" />
+    <Compile Include="RenderRequests\Tests\ARRTest.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
-    <Compile Include="RenderRequests\RenderRequests\IRRTest.cs" />
+    <Compile Include="RenderRequests\Tests\IRRTest.cs" />
     <Compile Include="RenderObjects\Buffers\VAO.cs" />
     <Compile Include="RenderObjects\Buffers\VBO.cs" />
     <Compile Include="RenderObjects\Geometries\Square.cs" />
@@ -58,7 +60,7 @@
     <Compile Include="RenderRequests\RenderRequest.cs" />
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="RenderRequests\RenderRequestFactory.cs" />
-    <Compile Include="RenderRequests\RenderRequests\RRTest.cs" />
+    <Compile Include="RenderRequests\Tests\RRTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">

@@ -2,9 +2,9 @@
 
 namespace Render.RenderRequests.AgentRenderRequests
 {
-    internal abstract class AgentRenderRequestBase : RenderRequest, IAgentRenderRequest
+    internal abstract class AvatarRenderRequestBase : RenderRequest, IAvatarRenderRequest
     {
-        protected AgentRenderRequestBase(int agentID)
+        protected AvatarRenderRequestBase(int agentID)
         {
             AgentID = agentID;
         }

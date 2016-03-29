@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
 using Render.RenderRequests.RenderRequests;
+using Render.RenderRequests.Tests;
 
 namespace Render.RenderRequests
 {
@@ -9,15 +10,14 @@ namespace Render.RenderRequests
     public static class RenderRequestFactory
     {
         private static readonly TypeSwitch<IRenderRequest> RRSwitch = new TypeSwitch<IRenderRequest>();
-        private static readonly TypeSwitchParam<IAgentRenderRequest> ARRSwitch = new TypeSwitchParam<IAgentRenderRequest>();
+        private static readonly TypeSwitchParam<IAvatarRenderRequest> ARRSwitch = new TypeSwitchParam<IAvatarRenderRequest>();
 
 
         static RenderRequestFactory()
         {
             RRSwitch.Case<IRRTest>(() => new RRTest());
 
-
-            //ARRSwitch.Case(() => null);
+            ARRSwitch.Case<IARRTest>(id => new ARRTest(id));
         }
 
 
@@ -30,7 +30,7 @@ namespace Render.RenderRequests
         }
 
         public static T CreateAgentRenderRequest<T>(int agentID)
-            where T : class, IAgentRenderRequest // unf cannot constrain T to be an interface, only a class
+            where T : class, IAvatarRenderRequest // unf cannot constrain T to be an interface, only a class
         {
             return ARRSwitch.Switch<T>(agentID);
         }

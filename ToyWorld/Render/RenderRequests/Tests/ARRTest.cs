@@ -3,17 +3,19 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
+using Render.RenderRequests.AgentRenderRequests;
 
-namespace Render.RenderRequests.RenderRequests
+namespace Render.RenderRequests.Tests
 {
-    class RRTest : RenderRequestBase, IRRTest
+    class ARRTest : AvatarRenderRequestBase, IARRTest
     {
         private readonly Square m_sq = new Square();
 
         private bool odd;
 
 
-        public RRTest()
+        public ARRTest(int avatarID)
+            : base(avatarID)
         {
             WindowKeypressResult = default(Key);
         }
@@ -47,26 +49,11 @@ namespace Render.RenderRequests.RenderRequests
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.MatrixMode(MatrixMode.Modelview);
-            Matrix4 m;
-
-            if (odd)
-                m = Matrix4.CreateScale(0.5f);
-            else
-                m = Matrix4.CreateScale(0.1f);
-
-
-            GL.LoadMatrix(ref m);
-            odd = !odd;
-
-            m_sq.Draw();
-
             renderer.Context.SwapBuffers();
         }
 
         void HandleWindow(GLRenderer renderer)
         {
-            renderer.ProcessRequests();
             renderer.Window.ProcessEvents();
         }
 

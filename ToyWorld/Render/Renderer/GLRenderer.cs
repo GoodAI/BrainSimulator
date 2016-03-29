@@ -30,7 +30,6 @@ namespace Render.Renderer
         {
             Window = new NativeWindow(width, height, title, GameWindowFlags.Default, GraphicsMode.Default, DisplayDevice.Default);
             Window.Resize += WindowOnResize;
-            Window.Visible = true;
         }
 
         private void WindowOnResize(object sender, EventArgs args)
@@ -73,11 +72,11 @@ namespace Render.Renderer
             m_renderRequestQueue.Enqueue((RenderRequestBase)request);
         }
 
-        public void EnqueueRequest(IAgentRenderRequest request)
+        public void EnqueueRequest(IAvatarRenderRequest request)
         {
             Debug.Assert(request != null);
-            Debug.Assert(request is AgentRenderRequestBase);
-            m_renderRequestQueue.Enqueue((AgentRenderRequestBase)request);
+            Debug.Assert(request is AvatarRenderRequestBase);
+            m_renderRequestQueue.Enqueue((AvatarRenderRequestBase)request);
         }
 
         public void ProcessRequests()

@@ -1,7 +1,7 @@
 ﻿using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
 
-namespace Render.RenderRequests
+namespace Render.RenderRequests.Tests
 {
     public interface IRRTest : IRenderRequest
     {

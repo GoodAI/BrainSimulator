@@ -23,7 +23,7 @@ namespace Render.Renderer
         void Reset();
 
         void EnqueueRequest(IRenderRequest request);
-        void EnqueueRequest(IAgentRenderRequest request);
+        void EnqueueRequest(IAvatarRenderRequest request);
         void ProcessRequests(); // Each message is a render pass in general...
     }
 }

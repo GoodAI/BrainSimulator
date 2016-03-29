@@ -1,9 +1,11 @@
-﻿namespace GoodAI.ToyWorld.Control
+﻿using System;
+
+namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IGameController
+    public interface IGameController : IDisposable
     {
         /// <summary>
         /// 
@@ -25,7 +27,7 @@
         /// </summary>
         /// <param name="avatarID"></param>
         T RegisterAgentRenderRequest<T>(int avatarID)
-            where T : class, IAgentRenderRequest;
+            where T : class, IAvatarRenderRequest;
 
         /// <summary>
         /// 

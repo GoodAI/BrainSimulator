@@ -2,11 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.RenderRequests;
-using Utils;
-using World.Tiles;
+using Render.RenderRequests.Tests;
 using Xunit;
 
 namespace ToyWorldTests.Render

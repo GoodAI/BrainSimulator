@@ -3,7 +3,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IAgentRenderRequest
+    public interface IAvatarRenderRequest
     {
         /// <summary>
         /// 
@@ -30,7 +30,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IRenderRequestFoV : IAgentRenderRequest
+    public interface IRenderRequestFoV : IAvatarRenderRequest
     {
 
     }

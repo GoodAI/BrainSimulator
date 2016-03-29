@@ -20,6 +20,12 @@ namespace Game
             Renderer = renderer;
         }
 
+        public void Dispose()
+        {
+            Renderer.Dispose();
+            Renderer = null;
+        }
+
 
         #region IGameController overrides
 
@@ -55,7 +61,7 @@ namespace Game
         }
 
         public virtual T RegisterAgentRenderRequest<T>(int avatarID)
-            where T : class, IAgentRenderRequest
+            where T : class, IAvatarRenderRequest
         {
             // TODO: check agentID or make the param an AgentController?
 

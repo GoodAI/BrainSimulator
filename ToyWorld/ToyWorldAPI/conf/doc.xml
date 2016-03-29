@@ -119,32 +119,32 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IAgentRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IAvatarRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.AgentID">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.AgentID">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.Size">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Size">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.Position">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Position">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.Resolution">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Resolution">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAgentRenderRequest.MemAddress">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.MemAddress">
             <summary>
             
             </summary>
