@@ -6,18 +6,14 @@ namespace Render.RenderObjects.Geometries
 {
     internal abstract class GeometryBase
     {
-        protected VAO m_vao;
-        public VBO IndexBuffer { get; set; }
+        protected readonly VAO Vao = new VAO();
+
 
         public abstract void Init();
-
-        void Draw()
-        {
-        GL.BindVertexArray(m_vao.Handle);
-        }
+        public abstract void Draw();
 
 
-        #region Basic geometries
+        #region Basic buffers
 
         protected static readonly Lazy<VBO> SquareVertices = new Lazy<VBO>(GenerateSquareVertices);
         static VBO GenerateSquareVertices()
@@ -30,7 +26,7 @@ namespace Render.RenderObjects.Geometries
                 -1, 0, 1
             };
 
-            return new VBO(buf.Length, buf);
+            return new VBO(buf.Length, buf, hint: BufferUsageHint.StaticDraw);
         }
 
         protected static readonly Lazy<VBO> SquareColors = new Lazy<VBO>(GenerateSquareColors);
@@ -44,7 +40,7 @@ namespace Render.RenderObjects.Geometries
                 1, 1, 1
             };
 
-            return new VBO(buf.Length, buf);
+            return new VBO(buf.Length, buf, hint: BufferUsageHint.StaticDraw);
         }
 
         #endregion

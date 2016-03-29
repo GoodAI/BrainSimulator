@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C61DB58A-5374-48F3-9457-025A1693C8CC}</ProjectGuid>
+    <ProjectGuid>{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Game</RootNamespace>
-    <AssemblyName>Game</AssemblyName>
+    <RootNamespace>ToyWorldFactory</RootNamespace>
+    <AssemblyName>ToyWorldFactory</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,15 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicGameController.cs" />
-    <Compile Include="ControllerFactory.cs" />
-    <Compile Include="TestGameController.cs" />
+    <Compile Include="GameFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{06daad7f-ac1c-417e-a903-55ffb859e761}</Project>
-      <Name>Physics</Name>
+    <ProjectReference Include="..\Game\Game.csproj">
+      <Project>{c61db58a-5374-48f3-9457-025a1693c8cc}</Project>
+      <Name>Game</Name>
     </ProjectReference>
     <ProjectReference Include="..\Render\Render.csproj">
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
@@ -57,10 +55,6 @@
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>ToyWorldAPI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\World\World.csproj">
-      <Project>{3831266c-24fe-4dd6-a4cc-39d0ef33c299}</Project>
-      <Name>World</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

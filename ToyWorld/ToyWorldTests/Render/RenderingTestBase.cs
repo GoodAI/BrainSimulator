@@ -12,7 +12,7 @@ namespace ToyWorldTests.Render
 {
     public class RenderingTestBase
     {
-        protected Key ManualDebugDraw(Action<IRenderer> renderCommands, string title = Globals.AppName)
+        protected Key ManualDebugDraw(string title = Globals.AppName)
         {
             var r = new GLRenderer();
 
@@ -22,10 +22,6 @@ namespace ToyWorldTests.Render
 
             Key result = 0;
             r.Window.KeyDown += (sender, args) => result = args.Key;
-
-            var c = renderCommands;
-            if (c != null)
-                c(r);
 
             while (result == 0)
             {

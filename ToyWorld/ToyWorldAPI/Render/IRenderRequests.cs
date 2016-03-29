@@ -1,4 +1,4 @@
-﻿namespace GoodAI.ToyWorld.Render
+﻿namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
@@ -17,9 +17,13 @@
         /// 
         /// </summary>
         float Resolution { get; }
-        /// <summary>
-        /// 
-        /// </summary>
-        float MemAddress { get; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IFreeRenderRequest : IRenderRequest
+    {
+        
     }
 }

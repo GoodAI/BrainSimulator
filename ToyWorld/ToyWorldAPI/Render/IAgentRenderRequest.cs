@@ -3,38 +3,35 @@
     /// <summary>
     /// 
     /// </summary>
-    public enum AvatarActionEnum
+    public interface IAgentRenderRequest
     {
         /// <summary>
         /// 
         /// </summary>
-        Rotation,
+        float AgentID { get; }
         /// <summary>
         /// 
         /// </summary>
-        Acceleration,
+        float Size { get; }
         /// <summary>
         /// 
         /// </summary>
-        Use,
+        float Position { get; }
         /// <summary>
         /// 
         /// </summary>
-        Interact,
+        float Resolution { get; }
         /// <summary>
         /// 
         /// </summary>
-        Pick
+        float MemAddress { get; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class AvatarAction<T>
+    public interface IRenderRequestFoV : IRenderRequest
     {
-        private AvatarActionEnum m_actionId;
-        private T m_value;
-        private int m_priority;
+
     }
 }

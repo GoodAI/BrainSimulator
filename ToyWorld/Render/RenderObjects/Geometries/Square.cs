@@ -1,4 +1,5 @@
-﻿using Render.Geometries.Buffers;
+﻿using OpenTK.Graphics.OpenGL;
+using Render.Geometries.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
@@ -6,8 +7,15 @@ namespace Render.RenderObjects.Geometries
     {
         public override void Init()
         {
-            m_vao.AddVBO(SquareVertices.Value, 0);
-            m_vao.AddVBO(SquareColors.Value, 1);
+            Vao.AddVBO(SquareVertices.Value, 0);
+            Vao.AddVBO(SquareColors.Value, 1);
+        }
+
+        public override void Draw()
+        {
+            GL.BindVertexArray(Vao.Handle);
+            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.BindVertexArray(0);
         }
     }
 }

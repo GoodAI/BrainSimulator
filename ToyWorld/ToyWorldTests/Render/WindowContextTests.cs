@@ -15,14 +15,8 @@ namespace ToyWorldTests.Render
         [Fact(Skip = "Manual input needed")]
         public void CreateRenderWindowAndContext()
         {
-            ManualDebugDraw(r => r.EnqueueRequest(null), "CreateRenderWindowAndContext");
+            ManualDebugDraw("CreateRenderWindowAndContext");
         }
 
-        [Fact(Skip = "Manual input needed")]
-        public void CreateWindow()
-        {
-            Thread.Sleep(5000);
-
-        }
     }
 }
