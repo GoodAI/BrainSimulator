@@ -18,6 +18,7 @@ namespace ToyWorldTests.Render
         }
 
         [Fact(Skip = "Manual input needed")]
+        //[Fact]
         public void DrawBasicGeometry()
         {
             var gc = ControllerFactory.GetController();
@@ -25,14 +26,24 @@ namespace ToyWorldTests.Render
 
             var RRTest = gc.RegisterRenderRequest<IRRTest>();
 
-
-            while (RRTest.WindowKeypressResult == default(Key))
+            try
             {
-                gc.MakeStep();
+                while (RRTest.WindowKeypressResult == default(Key))
+                {
+                    gc.MakeStep();
+                }
+            }
+            catch (Exception)
+            {
+                Assert.False(true);
+            }
+            finally
+            {
+                gc.Dispose();
             }
 
 
-            Assert.True(RRTest.WindowKeypressResult == Key.A);
+            Assert.Equal(RRTest.WindowKeypressResult, Key.A);
         }
     }
 }

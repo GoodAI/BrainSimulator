@@ -32,18 +32,18 @@ namespace ToyWorldTests.Game
             try
             {
                 gc = GetTestController();
-
-                Assert.NotNull(gc);
             }
             catch (Exception)
             {
                 Assert.False(true);
             }
 
+            Assert.NotNull(gc);
             gc.Dispose();
         }
 
-        [Fact(Skip = "Still requiring manual input -- should change later")]
+        //[Fact(Skip = "Still requiring manual input -- should change later")]
+        [Fact]
         public void DoStep()
         {
             var gc = GetTestController();

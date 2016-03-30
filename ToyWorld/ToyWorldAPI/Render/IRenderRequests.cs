@@ -1,4 +1,6 @@
-﻿namespace GoodAI.ToyWorld.Control
+﻿using System;
+
+namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 

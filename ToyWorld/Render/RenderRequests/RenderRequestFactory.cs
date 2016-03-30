@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GoodAI.ToyWorld.Control;
 using Render.RenderRequests.RenderRequests;
 using Render.RenderRequests.Tests;
@@ -10,7 +11,10 @@ namespace Render.RenderRequests
     public static class RenderRequestFactory
     {
         private static readonly TypeSwitch<IRenderRequest> RRSwitch = new TypeSwitch<IRenderRequest>();
+        public static IEnumerable<IRenderRequest> RRs { get { return RRSwitch.Matches.Values.Select(rr => rr()); } }
+
         private static readonly TypeSwitchParam<IAvatarRenderRequest> ARRSwitch = new TypeSwitchParam<IAvatarRenderRequest>();
+        public static IEnumerable<IAvatarRenderRequest> ARRs { get { return ARRSwitch.Matches.Values.Select(rr => rr(0)); } }
 
 
         static RenderRequestFactory()
@@ -41,13 +45,13 @@ namespace Render.RenderRequests
         internal abstract class TypeSwitchBase<TKey, TVal>
             where TVal : class
         {
-            private readonly Dictionary<Type, TVal> m_matches = new Dictionary<Type, TVal>();
+            internal readonly Dictionary<Type, TVal> Matches = new Dictionary<Type, TVal>();
 
 
             public TypeSwitchBase<TKey, TVal> Case<T>(TVal action)
                 where T : class, TKey
             {
-                m_matches.Add(typeof(T), action);
+                Matches.Add(typeof(T), action);
                 return this;
             }
 
@@ -56,7 +60,7 @@ namespace Render.RenderRequests
             {
                 TVal res;
 
-                if (!m_matches.TryGetValue(typeof(T), out res))
+                if (!Matches.TryGetValue(typeof(T), out res))
                 {
                     // log
                     return null;

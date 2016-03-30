@@ -1,4 +1,6 @@
-﻿namespace GoodAI.ToyWorld.Control
+﻿using System;
+
+namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
@@ -21,10 +23,6 @@
         /// 
         /// </summary>
         float Resolution { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        float MemAddress { get; set; }
     }
 
     /// <summary>

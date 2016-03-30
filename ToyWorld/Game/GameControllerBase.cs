@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Game
 {
     public abstract class GameControllerBase : IGameController
     {
-        protected IRenderer Renderer { get; private set; }
+        public IRenderer Renderer { get; private set; }
         //protected IWorld World { get; private set; }
 
 
@@ -20,7 +21,7 @@ namespace Game
             Renderer = renderer;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Renderer.Dispose();
             Renderer = null;

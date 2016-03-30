@@ -7,24 +7,27 @@ namespace Render.Geometries.Buffers
     internal class VBO
     {
         public uint Handle { get; private set; }
-        public int Count { get; set; }
+        public int Count { get; private set; }
 
-        private readonly BufferTarget m_target;
+        public BufferTarget Target { get; private set; }
+        public int Size { get; private set; }
 
 
         #region Creation/destruction
 
-        public VBO(int count, float[] initData = null, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+        public VBO(int count, float[] initData = null, int size = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
         {
-            m_target = target;
+            Target = target;
+            Size = size;
             Init(count, initData, hint);
         }
 
-        public VBO(int count, uint[] initData = null, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
-        {
-            m_target = target;
-            Init(count, initData, hint);
-        }
+        //public VBO(int count, uint[] initData = null, int size = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+        //{
+        //    Target = target;
+        //    Size = size;
+        //    Init(count, initData, hint);
+        //}
 
         private void Init<T>(int count, T[] initData, BufferUsageHint hint)
         where T : struct
@@ -50,12 +53,12 @@ namespace Render.Geometries.Buffers
 
         public void Bind()
         {
-            GL.BindBuffer(m_target, Handle);
+            GL.BindBuffer(Target, Handle);
         }
 
         public void Unbind()
         {
-            GL.BindBuffer(m_target, Handle);
+            GL.BindBuffer(Target, Handle);
         }
     }
 }

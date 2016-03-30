@@ -43,7 +43,6 @@
     <Compile Include="GameControllerBase.cs" />
     <Compile Include="BasicGameController.cs" />
     <Compile Include="ControllerFactory.cs" />
-    <Compile Include="TestGameController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

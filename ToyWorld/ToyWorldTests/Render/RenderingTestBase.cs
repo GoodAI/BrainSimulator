@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.Renderer;
+using Render.RenderRequests;
+using Render.RenderRequests.Tests;
 using Utils;
 using World.Tiles;
 using Xunit;
@@ -22,6 +25,11 @@ namespace ToyWorldTests.Render
 
             Key result = 0;
             r.Window.KeyDown += (sender, args) => result = args.Key;
+
+            var rr = RenderRequestFactory.CreateRenderRequest<IRRTest>();
+            (rr as RenderRequest).Init(r);
+
+            r.EnqueueRequest(rr);
 
             while (result == 0)
             {

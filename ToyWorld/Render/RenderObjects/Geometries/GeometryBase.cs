@@ -4,9 +4,15 @@ using Render.Geometries.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
-    internal abstract class GeometryBase
+    internal abstract class GeometryBase : IDisposable
     {
         protected readonly VAO Vao = new VAO();
+
+
+        public void Dispose()
+        {
+            Vao.Dispose();
+        }
 
 
         public abstract void Init();
@@ -21,9 +27,9 @@ namespace Render.RenderObjects.Geometries
             float[] buf =
             {
                 -1, 0, -1,
-                1, 0, -1,
-                1, 0, 1,
-                -1, 0, 1
+                 1, 0, -1,
+                 1, 0,  1,
+                -1, 0,  1
             };
 
             return new VBO(buf.Length, buf, hint: BufferUsageHint.StaticDraw);

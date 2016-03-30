@@ -144,11 +144,6 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.MemAddress">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:GoodAI.ToyWorld.Control.IRenderRequestFoV">
             <summary>
             

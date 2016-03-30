@@ -6,7 +6,6 @@ namespace GoodAI.ToyWorld.Control
     {
         public static IGameController GetController()
         {
-            //return new TestGameController();
             return new BasicGameController();
         }
     }

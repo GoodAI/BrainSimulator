@@ -18,8 +18,6 @@ namespace Render.RenderRequests.AgentRenderRequests
         public virtual float Position { get; set; }
         public virtual float Resolution { get; set; }
 
-        public virtual float MemAddress { get; set; }
-
         #endregion
     }
 }
