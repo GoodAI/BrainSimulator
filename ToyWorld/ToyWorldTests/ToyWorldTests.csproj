@@ -39,6 +39,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
@@ -83,6 +84,8 @@
     </Compile>
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />
+    <Compile Include="World\AtlasTests.cs" />
+    <Compile Include="World\MapLoaderTest.cs" />
     <Compile Include="World\WallsTests.cs" />
   </ItemGroup>
   <ItemGroup>

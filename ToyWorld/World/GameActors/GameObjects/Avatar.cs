@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using GoodAI.ToyWorld.Control;
 
-namespace World
+namespace World.GameActors.GameObjects
 {
-    public class Atlas
+    class Avatar : Character
     {
-        public System.Collections.Generic.List<ITileLayer> SortedLayers
+        public override string Name
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        internal List<IAvatarAction> AvatarActions
         {
             get
             {
@@ -18,7 +22,7 @@ namespace World
             }
         }
 
-        public List<ITileLayer> NamedLayers
+        internal IUsable Tool
         {
             get
             {

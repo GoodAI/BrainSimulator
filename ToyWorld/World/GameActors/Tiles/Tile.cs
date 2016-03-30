@@ -14,6 +14,5 @@
             get { return m_tileType; }
             protected set { m_tileType = value; }
         }
-
     }
 }

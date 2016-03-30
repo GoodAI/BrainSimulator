@@ -1,6 +1,5 @@
 ﻿using World.GameActions;
 using World.GameActors.Tiles;
-using World.Tiles;
 using Xunit;
 
 namespace ToyWorldTests.World
@@ -10,21 +9,15 @@ namespace ToyWorldTests.World
         private readonly Wall m_wall;
         public WallsTests()
         {
-            TileSetTableParser tstp = new TileSetTableParser();
-            m_wall = new Wall(tstp);
-        }
-
-        [Fact]
-        public void TileTypeAssigned()
-        {
-            // Assert
-            Assert.True(m_wall.TileType > 0);
+            m_wall = new Wall(0);
         }
 
         [Theory]
         [InlineData(0.0f)]
         [InlineData(0.009f)]
         [InlineData(0.999f)]
+        [InlineData(1.0f)]
+        [InlineData(3.0f)]
         public void PickaxeMakesDamageWall0(float damage)
         {
             ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
@@ -32,10 +25,14 @@ namespace ToyWorldTests.World
             // Act
             var pickaxedWall = m_wall.ApplyGameAction(pickaxe);
 
-            if (damage > 0)
+            if (damage >= 1)
+            {
+                Assert.IsType(typeof(DestroyedWall), pickaxedWall);
+            }
+            else if (damage > 0)
             {
                 Assert.IsType(typeof(DamagedWall), pickaxedWall);
-                DamagedWall damagedWall = (DamagedWall) pickaxedWall;
+                DamagedWall damagedWall = (DamagedWall)pickaxedWall;
                 Assert.True(damagedWall.Health >= 1.0f - damage);
             }
             else
@@ -43,21 +40,6 @@ namespace ToyWorldTests.World
                 Assert.IsType(typeof(Wall), pickaxedWall);
             }
             
-        }
-
-
-        [Theory]
-        [InlineData(1.0f)]
-        [InlineData(2.0f)]
-        public void PickaxeMakesDestroyedWall(float damage)
-        {
-            ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
-
-            // Act
-            var pickaxedWall = m_wall.ApplyGameAction(pickaxe);
-
-            // Assert
-            Assert.IsType(typeof(DestroyedWall), pickaxedWall);
         }
 
         [Theory]

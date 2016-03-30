@@ -1,7 +1,6 @@
 ﻿using World.GameActions;
-using World.GameActors.Tiles;
 
-namespace World.Tiles
+namespace World.GameActors.Tiles
 {
     /// <summary>
     /// </summary>
@@ -14,7 +13,7 @@ namespace World.Tiles
 
     /// <summary>
     /// </summary>
-    public interface INteractable
+    public interface Interactable
     {
         /// <summary>
         ///     Method is called when something apply GameAction on it.

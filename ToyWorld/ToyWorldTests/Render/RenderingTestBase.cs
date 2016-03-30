@@ -8,7 +8,6 @@ using Render.Renderer;
 using Render.RenderRequests;
 using Render.RenderRequests.Tests;
 using Utils;
-using World.Tiles;
 using Xunit;
 
 namespace ToyWorldTests.Render

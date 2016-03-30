@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
   <Class Name="World.GameActors.Tiles.Tile">
-    <Position X="11" Y="7" Width="1.5" />
+    <Position X="10" Y="7.75" Width="1.5" />
     <Members>
       <Field Name="m_tileType" Hidden="true" />
     </Members>
@@ -10,98 +10,190 @@
       <FileName>GameActors\Tiles\Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="World.GameActor">
-    <Position X="11" Y="10.75" Width="1.5" />
+  <Class Name="World.GameActors.GameActor">
+    <Position X="10" Y="12" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameActor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.GameActors.GameObjects.GameObject">
-    <Position X="11" Y="14.25" Width="1.5" />
+    <Position X="10" Y="15.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\GameObject.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="World.AutoupdateRegister">
-    <Position X="20" Y="8.5" Width="1.75" />
+  <Class Name="World.ToyWorldCore.AutoupdateRegister">
+    <Position X="20.25" Y="9.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AutoupdateRegister.cs</FileName>
+      <FileName>ToyWorldCore\AutoupdateRegister.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="World.Atlas">
-    <Position X="15" Y="10.5" Width="1.5" />
+  <Class Name="World.ToyWorldCore.MapLoader">
+    <Position X="21" Y="11.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>ToyWorldCore\Atlas.cs</FileName>
-      <NewMemberFileName>Atlas.cs</NewMemberFileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="World.MapLoader">
-    <Position X="21" Y="10.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\MapLoader.cs</FileName>
       <NewMemberFileName>MapLoader.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.ToyWorldCore.ToyWorld">
-    <Position X="17.5" Y="10.25" Width="1.5" />
+    <Position X="16.5" Y="11.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAAgAgAAAAAIAAAAAAQAAAABAAEAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAIAAAIkAgAAAAAIAAAAAAQgAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\ToyWorld.cs</FileName>
       <NewMemberFileName>ToyWorld.cs</NewMemberFileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Atlas" />
       <Property Name="TileSetTableParser" />
-      <Property Name="MapLoader" />
       <Property Name="AutoupdateRegister" />
+      <Property Name="Atlas" />
     </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.SimpleTileLayer">
-    <Position X="14" Y="7" Width="1.5" />
+  <Class Name="World.ToyWorldCore.SimpleTileLayer">
+    <Position X="13" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
-      <FileName>SimpleTileLayer.cs</FileName>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>ToyWorldCore\SimpleTileLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.SimpleObjectLayer">
-    <Position X="14" Y="14.25" Width="1.5" />
+  <Class Name="World.ToyWorldCore.SimpleObjectLayer">
+    <Position X="13" Y="16" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
-      <FileName>SimpleObjectLayer.cs</FileName>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>ToyWorldCore\SimpleObjectLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.Tiles.TileSetTableParser">
-    <Position X="18" Y="7.75" Width="1.75" />
+  <Class Name="World.GameActors.Tiles.TilesetTable">
+    <Position X="18.25" Y="7.75" Width="1.75" />
     <Members>
       <Field Name="m_namesValuesDictionary" Hidden="true" />
-      <Method Name="ParseTable" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAgBAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\TileSetTableParser.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>GameActors\Tiles\TilesetTable.cs</FileName>
+      <NewMemberFileName>GameActors\Tiles\TileSetTable.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="World.ToyWorld.ITileLayer">
-    <Position X="14" Y="9" Width="1.5" />
+  <Class Name="World.GameActors.GameObjects.Character">
+    <Position X="10" Y="17.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameObjects\Character.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.GameObjects.Avatar">
+    <Position X="10" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAKAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameObjects\Avatar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.ToyWorldCore.Atlas">
+    <Position X="14.25" Y="11.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAAIAAoAAAAAAAAAAAAAAAAAAAAAAgAQAAAAAAAAA=</HashCode>
+      <FileName>ToyWorldCore\Atlas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Wall" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Wall.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.DamagedWall" BaseTypeListCollapsed="true">
+    <Position X="18" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Wall.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.DestroyedWall">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Wall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.StaticTile" Collapsed="true">
+    <Position X="0.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\StaticTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.DynamicTile" Collapsed="true">
+    <Position X="18" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\DynamicTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="World.ToyWorldCore.ITileLayer">
+    <Position X="13" Y="9.75" Width="1.5" />
+    <AssociationLine Name="LayerType" Type="World.ToyWorldCore.LayerType">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.11" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\ITileLayer.cs</FileName>
       <NewMemberFileName>ITileLayer.cs</NewMemberFileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="LayerType" />
+    </ShowAsAssociation>
   </Interface>
-  <Interface Name="World.IObjectLayer">
-    <Position X="14" Y="12.5" Width="1.5" />
+  <Interface Name="World.ToyWorldCore.IObjectLayer">
+    <Position X="13" Y="14.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
-      <FileName>IObjectLayer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>ToyWorldCore\IObjectLayer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="LayerType" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="World.WorldInterfaces.IWorld">
+    <Position X="15.5" Y="9.75" Width="1.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WorldInterfaces\IWorld.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="World.GameActors.Tiles.Interactable">
+    <Position X="8" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.IAutoupdateable">
+    <Position X="6.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="World.ToyWorldCore.LayerType">
+    <Position X="12" Y="11.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgABACAAAAAAAAIgAAAAAAAgAAIAAAAAAAAgAAgAAAA=</HashCode>
+      <FileName>ToyWorldCore\LayerType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

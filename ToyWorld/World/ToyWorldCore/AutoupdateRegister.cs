@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using World.GameActors.Tiles;
 
-namespace World
+namespace World.ToyWorldCore
 {
     public class AutoupdateRegister
     {

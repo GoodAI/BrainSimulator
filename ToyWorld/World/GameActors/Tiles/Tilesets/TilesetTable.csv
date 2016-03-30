@@ -1,4 +1,4 @@
-Tiles;Values
-Wall;1
+NameOfTile;PositionInTileset
+Wall;256
 DestroyedWall;2
 DamagedWall;3

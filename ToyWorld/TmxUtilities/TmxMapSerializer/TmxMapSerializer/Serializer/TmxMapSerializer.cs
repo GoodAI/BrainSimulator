@@ -3,9 +3,9 @@ using TmxMapSerializer.Elements;
 
 namespace TmxMapSerializer.Serializer
 {
-    public class TmxMapSerializer : XmlSerializer
+    public class TmxSerializer : XmlSerializer
     {
-        public TmxMapSerializer() : base(typeof (Map))
+        public TmxSerializer() : base(typeof (Map))
         {
         }
     }

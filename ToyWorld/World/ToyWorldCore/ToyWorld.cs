@@ -1,65 +1,52 @@
 ﻿using System;
-using World.Tiles;
+using World.GameActors.Tiles;
+using World.WorldInterfaces;
 
 namespace World.ToyWorldCore
 {
-    public class ToyWorld
+    public class ToyWorld : IWorld
     {
+        public ToyWorld(string tmxMapFile, string tileTable = @"GameActors\Tiles\Tilesets\TilesetTable.csv")
+        {
+            AutoupdateRegister = new AutoupdateRegister();
+            MapLoader mapLoader = new MapLoader();
+            var loadedMap = mapLoader.LoadMap(tmxMapFile, new TilesetTable(tileTable));
+        }
 
         private IPhysics Physics { get; set; }
 
-        public World.Atlas Atlas
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        public TilesetTable TileSetTableParser { get; private set; }
 
-        public World.Tiles.TileSetTableParser TileSetTableParser
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        public AutoupdateRegister AutoupdateRegister { get; private set; }
 
-        public World.MapLoader MapLoader
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        public Atlas Atlas { get; private set; }
 
-        public World.AutoupdateRegister AutoupdateRegister
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
-
-        private void Autoupdate()
+        private void UpdatePhysics()
         {
             throw new NotImplementedException();
         }
 
-        private void MoveObjects()
+        private void UpdateCharacters()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
+        }
+
+        private void UpdateAvatars()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Update()
+        {
+            UpdateTiles();
+            UpdateAvatars();
+            UpdateCharacters();
+            UpdatePhysics();
+        }
+
+        private void UpdateTiles()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

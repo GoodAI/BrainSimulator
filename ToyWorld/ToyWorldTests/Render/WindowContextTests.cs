@@ -11,7 +11,6 @@ using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderRequests;
 using Utils;
-using World.Tiles;
 using Xunit;
 
 namespace ToyWorldTests.Render

@@ -1,44 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using World.ToyWorld;
+using World.GameActors.Tiles;
 
-namespace World
+namespace World.ToyWorldCore
 {
     public class Atlas
     {
-        public System.Collections.Generic.List<ITileLayer> SortedLayers
+        public Atlas()
         {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
+            TileLayers = new List<ITileLayer>();
+            ObjectLayers = new List<IObjectLayer>();
+            StaticTilesContainer = new Dictionary<int, StaticTile>();
         }
 
-        public List<ITileLayer> NamedLayers
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        public List<ITileLayer> TileLayers { get; private set; }
 
-        public List<IObjectLayer> ObjectLayers
+        public List<IObjectLayer> ObjectLayers { get; private set; }
+
+        public IObjectLayer Avatars { get; set; }
+
+        public IObjectLayer Characters { get; set; }
+
+        public Dictionary<int, StaticTile> StaticTilesContainer { get; set; }
+
+        public object GetLayer(LayerType layerType)
         {
-            get
+            if (layerType == LayerType.Object 
+                || layerType == LayerType.ForegroundObject)
             {
-                throw new System.NotImplementedException();
+                return ObjectLayers.First(x => x.LayerType == layerType);
             }
-            set
-            {
-            }
+            return TileLayers.First(x => x.LayerType == layerType);
         }
     }
 }

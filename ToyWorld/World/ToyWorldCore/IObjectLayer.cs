@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using VRageMath;
 using World.GameActors.GameObjects;
 
-namespace World
+namespace World.ToyWorldCore
 {
     public interface IObjectLayer
     {
+        LayerType LayerType { get; set; }
+
         List<GameObject> GetGameObjects(VRageMath.RectangleF rectangle);
     }
 }
