@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="World.GameActors.Tiles.Tile">
+    <Position X="11" Y="8" Width="1.5" />
+    <Members>
+      <Field Name="m_tileType" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAACAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Tile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActor">
+    <Position X="11" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.GameObjects.GameObject">
+    <Position X="11" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameObjects\GameObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.AutoupdateRegister">
+    <Position X="20" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AutoupdateRegister.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.Atlas">
+    <Position X="15" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>ToyWorldCore\Atlas.cs</FileName>
+      <NewMemberFileName>Atlas.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.MapLoader">
+    <Position X="21" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ToyWorldCore\MapLoader.cs</FileName>
+      <NewMemberFileName>MapLoader.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.ToyWorldCore.ToyWorld">
+    <Position X="17.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAIAAAAAAAAAAABAAEAAAAAAAAA=</HashCode>
+      <FileName>ToyWorldCore\ToyWorld.cs</FileName>
+      <NewMemberFileName>ToyWorld.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="World.ToyWorld.ITileLayer">
+    <Position X="14" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ToyWorldCore\ITileLayer.cs</FileName>
+      <NewMemberFileName>ITileLayer.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.IObjectLayer">
+    <Position X="14" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>IObjectLayer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

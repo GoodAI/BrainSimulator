@@ -1,21 +1,27 @@
 ﻿using System;
 using World.GameActions;
+using World.Tiles;
 
-namespace World.Tiles
+namespace World.GameActors.Tiles
 {
     /// <summary>
-    /// Wall can be transformed to DamagedWall if pickaxe is used
+    ///     Wall can be transformed to DamagedWall if pickaxe is used
     /// </summary>
-    public class Wall : StaticTile, Interactable
+    public class Wall : StaticTile, INteractable
     {
-        public AbstractTile ApplyGameAction(GameAction gameAction)
+        public Wall(TileSetTableParser tileSetTableParser)
+        {
+            TileType = tileSetTableParser.TileNumber("Wall");
+        }
+
+        public Tile ApplyGameAction(GameAction gameAction)
         {
             if (gameAction is ToUsePickaxe)
             {
-                var toUsePickaxe = ((ToUsePickaxe) gameAction);
+                var toUsePickaxe = (ToUsePickaxe) gameAction;
                 if (Math.Abs(toUsePickaxe.Damage) < 0.00001f)
                 {
-                    return null;
+                    return this;
                 }
                 if (toUsePickaxe.Damage >= 1.0f)
                 {
@@ -23,23 +29,16 @@ namespace World.Tiles
                 }
                 return new DamagedWall((gameAction as ToUsePickaxe).Damage);
             }
-            return null;
-        }
-
-        public override string Name
-        {
-            get { return "Wall"; }
+            return this;
         }
     }
 
     /// <summary>
-    /// DamagedWall has health from (0,1) excl. If health leq 0, it is replaced by DestroyedWall.
-    /// Only way how to make damage is to use pickaxe.
+    ///     DamagedWall has health from (0,1) excl. If health leq 0, it is replaced by DestroyedWall.
+    ///     Only way how to make damage is to use pickaxe.
     /// </summary>
-    public class DamagedWall : DynamicTile, Interactable
+    public class DamagedWall : DynamicTile, INteractable
     {
-        public float Health { get; private set; }
-
         private DamagedWall()
         {
             Health = 1f;
@@ -50,7 +49,9 @@ namespace World.Tiles
             Health -= damage;
         }
 
-        public AbstractTile ApplyGameAction(GameAction gameAction)
+        public float Health { get; private set; }
+
+        public Tile ApplyGameAction(GameAction gameAction)
         {
             if (gameAction is ToUsePickaxe)
             {
@@ -61,29 +62,17 @@ namespace World.Tiles
             {
                 return new DestroyedWall();
             }
-            return null;
-        }
-
-        public override string Name
-        {
-            get { return "DamagedWall"; }
+            return this;
         }
     }
 
     /// <summary>
-    /// 
     /// </summary>
     public class DestroyedWall : StaticTile
     {
-        public AbstractTile TransformTo(GameAction gameAction)
+        public Tile TransformTo(GameAction gameAction)
         {
-            return null;
-        }
-
-        public override string Name
-        {
-            get { return "DestroyedWall"; }
+            return this;
         }
     }
 }
-

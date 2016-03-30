@@ -1,11 +1,11 @@
 ﻿using World.GameActions;
+using World.GameActors.Tiles;
 
 namespace World.Tiles
 {
     /// <summary>
-    /// 
     /// </summary>
-    public interface Autoupdateable
+    public interface IAutoupdateable
     {
         void RegisterForUpdate();
 
@@ -13,13 +13,12 @@ namespace World.Tiles
     }
 
     /// <summary>
-    /// 
     /// </summary>
-    public interface Interactable
+    public interface INteractable
     {
         /// <summary>
-        /// Method is called when something apply GameAction on it.
+        ///     Method is called when something apply GameAction on it.
         /// </summary>
-        AbstractTile ApplyGameAction(GameAction gameAction);
+        Tile ApplyGameAction(GameAction gameAction);
     }
 }

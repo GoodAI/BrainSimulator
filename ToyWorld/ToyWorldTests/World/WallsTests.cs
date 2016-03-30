@@ -1,4 +1,5 @@
 ﻿using World.GameActions;
+using World.GameActors.Tiles;
 using World.Tiles;
 using Xunit;
 
@@ -6,77 +7,82 @@ namespace ToyWorldTests.World
 {
     public class WallsTests
     {
-        [Fact]
-        public void CreatingTile()
+        private readonly Wall m_wall;
+        public WallsTests()
         {
-            // Arrange
-            Wall wall = new Wall();
-
-            // Assert
-            Assert.True(wall.TileType > 0);
+            TileSetTableParser tstp = new TileSetTableParser();
+            m_wall = new Wall(tstp);
         }
 
         [Fact]
-        public void PickaxeMakesDamageWall0()
+        public void TileTypeAssigned()
         {
-            // Arrange
-            Wall wall = new Wall();
-            ToUsePickaxe pickaxe = new ToUsePickaxe {Damage = 0.009f};
-
-            // Act
-            var pickaxedWall = wall.ApplyGameAction(pickaxe);
-
             // Assert
-            Assert.IsType(typeof (DamagedWall), pickaxedWall);
-
-            DamagedWall damagedWall = (DamagedWall) pickaxedWall;
-            Assert.True(damagedWall.Health >= 0.99f);
+            Assert.True(m_wall.TileType > 0);
         }
 
-        [Fact]
-        public void PickaxeMakesDamageWall1()
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(0.009f)]
+        [InlineData(0.999f)]
+        public void PickaxeMakesDamageWall0(float damage)
         {
-            // Arrange
-            Wall wall = new Wall();
-            ToUsePickaxe pickaxe = new ToUsePickaxe {Damage = 0.999f};
+            ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
 
             // Act
-            var pickaxedWall = wall.ApplyGameAction(pickaxe);
+            var pickaxedWall = m_wall.ApplyGameAction(pickaxe);
 
-            // Assert
-            Assert.IsType(typeof(DamagedWall), pickaxedWall);
-
-            DamagedWall damagedWall = (DamagedWall)pickaxedWall;
-            Assert.True(damagedWall.Health <= 0.01f);
+            if (damage > 0)
+            {
+                Assert.IsType(typeof(DamagedWall), pickaxedWall);
+                DamagedWall damagedWall = (DamagedWall) pickaxedWall;
+                Assert.True(damagedWall.Health >= 1.0f - damage);
+            }
+            else
+            {
+                Assert.IsType(typeof(Wall), pickaxedWall);
+            }
+            
         }
 
 
-        [Fact]
-        public void PickaxeMakesDestroyedWall0()
+        [Theory]
+        [InlineData(1.0f)]
+        [InlineData(2.0f)]
+        public void PickaxeMakesDestroyedWall(float damage)
         {
-            // Arrange
-            Wall wall = new Wall();
-            ToUsePickaxe pickaxe = new ToUsePickaxe {Damage = 1.0f};
+            ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
 
             // Act
-            var pickaxedWall = wall.ApplyGameAction(pickaxe);
+            var pickaxedWall = m_wall.ApplyGameAction(pickaxe);
 
             // Assert
             Assert.IsType(typeof(DestroyedWall), pickaxedWall);
         }
 
-        [Fact]
-        public void PickaxeMakesDestroyedWall1()
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(0.3f)]
+        [InlineData(0.5f)]
+        [InlineData(1.0f)]
+        public void PickaxeMakesDestroyedWallFromDamagedWall(float damage)
         {
-            // Arrange
-            Wall wall = new Wall();
-            ToUsePickaxe pickaxe = new ToUsePickaxe {Damage = 1.8f};
-
-            // Act
-            var pickaxedWall = wall.ApplyGameAction(pickaxe);
-
+            float initialDamage = 0.5f;
             // Assert
-            Assert.IsType(typeof(DestroyedWall), pickaxedWall);
+            ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
+
+            DamagedWall damagedWall = new DamagedWall(initialDamage);
+            Tile pickaxedWall = damagedWall.ApplyGameAction(pickaxe);
+
+
+            if (damage + initialDamage >= 1)
+            {
+                Assert.IsType(typeof (DestroyedWall), pickaxedWall);
+            }
+            else
+            {
+                Assert.IsType(typeof(DamagedWall), pickaxedWall);
+            }
         }
     }
 }

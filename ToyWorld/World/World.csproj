@@ -44,13 +44,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoupdateRegister.cs" />
+    <Compile Include="GameActors\Tiles\DynamicTile.cs" />
+    <Compile Include="GameActors\GameActor.cs" />
+    <Compile Include="IObjectLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tiles\AbstractTile.cs" />
+    <Compile Include="GameActors\Tiles\Tile.cs" />
     <Compile Include="GameActions\GameActions.cs" />
-    <Compile Include="Tiles\GameObject.cs" />
-    <Compile Include="Tiles\TileInterfaces.cs" />
-    <Compile Include="Tiles\TileSetTableParser.cs" />
-    <Compile Include="Tiles\Wall.cs" />
+    <Compile Include="GameActors\GameObjects\GameObject.cs" />
+    <Compile Include="GameActors\Tiles\TileInterfaces.cs" />
+    <Compile Include="GameActors\Tiles\TileSetTableParser.cs" />
+    <Compile Include="GameActors\Tiles\Wall.cs" />
+    <Compile Include="GameActors\Tiles\StaticTile.cs" />
+    <Compile Include="ToyWorldCore\Atlas.cs" />
+    <Compile Include="ToyWorldCore\ITileLayer.cs" />
+    <Compile Include="ToyWorldCore\MapLoader.cs" />
+    <Compile Include="ToyWorldCore\ToyWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Physics\Physics.csproj">
@@ -67,8 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagramToyWorld.cd" />
     <None Include="packages.config" />
-    <None Include="Tiles\Tilesets\TilesetTable.csv">
+    <None Include="GameActors\Tiles\Tilesets\TilesetTable.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
