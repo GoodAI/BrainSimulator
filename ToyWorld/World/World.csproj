@@ -56,6 +56,8 @@
     <Compile Include="GameActors\Tiles\TileSetTableParser.cs" />
     <Compile Include="GameActors\Tiles\Wall.cs" />
     <Compile Include="GameActors\Tiles\StaticTile.cs" />
+    <Compile Include="SimpleObjectLayer.cs" />
+    <Compile Include="SimpleTileLayer.cs" />
     <Compile Include="ToyWorldCore\Atlas.cs" />
     <Compile Include="ToyWorldCore\ITileLayer.cs" />
     <Compile Include="ToyWorldCore\MapLoader.cs" />

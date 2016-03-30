@@ -5,6 +5,6 @@ namespace World.ToyWorld
 {
     public interface ITileLayer
     {
-        Tile GetTile();
+        Tile GetTile(int x, int y);
     }
 }
