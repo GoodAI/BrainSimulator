@@ -9,36 +9,40 @@ using Xunit;
 
 namespace ToyWorldTests.Game
 {
-    public class ControllerTests
+    public class ControllerTests : IDisposable
     {
-        public static IGameController GetTestController()
-        {
-            var gc = ControllerFactory.GetController();
-            gc.Init(null);
+        private IGameController m_gc;
 
-            return gc;
+
+        public ControllerTests()
+        {
+            m_gc = ControllerFactory.GetController();
+            m_gc.Init(null);
+        }
+
+        public void Dispose()
+        {
+            m_gc.Dispose();
+            m_gc = null;
         }
 
 
         [Fact]
         public void BasicSetup()
         {
-            var gc = GetTestController();
-            Assert.NotNull(gc);
+            Assert.NotNull(m_gc);
 
-            gc.RegisterRenderRequest<IRRTest>();
-            gc.RegisterAvatarRenderRequest<IARRTest>(0);
+            m_gc.RegisterRenderRequest<IRRTest>();
+            m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
 
-            gc.Dispose();
+            m_gc.GetAvatarController(0);
         }
 
         [Fact]
         public void ControllerNotImplementedThrows()
         {
-            var gc = GetTestController();
-
-            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)gc.RegisterRenderRequest<INotImplementedRR>);
-            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => gc.RegisterAvatarRenderRequest<INotImplementedARR>(0));
+            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)m_gc.RegisterRenderRequest<INotImplementedRR>);
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => m_gc.RegisterAvatarRenderRequest<INotImplementedARR>(0));
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             // var ac = gc.GetAvatarController(0);
@@ -47,32 +51,26 @@ namespace ToyWorldTests.Game
         [Fact]
         public void RenderNotNull()
         {
-            var gc = GetTestController();
-
-            var gcBase = gc as GameControllerBase;
+            var gcBase = m_gc as GameControllerBase;
             Assert.NotNull(gcBase);
             Assert.NotNull(gcBase.Renderer);
             Assert.NotNull(gcBase.Renderer.Window);
             Assert.NotNull(gcBase.Renderer.Context);
-
-            gc.Dispose();
         }
 
         [Fact]
         public void GameNotNull()
         {
-            // TODO
+            // TODO: test world stuff for existence
         }
 
         [Fact]
         public void DoStep()
         {
-            var gc = GetTestController();
+            m_gc.MakeStep();
+            m_gc.MakeStep();
 
-            gc.MakeStep();
-            gc.MakeStep();
-
-            gc.Dispose();
+            m_gc.Dispose();
         }
     }
 }

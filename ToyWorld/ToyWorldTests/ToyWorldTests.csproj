@@ -79,9 +79,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\RenderRequestTests.cs" />
     <Compile Include="Render\GeometryTests.cs" />
-    <Compile Include="Render\WindowContextTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />
     <Compile Include="World\AtlasTests.cs" />

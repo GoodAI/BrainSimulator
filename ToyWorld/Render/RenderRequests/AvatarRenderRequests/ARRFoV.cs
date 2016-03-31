@@ -18,9 +18,16 @@ namespace Render.RenderRequests.AvatarRenderRequests
             : base(avatarID)
         { }
 
+
         #region IAvatarRenderRequestFoV overrides
 
         public uint[] Image { get; protected set; }
+
+        #endregion
+
+        #region AvatarRenderRequestBase overrides
+
+        public override float Size { get { return Image.Length; } }
 
         #endregion
 
@@ -63,6 +70,5 @@ namespace Render.RenderRequests.AvatarRenderRequests
         }
 
         #endregion
-
     }
 }

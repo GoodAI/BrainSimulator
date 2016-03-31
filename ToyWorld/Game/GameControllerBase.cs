@@ -23,7 +23,8 @@ namespace Game
 
         public virtual void Dispose()
         {
-            Renderer.Dispose();
+            if (Renderer != null)
+                Renderer.Dispose();
             Renderer = null;
         }
 
@@ -40,7 +41,9 @@ namespace Game
         }
 
         public virtual void Reset()
-        { }
+        {
+            // TODO: Semantics of Reset? What should it do?
+        }
 
 
         public virtual void MakeStep()
