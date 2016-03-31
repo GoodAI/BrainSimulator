@@ -14,7 +14,7 @@ namespace Render.RenderObjects.Geometries
         public override void Draw()
         {
             GL.BindVertexArray(Vao.Handle);
-            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            // GL.DrawArrays(PrimitiveType.Quads, 0, 4);
             GL.BindVertexArray(0);
         }
     }

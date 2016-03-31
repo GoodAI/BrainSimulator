@@ -54,6 +54,12 @@ namespace Render.Renderer
 
         public virtual void CreateWindow(string title, int width, int height)
         {
+            if (Window != null)
+            {
+                Window.Close();
+                Window.Dispose();
+            }
+
             Window = new NativeWindow(width, height, title, GameWindowFlags.Default, GraphicsMode.Default, DisplayDevice.Default);
             Window.Resize += WindowOnResize;
         }
@@ -85,6 +91,7 @@ namespace Render.Renderer
 
         public virtual void Reset()
         {
+            Dispose();
             Init();
         }
 

@@ -28,7 +28,7 @@ namespace ToyWorldTests.Game
 
 
         [Fact]
-        public void BasicSetup()
+        public void Init()
         {
             Assert.NotNull(m_gc);
 
@@ -36,6 +36,8 @@ namespace ToyWorldTests.Game
             m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
 
             m_gc.GetAvatarController(0);
+
+            m_gc.Reset();
         }
 
         [Fact]
@@ -54,8 +56,6 @@ namespace ToyWorldTests.Game
             var gcBase = m_gc as GameControllerBase;
             Assert.NotNull(gcBase);
             Assert.NotNull(gcBase.Renderer);
-            Assert.NotNull(gcBase.Renderer.Window);
-            Assert.NotNull(gcBase.Renderer.Context);
         }
 
         [Fact]
@@ -67,10 +67,11 @@ namespace ToyWorldTests.Game
         [Fact]
         public void DoStep()
         {
-            m_gc.MakeStep();
-            m_gc.MakeStep();
+            m_gc.RegisterRenderRequest<IRRTest>();
+            m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
 
-            m_gc.Dispose();
+            m_gc.MakeStep();
+            m_gc.MakeStep();
         }
     }
 }

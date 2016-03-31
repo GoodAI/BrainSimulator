@@ -5,7 +5,6 @@ namespace Render.RenderRequests.Tests
 {
     public interface IRRTest : IRenderRequest
     {
-        Key WindowKeypressResult { get; }
         float MemAddress { get; set; }
     }
 }

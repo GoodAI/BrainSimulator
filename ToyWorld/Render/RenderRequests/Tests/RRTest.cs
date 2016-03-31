@@ -20,9 +20,7 @@ namespace Render.RenderRequests.Tests
 
 
         public RRTest()
-        {
-            WindowKeypressResult = default(Key);
-        }
+        { }
 
         public override void Dispose()
         {
@@ -32,9 +30,8 @@ namespace Render.RenderRequests.Tests
             m_sq.Dispose();
         }
 
-        #region IRRTest overrides
 
-        public Key WindowKeypressResult { get; private set; }
+        #region IRRTest overrides
 
         public float MemAddress { get; set; }
 
@@ -48,9 +45,7 @@ namespace Render.RenderRequests.Tests
 
             m_sq.Init();
 
-            renderer.Window.KeyDown += (sender, args) => WindowKeypressResult = args.Key;
             renderer.Window.Visible = true;
-
 
             // Init shaders
             int vert = LoadShader("Render.Shaders.Basic.vert", ShaderType.VertexShader);
@@ -90,12 +85,6 @@ namespace Render.RenderRequests.Tests
 
         public override void Draw(RendererBase renderer)
         {
-            DrawInternal(renderer);
-            HandleWindow(renderer);
-        }
-
-        void DrawInternal(RendererBase renderer)
-        {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             Matrix4 m;
@@ -109,11 +98,6 @@ namespace Render.RenderRequests.Tests
             m_sq.Draw();
 
             renderer.Context.SwapBuffers();
-        }
-
-        void HandleWindow(RendererBase renderer)
-        {
-            renderer.Window.ProcessEvents();
         }
 
         #endregion

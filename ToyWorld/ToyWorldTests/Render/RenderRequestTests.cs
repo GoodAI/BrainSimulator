@@ -72,13 +72,16 @@ namespace ToyWorldTests.Render
             }
         }
 
-        //[Fact(Skip = "Manual input needed")]
         [Fact]
         public void AvatarFoV()
         {
             var RRTest = m_gc.RegisterAvatarRenderRequest<IAvatarRenderRequestFoV>(0);
             Assert.NotEmpty(RRTest.Image);
 
+            Assert.Equal(RRTest.Size, RRTest.Image.Length);
+
+            m_gc.MakeStep();
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0xFFFFFF00);
             m_gc.MakeStep();
             Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0xFFFFFF00);
         }

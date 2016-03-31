@@ -35,9 +35,9 @@ namespace Game
         {
             // TODO: world
 
-            Renderer.CreateWindow("TestGameWindow", 1024, 768);
-            Renderer.CreateContext();
             Renderer.Init();
+            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
+            Renderer.CreateContext();
         }
 
         public virtual void Reset()
