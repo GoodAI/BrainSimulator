@@ -26,6 +26,11 @@
                     <File Id="fil739D9F2A096FFCB4C98E718B1042A69B" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\DiscreteQLearning\QLearning-tictactoe.brain" />
                 </Component>
             </Directory>
+            <Directory Id="dirBADA4BE71F2902955772FAF0E9D1FD38" Name="Evolution">
+                <Component Id="cmp800D64A34E50D323B6C235035DE68ABE" Guid="*">
+                    <File Id="fil59CC94EFD1BAA2A24196FEF8F094DB76" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\Evolution\GeneticWorld3DPendulum.brainz" />
+                </Component>
+            </Directory>
             <Directory Id="dirC21AC6ABED4247F914CC78CA4E770F5A" Name="LoopGroup">
                 <Component Id="cmpBD208791779066A68798A76D376AEC60" Guid="*">
                     <File Id="filABDAEA229203828DD7A4C184B50068A3" KeyPath="yes" Source="!(wix.ExamplesSourceDirectory)\LoopGroup\loopGroupExample.brain" />
@@ -673,12 +678,33 @@
             
             
             
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             <ComponentRef Id="cmpB3950B6F7A40D606C5ED201178706F7D" />
             <ComponentRef Id="cmpFEEC811D129763489B81AEA418C95DC2" />
             <ComponentRef Id="cmp883C4353E68A38504B672E2E2737D43F" />
             <ComponentRef Id="cmp2F8B26F085F8BB6BA908261E003FF0F7" />
             <ComponentRef Id="cmpA436E6AF221DE467EB618350535250DA" />
             <ComponentRef Id="cmp57A4A04B466AC37E2D9B22BAC9960ACC" />
+            <ComponentRef Id="cmp800D64A34E50D323B6C235035DE68ABE" />
             <ComponentRef Id="cmpBD208791779066A68798A76D376AEC60" />
             <ComponentRef Id="cmpE40C9FCBAA9186256344C4AF8A501982" />
             <ComponentRef Id="cmp255094FFA9E98BEFE25F6D6CFD782030" />
