@@ -7,7 +7,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderRequests;
-using Render.RenderRequests.AgentRenderRequests;
+using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
 using VRage.Collections;
 
@@ -107,6 +107,8 @@ namespace Render.Renderer
         public virtual void ProcessRequests()
         {
             Debug.Assert(Context != null);
+
+            Window.ProcessEvents();
 
             if (!Context.IsCurrent)
                 Context.MakeCurrent(Window.WindowInfo);

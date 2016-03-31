@@ -10,9 +10,7 @@ namespace Render.RenderRequests
         { }
 
 
-        public virtual void Init(IRenderer renderer)
-        { }
-        
+        public abstract void Init(IRenderer renderer);
         public abstract void Draw(RendererBase renderer);
     }
 }

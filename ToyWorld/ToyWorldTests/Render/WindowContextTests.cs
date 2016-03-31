@@ -10,12 +10,13 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderRequests;
+using ToyWorldTests.Game;
 using Utils;
 using Xunit;
 
 namespace ToyWorldTests.Render
 {
-    public class WindowContextTests : RenderingTestBase
+    public class WindowContextTests
     {
         [Fact]
         public void CheckRRInits()
@@ -39,13 +40,13 @@ namespace ToyWorldTests.Render
             }
         }
 
-        [Fact(Skip = "Manual input needed")]
-        //[Fact]
+        //[Fact(Skip = "Manual input needed")]
+        [Fact]
         public void CreateRenderWindowAndContext()
         {
-            var res = ManualDebugDraw("CreateRenderWindowAndContext");
+            var gc = ControllerTests.GetTestController();
 
-            var k = res;
+            gc.RegisterAvatarRenderRequest<IAvatarRenderRequestFoV>(0);
         }
     }
 }

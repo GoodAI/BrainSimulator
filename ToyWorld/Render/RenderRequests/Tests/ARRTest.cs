@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
-using Render.RenderRequests.AgentRenderRequests;
+using Render.RenderRequests.AvatarRenderRequests;
 
 namespace Render.RenderRequests.Tests
 {

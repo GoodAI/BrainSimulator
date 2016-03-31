@@ -61,12 +61,12 @@ namespace Game
             return rr;
         }
 
-        public virtual T RegisterAgentRenderRequest<T>(int avatarID)
+        public virtual T RegisterAvatarRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest
         {
             // TODO: check agentID or make the param an AgentController?
 
-            var rr = RenderRequestFactory.CreateAgentRenderRequest<T>(avatarID);
+            var rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarID);
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
 
@@ -79,7 +79,7 @@ namespace Game
             var rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
 
             if (rrBase == null)
-                throw new ArgumentException(string.Format("Incorrect type argument; the type {0} is not registered for use in this version.", typeof(T).Name));
+                throw new RenderRequestNotImplementedException(string.Format("Incorrect type argument; the type {0} is not registered for use in this controller version.", typeof(T).Name));
 
             rrBase.Init(Renderer);
         }

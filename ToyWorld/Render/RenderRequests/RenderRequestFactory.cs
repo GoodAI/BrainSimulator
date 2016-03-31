@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GoodAI.ToyWorld.Control;
+using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
 using Render.RenderRequests.Tests;
 
@@ -19,9 +20,12 @@ namespace Render.RenderRequests
 
         static RenderRequestFactory()
         {
+            // RenderRequests
             RRSwitch.Case<IRRTest>(() => new RRTest());
 
+            // AvatarRenderRequests
             ARRSwitch.Case<IARRTest>(id => new ARRTest(id));
+            ARRSwitch.Case<IAvatarRenderRequestFoV>(id => new ARRFoV(id));
         }
 
 
@@ -33,10 +37,10 @@ namespace Render.RenderRequests
             return RRSwitch.Switch<T>();
         }
 
-        public static T CreateAgentRenderRequest<T>(int agentID)
+        public static T CreateAvatarRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest // unf cannot constrain T to be an interface, only a class
         {
-            return ARRSwitch.Switch<T>(agentID);
+            return ARRSwitch.Switch<T>(avatarID);
         }
 
 
@@ -70,7 +74,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private class TypeSwitch<TKey> : TypeSwitchBase<TKey, Func<TKey>>
+        private sealed class TypeSwitch<TKey> : TypeSwitchBase<TKey, Func<TKey>>
         {
             public TRet Switch<TRet>()
                 where TRet : class, TKey
@@ -84,7 +88,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private class TypeSwitchParam<TKey> : TypeSwitchBase<TKey, Func<int, TKey>>
+        private sealed class TypeSwitchParam<TKey> : TypeSwitchBase<TKey, Func<int, TKey>>
         {
             public TRet Switch<TRet>(int id)
                 where TRet : class, TKey

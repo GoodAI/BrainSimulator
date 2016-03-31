@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
 using Render.RenderRequests;
@@ -10,56 +11,68 @@ namespace ToyWorldTests.Game
 {
     public class ControllerTests
     {
-        public IGameController GetTestController()
+        public static IGameController GetTestController()
         {
             var gc = ControllerFactory.GetController();
             gc.Init(null);
-
-            gc.RegisterRenderRequest<IRRTest>();
-            gc.RegisterAgentRenderRequest<IARRTest>(0);
-
-            gc.GetAvatarController(0);
 
             return gc;
         }
 
 
         [Fact]
-        public void SetupController()
+        public void BasicSetup()
         {
-            IGameController gc = null;
-
-            try
-            {
-                gc = GetTestController();
-            }
-            catch (Exception)
-            {
-                Assert.False(true);
-            }
-
+            var gc = GetTestController();
             Assert.NotNull(gc);
+
+            gc.RegisterRenderRequest<IRRTest>();
+            gc.RegisterAvatarRenderRequest<IARRTest>(0);
+
             gc.Dispose();
         }
 
-        //[Fact(Skip = "Still requiring manual input -- should change later")]
+        [Fact]
+        public void ControllerNotImplementedThrows()
+        {
+            var gc = GetTestController();
+
+            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)gc.RegisterRenderRequest<INotImplementedRR>);
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => gc.RegisterAvatarRenderRequest<INotImplementedARR>(0));
+
+            // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
+            // var ac = gc.GetAvatarController(0);
+        }
+
+        [Fact]
+        public void RenderNotNull()
+        {
+            var gc = GetTestController();
+
+            var gcBase = gc as GameControllerBase;
+            Assert.NotNull(gcBase);
+            Assert.NotNull(gcBase.Renderer);
+            Assert.NotNull(gcBase.Renderer.Window);
+            Assert.NotNull(gcBase.Renderer.Context);
+
+            gc.Dispose();
+        }
+
+        [Fact]
+        public void GameNotNull()
+        {
+            // TODO
+        }
+
         [Fact]
         public void DoStep()
         {
             var gc = GetTestController();
 
-            try
-            {
-                gc.MakeStep();
-            }
-            catch (Exception)
-            {
-                Assert.False(true);
-            }
-            finally
-            {
-                gc.Dispose();
-            }
+            gc.MakeStep();
+            gc.MakeStep();
+
+            gc.Dispose();
         }
     }
 }

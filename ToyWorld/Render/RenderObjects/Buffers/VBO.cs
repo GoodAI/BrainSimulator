@@ -10,15 +10,15 @@ namespace Render.Geometries.Buffers
         public int Count { get; private set; }
 
         public BufferTarget Target { get; private set; }
-        public int Size { get; private set; }
+        public int ElementSize { get; private set; }
 
 
         #region Creation/destruction
 
-        public VBO(int count, float[] initData = null, int size = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+        public VBO(int count, float[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
         {
             Target = target;
-            Size = size;
+            ElementSize = elementSize;
             Init(count, initData, hint);
         }
 

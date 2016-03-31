@@ -27,6 +27,9 @@ namespace VRage.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
+            if (m_head == m_tail)
+                yield break;
+
             if (m_head < m_tail)
             {
                 for (int i = m_head; i < m_tail; i++)

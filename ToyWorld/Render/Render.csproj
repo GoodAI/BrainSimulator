@@ -46,7 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Renderer\RendererBase.cs" />
-    <Compile Include="RenderRequests\AgentRenderRequests\AvatarRenderRequestBase.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\ARRFoV.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRenderRequestBase.cs" />
+    <Compile Include="RenderRequests\Tests\INotImplementedRRs.cs" />
     <Compile Include="RenderRequests\Tests\IARRTest.cs" />
     <Compile Include="RenderRequests\Tests\ARRTest.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />

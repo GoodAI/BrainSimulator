@@ -10,7 +10,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        float AgentID { get; }
+        float AvatarID { get; }
         /// <summary>
         /// 
         /// </summary>
@@ -28,8 +28,11 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public interface IRenderRequestFoV : IAvatarRenderRequest
+    public interface IAvatarRenderRequestFoV : IAvatarRenderRequest
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
+        uint[] Image { get; }
     }
 }

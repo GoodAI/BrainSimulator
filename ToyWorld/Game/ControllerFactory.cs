@@ -1,4 +1,5 @@
 ﻿using Game;
+using Render.Renderer;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -6,7 +7,7 @@ namespace GoodAI.ToyWorld.Control
     {
         public static IGameController GetController()
         {
-            return new BasicGameController();
+            return new BasicGameController(new GLRenderer());
         }
     }
 }

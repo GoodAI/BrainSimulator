@@ -10,17 +10,11 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
-    public class GeometryTests
+    public class RenderRequestTests
     {
-        [Fact]
-        public void BuildGeometries()
-        {
-
-        }
-
         [Fact(Skip = "Manual input needed")]
         //[Fact]
-        public void DrawBasicGeometry()
+        public void AvatarFoV()
         {
             var gc = ControllerFactory.GetController() as GameControllerBase;
             gc.Init(null);
@@ -29,21 +23,13 @@ namespace ToyWorldTests.Render
             gc.Renderer.Window.KeyDown += (sender, args) => winKeypressResult = args.Key;
             gc.Renderer.Window.Visible = true;
 
-
             var RRTest = gc.RegisterAvatarRenderRequest<IAvatarRenderRequestFoV>(0);
-            Assert.NotEmpty(RRTest.Image);
-
 
             while (winKeypressResult == default(Key))
             {
                 gc.MakeStep();
-                gc.Renderer.Context.MakeCurrent(gc.Renderer.Window.WindowInfo);
                 gc.Renderer.Context.SwapBuffers();
-                Thread.Sleep(100);
             }
-
-
-            Assert.Contains(RRTest.Image, u => u != 0xFFFFFF00 || u != 0);
 
             gc.Dispose();
 

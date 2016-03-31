@@ -52,6 +52,7 @@ namespace Render.RenderRequests.Tests
             renderer.Window.Visible = true;
 
 
+            // Init shaders
             int vert = LoadShader("Render.Shaders.Basic.vert", ShaderType.VertexShader);
             int frag = LoadShader("Render.Shaders.Basic.frag", ShaderType.FragmentShader);
 
