@@ -181,6 +181,10 @@
         <File Id='CoreDLL' Name='GoodAI.Platform.Core.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\GoodAI.Platform.Core.dll' KeyPath='yes' />
       </Component>
 
+      <Component Id='SystemCollectionsImmutableLib' Guid='*'>
+        <File Id='SystemCollectionsImmutableDLL' Name='System.Collections.Immutable.dll' DiskId='1' Source='$(var.Core.TargetPath)' KeyPath='yes' />
+      </Component>
+
       <Component Id='EULA' Guid='*'>
         <File Id='EulaRTF' Name='EULA.rtf' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\EULA.rtf' KeyPath='yes' />
       </Component>
