@@ -42,9 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="conf\nodes.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Compile Include="Control\IAvatarAction.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\GameSetup.cs" />
@@ -53,12 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\IAvatarRenderRequest.cs" />
     <Compile Include="Render\IRenderRequests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="post_build.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="conf\doc.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
