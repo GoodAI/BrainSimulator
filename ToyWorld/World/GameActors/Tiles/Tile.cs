@@ -1,18 +1,16 @@
-﻿using World.GameActions;
-
-namespace World.GameActors.Tiles
+﻿namespace World.GameActors.Tiles
 {
     /// <summary>
     ///     All tiles (objects fixed to the grid) are derived from this abstract class.
     /// </summary>
     public abstract class Tile : GameActor
     {
-        private int m_tileType = int.MinValue;
+        private int m_tileType;
 
         protected Tile(TilesetTable tilesetTable)
         {
-            string TypeName = GetType().Name;
-            m_tileType = tilesetTable.TileNumber(TypeName);
+            string typeName = GetType().Name;
+            m_tileType = tilesetTable.TileNumber(typeName);
         }
 
         protected Tile(int tileType)

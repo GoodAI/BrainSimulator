@@ -15,7 +15,7 @@ namespace World.GameActors.GameObjects
         {
             get
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
             set
             {
@@ -26,7 +26,7 @@ namespace World.GameActors.GameObjects
         {
             get
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
             set
             {

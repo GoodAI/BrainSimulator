@@ -1,6 +1,4 @@
-﻿using World.GameActions;
-
-namespace World.GameActors.Tiles
+﻿namespace World.GameActors.Tiles
 {
     class Background : StaticTile
     {

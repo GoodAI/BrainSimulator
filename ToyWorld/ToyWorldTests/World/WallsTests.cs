@@ -12,7 +12,7 @@ namespace ToyWorldTests.World
         public WallsTests()
         {
             m_wall = new Wall(0);
-            var mockTilesetTable = new Moq.Mock<TilesetTable>();
+            var mockTilesetTable = new Mock<TilesetTable>();
             mockTilesetTable.Setup(x => x.TileNumber(It.IsAny<string>())).Returns(0);
             mockTilesetTable.Setup(x => x.TileName(It.IsAny<int>())).Returns("");
             m_tilesetTable = mockTilesetTable.Object;

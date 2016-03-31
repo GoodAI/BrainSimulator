@@ -27,12 +27,12 @@ namespace World.ToyWorldCore
 
         private void UpdateCharacters()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         private void UpdateAvatars()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Update()
@@ -45,7 +45,7 @@ namespace World.ToyWorldCore
 
         private void UpdateTiles()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

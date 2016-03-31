@@ -1,8 +1,6 @@
-﻿using World.GameActions;
-
-namespace World.GameActors.Tiles
+﻿namespace World.GameActors.Tiles
 {
-    public class Path : World.GameActors.Tiles.StaticTile
+    public class Path : StaticTile
     {
         public Path(int tileType) : base(tileType)
         {
