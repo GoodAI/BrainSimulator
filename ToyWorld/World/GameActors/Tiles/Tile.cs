@@ -9,14 +9,15 @@ namespace World.GameActors.Tiles
     {
         private int m_tileType = int.MinValue;
 
-        protected Tile()
-        {
-        }
-
-        protected Tile(GameAction gameAction)
+        protected Tile(TilesetTable tilesetTable)
         {
             string TypeName = GetType().Name;
-            m_tileType = gameAction.TilesetTable.TileNumber(TypeName);
+            m_tileType = tilesetTable.TileNumber(TypeName);
+        }
+
+        protected Tile(int tileType)
+        {
+            m_tileType = tileType;
         }
 
         /// <summary>

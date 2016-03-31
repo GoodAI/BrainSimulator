@@ -59,6 +59,7 @@ namespace World.ToyWorldCore
 
         private static IObjectLayer FillObjectLayer(ObjectGroup objectLayer, LayerType layerType)
         {
+//            TODO : write loading of objects
             return new SimpleObjectLayer(layerType);
         }
 
@@ -109,7 +110,7 @@ namespace World.ToyWorldCore
                 var type = assembly.GetTypes().First(t => t.Name == className);
                 return (Tile)Activator.CreateInstance(type, tileNumber);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 return null;
 //                TODO : before release check code below is active

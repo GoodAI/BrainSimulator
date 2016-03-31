@@ -5,5 +5,8 @@
     /// </summary>
     public abstract class DynamicTile : Tile
     {
+        protected DynamicTile(TilesetTable tilesetTable) : base(tilesetTable)
+        {
+        }
     }
 }

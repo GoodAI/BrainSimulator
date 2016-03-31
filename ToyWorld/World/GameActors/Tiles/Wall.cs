@@ -13,7 +13,7 @@ namespace World.GameActors.Tiles
         {
         }
 
-        public Tile ApplyGameAction(GameAction gameAction)
+        public Tile ApplyGameAction(GameAction gameAction, TilesetTable tilesetTable)
         {
             if (gameAction is ToUsePickaxe)
             {
@@ -24,9 +24,9 @@ namespace World.GameActors.Tiles
                 }
                 if (toUsePickaxe.Damage >= 1.0f)
                 {
-                    return new DestroyedWall(gameAction);
+                    return new DestroyedWall(gameAction.TilesetTable);
                 }
-                return new DamagedWall((gameAction as ToUsePickaxe).Damage);
+                return new DamagedWall((gameAction as ToUsePickaxe).Damage, tilesetTable);
             }
             return this;
         }
@@ -38,19 +38,19 @@ namespace World.GameActors.Tiles
     /// </summary>
     public class DamagedWall : DynamicTile, IInteractable
     {
-        private DamagedWall()
+        private DamagedWall(TilesetTable tilesetTable) : base(tilesetTable)
         {
             Health = 1f;
         }
 
-        public DamagedWall(float damage) : this()
+        public DamagedWall(float damage, TilesetTable tilesetTable) : this(tilesetTable)
         {
             Health -= damage;
         }
 
         public float Health { get; private set; }
 
-        public Tile ApplyGameAction(GameAction gameAction)
+        public Tile ApplyGameAction(GameAction gameAction, TilesetTable tilesetTable)
         {
             if (gameAction is ToUsePickaxe)
             {
@@ -59,7 +59,7 @@ namespace World.GameActors.Tiles
             }
             if (Health <= 0f)
             {
-                return new DestroyedWall(gameAction);
+                return new DestroyedWall(gameAction.TilesetTable);
             }
             return this;
         }
@@ -73,7 +73,7 @@ namespace World.GameActors.Tiles
         {
         }
 
-        public DestroyedWall(GameAction gameAction) : base(gameAction)
+        public DestroyedWall(TilesetTable tilesetTable) : base(tilesetTable)
         {
         }
     }

@@ -29,7 +29,7 @@ namespace ToyWorldTests.World
             ToUsePickaxe pickaxe = new ToUsePickaxe(m_tilesetTable) { Damage = damage };
 
             // Act
-            var pickaxedWall = m_wall.ApplyGameAction(pickaxe);
+            var pickaxedWall = m_wall.ApplyGameAction(pickaxe, m_tilesetTable);
 
             if (damage >= 1)
             {
@@ -59,8 +59,8 @@ namespace ToyWorldTests.World
             // Assert
             ToUsePickaxe pickaxe = new ToUsePickaxe(m_tilesetTable) { Damage = damage };
 
-            DamagedWall damagedWall = new DamagedWall(initialDamage);
-            Tile pickaxedWall = damagedWall.ApplyGameAction(pickaxe);
+            DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
+            Tile pickaxedWall = damagedWall.ApplyGameAction(pickaxe, m_tilesetTable);
 
 
             if (damage + initialDamage >= 1)

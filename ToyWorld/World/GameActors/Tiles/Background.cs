@@ -8,7 +8,7 @@ namespace World.GameActors.Tiles
         {
         }
 
-        public Background(GameAction gameAction) : base(gameAction)
+        public Background(TilesetTable tileset) : base(tileset)
         {
         }
     }

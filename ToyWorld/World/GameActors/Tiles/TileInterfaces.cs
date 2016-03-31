@@ -18,6 +18,6 @@ namespace World.GameActors.Tiles
         /// <summary>
         ///     Method is called when something apply GameAction on it.
         /// </summary>
-        Tile ApplyGameAction(GameAction gameAction);
+        Tile ApplyGameAction(GameAction gameAction, TilesetTable tilesetTable);
     }
 }

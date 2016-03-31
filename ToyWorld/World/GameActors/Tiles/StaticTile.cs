@@ -1,18 +1,16 @@
-﻿using World.GameActions;
-
-namespace World.GameActors.Tiles
+﻿namespace World.GameActors.Tiles
 {
     /// <summary>
     ///     StaticTile is tile, which cannot be updated, but can be replaced by dynamic tile. Only one static
     /// </summary>
-    abstract public class StaticTile : Tile
+    public abstract class StaticTile : Tile
     {
-        protected StaticTile(int tileType) : base()
+        protected StaticTile(int tileType) : base(tileType)
         {
             TileType = tileType;
         }
 
-        protected StaticTile(GameAction gameAction) : base(gameAction)
+        protected StaticTile(TilesetTable tilesetTable) : base(tilesetTable)
         {
         }
     }
