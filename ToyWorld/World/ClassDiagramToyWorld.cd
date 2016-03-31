@@ -34,7 +34,7 @@
   <Class Name="World.ToyWorldCore.MapLoader">
     <Position X="21" Y="11.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAACBA=</HashCode>
       <FileName>ToyWorldCore\MapLoader.cs</FileName>
       <NewMemberFileName>MapLoader.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -121,9 +121,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.GameActors.Tiles.DestroyedWall">
-    <Position X="2.5" Y="0.5" Width="1.5" />
+    <Position X="1.5" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\Tiles\Wall.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -139,6 +139,35 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\Tiles\DynamicTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Path">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Path.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Background">
+    <Position X="3.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Background.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnBackground">
+    <Position X="5.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnBackground.cs</FileName>
+      <NewMemberFileName>GameActors\Tiles\Background.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="World.ToyWorldCore.ITileLayer">
@@ -174,7 +203,7 @@
       <FileName>WorldInterfaces\IWorld.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="World.GameActors.Tiles.Interactable">
+  <Interface Name="World.GameActors.Tiles.IInteractable">
     <Position X="8" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>

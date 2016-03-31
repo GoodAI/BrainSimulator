@@ -9,8 +9,7 @@ namespace World.ToyWorldCore
         public ToyWorld(string tmxMapFile, string tileTable = @"GameActors\Tiles\Tilesets\TilesetTable.csv")
         {
             AutoupdateRegister = new AutoupdateRegister();
-            MapLoader mapLoader = new MapLoader();
-            var loadedMap = mapLoader.LoadMap(tmxMapFile, new TilesetTable(tileTable));
+            var loadedMap = MapLoader.LoadMap(tmxMapFile, new TilesetTable(tileTable));
         }
 
         private IPhysics Physics { get; set; }

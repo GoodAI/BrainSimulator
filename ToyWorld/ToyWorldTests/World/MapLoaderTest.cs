@@ -9,8 +9,7 @@ namespace ToyWorldTests.World
         private Atlas m_atlas;
         public MapLoaderTests()
         {
-            MapLoader mapLoader = new MapLoader();
-            m_atlas = mapLoader.LoadMap(@"..\..\..\TestFiles\mockup999_pantry_world.tmx",
+            m_atlas = MapLoader.LoadMap(@"..\..\..\TestFiles\mockup999_pantry_world.tmx",
                 new TilesetTable(@"GameActors\Tiles\Tilesets\TilesetTable.csv"));
         }
 

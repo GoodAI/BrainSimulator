@@ -10,7 +10,7 @@ using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
 {
-    public class MapLoader
+    public static class MapLoader
     {
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace World.ToyWorldCore
         /// <param name="fileName"></param>
         /// <param name="tilesetTable"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
-        public Atlas LoadMap(string fileName, TilesetTable tilesetTable)
+        public static Atlas LoadMap(string fileName, TilesetTable tilesetTable)
         {
             TmxSerializer tmxMapSerializer = new TmxSerializer();
 
@@ -27,67 +27,94 @@ namespace World.ToyWorldCore
 
             Atlas atlas = new Atlas();
 
-            var layersNames = Enum.GetNames(typeof (LayerType));
-
-            var tileLayerNames = layersNames.Where(x => x.Contains("Object"));
-
-            foreach (var tileLayer in Enum.GetValues(typeof (LayerType)))
+            foreach (var tileLayerNumber in Enum.GetValues(typeof (LayerType)))
             {
-                var layerType = (LayerType) tileLayer;
+                var layerType = (LayerType) tileLayerNumber;
                 var layerName = Enum.GetName(typeof (LayerType), layerType);
 
                 Debug.Assert(layerName != null);
 
+
+
                 if (layerName.Contains("Object"))
                 {
-                    var layer = map.ObjectGroups.First(x => x.Name == layerName);
-                    var newSimpleLayer = new SimpleObjectLayer(layerType);
-                    atlas.ObjectLayers.Add(newSimpleLayer);
-                    foreach (var tmxMapObject in layer.TmxMapObjects)
-                    {
-                        //tmxMapObject
-                    }
+                    var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
+                    atlas.ObjectLayers.Add(
+                        FillObjectLayer(objectLayer, layerType)
+                        );
                 }
                 else
                 {
-                    var layer = map.Layers.First(x => x.Name == layerName);
-                    if (layer == null)
+                    var tileLayer = map.Layers.First(x => x.Name == layerName);
+                    if (tileLayer == null)
                         throw new Exception("Layer " + layerName + " not found in " + fileName + " file!");
-
-                    var newSimpleLayer = new SimpleTileLayer(layerType, map.Width + 1, map.Height + 1);
-                    atlas.TileLayers.Add(newSimpleLayer);
-
-                    var lines = layer.Data.RawData.Split('\n');
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        var tiles = lines[i].Split(',');
-                        for (int j = 0; j < tiles.Length; j++)
-                        {
-                            if (tiles[j] == "")
-                                continue;
-                            var tileNumber = int.Parse(tiles[j]);
-
-                            var tileName = tilesetTable.TileName(tileNumber);
-                            if (tileName != null)
-                                newSimpleLayer.Tiles[i][j] = (Tile)CreateInstance(tileName, tileNumber);
-//                          TODO : before release check code below is active
-//                            else
-//                                Debug.Assert(false, "Tile with number " + tileNumber + " was not found in TilesetTable");
-                        }
-                    }
+                    atlas.TileLayers.Add(
+                        FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable)
+                        );
                 }
             }
 
             return atlas;
         }
 
-        private static object CreateInstance(string className, int tileNumber)
+        private static IObjectLayer FillObjectLayer(ObjectGroup objectLayer, LayerType layerType)
+        {
+            return new SimpleObjectLayer(layerType);
+        }
+
+        private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int,StaticTile> staticTilesContainer, TilesetTable tilesetTable)
+        {
+            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width + 1, layer.Height + 1);
+            var lines = layer.Data.RawData.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var tiles = lines[i].Split(',');
+                for (int j = 0; j < tiles.Length; j++)
+                {
+                    if (tiles[j] == "")
+                        continue;
+                    var tileNumber = int.Parse(tiles[j]);
+                    if (staticTilesContainer.ContainsKey(tileNumber))
+                    {
+                        newSimpleLayer.Tiles[i][j] = staticTilesContainer[tileNumber];
+                    }
+                    else
+                    {
+                        var tileName = tilesetTable.TileName(tileNumber);
+                        if (tileName != null)
+                        {
+                            var newTile = CreateInstance(tileName, tileNumber);
+                            newSimpleLayer.Tiles[i][j] = newTile;
+                            if (newTile is StaticTile)
+                            {
+                                staticTilesContainer.Add(tileNumber, newTile as StaticTile);
+                            }
+                        }
+//                        TODO : before release check code below is active
+//                        else
+//                            Debug.Assert(false, "Tile with number " + tileNumber + " was not found in TilesetTable");
+                    }
+
+                }
+            }
+            return newSimpleLayer;
+        }
+
+        private static Tile CreateInstance(string className, int tileNumber)
         {
             var assembly = Assembly.GetExecutingAssembly();
-
-            var type = assembly.GetTypes().First(t => t.Name == className);
-
-            return Activator.CreateInstance(type, tileNumber);
+            
+            try
+            {
+                var type = assembly.GetTypes().First(t => t.Name == className);
+                return (Tile)Activator.CreateInstance(type, tileNumber);
+            }
+            catch (InvalidOperationException e)
+            {
+                return null;
+//                TODO : before release check code below is active
+//                throw new Exception("MapLoader cannot find class " + className);
+            }
         }
     }
 }

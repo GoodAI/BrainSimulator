@@ -45,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameActors\GameObjects\IUsable.cs" />
+    <Compile Include="GameActors\Tiles\OnBackground.cs" />
+    <Compile Include="GameActors\Tiles\Background.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle.cs" />
+    <Compile Include="GameActors\Tiles\Path.cs" />
     <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />
     <Compile Include="GameActors\GameObjects\Avatar.cs" />
     <Compile Include="GameActors\GameObjects\Character.cs" />

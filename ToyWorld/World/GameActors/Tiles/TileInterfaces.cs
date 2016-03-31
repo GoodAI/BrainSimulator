@@ -8,12 +8,12 @@ namespace World.GameActors.Tiles
     {
         void RegisterForUpdate();
 
-        void Update();
+        void Update(TilesetTable tilesetTable);
     }
 
     /// <summary>
     /// </summary>
-    public interface Interactable
+    public interface IInteractable
     {
         /// <summary>
         ///     Method is called when something apply GameAction on it.

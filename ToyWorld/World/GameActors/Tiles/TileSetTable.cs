@@ -14,18 +14,31 @@ namespace World.GameActors.Tiles
         {
             var dataTable = CsvEngine.CsvToDataTable(filePath, ';');
             var enumerable = dataTable.Rows.Cast<DataRow>();
+            var dataRows = enumerable as DataRow[] ?? enumerable.ToArray();
+
             var nameOfTile = dataTable.Columns.Cast<DataColumn>().First(x => x.ColumnName == "NameOfTile").Ordinal;
             var positionInTileset = dataTable.Columns.Cast<DataColumn>().First(x => x.ColumnName == "PositionInTileset").Ordinal;
-            m_namesValuesDictionary = enumerable.ToDictionary(x => x[nameOfTile].ToString(), x => int.Parse(x[positionInTileset].ToString()));
-            m_valuesNamesDictionary = enumerable.ToDictionary(x => int.Parse(x[positionInTileset].ToString()), x => x[nameOfTile].ToString());
+            var isDefault = dataTable.Columns.Cast<DataColumn>().First(x => x.ColumnName == "IsDefault").Ordinal;
+            
+            m_namesValuesDictionary = dataRows.Where(x => x[isDefault].ToString() == "1")
+                .ToDictionary(x => x[nameOfTile].ToString(), x => int.Parse(x[positionInTileset].ToString()));
+            m_valuesNamesDictionary = dataRows.ToDictionary(x => int.Parse(x[positionInTileset].ToString()), x => x[nameOfTile].ToString());
         }
 
-        public int TileNumber(string tileName)
+        /// <summary>
+        /// only for mocking
+        /// </summary>
+        public TilesetTable()
+        {
+            
+        }
+
+        public virtual int TileNumber(string tileName)
         {
             return m_namesValuesDictionary[tileName];
         }
 
-        public string TileName(int tileNumber)
+        public virtual string TileName(int tileNumber)
         {
             return m_valuesNamesDictionary.ContainsKey(tileNumber) ? m_valuesNamesDictionary[tileNumber] : null;
         }

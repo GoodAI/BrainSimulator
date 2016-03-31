@@ -6,11 +6,11 @@ namespace World.GameActors.Tiles
     /// <summary>
     ///     Wall can be transformed to DamagedWall if pickaxe is used
     /// </summary>
-    public class Wall : StaticTile, Interactable
+    public class Wall : StaticTile, IInteractable
     {
-        public Wall(int tileType)
+
+        public Wall(int tileType) : base(tileType)
         {
-            TileType = tileType;
         }
 
         public Tile ApplyGameAction(GameAction gameAction)
@@ -24,7 +24,7 @@ namespace World.GameActors.Tiles
                 }
                 if (toUsePickaxe.Damage >= 1.0f)
                 {
-                    return new DestroyedWall();
+                    return new DestroyedWall(gameAction);
                 }
                 return new DamagedWall((gameAction as ToUsePickaxe).Damage);
             }
@@ -36,7 +36,7 @@ namespace World.GameActors.Tiles
     ///     DamagedWall has health from (0,1) excl. If health leq 0, it is replaced by DestroyedWall.
     ///     Only way how to make damage is to use pickaxe.
     /// </summary>
-    public class DamagedWall : DynamicTile, Interactable
+    public class DamagedWall : DynamicTile, IInteractable
     {
         private DamagedWall()
         {
@@ -59,7 +59,7 @@ namespace World.GameActors.Tiles
             }
             if (Health <= 0f)
             {
-                return new DestroyedWall();
+                return new DestroyedWall(gameAction);
             }
             return this;
         }
@@ -69,9 +69,12 @@ namespace World.GameActors.Tiles
     /// </summary>
     public class DestroyedWall : StaticTile
     {
-        public Tile TransformTo(GameAction gameAction)
+        public DestroyedWall(int tileType) : base(tileType)
         {
-            return this;
+        }
+
+        public DestroyedWall(GameAction gameAction) : base(gameAction)
+        {
         }
     }
 }

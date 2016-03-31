@@ -1,15 +1,21 @@
 ﻿using World.GameActions;
 using World.GameActors.Tiles;
 using Xunit;
+using Moq;
 
 namespace ToyWorldTests.World
 {
     public class WallsTests
     {
         private readonly Wall m_wall;
+        private TilesetTable m_tilesetTable;
         public WallsTests()
         {
             m_wall = new Wall(0);
+            var mockTilesetTable = new Moq.Mock<TilesetTable>();
+            mockTilesetTable.Setup(x => x.TileNumber(It.IsAny<string>())).Returns(0);
+            mockTilesetTable.Setup(x => x.TileName(It.IsAny<int>())).Returns("");
+            m_tilesetTable = mockTilesetTable.Object;
         }
 
         [Theory]
@@ -20,7 +26,7 @@ namespace ToyWorldTests.World
         [InlineData(3.0f)]
         public void PickaxeMakesDamageWall0(float damage)
         {
-            ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
+            ToUsePickaxe pickaxe = new ToUsePickaxe(m_tilesetTable) { Damage = damage };
 
             // Act
             var pickaxedWall = m_wall.ApplyGameAction(pickaxe);
@@ -51,7 +57,7 @@ namespace ToyWorldTests.World
         {
             float initialDamage = 0.5f;
             // Assert
-            ToUsePickaxe pickaxe = new ToUsePickaxe { Damage = damage };
+            ToUsePickaxe pickaxe = new ToUsePickaxe(m_tilesetTable) { Damage = damage };
 
             DamagedWall damagedWall = new DamagedWall(initialDamage);
             Tile pickaxedWall = damagedWall.ApplyGameAction(pickaxe);
