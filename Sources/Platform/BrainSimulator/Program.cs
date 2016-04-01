@@ -55,20 +55,24 @@ namespace GoodAI.BrainSimulator
 
         static void ShowExceptionAndExit(string title, Exception ex)
         {
-            if (ex != null)
-            {
-                MessageBox.Show("Unhandled exception encountered, sorry:-("
-                    + "\n\nMessage:\n" + ex.Message
-                    + "\n\nStack trace:\n" + ex.StackTrace, title,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                MessageBox.Show("Unhandled exception encountered (but it's null!).",
-                    title, MessageBoxButtons.OK);
-            }
+            MessageBox.Show("Unhandled exception encountered, sorry :-("
+                + "\n\n" + PrintException(ex, printInner: true),
+                title, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             Environment.Exit(1);
+        }
+
+        static string PrintException(Exception ex, bool printInner = false)
+        {
+            return (ex == null)
+                ? "(null)"
+                : "Message:\n" + ex.Message
+                    + (!string.IsNullOrEmpty(ex.StackTrace) 
+                        ? "\n\nStack trace:\n" + ex.StackTrace
+                        : "")
+                    + (printInner && ex.InnerException != null
+                        ? "\n\nInner Exception " + PrintException(ex.InnerException) 
+                        : "");
         }
     }
 }
