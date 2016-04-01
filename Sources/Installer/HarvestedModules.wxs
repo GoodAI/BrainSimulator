@@ -197,6 +197,9 @@
                             <Component Id="cmpB658AE7E1F52B2759CB23F7AAF608B77" Guid="*">
                                 <File Id="filF0405A3176ADAFAF2FDD1177D8DA666C" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Observers\ColorHelpers.ptx" />
                             </Component>
+                            <Component Id="cmp3E0001DEA59CB986BD9A494B2E9C9305" Guid="*">
+                                <File Id="fil3E5AD0AF36273659638B3FFED8764F64" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Observers\ColorScaleObserverComplex.ptx" />
+                            </Component>
                             <Component Id="cmpA8D672AE08BC7A6B9B7225F05BB19B74" Guid="*">
                                 <File Id="fil449E418EB6ADB2C5A957E758BFF1B1FD" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.BasicNodes\ptx\Observers\ColorScaleObserverDouble.ptx" />
                             </Component>
@@ -619,6 +622,7 @@
                     </Directory>
                 </Directory>
                 <Directory Id="dir06701046D0935491C9D5AB9E24707B7E" Name="GoodAI.MNIST">
+                    
                     <Component Id="cmp106B51D635A76E20412259D2558811DB" Guid="*">
                         <File Id="fil358F82E98DBB950D49EC06EE3748A3F9" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.MNIST\GoodAI.MNIST.dll" />
                     </Component>
@@ -658,6 +662,7 @@
                         <File Id="fil80CCBF181E3CE0602AF5C2AFE0AE377B" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\IronPython.Wpf.dll" />
                     </Component>
                     
+                    
                     <Component Id="cmp4D78666258805013ABFB0F6F7549028B" Guid="*">
                         <File Id="fil3C05C32A61E0699D5A22AC15DC5C54D8" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\Microsoft.Dynamic.dll" />
                     </Component>
@@ -672,6 +677,7 @@
                     <Component Id="cmp836D7344C366C89BFA126B3F63D63AD4" Guid="*">
                         <File Id="fil0A4B1A81425F40DADCAA3F652E9DF2EA" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.PythonModule\Microsoft.Scripting.Metadata.dll" />
                     </Component>
+                    
                     
                     <Directory Id="dirFE064CB4E0DEEDDEE3AA47438EAF6DB8" Name="Lib">
                         <Component Id="cmp40049BDB57C7A52A2F98E401FAF2CDC2" Guid="*">
@@ -2264,11 +2270,11 @@
                     </Directory>
                 </Directory>
                 <Directory Id="dir4278B2DD2867C0806BC76C7E9512C3A4" Name="GoodAI.SoundWorld">
-
+                    
                     <Component Id="cmp4150A4401CDCCFC617E0961BEF4C3463" Guid="*">
                         <File Id="filF5D9A0385A4FBFB00DA1C081D8D4FD0E" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.SoundWorld\GoodAI.SoundWorld.dll" />
                     </Component>
-
+                    
                 </Directory>
             </Directory>
         </DirectoryRef>
@@ -2278,30 +2284,7 @@
             <ComponentRef Id="cmpAD0777FBE7BB310C9C9D26FAD22EFF5C" />
             <ComponentRef Id="cmp4A42D4425C64177B6F42CAA22F30692E" />
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             <ComponentRef Id="cmp951509EBF8D65F10E60EA0DB048457C6" />
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
             <ComponentRef Id="cmpB561F4242F166C846ADFB713314BD132" />
             <ComponentRef Id="cmp354F8BA8834F90EAD149AB35C701F838" />
@@ -2353,6 +2336,7 @@
             <ComponentRef Id="cmp9ABF4E225DE115D8BD68051C4D9ABE5F" />
             <ComponentRef Id="cmp69924CE7DD84E40133022235428E5157" />
             <ComponentRef Id="cmpB658AE7E1F52B2759CB23F7AAF608B77" />
+            <ComponentRef Id="cmp3E0001DEA59CB986BD9A494B2E9C9305" />
             <ComponentRef Id="cmpA8D672AE08BC7A6B9B7225F05BB19B74" />
             <ComponentRef Id="cmpFED7C6C594220B4B86337CCAADEAAE39" />
             <ComponentRef Id="cmp2C394FC838A57237D06FD022C431D5FA" />
@@ -2482,46 +2466,12 @@
             <ComponentRef Id="cmp732BEB09FBF5BADF6886E399CA2F6D68" />
             <ComponentRef Id="cmpA76C4387B770219DFF3C49F107B3D899" />
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             <ComponentRef Id="cmp106B51D635A76E20412259D2558811DB" />
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
             <ComponentRef Id="cmp8626FE63586F392235344C379382CB4A" />
             <ComponentRef Id="cmpB351A0222E920020019E357494672A05" />
             <ComponentRef Id="cmpD89ED9937336ABA92666C76A8FF7F711" />
             <ComponentRef Id="cmp24C067566B0E798020A5743FD1CD7581" />
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             <ComponentRef Id="cmp7BF0A5A02F90230BA161BA44BF152EC5" />
             
             <ComponentRef Id="cmpBFD1CC3C05337A5B653B7C4832B76D8B" />
@@ -2532,21 +2482,12 @@
             <ComponentRef Id="cmpD6A8C0E71F74BFB038553BD8192CCD55" />
             
             
-            
-            
             <ComponentRef Id="cmp4D78666258805013ABFB0F6F7549028B" />
             
             <ComponentRef Id="cmp2187BD96974A920A9EAFC105DA988722" />
             
             <ComponentRef Id="cmpD7DB51466150E16F0BD9EEE2EAB6F02E" />
             <ComponentRef Id="cmp836D7344C366C89BFA126B3F63D63AD4" />
-            
-            
-            
-            
-            
-            
-            
             
             
             <ComponentRef Id="cmp40049BDB57C7A52A2F98E401FAF2CDC2" />
@@ -3061,28 +3002,7 @@
             <ComponentRef Id="cmp33571C4092723F8F3A04AE2E8D525336" />
             <ComponentRef Id="cmpE7752DFB74D6E9BA1C81C933D4463523" />
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             <ComponentRef Id="cmp4150A4401CDCCFC617E0961BEF4C3463" />
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
         </ComponentGroup>
     </Fragment>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="33387B29-CA7F-4F32-90EB-48AABED64D3B" Name="Brain Simulator" Language="1033" Version="!(bind.FileVersion.BrainSimulatorEXE)" Manufacturer="GoodAI" UpgradeCode="9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A">
+  <Product Id="661DD715-E428-40DD-AC9B-E75D688BE0CE" Name="Brain Simulator" Language="1033" Version="!(bind.FileVersion.BrainSimulatorEXE)" Manufacturer="GoodAI" UpgradeCode="9BA364BA-3FC7-4DA0-B920-3BEBC49E8E8A">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -157,8 +157,16 @@
         <File Id='ScintillaNETDLL' Name='ScintillaNET.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\ScintillaNET.dll' KeyPath='yes' />
       </Component>
 
+      <Component Id='SimpleInjectorLib' Guid='*'>
+        <File Id='SimpleInjectorDLL' Name='SimpleInjector.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\SimpleInjector.dll' KeyPath='yes' />
+      </Component>
+
       <Component Id='GraphLib' Guid='*'>
         <File Id='GraphDLL' Name='Graph.dll' DiskId='1' Source='$(var.Graph.TargetPath)' KeyPath='yes' />
+      </Component>
+
+      <Component Id='TypeMapLib' Guid='*'>
+        <File Id='TypeMapDLL' Name='TypeMap.dll' DiskId='1' Source='$(var.TypeMap.TargetPath)' KeyPath='yes' />
       </Component>
 
       <Component Id='YAXLib' Guid='*'>
@@ -170,7 +178,11 @@
       </Component>
 
       <Component Id='CoreLib' Guid='*'>
-        <File Id='CoreDLL' Name='GoodAI.Platform.Core.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)GoodAI.Platform.Core.dll' KeyPath='yes' />
+        <File Id='CoreDLL' Name='GoodAI.Platform.Core.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\GoodAI.Platform.Core.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='SystemCollectionsImmutableLib' Guid='*'>
+        <File Id='SystemCollectionsImmutableDLL' Name='System.Collections.Immutable.dll' DiskId='1' Source='$(var.Core.TargetPath)' KeyPath='yes' />
       </Component>
 
       <Component Id='EULA' Guid='*'>
@@ -240,8 +252,14 @@
       <Component Id="cmp46099F220B279BF2FB51E202B3B30EA8" Guid="*">
           <File Id="filA112A1500BE984D6D32AB58340C0C2D0" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\OpenTK.txt" />
       </Component>
+      <Component Id="SimpleInjectorLicense" Guid="*">
+          <File Id="SimpleInjectorTXT" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\Simple Injector.txt" />
+      </Component>
       <Component Id="cmp0B85F121DD27EF768B0EFDFF6C3202AE" Guid="*">
           <File Id="fil2DFE8E0D7066109142B131FDB52BD42C" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\WinFormsUI.txt" />
+      </Component>
+      <Component Id="WixLicense" Guid="*">
+          <File Id="WixLicenseTXT" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\WiX.txt" />
       </Component>
       <Component Id="cmpA28E7462B57EC30AE7CAAE03677D6CC0" Guid="*">
           <File Id="filFA8422246C7D4FC3C1E3BFF9A20D3F5D" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\YAXLib.txt" />

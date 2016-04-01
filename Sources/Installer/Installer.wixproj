@@ -65,6 +65,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+      <Name>TypeMap</Name>
+      <Project>{86955c47-2a02-41a4-ab32-c9e592eb2971}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Modules\BasicNodes\Cuda\BasicNodesCuda.vcxproj">
       <Name>BasicNodesCuda</Name>
       <Project>{72423431-4a15-4e8d-b987-8e684bd730fe}</Project>
