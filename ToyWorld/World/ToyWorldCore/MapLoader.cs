@@ -77,7 +77,7 @@ namespace World.ToyWorldCore
                     var tileNumber = int.Parse(tiles[j]);
                     if (staticTilesContainer.ContainsKey(tileNumber))
                     {
-                        newSimpleLayer.Tiles[i][j] = staticTilesContainer[tileNumber];
+                        newSimpleLayer.Tiles[i,j] = staticTilesContainer[tileNumber];
                     }
                     else
                     {
@@ -85,7 +85,7 @@ namespace World.ToyWorldCore
                         if (tileName != null)
                         {
                             var newTile = CreateInstance(tileName, tileNumber);
-                            newSimpleLayer.Tiles[i][j] = newTile;
+                            newSimpleLayer.Tiles[i,j] = newTile;
                             if (newTile is StaticTile)
                             {
                                 staticTilesContainer.Add(tileNumber, newTile as StaticTile);

@@ -6,7 +6,7 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
-        public ToyWorld(string tmxMapFile, string tileTable = @"GameActors\Tiles\Tilesets\TilesetTable.csv")
+        public ToyWorld(string tmxMapFile, string tileTable)
         {
             AutoupdateRegister = new AutoupdateRegister();
             var loadedMap = MapLoader.LoadMap(tmxMapFile, new TilesetTable(tileTable));
@@ -14,7 +14,7 @@ namespace World.ToyWorldCore
 
         private IPhysics Physics { get; set; }
 
-        public TilesetTable TileSetTableParser { get; private set; }
+        public TilesetTable TileSetTable { get; private set; }
 
         public AutoupdateRegister AutoupdateRegister { get; private set; }
 

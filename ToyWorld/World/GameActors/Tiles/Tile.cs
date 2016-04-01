@@ -5,25 +5,20 @@
     /// </summary>
     public abstract class Tile : GameActor
     {
-        private int m_tileType;
-
         protected Tile(TilesetTable tilesetTable)
         {
             string typeName = GetType().Name;
-            m_tileType = tilesetTable.TileNumber(typeName);
+            TileType = tilesetTable.TileNumber(typeName);
         }
 
         protected Tile(int tileType)
         {
-            m_tileType = tileType;
+            TileType = tileType;
         }
 
         /// <summary>
         ///     TileType is number in tsx tileset
         /// </summary>
-        public int TileType {
-            get { return m_tileType; }
-            protected set { m_tileType = value; }
-        }
+        public int TileType { get; protected set; }
     }
 }
