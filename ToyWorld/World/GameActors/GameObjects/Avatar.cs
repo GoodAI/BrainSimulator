@@ -4,23 +4,11 @@ using GoodAI.ToyWorld.Control;
 
 namespace World.GameActors.GameObjects
 {
-    class Avatar : Character
+    public class Avatar : Character
     {
-        public override string Name
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public sealed override string Name { get; protected set; }
 
-        internal List<IAvatarAction> AvatarActions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        public Dictionary<AvatarActionEnum, AvatarAction<object>> AvatarActions { get; set; }
 
         internal IUsable Tool
         {
@@ -31,6 +19,11 @@ namespace World.GameActors.GameObjects
             set
             {
             }
+        }
+
+        public Avatar(string name)
+        {
+            Name = name;
         }
     }
 }

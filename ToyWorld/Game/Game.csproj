@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AvatarController.cs" />
     <Compile Include="GameControllerBase.cs" />
     <Compile Include="BasicGameController.cs" />
     <Compile Include="ControllerFactory.cs" />
@@ -62,6 +63,9 @@
       <Project>{3831266c-24fe-4dd6-a4cc-39d0ef33c299}</Project>
       <Name>World</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
+using World.ToyWorldCore;
+using World.WorldInterfaces;
 
 namespace Game
 {
+    // TODO: why there is abstract class instead of BasicGameController?
     public abstract class GameControllerBase : IGameController
     {
         public IRenderer Renderer { get; private set; }
-        //protected IWorld World { get; private set; }
+        protected IWorld World { get; private set; }
+        private GameSetup GameSetup { get; set; }
 
 
         protected GameControllerBase(IRenderer renderer)
@@ -33,7 +32,8 @@ namespace Game
 
         public virtual void Init(GameSetup setup)
         {
-            // TODO: world
+            GameSetup = setup;
+            World = new ToyWorld(GameSetup.PathToSaveFile, GameSetup.pathToTilesetFile);
 
             Renderer.Init();
             Renderer.CreateWindow("TestGameWindow", 1024, 1024);
@@ -43,12 +43,15 @@ namespace Game
         public virtual void Reset()
         {
             // TODO: Semantics of Reset? What should it do?
+            // current implementation: loads world from file again
+            World = new ToyWorld(GameSetup.PathToSaveFile, GameSetup.pathToTilesetFile);
         }
 
 
         public virtual void MakeStep()
         {
             // Assume Init has been called, we don't want to check for consistency every step
+            World.Update();
 
             Renderer.ProcessRequests();
         }

@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Control\AvatarAction.cs" />
+    <Compile Include="Control\AvatarActionEnum.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarAction.cs" />
     <Compile Include="Control\IAvatarController.cs" />
@@ -51,6 +53,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\IAvatarRenderRequest.cs" />
     <Compile Include="Render\IRenderRequests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="APIDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

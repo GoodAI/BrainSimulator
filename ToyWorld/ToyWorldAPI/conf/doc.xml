@@ -4,6 +4,21 @@
         <name>GoodAI.ToyWorldAPI</name>
     </assembly>
     <members>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.ActionId">
+            <summary>
+            Action to preform.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
+            <summary>
+            Value of action.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
+            <summary>
+            If two or more controllers are connected to one agent, action with highest priority will be performed.
+            </summary>
+        </member>
         <member name="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">
             <summary>
             Thrown when requesting an unknown IRenderRequest or IAvatarRenderRequest from an IGameController.
@@ -17,7 +32,7 @@
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IAvatarAction">
             <summary>
-            
+            Deprecated
             </summary>
         </member>
         <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Acceleration">
@@ -47,23 +62,16 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.ActionPriority">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:GoodAI.ToyWorld.Control.IAvatarController">
             <summary>
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetActions(GoodAI.ToyWorld.Control.ActionPriority)">
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetAction(GoodAI.ToyWorld.Control.AvatarAction{System.Object})">
             <summary>
             
             </summary>
-            <param name="priority">Specifies the priority with which the actions will be set on the returned object.
-            For every action, only the highest-priority setting will be kept.</param>
-            <returns>The object through which to set the Avatar's action.</returns>
+            <param name="action">Action for avatar.</param>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetStats">
             <summary>
@@ -82,7 +90,7 @@
             
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.GameSetup.PathToSaveFile">
+        <member name="P:GoodAI.ToyWorld.Control.GameSetup.PathToSaveFile">
             <summary>
             The path to a .TMX (fresh world) or a world save.
             </summary>

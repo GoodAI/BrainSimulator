@@ -1,7 +1,8 @@
 ﻿namespace GoodAI.ToyWorld.Control
 {
+    // TODO : delete this interface
     /// <summary>
-    /// 
+    /// Deprecated
     /// </summary>
     public interface IAvatarAction
     {

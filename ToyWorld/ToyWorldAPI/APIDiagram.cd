@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="GoodAI.ToyWorld.Control.IAvatarAction">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAABAAAIAAEAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Control\IAvatarAction.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GoodAI.ToyWorld.Control.IGameController">
+    <Position X="2" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAABAAQAAAgAAAAAAAABAAAAAACAAAAAAA=</HashCode>
+      <FileName>Control\IGameController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GoodAI.ToyWorld.Control.IAvatarController">
+    <Position X="6" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAQAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Control\IAvatarController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GoodAI.ToyWorld.Control.IStats">
+    <Position X="10" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Control\IStats.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GoodAI.ToyWorld.Control.IAvatarRenderRequest">
+    <Position X="12" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAgAAAAAAAAAAAgAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Render\IAvatarRenderRequest.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GoodAI.ToyWorld.Control.IAvatarRenderRequestFoV">
+    <Position X="14.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Render\IAvatarRenderRequest.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="GoodAI.ToyWorld.Control.ActionPriority">
+    <Position X="8" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAEAAEAIAAAAAFBAAAAAgAAAgAAIA=</HashCode>
+      <FileName>Control\IAvatarController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
