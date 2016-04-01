@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using GoodAI.ToyWorld.Control;
+﻿using GoodAI.ToyWorld.Control;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderRequests;
 using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
+using System;
+using System.Diagnostics;
 using VRage.Collections;
 
 namespace Render.Renderer
@@ -82,6 +80,7 @@ namespace Render.Renderer
 
             Context = new GraphicsContext(GraphicsMode.Default, Window.WindowInfo);
             Context.LoadAll();
+            Context.MakeCurrent(null);
         }
 
         public virtual void Init()
@@ -100,7 +99,7 @@ namespace Render.Renderer
             Debug.Assert(request != null);
             Debug.Assert(request is RenderRequestBase);
             m_renderRequestQueue.Enqueue((RenderRequestBase)request);
-            CheckError();
+            //CheckError();
         }
 
         public virtual void EnqueueRequest(IAvatarRenderRequest request)
@@ -108,7 +107,7 @@ namespace Render.Renderer
             Debug.Assert(request != null);
             Debug.Assert(request is AvatarRenderRequestBase);
             m_renderRequestQueue.Enqueue((AvatarRenderRequestBase)request);
-            CheckError();
+            //CheckError();
         }
 
         public virtual void ProcessRequests()
