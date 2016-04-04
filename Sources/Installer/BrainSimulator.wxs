@@ -182,7 +182,7 @@
       </Component>
 
       <Component Id='SystemCollectionsImmutableLib' Guid='*'>
-        <File Id='SystemCollectionsImmutableDLL' Name='System.Collections.Immutable.dll' DiskId='1' Source='$(var.Core.TargetPath)' KeyPath='yes' />
+        <File Id='SystemCollectionsImmutableDLL' Name='System.Collections.Immutable.dll' DiskId='1' Source='$(var.Core.TargetDir)' KeyPath='yes' />
       </Component>
 
       <Component Id='EULA' Guid='*'>
