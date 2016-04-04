@@ -7,15 +7,6 @@ namespace World.ToyWorldCore
 {
     public class Atlas
     {
-        public Atlas()
-        {
-            Avatars = new List<Avatar>();
-            Characters = new List<Character>();
-            TileLayers = new List<ITileLayer>();
-            ObjectLayers = new List<IObjectLayer>();
-            StaticTilesContainer = new Dictionary<int, StaticTile>();
-        }
-
         public List<ITileLayer> TileLayers { get; private set; }
 
         public List<IObjectLayer> ObjectLayers { get; private set; }
@@ -25,6 +16,15 @@ namespace World.ToyWorldCore
         public List<Character> Characters { get; private set; }
 
         public Dictionary<int, StaticTile> StaticTilesContainer { get; private set; }
+
+        public Atlas()
+        {
+            Avatars = new List<Avatar>();
+            Characters = new List<Character>();
+            TileLayers = new List<ITileLayer>();
+            ObjectLayers = new List<IObjectLayer>();
+            StaticTilesContainer = new Dictionary<int, StaticTile>();
+        }
 
         public object GetLayer(LayerType layerType)
         {

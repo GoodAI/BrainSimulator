@@ -14,10 +14,10 @@ namespace World.GameActors.Tiles
         public TilesetTable(StreamReader tilesetFile)
         {
             var dataTable = new DataTable();
-            var readLine = tilesetFile.ReadLine();
+            string readLine = tilesetFile.ReadLine();
 
             Debug.Assert(readLine != null, "readLine != null");
-            foreach (var header in readLine.Split(';'))
+            foreach (string header in readLine.Split(';'))
             {
                 dataTable.Columns.Add(header);
             }
@@ -25,12 +25,12 @@ namespace World.GameActors.Tiles
 
             while (!tilesetFile.EndOfStream)
             {
-                var line = tilesetFile.ReadLine();
+                string line = tilesetFile.ReadLine();
                 Debug.Assert(line != null, "line != null");
-                var row = line.Split(';');
+                string[] row = line.Split(';');
                 if (dataTable.Columns.Count != row.Length)
                     break;
-                var newRow = dataTable.NewRow();
+                DataRow newRow = dataTable.NewRow();
                 foreach (DataColumn column in dataTable.Columns)
                 {
                     newRow[column.ColumnName] = row[column.Ordinal];
@@ -38,7 +38,7 @@ namespace World.GameActors.Tiles
                 dataTable.Rows.Add(newRow);
             }
 
-            var enumerable = dataTable.Rows.Cast<DataRow>();
+            IEnumerable<DataRow> enumerable = dataTable.Rows.Cast<DataRow>();
             var dataRows = enumerable as DataRow[] ?? enumerable.ToArray();
             
             m_namesValuesDictionary = dataRows.Where(x => x["IsDefault"].ToString() == "1")

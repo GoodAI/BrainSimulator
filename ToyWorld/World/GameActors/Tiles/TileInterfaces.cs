@@ -8,7 +8,7 @@ namespace World.GameActors.Tiles
     {
         void RegisterForUpdate();
 
-        void Update(TilesetTable tilesetTable);
+        Tile Update(TilesetTable tilesetTable);
     }
 
     /// <summary>

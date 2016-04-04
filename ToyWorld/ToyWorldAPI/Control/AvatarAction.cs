@@ -5,16 +5,22 @@
         /// <summary>
         /// Action to preform.
         /// </summary>
-        public AvatarActionEnum ActionId { get; set; }
+        public readonly AvatarActionEnum ActionId;
+
         /// <summary>
         /// Value of action.
         /// </summary>
-        public T Value { get; set; }
+        public readonly T Value;
+
         /// <summary>
         /// If two or more controllers are connected to one agent, action with highest priority will be performed.
         /// </summary>
-        public int Priority { get; set; }
+        public readonly int Priority;
 
+        /// <summary></summary>
+        /// <param name="actionId">Action to preform.</param>
+        /// <param name="value">Value of action.</param>
+        /// <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
         public AvatarAction(AvatarActionEnum actionId, T value, int priority = 5)
         {
             ActionId = actionId;

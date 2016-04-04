@@ -26,7 +26,7 @@ namespace World.GameActors.Tiles
                 {
                     return new DestroyedWall(gameAction.TilesetTable);
                 }
-                return new DamagedWall((gameAction as ToUsePickaxe).Damage, tilesetTable);
+                return new DamagedWall((gameAction as ToUsePickaxe), tilesetTable);
             }
             return this;
         }
@@ -43,9 +43,15 @@ namespace World.GameActors.Tiles
             Health = 1f;
         }
 
-        public DamagedWall(float damage, TilesetTable tilesetTable) : this(tilesetTable)
+        public DamagedWall(float damage, TilesetTable tilesetTable)
+            : this(tilesetTable)
         {
             Health -= damage;
+        }
+
+        public DamagedWall(ToUsePickaxe toUsePickaxe, TilesetTable tilesetTable)
+            : this(toUsePickaxe.Damage, tilesetTable)
+        {
         }
 
         public float Health { get; private set; }

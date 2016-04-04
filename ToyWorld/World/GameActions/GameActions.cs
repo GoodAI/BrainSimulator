@@ -4,7 +4,7 @@ namespace World.GameActions
 {
     public abstract class GameAction
     {
-        public TilesetTable TilesetTable { get; set; }
+        public readonly TilesetTable TilesetTable;
 
         public GameAction(TilesetTable tilesetTable)
         {

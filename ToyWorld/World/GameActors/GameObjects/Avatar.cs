@@ -6,7 +6,7 @@ namespace World.GameActors.GameObjects
 {
     public class Avatar : Character
     {
-        public int Id { get; private set; }
+        public readonly int Id;
         public sealed override string Name { get; protected set; }
 
         public Dictionary<AvatarActionEnum, AvatarAction<object>> AvatarActions { get; set; }
@@ -19,6 +19,24 @@ namespace World.GameActors.GameObjects
             }
             set
             {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void AddAction(AvatarAction<object> action)
+        {
+            if (AvatarActions.ContainsKey(action.ActionId))
+            {
+                int currentPriority = action.Priority;
+                int prevPriority = AvatarActions[action.ActionId].Priority;
+                if (currentPriority > prevPriority)
+                {
+                    AvatarActions[action.ActionId] = action;
+                }
+            }
+            else
+            {
+                AvatarActions.Add(action.ActionId, action);
             }
         }
 
@@ -26,6 +44,11 @@ namespace World.GameActors.GameObjects
         {
             Name = name;
             Id = id;
+        }
+
+        public void ClearConstrols()
+        {
+            AvatarActions = new Dictionary<AvatarActionEnum, AvatarAction<object>>();
         }
     }
 }

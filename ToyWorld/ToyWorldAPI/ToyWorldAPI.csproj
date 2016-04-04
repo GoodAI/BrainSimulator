@@ -45,7 +45,6 @@
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarActionEnum.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
-    <Compile Include="Control\IAvatarAction.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\GameSetup.cs" />
     <Compile Include="Control\IGameController.cs" />

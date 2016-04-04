@@ -5,12 +5,11 @@
     /// </summary>
     public abstract class StaticTile : Tile
     {
-        protected StaticTile(int tileType) : base(tileType)
+        public StaticTile(TilesetTable tilesetTable) : base(tilesetTable)
         {
-            TileType = tileType;
         }
 
-        protected StaticTile(TilesetTable tilesetTable) : base(tilesetTable)
+        public StaticTile(int tileType) : base(tileType)
         {
         }
     }

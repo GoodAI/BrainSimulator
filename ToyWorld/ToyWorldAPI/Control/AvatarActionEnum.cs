@@ -2,10 +2,10 @@
 {
     public enum AvatarActionEnum
     {
-        rotation,
-        acceleration,
-        use,
-        interact,
-        pickOrDrop,
+        Rotation,
+        Acceleration,
+        Use,
+        Interact,
+        PickOrDrop,
     }
 }

@@ -22,18 +22,15 @@ namespace World.ToyWorldCore
         {
             TmxSerializer tmxMapSerializer = new TmxSerializer();
 
-            Map map = (Map)tmxMapSerializer.Deserialize(tmxFile);
+            Map map = tmxMapSerializer.Deserialize(tmxFile);
 
             Atlas atlas = new Atlas();
 
-            foreach (var tileLayerNumber in Enum.GetValues(typeof (LayerType)))
+            foreach (LayerType layerType in Enum.GetValues(typeof(LayerType)).Cast<LayerType>())
             {
-                var layerType = (LayerType) tileLayerNumber;
-                var layerName = Enum.GetName(typeof (LayerType), layerType);
+                string layerName = Enum.GetName(typeof (LayerType), layerType);
 
                 Debug.Assert(layerName != null);
-
-
 
                 if (layerName.Contains("Object"))
                 {

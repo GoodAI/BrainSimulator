@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.IO;
+using System.Xml.Serialization;
 using TmxMapSerializer.Elements;
 
 namespace TmxMapSerializer.Serializer
@@ -7,6 +8,11 @@ namespace TmxMapSerializer.Serializer
     {
         public TmxSerializer() : base(typeof (Map))
         {
+        }
+
+        public new Map Deserialize(TextReader textReader)
+        {
+            return (Map) base.Deserialize(textReader);
         }
     }
 }

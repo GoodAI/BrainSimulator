@@ -19,6 +19,6 @@
         /// <summary>
         ///     TileType is number in tsx tileset
         /// </summary>
-        public int TileType { get; protected set; }
+        public readonly int TileType;
     }
 }

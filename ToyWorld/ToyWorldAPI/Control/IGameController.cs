@@ -10,7 +10,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        void Init(GameSetup setup);
+        void Init();
 
         /// <summary>
         /// 

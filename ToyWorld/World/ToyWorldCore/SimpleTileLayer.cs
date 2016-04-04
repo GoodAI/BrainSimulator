@@ -1,5 +1,4 @@
-﻿using System;
-using World.GameActors.Tiles;
+﻿using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
 {

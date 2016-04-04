@@ -13,14 +13,15 @@ namespace Game
     {
         public IRenderer Renderer { get; private set; }
         protected IWorld World { get; private set; }
-        private GameSetup GameSetup { get; set; }
+        private readonly GameSetup m_gameSetup;
         private Dictionary<int, Avatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
 
-        protected GameControllerBase(IRenderer renderer)
+        protected GameControllerBase(IRenderer renderer, GameSetup setup)
         {
             Renderer = renderer;
+            m_gameSetup = setup;
         }
 
         public virtual void Dispose()
@@ -33,19 +34,18 @@ namespace Game
 
         #region IGameController overrides
 
-        public virtual void Init(GameSetup setup)
+        public virtual void Init()
         {
-            GameSetup = setup;
-            World = new ToyWorld(GameSetup.SaveFile, GameSetup.TilesetFile);
+            World = new ToyWorld(m_gameSetup.SaveFile, m_gameSetup.TilesetFile);
 
             m_avatars = new Dictionary<int, Avatar>();
-            foreach (var avatarId in World.GetAvatarsIds())
+            foreach (int avatarId in World.GetAvatarsIds())
             {
                 m_avatars.Add(avatarId, World.GetAvatar(avatarId));
             }
 
             m_avatarControllers = new Dictionary<int, AvatarController>();
-            foreach (var avatar in m_avatars)
+            foreach (KeyValuePair<int, Avatar> avatar in m_avatars)
             {
                 m_avatarControllers.Add(avatar.Key, new AvatarController(avatar.Value));
             }
@@ -59,7 +59,7 @@ namespace Game
         {
             // TODO: Semantics of Reset? What should it do?
             // current implementation: loads world from file again
-            World = new ToyWorld(GameSetup.SaveFile, GameSetup.TilesetFile);
+            World = new ToyWorld(m_gameSetup.SaveFile, m_gameSetup.TilesetFile);
         }
 
 
@@ -68,9 +68,9 @@ namespace Game
             // Assume Init has been called, we don't want to check for consistency every step
             World.Update();
 
-            foreach (var avatarController in m_avatarControllers)
+            foreach (AvatarController avatarController in m_avatarControllers.Values)
             {
-                avatarController.Value.ResetControls();
+                avatarController.ResetControls();
             }
 
             Renderer.ProcessRequests();
@@ -92,7 +92,7 @@ namespace Game
         {
             // TODO: check agentID or make the param an AgentController?
 
-            var rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
+            T rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
             InitRr(rr);
             Renderer.EnqueueRequest(rr);
 
@@ -102,7 +102,7 @@ namespace Game
         void InitRr<T>(T rr)
             where T : class
         {
-            var rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
+            RenderRequest rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
 
             if (rrBase == null)
                 throw new RenderRequestNotImplementedException(string.Format("Incorrect type argument; the type {0} is not registered for use in this controller version.", typeof(T).Name));

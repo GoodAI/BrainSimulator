@@ -13,8 +13,8 @@ namespace Game
     {
         #region IGameController overrides
 
-        public BasicGameController(IRenderer renderer)
-            : base(renderer)
+        public BasicGameController(IRenderer renderer, GameSetup gameSetup)
+            : base(renderer, gameSetup)
         { }
 
         #endregion

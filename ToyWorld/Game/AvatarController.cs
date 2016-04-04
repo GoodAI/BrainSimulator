@@ -16,19 +16,7 @@ namespace Game
 
         public void SetAction(AvatarAction<object> action)
         {
-            if (m_avatar.AvatarActions.ContainsKey(action.ActionId))
-            {
-                var currentPriority = action.Priority;
-                var prevPriority = m_avatar.AvatarActions[action.ActionId].Priority;
-                if (currentPriority > prevPriority)
-                {
-                    m_avatar.AvatarActions[action.ActionId] = action;
-                }
-            }
-            else
-            {
-                m_avatar.AvatarActions.Add(action.ActionId, action);
-            }
+            m_avatar.AddAction(action);
         }
 
         public IStats GetStats()
@@ -43,7 +31,7 @@ namespace Game
 
         internal void ResetControls()
         {
-            m_avatar.AvatarActions = new Dictionary<AvatarActionEnum, AvatarAction<object>>();
+            m_avatar.ClearConstrols();
         }
     }
 }
