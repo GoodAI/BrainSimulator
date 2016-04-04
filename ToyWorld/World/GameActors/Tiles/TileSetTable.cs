@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using FileHelpers;
 
 namespace World.GameActors.Tiles
 {
@@ -10,19 +11,39 @@ namespace World.GameActors.Tiles
         private readonly Dictionary<string, int> m_namesValuesDictionary;
         private readonly Dictionary<int, string> m_valuesNamesDictionary;
 
-        public TilesetTable(string filePath)
+        public TilesetTable(StreamReader tilesetFile)
         {
-            var dataTable = CsvEngine.CsvToDataTable(filePath, ';');
+            var dataTable = new DataTable();
+            var readLine = tilesetFile.ReadLine();
+
+            Debug.Assert(readLine != null, "readLine != null");
+            foreach (var header in readLine.Split(';'))
+            {
+                dataTable.Columns.Add(header);
+            }
+
+
+            while (!tilesetFile.EndOfStream)
+            {
+                var line = tilesetFile.ReadLine();
+                Debug.Assert(line != null, "line != null");
+                var row = line.Split(';');
+                if (dataTable.Columns.Count != row.Length)
+                    break;
+                var newRow = dataTable.NewRow();
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    newRow[column.ColumnName] = row[column.Ordinal];
+                }
+                dataTable.Rows.Add(newRow);
+            }
+
             var enumerable = dataTable.Rows.Cast<DataRow>();
             var dataRows = enumerable as DataRow[] ?? enumerable.ToArray();
-
-            var nameOfTile = dataTable.Columns.Cast<DataColumn>().First(x => x.ColumnName == "NameOfTile").Ordinal;
-            var positionInTileset = dataTable.Columns.Cast<DataColumn>().First(x => x.ColumnName == "PositionInTileset").Ordinal;
-            var isDefault = dataTable.Columns.Cast<DataColumn>().First(x => x.ColumnName == "IsDefault").Ordinal;
             
-            m_namesValuesDictionary = dataRows.Where(x => x[isDefault].ToString() == "1")
-                .ToDictionary(x => x[nameOfTile].ToString(), x => int.Parse(x[positionInTileset].ToString()));
-            m_valuesNamesDictionary = dataRows.ToDictionary(x => int.Parse(x[positionInTileset].ToString()), x => x[nameOfTile].ToString());
+            m_namesValuesDictionary = dataRows.Where(x => x["IsDefault"].ToString() == "1")
+                .ToDictionary(x => x["NameOfTile"].ToString(), x => int.Parse(x["PositionInTileset"].ToString()));
+            m_valuesNamesDictionary = dataRows.ToDictionary(x => int.Parse(x["PositionInTileset"].ToString()), x => x["NameOfTile"].ToString());
         }
 
         /// <summary>

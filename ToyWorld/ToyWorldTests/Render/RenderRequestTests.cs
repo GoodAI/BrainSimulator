@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +21,11 @@ namespace ToyWorldTests.Render
         {
             m_gc = ControllerFactory.GetController() as GameControllerBase;
             Assert.NotNull(m_gc);
-            m_gc.Init(null);
+            var gs = new GameSetup(
+                new StreamReader(TestingFiles.Files.GetTmxMemoryStream()),
+                new StreamReader(TestingFiles.Files.GetTilesetTableMemoryStream())
+                );
+            m_gc.Init(gs);
         }
 
         public void Dispose()

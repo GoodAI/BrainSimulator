@@ -1,4 +1,6 @@
-﻿namespace World.WorldInterfaces
+﻿using World.GameActors.GameObjects;
+
+namespace World.WorldInterfaces
 {
     public interface IWorld
     {
@@ -12,5 +14,11 @@
         ///     6. GamoObjects move (Physics)
         /// </summary>
         void Update();
+
+        int[] GetAvatarsIds();
+
+        int[] GetAvatarsNames();
+
+        Avatar GetAvatar(int id);
     }
 }

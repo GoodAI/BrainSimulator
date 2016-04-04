@@ -87,12 +87,31 @@
         </member>
         <member name="T:GoodAI.ToyWorld.Control.GameSetup">
             <summary>
-            
+            Setup object for ToyWorld
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.GameSetup.PathToSaveFile">
+        <member name="M:GoodAI.ToyWorld.Control.GameSetup.#ctor(System.IO.StreamReader,System.IO.StreamReader)">
+            <summary>
+            Setup object for ToyWorld constructor.
+            </summary>
+            <param name="saveFile">Tmx file created in Tiled editor or save file</param>
+            <param name="tilesetFile">Csv table containing columns "NameOfTile", "PositionInTileset" and "IsDefault"</param>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.GameSetup.SaveFile">
             <summary>
             The path to a .TMX (fresh world) or a world save.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.GameSetup.TilesetFile">
+            <summary>
+            Csv table containing columns "NameOfTile", "PositionInTileset" and "IsDefault"
+            One TileName can have more PositionInTileset numbers, so object can behave based on common
+            implementation but looks different according to position.
+            
+            <p>(string) Name of tile must match name of implemented object.</p>
+            <p>(int) Position in tileset is index of tile in png file with pictures of tiles and objects.
+            It should match index in Tiled</p>
+            <p>(0|1) . If is some tile default, when new tile is created, this TileNumber will be used.</p>
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IGameController">

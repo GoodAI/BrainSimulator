@@ -12,18 +12,17 @@ namespace World.ToyWorldCore
 {
     public static class MapLoader
     {
-
         /// <summary>
         /// Loads map from specified path, creates tiles and objects and put them into new Atlas object.
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="tmxFile"></param>
         /// <param name="tilesetTable"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
-        public static Atlas LoadMap(string fileName, TilesetTable tilesetTable)
+        public static Atlas LoadMap(StreamReader tmxFile, TilesetTable tilesetTable)
         {
             TmxSerializer tmxMapSerializer = new TmxSerializer();
 
-            Map map = (Map)tmxMapSerializer.Deserialize(new FileStream(fileName, FileMode.Open));
+            Map map = (Map)tmxMapSerializer.Deserialize(tmxFile);
 
             Atlas atlas = new Atlas();
 
@@ -47,7 +46,7 @@ namespace World.ToyWorldCore
                 {
                     var tileLayer = map.Layers.First(x => x.Name == layerName);
                     if (tileLayer == null)
-                        throw new Exception("Layer " + layerName + " not found in " + fileName + " file!");
+                        throw new Exception("Layer " + layerName + " not found in given tmx file!");
                     atlas.TileLayers.Add(
                         FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable)
                         );
@@ -72,7 +71,7 @@ namespace World.ToyWorldCore
                 var tiles = lines[i].Split(',');
                 for (int j = 0; j < tiles.Length; j++)
                 {
-                    if (tiles[j] == "")
+                    if (tiles[j].Trim() == "")
                         continue;
                     var tileNumber = int.Parse(tiles[j]);
                     if (staticTilesContainer.ContainsKey(tileNumber))

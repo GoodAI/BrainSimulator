@@ -6,6 +6,7 @@ namespace World.GameActors.GameObjects
 {
     public class Avatar : Character
     {
+        public int Id { get; private set; }
         public sealed override string Name { get; protected set; }
 
         public Dictionary<AvatarActionEnum, AvatarAction<object>> AvatarActions { get; set; }
@@ -21,9 +22,10 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        public Avatar(string name)
+        public Avatar(string name, int id)
         {
             Name = name;
+            Id = id;
         }
     }
 }

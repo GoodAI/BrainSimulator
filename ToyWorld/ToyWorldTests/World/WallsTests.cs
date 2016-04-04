@@ -1,4 +1,5 @@
-﻿using World.GameActions;
+﻿using System.IO;
+using World.GameActions;
 using World.GameActors.Tiles;
 using Xunit;
 using Moq;
@@ -8,10 +9,11 @@ namespace ToyWorldTests.World
     public class WallsTests
     {
         private readonly Wall m_wall;
-        private TilesetTable m_tilesetTable;
+        private readonly TilesetTable m_tilesetTable;
         public WallsTests()
         {
             m_wall = new Wall(0);
+
             var mockTilesetTable = new Mock<TilesetTable>();
             mockTilesetTable.Setup(x => x.TileNumber(It.IsAny<string>())).Returns(0);
             mockTilesetTable.Setup(x => x.TileName(It.IsAny<int>())).Returns("");

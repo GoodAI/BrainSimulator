@@ -1,4 +1,7 @@
-﻿using World.GameActors.Tiles;
+﻿using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using GoodAI.ToyWorld.Control;
+using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
 
@@ -9,8 +12,15 @@ namespace ToyWorldTests.World
         private Atlas m_atlas;
         public MapLoaderTests()
         {
-            m_atlas = MapLoader.LoadMap(@"..\..\..\TestFiles\mockup999_pantry_world.tmx",
-                new TilesetTable(@"GameActors\Tiles\Tilesets\TilesetTable.csv"));
+            var tmxMemoryStream = TestingFiles.Files.GetTmxMemoryStream();
+            var tilesetTableMemoryStream = TestingFiles.Files.GetTilesetTableMemoryStream();
+
+            var tmxStreamReader = new StreamReader(tmxMemoryStream);
+            var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
+
+            var tilesetTable = new TilesetTable(tilesetTableStreamReader);
+
+            m_atlas = MapLoader.LoadMap(tmxStreamReader, tilesetTable);
         }
 
         [Fact]

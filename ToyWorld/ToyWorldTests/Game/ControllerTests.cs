@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading;
+using System.IO;
 using Game;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Input;
-using Render.RenderRequests;
 using Render.RenderRequests.Tests;
 using Xunit;
 
@@ -11,40 +9,55 @@ namespace ToyWorldTests.Game
 {
     public class ControllerTests : IDisposable
     {
-        private IGameController m_gc;
+        private IGameController m_gameController;
 
 
         public ControllerTests()
         {
-            m_gc = ControllerFactory.GetController();
-            m_gc.Init(null);
+            m_gameController = ControllerFactory.GetController();
+
+            var tmxMemoryStream = TestingFiles.Files.GetTmxMemoryStream();
+            var tilesetTableMemoryStream = TestingFiles.Files.GetTilesetTableMemoryStream();
+
+            var tmxStreamReader = new StreamReader(tmxMemoryStream);
+            var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
+
+            var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
+
+            m_gameController.Init(gameSetup);
+        }
+
+        private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)
+        {
+            var stringBytes = System.Text.Encoding.UTF8.GetBytes(stringToWrite);
+            memoryStream.Write(stringBytes, 0, stringBytes.Length);
         }
 
         public void Dispose()
         {
-            m_gc.Dispose();
-            m_gc = null;
+            m_gameController.Dispose();
+            m_gameController = null;
         }
 
 
         [Fact]
         public void Init()
         {
-            Assert.NotNull(m_gc);
+            Assert.NotNull(m_gameController);
 
-            m_gc.RegisterRenderRequest<IRRTest>();
-            m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
+            m_gameController.RegisterRenderRequest<IRRTest>();
+            m_gameController.RegisterAvatarRenderRequest<IARRTest>(0);
 
-            m_gc.GetAvatarController(0);
+            m_gameController.GetAvatarController(0);
 
-            m_gc.Reset();
+            m_gameController.Reset();
         }
 
         [Fact]
         public void ControllerNotImplementedThrows()
         {
-            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)m_gc.RegisterRenderRequest<INotImplementedRR>);
-            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => m_gc.RegisterAvatarRenderRequest<INotImplementedARR>(0));
+            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)m_gameController.RegisterRenderRequest<INotImplementedRR>);
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => m_gameController.RegisterAvatarRenderRequest<INotImplementedARR>(0));
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             // var ac = gc.GetAvatarController(0);
@@ -53,7 +66,7 @@ namespace ToyWorldTests.Game
         [Fact]
         public void RenderNotNull()
         {
-            var gcBase = m_gc as GameControllerBase;
+            var gcBase = m_gameController as GameControllerBase;
             Assert.NotNull(gcBase);
             Assert.NotNull(gcBase.Renderer);
         }
@@ -67,11 +80,11 @@ namespace ToyWorldTests.Game
         [Fact]
         public void DoStep()
         {
-            m_gc.RegisterRenderRequest<IRRTest>();
-            m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
+            m_gameController.RegisterRenderRequest<IRRTest>();
+            m_gameController.RegisterAvatarRenderRequest<IARRTest>(0);
 
-            m_gc.MakeStep();
-            m_gc.MakeStep();
+            m_gameController.MakeStep();
+            m_gameController.MakeStep();
         }
     }
 }

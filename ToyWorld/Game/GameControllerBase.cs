@@ -1,7 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
+using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 using World.WorldInterfaces;
 
@@ -13,6 +14,8 @@ namespace Game
         public IRenderer Renderer { get; private set; }
         protected IWorld World { get; private set; }
         private GameSetup GameSetup { get; set; }
+        private Dictionary<int, Avatar> m_avatars;
+        private Dictionary<int, AvatarController> m_avatarControllers;
 
 
         protected GameControllerBase(IRenderer renderer)
@@ -33,7 +36,19 @@ namespace Game
         public virtual void Init(GameSetup setup)
         {
             GameSetup = setup;
-            World = new ToyWorld(GameSetup.PathToSaveFile, GameSetup.pathToTilesetFile);
+            World = new ToyWorld(GameSetup.SaveFile, GameSetup.TilesetFile);
+
+            m_avatars = new Dictionary<int, Avatar>();
+            foreach (var avatarId in World.GetAvatarsIds())
+            {
+                m_avatars.Add(avatarId, World.GetAvatar(avatarId));
+            }
+
+            m_avatarControllers = new Dictionary<int, AvatarController>();
+            foreach (var avatar in m_avatars)
+            {
+                m_avatarControllers.Add(avatar.Key, new AvatarController(avatar.Value));
+            }
 
             Renderer.Init();
             Renderer.CreateWindow("TestGameWindow", 1024, 1024);
@@ -44,7 +59,7 @@ namespace Game
         {
             // TODO: Semantics of Reset? What should it do?
             // current implementation: loads world from file again
-            World = new ToyWorld(GameSetup.PathToSaveFile, GameSetup.pathToTilesetFile);
+            World = new ToyWorld(GameSetup.SaveFile, GameSetup.TilesetFile);
         }
 
 
@@ -52,6 +67,11 @@ namespace Game
         {
             // Assume Init has been called, we don't want to check for consistency every step
             World.Update();
+
+            foreach (var avatarController in m_avatarControllers)
+            {
+                avatarController.Value.ResetControls();
+            }
 
             Renderer.ProcessRequests();
         }
@@ -61,25 +81,25 @@ namespace Game
             where T : class, IRenderRequest
         {
             var rr = RenderRequestFactory.CreateRenderRequest<T>();
-            InitRR(rr);
+            InitRr(rr);
             Renderer.EnqueueRequest(rr);
 
             return rr;
         }
 
-        public virtual T RegisterAvatarRenderRequest<T>(int avatarID)
+        public virtual T RegisterAvatarRenderRequest<T>(int avatarId)
             where T : class, IAvatarRenderRequest
         {
             // TODO: check agentID or make the param an AgentController?
 
-            var rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarID);
-            InitRR(rr);
+            var rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
+            InitRr(rr);
             Renderer.EnqueueRequest(rr);
 
             return rr;
         }
 
-        void InitRR<T>(T rr)
+        void InitRr<T>(T rr)
             where T : class
         {
             var rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
@@ -91,9 +111,9 @@ namespace Game
         }
 
 
-        public virtual IAvatarController GetAvatarController(int avatarId)
+        public IAvatarController GetAvatarController(int avatarId)
         {
-            return null;
+            return m_avatarControllers[avatarId];
         }
 
         #endregion
