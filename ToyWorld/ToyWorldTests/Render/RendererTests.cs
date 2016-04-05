@@ -8,7 +8,6 @@ using OpenTK;
 using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderRequests;
-using Render.RenderRequests.Tests;
 using Xunit;
 
 namespace ToyWorldTests.Render
@@ -34,23 +33,14 @@ namespace ToyWorldTests.Render
 
 
         [Fact]
-        public void Init()
+        public void InitRepeated()
         {
-            Assert.NotNull(m_renderer.Window);
-            Assert.NotNull(m_renderer.Context);
-
             m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
             m_renderer.CreateContext();
-
-            Assert.NotNull(m_renderer.Window);
-            Assert.NotNull(m_renderer.Context);
 
             m_renderer.Reset();
             m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
             m_renderer.CreateContext();
-
-            Assert.NotNull(m_renderer.Window);
-            Assert.NotNull(m_renderer.Context);
         }
 
         [Fact]
@@ -58,7 +48,6 @@ namespace ToyWorldTests.Render
         {
             // TODO: Doesn't work -- how to invoke the Resize event on Window?
             //m_renderer.Window.Size = new System.Drawing.Size((int)(m_renderer.Window.Width * 1.3f), (int)(m_renderer.Window.Height * 1.3f));
-            m_renderer.Window.WindowState = WindowState.Maximized;
             m_renderer.ProcessRequests();
         }
     }

@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
-using Render.Geometries.Buffers;
 using Render.Renderer;
+using Render.Tests.Effects;
+using Render.Tests.Geometries;
 
 namespace Render.RenderRequests.AvatarRenderRequests
 {
@@ -33,10 +34,12 @@ namespace Render.RenderRequests.AvatarRenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(IRenderer renderer)
+        public override void Init(RendererBase renderer)
         {
             //m_pbo = new VBO(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
-            Image = new uint[renderer.Window.Width * renderer.Window.Height];
+
+            // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
+            Image = new uint[renderer.Width * renderer.Height];
 
             GL.ClearColor(Color.Black);
         }
@@ -45,28 +48,10 @@ namespace Render.RenderRequests.AvatarRenderRequests
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            GL.Begin(PrimitiveType.Lines);
+            renderer.EffectManager.Use<NoEffect>();
+            renderer.GeometryManager.Draw<FancyFullscreenQuad>();
 
-            if (m_odd = !m_odd)
-            {
-                GL.Color3(Color.Red);
-                GL.Vertex3(0, 0, 0);
-                GL.Vertex3(1, 1, 1);
-            }
-            else
-            {
-                GL.Color3(Color.Green);
-                GL.Vertex3(0, 0, 0);
-                GL.Vertex3(-1, -1, -1);
-            }
-
-            GL.End();
-
-            //m_pbo.Bind();
-            //GL.ReadPixels(0,0,renderer.Window.Width, renderer.Window.Height,PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
-            //m_pbo.Unbind();
-
-            GL.ReadPixels(0, 0, renderer.Window.Width, renderer.Window.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
+            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
         }
 
         #endregion

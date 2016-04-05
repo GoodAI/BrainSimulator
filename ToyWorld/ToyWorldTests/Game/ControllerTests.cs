@@ -2,7 +2,7 @@
 using System.IO;
 using Game;
 using GoodAI.ToyWorld.Control;
-using Render.RenderRequests.Tests;
+using Render.Tests.RRs;
 using Xunit;
 
 namespace ToyWorldTests.Game
@@ -79,8 +79,8 @@ namespace ToyWorldTests.Game
         [Fact]
         public void DoStep()
         {
-            GameController.RegisterRenderRequest<IRRTest>();
-            GameController.RegisterAvatarRenderRequest<IARRTest>(0);
+            GameController.RegisterRenderRequest<IBasicTexRR>();
+            GameController.RegisterAvatarRenderRequest<IBasicARR>(0);
 
             GameController.MakeStep();
             GameController.MakeStep();

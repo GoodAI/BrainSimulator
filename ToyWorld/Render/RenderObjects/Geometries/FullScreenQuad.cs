@@ -16,7 +16,6 @@ namespace Render.RenderObjects.Geometries
         {
             GL.BindVertexArray(Vao.Handle);
             GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            GL.BindVertexArray(0);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using GoodAI.ToyWorld.Control;
-using OpenTK.Input;
 
-namespace Render.RenderRequests.Tests
+namespace Render.Tests.RRs
 {
     public interface INotImplementedRR : IRenderRequest
     { }

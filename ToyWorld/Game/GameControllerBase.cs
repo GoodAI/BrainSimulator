@@ -88,7 +88,6 @@ namespace Game
             var rr = RenderRequestFactory.CreateRenderRequest<T>();
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
-            Renderer.CheckError();
             Renderer.MakeContextNotCurrent();
 
             return rr;
@@ -103,7 +102,6 @@ namespace Game
             T rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
-            Renderer.CheckError();
             Renderer.MakeContextNotCurrent();
 
             return rr;

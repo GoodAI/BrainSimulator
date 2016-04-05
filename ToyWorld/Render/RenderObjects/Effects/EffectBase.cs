@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 
-namespace Render.Shaders
+namespace Render.RenderObjects.Shaders
 {
-    internal class Shader : IDisposable
+    internal class EffectBase : IDisposable
     {
-        const string ShaderPathBase = "Render.Shaders.Src.";
+        const string ShaderPathBase = "Render.RenderObjects.Effects.Src.";
 
         private readonly int m_prog;
 
 
         // TODO: genericity
-        public Shader(string vertPath, string fragPath)
+        protected EffectBase(string vertPath, string fragPath)
         {
             int vert = LoadShader(vertPath, ShaderType.VertexShader);
             int frag = LoadShader(fragPath, ShaderType.FragmentShader);
@@ -64,13 +59,9 @@ namespace Render.Shaders
         }
 
 
-        public void Use(RendererBase renderer)
+        public void Use()
         {
-            if (renderer.CurrentShader == this)
-                return;
-
             GL.UseProgram(m_prog);
-            renderer.CurrentShader = this;
         }
     }
 }

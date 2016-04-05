@@ -1,7 +1,6 @@
-﻿using OpenTK.Graphics.OpenGL;
-using Render.RenderObjects.Geometries;
+﻿using Render.RenderObjects.Geometries;
 
-namespace Render.RenderRequests.Tests
+namespace Render.Tests.Geometries
 {
     // 0 - Position
     // 1 - Color

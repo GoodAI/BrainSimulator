@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 
@@ -29,18 +30,15 @@ namespace Render.Geometries.Buffers
         //    Init(count, initData, hint);
         //}
 
-        private void Init<T>(int count, T[] initData, BufferUsageHint hint)
+        private void Init<T>(int count, T[] data, BufferUsageHint hint)
         where T : struct
         {
-            if (initData != null)
-                Debug.Assert(initData.Length == count);
-
             Handle = GL.GenBuffer();
             Count = count;
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, Handle);
-            GL.BufferData(BufferTarget.ArrayBuffer, count * Marshal.SizeOf(typeof(T)), initData, hint);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            Bind();
+            GL.BufferData(Target, count * Marshal.SizeOf(typeof(T)), data, hint);
+            Unbind();
         }
 
         public void Dispose()
@@ -50,6 +48,18 @@ namespace Render.Geometries.Buffers
 
         #endregion
 
+        public void Update<T>(T[] data, int count = -1, int offset = 0)
+            where T : struct
+        {
+            if (count == -1)
+                count = data.Length;
+
+            var tSize = Marshal.SizeOf(typeof(T));
+
+            Bind();
+            GL.BufferSubData(Target, new IntPtr(offset * tSize), count * tSize, data);
+            Unbind();
+        }
 
         public void Bind()
         {
