@@ -8,15 +8,17 @@ namespace Game
     class AvatarController : IAvatarController
     {
         private Avatar m_avatar;
+        private IAvatarPriorityActions a;
 
         public AvatarController(Avatar avatar)
         {
             m_avatar = avatar;
         }
 
-        public void SetAction(AvatarAction<object> action)
+        public void SetActions(IAvatarPriorityActions actions)
         {
-            m_avatar.AddAction(action);
+            a.Copy(actions);
+            m_avatar.Forward = actions.Forward.Value;
         }
 
         public IStats GetStats()

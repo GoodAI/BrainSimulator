@@ -36,13 +36,15 @@ namespace ToyWorldTests.Game
         public void Dispose()
         {
             GameController.Dispose();
+            // Test repeated Dispose()
+            GameController.Dispose();
             GameController = null;
         }
 
 
         // Tests game factory and basic enqueuing
         [Fact]
-        public void Init()
+        public void TestInitAndReset()
         {
             Assert.NotNull(GameController);
 

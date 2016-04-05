@@ -8,8 +8,8 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="action">Action for avatar.</param>
-        void SetAction(AvatarAction<object> action);
+        /// <param name="actions">Action for avatar.</param>
+        void SetActions(IAvatarPriorityActions actions);
 
         /// <summary>
         /// 

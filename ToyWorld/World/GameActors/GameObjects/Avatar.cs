@@ -4,7 +4,7 @@ using GoodAI.ToyWorld.Control;
 
 namespace World.GameActors.GameObjects
 {
-    public class Avatar : Character
+    public class Avatar : Character, IAvatarActions
     {
         public readonly int Id;
         public sealed override string Name { get; protected set; }
@@ -23,23 +23,6 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        public void AddAction(AvatarAction<object> action)
-        {
-            if (AvatarActions.ContainsKey(action.ActionId))
-            {
-                int currentPriority = action.Priority;
-                int prevPriority = AvatarActions[action.ActionId].Priority;
-                if (currentPriority > prevPriority)
-                {
-                    AvatarActions[action.ActionId] = action;
-                }
-            }
-            else
-            {
-                AvatarActions.Add(action.ActionId, action);
-            }
-        }
-
         public Avatar(string name, int id)
         {
             Name = name;
@@ -50,5 +33,9 @@ namespace World.GameActors.GameObjects
         {
             AvatarActions = new Dictionary<AvatarActionEnum, AvatarAction<object>>();
         }
+
+        public float Forward { get; set; }
+        public float Back { get; set; }
+        public bool DoPickup { get; set; }
     }
 }

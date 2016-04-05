@@ -37,24 +37,6 @@ namespace Game
         public virtual void Init()
         {
             // Init World
-            LoadWorld();
-
-            // Init rendering
-            Renderer.Init();
-            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
-            Renderer.CreateContext();
-        }
-
-        public virtual void Reset()
-        {
-            // TODO: Semantics of Reset? What should it do?
-            // current implementation: loads world from file again
-            Renderer.Reset();
-            LoadWorld();
-        }
-
-        void LoadWorld()
-        {
             World = new ToyWorld(m_gameSetup.SaveFile, m_gameSetup.TilesetFile);
 
             m_avatars = new Dictionary<int, Avatar>();
@@ -68,6 +50,18 @@ namespace Game
             {
                 m_avatarControllers.Add(avatar.Key, new AvatarController(avatar.Value));
             }
+
+            // Init rendering
+            Renderer.Init();
+            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
+            Renderer.CreateContext();
+        }
+
+        public virtual void Reset()
+        {
+            // TODO: Semantics of Reset? What should it do?
+            // World.Reset();
+            Renderer.Reset();
         }
 
         public virtual void MakeStep()
@@ -91,7 +85,7 @@ namespace Game
             where T : class, IRenderRequest
         {
             var rr = RenderRequestFactory.CreateRenderRequest<T>();
-            InitRr(rr);
+            InitRR(rr);
             Renderer.EnqueueRequest(rr);
 
             return rr;
@@ -103,13 +97,13 @@ namespace Game
             // TODO: check agentID or make the param an AgentController?
 
             T rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
-            InitRr(rr);
+            InitRR(rr);
             Renderer.EnqueueRequest(rr);
 
             return rr;
         }
 
-        void InitRr<T>(T rr)
+        void InitRR<T>(T rr)
             where T : class
         {
             RenderRequest rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest

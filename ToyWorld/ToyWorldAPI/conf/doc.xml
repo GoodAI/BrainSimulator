@@ -4,11 +4,6 @@
         <name>GoodAI.ToyWorldAPI</name>
     </assembly>
     <members>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.ActionId">
-            <summary>
-            Action to preform.
-            </summary>
-        </member>
         <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
             <summary>
             Value of action.
@@ -19,11 +14,21 @@
             If two or more controllers are connected to one agent, action with highest priority will be performed.
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(GoodAI.ToyWorld.Control.AvatarActionEnum,`0,System.Int32)">
+        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(`0,System.Int32)">
             <summary></summary>
             <param name="actionId">Action to preform.</param>
             <param name="value">Value of action.</param>
             <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IAvatarActions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IAvatarPriorityActions">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">
             <summary>
@@ -41,11 +46,11 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetAction(GoodAI.ToyWorld.Control.AvatarAction{System.Object})">
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetActions(GoodAI.ToyWorld.Control.IAvatarPriorityActions)">
             <summary>
             
             </summary>
-            <param name="action">Action for avatar.</param>
+            <param name="actions">Action for avatar.</param>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IAvatarController.GetStats">
             <summary>

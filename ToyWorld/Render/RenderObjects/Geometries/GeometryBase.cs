@@ -26,10 +26,10 @@ namespace Render.RenderObjects.Geometries
         {
             float[] buf =
             {
-                -1, 0, -1,
-                 1, 0, -1,
-                 1, 0,  1,
-                -1, 0,  1
+                -1,-1, 0, 
+                 1,-1, 0, 
+                 1, 1, 0, 
+                -1, 1, 0, 
             };
 
             return new VBO(buf.Length, buf, hint: BufferUsageHint.StaticDraw);

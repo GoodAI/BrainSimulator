@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameActions\IAvatarActions.cs" />
     <Compile Include="GameActors\GameObjects\IUsable.cs" />
     <Compile Include="GameActors\Tiles\OnBackground.cs" />
     <Compile Include="GameActors\Tiles\Background.cs" />
