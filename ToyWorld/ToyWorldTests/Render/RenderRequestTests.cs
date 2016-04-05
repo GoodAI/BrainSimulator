@@ -7,6 +7,7 @@ using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using Render.Renderer;
 using Render.RenderRequests;
 using Render.RenderRequests.Tests;
 using ToyWorldTests.Game;
@@ -17,6 +18,8 @@ namespace ToyWorldTests.Render
     public class RenderRequestTests : ControllerTests
     {
         private readonly GameControllerBase m_gc;
+
+        RendererBase Renderer { get { return m_gc.Renderer; } }
 
 
         public RenderRequestTests()
@@ -33,11 +36,9 @@ namespace ToyWorldTests.Render
             m_gc.Renderer.Window.KeyDown += (sender, args) => winKeypressResult = args.Key;
             m_gc.Renderer.Window.Visible = true;
 
-
             var RRTest = m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
 
-
-            while (winKeypressResult == default(Key))
+            while (winKeypressResult == default(Key) && Renderer.Window.Exists)
             {
                 Thread.Sleep(100);
                 m_gc.MakeStep();
@@ -45,18 +46,21 @@ namespace ToyWorldTests.Render
                 m_gc.Renderer.Context.SwapBuffers();
             }
 
-
             Assert.Equal(winKeypressResult, Key.A);
         }
 
         [Fact]
         public void RRInits()
         {
+            Assert.NotNull(Renderer);
+            Renderer.MakeContextCurrent();
+
             foreach (var rr in RenderRequestFactory.RRs)
             {
                 var r = rr as RenderRequest;
                 Assert.NotNull(r);
                 r.Init(m_gc.Renderer);
+                Renderer.CheckError();
             }
 
             foreach (var rr in RenderRequestFactory.ARRs)
@@ -64,7 +68,10 @@ namespace ToyWorldTests.Render
                 var r = rr as RenderRequest;
                 Assert.NotNull(r);
                 r.Init(m_gc.Renderer);
+                Renderer.CheckError();
             }
+
+            Renderer.MakeContextNotCurrent();
         }
 
 
@@ -72,8 +79,8 @@ namespace ToyWorldTests.Render
         public void AvatarFoV()
         {
             var RRTest = m_gc.RegisterAvatarRenderRequest<IAvatarRenderRequestFoV>(0);
-            Assert.NotEmpty(RRTest.Image);
 
+            Assert.NotEmpty(RRTest.Image);
             Assert.Equal(RRTest.Size, RRTest.Image.Length);
 
             m_gc.MakeStep();

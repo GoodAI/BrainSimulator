@@ -8,26 +8,22 @@ using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
 using Render.RenderRequests.RenderRequests;
+using Render.Shaders;
 
 namespace Render.RenderRequests.Tests
 {
     class RRTest : RenderRequestBase, IRRTest
     {
-        private readonly Square m_sq = new Square();
-        private int m_prog;
+        private GeometryBase m_sq;
+        private Shader m_copyShader;
 
         private bool odd;
 
 
-        public RRTest()
-        { }
-
         public override void Dispose()
         {
-            GL.UseProgram(0);
-            GL.DeleteProgram(m_prog);
-
             m_sq.Dispose();
+            m_copyShader.Dispose();
         }
 
 
@@ -42,45 +38,10 @@ namespace Render.RenderRequests.Tests
         public override void Init(IRenderer renderer)
         {
             GL.ClearColor(Color.Black);
-
-            m_sq.Init();
-
             renderer.Window.Visible = true;
 
-            // Init shaders
-            int vert = LoadShader("Render.Shaders.Basic.vert", ShaderType.VertexShader);
-            int frag = LoadShader("Render.Shaders.Basic.frag", ShaderType.FragmentShader);
-
-            m_prog = GL.CreateProgram();
-            GL.AttachShader(m_prog, vert);
-            GL.AttachShader(m_prog, frag);
-            GL.LinkProgram(m_prog);
-
-            var res = GL.GetProgramInfoLog(m_prog);
-
-            Debug.Assert(string.IsNullOrEmpty(res), res);
-
-            GL.UseProgram(m_prog);
-        }
-
-        int LoadShader(string name, ShaderType type)
-        {
-            var handle = GL.CreateShader(type);
-            var vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
-
-            Debug.Assert(vertSrc != null);
-
-            var str = new StreamReader(vertSrc);
-            string res = str.ReadToEnd();
-
-            GL.ShaderSource(handle, res);
-            GL.CompileShader(handle);
-
-            res = GL.GetShaderInfoLog(handle);
-
-            Debug.Assert(string.IsNullOrEmpty(res), res);
-
-            return handle;
+            m_sq = new FancyFullscreenQuad();
+            m_copyShader = new Shader("Basic.vert", "Basic.frag");
         }
 
         public override void Draw(RendererBase renderer)
@@ -95,6 +56,7 @@ namespace Render.RenderRequests.Tests
                 m = Matrix4.CreateScale(0.1f);
 
 
+            m_copyShader.Use(renderer);
             m_sq.Draw();
 
             renderer.Context.SwapBuffers();

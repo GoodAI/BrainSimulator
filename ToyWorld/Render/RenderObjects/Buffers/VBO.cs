@@ -6,7 +6,7 @@ namespace Render.Geometries.Buffers
 {
     internal class VBO
     {
-        public uint Handle { get; private set; }
+        public int Handle { get; private set; }
         public int Count { get; private set; }
 
         public BufferTarget Target { get; private set; }
@@ -35,7 +35,7 @@ namespace Render.Geometries.Buffers
             if (initData != null)
                 Debug.Assert(initData.Length == count);
 
-            Handle = (uint)GL.GenBuffer();
+            Handle = GL.GenBuffer();
             Count = count;
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, Handle);
@@ -58,7 +58,7 @@ namespace Render.Geometries.Buffers
 
         public void Unbind()
         {
-            GL.BindBuffer(Target, Handle);
+            GL.BindBuffer(Target, 0);
         }
     }
 }

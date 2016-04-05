@@ -27,7 +27,7 @@ namespace Render.Geometries.Buffers
             m_BOs.Clear();
         }
 
-        public void AddVBO(VBO vbo, int index, VertexAttribPointerType type = VertexAttribPointerType.Float, bool normalized = false, int stride = 1, int offset = 0)
+        public void AddVBO(VBO vbo, int index, VertexAttribPointerType type = VertexAttribPointerType.Float, bool normalized = false, int stride = 0, int offset = 0)
         {
             Debug.Assert(vbo != null);
             Debug.Assert(vbo.Target == BufferTarget.ArrayBuffer);
@@ -38,7 +38,7 @@ namespace Render.Geometries.Buffers
             vbo.Bind();
 
             GL.EnableVertexAttribArray(index);
-            GL.VertexAttribPointer(index, 4, type, normalized, stride, offset);
+            GL.VertexAttribPointer(index, vbo.ElementSize, type, normalized, stride, offset);
 
             GL.BindVertexArray(0);
             vbo.Unbind();

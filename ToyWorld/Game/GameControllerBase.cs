@@ -11,14 +11,14 @@ namespace Game
     // TODO: why there is abstract class instead of BasicGameController?
     public abstract class GameControllerBase : IGameController
     {
-        public IRenderer Renderer { get; private set; }
+        public RendererBase Renderer { get; private set; }
         public IWorld World { get; private set; }
         private readonly GameSetup m_gameSetup;
         private Dictionary<int, Avatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
 
-        protected GameControllerBase(IRenderer renderer, GameSetup setup)
+        protected GameControllerBase(RendererBase renderer, GameSetup setup)
         {
             Renderer = renderer;
             m_gameSetup = setup;
@@ -84,9 +84,12 @@ namespace Game
         public virtual T RegisterRenderRequest<T>()
             where T : class, IRenderRequest
         {
+            Renderer.MakeContextCurrent();
             var rr = RenderRequestFactory.CreateRenderRequest<T>();
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
+            Renderer.CheckError();
+            Renderer.MakeContextNotCurrent();
 
             return rr;
         }
@@ -96,9 +99,12 @@ namespace Game
         {
             // TODO: check agentID or make the param an AgentController?
 
+            Renderer.MakeContextCurrent();
             T rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
+            Renderer.CheckError();
+            Renderer.MakeContextNotCurrent();
 
             return rr;
         }

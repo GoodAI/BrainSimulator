@@ -7,6 +7,7 @@ using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
+using Render.Shaders;
 using VRage.Collections;
 
 namespace Render.Renderer
@@ -16,6 +17,8 @@ namespace Render.Renderer
         #region Fields
 
         private readonly IterableQueue<RenderRequest> m_renderRequestQueue = new IterableQueue<RenderRequest>();
+
+        internal Shader CurrentShader;
 
         #endregion
 
@@ -80,8 +83,7 @@ namespace Render.Renderer
 
             if (Context != null)
             {
-                if (Context.IsCurrent)
-                    Context.MakeCurrent(null);
+                MakeContextNotCurrent();
                 Context.Dispose();
             }
 
@@ -112,15 +114,14 @@ namespace Render.Renderer
 
         public virtual void ProcessRequests()
         {
-            Debug.Assert(Context != null);
-
             Window.ProcessEvents();
 
-            if (!Context.IsCurrent)
-                Context.MakeCurrent(Window.WindowInfo);
+            MakeContextCurrent();
 
             foreach (var renderRequest in m_renderRequestQueue)
                 Process(renderRequest);
+
+            CheckError();
 
             Context.MakeCurrent(null);
         }
@@ -133,19 +134,38 @@ namespace Render.Renderer
         #endregion
 
 
+        public void MakeContextCurrent()
+        {
+            if (!Context.IsCurrent)
+                Context.MakeCurrent(Window.WindowInfo);
+        }
+
+        public void MakeContextNotCurrent()
+        {
+            if (Context.IsCurrent)
+                Context.MakeCurrent(null);
+        }
+
+
         [Conditional("DEBUG")]
-        void CheckError()
+        public void CheckError()
         {
             int i = 60;
             ErrorCode err;
 
-            while ((err = GL.GetError()) != ErrorCode.NoError)
+            try
             {
-                if (--i == 0)
-                    throw new Exception(err.ToString());
+                while ((err = GL.GetError()) != ErrorCode.NoError)
+                {
+                    // TODO: log
+                    if (--i == 0)
+                        throw new Exception(err.ToString());
+                }
             }
-
-            // TODO: log
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }
