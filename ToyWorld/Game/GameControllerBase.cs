@@ -12,7 +12,7 @@ namespace Game
     public abstract class GameControllerBase : IGameController
     {
         public IRenderer Renderer { get; private set; }
-        protected IWorld World { get; private set; }
+        public IWorld World { get; private set; }
         private readonly GameSetup m_gameSetup;
         private Dictionary<int, Avatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
@@ -36,6 +36,25 @@ namespace Game
 
         public virtual void Init()
         {
+            // Init World
+            LoadWorld();
+
+            // Init rendering
+            Renderer.Init();
+            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
+            Renderer.CreateContext();
+        }
+
+        public virtual void Reset()
+        {
+            // TODO: Semantics of Reset? What should it do?
+            // current implementation: loads world from file again
+            Renderer.Reset();
+            LoadWorld();
+        }
+
+        void LoadWorld()
+        {
             World = new ToyWorld(m_gameSetup.SaveFile, m_gameSetup.TilesetFile);
 
             m_avatars = new Dictionary<int, Avatar>();
@@ -49,23 +68,13 @@ namespace Game
             {
                 m_avatarControllers.Add(avatar.Key, new AvatarController(avatar.Value));
             }
-
-            Renderer.Init();
-            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
-            Renderer.CreateContext();
         }
-
-        public virtual void Reset()
-        {
-            // TODO: Semantics of Reset? What should it do?
-            // current implementation: loads world from file again
-            World = new ToyWorld(m_gameSetup.SaveFile, m_gameSetup.TilesetFile);
-        }
-
 
         public virtual void MakeStep()
         {
             // Assume Init has been called, we don't want to check for consistency every step
+
+            // World
             World.Update();
 
             foreach (AvatarController avatarController in m_avatarControllers.Values)
@@ -73,6 +82,7 @@ namespace Game
                 avatarController.ResetControls();
             }
 
+            // Rendering
             Renderer.ProcessRequests();
         }
 

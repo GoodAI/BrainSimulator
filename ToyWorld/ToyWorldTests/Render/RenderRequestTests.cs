@@ -5,34 +5,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.RenderRequests;
 using Render.RenderRequests.Tests;
+using ToyWorldTests.Game;
 using Xunit;
 
 namespace ToyWorldTests.Render
 {
-    public class RenderRequestTests : IDisposable
+    public class RenderRequestTests : ControllerTests
     {
-        private GameControllerBase m_gc;
+        private readonly GameControllerBase m_gc;
 
 
         public RenderRequestTests()
         {
-            // TODO : rewrite this test
-            /*m_gc = ControllerFactory.GetController() as GameControllerBase;
-            Assert.NotNull(m_gc);
-            var gs = new GameSetup(
-                new StreamReader(TestingFiles.Files.GetTmxMemoryStream()),
-                new StreamReader(TestingFiles.Files.GetTilesetTableMemoryStream())
-                );
-            m_gc.Init();*/
-        }
-
-        public void Dispose()
-        {
-            m_gc.Dispose();
-            m_gc = null;
+            m_gc = GameController as GameControllerBase;
         }
 
 
@@ -87,9 +76,9 @@ namespace ToyWorldTests.Render
             Assert.Equal(RRTest.Size, RRTest.Image.Length);
 
             m_gc.MakeStep();
-            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0xFFFFFF00);
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
             m_gc.MakeStep();
-            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0xFFFFFF00);
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
         }
     }
 }

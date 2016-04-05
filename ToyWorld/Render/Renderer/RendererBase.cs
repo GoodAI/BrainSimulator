@@ -74,7 +74,8 @@ namespace Render.Renderer
 
             if (Context != null)
             {
-                Context.MakeCurrent(null);
+                if (Context.IsCurrent)
+                    Context.MakeCurrent(null);
                 Context.Dispose();
             }
 
@@ -91,23 +92,16 @@ namespace Render.Renderer
         public virtual void Reset()
         {
             Dispose();
-            Init();
         }
 
         public virtual void EnqueueRequest(IRenderRequest request)
         {
-            Debug.Assert(request != null);
-            Debug.Assert(request is RenderRequestBase);
             m_renderRequestQueue.Enqueue((RenderRequestBase)request);
-            //CheckError();
         }
 
         public virtual void EnqueueRequest(IAvatarRenderRequest request)
         {
-            Debug.Assert(request != null);
-            Debug.Assert(request is AvatarRenderRequestBase);
             m_renderRequestQueue.Enqueue((AvatarRenderRequestBase)request);
-            //CheckError();
         }
 
         public virtual void ProcessRequests()
@@ -136,8 +130,15 @@ namespace Render.Renderer
         [Conditional("DEBUG")]
         void CheckError()
         {
-            var err = GL.GetError();
-            Debug.Assert(err == ErrorCode.NoError, err.ToString());
+            int i = 60;
+            ErrorCode err;
+
+            while ((err = GL.GetError()) != ErrorCode.NoError)
+            {
+                if (--i == 0)
+                    throw new Exception(err.ToString());
+            }
+
             // TODO: log
         }
     }
