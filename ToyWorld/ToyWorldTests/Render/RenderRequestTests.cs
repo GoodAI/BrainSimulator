@@ -26,6 +26,7 @@ namespace ToyWorldTests.Render
 
 
         [Fact(Skip = "Long-running; manual input needed for ending.")]
+        //[Fact]
         public void ShowRRLongRunning()
         {
             Key winKeypressResult = default(Key);
@@ -33,8 +34,7 @@ namespace ToyWorldTests.Render
             m_gc.Renderer.Window.Visible = true;
 
 
-            var RRTest = m_gc.RegisterAvatarRenderRequest<IAvatarRenderRequestFoV>(0);
-            Assert.NotEmpty(RRTest.Image);
+            var RRTest = m_gc.RegisterAvatarRenderRequest<IARRTest>(0);
 
 
             while (winKeypressResult == default(Key))
@@ -66,6 +66,7 @@ namespace ToyWorldTests.Render
                 r.Init(m_gc.Renderer);
             }
         }
+
 
         [Fact]
         public void AvatarFoV()

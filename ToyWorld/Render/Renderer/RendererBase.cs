@@ -32,15 +32,21 @@ namespace Render.Renderer
             m_renderRequestQueue.Clear();
 
             // Dispose of Context
-            if (Context.IsCurrent)
-                Context.MakeCurrent(null);
-            Context.Dispose();
-            Context = null;
+            if (Context != null)
+            {
+                if (Context.IsCurrent)
+                    Context.MakeCurrent(null);
+                Context.Dispose();
+                Context = null;
+            }
 
             // Dispose of Window
-            Window.Close();
-            Window.Dispose();
-            Window = null;
+            if (Window != null)
+            {
+                Window.Close();
+                Window.Dispose();
+                Window = null;
+            }
         }
 
         #endregion
@@ -91,7 +97,7 @@ namespace Render.Renderer
 
         public virtual void Reset()
         {
-            Dispose();
+            m_renderRequestQueue.Clear();
         }
 
         public virtual void EnqueueRequest(IRenderRequest request)

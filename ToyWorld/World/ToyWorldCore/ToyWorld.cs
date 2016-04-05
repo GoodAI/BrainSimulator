@@ -25,17 +25,14 @@ namespace World.ToyWorldCore
 
         private void UpdatePhysics()
         {
-            throw new NotImplementedException();
         }
 
         private void UpdateCharacters()
         {
-            throw new NotImplementedException();
         }
 
         private void UpdateAvatars()
         {
-            throw new NotImplementedException();
         }
 
         public void Update()
@@ -58,12 +55,11 @@ namespace World.ToyWorldCore
 
         public Avatar GetAvatar(int id)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         private void UpdateTiles()
         {
-            throw new NotImplementedException();
         }
     }
 }
