@@ -4,20 +4,26 @@
         <name>GoodAI.ToyWorldAPI</name>
     </assembly>
     <members>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.ActionId">
+        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.ActionId">
             <summary>
             Action to preform.
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
+        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
             <summary>
             Value of action.
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
+        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
             <summary>
             If two or more controllers are connected to one agent, action with highest priority will be performed.
             </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(GoodAI.ToyWorld.Control.AvatarActionEnum,`0,System.Int32)">
+            <summary></summary>
+            <param name="actionId">Action to preform.</param>
+            <param name="value">Value of action.</param>
+            <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">
             <summary>
@@ -29,38 +35,6 @@
             Initializes a new instance of the RenderRequestNotImplementedException class with the specified message.
             </summary>
             <param name="message">The message that describes the error.</param>
-        </member>
-        <member name="T:GoodAI.ToyWorld.Control.IAvatarAction">
-            <summary>
-            Deprecated
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Acceleration">
-            <summary>
-            
-            Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Rotation">
-            <summary>
-            
-            Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Use">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Interact">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarAction.Pick">
-            <summary>
-            
-            </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IAvatarController">
             <summary>
@@ -119,7 +93,7 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.Init(GoodAI.ToyWorld.Control.GameSetup)">
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.Init">
             <summary>
             
             </summary>
