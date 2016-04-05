@@ -209,6 +209,16 @@ namespace GoodAI.Core.Utils
 
         #endregion
 
+        #region Project Options
+
+        [YAXSerializableField]
+        public bool LoadAllNodesData { get; set; }
+
+        [YAXSerializableField]
+        public bool SaveAllNodesData { get; set; }
+
+        #endregion
+
         #region Serialization & Versioning
 
         [YAXSerializableField, YAXSerializeAs("UsedModules")]
