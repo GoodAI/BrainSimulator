@@ -1,5 +1,6 @@
 ﻿using System;
 using World.GameActions;
+using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
 {
@@ -8,12 +9,12 @@ namespace World.GameActors.Tiles
     /// </summary>
     public class Wall : StaticTile, IInteractable
     {
-
-        public Wall(int tileType) : base(tileType)
+        public Wall(ITilesetTable tilesetTable)
+            : base(tilesetTable)
         {
         }
 
-        public Tile ApplyGameAction(GameAction gameAction, TilesetTable tilesetTable)
+        public Tile ApplyGameAction(Atlas atlas, GameAction gameAction, TilesetTable tilesetTable)
         {
             if (gameAction is ToUsePickaxe)
             {
@@ -24,7 +25,7 @@ namespace World.GameActors.Tiles
                 }
                 if (toUsePickaxe.Damage >= 1.0f)
                 {
-                    return new DestroyedWall(gameAction.TilesetTable);
+                    return new DestroyedWall(tilesetTable);
                 }
                 return new DamagedWall((gameAction as ToUsePickaxe), tilesetTable);
             }
@@ -38,7 +39,9 @@ namespace World.GameActors.Tiles
     /// </summary>
     public class DamagedWall : DynamicTile, IInteractable
     {
-        private DamagedWall(TilesetTable tilesetTable) : base(tilesetTable)
+        public float Health { get; private set; }
+
+        private DamagedWall(ITilesetTable tilesetTable) : base(tilesetTable)
         {
             Health = 1f;
         }
@@ -54,9 +57,9 @@ namespace World.GameActors.Tiles
         {
         }
 
-        public float Health { get; private set; }
 
-        public Tile ApplyGameAction(GameAction gameAction, TilesetTable tilesetTable)
+
+        public Tile ApplyGameAction(Atlas atlas, GameAction gameAction, TilesetTable tilesetTable)
         {
             if (gameAction is ToUsePickaxe)
             {
@@ -65,7 +68,7 @@ namespace World.GameActors.Tiles
             }
             if (Health <= 0f)
             {
-                return new DestroyedWall(gameAction.TilesetTable);
+                return new DestroyedWall(tilesetTable);
             }
             return this;
         }
@@ -75,11 +78,7 @@ namespace World.GameActors.Tiles
     /// </summary>
     public class DestroyedWall : StaticTile
     {
-        public DestroyedWall(int tileType) : base(tileType)
-        {
-        }
-
-        public DestroyedWall(TilesetTable tilesetTable) : base(tilesetTable)
+        public DestroyedWall(ITilesetTable tilesetTable) : base(tilesetTable)
         {
         }
     }

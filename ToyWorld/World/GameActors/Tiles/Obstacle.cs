@@ -2,7 +2,7 @@
 {
     class Obstacle : StaticTile
     {
-        public Obstacle(int tileType) : base(tileType)
+        public Obstacle(ITilesetTable tilesetTable) : base(tilesetTable)
         {
         }
     }

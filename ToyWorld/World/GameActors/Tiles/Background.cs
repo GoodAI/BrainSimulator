@@ -2,11 +2,7 @@
 {
     class Background : StaticTile
     {
-        public Background(int tileType) : base(tileType)
-        {
-        }
-
-        public Background(TilesetTable tileset) : base(tileset)
+        public Background(ITilesetTable tileset) : base(tileset)
         {
         }
     }

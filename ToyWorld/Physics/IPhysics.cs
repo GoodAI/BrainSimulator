@@ -1,4 +1,4 @@
-namespace World
+namespace Physics
 {
     public interface IPhysics
     {

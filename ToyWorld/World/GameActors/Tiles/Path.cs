@@ -2,11 +2,7 @@
 {
     public class Path : StaticTile
     {
-        public Path(int tileType) : base(tileType)
-        {
-        }
-
-        public Path(TilesetTable tileset) : base(tileset)
+        public Path(ITilesetTable tileset) : base(tileset)
         {
         }
     }

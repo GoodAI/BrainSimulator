@@ -7,18 +7,19 @@ namespace Game
 {
     class AvatarController : IAvatarController
     {
-        private Avatar m_avatar;
-        private IAvatarPriorityActions a;
+        private IAvatar m_avatar;
+        private AvatarControls m_avatarControls;
 
-        public AvatarController(Avatar avatar)
+        public AvatarController(IAvatar avatar)
         {
             m_avatar = avatar;
+            m_avatarControls = new AvatarControls();
         }
 
-        public void SetActions(IAvatarPriorityActions actions)
+        public void SetActions(AvatarControls actions)
         {
-            a.Copy(actions);
-            m_avatar.Forward = actions.Forward.Value;
+            m_avatarControls.Update(actions);
+            SetAvatarActionsControllable();
         }
 
         public IStats GetStats()
@@ -34,6 +35,15 @@ namespace Game
         internal void ResetControls()
         {
             m_avatar.ClearConstrols();
+        }
+
+        private void SetAvatarActionsControllable()
+        {
+            m_avatar.Acceleration = m_avatarControls.Acceleration.Value;
+            m_avatar.Interact = m_avatarControls.Interact.Value;
+            m_avatar.PickUp = m_avatarControls.PickUp.Value;
+            m_avatar.Rotation = m_avatarControls.Rotation.Value;
+            m_avatar.Use = m_avatarControls.Use.Value;
         }
     }
 }

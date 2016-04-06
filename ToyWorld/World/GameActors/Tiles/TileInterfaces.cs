@@ -1,4 +1,5 @@
 ﻿using World.GameActions;
+using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
 {
@@ -8,7 +9,7 @@ namespace World.GameActors.Tiles
     {
         void RegisterForUpdate();
 
-        Tile Update(TilesetTable tilesetTable);
+        Tile Update(Atlas atlas, TilesetTable tilesetTable);
     }
 
     /// <summary>
@@ -16,8 +17,8 @@ namespace World.GameActors.Tiles
     public interface IInteractable
     {
         /// <summary>
-        ///     Method is called when something apply GameAction on it.
+        /// Method is called when something apply GameAction on this object.
         /// </summary>
-        Tile ApplyGameAction(GameAction gameAction, TilesetTable tilesetTable);
+        Tile ApplyGameAction(Atlas atlas, GameAction gameAction, TilesetTable tilesetTable);
     }
 }

@@ -5,11 +5,7 @@
     /// </summary>
     public abstract class StaticTile : Tile
     {
-        public StaticTile(TilesetTable tilesetTable) : base(tilesetTable)
-        {
-        }
-
-        public StaticTile(int tileType) : base(tileType)
+        public StaticTile(ITilesetTable tilesetTable) : base(tilesetTable)
         {
         }
     }

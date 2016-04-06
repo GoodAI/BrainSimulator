@@ -1,6 +1,10 @@
 ﻿namespace GoodAI.ToyWorld.Control
 {
-    public struct AvatarAction<T>
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class AvatarAction<T>
     {
         /// <summary>
         /// Value of action.

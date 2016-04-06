@@ -1,13 +1,68 @@
-﻿namespace GoodAI.ToyWorld.Control
+﻿using System.Collections.Generic;
+
+namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IAvatarPriorityActions : IAvatarActions
+    public class AvatarControls
     {
-        new AvatarAction<float> Forward { get; set; }
-        new AvatarAction<float> Back { get; set; }
+        /// <summary>
+        /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
+        /// </summary>
+        public AvatarAction<float> Acceleration { get; set; }
+        /// <summary>
+        /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
+        /// </summary>
+        public AvatarAction<float> Rotation { get; set; }
+        /// <summary>
+        /// To interact with object in front.
+        /// </summary>
+        public AvatarAction<bool> Interact { get; set; }
+        /// <summary>
+        /// To use tool in hand / punch.
+        /// </summary>
+        public AvatarAction<bool> Use { get; set; }
+        /// <summary>
+        /// Pick up or put down tool in hand.
+        /// </summary>
+        public AvatarAction<bool> PickUp { get; set; }
 
-        new AvatarAction<bool> DoPickup { get; set; }
+        public AvatarControls()
+        {
+            Acceleration = new AvatarAction<float>(0, 0);
+            Rotation = new AvatarAction<float>(0, 0);
+            Interact = new AvatarAction<bool>(false, 0);
+            Use = new AvatarAction<bool>(false, 0);
+            PickUp = new AvatarAction<bool>(false, 0);
+        } 
+
+        /// <summary>
+        /// Rewrites actions from this list with actions from parameter with higher priority.
+        /// </summary>
+        /// <param name="actions"></param>
+        public void Update(AvatarControls actions)
+        {
+            if (Acceleration.Priority > actions.Acceleration.Priority)
+            {
+                Acceleration = actions.Acceleration;
+            }
+            if (Rotation.Priority > actions.Rotation.Priority)
+            {
+                Rotation = actions.Rotation;
+            }
+            if (Interact.Priority > actions.Interact.Priority)
+            {
+                Interact = actions.Interact;
+            }
+            if (Use.Priority > actions.Use.Priority)
+            {
+                Use = actions.Use;
+            }
+            if (PickUp.Priority > actions.PickUp.Priority)
+            {
+                PickUp = actions.PickUp;
+            }
+        }
     }
 }

@@ -6,7 +6,13 @@ using System.Linq;
 
 namespace World.GameActors.Tiles
 {
-    public class TilesetTable
+    public interface ITilesetTable
+    {
+        int TileNumber(string tileName);
+        string TileName(int tileNumber);
+    }
+
+    public class TilesetTable : ITilesetTable
     {
         private readonly Dictionary<string, int> m_namesValuesDictionary;
         private readonly Dictionary<int, string> m_valuesNamesDictionary;

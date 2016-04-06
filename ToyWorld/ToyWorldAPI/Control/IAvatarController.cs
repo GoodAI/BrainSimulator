@@ -9,7 +9,7 @@
         /// 
         /// </summary>
         /// <param name="actions">Action for avatar.</param>
-        void SetActions(IAvatarPriorityActions actions);
+        void SetActions(AvatarControls actions);
 
         /// <summary>
         /// 

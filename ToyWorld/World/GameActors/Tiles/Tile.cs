@@ -5,15 +5,10 @@
     /// </summary>
     public abstract class Tile : GameActor
     {
-        protected Tile(TilesetTable tilesetTable)
+        protected Tile(ITilesetTable tilesetTable)
         {
             string typeName = GetType().Name;
             TileType = tilesetTable.TileNumber(typeName);
-        }
-
-        protected Tile(int tileType)
-        {
-            TileType = tileType;
         }
 
         /// <summary>

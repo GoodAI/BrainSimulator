@@ -2,11 +2,8 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
   <Class Name="World.GameActors.Tiles.Tile">
     <Position X="10" Y="7.75" Width="1.5" />
-    <Members>
-      <Field Name="m_tileType" Hidden="true" />
-    </Members>
     <TypeIdentifier>
-      <HashCode>AAAACAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\Tiles\Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -25,14 +22,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="World.ToyWorldCore.AutoupdateRegister">
-    <Position X="20.25" Y="9.5" Width="1.75" />
+    <Position X="22.5" Y="10" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\AutoupdateRegister.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.ToyWorldCore.MapLoader">
-    <Position X="21" Y="11.5" Width="1.5" />
+    <Position X="15.5" Y="14.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAACBA=</HashCode>
       <FileName>ToyWorldCore\MapLoader.cs</FileName>
@@ -40,23 +37,23 @@
     </TypeIdentifier>
   </Class>
   <Class Name="World.ToyWorldCore.ToyWorld">
-    <Position X="16.5" Y="11.5" Width="1.75" />
+    <Position X="17.75" Y="11.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAQAAIAAAIkAgAAAAAIAAAAAAQgAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAIAAYIkAgAAAIAIAAAAAAAgAAAAAAAAAAAAACAA=</HashCode>
       <FileName>ToyWorldCore\ToyWorld.cs</FileName>
       <NewMemberFileName>ToyWorld.cs</NewMemberFileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="TileSetTableParser" />
       <Property Name="AutoupdateRegister" />
       <Property Name="Atlas" />
+      <Property Name="TilesetTable" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.SimpleTileLayer">
     <Position X="13" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQAAAAAAIAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\SimpleTileLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -70,7 +67,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.GameActors.Tiles.TilesetTable">
-    <Position X="18.25" Y="7.75" Width="1.75" />
+    <Position X="20.25" Y="8.5" Width="1.75" />
     <Members>
       <Field Name="m_namesValuesDictionary" Hidden="true" />
     </Members>
@@ -88,14 +85,15 @@
     </TypeIdentifier>
   </Class>
   <Class Name="World.GameActors.GameObjects.Avatar">
-    <Position X="10" Y="18.75" Width="1.5" />
+    <Position X="10" Y="19" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAKAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACACKAAAAAAIAAAAAAAAQQIAAEAAAAAAAEAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.Atlas">
-    <Position X="14.25" Y="11.5" Width="1.5" />
+    <Position X="15.5" Y="11.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
@@ -178,7 +176,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\ITileLayer.cs</FileName>
       <NewMemberFileName>ITileLayer.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -197,9 +195,9 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="World.WorldInterfaces.IWorld">
-    <Position X="15.5" Y="9.75" Width="1.25" />
+    <Position X="17.75" Y="15" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>WorldInterfaces\IWorld.cs</FileName>
     </TypeIdentifier>
   </Interface>

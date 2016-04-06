@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Physics;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.WorldInterfaces;
@@ -17,11 +18,20 @@ namespace World.ToyWorldCore
 
         private IPhysics Physics { get; set; }
 
-        public TilesetTable TileSetTable { get; private set; }
-
         public AutoupdateRegister AutoupdateRegister { get; private set; }
 
         public Atlas Atlas { get; private set; }
+
+        public World.GameActors.Tiles.TilesetTable TilesetTable
+        {
+            get
+            {
+                throw new System.NotImplementedException();
+            }
+            set
+            {
+            }
+        }
 
         private void UpdatePhysics()
         {
