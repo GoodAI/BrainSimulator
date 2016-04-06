@@ -145,9 +145,10 @@ namespace GoodAI.Core.Memory
                     throw new InvalidDataException("Different size of a stored memory block (" + fileSize + " B != " + size + " B)");                        
                 }
 
-                BinaryReader reader = new BinaryReader(File.OpenRead(filePath));
-                reader.Read(m_buffer, 0, size);
-                reader.Close();
+                using (var reader = new BinaryReader(File.OpenRead(filePath)))
+                {
+                    reader.Read(m_buffer, 0, size);
+                }
 
                 memoryBlock.Fill(m_buffer);                    
             }
@@ -181,10 +182,10 @@ namespace GoodAI.Core.Memory
 
             try
             {
-                BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create));
-
-                writer.Write(m_buffer, 0, size);
-                writer.Close();
+                using (var writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
+                {
+                    writer.Write(m_buffer, 0, size);
+                }
             }
             catch (Exception e)
             {
