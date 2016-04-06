@@ -47,6 +47,17 @@ extern "C"
 		}
 	}
 
+    __global__ void FillVBOHue (float* values, int imageSize, unsigned int* pixels, float hue=0.5f, float sat=0.5f){
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+			+ blockDim.x*blockIdx.x				
+			+ threadIdx.x;
+
+		if (id<imageSize){
+            float fval = fminf(fmaxf(values[id], 0), 1);
+            pixels[id] = hsva_to_uint_rgba(hue, sat, fval, 1.0f);  // 5.0f is normlaization -> needs to be fixed :(
+		}
+	}
+
 
 
 	__global__ void FillVBO (unsigned int* pixels, int imageSize, int r, int g, int b ){
