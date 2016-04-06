@@ -2,7 +2,7 @@
 
 namespace Render.RenderRequests.AvatarRenderRequests
 {
-    internal abstract class AvatarRenderRequestBase : RenderRequest, IAvatarRenderRequest
+    public abstract class AvatarRenderRequestBase : RenderRequest, IAvatarRenderRequest
     {
         protected AvatarRenderRequestBase(int avatarID)
         {

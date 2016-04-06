@@ -8,5 +8,5 @@ out vec2 f_texCoods;
 void main()
 {
 	f_texCoods = v_texCoods;
-	gl_Position = vec4(v_position, 1);
+	gl_Position = vec4(v_position, 2);
 }

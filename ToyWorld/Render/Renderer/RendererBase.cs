@@ -73,6 +73,10 @@ namespace Render.Renderer
             request.Draw(this);
         }
 
+        [Conditional("DEBUG")]
+        public virtual void CheckError()
+        { }
+
         #endregion
 
 

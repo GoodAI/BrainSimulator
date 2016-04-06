@@ -28,7 +28,7 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="avatarID"></param>
         /// <exception cref="RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="IAvatarRenderRequest"/> from the controller.
         /// This usually indicates an older version of the core than the API.</exception>
-        T RegisterAvatarRenderRequest<T>(int avatarID)
+        T RegisterRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest;
 
         /// <summary>

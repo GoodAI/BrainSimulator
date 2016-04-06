@@ -6,31 +6,31 @@ using System.Threading.Tasks;
 
 namespace Utils.VRageRIP.Lib.Collections
 {
-    public abstract class TypeSwitchBase<TKey, TVal>
-        where TVal : class
+    public abstract class TypeSwitchBase<TKeyBase, TValBase>
+        where TValBase : class
     {
-        public Dictionary<Type, TVal> Matches { get; private set; }
+        public Dictionary<Type, TValBase> Matches { get; private set; }
 
 
         protected TypeSwitchBase()
         {
-            Matches = new Dictionary<Type, TVal>();
+            Matches = new Dictionary<Type, TValBase>();
         }
 
 
-        public TypeSwitchBase<TKey, TVal> Case<T>(TVal action)
-            where T : class, TKey
+        public TypeSwitchBase<TKeyBase, TValBase> Case<TKey>(TValBase action)
+            where TKey : class, TKeyBase
         {
-            Matches.Add(typeof(T), action);
+            Matches.Add(typeof(TKey), action);
             return this;
         }
 
-        protected TVal SwitchInternal<T>()
-            where T : class, TKey
+        protected TValBase SwitchInternal<TKey>()
+            where TKey : class, TKeyBase
         {
-            TVal res;
+            TValBase res;
 
-            if (!Matches.TryGetValue(typeof(T), out res))
+            if (!Matches.TryGetValue(typeof(TKey), out res))
             {
                 // log
                 return null;
@@ -40,10 +40,10 @@ namespace Utils.VRageRIP.Lib.Collections
         }
     }
 
-    public sealed class TypeSwitch<TKey> : TypeSwitchBase<TKey, Func<TKey>>
+    public sealed class TypeSwitch<TKeyBase> : TypeSwitchBase<TKeyBase, Func<TKeyBase>>
     {
         public TRet Switch<TRet>()
-            where TRet : class, TKey
+            where TRet : class, TKeyBase
         {
             var res = SwitchInternal<TRet>();
 
@@ -54,10 +54,10 @@ namespace Utils.VRageRIP.Lib.Collections
         }
     }
 
-    public sealed class TypeSwitchParam<TKey, TParam> : TypeSwitchBase<TKey, Func<TParam, TKey>>
+    public sealed class TypeSwitchParam<TKeyBase, TParam> : TypeSwitchBase<TKeyBase, Func<TParam, TKeyBase>>
     {
         public TRet Switch<TRet>(TParam id)
-            where TRet : class, TKey
+            where TRet : class, TKeyBase
         {
             var res = SwitchInternal<TRet>();
 

@@ -29,8 +29,9 @@ namespace Render.Tests.RRs
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            renderer.EffectManager.Use<NoEffect>();
-            renderer.GeometryManager.Draw<FancyFullscreenQuad>();
+            var effect = renderer.EffectManager.Get<NoEffect>();
+            renderer.EffectManager.Use(effect);
+            renderer.GeometryManager.Get<FancyFullscreenQuad>().Draw();
         }
 
         #endregion

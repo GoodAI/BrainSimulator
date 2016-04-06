@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using OpenTK.Graphics.OpenGL;
+using Render.Geometries.Buffers;
 
-namespace Render.Geometries.Buffers
+namespace Render.RenderObjects.Buffers
 {
     internal class VAO : IDisposable
     {
         public uint Handle { get; private set; }
 
-        private readonly List<VBO> m_BOs = new List<VBO>();
+        public readonly Dictionary<string, VBO> VBOs = new Dictionary<string, VBO>();
 
 
         public VAO()
@@ -21,27 +21,45 @@ namespace Render.Geometries.Buffers
         {
             GL.DeleteVertexArray(Handle);
 
-            foreach (var vbo in m_BOs)
+            foreach (var vbo in VBOs.Values)
                 vbo.Dispose();
 
-            m_BOs.Clear();
+            VBOs.Clear();
         }
 
-        public void AddVBO(VBO vbo, int index, VertexAttribPointerType type = VertexAttribPointerType.Float, bool normalized = false, int stride = 0, int offset = 0)
-        {
-            Debug.Assert(vbo != null);
-            Debug.Assert(vbo.Target == BufferTarget.ArrayBuffer);
 
-            m_BOs.Add(vbo);
+        public void EnableVBO(
+            string id, int attribArrayIdx,
+            VertexAttribPointerType type = VertexAttribPointerType.Float,
+            bool normalized = false,
+            int stride = 0, int offset = 0)
+        {
+            VBO vbo = GetVBO(id);
 
             GL.BindVertexArray(Handle);
             vbo.Bind();
 
-            GL.EnableVertexAttribArray(index);
-            GL.VertexAttribPointer(index, vbo.ElementSize, type, normalized, stride, offset);
+            GL.EnableVertexAttribArray(attribArrayIdx);
+            GL.VertexAttribPointer(attribArrayIdx, vbo.ElementSize, type, normalized, stride, offset);
 
-            GL.BindVertexArray(0);
-            vbo.Unbind();
+            //GL.BindVertexArray(0);
+            //vbo.Unbind();
+        }
+
+        public void DisableAttrib(string id, int attribArrayIdx)
+        {
+            GL.BindVertexArray(Handle);
+            GL.DisableVertexAttribArray(attribArrayIdx);
+        }
+
+        VBO GetVBO(string id)
+        {
+            VBO vbo;
+
+            if (!VBOs.TryGetValue(id, out vbo))
+                throw new ArgumentException("Access to not registered VBO.", "id");
+
+            return vbo;
         }
     }
 }

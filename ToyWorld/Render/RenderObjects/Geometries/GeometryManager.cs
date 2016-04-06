@@ -14,16 +14,16 @@ namespace Render.RenderObjects.Geometries
                 .Case<FullScreenQuad>(() =>
                     new FullScreenQuad())
                 .Case<FancyFullscreenQuad>(() =>
-                    new FancyFullscreenQuad());
+                    new FancyFullscreenQuad())
+                .Case<FancyFullscreenQuadTex>(() =>
+                    new FancyFullscreenQuadTex(1));
         }
 
 
-        public void Draw<T>()
+        public T Get<T>()
             where T : GeometryBase
         {
-            m_effects.Switch<T>().Draw();
+            return m_effects.Switch<T>();
         }
-
-        // update
     }
 }

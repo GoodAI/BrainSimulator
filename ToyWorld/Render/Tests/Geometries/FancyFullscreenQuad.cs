@@ -6,9 +6,13 @@ namespace Render.Tests.Geometries
     // 1 - Color
     internal class FancyFullscreenQuad : FullScreenQuad
     {
+        const string Color = "color";
+
+
         public FancyFullscreenQuad()
         {
-            Vao.AddVBO(QuadColors.Value, 1);
+            Vao.VBOs[Color] = QuadColors.Value;
+            Vao.EnableVBO(Color, 1);
         }
     }
 }

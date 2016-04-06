@@ -63,5 +63,10 @@ namespace Render.RenderObjects.Shaders
         {
             GL.UseProgram(m_prog);
         }
+
+        public void SetUniform(int pos, int val)
+        {
+            GL.Uniform1(pos, val);
+        }
     }
 }

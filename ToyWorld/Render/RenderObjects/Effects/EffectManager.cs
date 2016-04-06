@@ -23,11 +23,14 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        public void Use<T>()
+        public T Get<T>()
             where T : EffectBase
         {
-            var effect = m_effects.Switch<T>();
+            return m_effects.Switch<T>();
+        }
 
+        public void Use(EffectBase effect)
+        {
             if (m_currentEffect == effect)
                 return;
 

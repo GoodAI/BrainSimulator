@@ -48,8 +48,9 @@ namespace Render.RenderRequests.AvatarRenderRequests
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            renderer.EffectManager.Use<NoEffect>();
-            renderer.GeometryManager.Draw<FancyFullscreenQuad>();
+            var effect = renderer.EffectManager.Get<NoEffect>();
+            renderer.EffectManager.Use(effect);
+            renderer.GeometryManager.Get<FancyFullscreenQuad>().Draw();
 
             GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
         }

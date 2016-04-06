@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
 using Render.Geometries.Buffers;
+using Render.RenderObjects.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
@@ -17,6 +18,11 @@ namespace Render.RenderObjects.Geometries
 
         public abstract void Draw();
 
+        public void Update<T>(string id, T[] data, int count = -1, int offset = 0)
+            where T : struct
+        {
+            Vao.VBOs[id].Update(data, count, offset);
+        }
 
         #region Basic buffers
 

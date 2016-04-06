@@ -93,13 +93,13 @@ namespace Game
             return rr;
         }
 
-        public virtual T RegisterAvatarRenderRequest<T>(int avatarId)
+        public virtual T RegisterRenderRequest<T>(int avatarId)
             where T : class, IAvatarRenderRequest
         {
             // TODO: check agentID or make the param an AgentController?
 
             Renderer.MakeContextCurrent();
-            T rr = RenderRequestFactory.CreateAvatarRenderRequest<T>(avatarId);
+            T rr = RenderRequestFactory.CreateRenderRequest<T>(avatarId);
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
             Renderer.MakeContextNotCurrent();

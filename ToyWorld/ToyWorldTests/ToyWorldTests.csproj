@@ -92,7 +92,7 @@
     <Compile Include="BrainSimIntegrationTests.cs" />
     <Compile Include="Game\ControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Render\RendererTests.cs" />
+    <Compile Include="Render\GLRendererTests.cs" />
     <Compile Include="Render\RenderRequestTests.cs" />
     <Compile Include="Render\GeometryTests.cs" />
     <Compile Include="TestBase.cs" />

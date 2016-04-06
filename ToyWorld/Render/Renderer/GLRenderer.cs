@@ -106,14 +106,9 @@ namespace Render.Renderer
             base.ProcessRequests();
 
             CheckError();
-            Context.MakeCurrent(null);
         }
 
-        #endregion
-
-
-        [Conditional("DEBUG")]
-        public void CheckError()
+        public override void CheckError()
         {
             int i = 60;
             ErrorCode err;
@@ -124,9 +119,9 @@ namespace Render.Renderer
                 if (--i == 0)
                     throw new Exception(err.ToString());
             }
-
-            if (i < 60)
-                throw new Exception("GL error: " + err); // is probably not the last error... will fix later
         }
+
+        #endregion
+
     }
 }

@@ -2,7 +2,7 @@
 
 uniform sampler2D tex;
 
-in vec4 f_texCoods;
+in vec2 f_texCoods;
 
 layout(location=0) out vec4 out_color;
 

@@ -1,5 +1,8 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
@@ -12,8 +15,12 @@ namespace Render.RenderObjects.Textures
         private readonly TextureTarget m_target;
 
 
-        protected TextureBase(
-            Bitmap bmp,
+        public TextureBase()
+        { }
+
+        public TextureBase(
+            MemoryStream data, int width, int height,
+            PixelFormat streamDataFormat = PixelFormat.Rgba,
             TextureMinFilter minFilter = TextureMinFilter.Linear,
             TextureMagFilter magFilter = TextureMagFilter.Linear,
             TextureWrapMode wrapMode = TextureWrapMode.MirroredRepeat,
@@ -28,21 +35,19 @@ namespace Render.RenderObjects.Textures
             GL.TexParameter(textureTarget, TextureParameterName.TextureWrapS, (int)wrapMode);
             GL.TexParameter(textureTarget, TextureParameterName.TextureWrapT, (int)wrapMode);
 
-            var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
-
             GL.TexImage2D(
                 textureTarget,
                 0,
                 PixelInternalFormat.Rgba,
-                bmp.Width, bmp.Height, 0,
-                PixelFormat.Rgba, PixelType.UnsignedByte,
-                data.Scan0);
+                width, height, 0,
+                streamDataFormat, PixelType.UnsignedByte,
+                data.ToArray());
 
             GL.BindTexture(textureTarget, 0);
         }
 
 
-        public void Bind()
+        public virtual void Bind()
         {
             GL.BindTexture(m_target, m_handle);
         }

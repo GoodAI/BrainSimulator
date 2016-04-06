@@ -180,7 +180,7 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterAvatarRenderRequest``1(System.Int32)">
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterRenderRequest``1(System.Int32)">
             <summary>
             
             </summary>

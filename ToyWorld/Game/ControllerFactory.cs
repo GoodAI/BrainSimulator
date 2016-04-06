@@ -5,7 +5,7 @@ namespace GoodAI.ToyWorld.Control
 {
     public static class ControllerFactory
     {
-        public static IGameController GetController(GameSetup gameSetup)
+        public static GameControllerBase GetController(GameSetup gameSetup)
         {
             return new BasicGameController(new GLRenderer(), gameSetup);
         }

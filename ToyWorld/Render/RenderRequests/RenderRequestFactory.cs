@@ -21,6 +21,10 @@ namespace Render.RenderRequests
 
         static RenderRequestFactory()
         {
+            //////////////////////
+            // NOTE: All renderRequests must inherit from RenderRequest
+            //////////////////////
+
             // RenderRequests
             RRSwitch
                 .Case<IBasicTexRR>(() =>
@@ -43,7 +47,7 @@ namespace Render.RenderRequests
             return RRSwitch.Switch<T>();
         }
 
-        public static T CreateAvatarRenderRequest<T>(int avatarID)
+        public static T CreateRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest // unf cannot constrain T to be an interface, only a class
         {
             return ARRSwitch.Switch<T>(avatarID);

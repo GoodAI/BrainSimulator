@@ -8,7 +8,8 @@ namespace Render.RenderObjects.Geometries
     {
         public FullScreenQuad()
         {
-            Vao.AddVBO(FullscreenQuadVertices.Value, 0);
+            Vao.VBOs.Add("vert", FullscreenQuadVertices.Value);
+            Vao.EnableVBO("vert", 0);
         }
 
 

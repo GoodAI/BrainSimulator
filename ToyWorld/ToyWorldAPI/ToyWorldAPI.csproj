@@ -51,7 +51,7 @@
     <Compile Include="Control\IGameController.cs" />
     <Compile Include="Control\IStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Render\IAvatarRenderRequest.cs" />
+    <Compile Include="Render\IAvatarRenderRequests.cs" />
     <Compile Include="Render\IRenderRequests.cs" />
   </ItemGroup>
   <ItemGroup>
