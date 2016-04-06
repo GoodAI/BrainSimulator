@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace GoodAI.ToyWorld.Control
+﻿namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
