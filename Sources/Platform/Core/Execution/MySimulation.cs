@@ -27,8 +27,16 @@ namespace GoodAI.Core.Execution
 
         public uint SimulationStep { get; protected set; }
 
-        public bool LoadAllNodesData { get; set; }
-        public bool SaveAllNodesData { get; set; }
+        public bool LoadAllNodesData
+        {
+            get { return (m_project != null) ? m_project.LoadAllNodesData : false; }
+        }
+
+        public bool SaveAllNodesData
+        {
+            get { return (m_project != null) ? m_project.SaveAllNodesData : false; }
+        }
+
         public int AutoSaveInterval { get; set; }
 
         public bool IsFinished { get; protected set; }
@@ -91,7 +99,6 @@ namespace GoodAI.Core.Execution
         {
             AutoSaveInterval = 0;
             GlobalDataFolder = String.Empty;
-            LoadAllNodesData = false;
 
             Validator = validator;
             validator.Simulation = this;

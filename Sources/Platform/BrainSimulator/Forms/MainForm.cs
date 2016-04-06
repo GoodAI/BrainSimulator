@@ -532,21 +532,14 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void loadOnStartMenuItem_Click(object sender, EventArgs e)
         {
-            if (!loadMemBlocksButton.Checked)
-            {
-                SimulationHandler.Simulation.LoadAllNodesData = true;
-                loadMemBlocksButton.Checked = true;
-            }
-            else
-            {
-                SimulationHandler.Simulation.LoadAllNodesData = false;
-                loadMemBlocksButton.Checked = false;                
-            }
-        }
+            loadMemBlocksButton.Checked = !loadMemBlocksButton.Checked;
+
+            Project.LoadAllNodesData = loadMemBlocksButton.Checked;
+       }
 
         private void saveOnStopMenuItem_CheckChanged(object sender, EventArgs e)
         {
-            SimulationHandler.Simulation.SaveAllNodesData = saveMemBlocksButton.Checked;
+            Project.SaveAllNodesData = saveMemBlocksButton.Checked;
         }
 
         private void exportStateButton_Click(object sender, EventArgs e)
