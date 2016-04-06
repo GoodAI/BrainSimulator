@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Render.RenderObjects.Textures;
@@ -21,23 +22,18 @@ namespace Render.Tests.Textures
 
             foreach (var stream in texPath)
             {
-                var img = Bitmap.FromStream(stream);
+                var bmp = new Bitmap(stream);
 
-            }
-            m_textures.AddRange(texPath.Select(a => new TextureBase(null, 0, 0)));
-        }
+                if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
+                    throw new ArgumentException("The image on the specified path is not in the required RGBA format.", "texPath");
 
-        public static byte[] ReadFully(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-                return ms.ToArray();
+                BitmapData data = bmp.LockBits(
+                    new Rectangle(0, 0, bmp.Width, bmp.Height),
+                    ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                m_textures.Add(new TextureBase(data.Scan0, bmp.Width, bmp.Height));
+                
+                bmp.UnlockBits(data);
             }
         }
 

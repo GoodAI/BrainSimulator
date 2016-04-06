@@ -1,8 +1,5 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
@@ -19,8 +16,8 @@ namespace Render.RenderObjects.Textures
         { }
 
         public TextureBase(
-            MemoryStream data, int width, int height,
-            PixelFormat streamDataFormat = PixelFormat.Rgba,
+            IntPtr data, int width, int height,
+            PixelFormat dataFormat = PixelFormat.Rgba,
             TextureMinFilter minFilter = TextureMinFilter.Linear,
             TextureMagFilter magFilter = TextureMagFilter.Linear,
             TextureWrapMode wrapMode = TextureWrapMode.MirroredRepeat,
@@ -40,8 +37,8 @@ namespace Render.RenderObjects.Textures
                 0,
                 PixelInternalFormat.Rgba,
                 width, height, 0,
-                streamDataFormat, PixelType.UnsignedByte,
-                data.ToArray());
+                dataFormat, PixelType.UnsignedByte,
+                data);
 
             GL.BindTexture(textureTarget, 0);
         }

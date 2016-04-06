@@ -48,13 +48,14 @@
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
+    <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
     <Compile Include="Tests\Effects\NoEffectTex.cs" />
     <Compile Include="Tests\Effects\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
-    <Compile Include="RenderRequests\AvatarRenderRequests\ARRFoV.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\FoVARR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRenderRequestBase.cs" />
-    <Compile Include="Tests\Geometries\FancyFullscreenQuadTex.cs" />
+    <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />
     <Compile Include="Tests\RRs\BasicARR.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />

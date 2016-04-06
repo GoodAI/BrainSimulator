@@ -3,9 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using OpenTK.Graphics.OpenGL;
-using Render.Renderer;
 
-namespace Render.RenderObjects.Shaders
+namespace Render.RenderObjects.Effects
 {
     internal class EffectBase : IDisposable
     {
@@ -67,6 +66,11 @@ namespace Render.RenderObjects.Shaders
         public void SetUniform(int pos, int val)
         {
             GL.Uniform1(pos, val);
+        }
+
+        public int GetUniformLocation(string name)
+        {
+            return GL.GetUniformLocation(m_prog, name);
         }
     }
 }

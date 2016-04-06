@@ -35,8 +35,8 @@ namespace ToyWorldTests.Render
         }
 
 
-        [Fact(Skip = "Long-running; manual input needed for ending.")]
-        //[Fact]
+        //[Fact(Skip = "Long-running; manual input needed for ending.")]
+        [Fact]
         public void ShowRRLongRunning()
         {
             Key winKeypressResult = default(Key);
@@ -45,14 +45,14 @@ namespace ToyWorldTests.Render
 
             m_renderer.MakeContextCurrent();
 
-            //var rr = RenderRequestFactory.CreateRenderRequest<IBasicTexRR>();
-            var rr = RenderRequestFactory.CreateRenderRequest<IBasicARR>(0);
+            var rr = RenderRequestFactory.CreateRenderRequest<IBasicTexRR>();
+            //var rr = RenderRequestFactory.CreateRenderRequest<IBasicARR>(0);
             (rr as RenderRequest).Init(m_renderer);
             m_renderer.EnqueueRequest(rr);
 
             while (winKeypressResult == default(Key) && m_renderer.Window.Exists)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 m_renderer.ProcessRequests();
                 m_renderer.Context.SwapBuffers();
             }

@@ -1,4 +1,4 @@
-﻿using Render.RenderObjects.Shaders;
+﻿using Render.RenderObjects.Effects;
 
 namespace Render.Tests.Effects
 {

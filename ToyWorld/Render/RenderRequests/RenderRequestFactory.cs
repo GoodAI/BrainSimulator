@@ -28,14 +28,16 @@ namespace Render.RenderRequests
             // RenderRequests
             RRSwitch
                 .Case<IBasicTexRR>(() =>
-                    new BasicTexRR());
+                    new BasicTexRR())
+                .Case<IFullMapRenderRequest>(() =>
+                    new FullMapRR());
 
             // AvatarRenderRequests
             ARRSwitch
                 .Case<IBasicARR>(id =>
                     new BasicARR(id))
-                .Case<IAvatarRenderRequestFoV>(id =>
-                    new ARRFoV(id));
+                .Case<IFoVAvatarRenderRequest>(id =>
+                    new FoVARR(id));
         }
 
 

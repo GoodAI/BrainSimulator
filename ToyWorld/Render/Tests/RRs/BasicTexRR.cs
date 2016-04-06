@@ -3,6 +3,7 @@ using GoodAI.ToyWorld.Control;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
+using Render.RenderObjects.Geometries;
 using Render.RenderRequests.RenderRequests;
 using Render.Tests.Effects;
 using Render.Tests.Geometries;
@@ -15,7 +16,7 @@ namespace Render.Tests.RRs
 
     class BasicTexRR : RenderRequestBase, IBasicTexRR
     {
-        private FancyFullscreenQuadTex m_quad;
+        private FullscreenQuadTex m_quad;
 
         private int m_offset;
 
@@ -26,7 +27,7 @@ namespace Render.Tests.RRs
         {
             GL.ClearColor(Color.Black);
 
-            m_quad = renderer.GeometryManager.Get<FancyFullscreenQuadTex>();
+            m_quad = renderer.GeometryManager.Get<FullscreenQuadTex>();
         }
 
         public override void Draw(RendererBase renderer)
@@ -35,39 +36,48 @@ namespace Render.Tests.RRs
 
             m_offset = ++m_offset % 50;
 
-            const int tileSize = 32;
-            const float tileSetWidthInv = 1 / 255f;
-            const float tileSetHeightInv = 1 / 612f;
+            const int tileSize = 67;
+            const int margin = 1;
+            const float tileSetWidth = 255f;
+            const float tileSetHeight = 612f;
+            const float tileSetWidthInv = 1 / tileSetWidth;
+            const float tileSetHeightInv = 1 / tileSetHeight;
 
-            int xIdx = m_offset % 5;
-            int yIdx = m_offset / 5;
+            int xOff = m_offset % 5;
+            int yOff = m_offset / 5;
 
-            int xPos = xIdx * tileSize;
-            int yPos = yIdx * tileSize;
+            int xPos = xOff * (tileSize + margin);
+            int yPos = yOff * (tileSize + margin);
 
             float x1 = xPos * tileSetWidthInv;
             float x2 = (xPos + tileSize) * tileSetWidthInv;
-            float y1 = yPos * tileSetHeightInv;
-            float y2 = (yPos + tileSize) * tileSetHeightInv;
+            float y2 = yPos * tileSetHeightInv;
+            float y1 = (yPos + tileSize) * tileSetHeightInv;
 
 
             var effect = renderer.EffectManager.Get<NoEffectTex>();
             renderer.EffectManager.Use(effect);
-            effect.SetUniform(0, 0);
+            effect.SetUniform(effect.GetUniformLocation("tex"), 0);
 
             var tex = renderer.TextureManager.Get<TilesetTexture>();
             renderer.TextureManager.Bind(tex);
-            m_quad.SetTexCoods(new[]
+            m_quad.SetTexCoods(new float[]
             {
+                x1, y1,
+                x2, y1,
+                x2, y2,
+                x1, y2,
+         
                 0, 0f,
-                0, 1,
-                1, 1,
                 1, 0,
-                //x1, y1,
-                //x2, y1,
-                //x2, y2,
-                //x1, y2,
-            });
+                1, 1,
+                0, 1,
+
+                0, 0,
+                0, tileSize,
+                tileSize, tileSize,
+                tileSize, 0,
+   });
 
             m_quad.Draw();
         }

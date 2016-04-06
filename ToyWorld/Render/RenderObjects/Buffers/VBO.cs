@@ -52,7 +52,7 @@ namespace Render.Geometries.Buffers
             where T : struct
         {
             if (count == -1)
-                count = data.Length;
+                count = Math.Min(Count, data.Length);
 
             var tSize = Marshal.SizeOf(typeof(T));
 

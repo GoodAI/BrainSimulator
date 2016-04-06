@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using Render.RenderObjects.Effects;
 using Render.RenderObjects.Geometries;
-using Render.RenderObjects.Shaders;
 using Render.RenderObjects.Textures;
 using VRage.Collections;
 

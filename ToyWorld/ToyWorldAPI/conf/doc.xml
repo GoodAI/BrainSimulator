@@ -232,12 +232,12 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IAvatarRenderRequestFoV">
+        <member name="T:GoodAI.ToyWorld.Control.IFoVAvatarRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequestFoV.Image">
+        <member name="P:GoodAI.ToyWorld.Control.IFoVAvatarRenderRequest.Image">
             <summary>
             
             </summary>
@@ -262,7 +262,7 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IFreeRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IFullMapRenderRequest">
             <summary>
             
             </summary>

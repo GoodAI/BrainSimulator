@@ -6,10 +6,13 @@ namespace Render.RenderObjects.Geometries
     // 0 - Position
     internal class FullScreenQuad : GeometryBase
     {
+        const string Vert = "vert";
+
+
         public FullScreenQuad()
         {
-            Vao.VBOs.Add("vert", FullscreenQuadVertices.Value);
-            Vao.EnableVBO("vert", 0);
+            Vao[Vert]= FullscreenQuadVertices.Value;
+            Vao.EnableAttrib(Vert, 0);
         }
 
 

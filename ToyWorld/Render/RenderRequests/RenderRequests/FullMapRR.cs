@@ -1,24 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
+using Render.RenderRequests.AvatarRenderRequests;
 using Render.Tests.Effects;
 using Render.Tests.Geometries;
 
-namespace Render.RenderRequests.AvatarRenderRequests
+namespace Render.RenderRequests.RenderRequests
 {
-    internal class ARRFoV : AvatarRenderRequestBase, IAvatarRenderRequestFoV
+    internal class FullMapRR : RenderRequestBase, IFullMapRenderRequest
     {
-        //VBO m_pbo;
-        private bool m_odd;
-
-
-        internal ARRFoV(int avatarID)
-            : base(avatarID)
-        { }
-
 
         #region IAvatarRenderRequestFoV overrides
 

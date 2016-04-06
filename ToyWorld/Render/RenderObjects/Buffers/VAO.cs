@@ -9,8 +9,10 @@ namespace Render.RenderObjects.Buffers
     {
         public uint Handle { get; private set; }
 
-        public readonly Dictionary<string, VBO> VBOs = new Dictionary<string, VBO>();
+        protected readonly Dictionary<string, VBO> VBOs = new Dictionary<string, VBO>();
 
+
+        #region Genesis
 
         public VAO()
         {
@@ -27,14 +29,40 @@ namespace Render.RenderObjects.Buffers
             VBOs.Clear();
         }
 
+        #endregion
 
-        public void EnableVBO(
+        #region Indexing
+
+        public VBO this[string id]
+        {
+            get
+            {
+                VBO vbo;
+
+                if (!VBOs.TryGetValue(id, out vbo))
+                    throw new ArgumentException("Access to not registered VBO.", "id");
+
+                return vbo;
+            }
+            set
+            {
+                if (VBOs.ContainsKey(id))
+                    throw new ArgumentException("A VBO has already been registered to this id.", "id");
+
+                VBOs[id] = value;
+            }
+        }
+
+        #endregion
+
+
+        public void EnableAttrib(
             string id, int attribArrayIdx,
             VertexAttribPointerType type = VertexAttribPointerType.Float,
             bool normalized = false,
             int stride = 0, int offset = 0)
         {
-            VBO vbo = GetVBO(id);
+            VBO vbo = this[id];
 
             GL.BindVertexArray(Handle);
             vbo.Bind();
@@ -50,16 +78,6 @@ namespace Render.RenderObjects.Buffers
         {
             GL.BindVertexArray(Handle);
             GL.DisableVertexAttribArray(attribArrayIdx);
-        }
-
-        VBO GetVBO(string id)
-        {
-            VBO vbo;
-
-            if (!VBOs.TryGetValue(id, out vbo))
-                throw new ArgumentException("Access to not registered VBO.", "id");
-
-            return vbo;
         }
     }
 }

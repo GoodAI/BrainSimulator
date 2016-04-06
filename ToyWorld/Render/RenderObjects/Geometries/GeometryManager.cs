@@ -15,8 +15,8 @@ namespace Render.RenderObjects.Geometries
                     new FullScreenQuad())
                 .Case<FancyFullscreenQuad>(() =>
                     new FancyFullscreenQuad())
-                .Case<FancyFullscreenQuadTex>(() =>
-                    new FancyFullscreenQuadTex(1));
+                .Case<FullscreenQuadTex>(() =>
+                    new FullscreenQuadTex());
         }
 
 
