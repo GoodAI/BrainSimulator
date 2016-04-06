@@ -38,28 +38,28 @@ namespace GoodAI.ToyWorld.Control
         } 
 
         /// <summary>
-        /// Rewrites actions from this list with actions from parameter with higher priority.
+        /// Rewrites actions from this list with actions from parameter with lower priority value.
         /// </summary>
         /// <param name="actions"></param>
         public void Update(AvatarControls actions)
         {
-            if (Acceleration.Priority > actions.Acceleration.Priority)
+            if (Acceleration.Priority < actions.Acceleration.Priority)
             {
                 Acceleration = actions.Acceleration;
             }
-            if (Rotation.Priority > actions.Rotation.Priority)
+            if (Rotation.Priority < actions.Rotation.Priority)
             {
                 Rotation = actions.Rotation;
             }
-            if (Interact.Priority > actions.Interact.Priority)
+            if (Interact.Priority < actions.Interact.Priority)
             {
                 Interact = actions.Interact;
             }
-            if (Use.Priority > actions.Use.Priority)
+            if (Use.Priority < actions.Use.Priority)
             {
                 Use = actions.Use;
             }
-            if (PickUp.Priority > actions.PickUp.Priority)
+            if (PickUp.Priority < actions.PickUp.Priority)
             {
                 PickUp = actions.PickUp;
             }
