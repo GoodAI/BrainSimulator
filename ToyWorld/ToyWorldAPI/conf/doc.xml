@@ -26,6 +26,42 @@
             <param name="value">Value of action.</param>
             <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
         </member>
+        <member name="T:GoodAI.ToyWorld.Control.AvatarControls">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.Update(GoodAI.ToyWorld.Control.AvatarControls)">
+            <summary>
+            Rewrites actions from this list with actions from parameter with lower priority value.
+            </summary>
+            <param name="actions"></param>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Acceleration">
+            <summary>
+            Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Rotation">
+            <summary>
+            Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Interact">
+            <summary>
+            To interact with object in front.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Use">
+            <summary>
+            To use tool in hand / punch.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.PickUp">
+            <summary>
+            Pick up or put down tool in hand.
+            </summary>
+        </member>
         <member name="T:GoodAI.ToyWorld.Control.IControlable">
             <summary>
             
@@ -57,42 +93,6 @@
             </summary>
         </member>
         <member name="P:GoodAI.ToyWorld.Control.IControlable.PickUp">
-            <summary>
-            Pick up or put down tool in hand.
-            </summary>
-        </member>
-        <member name="T:GoodAI.ToyWorld.Control.AvatarControls">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.Update(GoodAI.ToyWorld.Control.AvatarControls)">
-            <summary>
-            Rewrites actions from this list with actions from parameter with higher priority.
-            </summary>
-            <param name="actions"></param>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Acceleration">
-            <summary>
-            Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Rotation">
-            <summary>
-            Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Interact">
-            <summary>
-            To interact with object in front.
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.Use">
-            <summary>
-            To use tool in hand / punch.
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.AvatarControls.PickUp">
             <summary>
             Pick up or put down tool in hand.
             </summary>

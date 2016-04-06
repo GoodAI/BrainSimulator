@@ -5,18 +5,22 @@ using VRageMath;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IControllable
+    public interface IAvatar : IAvatarControlable, IDirection
+
     {
-        Point Position { get; set; }
     }
+
+
 
     public class Avatar : Character, IAvatar
     {
         public readonly int Id;
         public sealed override string Name { get; protected set; }
 
-        public float Acceleration { get; set; }
-        public float Rotation { get; set; }
+        public float DesiredSpeed { get; set; }
+        public float DesiredRotation { get; set; }
+        public float ForwardSpeed { get; set; }
+        public float RotationSpeed { get; set; }
         public bool Interact { get; set; }
         public bool Use { get; set; }
         public bool PickUp { get; set; }
@@ -41,8 +45,8 @@ namespace World.GameActors.GameObjects
 
         public void ResetControls()
         {
-            Acceleration = 0f;
-            Rotation = 0;
+            DesiredSpeed = 0f;
+            DesiredRotation = 0f;
             Interact = false;
             Use = false;
             PickUp = false;
