@@ -47,6 +47,8 @@ namespace ToyWorldTests.Game
         public void TestInitAndReset()
         {
             Assert.NotNull(GameController);
+            Assert.NotNull(GameController.Renderer);
+            Assert.NotNull(GameController.World);
 
             GameController.Reset();
         }
@@ -59,21 +61,6 @@ namespace ToyWorldTests.Game
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             // var ac = gc.GetAvatarController(0);
-        }
-
-        [Fact]
-        public void RenderNotNull()
-        {
-            var gcBase = GameController as GameControllerBase;
-            Assert.NotNull(gcBase);
-            Assert.NotNull(gcBase.Renderer);
-            Assert.NotNull(gcBase.World);
-        }
-
-        [Fact]
-        public void GameNotNull()
-        {
-            // TODO: test world stuff for existence
         }
 
         [Fact]
