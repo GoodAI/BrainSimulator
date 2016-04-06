@@ -105,7 +105,8 @@ namespace GoodAI.Core.Memory
                 }
                 else
                 {
-                    throw new FileNotFoundException("No data folder defined.");
+                    throw new FileNotFoundException(
+                        "File not found in temporal folder and no data folder defined: " + fileName);
                 }
 
                 fileName += "\\" + GetFileName(memoryBlock);
