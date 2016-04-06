@@ -1,9 +1,9 @@
 ﻿namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public interface IControlable
+    public interface IControllable
     {
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.

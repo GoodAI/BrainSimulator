@@ -5,7 +5,7 @@ using VRageMath;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IControlable
+    public interface IAvatar : IControllable
     {
         Point Position { get; set; }
     }
