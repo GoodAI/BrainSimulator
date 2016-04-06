@@ -43,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
+    <Compile Include="Control\AvatarControls.cs" />
     <Compile Include="Control\IAvatarActionsControlable.cs" />
-    <Compile Include="Control\IAvatarPriorityActions.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\GameSetup.cs" />
