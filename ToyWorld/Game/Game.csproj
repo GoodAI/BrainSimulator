@@ -47,10 +47,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{06daad7f-ac1c-417e-a903-55ffb859e761}</Project>
-      <Name>Physics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Render\Render.csproj">
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
       <Name>Render</Name>

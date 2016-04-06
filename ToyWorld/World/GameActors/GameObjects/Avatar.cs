@@ -1,46 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using GoodAI.ToyWorld.Control;
+﻿using GoodAI.ToyWorld.Control;
 using VRageMath;
+using World.Physics;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControlable, IDirection
-
+    public interface IAvatar : IAvatarControlable
     {
+        IUsable Tool { get; set; }
     }
-
-
 
     public class Avatar : Character, IAvatar
     {
         public readonly int Id;
         public sealed override string Name { get; protected set; }
+        public IUsable Tool { get; set; }
 
         public float DesiredSpeed { get; set; }
         public float DesiredRotation { get; set; }
-        public float ForwardSpeed { get; set; }
-        public float RotationSpeed { get; set; }
         public bool Interact { get; set; }
         public bool Use { get; set; }
         public bool PickUp { get; set; }
 
-        internal IUsable Tool
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public Avatar(string name, int id)
+        public Avatar(string name, int id, Vector2 initialPosition)
         {
             Name = name;
             Id = id;
+            PhysicalEntity = new MovableDirectablePhysicalEntity(initialPosition);
         }
 
         public void ResetControls()

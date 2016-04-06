@@ -6,7 +6,7 @@ namespace World.GameActors.GameObjects
     /// <summary>
     /// For GameObjects which are held in hand.
     /// </summary>
-    internal interface IUsable
+    public interface IUsable
     {
         void Use(Atlas atlas, TilesetTable tilesetTable);
     }

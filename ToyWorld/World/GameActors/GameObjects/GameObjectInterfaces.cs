@@ -3,7 +3,7 @@
     /// <summary>
     /// Object which implement this interface can be controlled by AvatarController.
     /// </summary>
-    public interface IAvatarControlable : IMovable
+    public interface IAvatarControlable
     {
         /// <summary>
         /// To interact with object in front.
@@ -34,29 +34,5 @@
         /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
         /// </summary>
         float DesiredRotation { get; set; }
-    }
-
-    /// <summary>
-    /// For game objects that can move.
-    /// </summary>
-    public interface IMovable
-    {
-        /// <summary>
-        /// Speed has no limit. It is limited by physics engine.
-        /// </summary>
-        float ForwardSpeed { get; set; }
-
-        /// <summary>
-        /// Rotation speed has no limit. It is limited by physics engine.
-        /// </summary>
-        float RotationSpeed { get; set; }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IDirection
-    {
-        float Direction { get; set; }
     }
 }
