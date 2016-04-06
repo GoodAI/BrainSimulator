@@ -11,6 +11,11 @@
             TileType = tilesetTable.TileNumber(typeName);
         }
 
+        protected Tile(int tileType)
+        {
+            TileType = tileType;
+        }
+
         /// <summary>
         ///     TileType is number in tsx tileset
         /// </summary>

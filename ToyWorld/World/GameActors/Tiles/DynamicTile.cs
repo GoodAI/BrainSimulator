@@ -5,7 +5,11 @@
     /// </summary>
     public abstract class DynamicTile : Tile
     {
-        public DynamicTile(ITilesetTable tilesetTable) : base(tilesetTable)
+        protected DynamicTile(ITilesetTable tilesetTable) : base(tilesetTable)
+        {
+        }
+
+        protected DynamicTile(int tileType) : base(tileType)
         {
         }
     }

@@ -5,5 +5,9 @@
         public Obstacle(ITilesetTable tilesetTable) : base(tilesetTable)
         {
         }
+
+        public Obstacle(int tileType) : base(tileType)
+        {
+        }
     }
 }

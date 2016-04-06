@@ -5,5 +5,9 @@
         public Path(ITilesetTable tileset) : base(tileset)
         {
         }
+
+        public Path(int tileType) : base(tileType)
+        {
+        }
     }
 }

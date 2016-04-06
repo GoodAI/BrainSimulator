@@ -5,5 +5,9 @@
         public Background(ITilesetTable tileset) : base(tileset)
         {
         }
+
+        public Background(int tileType) : base(tileType)
+        {
+        }
     }
 }

@@ -14,6 +14,10 @@ namespace World.GameActors.Tiles
         {
         }
 
+        public Wall(int tileType) : base(tileType)
+        {
+        }
+
         public Tile ApplyGameAction(Atlas atlas, GameAction gameAction, TilesetTable tilesetTable)
         {
             if (gameAction is ToUsePickaxe)
