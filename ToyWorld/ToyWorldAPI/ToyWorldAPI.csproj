@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
-    <Compile Include="Control\AvatarActionEnum.cs" />
     <Compile Include="Control\IAvatarActionsControlable.cs" />
     <Compile Include="Control\IAvatarPriorityActions.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />

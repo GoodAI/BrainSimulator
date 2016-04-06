@@ -5,19 +5,12 @@ using VRageMath;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar
+    public interface IAvatar : IControlable
     {
-        string Name { get; }
-        float Acceleration { get; set; }
-        float Rotation { get; set; }
-        bool Interact { get; set; }
-        bool Use { get; set; }
-        bool PickUp { get; set; }
         Point Position { get; set; }
-        void ClearConstrols();
     }
 
-    public class Avatar : Character, IControlable, IAvatar
+    public class Avatar : Character, IAvatar
     {
         public readonly int Id;
         public sealed override string Name { get; protected set; }
@@ -27,8 +20,6 @@ namespace World.GameActors.GameObjects
         public bool Interact { get; set; }
         public bool Use { get; set; }
         public bool PickUp { get; set; }
-
-        private Dictionary<AvatarActionEnum, AvatarAction<object>> AvatarActions { get; set; }
 
         internal IUsable Tool
         {
@@ -48,9 +39,13 @@ namespace World.GameActors.GameObjects
             Id = id;
         }
 
-        public void ClearConstrols()
+        public void ResetControls()
         {
-            AvatarActions = new Dictionary<AvatarActionEnum, AvatarAction<object>>();
+            Acceleration = 0f;
+            Rotation = 0;
+            Interact = false;
+            Use = false;
+            PickUp = false;
         }
     }
 }

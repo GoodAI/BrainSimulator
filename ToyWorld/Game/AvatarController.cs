@@ -34,7 +34,7 @@ namespace Game
 
         internal void ResetControls()
         {
-            m_avatar.ClearConstrols();
+            m_avatar.ResetControls();
         }
 
         private void SetAvatarActionsControllable()
