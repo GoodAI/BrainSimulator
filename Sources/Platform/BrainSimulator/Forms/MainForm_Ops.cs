@@ -261,6 +261,7 @@ namespace GoodAI.BrainSimulator.Forms
             Project.Observers = new List<MyAbstractObserver>();  // potential sideffect
             ObserverViews.ForEach(ov => { ov.StoreWindowInfo(); Project.Observers.Add(ov.Observer); });
 
+            //TODO/FIXME: VERY DANGEROUS
             Project.Name = Path.GetFileNameWithoutExtension(fileName);  // a little sideeffect (should be harmless)
 
             string serializedProject = Project.Serialize(Path.GetDirectoryName(fileName));
@@ -1018,7 +1019,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private string GetCurrentFileName()
         {
-            return string.IsNullOrEmpty(saveFileDialog.FileName) ? "" : Path.GetDirectoryName(saveFileDialog.FileName);
+            return !string.IsNullOrEmpty(saveFileDialog.FileName)
+                ? Path.GetFileNameWithoutExtension(saveFileDialog.FileName)
+                : "";
         }
 
         private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)
