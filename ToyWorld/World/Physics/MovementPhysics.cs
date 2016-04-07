@@ -13,7 +13,7 @@ namespace World.Physics
 
         private static void Shift(IMovableDirectablePhysicalEntity movable)
         {
-            var directionInRads = movable.Direction / (180 / (float)Math.PI);
+            var directionInRads = VRageMath.MathHelper.ToRadians(movable.Direction);
             var cos = (float)Math.Cos(directionInRads);
             float x = movable.Position.X + cos * movable.ForwardSpeed;
             var sin = (float)Math.Sin(directionInRads);
