@@ -15,11 +15,6 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        void Reset();
-
-        /// <summary>
-        /// 
-        /// </summary>
         void MakeStep();
 
         /// <summary>

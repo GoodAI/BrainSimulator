@@ -8,11 +8,35 @@ namespace Render.RenderObjects.Buffers
 {
     internal static class StaticVBOFactory
     {
+        private static readonly Dictionary<Vector2I, VBOBase> GridVertices = new Dictionary<Vector2I, VBOBase>();
+
+        public static VBOBase GetGridVertices(Vector2I gridSize) { return GetGridVerticesInternal(gridSize); }
+        public static Lazy<VBOBase> FullscreenQuadVertices;
+        public static Lazy<VBOBase> QuadColors;
+
+
+        public static void Init()
+        {
+            FullscreenQuadVertices = new Lazy<VBOBase>(GenerateSquareVertices);
+            QuadColors = new Lazy<VBOBase>(GenerateSquareColors);
+        }
+
+        public static void Clear()
+        {
+            GridVertices.Clear();
+
+            FullscreenQuadVertices = null;
+            QuadColors = null;
+        }
+
+
         #region Basic static buffers
 
         #region Square
 
-        static readonly float[] SquareVertices =
+        private static VBOBase GenerateSquareVertices()
+        {
+            float[] squareVertices =
             {
                 -1,-1,
                  1,-1,
@@ -20,14 +44,9 @@ namespace Render.RenderObjects.Buffers
                 -1, 1,
             };
 
-        public static readonly Lazy<VBOBase> FullscreenQuadVertices = new Lazy<VBOBase>(GenerateSquareVertices);
-        private static VBOBase GenerateSquareVertices()
-        {
-
-            return new VBO<float>(SquareVertices.Length, SquareVertices, 2, hint: BufferUsageHint.StaticDraw);
+            return new VBO<float>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
-        public static readonly Lazy<VBOBase> QuadColors = new Lazy<VBOBase>(GenerateSquareColors);
         private static VBOBase GenerateSquareColors()
         {
             float[] buf =
@@ -45,9 +64,7 @@ namespace Render.RenderObjects.Buffers
 
         #region Grid
 
-        private static readonly Dictionary<Vector2I, VBOBase> GridVertices = new Dictionary<Vector2I, VBOBase>();
-
-        public static VBOBase GetGridVertices(Vector2I gridSize)
+        private static VBOBase GetGridVerticesInternal(Vector2I gridSize)
         {
             {
                 VBOBase grid;

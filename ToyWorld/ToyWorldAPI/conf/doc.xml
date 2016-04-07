@@ -135,11 +135,6 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.Reset">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.MakeStep">
             <summary>
             

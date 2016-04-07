@@ -4,6 +4,7 @@ using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
+using Render.RenderObjects.Buffers;
 using Render.RenderObjects.Effects;
 using Render.RenderObjects.Geometries;
 using Render.RenderObjects.Textures;
@@ -26,7 +27,9 @@ namespace Render.Renderer
         #region Genesis
 
         internal RendererBase()
-        { }
+        {
+            StaticVBOFactory.Init();
+        }
 
         public virtual void Dispose()
         {
@@ -35,6 +38,8 @@ namespace Render.Renderer
                 renderRequest.Dispose();
 
             m_renderRequestQueue.Clear();
+
+            StaticVBOFactory.Clear();
         }
 
         #endregion
@@ -50,11 +55,6 @@ namespace Render.Renderer
         public abstract void MakeContextNotCurrent();
 
         public virtual void Init()
-        {
-            m_renderRequestQueue.Clear();
-        }
-
-        public virtual void Reset()
         {
             m_renderRequestQueue.Clear();
         }

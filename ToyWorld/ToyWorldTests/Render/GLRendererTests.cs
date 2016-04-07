@@ -67,7 +67,7 @@ namespace ToyWorldTests.Render
             m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
             m_renderer.CreateContext();
 
-            m_renderer.Reset();
+            m_renderer.Init();
             m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
             m_renderer.CreateContext();
         }

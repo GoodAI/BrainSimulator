@@ -62,13 +62,6 @@ namespace Game
             Renderer.CreateContext();
         }
 
-        public virtual void Reset()
-        {
-            // TODO: Semantics of Reset? What should it do?
-            // World.Reset();
-            Renderer.Reset();
-        }
-
         public virtual void MakeStep()
         {
             // Assume Init has been called, we don't want to check for consistency every step

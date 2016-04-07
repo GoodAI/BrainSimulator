@@ -23,6 +23,8 @@ namespace Render.Renderer
 
         public override void Dispose()
         {
+            base.Dispose();
+
             // Dispose of Context
             if (Context != null)
             {
@@ -39,8 +41,6 @@ namespace Render.Renderer
                 Window.Dispose();
                 Window = null;
             }
-
-            base.Dispose();
         }
 
         #endregion

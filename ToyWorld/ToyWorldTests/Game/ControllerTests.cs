@@ -44,13 +44,11 @@ namespace ToyWorldTests.Game
 
         // Tests game factory and basic enqueuing
         [Fact]
-        public void TestInitAndReset()
+        public void TestInit()
         {
             Assert.NotNull(GameController);
             Assert.NotNull(GameController.Renderer);
             Assert.NotNull(GameController.World);
-
-            GameController.Reset();
         }
 
         [Fact]
