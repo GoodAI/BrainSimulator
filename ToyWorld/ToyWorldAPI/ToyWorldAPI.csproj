@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
-    <Compile Include="Control\IAvatarActionsControlable.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\GameSetup.cs" />
@@ -56,6 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="APIDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{772B1188-A00D-45FC-B352-834227ADAE96}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

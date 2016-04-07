@@ -10,11 +10,11 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
         /// </summary>
-        public AvatarAction<float> Acceleration { get; set; }
+        public AvatarAction<float> DesiredSpeed { get; set; }
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
         /// </summary>
-        public AvatarAction<float> Rotation { get; set; }
+        public AvatarAction<float> DesiredRotation { get; set; }
         /// <summary>
         /// To interact with object in front.
         /// </summary>
@@ -30,8 +30,8 @@ namespace GoodAI.ToyWorld.Control
 
         public AvatarControls()
         {
-            Acceleration = new AvatarAction<float>(0, 0);
-            Rotation = new AvatarAction<float>(0, 0);
+            DesiredSpeed = new AvatarAction<float>(0, 0);
+            DesiredRotation = new AvatarAction<float>(0, 0);
             Interact = new AvatarAction<bool>(false, 0);
             Use = new AvatarAction<bool>(false, 0);
             PickUp = new AvatarAction<bool>(false, 0);
@@ -43,13 +43,13 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="actions"></param>
         public void Update(AvatarControls actions)
         {
-            if (Acceleration.Priority < actions.Acceleration.Priority)
+            if (DesiredSpeed.Priority < actions.DesiredSpeed.Priority)
             {
-                Acceleration = actions.Acceleration;
+                DesiredSpeed = actions.DesiredSpeed;
             }
-            if (Rotation.Priority < actions.Rotation.Priority)
+            if (DesiredRotation.Priority < actions.DesiredRotation.Priority)
             {
-                Rotation = actions.Rotation;
+                DesiredRotation = actions.DesiredRotation;
             }
             if (Interact.Priority < actions.Interact.Priority)
             {

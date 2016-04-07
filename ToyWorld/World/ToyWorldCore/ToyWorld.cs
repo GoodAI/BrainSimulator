@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using Physics;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
+using World.Physics;
 using World.WorldInterfaces;
 
 namespace World.ToyWorldCore
@@ -15,8 +14,6 @@ namespace World.ToyWorldCore
             AutoupdateRegister = new AutoupdateRegister();
             Atlas = MapLoader.LoadMap(tmxMapFile, new TilesetTable(tileTable));
         }
-
-        private IPhysics Physics { get; set; }
 
         public AutoupdateRegister AutoupdateRegister { get; private set; }
 
@@ -30,6 +27,18 @@ namespace World.ToyWorldCore
             }
             set
             {
+            }
+        }
+
+        public IPhysics IPhysics
+        {
+            get
+            {
+                throw new System.NotImplementedException();
+            }
+            set
+            {
+                throw new System.NotImplementedException();
             }
         }
 

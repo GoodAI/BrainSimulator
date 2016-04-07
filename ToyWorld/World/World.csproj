@@ -41,11 +41,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameActions\IAvatarActions.cs" />
+    <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
+    <Compile Include="Physics\BasicAvatarMover.cs" />
+    <Compile Include="Physics\IAvatarMover.cs" />
+    <Compile Include="Physics\IMovable.cs" />
     <Compile Include="GameActors\GameObjects\IUsable.cs" />
     <Compile Include="GameActors\Tiles\OnBackground.cs" />
     <Compile Include="GameActors\Tiles\Background.cs" />
     <Compile Include="GameActors\Tiles\Obstacle.cs" />
     <Compile Include="GameActors\Tiles\Path.cs" />
+    <Compile Include="Physics\IPhysics.cs" />
+    <Compile Include="Physics\MovableDirectablePhysicalEntity.cs" />
+    <Compile Include="Physics\MovementPhysics.cs" />
+    <Compile Include="Physics\PhysicalEntity.cs" />
     <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />
     <Compile Include="GameActors\GameObjects\Avatar.cs" />
     <Compile Include="GameActors\GameObjects\Character.cs" />
@@ -70,10 +78,6 @@
     <Compile Include="WorldInterfaces\IWorld.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{06daad7f-ac1c-417e-a903-55ffb859e761}</Project>
-      <Name>Physics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
       <Project>{7a4d6fa1-e44b-40e2-9de8-3606dbc657d9}</Project>
       <Name>TmxMapSerializer</Name>
