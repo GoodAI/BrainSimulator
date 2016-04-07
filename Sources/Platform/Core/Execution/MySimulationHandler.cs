@@ -433,7 +433,7 @@ namespace GoodAI.Core.Execution
                 Project.World.Cleanup();
 
                 MyLog.INFO.WriteLine("Freeing memory...");
-                Simulation.FreeMemory();
+                Simulation.FreeMemory(didCrash: m_simulationStoppedException != null);
                 PrintMemoryInfo();
 
                 MyKernelFactory.Instance.RecoverContexts();
