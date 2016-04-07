@@ -4,6 +4,6 @@ namespace World.Physics
 {
     interface IAvatarMover
     {
-        void SetAvatarMotion(Avatar avatar);
+        void SetAvatarMotion(IAvatar avatar);
     }
 }

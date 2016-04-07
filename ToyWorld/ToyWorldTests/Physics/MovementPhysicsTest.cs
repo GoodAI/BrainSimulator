@@ -1,19 +1,12 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using VRageMath;
 using World.Physics;
 using Xunit;
-using Xunit.Sdk;
 
 namespace ToyWorldTests.Physics
 {
     public class MovementPhysicsTest
     {
-        public MovementPhysicsTest()
-        {
-
-        }
-
         [Theory]
         [InlineData(0, 0)]
         [InlineData(0, 90)]
@@ -26,7 +19,7 @@ namespace ToyWorldTests.Physics
         [InlineData(-1, 45)]
         public void TestMoveForward(float speed, float direction)
         {
-            var startingPosition = new Vector2(5,5);
+            var startingPosition = new Vector2(5, 5);
 
             var movableMock = new Mock<IMovableDirectablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
@@ -47,41 +40,40 @@ namespace ToyWorldTests.Physics
             if (speed == 0f)
             {
                 Assert.True(movable.Position == startingPosition);
-            }else if (speed == 1f)
+            }
+            else if (speed == 1f)
             {
-                if (direction == 0)
+                switch ((int) direction)
                 {
-                    Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
+                    case 0:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
+                        break;
+                    case 90:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(5, 6)));
+                        break;
+                    case 180:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(4, 5)));
+                        break;
+                    case 270:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
+                        break;
+                    case 45:
+                        Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
+                        break;
                 }
-                else if (direction == 90)
+            }
+            else if (speed == -1f)
+            {
+                if (direction == 45)
                 {
-                    Assert.True(CompareVectors(movable.Position, new Vector2(5, 6)));
-                }
-                else if (direction == 180)
-                {
-                    Assert.True(CompareVectors(movable.Position, new Vector2(4, 5)));
-                }
-                else if (direction == 270)
-                {
-                    Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
-                }
-                else if (direction == 45)
-                {
-                    Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
-                }
-                else
-                {
-                    if (direction == 45)
-                    {
-                        Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
-                    }
+                    Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
                 }
             }
         }
 
         private static bool CompareVectors(Vector2 v1, Vector2 v2)
         {
-            var maxError = Vector2.One / 100000;
+            var maxError = Vector2.One/100000;
             return (v2 - v1).Length() < maxError.Length();
         }
 
@@ -114,7 +106,8 @@ namespace ToyWorldTests.Physics
             else if (rotationSpeed == 1f)
             {
                 Assert.True(movable.Direction == 91);
-            }else
+            }
+            else if (rotationSpeed == -1f)
             {
                 Assert.True(movable.Direction == 89);
             }

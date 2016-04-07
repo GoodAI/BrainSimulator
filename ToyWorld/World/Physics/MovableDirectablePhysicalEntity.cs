@@ -3,19 +3,15 @@ using VRageMath;
 
 namespace World.Physics
 {
-    public interface IMovableDirectablePhysicalEntity
+    public interface IMovableDirectablePhysicalEntity : IDirectable, IForwardMovable
     {
-        float Direction { get; set; }
-        float ForwardSpeed { get; set; }
-        float RotationSpeed { get; set; }
-
         /// <summary>
         /// Absolute position in ToyWorld.
         /// </summary>
         Vector2 Position { get; set; }
     }
 
-    public class MovableDirectablePhysicalEntity : PhysicalEntity, IDirectable, IForwardMovable, IMovableDirectablePhysicalEntity
+    public class MovableDirectablePhysicalEntity : PhysicalEntity, IMovableDirectablePhysicalEntity
     {
         public float Direction { get; set; }
         public float ForwardSpeed { get; set; }

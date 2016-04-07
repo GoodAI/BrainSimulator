@@ -4,9 +4,10 @@ using World.Physics;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControlable
+    public interface IAvatar : IAvatarControllable
     {
         IUsable Tool { get; set; }
+        MovableDirectablePhysicalEntity PhysicalEntity { get; set; }
     }
 
     public class Avatar : Character, IAvatar
@@ -14,6 +15,7 @@ namespace World.GameActors.GameObjects
         public readonly int Id;
         public sealed override string Name { get; protected set; }
         public IUsable Tool { get; set; }
+        public MovableDirectablePhysicalEntity PhysicalEntity { get; set; }
 
         public float DesiredSpeed { get; set; }
         public float DesiredRotation { get; set; }

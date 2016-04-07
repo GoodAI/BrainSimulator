@@ -3,11 +3,11 @@ using World.GameActors.GameObjects;
 
 namespace World.Physics
 {
-    class BasicAvatarMover : IAvatarMover
+    public class BasicAvatarMover : IAvatarMover
     {
-        public void SetAvatarMotion(Avatar avatar)
+        public void SetAvatarMotion(IAvatar avatar)
         {
-            var physicalEntity = avatar.PhysicalEntity as MovableDirectablePhysicalEntity;
+            var physicalEntity = avatar.PhysicalEntity;
             Debug.Assert(physicalEntity != null, "physicalEntity != null");
             physicalEntity.ForwardSpeed = avatar.DesiredSpeed;
             physicalEntity.RotationSpeed = avatar.DesiredRotation;

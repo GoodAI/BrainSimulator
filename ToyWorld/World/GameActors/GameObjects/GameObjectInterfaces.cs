@@ -3,7 +3,7 @@
     /// <summary>
     /// Object which implement this interface can be controlled by AvatarController.
     /// </summary>
-    public interface IAvatarControlable
+    public interface IAvatarControllable
     {
         /// <summary>
         /// To interact with object in front.
