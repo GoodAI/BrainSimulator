@@ -35,8 +35,8 @@ namespace ToyWorldTests.Render
         }
 
 
-        //[Fact(Skip = "Long-running; manual input needed for ending.")]
-        [Fact]
+        [Fact(Skip = "Long-running; manual input needed for ending.")]
+        //[Fact]
         public void ShowRRLongRunning()
         {
             Key winKeypressResult = default(Key);
