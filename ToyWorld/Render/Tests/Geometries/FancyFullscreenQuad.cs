@@ -1,4 +1,5 @@
-﻿using Render.RenderObjects.Geometries;
+﻿using Render.RenderObjects.Buffers;
+using Render.RenderObjects.Geometries;
 
 namespace Render.Tests.Geometries
 {
@@ -11,7 +12,7 @@ namespace Render.Tests.Geometries
 
         public FancyFullscreenQuad()
         {
-            Vao[Color] = QuadColors.Value;
+            Vao[Color] = StaticVBOFactory.QuadColors.Value;
             Vao.EnableAttrib(Color, 1);
         }
     }

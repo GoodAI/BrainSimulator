@@ -25,6 +25,8 @@ namespace Render.RenderRequests
             // NOTE: All renderRequests must inherit from RenderRequest
             //////////////////////
 
+            // TODO: Reflection check for classes that don't comply
+
             // RenderRequests
             RRSwitch
                 .Case<IBasicTexRR>(() =>

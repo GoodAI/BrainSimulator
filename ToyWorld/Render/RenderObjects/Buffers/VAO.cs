@@ -9,7 +9,7 @@ namespace Render.RenderObjects.Buffers
     {
         public uint Handle { get; private set; }
 
-        protected readonly Dictionary<string, VBO> VBOs = new Dictionary<string, VBO>();
+        private readonly Dictionary<string, VBOBase> m_vboBases = new Dictionary<string, VBOBase>();
 
 
         #region Genesis
@@ -23,33 +23,33 @@ namespace Render.RenderObjects.Buffers
         {
             GL.DeleteVertexArray(Handle);
 
-            foreach (var vbo in VBOs.Values)
-                vbo.Dispose();
+            foreach (var VBOBase in m_vboBases.Values)
+                VBOBase.Dispose();
 
-            VBOs.Clear();
+            m_vboBases.Clear();
         }
 
         #endregion
 
         #region Indexing
 
-        public VBO this[string id]
+        public VBOBase this[string id]
         {
             get
             {
-                VBO vbo;
+                VBOBase VBOBase;
 
-                if (!VBOs.TryGetValue(id, out vbo))
-                    throw new ArgumentException("Access to not registered VBO.", "id");
+                if (!m_vboBases.TryGetValue(id, out VBOBase))
+                    throw new ArgumentException("Access to not registered VBOBase.", "id");
 
-                return vbo;
+                return VBOBase;
             }
             set
             {
-                if (VBOs.ContainsKey(id))
-                    throw new ArgumentException("A VBO has already been registered to this id.", "id");
+                if (m_vboBases.ContainsKey(id))
+                    throw new ArgumentException("A VBOBase has already been registered to this id.", "id");
 
-                VBOs[id] = value;
+                m_vboBases[id] = value;
             }
         }
 
@@ -62,16 +62,16 @@ namespace Render.RenderObjects.Buffers
             bool normalized = false,
             int stride = 0, int offset = 0)
         {
-            VBO vbo = this[id];
+            VBOBase vboBase = this[id];
 
             GL.BindVertexArray(Handle);
-            vbo.Bind();
+            vboBase.Bind();
 
             GL.EnableVertexAttribArray(attribArrayIdx);
-            GL.VertexAttribPointer(attribArrayIdx, vbo.ElementSize, type, normalized, stride, offset);
+            GL.VertexAttribPointer(attribArrayIdx, vboBase.ElementSize, type, normalized, stride, offset);
 
             //GL.BindVertexArray(0);
-            //vbo.Unbind();
+            //VBOBase.Unbind();
         }
 
         public void DisableAttrib(string id, int attribArrayIdx)

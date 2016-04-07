@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
+    <Compile Include="RenderObjects\Buffers\StaticVBOFactory.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
     <Compile Include="Tests\Effects\NoEffectTex.cs" />

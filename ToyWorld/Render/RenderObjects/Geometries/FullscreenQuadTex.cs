@@ -11,7 +11,7 @@ namespace Render.RenderObjects.Geometries
 
         public FullscreenQuadTex()
         {
-            Vao[Cood] = new VBO(8, null, 2);
+            Vao[Cood] = new VBO<float>(8, null, 2);
             Vao.EnableAttrib(Cood, 1);
         }
 

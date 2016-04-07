@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using Render.Geometries.Buffers;
+using Render.RenderObjects.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
@@ -11,7 +12,7 @@ namespace Render.RenderObjects.Geometries
 
         public FullScreenQuad()
         {
-            Vao[Vert]= FullscreenQuadVertices.Value;
+            Vao[Vert]= StaticVBOFactory.FullscreenQuadVertices.Value;
             Vao.EnableAttrib(Vert, 0);
         }
 
