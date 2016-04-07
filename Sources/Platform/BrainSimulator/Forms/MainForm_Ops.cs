@@ -258,13 +258,25 @@ namespace GoodAI.BrainSimulator.Forms
             if (string.IsNullOrEmpty(fileName))
                 fileName = Path.GetTempFileName();
 
-            Project.Observers = new List<MyAbstractObserver>();  // potential sideffect
+            if (Project.Observers != null)
+                MyLog.WARNING.WriteLine("Project.Observers is not null, serialization will produce side-effect!");
+
+            Project.Observers = new List<MyAbstractObserver>();  // Potential sideffect.
             ObserverViews.ForEach(ov => { ov.StoreWindowInfo(); Project.Observers.Add(ov.Observer); });
 
-            Project.Name = Path.GetFileNameWithoutExtension(fileName);  // a little sideeffect (should be harmless)
+            string originalProjectName = Project.Name;  // Avoid side-effect.
+            Project.Name = Path.GetFileNameWithoutExtension(fileName);
 
-            string serializedProject = Project.Serialize(Path.GetDirectoryName(fileName));
-            Project.Observers = null;
+            string serializedProject;
+            try
+            {
+                serializedProject = Project.Serialize(Path.GetDirectoryName(fileName));
+            }
+            finally
+            {
+                Project.Observers = null;
+                Project.Name = originalProjectName;
+            }
 
             return serializedProject;
         }
@@ -1018,7 +1030,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private string GetCurrentFileName()
         {
-            return string.IsNullOrEmpty(saveFileDialog.FileName) ? "" : Path.GetDirectoryName(saveFileDialog.FileName);
+            return !string.IsNullOrEmpty(saveFileDialog.FileName)
+                ? Path.GetFileNameWithoutExtension(saveFileDialog.FileName)
+                : "";
         }
 
         private void RefreshPropertyViews(object s, PropertyValueChangedEventArgs e)

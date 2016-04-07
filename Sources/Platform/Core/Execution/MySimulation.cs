@@ -803,6 +803,7 @@ namespace GoodAI.Core.Execution
         {
             MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();
 
+            var isFirst = true;
             foreach (MyWorkingNode node in nodeList)
             {
                 if (LoadAllNodesData || node.LoadOnStart)
@@ -811,6 +812,10 @@ namespace GoodAI.Core.Execution
                     {
                         if (mb.Persistable)
                         {
+                            if (isFirst)
+                                MyLog.INFO.WriteLine("Loading state from: " + MyMemoryBlockSerializer.GetTempStorage(m_project));
+
+                            isFirst = false;
                             serializer.LoadBlock(mb, GlobalDataFolder);
                         }
                     }
@@ -822,6 +827,7 @@ namespace GoodAI.Core.Execution
         {
             MyMemoryBlockSerializer serializer = new MyMemoryBlockSerializer();
 
+            var isFirst = true;
             foreach (MyWorkingNode node in nodeList)
             {
                 if (SaveAllNodesData || node.SaveOnStop)
@@ -830,6 +836,10 @@ namespace GoodAI.Core.Execution
                     {
                         if (mb.Persistable)
                         {
+                            if (isFirst)
+                                MyLog.INFO.WriteLine("Saving state to: " + MyMemoryBlockSerializer.GetTempStorage(m_project));
+
+                            isFirst = false;
                             serializer.SaveBlock(mb);
                         }
                     }
