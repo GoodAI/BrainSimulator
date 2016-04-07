@@ -3,12 +3,8 @@ using VRageMath;
 
 namespace World.Physics
 {
-    public interface IMovableDirectablePhysicalEntity : IDirectable, IForwardMovable
+    public interface IMovableDirectablePhysicalEntity : IDirectable, IForwardMovable, IPhysicalEntity
     {
-        /// <summary>
-        /// Absolute position in ToyWorld.
-        /// </summary>
-        Vector2 Position { get; set; }
     }
 
     public class MovableDirectablePhysicalEntity : PhysicalEntity, IMovableDirectablePhysicalEntity

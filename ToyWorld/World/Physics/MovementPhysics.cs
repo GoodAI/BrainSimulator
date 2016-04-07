@@ -14,8 +14,10 @@ namespace World.Physics
         private static void Shift(IMovableDirectablePhysicalEntity movable)
         {
             var directionInRads = movable.Direction / (180 / (float)Math.PI);
-            float x = movable.Position.X + (float)Math.Cos(directionInRads) * movable.ForwardSpeed;
-            float y = movable.Position.Y + (float)Math.Sin(directionInRads) * movable.ForwardSpeed;
+            var cos = (float)Math.Cos(directionInRads);
+            float x = movable.Position.X + cos * movable.ForwardSpeed;
+            var sin = (float)Math.Sin(directionInRads);
+            float y = movable.Position.Y + sin * movable.ForwardSpeed;
             movable.Position = new Vector2(x, y);
         }
 
