@@ -1,11 +1,11 @@
 ﻿using System.IO;
 
-namespace TestingFiles
+namespace ToyWorldTests
 {
 
-    internal static class Files
+    internal static class FileStreams
     {
-        public static MemoryStream GetTmxMemoryStream()
+        public static Stream GetTmxMemoryStream()
         {
             var ms = new MemoryStream();
             const string fileSting = @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -71,7 +71,7 @@ namespace TestingFiles
             return ms;
         }
 
-        public static MemoryStream GetTilesetTableMemoryStream()
+        public static Stream GetTilesetTableMemoryStream()
         {
             var ms = new MemoryStream();
             const string fileSting = @"Layer;NameOfTile;PositionInTileset;IsDefault;Note
@@ -114,6 +114,11 @@ namespace TestingFiles
             WriteToMemoryStream(ms, fileSting);
             ms.Position = 0;
             return ms;
+        }
+
+        public static Stream FullTmxFileStream()
+        {
+            return new FileStream(@"\TestFiles\mockup999_pantry_world.tmx", FileMode.Open);
         }
 
         private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)

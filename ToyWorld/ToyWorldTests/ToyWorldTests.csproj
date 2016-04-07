@@ -63,6 +63,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
       <Private>True</Private>
@@ -118,6 +119,10 @@
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
       <Name>Render</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
+      <Project>{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}</Project>
+      <Name>TmxMapSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>ToyWorldAPI</Name>
@@ -138,6 +143,14 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
+    <None Include="TestFiles\mockup999_pantry_world.tmx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\roguelike_selection_summer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

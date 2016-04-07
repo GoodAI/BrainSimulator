@@ -1,6 +1,6 @@
 ﻿using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using GoodAI.ToyWorld.Control;
+using TmxMapSerializer.Elements;
+using TmxMapSerializer.Serializer;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
@@ -24,8 +24,11 @@ namespace ToyWorldTests.World
 
             var tilesetTable = new TilesetTable(tilesetTableStreamReader);
 
+            var serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStreamReader);
+
             // create atlas
-            m_atlas = MapLoader.LoadMap(tmxStreamReader, tilesetTable);
+            m_atlas = MapLoader.LoadMap(map, tilesetTable);
         }
 
         [Fact]
