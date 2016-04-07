@@ -2,6 +2,8 @@
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
+using TmxMapSerializer.Elements;
+using TmxMapSerializer.Serializer;
 using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 using World.WorldInterfaces;
@@ -37,7 +39,10 @@ namespace Game
         public virtual void Init()
         {
             // Init World
-            World = new ToyWorld(m_gameSetup.SaveFile, m_gameSetup.TilesetFile);
+            var serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(m_gameSetup.SaveFile);
+
+            World = new ToyWorld(map, m_gameSetup.TilesetFile);
 
             m_avatars = new Dictionary<int, Avatar>();
             foreach (int avatarId in World.GetAvatarsIds())

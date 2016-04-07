@@ -51,6 +51,10 @@
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
       <Name>Render</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
+      <Project>{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}</Project>
+      <Name>TmxMapSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>ToyWorldAPI</Name>

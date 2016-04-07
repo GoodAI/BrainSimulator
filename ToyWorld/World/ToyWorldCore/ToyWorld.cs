@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using TmxMapSerializer.Elements;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
@@ -9,10 +10,10 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
-        public ToyWorld(StreamReader tmxMapFile, StreamReader tileTable)
+        public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
             AutoupdateRegister = new AutoupdateRegister();
-            Atlas = MapLoader.LoadMap(tmxMapFile, new TilesetTable(tileTable));
+            Atlas = MapLoader.LoadMap(tmxDeserializedMap, new TilesetTable(tileTable));
         }
 
         public AutoupdateRegister AutoupdateRegister { get; private set; }

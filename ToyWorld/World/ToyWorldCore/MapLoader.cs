@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using TmxMapSerializer.Elements;
@@ -18,11 +17,9 @@ namespace World.ToyWorldCore
         /// <param name="tmxFile"></param>
         /// <param name="tilesetTable"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
-        public static Atlas LoadMap(StreamReader tmxFile, TilesetTable tilesetTable)
+        public static Atlas LoadMap(Map map, TilesetTable tilesetTable)
         {
             TmxSerializer tmxMapSerializer = new TmxSerializer();
-
-            Map map = tmxMapSerializer.Deserialize(tmxFile);
 
             Atlas atlas = new Atlas();
 
