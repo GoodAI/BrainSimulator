@@ -46,7 +46,7 @@ namespace ToyWorldTests.Render
         [Fact]
         public void AvatarFoV()
         {
-            var RRTest = GameController.RegisterRenderRequest<IFoVAvatarRenderRequest>(0);
+            var RRTest = GameController.RegisterRenderRequest<IFovAvatarRenderRequest>(0);
 
             Assert.NotEmpty(RRTest.Image);
             Assert.Equal(RRTest.Size, RRTest.Image.Length);

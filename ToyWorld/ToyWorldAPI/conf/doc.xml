@@ -232,12 +232,12 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IFoVAvatarRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IFovAvatarRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IFoVAvatarRenderRequest.Image">
+        <member name="P:GoodAI.ToyWorld.Control.IFovAvatarRenderRequest.Image">
             <summary>
             
             </summary>

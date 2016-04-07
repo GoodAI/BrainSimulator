@@ -36,7 +36,7 @@ namespace Render.RenderRequests
             ARRSwitch
                 .Case<IBasicARR>(id =>
                     new BasicARR(id))
-                .Case<IFoVAvatarRenderRequest>(id =>
+                .Case<IFovAvatarRenderRequest>(id =>
                     new FoVARR(id));
         }
 

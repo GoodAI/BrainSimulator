@@ -28,7 +28,7 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public interface IFoVAvatarRenderRequest : IAvatarRenderRequest
+    public interface IFovAvatarRenderRequest : IAvatarRenderRequest
     {
         /// <summary>
         /// 
