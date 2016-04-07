@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using OpenTK.Graphics.OpenGL;
+using Render.Geometries.Buffers;
 
-namespace Render.Geometries.Buffers
+namespace Render.RenderObjects.Buffers
 {
     internal class VAO : IDisposable
     {
         public uint Handle { get; private set; }
 
-        private readonly List<VBO> m_BOs = new List<VBO>();
+        private readonly Dictionary<string, VBOBase> m_vboBases = new Dictionary<string, VBOBase>();
 
+
+        #region Genesis
 
         public VAO()
         {
@@ -21,27 +23,61 @@ namespace Render.Geometries.Buffers
         {
             GL.DeleteVertexArray(Handle);
 
-            foreach (var vbo in m_BOs)
-                vbo.Dispose();
+            foreach (var VBOBase in m_vboBases.Values)
+                VBOBase.Dispose();
 
-            m_BOs.Clear();
+            m_vboBases.Clear();
         }
 
-        public void AddVBO(VBO vbo, int index, VertexAttribPointerType type = VertexAttribPointerType.Float, bool normalized = false, int stride = 1, int offset = 0)
-        {
-            Debug.Assert(vbo != null);
-            Debug.Assert(vbo.Target == BufferTarget.ArrayBuffer);
+        #endregion
 
-            m_BOs.Add(vbo);
+        #region Indexing
+
+        public VBOBase this[string id]
+        {
+            get
+            {
+                VBOBase VBOBase;
+
+                if (!m_vboBases.TryGetValue(id, out VBOBase))
+                    throw new ArgumentException("Access to not registered VBOBase.", "id");
+
+                return VBOBase;
+            }
+            set
+            {
+                if (m_vboBases.ContainsKey(id))
+                    throw new ArgumentException("A VBOBase has already been registered to this id.", "id");
+
+                m_vboBases[id] = value;
+            }
+        }
+
+        #endregion
+
+
+        public void EnableAttrib(
+            string id, int attribArrayIdx,
+            VertexAttribPointerType type = VertexAttribPointerType.Float,
+            bool normalized = false,
+            int stride = 0, int offset = 0)
+        {
+            VBOBase vboBase = this[id];
 
             GL.BindVertexArray(Handle);
-            vbo.Bind();
+            vboBase.Bind();
 
-            GL.EnableVertexAttribArray(index);
-            GL.VertexAttribPointer(index, 4, type, normalized, stride, offset);
+            GL.EnableVertexAttribArray(attribArrayIdx);
+            GL.VertexAttribPointer(attribArrayIdx, vboBase.ElementSize, type, normalized, stride, offset);
 
-            GL.BindVertexArray(0);
-            vbo.Unbind();
+            //GL.BindVertexArray(0);
+            //VBOBase.Unbind();
+        }
+
+        public void DisableAttrib(string id, int attribArrayIdx)
+        {
+            GL.BindVertexArray(Handle);
+            GL.DisableVertexAttribArray(attribArrayIdx);
         }
     }
 }

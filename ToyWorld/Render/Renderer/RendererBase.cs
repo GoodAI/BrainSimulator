@@ -1,94 +1,53 @@
 ﻿using GoodAI.ToyWorld.Control;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using Render.RenderRequests;
 using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
+using Render.RenderObjects.Effects;
+using Render.RenderObjects.Geometries;
+using Render.RenderObjects.Textures;
 using VRage.Collections;
 
 namespace Render.Renderer
 {
-    public abstract class RendererBase : IRenderer
+    public abstract class RendererBase : IDisposable
     {
         #region Fields
 
         private readonly IterableQueue<RenderRequest> m_renderRequestQueue = new IterableQueue<RenderRequest>();
 
+        internal readonly GeometryManager GeometryManager = new GeometryManager();
+        internal readonly EffectManager EffectManager = new EffectManager();
+        internal readonly TextureManager TextureManager = new TextureManager();
+
         #endregion
 
         #region Genesis
+
         internal RendererBase()
         { }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             // Dispose of RRs
             foreach (var renderRequest in m_renderRequestQueue)
                 renderRequest.Dispose();
 
             m_renderRequestQueue.Clear();
-
-            // Dispose of Context
-            if (Context != null)
-            {
-                if (Context.IsCurrent)
-                    Context.MakeCurrent(null);
-                Context.Dispose();
-                Context = null;
-            }
-
-            // Dispose of Window
-            if (Window != null)
-            {
-                Window.Close();
-                Window.Dispose();
-                Window = null;
-            }
         }
 
         #endregion
 
-        #region IRenderer overrides
+        #region Virtual stuff
 
-        public INativeWindow Window { get; protected set; }
-        public IGraphicsContext Context { get; protected set; }
+        public abstract int Width { get; }
+        public abstract int Height { get; }
 
-        public virtual void CreateWindow(string title, int width, int height)
-        {
-            if (Window != null)
-            {
-                Window.Close();
-                Window.Dispose();
-            }
-
-            Window = new NativeWindow(width, height, title, GameWindowFlags.Default, GraphicsMode.Default, DisplayDevice.Default);
-            Window.Resize += WindowOnResize;
-        }
-
-        private void WindowOnResize(object sender, EventArgs args)
-        {
-            if (Context != null)
-                Context.Update(Window.WindowInfo);
-        }
-
-        public virtual void CreateContext()
-        {
-            Debug.Assert(Window != null, "Missing window, cannot create context.");
-
-            if (Context != null)
-            {
-                if (Context.IsCurrent)
-                    Context.MakeCurrent(null);
-                Context.Dispose();
-            }
-
-            Context = new GraphicsContext(GraphicsMode.Default, Window.WindowInfo);
-            Context.LoadAll();
-            Context.MakeCurrent(null);
-        }
+        public abstract void CreateWindow(string title, int width, int height);
+        public abstract void CreateContext();
+        public abstract void MakeContextCurrent();
+        public abstract void MakeContextNotCurrent();
 
         public virtual void Init()
         {
@@ -100,29 +59,12 @@ namespace Render.Renderer
             m_renderRequestQueue.Clear();
         }
 
-        public virtual void EnqueueRequest(IRenderRequest request)
-        {
-            m_renderRequestQueue.Enqueue((RenderRequestBase)request);
-        }
-
-        public virtual void EnqueueRequest(IAvatarRenderRequest request)
-        {
-            m_renderRequestQueue.Enqueue((AvatarRenderRequestBase)request);
-        }
-
         public virtual void ProcessRequests()
         {
-            Debug.Assert(Context != null);
-
-            Window.ProcessEvents();
-
-            if (!Context.IsCurrent)
-                Context.MakeCurrent(Window.WindowInfo);
+            MakeContextCurrent();
 
             foreach (var renderRequest in m_renderRequestQueue)
                 Process(renderRequest);
-
-            Context.MakeCurrent(null);
         }
 
         protected virtual void Process(RenderRequest request)
@@ -130,22 +72,21 @@ namespace Render.Renderer
             request.Draw(this);
         }
 
+        [Conditional("DEBUG")]
+        public virtual void CheckError()
+        { }
+
         #endregion
 
 
-        [Conditional("DEBUG")]
-        void CheckError()
+        public void EnqueueRequest(IRenderRequest request)
         {
-            int i = 60;
-            ErrorCode err;
+            m_renderRequestQueue.Enqueue((RenderRequestBase)request);
+        }
 
-            while ((err = GL.GetError()) != ErrorCode.NoError)
-            {
-                if (--i == 0)
-                    throw new Exception(err.ToString());
-            }
-
-            // TODO: log
+        public void EnqueueRequest(IAvatarRenderRequest request)
+        {
+            m_renderRequestQueue.Enqueue((AvatarRenderRequestBase)request);
         }
     }
 }

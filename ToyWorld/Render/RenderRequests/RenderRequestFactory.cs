@@ -4,7 +4,8 @@ using System.Linq;
 using GoodAI.ToyWorld.Control;
 using Render.RenderRequests.AvatarRenderRequests;
 using Render.RenderRequests.RenderRequests;
-using Render.RenderRequests.Tests;
+using Render.Tests.RRs;
+using Utils.VRageRIP.Lib.Collections;
 
 namespace Render.RenderRequests
 {
@@ -14,18 +15,31 @@ namespace Render.RenderRequests
         private static readonly TypeSwitch<IRenderRequest> RRSwitch = new TypeSwitch<IRenderRequest>();
         public static IEnumerable<IRenderRequest> RRs { get { return RRSwitch.Matches.Values.Select(rr => rr()); } }
 
-        private static readonly TypeSwitchParam<IAvatarRenderRequest> ARRSwitch = new TypeSwitchParam<IAvatarRenderRequest>();
+        private static readonly TypeSwitchParam<IAvatarRenderRequest, int> ARRSwitch = new TypeSwitchParam<IAvatarRenderRequest, int>();
         public static IEnumerable<IAvatarRenderRequest> ARRs { get { return ARRSwitch.Matches.Values.Select(rr => rr(0)); } }
 
 
         static RenderRequestFactory()
         {
+            //////////////////////
+            // NOTE: All renderRequests must inherit from RenderRequest
+            //////////////////////
+
+            // TODO: Reflection check for classes that don't comply
+
             // RenderRequests
-            RRSwitch.Case<IRRTest>(() => new RRTest());
+            RRSwitch
+                .Case<IBasicTexRR>(() =>
+                    new BasicTexRR())
+                .Case<IFullMapRenderRequest>(() =>
+                    new FullMapRR());
 
             // AvatarRenderRequests
-            ARRSwitch.Case<IARRTest>(id => new ARRTest(id));
-            ARRSwitch.Case<IAvatarRenderRequestFoV>(id => new ARRFoV(id));
+            ARRSwitch
+                .Case<IBasicARR>(id =>
+                    new BasicARR(id))
+                .Case<IFovAvatarRenderRequest>(id =>
+                    new FoVARR(id));
         }
 
 
@@ -37,71 +51,10 @@ namespace Render.RenderRequests
             return RRSwitch.Switch<T>();
         }
 
-        public static T CreateAvatarRenderRequest<T>(int avatarID)
+        public static T CreateRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest // unf cannot constrain T to be an interface, only a class
         {
             return ARRSwitch.Switch<T>(avatarID);
         }
-
-
-        #region TypeSwitch
-
-        internal abstract class TypeSwitchBase<TKey, TVal>
-            where TVal : class
-        {
-            internal readonly Dictionary<Type, TVal> Matches = new Dictionary<Type, TVal>();
-
-
-            public TypeSwitchBase<TKey, TVal> Case<T>(TVal action)
-                where T : class, TKey
-            {
-                Matches.Add(typeof(T), action);
-                return this;
-            }
-
-            protected TVal SwitchInternal<T>()
-                where T : class, TKey
-            {
-                TVal res;
-
-                if (!Matches.TryGetValue(typeof(T), out res))
-                {
-                    // log
-                    return null;
-                }
-
-                return res;
-            }
-        }
-
-        private sealed class TypeSwitch<TKey> : TypeSwitchBase<TKey, Func<TKey>>
-        {
-            public TRet Switch<TRet>()
-                where TRet : class, TKey
-            {
-                var res = SwitchInternal<TRet>();
-
-                if (res != null)
-                    return (TRet)res();
-
-                return null;
-            }
-        }
-
-        private sealed class TypeSwitchParam<TKey> : TypeSwitchBase<TKey, Func<int, TKey>>
-        {
-            public TRet Switch<TRet>(int id)
-                where TRet : class, TKey
-            {
-                var res = SwitchInternal<TRet>();
-
-                if (res != null)
-                    return (TRet)res(id);
-
-                return null;
-            }
-        }
-
-        #endregion
     }
 }

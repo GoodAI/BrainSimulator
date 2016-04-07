@@ -24,7 +24,7 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public interface IFreeRenderRequest : IRenderRequest
+    public interface IFullMapRenderRequest : IRenderRequest
     {
         
     }

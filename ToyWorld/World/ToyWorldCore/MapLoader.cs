@@ -63,6 +63,8 @@ namespace World.ToyWorldCore
         {
             SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width + 1, layer.Height + 1);
             var lines = layer.Data.RawData.Split('\n');
+            var assembly = Assembly.GetExecutingAssembly();
+            var cachedTypes = assembly.GetTypes();
             for (int i = 0; i < lines.Length; i++)
             {
                 var tiles = lines[i].Split(',');
@@ -80,7 +82,7 @@ namespace World.ToyWorldCore
                         var tileName = tilesetTable.TileName(tileNumber);
                         if (tileName != null)
                         {
-                            var newTile = CreateInstance(tileName, tileNumber);
+                            var newTile = CreateInstance(tileName, tileNumber, cachedTypes);
                             newSimpleLayer.Tiles[i,j] = newTile;
                             if (newTile is StaticTile)
                             {
@@ -97,21 +99,14 @@ namespace World.ToyWorldCore
             return newSimpleLayer;
         }
 
-        private static Tile CreateInstance(string className, int tileNumber)
+        private static Tile CreateInstance(string className, int tileNumber, Type[] types)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            
-            try
+            for (int i = 0; i < types.Length; i++)
             {
-                var type = assembly.GetTypes().First(t => t.Name == className);
-                return (Tile)Activator.CreateInstance(type, tileNumber);
+                if (types[i].Name == className)
+                    return (Tile)Activator.CreateInstance(types[i], tileNumber);
             }
-            catch (InvalidOperationException)
-            {
-                return null;
-//                TODO : before release check code below is active
-//                throw new Exception("MapLoader cannot find class " + className);
-            }
+            return null;
         }
     }
 }

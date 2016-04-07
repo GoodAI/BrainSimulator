@@ -1,12 +1,14 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace Render.Geometries.Buffers
 {
-    internal class VBO
+    internal abstract class VBOBase
     {
-        public uint Handle { get; private set; }
+        public int Handle { get; private set; }
         public int Count { get; private set; }
 
         public BufferTarget Target { get; private set; }
@@ -15,32 +17,10 @@ namespace Render.Geometries.Buffers
 
         #region Creation/destruction
 
-        public VBO(int count, float[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+        protected VBOBase(int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer)
         {
             Target = target;
             ElementSize = elementSize;
-            Init(count, initData, hint);
-        }
-
-        //public VBO(int count, uint[] initData = null, int size = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
-        //{
-        //    Target = target;
-        //    Size = size;
-        //    Init(count, initData, hint);
-        //}
-
-        private void Init<T>(int count, T[] initData, BufferUsageHint hint)
-        where T : struct
-        {
-            if (initData != null)
-                Debug.Assert(initData.Length == count);
-
-            Handle = (uint)GL.GenBuffer();
-            Count = count;
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, Handle);
-            GL.BufferData(BufferTarget.ArrayBuffer, count * Marshal.SizeOf(typeof(T)), initData, hint);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
         public void Dispose()
@@ -48,8 +28,31 @@ namespace Render.Geometries.Buffers
             GL.DeleteBuffer(Handle);
         }
 
+        protected void Init<T>(int count, T[] data, BufferUsageHint hint)
+            where T : struct
+        {
+            Handle = GL.GenBuffer();
+            Count = count;
+
+            Bind();
+            GL.BufferData(Target, count * Marshal.SizeOf(typeof(T)), data, hint);
+            Unbind();
+        }
+
         #endregion
 
+        public void Update<T>(T[] data, int count = -1, int offset = 0)
+            where T : struct
+        {
+            if (count == -1)
+                count = Math.Min(Count, data.Length);
+
+            var tSize = Marshal.SizeOf(typeof(T));
+
+            Bind();
+            GL.BufferSubData(Target, new IntPtr(offset * tSize), count * tSize, data);
+            Unbind();
+        }
 
         public void Bind()
         {
@@ -58,7 +61,17 @@ namespace Render.Geometries.Buffers
 
         public void Unbind()
         {
-            GL.BindBuffer(Target, Handle);
+            GL.BindBuffer(Target, 0);
+        }
+    }
+
+    internal class VBO<T> : VBOBase
+        where T : struct
+    {
+        public VBO(int count, T[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+            : base(elementSize, target)
+        {
+            Init(count, initData, hint);
         }
     }
 }

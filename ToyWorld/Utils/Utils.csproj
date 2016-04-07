@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Globals.cs" />
     <Compile Include="VRageRIP\Lib\Collections\IterableQueue.cs" />
+    <Compile Include="VRageRIP\Lib\Collections\TypeSwitch.cs" />
     <Compile Include="VRageRIP\Lib\Exceptions\Exceptions.cs" />
     <Compile Include="VRageRIP\Lib\Collections\CacheList.cs" />
     <Compile Include="VRageRIP\Lib\Collections\CachingDictionary.cs" />

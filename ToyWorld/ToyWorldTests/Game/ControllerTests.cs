@@ -2,14 +2,14 @@
 using System.IO;
 using Game;
 using GoodAI.ToyWorld.Control;
-using Render.RenderRequests.Tests;
+using Render.Tests.RRs;
 using Xunit;
 
 namespace ToyWorldTests.Game
 {
     public class ControllerTests : IDisposable
     {
-        protected IGameController GameController;
+        protected GameControllerBase GameController;
 
 
         public ControllerTests()
@@ -47,6 +47,8 @@ namespace ToyWorldTests.Game
         public void TestInitAndReset()
         {
             Assert.NotNull(GameController);
+            Assert.NotNull(GameController.Renderer);
+            Assert.NotNull(GameController.World);
 
             GameController.Reset();
         }
@@ -55,32 +57,17 @@ namespace ToyWorldTests.Game
         public void ControllerNotImplementedThrows()
         {
             Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<INotImplementedRR>);
-            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterAvatarRenderRequest<INotImplementedARR>(0));
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedARR>(0));
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             // var ac = gc.GetAvatarController(0);
         }
 
         [Fact]
-        public void RenderNotNull()
-        {
-            var gcBase = GameController as GameControllerBase;
-            Assert.NotNull(gcBase);
-            Assert.NotNull(gcBase.Renderer);
-            Assert.NotNull(gcBase.World);
-        }
-
-        [Fact]
-        public void GameNotNull()
-        {
-            // TODO: test world stuff for existence
-        }
-
-        [Fact]
         public void DoStep()
         {
-            GameController.RegisterRenderRequest<IRRTest>();
-            GameController.RegisterAvatarRenderRequest<IARRTest>(0);
+            GameController.RegisterRenderRequest<IBasicTexRR>();
+            GameController.RegisterRenderRequest<IBasicARR>(0);
 
             GameController.MakeStep();
             GameController.MakeStep();

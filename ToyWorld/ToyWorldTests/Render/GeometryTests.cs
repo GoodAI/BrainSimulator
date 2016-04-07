@@ -5,7 +5,6 @@ using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
 using Render.RenderRequests;
-using Render.RenderRequests.Tests;
 using Xunit;
 
 namespace ToyWorldTests.Render
