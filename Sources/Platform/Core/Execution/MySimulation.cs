@@ -89,6 +89,8 @@ namespace GoodAI.Core.Execution
         protected Exception m_lastException;
         protected MyProject m_project;
 
+        protected bool m_memoryLoadingDone;
+
         public void OnStateChanged(object sender, MySimulationHandler.StateEventArgs args)
         {
             foreach (MyWorkingNode node in AllNodes)
@@ -111,6 +113,8 @@ namespace GoodAI.Core.Execution
             CurrentDebuggedBlock = null;
 
             IsFinished = false;
+
+            m_memoryLoadingDone = false;
         }
 
         public void ResetSimulationStep()
@@ -128,7 +132,7 @@ namespace GoodAI.Core.Execution
         public bool IsStepFinished { get; protected internal set; }
 
         public abstract bool IsChangingModel { get; }
-        public abstract void FreeMemory();
+        public abstract void FreeMemory(bool didCrash);
 
         public abstract void StepOver();
         public abstract void StepInto();
@@ -332,6 +336,7 @@ namespace GoodAI.Core.Execution
                 {
                     MyKernelFactory.Instance.SetCurrent(0);
                     LoadBlocks(AllNodes);
+                    m_memoryLoadingDone = true;
                 }
 
                 m_executionPhase = ExecutionPhase.Standard;
@@ -559,14 +564,17 @@ namespace GoodAI.Core.Execution
                 EmitDebugTargetReached();
         }
 
-        public override void FreeMemory()
+        public override void FreeMemory(bool didCrash)
         {
             if (AllNodes == null)
                 return;
 
             MyKernelFactory.Instance.SetCurrent(0);
 
-            SaveBlocks(AllNodes);
+            if (!didCrash || m_memoryLoadingDone)  // Don't save data when we crashed before even attempting to load them.
+                SaveBlocks(AllNodes);
+            else
+                MyLog.WARNING.WriteLine("State saving skipped becase of crash before loading.");
 
             FreeMemory(AllNodes);
         }
