@@ -9,5 +9,10 @@ namespace GoodAI.ToyWorld.Control
         {
             return new BasicGameController(new GLRenderer(), gameSetup);
         }
+
+        public static GameControllerBase GetThreadSafeController(GameSetup gameSetup)
+        {
+            return new BasicGameController(new GLRenderer(), gameSetup);
+        }
     }
 }

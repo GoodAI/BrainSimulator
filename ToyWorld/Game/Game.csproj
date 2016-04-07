@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvatarController.cs" />
+    <Compile Include="ThreadSafeGameController.cs" />
     <Compile Include="GameControllerBase.cs" />
     <Compile Include="BasicGameController.cs" />
     <Compile Include="ControllerFactory.cs" />
@@ -58,6 +59,10 @@
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
       <Name>ToyWorldAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{772B1188-A00D-45FC-B352-834227ADAE96}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\World\World.csproj">
       <Project>{3831266c-24fe-4dd6-a4cc-39d0ef33c299}</Project>
