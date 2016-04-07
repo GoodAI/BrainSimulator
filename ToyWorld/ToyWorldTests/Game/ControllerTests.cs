@@ -14,8 +14,8 @@ namespace ToyWorldTests.Game
 
         public ControllerTests()
         {
-            var tmxMemoryStream = TestingFiles.Files.GetTmxMemoryStream();
-            var tilesetTableMemoryStream = TestingFiles.Files.GetTilesetTableMemoryStream();
+            var tmxMemoryStream = FileStreams.GetTmxMemoryStream();
+            var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
 
             var tmxStreamReader = new StreamReader(tmxMemoryStream);
             var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);

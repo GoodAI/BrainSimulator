@@ -13,7 +13,7 @@ namespace ToyWorldTests.World
     {
         public TilesetTableTest()
         {
-            var tilesetTableMemoryStream = TestingFiles.Files.GetTilesetTableMemoryStream();
+            var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
             var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
             tilesetTableStreamReader.DiscardBufferedData();
             tilesetTableMemoryStream.Position = 0;
