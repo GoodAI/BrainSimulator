@@ -288,7 +288,11 @@ namespace GoodAI.BrainSimulator.Forms
 
             string oldProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Project);
             string newProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Path.GetFileNameWithoutExtension(newName));
-            CopyDirectory(oldProjectDataPath, newProjectDataPath);
+
+            if (newProjectDataPath != oldProjectDataPath)
+                CopyDirectory(oldProjectDataPath, newProjectDataPath);
+            else
+                MyLog.WARNING.WriteLine("Projects with the same filename share the same temporal folder where the state is saved.");
 
             SaveProject(newName);
             m_recentMenu.AddFile(newName);
@@ -296,16 +300,23 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void CopyDirectory(string sourcePath, string destinationPath)
         {
-            if (!Directory.Exists(sourcePath))
+            if (!Directory.Exists(sourcePath) || (sourcePath == destinationPath))
                 return;
 
-            // Create all of the directories.
-            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(sourcePath, destinationPath));
+            try
+            {
+                // Create all of the directories.
+                foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+                    Directory.CreateDirectory(dirPath.Replace(sourcePath, destinationPath));
 
-            // Copy all the files & replace any files with the same name.
-            foreach (string sourceFilePath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
-                File.Copy(sourceFilePath, sourceFilePath.Replace(sourcePath, destinationPath), true);
+                // Copy all the files & replace any files with the same name.
+                foreach (string sourceFilePath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+                    File.Copy(sourceFilePath, sourceFilePath.Replace(sourcePath, destinationPath), true);
+            }
+            catch (Exception ex)
+            {
+                MyLog.ERROR.WriteLine("Failed to copy directory: " + ex.Message);
+            }
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
