@@ -4,6 +4,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using YAXLib;
 
@@ -87,6 +88,7 @@ namespace GoodAI.Modules.Harm
     /// <ul>
     /// <li><b>Selection Period: </b>Select new action each N steps</li>
     /// <li><b>Min Epsilon: </b>Minimum probability of randomization (in case that Motivation=1)</li>
+    /// <li><b>Random From All: </b>If multiple maximum utilities found, choose randomly from all actions? If false, choses randomly from the best actions.</li>
     /// </ul>
     /// </summary>
     [Description("Action Selection"), MyTaskInfo(OneShot = false)]
@@ -107,6 +109,11 @@ namespace GoodAI.Modules.Harm
         Description("Select new action each N steps")]
         [YAXSerializableField(DefaultValue = 1)]
         public int ASMPeriod { get; set; }
+
+        [MyBrowsable, DisplayName("Random From All"), Category("Uncertainty Handling"),
+        Description("If multiple best values found, choose random from all actions?")]
+        [YAXSerializableField(DefaultValue = true)]
+        public bool RandomFromAll { get; set; }
 
         public MySimpleSortTask() { }
 
@@ -143,7 +150,17 @@ namespace GoodAI.Modules.Harm
 
             if (Owner.MaxUtilInd.Host[0] < 0)   // multiple identical utilities => random
             {
-                epsilon = 1;
+                // the old behavior, choose randomly from all utility values
+                if (RandomFromAll)
+                {
+                    epsilon = 1;
+                }
+                // new improvement: choose randomly only from max values
+                else
+                {
+                    List<int> maxVals = GetListOfMaxValues(Owner.UtilityInput);
+                    Owner.MaxUtilInd.Host[0] = maxVals[m_rnd.Next(maxVals.Count)];
+                }
             }
             else if (epsilon < MinEpsilon)      // min. randomization
             {
@@ -164,6 +181,27 @@ namespace GoodAI.Modules.Harm
                 Owner.UtilityInput.SafeCopyToHost();
                 m_setKernel.Run(Owner.Output, Owner.MaxUtilInd, Owner.UtilityInput.Count, Owner.UtilityInput.Host[Owner.MaxUtilInd.Host[0]]);
             }
+        }
+
+        private List<int> GetListOfMaxValues(MyMemoryBlock<float> data)
+        {
+            float maxVal = float.MinValue;
+            for (int i = 0; i < data.Count; i++)
+            {
+                if (data.Host[i] > maxVal)
+                {
+                    maxVal = data.Host[i];
+                }
+            }
+            List<int> maxIndexes = new List<int>();
+            for (int i = 0; i < data.Count; i++)
+            {
+                if (data.Host[i] == maxVal)
+                {
+                    maxIndexes.Add(i);
+                }
+            }
+            return maxIndexes;
         }
     }       
 }
