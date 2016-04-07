@@ -185,6 +185,7 @@ namespace GoodAI.Modules.Harm
 
         private List<int> GetListOfMaxValues(MyMemoryBlock<float> data)
         {
+            data.SafeCopyToHost();
             float maxVal = float.MinValue;
             for (int i = 0; i < data.Count; i++)
             {
