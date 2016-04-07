@@ -20,6 +20,7 @@
       <HashCode>AAAAAAAAAAAAAAAAAABAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\GameObject.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.AutoupdateRegister">
     <Position X="22.5" Y="10" Width="1.75" />
@@ -90,9 +91,10 @@
   <Class Name="World.GameActors.GameObjects.Avatar">
     <Position X="10" Y="20.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAACACCAAAAAAAAACAIAAAQAIAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAACACCAAAAAAAAACAJAAAQAIAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.Atlas">
     <Position X="15.5" Y="11.75" Width="1.5" />
@@ -250,14 +252,14 @@
   <Interface Name="World.GameActors.GameObjects.IAvatar">
     <Position X="10" Y="24" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAACAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Tool" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="GoodAI.ToyWorld.Control.IAvatarControlable">
+  <Interface Name="GoodAI.ToyWorld.Control.IAvatarControllable">
     <Position X="9.75" Y="25.5" Width="2" />
     <TypeIdentifier>
       <HashCode>IAAAACAAAAAAAAAACAIAAAAAIAAEAAAAAAAAAAAAAAA=</HashCode>
@@ -302,7 +304,7 @@
   <Interface Name="World.Physics.IMovableDirectablePhysicalEntity">
     <Position X="28" Y="20.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgACAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\MovableDirectablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
   </Interface>

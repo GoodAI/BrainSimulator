@@ -7,7 +7,7 @@ namespace World.Physics
     {
         public void SetAvatarMotion(IAvatar avatar)
         {
-            var physicalEntity = avatar.PhysicalEntity;
+            IMovableDirectablePhysicalEntity physicalEntity = avatar.PhysicalEntity;
             Debug.Assert(physicalEntity != null, "physicalEntity != null");
             physicalEntity.ForwardSpeed = avatar.DesiredSpeed;
             physicalEntity.RotationSpeed = avatar.DesiredRotation;
