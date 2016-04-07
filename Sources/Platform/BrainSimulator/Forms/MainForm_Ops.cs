@@ -986,10 +986,18 @@ namespace GoodAI.BrainSimulator.Forms
             RestoreObserverForms();
             RestoreDashboardForm();
 
+            ApplyProjectOptions();
+
             RefreshUndoRedoButtons();
 
             if (WorldChanged != null)
                 WorldChanged(this, new WorldChangedEventArgs(oldWorld, Project.World));
+        }
+
+        private void ApplyProjectOptions()
+        {
+            loadMemBlocksButton.Checked = Project.LoadAllNodesData;
+            saveMemBlocksButton.Checked = Project.SaveAllNodesData;
         }
 
         private void RestoreObserverForms(MyProject project = null)
