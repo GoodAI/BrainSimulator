@@ -117,7 +117,7 @@ namespace Game
         }
 
 
-        public IAvatarController GetAvatarController(int avatarId)
+        public virtual IAvatarController GetAvatarController(int avatarId)
         {
             return m_avatarControllers[avatarId];
         }
