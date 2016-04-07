@@ -145,7 +145,7 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterAvatarRenderRequest``1(System.Int32)">
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterRenderRequest``1(System.Int32)">
             <summary>
             
             </summary>
@@ -197,12 +197,12 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IAvatarRenderRequestFoV">
+        <member name="T:GoodAI.ToyWorld.Control.IFovAvatarRenderRequest">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequestFoV.Image">
+        <member name="P:GoodAI.ToyWorld.Control.IFovAvatarRenderRequest.Image">
             <summary>
             
             </summary>
@@ -227,7 +227,7 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IFreeRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IFullMapRenderRequest">
             <summary>
             
             </summary>
