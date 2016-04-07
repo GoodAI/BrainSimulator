@@ -288,7 +288,11 @@ namespace GoodAI.BrainSimulator.Forms
 
             string oldProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Project);
             string newProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Path.GetFileNameWithoutExtension(newName));
-            CopyDirectory(oldProjectDataPath, newProjectDataPath);
+
+            if (newProjectDataPath != oldProjectDataPath)
+                CopyDirectory(oldProjectDataPath, newProjectDataPath);
+            else
+                MyLog.WARNING.WriteLine("Projects with the same filename share the same temporal folder where the state is saved.");
 
             SaveProject(newName);
             m_recentMenu.AddFile(newName);
@@ -296,7 +300,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void CopyDirectory(string sourcePath, string destinationPath)
         {
-            if (!Directory.Exists(sourcePath))
+            if (!Directory.Exists(sourcePath) || (sourcePath == destinationPath))
                 return;
 
             // Create all of the directories.
