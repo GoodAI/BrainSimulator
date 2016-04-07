@@ -8,5 +8,6 @@ namespace World.ToyWorldCore
         LayerType LayerType { get; set; }
 
         List<GameObject> GetGameObjects(VRageMath.RectangleF rectangle);
+        bool AddGameObject(GameObject gameObject);
     }
 }

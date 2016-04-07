@@ -19,6 +19,6 @@ namespace World.WorldInterfaces
 
         int[] GetAvatarsNames();
 
-        Avatar GetAvatar(int id);
+        IAvatar GetAvatar(int id);
     }
 }

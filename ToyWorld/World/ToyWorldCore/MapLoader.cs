@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using VRageMath;
+using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -14,7 +16,7 @@ namespace World.ToyWorldCore
         /// <summary>
         /// Loads map from specified path, creates tiles and objects and put them into new Atlas object.
         /// </summary>
-        /// <param name="tmxFile"></param>
+        /// <param name="map"></param>
         /// <param name="tilesetTable"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
         public static Atlas LoadMap(Map map, TilesetTable tilesetTable)
@@ -33,7 +35,7 @@ namespace World.ToyWorldCore
                 {
                     var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(objectLayer, layerType)
+                        FillObjectLayer(atlas, objectLayer, layerType)
                         );
                 }
                 else
@@ -50,10 +52,23 @@ namespace World.ToyWorldCore
             return atlas;
         }
 
-        private static IObjectLayer FillObjectLayer(ObjectGroup objectLayer, LayerType layerType)
+        private static IObjectLayer FillObjectLayer(Atlas atlas, ObjectGroup objectLayer, LayerType layerType)
         {
 //            TODO : write loading of objects
-            return new SimpleObjectLayer(layerType);
+            var simpleObjectLayer = new SimpleObjectLayer(layerType);
+
+            var avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
+
+            foreach (var avatar in avatars)
+            {
+                var initialPosition = new Vector2(avatar.X, avatar.Y);
+                var size = new Vector2(avatar.Width, avatar.Height);
+                var gameAvatar = new Avatar(avatar.Name, avatar.Id, initialPosition, size);
+                simpleObjectLayer.AddGameObject(gameAvatar);
+                atlas.AddAvatar(gameAvatar);
+            }
+
+            return simpleObjectLayer;
         }
 
         private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int,StaticTile> staticTilesContainer, TilesetTable tilesetTable)

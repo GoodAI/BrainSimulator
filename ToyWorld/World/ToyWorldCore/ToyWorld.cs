@@ -65,17 +65,17 @@ namespace World.ToyWorldCore
 
         public int[] GetAvatarsIds()
         {
-            return Atlas.Avatars.Select(avatar => avatar.Id).ToArray();
+            return Atlas.Avatars.Keys.ToArray();
         }
 
         public int[] GetAvatarsNames()
         {
-            return Atlas.Avatars.Select(avatar => avatar.Id).ToArray();
+            return Atlas.Avatars.Keys.ToArray();
         }
 
-        public Avatar GetAvatar(int id)
+        public IAvatar GetAvatar(int id)
         {
-            return null;
+            return Atlas.Avatars[id];
         }
 
         private void UpdateTiles()

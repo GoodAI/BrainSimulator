@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using System.Linq;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using VRageMath;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
@@ -39,6 +41,19 @@ namespace ToyWorldTests.World
             Assert.True(m_atlas.StaticTilesContainer.Count > 0);
             // at least 7 tile layers
             Assert.True(m_atlas.TileLayers.Count >= 7);
+        }
+
+        [Fact]
+        public void AvatarLoaded()
+        {
+            Assert.NotNull(m_atlas.Avatars.First().Value);
+
+            var avatar = m_atlas.Avatars.First().Value;
+
+            Assert.True(avatar.Id == 1);
+            Assert.True(avatar.Name == "Pingu");
+            Assert.True(avatar.PhysicalEntity.Position == new Vector2(9, 22));
+            Assert.True(avatar.PhysicalEntity.Size == new Vector2(16, 16));
         }
     }
 }

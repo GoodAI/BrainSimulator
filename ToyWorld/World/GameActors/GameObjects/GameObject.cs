@@ -11,8 +11,7 @@ namespace World.GameActors.GameObjects
 
     public abstract class GameObject : GameActor, IGameObject
     {
-        public abstract string Name { get; protected set; }
-
+        public string Name { get; protected set; }
         public IPhysicalEntity PhysicalEntity { get; set; }
     }
 }

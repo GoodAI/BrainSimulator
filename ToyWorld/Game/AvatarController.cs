@@ -7,8 +7,8 @@ namespace Game
 {
     class AvatarController : IAvatarController
     {
-        private IAvatar m_avatar;
-        private AvatarControls m_avatarControls;
+        private readonly IAvatar m_avatar;
+        private readonly AvatarControls m_avatarControls;
 
         public AvatarController(IAvatar avatar)
         {

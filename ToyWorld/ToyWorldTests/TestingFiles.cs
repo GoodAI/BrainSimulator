@@ -54,7 +54,7 @@ namespace ToyWorldTests
                 </data>
                     </layer>
                     <objectgroup name=""Object"">
-                    <object id=""17"" gid=""496"" x=""9.66667"" y=""22"" width=""16"" height=""16""/>
+                    <object name=""Pingu"" type=""Avatar"" id=""1"" gid=""496"" x=""9"" y=""22"" width=""16"" height=""16""/>
                     </objectgroup>
                     <layer name=""Foreground"" width=""3"" height=""3"">
                     <data encoding=""csv"">

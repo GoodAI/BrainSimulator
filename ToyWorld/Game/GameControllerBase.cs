@@ -16,7 +16,7 @@ namespace Game
         public RendererBase Renderer { get; private set; }
         public IWorld World { get; private set; }
         private readonly GameSetup m_gameSetup;
-        private Dictionary<int, Avatar> m_avatars;
+        private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
 
@@ -44,16 +44,17 @@ namespace Game
 
             World = new ToyWorld(map, m_gameSetup.TilesetFile);
 
-            m_avatars = new Dictionary<int, Avatar>();
+            m_avatars = new Dictionary<int, IAvatar>();
             foreach (int avatarId in World.GetAvatarsIds())
             {
                 m_avatars.Add(avatarId, World.GetAvatar(avatarId));
             }
 
             m_avatarControllers = new Dictionary<int, AvatarController>();
-            foreach (KeyValuePair<int, Avatar> avatar in m_avatars)
+            foreach (KeyValuePair<int, IAvatar> avatar in m_avatars)
             {
-                m_avatarControllers.Add(avatar.Key, new AvatarController(avatar.Value));
+                var avatarController = new AvatarController(avatar.Value);
+                m_avatarControllers.Add(avatar.Key, avatarController);
             }
 
             // Init rendering

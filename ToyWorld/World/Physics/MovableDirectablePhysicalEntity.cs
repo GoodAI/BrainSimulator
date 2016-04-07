@@ -15,9 +15,10 @@ namespace World.Physics
 
         public MovableDirectablePhysicalEntity(
             Vector2 initialPostition,
+            Vector2 size,
             float forwardSpeed = 0,
             float direction = 90,
-            float rotationSpeed = 0) : base(initialPostition)
+            float rotationSpeed = 0) : base(initialPostition, size)
         {
             ForwardSpeed = forwardSpeed;
             Direction = direction;
