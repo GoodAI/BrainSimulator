@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,56 +17,83 @@ namespace Game
     public class ThreadSafeGameController : GameControllerBase
     {
         private readonly AsyncBuffer<TupleType> m_buffer = new AsyncBuffer<TupleType>();
-        readonly CancellationTokenSource m_cancellationToken = new CancellationTokenSource();
-
+        private readonly CancellationTokenSource m_cancellationToken = new CancellationTokenSource();
+        private readonly Task m_requestCollectionTask;
 
         public ThreadSafeGameController(RendererBase renderer, GameSetup gameSetup)
             : base(renderer, gameSetup)
         {
-            RunRequestCollectionAsync();
+            m_requestCollectionTask = Task.Run(() => RunRequestCollectionAsync(), m_cancellationToken.Token);
         }
 
         public override void Dispose()
         {
-            m_cancellationToken.Cancel();
+            m_cancellationToken.Cancel(true);
             m_buffer.Dispose();
         }
 
 
         #region Long-running method
 
-        async Task RunRequestCollectionAsync()
+        void RunRequestCollectionAsync()
         {
-            await Task.Yield();
-
             while (!m_buffer.Disposed)
             {
-                var action = await m_buffer.Get().ConfigureAwait(true);
-                action.Item2.SetResult(action.Item1());
+                TupleType result = null;
+
+                var task = m_buffer.Get();
+
+                try
+                {
+                    result = task.Result; // blocks while waiting for the result
+
+                    if (task.IsCanceled)
+                        ;
+
+                    var res = result.Item1();
+                    result.Item2.SetResult(res);
+                }
+                catch (Exception e)
+                {
+                    if (result != null)
+                        result.Item2.SetException(e);
+
+                    Debug.Fail("Shenanigans");
+                    // TODO: log
+                }
             }
         }
 
         #endregion
 
+        #region Delegation
+
         void DelegateStuff(Action action)
         {
-            DelegateStuff<object>(
-                () =>
-                {
-                    action();
-                    return null;
-                });
+            Func<object> dummy = () =>
+            {
+                action();
+                return null;
+            };
+
+            DelegateStuffInternal(dummy);
         }
 
-        T DelegateStuff<T>(Func<T> action)
+        T DelegateStuff<T>(Func<T> func)
             where T : class
         {
-            var t = new TaskCompletionSource<object>();
-            m_buffer.Add(new TupleType(action, t));
-            t.Task.Wait(m_cancellationToken.Token);
-            return t.Task.Result as T;
+            return DelegateStuffInternal(func) as T;
         }
 
+        object DelegateStuffInternal(Func<object> func)
+        {
+            var t = new TaskCompletionSource<object>();
+            m_buffer.Add(new TupleType(func, t));
+            t.Task.Wait(m_cancellationToken.Token);
+            return t.Task.Result;
+        }
+
+        #endregion
 
         #region GameControllerBase overrides -- public threadsafe methods
 
@@ -91,7 +119,7 @@ namespace Game
 
         public override T RegisterRenderRequest<T>()
         {
-            return DelegateStuff(() => base.RegisterRenderRequest<T>());
+            return DelegateStuff<T>(base.RegisterRenderRequest<T>);
         }
 
         public override IAvatarController GetAvatarController(int avatarId)

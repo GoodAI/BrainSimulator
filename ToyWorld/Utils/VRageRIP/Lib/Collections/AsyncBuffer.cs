@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace VRage.Library.Collections
@@ -17,6 +18,14 @@ namespace VRage.Library.Collections
         {
             m_queue = new Queue<T>();
             m_waitingTasks = new Queue<TaskCompletionSource<T>>();
+        }
+
+        public AsyncBuffer(CancellationToken cancellationToken)
+        {
+            m_queue = new Queue<T>();
+            m_waitingTasks = new Queue<TaskCompletionSource<T>>();
+
+            cancellationToken.Register(Cancel);
         }
 
         public void Dispose()
@@ -69,7 +78,7 @@ namespace VRage.Library.Collections
                     return Task.FromResult(m_queue.Dequeue());
                 }
 
-                var tcs = new TaskCompletionSource<T>();
+                var tcs = new TaskCompletionSource<T>(TaskCreationOptions.PreferFairness);
                 m_waitingTasks.Enqueue(tcs);
                 return tcs.Task;
             }
