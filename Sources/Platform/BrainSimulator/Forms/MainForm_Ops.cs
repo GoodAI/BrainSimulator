@@ -265,7 +265,7 @@ namespace GoodAI.BrainSimulator.Forms
             ObserverViews.ForEach(ov => { ov.StoreWindowInfo(); Project.Observers.Add(ov.Observer); });
 
             string originalProjectName = Project.Name;  // Avoid side-effect.
-            Project.Name = Path.GetFileNameWithoutExtension(fileName);
+            Project.SetNameFromPath(fileName);
 
             string serializedProject;
             try
@@ -951,7 +951,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (targetState == null)
                 return;
 
-            LoadSerializedContent(targetState.SerializedProject, targetState.ProjectPath);
+            LoadSerializedContent(targetState.SerializedProject, targetState.ProjectPath, Project.Name);
 
             // Open graph views
             foreach (MyNodeGroup nodeGroup in
@@ -972,7 +972,7 @@ namespace GoodAI.BrainSimulator.Forms
             //DebugUndoManager();
         }
 
-        private void LoadSerializedContent(string content, string projectPath, string projectName = null)
+        private void LoadSerializedContent(string content, string projectPath, string currentProjectName)
         {
             MyWorld oldWorld = Project == null ? null : Project.World;
             using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
@@ -983,8 +983,7 @@ namespace GoodAI.BrainSimulator.Forms
                 backup.Forget();
             }
 
-            if (projectName != null)
-                Project.Name = projectName;
+            Project.Name = currentProjectName;  // Don't use temporal dir of the project before SaveAs.
 
             // UI updates
             CloseCurrentProjectWindows();
@@ -1031,7 +1030,7 @@ namespace GoodAI.BrainSimulator.Forms
         private string GetCurrentFileName()
         {
             return !string.IsNullOrEmpty(saveFileDialog.FileName)
-                ? Path.GetFileNameWithoutExtension(saveFileDialog.FileName)
+                ? MyProject.MakeNameFromPath(saveFileDialog.FileName)
                 : "";
         }
 

@@ -240,7 +240,7 @@ namespace GoodAI.Core.Nodes
         {
             try
             {
-                string dataFolder = Path.GetDirectoryName(fileName) + "\\" + Path.GetFileNameWithoutExtension(fileName) + ".statedata";
+                string dataFolder = MyProject.MakeDataFolderFromFileName(fileName);
 
                 MyNetworkState networkState = new MyNetworkState()
                 {

@@ -287,12 +287,14 @@ namespace GoodAI.BrainSimulator.Forms
             string newName = saveFileDialog.FileName;
 
             string oldProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Project);
-            string newProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(Path.GetFileNameWithoutExtension(newName));
+            string newProjectDataPath = MyMemoryBlockSerializer.GetTempStorage(MyProject.MakeNameFromPath(newName));
 
             if (newProjectDataPath != oldProjectDataPath)
                 CopyDirectory(oldProjectDataPath, newProjectDataPath);
             else
                 MyLog.WARNING.WriteLine("Projects with the same filename share the same temporal folder where the state is saved.");
+
+            Project.SetNameFromPath(newName);
 
             SaveProject(newName);
             m_recentMenu.AddFile(newName);
@@ -521,8 +523,7 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (openMemFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                string dataFolder = Path.GetDirectoryName(openMemFileDialog.FileName) + "\\" +
-                        Path.GetFileNameWithoutExtension(openMemFileDialog.FileName) + ".statedata";
+                string dataFolder = MyProject.MakeDataFolderFromFileName(openMemFileDialog.FileName);
 
                 SimulationHandler.Simulation.GlobalDataFolder = dataFolder;
                 setGlobalDataFolderToolStripMenuItem.Text = "Change global data folder: " + SimulationHandler.Simulation.GlobalDataFolder;
@@ -559,8 +560,7 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 try
                 {
-                    string dataFolder = Path.GetDirectoryName(saveMemFileDialog.FileName) + "\\" +
-                        Path.GetFileNameWithoutExtension(saveMemFileDialog.FileName) + ".statedata";
+                    string dataFolder = MyProject.MakeDataFolderFromFileName(saveMemFileDialog.FileName);
                     
                     MyMemoryBlockSerializer.ExportTempStorage(Project, dataFolder);
 
