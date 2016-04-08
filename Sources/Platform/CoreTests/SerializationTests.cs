@@ -77,12 +77,12 @@ namespace CoreTests
             project.Network = project.CreateNode<MyNetwork>();
             project.Network.Name = "Network";
             project.CreateWorld(typeof (MyTestingWorld));
-            project.Name = "test";
+            project.FileName = tmpPath;
             var node = project.CreateNode<TestNode>();
             project.Network.AddChild(node);
             project.Restore();
 
-            string serialized = project.Serialize(tmpPath);
+            string serialized = project.Serialize();
             MyProject deserializedProject = MyProject.Deserialize(serialized, tmpPath);
 
             // MaxDifferences = 20 - A magic number. It shows more than one difference in the log.

@@ -302,7 +302,7 @@ namespace GoodAI.Core.Execution
                     backup.Forget();
                 }
 
-                Project.Name = newProjectName;
+                Project.FileName = path;
             }
             catch (Exception e)
             {
@@ -315,13 +315,16 @@ namespace GoodAI.Core.Execution
         /// Saves project to given path
         /// </summary>
         /// <param name="path">Path for saving .brain/.brainz file</param>
-        public void SaveProject(string path)
+        public void SaveProject(string path = null)
         {
-            MyLog.INFO.WriteLine("Saving project: " + path);
+            if (!string.IsNullOrEmpty(path))
+                Project.FileName = path;
+
+            MyLog.INFO.WriteLine("Saving project: " + Project.FileName);
             try
             {
-                string fileContent = Project.Serialize(Path.GetDirectoryName(path));
-                ProjectLoader.SaveProject(path, fileContent,
+                string fileContent = Project.Serialize();
+                ProjectLoader.SaveProject(Project.FileName, fileContent,
                     MyMemoryBlockSerializer.GetTempStorage(Project));
             }
             catch (Exception e)
@@ -561,8 +564,7 @@ namespace GoodAI.Core.Execution
         {
             Project = new MyProject
             {
-                Network = new MyNetwork(),
-                Name = projectName
+                Network = new MyNetwork()
             };
 
             Project.CreateWorld(worldType);

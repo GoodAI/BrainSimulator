@@ -27,7 +27,7 @@ namespace BasicNodesTests
         {
             using (var runner = new MyProjectRunner())
             {
-                MyProject project = runner.CreateProject(typeof(MyTestingWorld), "test project name");
+                MyProject project = runner.CreateProject(typeof(MyTestingWorld));
 
                 var node = project.CreateNode<MyCSharpNode>();
                 project.Network.AddChild(node);
@@ -41,7 +41,7 @@ namespace BasicNodesTests
         {
             using (var runner = new MyProjectRunner())
             {
-                MyProject project = runner.CreateProject(typeof(MyMNISTWorld), "MNIST");
+                MyProject project = runner.CreateProject(typeof(MyMNISTWorld));
 
                 MyWorld world = project.World;
 
