@@ -29,8 +29,11 @@ namespace Game
 
         public override void Dispose()
         {
-            m_cancellationToken.Cancel(true);
-            m_buffer.Dispose();
+            if (!m_cancellationToken.IsCancellationRequested)
+            {
+                m_cancellationToken.Cancel(true);
+                m_buffer.Dispose();
+            }
         }
 
 
@@ -47,6 +50,11 @@ namespace Game
                 {
                     task = m_buffer.Get();
                 }
+                catch (ObjectDisposedException e)
+                {
+                    Debug.Assert(m_cancellationToken.IsCancellationRequested);
+                    return;
+                }
                 catch (Exception)
                 {
                     // Should not ever happen    
@@ -59,12 +67,11 @@ namespace Game
                 {
                     task.Wait(m_cancellationToken.Token);
                 }
-                catch (OperationCanceledException e)
+                catch (Exception e)
                 {
-                    continue;
-                }
-                catch (AggregateException e)
-                {
+                    if (m_cancellationToken.IsCancellationRequested)
+                        return;
+
                     continue;
                 }
 
@@ -80,11 +87,8 @@ namespace Game
                 }
                 catch (Exception e)
                 {
-                    if (result != null)
-                        result.Item2.SetException(e);
-
-                    Debug.Fail("Shenanigans!");
-                    // TODO: log
+                    Debug.Assert(result != null);
+                    result.Item2.SetException(e);
                 }
             }
         }
@@ -112,8 +116,10 @@ namespace Game
 
         object DelegateStuffInternal(Func<object> func)
         {
+            Debug.Assert(func != null);
+
             var t = new TaskCompletionSource<object>();
-            m_buffer.Add(new TupleType(func, t));
+            m_buffer.Add(new TupleType(func, t)); // Throws ObjectDisposedException when called after Dispose has been called
 
             try
             {
@@ -121,9 +127,17 @@ namespace Game
             }
             catch (OperationCanceledException e)
             {
+                throw new ObjectDisposedException("ThreadSafeGameController", "Trying to call actions on a disposed object.");
             }
             catch (AggregateException e)
             {
+                foreach (var innerException in e.InnerExceptions)
+                {
+                    if (innerException is OperationCanceledException)
+                        throw new ObjectDisposedException("ThreadSafeGameController", "Trying to call actions on a disposed object.");
+
+                    throw innerException;
+                }
             }
 
             return t.Task.Result;

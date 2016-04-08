@@ -23,8 +23,8 @@ namespace ToyWorldTests.Game
 
             var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
 
-            //GameController = ControllerFactory.GetController(gameSetup);
-            GameController = ControllerFactory.GetThreadSafeController(gameSetup);
+            GameController = ControllerFactory.GetController(gameSetup);
+            //GameController = ControllerFactory.GetThreadSafeController(gameSetup);
 
             GameController.Init();
         }
