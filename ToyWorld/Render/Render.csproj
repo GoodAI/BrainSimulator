@@ -48,9 +48,10 @@
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
     <Compile Include="RenderObjects\Buffers\StaticVBOFactory.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenGridTex.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
+    <Compile Include="Tests\Effects\NoEffectOffset.cs" />
     <Compile Include="Tests\Effects\NoEffectTex.cs" />
     <Compile Include="Tests\Effects\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
@@ -93,6 +94,8 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\Basic.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RenderObjects\Effects\Src\Basic.vert" />

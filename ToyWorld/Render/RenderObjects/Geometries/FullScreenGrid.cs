@@ -1,12 +1,18 @@
-﻿using Render.RenderObjects.Buffers;
+﻿using OpenTK.Graphics.OpenGL;
+using Render.RenderObjects.Buffers;
 using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    internal class FullScreenGridTex : GeometryBase
+    internal class FullScreenGrid : GeometryBase
     {
-        public FullScreenGridTex(Vector2I dimensions)
+        public Vector2I Dimensions { get; private set; }
+
+
+        public FullScreenGrid(Vector2I dimensions)
         {
+            Dimensions = dimensions;
+
             this[VboPosition.Vertices] = StaticVboFactory.GetGridVertices(dimensions);
             EnableAttrib(VboPosition.Vertices);
 
@@ -15,13 +21,15 @@ namespace Render.RenderObjects.Geometries
         }
 
 
-        public void SetTexCoods(float[] data)
+        public void SetTextureOffsets(int[] data)
         {
             Update(VboPosition.TextureOffsets, data);
         }
 
         public override void Draw()
         {
+            GL.BindVertexArray(Handle);
+            GL.DrawArrays(PrimitiveType.Quads, 0, Dimensions.Size());
         }
     }
 }

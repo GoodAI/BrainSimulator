@@ -1,25 +1,27 @@
-﻿using System.Drawing;
+﻿using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
+using Render.RenderObjects.Geometries;
 using Render.RenderRequests.AvatarRenderRequests;
 using Render.Tests.Effects;
 using Render.Tests.Geometries;
+using Render.Tests.Textures;
+using VRageMath;
+using Color = System.Drawing.Color;
 
 namespace Render.RenderRequests.RenderRequests
 {
-    internal class FullMapRR : RenderRequestBase, IFullMapRenderRequest
+    internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
+        Vector2I m_dims = new Vector2I(3);
 
-        #region IAvatarRenderRequestFoV overrides
 
-        public uint[] Image { get; protected set; }
+        #region IFullMapRR overrides
 
         #endregion
 
         #region AvatarRenderRequestBase overrides
-
-        public override float Size { get { return Image.Length; } }
 
         #endregion
 
@@ -27,11 +29,6 @@ namespace Render.RenderRequests.RenderRequests
 
         public override void Init(RendererBase renderer)
         {
-            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
-
-            // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
-            Image = new uint[renderer.Width * renderer.Height];
-
             GL.ClearColor(Color.Black);
         }
 
@@ -39,11 +36,17 @@ namespace Render.RenderRequests.RenderRequests
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            var effect = renderer.EffectManager.Get<NoEffect>();
+            var effect = renderer.EffectManager.Get<NoEffectOffset>();
             renderer.EffectManager.Use(effect);
-            renderer.GeometryManager.Get<FancyFullscreenQuad>().Draw();
+            effect.SetUniform(effect.GetUniformLocation("tex"), 0);
 
-            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
+            var tex = renderer.TextureManager.Get<TilesetTexture>();
+            renderer.TextureManager.Bind(tex);
+
+            int[] offsets = Enumerable.Range(0, m_dims.Size()).ToArray();
+            renderer.GeometryManager.Get<FullScreenGrid>(m_dims).SetTextureOffsets(offsets);
+
+            renderer.GeometryManager.Get<FullScreenGrid>(m_dims).Draw();
         }
 
         #endregion

@@ -273,7 +273,7 @@
             
             </summary>
         </member>
-        <member name="T:GoodAI.ToyWorld.Control.IFullMapRenderRequest">
+        <member name="T:GoodAI.ToyWorld.Control.IFullMapRR">
             <summary>
             
             </summary>

@@ -16,13 +16,13 @@ namespace Render.RenderRequests.AvatarRenderRequests
         { }
 
 
-        #region IAvatarRenderRequestFoV overrides
+        #region IFovAvatarRR overrides
 
         public uint[] Image { get; private set; }
 
         #endregion
 
-        #region AvatarRenderRequestBase overrides
+        #region AvatarRRBase overrides
 
         public override float Size { get; set; }
 

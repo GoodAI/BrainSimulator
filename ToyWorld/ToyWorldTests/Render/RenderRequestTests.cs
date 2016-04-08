@@ -15,8 +15,8 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
-
-    public class RenderRequestTests : GameControllerTests
+    [Collection("Renderer")]
+    public class RenderRequestTests : GameControllerTestBase
     {
         [Fact]
         public void RRInits()
@@ -45,7 +45,16 @@ namespace ToyWorldTests.Render
 
 
         [Fact]
-        public void AvatarFoV()
+        public void FullMapRR()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFullMapRR>();
+
+            GameController.MakeStep();
+            GameController.MakeStep();
+        }
+
+        [Fact]
+        public void FoVAvatarRR()
         {
             var RRTest = GameController.RegisterRenderRequest<IFovAvatarRR>(0);
 

@@ -66,8 +66,8 @@ namespace Render.RenderObjects.Buffers
     internal class Vbo<T> : VboBase
         where T : struct
     {
-        public Vbo(int count, T[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
-            : base(elementSize, target)
+        public Vbo(int count, T[] initData = null, int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+            : base(elementSize < 0 ? 4 : elementSize, target)
         {
             Init(count, initData, hint);
         }
@@ -76,7 +76,7 @@ namespace Render.RenderObjects.Buffers
     internal sealed class StaticVbo<T> : Vbo<T>
         where T : struct
     {
-        public StaticVbo(int count, T[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+        public StaticVbo(int count, T[] initData = null, int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
             : base(count, initData, elementSize, target, hint)
         { }
 

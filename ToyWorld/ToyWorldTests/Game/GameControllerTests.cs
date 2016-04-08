@@ -8,11 +8,11 @@ using Xunit;
 namespace ToyWorldTests.Game
 {
     [Collection("Renderer")]
-    public class GameControllerTests : IDisposable    {
+    public class  GameControllerTestBase : IDisposable    {
         protected GameControllerBase GameController;
 
 
-        public GameControllerTests()
+        public GameControllerTestBase()
         {
             var tmxMemoryStream = FileStreams.GetTmxMemoryStream();
             var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
@@ -27,17 +27,6 @@ namespace ToyWorldTests.Game
             GameController.Init();
         }
 
-        protected virtual GameControllerBase GetController(GameSetup gameSetup)
-        {
-            return ControllerFactory.GetController(gameSetup);
-        }
-
-        private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)
-        {
-            var stringBytes = System.Text.Encoding.UTF8.GetBytes(stringToWrite);
-            memoryStream.Write(stringBytes, 0, stringBytes.Length);
-        }
-
         public void Dispose()
         {
             GameController.Dispose();
@@ -47,6 +36,15 @@ namespace ToyWorldTests.Game
         }
 
 
+        protected virtual GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetController(gameSetup);
+        }
+    }
+
+    [Collection("Renderer")]
+    public class BasicGameControllerTests : GameControllerTestBase
+    {
         // Tests game factory and basic enqueuing
         [Fact]
         public void TestInit()
@@ -77,7 +75,7 @@ namespace ToyWorldTests.Game
         }
     }
 
-    public class ThreadSafeControllerTests : GameControllerTests
+    public class ThreadSafeGameControllerTests : GameControllerTestBase
     {
         protected override GameControllerBase GetController(GameSetup gameSetup)
         {

@@ -31,7 +31,7 @@ namespace Render.RenderRequests
             RRSwitch
                 .Case<IBasicTextureRR>(() =>
                     new BasicTextureRR())
-                .Case<IFullMapRenderRequest>(() =>
+                .Case<IFullMapRR>(() =>
                     new FullMapRR());
 
             // AvatarRenderRequests
