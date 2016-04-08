@@ -64,7 +64,10 @@ namespace Render.Renderer
             MakeContextCurrent();
 
             foreach (var renderRequest in m_renderRequestQueue)
+            {
                 Process(renderRequest);
+                CheckError();
+            }
         }
 
         protected virtual void Process(RenderRequest request)

@@ -103,8 +103,6 @@ namespace Render.Renderer
             Window.ProcessEvents();
 
             base.ProcessRequests();
-
-            CheckError();
         }
 
         public override void CheckError()

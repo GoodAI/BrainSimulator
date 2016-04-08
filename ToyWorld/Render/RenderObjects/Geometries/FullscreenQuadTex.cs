@@ -1,4 +1,4 @@
-﻿using Render.Geometries.Buffers;
+﻿using Render.RenderObjects.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
@@ -11,14 +11,14 @@ namespace Render.RenderObjects.Geometries
 
         public FullscreenQuadTex()
         {
-            Vao[Cood] = new VBO<float>(8, null, 2);
-            Vao.EnableAttrib(Cood, 1);
+            this[Cood] = new VBO<float>(8, null, 2);
+            EnableAttrib(Cood, 1);
         }
 
 
         public void SetTexCoods(float[] data)
         {
-            Vao[Cood].Update(data);
+            Update(Cood, data);
         }
     }
 }

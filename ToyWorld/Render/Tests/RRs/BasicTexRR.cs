@@ -21,6 +21,13 @@ namespace Render.Tests.RRs
         private int m_offset;
 
 
+        public override void Dispose()
+        {
+            m_quad.Dispose();
+            base.Dispose();
+        }
+
+
         #region RenderRequestBase overrides
 
         public override void Init(RendererBase renderer)

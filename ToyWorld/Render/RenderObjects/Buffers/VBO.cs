@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace Render.Geometries.Buffers
+namespace Render.RenderObjects.Buffers
 {
-    internal abstract class VBOBase
+    internal abstract class VBOBase : IDisposable
     {
         public int Handle { get; private set; }
         public int Count { get; private set; }
@@ -15,7 +13,7 @@ namespace Render.Geometries.Buffers
         public int ElementSize { get; private set; }
 
 
-        #region Creation/destruction
+        #region Genesis
 
         protected VBOBase(int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer)
         {

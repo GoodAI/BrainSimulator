@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
-using Render.Geometries.Buffers;
 
 namespace Render.RenderObjects.Buffers
 {
@@ -9,7 +8,7 @@ namespace Render.RenderObjects.Buffers
     {
         public uint Handle { get; private set; }
 
-        private readonly Dictionary<string, VBOBase> m_vboBases = new Dictionary<string, VBOBase>();
+        private readonly Dictionary<string, VBOBase> m_vbos = new Dictionary<string, VBOBase>();
 
 
         #region Genesis
@@ -23,10 +22,10 @@ namespace Render.RenderObjects.Buffers
         {
             GL.DeleteVertexArray(Handle);
 
-            foreach (var VBOBase in m_vboBases.Values)
-                VBOBase.Dispose();
+            foreach (var vbo in m_vbos.Values)
+                vbo.Dispose();
 
-            m_vboBases.Clear();
+            m_vbos.Clear();
         }
 
         #endregion
@@ -37,19 +36,19 @@ namespace Render.RenderObjects.Buffers
         {
             get
             {
-                VBOBase VBOBase;
+                VBOBase vbo;
 
-                if (!m_vboBases.TryGetValue(id, out VBOBase))
+                if (!m_vbos.TryGetValue(id, out vbo))
                     throw new ArgumentException("Access to not registered VBOBase.", "id");
 
-                return VBOBase;
+                return vbo;
             }
             set
             {
-                if (m_vboBases.ContainsKey(id))
+                if (m_vbos.ContainsKey(id))
                     throw new ArgumentException("A VBOBase has already been registered to this id.", "id");
 
-                m_vboBases[id] = value;
+                m_vbos[id] = value;
             }
         }
 

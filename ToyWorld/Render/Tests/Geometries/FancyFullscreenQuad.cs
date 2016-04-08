@@ -12,8 +12,8 @@ namespace Render.Tests.Geometries
 
         public FancyFullscreenQuad()
         {
-            Vao[Color] = StaticVBOFactory.QuadColors.Value;
-            Vao.EnableAttrib(Color, 1);
+            this[Color] = StaticVBOFactory.QuadColors.Value;
+            EnableAttrib(Color, 1);
         }
     }
 }

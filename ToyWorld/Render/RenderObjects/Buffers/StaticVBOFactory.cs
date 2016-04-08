@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
-using Render.Geometries.Buffers;
 using VRageMath;
 
 namespace Render.RenderObjects.Buffers
