@@ -20,7 +20,7 @@ namespace World.Physics
 
         public Vector2 Size { get; set; }
 
-        protected PhysicalEntity(Vector2 position, Vector2 size)
+        public PhysicalEntity(Vector2 position, Vector2 size)
         {
             Position = position;
             Size = size;

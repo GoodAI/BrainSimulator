@@ -10,41 +10,29 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
+        private BasicAvatarMover m_basicAvatarMover;
+
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
             AutoupdateRegister = new AutoupdateRegister();
-            Atlas = MapLoader.LoadMap(tmxDeserializedMap, new TilesetTable(tileTable));
+
+            m_tilesetTable = new TilesetTable(tileTable);
+            Atlas = MapLoader.LoadMap(tmxDeserializedMap, m_tilesetTable);
+
+            m_physics = new Physics.Physics();
         }
 
         public AutoupdateRegister AutoupdateRegister { get; private set; }
 
         public Atlas Atlas { get; private set; }
 
-        public World.GameActors.Tiles.TilesetTable TilesetTable
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        private readonly TilesetTable m_tilesetTable;
 
-        public IPhysics IPhysics
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        private readonly IPhysics m_physics;
 
         private void UpdatePhysics()
         {
+            
         }
 
         private void UpdateCharacters()
@@ -53,6 +41,10 @@ namespace World.ToyWorldCore
 
         private void UpdateAvatars()
         {
+            var avatars = Atlas.GetAvatars();
+            m_physics.TransofrmControlsToMotion(avatars);
+            var forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
+            m_physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
         public void Update()

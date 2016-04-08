@@ -49,5 +49,10 @@ namespace World.ToyWorldCore
             }
             return true;
         }
+
+        public List<IAvatar> GetAvatars()
+        {
+            return Avatars.Values.ToList();
+        }
     }
 }

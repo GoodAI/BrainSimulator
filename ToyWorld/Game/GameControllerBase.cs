@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
@@ -18,6 +19,7 @@ namespace Game
         private readonly GameSetup m_gameSetup;
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
+        private bool m_initialized;
 
 
         protected GameControllerBase(RendererBase renderer, GameSetup setup)
@@ -38,6 +40,8 @@ namespace Game
 
         public virtual void Init()
         {
+            m_initialized = true;
+
             // Init World
             var serializer = new TmxSerializer();
             Map map = serializer.Deserialize(m_gameSetup.SaveFile);
@@ -65,17 +69,17 @@ namespace Game
 
         public virtual void MakeStep()
         {
-            // Assume Init has been called, we don't want to check for consistency every step
-
-            // World
-            World.Update();
-
-            foreach (AvatarController avatarController in m_avatarControllers.Values)
+            if (!m_initialized)
             {
-                avatarController.ResetControls();
+                throw new Exception("World is not initialized. Call Init() first.");
             }
 
-            // Rendering
+            // Controls should be already set
+
+            World.Update();
+
+            ResetAvatarControllers();
+
             Renderer.ProcessRequests();
         }
 
@@ -123,6 +127,14 @@ namespace Game
         public virtual IAvatarController GetAvatarController(int avatarId)
         {
             return m_avatarControllers[avatarId];
+        }
+
+        private void ResetAvatarControllers()
+        {
+            foreach (AvatarController avatarController in m_avatarControllers.Values)
+            {
+                avatarController.ResetControls();
+            }
         }
 
         #endregion

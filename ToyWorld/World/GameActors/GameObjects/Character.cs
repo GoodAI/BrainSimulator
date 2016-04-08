@@ -2,7 +2,11 @@
 
 namespace World.GameActors.GameObjects
 {
-    public abstract class Character : GameObject, IDirectable
+    public interface ICharacter : IGameObject, IDirectable
+    {
+    }
+
+    public abstract class Character : GameObject, ICharacter
     {
         public float Direction { get; set; }
     }

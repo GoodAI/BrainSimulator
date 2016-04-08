@@ -3,17 +3,17 @@ using VRageMath;
 
 namespace World.Physics
 {
-    public interface IMovableDirectablePhysicalEntity : IDirectable, IForwardMovable, IPhysicalEntity
+    public interface IForwardMovablePhysicalEntity : IForwardMovable, IPhysicalEntity
     {
     }
 
-    public class MovableDirectablePhysicalEntity : PhysicalEntity, IMovableDirectablePhysicalEntity
+    public class ForwardMovablePhysicalEntity : PhysicalEntity, IForwardMovablePhysicalEntity
     {
         public float Direction { get; set; }
         public float ForwardSpeed { get; set; }
         public float RotationSpeed { get; set; }
 
-        public MovableDirectablePhysicalEntity(
+        public ForwardMovablePhysicalEntity(
             Vector2 initialPostition,
             Vector2 size,
             float forwardSpeed = 0,

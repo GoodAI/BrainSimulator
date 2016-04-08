@@ -1,5 +1,4 @@
-﻿using VRageMath;
-using World.Physics;
+﻿using World.Physics;
 
 namespace World.GameActors.GameObjects
 {

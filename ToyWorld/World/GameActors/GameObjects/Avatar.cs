@@ -4,18 +4,18 @@ using World.Physics;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControllable, IGameObject
+    public interface IAvatar : IAvatarControllable, ICharacter
     {
         int Id { get;}
         IUsable Tool { get; set; }
-        IMovableDirectablePhysicalEntity PhysicalEntity { get; set; }
+        new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
     }
 
     public class Avatar : Character, IAvatar
     {
         public int Id { get; private set; }
         public IUsable Tool { get; set; }
-        public new IMovableDirectablePhysicalEntity PhysicalEntity { get; set; }
+        public new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
 
         public float DesiredSpeed { get; set; }
         public float DesiredRotation { get; set; }
@@ -27,7 +27,7 @@ namespace World.GameActors.GameObjects
         {
             Name = name;
             Id = id;
-            PhysicalEntity = new MovableDirectablePhysicalEntity(initialPosition, size);
+            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, size);
         }
 
         public void ResetControls()
