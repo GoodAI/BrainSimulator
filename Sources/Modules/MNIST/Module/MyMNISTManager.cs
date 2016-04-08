@@ -30,8 +30,8 @@ namespace MNIST
     public class MyMNISTManager
     {
         private int m_imagesServed;
-        public int m_trainingImagesDemand;
-        public int m_testImagesDemand;
+        public int m_trainingExamplesPerDigitCnt;
+        public int m_testExamplesPerDigitCnt;
         private string m_baseFolder;
         private ArrayList m_trainingImages;
         private ArrayList m_testImages;
@@ -43,8 +43,7 @@ namespace MNIST
         public int m_sequenceIterator;
         public bool m_definedOrder;
 
-        private int m_test;
-        private int m_training;
+        private int[] m_DigitCounts = new int[10];    // helper array used for loading a given number of each digit
 
         public bool RandomEnumerate = false;
         private Random rand = new Random();
@@ -68,15 +67,15 @@ namespace MNIST
         /// <param name="imagesCnt">How many images to load</param>
         /// <param name="exact">If TRUE, you will get exactly imagesCnt images. If FALSE, you will get AT MOST imagesCnt images. It's here for performance reason and BC</param>
         /// <param name="afterLastImage">What to do, after the last values has been sent</param>
-        public MyMNISTManager(string baseFolder, int trainingImagesCnt = int.MaxValue, int testImagesCnt = int.MaxValue,
+        public MyMNISTManager(string baseFolder, int trainingExamplesPerDigitCnt = int.MaxValue, int testExamplesPerDigitCnt = int.MaxValue,
             bool exact = false, MNISTLastImageMethod afterLastImage = MNISTLastImageMethod.ResetToStart)
         {
             m_baseFolder = baseFolder;
             m_trainingImages = new ArrayList();
             m_testImages = new ArrayList();
             m_afterLastImage = afterLastImage;
-            m_trainingImagesDemand = trainingImagesCnt;
-            m_testImagesDemand = testImagesCnt;
+            m_trainingExamplesPerDigitCnt = trainingExamplesPerDigitCnt;
+            m_testExamplesPerDigitCnt = testExamplesPerDigitCnt;
             m_imagesServed = 0;
             m_sequenceIterator = 0;
             m_definedOrder = false;
@@ -84,8 +83,8 @@ namespace MNIST
             // START TIME MEASUREMENT ----------------------------------------------------------
             //Stopwatch sw = new Stopwatch();
             //sw.Start();
-            ReadMnistSet("train-images.idx3-ubyte", "train-labels.idx1-ubyte", trainingImagesCnt, m_trainingImages);
-            ReadMnistSet("t10k-images.idx3-ubyte", "t10k-labels.idx1-ubyte", testImagesCnt, m_testImages);
+            ReadMnistSet("train-images.idx3-ubyte", "train-labels.idx1-ubyte", m_trainingExamplesPerDigitCnt, m_trainingImages);
+            ReadMnistSet("t10k-images.idx3-ubyte", "t10k-labels.idx1-ubyte", m_testExamplesPerDigitCnt, m_testImages);
 
             byte[,] data = new byte[28, 28];
             m_blankImage = new MyMNISTImage(data, 0);
@@ -97,7 +96,7 @@ namespace MNIST
             //Console.WriteLine("Elapsed={0}", sw.Elapsed);
         }
 
-        private void ReadMnistSet(String imagesInputFile, String labelsInputFile, int imagesCnt, ArrayList images)
+        private void ReadMnistSet(String imagesInputFile, String labelsInputFile, int numDigitClasses, ArrayList images)
         {
             FileStream ifsLabels = new FileStream(m_baseFolder + "train-labels.idx1-ubyte", FileMode.Open, FileAccess.Read);
             FileStream ifsImages = new FileStream(m_baseFolder + "train-images.idx3-ubyte", FileMode.Open, FileAccess.Read);
@@ -109,62 +108,43 @@ namespace MNIST
             brLabels.ReadInt32();
             brImages.ReadInt32();
 
-            int numImagesTrainLables = brLabels.ReadInt32();
-            numImagesTrainLables = ReverseBytes(numImagesTrainLables);
-            int numImagesTrainImages = brImages.ReadInt32();
-            numImagesTrainImages = ReverseBytes(numImagesTrainImages);
+            int numImagesLables = brLabels.ReadInt32();
+            numImagesLables = ReverseBytes(numImagesLables);
+            int numImages = brImages.ReadInt32();
+            numImages = ReverseBytes(numImages);
 
-            int numRowsTrainImages = brImages.ReadInt32();
-            numRowsTrainImages = ReverseBytes(numRowsTrainImages);
-            int numColsTrainImages = brImages.ReadInt32();
-            numColsTrainImages = ReverseBytes(numColsTrainImages);
+            int numRowsImages = brImages.ReadInt32();
+            numRowsImages = ReverseBytes(numRowsImages);
+            int numColsImages = brImages.ReadInt32();
+            numColsImages = ReverseBytes(numColsImages);
 
-            int maxImages = Math.Min(numImagesTrainImages, imagesCnt);
+            int numOfLoadedDigitClasses = 0;
 
-            for (int i = 0; i < maxImages; ++i)
+            if (numImagesLables == numImages)
             {
-                MyMNISTImage mImage = new MyMNISTImage(brImages, brLabels, numColsTrainImages, numRowsTrainImages);
-                images.Add(mImage);
+                for (int i = 0; i < numImages; ++i)
+                {
+                    MyMNISTImage mImage = new MyMNISTImage(brImages, brLabels, numColsImages, numRowsImages);
+                    if (m_DigitCounts[mImage.Label] < numDigitClasses)
+                    {
+                        images.Add(mImage);
+                        m_DigitCounts[mImage.Label]++;
+                        if (m_DigitCounts[mImage.Label] == numDigitClasses)
+                        {
+                            numOfLoadedDigitClasses++;
+                        }
+                    }
+                    if (numOfLoadedDigitClasses == 10)
+                    {
+                        break;
+                    }
+                }
             }
 
             ifsImages.Close();
             brImages.Close();
             ifsLabels.Close();
             brLabels.Close();
-        }
-
-        
-        public KeyValuePair<int, int> SatisfyingImagesLoaded(int[] trainingnumsToSend, int[] testnumsToSend){
-            m_training = m_test = 0;
-            int trainingToCount, testToCount;
-            if (m_trainingImagesDemand < m_trainingImages.Count)
-                trainingToCount = m_trainingImagesDemand;
-            else
-                trainingToCount = m_trainingImages.Count;
-
-            // Count training images that are satisfied by the filter
-            for (int i = 0; i < trainingToCount; i++)
-            {
-                MyMNISTImage m = m_trainingImages[i] as MyMNISTImage;
-                if (trainingnumsToSend.Contains<int>(m.Label))
-                    m_training += 1;
-            }
-
-            if (m_testImagesDemand < m_testImages.Count)
-                testToCount = m_testImagesDemand;
-            else
-                testToCount = m_testImages.Count;
-   
-            // Count test images satisfied by the filter
-            for (int i = 0; i < testToCount; i++)
-            {
-                MyMNISTImage m = m_testImages[i] as MyMNISTImage;
-                if (testnumsToSend.Contains<int>(m.Label))
-                    m_test += 1;
-            }
-
-
-            return new KeyValuePair<int, int>(m_training, m_test);
         }
 
         /// <summary>
@@ -176,30 +156,26 @@ namespace MNIST
         {
             ArrayList images = null;
             IEnumerator enumerator = null;
-            int imagesDemand = 0;
+            int examplesPerDigitCnt = 0;
             if (setType == MNISTSetType.Training)
             {
-                if(m_training == 0)
-                    throw new ArgumentException("Too few training images have been loaded to satisfy the selection that can be shown.");
-                
                 images = m_trainingImages;
                 enumerator = m_trainingImagesEnumerator;
-                imagesDemand = m_trainingImagesDemand;
+                examplesPerDigitCnt = m_trainingExamplesPerDigitCnt;
             }
             else if (setType == MNISTSetType.Test)
             {
-                if (m_test == 0)
-                    throw new ArgumentException("Too few test images have been loaded to satisfy the selection that can be shown.");
-                
                 images = m_testImages;
                 enumerator = m_testImagesEnumerator;
-                imagesDemand = m_testImagesDemand;
+                examplesPerDigitCnt = m_testExamplesPerDigitCnt;
             }
             
             if (RandomEnumerate)
             {
-                MyMNISTImage im = (MyMNISTImage)images[rand.Next(Math.Min(imagesDemand, images.Count))];
+                MyMNISTImage im = (MyMNISTImage)images[rand.Next(Math.Min(examplesPerDigitCnt * 10, images.Count))];
 
+                // choose random image until it is in the validNumbers set;
+                // if "sequence ordered" is ON it also has to be the expected next number in given sequence
                 if (m_definedOrder && im.Label != validNumbers[m_sequenceIterator] || !validNumbers.Contains(im.Label))
                 {
                     return this.GetNextImage(validNumbers, setType);
@@ -208,7 +184,7 @@ namespace MNIST
                 m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
                 return im;
             }
-            else if (enumerator.MoveNext() && m_imagesServed < imagesDemand)
+            else if (enumerator.MoveNext() && m_imagesServed < images.Count)
             {
                 MyMNISTImage im = (MyMNISTImage)enumerator.Current;
                 m_imagesServed++;

@@ -32,12 +32,6 @@ namespace MNIST
             set { SetOutput(1, value); }
         }
 
-        [MyBrowsable, Category("ImageCount"), Description("The number of training images that will be shown to the network with respect to the image counts and sent numbers."), ReadOnly(true)]
-        public int TrainingImagesShown { get; set; }
-
-        [MyBrowsable, Category("ImageCount"), Description("The number of test images that will be shown to the network with respect to the image counts and sent numbers."), ReadOnly(true)]
-        public int TestImagesShown { get; set; }
-
         [MyBrowsable, Category("Output"), Description("If set to true, output is binary vector of size 10")]
         [YAXSerializableField(DefaultValue = false)]
         public bool Binary { get; set; } // If set to true, output is binary vector of size 10
@@ -80,12 +74,16 @@ namespace MNIST
             Bitmap.MaxValueHint = 1;
         }
 
-        public void UpdateShownCounts()
+        public override void Validate(MyValidator validator)
         {
-            KeyValuePair<int, int> kv = MNISTManager.SatisfyingImagesLoaded(SendTrainingMNISTData.m_numsToSend, SendTestMNISTData.m_numsToSend);
-            TrainingImagesShown = kv.Key;
-            TestImagesShown = kv.Value;
-        } 
+            base.Validate(validator);
+            
+            if ((InitMNIST.TrainingExamplesPerDigit < 1) || (InitMNIST.TrainingExamplesPerDigit > 7000) ||
+                (InitMNIST.TestExamplesPerDigit < 1) || (InitMNIST.TestExamplesPerDigit > 7000))
+            {
+                validator.AddError(this, "The value of ExamplesPerDigit properties of the Init task have to be in the interval <1, 7000>");
+            }
+        }
     }
 
     /// <summary>
@@ -100,55 +98,44 @@ namespace MNIST
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 60000)]
-        public int TrainingImagesCnt
+        public int TrainingExamplesPerDigit
         {
             get
             {
-                return m_trainingImgsCnt;
+                return m_trainingExamplesPerDigit;
             }
             set
             {
-                m_trainingImgsCnt = value;
-                if (Owner != null && Owner.MNISTManager != null)
-                {
-                    Owner.MNISTManager.m_trainingImagesDemand = value;
-                    Owner.UpdateShownCounts();
-                }
+                m_trainingExamplesPerDigit = value;
             }
         }
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 10000)]
-        public int TestImagesCnt
+        public int TestExamplesPerDigit
         {
             get
             {
-                return m_testImgsCnt;
+                return m_testExamplesPerDigit;
             }
             set
             {
-                m_testImgsCnt = value;
-                if (Owner != null && Owner.MNISTManager != null)
-                {
-                    Owner.MNISTManager.m_testImagesDemand = value;
-                    Owner.UpdateShownCounts();
-                }
+                m_testExamplesPerDigit = value;
             }
         }
 
         public override void Init(int nGPU)
         {
             Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\",
-                TrainingImagesCnt, TestImagesCnt, false, AfterLastImage);
-            Owner.UpdateShownCounts();
+                TrainingExamplesPerDigit, TestExamplesPerDigit, false, AfterLastImage);
         }
 
         public override void Execute()
         {
         }
 
-        private int m_trainingImgsCnt;
-        private int m_testImgsCnt;
+        private int m_trainingExamplesPerDigit;
+        private int m_testExamplesPerDigit;
     }
 
     // Parent class ment to be derived from MySendTrainingMNISTTask and MySendTestMNISTTask (below)
@@ -187,7 +174,6 @@ namespace MNIST
                 if (Owner != null && Owner.MNISTManager != null)
                 {
                     Owner.MNISTManager.m_sequenceIterator = 0;
-                    Owner.UpdateShownCounts();
                 }
             }
         }
