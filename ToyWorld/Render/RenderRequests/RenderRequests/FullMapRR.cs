@@ -27,7 +27,7 @@ namespace Render.RenderRequests.RenderRequests
 
         public override void Init(RendererBase renderer)
         {
-            //m_pbo = new VBO(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
+            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
 
             // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
             Image = new uint[renderer.Width * renderer.Height];

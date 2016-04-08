@@ -4,16 +4,29 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Render.RenderObjects.Buffers
 {
-    internal class VAO : IDisposable
+    internal class Vao : IDisposable
     {
+        public enum VboPosition
+        {
+            Vertices = 0,
+            TextureOffsets = 1,
+
+
+            // Testing stuff
+            TextureCoords = 6,
+            Colors = 7,
+        }
+
+
+
         public uint Handle { get; private set; }
 
-        private readonly Dictionary<string, VBOBase> m_vbos = new Dictionary<string, VBOBase>();
+        private readonly Dictionary<VboPosition, VboBase> m_vbos = new Dictionary<VboPosition, VboBase>();
 
 
         #region Genesis
 
-        public VAO()
+        public Vao()
         {
             Handle = (uint)GL.GenVertexArray();
         }
@@ -22,7 +35,7 @@ namespace Render.RenderObjects.Buffers
         {
             GL.DeleteVertexArray(Handle);
 
-            foreach (var vbo in m_vbos.Values)
+            foreach (VboBase vbo in m_vbos.Values)
                 vbo.Dispose();
 
             m_vbos.Clear();
@@ -32,21 +45,21 @@ namespace Render.RenderObjects.Buffers
 
         #region Indexing
 
-        public VBOBase this[string id]
+        protected VboBase this[VboPosition id]
         {
             get
             {
-                VBOBase vbo;
+                VboBase vbo;
 
                 if (!m_vbos.TryGetValue(id, out vbo))
-                    throw new ArgumentException("Access to not registered VBOBase.", "id");
+                    throw new ArgumentException("Access to not registered Vbo.", "id");
 
                 return vbo;
             }
             set
             {
                 if (m_vbos.ContainsKey(id))
-                    throw new ArgumentException("A VBOBase has already been registered to this id.", "id");
+                    throw new ArgumentException("A Vbo has already been registered to this id.", "id");
 
                 m_vbos[id] = value;
             }
@@ -56,12 +69,16 @@ namespace Render.RenderObjects.Buffers
 
 
         public void EnableAttrib(
-            string id, int attribArrayIdx,
+            VboPosition id, int attribArrayIdx = -1,
             VertexAttribPointerType type = VertexAttribPointerType.Float,
             bool normalized = false,
             int stride = 0, int offset = 0)
         {
-            VBOBase vboBase = this[id];
+            if (attribArrayIdx < 0)
+                attribArrayIdx = (int)id;
+
+
+            VboBase vboBase = this[id];
 
             GL.BindVertexArray(Handle);
             vboBase.Bind();
@@ -70,7 +87,7 @@ namespace Render.RenderObjects.Buffers
             GL.VertexAttribPointer(attribArrayIdx, vboBase.ElementSize, type, normalized, stride, offset);
 
             //GL.BindVertexArray(0);
-            //VBOBase.Unbind();
+            //VboBase.Unbind();
         }
 
         public void DisableAttrib(string id, int attribArrayIdx)

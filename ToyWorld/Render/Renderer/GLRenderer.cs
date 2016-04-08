@@ -1,16 +1,8 @@
-﻿using GoodAI.ToyWorld.Control;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using Render.RenderRequests;
-using Render.RenderRequests.AvatarRenderRequests;
-using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
-using Render.RenderObjects.Effects;
-using Render.RenderObjects.Geometries;
-using Render.RenderObjects.Textures;
-using VRage.Collections;
 
 namespace Render.Renderer
 {
@@ -107,6 +99,8 @@ namespace Render.Renderer
 
         public override void CheckError()
         {
+            base.CheckError();
+
             ErrorCode error, previousError = ErrorCode.NoError;
 
             while ((error = GL.GetError()) != ErrorCode.NoError)
@@ -117,11 +111,11 @@ namespace Render.Renderer
                     // the same error repeated twice indicates an infinite loop of errors
                     throw new Exception(error.ToString());
                 }
+
                 previousError = error;
             }
         }
 
         #endregion
-
     }
 }

@@ -3,16 +3,12 @@ using Render.RenderObjects.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
-    // 0 - Position
     internal class FullScreenQuad : GeometryBase
     {
-        const string Vert = "vert";
-
-
         public FullScreenQuad()
         {
-            this[Vert]= StaticVBOFactory.FullscreenQuadVertices.Value;
-            EnableAttrib(Vert, 0);
+            this[VboPosition.Vertices] = StaticVboFactory.FullscreenQuadVertices;
+            EnableAttrib(VboPosition.Vertices);
         }
 
 

@@ -28,7 +28,7 @@ namespace Render.Renderer
 
         internal RendererBase()
         {
-            StaticVBOFactory.Init();
+            StaticVboFactory.Init();
         }
 
         public virtual void Dispose()
@@ -39,7 +39,7 @@ namespace Render.Renderer
 
             m_renderRequestQueue.Clear();
 
-            StaticVBOFactory.Clear();
+            StaticVboFactory.Clear();
         }
 
         #endregion
@@ -89,7 +89,7 @@ namespace Render.Renderer
 
         public void EnqueueRequest(IAvatarRenderRequest request)
         {
-            m_renderRequestQueue.Enqueue((AvatarRenderRequestBase)request);
+            m_renderRequestQueue.Enqueue((AvatarRRBase)request);
         }
     }
 }

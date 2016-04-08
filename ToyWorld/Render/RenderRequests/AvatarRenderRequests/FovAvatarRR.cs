@@ -9,22 +9,22 @@ using Render.Tests.Geometries;
 
 namespace Render.RenderRequests.AvatarRenderRequests
 {
-    internal class FovARR : AvatarRenderRequestBase, IFovAvatarRenderRequest
+    internal class FovAvatarRR : AvatarRRBase, IFovAvatarRR
     {
-        internal FovARR(int avatarID)
+        internal FovAvatarRR(int avatarID)
             : base(avatarID)
         { }
 
 
         #region IAvatarRenderRequestFoV overrides
 
-        public uint[] Image { get; protected set; }
+        public uint[] Image { get; private set; }
 
         #endregion
 
         #region AvatarRenderRequestBase overrides
 
-        public override float Size { get { return Image.Length; } }
+        public override float Size { get; set; }
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace Render.RenderRequests.AvatarRenderRequests
 
         public override void Init(RendererBase renderer)
         {
-            //m_pbo = new VBO(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
+            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
 
             // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
             Image = new uint[renderer.Width * renderer.Height];

@@ -1,24 +1,22 @@
 ﻿using Render.RenderObjects.Buffers;
+using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    // 0 - Position
-    // 1 - TexCoods
-    internal class FullscreenQuadTex : FullScreenQuad
+    internal class FullScreenQuadTex : FullScreenQuad
     {
-        const string Cood = "cood0";
-
-
-        public FullscreenQuadTex()
+        public FullScreenQuadTex()
         {
-            this[Cood] = new VBO<float>(8, null, 2);
-            EnableAttrib(Cood, 1);
+            // 4 vertices * 2 vector components
+            // No init data because we update it (nearly) every step
+            this[VboPosition.TextureCoords] = new Vbo<Vector2>(4 * 2, null, 2);
+            EnableAttrib(VboPosition.TextureCoords);
         }
 
 
-        public void SetTexCoods(float[] data)
+        public void SetTextureCoords(Vector2[] data)
         {
-            Update(Cood, data);
+            Update(VboPosition.TextureCoords, data);
         }
     }
 }

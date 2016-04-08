@@ -61,7 +61,7 @@ namespace ToyWorldTests.Game
         public void ControllerNotImplementedThrows()
         {
             Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<INotImplementedRR>);
-            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedARR>(0));
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedAvatarRR>(0));
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             // var ac = gc.GetAvatarController(0);
@@ -70,8 +70,8 @@ namespace ToyWorldTests.Game
         [Fact]
         public void DoStep()
         {
-            GameController.RegisterRenderRequest<IBasicTexRR>();
-            GameController.RegisterRenderRequest<IBasicARR>(0);
+            GameController.RegisterRenderRequest<IBasicTextureRR>();
+            GameController.RegisterRenderRequest<IBasicAvatarRR>(0);
 
             GameController.MakeStep();
             GameController.MakeStep();

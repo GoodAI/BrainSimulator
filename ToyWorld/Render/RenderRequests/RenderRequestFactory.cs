@@ -15,8 +15,8 @@ namespace Render.RenderRequests
         private static readonly TypeSwitch<IRenderRequest> RRSwitch = new TypeSwitch<IRenderRequest>();
         public static IEnumerable<IRenderRequest> RRs { get { return RRSwitch.Matches.Values.Select(rr => rr()); } }
 
-        private static readonly TypeSwitchParam<IAvatarRenderRequest, int> ARRSwitch = new TypeSwitchParam<IAvatarRenderRequest, int>();
-        public static IEnumerable<IAvatarRenderRequest> ARRs { get { return ARRSwitch.Matches.Values.Select(rr => rr(0)); } }
+        private static readonly TypeSwitchParam<IAvatarRenderRequest, int> avatarRRSwitch = new TypeSwitchParam<IAvatarRenderRequest, int>();
+        public static IEnumerable<IAvatarRenderRequest> AvatarRRs { get { return avatarRRSwitch.Matches.Values.Select(rr => rr(0)); } }
 
 
         static RenderRequestFactory()
@@ -29,17 +29,17 @@ namespace Render.RenderRequests
 
             // RenderRequests
             RRSwitch
-                .Case<IBasicTexRR>(() =>
-                    new BasicTexRR())
+                .Case<IBasicTextureRR>(() =>
+                    new BasicTextureRR())
                 .Case<IFullMapRenderRequest>(() =>
                     new FullMapRR());
 
             // AvatarRenderRequests
-            ARRSwitch
-                .Case<IBasicARR>(id =>
-                    new BasicARR(id))
-                .Case<IFovAvatarRenderRequest>(id =>
-                    new FovARR(id));
+            avatarRRSwitch
+                .Case<IBasicAvatarRR>(id =>
+                    new BasicAvatarRR(id))
+                .Case<IFovAvatarRR>(id =>
+                    new FovAvatarRR(id));
         }
 
 
@@ -54,7 +54,7 @@ namespace Render.RenderRequests
         public static T CreateRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest // unf cannot constrain T to be an interface, only a class
         {
-            return ARRSwitch.Switch<T>(avatarID);
+            return avatarRRSwitch.Switch<T>(avatarID);
         }
     }
 }

@@ -5,25 +5,25 @@ namespace Render.RenderObjects.Geometries
 {
     internal class GeometryManager
     {
-        private readonly TypeSwitch<GeometryBase> m_effects = new TypeSwitch<GeometryBase>();
+        private readonly TypeSwitch<GeometryBase> m_geometries = new TypeSwitch<GeometryBase>();
 
 
         public GeometryManager()
         {
-            m_effects
+            m_geometries
                 .Case<FullScreenQuad>(() =>
                     new FullScreenQuad())
                 .Case<FancyFullscreenQuad>(() =>
                     new FancyFullscreenQuad())
-                .Case<FullscreenQuadTex>(() =>
-                    new FullscreenQuadTex());
+                .Case<FullScreenQuadTex>(() =>
+                    new FullScreenQuadTex());
         }
 
 
         public T Get<T>()
             where T : GeometryBase
         {
-            return m_effects.Switch<T>();
+            return m_geometries.Switch<T>();
         }
     }
 }

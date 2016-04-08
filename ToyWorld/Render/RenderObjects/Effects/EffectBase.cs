@@ -32,14 +32,14 @@ namespace Render.RenderObjects.Effects
             Debug.Assert(string.IsNullOrEmpty(res), res);
         }
 
-        int LoadShader(string name, ShaderType type)
+        private int LoadShader(string name, ShaderType type)
         {
             var handle = GL.CreateShader(type);
-            var vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
-
+            
+            Stream vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
             Debug.Assert(vertSrc != null);
 
-            var str = new StreamReader(vertSrc);
+            StreamReader str = new StreamReader(vertSrc);
             string res = str.ReadToEnd();
 
             GL.ShaderSource(handle, res);

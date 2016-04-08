@@ -8,12 +8,12 @@ using Render.Tests.Geometries;
 
 namespace Render.Tests.RRs
 {
-    public interface IBasicARR : IAvatarRenderRequest
+    public interface IBasicAvatarRR : IAvatarRenderRequest
     { }
 
-    class BasicARR : AvatarRenderRequestBase, IBasicARR
+    class BasicAvatarRR : AvatarRRBase, IBasicAvatarRR
     {
-        public BasicARR(int avatarID)
+        public BasicAvatarRR(int avatarID)
             : base(avatarID)
         { }
 

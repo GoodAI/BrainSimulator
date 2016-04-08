@@ -1,39 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
+using Render.RenderObjects.Geometries;
 using VRageMath;
 
 namespace Render.RenderObjects.Buffers
 {
-    internal static class StaticVBOFactory
+    internal static class StaticVboFactory
     {
-        private static readonly Dictionary<Vector2I, VBOBase> GridVertices = new Dictionary<Vector2I, VBOBase>();
+        private static readonly Dictionary<Vector2I, VboBase> GridVertices = new Dictionary<Vector2I, VboBase>();
 
-        public static VBOBase GetGridVertices(Vector2I gridSize) { return GetGridVerticesInternal(gridSize); }
-        public static Lazy<VBOBase> FullscreenQuadVertices;
-        public static Lazy<VBOBase> QuadColors;
 
+        #region Public getters
+
+        public static VboBase FullscreenQuadVertices { get { return _fullscreenQuadVertices.Value; } }
+        public static VboBase QuadColors { get { return _quadColors.Value; } }
+
+        public static VboBase GetGridVertices(Vector2I gridSize) { return GetGridVerticesInternal(gridSize); }
+
+        #endregion
+
+        #region Genesis
 
         public static void Init()
         {
-            FullscreenQuadVertices = new Lazy<VBOBase>(GenerateSquareVertices);
-            QuadColors = new Lazy<VBOBase>(GenerateSquareColors);
+            _fullscreenQuadVertices = new Lazy<VboBase>(GenerateSquareVertices);
+            _quadColors = new Lazy<VboBase>(GenerateSquareColors);
         }
 
         public static void Clear()
         {
             GridVertices.Clear();
 
-            FullscreenQuadVertices = null;
-            QuadColors = null;
+            _fullscreenQuadVertices = null;
+            _quadColors = null;
         }
 
+        #endregion
 
         #region Basic static buffers
 
         #region Square
 
-        private static VBOBase GenerateSquareVertices()
+        private static Lazy<VboBase> _fullscreenQuadVertices;
+        private static VboBase GenerateSquareVertices()
         {
             float[] squareVertices =
             {
@@ -43,10 +53,11 @@ namespace Render.RenderObjects.Buffers
                 -1, 1,
             };
 
-            return new VBO<float>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
+            return new StaticVbo<float>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
-        private static VBOBase GenerateSquareColors()
+        private static Lazy<VboBase> _quadColors;
+        private static VboBase GenerateSquareColors()
         {
             float[] buf =
             {
@@ -56,17 +67,17 @@ namespace Render.RenderObjects.Buffers
                 1, 1, 1,
             };
 
-            return new VBO<float>(buf.Length, buf, 3, hint: BufferUsageHint.StaticDraw);
+            return new StaticVbo<float>(buf.Length, buf, 3, hint: BufferUsageHint.StaticDraw);
         }
 
         #endregion
 
         #region Grid
 
-        private static VBOBase GetGridVerticesInternal(Vector2I gridSize)
+        private static VboBase GetGridVerticesInternal(Vector2I gridSize)
         {
             {
-                VBOBase grid;
+                VboBase grid;
 
                 if (GridVertices.TryGetValue(gridSize, out grid))
                     return grid;
@@ -75,10 +86,12 @@ namespace Render.RenderObjects.Buffers
 
             Vector2[] vertices = new Vector2[gridSize.Size() * 4];
 
-            Vector2 xStep = new Vector2(1f / gridSize.X, 0);
-            Vector2 yStep = new Vector2(0, 1f / gridSize.Y);
+            Vector2I xStep = new Vector2I(1, 0);
+            Vector2I yStep = new Vector2I(0, 1);
+            Vector2I xyStep = xStep + yStep;
+            Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
 
-            Vector2 bl = new Vector2();
+            Vector2 botLeft = new Vector2();
 
             int idx = 0;
 
@@ -86,18 +99,18 @@ namespace Render.RenderObjects.Buffers
             {
                 for (int i = 0; i < gridSize.X; i++)
                 {
-                    vertices[idx++] = bl;
-                    vertices[idx++] = bl + xStep;
-                    vertices[idx++] = bl + yStep;
-                    vertices[idx++] = bl + xStep + yStep;
+                    vertices[idx++] = botLeft * gridSizeInv;
+                    vertices[idx++] = (botLeft + xStep) * gridSizeInv;
+                    vertices[idx++] = (botLeft + yStep) * gridSizeInv;
+                    vertices[idx++] = (botLeft + xyStep) * gridSizeInv;
 
-                    bl += xStep;
+                    botLeft += xStep;
                 }
 
-                bl += yStep;
+                botLeft += yStep;
             }
 
-            return new VBO<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);
+            return new StaticVbo<Vector2>(vertices.Length * 2, vertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
         #endregion

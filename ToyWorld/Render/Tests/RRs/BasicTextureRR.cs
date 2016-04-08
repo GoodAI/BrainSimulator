@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using GoodAI.ToyWorld.Control;
+﻿using GoodAI.ToyWorld.Control;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -8,15 +7,18 @@ using Render.RenderRequests.RenderRequests;
 using Render.Tests.Effects;
 using Render.Tests.Geometries;
 using Render.Tests.Textures;
+using VRageMath;
+using Color = System.Drawing.Color;
+using Vector2 = VRageMath.Vector2;
 
 namespace Render.Tests.RRs
 {
-    public interface IBasicTexRR : IRenderRequest
+    public interface IBasicTextureRR : IRenderRequest
     { }
 
-    class BasicTexRR : RenderRequestBase, IBasicTexRR
+    class BasicTextureRR : RenderRequestBase, IBasicTextureRR
     {
-        private FullscreenQuadTex m_quad;
+        private FullScreenQuadTex m_quad;
 
         private int m_offset;
 
@@ -34,7 +36,7 @@ namespace Render.Tests.RRs
         {
             GL.ClearColor(Color.Black);
 
-            m_quad = renderer.GeometryManager.Get<FullscreenQuadTex>();
+            m_quad = renderer.GeometryManager.Get<FullScreenQuadTex>();
         }
 
         public override void Draw(RendererBase renderer)
@@ -47,8 +49,8 @@ namespace Render.Tests.RRs
             const int margin = 1;
             const float tileSetWidth = 255f;
             const float tileSetHeight = 612f;
-            const float tileSetWidthInv = 1 / tileSetWidth;
-            const float tileSetHeightInv = 1 / tileSetHeight;
+            const float tileSetWidthInv = 1 - 1 / tileSetWidth;
+            const float tileSetHeightInv = 1 - 1 / tileSetHeight;
 
             int xOff = m_offset % 5;
             int yOff = m_offset / 5;
@@ -68,23 +70,13 @@ namespace Render.Tests.RRs
 
             var tex = renderer.TextureManager.Get<TilesetTexture>();
             renderer.TextureManager.Bind(tex);
-            m_quad.SetTexCoods(new float[]
+            m_quad.SetTextureCoords(new Vector2[]
             {
-                x1, y1,
-                x2, y1,
-                x2, y2,
-                x1, y2,
-         
-                0, 0f,
-                1, 0,
-                1, 1,
-                0, 1,
-
-                0, 0,
-                0, tileSize,
-                tileSize, tileSize,
-                tileSize, 0,
-   });
+               new Vector2( x1, y1),
+               new Vector2( x2, y1),
+               new Vector2( x2, y2),
+               new Vector2( x1, y2),
+            });
 
             m_quad.Draw();
         }

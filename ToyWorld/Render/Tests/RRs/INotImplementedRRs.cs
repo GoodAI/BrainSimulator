@@ -4,6 +4,6 @@ namespace Render.Tests.RRs
 {
     public interface INotImplementedRR : IRenderRequest
     { }
-    public interface INotImplementedARR : IAvatarRenderRequest
+    public interface INotImplementedAvatarRR : IAvatarRenderRequest
     { }
 }
