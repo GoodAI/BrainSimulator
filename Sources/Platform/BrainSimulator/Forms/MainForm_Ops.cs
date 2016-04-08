@@ -100,6 +100,8 @@ namespace GoodAI.BrainSimulator.Forms
             SaveState(GetSerializedProject(tmpPath), tmpPath, "New project");
             RefreshUndoRedoButtons();
 
+            ApplyProjectOptions();  // Apply default project options such as save on stop to UI.
+
             saveFileDialog.FileName = string.Empty;
         }
 
