@@ -21,7 +21,7 @@ namespace World.ToyWorldCore
         /// <returns>Atlas with initial state of ToyWorld</returns>
         public static Atlas LoadMap(Map map, TilesetTable tilesetTable)
         {
-            TmxSerializer tmxMapSerializer = new TmxSerializer();
+            var tmxMapSerializer = new TmxSerializer();
 
             Atlas atlas = new Atlas();
 
@@ -118,6 +118,8 @@ namespace World.ToyWorldCore
                 if (types[i].Name == className)
                     return (Tile)Activator.CreateInstance(types[i], tileNumber);
             }
+            // TODO : make sure next line is active before release
+//            throw new Exception("MapLoader cannot find class " + className);
             return null;
         }
     }
