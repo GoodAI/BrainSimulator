@@ -7,6 +7,7 @@ using Xunit;
 
 namespace ToyWorldTests.Game
 {
+    [Collection("Renderer")]
     public class ControllerTests : IDisposable
     {
         protected GameControllerBase GameController;

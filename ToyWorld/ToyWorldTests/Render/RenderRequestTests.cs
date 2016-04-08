@@ -15,6 +15,7 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
+    [Collection("Renderer")]
     public class RenderRequestTests : ControllerTests
     {
         [Fact]

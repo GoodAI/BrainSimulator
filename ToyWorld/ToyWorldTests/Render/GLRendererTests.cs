@@ -16,6 +16,7 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
+    [Collection("Renderer")]
     public class GLRendererTests : IDisposable
     {
         private readonly GLRenderer m_renderer;
