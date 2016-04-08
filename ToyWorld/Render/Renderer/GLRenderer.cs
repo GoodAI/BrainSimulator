@@ -109,14 +109,17 @@ namespace Render.Renderer
 
         public override void CheckError()
         {
-            int i = 60;
-            ErrorCode err;
+            ErrorCode error, previousError = ErrorCode.NoError;
 
-            while ((err = GL.GetError()) != ErrorCode.NoError)
+            while ((error = GL.GetError()) != ErrorCode.NoError)
             {
                 // TODO: log
-                if (--i == 0)
-                    throw new Exception(err.ToString());
+                if (previousError == error)
+                {
+                    // the same error repeated twice indicates an infinite loop of errors
+                    throw new Exception(error.ToString());
+                }
+                previousError = error;
             }
         }
 
