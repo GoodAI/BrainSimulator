@@ -265,7 +265,7 @@ namespace GoodAI.BrainSimulator.Forms
             ObserverViews.ForEach(ov => { ov.StoreWindowInfo(); Project.Observers.Add(ov.Observer); });
 
             string originalProjectName = Project.Name;  // Avoid side-effect.
-            Project.Name = Path.GetFileNameWithoutExtension(fileName);
+            Project.SetNameFromPath(fileName);
 
             string serializedProject;
             try
@@ -1031,7 +1031,7 @@ namespace GoodAI.BrainSimulator.Forms
         private string GetCurrentFileName()
         {
             return !string.IsNullOrEmpty(saveFileDialog.FileName)
-                ? Path.GetFileNameWithoutExtension(saveFileDialog.FileName)
+                ? MyProject.MakeNameFromPath(saveFileDialog.FileName)
                 : "";
         }
 

@@ -6,6 +6,7 @@ using GoodAI.Core.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using GoodAI.Core.Dashboard;
 using YAXLib;
 
@@ -16,6 +17,21 @@ namespace GoodAI.Core.Utils
     {        
         [YAXSerializableField, YAXAttributeForClass]
         public string Name { get; set; }
+
+        public void SetNameFromPath(string path)
+        {
+            Name = MakeNameFromPath(path);
+        }
+
+        public static string MakeNameFromPath(string path)
+        {
+            return Path.GetFileNameWithoutExtension(path);
+        }
+
+        public static string MakeDataFolderFromFileName(string path)
+        {
+            return Path.Combine(Path.GetDirectoryName(path), MyProject.MakeNameFromPath(path) + ".statedata");
+        }
 
         [YAXSerializableField]
         [YAXSerializeAs("Observers")]

@@ -291,7 +291,7 @@ namespace GoodAI.Core.Execution
 
             try
             {
-                string newProjectName = Path.GetFileNameWithoutExtension(path);
+                string newProjectName = MyProject.MakeNameFromPath(path);
 
                 content = ProjectLoader.LoadProject(path,
                     MyMemoryBlockSerializer.GetTempStorage(newProjectName));
