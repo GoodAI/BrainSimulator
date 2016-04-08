@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameActions\IAvatarActions.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\IAvatarMover.cs" />

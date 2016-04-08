@@ -1,0 +1,87 @@
+﻿using System;
+using System.IO;
+using Game;
+using GoodAI.ToyWorld.Control;
+using Render.Tests.RRs;
+using Xunit;
+
+namespace ToyWorldTests.Game
+{
+    [Collection("Renderer")]
+    public class GameControllerTests : IDisposable    {
+        protected GameControllerBase GameController;
+
+
+        public GameControllerTests()
+        {
+            var tmxMemoryStream = FileStreams.GetTmxMemoryStream();
+            var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
+
+            var tmxStreamReader = new StreamReader(tmxMemoryStream);
+            var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
+
+            var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
+
+            GameController = GetController(gameSetup);
+
+            GameController.Init();
+        }
+
+        protected virtual GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetController(gameSetup);
+        }
+
+        private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)
+        {
+            var stringBytes = System.Text.Encoding.UTF8.GetBytes(stringToWrite);
+            memoryStream.Write(stringBytes, 0, stringBytes.Length);
+        }
+
+        public void Dispose()
+        {
+            GameController.Dispose();
+            // Test repeated Dispose()
+            GameController.Dispose();
+            GameController = null;
+        }
+
+
+        // Tests game factory and basic enqueuing
+        [Fact]
+        public void TestInit()
+        {
+            Assert.NotNull(GameController);
+            Assert.NotNull(GameController.Renderer);
+            Assert.NotNull(GameController.World);
+        }
+
+        [Fact]
+        public void ControllerNotImplementedThrows()
+        {
+            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<INotImplementedRR>);
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedAvatarRR>(0));
+
+            // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
+            // var ac = gc.GetAvatarController(0);
+        }
+
+        [Fact]
+        public void DoStep()
+        {
+            GameController.RegisterRenderRequest<IBasicTextureRR>();
+            GameController.RegisterRenderRequest<IBasicAvatarRR>(0);
+
+            GameController.MakeStep();
+            GameController.MakeStep();
+        }
+    }
+
+    public class ThreadSafeControllerTests : GameControllerTests
+    {
+        protected override GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetThreadSafeController(gameSetup);
+        }
+    }
+}

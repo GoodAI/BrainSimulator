@@ -26,14 +26,55 @@
             <param name="value">Value of action.</param>
             <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
         </member>
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarControls.Update(GoodAI.ToyWorld.Control.IAvatarControls)">
+            <summary>
+            Rewrites actions from this list with actions from parameter with lower priority value.
+            </summary>
+            <param name="actions"></param>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarControls.DesiredSpeed">
+            <summary>
+            Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarControls.DesiredRotation">
+            <summary>
+            Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarControls.Interact">
+            <summary>
+            To interact with object in front.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarControls.Use">
+            <summary>
+            To use tool in hand / punch.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarControls.PickUp">
+            <summary>
+            Pick up or put down tool in hand.
+            </summary>
+        </member>
         <member name="T:GoodAI.ToyWorld.Control.AvatarControls">
             <summary>
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.Update(GoodAI.ToyWorld.Control.AvatarControls)">
+        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.#ctor(GoodAI.ToyWorld.Control.AvatarAction{System.Single},GoodAI.ToyWorld.Control.AvatarAction{System.Single},GoodAI.ToyWorld.Control.AvatarAction{System.Boolean},GoodAI.ToyWorld.Control.AvatarAction{System.Boolean},GoodAI.ToyWorld.Control.AvatarAction{System.Boolean})">
             <summary>
-            Rewrites actions from this list with actions from parameter with lower priority value.
+            
+            </summary>
+            <param name="desiredSpeed"></param>
+            <param name="desiredRotation"></param>
+            <param name="interact"></param>
+            <param name="use"></param>
+            <param name="pickUp"></param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.Update(GoodAI.ToyWorld.Control.IAvatarControls)">
+            <summary>
+            Rewrites actions from this AvatarControls with actions from given AvatarControls with lower priority value.
             </summary>
             <param name="actions"></param>
         </member>
@@ -78,7 +119,7 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetActions(GoodAI.ToyWorld.Control.AvatarControls)">
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.SetActions(GoodAI.ToyWorld.Control.IAvatarControls)">
             <summary>
             
             </summary>
@@ -95,6 +136,11 @@
             
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.IAvatarController.ResetControls">
+            <summary>
+            Sets initial values to controls. Agent should not move.
+            </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.GameSetup">
             <summary>

@@ -7,13 +7,17 @@ using Xunit;
 
 namespace ToyWorldTests.Game
 {
+<<<<<<< HEAD:ToyWorld/ToyWorldTests/Game/ControllerTests.cs
     [Collection("Renderer")]
     public class ControllerTests : IDisposable
+=======
+    public class GameControllerTests : IDisposable
+>>>>>>> Test for AvatarController added; IAvatarActions deleted:ToyWorld/ToyWorldTests/Game/GameControllerTests.cs
     {
         protected GameControllerBase GameController;
 
 
-        public ControllerTests()
+        public GameControllerTests()
         {
             var tmxMemoryStream = FileStreams.GetTmxMemoryStream();
             var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();

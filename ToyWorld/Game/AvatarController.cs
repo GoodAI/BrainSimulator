@@ -5,18 +5,18 @@ using World.GameActors.GameObjects;
 
 namespace Game
 {
-    class AvatarController : IAvatarController
+    public class AvatarController : IAvatarController
     {
         private readonly IAvatar m_avatar;
-        private readonly AvatarControls m_avatarControls;
+        private AvatarControls m_avatarControls;
 
         public AvatarController(IAvatar avatar)
         {
             m_avatar = avatar;
-            m_avatarControls = new AvatarControls();
+            m_avatarControls = new AvatarControls(int.MaxValue);
         }
 
-        public void SetActions(AvatarControls actions)
+        public void SetActions(IAvatarControls actions)
         {
             m_avatarControls.Update(actions);
             SetAvatarActionsControllable();
@@ -32,8 +32,9 @@ namespace Game
             throw new NotImplementedException();
         }
 
-        internal void ResetControls()
+        public void ResetControls()
         {
+            m_avatarControls = new AvatarControls(int.MaxValue);
             m_avatar.ResetControls();
         }
 
