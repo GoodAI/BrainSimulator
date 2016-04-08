@@ -20,10 +20,11 @@ namespace Game
         private readonly CancellationTokenSource m_cancellationToken = new CancellationTokenSource();
         private readonly Task m_requestCollectionTask;
 
+
         public ThreadSafeGameController(RendererBase renderer, GameSetup gameSetup)
             : base(renderer, gameSetup)
         {
-            m_requestCollectionTask = Task.Run(() => RunRequestCollectionAsync(), m_cancellationToken.Token);
+            m_requestCollectionTask = Task.Factory.StartNew(RunRequestCollectionAsync, TaskCreationOptions.LongRunning);
         }
 
         public override void Dispose()
@@ -37,18 +38,42 @@ namespace Game
 
         void RunRequestCollectionAsync()
         {
-            while (!m_buffer.Disposed)
+            while (!m_cancellationToken.IsCancellationRequested)
             {
-                TupleType result = null;
+                Task<TupleType> task;
 
-                var task = m_buffer.Get();
+                // Get a new task to wait for
+                try
+                {
+                    task = m_buffer.Get();
+                }
+                catch (Exception)
+                {
+                    // Should not ever happen    
+                    m_buffer.Clear();
+                    continue;
+                }
+
+                // Wait for the producers to queue up an item
+                try
+                {
+                    task.Wait(m_cancellationToken.Token);
+                }
+                catch (OperationCanceledException e)
+                {
+                    continue;
+                }
+                catch (AggregateException e)
+                {
+                    continue;
+                }
+
+                // Execute the item and return its result
+                TupleType result = null;
 
                 try
                 {
-                    result = task.Result; // blocks while waiting for the result
-
-                    if (task.IsCanceled)
-                        ;
+                    result = task.Result;
 
                     var res = result.Item1();
                     result.Item2.SetResult(res);
@@ -58,7 +83,7 @@ namespace Game
                     if (result != null)
                         result.Item2.SetException(e);
 
-                    Debug.Fail("Shenanigans");
+                    Debug.Fail("Shenanigans!");
                     // TODO: log
                 }
             }
@@ -89,7 +114,18 @@ namespace Game
         {
             var t = new TaskCompletionSource<object>();
             m_buffer.Add(new TupleType(func, t));
-            t.Task.Wait(m_cancellationToken.Token);
+
+            try
+            {
+                t.Task.Wait(m_cancellationToken.Token);
+            }
+            catch (OperationCanceledException e)
+            {
+            }
+            catch (AggregateException e)
+            {
+            }
+
             return t.Task.Result;
         }
 
@@ -100,11 +136,6 @@ namespace Game
         public override void Init()
         {
             DelegateStuff(base.Init);
-        }
-
-        public override void Reset()
-        {
-            DelegateStuff(base.Reset);
         }
 
         public override void MakeStep()

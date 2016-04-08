@@ -11,9 +11,6 @@ namespace VRage.Library.Collections
         private readonly Queue<TaskCompletionSource<T>> m_waitingTasks;
 
 
-        public bool Disposed { get; private set; }
-
-
         public AsyncBuffer()
         {
             m_queue = new Queue<T>();
@@ -25,15 +22,15 @@ namespace VRage.Library.Collections
             m_queue = new Queue<T>();
             m_waitingTasks = new Queue<TaskCompletionSource<T>>();
 
-            cancellationToken.Register(Cancel);
+            cancellationToken.Register(Clear);
         }
 
         public void Dispose()
         {
-            Cancel();
+            Clear();
         }
 
-        public void Cancel()
+        public void Clear()
         {
             lock (m_queue)
             {
@@ -42,7 +39,6 @@ namespace VRage.Library.Collections
 
                 m_waitingTasks.Clear();
                 m_queue.Clear();
-                Disposed = true;
             }
         }
 
