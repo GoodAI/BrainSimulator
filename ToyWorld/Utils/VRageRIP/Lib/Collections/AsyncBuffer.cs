@@ -37,7 +37,7 @@ namespace VRage.Library.Collections
         {
             lock (m_queue)
             {
-                foreach (var taskCompletionSource in m_waitingTasks)
+                foreach (TaskCompletionSource<T> taskCompletionSource in m_waitingTasks)
                     taskCompletionSource.SetCanceled();
 
                 m_waitingTasks.Clear();
