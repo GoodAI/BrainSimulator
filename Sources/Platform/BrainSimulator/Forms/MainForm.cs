@@ -294,6 +294,8 @@ namespace GoodAI.BrainSimulator.Forms
             else
                 MyLog.WARNING.WriteLine("Projects with the same filename share the same temporal folder where the state is saved.");
 
+            Project.SetNameFromPath(newName);
+
             SaveProject(newName);
             m_recentMenu.AddFile(newName);
         }
