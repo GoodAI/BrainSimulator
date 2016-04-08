@@ -40,14 +40,13 @@
   <Class Name="World.ToyWorldCore.ToyWorld">
     <Position X="17.75" Y="11.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAQAAIAAYIkAgAAAIAIIAAAAAAgAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>AAQAAIAAYIkAgAAACAAIAAACAAgAAAAAAAAAAAAACAA=</HashCode>
       <FileName>ToyWorldCore\ToyWorld.cs</FileName>
       <NewMemberFileName>ToyWorld.cs</NewMemberFileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="AutoupdateRegister" />
       <Property Name="Atlas" />
-      <Property Name="TilesetTable" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
@@ -101,7 +100,7 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AABAAIAAoAAAAAAAAAAAAAAAAAACAAAgAQAAAAAAAAA=</HashCode>
+      <HashCode>AABAAIAAoAAAAAAAAAAAAAAAAAACAAAgAQAAAAAAgAA=</HashCode>
       <FileName>ToyWorldCore\Atlas.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -194,11 +193,11 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.Physics.MovableDirectablePhysicalEntity">
+  <Class Name="World.Physics.ForwardMovablePhysicalEntity">
     <Position X="25.75" Y="20" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAACAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
-      <FileName>Physics\MovableDirectablePhysicalEntity.cs</FileName>
+      <FileName>Physics\ForwardMovablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -268,7 +267,7 @@
   <Interface Name="World.GameActors.GameObjects.IAvatar">
     <Position X="10" Y="24" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAACAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -317,13 +316,6 @@
       <FileName>Physics\Physics.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="World.Physics.IMovableDirectablePhysicalEntity">
-    <Position X="28.75" Y="20" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Physics\MovableDirectablePhysicalEntity.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="World.Physics.IAvatarMover">
     <Position X="31" Y="13.25" Width="1.5" />
     <TypeIdentifier>
@@ -343,6 +335,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAgAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\PhysicalEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.IForwardMovablePhysicalEntity">
+    <Position X="28.75" Y="20" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\ForwardMovablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="World.ToyWorldCore.LayerType">
