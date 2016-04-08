@@ -47,7 +47,7 @@ namespace ToyWorldTests.Render
             m_renderer.MakeContextCurrent();
 
             var rr = RenderRequestFactory.CreateRenderRequest<IBasicTexRR>();
-            //var rr = RenderRequestFactory.CreateRenderRequest<IBasicARR>(0);
+            //var rr = RenderRequestFactory.CreateRenderRequest<IFovAvatarRenderRequest>(0);
             (rr as RenderRequest).Init(m_renderer);
             m_renderer.EnqueueRequest(rr);
 

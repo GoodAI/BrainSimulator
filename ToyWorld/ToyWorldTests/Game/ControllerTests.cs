@@ -23,9 +23,14 @@ namespace ToyWorldTests.Game
 
             var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
 
-            GameController = ControllerFactory.GetController(gameSetup);
+            GameController = GetController(gameSetup);
 
             GameController.Init();
+        }
+
+        protected virtual GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetController(gameSetup);
         }
 
         private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)
@@ -70,6 +75,14 @@ namespace ToyWorldTests.Game
 
             GameController.MakeStep();
             GameController.MakeStep();
+        }
+    }
+
+    public class ThreadSafeControllerTests : ControllerTests
+    {
+        protected override GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetThreadSafeController(gameSetup);
         }
     }
 }

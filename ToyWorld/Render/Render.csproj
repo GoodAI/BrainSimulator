@@ -54,7 +54,7 @@
     <Compile Include="Tests\Effects\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
-    <Compile Include="RenderRequests\AvatarRenderRequests\FoVARR.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\FovARR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRenderRequestBase.cs" />
     <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />

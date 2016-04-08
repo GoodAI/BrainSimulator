@@ -111,13 +111,15 @@ namespace Game
             RenderRequest rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
 
             if (rrBase == null)
-                throw new RenderRequestNotImplementedException(string.Format("Incorrect type argument; the type {0} is not registered for use in this controller version.", typeof(T).Name));
+                throw new RenderRequestNotImplementedException(
+                    string.Format("Incorrect type argument; the type {0} is not registered for use in this controller version.",
+                    typeof(T).Name));
 
             rrBase.Init(Renderer);
         }
 
 
-        public IAvatarController GetAvatarController(int avatarId)
+        public virtual IAvatarController GetAvatarController(int avatarId)
         {
             return m_avatarControllers[avatarId];
         }

@@ -8,5 +8,10 @@ namespace ToyWorldFactory
         {
             return ControllerFactory.GetController(gameSetup);
         }
+
+        public static IGameController GetThreadSafeGameController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetThreadSafeController(gameSetup);
+        }
     }
 }
