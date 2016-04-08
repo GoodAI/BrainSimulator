@@ -1,3 +1,33 @@
+### Brain Simulator 0.5.0
+*Early access release* (2016-04-12)
+
+*Brain Simulator is now licensed under **Apache License**, version 2.0!*
+
+#### New features
+
+**Undo** - it's now possible to undo and redo model changes such as connection or node removal   
+
+**Dynamic model (experimental)** - the ability to programmatically change the model at runtime, add and connect new nodes, etc.
+
+**Changed memory block dimensions API** - improved API for manipulating with memory block dimensions (the `TensorDimensions` class), removed user defined dimensions from UI (dimensions can be adjusted only on dedicated places such as Join node output or the memory block observer) 
+
+**Brain Unit testing framework (experimental)** - the ability to easily create node and brain tests using Brain Unit node or by defining a simple class 
+
+**Memory block metadata** - the ability to attach any metadata to memory blocks (such as preferred visualization method)
+
+**Select backward edges** - select which connections in a cycle are backward to adjust simulation order
+
+**Scripting node group** - a node group that allows to define a custom task scheduler in a script
+
+#### Improvements and fixes
+
+* Options 'Load on start' and 'Save on close' are now saved in the project file
+* Fixed and issue which caused the memory block state data to be saved on a wrong place
+* Task and task group enabling/disabling can be added to the dashboard
+* MNIST World improvements - separate tasks for training and testing data, more improvements
+* Improved reduction API
+
+
 ### Brain Simulator 0.4.0
 *Early access release* (2015-12-16)
 
@@ -11,7 +41,7 @@
 
 **Dynamic memory** – blocks marked as dynamic can be reallocated in node/task code
 
-**Memory Blocks dimensions (experimental)** – memory block attribute that allows arbitrary dimension setting both from the UI and from code (please do not use it from code yet, as API will probably change)
+**Memory blocks dimensions (experimental)** – memory block attribute that allows arbitrary dimension setting both from the UI and from code (please do not use it from code yet, as API will probably change)
 
 ##### New worlds and nodes
 
