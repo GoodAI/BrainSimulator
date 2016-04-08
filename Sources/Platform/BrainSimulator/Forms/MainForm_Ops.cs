@@ -82,6 +82,9 @@ namespace GoodAI.BrainSimulator.Forms
             Project.Network = Project.CreateNode<MyNetwork>();
             Project.Network.Name = "Network";
 
+            string tmpPath = Path.GetTempFileName();
+            Project.Name = MyProject.MakeNameFromPath(tmpPath);
+
             worldList.SelectedIndex = -1;
             worldList.SelectedItem = MyConfiguration.KnownWorlds.Values.First();
 
@@ -94,8 +97,10 @@ namespace GoodAI.BrainSimulator.Forms
             RestoreDashboardForm();
 
             UndoManager.Clear();
-            SaveState(GetSerializedProject(saveFileDialog.FileName), saveFileDialog.FileName, "New project");
+            SaveState(GetSerializedProject(tmpPath), tmpPath, "New project");
             RefreshUndoRedoButtons();
+
+            saveFileDialog.FileName = string.Empty;
         }
 
         private void CloseCurrentProjectWindows()

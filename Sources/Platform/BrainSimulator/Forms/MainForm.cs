@@ -335,8 +335,6 @@ namespace GoodAI.BrainSimulator.Forms
             OpenGraphLayout(Project.Network);
 
             AppSettings.SaveSettings(settings => settings.LastProject = String.Empty);
-
-            saveFileDialog.FileName = String.Empty;
         }
 
         public void runToolButton_Click(object sender, EventArgs e)
