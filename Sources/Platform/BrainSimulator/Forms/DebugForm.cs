@@ -64,8 +64,17 @@ namespace GoodAI.BrainSimulator.Forms
                 m_mainForm.Breakpoints.Remove(args.Node.Executable);
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            UpdateDebugListView();
+        }
+
         private void UpdateDebugListView()
         {
+            if (IsHidden)
+                return;
+
             // Clean up the event handlers.
             foreach (var node in debugTreeView.AllNodes)
             {
