@@ -9,13 +9,9 @@ using Render.Tests.Geometries;
 
 namespace Render.RenderRequests.AvatarRenderRequests
 {
-    internal class FoVARR : AvatarRenderRequestBase, IFovAvatarRenderRequest
+    internal class FovARR : AvatarRenderRequestBase, IFovAvatarRenderRequest
     {
-        //VBO m_pbo;
-        private bool m_odd;
-
-
-        internal FoVARR(int avatarID)
+        internal FovARR(int avatarID)
             : base(avatarID)
         { }
 

@@ -39,7 +39,7 @@ namespace Game
 
         #region Long-running method
 
-        void RunRequestCollectionAsync()
+        private void RunRequestCollectionAsync()
         {
             while (!m_cancellationToken.IsCancellationRequested)
             {
@@ -97,7 +97,7 @@ namespace Game
 
         #region Delegation
 
-        void DelegateStuff(Action action)
+        private void DelegateStuff(Action action)
         {
             Func<object> dummy = () =>
             {
@@ -108,13 +108,13 @@ namespace Game
             DelegateStuffInternal(dummy);
         }
 
-        T DelegateStuff<T>(Func<T> func)
+        private T DelegateStuff<T>(Func<T> func)
             where T : class
         {
             return DelegateStuffInternal(func) as T;
         }
 
-        object DelegateStuffInternal(Func<object> func)
+        private object DelegateStuffInternal(Func<object> func)
         {
             Debug.Assert(func != null);
 
@@ -127,14 +127,14 @@ namespace Game
             }
             catch (OperationCanceledException e)
             {
-                throw new ObjectDisposedException("ThreadSafeGameController", "Trying to call actions on a disposed object.");
+                throw new ObjectDisposedException("Trying to call actions on a disposed object.", e);
             }
             catch (AggregateException e)
             {
                 foreach (var innerException in e.InnerExceptions)
                 {
                     if (innerException is OperationCanceledException)
-                        throw new ObjectDisposedException("ThreadSafeGameController", "Trying to call actions on a disposed object.");
+                        throw new ObjectDisposedException("Trying to call actions on a disposed object.", e);
 
                     throw innerException;
                 }

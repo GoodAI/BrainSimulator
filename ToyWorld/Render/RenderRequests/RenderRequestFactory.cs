@@ -39,7 +39,7 @@ namespace Render.RenderRequests
                 .Case<IBasicARR>(id =>
                     new BasicARR(id))
                 .Case<IFovAvatarRenderRequest>(id =>
-                    new FoVARR(id));
+                    new FovARR(id));
         }
 
 
