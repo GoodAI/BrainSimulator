@@ -15,8 +15,12 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
-
+<<<<<<< HEAD
+    [Collection("Renderer")]
+    public class RenderRequestTests : ControllerTests
+=======
     public class RenderRequestTests : GameControllerTests
+>>>>>>> Test for AvatarController added; IAvatarActions deleted
     {
         [Fact]
         public void RRInits()

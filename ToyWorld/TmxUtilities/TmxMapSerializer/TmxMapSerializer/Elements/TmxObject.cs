@@ -7,6 +7,12 @@ namespace TmxMapSerializer.Elements
         [XmlAttribute("id")]
         public int Id { get; set; }
 
+        [XmlAttribute("name")]
+        public string Name { get; set; }
+
+        [XmlAttribute("type")]
+        public string Type { get; set; }
+
         [XmlAttribute("gid")]
         public int Gid { get; set; }
 

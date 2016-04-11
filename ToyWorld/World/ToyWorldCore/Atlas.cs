@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
@@ -11,7 +12,7 @@ namespace World.ToyWorldCore
 
         public List<IObjectLayer> ObjectLayers { get; private set; }
 
-        public List<Avatar> Avatars { get; private set; }
+        public Dictionary<int, IAvatar> Avatars { get; private set; }
 
         public List<Character> Characters { get; private set; }
 
@@ -19,7 +20,7 @@ namespace World.ToyWorldCore
 
         public Atlas()
         {
-            Avatars = new List<Avatar>();
+            Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<Character>();
             TileLayers = new List<ITileLayer>();
             ObjectLayers = new List<IObjectLayer>();
@@ -34,6 +35,24 @@ namespace World.ToyWorldCore
                 return ObjectLayers.First(x => x.LayerType == layerType);
             }
             return TileLayers.First(x => x.LayerType == layerType);
+        }
+
+        public bool AddAvatar(IAvatar avatar)
+        {
+            try
+            {
+                Avatars.Add(avatar.Id, avatar);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public List<IAvatar> GetAvatars()
+        {
+            return Avatars.Values.ToList();
         }
     }
 }

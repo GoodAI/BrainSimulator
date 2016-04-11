@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
 using World.GameActors.GameObjects;
@@ -10,41 +11,29 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
+        private BasicAvatarMover m_basicAvatarMover;
+
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
             AutoupdateRegister = new AutoupdateRegister();
-            Atlas = MapLoader.LoadMap(tmxDeserializedMap, new TilesetTable(tileTable));
+
+            m_tilesetTable = new TilesetTable(tileTable);
+            Atlas = MapLoader.LoadMap(tmxDeserializedMap, m_tilesetTable);
+
+            m_physics = new Physics.Physics();
         }
 
         public AutoupdateRegister AutoupdateRegister { get; private set; }
 
         public Atlas Atlas { get; private set; }
 
-        public World.GameActors.Tiles.TilesetTable TilesetTable
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
+        private readonly TilesetTable m_tilesetTable;
 
-        public IPhysics IPhysics
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        private readonly IPhysics m_physics;
 
         private void UpdatePhysics()
         {
+            
         }
 
         private void UpdateCharacters()
@@ -53,6 +42,10 @@ namespace World.ToyWorldCore
 
         private void UpdateAvatars()
         {
+            List<IAvatar> avatars = Atlas.GetAvatars();
+            m_physics.TransofrmControlsToMotion(avatars);
+            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
+            m_physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
         public void Update()
@@ -63,19 +56,19 @@ namespace World.ToyWorldCore
             UpdatePhysics();
         }
 
-        public int[] GetAvatarsIds()
+        public List<int> GetAvatarsIds()
         {
-            return Atlas.Avatars.Select(avatar => avatar.Id).ToArray();
+            return Atlas.Avatars.Keys.ToList();
         }
 
-        public int[] GetAvatarsNames()
+        public List<string> GetAvatarsNames()
         {
-            return Atlas.Avatars.Select(avatar => avatar.Id).ToArray();
+            return Atlas.Avatars.Values.Select(x => x.Name).ToList();
         }
 
-        public Avatar GetAvatar(int id)
+        public IAvatar GetAvatar(int id)
         {
-            return null;
+            return Atlas.Avatars[id];
         }
 
         private void UpdateTiles()

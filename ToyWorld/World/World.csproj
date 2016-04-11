@@ -40,9 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameActions\IAvatarActions.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
+    <Compile Include="Physics\ForwardMovablePhysicalEntity.cs" />
     <Compile Include="Physics\IAvatarMover.cs" />
     <Compile Include="Physics\IMovable.cs" />
     <Compile Include="GameActors\GameObjects\IUsable.cs" />
@@ -50,8 +50,7 @@
     <Compile Include="GameActors\Tiles\Background.cs" />
     <Compile Include="GameActors\Tiles\Obstacle.cs" />
     <Compile Include="GameActors\Tiles\Path.cs" />
-    <Compile Include="Physics\IPhysics.cs" />
-    <Compile Include="Physics\MovableDirectablePhysicalEntity.cs" />
+    <Compile Include="Physics\Physics.cs" />
     <Compile Include="Physics\MovementPhysics.cs" />
     <Compile Include="Physics\PhysicalEntity.cs" />
     <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />

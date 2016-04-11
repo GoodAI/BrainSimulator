@@ -3,7 +3,7 @@
     /// <summary>
     /// For game objects that can move.
     /// </summary>
-    public interface IForwardMovable
+    public interface IForwardMovable : IDirectable
     {
         /// <summary>
         /// Speed has no limit. It is limited by physics engine.

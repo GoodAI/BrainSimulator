@@ -3,15 +3,20 @@ using VRageMath;
 
 namespace World.Physics
 {
-    public class MovementPhysics
+    public interface IMovementPhysics
     {
-        public static void Move(IMovableDirectablePhysicalEntity movable)
+        void Move(IForwardMovablePhysicalEntity movable);
+    }
+
+    public class MovementPhysics : IMovementPhysics
+    {
+        public void Move(IForwardMovablePhysicalEntity movable)
         {
             Shift(movable);
             Rotate(movable);
         }
 
-        private static void Shift(IMovableDirectablePhysicalEntity movable)
+        private static void Shift(IForwardMovablePhysicalEntity movable)
         {
             var directionInRads = VRageMath.MathHelper.ToRadians(movable.Direction);
             var cos = (float)Math.Cos(directionInRads);
@@ -21,7 +26,7 @@ namespace World.Physics
             movable.Position = new Vector2(x, y);
         }
 
-        private static void Rotate(IMovableDirectablePhysicalEntity movable)
+        private static void Rotate(IForwardMovablePhysicalEntity movable)
         {
             movable.Direction += movable.RotationSpeed;
         }

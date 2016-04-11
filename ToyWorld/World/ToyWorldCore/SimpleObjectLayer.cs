@@ -7,7 +7,7 @@ namespace World.ToyWorldCore
 {
     public class SimpleObjectLayer : IObjectLayer 
     {
-        public List<GameObject> GameObjects { get; set; }
+        private List<GameObject> GameObjects { get; set; }
 
         public LayerType LayerType { get; set; }
 
@@ -20,6 +20,12 @@ namespace World.ToyWorldCore
         public List<GameObject> GetGameObjects(RectangleF rectangle)
         {
             throw new NotImplementedException();
+        }
+
+        public bool AddGameObject(GameObject gameObject)
+        {
+            GameObjects.Add(gameObject);
+            return true;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
@@ -16,8 +17,9 @@ namespace Game
         public RendererBase Renderer { get; private set; }
         public IWorld World { get; private set; }
         private readonly GameSetup m_gameSetup;
-        private Dictionary<int, Avatar> m_avatars;
+        private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
+        private bool m_initialized;
 
 
         protected GameControllerBase(RendererBase renderer, GameSetup setup)
@@ -38,22 +40,25 @@ namespace Game
 
         public virtual void Init()
         {
+            m_initialized = true;
+
             // Init World
             var serializer = new TmxSerializer();
             Map map = serializer.Deserialize(m_gameSetup.SaveFile);
 
             World = new ToyWorld(map, m_gameSetup.TilesetFile);
 
-            m_avatars = new Dictionary<int, Avatar>();
+            m_avatars = new Dictionary<int, IAvatar>();
             foreach (int avatarId in World.GetAvatarsIds())
             {
                 m_avatars.Add(avatarId, World.GetAvatar(avatarId));
             }
 
             m_avatarControllers = new Dictionary<int, AvatarController>();
-            foreach (KeyValuePair<int, Avatar> avatar in m_avatars)
+            foreach (KeyValuePair<int, IAvatar> avatar in m_avatars)
             {
-                m_avatarControllers.Add(avatar.Key, new AvatarController(avatar.Value));
+                var avatarController = new AvatarController(avatar.Value);
+                m_avatarControllers.Add(avatar.Key, avatarController);
             }
 
             // Init rendering
@@ -64,17 +69,17 @@ namespace Game
 
         public virtual void MakeStep()
         {
-            // Assume Init has been called, we don't want to check for consistency every step
-
-            // World
-            World.Update();
-
-            foreach (AvatarController avatarController in m_avatarControllers.Values)
+            if (!m_initialized)
             {
-                avatarController.ResetControls();
+                Init();
             }
 
-            // Rendering
+            // Controls should be already set
+
+            World.Update();
+
+            ResetAvatarControllers();
+
             Renderer.ProcessRequests();
         }
 
@@ -122,6 +127,14 @@ namespace Game
         public virtual IAvatarController GetAvatarController(int avatarId)
         {
             return m_avatarControllers[avatarId];
+        }
+
+        private void ResetAvatarControllers()
+        {
+            foreach (AvatarController avatarController in m_avatarControllers.Values)
+            {
+                avatarController.ResetControls();
+            }
         }
 
         #endregion

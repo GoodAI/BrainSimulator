@@ -7,6 +7,13 @@ namespace ToyWorldTests.Physics
 {
     public class MovementPhysicsTest
     {
+        private readonly MovementPhysics m_movementPhysics;
+
+        public MovementPhysicsTest()
+        {
+            m_movementPhysics = new MovementPhysics();
+        }
+
         [Theory]
         [InlineData(0, 0)]
         [InlineData(0, 90)]
@@ -21,7 +28,7 @@ namespace ToyWorldTests.Physics
         {
             var startingPosition = new Vector2(5, 5);
 
-            var movableMock = new Mock<IMovableDirectablePhysicalEntity>();
+            var movableMock = new Mock<IForwardMovablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
             movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
             movableMock.Setup(x => x.Direction).Returns(direction);*/
@@ -32,9 +39,11 @@ namespace ToyWorldTests.Physics
             movableMock.Object.Direction = direction;
 
 
-            IMovableDirectablePhysicalEntity movable = movableMock.Object;
+            IForwardMovablePhysicalEntity movable = movableMock.Object;
 
-            MovementPhysics.Move(movable);
+            
+
+            m_movementPhysics.Move(movable);
 
 
             if (speed == 0f)
@@ -85,7 +94,7 @@ namespace ToyWorldTests.Physics
         {
             var startingDirection = 90;
 
-            var movableMock = new Mock<IMovableDirectablePhysicalEntity>();
+            var movableMock = new Mock<IForwardMovablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
             movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
             movableMock.Setup(x => x.Direction).Returns(direction);*/
@@ -95,9 +104,9 @@ namespace ToyWorldTests.Physics
             movableMock.Object.RotationSpeed = rotationSpeed;
 
 
-            IMovableDirectablePhysicalEntity movable = movableMock.Object;
+            IForwardMovablePhysicalEntity movable = movableMock.Object;
 
-            MovementPhysics.Move(movable);
+            m_movementPhysics.Move(movable);
 
             if (rotationSpeed == 0f)
             {

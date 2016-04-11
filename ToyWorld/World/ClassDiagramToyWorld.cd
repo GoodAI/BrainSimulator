@@ -40,15 +40,13 @@
   <Class Name="World.ToyWorldCore.ToyWorld">
     <Position X="17.75" Y="11.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAQAAIIAYIkAgAAAIAAAAAAAAAgAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>AAQAAIAAYIkAgAAACAAIAAACAAgAAAAAAAAAAAAACAA=</HashCode>
       <FileName>ToyWorldCore\ToyWorld.cs</FileName>
       <NewMemberFileName>ToyWorld.cs</NewMemberFileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="AutoupdateRegister" />
       <Property Name="Atlas" />
-      <Property Name="TilesetTable" />
-      <Property Name="IPhysics" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
@@ -63,7 +61,7 @@
   <Class Name="World.ToyWorldCore.SimpleObjectLayer">
     <Position X="13" Y="16" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AABAAAAEAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>ToyWorldCore\SimpleObjectLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -91,7 +89,7 @@
   <Class Name="World.GameActors.GameObjects.Avatar">
     <Position X="10" Y="20.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAACACCAAAAAAAAACAJAAAQAIAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAACACCAAAAAAAAACAJAAAAAIAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -102,7 +100,7 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AABAAIAAoAAAAAAAAAAAAAAAAAAAAAAgAQAAAAAAAAA=</HashCode>
+      <HashCode>AABAAIAAoAAAAAAAAAAAAAAAAAACAAAgAQAAAAAAgAA=</HashCode>
       <FileName>ToyWorldCore\Atlas.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -173,15 +171,15 @@
     </TypeIdentifier>
   </Class>
   <Class Name="World.Physics.PhysicalEntity">
-    <Position X="26.25" Y="17.25" Width="1.5" />
+    <Position X="25.75" Y="25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAgAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\PhysicalEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.Physics.MovementPhysics">
-    <Position X="30.75" Y="13.5" Width="1.5" />
+    <Position X="29" Y="12" Width="1.75" />
     <Members>
       <Method Name="Rotate" Hidden="true" />
       <Method Name="Shift" Hidden="true" />
@@ -193,14 +191,31 @@
       <HashCode>AAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\MovementPhysics.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.Physics.MovableDirectablePhysicalEntity">
-    <Position X="26.25" Y="20.25" Width="1.5" />
+  <Class Name="World.Physics.ForwardMovablePhysicalEntity">
+    <Position X="25.75" Y="20" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAACAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
-      <FileName>Physics\MovableDirectablePhysicalEntity.cs</FileName>
+      <FileName>Physics\ForwardMovablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.Physics.BasicAvatarMover" BaseTypeListCollapsed="true">
+    <Position X="31" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Physics\BasicAvatarMover.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="World.Physics.Physics" BaseTypeListCollapsed="true">
+    <Position X="26" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAACAAAAAAAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <FileName>Physics\Physics.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Interface Name="World.ToyWorldCore.ITileLayer">
     <Position X="13" Y="9.75" Width="1.5" />
@@ -221,7 +236,7 @@
   <Interface Name="World.ToyWorldCore.IObjectLayer">
     <Position X="13" Y="14.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>ToyWorldCore\IObjectLayer.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -252,7 +267,7 @@
   <Interface Name="World.GameActors.GameObjects.IAvatar">
     <Position X="10" Y="24" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAACAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAACAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -274,38 +289,59 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="GoodAI.ToyWorld.Control.IForwardMovable">
-    <Position X="31.5" Y="17.25" Width="1.5" />
+    <Position X="31" Y="21.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="GoodAI.ToyWorld.Control.IGridMovable">
-    <Position X="28" Y="17.25" Width="1.5" />
+    <Position X="33" Y="23.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAIAAAAAAAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="GoodAI.ToyWorld.Control.IDirectable">
-    <Position X="29.75" Y="17.25" Width="1.5" />
+    <Position X="31" Y="23.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IPhysics">
-    <Position X="26" Y="13.5" Width="1.5" />
+    <Position X="26" Y="14.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Physics\IPhysics.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <FileName>Physics\Physics.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="World.Physics.IMovableDirectablePhysicalEntity">
-    <Position X="28" Y="20.25" Width="1.5" />
+  <Interface Name="World.Physics.IAvatarMover">
+    <Position X="31" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Physics\IAvatarMover.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.IMovementPhysics">
+    <Position X="29" Y="13.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\MovementPhysics.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.IPhysicalEntity">
+    <Position X="28.75" Y="25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\PhysicalEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.IForwardMovablePhysicalEntity">
+    <Position X="28.75" Y="20" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Physics\MovableDirectablePhysicalEntity.cs</FileName>
+      <FileName>Physics\ForwardMovablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="World.ToyWorldCore.LayerType">

@@ -1,4 +1,5 @@
-﻿using World.GameActors.GameObjects;
+﻿using System.Collections.Generic;
+using World.GameActors.GameObjects;
 
 namespace World.WorldInterfaces
 {
@@ -15,10 +16,10 @@ namespace World.WorldInterfaces
         /// </summary>
         void Update();
 
-        int[] GetAvatarsIds();
+        List<int> GetAvatarsIds();
 
-        int[] GetAvatarsNames();
+        List<string> GetAvatarsNames();
 
-        Avatar GetAvatar(int id);
+        IAvatar GetAvatar(int id);
     }
 }

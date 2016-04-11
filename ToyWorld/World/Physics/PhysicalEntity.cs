@@ -8,6 +8,7 @@ namespace World.Physics
         /// Absolute position in ToyWorld.
         /// </summary>
         Vector2 Position { get; set; }
+        Vector2 Size { get; set; }
     }
 
     public abstract class PhysicalEntity : IPhysicalEntity
@@ -17,9 +18,12 @@ namespace World.Physics
         /// </summary>
         public Vector2 Position { get; set; }
 
-        protected PhysicalEntity(Vector2 position)
+        public Vector2 Size { get; set; }
+
+        public PhysicalEntity(Vector2 position, Vector2 size)
         {
             Position = position;
+            Size = size;
         }
     }
 }
