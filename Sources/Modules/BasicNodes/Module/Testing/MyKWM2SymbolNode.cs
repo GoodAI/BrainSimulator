@@ -114,13 +114,11 @@ namespace GoodAI.Modules.Testing
 
                     m_addKernel.Run(Owner.Output, Owner.InterResult, Owner.Output, 0, Owner.Output.Count);
 
-
                     // Compute relative differences
                     for (int j = i + 1; j < nrClusters; j++)
                     {
                         float x2 = Owner.ClustersPos.Host[j * Owner.ClustersPos.ColumnHint];
                         float y2 = Owner.ClustersPos.Host[j * Owner.ClustersPos.ColumnHint + 1];
-
 
                         var shape2 = Owner.Input.GetDevicePtr(Owner.GPU, j * Owner.ClusterSize);
                         var space2 = SpatialEncode(x1 - x2, y1 - y2);
@@ -130,7 +128,6 @@ namespace GoodAI.Modules.Testing
                         m_binder.Bind(space2, interResult, interResult);
 
                         m_addKernel.Run(Owner.Output, Owner.InterResult, Owner.Output, 0, Owner.Output.Count);
-
 
                         space2 = SpatialEncode(x2 - x1, y2 - y1);
 
@@ -154,7 +151,7 @@ namespace GoodAI.Modules.Testing
                     MyMemoryManager.Instance.GetGlobalVariable<float>(Owner.GlobalVariableName, Owner.GPU, Owner.GenerateRandomVectors).DevicePointer
                     + (int)MyCodeVector.Position * Owner.SymbolSize * sizeof(float), Owner.SymbolSize);
 
-                Owner.PositionSymbol.GetDevice(Owner).CopyToDevice(codeVector, 0, 0, sizeof(float) * Owner.SymbolSize);
+                Owner.PositionSymbol.GetDevice(Owner).CopyToDevice(codeVector, 0, 0, sizeof(float) * Owner.ClusterSize);
             }
 
             private CUdeviceptr SpatialEncode(float x, float y)
