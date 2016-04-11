@@ -72,7 +72,8 @@ namespace BasicNodesTests
 
                 // Setup the nodes.
 
-                MyTask sendMnistData = world.GetTaskByPropertyName("SendMNISTData");
+                MyTask sendMnistData = world.GetTaskByPropertyName("SendTrainingMNISTData");
+                Assert.NotNull(sendMnistData);
                 sendMnistData.GetType().GetProperty("RandomEnumerate").SetValue(sendMnistData, true);
                 sendMnistData.GetType().GetProperty("ExpositionTime").SetValue(sendMnistData, 1);
 
