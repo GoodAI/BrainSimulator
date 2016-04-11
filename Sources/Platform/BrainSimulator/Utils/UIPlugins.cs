@@ -37,13 +37,20 @@ namespace GoodAI.BrainSimulator.Forms
 
             foreach (FileInfo assemblyFile in MyConfiguration.ListModules())
             {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
-                string xml;
-                if (MyResources.TryGetTextFromAssembly(assembly, MyModuleConfig.MODULE_CONFIG_FILE, out xml))
-                    continue;
+                try
+                {
+                    Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
+                    string xml;
+                    if (MyResources.TryGetTextFromAssembly(assembly, MyModuleConfig.MODULE_CONFIG_FILE, out xml))
+                        continue;
 
-                MyLog.INFO.WriteLine("UI module loaded: " + assemblyFile.Name);
-                ret.AddRange(assembly.GetTypes().Where(IsUIExtension));
+                    MyLog.INFO.WriteLine("UI module loaded: " + assemblyFile.Name);
+                    ret.AddRange(assembly.GetTypes().Where(IsUIExtension));
+                }
+                catch (Exception ex)
+                {
+                    MyLog.DEBUG.WriteLine("Error when looking for UI modules: " + ex.Message);
+                }
             }
 
             return ret;
