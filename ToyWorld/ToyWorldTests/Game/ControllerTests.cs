@@ -7,6 +7,7 @@ using Xunit;
 
 namespace ToyWorldTests.Game
 {
+    [Collection("Renderer")]
     public class ControllerTests : IDisposable
     {
         protected GameControllerBase GameController;
@@ -22,9 +23,14 @@ namespace ToyWorldTests.Game
 
             var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
 
-            GameController = ControllerFactory.GetController(gameSetup);
+            GameController = GetController(gameSetup);
 
             GameController.Init();
+        }
+
+        protected virtual GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetController(gameSetup);
         }
 
         private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)
@@ -44,20 +50,18 @@ namespace ToyWorldTests.Game
 
         // Tests game factory and basic enqueuing
         [Fact]
-        public void TestInitAndReset()
+        public void TestInit()
         {
             Assert.NotNull(GameController);
             Assert.NotNull(GameController.Renderer);
             Assert.NotNull(GameController.World);
-
-            GameController.Reset();
         }
 
         [Fact]
         public void ControllerNotImplementedThrows()
         {
             Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<INotImplementedRR>);
-            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedARR>(0));
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedAvatarRR>(0));
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             // var ac = gc.GetAvatarController(0);
@@ -66,11 +70,19 @@ namespace ToyWorldTests.Game
         [Fact]
         public void DoStep()
         {
-            GameController.RegisterRenderRequest<IBasicTexRR>();
-            GameController.RegisterRenderRequest<IBasicARR>(0);
+            GameController.RegisterRenderRequest<IBasicTextureRR>();
+            GameController.RegisterRenderRequest<IBasicAvatarRR>(0);
 
             GameController.MakeStep();
             GameController.MakeStep();
+        }
+    }
+
+    public class ThreadSafeControllerTests : ControllerTests
+    {
+        protected override GameControllerBase GetController(GameSetup gameSetup)
+        {
+            return ControllerFactory.GetThreadSafeController(gameSetup);
         }
     }
 }

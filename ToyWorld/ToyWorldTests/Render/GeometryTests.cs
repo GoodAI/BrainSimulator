@@ -9,6 +9,7 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
+    [Collection("Renderer")]
     public class GeometryTests
     {
         [Fact]

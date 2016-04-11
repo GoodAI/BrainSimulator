@@ -1,20 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
-using Render.Geometries.Buffers;
 
 namespace Render.RenderObjects.Buffers
 {
-    internal class VAO : IDisposable
+    internal class Vao : IDisposable
     {
+        public enum VboPosition
+        {
+            Vertices = 0,
+            TextureOffsets = 1,
+
+
+            // Testing stuff
+            TextureCoords = 6,
+            Colors = 7,
+        }
+
+
+
         public uint Handle { get; private set; }
 
-        private readonly Dictionary<string, VBOBase> m_vboBases = new Dictionary<string, VBOBase>();
+        private readonly Dictionary<VboPosition, VboBase> m_vbos = new Dictionary<VboPosition, VboBase>();
 
 
         #region Genesis
 
-        public VAO()
+        public Vao()
         {
             Handle = (uint)GL.GenVertexArray();
         }
@@ -23,33 +35,33 @@ namespace Render.RenderObjects.Buffers
         {
             GL.DeleteVertexArray(Handle);
 
-            foreach (var VBOBase in m_vboBases.Values)
-                VBOBase.Dispose();
+            foreach (VboBase vbo in m_vbos.Values)
+                vbo.Dispose();
 
-            m_vboBases.Clear();
+            m_vbos.Clear();
         }
 
         #endregion
 
         #region Indexing
 
-        public VBOBase this[string id]
+        protected VboBase this[VboPosition id]
         {
             get
             {
-                VBOBase VBOBase;
+                VboBase vbo;
 
-                if (!m_vboBases.TryGetValue(id, out VBOBase))
-                    throw new ArgumentException("Access to not registered VBOBase.", "id");
+                if (!m_vbos.TryGetValue(id, out vbo))
+                    throw new ArgumentException("Access to not registered Vbo.", "id");
 
-                return VBOBase;
+                return vbo;
             }
             set
             {
-                if (m_vboBases.ContainsKey(id))
-                    throw new ArgumentException("A VBOBase has already been registered to this id.", "id");
+                if (m_vbos.ContainsKey(id))
+                    throw new ArgumentException("A Vbo has already been registered to this id.", "id");
 
-                m_vboBases[id] = value;
+                m_vbos[id] = value;
             }
         }
 
@@ -57,12 +69,16 @@ namespace Render.RenderObjects.Buffers
 
 
         public void EnableAttrib(
-            string id, int attribArrayIdx,
+            VboPosition id, int attribArrayIdx = -1,
             VertexAttribPointerType type = VertexAttribPointerType.Float,
             bool normalized = false,
             int stride = 0, int offset = 0)
         {
-            VBOBase vboBase = this[id];
+            if (attribArrayIdx < 0)
+                attribArrayIdx = (int)id;
+
+
+            VboBase vboBase = this[id];
 
             GL.BindVertexArray(Handle);
             vboBase.Bind();
@@ -71,7 +87,7 @@ namespace Render.RenderObjects.Buffers
             GL.VertexAttribPointer(attribArrayIdx, vboBase.ElementSize, type, normalized, stride, offset);
 
             //GL.BindVertexArray(0);
-            //VBOBase.Unbind();
+            //VboBase.Unbind();
         }
 
         public void DisableAttrib(string id, int attribArrayIdx)

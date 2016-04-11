@@ -1,29 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
-using Render.Geometries.Buffers;
-using Render.RenderObjects.Buffers;
-using VRageMath;
+﻿using Render.RenderObjects.Buffers;
 
 namespace Render.RenderObjects.Geometries
 {
-    internal abstract class GeometryBase : IDisposable
+    internal abstract class GeometryBase : Vao
     {
-        protected readonly VAO Vao = new VAO();
-
-
-        public void Dispose()
-        {
-            Vao.Dispose();
-        }
-
-
         public abstract void Draw();
 
-        public void Update<T>(string id, T[] data, int count = -1, int offset = 0)
+        public void Update<T>(VboPosition id, T[] data, int count = -1, int offset = 0)
             where T : struct
         {
-            Vao[id].Update(data, count, offset);
+            this[id].Update(data, count, offset);
         }
     }
 }

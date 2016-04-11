@@ -1,16 +1,8 @@
-﻿using GoodAI.ToyWorld.Control;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using Render.RenderRequests;
-using Render.RenderRequests.AvatarRenderRequests;
-using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
-using Render.RenderObjects.Effects;
-using Render.RenderObjects.Geometries;
-using Render.RenderObjects.Textures;
-using VRage.Collections;
 
 namespace Render.Renderer
 {
@@ -23,6 +15,8 @@ namespace Render.Renderer
 
         public override void Dispose()
         {
+            base.Dispose();
+
             // Dispose of Context
             if (Context != null)
             {
@@ -39,8 +33,6 @@ namespace Render.Renderer
                 Window.Dispose();
                 Window = null;
             }
-
-            base.Dispose();
         }
 
         #endregion
@@ -103,24 +95,27 @@ namespace Render.Renderer
             Window.ProcessEvents();
 
             base.ProcessRequests();
-
-            CheckError();
         }
 
         public override void CheckError()
         {
-            int i = 60;
-            ErrorCode err;
+            base.CheckError();
 
-            while ((err = GL.GetError()) != ErrorCode.NoError)
+            ErrorCode error, previousError = ErrorCode.NoError;
+
+            while ((error = GL.GetError()) != ErrorCode.NoError)
             {
                 // TODO: log
-                if (--i == 0)
-                    throw new Exception(err.ToString());
+                if (previousError == error)
+                {
+                    // the same error repeated twice indicates an infinite loop of errors
+                    throw new Exception(error.ToString());
+                }
+
+                previousError = error;
             }
         }
 
         #endregion
-
     }
 }
