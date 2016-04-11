@@ -533,3 +533,19 @@ Where `X` is a number of version the method accepts and `Y` is a number of versi
 Input to the conversion method is a string, which represents the loaded .brain file. The function can alter the string in any way it wants and then returns it (on return, the string should represent the .brain file in `Y` version).
 
 The sequence of conversion methods is invoked, until the opened project version is the same as the current module version. The project has to be saved after the conversion (message is written to Brain Simulator log).
+
+## Dynamic model changes
+
+The simulation will allow changes on nodes that implement the `IModelChanger` interface. It's meant to be used on subclasses of `MyNodeGroup`, but potentially there could be more uses in the future.
+
+In your class you'll have to implement one getter and one method:
+
+`AffectedNode` - in most cases you should return `this` here. The UI decides which graph views to refresh based on this.
+
+`ChangeModel` - here you perform your changes. You disconnect and remove nodes, you add and connect new ones. The method returns true if the model was indeed changed, otherwise return false for better performance.
+The method gets one parameter of type `IModelChanges`.
+
+Register nodes that were removed by `changes.RemoveNode` and nodes that are to be added by `changes.AddNode`. The simulation will handle stuff like initialization, memory block creation and scheduling based on this. Nodes that are marked to be removed list will not be usable again. If you plan on using the nodes in the future, don't add them via `changes.RemoveNode` so that they will keep their memory blocks.
+
+It's your responsibility to correctly create the node. The easiest way is to call `var newNode = Owner.CreateNode<TypeOfTheNodeYoureCreating>()` and then optionally `newNode.EnableDefaultTasks()`.
+All things that you have to watch out for during design time apply here as well.
