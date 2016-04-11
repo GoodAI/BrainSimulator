@@ -43,8 +43,6 @@ namespace MNIST
         public int m_sequenceIterator;
         public bool m_definedOrder;
 
-        private int[] m_DigitCounts = new int[10];    // helper array used for loading a given number of each digit
-
         public bool RandomEnumerate = false;
         private Random rand = new Random();
 
@@ -98,8 +96,8 @@ namespace MNIST
 
         private void ReadMnistSet(String imagesInputFile, String labelsInputFile, int numDigitClasses, ArrayList images)
         {
-            FileStream ifsLabels = new FileStream(m_baseFolder + "train-labels.idx1-ubyte", FileMode.Open, FileAccess.Read);
-            FileStream ifsImages = new FileStream(m_baseFolder + "train-images.idx3-ubyte", FileMode.Open, FileAccess.Read);
+            FileStream ifsLabels = new FileStream(m_baseFolder + labelsInputFile, FileMode.Open, FileAccess.Read);
+            FileStream ifsImages = new FileStream(m_baseFolder + imagesInputFile, FileMode.Open, FileAccess.Read);
 
             BinaryReader brLabels = new BinaryReader(ifsLabels);
             BinaryReader brImages = new BinaryReader(ifsImages);
@@ -119,17 +117,18 @@ namespace MNIST
             numColsImages = ReverseBytes(numColsImages);
 
             int numOfLoadedDigitClasses = 0;
+            int[] digitCounts = new int[10];    // helper array used for loading a given number of each digit
 
             if (numImagesLables == numImages)
             {
                 for (int i = 0; i < numImages; ++i)
                 {
                     MyMNISTImage mImage = new MyMNISTImage(brImages, brLabels, numColsImages, numRowsImages);
-                    if (m_DigitCounts[mImage.Label] < numDigitClasses)
+                    if (digitCounts[mImage.Label] < numDigitClasses)
                     {
                         images.Add(mImage);
-                        m_DigitCounts[mImage.Label]++;
-                        if (m_DigitCounts[mImage.Label] == numDigitClasses)
+                        digitCounts[mImage.Label]++;
+                        if (digitCounts[mImage.Label] == numDigitClasses)
                         {
                             numOfLoadedDigitClasses++;
                         }
