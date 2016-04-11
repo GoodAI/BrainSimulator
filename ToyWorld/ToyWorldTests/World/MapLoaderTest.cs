@@ -3,6 +3,7 @@ using System.Linq;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
+using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
@@ -48,7 +49,7 @@ namespace ToyWorldTests.World
         {
             Assert.NotNull(m_atlas.Avatars.First().Value);
 
-            var avatar = m_atlas.Avatars.First().Value;
+            IAvatar avatar = m_atlas.Avatars.First().Value;
 
             Assert.True(avatar.Id == 1);
             Assert.True(avatar.Name == "Pingu");

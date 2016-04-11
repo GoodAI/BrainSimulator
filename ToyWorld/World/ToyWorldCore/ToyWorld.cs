@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
 using World.GameActors.GameObjects;
@@ -41,9 +42,9 @@ namespace World.ToyWorldCore
 
         private void UpdateAvatars()
         {
-            var avatars = Atlas.GetAvatars();
+            List<IAvatar> avatars = Atlas.GetAvatars();
             m_physics.TransofrmControlsToMotion(avatars);
-            var forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
+            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
             m_physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
@@ -55,14 +56,14 @@ namespace World.ToyWorldCore
             UpdatePhysics();
         }
 
-        public int[] GetAvatarsIds()
+        public List<int> GetAvatarsIds()
         {
-            return Atlas.Avatars.Keys.ToArray();
+            return Atlas.Avatars.Keys.ToList();
         }
 
-        public int[] GetAvatarsNames()
+        public List<string> GetAvatarsNames()
         {
-            return Atlas.Avatars.Keys.ToArray();
+            return Atlas.Avatars.Values.Select(x => x.Name).ToList();
         }
 
         public IAvatar GetAvatar(int id)

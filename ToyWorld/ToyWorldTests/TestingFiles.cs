@@ -8,7 +8,7 @@ namespace ToyWorldTests
         public static Stream GetTmxMemoryStream()
         {
             var ms = new MemoryStream();
-            const string fileSting = 
+            const string fileString = 
                 @"<?xml version=""1.0"" encoding=""UTF-8""?>
                 <map version=""1.0"" orientation=""orthogonal"" renderorder=""right-down"" width=""3"" height=""3"" tilewidth=""16"" tileheight=""16"" nextobjectid=""19"">
                         <tileset firstgid=""1"" source=""roguelikeSheet_summer.tsx""/>
@@ -67,7 +67,7 @@ namespace ToyWorldTests
                         <objectgroup name=""ForegroundObject""/>
                 </map>
                 ";
-            WriteToMemoryStream(ms, fileSting);
+            WriteToMemoryStream(ms, fileString);
             ms.Position = 0;
             return ms;
         }
@@ -75,7 +75,7 @@ namespace ToyWorldTests
         public static Stream GetTilesetTableMemoryStream()
         {
             var ms = new MemoryStream();
-            const string fileSting = 
+            const string fileString = 
                 @"Layer;NameOfTile;PositionInTileset;IsDefault;Note
                 Background;Background;16;1;Grass
                 ;Background;17;0;Tile
@@ -113,7 +113,7 @@ namespace ToyWorldTests
                 ;OpenedIronDoor;335;1;
                 ";
 
-            WriteToMemoryStream(ms, fileSting);
+            WriteToMemoryStream(ms, fileString);
             ms.Position = 0;
             return ms;
         }

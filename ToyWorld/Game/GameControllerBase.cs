@@ -71,7 +71,7 @@ namespace Game
         {
             if (!m_initialized)
             {
-                throw new Exception("World is not initialized. Call Init() first.");
+                Init();
             }
 
             // Controls should be already set

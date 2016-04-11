@@ -25,7 +25,7 @@ namespace World.Physics
 
         public void TransofrmControlsToMotion(List<IAvatar> avatars)
         {
-            foreach (var avatar in avatars)
+            foreach (IAvatar avatar in avatars)
             {
                 m_avatarMover.SetAvatarMotion(avatar);
             }
@@ -33,7 +33,7 @@ namespace World.Physics
 
         public void MoveMovableDirectable(List<IForwardMovablePhysicalEntity> movableEntities)
         {
-            foreach (var movableEntity in movableEntities)
+            foreach (IForwardMovablePhysicalEntity movableEntity in movableEntities)
             {
                 m_movementPhysics.Move(movableEntity);
             }
