@@ -11,6 +11,7 @@ using Render.Renderer;
 using Render.RenderRequests;
 using Render.RenderRequests.RenderRequests;
 using Render.Tests.RRs;
+using ToyWorldTests.Attributes;
 using ToyWorldTests.Game;
 using Xunit;
 
@@ -36,8 +37,7 @@ namespace ToyWorldTests.Render
         }
 
 
-        [Fact(Skip = "Long-running; manual input needed for ending.")]
-        //[Fact]
+        [RunnableInDebugOnly]
         public void ShowRRLongRunning()
         {
             Key winKeypressResult = default(Key);

@@ -90,6 +90,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Attributes\FactRunnableInDebugOnlyAttribute.cs" />
     <Compile Include="BrainSimIntegrationTests.cs" />
     <Compile Include="Game\AvatarControllerTests.cs" />
     <Compile Include="Game\GameControllerTests.cs" />
