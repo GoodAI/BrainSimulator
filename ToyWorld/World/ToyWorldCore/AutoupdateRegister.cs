@@ -12,7 +12,7 @@ namespace World.ToyWorldCore
 
         public AutoupdateRegister(int registerSize = 100)
         {
-            Contract.Requires(registerSize > 0, "Register size must be larger than zero.");
+            Contract.Requires<ArgumentOutOfRangeException>(registerSize > 0, "Register size must be larger than zero.");
             m_register = new CircularList<List<GameActor>>(registerSize);
         }
 
@@ -23,9 +23,14 @@ namespace World.ToyWorldCore
             m_register[timePeriod].Add(actor);
         }
 
-        //public List<Tile> NextUpdateRequests()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public List<GameActor> CurrentUpdateRequests()
+        {
+            return m_register[0];
+        }
+
+        public void Tick()
+        {
+            m_register.MoveNext();
+        }
     }
 }

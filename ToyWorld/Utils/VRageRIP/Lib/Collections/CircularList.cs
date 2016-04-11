@@ -11,8 +11,8 @@ namespace VRage.Collections
     /// <typeparam name="T"></typeparam>
     public class CircularList<T> : IEnumerator<T>, IEnumerable<T> where T : new()
     {
-        private T[] m_circle;
-        private int m_cursor;
+        protected T[] m_circle;
+        protected int m_cursor;
 
         object IEnumerator.Current { get { return Current; } }
 
@@ -24,6 +24,8 @@ namespace VRage.Collections
                 return m_circle[m_cursor];
             }
         }
+
+        public int Size { get { return m_circle.Length; } }
 
         public CircularList(int size)
         {
@@ -42,6 +44,11 @@ namespace VRage.Collections
             {
                 int accessIndex = (m_cursor + index) % m_circle.Length;
                 return m_circle[accessIndex];
+            }
+            set
+            {
+                int accessIndex = (m_cursor + index) % m_circle.Length;
+                m_circle[accessIndex] = value;
             }
         }
 
