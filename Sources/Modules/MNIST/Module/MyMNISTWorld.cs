@@ -97,7 +97,7 @@ namespace MNIST
         public MNISTLastImageMethod AfterLastImage { get; set; }
 
         [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 60000)]
+        [YAXSerializableField(DefaultValue = 7000)]
         public int TrainingExamplesPerDigit
         {
             get
@@ -111,7 +111,7 @@ namespace MNIST
         }
 
         [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 10000)]
+        [YAXSerializableField(DefaultValue = 2000)]
         public int TestExamplesPerDigit
         {
             get

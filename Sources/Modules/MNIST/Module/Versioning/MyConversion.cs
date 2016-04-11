@@ -1,4 +1,6 @@
 ﻿using GoodAI.Core.Configuration;
+using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace MNIST.Versioning
 {
@@ -18,7 +20,19 @@ namespace MNIST.Versioning
         {
             xml = xml.Replace("MNIST.MySendMNISTTask", "MNIST.MySendTrainingMNISTTask");
             xml = xml.Replace("SendMNISTData", "SendTrainingMNISTData");
-            return xml;
+            xml = xml.Replace("ImagesCnt", "TrainingExamplesPerDigit");
+
+            XDocument document = XDocument.Parse(xml);
+            if (document.Root == null)
+                return xml;
+
+            foreach (XElement element in document.Root.Descendants("TrainingExamplesPerDigit"))
+            {
+                int oldValue = int.Parse(element.Value) / 10;
+                element.SetValue(oldValue.ToString());
+            }
+
+            return document.ToString();
         }
     }
 }
