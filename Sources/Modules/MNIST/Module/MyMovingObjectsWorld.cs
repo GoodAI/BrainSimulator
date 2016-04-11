@@ -154,7 +154,7 @@ namespace BrainSimulator.Retina
                             newObject.velocity *= velocitySize;
                         }
 
-                        MyMNISTImage image = Owner.m_MNISTManager.GetNextImage(m_validNumbers);
+                        MyMNISTImage image = Owner.m_MNISTManager.GetNextImage(m_validNumbers, MNIST.MNISTSetType.Training);
                         Array.Copy(image.Data1D, 0, Owner.Bitmaps.Host, i * IMG_WIDTH * IMG_WIDTH, IMG_WIDTH * IMG_WIDTH);
                         copyBitmaps = true;
                         CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);

@@ -6,6 +6,7 @@ using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Collections.Generic;
 using YAXLib;
 
 namespace MNIST
@@ -13,8 +14,8 @@ namespace MNIST
     /// <author>GoodAI</author>
     /// <meta>mv</meta>
     /// <status>Working</status>
-    /// <summary>Provides MNIST dataset images</summary>
-    /// <description></description>
+    /// <summary>Provides MNIST dataset images.</summary>
+    /// <description>There is 60000 (roughly 6000 for each class) and training and 10000 testing images.</description>
     public class MyMNISTWorld : MyWorld
     {
         [MyOutputBlock(0)]
@@ -43,12 +44,12 @@ namespace MNIST
 
         public MyEOFSignal EOFSignal { get; private set; }
         public MyInitMNISTTask InitMNIST { get; private set; }
-        public MySendMNISTTask SendMNISTData { get; private set; }
 
-        public int ImagesCnt
-        {
-            get { return InitMNIST.ImagesCnt; }
-        }
+        // mutually exclusive tasks
+        [MyTaskGroup("SendData")]
+        public MySendTrainingMNISTTask SendTrainingMNISTData { get; protected set; }
+        [MyTaskGroup("SendData")]
+        public MySendTestMNISTTask SendTestMNISTData { get; protected set; }
 
         public override void UpdateMemoryBlocks()
         {
@@ -72,6 +73,17 @@ namespace MNIST
             Bitmap.MinValueHint = 0;
             Bitmap.MaxValueHint = 1;
         }
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+
+            if ((InitMNIST.TrainingExamplesPerDigit < 1) || (InitMNIST.TrainingExamplesPerDigit > 7000) ||
+                (InitMNIST.TestExamplesPerDigit < 1) || (InitMNIST.TestExamplesPerDigit > 7000))
+            {
+                validator.AddError(this, "The value of ExamplesPerDigit properties of the Init task have to be in the interval <1, 7000>");
+            }
+        }
     }
 
     /// <summary>
@@ -84,52 +96,63 @@ namespace MNIST
         [YAXSerializableField(DefaultValue = MNISTLastImageMethod.ResetToStart)]
         public MNISTLastImageMethod AfterLastImage { get; set; }
 
-        private int m_imgsCnt = 2000;
         [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 2000)]
-        public int ImagesCnt
+        [YAXSerializableField(DefaultValue = 7000),
+        DisplayName("Train Examples per Digit"),
+        Description("Continue loading images from the dataset until there is required number of training samples for each digit.")]
+        public int TrainingExamplesPerDigit
         {
             get
             {
-                return m_imgsCnt;
+                return m_trainingExamplesPerDigit;
             }
             set
             {
-                m_imgsCnt = value;
-                if (Owner != null && Owner.MNISTManager != null)
-                {
-                    Owner.MNISTManager.m_imagesDemand = value;
-                }
+                m_trainingExamplesPerDigit = value;
+            }
+        }
+
+        [MyBrowsable, Category("Params"), DisplayName("Test Examples per Digit"),
+        Description("Continue loading images from the dataset until there is required number of testing samples for each digit.")]
+        [YAXSerializableField(DefaultValue = 2000)]
+        public int TestExamplesPerDigit
+        {
+            get
+            {
+                return m_testExamplesPerDigit;
+            }
+            set
+            {
+                m_testExamplesPerDigit = value;
             }
         }
 
         public override void Init(int nGPU)
         {
-            Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\", ImagesCnt, false, AfterLastImage);
+            Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\",
+                TrainingExamplesPerDigit, TestExamplesPerDigit, false, AfterLastImage);
         }
 
         public override void Execute()
         {
         }
+
+        private int m_trainingExamplesPerDigit;
+        private int m_testExamplesPerDigit;
     }
 
-    /// <summary>
-    /// Sends MNIST image patch to the world output.
-    /// <ul>
-    /// <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output</li>
-    /// <li><b>Send Numbers</b> - All or enumeration of numbers requested on the output</li>
-    /// <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file</li>
-    /// <li><b>Sequence Ordered</b> - Sends pathes in order defined in <b>Send Numbers</b> property</li>
-    /// </ul>
-    /// </summary>
-    [Description("Send MNIST Data"), MyTaskInfo(OneShot = false)]
+    // Parent class ment to be derived from MySendTrainingMNISTTask and MySendTestMNISTTask (below)
+    // Its done in this manner so each set (training/test) can be set-up independently and its easilly switchable in the GUI
     public class MySendMNISTTask : MyTask<MyMNISTWorld>
     {
-        private int[] m_numsToSend;
+        protected MNIST.MNISTSetType m_setType;
+
+        public int[] m_numsToSend { get; protected set; }
         private string m_send;
 
         [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 50)]
+        [YAXSerializableField(DefaultValue = 50),
+         Description("How many time steps is each sample shown.")]
         public int ExpositionTime { get; set; }
 
         [MyBrowsable, Category("Params")]
@@ -137,7 +160,8 @@ namespace MNIST
         public int ExpositionTimeOffset { get; set; }
 
         [MyBrowsable, Category("Params"), DisplayName("Send numbers")]
-        [YAXSerializableField(DefaultValue = "All")]
+        [YAXSerializableField(DefaultValue = "All"),
+         Description("Choose data to be sent by labels, use 'All' or e.g. '1,3,5'")]
         public string SendNumbers
         {
             get { return m_send; }
@@ -159,12 +183,14 @@ namespace MNIST
             }
         }
 
-        [MyBrowsable, Category("Params"), DisplayName("Sequence ordered")]
+        [MyBrowsable, Category("Params"), DisplayName("Sequence ordered"),
+        Description("Send data ordered according to their labels (that is: 0,1,2,3,4..)?")]
         [YAXSerializableField(DefaultValue = false)]
         public bool SequenceOrdered { get; set; }
 
 
-        [MyBrowsable, Category("Params"), DisplayName("Random order")]
+        [MyBrowsable, Category("Params"), DisplayName("Random order"),
+        Description("Read data from the dataset in random order? Can be combined with Sequence Ordered parameter.")]
         [YAXSerializableField(DefaultValue = false)]
         public bool RandomEnumerate { get; set; }
 
@@ -182,7 +208,7 @@ namespace MNIST
             //if ((SimulationStep <= ExpositionTime * Owner.ImagesCnt) && (SimulationStep % ExpositionTime == 0))
             if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
             {
-                MyMNISTImage im = Owner.MNISTManager.GetNextImage(m_numsToSend);
+                MyMNISTImage im = Owner.MNISTManager.GetNextImage(m_numsToSend, m_setType);
 
                 if (Owner.BinaryPixels)
                     im.ToBinary();
@@ -204,4 +230,43 @@ namespace MNIST
             }
         }
     }
+
+    /// <summary>
+    /// Sends MNIST TRAINING image patch to the world output.
+    /// <ul>
+    /// <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output.</li>
+    /// <li><b>Send Numbers</b> - Sends numbers from all classes ('All') or only from classes enumerated in the field (e.g. '1,2,3').</li>
+    /// <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file.</li>
+    /// <li><b>Sequence Ordered</b> - Order the images by their class labels (i.e. sends sequence of images with labels '0,1,2,3,4...')?</li>
+    /// </ul>
+    /// </summary>
+    [Description("Send Training Data"), MyTaskInfo(OneShot = false)]
+    public class MySendTrainingMNISTTask : MySendMNISTTask
+    {
+        public MySendTrainingMNISTTask()
+            : base()
+        {
+            m_setType = MNIST.MNISTSetType.Training;
+        }
+    }
+
+    /// <summary>
+    /// Sends MNIST TESTING image patch to the world output.
+    /// <ul>
+    /// <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output.</li>
+    /// <li><b>Send Numbers</b> - Sends numbers from all classes ('All') or only from classes enumerated in the field (e.g. '1,2,3').</li>
+    /// <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file.</li>
+    /// <li><b>Sequence Ordered</b> - Order the images by their class labels (i.e. sends sequence of images with labels '0,1,2,3,4...')?</li>
+    /// </ul>
+    /// </summary>
+    [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
+    public class MySendTestMNISTTask : MySendMNISTTask
+    {
+        public MySendTestMNISTTask()
+            : base()
+        {
+            m_setType = MNIST.MNISTSetType.Test;
+        }
+    }
+
 }

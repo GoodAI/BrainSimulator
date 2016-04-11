@@ -1,5 +1,6 @@
 ﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using GoodAI.Core.Configuration;
 using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace GoodAI.Modules.Scripting
 {
@@ -65,6 +67,13 @@ namespace GoodAI.Modules.Scripting
 
             parameters.ReferencedAssemblies.Add("GoodAI.Platform.Core.dll");
             parameters.ReferencedAssemblies.Add("System.Core.dll"); //for LINQ support
+
+            // add all loaded dll modules to be accessible also from the C# node script
+            foreach (FileInfo assemblyFile in MyConfiguration.ListModules())
+            {
+                parameters.ReferencedAssemblies.Add(assemblyFile.FullName);
+            }
+
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
