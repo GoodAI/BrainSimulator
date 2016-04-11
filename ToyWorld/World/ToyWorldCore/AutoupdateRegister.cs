@@ -91,7 +91,7 @@ namespace World.ToyWorldCore
         {
             Contract.Requires<ArgumentNullException>(actor != null, "You cannot register null object for updating.");
             Contract.Requires<ArgumentOutOfRangeException>(timePeriod > 0, "Update period has to be larger than zero.");
-
+            m_register[timePeriod].Add(actor);
         }
 
         //public List<Tile> NextUpdateRequests()
