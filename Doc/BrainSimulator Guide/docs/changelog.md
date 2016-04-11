@@ -27,6 +27,11 @@
 * MNIST World improvements - separate tasks for training and testing data, more improvements
 * Improved reduction API
 
+#### Known Bugs
+
+* The CUDA-based Matrix Observer sometimes crashes, please try to replace it with the new CPU-based Matrix Observer (look for an icon with a green dot) 
+
+
 
 ### Brain Simulator 0.4.0
 *Early access release* (2015-12-16)
@@ -72,6 +77,8 @@
 
 * Save As and Import does not support moving/loading the state data (e.g. when working with a "brainz" project file)
 * Most transformation nodes have incomplete validation that allows zero input; it will cause a crash in kernels during the simulation
+
+
 
 ### Brain Simulator 0.3.0
 *Early access release* (2015-10-29)
