@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using OpenTK.Graphics.OpenGL;
+using VRageMath;
 
 namespace Render.RenderObjects.Effects
 {
@@ -35,7 +36,7 @@ namespace Render.RenderObjects.Effects
         private int LoadShader(string name, ShaderType type)
         {
             var handle = GL.CreateShader(type);
-            
+
             Stream vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
             Debug.Assert(vertSrc != null);
 
@@ -63,9 +64,19 @@ namespace Render.RenderObjects.Effects
             GL.UseProgram(m_prog);
         }
 
-        public void SetUniform(int pos, int val)
+        public void SetUniform1(int pos, int val)
         {
             GL.Uniform1(pos, val);
+        }
+
+        public void SetUniform2(int pos, Vector2 val)
+        {
+            GL.Uniform2(pos, val.X, val.Y);
+        }
+
+        public void SetUniform4(int pos, Vector4I val)
+        {
+            GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }
 
         public int GetUniformLocation(string name)

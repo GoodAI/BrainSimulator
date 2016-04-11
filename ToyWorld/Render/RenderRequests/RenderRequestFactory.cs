@@ -36,8 +36,6 @@ namespace Render.RenderRequests
 
             // AvatarRenderRequests
             avatarRRSwitch
-                .Case<IBasicAvatarRR>(id =>
-                    new BasicAvatarRR(id))
                 .Case<IFovAvatarRR>(id =>
                     new FovAvatarRR(id));
         }

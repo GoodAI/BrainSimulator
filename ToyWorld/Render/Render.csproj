@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
-    <Compile Include="RenderObjects\Buffers\StaticVBOFactory.cs" />
+    <Compile Include="RenderObjects\Buffers\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
@@ -60,7 +60,6 @@
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRRBase.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadTex.cs" />
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />
-    <Compile Include="Tests\RRs\BasicAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
     <Compile Include="RenderObjects\Buffers\Vao.cs" />
     <Compile Include="RenderObjects\Buffers\Vbo.cs" />

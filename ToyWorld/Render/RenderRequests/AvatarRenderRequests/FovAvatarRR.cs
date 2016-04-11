@@ -11,6 +11,10 @@ namespace Render.RenderRequests.AvatarRenderRequests
 {
     internal class FovAvatarRR : AvatarRRBase, IFovAvatarRR
     {
+        private NoEffect m_effect;
+        private FancyFullscreenQuad m_quad;
+
+
         internal FovAvatarRR(int avatarID)
             : base(avatarID)
         { }
@@ -32,21 +36,23 @@ namespace Render.RenderRequests.AvatarRenderRequests
 
         public override void Init(RendererBase renderer)
         {
-            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
+            GL.ClearColor(Color.Black);
 
             // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
             Image = new uint[renderer.Width * renderer.Height];
 
-            GL.ClearColor(Color.Black);
+            m_effect = renderer.EffectManager.Get<NoEffect>();
+            m_quad = renderer.GeometryManager.Get<FancyFullscreenQuad>();
+
+            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
         }
 
         public override void Draw(RendererBase renderer)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            var effect = renderer.EffectManager.Get<NoEffect>();
-            renderer.EffectManager.Use(effect);
-            renderer.GeometryManager.Get<FancyFullscreenQuad>().Draw();
+            renderer.EffectManager.Use(m_effect);
+            m_quad.Draw();
 
             GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
         }

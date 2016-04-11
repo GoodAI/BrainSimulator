@@ -45,15 +45,15 @@ namespace Render.RenderObjects.Buffers
         private static Lazy<VboBase> _fullscreenQuadVertices;
         private static VboBase GenerateSquareVertices()
         {
-            float[] squareVertices =
+            Vector2[] squareVertices =
             {
-                -1,-1,
-                 1,-1,
-                 1, 1,
-                -1, 1,
+               new Vector2(-1,-1),
+               new Vector2( 1,-1),
+               new Vector2( 1, 1),
+               new Vector2(-1, 1),
             };
 
-            return new StaticVbo<float>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
+            return new StaticVbo<Vector2>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
         private static Lazy<VboBase> _quadColors;
@@ -97,12 +97,14 @@ namespace Render.RenderObjects.Buffers
 
             for (int j = 0; j < gridSize.Y; j++)
             {
+                botLeft.X = 0;
+
                 for (int i = 0; i < gridSize.X; i++)
                 {
                     vertices[idx++] = botLeft * gridSizeInv;
                     vertices[idx++] = (botLeft + xStep) * gridSizeInv;
-                    vertices[idx++] = (botLeft + yStep) * gridSizeInv;
                     vertices[idx++] = (botLeft + xyStep) * gridSizeInv;
+                    vertices[idx++] = (botLeft + yStep) * gridSizeInv;
 
                     botLeft += xStep;
                 }
@@ -110,7 +112,7 @@ namespace Render.RenderObjects.Buffers
                 botLeft += yStep;
             }
 
-            return new StaticVbo<Vector2>(vertices.Length * 2, vertices, 2, hint: BufferUsageHint.StaticDraw);
+            return new StaticVbo<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
         #endregion

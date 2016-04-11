@@ -6,6 +6,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Render.RenderObjects.Textures;
+using VRageMath;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace Render.Tests.Textures
 {
@@ -20,6 +22,7 @@ namespace Render.Tests.Textures
         {
             Debug.Assert(texPath != null && texPath.Length > 0 && !texPath.Contains(null));
 
+
             foreach (var stream in texPath)
             {
                 var bmp = new Bitmap(stream);
@@ -32,9 +35,12 @@ namespace Render.Tests.Textures
                     ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
                 m_textures.Add(new TextureBase(data.Scan0, bmp.Width, bmp.Height));
-                
+
                 bmp.UnlockBits(data);
             }
+
+            Size = m_textures[0].Size;
+            Debug.Assert(m_textures.TrueForAll(a => a.Size == Size), "Tilesets have to be of the same dimensionality.");
         }
 
 

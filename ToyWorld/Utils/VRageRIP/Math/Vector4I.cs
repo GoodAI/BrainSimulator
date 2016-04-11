@@ -16,6 +16,10 @@ namespace VRageMath
         [ProtoBuf.ProtoMember]
         public int W;
 
+        public Vector4I(int val)
+            : this(val, val, val, val)
+        { }
+
         public Vector4I(int x, int y, int z, int w)
         {
             X = x;

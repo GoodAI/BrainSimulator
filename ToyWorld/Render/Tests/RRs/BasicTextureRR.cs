@@ -66,7 +66,7 @@ namespace Render.Tests.RRs
 
             var effect = renderer.EffectManager.Get<NoEffectTex>();
             renderer.EffectManager.Use(effect);
-            effect.SetUniform(effect.GetUniformLocation("tex"), 0);
+            effect.SetUniform1(effect.GetUniformLocation("tex"), 0);
 
             var tex = renderer.TextureManager.Get<TilesetTexture>();
             renderer.TextureManager.Bind(tex);
