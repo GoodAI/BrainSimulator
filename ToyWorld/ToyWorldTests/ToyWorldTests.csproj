@@ -109,6 +109,7 @@
     <Compile Include="World\SimpleTileLayerTest.cs" />
     <Compile Include="TestingFiles.cs" />
     <Compile Include="World\TilesetTableTest.cs" />
+    <Compile Include="World\ToyWorldTests.cs" />
     <Compile Include="World\WallsTests.cs" />
   </ItemGroup>
   <ItemGroup>
