@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 namespace VRage.Collections
@@ -14,6 +15,7 @@ namespace VRage.Collections
         protected T[] m_circle;
         protected int m_cursor;
 
+        [ExcludeFromCodeCoverage]
         object IEnumerator.Current { get { return Current; } }
 
         public T Current
@@ -52,7 +54,7 @@ namespace VRage.Collections
             }
         }
 
-        public void RangeOK(int index)
+        private void RangeOK(int index)
         {
             if (index < 0)
                 throw new ArgumentOutOfRangeException("Trying to access the element before the list start.");
@@ -68,7 +70,7 @@ namespace VRage.Collections
 
         public bool MoveNext()
         {
-            if (++m_cursor > m_circle.Length)
+            if (++m_cursor >= m_circle.Length)
                 m_cursor = 0;
             return true;
         }
@@ -78,6 +80,7 @@ namespace VRage.Collections
             return this;
         }
 
+        [ExcludeFromCodeCoverage]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;

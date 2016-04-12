@@ -38,31 +38,9 @@ namespace ToyWorldTests.Utils
         }
 
         [Fact]
-        public void TestMovingAfterEnd()
+        public void TestCurrentSameAsZeroth()
         {
-            for (int i = 0; i < m_list.Size - 1; ++i)
-                m_list.MoveNext();
-
-            Assert.Equal(9, m_list[0]);
-            m_list.MoveNext();
-            Assert.Equal(0, m_list[0]);
-        }
-
-        [Fact]
-        public void TestReset()
-        {
-            m_list.MoveNext();
-            Assert.Equal(1, m_list[0]);
-            m_list.Reset();
-            m_list.MoveNext();
-            Assert.Equal(0, m_list[0]);
-        }
-
-        [Fact]
-        public void TestCurrentAfterReset()
-        {
-            m_list.Reset();
-            Assert.Throws<ArgumentOutOfRangeException>(() => m_list.Current);
+            Assert.Equal(m_list.Current, m_list[0]);
         }
 
         [Fact]
@@ -74,9 +52,31 @@ namespace ToyWorldTests.Utils
         }
 
         [Fact]
-        public void TestCurrentSameAsZeroth()
+        public void TestCurrentAfterReset()
         {
-            Assert.Equal(m_list.Current, m_list[0]);
+            m_list.Reset();
+            Assert.Throws<ArgumentOutOfRangeException>(() => m_list.Current);
+        }
+
+        [Fact]
+        public void TestMovingAfterEnd()
+        {
+            for (int i = 0; i < m_list.Size - 1; ++i)
+                m_list.MoveNext();
+
+            Assert.Equal(9, m_list.Current);
+            m_list.MoveNext();
+            Assert.Equal(0, m_list.Current);
+        }
+
+        [Fact]
+        public void TestReset()
+        {
+            m_list.MoveNext();
+            Assert.Equal(1, m_list.Current);
+            m_list.Reset();
+            m_list.MoveNext();
+            Assert.Equal(0, m_list.Current);
         }
 
         [Fact]
