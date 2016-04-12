@@ -40,6 +40,10 @@ namespace MNIST
         [YAXSerializableField(DefaultValue = false)]
         public bool BinaryPixels { get; set; }
 
+        [MyBrowsable, Category("Random"), Description("Random seed for the whole world. 0 = no seed, each run will use different random values.")]
+        [YAXSerializableField(DefaultValue = 0)]
+        public int RandomSeed { get; set; }
+
         public MyMNISTManager MNISTManager;
 
         public MyEOFSignal EOFSignal { get; private set; }
@@ -130,7 +134,7 @@ namespace MNIST
         public override void Init(int nGPU)
         {
             Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\",
-                TrainingExamplesPerDigit, TestExamplesPerDigit, false, AfterLastImage);
+                TrainingExamplesPerDigit, TestExamplesPerDigit, false, AfterLastImage, Owner.RandomSeed);
         }
 
         public override void Execute()

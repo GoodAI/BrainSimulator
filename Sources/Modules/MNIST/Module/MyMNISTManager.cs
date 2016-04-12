@@ -44,7 +44,7 @@ namespace MNIST
         public bool m_definedOrder;
 
         public bool RandomEnumerate = false;
-        private Random rand = new Random();
+        private Random rand;
 
         /// <summary>
         /// Converts between little-endian and big-endian
@@ -66,8 +66,17 @@ namespace MNIST
         /// <param name="exact">If TRUE, you will get exactly imagesCnt images. If FALSE, you will get AT MOST imagesCnt images. It's here for performance reason and BC</param>
         /// <param name="afterLastImage">What to do, after the last values has been sent</param>
         public MyMNISTManager(string baseFolder, int trainingExamplesPerDigitCnt = int.MaxValue, int testExamplesPerDigitCnt = int.MaxValue,
-            bool exact = false, MNISTLastImageMethod afterLastImage = MNISTLastImageMethod.ResetToStart)
+            bool exact = false, MNISTLastImageMethod afterLastImage = MNISTLastImageMethod.ResetToStart, int randomSeed = 0)
         {
+            if (randomSeed == 0)
+            {
+                rand = new Random();
+            }
+            else
+            {
+                rand = new Random(randomSeed);
+            }
+
             m_baseFolder = baseFolder;
             m_trainingImages = new ArrayList();
             m_testImages = new ArrayList();
