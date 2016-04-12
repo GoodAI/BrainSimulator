@@ -263,7 +263,7 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Position">
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.PositionCenter">
             <summary>
             
             </summary>

@@ -18,8 +18,8 @@ namespace Render.RenderObjects.Textures
         { }
 
         public TextureBase(
-            IntPtr data, int width, int height,
-            PixelFormat dataFormat = PixelFormat.Rgba,
+            int[] data, int width, int height,
+            PixelFormat dataFormat = PixelFormat.Bgra,
             TextureMinFilter minFilter = TextureMinFilter.Linear,
             TextureMagFilter magFilter = TextureMagFilter.Linear,
             TextureWrapMode wrapMode = TextureWrapMode.MirroredRepeat,

@@ -1,4 +1,5 @@
-﻿using GoodAI.ToyWorld.Control;
+﻿using System.Drawing;
+using GoodAI.ToyWorld.Control;
 
 namespace Render.RenderRequests.RenderRequests
 {
@@ -6,9 +7,9 @@ namespace Render.RenderRequests.RenderRequests
     {
         #region IRenderRequest overrides
 
-        public virtual float Size { get; set; }
-        public virtual float Position { get; set; }
-        public virtual float Resolution { get; set; }
+        public virtual Size Size { get; protected set; }
+        public virtual PointF PositionCenter { get; protected set; }
+        public virtual Size Resolution { get; set; }
 
         #endregion
     }

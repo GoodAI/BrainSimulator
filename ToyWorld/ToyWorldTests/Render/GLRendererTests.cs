@@ -40,10 +40,20 @@ namespace ToyWorldTests.Render
         [RunnableInDebugOnly]
         public void ShowRRLongRunning()
         {
-            Key winKeypressResult = default(Key);
-            m_renderer.Window.KeyDown += (sender, args) => winKeypressResult = args.Key;
-            m_renderer.Window.Visible = true;
+            CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
 
+            m_renderer.Window.KeyDown += (sender, args) =>
+            {
+                if (args.Key == Key.A)
+                    tokenSource.Cancel();
+            };
+            m_renderer.Window.MouseDown += (sender, args) =>
+            {
+                if (args.Button == MouseButton.Right)
+                    tokenSource.Cancel();
+            };
+
+            m_renderer.Window.Visible = true;
             m_renderer.MakeContextCurrent();
 
             var rr = RenderRequestFactory.CreateRenderRequest<IFullMapRR>();
@@ -51,14 +61,22 @@ namespace ToyWorldTests.Render
             (rr as RenderRequest).Init(m_renderer);
             m_renderer.EnqueueRequest(rr);
 
-            while (winKeypressResult == default(Key) && m_renderer.Window.Exists)
+            while (m_renderer.Window.Exists && !tokenSource.IsCancellationRequested)
             {
-                Thread.Sleep(1000);
+                try
+                {
+                    Task.Delay(1000, tokenSource.Token).Wait(tokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+
                 m_renderer.Context.SwapBuffers();
                 m_renderer.ProcessRequests();
             }
 
-            Assert.Equal(winKeypressResult, Key.A);
+            Assert.True(tokenSource.IsCancellationRequested);
         }
 
 

@@ -47,10 +47,10 @@ namespace Render.RenderObjects.Buffers
         {
             Vector2[] squareVertices =
             {
-               new Vector2(-1,-1),
-               new Vector2( 1,-1),
-               new Vector2( 1, 1),
                new Vector2(-1, 1),
+               new Vector2( 1, 1),
+               new Vector2( 1,-1),
+               new Vector2(-1,-1),
             };
 
             return new StaticVbo<Vector2>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
@@ -86,30 +86,31 @@ namespace Render.RenderObjects.Buffers
 
             Vector2[] vertices = new Vector2[gridSize.Size() * 4];
 
-            Vector2I xStep = new Vector2I(1, 0);
-            Vector2I yStep = new Vector2I(0, 1);
+            Vector2I xStep = new Vector2I(2, 0);
+            Vector2I yStep = new Vector2I(0, -2);
             Vector2I xyStep = xStep + yStep;
             Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
 
-            Vector2 botLeft = new Vector2();
+            // Generate tiles from top-left corner row-wise, centered on origin
+            Vector2 topLeft = new Vector2(-gridSize.X, gridSize.Y);
 
             int idx = 0;
 
             for (int j = 0; j < gridSize.Y; j++)
             {
-                botLeft.X = 0;
-
                 for (int i = 0; i < gridSize.X; i++)
                 {
-                    vertices[idx++] = botLeft * gridSizeInv;
-                    vertices[idx++] = (botLeft + xStep) * gridSizeInv;
-                    vertices[idx++] = (botLeft + xyStep) * gridSizeInv;
-                    vertices[idx++] = (botLeft + yStep) * gridSizeInv;
+                    // Start top-left, continue clock-wise
+                    vertices[idx++] = topLeft * gridSizeInv;
+                    vertices[idx++] = (topLeft + xStep) * gridSizeInv;
+                    vertices[idx++] = (topLeft + xyStep) * gridSizeInv;
+                    vertices[idx++] = (topLeft + yStep) * gridSizeInv;
 
-                    botLeft += xStep;
+                    topLeft += xStep;
                 }
 
-                botLeft += yStep;
+                topLeft += yStep;
+                topLeft.X = -gridSize.X;
             }
 
             return new StaticVbo<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);

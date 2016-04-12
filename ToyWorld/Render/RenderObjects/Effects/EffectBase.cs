@@ -74,6 +74,11 @@ namespace Render.RenderObjects.Effects
             GL.Uniform2(pos, val.X, val.Y);
         }
 
+        public void SetUniform3(int pos, Vector3I val)
+        {
+            GL.Uniform3(pos, val.X, val.Y, val.Z);
+        }
+
         public void SetUniform4(int pos, Vector4I val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
