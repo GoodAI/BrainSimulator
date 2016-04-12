@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
@@ -29,7 +30,7 @@ namespace World.ToyWorldCore
 
         public object GetLayer(LayerType layerType)
         {
-            if (layerType == LayerType.Object 
+            if (layerType == LayerType.Object
                 || layerType == LayerType.ForegroundObject)
             {
                 return ObjectLayers.First(x => x.LayerType == layerType);
@@ -53,6 +54,17 @@ namespace World.ToyWorldCore
         public List<IAvatar> GetAvatars()
         {
             return Avatars.Values.ToList();
+        }
+
+        public IEnumerable<GameActor> GetAllObjects()
+        {
+            foreach (ITileLayer tileLayer in TileLayers)
+                foreach (Tile tile in tileLayer.GetAllObjects())
+                    yield return tile;
+
+            foreach (IObjectLayer objectLayer in ObjectLayers)
+                foreach (GameObject item in objectLayer.GetAllObjects())
+                    yield return item;
         }
     }
 }
