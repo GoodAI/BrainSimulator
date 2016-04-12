@@ -1,8 +1,13 @@
-﻿using VRageMath;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using VRageMath;
 using World.GameActors.Tiles;
+using World.ToyWorldCore;
 
 namespace World.ToyWorldCore
 {
+    [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
         Tile GetTile(int x, int y);
@@ -24,5 +29,32 @@ namespace World.ToyWorldCore
         /// <param name="tileTypes"></param>
         /// <param name="pos"></param>
         void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes);
+    }
+
+
+    [ContractClassFor(typeof(ITileLayer))]
+    internal abstract class TileLayerContracts : ITileLayer
+    {
+        public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>((x2 - x1 + 1) > 0, "X values doesn't form a valid rectangle");
+            Contract.Requires<ArgumentOutOfRangeException>((y2 - y1 + 1) > 0, "Y values doesn't form a valid rectangle");
+
+            return default(Tile[,]);
+        }
+
+        public void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes) { }
+
+        public LayerType LayerType { get; set; }
+
+        public Tile GetTile(int x, int y)
+        {
+            return default(Tile);
+        }
+
+        public List<Tile> GetAllObjects()
+        {
+            return default(List<Tile>);
+        }
     }
 }

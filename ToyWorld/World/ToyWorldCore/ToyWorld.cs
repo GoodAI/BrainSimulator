@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
@@ -26,6 +28,7 @@ namespace World.ToyWorldCore
 
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
+            Contract.Requires<ArgumentNullException>(tileTable != null, "Tile table cannot be null");
             Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
 
             AutoupdateRegister = new AutoupdateRegister();
@@ -100,6 +103,13 @@ namespace World.ToyWorldCore
 
         private void UpdateTiles()
         {
+        }
+
+        [ContractInvariantMethod]
+        private void Invariants()
+        {
+            Contract.Invariant(Atlas != null, "Atlas cannot be null");
+            Contract.Invariant(AutoupdateRegister != null, "Autoupdate register cannot be null");
         }
     }
 }

@@ -10,9 +10,10 @@ namespace VRage.Collections
     /// Implements circular list. All indexing is done with respect to the current cursor position - i.e. the cursor is invisible to clients.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [ContractVerification(true)]
     public class CircularList<T> : IEnumerator<T>, IEnumerable<T> where T : new()
     {
-        protected T[] m_circle;
+        protected readonly T[] m_circle;
         protected int m_cursor;
 
         [ExcludeFromCodeCoverage]
@@ -23,6 +24,7 @@ namespace VRage.Collections
             get
             {
                 RangeOK(m_cursor);
+                Contract.Assume(m_cursor >= 0);
                 return m_circle[m_cursor];
             }
         }
@@ -44,11 +46,14 @@ namespace VRage.Collections
         {
             get
             {
+                Contract.Ensures(Contract.Result<T>() != null);
+                Contract.Assume((m_cursor + index) % m_circle.Length >= 0);
                 int accessIndex = (m_cursor + index) % m_circle.Length;
                 return m_circle[accessIndex];
             }
             set
             {
+                Contract.Assume((m_cursor + index) % m_circle.Length >= 0);
                 int accessIndex = (m_cursor + index) % m_circle.Length;
                 m_circle[accessIndex] = value;
             }
@@ -87,5 +92,13 @@ namespace VRage.Collections
         }
 
         public void Dispose() { }
+
+        [ContractInvariantMethod]
+        private void Invariants()
+        {
+            Contract.Invariant(m_circle != null);
+            Contract.Invariant(m_circle.Length > 0);
+            Contract.Invariant(m_cursor < m_circle.Length);
+        }
     }
 }

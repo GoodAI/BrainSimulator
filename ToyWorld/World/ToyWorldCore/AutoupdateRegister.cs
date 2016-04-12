@@ -8,11 +8,18 @@ namespace World.ToyWorldCore
 {
     public class AutoupdateRegister
     {
-        private CircularList<List<IAutoupdateable>> m_register;
+        private readonly CircularList<List<IAutoupdateable>> m_register;
 
         public int Size { get { return m_register.Size; } }
 
-        public List<IAutoupdateable> CurrentUpdateRequests { get { return m_register[0]; } }
+        public List<IAutoupdateable> CurrentUpdateRequests
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<List<IAutoupdateable>>() != null);
+                return m_register[0];
+            }
+        }
 
         public AutoupdateRegister(int registerSize = 100)
         {
@@ -33,6 +40,12 @@ namespace World.ToyWorldCore
         public void Tick()
         {
             m_register.MoveNext();
+        }
+
+        [ContractInvariantMethod]
+        private void Invariants()
+        {
+            Contract.Invariant(m_register != null, "Register cannot be null");
         }
     }
 }

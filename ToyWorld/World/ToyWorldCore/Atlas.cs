@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using World.GameActors;
 using World.GameActors.GameObjects;
@@ -40,6 +41,7 @@ namespace World.ToyWorldCore
 
         public bool AddAvatar(IAvatar avatar)
         {
+            Contract.Requires<ArgumentNullException>(avatar != null, "Avatar cannot be null");
             try
             {
                 Avatars.Add(avatar.Id, avatar);
@@ -53,6 +55,7 @@ namespace World.ToyWorldCore
 
         public List<IAvatar> GetAvatars()
         {
+            Contract.Ensures(Contract.Result<List<IAvatar>>() != null);
             return Avatars.Values.ToList();
         }
 
