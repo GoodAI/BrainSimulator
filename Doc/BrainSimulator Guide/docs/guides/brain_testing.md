@@ -28,14 +28,14 @@ To sum it up, Brain Unit consists of three components (located in Testing/Infras
 
 1. Create a project in Brain Simulator that you'd like to be run in the test and save it to `Sources\Tests\BrainTests\Brains`
 1. In VS, create a C# library project called `SomethingBrainTests` (such as `BasicBrainTests`, see Testing/BrainTests in the BrainSimulator solution).
- - Make sure this project's binary is copied to the `BrainTestRunner` (the easiest way is adding it as a Reference)
- - ...or just add the test to a suitable existing `SomethingBrainTests` project
- - Note: It is also possible to add a test directly to a BrainSimulator module (such as `BasicNodes`).
+	- Make sure this project's binary is copied to the `BrainTestRunner` (the easiest way is adding it as a Reference)
+	- ...or just add the test to a suitable existing `SomethingBrainTests` project
+	- Note: It is also possible to add a test directly to a BrainSimulator module (such as `BasicNodes`).
 1. Add the test class
- - It should be public (sealed) class derived from `BrainTest`
- - In the constructor set values for `BrainFileName` (to the file name of the BrainSim project from step 1), `MaxStepCount` and optionally `InspectInterval` (see example below)
- - Override the Check method and optionally the `ShouldStop` method
- - In the Check method, you can use xUnit asserts to check some propositions (or you can throw any other exception to indicate failure).
+	- It should be public (sealed) class derived from `BrainTest`
+	- In the constructor set values for `BrainFileName` (to the file name of the BrainSim project from step 1), `MaxStepCount` and optionally `InspectInterval` (see example below)
+	- Override the Check method and optionally the `ShouldStop` method
+	- In the Check method, you can use xUnit asserts to check some propositions (or you can throw any other exception to indicate failure).
 1. Run the runner and see what happens :)
 
 ### What happens when you run the test
@@ -44,6 +44,9 @@ To sum it up, Brain Unit consists of three components (located in Testing/Infras
 The **IBrainScan** interface and Brain Unit in general are currently quite limited. If you need something that is not possible, let us know, or try to extend it yourself.
 
 Example test code:
+
+    using GoodAI.Testing.BrainUnit;
+    using Xunit;
 
     public sealed class AccumulatorCanCountToTen : BrainTest
     {
@@ -71,8 +74,8 @@ Example test code:
 `BrainUnitNode` enables you to write a test without Visual Studio, but it is ultimately adapted to an equivalent of the code brain test. `BrainUnitNode` is similar to the C# node.  In addition it has some properties for defining the test.
 
 1. Create a brain project and save it to `Sources\Tests\BrainTests\BrainUnitNodeTests`
- - Add `BrainUnitNode` the project and connect it to the output of some other node that you want to evaluate.
- - (Before that, make sure the you have `TestingNodes` module loaded into Brain Simulator.)
- - Set up properties of the `BrainUnitNode`: `MaxStepCount` and optionally the `InspectInterval`
+	- Add `BrainUnitNode` the project and connect it to the output of some other node that you want to evaluate.
+	- (Before that, make sure the you have `TestingNodes` module loaded into Brain Simulator.)
+	- Set up properties of the `BrainUnitNode`: `MaxStepCount` and optionally the `InspectInterval`
 2. Define the `Check` method and optionally the ShouldStop method inside the node's code.
 3. Run the runner.
