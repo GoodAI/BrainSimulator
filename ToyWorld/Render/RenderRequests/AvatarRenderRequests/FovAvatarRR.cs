@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using Render.Tests.Effects;
 using Render.Tests.Geometries;
+using World.ToyWorldCore;
 
 namespace Render.RenderRequests.AvatarRenderRequests
 {
@@ -34,7 +35,7 @@ namespace Render.RenderRequests.AvatarRenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer)
+        public override void Init(RendererBase renderer, ToyWorld world)
         {
             GL.ClearColor(Color.Black);
 
@@ -47,7 +48,7 @@ namespace Render.RenderRequests.AvatarRenderRequests
             //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
         }
 
-        public override void Draw(RendererBase renderer)
+        public override void Draw(RendererBase renderer, ToyWorld world)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 

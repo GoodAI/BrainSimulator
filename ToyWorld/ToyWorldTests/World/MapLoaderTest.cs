@@ -25,10 +25,10 @@ namespace ToyWorldTests.World
             var tmxStreamReader = new StreamReader(tmxMemoryStream);
             var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
 
-            var tilesetTable = new TilesetTable(tilesetTableStreamReader);
-
             var serializer = new TmxSerializer();
             Map map = serializer.Deserialize(tmxStreamReader);
+
+            var tilesetTable = new TilesetTable(map, tilesetTableStreamReader);
 
             // create atlas
             m_atlas = MapLoader.LoadMap(map, tilesetTable);

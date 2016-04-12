@@ -6,7 +6,7 @@ using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Render.RenderObjects.Textures
 {
-    internal class TextureBase
+    internal class TextureBase : IDisposable
     {
         private readonly int m_handle;
         private readonly TextureTarget m_target;
@@ -45,6 +45,11 @@ namespace Render.RenderObjects.Textures
                 data);
 
             GL.BindTexture(textureTarget, 0);
+        }
+        
+        public virtual void Dispose()
+        {
+            GL.DeleteTexture(m_handle);
         }
 
 

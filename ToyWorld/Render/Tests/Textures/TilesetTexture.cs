@@ -51,6 +51,15 @@ namespace Render.Tests.Textures
             Debug.Assert(m_textures.TrueForAll(a => a.Size == Size), "Tilesets have to be of the same dimensionality.");
         }
 
+        public override void Dispose()
+        {
+            foreach (var textureBase in m_textures)
+                textureBase.Dispose();
+
+            base.Dispose();
+        }
+
+
         public override void Bind()
         {
             Bind(0);

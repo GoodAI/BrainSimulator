@@ -14,6 +14,8 @@ namespace Render.RenderObjects.Effects
         private readonly int m_prog;
 
 
+        #region Genesis
+
         // TODO: genericity
         protected EffectBase(string vertPath, string fragPath)
         {
@@ -53,10 +55,12 @@ namespace Render.RenderObjects.Effects
             return handle;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             GL.DeleteProgram(m_prog);
         }
+
+        #endregion
 
 
         public void Use()
@@ -64,14 +68,18 @@ namespace Render.RenderObjects.Effects
             GL.UseProgram(m_prog);
         }
 
+
+        #region Uniforms
+
+        public int GetUniformLocation(string name)
+        {
+            return GL.GetUniformLocation(m_prog, name);
+        }
+
+
         public void SetUniform1(int pos, int val)
         {
             GL.Uniform1(pos, val);
-        }
-
-        public void SetUniform2(int pos, Vector2 val)
-        {
-            GL.Uniform2(pos, val.X, val.Y);
         }
 
         public void SetUniform3(int pos, Vector3I val)
@@ -84,9 +92,6 @@ namespace Render.RenderObjects.Effects
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }
 
-        public int GetUniformLocation(string name)
-        {
-            return GL.GetUniformLocation(m_prog, name);
-        }
+        #endregion
     }
 }

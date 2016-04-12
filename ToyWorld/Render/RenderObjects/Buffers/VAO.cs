@@ -49,6 +49,8 @@ namespace Render.RenderObjects.Buffers
         {
             get
             {
+                return m_vbos[id];
+
                 VboBase vbo;
 
                 if (!m_vbos.TryGetValue(id, out vbo))
@@ -58,8 +60,8 @@ namespace Render.RenderObjects.Buffers
             }
             set
             {
-                if (m_vbos.ContainsKey(id))
-                    throw new ArgumentException("A Vbo has already been registered to this id.", "id");
+                //if (m_vbos.ContainsKey(id))
+                //    throw new ArgumentException("A Vbo has already been registered to this id.", "id");
 
                 m_vbos[id] = value;
             }
@@ -90,10 +92,10 @@ namespace Render.RenderObjects.Buffers
             //VboBase.Unbind();
         }
 
-        public void DisableAttrib(string id, int attribArrayIdx)
-        {
-            GL.BindVertexArray(Handle);
-            GL.DisableVertexAttribArray(attribArrayIdx);
-        }
+        //public void DisableAttrib(string id, int attribArrayIdx)
+        //{
+        //    GL.BindVertexArray(Handle);
+        //    GL.DisableVertexAttribArray(attribArrayIdx);
+        //}
     }
 }

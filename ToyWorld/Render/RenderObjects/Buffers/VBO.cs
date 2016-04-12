@@ -37,7 +37,7 @@ namespace Render.RenderObjects.Buffers
 
             Bind();
             GL.BufferData(Target, ByteCount, data, hint);
-            Unbind();
+            //Unbind();
         }
 
         #endregion
@@ -52,7 +52,7 @@ namespace Render.RenderObjects.Buffers
 
             Bind();
             GL.BufferSubData(Target, new IntPtr(offset * tSize), tCount, data);
-            Unbind();
+            //Unbind();
         }
 
         public void Bind()
@@ -60,10 +60,10 @@ namespace Render.RenderObjects.Buffers
             GL.BindBuffer(Target, Handle);
         }
 
-        public void Unbind()
-        {
-            GL.BindBuffer(Target, 0);
-        }
+        //public void Unbind()
+        //{
+        //    GL.BindBuffer(Target, 0);
+        //}
     }
 
     internal class Vbo<T> : VboBase

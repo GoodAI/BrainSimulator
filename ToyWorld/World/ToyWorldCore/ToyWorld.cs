@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
+using VRageMath;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
@@ -13,27 +14,31 @@ namespace World.ToyWorldCore
     {
         private BasicAvatarMover m_basicAvatarMover;
 
+        public Vector2I Size { get; private set; }
+
+
+        public AutoupdateRegister AutoupdateRegister { get; protected set; }
+        public Atlas Atlas { get; protected set; }
+        public TilesetTable TilesetTable { get; protected set; }
+        public IPhysics Physics { get; protected set; }
+
+
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
+            Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
+
             AutoupdateRegister = new AutoupdateRegister();
 
-            m_tilesetTable = new TilesetTable(tileTable);
-            Atlas = MapLoader.LoadMap(tmxDeserializedMap, m_tilesetTable);
+            TilesetTable = new TilesetTable(tmxDeserializedMap, tileTable);
+            Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable);
 
-            m_physics = new Physics.Physics();
+            Physics = new Physics.Physics();
         }
 
-        public AutoupdateRegister AutoupdateRegister { get; private set; }
-
-        public Atlas Atlas { get; private set; }
-
-        private readonly TilesetTable m_tilesetTable;
-
-        private readonly IPhysics m_physics;
 
         private void UpdatePhysics()
         {
-            
+
         }
 
         private void UpdateCharacters()
@@ -43,9 +48,9 @@ namespace World.ToyWorldCore
         private void UpdateAvatars()
         {
             List<IAvatar> avatars = Atlas.GetAvatars();
-            m_physics.TransofrmControlsToMotion(avatars);
+            Physics.TransofrmControlsToMotion(avatars);
             List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
-            m_physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
+            Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
         public void Update()

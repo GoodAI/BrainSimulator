@@ -36,6 +36,14 @@ namespace VRageMath
             W = w;
         }
 
+        public Vector4I(Vector2I xy, Vector2I zw)
+        {
+            X = xy.X;
+            Y = xy.Y;
+            Z = zw.X;
+            W = zw.Y;
+        }
+
         public class EqualityComparer : IEqualityComparer<Vector4I>, IComparer<Vector4I>
         {
             public bool Equals(Vector4I x, Vector4I y)

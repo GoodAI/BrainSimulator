@@ -9,13 +9,13 @@ using Render.Tests.Effects;
 using Render.Tests.Geometries;
 using Render.Tests.Textures;
 using VRageMath;
+using World.ToyWorldCore;
 using Color = System.Drawing.Color;
 
 namespace Render.RenderRequests.RenderRequests
 {
     internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
-        readonly Vector4I m_tileSizeMargin = new Vector4I(16, 16, 1, 1);
         private Vector2I m_size { get { return new Vector2I(Size.Width, Size.Height); } }
 
         private NoEffectOffset m_effect;
@@ -29,6 +29,13 @@ namespace Render.RenderRequests.RenderRequests
             Size = new Size(8, 8);
         }
 
+        public override void Dispose()
+        {
+            m_effect.Dispose();
+            m_tex.Dispose();
+            m_grid.Dispose();
+            base.Dispose();
+        }
 
         #region IFullMapRR overrides
 
@@ -36,7 +43,7 @@ namespace Render.RenderRequests.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer)
+        public override void Init(RendererBase renderer, ToyWorld world)
         {
             GL.ClearColor(Color.DimGray);
             GL.Enable(EnableCap.Blend);
@@ -49,17 +56,17 @@ namespace Render.RenderRequests.RenderRequests
             renderer.EffectManager.Use(m_effect);
             m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
 
-            Vector2 fullTileSize = new Vector2I(m_tileSizeMargin.X + m_tileSizeMargin.Z, m_tileSizeMargin.Y + m_tileSizeMargin.W);
+            Vector2 fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins;
             Vector2 tileCount = m_tex.Size / fullTileSize;
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
-            m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), m_tileSizeMargin);
+            m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
 
             Size = new Size((int)tileCount.X, (int)tileCount.Y / 2);
 
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(m_size);
         }
 
-        public override void Draw(RendererBase renderer)
+        public override void Draw(RendererBase renderer, ToyWorld world)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 

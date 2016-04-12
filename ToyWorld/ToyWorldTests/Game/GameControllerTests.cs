@@ -1,14 +1,21 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
+using OpenTK.Input;
+using Render.Renderer;
+using Render.RenderRequests;
 using Render.Tests.RRs;
+using ToyWorldTests.Attributes;
 using Xunit;
 
 namespace ToyWorldTests.Game
 {
     [Collection("Renderer")]
-    public class  GameControllerTestBase : IDisposable    {
+    public class GameControllerTestBase : IDisposable
+    {
         protected GameControllerBase GameController;
 
 
@@ -34,7 +41,6 @@ namespace ToyWorldTests.Game
             GameController.Dispose();
             GameController = null;
         }
-
 
         protected virtual GameControllerBase GetController(GameSetup gameSetup)
         {

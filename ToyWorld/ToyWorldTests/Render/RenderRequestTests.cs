@@ -28,7 +28,7 @@ namespace ToyWorldTests.Render
             {
                 var r = rr as RenderRequest;
                 Assert.NotNull(r);
-                r.Init(GameController.Renderer);
+                r.Init(GameController.Renderer, GameController.World);
                 GameController.Renderer.CheckError();
             }
 
@@ -36,7 +36,7 @@ namespace ToyWorldTests.Render
             {
                 var r = rr as RenderRequest;
                 Assert.NotNull(r);
-                r.Init(GameController.Renderer);
+                r.Init(GameController.Renderer, GameController.World);
                 GameController.Renderer.CheckError();
             }
 
