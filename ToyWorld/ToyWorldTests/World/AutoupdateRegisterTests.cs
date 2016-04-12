@@ -1,9 +1,6 @@
 ﻿using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using World.GameActors;
 using World.ToyWorldCore;
 using Xunit;
