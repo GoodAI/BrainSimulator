@@ -21,8 +21,8 @@ namespace World.ToyWorldCore
 
         public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
         {
-            var xCount = x2 - x1 + 1;
-            var yCount = y2 - y1 + 1;
+            var xCount = x2 - x1;
+            var yCount = y2 - y1;
             var f = new Tile[xCount, yCount];
             
             for (var i = 0; i < xCount; i++)

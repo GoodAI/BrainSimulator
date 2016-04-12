@@ -33,7 +33,7 @@ namespace Render.RenderObjects.Geometries
         {
             // We need to duplicate the data for each vertex of the quad
             int size = Dimensions.Size();
-            Debug.Assert(size <= data.Length);
+            Debug.Assert(size <= data.Length, "Too few data to update the tex offsets.");
 
             for (int i = 0; i < size; i++)
                 m_offsetsInternal[i] = new Vector4I(data[i]);

@@ -45,6 +45,14 @@ vec2 GetTexCoods()
 
 void main()
 {
+	if (v_texOffset < 0)
+	{
+		// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
+		gl_Position = vec4(0,0,0,0);
+		f_texCoods = vec2(0,0);
+		return;
+	}
+		
 	f_texCoods = GetTexCoods();
 	gl_Position = vec4(v_position, 0, 1);
 }
