@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using VRageMath;
 using World.GameActors.Tiles;
 
@@ -84,6 +85,11 @@ namespace World.ToyWorldCore
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
                     tileTypes[idx++] = 0;
             }
+        }
+
+        public List<Tile> GetAllObjects()
+        {
+            return Tiles.Cast<Tile>().ToList();
         }
     }
 }

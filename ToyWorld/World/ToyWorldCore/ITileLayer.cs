@@ -3,10 +3,8 @@ using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
 {
-    public interface ITileLayer
+    public interface ITileLayer : ILayer<Tile>
     {
-        LayerType LayerType { get; set; }
-
         Tile GetTile(int x, int y);
 
         /// <summary>
