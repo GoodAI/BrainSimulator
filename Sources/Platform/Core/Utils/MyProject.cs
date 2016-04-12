@@ -14,14 +14,20 @@ namespace GoodAI.Core.Utils
 {
     [YAXSerializeAs("Project"), YAXSerializableType(FieldsToSerialize=YAXSerializationFields.AttributedFieldsOnly)]
     public class MyProject : IDisposable
-    {        
-        [YAXSerializableField, YAXAttributeForClass]
-        public string Name { get; set; }
-
-        public void SetNameFromPath(string path)
+    {
+        public MyProject()
         {
-            Name = MakeNameFromPath(path);
+            // Set temporary random filename (without even creating the file)
+            m_fileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".brain");
+
+            // Set corresponding Name, but keep the HasBeenNamed property to false
+            Name = MakeNameFromPath(m_fileName);
         }
+
+        #region Name and FileName
+
+        [YAXSerializableField, YAXAttributeForClass]
+        public string Name { get; private set; }
 
         public static string MakeNameFromPath(string path)
         {
@@ -32,6 +38,25 @@ namespace GoodAI.Core.Utils
         {
             return Path.Combine(Path.GetDirectoryName(path), MyProject.MakeNameFromPath(path) + ".statedata");
         }
+
+        public bool HasBeenNamed { get; private set; }
+
+        public string FileName
+        {
+            get { return m_fileName; }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Invalid file name");
+
+                m_fileName = value;
+                Name = MakeNameFromPath(value);
+                HasBeenNamed = true;
+            }
+        }
+        private string m_fileName;
+
+        #endregion
 
         [YAXSerializableField]
         [YAXSerializeAs("Observers")]
@@ -253,7 +278,7 @@ namespace GoodAI.Core.Utils
                 YAXExceptionHandlingPolicies.DoNotThrow, YAXExceptionTypes.Error, YAXSerializationOptions.SerializeNullObjects);
         }
 
-        public string Serialize(string projectPath)
+        public string Serialize()
         {                        
             if (ReadOnly)            
             {
@@ -264,7 +289,7 @@ namespace GoodAI.Core.Utils
             UsedModules = ScanForUsedModules();
 
             StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + System.Environment.NewLine);
-            MyPathSerializer.ReferencePath = projectPath;  // needed for conversion of absolute paths to relative ones
+            MyPathSerializer.ReferencePath = Path.GetDirectoryName(FileName);  // Needed for conversion of absolute paths to relative ones.
             sb.Append(MyProject.GetSerializer().Serialize(this));
             MyPathSerializer.ReferencePath = String.Empty;
 
@@ -363,6 +388,8 @@ namespace GoodAI.Core.Utils
             {
                 throw new YAXException("Cannot deserialize project.");
             }
+
+            loadedProject.FileName = projectPath;
 
             loadedProject.World.FinalizeTasksDeserialization();
 

@@ -16,9 +16,10 @@ namespace GoodAI.Core.Memory
             return GetTempStorage(project.Name);
         }
 
+        // TODO: Move this to MyProject (?)
         public static string GetTempStorage(String projectName)
         {
-            return Path.GetTempPath() + "\\bs_temporal\\" + projectName + ".statedata";
+            return Path.Combine(Path.GetTempPath(), "bs_temporal", projectName + ".statedata");
         }
 
         public static void ClearTempStorage(MyProject project)

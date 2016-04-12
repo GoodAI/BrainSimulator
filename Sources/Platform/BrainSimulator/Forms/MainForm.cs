@@ -264,9 +264,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void SaveProjectOrSaveAs()
         {
-            if (saveFileDialog.FileName != string.Empty)
+            if (Project.HasBeenNamed)
             {
-                SaveProject(saveFileDialog.FileName);
+                SaveProject();
             }
             else
             {
@@ -294,9 +294,9 @@ namespace GoodAI.BrainSimulator.Forms
             else
                 MyLog.WARNING.WriteLine("Projects with the same filename share the same temporal folder where the state is saved.");
 
-            Project.SetNameFromPath(newName);
+            Project.FileName = newName;  // Also sets the name;
 
-            SaveProject(newName);
+            SaveProject();
             m_recentMenu.AddFile(newName);
         }
 
@@ -424,7 +424,7 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }           
 
-            if ((String.IsNullOrEmpty(saveFileDialog.FileName)) || !IsProjectSaved(saveFileDialog.FileName))
+            if (!Project.HasBeenNamed || !IsProjectSaved())
             {
                 var dialogResult = MessageBox.Show("Save project changes?",
                     "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
