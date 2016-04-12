@@ -37,7 +37,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void GetRectangleWholeArray()
         {
-            var rectangle = m_simpleTileLayer.GetRectangle(0, 0, 2, 2);
+            var rectangle = m_simpleTileLayer.GetRectangle(0, 0, 3, 3);
             var origRectangle = m_simpleTileLayer.Tiles;
             var rectangleEnum = rectangle.Cast<Tile>().ToArray();
             var origRectangleEnum = origRectangle.Cast<Tile>().ToArray();
@@ -50,6 +50,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void GetRectangleSingle()
         {
+            // rewrite pls
             var rectangle = m_simpleTileLayer.GetRectangle(1, 1, 1, 1);
             var origRectangle = m_simpleTileLayer.Tiles;
             var rectangleEnum = rectangle.Cast<Tile>().ToArray();

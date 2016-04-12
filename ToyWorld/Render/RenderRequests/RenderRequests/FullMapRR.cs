@@ -1,15 +1,12 @@
-﻿using System.Drawing;
-using System.Linq;
+﻿using System;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
-using Render.RenderRequests.AvatarRenderRequests;
 using Render.Tests.Effects;
-using Render.Tests.Geometries;
 using Render.Tests.Textures;
 using VRageMath;
-using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Color = System.Drawing.Color;
 
@@ -18,6 +15,7 @@ namespace Render.RenderRequests.RenderRequests
     internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
         private Vector2I m_size { get { return new Vector2I(Size.Width, Size.Height); } }
+        private int[] m_buffer;
 
         private NoEffectOffset m_effect;
         private TilesetTexture m_tex;
@@ -56,9 +54,9 @@ namespace Render.RenderRequests.RenderRequests
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
 
-            //Size = new Size((int)tileCount.X, (int)tileCount.Y / 2);
             Size = new Size(world.Size.X, world.Size.Y);
 
+            m_buffer = new int[world.Size.Size()];
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(m_size);
         }
 
@@ -69,14 +67,14 @@ namespace Render.RenderRequests.RenderRequests
             renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
 
-            var layer = world.Atlas.TileLayers.First();
-            var rect = layer.GetRectangle(0, 0, world.Size.X, world.Size.Y);
 
-            //int[] offsets = Enumerable.Range(0, m_size.Size()).ToArray();
-            int[] offsets = rect.Cast<Tile>().Select(t => t != null ? t.TileType : -1).ToArray();
-            m_grid.SetTextureOffsets(offsets);
+            foreach (var tileLayer in world.Atlas.TileLayers)
+            {
+                tileLayer.GetRectangle(0, 0, world.Size.X, world.Size.Y, m_buffer);
+                m_grid.SetTextureOffsets(m_buffer);
 
-            m_grid.Draw();
+                m_grid.Draw();
+            }
         }
 
         #endregion
