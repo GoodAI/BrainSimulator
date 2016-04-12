@@ -1,7 +1,7 @@
 ﻿using Moq;
 using System;
 using System.Collections.Generic;
-using World.GameActors;
+using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
 
@@ -50,7 +50,7 @@ namespace ToyWorldTests.World
         public void TestRegisterForThisStepThrows()
         {
             AutoupdateRegister register = new AutoupdateRegister();
-            Mock<GameActor> mock = new Mock<GameActor>();
+            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => register.Register(mock.Object, 0));
         }
@@ -59,13 +59,13 @@ namespace ToyWorldTests.World
         {
             AutoupdateRegister register = new AutoupdateRegister();
 
-            Assert.IsType<List<GameActor>>(register.CurrentUpdateRequests);
+            Assert.IsType<List<IAutoupdateable>>(register.CurrentUpdateRequests);
         }
 
         private AutoupdateRegister CreateSmallRegisterWithOneObject()
         {
             AutoupdateRegister register = new AutoupdateRegister(2);
-            Mock<GameActor> mock = new Mock<GameActor>();
+            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
             register.Register(mock.Object, 1);
             return register;
         }
@@ -74,7 +74,7 @@ namespace ToyWorldTests.World
         public void TestRegisterAndGet()
         {
             AutoupdateRegister register = new AutoupdateRegister(2);
-            Mock<GameActor> mock = new Mock<GameActor>();
+            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
             register.Register(mock.Object, 1);
             register.Tick();
 
@@ -85,7 +85,7 @@ namespace ToyWorldTests.World
         public void TestTick()
         {
             AutoupdateRegister register = CreateSmallRegisterWithOneObject();
-            List<GameActor> list = register.CurrentUpdateRequests;
+            List<IAutoupdateable> list = register.CurrentUpdateRequests;
             register.Tick();
 
             Assert.NotEqual(list, register.CurrentUpdateRequests);
@@ -96,7 +96,7 @@ namespace ToyWorldTests.World
         {
             AutoupdateRegister register = CreateSmallRegisterWithOneObject();
             register.Tick();
-            List<GameActor> list = register.CurrentUpdateRequests;
+            List<IAutoupdateable> list = register.CurrentUpdateRequests;
             register.Tick();
             register.Tick();
 
@@ -107,7 +107,7 @@ namespace ToyWorldTests.World
         public void TestSchedulAfterEnd()
         {
             AutoupdateRegister register = new AutoupdateRegister(2);
-            Mock<GameActor> mock = new Mock<GameActor>();
+            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
             register.Register(mock.Object, 2);
             register.Tick();
             register.Tick();
