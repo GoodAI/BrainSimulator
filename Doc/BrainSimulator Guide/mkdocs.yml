@@ -20,6 +20,7 @@ pages:
     - Discrete Q-Learning: 'guides/discreteqlearning.md'
     - Image Processing: 'guides/improc.md'
     - Restricted Boltzmann Machine: 'guides/rbm.md'
+    - Automated node and brain testing: 'guides/brain_testing.md'
 
 - Examples:
     - Worlds: 'examples/worlds.md'

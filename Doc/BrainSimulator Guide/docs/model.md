@@ -534,7 +534,8 @@ Input to the conversion method is a string, which represents the loaded .brain f
 
 The sequence of conversion methods is invoked, until the opened project version is the same as the current module version. The project has to be saved after the conversion (message is written to Brain Simulator log).
 
-## Dynamic model changes
+
+## Dynamic model changes <a name="dynamic-model"></a>
 
 The simulation will allow changes on nodes that implement the `IModelChanger` interface. It's meant to be used on subclasses of `MyNodeGroup`, but potentially there could be more uses in the future.
 

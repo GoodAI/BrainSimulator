@@ -7,11 +7,11 @@
 
 **Undo** - it's now possible to undo and redo model changes such as connection or node removal   
 
-**Dynamic model (experimental)** - the ability to programmatically change the model at runtime, add and connect new nodes, etc.
+**Dynamic model (experimental)** - the ability to programmatically change the model at runtime, add and connect new nodes, etc. (see [dynamic model API description](model.md#dynamic-model))
 
 **Changed memory block dimensions API** - improved API for manipulating with memory block dimensions (the `TensorDimensions` class), removed user defined dimensions from UI (dimensions can be adjusted only on dedicated places such as Join node output or the memory block observer) 
 
-**Brain Unit testing framework (experimental)** - the ability to easily create node and brain tests using Brain Unit node or by defining a simple class 
+**Brain Unit testing framework (experimental)** - the ability to easily create node and brain tests using Brain Unit node or by defining a simple class (see the [node and brain testing guide](guides\brain_testing.md))
 
 **Memory block metadata** - the ability to attach any metadata to memory blocks (such as preferred visualization method)
 
