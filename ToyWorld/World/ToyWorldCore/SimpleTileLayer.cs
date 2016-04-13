@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -44,16 +45,42 @@ namespace World.ToyWorldCore
 
             Debug.Assert(tileTypes != null && tileTypes.Length >= xCount * yCount);
 
-            for (var j = y1; j < y2; j++)
+            int idx = 0;
+
+            // Rows before start of map
+            for (int j = y1; j < 0; j++)
             {
-                if (j < 0)
+                for (int i = x1; i < x2; i++)
+                    tileTypes[idx++] = 0;
+            }
 
-                for (var i = x1; i < x2; i++)
+            // Rows inside of map
+            int xLength = Tiles.GetLength(0);
+            int yLength = Tiles.GetLength(1);
+
+            for (var j = 0; j < yLength; j++)
+            {
+                // Tiles before start of map
+                for (int i = x1; i < 0; i++)
+                    tileTypes[idx++] = 0;
+
+                // Tiles inside of map
+                for (var i = 0; i < xLength; i++)
                 {
-
-                    var tile = Tiles[x1 + i, y1 + j];
-                    tileTypes[j * xCount + i] = tile != null ? tile.TileType : 0;
+                    var tile = Tiles[i, j];
+                    tileTypes[idx++] = tile != null ? tile.TileType : 0;
                 }
+
+                // Tiles after end of map
+                for (int i = xLength; i < x2; i++)
+                    tileTypes[idx++] = 0;
+            }
+
+            // Rows after end of map
+            for (int j = yLength; j < y2; j++)
+            {
+                for (int i = x1; i < x2; i++)
+                    tileTypes[idx++] = 0;
             }
         }
     }

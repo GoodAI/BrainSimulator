@@ -21,6 +21,9 @@ namespace Render.RenderRequests.RenderRequests
         private TilesetTexture m_tex;
         private FullScreenGrid m_grid;
 
+        private Matrix m_view;
+        private int m_viewPos;
+
 
         public override void Dispose()
         {
@@ -30,7 +33,10 @@ namespace Render.RenderRequests.RenderRequests
             base.Dispose();
         }
 
+
         #region IFullMapRR overrides
+
+        public float Rotation { get; set; }
 
         #endregion
 
@@ -43,21 +49,27 @@ namespace Render.RenderRequests.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
+            // Set up tileset textures
             m_tex = renderer.TextureManager.Get<TilesetTexture>();
 
+            // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
-            renderer.EffectManager.Use(m_effect);
+            renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
             m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
 
+            // Set up static uniforms
             Vector2 fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins;
             Vector2 tileCount = m_tex.Size / fullTileSize;
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+            m_viewPos = m_effect.GetUniformLocation("view");
 
             Size = new Size(world.Size.X, world.Size.Y);
 
+            // Set up tile grid geometry
             m_buffer = new int[world.Size.Size()];
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(m_size);
+
         }
 
         public override void Draw(RendererBase renderer, ToyWorld world)
@@ -67,6 +79,11 @@ namespace Render.RenderRequests.RenderRequests
             renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
 
+            if (Rotation > 0)
+            {
+                Matrix.CreateRotationZ(Rotation, out m_view);
+                m_effect.SetUniformMatrix4(m_viewPos, m_view);
+            }
 
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
@@ -78,5 +95,6 @@ namespace Render.RenderRequests.RenderRequests
         }
 
         #endregion
+
     }
 }

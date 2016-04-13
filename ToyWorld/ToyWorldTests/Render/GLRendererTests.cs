@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -15,6 +16,7 @@ using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using ToyWorldTests.Attributes;
 using ToyWorldTests.Game;
+using VRageMath;
 using World.ToyWorldCore;
 using Xunit;
 
@@ -53,20 +55,6 @@ namespace ToyWorldTests.Render
         [RunnableInDebugOnly]
         public void ShowRRLongRunning()
         {
-            CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
-
-            m_renderer.Window.KeyDown += (sender, args) =>
-            {
-                if (args.Key == Key.A)
-                    tokenSource.Cancel();
-            };
-            m_renderer.Window.MouseDown += (sender, args) =>
-            {
-                if (args.Button == MouseButton.Right)
-                    tokenSource.Cancel();
-            };
-
-            m_renderer.Window.Visible = true;
             m_renderer.MakeContextCurrent();
 
             var rr = RenderRequestFactory.CreateRenderRequest<IFullMapRR>();
@@ -74,11 +62,19 @@ namespace ToyWorldTests.Render
             (rr as RenderRequest).Init(m_renderer, m_world);
             m_renderer.EnqueueRequest(rr);
 
-            while (m_renderer.Window.Exists && !tokenSource.IsCancellationRequested)
+            CancellationToken token = SetupWindow(
+                delta =>
+                {
+                    double rot = rr.Rotation + delta.X;
+                    MathHelper.LimitRadians2PI(ref rot);
+                    rr.Rotation = (float)rot;
+                });
+
+            while (m_renderer.Window.Exists && !token.IsCancellationRequested)
             {
                 try
                 {
-                    Task.Delay(1000, tokenSource.Token).Wait(tokenSource.Token);
+                    Task.Delay(20, token).Wait(token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -89,7 +85,36 @@ namespace ToyWorldTests.Render
                 m_renderer.ProcessRequests(m_world);
             }
 
-            Assert.True(tokenSource.IsCancellationRequested);
+            Assert.True(token.IsCancellationRequested);
+        }
+
+        private CancellationToken SetupWindow(Action<PointF> onDrag)
+        {
+            CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
+
+            m_renderer.Window.KeyDown += (sender, args) =>
+            {
+                if (args.Key == Key.A)
+                    tokenSource.Cancel();
+            };
+
+            m_renderer.Window.MouseDown += (sender, args) =>
+            {
+                if (args.Button == MouseButton.Right)
+                    tokenSource.Cancel();
+            };
+
+            m_renderer.Window.MouseMove += (sender, args) =>
+            {
+                const float factor = 1 / 60f;
+
+                if (args.Mouse.IsButtonDown(MouseButton.Left))
+                    onDrag(new PointF(args.XDelta * factor, args.YDelta * factor));
+            };
+
+            m_renderer.Window.Visible = true;
+
+            return tokenSource.Token;
         }
 
 

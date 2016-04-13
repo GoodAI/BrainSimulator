@@ -26,5 +26,7 @@ namespace GoodAI.ToyWorld.Control
     /// 
     /// </summary>
     public interface IFullMapRR : IRenderRequest
-    { }
+    {
+        float Rotation { get; set; }
+    }
 }

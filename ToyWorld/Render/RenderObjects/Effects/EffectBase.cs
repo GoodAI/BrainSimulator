@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 using VRageMath;
 
@@ -90,6 +91,15 @@ namespace Render.RenderObjects.Effects
         public void SetUniform4(int pos, Vector4I val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
+        }
+
+        // TODO: Jde matrix prevest na array bez kopirovani a unsafe kodu?
+        public void SetUniformMatrix4(int pos, Matrix val)
+        {
+            unsafe
+            {
+                GL.UniformMatrix4(pos, 1, false, val.M.data);
+            }
         }
 
         #endregion
