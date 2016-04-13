@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
+    <Compile Include="Physics\CollisionChecker.cs" />
+    <Compile Include="Physics\CollisionResolver.cs" />
     <Compile Include="Physics\ForwardMovablePhysicalEntity.cs" />
     <Compile Include="Physics\IAvatarMover.cs" />
     <Compile Include="Physics\IMovable.cs" />
@@ -53,6 +55,8 @@
     <Compile Include="Physics\Physics.cs" />
     <Compile Include="Physics\MovementPhysics.cs" />
     <Compile Include="Physics\PhysicalEntity.cs" />
+    <Compile Include="Physics\Shapes.cs" />
+    <Compile Include="Physics\Utils.cs" />
     <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />
     <Compile Include="GameActors\GameObjects\Avatar.cs" />
     <Compile Include="GameActors\GameObjects\Character.cs" />

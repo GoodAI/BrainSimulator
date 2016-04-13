@@ -1,4 +1,5 @@
 ﻿using GoodAI.ToyWorld.Control;
+using System;
 using VRageMath;
 using World.Physics;
 
@@ -27,7 +28,9 @@ namespace World.GameActors.GameObjects
         {
             Name = name;
             Id = id;
-            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, size);
+
+            float circleRadius = size.Length() / 2f * (float) Math.Cos(Math.PI / 4);
+            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, new Circle(circleRadius));
         }
 
         public void ResetControls()

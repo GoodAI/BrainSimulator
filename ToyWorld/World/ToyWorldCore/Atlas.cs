@@ -1,12 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VRageMath;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
 {
-    public class Atlas
+    interface IAtlas
+    {
+        /// <summary>
+        /// Adds avatar to Atlas or returns false.
+        /// </summary>
+        /// <param name="avatar"></param>
+        /// <returns></returns>
+        bool AddAvatar(World.GameActors.GameObjects.IAvatar avatar);
+
+        /// <summary>
+        /// Dictionary of all registered avatars, where key is ID of Avatar and Value is IAvatar.
+        /// </summary>
+        Dictionary<int, IAvatar> Avatars { get; }
+
+        /// <summary>
+        /// Returns List of all Avatars.
+        /// </summary>
+        /// <returns></returns>
+        List<IAvatar> GetAvatars();
+
+        /// <summary>
+        /// Returns IObjectLayer or ITileLayer for given LayerType
+        /// </summary>
+        /// <param name="layerType"></param>
+        /// <returns></returns>
+        object GetLayer(LayerType layerType);
+
+        List<Character> Characters { get; }
+
+        /// <summary>
+        /// Container for all ObjectLayers
+        /// </summary>
+        List<IObjectLayer> ObjectLayers { get; }
+
+        /// <summary>
+        /// Dictionary of static tiles.
+        /// </summary>
+        Dictionary<int, StaticTile> StaticTilesContainer { get; }
+
+        /// <summary>
+        /// Container for all TileLayers
+        /// </summary>
+        List<ITileLayer> TileLayers { get; }
+
+        /// <summary>
+        /// Checks whether on given coordinates is colliding tile.
+        /// </summary>
+        /// <param name="coordinates"></param>
+        /// <returns></returns>
+        bool ContainsCollidingTile(Vector2I coordinates);
+    }
+
+    public class Atlas : IAtlas
     {
         public List<ITileLayer> TileLayers { get; private set; }
 
@@ -53,6 +106,20 @@ namespace World.ToyWorldCore
         public List<IAvatar> GetAvatars()
         {
             return Avatars.Values.ToList();
+        }
+
+
+        public bool ContainsCollidingTile(Vector2I coordinates)
+        {
+            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetTile(coordinates) != null)
+            {
+                return true;
+            }
+            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetTile(coordinates) != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

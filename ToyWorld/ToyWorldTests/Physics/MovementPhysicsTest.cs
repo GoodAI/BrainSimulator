@@ -28,20 +28,7 @@ namespace ToyWorldTests.Physics
         {
             var startingPosition = new Vector2(5, 5);
 
-            var movableMock = new Mock<IForwardMovablePhysicalEntity>();
-            /*movableMock.Setup(x => x.Position).Returns(startingPosition);
-            movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
-            movableMock.Setup(x => x.Direction).Returns(direction);*/
-
-            movableMock.SetupAllProperties();
-            movableMock.Object.Position = startingPosition;
-            movableMock.Object.ForwardSpeed = speed;
-            movableMock.Object.Direction = direction;
-
-
-            IForwardMovablePhysicalEntity movable = movableMock.Object;
-
-            
+            IForwardMovablePhysicalEntity movable = new ForwardMovablePhysicalEntity(startingPosition, new Mock<Shape>().Object, speed, direction);
 
             m_movementPhysics.Move(movable);
 

@@ -1030,6 +1030,11 @@ namespace VRageMath
             return new Vector2((float)Math.Floor(position.X), (float)Math.Floor(position.Y));
         }
 
+        public static Vector2 Ceiling(Vector2 position)
+        {
+            return new Vector2((float)Math.Ceiling(position.X), (float)Math.Ceiling(position.Y));
+        }
+
         public void Rotate(double angle)
         {
             float tmpX = X;

@@ -15,14 +15,25 @@ namespace World.Physics
 
         public ForwardMovablePhysicalEntity(
             Vector2 initialPostition,
-            Vector2 size,
+            Shape shape,
             float forwardSpeed = 0,
             float direction = 90,
-            float rotationSpeed = 0) : base(initialPostition, size)
+            float rotationSpeed = 0)
+            : base(initialPostition, shape)
         {
             ForwardSpeed = forwardSpeed;
             Direction = direction;
             RotationSpeed = rotationSpeed;
+        }
+
+        public void Move()
+        {
+            Position = Utils.Move(Position, Direction, ForwardSpeed);
+        }
+
+        public void Move(float forwardSpeed, float direction)
+        {
+            Position = Utils.Move(Position, direction, forwardSpeed);
         }
     }
 }

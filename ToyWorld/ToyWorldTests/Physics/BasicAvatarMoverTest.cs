@@ -24,8 +24,8 @@ namespace ToyWorldTests.Physics
             m_avatar.DesiredRotation = 1;
             m_avatar.DesiredSpeed = 1;
             m_basicAvatarMover.SetAvatarMotion(m_avatar);
-            Assert.True(m_avatar.PhysicalEntity.ForwardSpeed == 1f);
-            Assert.True(m_avatar.PhysicalEntity.RotationSpeed == 1f);
+            Assert.True(m_avatar.PhysicalEntity.ForwardSpeed > 0);
+            Assert.True(m_avatar.PhysicalEntity.RotationSpeed > 0);
         }
     }
 }
