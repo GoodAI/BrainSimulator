@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -7,6 +8,7 @@ using Render.Tests.Effects;
 using Render.Tests.Textures;
 using VRageMath;
 using World.ToyWorldCore;
+using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests.RenderRequests
 {
@@ -20,8 +22,8 @@ namespace Render.RenderRequests.RenderRequests
         private FullScreenQuadOffset m_quad;
 
         private Matrix m_projMatrix;
-        private Matrix m_worldViewMatrix;
-        private Matrix m_viewProjMatrix;
+        private Matrix m_worldMatrix;
+        private Matrix m_worldViewProjectionMatrix;
         private int m_mvpPos;
 
 
@@ -64,7 +66,7 @@ namespace Render.RenderRequests.RenderRequests
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_mvpPos = m_effect.GetUniformLocation("mvp");
 
-            SizeV = new Vector2I(6);
+            SizeV = world.Size;
             ViewV = new RectangleF(Vector2.Zero, (Vector2)SizeV);
 
             // Set up tile grid geometry
@@ -72,8 +74,10 @@ namespace Render.RenderRequests.RenderRequests
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(SizeV);
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
-            // Move to center and scale up to world size
-            m_worldViewMatrix = Matrix.CreateTranslation(0.5f, -0.5f, 0) * Matrix.CreateScale(world.Size.X, world.Size.Y, 1);
+            // Scale up to world size (was (-1,1) originally)
+            m_worldMatrix = Matrix.CreateScale(world.Size.X * 0.5f, world.Size.Y * 0.5f, 1);
+            // No view matrix needed here -- we are fixed on origin (center of the world),
+            // or the view has to be computed each step
             m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, 1, -20);
         }
 
@@ -85,15 +89,18 @@ namespace Render.RenderRequests.RenderRequests
             renderer.TextureManager.Bind(m_tex);
 
 
-            // Draw tile layers
-            m_viewProjMatrix = m_worldViewMatrix;
+            // Set up transformation to screen space
+            m_worldViewProjectionMatrix = m_worldMatrix;
 
             if (Rotation.X > 0)
-                m_viewProjMatrix *= Matrix.CreateRotationZ(Rotation.X);
+                // Temporary view transform
+                m_worldViewProjectionMatrix *= Matrix.CreateRotationZ(Rotation.X);
 
-            m_viewProjMatrix *= m_projMatrix;
-            m_effect.SetUniformMatrix4(m_mvpPos, m_viewProjMatrix);
+            m_worldViewProjectionMatrix *= m_projMatrix;
+            m_effect.SetUniformMatrix4(m_mvpPos, m_worldViewProjectionMatrix);
 
+
+            // Draw tile layers
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
                 tileLayer.GetRectangle(ViewV.Position, ViewV.Size, m_buffer);
@@ -101,6 +108,7 @@ namespace Render.RenderRequests.RenderRequests
 
                 m_grid.Draw();
             }
+
 
             // Draw objects
             foreach (var objectLayer in world.Atlas.ObjectLayers)
@@ -112,7 +120,12 @@ namespace Render.RenderRequests.RenderRequests
                     modelMatrix *= Matrix.CreateRotationZ(0.5f);
                     modelMatrix *= Matrix.CreateScale(0.2f);
                     modelMatrix *= Matrix.CreateTranslation(Rotation.Y, 0, 0.01f);
-                    modelMatrix *= m_viewProjMatrix;
+                    var rot = Rotation.Y + 0.01f;
+                    if (rot > MathHelper.Pi)
+                        rot = 0;
+                    Rotation = new PointF(Rotation.X, rot);
+
+                    modelMatrix *= m_worldViewProjectionMatrix;
                     m_effect.SetUniformMatrix4(m_mvpPos, modelMatrix);
 
                     const int tileSetOffset = 17;
