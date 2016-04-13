@@ -62,7 +62,7 @@ namespace World.GameActors.Tiles
             }
 
             IEnumerable<DataRow> enumerable = dataTable.Rows.Cast<DataRow>();
-            var dataRows = enumerable as DataRow[] ?? enumerable.ToArray();
+            var dataRows = enumerable.ToArray();
 
             m_namesValuesDictionary = dataRows.Where(x => x["IsDefault"].ToString() == "1")
                 .ToDictionary(x => x["NameOfTile"].ToString(), x => int.Parse(x["PositionInTileset"].ToString()));
