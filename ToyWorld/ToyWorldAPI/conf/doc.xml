@@ -228,14 +228,19 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Position">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.PositionCenter">
             <summary>
             
             </summary>
         </member>
         <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.RelativePosition">
             <summary>
-            Relative position of the center of the view to the agent's position.
+            Relative position of PositionCenter to avatar's position
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.View">
+            <summary>
+            
             </summary>
         </member>
         <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Resolution">

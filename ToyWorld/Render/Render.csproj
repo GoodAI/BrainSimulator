@@ -53,13 +53,14 @@
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
     <Compile Include="Tests\Effects\NoEffectOffset.cs" />
     <Compile Include="Tests\Effects\NoEffectTex.cs" />
     <Compile Include="Tests\Effects\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
-    <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\PovAvatarRR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRRBase.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadTex.cs" />
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />

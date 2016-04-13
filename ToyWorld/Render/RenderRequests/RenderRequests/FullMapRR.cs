@@ -27,14 +27,18 @@ namespace Render.RenderRequests.RenderRequests
         private int m_mvpPos;
 
 
+        #region Genesis
+
         public override void Dispose()
         {
             m_effect.Dispose();
             m_tex.Dispose();
             m_grid.Dispose();
+            m_quad.Dispose();
             base.Dispose();
         }
 
+        #endregion
 
         #region IFullMapRR overrides
 
@@ -66,7 +70,9 @@ namespace Render.RenderRequests.RenderRequests
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_mvpPos = m_effect.GetUniformLocation("mvp");
 
+            // Setup public properties
             SizeV = world.Size;
+            PositionCenterV = (Vector2)SizeV * 0.5f;
             ViewV = new RectangleF(Vector2.Zero, (Vector2)SizeV);
 
             // Set up tile grid geometry
