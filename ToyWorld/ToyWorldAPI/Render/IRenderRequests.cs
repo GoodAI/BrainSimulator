@@ -19,6 +19,12 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
+        RectangleF View { get; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         Size Resolution { get; set; }
     }
 
@@ -27,6 +33,9 @@ namespace GoodAI.ToyWorld.Control
     /// </summary>
     public interface IFullMapRR : IRenderRequest
     {
-        float Rotation { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        PointF Rotation { get; set; }
     }
 }

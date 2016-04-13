@@ -268,12 +268,22 @@
             
             </summary>
         </member>
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.View">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Resolution">
             <summary>
             
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IFullMapRR">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IFullMapRR.Rotation">
             <summary>
             
             </summary>

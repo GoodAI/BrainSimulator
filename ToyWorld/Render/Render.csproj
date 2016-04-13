@@ -51,6 +51,7 @@
     <Compile Include="Renderer\RendererBase.cs" />
     <Compile Include="RenderObjects\Buffers\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
     <Compile Include="Tests\Effects\NoEffectOffset.cs" />

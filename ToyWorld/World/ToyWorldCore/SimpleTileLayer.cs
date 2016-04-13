@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using VRageMath;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -38,19 +39,20 @@ namespace World.ToyWorldCore
             return f;
         }
 
-        public void GetRectangle(int x1, int y1, int x2, int y2, int[] tileTypes)
+        public void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes)
         {
-            var xCount = x2 - x1;
-            var yCount = y2 - y1;
+            Vector2I intTopLeft = new Vector2I(pos);
+            Vector2I intBotRight = new Vector2I(pos + size);
+            Rectangle rectangle = new Rectangle(intTopLeft, intBotRight - intTopLeft);
 
-            Debug.Assert(tileTypes != null && tileTypes.Length >= xCount * yCount);
+            Debug.Assert(tileTypes != null && tileTypes.Length >= rectangle.Size.Size());
 
             int idx = 0;
 
             // Rows before start of map
-            for (int j = y1; j < 0; j++)
+            for (int j = rectangle.Top; j < 0; j++)
             {
-                for (int i = x1; i < x2; i++)
+                for (int i = rectangle.Left; i < rectangle.Right; i++)
                     tileTypes[idx++] = 0;
             }
 
@@ -61,7 +63,7 @@ namespace World.ToyWorldCore
             for (var j = 0; j < yLength; j++)
             {
                 // Tiles before start of map
-                for (int i = x1; i < 0; i++)
+                for (int i = rectangle.Left; i < 0; i++)
                     tileTypes[idx++] = 0;
 
                 // Tiles inside of map
@@ -72,14 +74,14 @@ namespace World.ToyWorldCore
                 }
 
                 // Tiles after end of map
-                for (int i = xLength; i < x2; i++)
+                for (int i = xLength; i < rectangle.Right; i++)
                     tileTypes[idx++] = 0;
             }
 
             // Rows after end of map
-            for (int j = yLength; j < y2; j++)
+            for (int j = yLength; j < rectangle.Bottom; j++)
             {
-                for (int i = x1; i < x2; i++)
+                for (int i = rectangle.Left; i < rectangle.Right; i++)
                     tileTypes[idx++] = 0;
             }
         }

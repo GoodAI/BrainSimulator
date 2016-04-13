@@ -94,6 +94,9 @@ namespace Render.RenderObjects.Effects
         }
 
         // TODO: Jde matrix prevest na array bez kopirovani a unsafe kodu?
+        /// <summary>
+        ///Passed matrices are applied from left to right (as in vert*(a*b*c) -- a will be first).
+        /// </summary>
         public void SetUniformMatrix4(int pos, Matrix val)
         {
             unsafe

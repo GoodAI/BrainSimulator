@@ -65,9 +65,16 @@ namespace ToyWorldTests.Render
             CancellationToken token = SetupWindow(
                 delta =>
                 {
-                    double rot = rr.Rotation + delta.X;
+                    delta += new SizeF(rr.Rotation);
+                    float rot = delta.X;
                     MathHelper.LimitRadians2PI(ref rot);
-                    rr.Rotation = (float)rot;
+                    delta.X = rot;
+
+                    rot = delta.Y;
+                    MathHelper.LimitRadiansPI(ref rot);
+                    delta.Y = rot;
+
+                    rr.Rotation = delta;
                 });
 
             while (m_renderer.Window.Exists && !token.IsCancellationRequested)
@@ -106,7 +113,7 @@ namespace ToyWorldTests.Render
 
             m_renderer.Window.MouseMove += (sender, args) =>
             {
-                const float factor = 1 / 60f;
+                const float factor = 1 / 100f;
 
                 if (args.Mouse.IsButtonDown(MouseButton.Left))
                     onDrag(new PointF(args.XDelta * factor, args.YDelta * factor));

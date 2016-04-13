@@ -92,7 +92,7 @@ namespace Render.RenderObjects.Buffers
             Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
 
             // Generate tiles from top-left corner row-wise, centered on origin
-            Vector2 topLeft = new Vector2(-gridSize.X, gridSize.Y);
+            Vector2I topLeft = new Vector2I(-gridSize.X, gridSize.Y);
 
             int idx = 0;
 
@@ -101,10 +101,10 @@ namespace Render.RenderObjects.Buffers
                 for (int i = 0; i < gridSize.X; i++)
                 {
                     // Start top-left, continue clock-wise
-                    vertices[idx++] = topLeft * gridSizeInv;
-                    vertices[idx++] = (topLeft + xStep) * gridSizeInv;
-                    vertices[idx++] = (topLeft + xyStep) * gridSizeInv;
-                    vertices[idx++] = (topLeft + yStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)topLeft * gridSizeInv;
+                    vertices[idx++] = (Vector2)(topLeft + xStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)(topLeft + xyStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)(topLeft + yStep) * gridSizeInv;
 
                     topLeft += xStep;
                 }

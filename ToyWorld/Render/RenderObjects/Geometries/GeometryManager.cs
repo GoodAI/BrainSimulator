@@ -1,4 +1,5 @@
-﻿using Render.Tests.Geometries;
+﻿using System;
+using Render.Tests.Geometries;
 using Utils.VRageRIP.Lib.Collections;
 using VRageMath;
 
@@ -12,17 +13,30 @@ namespace Render.RenderObjects.Geometries
 
         public GeometryManager()
         {
-            m_geometries
-                .Case<FullScreenQuad>(() =>
-                    new FullScreenQuad())
-                .Case<FancyFullscreenQuad>(() =>
-                    new FancyFullscreenQuad())
-                .Case<FullScreenQuadTex>(() =>
-                    new FullScreenQuadTex());
+            // TODO: gather and distribute types to TypeSwitches based on available constructor through reflection (add attributes?)
+            // Plain geometries
+            CaseInternal<FullScreenQuad>();
+            CaseInternal<FancyFullscreenQuad>();
+            CaseInternal<FullScreenQuadTex>();
+            CaseInternal<FullScreenQuadOffset>();
 
-            m_vecGeometries
-                .Case<FullScreenGrid>(vec =>
-                    new FullScreenGrid(vec));
+            // Parameterized geometries
+            CaseParamInternal<FullScreenGrid>();
+        }
+
+        private GeometryManager CaseInternal<T>()
+            where T : GeometryBase, new()
+        {
+            m_geometries.Case<T>(() => new T());
+            return this;
+        }
+
+        private GeometryManager CaseParamInternal<T>()
+            where T : GeometryBase
+        {
+            // Activator is about 11 times slower, than new T() -- should be ok for this usage
+            m_vecGeometries.Case<T>(vec => (T)Activator.CreateInstance(typeof(T), vec));
+            return this;
         }
 
 

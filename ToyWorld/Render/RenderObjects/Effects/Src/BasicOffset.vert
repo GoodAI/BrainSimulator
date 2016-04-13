@@ -6,7 +6,7 @@ uniform ivec3	texSizeCount	= ivec3(256,256, 16);
 // Tile size, tile margin in px
 uniform ivec4	tileSizeMargin	= ivec4(16,16, 0,0);
 
-uniform mat4 view = mat4(1);
+uniform mat4 mvp = mat4(1);
 
 
 layout(location=0) in vec2	v_position;
@@ -56,5 +56,5 @@ void main()
 	}
 		
 	f_texCoods = GetTexCoods();
-	gl_Position = view * vec4(v_position, 0, 1);
+	gl_Position = mvp * vec4(v_position, 0, 1);
 }
