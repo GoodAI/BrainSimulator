@@ -51,10 +51,5 @@ namespace World.ToyWorldCore
         {
             return default(Tile);
         }
-
-        public List<Tile> GetAllObjects()
-        {
-            return default(List<Tile>);
-        }
     }
 }

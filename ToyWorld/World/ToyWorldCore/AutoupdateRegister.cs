@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using VRage.Collections;
 using World.GameActors.Tiles;
+using World.WorldInterfaces;
 
 namespace World.ToyWorldCore
 {
@@ -40,6 +41,13 @@ namespace World.ToyWorldCore
         public void Tick()
         {
             m_register.MoveNext();
+        }
+
+        public void UpdateItems(IWorld world)
+        {
+            foreach (IAutoupdateable actor in CurrentUpdateRequests)
+                actor.Update(world);
+            CurrentUpdateRequests.Clear();
         }
 
         [ContractInvariantMethod]

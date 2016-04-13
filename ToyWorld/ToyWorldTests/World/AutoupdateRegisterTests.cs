@@ -1,6 +1,9 @@
 ﻿using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using TmxMapSerializer.Elements;
+using TmxMapSerializer.Serializer;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
@@ -113,6 +116,34 @@ namespace ToyWorldTests.World
             register.Tick();
 
             Assert.Equal(mock.Object, register.CurrentUpdateRequests[0]);
+        }
+
+        [Fact]
+        public void TestUpdateItems()
+        {
+            var tmxStreamReader = new StreamReader(FileStreams.GetTmxMemoryStream());
+            var tilesetTableStreamReader = new StreamReader(FileStreams.GetTilesetTableMemoryStream());
+
+            TmxSerializer serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStreamReader);
+            ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
+
+            AutoupdateRegister register = new AutoupdateRegister();
+            Mock<Tile> mockTile = new Mock<Tile>();
+            Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
+            register.Register(mock1.Object, 1);
+            register.Register(mock2.Object, 2);
+            register.Tick();
+            register.UpdateItems(world);
+
+            mock1.Verify(x => x.Update(It.IsAny<ToyWorld>()));
+            mock2.Verify(x => x.Update(It.IsAny<ToyWorld>()), Times.Never());
+
+            register.Tick();
+            register.UpdateItems(world);
+
+            mock2.Verify(x => x.Update(It.IsAny<ToyWorld>()));
         }
     }
 }

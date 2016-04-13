@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using VRage.Collections;
 using Xunit;
 
@@ -74,15 +73,6 @@ namespace ToyWorldTests.Utils
             m_list.Reset();
             m_list.MoveNext();
             Assert.Equal(0, m_list.Current);
-        }
-
-        [Fact]
-        public void TestEnumerator()
-        {
-            IEnumerator<int> enumerator = m_list.GetEnumerator();
-            enumerator.MoveNext();
-
-            Assert.Equal(1, enumerator.Current);
         }
     }
 }

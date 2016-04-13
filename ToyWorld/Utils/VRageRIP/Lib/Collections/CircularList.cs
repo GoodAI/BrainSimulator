@@ -11,7 +11,7 @@ namespace VRage.Collections
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [ContractVerification(true)]
-    public class CircularList<T> : IEnumerator<T>, IEnumerable<T> where T : new()
+    public class CircularList<T> : IEnumerator<T> where T : new()
     {
         protected readonly T[] m_circle;
         protected int m_cursor;
@@ -62,10 +62,10 @@ namespace VRage.Collections
         private void RangeOK(int index)
         {
             if (index < 0)
-                throw new ArgumentOutOfRangeException("Trying to access the element before the list start.");
+                throw new ArgumentOutOfRangeException("index", "Trying to access the element before the list start.");
 
             if (index >= m_circle.Length)
-                throw new ArgumentOutOfRangeException("Trying to access the element after the list end.");
+                throw new ArgumentOutOfRangeException("index", "Trying to access the element after the list end.");
         }
 
         public void Reset()
@@ -78,17 +78,6 @@ namespace VRage.Collections
             if (++m_cursor >= m_circle.Length)
                 m_cursor = 0;
             return true;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return this;
-        }
-
-        [ExcludeFromCodeCoverage]
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this;
         }
 
         public void Dispose() { }

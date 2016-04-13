@@ -38,30 +38,6 @@ namespace ToyWorldTests.World
         }
 
         [Fact]
-        public void TestUpdateScheduled()
-        {
-            AutoupdateRegister register = m_world.AutoupdateRegister;
-
-            Mock<Tile> mockTile = new Mock<Tile>();
-
-            Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
-            Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
-
-            register.Register(mock1.Object, 1);
-            register.Register(mock2.Object, 2);
-            register.Tick();
-
-            m_world.UpdateScheduled();
-
-            mock1.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>(), It.IsAny<AutoupdateRegister>()));
-            mock2.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>(), It.IsAny<AutoupdateRegister>()), Times.Never());
-
-            m_world.UpdateScheduled();
-
-            mock2.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>(), It.IsAny<AutoupdateRegister>()));
-        }
-
-        [Fact]
         public void TestAvatarNames()
         {
             Assert.Contains<string>("Pingu", m_world.GetAvatarsNames());

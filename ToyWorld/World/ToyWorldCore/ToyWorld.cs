@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
 using VRageMath;
-using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
@@ -37,19 +36,6 @@ namespace World.ToyWorldCore
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable);
 
             Physics = new Physics.Physics();
-
-            UpdateAllObjects();
-        }
-
-
-        private void UpdateAllObjects()
-        {
-            foreach (GameActor actor in Atlas.GetAllObjects())
-            {
-                IAutoupdateable updateable = actor as IAutoupdateable;
-                if (updateable != null)
-                    updateable.Update(Atlas, TilesetTable, AutoupdateRegister);
-            }
         }
 
         private void UpdatePhysics()
@@ -72,7 +58,7 @@ namespace World.ToyWorldCore
         public void UpdateScheduled()
         {
             foreach (IAutoupdateable actor in AutoupdateRegister.CurrentUpdateRequests)
-                actor.Update(Atlas, TilesetTable, AutoupdateRegister);
+                actor.Update(this);
             AutoupdateRegister.CurrentUpdateRequests.Clear();
             AutoupdateRegister.Tick();
         }
@@ -82,7 +68,7 @@ namespace World.ToyWorldCore
             UpdateTiles();
             UpdateAvatars();
             UpdateCharacters();
-            UpdateScheduled();
+            AutoupdateRegister.UpdateItems(this);
             UpdatePhysics();
         }
 

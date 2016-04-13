@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
@@ -34,7 +33,7 @@ namespace World.ToyWorldCore
             if (layerType == LayerType.Object
                 || layerType == LayerType.ForegroundObject)
             {
-                return ObjectLayers.First(x => x.LayerType == layerType);
+                return ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
             }
             return TileLayers.First(x => x.LayerType == layerType);
         }
@@ -57,17 +56,6 @@ namespace World.ToyWorldCore
         {
             Contract.Ensures(Contract.Result<List<IAvatar>>() != null);
             return Avatars.Values.ToList();
-        }
-
-        public IEnumerable<GameActor> GetAllObjects()
-        {
-            foreach (ITileLayer tileLayer in TileLayers)
-                foreach (Tile tile in tileLayer.GetAllObjects())
-                    yield return tile;
-
-            foreach (IObjectLayer objectLayer in ObjectLayers)
-                foreach (GameObject item in objectLayer.GetAllObjects())
-                    yield return item;
         }
     }
 }
