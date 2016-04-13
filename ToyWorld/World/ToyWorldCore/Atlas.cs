@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Utils;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
@@ -40,7 +41,7 @@ namespace World.ToyWorldCore
 
         public bool AddAvatar(IAvatar avatar)
         {
-            Contract.Requires<ArgumentNullException>(avatar != null, "Avatar cannot be null");
+            MyContract.Requires<ArgumentNullException>(avatar != null, "Avatar cannot be null");
             try
             {
                 Avatars.Add(avatar.Id, avatar);

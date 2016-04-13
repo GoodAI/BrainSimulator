@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Utils;
 using VRageMath;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
@@ -37,8 +37,8 @@ namespace World.ToyWorldCore
     {
         public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((x2 - x1 + 1) > 0, "X values doesn't form a valid rectangle");
-            Contract.Requires<ArgumentOutOfRangeException>((y2 - y1 + 1) > 0, "Y values doesn't form a valid rectangle");
+            MyContract.Requires<ArgumentOutOfRangeException>((x2 - x1 + 1) > 0, "X values doesn't form a valid rectangle");
+            MyContract.Requires<ArgumentOutOfRangeException>((y2 - y1 + 1) > 0, "Y values doesn't form a valid rectangle");
 
             return default(Tile[,]);
         }

@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
+using Utils;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
@@ -28,7 +29,7 @@ namespace World.ToyWorldCore
 
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
-            Contract.Requires<ArgumentNullException>(tileTable != null, "Tile table cannot be null");
+            MyContract.Requires<ArgumentNullException>(tileTable != null, "Tile table cannot be null");
             Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
 
             AutoupdateRegister = new AutoupdateRegister();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Utils;
 using VRage.Collections;
 using World.GameActors.Tiles;
 using World.WorldInterfaces;
@@ -24,7 +25,7 @@ namespace World.ToyWorldCore
 
         public AutoupdateRegister(int registerSize = 100)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(registerSize > 0, "Register size must be larger than zero.");
+            MyContract.Requires<ArgumentOutOfRangeException>(registerSize > 0, "Register size must be larger than zero.");
 
             m_register = new CircularList<List<IAutoupdateable>>(registerSize);
             m_register.MoveNext();
@@ -32,8 +33,8 @@ namespace World.ToyWorldCore
 
         public void Register(IAutoupdateable actor, int timePeriod = 1)
         {
-            Contract.Requires<ArgumentNullException>(actor != null, "You cannot register null object for updating.");
-            Contract.Requires<ArgumentOutOfRangeException>(timePeriod > 0, "Update period has to be larger than zero.");
+            MyContract.Requires<ArgumentNullException>(actor != null, "You cannot register null object for updating.");
+            MyContract.Requires<ArgumentOutOfRangeException>(timePeriod > 0, "Update period has to be larger than zero.");
 
             m_register[timePeriod].Add(actor);
         }
