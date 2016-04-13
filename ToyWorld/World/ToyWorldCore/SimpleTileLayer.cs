@@ -1,4 +1,7 @@
 ﻿using World.GameActors.Tiles;
+using Utils.VRageRIP.Lib.Extensions;
+using VRageMath;
+using System;
 
 namespace World.ToyWorldCore
 {
@@ -7,30 +10,27 @@ namespace World.ToyWorldCore
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
             LayerType = layerType;
-            Tiles = new Tile[width, height];
+            Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
         }
 
-        public Tile[,] Tiles { get; set; }
+        public Tile[][] Tiles { get; set; }
 
-        public LayerType LayerType { get; set; }
+        public LayerType LayerType { get; private set; }
 
-        public Tile GetTile(int x, int y)
+        public Tile GetTile(Vector2I coordinates)
         {
-            return Tiles[x, y];
+            return Tiles[coordinates.X][coordinates.Y];
         }
 
-        public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
+        public Tile[] GetRectangle(Rectangle rectangle)
         {
-            var xCount = x2 - x1 + 1;
-            var yCount = y2 - y1 + 1;
-            var f = new Tile[xCount, yCount];
-            
-            for (var i = 0; i < xCount; i++)
+            int totalElementsNumber = rectangle.Height * rectangle.Width;
+
+            var f = new Tile[totalElementsNumber];
+
+            for (int i = 0; i < rectangle.Height; i++)
             {
-                for (var j = 0; j < yCount; j++)
-                {
-                    f[i, j] = Tiles[x1 + i, y1 + j];
-                }
+                Array.Copy(Tiles[rectangle.Top + i], rectangle.Left, f, rectangle.Width * i, rectangle.Width);
             }
 
             return f;
