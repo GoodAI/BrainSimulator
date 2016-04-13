@@ -12,22 +12,33 @@ namespace GoodAI.ToyWorld.Control
         /// 
         /// </summary>
         float AvatarID { get; }
+
+
         /// <summary>
         /// 
         /// </summary>
-        float Size { get; set; }
+        Size Size { get; }
+
         /// <summary>
         /// 
         /// </summary>
-        float Position { get; }
+        PointF PositionCenter { get; }
+
         /// <summary>
-        /// Relative position of the center of the view to the agent's position.
+        /// Relative position of PositionCenter to avatar's position
         /// </summary>
-        float RelativePosition { get; set; }
+        PointF RelativePosition { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
-        Point Resolution { get; set; }
+        RectangleF View { get; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Size Resolution { get; set; }
     }
 
     /// <summary>

@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
+using VRageMath;
 
 namespace Render.RenderObjects.Effects
 {
@@ -12,6 +14,8 @@ namespace Render.RenderObjects.Effects
 
         private readonly int m_prog;
 
+
+        #region Genesis
 
         // TODO: genericity
         protected EffectBase(string vertPath, string fragPath)
@@ -35,7 +39,7 @@ namespace Render.RenderObjects.Effects
         private int LoadShader(string name, ShaderType type)
         {
             var handle = GL.CreateShader(type);
-            
+
             Stream vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
             Debug.Assert(vertSrc != null);
 
@@ -52,10 +56,12 @@ namespace Render.RenderObjects.Effects
             return handle;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             GL.DeleteProgram(m_prog);
         }
+
+        #endregion
 
 
         public void Use()
@@ -63,14 +69,42 @@ namespace Render.RenderObjects.Effects
             GL.UseProgram(m_prog);
         }
 
-        public void SetUniform(int pos, int val)
-        {
-            GL.Uniform1(pos, val);
-        }
+
+        #region Uniforms
 
         public int GetUniformLocation(string name)
         {
             return GL.GetUniformLocation(m_prog, name);
         }
+
+
+        public void SetUniform1(int pos, int val)
+        {
+            GL.Uniform1(pos, val);
+        }
+
+        public void SetUniform3(int pos, Vector3I val)
+        {
+            GL.Uniform3(pos, val.X, val.Y, val.Z);
+        }
+
+        public void SetUniform4(int pos, Vector4I val)
+        {
+            GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
+        }
+
+        // TODO: Jde matrix prevest na array bez kopirovani a unsafe kodu?
+        /// <summary>
+        ///Passed matrices are applied from left to right (as in vert*(a*b*c) -- a will be first).
+        /// </summary>
+        public void SetUniformMatrix4(int pos, Matrix val)
+        {
+            unsafe
+            {
+                GL.UniformMatrix4(pos, 1, false, val.M.data);
+            }
+        }
+
+        #endregion
     }
 }

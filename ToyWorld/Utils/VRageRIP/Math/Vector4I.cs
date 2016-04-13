@@ -16,6 +16,10 @@ namespace VRageMath
         [ProtoBuf.ProtoMember]
         public int W;
 
+        public Vector4I(int val)
+            : this(val, val, val, val)
+        { }
+
         public Vector4I(int x, int y, int z, int w)
         {
             X = x;
@@ -30,6 +34,14 @@ namespace VRageMath
             Y = xyz.Y;
             Z = xyz.Z;
             W = w;
+        }
+
+        public Vector4I(Vector2I xy, Vector2I zw)
+        {
+            X = xy.X;
+            Y = xy.Y;
+            Z = zw.X;
+            W = zw.Y;
         }
 
         public class EqualityComparer : IEqualityComparer<Vector4I>, IComparer<Vector4I>

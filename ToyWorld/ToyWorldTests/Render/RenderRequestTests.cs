@@ -15,8 +15,8 @@ using Xunit;
 
 namespace ToyWorldTests.Render
 {
-
-    public class RenderRequestTests : GameControllerTests
+    [Collection("Renderer")]
+    public class RenderRequestTests : GameControllerTestBase
     {
         [Fact]
         public void RRInits()
@@ -28,7 +28,7 @@ namespace ToyWorldTests.Render
             {
                 var r = rr as RenderRequest;
                 Assert.NotNull(r);
-                r.Init(GameController.Renderer);
+                r.Init(GameController.Renderer, GameController.World);
                 GameController.Renderer.CheckError();
             }
 
@@ -36,7 +36,7 @@ namespace ToyWorldTests.Render
             {
                 var r = rr as RenderRequest;
                 Assert.NotNull(r);
-                r.Init(GameController.Renderer);
+                r.Init(GameController.Renderer, GameController.World);
                 GameController.Renderer.CheckError();
             }
 
@@ -45,7 +45,18 @@ namespace ToyWorldTests.Render
 
 
         [Fact]
-        public void AvatarFoV()
+        public void FullMapRR()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFullMapRR>();
+
+            GameController.MakeStep();
+            GameController.MakeStep();
+
+            // Asserting not throwing of any exceptions -- there is nothing to test otherwise, no visual output
+        }
+
+        [Fact]
+        public void FoVAvatarRR()
         {
             var RRTest = GameController.RegisterRenderRequest<IFovAvatarRR>(0);
 

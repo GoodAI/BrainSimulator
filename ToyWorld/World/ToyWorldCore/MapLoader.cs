@@ -27,7 +27,7 @@ namespace World.ToyWorldCore
 
             foreach (LayerType layerType in Enum.GetValues(typeof(LayerType)).Cast<LayerType>())
             {
-                string layerName = Enum.GetName(typeof (LayerType), layerType);
+                string layerName = Enum.GetName(typeof(LayerType), layerType);
 
                 Debug.Assert(layerName != null);
 
@@ -54,7 +54,7 @@ namespace World.ToyWorldCore
 
         private static IObjectLayer FillObjectLayer(Atlas atlas, ObjectGroup objectLayer, LayerType layerType)
         {
-//            TODO : write loading of objects
+            //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
 
             var avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
@@ -71,10 +71,11 @@ namespace World.ToyWorldCore
             return simpleObjectLayer;
         }
 
-        private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int,StaticTile> staticTilesContainer, TilesetTable tilesetTable)
+        private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int, StaticTile> staticTilesContainer, TilesetTable tilesetTable)
         {
-            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width + 1, layer.Height + 1);
-            var lines = layer.Data.RawData.Split('\n');
+            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
+            var lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             var assembly = Assembly.GetExecutingAssembly();
             var cachedTypes = assembly.GetTypes();
             for (int i = 0; i < lines.Length; i++)
@@ -87,7 +88,7 @@ namespace World.ToyWorldCore
                     var tileNumber = int.Parse(tiles[j]);
                     if (staticTilesContainer.ContainsKey(tileNumber))
                     {
-                        newSimpleLayer.Tiles[i,j] = staticTilesContainer[tileNumber];
+                        newSimpleLayer.Tiles[i, j] = staticTilesContainer[tileNumber];
                     }
                     else
                     {
@@ -95,15 +96,15 @@ namespace World.ToyWorldCore
                         if (tileName != null)
                         {
                             var newTile = CreateInstance(tileName, tileNumber, cachedTypes);
-                            newSimpleLayer.Tiles[i,j] = newTile;
+                            newSimpleLayer.Tiles[i, j] = newTile;
                             if (newTile is StaticTile)
                             {
                                 staticTilesContainer.Add(tileNumber, newTile as StaticTile);
                             }
                         }
-//                        TODO : before release check code below is active
-//                        else
-//                            Debug.Assert(false, "Tile with number " + tileNumber + " was not found in TilesetTable");
+                        //                        TODO : before release check code below is active
+                        //                        else
+                        //                            Debug.Assert(false, "Tile with number " + tileNumber + " was not found in TilesetTable");
                     }
 
                 }
@@ -119,7 +120,7 @@ namespace World.ToyWorldCore
                     return (Tile)Activator.CreateInstance(types[i], tileNumber);
             }
             // TODO : make sure next line is active before release
-//            throw new Exception("MapLoader cannot find class " + className);
+            //            throw new Exception("MapLoader cannot find class " + className);
             return null;
         }
     }

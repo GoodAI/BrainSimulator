@@ -93,6 +93,7 @@
     <Compile Include="VRageRIP\Lib\Collections\ThreadSafeStore.cs" />
     <Compile Include="VRageRIP\Lib\Collections\UniqueListReader.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\ArrayEnumerator.cs" />
+    <Compile Include="VRageRIP\Lib\Extensions\ColorExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\ArrayExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\ArrayOfTypeEnumerator.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\AssemblyExtensions.cs" />

@@ -6,6 +6,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Render.RenderObjects.Textures;
+using VRageMath;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace Render.Tests.Textures
 {
@@ -20,21 +22,41 @@ namespace Render.Tests.Textures
         {
             Debug.Assert(texPath != null && texPath.Length > 0 && !texPath.Contains(null));
 
+
             foreach (var stream in texPath)
             {
-                var bmp = new Bitmap(stream);
+                using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
+                {
+                    if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
+                        throw new ArgumentException("The image on the specified path is not in the required RGBA format.", "texPath");
 
-                if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
-                    throw new ArgumentException("The image on the specified path is not in the required RGBA format.", "texPath");
+                    BitmapData data = bmp.LockBits(
+                        new Rectangle(0, 0, bmp.Width, bmp.Height),
+                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-                BitmapData data = bmp.LockBits(
-                    new Rectangle(0, 0, bmp.Width, bmp.Height),
-                    ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    try
+                    {
+                        //bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
-                m_textures.Add(new TextureBase(data.Scan0, bmp.Width, bmp.Height));
-                
-                bmp.UnlockBits(data);
+                        m_textures.Add(new TextureBase(data.Scan0.ArgbToRgbaArray(data.Width * data.Height), bmp.Width, bmp.Height));
+                    }
+                    finally
+                    {
+                        bmp.UnlockBits(data);
+                    }
+                }
             }
+
+            Size = m_textures[0].Size;
+            Debug.Assert(m_textures.TrueForAll(a => a.Size == Size), "Tilesets have to be of the same dimensionality.");
+        }
+
+        public override void Dispose()
+        {
+            foreach (var textureBase in m_textures)
+                textureBase.Dispose();
+
+            base.Dispose();
         }
 
 

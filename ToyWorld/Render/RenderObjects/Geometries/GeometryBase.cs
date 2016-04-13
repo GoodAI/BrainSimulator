@@ -6,7 +6,7 @@ namespace Render.RenderObjects.Geometries
     {
         public abstract void Draw();
 
-        public void Update<T>(VboPosition id, T[] data, int count = -1, int offset = 0)
+        protected void Update<T>(VboPosition id, T[] data, int count = -1, int offset = 0)
             where T : struct
         {
             this[id].Update(data, count, offset);

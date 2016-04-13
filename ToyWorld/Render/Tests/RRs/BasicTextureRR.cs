@@ -8,6 +8,7 @@ using Render.Tests.Effects;
 using Render.Tests.Geometries;
 using Render.Tests.Textures;
 using VRageMath;
+using World.ToyWorldCore;
 using Color = System.Drawing.Color;
 using Vector2 = VRageMath.Vector2;
 
@@ -32,14 +33,14 @@ namespace Render.Tests.RRs
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer)
+        public override void Init(RendererBase renderer, ToyWorld world)
         {
             GL.ClearColor(Color.Black);
 
             m_quad = renderer.GeometryManager.Get<FullScreenQuadTex>();
         }
 
-        public override void Draw(RendererBase renderer)
+        public override void Draw(RendererBase renderer, ToyWorld world)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -66,7 +67,7 @@ namespace Render.Tests.RRs
 
             var effect = renderer.EffectManager.Get<NoEffectTex>();
             renderer.EffectManager.Use(effect);
-            effect.SetUniform(effect.GetUniformLocation("tex"), 0);
+            effect.SetUniform1(effect.GetUniformLocation("tex"), 0);
 
             var tex = renderer.TextureManager.Get<TilesetTexture>();
             renderer.TextureManager.Bind(tex);
