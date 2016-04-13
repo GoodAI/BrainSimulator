@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
@@ -33,7 +34,13 @@ namespace World.ToyWorldCore
             AutoupdateRegister = new AutoupdateRegister();
 
             TilesetTable = new TilesetTable(tmxDeserializedMap, tileTable);
-            Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable);
+            Action<GameActor> initializer = delegate(GameActor actor)
+            {
+                IAutoupdateable updateable = actor as IAutoupdateable;
+                if (updateable != null)
+                    updateable.Update(this);
+            };
+            Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
 
             Physics = new Physics.Physics();
         }
