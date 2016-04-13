@@ -6,15 +6,14 @@ namespace World.Physics
     public interface IPhysicalEntity
     {
         /// <summary>
-        /// Absolute position in ToyWorld.
+        /// Absolute position in ToyWorld. Upper left corner.
         /// </summary>
         Vector2 Position { get; set; }
 
-        IShape Shape
-        {
-            get;
-            set;
-        }
+        /// <summary>
+        /// Shape of this entity.
+        /// </summary>
+        IShape Shape { get; set; }
 
         /// <summary>
         /// Returns rectangle wrapping this entity.

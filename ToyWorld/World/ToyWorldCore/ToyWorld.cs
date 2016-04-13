@@ -43,7 +43,7 @@ namespace World.ToyWorldCore
         private void UpdateAvatars()
         {
             List<IAvatar> avatars = Atlas.GetAvatars();
-            m_physics.TransofrmControlsToMotion(avatars);
+            m_physics.TransofrmControlsPhysicalProperties(avatars);
             List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
             m_physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }

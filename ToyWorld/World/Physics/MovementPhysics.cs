@@ -5,6 +5,10 @@ namespace World.Physics
 {
     public interface IMovementPhysics
     {
+        /// <summary>
+        /// Move with given ForwardMovable object.
+        /// </summary>
+        /// <param name="movable"></param>
         void Move(IForwardMovablePhysicalEntity movable);
     }
 
