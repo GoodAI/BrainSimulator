@@ -54,6 +54,7 @@
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
+    <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
     <Compile Include="Tests\Effects\NoEffectOffset.cs" />
     <Compile Include="Tests\Effects\NoEffectTex.cs" />

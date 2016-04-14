@@ -3,7 +3,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
-using Render.RenderRequests.RenderRequests;
+using Render.RenderRequests;
 using Render.Tests.Effects;
 using Render.Tests.Geometries;
 using Render.Tests.Textures;

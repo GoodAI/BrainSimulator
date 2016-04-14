@@ -25,6 +25,15 @@ namespace Render.RenderObjects.Textures
                         Debug.Assert(str != null);
                         return new TilesetTexture(str);
                     });
+
+            // TODO: use:
+            //CaseInternal<TilesetTexture>();
+        }
+
+        private void CaseInternal<T>()
+            where T : TextureBase, new()
+        {
+            m_textures.Case<T>(() => new T());
         }
 
 

@@ -38,4 +38,15 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         PointF Rotation { get; set; }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IFreeMapRR : IFullMapRR
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        new PointF PositionCenter { get; set; }
+    }
 }

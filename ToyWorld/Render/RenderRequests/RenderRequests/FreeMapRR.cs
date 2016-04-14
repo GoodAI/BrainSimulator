@@ -1,4 +1,6 @@
-﻿using GoodAI.ToyWorld.Control;
+﻿using System;
+using System.Drawing;
+using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
@@ -6,13 +8,12 @@ using Render.Tests.Effects;
 using Render.Tests.Textures;
 using VRageMath;
 using World.ToyWorldCore;
+using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests
 {
-    internal class FovAvatarRR : AvatarRRBase, IFovAvatarRR
+    internal class FreeMapRR : RenderRequestBase, IFreeMapRR
     {
-        private int[] m_buffer;
-
         private NoEffectOffset m_effect;
         private TilesetTexture m_tex;
         private FullScreenGrid m_grid;
@@ -23,12 +24,10 @@ namespace Render.RenderRequests
         private Matrix m_worldViewProjectionMatrix;
         private int m_mvpPos;
 
+        protected Vector3 RotationV { get { return new Vector3((Vector2)Rotation, 0); } set { Rotation = new PointF(value.X, value.Y); } }
+
 
         #region Genesis
-
-        public FovAvatarRR(int avatarID)
-            : base(avatarID)
-        { }
 
         public override void Dispose()
         {
@@ -41,9 +40,11 @@ namespace Render.RenderRequests
 
         #endregion
 
-        #region IFovAvatarRR overrides
+        #region IFreeMapRR overrides
 
-        public uint[] Image { get; private set; }
+        public PointF Rotation { get; set; }
+
+        public new PointF PositionCenter { get { return base.PositionCenter; } set { base.PositionCenter = value; } }
 
         #endregion
 
@@ -51,8 +52,6 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase renderer, ToyWorld world)
         {
-            Image = new uint[renderer.Width * renderer.Height];
-
             GL.ClearColor(System.Drawing.Color.DimGray);
             GL.Enable(EnableCap.Blend);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
@@ -73,12 +72,12 @@ namespace Render.RenderRequests
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_mvpPos = m_effect.GetUniformLocation("mvp");
 
+            // Setup public properties
             SizeV = world.Size;
-            PositionCenterV = (Vector2)SizeV * 0.5f;
+            PositionCenterV = new Vector3((Vector2)SizeV * 0.5f, 0);
             ViewV = new RectangleF(Vector2.Zero, (Vector2)SizeV);
 
             // Set up tile grid geometry
-            m_buffer = new int[SizeV.Size()];
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(SizeV);
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
@@ -86,7 +85,8 @@ namespace Render.RenderRequests
             m_worldMatrix = Matrix.CreateScale(world.Size.X * 0.5f, world.Size.Y * 0.5f, 1);
             // No view matrix needed here -- we are fixed on origin (center of the world),
             // or the view has to be computed each step
-            m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, 1, -20);
+            const float zoom = 1f;
+            m_projMatrix = Matrix.CreateOrthographic(SizeV.X * zoom, SizeV.Y * zoom, -1, 20);
         }
 
         public override void Draw(RendererBase renderer, ToyWorld world)
@@ -99,7 +99,7 @@ namespace Render.RenderRequests
 
             // Set up transformation to screen space
             m_worldViewProjectionMatrix = m_worldMatrix;
-            // TODO: m_worldViewProjectionMatrix *= GetViewMatrix(Vector3.Zero, Vector3.Zero);
+            m_worldViewProjectionMatrix *= GetViewMatrix(RotationV, PositionCenterV);
             m_worldViewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, m_worldViewProjectionMatrix);
 
@@ -121,7 +121,7 @@ namespace Render.RenderRequests
                     Matrix modelMatrix = Matrix.Identity;
                     modelMatrix *= Matrix.CreateRotationZ(0.5f);
                     modelMatrix *= Matrix.CreateScale(0.2f);
-                    modelMatrix *= Matrix.CreateTranslation(0.3f, 0, 0.01f);
+                    modelMatrix *= Matrix.CreateTranslation(Rotation.Y, 0, 0.01f);
                     modelMatrix *= m_worldViewProjectionMatrix;
                     m_effect.SetUniformMatrix4(m_mvpPos, modelMatrix);
 
@@ -131,8 +131,6 @@ namespace Render.RenderRequests
                     m_quad.Draw();
                 }
             }
-
-            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
         }
 
         #endregion

@@ -23,17 +23,41 @@ vec2 GetTexCoods()
 	ivec2 uv = off * (tileSizeMargin.xy + tileSizeMargin.zw);
 
 	// Offset the vertex according to its position in the quad
-	switch (gl_VertexID % 4)
+	int vertID = gl_VertexID % 4;
+
+	const int uvOffset = 1;
+
+	switch (vertID)
 	{
 		case 0:
+		case 3:
+		uv.x += uvOffset;
 		break;
 
+		case 1:
+		case 2:
+		uv.x -= uvOffset;
+	}
+	switch (vertID)
+	{
+		case 0:
+		case 1:
+		uv.y += uvOffset;
+		break;
+
+		case 2:
+		case 3:
+		uv.y -= uvOffset;
+		break;
+	}
+	switch (vertID)
+	{
 		case 1:
 		uv += ivec2(tileSizeMargin.x, 0);
 		break;
 				
 		case 2:
-		uv += ivec2(tileSizeMargin.x, tileSizeMargin.y);
+		uv += tileSizeMargin.xy;
 		break;
 				
 		case 3:
@@ -50,7 +74,7 @@ void main()
 	if (v_texOffset <= 0)
 	{
 		// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
-		gl_Position = vec4(0,0,20,0);
+		gl_Position = vec4(0,0,2000,0);
 		f_texCoods = vec2(0,0);
 		return;
 	}

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -10,7 +9,7 @@ using VRageMath;
 using World.ToyWorldCore;
 using RectangleF = VRageMath.RectangleF;
 
-namespace Render.RenderRequests.RenderRequests
+namespace Render.RenderRequests
 {
     internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
@@ -72,7 +71,7 @@ namespace Render.RenderRequests.RenderRequests
 
             // Setup public properties
             SizeV = world.Size;
-            PositionCenterV = (Vector2)SizeV * 0.5f;
+            PositionCenterV = new Vector3((Vector2)SizeV * 0.5f, 0);
             ViewV = new RectangleF(Vector2.Zero, (Vector2)SizeV);
 
             // Set up tile grid geometry
@@ -97,11 +96,8 @@ namespace Render.RenderRequests.RenderRequests
 
             // Set up transformation to screen space
             m_worldViewProjectionMatrix = m_worldMatrix;
-
-            if (Rotation.X > 0)
-                // Temporary view transform
-                m_worldViewProjectionMatrix *= Matrix.CreateRotationZ(Rotation.X);
-
+            // Temporary view transform
+            m_worldViewProjectionMatrix *= GetViewMatrix(new Vector3(Rotation.X, Rotation.Y, 0), PositionCenterV);
             m_worldViewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, m_worldViewProjectionMatrix);
 
@@ -109,9 +105,7 @@ namespace Render.RenderRequests.RenderRequests
             // Draw tile layers
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
-                tileLayer.GetRectangle(ViewV.Position, ViewV.Size, m_buffer);
-                m_grid.SetTextureOffsets(m_buffer);
-
+                m_grid.SetTextureOffsets(tileLayer.GetRectangle(ViewV.Position, ViewV.Size));
                 m_grid.Draw();
             }
 

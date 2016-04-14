@@ -10,8 +10,12 @@ namespace World.ToyWorldCore
 {
     public class SimpleTileLayer : ITileLayer
     {
+        private int[] m_tileTypes;
+
+
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
+            m_tileTypes = new int[0];
             MyContract.Requires<ArgumentOutOfRangeException>(width > 0, "Tile width has to be positive");
             MyContract.Requires<ArgumentOutOfRangeException>(height > 0, "Tile height has to be positive");
             LayerType = layerType;
@@ -44,13 +48,15 @@ namespace World.ToyWorldCore
             return f;
         }
 
-        public void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes)
+        public int[] GetRectangle(Vector2 pos, Vector2 size)
         {
             Vector2I intTopLeft = new Vector2I(pos);
             Vector2I intBotRight = new Vector2I(pos + size);
             Rectangle rectangle = new Rectangle(intTopLeft, intBotRight - intTopLeft);
 
-            Debug.Assert(tileTypes != null && tileTypes.Length >= rectangle.Size.Size());
+            if (m_tileTypes.Length < rectangle.Size.Size())
+                this.m_tileTypes = new int[rectangle.Size.Size()];
+
 
             int idx = 0;
 
@@ -58,7 +64,7 @@ namespace World.ToyWorldCore
             for (int j = rectangle.Top; j < 0; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
-                    tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = 0;
             }
 
             // Rows inside of map
@@ -69,26 +75,28 @@ namespace World.ToyWorldCore
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < 0; i++)
-                    tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = 0;
 
                 // Tiles inside of map
                 for (var i = 0; i < xLength; i++)
                 {
                     var tile = Tiles[i, j];
-                    tileTypes[idx++] = tile != null ? tile.TileType : 0;
+                    m_tileTypes[idx++] = tile != null ? tile.TileType : 0;
                 }
 
                 // Tiles after end of map
                 for (int i = xLength; i < rectangle.Right; i++)
-                    tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = 0;
             }
 
             // Rows after end of map
             for (int j = yLength; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
-                    tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = 0;
             }
+
+            return m_tileTypes;
         }
 
         public List<Tile> GetAllObjects()

@@ -2,7 +2,7 @@
 using VRageMath;
 using RectangleF = VRageMath.RectangleF;
 
-namespace Render.RenderRequests.AvatarRenderRequests
+namespace Render.RenderRequests
 {
     public abstract class AvatarRRBase : RenderRequest, IAvatarRenderRequest
     {

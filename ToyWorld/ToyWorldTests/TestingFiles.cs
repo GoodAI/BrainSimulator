@@ -120,7 +120,8 @@ namespace ToyWorldTests
 
         public static Stream FullTmxFileStream()
         {
-            return new FileStream(@"\TestFiles\mockup999_pantry_world.tmx", FileMode.Open);
+            var path = @".\TestFiles\mockup999_pantry_world.tmx";
+            return new FileStream(path, FileMode.Open);
         }
 
         private static void WriteToMemoryStream(MemoryStream memoryStream, string stringToWrite)

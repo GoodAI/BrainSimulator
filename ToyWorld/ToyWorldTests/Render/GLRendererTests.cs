@@ -24,7 +24,7 @@ namespace ToyWorldTests.Render
 
         public GLRendererTests()
         {
-            using (var tmxStreamReader = new StreamReader(FileStreams.GetTmxMemoryStream()))
+            using (var tmxStreamReader = new StreamReader(FileStreams.FullTmxFileStream()))
             {
                 var serializer = new TmxSerializer();
                 Map map = serializer.Deserialize(tmxStreamReader);
@@ -47,7 +47,7 @@ namespace ToyWorldTests.Render
 
         //[RunnableInDebugOnly]
         /*
-        [Fact] 
+        [Fact]
         /*/
         [Fact(Skip = "Skipped -- requires manual input to end.")]
         //**/
@@ -55,7 +55,7 @@ namespace ToyWorldTests.Render
         {
             m_renderer.MakeContextCurrent();
 
-            var rr = RenderRequestFactory.CreateRenderRequest<IFullMapRR>();
+            var rr = RenderRequestFactory.CreateRenderRequest<IFreeMapRR>();
             //var rr = RenderRequestFactory.CreateRenderRequest<IFovAvatarRR>(0);
             (rr as RenderRequest).Init(m_renderer, m_world);
             m_renderer.EnqueueRequest(rr);
@@ -63,16 +63,7 @@ namespace ToyWorldTests.Render
             CancellationToken token = SetupWindow(
                 delta =>
                 {
-                    delta += new SizeF(rr.Rotation);
-                    float rot = delta.X;
-                    MathHelper.LimitRadians2PI(ref rot);
-                    delta.X = rot;
-
-                    rot = delta.Y;
-                    MathHelper.LimitRadiansPI(ref rot);
-                    delta.Y = rot;
-
-                    rr.Rotation = delta;
+                    rr.PositionCenter = new PointF(rr.PositionCenter.X - delta.X, rr.PositionCenter.Y + delta.Y);
                 });
 
             while (m_renderer.Window.Exists && !token.IsCancellationRequested)
@@ -93,7 +84,7 @@ namespace ToyWorldTests.Render
             Assert.True(token.IsCancellationRequested);
         }
 
-        private CancellationToken SetupWindow(Action<PointF> onDrag)
+        private CancellationToken SetupWindow(Action<Vector3> onDrag)
         {
             CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
 
@@ -114,7 +105,7 @@ namespace ToyWorldTests.Render
                 const float factor = 1 / 100f;
 
                 if (args.Mouse.IsButtonDown(MouseButton.Left))
-                    onDrag(new PointF(args.XDelta * factor, args.YDelta * factor));
+                    onDrag(new Vector3(new Vector2(args.XDelta, args.YDelta) * factor, 0));
             };
 
             m_renderer.Window.Visible = true;

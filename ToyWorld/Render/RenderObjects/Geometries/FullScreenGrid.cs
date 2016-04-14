@@ -36,7 +36,7 @@ namespace Render.RenderObjects.Geometries
             Debug.Assert(size <= data.Length, "Too few data to update the texture offsets.");
 
             for (int i = 0; i < size; i++)
-                m_offsetsInternal[i] = new Vector4I(data[i]);
+                m_offsetsInternal[i] = new Vector4I(data[i]-1);
 
             Update(VboPosition.TextureOffsets, m_offsetsInternal);
         }

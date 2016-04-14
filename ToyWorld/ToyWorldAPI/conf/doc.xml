@@ -293,5 +293,15 @@
             
             </summary>
         </member>
+        <member name="T:GoodAI.ToyWorld.Control.IFreeMapRR">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IFreeMapRR.PositionCenter">
+            <summary>
+            
+            </summary>
+        </member>
     </members>
 </doc>
