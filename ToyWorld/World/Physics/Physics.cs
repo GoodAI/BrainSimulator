@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using GoodAI.ToyWorld.Control;
 using World.GameActors.GameObjects;
 
 namespace World.Physics

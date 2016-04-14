@@ -29,7 +29,7 @@ namespace World.GameActors.GameObjects
             Name = name;
             Id = id;
 
-            float circleRadius = size.Length() / 2f * (float) Math.Cos(Math.PI / 4);
+            float circleRadius = size.Length() / 2f;
             PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, new Circle(circleRadius));
         }
 
