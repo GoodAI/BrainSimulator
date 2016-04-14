@@ -69,7 +69,7 @@ namespace Render.Tests.RRs
             renderer.EffectManager.Use(effect);
             effect.SetUniform1(effect.GetUniformLocation("tex"), 0);
 
-            var tex = renderer.TextureManager.Get<TilesetTexture>();
+            var tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
             renderer.TextureManager.Bind(tex);
             m_quad.SetTextureCoords(new Vector2[]
             {

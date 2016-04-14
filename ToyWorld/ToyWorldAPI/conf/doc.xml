@@ -172,41 +172,41 @@
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IGameController">
-            <summary>
+             <summary>
             
-            </summary>
+             </summary>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.Init">
-            <summary>
+             <summary>
             
-            </summary>
+             </summary>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.MakeStep">
-            <summary>
+             <summary>
             
-            </summary>
+             </summary>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterRenderRequest``1(System.Int32)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="avatarID"></param>
-            <exception cref="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="T:GoodAI.ToyWorld.Control.IAvatarRenderRequest"/> from the controller.
-            This usually indicates an older version of the core than the API.</exception>
+             </summary>
+             <param name="avatarID"></param>
+             <exception cref="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="T:GoodAI.ToyWorld.Control.IAvatarRenderRequest"/> from the controller.
+             This usually indicates an older version of the core than the API.</exception>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.RegisterRenderRequest``1">
-            <summary>
+             <summary>
             
-            </summary>
-            <exception cref="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="T:GoodAI.ToyWorld.Control.IRenderRequest"/> from the controller.
-            This usually indicates an older version of the core than the API.</exception>
+             </summary>
+             <exception cref="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="T:GoodAI.ToyWorld.Control.IRenderRequest"/> from the controller.
+             This usually indicates an older version of the core than the API.</exception>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IGameController.GetAvatarController(System.Int32)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="avatarId"></param>
-            <returns></returns>
+             </summary>
+             <param name="avatarId"></param>
+             <returns></returns>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IStats">
             <summary>

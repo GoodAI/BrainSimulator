@@ -11,7 +11,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        float AvatarID { get; }
+        int AvatarID { get; }
 
 
         /// <summary>

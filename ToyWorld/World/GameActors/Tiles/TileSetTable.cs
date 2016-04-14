@@ -32,7 +32,6 @@ namespace World.GameActors.Tiles
             {
                 Tilesets.AddRange(tmxMap.Tileset);
                 TileSize = new Vector2I(tmxMap.Tilewidth, tmxMap.Tileheight);
-                // TODO: deserialize margins
                 TileMargins = Vector2I.One;
             }
 
@@ -75,6 +74,12 @@ namespace World.GameActors.Tiles
         public TilesetTable()
         {
 
+        }
+
+
+        public string[] GetTilesetImages()
+        {
+            return Tilesets.Select(t => t.Image.Source).ToArray();
         }
 
         public virtual int TileNumber(string tileName)

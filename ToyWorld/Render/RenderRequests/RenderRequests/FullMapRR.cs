@@ -13,8 +13,6 @@ namespace Render.RenderRequests
 {
     internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
-        private int[] m_buffer;
-
         private NoEffectOffset m_effect;
         private TilesetTexture m_tex;
         private FullScreenGrid m_grid;
@@ -55,7 +53,7 @@ namespace Render.RenderRequests
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             // Set up tileset textures
-            m_tex = renderer.TextureManager.Get<TilesetTexture>();
+            m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -75,7 +73,6 @@ namespace Render.RenderRequests
             ViewV = new RectangleF(Vector2.Zero, (Vector2)SizeV);
 
             // Set up tile grid geometry
-            m_buffer = new int[SizeV.Size()];
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(SizeV);
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 

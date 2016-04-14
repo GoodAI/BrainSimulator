@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace ToyWorldTests.Game
 
         public GameControllerTestBase()
         {
-            var tmxMemoryStream = FileStreams.GetTmxMemoryStream();
+            var tmxMemoryStream = FileStreams.GetTilesetTableMemoryStream();
             var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
 
             var tmxStreamReader = new StreamReader(tmxMemoryStream);
@@ -64,17 +65,17 @@ namespace ToyWorldTests.Game
         public void ControllerNotImplementedThrows()
         {
             Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<INotImplementedRR>);
-            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedAvatarRR>(0));
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedAvatarRR>(1));
 
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
-            // var ac = gc.GetAvatarController(0);
+            Assert.ThrowsAny<KeyNotFoundException>(() => GameController.GetAvatarController(-1));
         }
 
         [Fact]
         public void DoStep()
         {
             GameController.RegisterRenderRequest<IBasicTextureRR>();
-            GameController.RegisterRenderRequest<IFovAvatarRR>(0);
+            GameController.RegisterRenderRequest<IFovAvatarRR>(1);
 
             GameController.MakeStep();
             GameController.MakeStep();

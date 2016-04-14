@@ -58,7 +58,8 @@ namespace Render.RenderRequests
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             // Set up tileset textures
-            m_tex = renderer.TextureManager.Get<TilesetTexture>();
+            m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
+
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -82,7 +83,8 @@ namespace Render.RenderRequests
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // Scale up to world size (was (-1,1) originally)
-            m_worldMatrix = Matrix.CreateScale(world.Size.X * 0.5f, world.Size.Y * 0.5f, 1);
+            Vector2 halfWorldSize = new Vector2(world.Size.X * 0.5f, world.Size.Y * 0.5f);
+            m_worldMatrix = Matrix.CreateScale(new Vector3(halfWorldSize, 1)) * Matrix.CreateTranslation(new Vector3(halfWorldSize, 0));
             // No view matrix needed here -- we are fixed on origin (center of the world),
             // or the view has to be computed each step
             const float zoom = 1f;
@@ -121,7 +123,7 @@ namespace Render.RenderRequests
                     Matrix modelMatrix = Matrix.Identity;
                     modelMatrix *= Matrix.CreateRotationZ(0.5f);
                     modelMatrix *= Matrix.CreateScale(0.2f);
-                    modelMatrix *= Matrix.CreateTranslation(Rotation.Y, 0, 0.01f);
+                    modelMatrix *= Matrix.CreateTranslation(0, 0, 0.01f);
                     modelMatrix *= m_worldViewProjectionMatrix;
                     m_effect.SetUniformMatrix4(m_mvpPos, modelMatrix);
 

@@ -11,8 +11,6 @@ namespace Render.RenderRequests
 {
     internal class FovAvatarRR : AvatarRRBase, IFovAvatarRR
     {
-        private int[] m_buffer;
-
         private NoEffectOffset m_effect;
         private TilesetTexture m_tex;
         private FullScreenGrid m_grid;
@@ -51,7 +49,7 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase renderer, ToyWorld world)
         {
-            Image = new uint[renderer.Width * renderer.Height];
+            Image = new uint[Resolution.Width * Resolution.Height];
 
             GL.ClearColor(System.Drawing.Color.DimGray);
             GL.Enable(EnableCap.Blend);
@@ -59,7 +57,7 @@ namespace Render.RenderRequests
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             // Set up tileset textures
-            m_tex = renderer.TextureManager.Get<TilesetTexture>();
+            m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -78,13 +76,13 @@ namespace Render.RenderRequests
             ViewV = new RectangleF(Vector2.Zero, (Vector2)SizeV);
 
             // Set up tile grid geometry
-            m_buffer = new int[SizeV.Size()];
             m_grid = renderer.GeometryManager.Get<FullScreenGrid>(SizeV);
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // Scale up to world size (was (-1,1) originally)
-            m_worldMatrix = Matrix.CreateScale(world.Size.X * 0.5f, world.Size.Y * 0.5f, 1);
-            // No view matrix needed here -- we are fixed on origin (center of the world),
+            Vector2 halfWorldSize = new Vector2(world.Size.X * 0.5f, world.Size.Y * 0.5f);
+            m_worldMatrix = Matrix.CreateScale(new Vector3(halfWorldSize, 1)) * Matrix.CreateTranslation(new Vector3(halfWorldSize, 0));
+            // View matrix is computed each frame
             // or the view has to be computed each step
             m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, 1, -20);
         }
@@ -99,7 +97,8 @@ namespace Render.RenderRequests
 
             // Set up transformation to screen space
             m_worldViewProjectionMatrix = m_worldMatrix;
-            // TODO: m_worldViewProjectionMatrix *= GetViewMatrix(Vector3.Zero, Vector3.Zero);
+            var avatar = world.GetAvatar(AvatarID);
+            m_worldViewProjectionMatrix *= GetViewMatrix(Vector3.Zero, new Vector3(avatar.PhysicalEntity.Position, 0));
             m_worldViewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, m_worldViewProjectionMatrix);
 
@@ -132,7 +131,7 @@ namespace Render.RenderRequests
                 }
             }
 
-            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
+            GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
         }
 
         #endregion

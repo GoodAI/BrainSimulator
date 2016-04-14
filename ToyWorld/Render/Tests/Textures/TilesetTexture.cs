@@ -18,13 +18,20 @@ namespace Render.Tests.Textures
         public int Count { get { return m_textures.Count; } }
 
 
-        public TilesetTexture(params Stream[] texPath)
+        public TilesetTexture(params string[] texPath)
         {
-            Debug.Assert(texPath != null && texPath.Length > 0 && !texPath.Contains(null));
+            Debug.Assert(texPath != null && texPath.Length > 0);
 
 
-            foreach (var stream in texPath)
+            foreach (var path in texPath)
             {
+                if (path == null)
+                {
+                    m_textures.Add(null);
+                    continue;
+                }
+
+                using (FileStream stream = new FileStream(@".\TestFiles\" + path, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
                     if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
@@ -36,8 +43,6 @@ namespace Render.Tests.Textures
 
                     try
                     {
-                        //bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
                         m_textures.Add(new TextureBase(data.Scan0.ArgbToRgbaArray(data.Width * data.Height), bmp.Width, bmp.Height));
                     }
                     finally
