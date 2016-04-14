@@ -6,6 +6,7 @@ using GoodAI.Modules.Transforms;
 using ManagedCuda.BasicTypes;
 using System.ComponentModel;
 using YAXLib;
+using System.Collections.Generic;
 
 namespace GoodAI.Core.Nodes
 {
@@ -132,10 +133,49 @@ namespace GoodAI.Core.Nodes
         public int Input1Count { get { return GetInput(1) != null ? GetInput(1).Count : 1; } }
         public int Input1ColHint { get { return GetInput(1) != null ? GetInput(1).ColumnHint : 0; } }
 
+        /// <summary>
+        /// Computes new TensorDimensions which have all dimensions except for the last dimension equal to the input TensorDimensions. The last dimension is computed based on the count. 
+        /// </summary>
+        private TensorDimensions ComputeLastDimension(TensorDimensions dims, int count)
+        {
+            int allButLastCount = 1;
+            for (int i = 0; i < dims.Rank - 1; i++)
+            {
+                allButLastCount *= dims[i];
+            }
+
+            if (allButLastCount == 0 || count == 0)
+            {
+                return new TensorDimensions(0);
+            }
+
+
+            if (count % allButLastCount != 0)
+            {
+                MyLog.WARNING.WriteLine(Name + ": Could not set proper output dimensions!");
+                return new TensorDimensions(count);
+            }
+
+            int lastDimension = count / allButLastCount;
+
+            List<int> outputDimensions = new List<int>();
+
+            for (int i = 0; i < dims.Rank - 1; i++)
+            {
+                outputDimensions.Add(dims[i]);
+            }
+            outputDimensions.Add(lastDimension);
+
+            return new TensorDimensions(outputDimensions);
+        }
+
         public override void UpdateMemoryBlocks()
         {
+            TensorDimensions firstInputDimensions = new TensorDimensions(1);
+
+            
             int totalOutputs = 0;
-            Output.ColumnHint = 1;
+            //Output.ColumnHint = 1;
 
             for (int i = 0; i < InputBranches; i++)
             {
@@ -147,16 +187,26 @@ namespace GoodAI.Core.Nodes
                 m_offsets[i] = totalOutputs;
                 totalOutputs += ai.Count;
 
-                if (Output.ColumnHint == 1 && ai.ColumnHint > 1)
+
+                if (firstInputDimensions[0] == 1)
                 {
-                    Output.ColumnHint = ai.ColumnHint;
+                    firstInputDimensions = GetInput(i).Dims;
                 }
+              
+                
+                //if (Output.ColumnHint == 1 && ai.ColumnHint > 1)
+                //{
+                //    Output.ColumnHint = ai.ColumnHint;
+                //}
             }
+
+
 
             switch (Operation)
             {
                 case MyJoinOperation.StackInputs:
                     OutputSize = totalOutputs;
+                    Output.Dims = ComputeLastDimension(firstInputDimensions, totalOutputs);
                     break;
 
                 case MyJoinOperation.AddToIdcs_Normalize:
@@ -165,15 +215,17 @@ namespace GoodAI.Core.Nodes
 
                 case MyJoinOperation.GatherFromIdcs:
                     OutputSize = GetInputSize(1);
+                    Output.Dims = ComputeLastDimension(firstInputDimensions, GetInputSize(1));
                     break;
 
                 case MyJoinOperation.DistanceSquared:
                 case MyJoinOperation.CosineDistance:
                 case MyJoinOperation.DotProduct:
                     OutputSize = 1;
-                    Output.ColumnHint = 1;
+                    //Output.ColumnHint = 1;
                     InputBlocksPointers.Count = 2;
                     Temp.Count = GetInputSize(0);
+                    Output.Dims = new TensorDimensions(1);
                     break;
 
                 case MyJoinOperation.MatMultiplication:
@@ -182,6 +234,10 @@ namespace GoodAI.Core.Nodes
                     else
                         OutputSize = Input0Count / Input0ColHint * Input1ColHint; /// size of output matrix: #rows A  times #cols B
                     Output.ColumnHint = Input1ColHint;  /// # of columns in the output correspond to the # of columns in the first matrix
+                    if (firstInputDimensions.Rank > 2)
+                    {
+                        MyLog.WARNING.WriteLine(Name + ": Matrix multiplication is not defined for tensors.");
+                    }
                     InputBlocksPointers.Count = 2;
                     break;
 
@@ -191,6 +247,7 @@ namespace GoodAI.Core.Nodes
                         // All are validated to be of the same length
                         OutputSize = GetInputSize(0);
                         InputBlocksPointers.Count = InputBranches;
+                        Output.Dims = ComputeLastDimension(firstInputDimensions, GetInputSize(0));
                     }
                     else // (if InputBranches == 2)
                     {
@@ -198,7 +255,7 @@ namespace GoodAI.Core.Nodes
 
                         int max = 0;
 
-                        for (int i = 0; i < InputBranches; i++)
+                        for (int i = 0; i < 2; i++)
                         {
                             var input = GetInput(i);
 
@@ -207,6 +264,7 @@ namespace GoodAI.Core.Nodes
                         }
 
                         OutputSize = max;
+                        Output.Dims = ComputeLastDimension(firstInputDimensions, max);
                     }
                     break;
             }
@@ -256,14 +314,28 @@ namespace GoodAI.Core.Nodes
                     break;
             }
 
+            TensorDimensions firstInputDimensions = null; ;
+
             for (int i = 0; i < InputBranches; i++)
             {
                 MyMemoryBlock<float> ai = GetInput(i);
+   
 
                 if (ai == null)
                     validator.AddError(this, string.Format("Missing input {0}.", i));
                 else if (InputBranches > 2) // Two inputs are allowed to be of variable size
                     validator.AssertError(ai.Count == OutputSize, this, "Operand size differs from output size");
+
+                if (firstInputDimensions == null)
+                {
+                    firstInputDimensions = ai.Dims;
+                }
+
+                if (firstInputDimensions.Rank != ai.Dims.Rank)
+                {
+                    MyLog.ERROR.WriteLine(Name + ": Incompatible input ranks!");
+                    return;
+                }
             }
         }
 
