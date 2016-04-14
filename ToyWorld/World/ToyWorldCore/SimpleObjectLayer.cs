@@ -29,5 +29,10 @@ namespace World.ToyWorldCore
             GameObjects.Add(gameObject);
             return true;
         }
+
+        public List<GameObject> GetAllObjects()
+        {
+            return GameObjects;
+        }
     }
 }

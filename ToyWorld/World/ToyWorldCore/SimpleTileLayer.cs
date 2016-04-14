@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using Utils;
 using VRageMath;
 using World.GameActors.Tiles;
 
@@ -9,6 +12,8 @@ namespace World.ToyWorldCore
     {
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
+            MyContract.Requires<ArgumentOutOfRangeException>(width > 0, "Tile width has to be positive");
+            MyContract.Requires<ArgumentOutOfRangeException>(height > 0, "Tile height has to be positive");
             LayerType = layerType;
             Tiles = new Tile[width, height];
         }
@@ -84,6 +89,11 @@ namespace World.ToyWorldCore
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
                     tileTypes[idx++] = 0;
             }
+        }
+
+        public List<Tile> GetAllObjects()
+        {
+            return Tiles.Cast<Tile>().ToList();
         }
     }
 }

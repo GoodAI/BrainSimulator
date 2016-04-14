@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using Utils;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
@@ -29,16 +31,17 @@ namespace World.ToyWorldCore
 
         public object GetLayer(LayerType layerType)
         {
-            if (layerType == LayerType.Object 
+            if (layerType == LayerType.Object
                 || layerType == LayerType.ForegroundObject)
             {
-                return ObjectLayers.First(x => x.LayerType == layerType);
+                return ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
             }
             return TileLayers.First(x => x.LayerType == layerType);
         }
 
         public bool AddAvatar(IAvatar avatar)
         {
+            MyContract.Requires<ArgumentNullException>(avatar != null, "Avatar cannot be null");
             try
             {
                 Avatars.Add(avatar.Id, avatar);
@@ -52,6 +55,7 @@ namespace World.ToyWorldCore
 
         public List<IAvatar> GetAvatars()
         {
+            Contract.Ensures(Contract.Result<List<IAvatar>>() != null);
             return Avatars.Values.ToList();
         }
     }

@@ -3,6 +3,7 @@ using System.Linq;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
@@ -31,7 +32,7 @@ namespace ToyWorldTests.World
             var tilesetTable = new TilesetTable(map, tilesetTableStreamReader);
 
             // create atlas
-            m_atlas = MapLoader.LoadMap(map, tilesetTable);
+            m_atlas = MapLoader.LoadMap(map, tilesetTable, (GameActor actor) => { });
         }
 
         [Fact]
