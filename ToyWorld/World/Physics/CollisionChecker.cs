@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VRageMath;
 using World.ToyWorldCore;
 
 namespace World.Physics
@@ -30,15 +31,15 @@ namespace World.Physics
         private const float MAXIMUM_GAMEOBJECT_RADIUS = 5f;
         public float MaximumGameObjectRadius { get { return MAXIMUM_GAMEOBJECT_RADIUS; } }
 
-        IAtlas Atlas;
+        private IAtlas m_atlas;
 
         public CollisionChecker(IAtlas atlas){
-            Atlas = atlas;
+            m_atlas = atlas;
         }
 
         public bool CollidesWithTile(IPhysicalEntity physicalEntity){
-            var coverTilesCoordinates = physicalEntity.CoverTiles();
-            var colliding = !coverTilesCoordinates.TrueForAll(x => !Atlas.ContainsCollidingTile(x));
+            List<Vector2I> coverTilesCoordinates = physicalEntity.CoverTiles();
+            bool colliding = !coverTilesCoordinates.TrueForAll(x => !m_atlas.ContainsCollidingTile(x));
             return colliding;
         }
 

@@ -24,23 +24,19 @@ namespace World.Physics
 
         public void ResolveCollision(IForwardMovablePhysicalEntity physicalEntity)
         {
-            var directionRads = MathHelper.ToRadians(physicalEntity.Direction);
-            var speed = physicalEntity.ForwardSpeed;
-            var collidingPosition = physicalEntity.Position;
-            
             FindTileFreePosition(physicalEntity);
         }
 
         private void FindTileFreePosition(IForwardMovablePhysicalEntity physicalEntity)
         {
-            var speed = physicalEntity.ForwardSpeed;
-            var previousPosition = Utils.Move(physicalEntity.Position, physicalEntity.Direction, - speed);
+            float speed = physicalEntity.ForwardSpeed;
+            Vector2 previousPosition = Utils.Move(physicalEntity.Position, physicalEntity.Direction, - speed);
             // get back to last free position in direction counter to original direction
             TileFreePositionBinarySearch(physicalEntity, physicalEntity.ForwardSpeed, physicalEntity.Direction, false);
 
-            var freePosition = physicalEntity.Position;
-            var directionRads = MathHelper.ToRadians(physicalEntity.Direction);
-            var residueSpeed = speed - Vector2.Distance(previousPosition, freePosition);
+            Vector2 freePosition = physicalEntity.Position;
+            float directionRads = MathHelper.ToRadians(physicalEntity.Direction);
+            float residueSpeed = speed - Vector2.Distance(previousPosition, freePosition);
             float xSpeed = (float)Math.Cos(directionRads) * residueSpeed;
             float ySpeed = (float)Math.Sin(directionRads) * residueSpeed;
             // position before move
@@ -48,13 +44,13 @@ namespace World.Physics
             // try to move orthogonally left/right and up/down
             TileFreePositionBinarySearch(physicalEntity, xSpeed, X_DIRECTION, true);
             TileFreePositionBinarySearch(physicalEntity, ySpeed, Y_DIRECTION, true);
-            var xFirstPosition = new Vector2(physicalEntity.Position.X, physicalEntity.Position.Y);
+            Vector2 xFirstPosition = new Vector2(physicalEntity.Position.X, physicalEntity.Position.Y);
 
             // try to move orthogonally up/down and left/right; reset position first
             physicalEntity.Position = freePosition;
             TileFreePositionBinarySearch(physicalEntity, ySpeed, Y_DIRECTION, true);
             TileFreePositionBinarySearch(physicalEntity, xSpeed, X_DIRECTION, true);
-            var yFirstPosition = new Vector2(physicalEntity.Position.X, physicalEntity.Position.Y);
+            Vector2 yFirstPosition = new Vector2(physicalEntity.Position.X, physicalEntity.Position.Y);
 
             // farther position is chosen
             if (Vector2.Distance(freePosition, xFirstPosition) > Vector2.Distance(freePosition, yFirstPosition))
@@ -76,7 +72,7 @@ namespace World.Physics
         /// <param name="goForward">If true make step forward. Otherwise start with half step back.</param>
         private void TileFreePositionBinarySearch(IForwardMovablePhysicalEntity physicalEntity, float initialSpeed, float direction, bool goForward)
         {
-            var speed = initialSpeed;
+            float speed = initialSpeed;
 
             if (goForward)
             {
@@ -84,7 +80,7 @@ namespace World.Physics
                 goForward = false;
             }
 
-            var colliding = m_collisionChecker.CollidesWithTile(physicalEntity);
+            bool colliding = m_collisionChecker.CollidesWithTile(physicalEntity);
             if (!colliding)
             {
                 return;

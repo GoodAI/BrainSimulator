@@ -19,36 +19,37 @@ namespace ToyWorldTests.Physics
             if (TestUtils.FloatEq(x, 0.2f) && TestUtils.FloatEq(y, 0.2f) && TestUtils.FloatEq(size, 0.5f))
             {
                 Assert.True(coverTiles.Count == 1);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
             }
 
             if (TestUtils.FloatEq(x, 0f) && TestUtils.FloatEq(y, 0f) && TestUtils.FloatEq(size, 1.5f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 0f) && TestUtils.FloatEq(y, 0f) && TestUtils.FloatEq(size, 2f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 0.1f) && TestUtils.FloatEq(y, 0.1f) && TestUtils.FloatEq(size, 1.5f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
         }
@@ -69,66 +70,66 @@ namespace ToyWorldTests.Physics
             if (TestUtils.FloatEq(x, 0.7f) && TestUtils.FloatEq(y, 0.7f) && TestUtils.FloatEq(radius, 0.1f))
             {
                 Assert.True(coverTiles.Count == 1);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
             }
 
             if (TestUtils.FloatEq(x, 1.2f) && TestUtils.FloatEq(y, 1.2f) && TestUtils.FloatEq(radius, 0.7f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 1f) && TestUtils.FloatEq(y, 1f) && TestUtils.FloatEq(y, 0.8f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 1f) && TestUtils.FloatEq(y, 1f) && TestUtils.FloatEq(radius, 1f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 1.1f) && TestUtils.FloatEq(y, 1.1f) && TestUtils.FloatEq(radius, 0.8f))
             {
                 Assert.True(coverTiles.Count == 4);
-                Assert.True(coverTiles.Exists(a => a == VRageMath.Vector2.Zero));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.Contains<VRageMath.Vector2I>(VRageMath.Vector2I.Zero, coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 2f) && TestUtils.FloatEq(y, 2f) && TestUtils.FloatEq(radius, 1.2f))
             {
                 Assert.True(coverTiles.Count == 12);
-                Assert.True(!coverTiles.Exists(a => a == new VRageMath.Vector2(0, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.True(!coverTiles.Exists(a => a == new VRageMath.Vector2I(0, 0)));
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
 
             if (TestUtils.FloatEq(x, 1.5f) && TestUtils.FloatEq(y, 2f) && TestUtils.FloatEq(radius, 1.05f))
             {
                 Assert.True(coverTiles.Count == 8);
-                Assert.True(!coverTiles.Exists(a => a == new VRageMath.Vector2(0, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(0, 1)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 0)));
-                Assert.True(coverTiles.Exists(a => a == new VRageMath.Vector2(1, 1)));
+                Assert.True(!coverTiles.Exists(a => a == new VRageMath.Vector2I(0, 0)));
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(0, 1), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 0), coverTiles);
+                Assert.Contains<VRageMath.Vector2I>(new VRageMath.Vector2I(1, 1), coverTiles);
                 return;
             }
         }

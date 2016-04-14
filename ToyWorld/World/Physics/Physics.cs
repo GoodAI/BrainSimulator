@@ -9,7 +9,7 @@ namespace World.Physics
         /// Transform Avatar's desires (usually set by controller) to physical properties (not directly to motion).
         /// </summary>
         /// <param name="avatars"></param>
-        void TransofrmControlsPhysicalProperties(List<IAvatar> avatars);
+        void TransformControlsPhysicalProperties(List<IAvatar> avatars);
 
         /// <summary>
         /// Move with given IForwardMovablePhysicalEntities.
@@ -31,7 +31,7 @@ namespace World.Physics
         }
 
 
-        public void TransofrmControlsPhysicalProperties(List<IAvatar> avatars)
+        public void TransformControlsPhysicalProperties(List<IAvatar> avatars)
         {
             foreach (IAvatar avatar in avatars)
             {

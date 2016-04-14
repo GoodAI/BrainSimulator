@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using VRageMath;
 using World.GameActors.GameObjects;
-using System.Linq;
 using World.Physics;
 
 namespace World.ToyWorldCore
@@ -25,8 +23,8 @@ namespace World.ToyWorldCore
 
             foreach (GameObject gameObject in GameObjects)
             {
-                var physicalEntity = gameObject.PhysicalEntity;
-                var r = new RectangleF();
+                IPhysicalEntity physicalEntity = gameObject.PhysicalEntity;
+                RectangleF r = new RectangleF();
                 RectangleF cover = physicalEntity.CoverRectangle();
                 RectangleF.Intersect(ref cover, ref rectangle, out r);
                 if (r.Size.Length() > 0f)

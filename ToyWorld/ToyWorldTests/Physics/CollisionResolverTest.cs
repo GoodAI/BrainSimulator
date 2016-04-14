@@ -7,11 +7,6 @@ namespace ToyWorldTests.Physics
 {
     public class CollisionResolverTest
     {
-        public CollisionResolverTest()
-        {
-
-        }
-
         [Fact]
         public void ResolveCollissionOrthogonal()
         {
@@ -29,8 +24,8 @@ namespace ToyWorldTests.Physics
 
             collisionResolver.ResolveCollision(pe);
 
-            Assert.True(TestUtils.FloatEq(pe.Position.X, 0, 0.02f));
-            Assert.True(TestUtils.FloatEq(pe.Position.Y, 0));
+            Assert.Equal(pe.Position.X, 0, 2);
+            Assert.Equal(pe.Position.Y, 0, 2);
         }
 
         [Fact]
@@ -50,8 +45,8 @@ namespace ToyWorldTests.Physics
 
             collisionResolver.ResolveCollision(pe);
 
-            Assert.True(TestUtils.FloatEq(pe.Position.X, 0, 0.02f));
-            Assert.True(TestUtils.FloatEq(pe.Position.Y, 0.71f, 0.02f));
+            Assert.Equal(pe.Position.X, 0f, 2);
+            Assert.Equal(pe.Position.Y, 0.71f, 2);
         }
     }
 

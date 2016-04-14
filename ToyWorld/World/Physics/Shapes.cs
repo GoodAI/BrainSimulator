@@ -54,7 +54,7 @@ namespace World.Physics
 
         public override float PossibleCollisionDistance()
         {
-            return Size.Length();
+            return Size.Length() / 2;
         }
 
         public override Vector2 Center(Vector2 upperLefCorner)
@@ -69,8 +69,8 @@ namespace World.Physics
 
         public override List<Vector2I> CoverTiles(Vector2 position)
         {
-            var cornerUL = position;
-            var cornerLR = position + Size;
+            Vector2 cornerUL = position;
+            Vector2 cornerLR = position + Size;
 
             var list = new List<Vector2I>();
 
@@ -107,20 +107,20 @@ namespace World.Physics
 
         public override Vector2 CoverRectangleSize()
         {
-            var side = Radius * 2;
+            float side = Radius * 2;
             return new Vector2(side, side);
         }
 
         public override List<Vector2I> CoverTiles(Vector2 position)
         {
-            var center = Center(position);
+            Vector2 center = Center(position);
 
-            var coverRectangleSize = CoverRectangleSize();
+            Vector2 coverRectangleSize = CoverRectangleSize();
 
-            var cornerUL = position;
-            var cornerLR = position + coverRectangleSize;
+            Vector2 cornerUL = position;
+            Vector2 cornerLR = position + coverRectangleSize;
 
-            var list = new List<Vector2I>();
+            List<Vector2I> list = new List<Vector2I>();
 
             for (int i = (int)Math.Floor(cornerUL.X); i < (int)Math.Ceiling(cornerLR.X); i++)
             {
@@ -137,10 +137,10 @@ namespace World.Physics
 
         private bool CircleRectangleIntersects(Vector2 center, RectangleF rectangle)
         {
-            var rectangleCX = rectangle.X + rectangle.Width / 2;
-            var rectangleCY = rectangle.Y + rectangle.Height / 2;
-            var circleDistanceX = Math.Abs(center.X - rectangleCX);
-            var circleDistanceY = Math.Abs(center.Y - rectangleCY);
+            float rectangleCX = rectangle.X + rectangle.Width / 2;
+            float rectangleCY = rectangle.Y + rectangle.Height / 2;
+            float circleDistanceX = Math.Abs(center.X - rectangleCX);
+            float circleDistanceY = Math.Abs(center.Y - rectangleCY);
 
             if (circleDistanceX > (rectangle.Width / 2 + Radius)) { return false; }
             if (circleDistanceY > (rectangle.Height / 2 + Radius)) { return false; }
@@ -148,10 +148,10 @@ namespace World.Physics
             if (circleDistanceX <= (rectangle.Width / 2)) { return true; }
             if (circleDistanceY <= (rectangle.Height / 2)) { return true; }
 
-            var cornerDistanceSq = Math.Pow(circleDistanceX - rectangle.Width / 2, 2) +
-                                   Math.Pow(circleDistanceY - rectangle.Height / 2, 2);
+            float cornerDistanceSq = (float) Math.Pow(circleDistanceX - rectangle.Width / 2, 2) +
+                                   (float) Math.Pow(circleDistanceY - rectangle.Height / 2, 2);
 
-            var containsCorner = cornerDistanceSq <= Math.Pow(Radius, 2);
+            bool containsCorner = cornerDistanceSq <= Math.Pow(Radius, 2);
 
             return containsCorner;
         }
