@@ -27,5 +27,8 @@ namespace TmxMapSerializer.Elements
 
         [XmlAttribute("height")]
         public float Height { get; set; }
+
+        [XmlAttribute("rotation")]
+        public float Rotation { get; set; }
     }
 }

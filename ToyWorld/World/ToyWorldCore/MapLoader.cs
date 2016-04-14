@@ -58,13 +58,15 @@ namespace World.ToyWorldCore
             //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
 
+            // avatars list
             var avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
 
             foreach (var avatar in avatars)
             {
                 var initialPosition = new Vector2(avatar.X, avatar.Y);
                 var size = new Vector2(avatar.Width, avatar.Height);
-                var gameAvatar = new Avatar(avatar.Name, avatar.Id, initialPosition, size);
+                var rotation = avatar.Rotation;
+                var gameAvatar = new Avatar(avatar.Name, avatar.Id, initialPosition, size, rotation);
                 initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);

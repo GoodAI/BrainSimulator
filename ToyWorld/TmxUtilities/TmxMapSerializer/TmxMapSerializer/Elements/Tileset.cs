@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace TmxMapSerializer.Elements
@@ -30,5 +31,10 @@ namespace TmxMapSerializer.Elements
 
         [XmlElement("image")]
         public Image Image { get; set; }
+
+        // tileset composed of images
+
+        [XmlElement("tile")]
+        public List<TmxTile> Tile { get; set; }
     }
 }

@@ -16,8 +16,8 @@ namespace World.Physics
         public ForwardMovablePhysicalEntity(
             Vector2 initialPostition,
             Vector2 size,
-            float forwardSpeed = 0,
             float direction = 90,
+            float forwardSpeed = 0,
             float rotationSpeed = 0) : base(initialPostition, size)
         {
             ForwardSpeed = forwardSpeed;
