@@ -16,7 +16,7 @@ namespace World.GameActors.GameObjects
         public string Name { get; protected set; }
         public IPhysicalEntity PhysicalEntity { get; set; }
 
-        Vector2 IGameObject.Size
+        public Vector2 Size
         {
             get
             {
@@ -28,7 +28,7 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        Vector2 IGameObject.Position
+        public Vector2 Position
         {
             get
             {

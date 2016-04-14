@@ -8,7 +8,6 @@ namespace World.GameActors.GameObjects
     {
         int Id { get; }
         IUsable Tool { get; set; }
-        new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
     }
 
     public class Avatar : Character, IAvatar

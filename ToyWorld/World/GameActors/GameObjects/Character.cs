@@ -5,6 +5,7 @@ namespace World.GameActors.GameObjects
 {
     public interface ICharacter : IGameObject, IForwardMovable
     {
+        new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
     }
 
     public abstract class Character : GameObject, ICharacter
