@@ -1,6 +1,7 @@
 ﻿using GoodAI.ToyWorld.Control;
+using World.GameActors.GameObjects;
 
-namespace World.GameActors.GameObjects
+namespace World.Physics
 {
     public interface ICharacter : IGameObject, IDirectable
     {

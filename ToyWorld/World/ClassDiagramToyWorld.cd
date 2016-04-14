@@ -78,7 +78,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.GameActors.GameObjects.Character">
+  <Class Name="World.Physics.Character">
     <Position X="10" Y="19" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -213,7 +213,7 @@
   <Class Name="World.Physics.Physics" BaseTypeListCollapsed="true">
     <Position X="26" Y="12" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgAAAAAAAAAAACAAAAAAAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <HashCode>AAAAgAAAAAAAAAAACAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
       <FileName>Physics\Physics.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -229,9 +229,10 @@
   <Class Name="World.Physics.CollisionResolver">
     <Position X="27.75" Y="17" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAABABAAAAAAAIAAAAAAACAAAAEAAAAAAAIEAAAA=</HashCode>
+      <HashCode>AAAAAAAABAAAAAAAIAAAAAAACAAAAAEABAAAAIAAAAA=</HashCode>
       <FileName>Physics\CollisionResolver.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.Physics.Shape" Collapsed="true">
     <Position X="29.25" Y="30" Width="1.5" />
@@ -340,22 +341,22 @@
       <FileName>GameActors\GameObjects\IUsable.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="GoodAI.ToyWorld.Control.IForwardMovable">
+  <Interface Name="World.Physics.IForwardMovable">
     <Position X="31" Y="21.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="GoodAI.ToyWorld.Control.IGridMovable">
+  <Interface Name="World.Physics.IGridMovable">
     <Position X="33" Y="23.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAIAAAAAAAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="GoodAI.ToyWorld.Control.IDirectable">
-    <Position X="31" Y="23.5" Width="1.5" />
+  <Interface Name="World.Physics.IDirectable">
+    <Position X="31" Y="23.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
@@ -364,7 +365,7 @@
   <Interface Name="World.Physics.IPhysics">
     <Position X="26" Y="14.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
       <FileName>Physics\Physics.cs</FileName>
     </TypeIdentifier>
   </Interface>

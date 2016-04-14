@@ -1,4 +1,4 @@
-﻿namespace GoodAI.ToyWorld.Control
+﻿namespace World.Physics
 {
     /// <summary>
     /// For game objects that can move.

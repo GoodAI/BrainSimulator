@@ -1,9 +1,5 @@
-﻿using Moq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using World.Physics;
 using Xunit;
 
@@ -31,7 +27,7 @@ namespace ToyWorldTests.Physics
 
             pe.Move();
 
-            collisionResolver.ResolveCollisionWithTile(pe);
+            collisionResolver.ResolveCollision(pe);
 
             Assert.True(TestUtils.FloatEq(pe.Position.X, 0, 0.02f));
             Assert.True(TestUtils.FloatEq(pe.Position.Y, 0));
@@ -52,7 +48,7 @@ namespace ToyWorldTests.Physics
 
             pe.Move();
 
-            collisionResolver.ResolveCollisionWithTile(pe);
+            collisionResolver.ResolveCollision(pe);
 
             Assert.True(TestUtils.FloatEq(pe.Position.X, 0, 0.02f));
             Assert.True(TestUtils.FloatEq(pe.Position.Y, 0.71f, 0.02f));
@@ -61,18 +57,17 @@ namespace ToyWorldTests.Physics
 
     internal class CollisionCheckerMock : ICollisionChecker
     {
-
-        public List<PhysicalEntity> CollidesWithAnotherEntity(IPhysicalEntity physicalEntity)
+        List<PhysicalEntity> ICollisionChecker.CollidesWithAnotherEntity(IPhysicalEntity physicalEntity)
         {
             throw new NotImplementedException();
         }
 
-        public bool CollidesWithTile(IPhysicalEntity physicalEntity)
+        bool ICollisionChecker.CollidesWithTile(IPhysicalEntity physicalEntity)
         {
             return physicalEntity.Position.X < 0;
         }
 
-        public float MaximumGameObjectRadius
+        float ICollisionChecker.MaximumGameObjectRadius
         {
             get { throw new NotImplementedException(); }
         }
