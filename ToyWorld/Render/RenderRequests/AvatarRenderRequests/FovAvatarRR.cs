@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using GoodAI.ToyWorld.Control;
+﻿using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
@@ -41,7 +39,7 @@ namespace Render.RenderRequests.AvatarRenderRequests
             base.Dispose();
         }
 
-#endregion
+        #endregion
 
         #region IFovAvatarRR overrides
 
@@ -104,7 +102,7 @@ namespace Render.RenderRequests.AvatarRenderRequests
 
             // No view transform
             //if (Rotation.X > 0)
-                //m_worldViewProjectionMatrix *= Matrix.CreateRotationZ(Rotation.X);
+            //m_worldViewProjectionMatrix *= Matrix.CreateRotationZ(Rotation.X);
 
             m_worldViewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, m_worldViewProjectionMatrix);
@@ -140,7 +138,7 @@ namespace Render.RenderRequests.AvatarRenderRequests
                 }
             }
 
-            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
+            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
         }
 
         #endregion
