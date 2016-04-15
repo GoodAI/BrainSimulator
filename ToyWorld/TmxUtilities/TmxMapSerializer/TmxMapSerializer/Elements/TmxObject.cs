@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace TmxMapSerializer.Elements
@@ -30,5 +31,8 @@ namespace TmxMapSerializer.Elements
 
         [XmlAttribute("rotation")]
         public float Rotation { get; set; }
+
+        [XmlElement("properties")]
+        public Properties Properties { get; set; }
     }
 }

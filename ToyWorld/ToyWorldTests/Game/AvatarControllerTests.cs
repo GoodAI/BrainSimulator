@@ -13,7 +13,7 @@ namespace ToyWorldTests.Game
 
         public AvatarControllerTests()
         {
-            m_avatar = new Avatar("Pingu", 0, Vector2.Zero, Vector2.One);
+            m_avatar = new Avatar("", 0, "Pingu", 0, Vector2.Zero, Vector2.One);
 
             m_avatarController = new AvatarController(m_avatar);
         }

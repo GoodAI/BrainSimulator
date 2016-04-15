@@ -13,7 +13,7 @@ namespace ToyWorldTests.Physics
 
         public BasicAvatarMoverTest()
         {
-            m_avatar = new Avatar("Pingu", 0, Vector2.Zero, Vector2.One);
+            m_avatar = new Avatar("", 0, "Pingu", 0, Vector2.Zero, Vector2.One);
             m_basicAvatarMover = new BasicAvatarMover();
             BasicAvatarMover basicAvatarMover = m_basicAvatarMover;
         }

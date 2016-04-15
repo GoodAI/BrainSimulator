@@ -34,8 +34,33 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        public float ForwardSpeed { get; set; }
+        public float ForwardSpeed
+        {
+            get
+            {
+                return this.PhysicalEntity.ForwardSpeed;
+            }
+            set
+            {
+                this.PhysicalEntity.ForwardSpeed = value;
+            }
+        }
 
-        public float RotationSpeed { get; set; }
+        public float RotationSpeed
+        {
+            get
+            {
+                return this.PhysicalEntity.RotationSpeed;
+            }
+            set
+            {
+                this.PhysicalEntity.RotationSpeed = value;
+            }
+        }
+
+        public Character(string tilesetName, int tileID)
+            : base(tilesetName, tileID)
+        {
+        }
     }
 }

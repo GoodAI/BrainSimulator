@@ -45,6 +45,8 @@
     <Compile Include="Elements\Layer.cs" />
     <Compile Include="Elements\Map.cs" />
     <Compile Include="Elements\ObjectGroup.cs" />
+    <Compile Include="Elements\Properties.cs" />
+    <Compile Include="Elements\Property.cs" />
     <Compile Include="Elements\TmxTile.cs" />
     <Compile Include="Elements\TmxObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -30,7 +30,7 @@ namespace World.GameActors.Tiles
         {
             if (tmxMap != null)
             {
-                Tilesets.AddRange(tmxMap.Tileset);
+                Tilesets.AddRange(tmxMap.Tilesets);
                 TileSize = new Vector2I(tmxMap.Tilewidth, tmxMap.Tileheight);
                 // TODO: deserialize margins
                 TileMargins = Vector2I.One;

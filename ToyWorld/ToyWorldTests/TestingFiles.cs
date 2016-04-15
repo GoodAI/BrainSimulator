@@ -8,7 +8,7 @@ namespace ToyWorldTests
         public static Stream GetTmxMemoryStream()
         {
             var ms = new MemoryStream();
-            const string fileString = 
+            const string fileString =
                 @"<?xml version=""1.0"" encoding=""UTF-8""?>
                 <map version=""1.0"" orientation=""orthogonal"" renderorder=""right-down"" width=""3"" height=""3"" tilewidth=""16"" tileheight=""16"" nextobjectid=""19"">
                         <tileset firstgid=""1"" source=""roguelikeSheet_summer.tsx""/>
@@ -55,7 +55,11 @@ namespace ToyWorldTests
                     </data>
                         </layer>
                         <objectgroup name=""Object"">
-                        <object name=""Pingu"" type=""Avatar"" id=""1"" gid=""496"" x=""9"" y=""22"" width=""16"" height=""16""/>
+                          <object id=""16"" name=""Pingu"" type=""Avatar"" gid=""496"" x=""9"" y=""22"" width=""16"" height=""16"" rotation=""160"">
+                           <properties>
+                            <property name=""ForwardSpeed"" value=""0.5""/>
+                           </properties>
+                          </object>
                         </objectgroup>
                         <layer name=""Foreground"" width=""3"" height=""3"">
                         <data encoding=""csv"">

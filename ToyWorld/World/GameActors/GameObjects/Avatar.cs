@@ -21,7 +21,15 @@ namespace World.GameActors.GameObjects
         public bool Use { get; set; }
         public bool PickUp { get; set; }
 
-        public Avatar(string name, int id, Vector2 initialPosition, Vector2 size, float direction = 0)
+        public Avatar(
+            string tilesetName,
+            int tileId,
+            string name, 
+            int id, 
+            Vector2 initialPosition, 
+            Vector2 size, 
+            float direction = 0
+            ) : base (tilesetName, tileId)
         {
             Name = name;
             Id = id;

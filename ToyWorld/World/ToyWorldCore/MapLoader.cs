@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
@@ -22,9 +24,9 @@ namespace World.ToyWorldCore
         /// <returns>Atlas with initial state of ToyWorld</returns>
         public static Atlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)
         {
-            var tmxMapSerializer = new TmxSerializer();
-
             Atlas atlas = new Atlas();
+
+            map.Tilesets.OrderBy(x => x.Firstgid);
 
             foreach (LayerType layerType in Enum.GetValues(typeof(LayerType)).Cast<LayerType>())
             {
@@ -36,14 +38,13 @@ namespace World.ToyWorldCore
                 {
                     var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(atlas, objectLayer, layerType, initializer)
-                        );
+                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets));
                 }
                 else
                 {
                     var tileLayer = map.Layers.First(x => x.Name == layerName);
                     if (tileLayer == null)
-                        throw new Exception("Layer " + layerName + " not found in given tmx file!");
+                        throw new Exception("Layer " + layerName + " not found in given .tmx file!");
                     atlas.TileLayers.Add(
                         FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable, initializer)
                         );
@@ -53,20 +54,38 @@ namespace World.ToyWorldCore
             return atlas;
         }
 
-        private static IObjectLayer FillObjectLayer(Atlas atlas, ObjectGroup objectLayer, LayerType layerType, Action<GameActor> initializer)
+        private static IObjectLayer FillObjectLayer(
+            Atlas atlas,
+            ObjectGroup objectLayer,
+            LayerType layerType,
+            Action<GameActor> initializer,
+            List<Tileset> tilesets)
         {
             //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
 
             // avatars list
-            var avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
+            IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
 
             foreach (var avatar in avatars)
             {
                 var initialPosition = new Vector2(avatar.X, avatar.Y);
                 var size = new Vector2(avatar.Width, avatar.Height);
-                var rotation = avatar.Rotation;
-                var gameAvatar = new Avatar(avatar.Name, avatar.Id, initialPosition, size, rotation);
+                float rotation = avatar.Rotation;
+
+                int originalGid = avatar.Gid;
+                Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
+                string tilesetName = nameNewGid.Item1;
+                int newGid = nameNewGid.Item2;
+
+                var gameAvatar = new Avatar(tilesetName, newGid, avatar.Name, avatar.Id, initialPosition, size, rotation);
+
+                // this is magic
+                if (avatar.Properties != null)
+                {
+                    SetGameObjectProperties(avatar.Properties.PropertiesList, gameAvatar);
+                }
+                
                 initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);
@@ -75,7 +94,12 @@ namespace World.ToyWorldCore
             return simpleObjectLayer;
         }
 
-        private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int, StaticTile> staticTilesContainer, TilesetTable tilesetTable, Action<GameActor> initializer)
+        private static ITileLayer FillTileLayer(
+            Layer layer,
+            LayerType layerType,
+            Dictionary<int, StaticTile> staticTilesContainer,
+            TilesetTable tilesetTable,
+            Action<GameActor> initializer)
         {
             SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
             var lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
@@ -127,6 +151,83 @@ namespace World.ToyWorldCore
             // TODO : make sure next line is active before release
             //            throw new Exception("MapLoader cannot find class " + className);
             return null;
+        }
+
+        private static Tuple<string, int> TilesetNameFromGid(List<Tileset> tilesets, int gid)
+        {
+            if (gid < tilesets.First().Firstgid)
+            {
+                throw new ArgumentException(".tmx file corrupted. GID " + gid + " belongs to no tileset!");
+            }
+
+            foreach (Tileset tileset in tilesets)
+            {
+                if (tileset.Firstgid < gid)
+                {
+                    return new Tuple<string, int>(tileset.Name, gid - tileset.Firstgid + 1);
+                }
+            }
+            throw new ArgumentException(".tmx file corrupted. GID " + gid + " belongs to no tileset!");
+        }
+
+        /// <summary>
+        /// Set GameObject properties. Properties are paired with name.
+        /// </summary>
+        /// <param name="properties"></param>
+        /// <param name="gameObject"></param>
+        private static void SetGameObjectProperties(List<Property> properties, GameObject gameObject)
+        {
+            Type type = gameObject.GetType();
+            Convert.ChangeType(gameObject, type);
+
+            foreach (Property property in properties)
+            {
+                try
+                {
+                    PropertyInfo gameObjectProperty = type.GetProperty(property.Name);
+                    Type propertyType = gameObjectProperty.PropertyType;
+                    object value;
+                    try
+                    {
+                        if (propertyType == typeof(int))
+                        {
+                            value = int.Parse(property.Value);
+                        }
+                        else if (propertyType == typeof(float))
+                        {
+                            value = float.Parse(property.Value, CultureInfo.InvariantCulture);
+                        }
+                        else if (propertyType == typeof(string))
+                        {
+                            value = property.Value;
+                        }
+                        else
+                        {
+                            throw new NotSupportedException("Property requires type which is not int, float or string.");
+                        }
+                        gameObjectProperty.SetValue(gameObject, value);
+                    }
+                    catch (FormatException)
+                    {
+                        throw new FormatException(
+                            "Cannot parse property " + property.Name +
+                            " with value " + property.Value +
+                            " at object " + gameObject.Name +
+                            " at " + gameObject.Position + ".\n" +
+                            "Property type should be " + propertyType.Name);
+                    }
+                }
+                catch (AmbiguousMatchException)
+                {
+                    IEnumerable<string> propertiesNames = type.GetProperties().Select(x => x.Name);
+                    string joined = String.Join(",\n", propertiesNames);
+                    throw new NotSupportedException(
+                        ".tmx file contains unknown property " + property.Name +
+                        " at object " + gameObject.Name +
+                        " at " + gameObject.Position + ".\n" +
+                        "Available properties are: \n" + joined);
+                }
+            }
         }
     }
 }
