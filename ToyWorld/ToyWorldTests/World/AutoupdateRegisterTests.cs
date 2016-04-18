@@ -129,7 +129,6 @@ namespace ToyWorldTests.World
             ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
 
             AutoupdateRegister register = new AutoupdateRegister();
-            Mock<TmxTile> mockTile = new Mock<TmxTile>();
             Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
             Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
             register.Register(mock1.Object, 1);
