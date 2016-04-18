@@ -39,28 +39,28 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public class AvatarControls : IAvatarControls
+    public struct AvatarControls : IAvatarControls
     {
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
         /// </summary>
-        public AvatarAction<float> DesiredSpeed { get; private set; }
+        public AvatarAction<float> DesiredSpeed { get; set; }
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
         /// </summary>
-        public AvatarAction<float> DesiredRotation { get; private set; }
+        public AvatarAction<float> DesiredRotation { get; set; }
         /// <summary>
         /// To interact with object in front.
         /// </summary>
-        public AvatarAction<bool> Interact { get; private set; }
+        public AvatarAction<bool> Interact { get; set; }
         /// <summary>
         /// To use tool in hand / punch.
         /// </summary>
-        public AvatarAction<bool> Use { get; private set; }
+        public AvatarAction<bool> Use { get; set; }
         /// <summary>
         /// Pick up or put down tool in hand.
         /// </summary>
-        public AvatarAction<bool> PickUp { get; private set; }
+        public AvatarAction<bool> PickUp { get; set; }
 
         /// <summary>
         /// 
@@ -76,7 +76,7 @@ namespace GoodAI.ToyWorld.Control
             AvatarAction<bool> interact,
             AvatarAction<bool> use,
             AvatarAction<bool> pickUp
-            )
+            ) : this()
         {
             DesiredSpeed = desiredSpeed;
             DesiredRotation = desiredRotation;
@@ -92,7 +92,7 @@ namespace GoodAI.ToyWorld.Control
             bool interact = false,
             bool use = false,
             bool pickUp = false
-            )
+            ) : this()
         {
             DesiredSpeed = new AvatarAction<float>(desiredSpeed, priority);
             DesiredRotation = new AvatarAction<float>(desiredRotation, priority);
@@ -107,26 +107,11 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="actions"></param>
         public void Update(IAvatarControls actions)
         {
-            if (DesiredSpeed.Priority > actions.DesiredSpeed.Priority)
-            {
-                DesiredSpeed = actions.DesiredSpeed;
-            }
-            if (DesiredRotation.Priority > actions.DesiredRotation.Priority)
-            {
-                DesiredRotation = actions.DesiredRotation;
-            }
-            if (Interact.Priority > actions.Interact.Priority)
-            {
-                Interact = actions.Interact;
-            }
-            if (Use.Priority > actions.Use.Priority)
-            {
-                Use = actions.Use;
-            }
-            if (PickUp.Priority > actions.PickUp.Priority)
-            {
-                PickUp = actions.PickUp;
-            }
+            DesiredSpeed += actions.DesiredSpeed;
+            DesiredRotation += actions.DesiredRotation;
+            Interact += actions.Interact;
+            Use += actions.Use;
+            PickUp += actions.PickUp;
         }
     }
 }

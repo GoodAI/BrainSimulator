@@ -9,8 +9,8 @@ namespace World.Physics
         {
             IForwardMovablePhysicalEntity physicalEntity = avatar.PhysicalEntity;
             Debug.Assert(physicalEntity != null, "physicalEntity != null");
-            physicalEntity.ForwardSpeed = avatar.DesiredSpeed;
-            physicalEntity.RotationSpeed = avatar.DesiredRotation;
+            physicalEntity.ForwardSpeed = avatar.DesiredSpeed / 6;
+            physicalEntity.RotationSpeed = avatar.DesiredRotation * 11.25f;
         }
     }
 }

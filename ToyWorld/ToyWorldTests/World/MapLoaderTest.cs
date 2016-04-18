@@ -54,7 +54,6 @@ namespace ToyWorldTests.World
 
             Assert.True(avatar.Id == 16);
             Assert.True(avatar.Name == "Pingu");
-            Assert.True(avatar.PhysicalEntity.Position == new Vector2(9, 22));
             Assert.True(avatar.PhysicalEntity.Size == new Vector2(16, 16));
         }
     }

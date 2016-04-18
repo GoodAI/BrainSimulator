@@ -38,7 +38,7 @@ namespace World.ToyWorldCore
                 {
                     var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets));
+                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets, map.Tilewidth, map.Tileheight));
                 }
                 else
                 {
@@ -59,8 +59,13 @@ namespace World.ToyWorldCore
             ObjectGroup objectLayer,
             LayerType layerType,
             Action<GameActor> initializer,
-            List<Tileset> tilesets)
+            List<Tileset> tilesets,
+            int tileWidth,
+            int tileHeight
+            )
         {
+            NormalizeObjectPositions(objectLayer.TmxMapObjects, tileWidth, tileHeight);
+
             //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
 
@@ -92,6 +97,21 @@ namespace World.ToyWorldCore
             }
 
             return simpleObjectLayer;
+        }
+
+        /// <summary>
+        /// From absolute position in pixels to side of tile = 1
+        /// </summary>
+        /// <param name="tmxObjects"></param>
+        /// <param name="tileWidth"></param>
+        /// <param name="tileHeight"></param>
+        private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight)
+        {
+            foreach (var tmxObject in tmxObjects)
+            {
+                tmxObject.X /= tileWidth;
+                tmxObject.Y /= tileHeight;
+            }
         }
 
         private static ITileLayer FillTileLayer(

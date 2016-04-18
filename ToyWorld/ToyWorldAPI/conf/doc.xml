@@ -10,21 +10,20 @@
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
+        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(`0,System.Int32)">
+            <summary></summary>
+            <param name="value">Value of action.</param>
+            <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
             <summary>
             Value of action.
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
             <summary>
             If two or more controllers are connected to one agent, action with highest priority will be performed.
             </summary>
-        </member>
-        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(`0,System.Int32)">
-            <summary></summary>
-            <param name="actionId">Action to preform.</param>
-            <param name="value">Value of action.</param>
-            <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IAvatarControls.Update(GoodAI.ToyWorld.Control.IAvatarControls)">
             <summary>
