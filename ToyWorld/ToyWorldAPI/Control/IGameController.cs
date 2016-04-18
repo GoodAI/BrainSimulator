@@ -3,22 +3,22 @@
 namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IGameController : IDisposable
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         void Init();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         void MakeStep();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="avatarID"></param>
         /// <exception cref="RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="IAvatarRenderRequest"/> from the controller.
@@ -27,7 +27,7 @@ namespace GoodAI.ToyWorld.Control
             where T : class, IAvatarRenderRequest;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <exception cref="RenderRequestNotImplementedException">Thrown when requesting an unknown <see cref="IRenderRequest"/> from the controller.
         /// This usually indicates an older version of the core than the API.</exception>
@@ -35,10 +35,12 @@ namespace GoodAI.ToyWorld.Control
             where T : class, IRenderRequest;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="avatarId"></param>
         /// <returns></returns>
         IAvatarController GetAvatarController(int avatarId);
+
+        int[] GetAvatarIds();
     }
 }
