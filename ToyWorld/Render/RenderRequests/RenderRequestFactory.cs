@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GoodAI.ToyWorld.Control;
-using Render.RenderRequests.AvatarRenderRequests;
-using Render.RenderRequests.RenderRequests;
 using Render.Tests.RRs;
 using Utils.VRageRIP.Lib.Collections;
 
@@ -28,16 +26,27 @@ namespace Render.RenderRequests
             // TODO: Reflection check for classes that don't comply
 
             // RenderRequests
-            RRSwitch
-                .Case<IBasicTextureRR>(() =>
-                    new BasicTextureRR())
-                .Case<IFullMapRR>(() =>
-                    new FullMapRR());
+            CaseInternal<IBasicTextureRR, BasicTextureRR>();
+            CaseInternal<IFullMapRR, FullMapRR>();
+            CaseInternal<IFreeMapRR, FreeMapRR>();
 
             // AvatarRenderRequests
-            avatarRRSwitch
-                .Case<IFovAvatarRR>(id =>
-                    new FovAvatarRR(id));
+            CaseParamInternal<IFovAvatarRR, FovAvatarRR>();
+        }
+
+        private static void CaseInternal<T, TNew>()
+            where T : class, IRenderRequest
+            where TNew : class, T, new()
+        {
+            RRSwitch.Case<T>(() => new TNew());
+        }
+
+        private static void CaseParamInternal<T, TNew>()
+            where T : class, IAvatarRenderRequest
+            where TNew : class, T
+        {
+            // Activator is about 11 times slower, than new T() -- should be ok for this usage
+            avatarRRSwitch.Case<T>(vec => (TNew)Activator.CreateInstance(typeof(TNew), vec));
         }
 
 

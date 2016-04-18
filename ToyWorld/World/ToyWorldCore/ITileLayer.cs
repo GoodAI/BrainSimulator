@@ -26,9 +26,8 @@ namespace World.ToyWorldCore
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
         /// </summary>
         /// <param name="size"></param>
-        /// <param name="tileTypes"></param>
         /// <param name="pos"></param>
-        void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes);
+        int[] GetRectangle(Vector2 pos, Vector2 size);
     }
 
 
@@ -43,7 +42,12 @@ namespace World.ToyWorldCore
             return default(Tile[,]);
         }
 
-        public void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes) { }
+        public int[] GetRectangle(Vector2 pos, Vector2 size)
+        {
+            MyContract.Requires<ArgumentOutOfRangeException>(size.X > 0 && size.Y > 0, "Y values doesn't form a valid rectangle");
+
+            return default(int[]);
+        }
 
         public LayerType LayerType { get; set; }
 

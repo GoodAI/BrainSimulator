@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -11,7 +12,7 @@ using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests
 {
-    internal class FullMapRR : RenderRequestBase, IFullMapRR
+    internal class FreeMapRR : RenderRequestBase, IFreeMapRR
     {
         private NoEffectOffset m_effect;
         private TilesetTexture m_tex;
@@ -22,6 +23,8 @@ namespace Render.RenderRequests
         private Matrix m_worldMatrix;
         private Matrix m_worldViewProjectionMatrix;
         private int m_mvpPos;
+
+        protected Vector3 RotationV { get { return new Vector3((Vector2)Rotation, 0); } set { Rotation = new PointF(value.X, value.Y); } }
 
 
         #region Genesis
@@ -37,9 +40,11 @@ namespace Render.RenderRequests
 
         #endregion
 
-        #region IFullMapRR overrides
+        #region IFreeMapRR overrides
 
-        public System.Drawing.PointF Rotation { get; set; }
+        public PointF Rotation { get; set; }
+
+        public new PointF PositionCenter { get { return base.PositionCenter; } set { base.PositionCenter = value; } }
 
         #endregion
 
@@ -54,6 +59,7 @@ namespace Render.RenderRequests
 
             // Set up tileset textures
             m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
+
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -77,10 +83,12 @@ namespace Render.RenderRequests
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // Scale up to world size (was (-1,1) originally)
-            m_worldMatrix = Matrix.CreateScale(world.Size.X * 0.5f, world.Size.Y * 0.5f, 1);
+            Vector2 halfWorldSize = new Vector2(world.Size.X * 0.5f, world.Size.Y * 0.5f);
+            m_worldMatrix = Matrix.CreateScale(new Vector3(halfWorldSize, 1)) * Matrix.CreateTranslation(new Vector3(halfWorldSize, 0));
             // No view matrix needed here -- we are fixed on origin (center of the world),
             // or the view has to be computed each step
-            m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, 1, -20);
+            const float zoom = 1f;
+            m_projMatrix = Matrix.CreateOrthographic(SizeV.X * zoom, SizeV.Y * zoom, -1, 20);
         }
 
         public override void Draw(RendererBase renderer, ToyWorld world)
@@ -93,8 +101,7 @@ namespace Render.RenderRequests
 
             // Set up transformation to screen space
             m_worldViewProjectionMatrix = m_worldMatrix;
-            // Temporary view transform
-            m_worldViewProjectionMatrix *= GetViewMatrix(new Vector3(Rotation.X, Rotation.Y, 0), PositionCenterV);
+            m_worldViewProjectionMatrix *= GetViewMatrix(RotationV, PositionCenterV);
             m_worldViewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, m_worldViewProjectionMatrix);
 
@@ -116,12 +123,7 @@ namespace Render.RenderRequests
                     Matrix modelMatrix = Matrix.Identity;
                     modelMatrix *= Matrix.CreateRotationZ(0.5f);
                     modelMatrix *= Matrix.CreateScale(0.2f);
-                    modelMatrix *= Matrix.CreateTranslation(Rotation.Y, 0, 0.01f);
-                    var rot = Rotation.Y + 0.01f;
-                    if (rot > MathHelper.Pi)
-                        rot = 0;
-                    Rotation = new PointF(Rotation.X, rot);
-
+                    modelMatrix *= Matrix.CreateTranslation(0, 0, 0.01f);
                     modelMatrix *= m_worldViewProjectionMatrix;
                     m_effect.SetUniformMatrix4(m_mvpPos, modelMatrix);
 
@@ -134,6 +136,5 @@ namespace Render.RenderRequests
         }
 
         #endregion
-
     }
 }

@@ -1,7 +1,5 @@
 ﻿using GoodAI.ToyWorld.Control;
 using Render.RenderRequests;
-using Render.RenderRequests.AvatarRenderRequests;
-using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
 using Render.RenderObjects.Buffers;

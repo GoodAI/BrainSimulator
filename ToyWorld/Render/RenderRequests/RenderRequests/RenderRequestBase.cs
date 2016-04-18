@@ -3,7 +3,7 @@ using GoodAI.ToyWorld.Control;
 using VRageMath;
 using RectangleF = VRageMath.RectangleF;
 
-namespace Render.RenderRequests.RenderRequests
+namespace Render.RenderRequests
 {
     public abstract class RenderRequestBase : RenderRequest, IRenderRequest
     {
@@ -20,7 +20,7 @@ namespace Render.RenderRequests.RenderRequests
 
 
         protected Vector2I SizeV { get { return (Vector2I)Size; } set { Size = new Size(value.X, value.Y); } }
-        protected Vector2 PositionCenterV { get { return (Vector2)PositionCenter; } set { PositionCenter = new PointF(value.X, value.Y); } }
+        protected Vector3 PositionCenterV { get { return new Vector3((Vector2)PositionCenter, 0); } set { PositionCenter = new PointF(value.X, value.Y); } }
         protected RectangleF ViewV { get { return (RectangleF)View; } set { View = new System.Drawing.RectangleF(value.X, value.Y, value.Width, value.Height); } }
     }
 }

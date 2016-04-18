@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="51">
  <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="540" columns="15">
   <image source="roguelike_selection_summer.png" trans="ff00ff" width="255" height="612"/>
  </tileset>
  <tileset firstgid="541" name="winter" tilewidth="16" tileheight="16" spacing="1" tilecount="540" columns="15">
-  <image source="../bin/x64/Debug/TestFiles/roguelike_selection_winter.png" trans="ff00ff" width="255" height="613"/>
+  <image source="../bin/x64/Debug/TestFiles/roguelike_selection_winter.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
  <layer name="Background" width="50" height="50">
   <data encoding="csv">

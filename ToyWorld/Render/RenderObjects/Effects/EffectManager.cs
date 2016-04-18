@@ -14,13 +14,15 @@ namespace Render.RenderObjects.Effects
 
         public EffectManager()
         {
-            m_effects
-                .Case<NoEffect>(() =>
-                    new NoEffect())
-                .Case<NoEffectTex>(() =>
-                    new NoEffectTex())
-                .Case<NoEffectOffset>(() =>
-                    new NoEffectOffset());
+            CaseInternal<NoEffect>();
+            CaseInternal<NoEffectTex>();
+            CaseInternal<NoEffectOffset>();
+        }
+
+        private void CaseInternal<T>()
+            where T : EffectBase, new()
+        {
+            m_effects.Case<T>(() => new T());
         }
 
 
