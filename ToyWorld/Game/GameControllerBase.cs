@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
@@ -47,7 +48,7 @@ namespace Game
             // Init World
             var serializer = new TmxSerializer();
             Map map = serializer.Deserialize(m_gameSetup.SaveFile);
-          
+
             World = new ToyWorld(map, m_gameSetup.TilesetFile);
 
             m_avatars = new Dictionary<int, IAvatar>();
@@ -137,6 +138,11 @@ namespace Game
             {
                 avatarController.ResetControls();
             }
+        }
+
+        public int[] GetAvatarIds()
+        {
+            return m_avatarControllers.Keys.ToArray();
         }
 
         #endregion
