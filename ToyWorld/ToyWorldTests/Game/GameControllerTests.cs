@@ -74,7 +74,7 @@ namespace ToyWorldTests.Game
         [Fact]
         public void DoStep()
         {
-            GameController.RegisterRenderRequest<IBasicTextureRR>();
+            GameController.RegisterRenderRequest<IFullMapRR>();
             GameController.RegisterRenderRequest<IFovAvatarRR>(1);
 
             GameController.MakeStep();

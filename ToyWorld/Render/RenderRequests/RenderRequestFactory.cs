@@ -26,7 +26,6 @@ namespace Render.RenderRequests
             // TODO: Reflection check for classes that don't comply
 
             // RenderRequests
-            CaseInternal<IBasicTextureRR, BasicTextureRR>();
             CaseInternal<IFullMapRR, FullMapRR>();
             CaseInternal<IFreeMapRR, FreeMapRR>();
 

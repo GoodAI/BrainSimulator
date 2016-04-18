@@ -90,7 +90,7 @@ namespace World.ToyWorldCore
                 {
                     SetGameObjectProperties(avatar.Properties.PropertiesList, gameAvatar);
                 }
-                
+
                 initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);
@@ -111,6 +111,9 @@ namespace World.ToyWorldCore
             {
                 tmxObject.X /= tileWidth;
                 tmxObject.Y /= tileHeight;
+                tmxObject.Width /= tileWidth;
+                tmxObject.Height /= tileHeight;
+                tmxObject.Rotation /= 360f;
             }
         }
 

@@ -10,28 +10,14 @@ namespace Render.RenderRequests
         protected AvatarRRBase(int avatarID)
         {
             AvatarID = avatarID;
-            Size = new Size(3, 3);
-            Resolution = new Size(1024, 1024);
-
         }
 
 
         #region IAvatarRenderRequest overrides
 
         public int AvatarID { get; protected set; }
-
-        public virtual System.Drawing.Size Size { get; set; }
-        public virtual System.Drawing.Size Resolution { get; set; }
-
-        public System.Drawing.PointF PositionCenter { get; private set; }
         public System.Drawing.PointF RelativePosition { get; set; }
-        public System.Drawing.RectangleF View { get; private set; }
 
         #endregion
-
-
-        protected Vector2I SizeV { get { return (Vector2I)Size; } set { Size = new System.Drawing.Size(value.X, value.Y); } }
-        protected Vector2 PositionCenterV { get { return (Vector2)PositionCenter; } set { PositionCenter = new System.Drawing.PointF(value.X, value.Y); } }
-        protected RectangleF ViewV { get { return (RectangleF)View; } set { View = new System.Drawing.RectangleF(value.X, value.Y, value.Width, value.Height); } }
     }
 }

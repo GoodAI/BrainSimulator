@@ -55,53 +55,50 @@ namespace World.ToyWorldCore
             Rectangle rectangle = new Rectangle(intTopLeft, intBotRight - intTopLeft);
 
             if (m_tileTypes.Length < rectangle.Size.Size())
-                this.m_tileTypes = new int[rectangle.Size.Size()];
+                m_tileTypes = new int[rectangle.Size.Size()];
 
+
+            int left = Math.Max(rectangle.Left, 0);
+            int right = Math.Min(rectangle.Right, Tiles.GetLength(0));
+            int top = Math.Max(rectangle.Top, 0);
+            int bot = Math.Min(rectangle.Bottom, Tiles.GetLength(1));
 
             int idx = 0;
 
             // Rows before start of map
-            for (int j = rectangle.Top; j < 0; j++)
+            for (int j = rectangle.Top; j < top; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
                     m_tileTypes[idx++] = 0;
             }
 
             // Rows inside of map
-            int xLength = Tiles.GetLength(0);
-            int yLength = Tiles.GetLength(1);
-
-            for (var j = 0; j < yLength; j++)
+            for (var j = top; j < bot; j++)
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < 0; i++)
                     m_tileTypes[idx++] = 0;
 
                 // Tiles inside of map
-                for (var i = 0; i < xLength; i++)
+                for (var i = left; i < right; i++)
                 {
                     var tile = Tiles[i, j];
                     m_tileTypes[idx++] = tile != null ? tile.TileType : 0;
                 }
 
                 // Tiles after end of map
-                for (int i = xLength; i < rectangle.Right; i++)
+                for (int i = right; i < rectangle.Right; i++)
                     m_tileTypes[idx++] = 0;
             }
 
             // Rows after end of map
-            for (int j = yLength; j < rectangle.Bottom; j++)
+            for (int j = bot; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
                     m_tileTypes[idx++] = 0;
             }
 
             return m_tileTypes;
-        }
-
-        public List<Tile> GetAllObjects()
-        {
-            return Tiles.Cast<Tile>().ToList();
         }
     }
 }
