@@ -92,11 +92,11 @@ namespace GoodAI.ToyWorld.Control
             )
             : this()
         {
-            DesiredSpeed = new AvatarAction<float>(desiredSpeed, priority);
-            DesiredRotation = new AvatarAction<float>(desiredRotation, priority);
-            Interact = new AvatarAction<bool>(interact, priority);
-            Use = new AvatarAction<bool>(use, priority);
-            PickUp = new AvatarAction<bool>(pickUp, priority);
+            m_desiredSpeed = new AvatarAction<float>(desiredSpeed, priority);
+            m_desiredRotation = new AvatarAction<float>(desiredRotation, priority);
+            m_interact = new AvatarAction<bool>(interact, priority);
+            m_use = new AvatarAction<bool>(use, priority);
+            m_pickUp = new AvatarAction<bool>(pickUp, priority);
         }
 
         /// <summary>
@@ -115,11 +115,11 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="actions"></param>
         public void Update(IAvatarControls actions)
         {
-            DesiredSpeed += actions.DesiredSpeed;
-            DesiredRotation += actions.DesiredRotation;
-            Interact += actions.Interact;
-            Use += actions.Use;
-            PickUp += actions.PickUp;
+            DesiredSpeed = actions.DesiredSpeed;
+            DesiredRotation = actions.DesiredRotation;
+            Interact = actions.Interact;
+            Use = actions.Use;
+            PickUp = actions.PickUp;
         }
     }
 }

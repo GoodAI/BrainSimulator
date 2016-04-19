@@ -18,7 +18,7 @@ namespace World.Physics
 
         private static void Shift(IForwardMovablePhysicalEntity movable)
         {
-            var directionInRads = VRageMath.MathHelper.ToRadians(movable.Direction);
+            var directionInRads = movable.Direction;
             var cos = (float)Math.Cos(directionInRads);
             float x = movable.Position.X + cos * movable.ForwardSpeed;
             var sin = (float)Math.Sin(directionInRads);
@@ -28,7 +28,7 @@ namespace World.Physics
 
         private static void Rotate(IForwardMovablePhysicalEntity movable)
         {
-            movable.Direction += movable.RotationSpeed;
+            movable.Direction = MathHelper.WrapAngle(movable.Direction + movable.RotationSpeed);
         }
     }
 }

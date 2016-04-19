@@ -48,12 +48,8 @@ namespace World.ToyWorldCore
             return f;
         }
 
-        public int[] GetRectangle(Vector2 pos, Vector2 size)
+        public int[] GetRectangle(Rectangle rectangle)
         {
-            Vector2I intTopLeft = new Vector2I(pos);
-            Vector2I intBotRight = new Vector2I(pos + size);
-            Rectangle rectangle = new Rectangle(intTopLeft, intBotRight - intTopLeft);
-
             if (m_tileTypes.Length < rectangle.Size.Size())
                 m_tileTypes = new int[rectangle.Size.Size()];
 
@@ -99,6 +95,13 @@ namespace World.ToyWorldCore
             }
 
             return m_tileTypes;
+        }
+
+        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
+        {
+            Vector2I intBotRight = topLeft + size;
+            Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
+            return GetRectangle(rectangle);
         }
     }
 }

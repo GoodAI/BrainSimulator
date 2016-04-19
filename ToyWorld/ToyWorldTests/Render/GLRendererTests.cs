@@ -50,16 +50,16 @@ namespace ToyWorldTests.Render
             int aID = m_gameController.GetAvatarIds().First();
             var rr = m_gameController.RegisterRenderRequest<IFreeMapRR>();
             var ac = m_gameController.GetAvatarController(aID);
-            var controls = new AvatarControls(5) { DesiredSpeed = 0.1f };
+            var controls = new AvatarControls(5) { DesiredSpeed = .7f };
 
             CancellationToken token = SetupWindow(
                 delta =>
                 {
                     //rr.PositionCenter = new PointF(rr.PositionCenter.X - delta.X, rr.PositionCenter.Y + delta.Y);
-                    controls.DesiredRotation += MathHelper.WrapAngle(controls.DesiredRotation.Value + 0.001f);
-                    controls.DesiredRotation = new AvatarAction<float>(0, 0);
-                    ac.SetActions(controls);
+                    controls.DesiredRotation = MathHelper.WrapAngle(delta.X);
+
                 });
+
 
             while (Renderer.Window.Exists && !token.IsCancellationRequested)
             {
@@ -72,7 +72,9 @@ namespace ToyWorldTests.Render
                     break;
                 }
 
-                Renderer.ProcessRequests(World);
+                ac.SetActions(controls);
+
+                m_gameController.MakeStep();
                 Renderer.Context.SwapBuffers();
             }
 
@@ -113,7 +115,7 @@ namespace ToyWorldTests.Render
     public class GLRendererTests : GLRendererTestBase
     {
         //[RunnableInDebugOnly]
-        /*
+        //*
         [Fact]
         /*/
         [Fact(Skip = "Skipped -- requires manual input to end.")]

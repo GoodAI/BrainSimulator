@@ -40,11 +40,10 @@
 
         public static AvatarAction<T> operator +(AvatarAction<T> value1, AvatarAction<T> value2)
         {
+            // Higher priority values mean lesser priority; if they are the same, update with the new value
             if (value2.Priority <= value1.Priority)
-            {
-                value1.Priority = value2.Priority;
-                value1.Value = value2.Value;
-            }
+                return value2;
+
             return value1;
         }
     }
