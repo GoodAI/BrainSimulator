@@ -63,18 +63,5 @@ namespace World.Physics
             : base(tilesetName, tileID)
         {
         }
-
-
-        public void Move()
-        {
-            // TODO
-            throw new System.NotImplementedException();
-        }
-
-        public void Move(float forwardSpeed, float direction)
-        {
-            // TODO
-            throw new System.NotImplementedException();
-        }
     }
 }

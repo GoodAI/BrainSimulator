@@ -14,18 +14,6 @@
         /// Rotation speed has no limit. It is limited by physics engine.
         /// </summary>
         float RotationSpeed { get; set; }
-
-        /// <summary>
-        /// Move according to internal speed and direction.
-        /// </summary>
-        void Move();
-
-        /// <summary>
-        /// Move according to given speed and direction.
-        /// </summary>
-        /// <param name="forwardSpeed"></param>
-        /// <param name="direction"></param>
-        void Move(float forwardSpeed, float direction);
     }
 
     public interface IGridMovable

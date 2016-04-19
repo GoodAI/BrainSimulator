@@ -11,15 +11,17 @@ namespace World.Physics
 
     public class CollisionResolver : ICollisionResolver
     {
-        ICollisionChecker m_collisionChecker;
+        private readonly ICollisionChecker m_collisionChecker;
+        private readonly IMovementPhysics m_movementPhysics;
 
         private const int BINARY_SEARCH_ITERATIONS = 16;
-        private const float X_DIRECTION = 0;
-        private const float Y_DIRECTION = 90;
+        private const float X_DIRECTION = (float) Math.PI / 4;
+        private const float Y_DIRECTION = 0;
 
-        public CollisionResolver(ICollisionChecker collisionChecker)
+        public CollisionResolver(ICollisionChecker collisionChecker, IMovementPhysics movementPhysics)
         {
             m_collisionChecker = collisionChecker;
+            m_movementPhysics = movementPhysics;
         }
 
         public void ResolveCollision(IForwardMovablePhysicalEntity physicalEntity)
@@ -76,7 +78,7 @@ namespace World.Physics
 
             if (goForward)
             {
-                physicalEntity.Move(initialSpeed, direction);
+                m_movementPhysics.Shift(physicalEntity, initialSpeed, direction);
                 goForward = false;
             }
 
@@ -91,11 +93,11 @@ namespace World.Physics
             {
                 if (goForward)
                 {
-                    physicalEntity.Move(speed, direction);
+                    m_movementPhysics.Shift(physicalEntity, speed, direction);
                 }
                 else
                 {
-                    physicalEntity.Move(-speed, direction);
+                    m_movementPhysics.Shift(physicalEntity, - speed, direction);
                 }
                 colliding = m_collisionChecker.CollidesWithTile(physicalEntity);
                 if (!colliding)

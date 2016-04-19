@@ -18,9 +18,10 @@ namespace ToyWorldTests.Physics
             //collisionCheckerMock.Setup(x => x.CollidesWithTile(pe)).Returns(pe.Position.X < 0);
 
             ICollisionChecker collisionChecker = new CollisionCheckerMock();
-            ICollisionResolver collisionResolver = new CollisionResolver(collisionChecker);
+            var movementPhysics = new MovementPhysics();
+            ICollisionResolver collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
 
-            pe.Move();
+            movementPhysics.Move(pe);
 
             collisionResolver.ResolveCollision(pe);
 
@@ -39,9 +40,10 @@ namespace ToyWorldTests.Physics
             //collisionCheckerMock.Setup(x => x.CollidesWithTile(pe)).Returns(pe.Position.X < 0);
 
             ICollisionChecker collisionChecker = new CollisionCheckerMock();
-            ICollisionResolver collisionResolver = new CollisionResolver(collisionChecker);
+            var movementPhysics = new MovementPhysics();
+            ICollisionResolver collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
 
-            pe.Move();
+            movementPhysics.Move(pe);
 
             collisionResolver.ResolveCollision(pe);
 

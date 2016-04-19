@@ -21,7 +21,7 @@ namespace World.GameActors.GameObjects
         /// <summary>
         /// Size is getter and setter to property inside PhysicalEntity
         /// </summary>
-        Vector2 Size { get; set; }
+        Vector2 Size { get; }
 
         /// <summary>
         /// Position is getter and setter to property inside PhysicalEntity
@@ -46,8 +46,7 @@ namespace World.GameActors.GameObjects
 
         public Vector2 Size
         {
-            get;
-            set; // TODO: remove
+            get { return PhysicalEntity.CoverRectangle().Size; }
         }
 
         public Vector2 Position
