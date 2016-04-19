@@ -1,12 +1,10 @@
-﻿
+﻿using System;
+using VRageMath;
+
 namespace World.Physics
 {
     public interface IMovementPhysics
     {
-        /// <summary>
-        /// Move with given ForwardMovable object.
-        /// </summary>
-        /// <param name="movable"></param>
         void Move(IForwardMovablePhysicalEntity movable);
     }
 
@@ -20,12 +18,14 @@ namespace World.Physics
 
         private static void Shift(IForwardMovablePhysicalEntity movable)
         {
-            movable.Move();
+            // Swapped sin and cos (rotated by 90°) because the default direction vector (for radian = 0) should be up (i.e. (0,1))
+            Vector2 direction = new Vector2((float)Math.Sin(movable.Direction), (float)Math.Cos(movable.Direction));
+            movable.Position = movable.Position + direction * movable.ForwardSpeed;
         }
 
         private static void Rotate(IForwardMovablePhysicalEntity movable)
         {
-            movable.Direction += movable.RotationSpeed;
+            movable.Direction = MathHelper.WrapAngle(movable.Direction + movable.RotationSpeed);
         }
     }
 }

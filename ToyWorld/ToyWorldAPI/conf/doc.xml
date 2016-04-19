@@ -10,21 +10,20 @@
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
+        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(`0,System.Int32)">
+            <summary></summary>
+            <param name="value">Value of action.</param>
+            <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Value">
             <summary>
             Value of action.
             </summary>
         </member>
-        <member name="F:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
+        <member name="P:GoodAI.ToyWorld.Control.AvatarAction`1.Priority">
             <summary>
             If two or more controllers are connected to one agent, action with highest priority will be performed.
             </summary>
-        </member>
-        <member name="M:GoodAI.ToyWorld.Control.AvatarAction`1.#ctor(`0,System.Int32)">
-            <summary></summary>
-            <param name="actionId">Action to preform.</param>
-            <param name="value">Value of action.</param>
-            <param name="priority">If two or more controllers are connected to one agent, action with highest priority will be performed.</param>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.IAvatarControls.Update(GoodAI.ToyWorld.Control.IAvatarControls)">
             <summary>
@@ -62,15 +61,22 @@
             
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.#ctor(GoodAI.ToyWorld.Control.AvatarAction{System.Single},GoodAI.ToyWorld.Control.AvatarAction{System.Single},GoodAI.ToyWorld.Control.AvatarAction{System.Boolean},GoodAI.ToyWorld.Control.AvatarAction{System.Boolean},GoodAI.ToyWorld.Control.AvatarAction{System.Boolean})">
+        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.#ctor(System.Int32,System.Single,System.Single,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             
             </summary>
+            <param name="priority"></param>
             <param name="desiredSpeed"></param>
             <param name="desiredRotation"></param>
             <param name="interact"></param>
             <param name="use"></param>
             <param name="pickUp"></param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Control.AvatarControls.#ctor(GoodAI.ToyWorld.Control.IAvatarControls)">
+            <summary>
+            
+            </summary>
+            <param name="other"></param>
         </member>
         <member name="M:GoodAI.ToyWorld.Control.AvatarControls.Update(GoodAI.ToyWorld.Control.IAvatarControls)">
             <summary>
@@ -101,6 +107,31 @@
         <member name="P:GoodAI.ToyWorld.Control.AvatarControls.PickUp">
             <summary>
             Pick up or put down tool in hand.
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Control.IRenderRequestBase">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequestBase.PositionCenter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequestBase.Size">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequestBase.View">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IRenderRequestBase.Resolution">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.RenderRequestNotImplementedException">
@@ -147,7 +178,7 @@
             Setup object for ToyWorld
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.GameSetup.#ctor(System.IO.StreamReader,System.IO.StreamReader)">
+        <member name="M:GoodAI.ToyWorld.Control.GameSetup.#ctor(System.IO.Stream,System.IO.StreamReader)">
             <summary>
             Setup object for ToyWorld constructor.
             </summary>
@@ -223,29 +254,9 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Size">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.PositionCenter">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.RelativePosition">
             <summary>
             Relative position of PositionCenter to avatar's position
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.View">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Resolution">
-            <summary>
-            
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IFovAvatarRR">
@@ -263,32 +274,17 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Size">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.PositionCenter">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.View">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GoodAI.ToyWorld.Control.IRenderRequest.Resolution">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:GoodAI.ToyWorld.Control.IFullMapRR">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IFullMapRR.Rotation">
+        <member name="T:GoodAI.ToyWorld.Control.IFreeMapRR">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IFreeMapRR.PositionCenter">
             <summary>
             
             </summary>

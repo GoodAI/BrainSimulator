@@ -48,6 +48,7 @@ namespace Game
             // Init World
             var serializer = new TmxSerializer();
             Map map = serializer.Deserialize(m_gameSetup.SaveFile);
+            m_gameSetup.SaveFile.Close();
 
             World = new ToyWorld(map, m_gameSetup.TilesetFile);
 

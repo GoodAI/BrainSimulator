@@ -173,10 +173,21 @@
     <None Include="TestFiles\mockup999_pantry_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\mock_small_stream_world.tmx" />
+    <None Include="TestFiles\TilesetTable.csv" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\roguelike_selection_summer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\roguelike_selection_winter.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\sheep.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\wumpus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Choose>

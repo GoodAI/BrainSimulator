@@ -51,14 +51,24 @@ namespace ToyWorldTests.Render
 
             GameController.MakeStep();
             GameController.MakeStep();
-
             // Asserting not throwing of any exceptions -- there is nothing to test otherwise, no visual output
         }
 
         [Fact]
+        public void FreeMapRR()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFreeMapRR>();
+
+            GameController.MakeStep();
+            GameController.MakeStep();
+            // Asserting not throwing of any exceptions -- there is nothing to test otherwise, no visual output
+        }
+
+
+        [Fact]
         public void FoVAvatarRR()
         {
-            var RRTest = GameController.RegisterRenderRequest<IFovAvatarRR>(0);
+            var RRTest = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
 
             Assert.NotEmpty(RRTest.Image);
             //Assert.Equal(RRTest.Size, RRTest.Image.Length);

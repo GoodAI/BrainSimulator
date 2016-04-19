@@ -9,14 +9,12 @@ namespace World.GameActors.GameObjects
     {
         int Id { get;}
         IUsable Tool { get; set; }
-        new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
     }
 
     public class Avatar : Character, IAvatar
     {
         public int Id { get; private set; }
         public IUsable Tool { get; set; }
-        public new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
 
         public float DesiredSpeed { get; set; }
         public float DesiredRotation { get; set; }
@@ -24,13 +22,21 @@ namespace World.GameActors.GameObjects
         public bool Use { get; set; }
         public bool PickUp { get; set; }
 
-        public Avatar(string name, int id, Vector2 initialPosition, Vector2 size)
+        public Avatar(
+            string tilesetName,
+            int tileId,
+            string name, 
+            int id, 
+            Vector2 initialPosition, 
+            Vector2 size, 
+            float direction = 0
+            ) : base (tilesetName, tileId)
         {
             Name = name;
             Id = id;
 
             float circleRadius = size.Length() / 2f;
-            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, new Circle(circleRadius));
+            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, new Circle(circleRadius), direction: direction);
         }
 
         public void ResetControls()

@@ -39,52 +39,49 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public class AvatarControls : IAvatarControls
+    public struct AvatarControls : IAvatarControls
     {
+        private AvatarAction<float> m_desiredSpeed;
+        private AvatarAction<float> m_desiredRotation;
+        private AvatarAction<bool> m_interact;
+        private AvatarAction<bool> m_use;
+        private AvatarAction<bool> m_pickUp;
+
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
         /// </summary>
-        public AvatarAction<float> DesiredSpeed { get; private set; }
+        public AvatarAction<float> DesiredSpeed { get { return m_desiredSpeed; } set { m_desiredSpeed += value; } }
+
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
         /// </summary>
-        public AvatarAction<float> DesiredRotation { get; private set; }
+        public AvatarAction<float> DesiredRotation { get { return m_desiredRotation; } set { m_desiredRotation += value; } }
+
         /// <summary>
         /// To interact with object in front.
         /// </summary>
-        public AvatarAction<bool> Interact { get; private set; }
+        public AvatarAction<bool> Interact { get { return m_interact; } set { m_interact += value; } }
+
         /// <summary>
         /// To use tool in hand / punch.
         /// </summary>
-        public AvatarAction<bool> Use { get; private set; }
+        public AvatarAction<bool> Use { get { return m_use; } set { m_use += value; } }
+
         /// <summary>
         /// Pick up or put down tool in hand.
         /// </summary>
-        public AvatarAction<bool> PickUp { get; private set; }
+        public AvatarAction<bool> PickUp { get { return m_pickUp; } set { m_pickUp += value; } }
+
 
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="priority"></param>
         /// <param name="desiredSpeed"></param>
         /// <param name="desiredRotation"></param>
         /// <param name="interact"></param>
         /// <param name="use"></param>
         /// <param name="pickUp"></param>
-        public AvatarControls(
-            AvatarAction<float> desiredSpeed,
-            AvatarAction<float> desiredRotation,
-            AvatarAction<bool> interact,
-            AvatarAction<bool> use,
-            AvatarAction<bool> pickUp
-            )
-        {
-            DesiredSpeed = desiredSpeed;
-            DesiredRotation = desiredRotation;
-            Interact = interact;
-            Use = use;
-            PickUp = pickUp;
-        }
-
         public AvatarControls(
             int priority,
             float desiredSpeed = 0f,
@@ -93,12 +90,23 @@ namespace GoodAI.ToyWorld.Control
             bool use = false,
             bool pickUp = false
             )
+            : this()
         {
-            DesiredSpeed = new AvatarAction<float>(desiredSpeed, priority);
-            DesiredRotation = new AvatarAction<float>(desiredRotation, priority);
-            Interact = new AvatarAction<bool>(interact, priority);
-            Use = new AvatarAction<bool>(use, priority);
-            PickUp = new AvatarAction<bool>(pickUp, priority);
+            m_desiredSpeed = new AvatarAction<float>(desiredSpeed, priority);
+            m_desiredRotation = new AvatarAction<float>(desiredRotation, priority);
+            m_interact = new AvatarAction<bool>(interact, priority);
+            m_use = new AvatarAction<bool>(use, priority);
+            m_pickUp = new AvatarAction<bool>(pickUp, priority);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        public AvatarControls(IAvatarControls other)
+            : this()
+        {
+            Update(other);
         }
 
         /// <summary>
@@ -107,26 +115,11 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="actions"></param>
         public void Update(IAvatarControls actions)
         {
-            if (DesiredSpeed.Priority > actions.DesiredSpeed.Priority)
-            {
-                DesiredSpeed = actions.DesiredSpeed;
-            }
-            if (DesiredRotation.Priority > actions.DesiredRotation.Priority)
-            {
-                DesiredRotation = actions.DesiredRotation;
-            }
-            if (Interact.Priority > actions.Interact.Priority)
-            {
-                Interact = actions.Interact;
-            }
-            if (Use.Priority > actions.Use.Priority)
-            {
-                Use = actions.Use;
-            }
-            if (PickUp.Priority > actions.PickUp.Priority)
-            {
-                PickUp = actions.PickUp;
-            }
+            DesiredSpeed = actions.DesiredSpeed;
+            DesiredRotation = actions.DesiredRotation;
+            Interact = actions.Interact;
+            Use = actions.Use;
+            PickUp = actions.PickUp;
         }
     }
 }

@@ -1,23 +1,20 @@
 ﻿using System.Drawing;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
-using Render.RenderObjects.Geometries;
-using Render.Tests.Effects;
-using Render.Tests.Textures;
 using VRageMath;
 using World.ToyWorldCore;
-using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests
 {
-    internal class FullMapRR : RenderRequestBase, IFullMapRR
+    internal class FreeMapRR : RenderRequestBase, IFreeMapRR
     {
         #region Genesis
 
         #endregion
 
-        #region IFullMapRR overrides
+        #region IFreeMapRR overrides
+
+        public new PointF PositionCenter { get { return base.PositionCenter; } set { base.PositionCenter = value; } }
 
         #endregion
 
@@ -29,6 +26,13 @@ namespace Render.RenderRequests
             PositionCenterV = new Vector3(SizeV, 0) * 0.5f;
 
             base.Init(renderer, world);
+        }
+
+        public override void Draw(RendererBase renderer, ToyWorld world)
+        {
+            // TODO: setup camera
+
+            base.Draw(renderer, world);
         }
 
         #endregion

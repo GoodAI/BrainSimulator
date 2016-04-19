@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
+    <Compile Include="Render\IRenderRequestBase.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarController.cs" />
     <Compile Include="Control\GameSetup.cs" />

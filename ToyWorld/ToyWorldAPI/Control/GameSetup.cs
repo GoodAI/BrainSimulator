@@ -10,7 +10,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// The path to a .TMX (fresh world) or a world save.
         /// </summary>
-        public StreamReader SaveFile { get; private set; }
+        public Stream SaveFile { get; private set; }
 
         /// <summary>
         /// Csv table containing columns "NameOfTile", "PositionInTileset" and "IsDefault"
@@ -29,7 +29,7 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         /// <param name="saveFile">Tmx file created in Tiled editor or save file</param>
         /// <param name="tilesetFile">Csv table containing columns "NameOfTile", "PositionInTileset" and "IsDefault"</param>
-        public GameSetup(StreamReader saveFile, StreamReader tilesetFile)
+        public GameSetup(Stream saveFile, StreamReader tilesetFile)
         {
             SaveFile = saveFile;
             TilesetFile = tilesetFile;

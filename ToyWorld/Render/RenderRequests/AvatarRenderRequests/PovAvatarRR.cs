@@ -8,7 +8,7 @@ using Render.Tests.Effects;
 using Render.Tests.Geometries;
 using World.ToyWorldCore;
 
-namespace Render.RenderRequests.AvatarRenderRequests
+namespace Render.RenderRequests
 {
     internal class PovAvatarRR : AvatarRRBase, IFovAvatarRR
     {

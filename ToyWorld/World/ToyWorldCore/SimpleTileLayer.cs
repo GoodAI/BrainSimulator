@@ -5,93 +5,103 @@ using System.Linq;
 using Utils;
 using VRageMath;
 using World.GameActors.Tiles;
-using Utils.VRageRIP.Lib.Extensions;
 
 namespace World.ToyWorldCore
 {
     public class SimpleTileLayer : ITileLayer
     {
+        private int[] m_tileTypes;
+
+
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
+            m_tileTypes = new int[0];
             MyContract.Requires<ArgumentOutOfRangeException>(width > 0, "Tile width has to be positive");
             MyContract.Requires<ArgumentOutOfRangeException>(height > 0, "Tile height has to be positive");
             LayerType = layerType;
-            Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
+            Tiles = new Tile[width, height];
         }
 
-        public Tile[][] Tiles { get; set; }
+        public Tile[,] Tiles { get; set; }
 
         public LayerType LayerType { get; set; }
 
-        public Tile GetTile(Vector2I coordinates)
+        public Tile GetTile(int x, int y)
         {
-            return Tiles[coordinates.X][coordinates.Y];
+            return Tiles[x, y];
         }
 
-        public Tile[] GetRectangle(Rectangle rectangle)
+        public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
         {
-            int totalElementsNumber = rectangle.Height * rectangle.Width;
+            var xCount = x2 - x1;
+            var yCount = y2 - y1;
+            var f = new Tile[xCount, yCount];
 
-            var f = new Tile[totalElementsNumber];
-
-            for (int i = 0; i < rectangle.Height; i++)
+            for (var i = 0; i < xCount; i++)
             {
-                Array.Copy(Tiles[rectangle.Top + i], rectangle.Left, f, rectangle.Width * i, rectangle.Width);
+                for (var j = 0; j < yCount; j++)
+                {
+                    f[i, j] = Tiles[x1 + i, y1 + j];
+                }
             }
 
             return f;
         }
 
-        public void GetRectangle(Vector2 pos, Vector2 size, int[] tileTypes)
+        public int[] GetRectangle(Rectangle rectangle)
         {
-            /*Vector2I intTopLeft = new Vector2I(pos);
-            Vector2I intBotRight = new Vector2I(pos + size);
-            Rectangle rectangle = new Rectangle(intTopLeft, intBotRight - intTopLeft);
+            if (m_tileTypes.Length < rectangle.Size.Size())
+                m_tileTypes = new int[rectangle.Size.Size()];
 
-            Debug.Assert(tileTypes != null && tileTypes.Length >= rectangle.Size.Size());
+
+            int left = Math.Max(rectangle.Left, 0);
+            int right = Math.Min(rectangle.Right, Tiles.GetLength(0));
+            int top = Math.Max(rectangle.Top, 0);
+            int bot = Math.Min(rectangle.Bottom, Tiles.GetLength(1));
 
             int idx = 0;
 
             // Rows before start of map
-            for (int j = rectangle.Top; j < 0; j++)
+            for (int j = rectangle.Top; j < top; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
-                    tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = 0;
             }
 
             // Rows inside of map
-            int xLength = Tiles.GetLength(0);
-            int yLength = Tiles.GetLength(1);
-
-            for (var j = 0; j < yLength; j++)
+            for (var j = top; j < bot; j++)
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < 0; i++)
-                    tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = 0;
 
                 // Tiles inside of map
-                for (var i = 0; i < xLength; i++)
+                for (var i = left; i < right; i++)
                 {
-                    var tile = Tiles[i][j];
-                    tileTypes[idx++] = tile != null ? tile.TileType : 0;
+                    var tile = Tiles[i, j];
+                    m_tileTypes[idx++] = tile != null ? tile.TileType : 0;
                 }
 
                 // Tiles after end of map
-                for (int i = xLength; i < rectangle.Right; i++)
-                    tileTypes[idx++] = 0;
+                for (int i = right; i < rectangle.Right; i++)
+                    m_tileTypes[idx++] = 0;
             }
 
             // Rows after end of map
-            for (int j = yLength; j < rectangle.Bottom; j++)
+            for (int j = bot; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
-                    tileTypes[idx++] = 0;
-            }*/
+                    m_tileTypes[idx++] = 0;
+            }
+
+            return m_tileTypes;
         }
 
-        public List<Tile> GetAllObjects()
+        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
         {
-            return Tiles.Cast<Tile>().ToList();
+            Vector2I intBotRight = topLeft + size;
+            Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
+            return GetRectangle(rectangle);
         }
     }
 }

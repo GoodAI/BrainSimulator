@@ -20,14 +20,13 @@ namespace ToyWorldTests.World
         public MapLoaderTests()
         {
             // initiate streamReaders
-            var tmxMemoryStream = FileStreams.GetTmxMemoryStream();
-            var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
+            var tmxMemoryStream = FileStreams.SmallTmx();
+            var tilesetTableMemoryStream = FileStreams.TilesetTableStream();
 
-            var tmxStreamReader = new StreamReader(tmxMemoryStream);
             var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
 
             var serializer = new TmxSerializer();
-            Map map = serializer.Deserialize(tmxStreamReader);
+            Map map = serializer.Deserialize(tmxMemoryStream);
 
             var tilesetTable = new TilesetTable(map, tilesetTableStreamReader);
 
@@ -54,7 +53,7 @@ namespace ToyWorldTests.World
 
             Assert.True(avatar.Id == 1);
             Assert.True(avatar.Name == "Pingu");
-            Assert.True(avatar.PhysicalEntity.Position == new Vector2(9, 22));
+            Assert.True(avatar.PhysicalEntity.Size == new Vector2(1, 1));
         }
     }
 }

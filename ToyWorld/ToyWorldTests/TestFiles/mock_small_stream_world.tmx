@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" nextobjectid="19">
-		<tileset firstgid="1" source="roguelikeSheet_summer.tsx"/>
+ <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="540" columns="15">
+  <image source="roguelike_selection_summer.png" trans="ff00ff" width="255" height="612"/>
+ </tileset>
 		<layer name="Background" width="3" height="3">
 		<data encoding="csv">
 	16,17,16,
