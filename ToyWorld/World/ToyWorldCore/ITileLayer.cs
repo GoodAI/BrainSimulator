@@ -13,21 +13,17 @@ namespace World.ToyWorldCore
         Tile GetTile(int x, int y);
 
         /// <summary>
-        /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
+        /// Returns Tiles in given region, where extremes are included.
         /// </summary>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <returns>Array of array of Tiles in given region.</returns>
-        Tile[,] GetRectangle(int x1, int y1, int x2, int y2);
+        /// <param name="rectangle"></param>
+        int[] GetRectangle(Rectangle rectangle);
 
         /// <summary>
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
         /// </summary>
         /// <param name="size"></param>
         /// <param name="pos"></param>
-        int[] GetRectangle(Vector2 pos, Vector2 size);
+        int[] GetRectangle(Vector2I pos, Vector2I size);
     }
 
 
@@ -42,7 +38,14 @@ namespace World.ToyWorldCore
             return default(Tile[,]);
         }
 
-        public int[] GetRectangle(Vector2 pos, Vector2 size)
+        public int[] GetRectangle(Rectangle rectangle)
+        {
+            MyContract.Requires<ArgumentOutOfRangeException>(rectangle.Size.X > 0 && rectangle.Size.Y > 0, "Y values doesn't form a valid rectangle");
+
+            return default(int[]);
+        }
+
+        public int[] GetRectangle(Vector2I pos, Vector2I size)
         {
             MyContract.Requires<ArgumentOutOfRangeException>(size.X > 0 && size.Y > 0, "Y values doesn't form a valid rectangle");
 

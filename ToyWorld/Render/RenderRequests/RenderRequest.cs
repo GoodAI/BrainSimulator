@@ -143,7 +143,7 @@ namespace Render.RenderRequests
             // Draw tile layers
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
-                m_grid.SetTextureOffsets(tileLayer.GetRectangle(ViewV.Position, ViewV.Size));
+                m_grid.SetTextureOffsets(tileLayer.GetRectangle((Vector2I)ViewV.Position, (Vector2I)ViewV.Size));
                 m_grid.Draw();
             }
 
