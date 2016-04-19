@@ -115,13 +115,13 @@ namespace ToyWorldTests.Render
     public class GLRendererTests : GLRendererTestBase
     {
         //[RunnableInDebugOnly]
-        //*
+        /*
         [Fact]
         /*/
         [Fact(Skip = "Skipped -- requires manual input to end.")]
         //**/
         public void ShowRRLongRunning()
-        {
+       {
             RunRRLongRunning();
         }
 
