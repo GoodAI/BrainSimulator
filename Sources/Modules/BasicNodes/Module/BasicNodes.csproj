@@ -751,4 +751,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterClean">
+    <RemoveDir Directories="$(ProjectDir)..\..\..\Platform\BrainSimulator\bin\$(Configuration)\modules\GoodAI.BasicNodes" />
+  </Target>
 </Project>

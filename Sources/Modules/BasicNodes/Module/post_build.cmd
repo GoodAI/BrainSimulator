@@ -1,24 +1,25 @@
 set MODULE_NAME=GoodAI.BasicNodes
 
-set BRAIN_SIM_DIR=%2..\..\..\Platform\BrainSimulator
-
 echo Running %MODULE_NAME% post_build.cmd
-rem echo Param 1 (SolutionDir): %1 (not used)
-rem echo Param 2 (ProjectDir) : %2
-rem echo Param 3 (OutDir)     : %3
-rem echo Param 4 (ConfigName) : %4
 
-if not exist %BRAIN_SIM_DIR% (
-	echo Error: Target directory %BRAIN_SIM_DIR% not found. Please check paths.
-	exit /B 2
-)
+rem $(SolutionDir) = %1, $(ProjectDir) = %2, $(OutDir) = %3 $(Configuration) = %4
+
+
+set BRAIN_SIM_DIR=%2..\..\..\Platform\BrainSimulator
 
 set TARGET_DIR=%BRAIN_SIM_DIR%\bin\%4\modules\%MODULE_NAME%
 
+
+echo Creating directory: %TARGET_DIR%
+
+mkdir %TARGET_DIR%
+
+
 echo Copying from: & echo  %2%3 & echo to: & echo  %TARGET_DIR%.
 
-if not exist %TARGET_DIR% mkdir %TARGET_DIR%
-xcopy /y /s /q %2%3*.* %TARGET_DIR%
+xcopy /y /s %2%3*.* %TARGET_DIR%
 if %ERRORLEVEL% GEQ 1 exit /B 3
 
 echo Module '%MODULE_NAME%' post_build: copying successful.
+
+rem The files that are copied above are removed in case of clean (see BasicNodes.csproj, target "AfterClean").
