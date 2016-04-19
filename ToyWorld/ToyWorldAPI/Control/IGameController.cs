@@ -41,6 +41,10 @@ namespace GoodAI.ToyWorld.Control
         /// <returns></returns>
         IAvatarController GetAvatarController(int avatarId);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         int[] GetAvatarIds();
     }
 }

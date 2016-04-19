@@ -16,8 +16,6 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
-        private BasicAvatarMover m_basicAvatarMover;
-
         public Vector2I Size { get; private set; }
 
 

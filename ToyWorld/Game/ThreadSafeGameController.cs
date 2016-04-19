@@ -50,7 +50,7 @@ namespace Game
                 {
                     task = m_buffer.Get();
                 }
-                catch (ObjectDisposedException e)
+                catch (ObjectDisposedException)
                 {
                     Debug.Assert(m_cancellationToken.IsCancellationRequested);
                     return;
@@ -67,7 +67,7 @@ namespace Game
                 {
                     task.Wait(m_cancellationToken.Token);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     if (m_cancellationToken.IsCancellationRequested)
                         return;
