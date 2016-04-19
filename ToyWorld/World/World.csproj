@@ -198,11 +198,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagramToyWorld.cd" />
-    <None Include="GameActors\Tiles\Tilesets\TilesetTable.csv">
+    <Content Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Include="res\Worlds\mock_small_stream_world.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="res\Worlds\roguelike_selection_summer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
