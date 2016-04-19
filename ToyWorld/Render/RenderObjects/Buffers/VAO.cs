@@ -47,22 +47,8 @@ namespace Render.RenderObjects.Buffers
 
         protected VboBase this[VboPosition id]
         {
-            get
-            {
-                VboBase vbo;
-
-                if (!m_vbos.TryGetValue(id, out vbo))
-                    throw new ArgumentException("Access to not registered Vbo.", "id");
-
-                return vbo;
-            }
-            set
-            {
-                if (m_vbos.ContainsKey(id))
-                    throw new ArgumentException("A Vbo has already been registered to this id.", "id");
-
-                m_vbos[id] = value;
-            }
+            get { return m_vbos[id]; }
+            set { m_vbos[id] = value; }
         }
 
         #endregion
@@ -90,10 +76,10 @@ namespace Render.RenderObjects.Buffers
             //VboBase.Unbind();
         }
 
-        public void DisableAttrib(string id, int attribArrayIdx)
-        {
-            GL.BindVertexArray(Handle);
-            GL.DisableVertexAttribArray(attribArrayIdx);
-        }
+        //public void DisableAttrib(string id, int attribArrayIdx)
+        //{
+        //    GL.BindVertexArray(Handle);
+        //    GL.DisableVertexAttribArray(attribArrayIdx);
+        //}
     }
 }

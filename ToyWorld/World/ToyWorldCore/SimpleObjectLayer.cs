@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using VRageMath;
 using World.GameActors.GameObjects;
 using World.Physics;
@@ -41,5 +42,10 @@ namespace World.ToyWorldCore
             GameObjects.Add(gameObject);
             return true;
         }
+
+        public List<GameObject> GetAllObjects()
+        {
+            return GameObjects;
     }
+}
 }

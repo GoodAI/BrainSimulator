@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using VRageMath;
+using Utils;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
@@ -86,13 +88,14 @@ namespace World.ToyWorldCore
             if (layerType == LayerType.Object 
                 || layerType == LayerType.ForegroundObject)
             {
-                return ObjectLayers.First(x => x.LayerType == layerType);
+                return ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
             }
             return TileLayers.First(x => x.LayerType == layerType);
         }
 
         public bool AddAvatar(IAvatar avatar)
         {
+            MyContract.Requires<ArgumentNullException>(avatar != null, "Avatar cannot be null");
             try
             {
                 Avatars.Add(avatar.Id, avatar);
@@ -106,6 +109,7 @@ namespace World.ToyWorldCore
 
         public List<IAvatar> GetAvatars()
         {
+            Contract.Ensures(Contract.Result<List<IAvatar>>() != null);
             return Avatars.Values.ToList();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -10,22 +11,31 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        float Size { get; }
+        Size Size { get; }
         /// <summary>
         /// 
         /// </summary>
-        float Position { get; }
+        PointF PositionCenter { get; }
         /// <summary>
         /// 
         /// </summary>
-        float Resolution { get; }
+        RectangleF View { get; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Size Resolution { get; set; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public interface IFullMapRenderRequest : IRenderRequest
+    public interface IFullMapRR : IRenderRequest
     {
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        PointF Rotation { get; set; }
     }
 }

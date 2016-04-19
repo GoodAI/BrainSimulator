@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace VRageMath
 {
@@ -8,8 +9,8 @@ namespace VRageMath
     public struct Vector2I
     {
         public static readonly ComparerClass Comparer = new ComparerClass();
-        public static Vector2I Zero  = new Vector2I();
-        public static Vector2I One   = new Vector2I(1, 1);
+        public static Vector2I Zero = new Vector2I();
+        public static Vector2I One = new Vector2I(1, 1);
         public static Vector2I UnitX = new Vector2I(1, 0);
         public static Vector2I UnitY = new Vector2I(0, 1);
 
@@ -46,9 +47,19 @@ namespace VRageMath
             return Math.Abs(X * Y);
         }
 
-        public static implicit operator Vector2(Vector2I intVector)
+        public static explicit operator Vector2I(Size other)
         {
-            return new Vector2(intVector.X, intVector.Y);
+            return new Vector2I(other.Width, other.Height);
+        }
+
+        public static implicit operator Vector2I(Point other)
+        {
+            return new Vector2I(other.X, other.Y);
+        }
+
+        public static explicit operator Vector2(Vector2I other)
+        {
+            return new Vector2(other);
         }
 
         public static Vector2I operator +(Vector2I left, Vector2I right)
@@ -125,7 +136,7 @@ namespace VRageMath
             }
             else
             {
-                return this == (Vector2I) obj;
+                return this == (Vector2I)obj;
             }
         }
 

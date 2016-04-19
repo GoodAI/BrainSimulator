@@ -6,6 +6,7 @@ using System.Reflection;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
@@ -19,7 +20,7 @@ namespace World.ToyWorldCore
         /// <param name="map"></param>
         /// <param name="tilesetTable"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
-        public static Atlas LoadMap(Map map, TilesetTable tilesetTable)
+        public static Atlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)
         {
             var tmxMapSerializer = new TmxSerializer();
 
@@ -35,7 +36,7 @@ namespace World.ToyWorldCore
                 {
                     var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(atlas, objectLayer, layerType)
+                        FillObjectLayer(atlas, objectLayer, layerType, initializer)
                         );
                 }
                 else
@@ -44,7 +45,7 @@ namespace World.ToyWorldCore
                     if (tileLayer == null)
                         throw new Exception("Layer " + layerName + " not found in given tmx file!");
                     atlas.TileLayers.Add(
-                        FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable)
+                        FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable, initializer)
                         );
                 }
             }
@@ -52,7 +53,7 @@ namespace World.ToyWorldCore
             return atlas;
         }
 
-        private static IObjectLayer FillObjectLayer(Atlas atlas, ObjectGroup objectLayer, LayerType layerType)
+        private static IObjectLayer FillObjectLayer(Atlas atlas, ObjectGroup objectLayer, LayerType layerType, Action<GameActor> initializer)
         {
 //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
@@ -64,6 +65,7 @@ namespace World.ToyWorldCore
                 var initialPosition = new Vector2(avatar.X, avatar.Y);
                 var size = new Vector2(avatar.Width, avatar.Height);
                 var gameAvatar = new Avatar(avatar.Name, avatar.Id, initialPosition, size);
+                initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);
             }
@@ -71,10 +73,11 @@ namespace World.ToyWorldCore
             return simpleObjectLayer;
         }
 
-        private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int,StaticTile> staticTilesContainer, TilesetTable tilesetTable)
+        private static ITileLayer FillTileLayer(Layer layer, LayerType layerType, Dictionary<int, StaticTile> staticTilesContainer, TilesetTable tilesetTable, Action<GameActor> initializer)
         {
-            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width + 1, layer.Height + 1);
-            var lines = layer.Data.RawData.Split('\n');
+            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
+            var lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             var assembly = Assembly.GetExecutingAssembly();
             var cachedTypes = assembly.GetTypes();
             for (int i = 0; i < lines.Length; i++)
@@ -95,6 +98,8 @@ namespace World.ToyWorldCore
                         if (tileName != null)
                         {
                             var newTile = CreateInstance(tileName, tileNumber, cachedTypes);
+                            newSimpleLayer.Tiles[i][j] = newTile;
+                            initializer.Invoke(newTile);
                             newSimpleLayer.Tiles[i][j] = newTile;
                             if (newTile is StaticTile)
                             {

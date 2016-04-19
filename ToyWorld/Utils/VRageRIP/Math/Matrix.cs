@@ -12,11 +12,11 @@ namespace VRageMath
     /// <summary>
     /// Defines a matrix.
     /// </summary>
-    [ProtoBuf.ProtoContract, Serializable]    
+    [ProtoBuf.ProtoContract, Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public struct Matrix : IEquatable<Matrix>
     {
-        private unsafe struct F16
+        public unsafe struct F16
         {
             // 16 float numbers, indexed as data[row,column]
             public fixed float data[16];
@@ -28,7 +28,7 @@ namespace VRageMath
         /// Matrix values
         /// </summary>
         [FieldOffset(0)]
-        private F16 M;
+        public F16 M;
 
         /// <summary>
         /// Value at row 1 column 1 of the matrix.
@@ -2667,7 +2667,7 @@ return flag;
             M23 = M32;
             M32 = temp;
         }
-        
+
         /// <summary>
         /// Calculates the determinant of the matrix.
         /// </summary>

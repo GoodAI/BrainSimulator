@@ -7,7 +7,8 @@ namespace Render.RenderObjects.Buffers
     internal abstract class VboBase : IDisposable
     {
         public int Handle { get; private set; }
-        public int Count { get; private set; }
+
+        public int ByteCount { get; private set; }
 
         public BufferTarget Target { get; private set; }
         public int ElementSize { get; private set; }
@@ -26,30 +27,32 @@ namespace Render.RenderObjects.Buffers
             GL.DeleteBuffer(Handle);
         }
 
-        protected void Init<T>(int count, T[] data, BufferUsageHint hint)
+        protected void Init<T>(int tCount, T[] data, BufferUsageHint hint)
             where T : struct
         {
+            int tSize = Marshal.SizeOf(typeof(T));
+
             Handle = GL.GenBuffer();
-            Count = count;
+            ByteCount = tCount * tSize;
 
             Bind();
-            GL.BufferData(Target, count * Marshal.SizeOf(typeof(T)), data, hint);
-            Unbind();
+            GL.BufferData(Target, ByteCount, data, hint);
+            //Unbind();
         }
 
         #endregion
 
-        public virtual void Update<T>(T[] data, int count = -1, int offset = 0)
+        public virtual void Update<T>(T[] data, int tCount = -1, int offset = 0)
             where T : struct
         {
-            if (count == -1)
-                count = Math.Min(Count, data.Length);
-
             var tSize = Marshal.SizeOf(typeof(T));
 
+            if (tCount == -1)
+                tCount = Math.Min(ByteCount, data.Length * tSize);
+
             Bind();
-            GL.BufferSubData(Target, new IntPtr(offset * tSize), count * tSize, data);
-            Unbind();
+            GL.BufferSubData(Target, new IntPtr(offset * tSize), tCount, data);
+            //Unbind();
         }
 
         public void Bind()
@@ -57,27 +60,27 @@ namespace Render.RenderObjects.Buffers
             GL.BindBuffer(Target, Handle);
         }
 
-        public void Unbind()
-        {
-            GL.BindBuffer(Target, 0);
-        }
+        //public void Unbind()
+        //{
+        //    GL.BindBuffer(Target, 0);
+        //}
     }
 
     internal class Vbo<T> : VboBase
         where T : struct
     {
-        public Vbo(int count, T[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
-            : base(elementSize, target)
+        public Vbo(int tCount, T[] initData = null, int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+            : base(elementSize < 0 ? 4 : elementSize, target)
         {
-            Init(count, initData, hint);
+            Init(tCount, initData, hint);
         }
     }
 
     internal sealed class StaticVbo<T> : Vbo<T>
         where T : struct
     {
-        public StaticVbo(int count, T[] initData = null, int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
-            : base(count, initData, elementSize, target, hint)
+        public StaticVbo(int tCount, T[] initData = null, int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+            : base(tCount, initData, elementSize, target, hint)
         { }
 
         // These are shared by many geometries, prevent their disposal

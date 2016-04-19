@@ -18,7 +18,9 @@ namespace Render.RenderObjects.Effects
                 .Case<NoEffect>(() =>
                     new NoEffect())
                 .Case<NoEffectTex>(() =>
-                    new NoEffectTex());
+                    new NoEffectTex())
+                .Case<NoEffectOffset>(() =>
+                    new NoEffectOffset());
         }
 
 

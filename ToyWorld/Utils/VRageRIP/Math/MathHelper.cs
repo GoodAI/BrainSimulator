@@ -528,6 +528,22 @@ namespace VRageMath
         /// Returns angle in range 0..2*PI
         /// </summary>
         /// <param name="angle">in radians</param>
+        public static void LimitRadians2PI(ref float angle)
+        {
+            if (angle > TwoPi)
+            {            
+                angle = angle % TwoPi;
+            }
+            else if (angle < 0)
+            {
+                angle = angle % TwoPi + TwoPi;
+            }
+        }
+
+        /// <summary>
+        /// Returns angle in range 0..2*PI
+        /// </summary>
+        /// <param name="angle">in radians</param>
         public static void LimitRadians(ref float angle)
         {
             if (angle > TwoPi)

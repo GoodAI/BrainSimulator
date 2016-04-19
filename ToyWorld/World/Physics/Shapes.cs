@@ -130,7 +130,7 @@ namespace World.Physics
                 }
             }
 
-            list.RemoveAll(x => !CircleRectangleIntersects(center, new RectangleF(x, Vector2.One)));
+            list.RemoveAll(x => !CircleRectangleIntersects(center, new RectangleF(new Vector2(x.X, x.Y), Vector2.One)));
 
             return list;
         }

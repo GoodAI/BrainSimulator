@@ -4,18 +4,26 @@ using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
+using Render.Renderer;
 using Render.RenderRequests;
 using Xunit;
 
 namespace ToyWorldTests.Render
 {
     [Collection("Renderer")]
-    public class GeometryTests
+    // TODO: GL-independent geometry tests (use rendererBase only)
+    public class GLGeometryTests : GLRendererTests
     {
         [Fact]
         public void BuildGeometries()
         {
 
+        }
+
+        [Fact]
+        public void StaticVboThrows()
+        {
+            
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Render.RenderObjects.Geometries
         {
             // 4 vertices * 2 vector components
             // No init data because we update it (nearly) every step
-            this[VboPosition.TextureCoords] = new Vbo<Vector2>(4 * 2, null, 2);
+            this[VboPosition.TextureCoords] = new Vbo<Vector2>(4, null, 2);
             EnableAttrib(VboPosition.TextureCoords);
         }
 

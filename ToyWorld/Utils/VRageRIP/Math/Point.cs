@@ -44,6 +44,17 @@ namespace VRageMath
             this.Y = y;
         }
 
+        public Point(Vector2 vec)
+        {
+            X = (int)vec.X;
+            Y = (int)vec.Y;
+        }
+
+        public static implicit operator Point(Vector2I p)
+        {
+            return new Point(p.X, p.Y);
+        }
+
         /// <summary>
         /// Determines whether two Point instances are equal.
         /// </summary>
