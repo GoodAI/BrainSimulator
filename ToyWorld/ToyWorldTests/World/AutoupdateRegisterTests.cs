@@ -121,11 +121,11 @@ namespace ToyWorldTests.World
         [Fact]
         public void TestUpdateItems()
         {
-            var tmxStreamReader = new StreamReader(FileStreams.GetTmxMemoryStream());
-            var tilesetTableStreamReader = new StreamReader(FileStreams.GetTilesetTableMemoryStream());
+            var tmxStream = FileStreams.SmallTmx();
+            var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
 
             TmxSerializer serializer = new TmxSerializer();
-            Map map = serializer.Deserialize(tmxStreamReader);
+            Map map = serializer.Deserialize(tmxStream);
             ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
 
             AutoupdateRegister register = new AutoupdateRegister();

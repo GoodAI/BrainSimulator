@@ -178,7 +178,7 @@
             Setup object for ToyWorld
             </summary>
         </member>
-        <member name="M:GoodAI.ToyWorld.Control.GameSetup.#ctor(System.IO.StreamReader,System.IO.StreamReader)">
+        <member name="M:GoodAI.ToyWorld.Control.GameSetup.#ctor(System.IO.Stream,System.IO.StreamReader)">
             <summary>
             Setup object for ToyWorld constructor.
             </summary>

@@ -22,13 +22,12 @@ namespace ToyWorldTests.Game
 
         public GameControllerTestBase()
         {
-            var tmxMemoryStream = FileStreams.GetTilesetTableMemoryStream();
-            var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
+            var tmxMemoryStream = FileStreams.SmallTmx();
+            var tilesetTableMemoryStream = FileStreams.TilesetTableStream();
 
-            var tmxStreamReader = new StreamReader(tmxMemoryStream);
             var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
 
-            var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
+            var gameSetup = new GameSetup(tmxMemoryStream, tilesetTableStreamReader);
 
             GameController = GetController(gameSetup);
 

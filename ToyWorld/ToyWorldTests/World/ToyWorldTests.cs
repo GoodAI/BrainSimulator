@@ -15,11 +15,11 @@ namespace ToyWorldTests.World
 
         public ToyWorldTests()
         {
-            var tmxStreamReader = new StreamReader(FileStreams.GetTmxMemoryStream());
-            var tilesetTableStreamReader = new StreamReader(FileStreams.GetTilesetTableMemoryStream());
+            var tmxStream = FileStreams.SmallTmx();
+            var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
 
             TmxSerializer serializer = new TmxSerializer();
-            Map map = serializer.Deserialize(tmxStreamReader);
+            Map map = serializer.Deserialize(tmxStream);
             m_world = new ToyWorld(map, tilesetTableStreamReader);
         }
 

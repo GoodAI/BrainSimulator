@@ -10,9 +10,9 @@ namespace TmxMapSerializer.Serializer
         {
         }
 
-        public new Map Deserialize(TextReader textReader)
+        public new Map Deserialize(Stream stream)
         {
-            return (Map) base.Deserialize(textReader);
+            return (Map)base.Deserialize(stream);
         }
     }
 }

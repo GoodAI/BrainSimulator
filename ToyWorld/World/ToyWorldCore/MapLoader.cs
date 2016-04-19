@@ -113,7 +113,7 @@ namespace World.ToyWorldCore
                 tmxObject.Y /= tileHeight;
                 tmxObject.Width /= tileWidth;
                 tmxObject.Height /= tileHeight;
-                tmxObject.Rotation /= 360f;
+                tmxObject.Rotation = MathHelper.ToRadians(tmxObject.Rotation);
             }
         }
 

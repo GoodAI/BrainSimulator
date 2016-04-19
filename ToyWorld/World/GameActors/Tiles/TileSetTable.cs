@@ -60,6 +60,8 @@ namespace World.GameActors.Tiles
                 dataTable.Rows.Add(newRow);
             }
 
+            tilesetFile.Close();
+
             IEnumerable<DataRow> enumerable = dataTable.Rows.Cast<DataRow>();
             var dataRows = enumerable.ToArray();
 

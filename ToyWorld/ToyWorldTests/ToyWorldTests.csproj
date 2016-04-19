@@ -152,6 +152,8 @@
     <None Include="TestFiles\mockup999_pantry_world.tmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\mock_small_stream_world.tmx" />
+    <None Include="TestFiles\TilesetTable.csv" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\roguelike_selection_summer.png">

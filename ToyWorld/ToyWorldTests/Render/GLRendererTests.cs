@@ -28,10 +28,10 @@ namespace ToyWorldTests.Render
 
         public GLRendererTestBase()
         {
-            using (var tmxStreamReader = new StreamReader(FileStreams.FullTmxFileStream()))
-            using (var tilesetTableStreamReader = new StreamReader(FileStreams.GetTilesetTableMemoryStream()))
+            using (var tmxStream = FileStreams.FullTmxStream())
+            using (var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream()))
             {
-                var gameSetup = new GameSetup(tmxStreamReader, tilesetTableStreamReader);
+                var gameSetup = new GameSetup(tmxStream, tilesetTableStreamReader);
                 m_gameController = ControllerFactory.GetController(gameSetup);
                 m_gameController.Init();
             }

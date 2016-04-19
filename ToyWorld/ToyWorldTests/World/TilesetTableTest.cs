@@ -14,7 +14,7 @@ namespace ToyWorldTests.World
     {
         public TilesetTableTest()
         {
-            var tilesetTableMemoryStream = FileStreams.GetTilesetTableMemoryStream();
+            var tilesetTableMemoryStream = FileStreams.TilesetTableStream();
             var tilesetTableStreamReader = new StreamReader(tilesetTableMemoryStream);
             tilesetTableStreamReader.DiscardBufferedData();
             tilesetTableMemoryStream.Position = 0;
