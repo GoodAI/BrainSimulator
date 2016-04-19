@@ -56,7 +56,7 @@ namespace ToyWorldTests.Render
                 delta =>
                 {
                     //rr.PositionCenter = new PointF(rr.PositionCenter.X - delta.X, rr.PositionCenter.Y + delta.Y);
-                    controls.DesiredRotation = MathHelper.WrapAngle(delta.X);
+                    controls.DesiredRotation = MathHelper.WrapAngle(delta.X * 0.1f);
 
                 });
 

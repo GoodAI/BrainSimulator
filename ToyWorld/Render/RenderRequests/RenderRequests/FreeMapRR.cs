@@ -23,7 +23,6 @@ namespace Render.RenderRequests
         public override void Init(RendererBase renderer, ToyWorld world)
         {
             SizeV = (Vector2)world.Size;
-            SizeV = Vector2.One * 4;
             PositionCenterV = new Vector3(SizeV, 0) * 0.5f;
 
             base.Init(renderer, world);

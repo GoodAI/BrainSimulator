@@ -157,8 +157,10 @@ namespace Render.RenderRequests
                     // Set up transformation to screen space for the gameObject
                     transform = Matrix.Identity;
                     // Model transform
-                    transform *= Matrix.CreateRotationZ(0.5f);
-                    transform *= Matrix.CreateScale(gameObject.Size);
+                    IDirectable dir = gameObject as IDirectable;
+                    if (dir != null)
+                        transform *= Matrix.CreateRotationZ(-dir.Direction);
+                    transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));
                     m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
