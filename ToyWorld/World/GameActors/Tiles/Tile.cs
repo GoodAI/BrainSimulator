@@ -16,6 +16,11 @@
             TileType = tileType;
         }
 
+        public static explicit operator int(Tile t)
+        {
+            return t.TileType;
+        }
+
         /// <summary>
         ///     TileType is number in tsx tileset
         /// </summary>

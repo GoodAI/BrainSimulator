@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Utils;
+using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors.Tiles;
 
@@ -19,34 +20,12 @@ namespace World.ToyWorldCore
             MyContract.Requires<ArgumentOutOfRangeException>(width > 0, "Tile width has to be positive");
             MyContract.Requires<ArgumentOutOfRangeException>(height > 0, "Tile height has to be positive");
             LayerType = layerType;
-            Tiles = new Tile[width, height];
+            Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
         }
 
-        public Tile[,] Tiles { get; set; }
+        public Tile[][] Tiles { get; set; }
 
         public LayerType LayerType { get; set; }
-
-        public Tile GetTile(int x, int y)
-        {
-            return Tiles[x, y];
-        }
-
-        public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
-        {
-            var xCount = x2 - x1;
-            var yCount = y2 - y1;
-            var f = new Tile[xCount, yCount];
-
-            for (var i = 0; i < xCount; i++)
-            {
-                for (var j = 0; j < yCount; j++)
-                {
-                    f[i, j] = Tiles[x1 + i, y1 + j];
-                }
-            }
-
-            return f;
-        }
 
         public int[] GetRectangle(Rectangle rectangle)
         {
@@ -55,9 +34,9 @@ namespace World.ToyWorldCore
 
 
             int left = Math.Max(rectangle.Left, 0);
-            int right = Math.Min(rectangle.Right, Tiles.GetLength(0));
+            int right = Math.Min(rectangle.Right, Tiles.Length);
             int top = Math.Max(rectangle.Top, 0);
-            int bot = Math.Min(rectangle.Bottom, Tiles.GetLength(1));
+            int bot = Math.Min(rectangle.Bottom, Tiles[0].Length);
 
             int idx = 0;
 
@@ -78,7 +57,7 @@ namespace World.ToyWorldCore
                 // Tiles inside of map
                 for (var i = left; i < right; i++)
                 {
-                    var tile = Tiles[i, j];
+                    var tile = Tiles[i][j];
                     m_tileTypes[idx++] = tile != null ? tile.TileType : 0;
                 }
 
@@ -102,6 +81,11 @@ namespace World.ToyWorldCore
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
             return GetRectangle(rectangle);
+        }
+
+        public Tile GetTile(Vector2I coordinates)
+        {
+            return Tiles[coordinates.X][coordinates.Y];
         }
     }
 }

@@ -23,8 +23,8 @@ namespace ToyWorldTests.Physics
         [InlineData(1, 90)]
         [InlineData(1, 180)]
         [InlineData(1, 270)]
-        [InlineData(1, 45)]
-        [InlineData(-1, 45)]
+        [InlineData(1, 135)]
+        [InlineData(-1, 135)]
         public void TestMoveForward(float speed, float direction)
         {
             var startingPosition = new Vector2(5, 5);
@@ -56,25 +56,25 @@ namespace ToyWorldTests.Physics
                 switch ((int) direction)
                 {
                     case 0:
-                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
-                        break;
-                    case 90:
-                        Assert.True(CompareVectors(movable.Position, new Vector2(5, 6)));
-                        break;
-                    case 180:
-                        Assert.True(CompareVectors(movable.Position, new Vector2(4, 5)));
-                        break;
-                    case 270:
                         Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
                         break;
-                    case 45:
+                    case 90:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
+                        break;
+                    case 180:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(5, 6)));
+                        break;
+                    case 270:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(4, 5)));
+                        break;
+                    case 135:
                         Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
                         break;
                 }
             }
             else if (speed == -1f)
             {
-                if (direction == 45)
+                if (direction == 135)
                 {
                     Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
                 }

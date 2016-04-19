@@ -10,7 +10,7 @@ namespace World.ToyWorldCore
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
-        Tile GetTile(int x, int y);
+        Tile GetTile(Vector2I coordinates);
 
         /// <summary>
         /// Returns Tiles in given region, where extremes are included.
@@ -55,6 +55,11 @@ namespace World.ToyWorldCore
         public LayerType LayerType { get; set; }
 
         public Tile GetTile(int x, int y)
+        {
+            return default(Tile);
+        }
+
+        public Tile GetTile(Vector2I coordinates)
         {
             return default(Tile);
         }

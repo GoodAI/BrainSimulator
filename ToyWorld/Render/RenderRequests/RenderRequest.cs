@@ -7,6 +7,7 @@ using Render.RenderObjects.Geometries;
 using Render.Tests.Effects;
 using Render.Tests.Textures;
 using VRageMath;
+using World.Physics;
 using World.ToyWorldCore;
 using RectangleF = VRageMath.RectangleF;
 
