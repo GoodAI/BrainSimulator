@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IAvatarControls
     {
@@ -33,6 +33,11 @@ namespace GoodAI.ToyWorld.Control
         AvatarAction<bool> PickUp { get; }
 
         /// <summary>
+        /// Set Fof position
+        /// </summary>
+        AvatarAction<PointF> Fof { get; }
+
+        /// <summary>
         /// Rewrites actions from this list with actions from parameter with lower priority value.
         /// </summary>
         /// <param name="actions"></param>
@@ -40,7 +45,7 @@ namespace GoodAI.ToyWorld.Control
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public struct AvatarControls : IAvatarControls
     {
@@ -49,6 +54,7 @@ namespace GoodAI.ToyWorld.Control
         private AvatarAction<bool> m_interact;
         private AvatarAction<bool> m_use;
         private AvatarAction<bool> m_pickUp;
+        private AvatarAction<PointF> m_fof;
 
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
@@ -75,9 +81,14 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         public AvatarAction<bool> PickUp { get { return m_pickUp; } set { m_pickUp += value; } }
 
+        /// <summary>
+        /// Set Fof position
+        /// </summary>
+        public AvatarAction<PointF> Fof { get { return m_fof; } set { m_fof += value; } }
+
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="priority"></param>
         /// <param name="desiredSpeed"></param>
@@ -85,13 +96,15 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="interact"></param>
         /// <param name="use"></param>
         /// <param name="pickUp"></param>
+        /// <param name="fof"></param>
         public AvatarControls(
             int priority,
             float desiredSpeed = 0f,
             float desiredRotation = 0f,
             bool interact = false,
             bool use = false,
-            bool pickUp = false
+            bool pickUp = false,
+            PointF fof = default(PointF)
             )
             : this()
         {
@@ -100,10 +113,11 @@ namespace GoodAI.ToyWorld.Control
             m_interact = new AvatarAction<bool>(interact, priority);
             m_use = new AvatarAction<bool>(use, priority);
             m_pickUp = new AvatarAction<bool>(pickUp, priority);
+            m_fof = new AvatarAction<PointF>(fof, priority);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="other"></param>
         public AvatarControls(IAvatarControls other)
@@ -118,11 +132,15 @@ namespace GoodAI.ToyWorld.Control
         /// <param name="actions"></param>
         public void Update(IAvatarControls actions)
         {
+            if (actions == null)
+                return;
+
             DesiredSpeed = actions.DesiredSpeed;
             DesiredRotation = actions.DesiredRotation;
             Interact = actions.Interact;
             Use = actions.Use;
             PickUp = actions.PickUp;
+            Fof = actions.Fof;
         }
     }
 }

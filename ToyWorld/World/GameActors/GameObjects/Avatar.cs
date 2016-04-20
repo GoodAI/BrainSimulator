@@ -1,5 +1,5 @@
 ﻿using GoodAI.ToyWorld.Control;
-using System;
+using System.Drawing;
 using VRageMath;
 using World.Physics;
 
@@ -7,7 +7,7 @@ namespace World.GameActors.GameObjects
 {
     public interface IAvatar : IAvatarControllable, ICharacter
     {
-        int Id { get;}
+        int Id { get; }
         IUsable Tool { get; set; }
     }
 
@@ -21,16 +21,18 @@ namespace World.GameActors.GameObjects
         public bool Interact { get; set; }
         public bool Use { get; set; }
         public bool PickUp { get; set; }
+        public PointF Fof { get; set; }
 
         public Avatar(
             string tilesetName,
             int tileId,
-            string name, 
-            int id, 
-            Vector2 initialPosition, 
-            Vector2 size, 
+            string name,
+            int id,
+            Vector2 initialPosition,
+            Vector2 size,
             float direction = 0
-            ) : base (tilesetName, tileId)
+            )
+            : base(tilesetName, tileId)
         {
             Name = name;
             Id = id;
@@ -46,6 +48,7 @@ namespace World.GameActors.GameObjects
             Interact = false;
             Use = false;
             PickUp = false;
+            Fof = default(PointF);
         }
     }
 }
