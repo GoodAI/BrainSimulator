@@ -27,17 +27,32 @@
             Priority = priority;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static implicit operator AvatarAction<T>(T value)
         {
             return new AvatarAction<T>(value);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static implicit operator T(AvatarAction<T> value)
         {
             return value.Value;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <returns></returns>
         public static AvatarAction<T> operator +(AvatarAction<T> value1, AvatarAction<T> value2)
         {
             // Higher priority values mean lesser priority; if they are the same, update with the new value

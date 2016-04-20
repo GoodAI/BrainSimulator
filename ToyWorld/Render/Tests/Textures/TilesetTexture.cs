@@ -13,6 +13,7 @@ namespace Render.Tests.Textures
 {
     internal class TilesetTexture : TextureBase
     {
+
         readonly List<TextureBase> m_textures = new List<TextureBase>();
 
         public int Count { get { return m_textures.Count; } }
@@ -31,7 +32,7 @@ namespace Render.Tests.Textures
                     continue;
                 }
 
-                using (FileStream stream = new FileStream(@".\TestFiles\" + path, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(Utils.Globals.GetDllDirectory() +  @"\res\Worlds\" + path, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
                     if (bmp.PixelFormat != PixelFormat.Format32bppArgb)

@@ -2,6 +2,9 @@
 
 namespace GoodAI.ToyWorld.Control
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IAvatarControls
     {
         /// <summary>
