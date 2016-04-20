@@ -13,5 +13,10 @@ namespace Utils
         public const string AppName = "Toy World";
         public const string TestFileLocation = @".\TestFiles\";
 
+        public static string GetDllDirectory()
+        {
+            return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        }
+
     }
 }

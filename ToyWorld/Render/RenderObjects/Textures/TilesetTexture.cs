@@ -28,8 +28,7 @@ namespace Render.RenderObjects.Textures
                     m_textures.Add(null);
                     continue;
                 }
-
-                using (FileStream stream = new FileStream(Globals.TestFileLocation + path, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(Utils.Globals.GetDllDirectory() +  @"\res\Worlds\" + path, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
                     if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
