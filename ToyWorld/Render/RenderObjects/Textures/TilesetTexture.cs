@@ -4,12 +4,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using Render.RenderObjects.Textures;
-using VRageMath;
-using Rectangle = System.Drawing.Rectangle;
 
-namespace Render.Tests.Textures
+namespace Render.RenderObjects.Textures
 {
     internal class TilesetTexture : TextureBase
     {
@@ -32,7 +28,7 @@ namespace Render.Tests.Textures
                     continue;
                 }
 
-                using (FileStream stream = new FileStream(Utils.Globals.GetDllDirectory() +  @"\res\Worlds\" + path, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(@".\TestFiles\" + path, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
                     if (bmp.PixelFormat != PixelFormat.Format32bppArgb)

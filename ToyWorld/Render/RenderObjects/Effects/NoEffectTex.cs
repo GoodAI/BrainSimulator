@@ -1,6 +1,4 @@
-﻿using Render.RenderObjects.Effects;
-
-namespace Render.Tests.Effects
+﻿namespace Render.RenderObjects.Effects
 {
     internal class NoEffectTex : EffectBase
     {

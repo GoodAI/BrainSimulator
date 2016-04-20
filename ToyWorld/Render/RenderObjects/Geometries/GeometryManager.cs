@@ -1,5 +1,4 @@
 ﻿using System;
-using Render.Tests.Geometries;
 using Utils.VRageRIP.Lib.Collections;
 using VRageMath;
 
@@ -16,7 +15,7 @@ namespace Render.RenderObjects.Geometries
             // TODO: gather and distribute types to TypeSwitches based on available constructor through reflection (add attributes?)
             // Plain geometries
             CaseInternal<FullScreenQuad>();
-            CaseInternal<FancyFullscreenQuad>();
+            CaseInternal<FullscreenQuadColor>();
             CaseInternal<FullScreenQuadTex>();
             CaseInternal<FullScreenQuadOffset>();
 
