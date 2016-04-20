@@ -201,6 +201,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="res\Worlds\roguelike_selection_winter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="ClassDiagramToyWorld.cd" />
     <Content Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -208,6 +211,9 @@
     <Content Include="res\Worlds\mock_small_stream_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="res\Worlds\mockup999_pantry_world.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="res\Worlds\roguelike_selection_summer.png">
