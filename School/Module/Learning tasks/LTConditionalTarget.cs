@@ -52,12 +52,18 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             if (movingCondition)
             {
-                return world.RandomPositionInsidePowNonCovering(m_rand, size);
+                return world.RandomPositionInsidePowNonCovering(m_rand, size, 1, 40);
             }
 
             const int FIXED_OFFSET = 10;
             RectangleF powRectangle = world.GetPowGeometry();
             return new PointF(powRectangle.X + FIXED_OFFSET, powRectangle.Y + FIXED_OFFSET);
+        }
+
+        public static float DistanceTo(PointF source, PointF target)
+        {
+            PointF vec = new PointF(target.X - source.X, target.Y - source.Y);
+            return (float)Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y);
         }
     }
 
@@ -144,7 +150,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             // TODO Currently, degrees of freedom is not taken into account
             // And distance to target is the same throughout the learning task
-            return world.RandomPositionInsidePowNonCovering(m_rand, size);
+            return world.RandomPositionInsidePowNonCovering(m_rand, size, 10, 22);
         }
     }
 
