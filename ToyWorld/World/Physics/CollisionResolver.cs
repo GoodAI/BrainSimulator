@@ -26,6 +26,10 @@ namespace World.Physics
 
         public void ResolveCollision(IForwardMovablePhysicalEntity physicalEntity)
         {
+            if (m_collisionChecker.CollidesWithTile(physicalEntity))
+            {
+                return;
+            }
             FindTileFreePosition(physicalEntity);
         }
 

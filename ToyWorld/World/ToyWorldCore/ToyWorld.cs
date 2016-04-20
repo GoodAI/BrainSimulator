@@ -16,9 +16,9 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
+        private readonly CollisionResolver m_collisionResolver;
+
         public Vector2I Size { get; private set; }
-
-
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
         public Atlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
@@ -41,12 +41,28 @@ namespace World.ToyWorldCore
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
 
+
+            // physics
             Physics = new Physics.Physics();
+
+            IMovementPhysics movementPhysics = new MovementPhysics();
+            ICollisionChecker collisionChecker = new CollisionChecker(Atlas);
+            m_collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
         }
+
+
+        //
+        // TODO: methods below will be moved to some physics class
+        //
+
 
         private void UpdatePhysics()
         {
-            
+            // temporal code to test basic physics
+            foreach (IAvatar avatar in Atlas.GetAvatars())
+            {
+                m_collisionResolver.ResolveCollision(avatar.PhysicalEntity);
+            }
         }
 
         private void UpdateCharacters()
