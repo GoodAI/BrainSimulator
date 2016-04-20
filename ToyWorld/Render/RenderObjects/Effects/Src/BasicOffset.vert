@@ -42,26 +42,26 @@ vec2 GetTexCoods()
 	{
 		case 0:
 		case 3:
-		uv.y += uvOffset;
+		uv.y -= uvOffset;
 		break;
 
 		case 1:
 		case 2:
-		uv.y -= uvOffset;
+		uv.y += uvOffset;
 		break;
 	}
 	switch (vertID)
 	{
-		case 1:
+		case 0:
 		uv += ivec2(0, tileSizeMargin.y);
 		break;
 				
 		case 2:
-		uv += tileSizeMargin.xy;
+		uv += ivec2(tileSizeMargin.x, 0);
 		break;
 				
 		case 3:
-		uv += ivec2(tileSizeMargin.x, 0);
+		uv += tileSizeMargin.xy;
 		break;
 	}
 
