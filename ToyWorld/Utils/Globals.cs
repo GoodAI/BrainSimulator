@@ -11,10 +11,7 @@ namespace Utils
         // Name of the application (NOTE that Utils, World, Rendering and Runner 
         // should be part of the ENGINE, which could be used by different Games....)
         public const string AppName = "Toy World";
+        public const string TestFileLocation = @".\TestFiles\";
 
-        public static string GetDllDirectory()
-        {
-            return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        }
     }
 }

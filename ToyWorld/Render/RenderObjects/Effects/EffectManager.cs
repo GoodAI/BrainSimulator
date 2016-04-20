@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Render.Tests.Effects;
 using Utils.VRageRIP.Lib.Collections;
 
 namespace Render.RenderObjects.Effects

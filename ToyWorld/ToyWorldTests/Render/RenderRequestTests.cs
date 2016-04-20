@@ -78,5 +78,19 @@ namespace ToyWorldTests.Render
             GameController.MakeStep();
             Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
         }
+
+        [Fact]
+        public void FoFAvatarRR()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
+
+            Assert.NotEmpty(RRTest.Image);
+            //Assert.Equal(RRTest.Size, RRTest.Image.Length);
+
+            GameController.MakeStep();
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+            GameController.MakeStep();
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+        }
     }
 }

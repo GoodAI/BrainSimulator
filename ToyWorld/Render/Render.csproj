@@ -76,9 +76,9 @@
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
-    <Compile Include="Tests\Effects\NoEffectOffset.cs" />
-    <Compile Include="Tests\Effects\NoEffectTex.cs" />
-    <Compile Include="Tests\Effects\NoEffect.cs" />
+    <Compile Include="RenderObjects\Effects\NoEffectOffset.cs" />
+    <Compile Include="RenderObjects\Effects\NoEffectTex.cs" />
+    <Compile Include="RenderObjects\Effects\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FofAvatarRR.cs" />
@@ -88,7 +88,7 @@
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
     <Compile Include="RenderObjects\Buffers\Vao.cs" />
     <Compile Include="RenderObjects\Buffers\Vbo.cs" />
-    <Compile Include="Tests\Geometries\FancyFullscreenQuad.cs" />
+    <Compile Include="RenderObjects\Geometries\FullscreenQuadColor.cs" />
     <Compile Include="RenderObjects\Geometries\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\GeometryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,7 +96,7 @@
     <Compile Include="RenderRequests\RenderRequestFactory.cs" />
     <Compile Include="RenderObjects\Effects\EffectBase.cs" />
     <Compile Include="RenderObjects\Textures\TextureBase.cs" />
-    <Compile Include="Tests\Textures\TilesetTexture.cs" />
+    <Compile Include="RenderObjects\Textures\TilesetTexture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
@@ -114,14 +114,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Basic.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Basic.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.vert" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

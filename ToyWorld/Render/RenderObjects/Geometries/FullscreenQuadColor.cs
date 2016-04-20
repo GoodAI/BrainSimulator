@@ -1,11 +1,10 @@
 ﻿using Render.RenderObjects.Buffers;
-using Render.RenderObjects.Geometries;
 
-namespace Render.Tests.Geometries
+namespace Render.RenderObjects.Geometries
 {
-    internal class FancyFullscreenQuad : FullScreenQuad
+    internal class FullscreenQuadColor : FullScreenQuad
     {
-        public FancyFullscreenQuad()
+        public FullscreenQuadColor()
         {
             this[VboPosition.Colors] = StaticVboFactory.QuadColors;
             EnableAttrib(VboPosition.Colors);

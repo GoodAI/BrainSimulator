@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using OpenTK.Graphics.OpenGL;
-using Render.Tests.Textures;
 using Utils.VRageRIP.Lib.Collections;
 
 using TexInitType = System.String;

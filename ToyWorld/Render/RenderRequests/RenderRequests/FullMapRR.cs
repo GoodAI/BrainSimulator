@@ -3,8 +3,6 @@ using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using Render.RenderObjects.Geometries;
-using Render.Tests.Effects;
-using Render.Tests.Textures;
 using VRageMath;
 using World.ToyWorldCore;
 using RectangleF = VRageMath.RectangleF;
