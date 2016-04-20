@@ -30,7 +30,6 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
-            // Setup params
             var avatar = world.GetAvatar(AvatarID);
             PositionCenterV = avatar.Position;
 

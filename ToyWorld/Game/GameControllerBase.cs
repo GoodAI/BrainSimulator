@@ -82,9 +82,9 @@ namespace Game
 
             World.Update();
 
-            ResetAvatarControllers();
-
             Renderer.ProcessRequests(World);
+
+            ResetAvatarControllers();
         }
 
 

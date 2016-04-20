@@ -1,15 +1,16 @@
-﻿using System.Drawing;
-using GoodAI.ToyWorld.Control;
+﻿using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
-using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests
 {
     public abstract class AvatarRRBase : RenderRequest, IAvatarRenderRequest
     {
+        protected Vector2 RelativePositionV { get; set; }
+
+
         protected AvatarRRBase(int avatarID)
         {
             AvatarID = avatarID;
@@ -22,6 +23,12 @@ namespace Render.RenderRequests
 
         public uint[] Image { get; private set; }
 
+        public System.Drawing.PointF RelativePosition
+        {
+            get { return new System.Drawing.PointF(RelativePositionV.X, RelativePositionV.Y); }
+            set { RelativePositionV = (Vector2)value; }
+        }
+
         #endregion
 
         public override void Init(RendererBase renderer, ToyWorld world)
@@ -33,6 +40,8 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
+            PositionCenterV += RelativePositionV;
+
             base.Draw(renderer, world);
 
             // Gather data to host mem

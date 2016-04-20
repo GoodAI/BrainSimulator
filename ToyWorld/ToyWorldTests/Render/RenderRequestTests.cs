@@ -71,7 +71,7 @@ namespace ToyWorldTests.Render
             var RRTest = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
 
             Assert.NotEmpty(RRTest.Image);
-            //Assert.Equal(RRTest.Size, RRTest.Image.Length);
+            Assert.Equal(RRTest.Resolution.Width * RRTest.Resolution.Height, RRTest.Image.Length);
 
             GameController.MakeStep();
             Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
@@ -82,15 +82,27 @@ namespace ToyWorldTests.Render
         [Fact]
         public void FoFAvatarRR()
         {
+            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
             var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
+            RRTest.FovAvatarRenderRequest = RR;
 
             Assert.NotEmpty(RRTest.Image);
-            //Assert.Equal(RRTest.Size, RRTest.Image.Length);
+            Assert.Equal(RRTest.Resolution.Width * RRTest.Resolution.Height, RRTest.Image.Length);
 
             GameController.MakeStep();
             Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
             GameController.MakeStep();
             Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+        }
+        [Fact]
+        public void FoFAvatarRRThrows()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
+            Assert.ThrowsAny<MissingFieldException>((Action)GameController.MakeStep);
+
+            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
+            Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = null);
+            //Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = DifferentRR); // TODO: need at least two avatars for this test
         }
     }
 }

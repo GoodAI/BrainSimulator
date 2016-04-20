@@ -1,4 +1,5 @@
-﻿using GoodAI.ToyWorld.Control;
+﻿using System;
+using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
@@ -7,8 +8,7 @@ namespace Render.RenderRequests
 {
     internal class FofAvatarRR : AvatarRRBase, IFofAvatarRR
     {
-        public Vector2 RelativePositionV { get; set; }
-
+        private IFovAvatarRR m_fovAvatarRenderRequest;
 
         #region Genesis
 
@@ -16,15 +16,22 @@ namespace Render.RenderRequests
             : base(avatarID)
         { }
 
-
         #endregion
 
         #region IFofAvatarRR overrides
 
-        public System.Drawing.PointF RelativePosition
+        public IFovAvatarRR FovAvatarRenderRequest
         {
-            get { return new System.Drawing.PointF(RelativePositionV.X, RelativePositionV.Y); }
-            set { RelativePositionV = (Vector2)value; }
+            get { return m_fovAvatarRenderRequest; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value", "The supplied IFovAvatarRR cannot be null.");
+                if (value.AvatarID != AvatarID)
+                    throw new ArgumentException("The supplied IFovAvatarRR is tied to a different avatarID. Fof/Fov ID: " + AvatarID + '/' + value.AvatarID);
+
+                m_fovAvatarRenderRequest = value;
+            }
         }
 
         #endregion
@@ -40,14 +47,21 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
+            if (FovAvatarRenderRequest == null)
+                throw new MissingFieldException("Missing the IFovAvatarRR. Please specify one before using this render request.");
+
             // Setup params
             var avatar = world.GetAvatar(AvatarID);
-            PositionCenterV = avatar.Position + RelativePositionV;
+            PositionCenterV =
+                avatar.Position
+                // Offset so that the FofOffset interval (-1,1) spans the entire Fov view and doesn't reach outside of it
+            + ((Vector2)FovAvatarRenderRequest.Size - SizeV) / 2
+            * (Vector2)avatar.Fof;
 
             base.Draw(renderer, world);
-
         }
 
         #endregion
+
     }
 }
