@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Utils;
 
 namespace Render.RenderObjects.Textures
 {
@@ -28,7 +29,7 @@ namespace Render.RenderObjects.Textures
                     continue;
                 }
 
-                using (FileStream stream = new FileStream(@".\TestFiles\" + path, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(Globals.TestFileLocation + path, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
                     if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
