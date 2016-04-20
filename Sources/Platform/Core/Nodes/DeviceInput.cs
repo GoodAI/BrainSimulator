@@ -24,6 +24,8 @@ namespace GoodAI.Core.Nodes
         [YAXSerializableField(DefaultValue = false)]
         public bool StepOnKeyDown { get; set; }
 
+        private LinkedList<Tuple<int, bool>> m_keyPresses = new LinkedList<Tuple<int,bool>>();
+
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Output
         {
@@ -38,15 +40,15 @@ namespace GoodAI.Core.Nodes
 
         public void SetKeyUp(int keyValue)
         {
-            Output.Host[keyValue] = 0.0f;
-
+            m_keyPresses.AddLast(new Tuple<int, bool>(keyValue, false));
             ExecuteIfPaused();
         }
 
         public void SetKeyDown(int keyValue)
         {
-            bool wasNotPressed = Output.Host[keyValue] < 1.0f;
-            Output.Host[keyValue] = 1.0f;
+            bool wasNotPressed = Output.Host[keyValue] < 1.0f; // valid only when simulation state is PAUSED, otherwise the result is undefined
+
+            m_keyPresses.AddLast(new Tuple<int, bool>(keyValue, true));
 
             ExecuteIfPaused();
 
@@ -71,6 +73,12 @@ namespace GoodAI.Core.Nodes
 
             public override void Execute()
             {
+                while(Owner.m_keyPresses.Count > 0)
+                {
+                    Tuple<int, bool> keyPress = Owner.m_keyPresses.First.Value;
+                    Owner.m_keyPresses.RemoveFirst();
+                    Owner.Output.Host[keyPress.Item1] = keyPress.Item2 ? 1.0f : 0.0f;
+                }
                 Owner.Output.SafeCopyToDevice();
             }
         }
