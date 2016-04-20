@@ -31,6 +31,7 @@ namespace Render.RenderRequests
 
             // AvatarRenderRequests
             CaseParamInternal<IFovAvatarRR, FovAvatarRR>();
+            CaseParamInternal<IFofAvatarRR, FofAvatarRR>();
         }
 
         private static void CaseInternal<T, TNew>()
@@ -54,12 +55,18 @@ namespace Render.RenderRequests
         public static T CreateRenderRequest<T>()
             where T : class, IRenderRequest // unf cannot constrain T to be an interface, only a class
         {
+            if (typeof(T) == typeof(IRenderRequest))
+                throw new RenderRequestNotImplementedException("The supplied interface cannot be the base interface. You have to use a derived type. Used type: " + typeof(IRenderRequest).Name);
+
             return RRSwitch.Switch<T>();
         }
 
         public static T CreateRenderRequest<T>(int avatarID)
             where T : class, IAvatarRenderRequest // unf cannot constrain T to be an interface, only a class
         {
+            if (typeof(T) == typeof(IAvatarRenderRequest))
+                throw new RenderRequestNotImplementedException("The supplied interface cannot be the base interface. You have to use a derived type. Used type: " + typeof(IAvatarRenderRequest).Name);
+
             return avatarRRSwitch.Switch<T>(avatarID);
         }
     }

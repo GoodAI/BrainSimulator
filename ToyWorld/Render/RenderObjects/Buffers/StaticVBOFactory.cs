@@ -91,8 +91,8 @@ namespace Render.RenderObjects.Buffers
             Vector2I xyStep = xStep + yStep;
             Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
 
-            // Generate tiles from top-left corner row-wise, centered on origin
-            Vector2I topLeft = new Vector2I(-gridSize.X, -gridSize.Y);
+            // Generate tiles from bot-left corner row-wise, centered on origin
+            Vector2I botLeft = new Vector2I(-gridSize.X, -gridSize.Y);
 
             int idx = 0;
 
@@ -101,16 +101,16 @@ namespace Render.RenderObjects.Buffers
                 for (int i = 0; i < gridSize.X; i++)
                 {
                     // Start top-left, continue clock-wise
-                    vertices[idx++] = (Vector2)topLeft * gridSizeInv;
-                    vertices[idx++] = (Vector2)(topLeft + xStep) * gridSizeInv;
-                    vertices[idx++] = (Vector2)(topLeft + xyStep) * gridSizeInv;
-                    vertices[idx++] = (Vector2)(topLeft + yStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)botLeft * gridSizeInv;
+                    vertices[idx++] = (Vector2)(botLeft + xStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)(botLeft + xyStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)(botLeft + yStep) * gridSizeInv;
 
-                    topLeft += xStep;
+                    botLeft += xStep;
                 }
 
-                topLeft += yStep;
-                topLeft.X = -gridSize.X;
+                botLeft += yStep;
+                botLeft.X = -gridSize.X;
             }
 
             return new StaticVbo<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);

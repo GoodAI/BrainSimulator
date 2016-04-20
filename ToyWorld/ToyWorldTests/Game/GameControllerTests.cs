@@ -66,6 +66,9 @@ namespace ToyWorldTests.Game
             Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<INotImplementedRR>);
             Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<INotImplementedAvatarRR>(1));
 
+            Assert.ThrowsAny<RenderRequestNotImplementedException>((Func<object>)GameController.RegisterRenderRequest<IRenderRequest>);
+            Assert.ThrowsAny<RenderRequestNotImplementedException>(() => GameController.RegisterRenderRequest<IAvatarRenderRequest>(1));
+
             // TODO: What to throw for an unknown aID? What should be an aID? How to get allowed aIDs?
             Assert.ThrowsAny<KeyNotFoundException>(() => GameController.GetAvatarController(-1));
         }
