@@ -102,11 +102,11 @@ namespace VRageMath
         /// <summary>
         /// Gets the Point that specifies the center of the rectangle.
         /// </summary>
-        public Point Center
+        public Vector2I Center
         {
             get
             {
-                return new Point(this.X + this.Width / 2, this.Y + this.Height / 2);
+                return new Vector2I(X + Width / 2, Y + Height / 2);
             }
         }
 
@@ -128,7 +128,7 @@ namespace VRageMath
         /// Initializes a new instance of Rectangle.
         /// </summary>
         /// <param name="position">The position of the rectangle</param><param name="size">The size of the rectangle.</param>
-        public Rectangle(Point position, Vector2I size)
+        public Rectangle(Vector2I position, Vector2I size)
         {
             Position = position;
             Size = size;

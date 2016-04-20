@@ -48,9 +48,9 @@ namespace ToyWorldTests.Render
             Renderer.MakeContextCurrent();
 
             int aID = m_gameController.GetAvatarIds().First();
-            var rr = m_gameController.RegisterRenderRequest<IFreeMapRR>();
+            var rr = m_gameController.RegisterRenderRequest<IFovAvatarRR>(aID);
             var ac = m_gameController.GetAvatarController(aID);
-            var controls = new AvatarControls(5) { DesiredSpeed = .7f };
+            var controls = new AvatarControls(5) { DesiredSpeed = .3f };
 
             CancellationToken token = SetupWindow(
                 delta =>
@@ -95,6 +95,9 @@ namespace ToyWorldTests.Render
             {
                 if (args.Button == MouseButton.Right)
                     tokenSource.Cancel();
+
+                if (args.Button == MouseButton.Left)
+                    onDrag(Vector3.Zero);
             };
 
             Renderer.Window.MouseMove += (sender, args) =>
@@ -121,7 +124,7 @@ namespace ToyWorldTests.Render
         [Fact(Skip = "Skipped -- requires manual input to end.")]
         //**/
         public void ShowRRLongRunning()
-       {
+        {
             RunRRLongRunning();
         }
 

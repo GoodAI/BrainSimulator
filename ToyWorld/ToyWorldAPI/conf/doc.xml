@@ -239,6 +239,12 @@
              <param name="avatarId"></param>
              <returns></returns>
         </member>
+        <member name="M:GoodAI.ToyWorld.Control.IGameController.GetAvatarIds">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:GoodAI.ToyWorld.Control.IStats">
             <summary>
             

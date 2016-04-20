@@ -32,33 +32,36 @@ namespace World.ToyWorldCore
             if (m_tileTypes.Length < rectangle.Size.Size())
                 m_tileTypes = new int[rectangle.Size.Size()];
 
-
-            int left = Math.Max(rectangle.Left, 0);
-            int right = Math.Min(rectangle.Right, Tiles.Length);
-            int top = Math.Max(rectangle.Top, 0);
-            int bot = Math.Min(rectangle.Bottom, Tiles[0].Length);
+            int left = Math.Max(rectangle.Left, Math.Min(0, rectangle.Left + rectangle.Width));
+            int right = Math.Min(rectangle.Right, Math.Max(Tiles.Length, rectangle.Right - rectangle.Width));
+            // Rectangle origin is in top-left; it's top is thus our bottom
+            int bot = Math.Max(rectangle.Top, Math.Min(0, rectangle.Top + rectangle.Height));
+            int top = Math.Min(rectangle.Bottom, Math.Max(Tiles[0].Length, rectangle.Bottom - rectangle.Height));
 
             int idx = 0;
 
             // Rows before start of map
-            for (int j = rectangle.Top; j < top; j++)
+            for (int j = rectangle.Top; j < bot; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
                     m_tileTypes[idx++] = 0;
             }
 
             // Rows inside of map
-            for (var j = top; j < bot; j++)
+            for (var j = bot; j < top; j++)
             {
                 // Tiles before start of map
-                for (int i = rectangle.Left; i < 0; i++)
+                for (int i = rectangle.Left; i < left; i++)
                     m_tileTypes[idx++] = 0;
 
                 // Tiles inside of map
                 for (var i = left; i < right; i++)
                 {
                     var tile = Tiles[i][j];
-                    m_tileTypes[idx++] = tile != null ? tile.TileType : 0;
+                    if (tile != null)
+                        m_tileTypes[idx++] = tile.TileType;
+                    else
+                        m_tileTypes[idx++] = 0;
                 }
 
                 // Tiles after end of map
@@ -67,7 +70,7 @@ namespace World.ToyWorldCore
             }
 
             // Rows after end of map
-            for (int j = bot; j < rectangle.Bottom; j++)
+            for (int j = top; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
                     m_tileTypes[idx++] = 0;

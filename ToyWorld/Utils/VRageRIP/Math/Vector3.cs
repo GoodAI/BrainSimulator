@@ -81,6 +81,13 @@ namespace VRageMath
             this.X = this.Y = this.Z = value;
         }
 
+        public Vector3(Vector2 value)
+        {
+            X = value.X;
+            Y = value.Y;
+            Z = 0;
+        }
+
         /// <summary>
         /// Initializes a new instance of Vector3.
         /// </summary>
@@ -92,11 +99,11 @@ namespace VRageMath
             this.Z = z;
         }
 
-        public Vector3(Vector4 xyz)
+        public Vector3(Vector2I value)
         {
-            this.X = xyz.X;
-            this.Y = xyz.Y;
-            this.Z = xyz.Z;
+            X = value.X;
+            Y = value.Y;
+            Z = 0;
         }
 
         public Vector3(ref Vector3I value)
@@ -111,6 +118,13 @@ namespace VRageMath
             X = value.X;
             Y = value.Y;
             Z = value.Z;
+        }
+
+        public Vector3(Vector4 xyz)
+        {
+            this.X = xyz.X;
+            this.Y = xyz.Y;
+            this.Z = xyz.Z;
         }
 
         /// <summary>

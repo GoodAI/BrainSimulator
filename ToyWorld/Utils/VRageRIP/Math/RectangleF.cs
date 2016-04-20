@@ -101,6 +101,22 @@ namespace VRageMath
         }
 
         /// <summary>
+        /// Gets the Point that specifies the center of the rectangle.
+        /// </summary>
+        public Vector2 Center
+        {
+            get
+            {
+                return new Vector2(X + Width / 2f, Y + Height / 2f);
+            }
+            set
+            {
+                X = value.X - Width / 2f;
+                Y = value.Y - Height / 2f;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RectangleF"/> struct.
         /// </summary>
         /// <param name="x">The x.</param>
@@ -122,6 +138,16 @@ namespace VRageMath
         {
             Position = position;
             Size = size;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
+        /// </summary>
+        /// <param name="rectangle">The integer rectangle.</param>
+        public RectangleF(Rectangle rectangle)
+        {
+            Position = new Vector2(rectangle.Position);
+            Size = new Vector2(rectangle.Size);
         }
 
         public bool Contains(int x, int y)

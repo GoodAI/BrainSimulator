@@ -87,12 +87,12 @@ namespace Render.RenderObjects.Buffers
             Vector2[] vertices = new Vector2[gridSize.Size() * 4];
 
             Vector2I xStep = new Vector2I(2, 0);
-            Vector2I yStep = new Vector2I(0, -2);
+            Vector2I yStep = new Vector2I(0, 2);
             Vector2I xyStep = xStep + yStep;
             Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
 
             // Generate tiles from top-left corner row-wise, centered on origin
-            Vector2I topLeft = new Vector2I(-gridSize.X, gridSize.Y);
+            Vector2I topLeft = new Vector2I(-gridSize.X, -gridSize.Y);
 
             int idx = 0;
 
