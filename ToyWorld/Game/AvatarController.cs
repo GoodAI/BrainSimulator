@@ -45,6 +45,7 @@ namespace Game
             m_avatar.PickUp = m_avatarControls.PickUp;
             m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
             m_avatar.Use = m_avatarControls.Use;
+            m_avatar.Fof = m_avatarControls.Fof;
         }
     }
 }
