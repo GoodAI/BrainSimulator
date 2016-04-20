@@ -97,8 +97,10 @@ namespace ToyWorldTests.Render
         [Fact]
         public void FoFAvatarRRThrows()
         {
-            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
             var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
+            Assert.ThrowsAny<MissingFieldException>((Action)GameController.MakeStep);
+
+            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
             Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = null);
             //Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = DifferentRR); // TODO: need at least two avatars for this test
         }

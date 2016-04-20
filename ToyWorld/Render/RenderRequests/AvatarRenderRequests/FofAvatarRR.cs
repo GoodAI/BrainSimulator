@@ -47,6 +47,9 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
+            if (FovAvatarRenderRequest == null)
+                throw new MissingFieldException("Missing the IFovAvatarRR. Please specify one before using this render request.");
+
             // Setup params
             var avatar = world.GetAvatar(AvatarID);
             PositionCenterV =
