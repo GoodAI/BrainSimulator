@@ -12,22 +12,26 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         int AvatarID { get; }
 
-
         /// <summary>
-        /// Relative position of PositionCenter to avatar's position
+        /// 
         /// </summary>
-        PointF RelativePosition { get; set; }
-
+        uint[] Image { get; }
     }
 
     /// <summary>
     /// 
     /// </summary>
     public interface IFovAvatarRR : IAvatarRenderRequest
+    { }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IFofAvatarRR : IAvatarRenderRequest
     {
         /// <summary>
-        /// 
+        /// Relative position of PositionCenter to avatar's position
         /// </summary>
-        uint[] Image { get; }
+        PointF RelativePosition { get; set; }
     }
 }

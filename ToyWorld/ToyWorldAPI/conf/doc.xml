@@ -260,9 +260,9 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.RelativePosition">
+        <member name="P:GoodAI.ToyWorld.Control.IAvatarRenderRequest.Image">
             <summary>
-            Relative position of PositionCenter to avatar's position
+            
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IFovAvatarRR">
@@ -270,9 +270,14 @@
             
             </summary>
         </member>
-        <member name="P:GoodAI.ToyWorld.Control.IFovAvatarRR.Image">
+        <member name="T:GoodAI.ToyWorld.Control.IFofAvatarRR">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Control.IFofAvatarRR.RelativePosition">
+            <summary>
+            Relative position of PositionCenter to avatar's position
             </summary>
         </member>
         <member name="T:GoodAI.ToyWorld.Control.IRenderRequest">
