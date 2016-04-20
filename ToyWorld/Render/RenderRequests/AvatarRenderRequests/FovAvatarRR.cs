@@ -28,15 +28,6 @@ namespace Render.RenderRequests
             base.Init(renderer, world);
         }
 
-        public override void Draw(RendererBase renderer, ToyWorld world)
-        {
-            // Setup params
-            var avatar = world.GetAvatar(AvatarID);
-            PositionCenterV = avatar.Position;
-
-            base.Draw(renderer, world);
-        }
-
         #endregion
     }
 }

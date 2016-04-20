@@ -48,7 +48,10 @@ namespace ToyWorldTests.Render
             Renderer.MakeContextCurrent();
 
             int aID = m_gameController.GetAvatarIds().First();
-            var rr = m_gameController.RegisterRenderRequest<IFovAvatarRR>(aID);
+            var rr1 = m_gameController.RegisterRenderRequest<IFovAvatarRR>(aID);
+            var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
+            rr.FovAvatarRenderRequest = rr1;
+
             var ac = m_gameController.GetAvatarController(aID);
             var controls = new AvatarControls(5) { DesiredSpeed = .3f };
 
@@ -102,7 +105,7 @@ namespace ToyWorldTests.Render
 
             Renderer.Window.MouseMove += (sender, args) =>
             {
-                const float factor = 1 / 100f;
+                const float factor = 1 / 5f;
 
                 if (args.Mouse.IsButtonDown(MouseButton.Left))
                     onDrag(new Vector3(args.XDelta, args.YDelta, 0) * factor);
