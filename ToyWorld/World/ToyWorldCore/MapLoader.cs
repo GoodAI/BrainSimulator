@@ -38,7 +38,7 @@ namespace World.ToyWorldCore
                 {
                     var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets, map.Tilewidth, map.Tileheight));
+                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets, map.Tilewidth, map.Tileheight, map.Height));
                 }
                 else
                 {
@@ -61,10 +61,11 @@ namespace World.ToyWorldCore
             Action<GameActor> initializer,
             List<Tileset> tilesets,
             int tileWidth,
-            int tileHeight
+            int tileHeight,
+            int worldHeight
             )
         {
-            NormalizeObjectPositions(objectLayer.TmxMapObjects, tileWidth, tileHeight);
+            NormalizeObjectPositions(objectLayer.TmxMapObjects, tileWidth, tileHeight, worldHeight);
 
             //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
@@ -105,11 +106,12 @@ namespace World.ToyWorldCore
         /// <param name="tmxObjects"></param>
         /// <param name="tileWidth"></param>
         /// <param name="tileHeight"></param>
-        private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight)
+        private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight, int worldHeight)
         {
             foreach (var tmxObject in tmxObjects)
             {
                 tmxObject.X /= tileWidth;
+                tmxObject.X = worldHeight - tmxObject.X;
                 tmxObject.Y /= tileHeight;
                 tmxObject.Width /= tileWidth;
                 tmxObject.Height /= tileHeight;
@@ -139,7 +141,7 @@ namespace World.ToyWorldCore
                     var tileNumber = int.Parse(tiles[j]);
                     if (staticTilesContainer.ContainsKey(tileNumber))
                     {
-                        newSimpleLayer.Tiles[i][j] = staticTilesContainer[tileNumber];
+                        newSimpleLayer.Tiles[j][layer.Height - 1 - i] = staticTilesContainer[tileNumber];
                     }
                     else
                     {

@@ -28,7 +28,7 @@ namespace Render.RenderRequests
         {
             Image = new uint[Resolution.Width * Resolution.Height];
 
-            SizeV = new Vector2(20, 20);
+            SizeV = new Vector2(50, 50);
 
             base.Init(renderer, world);
         }
@@ -37,7 +37,7 @@ namespace Render.RenderRequests
         {
             // Setup params
             var avatar = world.GetAvatar(AvatarID);
-            PositionCenterV = new Vector3(avatar.Position, 0);
+            PositionCenterV = avatar.Position;
 
             base.Draw(renderer, world);
 
