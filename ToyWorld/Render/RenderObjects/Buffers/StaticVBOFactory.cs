@@ -47,10 +47,10 @@ namespace Render.RenderObjects.Buffers
         {
             Vector2[] squareVertices =
             {
+               new Vector2(-1,-1),
                new Vector2(-1, 1),
                new Vector2( 1, 1),
                new Vector2( 1,-1),
-               new Vector2(-1,-1),
             };
 
             return new StaticVbo<Vector2>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
@@ -102,9 +102,9 @@ namespace Render.RenderObjects.Buffers
                 {
                     // Start top-left, continue clock-wise
                     vertices[idx++] = (Vector2)botLeft * gridSizeInv;
-                    vertices[idx++] = (Vector2)(botLeft + xStep) * gridSizeInv;
-                    vertices[idx++] = (Vector2)(botLeft + xyStep) * gridSizeInv;
                     vertices[idx++] = (Vector2)(botLeft + yStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)(botLeft + xyStep) * gridSizeInv;
+                    vertices[idx++] = (Vector2)(botLeft + xStep) * gridSizeInv;
 
                     botLeft += xStep;
                 }
