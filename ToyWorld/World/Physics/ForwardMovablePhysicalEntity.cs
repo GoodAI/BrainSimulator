@@ -24,15 +24,5 @@ namespace World.Physics
             Direction = direction;
             RotationSpeed = rotationSpeed;
         }
-
-        public void Move()
-        {
-            Position = Utils.Move(Position, Direction, ForwardSpeed);
-        }
-
-        public void Move(float forwardSpeed, float direction)
-        {
-            Position = Utils.Move(Position, direction, forwardSpeed);
-        }
     }
 }
