@@ -151,7 +151,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Globals.cs" />
-    <Compile Include="MyContract.cs" />
     <Compile Include="VRageRIP\Lib\Collections\AsyncBuffer.cs" />
     <Compile Include="VRageRIP\Lib\Collections\CircularList.cs" />
     <Compile Include="VRageRIP\Lib\Collections\IterableQueue.cs" />

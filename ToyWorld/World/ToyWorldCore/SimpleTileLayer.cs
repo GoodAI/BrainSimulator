@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Utils;
+using System.Diagnostics.Contracts;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors.Tiles;
@@ -18,9 +15,13 @@ namespace World.ToyWorldCore
 
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
+            if (width <= 0)
+                throw new ArgumentOutOfRangeException("width", "Tile width has to be positive");
+            if (height <= 0)
+                throw new ArgumentOutOfRangeException("height", "Tile height has to be positive");
+            Contract.EndContractBlock();
+
             m_tileTypes = new int[0];
-            MyContract.Requires<ArgumentOutOfRangeException>(width > 0, "Tile width has to be positive");
-            MyContract.Requires<ArgumentOutOfRangeException>(height > 0, "Tile height has to be positive");
             LayerType = layerType;
             Height = height;
             Width = width;

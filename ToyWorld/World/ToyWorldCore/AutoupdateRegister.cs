@@ -25,7 +25,9 @@ namespace World.ToyWorldCore
 
         public AutoupdateRegister(int registerSize = 100)
         {
-            MyContract.Requires<ArgumentOutOfRangeException>(registerSize > 0, "Register size must be larger than zero.");
+            if (registerSize <= 0)
+                throw new ArgumentOutOfRangeException("registerSize");
+            Contract.EndContractBlock();
 
             m_register = new CircularList<List<IAutoupdateable>>(registerSize);
             m_register.MoveNext();
@@ -33,8 +35,11 @@ namespace World.ToyWorldCore
 
         public void Register(IAutoupdateable actor, int timePeriod = 1)
         {
-            MyContract.Requires<ArgumentNullException>(actor != null, "You cannot register null object for updating.");
-            MyContract.Requires<ArgumentOutOfRangeException>(timePeriod > 0, "Update period has to be larger than zero.");
+            if (actor == null)
+                throw new ArgumentNullException("actor");
+            if (timePeriod <= 0)
+                throw new ArgumentOutOfRangeException("timePeriod", "Update period has to be larger than zero.");
+            Contract.EndContractBlock();
 
             m_register[timePeriod].Add(actor);
         }

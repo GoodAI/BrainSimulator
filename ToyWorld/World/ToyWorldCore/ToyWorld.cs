@@ -27,7 +27,10 @@ namespace World.ToyWorldCore
 
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
-            MyContract.Requires<ArgumentNullException>(tileTable != null, "Tile table cannot be null");
+            if (tileTable == null)
+                throw new ArgumentNullException("tileTable");
+            Contract.EndContractBlock();
+
             Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
 
             AutoupdateRegister = new AutoupdateRegister();
@@ -118,6 +121,6 @@ namespace World.ToyWorldCore
         {
             Contract.Invariant(Atlas != null, "Atlas cannot be null");
             Contract.Invariant(AutoupdateRegister != null, "Autoupdate register cannot be null");
-    }
+        }
     }
 }

@@ -96,7 +96,9 @@ namespace World.ToyWorldCore
 
         public bool AddAvatar(IAvatar avatar)
         {
-            MyContract.Requires<ArgumentNullException>(avatar != null, "Avatar cannot be null");
+            if (avatar == null)
+                throw new ArgumentNullException("avatar");
+            Contract.EndContractBlock();
             try
             {
                 Avatars.Add(avatar.Id, avatar);

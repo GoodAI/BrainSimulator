@@ -32,22 +32,29 @@ namespace World.ToyWorldCore
     {
         public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
         {
-            MyContract.Requires<ArgumentOutOfRangeException>((x2 - x1 + 1) > 0, "X values doesn't form a valid rectangle");
-            MyContract.Requires<ArgumentOutOfRangeException>((y2 - y1 + 1) > 0, "Y values doesn't form a valid rectangle");
+            if ((x2 - x1 + 1) <= 0)
+                throw new ArgumentOutOfRangeException("x1", "X values doesn't form a valid rectangle");
+            if ((y2 - y1 + 1) <= 0)
+                throw new ArgumentOutOfRangeException("y1", "Y values doesn't form a valid rectangle");
+            Contract.EndContractBlock();
 
             return default(Tile[,]);
         }
 
         public int[] GetRectangle(Rectangle rectangle)
         {
-            MyContract.Requires<ArgumentOutOfRangeException>(rectangle.Size.X > 0 && rectangle.Size.Y > 0, "Y values doesn't form a valid rectangle");
+            if (rectangle.Size.X <= 0 && rectangle.Size.Y <= 0)
+                throw new ArgumentOutOfRangeException("rectangle", "values doesn't form a valid rectangle");
+            Contract.EndContractBlock();
 
             return default(int[]);
         }
 
         public int[] GetRectangle(Vector2I pos, Vector2I size)
         {
-            MyContract.Requires<ArgumentOutOfRangeException>(size.X > 0 && size.Y > 0, "Y values doesn't form a valid rectangle");
+            if (size.X <= 0 && size.Y <= 0)
+                throw new ArgumentOutOfRangeException("size", "size values doesn't form a valid rectangle");
+            Contract.EndContractBlock();
 
             return default(int[]);
         }
