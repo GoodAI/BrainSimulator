@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using VRageMath;
-using Utils;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
-using World.GameActors;
 
 namespace World.ToyWorldCore
 {
+
     interface IAtlas
     {
         /// <summary>
@@ -99,6 +99,7 @@ namespace World.ToyWorldCore
             if (avatar == null)
                 throw new ArgumentNullException("avatar");
             Contract.EndContractBlock();
+
             try
             {
                 Avatars.Add(avatar.Id, avatar);

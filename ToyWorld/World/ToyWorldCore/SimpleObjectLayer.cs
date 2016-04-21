@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using VRageMath;
 using World.GameActors.GameObjects;
 using World.Physics;
@@ -44,6 +45,8 @@ namespace World.ToyWorldCore
 
         public List<GameObject> GetAllObjects()
         {
+            Contract.Ensures(Contract.Result<List<GameObject>>() != null);
+
             return GameObjects;
         }
     }
