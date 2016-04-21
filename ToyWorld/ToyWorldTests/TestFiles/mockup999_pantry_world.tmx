@@ -331,7 +331,7 @@
 </data>
  </layer>
  <objectgroup name="Object">
-  <object id="16" name="Pingu" type="Avatar" gid="496" x="378" y="48" width="16" height="16" rotation="160">
+  <object id="16" name="Pingu" type="Avatar" gid="496" x="378" y="48" width="12" height="12" rotation="160">
    <properties>
     <property name="ForwardSpeed" value="0.5"/>
    </properties>

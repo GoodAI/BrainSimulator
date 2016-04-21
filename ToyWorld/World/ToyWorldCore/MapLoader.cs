@@ -109,8 +109,8 @@ namespace World.ToyWorldCore
             foreach (TmxObject tmxObject in tmxObjects)
             {
                 tmxObject.X /= tileWidth;
-                tmxObject.X = worldHeight - tmxObject.X;
                 tmxObject.Y /= tileHeight;
+                tmxObject.Y = worldHeight - tmxObject.Y;
                 tmxObject.Width /= tileWidth;
                 tmxObject.Height /= tileHeight;
                 tmxObject.Rotation = MathHelper.ToRadians(tmxObject.Rotation);
@@ -148,7 +148,7 @@ namespace World.ToyWorldCore
                         {
                             Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes);
                             initializer.Invoke(newTile);
-                            newSimpleLayer.Tiles[i][j] = newTile;
+                            newSimpleLayer.Tiles[j][layer.Height - 1 - i] = newTile;
                             if (newTile is StaticTile)
                             {
                                 staticTilesContainer.Add(tileNumber, newTile as StaticTile);
