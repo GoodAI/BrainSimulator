@@ -16,7 +16,7 @@ namespace World.Physics
             Vector2 initialPostition,
             Shape shape,
             float forwardSpeed = 0,
-            float direction = 90,
+            float direction = 0,
             float rotationSpeed = 0)
             : base(initialPostition, shape)
         {

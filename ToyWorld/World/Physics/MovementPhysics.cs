@@ -15,28 +15,23 @@ namespace World.Physics
     {
         public void Move(IForwardMovablePhysicalEntity movable)
         {
-            Shift(movable);
             Rotate(movable);
+            Shift(movable);
         }
 
         public void Shift(IForwardMovablePhysicalEntity movable)
         {
-            // Swapped sin and cos (rotated by 90°) because the default direction vector (for radian = 0) should be up (i.e. (0,1))
-            Vector2 direction = new Vector2(-(float)Math.Sin(movable.Direction), (float)Math.Cos(movable.Direction));
-            movable.Position = movable.Position + direction * movable.ForwardSpeed;
+            movable.Position = Utils.Move(movable.Position, movable.Direction, movable.ForwardSpeed);
         }
 
         public void Shift(IForwardMovablePhysicalEntity movable, float speed)
         {
-            // Swapped sin and cos (rotated by 90°) because the default direction vector (for radian = 0) should be up (i.e. (0,1))
-            Vector2 direction = new Vector2((float)Math.Sin(movable.Direction), (float)-Math.Cos(movable.Direction));
-            movable.Position = movable.Position + direction * speed;
+            movable.Position = Utils.Move(movable.Position, movable.Direction, speed);
         }
 
         public void Shift(IForwardMovablePhysicalEntity movable, float speed, float directionInRads)
         {
-            Vector2 direction = new Vector2((float)Math.Sin(directionInRads), (float)-Math.Cos(directionInRads));
-            movable.Position = movable.Position + direction * speed;
+            movable.Position = Utils.Move(movable.Position, directionInRads, speed);
         }
 
         private static void Rotate(IForwardMovablePhysicalEntity movable)

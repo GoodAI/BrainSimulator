@@ -12,6 +12,8 @@ namespace World.ToyWorldCore
     public class SimpleTileLayer : ITileLayer
     {
         private int[] m_tileTypes;
+        public int Width { get; set; }
+        public int Height { get; set; }
 
 
         public SimpleTileLayer(LayerType layerType, int width, int height)
@@ -20,6 +22,8 @@ namespace World.ToyWorldCore
             MyContract.Requires<ArgumentOutOfRangeException>(width > 0, "Tile width has to be positive");
             MyContract.Requires<ArgumentOutOfRangeException>(height > 0, "Tile height has to be positive");
             LayerType = layerType;
+            Height = height;
+            Width = width;
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
         }
 
@@ -88,6 +92,10 @@ namespace World.ToyWorldCore
 
         public Tile GetTile(Vector2I coordinates)
         {
+            if (coordinates.X < 0 || coordinates.Y < 0 || coordinates.X >= Width || coordinates.Y >= Height)
+            {
+                return new Obstacle(0);
+            }
             return Tiles[coordinates.X][coordinates.Y];
         }
     }
