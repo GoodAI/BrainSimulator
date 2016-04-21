@@ -19,12 +19,13 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="map"></param>
         /// <param name="tilesetTable"></param>
+        /// <param name="initializer"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
         public static Atlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)
         {
             Atlas atlas = new Atlas();
 
-            map.Tilesets.OrderBy(x => x.Firstgid);
+            map.Tilesets = map.Tilesets.OrderBy(x => x.Firstgid).ToList();
 
             foreach (LayerType layerType in Enum.GetValues(typeof(LayerType)).Cast<LayerType>())
             {
@@ -104,6 +105,7 @@ namespace World.ToyWorldCore
         /// <param name="tmxObjects"></param>
         /// <param name="tileWidth"></param>
         /// <param name="tileHeight"></param>
+        /// <param name="worldHeight"></param>
         private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight, int worldHeight)
         {
             foreach (TmxObject tmxObject in tmxObjects)
@@ -201,7 +203,6 @@ namespace World.ToyWorldCore
         private static void SetGameObjectProperties(List<Property> properties, GameObject gameObject)
         {
             Type type = gameObject.GetType();
-            Convert.ChangeType(gameObject, type);
 
             foreach (Property property in properties)
             {
