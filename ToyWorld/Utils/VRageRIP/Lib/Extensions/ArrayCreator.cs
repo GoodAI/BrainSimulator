@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.Contracts;
 
 namespace Utils.VRageRIP.Lib.Extensions
 {
@@ -10,13 +7,14 @@ namespace Utils.VRageRIP.Lib.Extensions
     {
         public static T CreateJaggedArray<T>(params int[] lengths)
         {
-            return (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
+            return (T)InitializeJaggedArray(null, 0, lengths);
         }
 
         static object InitializeJaggedArray(Type type, int index, int[] lengths)
         {
-            MyContract.Requires<ArgumentNullException>(type != null, "Type cannot be null!");
-
+            if (type == null)
+                throw new ArgumentNullException("type");
+            Contract.EndContractBlock();
             Array array = Array.CreateInstance(type, lengths[index]);
             Type elementType = type.GetElementType();
 
