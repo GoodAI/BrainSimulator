@@ -129,7 +129,8 @@ namespace Render.RenderRequests
             m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // View matrix is computed each frame
-            m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 20);
+            m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+            //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
         }
 
         public virtual void Draw(RendererBase renderer, ToyWorld world)
@@ -160,6 +161,9 @@ namespace Render.RenderRequests
             // Draw tile layers
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
+                //transform *= Matrix.CreateTranslation(0, 0, -0.1f);
+                //m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
+
                 m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
                 m_grid.Draw();
             }

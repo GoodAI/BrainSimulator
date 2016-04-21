@@ -1,5 +1,4 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using VRageMath;
 using World.Physics;
 using Xunit;
@@ -31,7 +30,7 @@ namespace ToyWorldTests.Physics
 
             var movableMock = new Mock<IForwardMovablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
-            movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
+            movableMock.Setup(x => x.ForwardSpeed).Returns(speed);
             movableMock.Setup(x => x.Direction).Returns(direction);*/
 
             movableMock.SetupAllProperties();
@@ -42,7 +41,7 @@ namespace ToyWorldTests.Physics
 
             IForwardMovablePhysicalEntity movable = movableMock.Object;
 
-            
+
 
             m_movementPhysics.Move(movable);
 
@@ -53,7 +52,7 @@ namespace ToyWorldTests.Physics
             }
             else if (speed == 1f)
             {
-                switch ((int) direction)
+                switch ((int)direction)
                 {
                     case 0:
                         Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
@@ -83,7 +82,7 @@ namespace ToyWorldTests.Physics
 
         private static bool CompareVectors(Vector2 v1, Vector2 v2)
         {
-            var maxError = Vector2.One/100000;
+            var maxError = Vector2.One / 100000;
             return (v2 - v1).Length() < maxError.Length();
         }
 
@@ -93,11 +92,11 @@ namespace ToyWorldTests.Physics
         [InlineData(-1)]
         public void TestRotate(float rotationSpeed)
         {
-            var startingDirection = 0;
+            float startingDirection = 0;
 
             var movableMock = new Mock<IForwardMovablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
-            movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
+            movableMock.Setup(x => x.ForwardSpeed).Returns(speed);
             movableMock.Setup(x => x.Direction).Returns(direction);*/
 
             movableMock.SetupAllProperties();
