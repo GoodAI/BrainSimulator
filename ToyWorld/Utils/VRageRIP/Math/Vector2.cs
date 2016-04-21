@@ -45,8 +45,18 @@ namespace VRageMath
         /// <summary>
         /// Initializes a new instance of Vector2.
         /// </summary>
-        /// <param name="x">Initial value for the x-component of the vector.</param><param name="y">Initial value for the y-component of the vector.</param>
+        /// <param name="other">Initial value for the vector.</param>
         public Vector2(Vector2I other)
+        {
+            X = other.X;
+            Y = other.Y;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Vector2.
+        /// </summary>
+        /// <param name="other">Initial value for the vector.</param>
+        public Vector2(Vector3 other)
         {
             X = other.X;
             Y = other.Y;

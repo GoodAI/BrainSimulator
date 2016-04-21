@@ -15,10 +15,10 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        SizeF Size { get; }
+        SizeF Size { get; set; }
 
         /// <summary>
-        /// 
+        /// Determined by PositionCenter and Size.
         /// </summary>
         RectangleF View { get; }
 

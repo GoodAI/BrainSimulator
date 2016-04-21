@@ -23,5 +23,10 @@ namespace GoodAI.ToyWorld.Control
         /// 
         /// </summary>
         new PointF PositionCenter { get; set; }
+
+        /// <summary>
+        /// Equivalent to setting the PositionCenter property (except for the z value).
+        /// </summary>
+        void SetPositionCenter(float x, float y, float z = 0);
     }
 }

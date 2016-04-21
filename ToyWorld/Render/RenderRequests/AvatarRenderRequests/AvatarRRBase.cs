@@ -36,7 +36,7 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
-            PositionCenterV += RelativePositionV;
+            PositionCenterV2 += RelativePositionV;
 
             base.Draw(renderer, world);
         }
