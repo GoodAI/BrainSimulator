@@ -7,7 +7,7 @@ namespace Utils.VRageRIP.Lib.Extensions
     {
         public static T CreateJaggedArray<T>(params int[] lengths)
         {
-            return (T)InitializeJaggedArray(null, 0, lengths);
+            return (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
         }
 
         static object InitializeJaggedArray(Type type, int index, int[] lengths)
