@@ -109,6 +109,9 @@
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
+    <Compile Include="Logger\ILoggerDequeuer.cs" />
+    <Compile Include="Logger\Log.cs" />
+    <Compile Include="Logger\LogMessage.cs" />
     <Compile Include="Render\IRenderRequestBase.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarController.cs" />
@@ -124,7 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LoggerIface\LoggerIface.csproj">
-      <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
+      <Project>{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}</Project>
       <Name>LoggerIface</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">

@@ -67,6 +67,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LoggerIface\LoggerIface.csproj">
+      <Project>{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}</Project>
+      <Name>LoggerIface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Render\Render.csproj">
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
       <Name>Render</Name>
