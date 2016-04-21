@@ -13,11 +13,6 @@ namespace GoodAI.ToyWorld.Control
         int AvatarID { get; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        uint[] Image { get; }
-
-        /// <summary>
         /// Relative position of PositionCenter to avatar's position
         /// </summary>
         PointF RelativePosition { get; set; }

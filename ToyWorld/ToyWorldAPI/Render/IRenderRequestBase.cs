@@ -22,9 +22,21 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         RectangleF View { get; }
 
+
         /// <summary>
         /// 
         /// </summary>
         Size Resolution { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool GatherImage { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        uint[] Image { get; }
     }
 }

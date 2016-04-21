@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -48,6 +47,7 @@ namespace Render.RenderRequests
         {
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
+            Image = new uint[0];
         }
 
         public virtual void Dispose()
@@ -75,7 +75,30 @@ namespace Render.RenderRequests
 
         public System.Drawing.RectangleF View { get { return new System.Drawing.RectangleF(PositionCenter, Size); } }
 
-        public virtual System.Drawing.Size Resolution { get; set; }
+
+        private System.Drawing.Size m_resolution;
+        public virtual System.Drawing.Size Resolution
+        {
+            get
+            {
+                return m_resolution;
+            }
+            set
+            {
+                const int minResolution = 16;
+                const int maxResolution = 4096;
+                if (value.Width < minResolution || value.Height < minResolution)
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be greater than " + minResolution + " pixels.");
+                if (value.Width > maxResolution || value.Height > maxResolution)
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be smaller than " + maxResolution + " pixels.");
+
+                m_resolution = value;
+            }
+        }
+
+
+        public bool GatherImage { get; set; }
+        public uint[] Image { get; private set; }
 
         #endregion
 
@@ -191,6 +214,16 @@ namespace Render.RenderRequests
 
                     m_quad.Draw();
                 }
+            }
+
+
+            // Gather data to host mem
+            if (GatherImage)
+            {
+                if (Image.Length < Resolution.Width * Resolution.Height)
+                    Image = new uint[Resolution.Width * Resolution.Height];
+
+                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
             }
         }
     }
