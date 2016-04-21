@@ -29,6 +29,10 @@ namespace GoodAI.ToyWorldAPI.Logger
         {
             LogMessage message; 
             m_queue.TryDequeue(out message);
+            if (message == null)
+            {
+                return null;
+            }
             return new Tuple<string, object[], Exception>(
                 m_severityNames[(int)message.Severity] + message.Template,
                 message.Objects,
