@@ -55,19 +55,19 @@ namespace ToyWorldTests.Physics
                 switch ((int)direction)
                 {
                     case 0:
-                        Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
-                        break;
-                    case 90:
-                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
-                        break;
-                    case 180:
                         Assert.True(CompareVectors(movable.Position, new Vector2(5, 6)));
                         break;
-                    case 270:
+                    case 90:
                         Assert.True(CompareVectors(movable.Position, new Vector2(4, 5)));
                         break;
+                    case 180:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
+                        break;
+                    case 270:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
+                        break;
                     case 135:
-                        Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
+                        Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
                         break;
                 }
             }
@@ -75,7 +75,7 @@ namespace ToyWorldTests.Physics
             {
                 if (direction == 135)
                 {
-                    Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
+                    Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
                 }
             }
         }

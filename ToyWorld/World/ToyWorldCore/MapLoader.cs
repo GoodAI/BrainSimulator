@@ -17,8 +17,8 @@ namespace World.ToyWorldCore
         /// <summary>
         /// Loads map from specified path, creates tiles and objects and put them into new Atlas object.
         /// </summary>
-        /// <param name="map"></param>
-        /// <param name="tilesetTable"></param>
+        /// <param name="map">Deserialized .tmx file</param>
+        /// <param name="tilesetTable">Table of numbers of game object and theirs classes</param>
         /// <param name="initializer"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
         public static Atlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)

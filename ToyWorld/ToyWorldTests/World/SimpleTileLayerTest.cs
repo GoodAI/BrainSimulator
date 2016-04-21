@@ -39,9 +39,9 @@ namespace ToyWorldTests.World
                 };
 
             m_tileSequenceArray = new Tile[] {
-                row0[0], row0[1], row0[2],
-                row1[0], row1[1], row1[2],
-                row2[0], row2[1], row2[2],
+                row0[0], row1[0], row2[0],
+                row0[1], row1[1], row2[1],
+                row0[2], row1[2], row2[2],
                 };
 
             m_simpleTileLayer = new SimpleTileLayer(LayerType.Obstacle, 3, 3)
