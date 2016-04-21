@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using VRageMath;
 using World.GameActors.GameObjects;
 using World.Physics;
 
 namespace World.ToyWorldCore
 {
-    public class SimpleObjectLayer : IObjectLayer 
+    public class SimpleObjectLayer : IObjectLayer
     {
         private List<GameObject> GameObjects { get; set; }
 
@@ -46,6 +45,6 @@ namespace World.ToyWorldCore
         public List<GameObject> GetAllObjects()
         {
             return GameObjects;
+        }
     }
-}
 }

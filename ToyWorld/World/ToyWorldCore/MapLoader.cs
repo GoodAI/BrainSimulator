@@ -4,9 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using TmxMapSerializer.Elements;
-using TmxMapSerializer.Serializer;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
@@ -36,13 +34,13 @@ namespace World.ToyWorldCore
 
                 if (layerName.Contains("Object"))
                 {
-                    var objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
+                    ObjectGroup objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
                         FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets, map.Tilewidth, map.Tileheight, map.Height));
                 }
                 else
                 {
-                    var tileLayer = map.Layers.First(x => x.Name == layerName);
+                    Layer tileLayer = map.Layers.First(x => x.Name == layerName);
                     if (tileLayer == null)
                         throw new Exception("Layer " + layerName + " not found in given .tmx file!");
                     atlas.TileLayers.Add(
@@ -73,7 +71,7 @@ namespace World.ToyWorldCore
             // avatars list
             IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
 
-            foreach (var avatar in avatars)
+            foreach (TmxObject avatar in avatars)
             {
                 var initialPosition = new Vector2(avatar.X, avatar.Y);
                 var size = new Vector2(avatar.Width, avatar.Height);
@@ -108,7 +106,7 @@ namespace World.ToyWorldCore
         /// <param name="tileHeight"></param>
         private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight, int worldHeight)
         {
-            foreach (var tmxObject in tmxObjects)
+            foreach (TmxObject tmxObject in tmxObjects)
             {
                 tmxObject.X /= tileWidth;
                 tmxObject.X = worldHeight - tmxObject.X;
@@ -127,28 +125,28 @@ namespace World.ToyWorldCore
             Action<GameActor> initializer)
         {
             SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
-            var lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            string[] lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
-            var assembly = Assembly.GetExecutingAssembly();
-            var cachedTypes = assembly.GetTypes();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Type[] cachedTypes = assembly.GetTypes();
             for (int i = 0; i < lines.Length; i++)
             {
-                var tiles = lines[i].Split(',');
+                string[] tiles = lines[i].Split(',');
                 for (int j = 0; j < tiles.Length; j++)
                 {
                     if (tiles[j].Trim() == "")
                         continue;
-                    var tileNumber = int.Parse(tiles[j]);
+                    int tileNumber = int.Parse(tiles[j]);
                     if (staticTilesContainer.ContainsKey(tileNumber))
                     {
                         newSimpleLayer.Tiles[j][layer.Height - 1 - i] = staticTilesContainer[tileNumber];
                     }
                     else
                     {
-                        var tileName = tilesetTable.TileName(tileNumber);
+                        string tileName = tilesetTable.TileName(tileNumber);
                         if (tileName != null)
                         {
-                            var newTile = CreateInstance(tileName, tileNumber, cachedTypes);
+                            Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes);
                             initializer.Invoke(newTile);
                             newSimpleLayer.Tiles[i][j] = newTile;
                             if (newTile is StaticTile)

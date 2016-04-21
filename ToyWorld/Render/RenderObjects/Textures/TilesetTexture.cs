@@ -21,7 +21,7 @@ namespace Render.RenderObjects.Textures
             Debug.Assert(texPath != null && texPath.Length > 0);
 
 
-            foreach (var path in texPath)
+            foreach (string path in texPath)
             {
                 if (path == null)
                 {

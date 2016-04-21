@@ -15,16 +15,18 @@ namespace Utils.VRageRIP.Lib.Extensions
 
         static object InitializeJaggedArray(Type type, int index, int[] lengths)
         {
+            MyContract.Requires<ArgumentNullException>(type != null, "Type cannot be null!");
+
             Array array = Array.CreateInstance(type, lengths[index]);
             Type elementType = type.GetElementType();
 
-            if (elementType != null)
+            if (elementType == null)
+                return array;
+
+            for (int i = 0; i < lengths[index]; i++)
             {
-                for (int i = 0; i < lengths[index]; i++)
-                {
-                    array.SetValue(
-                        InitializeJaggedArray(elementType, index + 1, lengths), i);
-                }
+                array.SetValue(
+                    InitializeJaggedArray(elementType, index + 1, lengths), i);
             }
 
             return array;

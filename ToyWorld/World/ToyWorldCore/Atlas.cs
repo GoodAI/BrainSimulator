@@ -7,6 +7,7 @@ using Utils;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
+using World.GameActors;
 
 namespace World.ToyWorldCore
 {
@@ -35,7 +36,7 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="layerType"></param>
         /// <returns></returns>
-        object GetLayer(LayerType layerType);
+        ILayer<GameActor> GetLayer(LayerType layerType);
 
         List<Character> Characters { get; }
 
@@ -83,14 +84,14 @@ namespace World.ToyWorldCore
             StaticTilesContainer = new Dictionary<int, StaticTile>();
         }
 
-        public object GetLayer(LayerType layerType)
+        public ILayer<GameActor> GetLayer(LayerType layerType)
         {
-            if (layerType == LayerType.Object 
+            if (layerType == LayerType.Object
                 || layerType == LayerType.ForegroundObject)
             {
-                return ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
+                return (ILayer<GameActor>)ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
             }
-            return TileLayers.First(x => x.LayerType == layerType);
+            return (ILayer<GameActor>)TileLayers.First(x => x.LayerType == layerType);
         }
 
         public bool AddAvatar(IAvatar avatar)
