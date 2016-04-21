@@ -44,12 +44,13 @@ namespace World.ToyWorldCore
             int top = Math.Min(rectangle.Bottom, Math.Max(Tiles[0].Length, rectangle.Bottom - rectangle.Height));
 
             int idx = 0;
+            int defaultTileOffset = LayerType == LayerType.Background ? 259 : 0;
 
             // Rows before start of map
             for (int j = rectangle.Top; j < bot; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
-                    m_tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = defaultTileOffset;
             }
 
             // Rows inside of map
@@ -57,7 +58,7 @@ namespace World.ToyWorldCore
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < left; i++)
-                    m_tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = defaultTileOffset;
 
                 // Tiles inside of map
                 for (var i = left; i < right; i++)
@@ -66,19 +67,19 @@ namespace World.ToyWorldCore
                     if (tile != null)
                         m_tileTypes[idx++] = tile.TileType;
                     else
-                        m_tileTypes[idx++] = 0;
+                        m_tileTypes[idx++] = defaultTileOffset;
                 }
 
                 // Tiles after end of map
                 for (int i = right; i < rectangle.Right; i++)
-                    m_tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = defaultTileOffset;
             }
 
             // Rows after end of map
             for (int j = top; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < rectangle.Right; i++)
-                    m_tileTypes[idx++] = 0;
+                    m_tileTypes[idx++] = defaultTileOffset;
             }
 
             return m_tileTypes;
