@@ -21,8 +21,6 @@ namespace Render.RenderRequests
 
         public int AvatarID { get; protected set; }
 
-        public uint[] Image { get; private set; }
-
         public System.Drawing.PointF RelativePosition
         {
             get { return new System.Drawing.PointF(RelativePositionV.X, RelativePositionV.Y); }
@@ -33,19 +31,14 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase renderer, ToyWorld world)
         {
-            Image = new uint[Resolution.Width * Resolution.Height];
-
             base.Init(renderer, world);
         }
 
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
-            PositionCenterV += RelativePositionV;
+            PositionCenterV2 += RelativePositionV;
 
             base.Draw(renderer, world);
-
-            // Gather data to host mem
-            GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
         }
     }
 }

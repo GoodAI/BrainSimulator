@@ -52,7 +52,7 @@ namespace Render.RenderRequests
 
             // Setup params
             var avatar = world.GetAvatar(AvatarID);
-            PositionCenterV =
+            PositionCenterV2 =
                 avatar.Position
                 // Offset so that the FofOffset interval (-1,1) spans the entire Fov view and doesn't reach outside of it
             + ((Vector2)FovAvatarRenderRequest.Size - SizeV) / 2

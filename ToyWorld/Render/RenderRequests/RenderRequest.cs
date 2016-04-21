@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -26,9 +25,18 @@ namespace Render.RenderRequests
         private int m_mvpPos;
 
 
-        protected Vector2 PositionCenterV { get; set; }
+        #region View control properties
+
+        /// <summary>
+        /// The position of the center of view.
+        /// </summary>
+        protected Vector3 PositionCenterV { get; set; }
+        /// <summary>
+        /// The position of the center of view. Equivalent to PositionCenterV (except for the z value).
+        /// </summary>
+        protected Vector2 PositionCenterV2 { get { return new Vector2(PositionCenterV); } set { PositionCenterV = new Vector3(value, PositionCenterV.Z); } }
         protected Vector2 SizeV { get; set; }
-        protected RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = PositionCenterV }; } }
+        protected RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
         private Rectangle GridView
         {
@@ -43,11 +51,16 @@ namespace Render.RenderRequests
             }
         }
 
+        #endregion
+
+        #region Genesis
 
         public RenderRequest()
         {
+            PositionCenterV = new Vector3(0, 0, 20);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
+            Image = new uint[0];
         }
 
         public virtual void Dispose()
@@ -58,29 +71,56 @@ namespace Render.RenderRequests
             m_quad.Dispose();
         }
 
+        #endregion
 
         #region IRenderRequestBase overrides
 
         public System.Drawing.PointF PositionCenter
         {
             get { return new System.Drawing.PointF(PositionCenterV.X, PositionCenterV.Y); }
-            protected set { PositionCenterV = new Vector2(value.X, value.Y); }
+            protected set { PositionCenterV2 = new Vector2(value.X, value.Y); }
         }
 
         public System.Drawing.SizeF Size
         {
             get { return new System.Drawing.SizeF(SizeV.X, SizeV.Y); }
-            protected set { SizeV = new Vector2(value.Width, value.Height); }
+            set
+            {
+                if (value.Width <= 0 || value.Height <= 0)
+                    throw new ArgumentOutOfRangeException("value", "Cannot use non-positive view size for a render request. Value: " + value);
+
+                SizeV = new Vector2(value.Width, value.Height);
+            }
         }
 
         public System.Drawing.RectangleF View { get { return new System.Drawing.RectangleF(PositionCenter, Size); } }
 
-        public virtual System.Drawing.Size Resolution { get; set; }
+
+        private System.Drawing.Size m_resolution;
+        public System.Drawing.Size Resolution
+        {
+            get { return m_resolution; }
+            set
+            {
+                const int minResolution = 16;
+                const int maxResolution = 4096;
+                if (value.Width < minResolution || value.Height < minResolution)
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be greater than " + minResolution + " pixels.");
+                if (value.Width > maxResolution || value.Height > maxResolution)
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be smaller than " + maxResolution + " pixels.");
+
+                m_resolution = value;
+            }
+        }
+
+
+        public bool GatherImage { get; set; }
+        public uint[] Image { get; private set; }
 
         #endregion
 
 
-        protected Matrix GetViewMatrix(Vector3 rotation, Vector3 translation, float zoom = 1)
+        protected Matrix GetViewMatrix(Vector3 rotation, Vector3 cameraPos, Vector3 cameraDirection = default(Vector3))
         {
             var viewMatrix = Matrix.Identity;
 
@@ -93,9 +133,9 @@ namespace Render.RenderRequests
             if (rotation.Z > 0)
                 viewMatrix *= Matrix.CreateRotationY(rotation.Z);
 
-            Vector3 tar = new Vector3(translation.X, translation.Y, 0);
-            translation.Z = 20 / MathHelper.Clamp(zoom, 0.1f, 10f);
-            viewMatrix *= Matrix.CreateLookAt(translation, tar, Vector3.Up);
+            if (cameraDirection == default(Vector3))
+                cameraDirection = Vector3.Forward;
+            viewMatrix *= Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection, Vector3.Up);
 
             return viewMatrix;
         }
@@ -153,7 +193,7 @@ namespace Render.RenderRequests
             // World transform -- move center to view center
             transform *= Matrix.CreateTranslation(new Vector3(GridView.Center));
             // View and proj transforms
-            m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, new Vector3(PositionCenterV));
+            m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, PositionCenterV);
             m_viewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
 
@@ -191,6 +231,16 @@ namespace Render.RenderRequests
 
                     m_quad.Draw();
                 }
+            }
+
+
+            // Gather data to host mem
+            if (GatherImage)
+            {
+                if (Image.Length < Resolution.Width * Resolution.Height)
+                    Image = new uint[Resolution.Width * Resolution.Height];
+
+                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
             }
         }
     }

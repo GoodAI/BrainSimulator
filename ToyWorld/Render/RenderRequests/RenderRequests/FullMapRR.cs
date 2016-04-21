@@ -12,11 +12,9 @@ namespace Render.RenderRequests
     internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
         #region Genesis
-
         #endregion
 
         #region IFullMapRR overrides
-
         #endregion
 
         #region RenderRequestBase overrides
@@ -24,7 +22,7 @@ namespace Render.RenderRequests
         public override void Init(RendererBase renderer, ToyWorld world)
         {
             SizeV = (Vector2)world.Size;
-            PositionCenterV = SizeV * 0.5f;
+            PositionCenterV2 = SizeV * 0.5f;
 
             base.Init(renderer, world);
         }

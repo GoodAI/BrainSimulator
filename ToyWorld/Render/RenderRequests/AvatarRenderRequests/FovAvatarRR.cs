@@ -16,7 +16,6 @@ namespace Render.RenderRequests
         #endregion
 
         #region IFovAvatarRR overrides
-
         #endregion
 
         #region RenderRequestBase overrides
@@ -31,7 +30,7 @@ namespace Render.RenderRequests
         public override void Draw(RendererBase renderer, ToyWorld world)
         {
             var avatar = world.GetAvatar(AvatarID);
-            PositionCenterV = avatar.Position;
+            PositionCenterV2 = avatar.Position;
 
             base.Draw(renderer, world);
         }
