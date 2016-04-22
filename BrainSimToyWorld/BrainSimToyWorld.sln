@@ -41,6 +41,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapSerializer", "..\ToyWorld\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj", "{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimToyWorld", "Module\BrainSimToyWorld.csproj", "{8C381B5A-3FD7-4311-9C42-F8115587E5FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6} = {F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
