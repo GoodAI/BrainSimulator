@@ -2,14 +2,14 @@
 
 namespace Logger
 {
-    public class LogMessage
+    public class TWLogMessage
     {
-        public Severity Severity { get; private set; }
+        public TWSeverity Severity { get; private set; }
         public string Template { get; private set; }
         public object[] Objects { get; private set; }
         public Exception Exception { get; private set; }
 
-        public LogMessage(Severity severity, string template, object[] objects, Exception exception)
+        public TWLogMessage(TWSeverity severity, string template, object[] objects, Exception exception)
         {
             Severity = severity;
             Template = template;

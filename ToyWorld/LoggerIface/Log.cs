@@ -25,7 +25,7 @@ namespace GoodAI.Logging
         /// </summary>
         public static ILog Instance
         {
-            get { return m_log ?? (m_log = new Log()); }
+            get { return m_log ?? (m_log = (LogReader)LogReader.Instance); }
         }
     }
 }

@@ -41,16 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractLog.cs" />
+    <Compile Include="ILogReader.cs" />
     <Compile Include="ILog.cs" />
+    <Compile Include="LogReader.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="LoggerExtensions.cs" />
+    <Compile Include="LogMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Logger\LoggerIface.csproj">
-      <Project>{97bd8cc4-ec76-44ef-b774-48062454f4fc}</Project>
-      <Name>LoggerIface</Name>
-    </ProjectReference>
+    <Compile Include="Severity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
