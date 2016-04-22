@@ -341,7 +341,7 @@
     <property name="ForwardSpeed" value="0.1"/>
    </properties>
   </object>
-  <object id="52" name="Fast Ball" type="Ball" gid="497" x="209.167" y="139.833" width="12" height="12" rotation="12">
+  <object id="52" name="Fast Ball" type="Ball" gid="497" x="397.167" y="175.833" width="12" height="12" rotation="175">
    <properties>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
