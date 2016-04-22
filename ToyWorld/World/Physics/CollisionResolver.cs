@@ -55,13 +55,11 @@ namespace World.Physics
             }
             else if(physicalEntity.TileCollision == TileCollision.Bounce)
             {
-                Bounce(physicalEntity, residueSpeed);
+                Bounce(physicalEntity, residueSpeed, 10);
             }
         }
 
-
-        private int m_recursionCounter = 0;
-        private void Bounce(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed)
+        private void Bounce(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed, int maxDepth)
         {
             Vector2 originalPosition = physicalEntity.Position;
             float originalDirection = physicalEntity.Direction;
@@ -98,11 +96,10 @@ namespace World.Physics
             physicalEntity.Position = bestPosition;
             physicalEntity.Direction = bestDirection;
 
-            if (maxDistance < residueSpeed - NEGLIGIBLE_DISTANCE && m_recursionCounter < 10)
+            if (maxDistance < residueSpeed - NEGLIGIBLE_DISTANCE && maxDepth > 0)
             {
-                Bounce(physicalEntity, residueSpeed - maxDistance);
+                Bounce(physicalEntity, residueSpeed - maxDistance, maxDepth - 1);
             }
-            m_recursionCounter = 0;
         }
 
         private void Slide(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed)
