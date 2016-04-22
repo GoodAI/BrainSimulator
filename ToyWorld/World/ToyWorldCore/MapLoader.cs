@@ -37,15 +37,37 @@ namespace World.ToyWorldCore
                 {
                     ObjectGroup objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets, map.Tilewidth, map.Tileheight, map.Height));
+                        FillObjectLayer(
+                        atlas,
+                        objectLayer,
+                        layerType,
+                        initializer,
+                        map.Tilesets,
+                        map.Tilewidth,
+                        map.Tileheight,
+                        map.Height
+                        ));
                 }
                 else
                 {
-                    Layer tileLayer = map.Layers.First(x => x.Name == layerName);
-                    if (tileLayer == null)
+                    Layer tileLayer;
+                    try
+                    {
+                        tileLayer = map.Layers.First(x => x.Name == layerName);
+                    }
+                    catch (Exception)
+                    {
+
                         throw new Exception("Layer " + layerName + " not found in given .tmx file!");
+                    }
+                        
                     atlas.TileLayers.Add(
-                        FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable, initializer)
+                        FillTileLayer(
+                        tileLayer,
+                        layerType,
+                        atlas.StaticTilesContainer,
+                        tilesetTable,
+                        initializer)
                         );
                 }
             }
