@@ -1,16 +1,8 @@
 ﻿using System;
+using Logger;
 
 namespace GoodAI.Logging
 {
-    public enum Severity
-    {
-        Error,
-        Warn,
-        Info,
-        Debug,
-        Verbose
-    }
-
     public interface ILog
     {
         /// <summary>

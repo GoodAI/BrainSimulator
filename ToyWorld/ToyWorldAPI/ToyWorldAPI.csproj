@@ -109,9 +109,6 @@
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
-    <Compile Include="Logger\ILoggerDequeuer.cs" />
-    <Compile Include="Logger\Log.cs" />
-    <Compile Include="Logger\LogMessage.cs" />
     <Compile Include="Render\IRenderRequestBase.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarController.cs" />
@@ -124,16 +121,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="APIDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LoggerIface\LoggerIface.csproj">
-      <Project>{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}</Project>
-      <Name>LoggerIface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{772B1188-A00D-45FC-B352-834227ADAE96}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -61,7 +61,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TW API", "TW API", "{FF7EF0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapSerializer", "TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj", "{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerIface", "LoggerIface\LoggerIface.csproj", "{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "LoggerIface\Logger.csproj", "{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerIface", "Logger\LoggerIface.csproj", "{97BD8CC4-EC76-44EF-B774-48062454F4FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -221,6 +223,14 @@ Global
 		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|1 BrainSim +CUDA.Build.0 = Release|Any CPU
 		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|2 BrainSim -CUDA.ActiveCfg = Release|Any CPU
 		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|2 BrainSim -CUDA.Build.0 = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|1 BrainSim +CUDA.ActiveCfg = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|1 BrainSim +CUDA.Build.0 = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|2 BrainSim -CUDA.ActiveCfg = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|2 BrainSim -CUDA.Build.0 = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|1 BrainSim +CUDA.ActiveCfg = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|1 BrainSim +CUDA.Build.0 = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|2 BrainSim -CUDA.ActiveCfg = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|2 BrainSim -CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -247,5 +257,6 @@ Global
 		{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6} = {FF7EF011-D33E-4B6E-9117-DBF85E17EE40}
 		{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9} = {91CAB9D9-3DFD-48E9-B2D1-1287AB378D9B}
 		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210} = {91CAB9D9-3DFD-48E9-B2D1-1287AB378D9B}
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC} = {FF7EF011-D33E-4B6E-9117-DBF85E17EE40}
 	EndGlobalSection
 EndGlobal

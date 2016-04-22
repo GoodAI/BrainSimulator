@@ -190,6 +190,10 @@
     <Compile Include="WorldInterfaces\IWorld.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LoggerIface\Logger.csproj">
+      <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
       <Project>{7a4d6fa1-e44b-40e2-9de8-3606dbc657d9}</Project>
       <Name>TmxMapSerializer</Name>

@@ -124,6 +124,7 @@
     <Compile Include="TestContainerConfiguration.cs" />
     <Compile Include="TestUtils.cs" />
     <Compile Include="Utils\CircularListTests.cs" />
+    <Compile Include="Utils\LogTest.cs" />
     <Compile Include="World\AtlasTests.cs" />
     <Compile Include="World\AutoupdateRegisterTests.cs" />
     <Compile Include="World\MapLoaderTest.cs" />
