@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using VRageMath;
 
 namespace World.Physics
@@ -17,6 +16,7 @@ namespace World.Physics
         private const int BINARY_SEARCH_ITERATIONS = 16;
         private const float X_DIRECTION = (float) Math.PI / 2;
         private const float Y_DIRECTION = 0;
+        private const float NEGLIGIBLE_DISTANCE = 0.001f;
 
         private Random random = new Random(79);
 
@@ -47,13 +47,73 @@ namespace World.Physics
             // get back to last free position in direction counter to original direction
             TileFreePositionBinarySearch(physicalEntity, physicalEntity.ForwardSpeed, physicalEntity.Direction);
 
+            float residueSpeed = speed - Vector2.Distance(previousPosition, physicalEntity.Position);
+
+            if (physicalEntity.TileCollision == TileCollision.Slide)
+            {
+                Slide(physicalEntity, residueSpeed);
+            }
+            else if(physicalEntity.TileCollision == TileCollision.Bounce)
+            {
+                Bounce(physicalEntity, residueSpeed);
+            }
+        }
+
+
+        private int m_recursionCounter = 0;
+        private void Bounce(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed)
+        {
+            Vector2 originalPosition = physicalEntity.Position;
+            float originalDirection = physicalEntity.Direction;
+
+            float maxDistance = 0;
+            Vector2 bestPosition = originalPosition;
+            float bestDirection = originalDirection;
+
+            for (int i = 0; i < 2; i++)
+            {
+                float newDirection;
+                if (i == 0)
+                {
+                    newDirection = MathHelper.WrapAngle(2f * MathHelper.Pi - physicalEntity.Direction);
+                }
+                else
+                {
+                    newDirection = MathHelper.WrapAngle(3f * MathHelper.Pi - physicalEntity.Direction);
+                }
+
+                TileFreePositionBinarySearch(physicalEntity, residueSpeed, newDirection);
+
+                float distance = Vector2.Distance(originalPosition, physicalEntity.Position);
+                if (maxDistance < distance)
+                {
+                    maxDistance = distance;
+                    bestPosition = physicalEntity.Position;
+                    bestDirection = newDirection;
+                }
+
+                physicalEntity.Position = originalPosition;
+            }
+
+            physicalEntity.Position = bestPosition;
+            physicalEntity.Direction = bestDirection;
+
+            if (maxDistance < residueSpeed - NEGLIGIBLE_DISTANCE && m_recursionCounter < 10)
+            {
+                Bounce(physicalEntity, residueSpeed - maxDistance);
+            }
+            m_recursionCounter = 0;
+        }
+
+        private void Slide(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed)
+        {
             Vector2 freePosition = physicalEntity.Position;
             float directionRads = physicalEntity.Direction;
-            float residueSpeed = speed - Vector2.Distance(previousPosition, freePosition);
+
             float xSpeed = (float)Math.Sin(directionRads) * residueSpeed;
             float ySpeed = (float)Math.Cos(directionRads) * residueSpeed;
             // position before move
-            
+
             // try to move orthogonally left/right and up/down
             TileFreePositionBinarySearch(physicalEntity, xSpeed, X_DIRECTION);
             TileFreePositionBinarySearch(physicalEntity, ySpeed, Y_DIRECTION);

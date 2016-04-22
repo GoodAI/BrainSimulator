@@ -85,6 +85,11 @@ namespace World.Physics
             Radius = radius;
         }
 
+        public Circle(Vector2 size)
+        {
+            Radius = (size.X + size.Y) / 4;
+        }
+
         public override float PossibleCollisionDistance()
         {
             return Radius;

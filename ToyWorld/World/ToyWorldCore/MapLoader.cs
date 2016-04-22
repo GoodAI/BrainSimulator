@@ -55,12 +55,12 @@ namespace World.ToyWorldCore
                     {
                         tileLayer = map.Layers.First(x => x.Name == layerName);
                     }
-                    catch (Exception)
+                    catch (InvalidOperationException)
                     {
 
-                        throw new Exception("Layer " + layerName + " not found in given .tmx file!");
+                        throw new ArgumentException("Layer " + layerName + " not found in given .tmx file!");
                     }
-                        
+
                     atlas.TileLayers.Add(
                         FillTileLayer(
                         tileLayer,
@@ -97,29 +97,82 @@ namespace World.ToyWorldCore
 
             foreach (TmxObject avatar in avatars)
             {
-                var initialPosition = new Vector2(avatar.X, avatar.Y);
-                var size = new Vector2(avatar.Width, avatar.Height);
-                float rotation = avatar.Rotation;
-
-                int originalGid = avatar.Gid;
-                Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
-                string tilesetName = nameNewGid.Item1;
-                int newGid = nameNewGid.Item2;
-
-                var gameAvatar = new Avatar(tilesetName, newGid, avatar.Name, avatar.Id, initialPosition, size, rotation);
-
-                // this is magic
-                if (avatar.Properties != null)
-                {
-                    SetGameObjectProperties(avatar.Properties.PropertiesList, gameAvatar);
-                }
-
+                var gameAvatar = LoadAgent(avatar, tilesets);
                 initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);
             }
 
+            IEnumerable<TmxObject> others = objectLayer.TmxMapObjects.Except(avatars);
+
+            foreach (TmxObject tmxObject in others)
+            {
+                var character = LoadCharacter(tmxObject, tilesets);
+                initializer.Invoke(character);
+                simpleObjectLayer.AddGameObject(character);
+                atlas.Characters.Add(character);
+            }
+
             return simpleObjectLayer;
+        }
+
+        private static Avatar LoadAgent(TmxObject avatar, List<Tileset> tilesets)
+        {
+            var initialPosition = new Vector2(avatar.X, avatar.Y);
+            var size = new Vector2(avatar.Width, avatar.Height);
+            float rotation = avatar.Rotation;
+
+            int originalGid = avatar.Gid;
+            Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
+            string tilesetName = nameNewGid.Item1;
+            int newGid = nameNewGid.Item2;
+
+            var gameAvatar = new Avatar(tilesetName, newGid, avatar.Name, avatar.Id, initialPosition, size, rotation);
+
+            // this is magic
+            if (avatar.Properties != null)
+            {
+                SetGameObjectProperties(avatar.Properties.PropertiesList, gameAvatar);
+            }
+
+            return gameAvatar;
+        }
+
+        private static Character LoadCharacter(TmxObject tmxObject, List<Tileset> tilesets)
+        {
+            var initialPosition = new Vector2(tmxObject.X, tmxObject.Y);
+            var size = new Vector2(tmxObject.Width, tmxObject.Height);
+            float rotation = tmxObject.Rotation;
+
+            int originalGid = tmxObject.Gid;
+            Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
+            string tilesetName = nameNewGid.Item1;
+            int newGid = nameNewGid.Item2;
+
+            Type objectType = Type.GetType("World.GameActors.GameObjects." +tmxObject.Type);
+
+            if (objectType == null)
+            {
+                throw new ArgumentException("MapLoader cannot find \"" + tmxObject.Type + "\" class.");
+            }
+
+            var gameObject = (Character)Activator.CreateInstance(
+                objectType,
+                tilesetName,
+                newGid,
+                tmxObject.Name,
+                initialPosition,
+                size,
+                rotation
+                );
+
+            // this is magic
+            if (tmxObject.Properties != null)
+            {
+                SetGameObjectProperties(tmxObject.Properties.PropertiesList, gameObject);
+            }
+
+            return gameObject;
         }
 
         /// <summary>

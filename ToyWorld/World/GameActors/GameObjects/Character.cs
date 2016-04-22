@@ -1,8 +1,9 @@
-﻿using GoodAI.ToyWorld.Control;
-using World.GameActors.GameObjects;
+﻿using System;
+using System.Reflection;
+using VRageMath;
 using World.Physics;
 
-namespace World.Physics
+namespace World.GameActors.GameObjects
 {
     public interface ICharacter : IGameObject, IForwardMovable
     {
@@ -59,9 +60,22 @@ namespace World.Physics
             }
         }
 
-        public Character(string tilesetName, int tileID)
-            : base(tilesetName, tileID)
+        public Character(
+            string tilesetName,
+            int tileId,
+            string name,
+            Vector2 position,
+            Vector2 size,
+            float direction,
+            TileCollision tileCollision = TileCollision.Slide,
+            Type shapeType = null
+            )
+            : base(tilesetName, tileId, name)
         {
+            shapeType = shapeType ?? typeof(Circle);
+            ConstructorInfo ctor = shapeType.GetConstructor(new[] {typeof(Vector2)});
+            Shape shape = (Shape)ctor.Invoke(new object[] {size});
+            PhysicalEntity = new ForwardMovablePhysicalEntity(position, shape, direction: direction, tileCollision: tileCollision);
         }
     }
 }

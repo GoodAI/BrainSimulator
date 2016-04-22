@@ -146,6 +146,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameActors\GameObjects\Ball.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\Fruit.cs" />
     <Compile Include="GameActors\Tiles\Tree.cs" />

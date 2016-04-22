@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace GoodAI.ToyWorld.Control
+namespace World.GameActors.GameObjects
 {
     /// <summary>
     /// Object which implement this interface can be controlled by AvatarController.
