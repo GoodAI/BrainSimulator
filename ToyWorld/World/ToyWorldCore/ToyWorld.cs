@@ -73,10 +73,17 @@ namespace World.ToyWorldCore
             {
                 m_collisionResolver.ResolveCollision(avatar.PhysicalEntity);
             }
+            foreach (ICharacter character in Atlas.Characters)
+            {
+                m_collisionResolver.ResolveCollision(character.PhysicalEntity);
+            }
         }
 
         private void UpdateCharacters()
         {
+            List<ICharacter> characters = Atlas.Characters;
+            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = characters.Select(x => x.PhysicalEntity).ToList();
+            Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
         private void UpdateAvatars()
