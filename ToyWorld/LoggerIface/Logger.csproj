@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractLog.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="LoggerExtensions.cs" />

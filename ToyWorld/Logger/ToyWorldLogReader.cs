@@ -13,13 +13,13 @@ namespace Logger
 
             while(true){
                 LogMessage message;
-                m_queue.TryDequeue(out message);
+                Queue.TryDequeue(out message);
                 if (message == null)
                 {
                     break;
                 }
                 var messageTuple = new Tuple<string, object[], Exception>(
-                    "<" + m_severityNames[(int) message.Severity]+"> " + message.Template,
+                    "<" + SeverityNames[(int) message.Severity]+"> " + message.Template,
                     message.Objects,
                     message.Exception
                     );

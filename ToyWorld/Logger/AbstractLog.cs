@@ -4,8 +4,8 @@ namespace Logger
 {
     public class AbstractLog
     {
-        protected readonly ConcurrentQueue<LogMessage> m_queue = new ConcurrentQueue<LogMessage>();
+        protected readonly ConcurrentQueue<LogMessage> Queue = new ConcurrentQueue<LogMessage>();
 
-        protected readonly string[] m_severityNames = typeof(Severity).GetEnumNames();
+        protected readonly string[] SeverityNames = typeof(Severity).GetEnumNames();
     }
 }

@@ -12,12 +12,12 @@ namespace GoodAI.Logging
 
         public void Add(Severity severity, string template, params object[] objects)
         {
-            m_queue.Enqueue(new LogMessage(severity, template, objects, null));
+            Queue.Enqueue(new LogMessage(severity, template, objects, null));
         }
 
         public void Add(Severity severity, Exception ex, string template, params object[] objects)
         {
-            m_queue.Enqueue(new LogMessage(severity, template, objects, ex));
+            Queue.Enqueue(new LogMessage(severity, template, objects, ex));
         }
 
         /// <summary>
