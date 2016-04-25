@@ -6,7 +6,7 @@ namespace Render.RenderObjects.Effects
     internal class NoiseEffect : EffectBase
     {
         public NoiseEffect()
-            : base("Basic.vert", "Noise.frag", fragAddendum: GetNoiseSrcStream("noise3D.glsl"))
+            : base("Noise.vert", "Noise.frag", fragAddendum: GetNoiseSrcStream("Noise.perlinNoise3D.glsl"))
         { }
 
 

@@ -77,9 +77,9 @@
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
-    <Compile Include="RenderObjects\Effects\NoEffectOffset.cs" />
-    <Compile Include="RenderObjects\Effects\NoEffectTex.cs" />
-    <Compile Include="RenderObjects\Effects\NoEffect.cs" />
+    <Compile Include="RenderObjects\Effects\Other\NoEffectOffset.cs" />
+    <Compile Include="RenderObjects\Effects\Other\NoEffectTex.cs" />
+    <Compile Include="RenderObjects\Effects\Other\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FofAvatarRR.cs" />
@@ -121,6 +121,9 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.vert" />
+    <None Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
+    <None Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
     <None Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
     <None Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
   </ItemGroup>
