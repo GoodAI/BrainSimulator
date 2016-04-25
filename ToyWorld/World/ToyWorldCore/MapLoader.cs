@@ -64,7 +64,8 @@ namespace World.ToyWorldCore
             int worldHeight
             )
         {
-            NormalizeObjectPositions(objectLayer.TmxMapObjects, tileWidth, tileHeight, worldHeight);
+            objectLayer.TmxMapObjects.ForEach(x => NormalizeObjectPosition(x, tileWidth, tileHeight, worldHeight));
+            objectLayer.TmxMapObjects.ForEach(TransformObjectPosition);
 
             //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
@@ -100,23 +101,33 @@ namespace World.ToyWorldCore
         }
 
         /// <summary>
+        /// Transforms from rotation around left lower corner to rotation around center
+        /// </summary>
+        /// <param name="tmxObject"></param>
+        private static void TransformObjectPosition(TmxObject tmxObject)
+        {
+            Vector2 rotationCenter = new Vector2(tmxObject.X, tmxObject.Y);
+            Vector2 size = new Vector2(tmxObject.Width / 2, tmxObject.Height / 2);
+            Vector2 newPosition = RotateAroundCenter(rotationCenter + size, rotationCenter, tmxObject.Rotation);
+            tmxObject.X = newPosition.X;
+            tmxObject.Y = newPosition.Y;
+        }
+
+        /// <summary>
         /// From absolute position in pixels to side of tile = 1
         /// </summary>
-        /// <param name="tmxObjects"></param>
+        /// <param name="tmxObject"></param>
         /// <param name="tileWidth"></param>
         /// <param name="tileHeight"></param>
         /// <param name="worldHeight"></param>
-        private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight, int worldHeight)
+        private static void NormalizeObjectPosition(TmxObject tmxObject, int tileWidth, int tileHeight, int worldHeight)
         {
-            foreach (TmxObject tmxObject in tmxObjects)
-            {
-                tmxObject.X /= tileWidth;
-                tmxObject.Y /= tileHeight;
-                tmxObject.Y = worldHeight - tmxObject.Y;
-                tmxObject.Width /= tileWidth;
-                tmxObject.Height /= tileHeight;
-                tmxObject.Rotation = MathHelper.ToRadians(tmxObject.Rotation);
-            }
+            tmxObject.X /= tileWidth;
+            tmxObject.Y /= tileHeight;
+            tmxObject.Y = worldHeight - tmxObject.Y;
+            tmxObject.Width /= tileWidth;
+            tmxObject.Height /= tileHeight;
+            tmxObject.Rotation =  - MathHelper.ToRadians(tmxObject.Rotation);
         }
 
         private static ITileLayer FillTileLayer(
@@ -252,6 +263,13 @@ namespace World.ToyWorldCore
                         "Available properties are: \n" + joined);
                 }
             }
+        }
+
+        private static Vector2 RotateAroundCenter(Vector2 target, Vector2 center, float angle)
+        {
+            Vector2 diff = target - center;
+            diff.Rotate(angle);
+            return diff + center;
         }
     }
 }
