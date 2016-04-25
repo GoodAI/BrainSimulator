@@ -10,7 +10,7 @@ namespace Render.RenderObjects.Effects
 {
     internal class EffectBase : IDisposable
     {
-        const string ShaderPathBase = "Render.RenderObjects.Effects.Src.";
+        protected const string ShaderPathBase = "Render.RenderObjects.Effects.Src.";
 
         private readonly int m_prog;
 
@@ -18,10 +18,10 @@ namespace Render.RenderObjects.Effects
         #region Genesis
 
         // TODO: genericity
-        protected EffectBase(string vertPath, string fragPath)
+        protected EffectBase(string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
         {
-            int vert = LoadShader(vertPath, ShaderType.VertexShader);
-            int frag = LoadShader(fragPath, ShaderType.FragmentShader);
+            int vert = LoadShader(vertPath, ShaderType.VertexShader, vertAddendum);
+            int frag = LoadShader(fragPath, ShaderType.FragmentShader, fragAddendum);
 
             m_prog = GL.CreateProgram();
             GL.AttachShader(m_prog, vert);
@@ -36,15 +36,21 @@ namespace Render.RenderObjects.Effects
             Debug.Assert(string.IsNullOrEmpty(res), res);
         }
 
-        private int LoadShader(string name, ShaderType type)
+        private int LoadShader(string name, ShaderType type, Stream addendum = null)
         {
             var handle = GL.CreateShader(type);
 
             Stream vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
             Debug.Assert(vertSrc != null);
 
-            StreamReader str = new StreamReader(vertSrc);
-            string res = str.ReadToEnd();
+            string res;
+
+            using (StreamReader str = new StreamReader(vertSrc))
+                res = str.ReadToEnd();
+
+            if (addendum != null)
+                using (StreamReader str = new StreamReader(addendum))
+                    res += str.ReadToEnd();
 
             GL.ShaderSource(handle, res);
             GL.CompileShader(handle);

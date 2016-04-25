@@ -70,6 +70,7 @@
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
     <Compile Include="RenderObjects\Buffers\StaticVboFactory.cs" />
+    <Compile Include="RenderObjects\Effects\Fullscreen\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
@@ -119,6 +120,9 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.frag" />
+    <None Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
+    <None Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.vert" />
