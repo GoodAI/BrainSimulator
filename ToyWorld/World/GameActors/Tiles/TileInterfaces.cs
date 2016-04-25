@@ -1,5 +1,6 @@
 ﻿using World.GameActions;
 using World.ToyWorldCore;
+using World.WorldInterfaces;
 
 namespace World.GameActors.Tiles
 {
@@ -7,9 +8,9 @@ namespace World.GameActors.Tiles
     /// </summary>
     public interface IAutoupdateable
     {
-        void RegisterForUpdate();
+        Tile Update(IWorld world);
 
-        Tile Update(Atlas atlas, TilesetTable tilesetTable);
+        int NextUpdateAfter { get; }
     }
 
     /// <summary>

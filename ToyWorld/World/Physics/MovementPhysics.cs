@@ -6,29 +6,37 @@ namespace World.Physics
     public interface IMovementPhysics
     {
         void Move(IForwardMovablePhysicalEntity movable);
+        void Shift(IForwardMovablePhysicalEntity movable);
+        void Shift(IForwardMovablePhysicalEntity movable, float speed);
+        void Shift(IForwardMovablePhysicalEntity movable, float speed, float directionInRads);
     }
 
     public class MovementPhysics : IMovementPhysics
     {
         public void Move(IForwardMovablePhysicalEntity movable)
         {
-            Shift(movable);
             Rotate(movable);
+            Shift(movable);
         }
 
-        private static void Shift(IForwardMovablePhysicalEntity movable)
+        public void Shift(IForwardMovablePhysicalEntity movable)
         {
-            var directionInRads = VRageMath.MathHelper.ToRadians(movable.Direction);
-            var cos = (float)Math.Cos(directionInRads);
-            float x = movable.Position.X + cos * movable.ForwardSpeed;
-            var sin = (float)Math.Sin(directionInRads);
-            float y = movable.Position.Y + sin * movable.ForwardSpeed;
-            movable.Position = new Vector2(x, y);
+            movable.Position = Utils.Move(movable.Position, movable.Direction, movable.ForwardSpeed);
+        }
+
+        public void Shift(IForwardMovablePhysicalEntity movable, float speed)
+        {
+            movable.Position = Utils.Move(movable.Position, movable.Direction, speed);
+        }
+
+        public void Shift(IForwardMovablePhysicalEntity movable, float speed, float directionInRads)
+        {
+            movable.Position = Utils.Move(movable.Position, directionInRads, speed);
         }
 
         private static void Rotate(IForwardMovablePhysicalEntity movable)
         {
-            movable.Direction += movable.RotationSpeed;
+            movable.Direction = MathHelper.WrapAngle(movable.Direction + movable.RotationSpeed);
         }
     }
 }

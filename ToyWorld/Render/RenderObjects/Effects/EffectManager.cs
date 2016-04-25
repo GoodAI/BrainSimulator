@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Render.Tests.Effects;
 using Utils.VRageRIP.Lib.Collections;
 
 namespace Render.RenderObjects.Effects
@@ -14,11 +13,15 @@ namespace Render.RenderObjects.Effects
 
         public EffectManager()
         {
-            m_effects
-                .Case<NoEffect>(() =>
-                    new NoEffect())
-                .Case<NoEffectTex>(() =>
-                    new NoEffectTex());
+            CaseInternal<NoEffect>();
+            CaseInternal<NoEffectTex>();
+            CaseInternal<NoEffectOffset>();
+        }
+
+        private void CaseInternal<T>()
+            where T : EffectBase, new()
+        {
+            m_effects.Case<T>(() => new T());
         }
 
 

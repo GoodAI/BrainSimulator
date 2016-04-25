@@ -3,6 +3,8 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using TmxMapSerializer.Elements;
+using VRageMath;
 
 namespace World.GameActors.Tiles
 {
@@ -17,8 +19,22 @@ namespace World.GameActors.Tiles
         private readonly Dictionary<string, int> m_namesValuesDictionary;
         private readonly Dictionary<int, string> m_valuesNamesDictionary;
 
-        public TilesetTable(StreamReader tilesetFile)
+
+        public readonly List<Tileset> Tilesets = new List<Tileset>();
+
+        public Vector2I TileSize { get; protected set; }
+        public Vector2I TileMargins { get; protected set; }
+
+
+        public TilesetTable(Map tmxMap, StreamReader tilesetFile)
         {
+            if (tmxMap != null)
+            {
+                Tilesets.AddRange(tmxMap.Tilesets);
+                TileSize = new Vector2I(tmxMap.Tilewidth, tmxMap.Tileheight);
+                TileMargins = Vector2I.One;
+            }
+
             var dataTable = new DataTable();
             string readLine = tilesetFile.ReadLine();
 
@@ -44,9 +60,11 @@ namespace World.GameActors.Tiles
                 dataTable.Rows.Add(newRow);
             }
 
+            tilesetFile.Close();
+
             IEnumerable<DataRow> enumerable = dataTable.Rows.Cast<DataRow>();
-            var dataRows = enumerable as DataRow[] ?? enumerable.ToArray();
-            
+            var dataRows = enumerable.ToArray();
+
             m_namesValuesDictionary = dataRows.Where(x => x["IsDefault"].ToString() == "1")
                 .ToDictionary(x => x["NameOfTile"].ToString(), x => int.Parse(x["PositionInTileset"].ToString()));
             m_valuesNamesDictionary = dataRows.ToDictionary(x => int.Parse(x["PositionInTileset"].ToString()), x => x["NameOfTile"].ToString());
@@ -57,7 +75,13 @@ namespace World.GameActors.Tiles
         /// </summary>
         public TilesetTable()
         {
-            
+
+        }
+
+
+        public string[] GetTilesetImages()
+        {
+            return Tilesets.Select(t => t.Image.Source).ToArray();
         }
 
         public virtual int TileNumber(string tileName)

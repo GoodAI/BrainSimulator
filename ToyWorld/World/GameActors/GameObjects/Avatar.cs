@@ -1,4 +1,5 @@
 ﻿using GoodAI.ToyWorld.Control;
+using System.Drawing;
 using VRageMath;
 using World.Physics;
 
@@ -6,28 +7,38 @@ namespace World.GameActors.GameObjects
 {
     public interface IAvatar : IAvatarControllable, ICharacter
     {
-        int Id { get;}
+        int Id { get; }
         IUsable Tool { get; set; }
-        new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
     }
 
     public class Avatar : Character, IAvatar
     {
         public int Id { get; private set; }
         public IUsable Tool { get; set; }
-        public new IForwardMovablePhysicalEntity PhysicalEntity { get; set; }
 
         public float DesiredSpeed { get; set; }
         public float DesiredRotation { get; set; }
         public bool Interact { get; set; }
         public bool Use { get; set; }
         public bool PickUp { get; set; }
+        public PointF Fof { get; set; }
 
-        public Avatar(string name, int id, Vector2 initialPosition, Vector2 size)
+        public Avatar(
+            string tilesetName,
+            int tileId,
+            string name,
+            int id,
+            Vector2 initialPosition,
+            Vector2 size,
+            float direction = 0
+            )
+            : base(tilesetName, tileId)
         {
             Name = name;
             Id = id;
-            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, size);
+
+            float circleRadius = (size.X + size.Y) / 4f;
+            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, new Circle(circleRadius), direction: direction);
         }
 
         public void ResetControls()
@@ -37,6 +48,7 @@ namespace World.GameActors.GameObjects
             Interact = false;
             Use = false;
             PickUp = false;
+            Fof = default(PointF);
         }
     }
 }

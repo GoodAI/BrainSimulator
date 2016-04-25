@@ -269,6 +269,11 @@ namespace VRageMath
             return (boxMax.X >= pt.X && boxMin.X <= pt.X) && (boxMax.Y >= pt.Y && boxMin.Y <= pt.Y) && (boxMax.Z >= pt.Z && boxMin.Z <= pt.Z);
         }
 
+        public static explicit operator Vector3I(Vector3 a)
+        {
+            return new Vector3I(a.X, a.Y, a.Z);
+        }
+
         public static Vector3I operator *(Vector3I a, Vector3I b)
         {
             return new Vector3I(a.X * b.X, a.Y * b.Y, a.Z * b.Z);

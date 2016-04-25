@@ -304,7 +304,7 @@ namespace GoodAI.Modules.School.Worlds
 
         #region Rendering helpers
 
-        protected PointF GetPowCenter()
+        public PointF GetPowCenter()
         {
             GameObject agent = Agent;
             if (agent == null)
@@ -395,16 +395,15 @@ namespace GoodAI.Modules.School.Worlds
             return randPoint;
         }
 
-        public PointF RandomPositionInsidePowNonCovering(Random rndGen, SizeF size, int objectMargin = 1)
+        public PointF RandomPositionInsidePowNonCovering(Random rndGen, SizeF size, float objectMargin = 1, float agentMargin = 0)
         {
-            return RandomPositionInsideRectangleNonCovering(rndGen, size, GetPowGeometry(), objectMargin);
+            return RandomPositionInsideRectangleNonCovering(rndGen, size, GetPowGeometry(), objectMargin, agentMargin);
         }
 
         public PointF RandomPositionInsideRectangleNonCovering(Random rndGen, SizeF size, RectangleF rectangle, float objectMargin = 1, float agentMargin = 0)
         {
             RectangleF agent = GetAgentGeometry();
             agent = LearningTaskHelpers.ResizeRectangleAroundCentre(agent, agentMargin, agentMargin);
-
 
             SizeF borders = new SizeF(objectMargin, objectMargin);
             size += borders + borders;
@@ -415,24 +414,27 @@ namespace GoodAI.Modules.School.Worlds
             bool intersects = true;
             while (intersects)
             {
+                if (randomPositionCounter++ > 1000)
+                {
+                    MyLog.WARNING.WriteLine("ManInWorld: Cannot place object randomly, choosing random location.");
+                    break;
+                }
+
                 intersects = false;
-                randomPositionCounter++;
                 obj = new RectangleF(RandomPositionInsideRectangle(rndGen, size, rectangle), size);
 
-                // check intersection for all GameObjects
-                for (int i = 0; i < GameObjects.Count; i++)
+                // Check for agent collision -- use modified rectangle
+                if (agent.IntersectsWith(obj))
                 {
-                    if (randomPositionCounter > 1000)
-                    {
-                        Debug.Assert(false, "Cannot place object randomly");
-                        break;
-                    }
+                    intersects = true;
+                    continue;
+                }
 
-                    RectangleF gameObjectG = GameObjects[i].GetGeometry();
-                    if (gameObjectG.IntersectsWith(obj) ||
-                        obj.IntersectsWith(gameObjectG) ||
-                        agent.IntersectsWith(obj) ||
-                        obj.IntersectsWith(agent))
+                // Check intersection for all GameObjects except agent
+                foreach (GameObject o in GameObjects.Where(a => a.Type != GameObjectType.Agent))
+                {
+                    RectangleF gameObjectG = o.GetGeometry();
+                    if (gameObjectG.IntersectsWith(obj))
                     {
                         intersects = true;
                         break;
@@ -453,14 +455,14 @@ namespace GoodAI.Modules.School.Worlds
             return rmk;
         }
 
-        public GameObject CreateShape(Shape.Shapes shape, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
+        public Shape CreateShape(Shape.Shapes shape, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
         {
             Shape rmk = new Shape(shape, p, size, rotation, type);
             AddGameObject(rmk);
             return rmk;
         }
 
-        public GameObject CreateShape(Shape.Shapes shape, Color colorMask, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
+        public Shape CreateShape(Shape.Shapes shape, Color colorMask, PointF p, SizeF size = default(SizeF), float rotation = 0, GameObjectType type = GameObjectType.None)
         {
             Shape rmk = new Shape(shape, p, size, rotation, type)
             {

@@ -1,54 +1,38 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using GoodAI.ToyWorld.Control;
-using OpenTK.Graphics.OpenGL;
+﻿using GoodAI.ToyWorld.Control;
 using Render.Renderer;
-using Render.Tests.Effects;
-using Render.Tests.Geometries;
+using VRageMath;
+using World.ToyWorldCore;
 
-namespace Render.RenderRequests.AvatarRenderRequests
+namespace Render.RenderRequests
 {
     internal class FovAvatarRR : AvatarRRBase, IFovAvatarRR
     {
-        internal FovAvatarRR(int avatarID)
+        #region Genesis
+
+        public FovAvatarRR(int avatarID)
             : base(avatarID)
         { }
 
-
-        #region IAvatarRenderRequestFoV overrides
-
-        public uint[] Image { get; private set; }
-
         #endregion
 
-        #region AvatarRenderRequestBase overrides
-
-        public override float Size { get; set; }
-
+        #region IFovAvatarRR overrides
         #endregion
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer)
+        public override void Init(RendererBase renderer, ToyWorld world)
         {
-            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
+            SizeV = new Vector2(20, 20);
 
-            // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
-            Image = new uint[renderer.Width * renderer.Height];
-
-            GL.ClearColor(Color.Black);
+            base.Init(renderer, world);
         }
 
-        public override void Draw(RendererBase renderer)
+        public override void Draw(RendererBase renderer, ToyWorld world)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            var avatar = world.GetAvatar(AvatarID);
+            PositionCenterV2 = avatar.Position;
 
-            var effect = renderer.EffectManager.Get<NoEffect>();
-            renderer.EffectManager.Use(effect);
-            renderer.GeometryManager.Get<FancyFullscreenQuad>().Draw();
-
-            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
+            base.Draw(renderer, world);
         }
 
         #endregion

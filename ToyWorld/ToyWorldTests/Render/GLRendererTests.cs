@@ -1,76 +1,146 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Render.Renderer;
 using Render.RenderRequests;
-using Render.RenderRequests.RenderRequests;
-using Render.Tests.RRs;
-using ToyWorldTests.Game;
+using TmxMapSerializer.Elements;
+using TmxMapSerializer.Serializer;
+using VRageMath;
+using World.ToyWorldCore;
 using Xunit;
 
 namespace ToyWorldTests.Render
 {
     [Collection("Renderer")]
-    public class GLRendererTests : IDisposable
+    public class GLRendererTestBase : IDisposable
     {
-        private readonly GLRenderer m_renderer;
+        private readonly GameControllerBase m_gameController;
+
+        protected ToyWorld World { get { return m_gameController.World; } }
+        protected GLRenderer Renderer { get { return (GLRenderer)m_gameController.Renderer; } }
 
 
-        public GLRendererTests()
+        public GLRendererTestBase()
         {
-            m_renderer = new GLRenderer();
-            m_renderer.Init();
-            m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
-            m_renderer.CreateContext();
+            using (var tmxStream = FileStreams.FullTmxStream())
+            using (var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream()))
+            {
+                var gameSetup = new GameSetup(tmxStream, tilesetTableStreamReader);
+                m_gameController = ControllerFactory.GetController(gameSetup);
+                m_gameController.Init();
+            }
         }
 
         public void Dispose()
         {
-            m_renderer.Dispose();
+            m_gameController.Dispose();
         }
 
 
-        [Fact(Skip = "Long-running; manual input needed for ending.")]
-        //[Fact]
-        public void ShowRRLongRunning()
+        protected void RunRRLongRunning()
         {
-            Key winKeypressResult = default(Key);
-            m_renderer.Window.KeyDown += (sender, args) => winKeypressResult = args.Key;
-            m_renderer.Window.Visible = true;
+            Renderer.MakeContextCurrent();
 
-            m_renderer.MakeContextCurrent();
+            int aID = m_gameController.GetAvatarIds().First();
+            var rr = m_gameController.RegisterRenderRequest<IFovAvatarRR>(aID);
+            //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
+            //rr.FovAvatarRenderRequest = rr1;
 
-            var rr = RenderRequestFactory.CreateRenderRequest<IBasicTextureRR>();
-            //var rr = RenderRequestFactory.CreateRenderRequest<IFovAvatarRenderRequest>(0);
-            (rr as RenderRequest).Init(m_renderer);
-            m_renderer.EnqueueRequest(rr);
+            var ac = m_gameController.GetAvatarController(aID);
+            var controls = new AvatarControls(5) { DesiredSpeed = .3f };
 
-            while (winKeypressResult == default(Key) && m_renderer.Window.Exists)
+            CancellationToken token = SetupWindow(
+                delta =>
+                {
+                    //rr.PositionCenter = new PointF(rr.PositionCenter.X - delta.X, rr.PositionCenter.Y + delta.Y);
+                    controls.DesiredRotation = MathHelper.WrapAngle(delta.X * 0.1f);
+                    controls.Fof = new PointF(0, controls.Fof.Value.Y + -delta.Y * 0.1f);
+                });
+
+
+            while (Renderer.Window.Exists && !token.IsCancellationRequested)
             {
-                Thread.Sleep(1000);
-                m_renderer.ProcessRequests();
-                m_renderer.Context.SwapBuffers();
+                try
+                {
+                    Task.Delay(20, token).Wait(token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+
+                ac.SetActions(controls);
+
+                m_gameController.MakeStep();
+                Renderer.Context.SwapBuffers();
             }
 
-            Assert.Equal(winKeypressResult, Key.A);
+            Assert.True(token.IsCancellationRequested);
+        }
+
+        private CancellationToken SetupWindow(Action<Vector3> onDrag)
+        {
+            CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
+
+            Renderer.Window.KeyDown += (sender, args) =>
+            {
+                if (args.Key == Key.A)
+                    tokenSource.Cancel();
+            };
+
+            Renderer.Window.MouseDown += (sender, args) =>
+            {
+                if (args.Button == MouseButton.Right)
+                    tokenSource.Cancel();
+
+                if (args.Button == MouseButton.Left)
+                    onDrag(Vector3.Zero);
+            };
+
+            Renderer.Window.MouseMove += (sender, args) =>
+            {
+                const float factor = 1 / 5f;
+
+                if (args.Mouse.IsButtonDown(MouseButton.Left))
+                    onDrag(new Vector3(args.XDelta, args.YDelta, 0) * factor);
+            };
+
+            Renderer.Window.Visible = true;
+
+            return tokenSource.Token;
+        }
+    }
+
+
+    public class GLRendererTests : GLRendererTestBase
+    {
+        //[RunnableInDebugOnly]
+        /*
+        [Fact]
+        /*/
+        [Fact(Skip = "Skipped -- requires manual input to end.")]
+        //**/
+        public void ShowRRLongRunning()
+        {
+            RunRRLongRunning();
         }
 
 
         [Fact]
         public void InitRepeated()
         {
-            m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
-            m_renderer.CreateContext();
+            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
+            Renderer.CreateContext();
 
-            m_renderer.Init();
-            m_renderer.CreateWindow("TestGameWindow", 1024, 1024);
-            m_renderer.CreateContext();
+            Renderer.Init();
+            Renderer.CreateWindow("TestGameWindow", 1024, 1024);
+            Renderer.CreateContext();
         }
 
         [Fact]
@@ -78,7 +148,7 @@ namespace ToyWorldTests.Render
         {
             // TODO: Doesn't work -- how to invoke the Resize event on Window?
             //m_renderer.Window.Size = new System.Drawing.Size((int)(m_renderer.Window.Width * 1.3f), (int)(m_renderer.Window.Height * 1.3f));
-            m_renderer.ProcessRequests();
+            Renderer.ProcessRequests(World);
         }
     }
 }

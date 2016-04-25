@@ -1,15 +1,10 @@
-﻿using GoodAI.ToyWorld.Control;
+﻿using System.Drawing;
+using GoodAI.ToyWorld.Control;
+using VRageMath;
+using RectangleF = VRageMath.RectangleF;
 
-namespace Render.RenderRequests.RenderRequests
+namespace Render.RenderRequests
 {
     public abstract class RenderRequestBase : RenderRequest, IRenderRequest
-    {
-        #region IRenderRequest overrides
-
-        public virtual float Size { get; set; }
-        public virtual float Position { get; set; }
-        public virtual float Resolution { get; set; }
-
-        #endregion
-    }
+    { }
 }

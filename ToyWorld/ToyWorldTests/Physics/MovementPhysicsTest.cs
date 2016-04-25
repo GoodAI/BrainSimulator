@@ -22,26 +22,26 @@ namespace ToyWorldTests.Physics
         [InlineData(1, 90)]
         [InlineData(1, 180)]
         [InlineData(1, 270)]
-        [InlineData(1, 45)]
-        [InlineData(-1, 45)]
+        [InlineData(1, 135)]
+        [InlineData(-1, 135)]
         public void TestMoveForward(float speed, float direction)
         {
             var startingPosition = new Vector2(5, 5);
 
             var movableMock = new Mock<IForwardMovablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
-            movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
+            movableMock.Setup(x => x.ForwardSpeed).Returns(speed);
             movableMock.Setup(x => x.Direction).Returns(direction);*/
 
             movableMock.SetupAllProperties();
             movableMock.Object.Position = startingPosition;
             movableMock.Object.ForwardSpeed = speed;
-            movableMock.Object.Direction = direction;
+            movableMock.Object.Direction = MathHelper.ToRadians(direction);
 
 
             IForwardMovablePhysicalEntity movable = movableMock.Object;
 
-            
+
 
             m_movementPhysics.Move(movable);
 
@@ -52,37 +52,37 @@ namespace ToyWorldTests.Physics
             }
             else if (speed == 1f)
             {
-                switch ((int) direction)
+                switch ((int)direction)
                 {
                     case 0:
-                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
-                        break;
-                    case 90:
                         Assert.True(CompareVectors(movable.Position, new Vector2(5, 6)));
                         break;
-                    case 180:
+                    case 90:
                         Assert.True(CompareVectors(movable.Position, new Vector2(4, 5)));
                         break;
-                    case 270:
+                    case 180:
                         Assert.True(CompareVectors(movable.Position, new Vector2(5, 4)));
                         break;
-                    case 45:
-                        Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
+                    case 270:
+                        Assert.True(CompareVectors(movable.Position, new Vector2(6, 5)));
+                        break;
+                    case 135:
+                        Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
                         break;
                 }
             }
             else if (speed == -1f)
             {
-                if (direction == 45)
+                if (direction == 135)
                 {
-                    Assert.True(movable.Position.X < 4.5f && movable.Position.Y < 4.5f);
+                    Assert.True(movable.Position.X > 5.5f && movable.Position.Y > 5.5f);
                 }
             }
         }
 
         private static bool CompareVectors(Vector2 v1, Vector2 v2)
         {
-            var maxError = Vector2.One/100000;
+            var maxError = Vector2.One / 100000;
             return (v2 - v1).Length() < maxError.Length();
         }
 
@@ -92,11 +92,11 @@ namespace ToyWorldTests.Physics
         [InlineData(-1)]
         public void TestRotate(float rotationSpeed)
         {
-            var startingDirection = 90;
+            float startingDirection = 0;
 
             var movableMock = new Mock<IForwardMovablePhysicalEntity>();
             /*movableMock.Setup(x => x.Position).Returns(startingPosition);
-            movableMock.Setup(x => x.ForwardSpeed).Returns(speed); 
+            movableMock.Setup(x => x.ForwardSpeed).Returns(speed);
             movableMock.Setup(x => x.Direction).Returns(direction);*/
 
             movableMock.SetupAllProperties();
@@ -108,18 +108,7 @@ namespace ToyWorldTests.Physics
 
             m_movementPhysics.Move(movable);
 
-            if (rotationSpeed == 0f)
-            {
-                Assert.True(movable.Direction == startingDirection);
-            }
-            else if (rotationSpeed == 1f)
-            {
-                Assert.True(movable.Direction == 91);
-            }
-            else if (rotationSpeed == -1f)
-            {
-                Assert.True(movable.Direction == 89);
-            }
+            Assert.Equal(movable.Direction, startingDirection + rotationSpeed);
         }
     }
 }

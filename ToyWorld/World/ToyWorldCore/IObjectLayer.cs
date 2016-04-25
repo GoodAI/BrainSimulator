@@ -3,10 +3,8 @@ using World.GameActors.GameObjects;
 
 namespace World.ToyWorldCore
 {
-    public interface IObjectLayer
+    public interface IObjectLayer : ILayer<GameObject>
     {
-        LayerType LayerType { get; set; }
-
         /// <summary>
         /// Returns objects that have intersection with giver rectangle.
         /// </summary>

@@ -1,29 +1,53 @@
-﻿using VRageMath;
+﻿using System.Collections.Generic;
+using VRageMath;
 
 namespace World.Physics
 {
     public interface IPhysicalEntity
     {
         /// <summary>
-        /// Absolute position in ToyWorld.
+        /// Absolute position in ToyWorld. Upper left corner.
         /// </summary>
         Vector2 Position { get; set; }
-        Vector2 Size { get; set; }
+
+        /// <summary>
+        /// Shape of this entity.
+        /// </summary>
+        IShape Shape { get; set; }
+
+        /// <summary>
+        /// Returns rectangle wrapping this entity.
+        /// </summary>
+        /// <returns></returns>
+        RectangleF CoverRectangle();
+
+        /// <summary>
+        /// Returns list of all square coordinates which collides with this entity.
+        /// </summary>
+        /// <returns></returns>
+        List<Vector2I> CoverTiles();
     }
 
     public abstract class PhysicalEntity : IPhysicalEntity
     {
-        /// <summary>
-        /// Absolute position in ToyWorld.
-        /// </summary>
         public Vector2 Position { get; set; }
 
-        public Vector2 Size { get; set; }
+        public IShape Shape { get; set; }
 
-        public PhysicalEntity(Vector2 position, Vector2 size)
+        public PhysicalEntity(Vector2 position, Shape shape)
         {
             Position = position;
-            Size = size;
+            Shape = shape;
+        }
+
+        public VRageMath.RectangleF CoverRectangle()
+        {
+            return new VRageMath.RectangleF(Position, Shape.CoverRectangleSize());
+        }
+
+        public List<Vector2I> CoverTiles()
+        {
+            return Shape.CoverTiles(Position);
         }
     }
 }

@@ -40,11 +40,12 @@ namespace Game
 
         private void SetAvatarActionsControllable()
         {
-            m_avatar.DesiredSpeed = m_avatarControls.DesiredSpeed.Value;
-            m_avatar.Interact = m_avatarControls.Interact.Value;
-            m_avatar.PickUp = m_avatarControls.PickUp.Value;
-            m_avatar.DesiredRotation = m_avatarControls.DesiredRotation.Value;
-            m_avatar.Use = m_avatarControls.Use.Value;
+            m_avatar.DesiredSpeed = m_avatarControls.DesiredSpeed;
+            m_avatar.Interact = m_avatarControls.Interact;
+            m_avatar.PickUp = m_avatarControls.PickUp;
+            m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
+            m_avatar.Use = m_avatarControls.Use;
+            m_avatar.Fof = m_avatarControls.Fof;
         }
     }
 }

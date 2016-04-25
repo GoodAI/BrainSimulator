@@ -20,6 +20,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -27,6 +28,27 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -47,36 +69,38 @@
   <ItemGroup>
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
-    <Compile Include="RenderObjects\Buffers\StaticVBOFactory.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenGridTex.cs" />
+    <Compile Include="RenderObjects\Buffers\StaticVboFactory.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Textures\TextureManager.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
+    <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
-    <Compile Include="Tests\Effects\NoEffectTex.cs" />
-    <Compile Include="Tests\Effects\NoEffect.cs" />
+    <Compile Include="RenderObjects\Effects\NoEffectOffset.cs" />
+    <Compile Include="RenderObjects\Effects\NoEffectTex.cs" />
+    <Compile Include="RenderObjects\Effects\NoEffect.cs" />
     <Compile Include="RenderObjects\Effects\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
-    <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\FofAvatarRR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRRBase.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadTex.cs" />
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />
-    <Compile Include="Tests\RRs\BasicAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
     <Compile Include="RenderObjects\Buffers\Vao.cs" />
     <Compile Include="RenderObjects\Buffers\Vbo.cs" />
-    <Compile Include="Tests\Geometries\FancyFullscreenQuad.cs" />
+    <Compile Include="RenderObjects\Geometries\FullscreenQuadColor.cs" />
     <Compile Include="RenderObjects\Geometries\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\GeometryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderRequests\RenderRequest.cs" />
     <Compile Include="RenderRequests\RenderRequestFactory.cs" />
-    <Compile Include="Tests\RRs\BasicTextureRR.cs" />
     <Compile Include="RenderObjects\Effects\EffectBase.cs" />
     <Compile Include="RenderObjects\Textures\TextureBase.cs" />
-    <Compile Include="Tests\Textures\TilesetTexture.cs" />
+    <Compile Include="RenderObjects\Textures\TilesetTexture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
-      <Project>{8c381b5a-3fd7-4311-9c42-f8115587e5fd}</Project>
+      <Project>{527728E6-91BE-4678-912F-45A507D0BC67}</Project>
       <Name>ToyWorldAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
@@ -90,18 +114,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Basic.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Basic.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tests\Textures\roguelike_selection_summer.png" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.vert" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

@@ -1,43 +1,37 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IAvatarRenderRequest
+    public interface IAvatarRenderRequest : IRenderRequestBase
     {
         /// <summary>
         /// 
         /// </summary>
-        float AvatarID { get; }
+        int AvatarID { get; }
+
         /// <summary>
-        /// 
+        /// Relative position of PositionCenter to avatar's position
         /// </summary>
-        float Size { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        float Position { get; }
-        /// <summary>
-        /// Relative position of the center of the view to the agent's position.
-        /// </summary>
-        float RelativePosition { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        Point Resolution { get; set; }
+        PointF RelativePosition { get; set; }
     }
 
     /// <summary>
     /// 
     /// </summary>
     public interface IFovAvatarRR : IAvatarRenderRequest
+    { }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IFofAvatarRR : IAvatarRenderRequest
     {
         /// <summary>
         /// 
         /// </summary>
-        uint[] Image { get; }
+        IFovAvatarRR FovAvatarRenderRequest { get; set; }
     }
 }

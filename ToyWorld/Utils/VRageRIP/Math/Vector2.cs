@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 
 namespace VRageMath
@@ -10,8 +11,8 @@ namespace VRageMath
     [ProtoBuf.ProtoContract, Serializable]
     public struct Vector2 : IEquatable<Vector2>
     {
-        public static Vector2 Zero  = new Vector2();
-        public static Vector2 One   = new Vector2(1f, 1f);
+        public static Vector2 Zero = new Vector2();
+        public static Vector2 One = new Vector2(1f, 1f);
         public static Vector2 UnitX = new Vector2(1f, 0f);
         public static Vector2 UnitY = new Vector2(0f, 1f);
         public static Vector2 PositiveInfinity = One * float.PositiveInfinity;
@@ -42,6 +43,26 @@ namespace VRageMath
         }
 
         /// <summary>
+        /// Initializes a new instance of Vector2.
+        /// </summary>
+        /// <param name="other">Initial value for the vector.</param>
+        public Vector2(Vector2I other)
+        {
+            X = other.X;
+            Y = other.Y;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Vector2.
+        /// </summary>
+        /// <param name="other">Initial value for the vector.</param>
+        public Vector2(Vector3 other)
+        {
+            X = other.X;
+            Y = other.Y;
+        }
+
+        /// <summary>
         /// Creates a new instance of Vector2.
         /// </summary>
         /// <param name="value">Value to initialize both components to.</param>
@@ -64,6 +85,16 @@ namespace VRageMath
                 else if (index == 1) return Y;
                 else throw new ArgumentException();
             }
+        }
+
+        public static explicit operator Vector2(PointF vector)
+        {
+            return new Vector2(vector.X, vector.Y);
+        }
+
+        public static explicit operator Vector2(SizeF vector)
+        {
+            return new Vector2(vector.Width, vector.Height);
         }
 
         public static explicit operator Vector2I(Vector2 vector)
@@ -1028,6 +1059,11 @@ namespace VRageMath
         public static Vector2 Floor(Vector2 position)
         {
             return new Vector2((float)Math.Floor(position.X), (float)Math.Floor(position.Y));
+        }
+
+        public static Vector2 Ceiling(Vector2 position)
+        {
+            return new Vector2((float)Math.Ceiling(position.X), (float)Math.Ceiling(position.Y));
         }
 
         public void Rotate(double angle)

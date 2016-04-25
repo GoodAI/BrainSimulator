@@ -1,4 +1,4 @@
-﻿namespace GoodAI.ToyWorld.Control
+﻿namespace World.Physics
 {
     /// <summary>
     /// For game objects that can move.
@@ -35,7 +35,7 @@
     public interface IDirectable
     {
         /// <summary>
-        /// Direction in degrees. 0 means right, 90 down, 180 left, 270 up.
+        /// Direction in radians. 0 means up, -Pi/2 right.
         /// </summary>
         float Direction { get; set; }
     }

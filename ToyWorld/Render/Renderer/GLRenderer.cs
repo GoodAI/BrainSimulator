@@ -3,6 +3,8 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using World.ToyWorldCore;
 
 namespace Render.Renderer
 {
@@ -90,11 +92,11 @@ namespace Render.Renderer
                 Context.MakeCurrent(null);
         }
 
-        public override void ProcessRequests()
+        public override void ProcessRequests(ToyWorld world)
         {
             Window.ProcessEvents();
 
-            base.ProcessRequests();
+            base.ProcessRequests(world);
         }
 
         public override void CheckError()

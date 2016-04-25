@@ -2,48 +2,29 @@
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
-using Render.RenderRequests.AvatarRenderRequests;
-using Render.Tests.Effects;
-using Render.Tests.Geometries;
+using Render.RenderObjects.Geometries;
+using VRageMath;
+using World.ToyWorldCore;
+using RectangleF = VRageMath.RectangleF;
 
-namespace Render.RenderRequests.RenderRequests
+namespace Render.RenderRequests
 {
-    internal class FullMapRR : RenderRequestBase, IFullMapRenderRequest
+    internal class FullMapRR : RenderRequestBase, IFullMapRR
     {
-
-        #region IAvatarRenderRequestFoV overrides
-
-        public uint[] Image { get; protected set; }
-
+        #region Genesis
         #endregion
 
-        #region AvatarRenderRequestBase overrides
-
-        public override float Size { get { return Image.Length; } }
-
+        #region IFullMapRR overrides
         #endregion
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer)
+        public override void Init(RendererBase renderer, ToyWorld world)
         {
-            //m_pbo = new Vbo<T>(renderer.Window.Width * renderer.Window.Height, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamRead);
+            SizeV = (Vector2)world.Size;
+            PositionCenterV2 = SizeV * 0.5f;
 
-            // TODO: mel by mit vlastni rendertarget s custom dims, spravovanej nejakym managerem
-            Image = new uint[renderer.Width * renderer.Height];
-
-            GL.ClearColor(Color.Black);
-        }
-
-        public override void Draw(RendererBase renderer)
-        {
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            var effect = renderer.EffectManager.Get<NoEffect>();
-            renderer.EffectManager.Use(effect);
-            renderer.GeometryManager.Get<FancyFullscreenQuad>().Draw();
-
-            GL.ReadPixels(0, 0, renderer.Width, renderer.Height, PixelFormat.Rgba, PixelType.UnsignedByte, Image);
+            base.Init(renderer, world);
         }
 
         #endregion

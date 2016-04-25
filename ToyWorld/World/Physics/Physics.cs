@@ -1,12 +1,20 @@
 using System.Collections.Generic;
-using GoodAI.ToyWorld.Control;
 using World.GameActors.GameObjects;
 
 namespace World.Physics
 {
     public interface IPhysics
     {
-        void TransofrmControlsToMotion(List<IAvatar> avatars);
+        /// <summary>
+        /// Transform Avatar's desires (usually set by controller) to physical properties (not directly to motion).
+        /// </summary>
+        /// <param name="avatars"></param>
+        void TransformControlsPhysicalProperties(List<IAvatar> avatars);
+
+        /// <summary>
+        /// Move with given IForwardMovablePhysicalEntities.
+        /// </summary>
+        /// <param name="movableEntities"></param>
         void MoveMovableDirectable(List<IForwardMovablePhysicalEntity> movableEntities);
     }
 
@@ -23,7 +31,7 @@ namespace World.Physics
         }
 
 
-        public void TransofrmControlsToMotion(List<IAvatar> avatars)
+        public void TransformControlsPhysicalProperties(List<IAvatar> avatars)
         {
             foreach (IAvatar avatar in avatars)
             {

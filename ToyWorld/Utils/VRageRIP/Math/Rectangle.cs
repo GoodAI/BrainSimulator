@@ -10,21 +10,50 @@ namespace VRageMath
     public struct Rectangle : IEquatable<Rectangle>
     {
         /// <summary>
-        /// Specifies the x-coordinate of the rectangle.
+        /// The Position.
         /// </summary>
-        public int X;
+        public Point Position;
+
         /// <summary>
-        /// Specifies the y-coordinate of the rectangle.
+        /// The Size.
         /// </summary>
-        public int Y;
+        public Vector2I Size;
+
         /// <summary>
-        /// Specifies the width of the rectangle.
+        /// Left coordinate.
         /// </summary>
-        public int Width;
+        public int X
+        {
+            get { return Position.X; }
+            set { Position.X = value; }
+        }
+
         /// <summary>
-        /// Specifies the height of the rectangle.
+        /// Top coordinate.
         /// </summary>
-        public int Height;
+        public int Y
+        {
+            get { return Position.Y; }
+            set { Position.Y = value; }
+        }
+
+        /// <summary>
+        /// Width of this rectangle.
+        /// </summary>
+        public int Width
+        {
+            get { return Size.X; }
+            set { Size.X = value; }
+        }
+
+        /// <summary>
+        /// Height of this rectangle.
+        /// </summary>
+        public int Height
+        {
+            get { return Size.Y; }
+            set { Size.Y = value; }
+        }
 
         /// <summary>
         /// Returns the x-coordinate of the left side of the rectangle.
@@ -71,29 +100,13 @@ namespace VRageMath
         }
 
         /// <summary>
-        /// Gets or sets the upper-left value of the Rectangle.
-        /// </summary>
-        public Point Location
-        {
-            get
-            {
-                return new Point(this.X, this.Y);
-            }
-            set
-            {
-                this.X = value.X;
-                this.Y = value.Y;
-            }
-        }
-
-        /// <summary>
         /// Gets the Point that specifies the center of the rectangle.
         /// </summary>
-        public Point Center
+        public Vector2I Center
         {
             get
             {
-                return new Point(this.X + this.Width / 2, this.Y + this.Height / 2);
+                return new Vector2I(X + Width / 2, Y + Height / 2);
             }
         }
 
@@ -107,10 +120,18 @@ namespace VRageMath
         /// <param name="x">The x-coordinate of the rectangle.</param><param name="y">The y-coordinate of the rectangle.</param><param name="width">Width of the rectangle.</param><param name="height">Height of the rectangle.</param>
         public Rectangle(int x, int y, int width, int height)
         {
-            this.X = x;
-            this.Y = y;
-            this.Width = width;
-            this.Height = height;
+            Position = new Point(x, y);
+            Size = new Vector2I(width, height);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Rectangle.
+        /// </summary>
+        /// <param name="position">The position of the rectangle</param><param name="size">The size of the rectangle.</param>
+        public Rectangle(Vector2I position, Vector2I size)
+        {
+            Position = position;
+            Size = size;
         }
 
         /// <summary>
@@ -261,17 +282,13 @@ namespace VRageMath
             Rectangle rectangle;
             if (num7 > num5 && num8 > num6)
             {
-                rectangle.X = num5;
-                rectangle.Y = num6;
-                rectangle.Width = num7 - num5;
-                rectangle.Height = num8 - num6;
+                rectangle.Position = new Point(num5, num6);
+                rectangle.Size = new Vector2I(num7 - num5, num8 - num6);
             }
             else
             {
-                rectangle.X = 0;
-                rectangle.Y = 0;
-                rectangle.Width = 0;
-                rectangle.Height = 0;
+                rectangle.Position = Point.Zero;
+                rectangle.Size = Vector2I.Zero;
             }
             return rectangle;
         }
@@ -292,17 +309,13 @@ namespace VRageMath
             int num8 = num3 < num4 ? num3 : num4;
             if (num7 > num5 && num8 > num6)
             {
-                result.X = num5;
-                result.Y = num6;
-                result.Width = num7 - num5;
-                result.Height = num8 - num6;
+                result.Position = new Point(num5, num6);
+                result.Size = new Vector2I(num7 - num5, num8 - num6);
             }
             else
             {
-                result.X = 0;
-                result.Y = 0;
-                result.Width = 0;
-                result.Height = 0;
+                result.Position = Point.Zero;
+                result.Size = Vector2I.Zero;
             }
         }
 
@@ -321,10 +334,8 @@ namespace VRageMath
             int num7 = num1 > num2 ? num1 : num2;
             int num8 = num3 > num4 ? num3 : num4;
             Rectangle rectangle;
-            rectangle.X = num5;
-            rectangle.Y = num6;
-            rectangle.Width = num7 - num5;
-            rectangle.Height = num8 - num6;
+            rectangle.Position = new Point(num5, num6);
+            rectangle.Size = new Vector2I(num7 - num5, num8 - num6);
             return rectangle;
         }
 
@@ -342,10 +353,8 @@ namespace VRageMath
             int num6 = value1.Y < value2.Y ? value1.Y : value2.Y;
             int num7 = num1 > num2 ? num1 : num2;
             int num8 = num3 > num4 ? num3 : num4;
-            result.X = num5;
-            result.Y = num6;
-            result.Width = num7 - num5;
-            result.Height = num8 - num6;
+            result.Position = new Point(num5, num6);
+            result.Size = new Vector2I(num7 - num5, num8 - num6);
         }
 
         /// <summary>

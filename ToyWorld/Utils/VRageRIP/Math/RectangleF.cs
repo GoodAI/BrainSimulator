@@ -11,67 +11,6 @@ namespace VRageMath
     public struct RectangleF : IEquatable<RectangleF>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
-        /// </summary>
-        /// <param name="position">The x-y position of this rectangle.</param>
-        /// <param name="size">The x-y size of this rectangle.</param>
-        public RectangleF(Vector2 position, Vector2 size)
-        {
-            Position = position;
-            Size = size;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
-        /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        public RectangleF(float x, float y, float width, float height)
-        {
-            Position = new Vector2(x, y);
-            Size = new Vector2(width, height);
-        }
-
-        public bool Contains(int x, int y)
-        {
-            if (x >= X && x <= X + Width && y >= Y && y <= Y + Height)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public bool Contains(float x, float y)
-        {
-            if (x >= X && x <= X + Width && y >= Y && y <= Y + Height)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public bool Contains(Vector2 vector2D)
-        {
-            if (vector2D.X >= X && vector2D.X <= X + Width && vector2D.Y >= Y && vector2D.Y <= Y + Height)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public bool Contains(Point point)
-        {
-            if (point.X >= X && point.X <= X + Width && point.Y >= Y && point.Y <= Y + Height)
-            {
-                return true;
-            }
-            return false;
-        }
-
-
-        /// <summary>
         /// The Position.
         /// </summary>
         public Vector2 Position;
@@ -115,6 +54,136 @@ namespace VRageMath
         {
             get { return Size.Y; }
             set { Size.Y = value; }
+        }
+
+        /// <summary>
+        /// Returns the x-coordinate of the left side of the rectangle.
+        /// </summary>
+        public float Left
+        {
+            get
+            {
+                return this.X;
+            }
+        }
+
+        /// <summary>
+        /// Returns the x-coordinate of the right side of the rectangle.
+        /// </summary>
+        public float Right
+        {
+            get
+            {
+                return this.X + this.Width;
+            }
+        }
+
+        /// <summary>
+        /// Returns the y-coordinate of the top of the rectangle.
+        /// </summary>
+        public float Top
+        {
+            get
+            {
+                return this.Y;
+            }
+        }
+
+        /// <summary>
+        /// Returns the y-coordinate of the bottom of the rectangle.
+        /// </summary>
+        public float Bottom
+        {
+            get
+            {
+                return this.Y + this.Height;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Point that specifies the center of the rectangle.
+        /// </summary>
+        public Vector2 Center
+        {
+            get
+            {
+                return new Vector2(X + Width / 2f, Y + Height / 2f);
+            }
+            set
+            {
+                X = value.X - Width / 2f;
+                Y = value.Y - Height / 2f;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        public RectangleF(float x, float y, float width, float height)
+        {
+            Position = new Vector2(x, y);
+            Size = new Vector2(width, height);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
+        /// </summary>
+        /// <param name="position">The x-y position of this rectangle.</param>
+        /// <param name="size">The x-y size of this rectangle.</param>
+        public RectangleF(Vector2 position, Vector2 size)
+        {
+            Position = position;
+            Size = size;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
+        /// </summary>
+        /// <param name="rectangle">The integer rectangle.</param>
+        public RectangleF(Rectangle rectangle)
+        {
+            Position = new Vector2(rectangle.Position);
+            Size = new Vector2(rectangle.Size);
+        }
+
+        public bool Contains(int x, int y)
+        {
+            if (x >= X && x <= X + Width && y >= Y && y <= Y + Height)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool Contains(float x, float y)
+        {
+            if (x >= X && x <= X + Width && y >= Y && y <= Y + Height)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool Contains(Vector2 vector2D)
+        {
+            if (vector2D.X >= X && vector2D.X <= X + Width && vector2D.Y >= Y && vector2D.Y <= Y + Height)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool Contains(Point point)
+        {
+            if (point.X >= X && point.X <= X + Width && point.Y >= Y && point.Y <= Y + Height)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -182,6 +251,11 @@ namespace VRageMath
                 result = (result * 397) ^ Height.GetHashCode();
                 return result;
             }
+        }
+
+        public static explicit operator RectangleF(System.Drawing.RectangleF other)
+        {
+            return new RectangleF(other.X, other.Y, other.Width, other.Height);
         }
 
         /// <summary>

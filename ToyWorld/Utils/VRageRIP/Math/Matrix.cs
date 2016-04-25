@@ -12,11 +12,11 @@ namespace VRageMath
     /// <summary>
     /// Defines a matrix.
     /// </summary>
-    [ProtoBuf.ProtoContract, Serializable]    
+    [ProtoBuf.ProtoContract, Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public struct Matrix : IEquatable<Matrix>
     {
-        private unsafe struct F16
+        public unsafe struct F16
         {
             // 16 float numbers, indexed as data[row,column]
             public fixed float data[16];
@@ -28,7 +28,7 @@ namespace VRageMath
         /// Matrix values
         /// </summary>
         [FieldOffset(0)]
-        private F16 M;
+        public F16 M;
 
         /// <summary>
         /// Value at row 1 column 1 of the matrix.
@@ -999,6 +999,18 @@ namespace VRageMath
         /// <summary>
         /// Creates a translation Matrix.
         /// </summary>
+        /// <param name="position">Amounts to translate by on the x and y axes.</param>
+        public static Matrix CreateTranslation(Vector2 position)
+        {
+            Matrix matrix;
+            Vector3 pos = new Vector3(position, 0);
+            CreateTranslation(ref pos, out matrix);
+            return matrix;
+        }
+
+        /// <summary>
+        /// Creates a translation Matrix.
+        /// </summary>
         /// <param name="position">Amounts to translate by on the x, y, and z axes.</param><param name="result">[OutAttribute] The created translation Matrix.</param>
         public static void CreateTranslation(ref Vector3 position, out Matrix result)
         {
@@ -1152,6 +1164,18 @@ namespace VRageMath
             matrix.M42 = 0.0f;
             matrix.M43 = 0.0f;
             matrix.M44 = 1f;
+            return matrix;
+        }
+
+        /// <summary>
+        /// Creates a scaling Matrix.
+        /// </summary>
+        /// <param name="scales">Amounts to scale by on the x and y axes.</param>
+        public static Matrix CreateScale(Vector2 scales)
+        {
+            Matrix matrix;
+            Vector3 scale = new Vector3(scales, 1);
+            CreateScale(ref scale, out matrix);
             return matrix;
         }
 
@@ -2667,7 +2691,7 @@ return flag;
             M23 = M32;
             M32 = temp;
         }
-        
+
         /// <summary>
         /// Calculates the determinant of the matrix.
         /// </summary>

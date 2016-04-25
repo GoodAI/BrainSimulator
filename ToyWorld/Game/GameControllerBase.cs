@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
@@ -14,12 +15,14 @@ namespace Game
     // TODO: why there is abstract class instead of BasicGameController?
     public abstract class GameControllerBase : IGameController
     {
-        public RendererBase Renderer { get; private set; }
-        public IWorld World { get; private set; }
+        private bool m_initialized;
         private readonly GameSetup m_gameSetup;
+
+        public RendererBase Renderer { get; private set; }
+        public ToyWorld World { get; private set; }
+
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
-        private bool m_initialized;
 
 
         protected GameControllerBase(RendererBase renderer, GameSetup setup)
@@ -45,6 +48,7 @@ namespace Game
             // Init World
             var serializer = new TmxSerializer();
             Map map = serializer.Deserialize(m_gameSetup.SaveFile);
+            m_gameSetup.SaveFile.Close();
 
             World = new ToyWorld(map, m_gameSetup.TilesetFile);
 
@@ -78,9 +82,9 @@ namespace Game
 
             World.Update();
 
-            ResetAvatarControllers();
+            Renderer.ProcessRequests(World);
 
-            Renderer.ProcessRequests();
+            ResetAvatarControllers();
         }
 
 
@@ -120,7 +124,7 @@ namespace Game
                     string.Format("Incorrect type argument; the type {0} is not registered for use in this controller version.",
                     typeof(T).Name));
 
-            rrBase.Init(Renderer);
+            rrBase.Init(Renderer, World);
         }
 
 
@@ -135,6 +139,11 @@ namespace Game
             {
                 avatarController.ResetControls();
             }
+        }
+
+        public int[] GetAvatarIds()
+        {
+            return m_avatarControllers.Keys.ToArray();
         }
 
         #endregion

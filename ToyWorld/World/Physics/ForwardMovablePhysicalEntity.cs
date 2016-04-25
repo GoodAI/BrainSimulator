@@ -1,5 +1,4 @@
-﻿using GoodAI.ToyWorld.Control;
-using VRageMath;
+﻿using VRageMath;
 
 namespace World.Physics
 {
@@ -15,10 +14,11 @@ namespace World.Physics
 
         public ForwardMovablePhysicalEntity(
             Vector2 initialPostition,
-            Vector2 size,
+            Shape shape,
             float forwardSpeed = 0,
-            float direction = 90,
-            float rotationSpeed = 0) : base(initialPostition, size)
+            float direction = 0,
+            float rotationSpeed = 0)
+            : base(initialPostition, shape)
         {
             ForwardSpeed = forwardSpeed;
             Direction = direction;

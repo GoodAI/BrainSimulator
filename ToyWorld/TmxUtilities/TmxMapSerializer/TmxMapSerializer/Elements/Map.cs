@@ -33,7 +33,7 @@ namespace TmxMapSerializer.Elements
         public int Nextobjectid { get; set; }
 
         [XmlElement("tileset")]
-        public List<Tileset> Tileset { get; set; }
+        public List<Tileset> Tilesets { get; set; }
 
         [XmlElement("layer")]
         public List<Layer> Layers { get; set; }

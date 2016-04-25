@@ -1,7 +1,5 @@
 ﻿using GoodAI.ToyWorld.Control;
 using Render.RenderRequests;
-using Render.RenderRequests.AvatarRenderRequests;
-using Render.RenderRequests.RenderRequests;
 using System;
 using System.Diagnostics;
 using Render.RenderObjects.Buffers;
@@ -9,6 +7,7 @@ using Render.RenderObjects.Effects;
 using Render.RenderObjects.Geometries;
 using Render.RenderObjects.Textures;
 using VRage.Collections;
+using World.ToyWorldCore;
 
 namespace Render.Renderer
 {
@@ -59,20 +58,20 @@ namespace Render.Renderer
             m_renderRequestQueue.Clear();
         }
 
-        public virtual void ProcessRequests()
+        public virtual void ProcessRequests(ToyWorld world)
         {
             MakeContextCurrent();
 
             foreach (var renderRequest in m_renderRequestQueue)
             {
-                Process(renderRequest);
+                Process(renderRequest, world);
                 CheckError();
             }
         }
 
-        protected virtual void Process(RenderRequest request)
+        protected virtual void Process(RenderRequest request, ToyWorld world)
         {
-            request.Draw(this);
+            request.Draw(this, world);
         }
 
         [Conditional("DEBUG")]
