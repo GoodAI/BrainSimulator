@@ -1,6 +1,7 @@
 ﻿using GoodAI.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Logger
 {
@@ -24,7 +25,34 @@ namespace Logger
                     message.Objects, message.Exception));
             }
 
+            list.Reverse();
+
             return list;
+        }
+
+        public static List<TWLogMessage> GetVerboseLogMessages()
+        {
+            return GetAllLogMessages();
+        }
+
+        public static List<TWLogMessage> GetDebugLogMessages()
+        {
+            return GetVerboseLogMessages().Where(x => x.Severity != TWSeverity.Verbose).ToList();
+        }
+
+        public static List<TWLogMessage> GetInfoLogMessages()
+        {
+            return GetDebugLogMessages().Where(x => x.Severity != TWSeverity.Debug).ToList();
+        }
+
+        public static List<TWLogMessage> GetWarnLogMessages()
+        {
+            return GetInfoLogMessages().Where(x => x.Severity != TWSeverity.Info).ToList();
+        }
+
+        public static List<TWLogMessage> GetErrorLogMessages()
+        {
+            return GetWarnLogMessages().Where(x => x.Severity != TWSeverity.Warn).ToList();
         }
 
         private static TWSeverity ToTWSeverity(Severity s)

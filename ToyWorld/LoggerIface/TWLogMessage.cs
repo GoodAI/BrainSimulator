@@ -16,5 +16,10 @@ namespace Logger
             Objects = objects;
             Exception = exception;
         }
+
+        public override string ToString()
+        {
+            return Template + " " + Exception;
+        }
     }
 }

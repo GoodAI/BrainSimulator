@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using Utils;
 using VRageMath;
@@ -55,6 +56,8 @@ namespace World.ToyWorldCore
             IMovementPhysics movementPhysics = new MovementPhysics();
             ICollisionChecker collisionChecker = new CollisionChecker(Atlas);
             m_collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
+
+            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Loading Successful");
         }
 
 
@@ -100,6 +103,7 @@ namespace World.ToyWorldCore
             UpdateCharacters();
             AutoupdateRegister.UpdateItems(this);
             UpdatePhysics();
+            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Step performed");
         }
 
         public List<int> GetAvatarsIds()

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
+using Logger;
 using ToyWorldFactory;
 using YAXLib;
 
@@ -239,6 +240,12 @@ namespace GoodAI.ToyWorld
 
             public override void Execute()
             {
+                List<TWLogMessage> allLogMessages = TWLog.GetAllLogMessages();
+
+                Console.WriteLine("Start of TWLog");
+                allLogMessages.ForEach(Console.WriteLine);
+                Console.WriteLine("End of TWLog");
+
                 Owner.m_gameCtrl.MakeStep();
 
                 TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);

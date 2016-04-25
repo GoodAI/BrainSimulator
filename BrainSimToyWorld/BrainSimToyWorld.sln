@@ -48,6 +48,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimToyWorld", "Module\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldTests", "..\ToyWorld\ToyWorldTests\ToyWorldTests.csproj", "{29936884-7FC6-4159-95C0-6E9B3C0D028A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerIface", "..\ToyWorld\LoggerIface\LoggerIface.csproj", "{97BD8CC4-EC76-44EF-B774-48062454F4FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "..\ToyWorld\Logger\Logger.csproj", "{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -187,6 +191,22 @@ Global
 		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{97BD8CC4-EC76-44EF-B774-48062454F4FC}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
