@@ -52,7 +52,11 @@ namespace World.ToyWorldCore
         public void UpdateItems(IWorld world)
         {
             foreach (IAutoupdateable actor in CurrentUpdateRequests)
+            {
                 actor.Update(world);
+                if (actor.NextUpdateAfter > 0)
+                    Register(actor, actor.NextUpdateAfter);
+            }
             CurrentUpdateRequests.Clear();
         }
 

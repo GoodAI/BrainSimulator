@@ -9,6 +9,8 @@ namespace World.GameActors.Tiles
     public interface IAutoupdateable
     {
         Tile Update(IWorld world);
+
+        int NextUpdateAfter { get; }
     }
 
     /// <summary>
