@@ -147,6 +147,8 @@
     <Compile Include="DiscreteRL\Interfaces\IDiscretePolicyObservable.cs" />
     <Compile Include="DiscreteRL\Interfaces\IDiscreteSRPObservable.cs" />
     <Compile Include="DiscreteRL\Observers\DiscreteQLearningObserver.cs" />
+    <Compile Include="DyBM\MyDyBMInputLayer.cs" />
+    <Compile Include="DyBM\Tasks\MyDyBMLearningTask.cs" />
     <Compile Include="GameBoy\MyTwoPlayerPongWorld.cs" />
     <Compile Include="GeneticWorld\GeneticWorldTasks.cs" />
     <Compile Include="GeneticWorld\MyGeneticTrainingWorld.cs" />
