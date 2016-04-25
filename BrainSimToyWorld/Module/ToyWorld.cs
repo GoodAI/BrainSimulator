@@ -18,6 +18,7 @@ namespace GoodAI.ToyWorld
     public class ToyWorld : MyWorld
     {
         public TWUpdateTask UpdateTask { get; private set; }
+
         public TWGetInputTask GetInputTask { get; private set; }
 
         [MyOutputBlock(0)]
@@ -80,9 +81,13 @@ namespace GoodAI.ToyWorld
         public int ResolutionHeight { get; set; }
 
         private IGameController m_gameCtrl { get; set; }
+
         private IAvatarController m_avatarCtrl { get; set; }
+
         private IFovAvatarRR m_fovRR { get; set; }
+
         private IFofAvatarRR m_fofRR { get; set; }
+
         private IFreeMapRR m_freeRR { get; set; }
 
         public ToyWorld()
@@ -91,11 +96,6 @@ namespace GoodAI.ToyWorld
                 TilesetTable = GetDllDirectory() + @"\res\GameActors\Tiles\Tilesets\TilesetTable.csv";
             if (SaveFile == null)
                 SaveFile = GetDllDirectory() + @"\res\Worlds\mockup999_pantry_world.tmx";
-        }
-
-        private static string GetDllDirectory()
-        {
-            return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
         public override void Validate(MyValidator validator)
@@ -107,6 +107,36 @@ namespace GoodAI.ToyWorld
 
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == 8, this, "Controls size has to be of size 8 or 84+. Use device input node for controls, or provide correct number of inputs");
+        }
+
+        public override void UpdateMemoryBlocks()
+        {
+            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable))
+                return;
+
+            GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
+            m_gameCtrl = GameFactory.GetThreadSafeGameController(setup);
+            m_gameCtrl.Init();
+
+            int[] avatarIds = m_gameCtrl.GetAvatarIds();
+            if (avatarIds.Length == 0)
+            {
+                MyLog.ERROR.WriteLine("No avatar found in map!");
+                return;
+            }
+
+            int myAvatarId = avatarIds[0];
+            m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
+
+            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId);
+            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; });
+            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
+            m_freeRR.SetPositionCenter(CenterX, CenterY);
+        }
+
+        private static string GetDllDirectory()
+        {
+            return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
         private T InitRR<T>(IRenderRequestBase rr, MyMemoryBlock<float> targetMemBlock, Action<IRenderRequestBase> initializer = null) where T : class, IRenderRequestBase
@@ -131,32 +161,6 @@ namespace GoodAI.ToyWorld
             return InitRR<T>(rr, targetMemBlock, initializer);
         }
 
-        public override void UpdateMemoryBlocks()
-        {
-
-            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable))
-                return;
-
-            GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
-            m_gameCtrl = GameFactory.GetThreadSafeGameController(setup);
-            m_gameCtrl.Init();
-
-            int[] avatarIds = m_gameCtrl.GetAvatarIds();
-            if (avatarIds.Length == 0)
-            {
-                MyLog.ERROR.WriteLine("No avatar found in map!");
-                return;
-            }
-
-            int myAvatarId = avatarIds[0];
-            m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
-
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId);
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; });
-            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
-            m_freeRR.SetPositionCenter(CenterX, CenterY);
-        }
-
         public class TWGetInputTask : MyTask<ToyWorld>
         {
             private Dictionary<string, int> controlIndexes = new Dictionary<string, int>();
@@ -174,33 +178,31 @@ namespace GoodAI.ToyWorld
                     controlIndexes["fof_left"] = 5;
                     controlIndexes["fof_up"] = 6;
                     controlIndexes["fof_down"] = 7;
+                    controlIndexes["interact"] = 8;
+                    controlIndexes["use"] = 9;
+                    controlIndexes["pickup"] = 10;
                 }
                 else if (Owner.Controls.Count >= 84)
                 {
                     MyLog.INFO.WriteLine("ToyWorld: Controls set to keyboard mode.");
-                    controlIndexes["forward"] = 87;
-                    controlIndexes["backward"] = 83;
-                    controlIndexes["left"] = 65;
-                    controlIndexes["right"] = 68;
-                    controlIndexes["fof_right"] = 74;
-                    controlIndexes["fof_left"] = 76;
-                    controlIndexes["fof_up"] = 73;
-                    controlIndexes["fof_down"] = 75;
-                }
-            }
+                    controlIndexes["forward"] = 87;     // W
+                    controlIndexes["backward"] = 83;    // S
+                    controlIndexes["left"] = 65;        // A
+                    controlIndexes["right"] = 68;       // D
 
-            private float convertBiControlToUniControl(float a, float b)
-            {
-                return a >= b ? a : -b;
+                    controlIndexes["fof_up"] = 73;      // I
+                    controlIndexes["fof_left"] = 76;    // J
+                    controlIndexes["fof_down"] = 75;    // K
+                    controlIndexes["fof_right"] = 74;   // L
+
+                    controlIndexes["interact"] = 66;    // B
+                    controlIndexes["use"] = 78;         // N
+                    controlIndexes["pickup"] = 77;      // M
+                }
             }
 
             public override void Execute()
             {
-                float speed = 0;
-                float rotation = 0;
-                float fof_x = 0;
-                float fof_y = 0;
-
                 Owner.Controls.SafeCopyToHost();
                 float leftSignal = Owner.Controls.Host[controlIndexes["left"]];
                 float rightSignal = Owner.Controls.Host[controlIndexes["right"]];
@@ -212,19 +214,37 @@ namespace GoodAI.ToyWorld
                 float fof_up = Owner.Controls.Host[controlIndexes["fof_up"]];
                 float fof_down = Owner.Controls.Host[controlIndexes["fof_down"]];
 
-                rotation = convertBiControlToUniControl(leftSignal, rightSignal);
-                speed = convertBiControlToUniControl(fwSignal, bwSignal);
-                fof_x = convertBiControlToUniControl(fof_left, fof_right);
-                fof_y = convertBiControlToUniControl(fof_up, fof_down);
+                float rotation = convertBiControlToUniControl(leftSignal, rightSignal);
+                float speed = convertBiControlToUniControl(fwSignal, bwSignal);
+                float fof_x = convertBiControlToUniControl(fof_left, fof_right);
+                float fof_y = convertBiControlToUniControl(fof_up, fof_down);
 
-                IAvatarControls ctrl = new AvatarControls(100, speed, rotation, fof: new PointF(fof_x, fof_y));
+                bool interact = Owner.Controls.Host[controlIndexes["interact"]] > 0.5 ? true : false;
+                bool use = Owner.Controls.Host[controlIndexes["use"]] > 0.5 ? true : false;
+                bool pickup = Owner.Controls.Host[controlIndexes["pickup"]] > 0.5 ? true : false;
+
+                IAvatarControls ctrl = new AvatarControls(100, speed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
                 Owner.m_avatarCtrl.SetActions(ctrl);
+            }
+
+            private float convertBiControlToUniControl(float a, float b)
+            {
+                return a >= b ? a : -b;
             }
         }
 
         public class TWUpdateTask : MyTask<ToyWorld>
         {
             public override void Init(int nGPU) { }
+
+            public override void Execute()
+            {
+                Owner.m_gameCtrl.MakeStep();
+
+                TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);
+                TransferFromRRToMemBlock(Owner.m_fofRR, Owner.VisualFof);
+                TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
+            }
 
             private void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
             {
@@ -237,15 +257,6 @@ namespace GoodAI.ToyWorld
                     Buffer.BlockCopy(data, i * stride, mb.Host, (mb.Count - (i + 1) * width) * sizeof(uint), stride);
 
                 mb.SafeCopyToDevice();
-            }
-
-            public override void Execute()
-            {
-                Owner.m_gameCtrl.MakeStep();
-
-                TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);
-                TransferFromRRToMemBlock(Owner.m_fofRR, Owner.VisualFof);
-                TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
             }
         }
     }
