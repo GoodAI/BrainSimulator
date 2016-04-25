@@ -22,10 +22,8 @@ namespace Logger
                     break;
                 }
                 list.Add(new TWLogMessage(ToTWSeverity(message.Severity), message.Template, 
-                    message.Objects, message.Exception));
+                    message.Objects, message.Exception, message.Time));
             }
-
-            list.Reverse();
 
             return list;
         }

@@ -8,6 +8,7 @@ namespace Logger
         public string Template { get; private set; }
         public object[] Objects { get; private set; }
         public Exception Exception { get; private set; }
+        public DateTime Time;
 
         public LogMessage(Severity severity, string template, object[] objects, Exception exception)
         {
@@ -15,6 +16,7 @@ namespace Logger
             Template = template;
             Objects = objects;
             Exception = exception;
+            Time = DateTime.Now;
         }
     }
 }
