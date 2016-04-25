@@ -40,7 +40,11 @@ namespace World.ToyWorldCore
             {
                 IAutoupdateable updateable = actor as IAutoupdateable;
                 if (updateable != null)
+                {
                     updateable.Update(this);
+                    if (updateable.NextUpdateAfter > 0)
+                        AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
+                }
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
 
@@ -90,6 +94,7 @@ namespace World.ToyWorldCore
 
         public void Update()
         {
+            UpdateScheduled();
             UpdateTiles();
             UpdateAvatars();
             UpdateCharacters();
