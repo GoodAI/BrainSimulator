@@ -35,7 +35,9 @@ namespace World.ToyWorldCore
 
                 if (layerName.Contains("Object"))
                 {
-                    ObjectGroup objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
+                    ObjectGroup objectLayer = map.ObjectGroups.FirstOrDefault(x => x.Name == layerName);
+                    if (objectLayer == null)  // TMX does not contain such layer
+                        continue;
                     atlas.ObjectLayers.Add(
                         FillObjectLayer(
                         atlas,
@@ -50,17 +52,9 @@ namespace World.ToyWorldCore
                 }
                 else
                 {
-                    Layer tileLayer;
-                    try
-                    {
-                        tileLayer = map.Layers.First(x => x.Name == layerName);
-                    }
-                    catch (InvalidOperationException)
-                    {
-
-                        throw new ArgumentException("Layer " + layerName + " not found in given .tmx file!");
-                    }
-
+                    Layer tileLayer = map.Layers.FirstOrDefault(x => x.Name == layerName);
+                    if (tileLayer == null)  // TMX does not contain such layer
+                        continue;
                     atlas.TileLayers.Add(
                         FillTileLayer(
                         tileLayer,
@@ -150,7 +144,7 @@ namespace World.ToyWorldCore
             string tilesetName = nameNewGid.Item1;
             int newGid = nameNewGid.Item2;
 
-            Type objectType = Type.GetType("World.GameActors.GameObjects." +tmxObject.Type);
+            Type objectType = Type.GetType("World.GameActors.GameObjects." + tmxObject.Type);
 
             if (objectType == null)
             {
@@ -203,7 +197,7 @@ namespace World.ToyWorldCore
             tmxObject.Y = worldHeight - tmxObject.Y;
             tmxObject.Width /= tileWidth;
             tmxObject.Height /= tileHeight;
-            tmxObject.Rotation =  - MathHelper.ToRadians(tmxObject.Rotation);
+            tmxObject.Rotation = -MathHelper.ToRadians(tmxObject.Rotation);
         }
 
         private static ITileLayer FillTileLayer(
@@ -288,7 +282,7 @@ namespace World.ToyWorldCore
         /// <param name="properties"></param>
         /// <param name="gameObject"></param>
         [DebuggerNonUserCode] // We want to let exceptions to be caught in this method.
-                              // You will receive more informative exception on call.
+        // You will receive more informative exception on call.
         private static void SetGameObjectProperties(List<Property> properties, GameObject gameObject)
         {
             Type type = gameObject.GetType();
@@ -324,7 +318,7 @@ namespace World.ToyWorldCore
                             {
                                 value = bool.Parse(property.Value);
                             }
-                            
+
                         }
                         else if (propertyType == typeof(string))
                         {

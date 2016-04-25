@@ -9,21 +9,26 @@ namespace World.ToyWorldCore
 {
     public class SimpleObjectLayer : IObjectLayer
     {
-        private List<IGameObject> GameObjects { get; set; }
+        private List<GameObject> GameObjects { get; set; }
 
         public LayerType LayerType { get; set; }
 
         public SimpleObjectLayer(LayerType layerType)
         {
             LayerType = layerType;
-            GameObjects = new List<IGameObject>();
+            GameObjects = new List<GameObject>();
         }
 
-        public List<IGameObject> GetGameObjects(RectangleF rectangle)
+        public GameObject GetActorAt(int x, int y)
         {
-            var list = new List<IGameObject>();
+            return GetGameObjects(new RectangleF(x, y, 1, 1)).First();
+        }
 
-            foreach (IGameObject gameObject in GameObjects)
+        public List<GameObject> GetGameObjects(RectangleF rectangle)
+        {
+            var list = new List<GameObject>();
+
+            foreach (GameObject gameObject in GameObjects)
             {
                 IPhysicalEntity physicalEntity = gameObject.PhysicalEntity;
                 RectangleF r = new RectangleF();
@@ -38,18 +43,18 @@ namespace World.ToyWorldCore
             return list;
         }
 
-        public List<IGameObject> GetGameObjects()
+        public List<GameObject> GetGameObjects()
         {
-            var newList = new List<IGameObject>();
+            var newList = new List<GameObject>();
             newList.AddRange(GameObjects);
             return newList;
         }
 
-        public List<IGameObject> GetGameObjects(VRageMath.Circle circle)
+        public List<GameObject> GetGameObjects(VRageMath.Circle circle)
         {
-            var list = new List<IGameObject>();
+            var list = new List<GameObject>();
 
-            foreach (IGameObject gameObject in GameObjects)
+            foreach (GameObject gameObject in GameObjects)
             {
                 if (circle.Include(gameObject.Position))
                 {
@@ -66,7 +71,7 @@ namespace World.ToyWorldCore
             return true;
         }
 
-        public List<IGameObject> GetAllObjects()
+        public List<GameObject> GetAllObjects()
         {
             Contract.Ensures(Contract.Result<List<GameObject>>() != null);
 

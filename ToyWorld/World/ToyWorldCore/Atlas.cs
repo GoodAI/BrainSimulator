@@ -60,6 +60,8 @@ namespace World.ToyWorldCore
         /// <param name="coordinates"></param>
         /// <returns></returns>
         bool ContainsCollidingTile(Vector2I coordinates);
+
+        IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type);
     }
 
     public class Atlas : IAtlas
@@ -67,6 +69,17 @@ namespace World.ToyWorldCore
         public List<ITileLayer> TileLayers { get; private set; }
 
         public List<IObjectLayer> ObjectLayers { get; private set; }
+
+        private IEnumerable<ILayer<GameActor>> Layers
+        {
+            get
+            {
+                foreach (ITileLayer layer in TileLayers)
+                    yield return layer;
+                foreach (IObjectLayer layer in ObjectLayers)
+                    yield return layer;
+            }
+        }
 
         public Dictionary<int, IAvatar> Avatars { get; private set; }
 
@@ -119,15 +132,20 @@ namespace World.ToyWorldCore
 
         public bool ContainsCollidingTile(Vector2I coordinates)
         {
-            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetTile(coordinates) != null)
+            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
-            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetTile(coordinates) != null)
+            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
             return false;
+        }
+
+        public IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type = LayerType.All)
+        {
+            return Layers.Where(t => (t.LayerType & type) > 0).Select(layer => layer.GetActorAt(x, y));
         }
     }
 }

@@ -34,6 +34,20 @@ namespace World.ToyWorldCore
 
         public LayerType LayerType { get; set; }
 
+        public Tile GetActorAt(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+            {
+                return new Obstacle(0);
+            }
+            return Tiles[x][y];
+        }
+
+        public Tile GetActorAt(Vector2I coordinates)
+        {
+            return GetActorAt(coordinates.X, coordinates.Y);
+        }
+
         public int[] GetRectangle(Rectangle rectangle)
         {
             if (m_tileTypes.Length < rectangle.Size.Size())
@@ -105,15 +119,6 @@ namespace World.ToyWorldCore
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
             return GetRectangle(rectangle);
-        }
-
-        public Tile GetTile(Vector2I coordinates)
-        {
-            if (coordinates.X < 0 || coordinates.Y < 0 || coordinates.X >= Width || coordinates.Y >= Height)
-            {
-                return new Obstacle(0);
-            }
-            return Tiles[coordinates.X][coordinates.Y];
         }
     }
 }
