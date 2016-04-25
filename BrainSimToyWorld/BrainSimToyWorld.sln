@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimToyWorld", "Module\
 		{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6} = {F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldTests", "..\ToyWorld\ToyWorldTests\ToyWorldTests.csproj", "{29936884-7FC6-4159-95C0-6E9B3C0D028A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -179,6 +181,12 @@ Global
 		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{8C381B5A-3FD7-4311-9C42-F8115587E5FD}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{29936884-7FC6-4159-95C0-6E9B3C0D028A}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
