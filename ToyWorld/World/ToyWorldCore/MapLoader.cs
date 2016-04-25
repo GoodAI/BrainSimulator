@@ -95,19 +95,20 @@ namespace World.ToyWorldCore
             // avatars list
             IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
 
-            foreach (TmxObject avatar in avatars)
+            TmxObject[] tmxObjects = avatars.ToArray();
+            foreach (TmxObject avatar in tmxObjects)
             {
-                var gameAvatar = LoadAgent(avatar, tilesets);
+                Avatar gameAvatar = LoadAgent(avatar, tilesets);
                 initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);
             }
 
-            IEnumerable<TmxObject> others = objectLayer.TmxMapObjects.Except(avatars);
+            IEnumerable<TmxObject> others = objectLayer.TmxMapObjects.Except(tmxObjects);
 
             foreach (TmxObject tmxObject in others)
             {
-                var character = LoadCharacter(tmxObject, tilesets);
+                Character character = LoadCharacter(tmxObject, tilesets);
                 initializer.Invoke(character);
                 simpleObjectLayer.AddGameObject(character);
                 atlas.Characters.Add(character);

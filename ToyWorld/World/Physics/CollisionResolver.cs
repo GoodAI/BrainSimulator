@@ -49,13 +49,14 @@ namespace World.Physics
 
             float residueSpeed = speed - Vector2.Distance(previousPosition, physicalEntity.Position);
 
-            if (physicalEntity.TileCollision == TileCollision.Slide)
+            switch (physicalEntity.TileCollision)
             {
-                Slide(physicalEntity, residueSpeed);
-            }
-            else if(physicalEntity.TileCollision == TileCollision.Bounce)
-            {
-                Bounce(physicalEntity, residueSpeed, 10);
+                case TileCollision.Bounce:
+                    Bounce(physicalEntity, residueSpeed, 10);
+                    break;
+                case TileCollision.Slide:
+                    Slide(physicalEntity, residueSpeed);
+                    break;
             }
         }
 

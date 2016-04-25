@@ -73,7 +73,13 @@ namespace World.GameActors.GameObjects
             : base(tilesetName, tileId, name)
         {
             shapeType = shapeType ?? typeof(Circle);
-            ConstructorInfo ctor = shapeType.GetConstructor(new[] {typeof(Vector2)});
+            ConstructorInfo ctor = shapeType.GetConstructor(new[] { typeof(Vector2) });
+
+            if (ctor == null)
+            {
+                throw new Exception("Class World.Physics.Circle has no constructor Circle(Vector2), hence Character cannot create his PhysicalEntity Shape.");
+            }
+
             Shape shape = (Shape)ctor.Invoke(new object[] {size});
             PhysicalEntity = new ForwardMovablePhysicalEntity(position, shape, direction: direction, tileCollision: tileCollision);
         }
