@@ -95,7 +95,7 @@ namespace World.ToyWorldCore
             // avatars list
             IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
 
-            TmxObject[] tmxObjects = avatars.ToArray();
+            List<TmxObject> tmxObjects = avatars.ToList();
             foreach (TmxObject avatar in tmxObjects)
             {
                 Avatar gameAvatar = LoadAgent(avatar, tilesets);

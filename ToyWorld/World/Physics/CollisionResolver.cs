@@ -18,8 +18,6 @@ namespace World.Physics
         private const float Y_DIRECTION = 0;
         private const float NEGLIGIBLE_DISTANCE = 0.001f;
 
-        private Random random = new Random(79);
-
         public CollisionResolver(ICollisionChecker collisionChecker, IMovementPhysics movementPhysics)
         {
             m_collisionChecker = collisionChecker;
@@ -140,7 +138,6 @@ namespace World.Physics
         /// <param name="physicalEntity"></param>
         /// <param name="initialSpeed"></param>
         /// <param name="direction"></param>
-        /// <param name="goForward">If true make step forward. Otherwise start with half step back.</param>
         private void TileFreePositionBinarySearch(IForwardMovablePhysicalEntity physicalEntity, float initialSpeed, float direction)
         {
             float speed = initialSpeed;
