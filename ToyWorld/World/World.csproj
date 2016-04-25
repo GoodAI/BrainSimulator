@@ -190,7 +190,7 @@
     <Compile Include="WorldInterfaces\IWorld.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoggerIface\Logger.csproj">
+    <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
       <Name>Logger</Name>
     </ProjectReference>

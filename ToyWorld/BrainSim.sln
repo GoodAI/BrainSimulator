@@ -61,9 +61,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TW API", "TW API", "{FF7EF0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapSerializer", "TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj", "{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "LoggerIface\Logger.csproj", "{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerIface", "Logger\LoggerIface.csproj", "{97BD8CC4-EC76-44EF-B774-48062454F4FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerIface", "LoggerIface\LoggerIface.csproj", "{97BD8CC4-EC76-44EF-B774-48062454F4FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
