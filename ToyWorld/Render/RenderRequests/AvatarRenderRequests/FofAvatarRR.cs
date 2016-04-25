@@ -29,6 +29,8 @@ namespace Render.RenderRequests
                     throw new ArgumentNullException("value", "The supplied IFovAvatarRR cannot be null.");
                 if (value.AvatarID != AvatarID)
                     throw new ArgumentException("The supplied IFovAvatarRR is tied to a different avatarID. Fof/Fov ID: " + AvatarID + '/' + value.AvatarID);
+                if (value.Size.Width < Size.Width || value.Size.Height < Size.Height)
+                    throw new ArgumentException("The supplied IFovAvatarRR's view size cannot be smaller than this view size. Fof/Fov sizes: " + Size + '/' + value.Size);
 
                 m_fovAvatarRenderRequest = value;
             }
@@ -62,6 +64,5 @@ namespace Render.RenderRequests
         }
 
         #endregion
-
     }
 }

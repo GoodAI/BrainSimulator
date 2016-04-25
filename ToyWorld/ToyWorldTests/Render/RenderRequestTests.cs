@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -103,6 +104,10 @@ namespace ToyWorldTests.Render
             var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
             Assert.ThrowsAny<MissingFieldException>((Action)GameController.MakeStep);
             Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = null);
+
+            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
+            RR.Size = new SizeF(1, 1);
+            Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = RR);
 
             //var differentRR = GameController.RegisterRenderRequest<IFovAvatarRR>(0);
             //Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = differentRR); // TODO: need at least two avatars for this test
