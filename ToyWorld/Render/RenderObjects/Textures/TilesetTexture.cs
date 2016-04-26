@@ -10,7 +10,6 @@ namespace Render.RenderObjects.Textures
 {
     internal class TilesetTexture : TextureBase
     {
-
         readonly List<TextureBase> m_textures = new List<TextureBase>();
 
         public int Count { get { return m_textures.Count; } }
@@ -45,7 +44,8 @@ namespace Render.RenderObjects.Textures
                                 data.Scan0.ArgbToRgbaArray(data.Width * data.Height),
                                 bmp.Width, bmp.Height,
                                 minFilter: TextureMinFilter.NearestMipmapLinear,
-                                magFilter: TextureMagFilter.Nearest));
+                                magFilter: TextureMagFilter.Nearest,
+                                generateMipmap: true));
                     }
                     finally
                     {
