@@ -24,7 +24,7 @@ namespace Render.RenderObjects.Effects
 
             // Vertex shader
             LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vertPath));
-            if (fragAddendum != null)
+            if (vertAddendum != null)
                 LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vertAddendum));
 
             // Fragment shader
@@ -92,12 +92,22 @@ namespace Render.RenderObjects.Effects
             GL.Uniform1(pos, val);
         }
 
+        public void SetUniform1(int pos, float val)
+        {
+            GL.Uniform1(pos, val);
+        }
+
         public void SetUniform3(int pos, Vector3I val)
         {
             GL.Uniform3(pos, val.X, val.Y, val.Z);
         }
 
         public void SetUniform4(int pos, Vector4I val)
+        {
+            GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
+        }
+
+        public void SetUniform4(int pos, Vector4 val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }

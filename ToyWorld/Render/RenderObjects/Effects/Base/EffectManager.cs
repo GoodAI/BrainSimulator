@@ -16,6 +16,7 @@ namespace Render.RenderObjects.Effects
             CaseInternal<NoEffect>();
             CaseInternal<NoEffectTex>();
             CaseInternal<NoEffectOffset>();
+            CaseInternal<NoiseEffect>();
         }
 
         private void CaseInternal<T>()
