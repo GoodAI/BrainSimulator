@@ -57,6 +57,10 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string SaveFile { get; set; }
 
+        [MyBrowsable, Category("FoF view"), DisplayName("FoF size")]
+        [YAXSerializableField(DefaultValue = 3)]
+        public int FoFSize { get; set; }
+
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
         [YAXSerializableField(DefaultValue = 0)]
         public float CenterX { get; set; }
@@ -106,13 +110,19 @@ namespace GoodAI.ToyWorld
             validator.AssertError(File.Exists(SaveFile), this, "Please specify a correct SaveFile path in world properties.");
             validator.AssertError(File.Exists(TilesetTable), this, "Please specify a correct TilesetTable path in world properties.");
 
+            validator.AssertError(FoFSize > 0, this, "FoF size has to be positive.");
+            validator.AssertError(Width > 0, this, "Free view width has to be positive.");
+            validator.AssertError(Height > 0, this, "Free view height has to be positive.");
+            validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
+            validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
+
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == 8, this, "Controls size has to be of size 8 or 84+. Use device input node for controls, or provide correct number of inputs");
         }
 
         public override void UpdateMemoryBlocks()
         {
-            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable))
+            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0)
                 return;
 
             GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
@@ -130,7 +140,7 @@ namespace GoodAI.ToyWorld
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
 
             m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId);
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; });
+            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); });
             m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
         }
