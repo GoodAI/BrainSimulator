@@ -49,6 +49,10 @@ namespace GoodAI.ToyWorld
             get { return GetInput(0); }
         }
 
+        [MyBrowsable, Category("Runtime"), DisplayName("Run every Nth")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public int RunEvery { get; set; }
+
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string TilesetTable { get; set; }
@@ -214,6 +218,9 @@ namespace GoodAI.ToyWorld
 
             public override void Execute()
             {
+                if (SimulationStep != 0 && SimulationStep % Owner.RunEvery != 0)
+                    return;
+
                 Owner.Controls.SafeCopyToHost();
                 float leftSignal = Owner.Controls.Host[controlIndexes["left"]];
                 float rightSignal = Owner.Controls.Host[controlIndexes["right"]];
@@ -287,6 +294,9 @@ namespace GoodAI.ToyWorld
 
             public override void Execute()
             {
+                if (SimulationStep != 0 && SimulationStep % Owner.RunEvery != 0)
+                    return;
+
                 PrintLogMessages();
 
                 Owner.m_gameCtrl.MakeStep();
