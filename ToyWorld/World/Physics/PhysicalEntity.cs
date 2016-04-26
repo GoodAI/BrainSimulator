@@ -43,9 +43,9 @@ namespace World.Physics
             Position = position;
         }
 
-        public VRageMath.RectangleF CoverRectangle()
+        public RectangleF CoverRectangle()
         {
-            return new VRageMath.RectangleF(Position, Shape.CoverRectangleSize());
+            return new RectangleF(Position, Shape.CoverRectangleSize());
         }
 
         public List<Vector2I> CoverTiles()

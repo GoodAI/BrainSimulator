@@ -139,9 +139,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -198,10 +196,6 @@
     <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
       <Project>{7a4d6fa1-e44b-40e2-9de8-3606dbc657d9}</Project>
       <Name>TmxMapSerializer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
-      <Project>{527728E6-91BE-4678-912F-45A507D0BC67}</Project>
-      <Name>ToyWorldAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>

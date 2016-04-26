@@ -1,5 +1,4 @@
-﻿using System;
-using VRageMath;
+﻿using VRageMath;
 
 namespace World.Physics
 {
