@@ -95,7 +95,7 @@ namespace Render.RenderRequests
             protected set { PositionCenterV2 = new Vector2(value.X, value.Y); }
         }
 
-        public System.Drawing.SizeF Size
+        public virtual System.Drawing.SizeF Size
         {
             get { return new System.Drawing.SizeF(SizeV.X, SizeV.Y); }
             set

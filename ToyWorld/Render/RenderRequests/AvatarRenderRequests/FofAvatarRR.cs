@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using VRageMath;
@@ -19,6 +20,15 @@ namespace Render.RenderRequests
         #endregion
 
         #region IFofAvatarRR overrides
+
+        public override SizeF Size
+        {
+            get { return base.Size; }
+            set
+            {
+                base.Size = new SizeF(Math.Min(value.Width, FovAvatarRenderRequest.Size.Width), Math.Min(value.Height, FovAvatarRenderRequest.Size.Height));
+            }
+        }
 
         public IFovAvatarRR FovAvatarRenderRequest
         {
