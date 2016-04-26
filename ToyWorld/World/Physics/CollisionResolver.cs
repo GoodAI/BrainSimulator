@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using VRageMath;
 
 namespace World.Physics
@@ -67,18 +68,14 @@ namespace World.Physics
             Vector2 bestPosition = originalPosition;
             float bestDirection = originalDirection;
 
-            for (int i = 0; i < 2; i++)
-            {
-                float newDirection;
-                if (i == 0)
-                {
-                    newDirection = MathHelper.WrapAngle(2f * MathHelper.Pi - physicalEntity.Direction);
-                }
-                else
-                {
-                    newDirection = MathHelper.WrapAngle(3f * MathHelper.Pi - physicalEntity.Direction);
-                }
+            // candidate directions to move
+            var candidateDirections = new List<float>();
+            candidateDirections.Add(MathHelper.WrapAngle(2f * MathHelper.Pi - physicalEntity.Direction));
+            candidateDirections.Add(MathHelper.WrapAngle(3f * MathHelper.Pi - physicalEntity.Direction));
 
+            // search for direction of longest move
+            foreach (float newDirection in candidateDirections)
+            {
                 TileFreePositionBinarySearch(physicalEntity, residueSpeed, newDirection);
 
                 float distance = Vector2.Distance(originalPosition, physicalEntity.Position);

@@ -40,11 +40,11 @@ namespace World.GameActors.GameObjects
         {
             get
             {
-                return this.PhysicalEntity.ForwardSpeed;
+                return PhysicalEntity.ForwardSpeed;
             }
             set
             {
-                this.PhysicalEntity.ForwardSpeed = value;
+                PhysicalEntity.ForwardSpeed = value;
             }
         }
 
@@ -52,11 +52,11 @@ namespace World.GameActors.GameObjects
         {
             get
             {
-                return this.PhysicalEntity.RotationSpeed;
+                return PhysicalEntity.RotationSpeed;
             }
             set
             {
-                this.PhysicalEntity.RotationSpeed = value;
+                PhysicalEntity.RotationSpeed = value;
             }
         }
 
@@ -77,7 +77,8 @@ namespace World.GameActors.GameObjects
 
             if (ctor == null)
             {
-                throw new Exception("Class World.Physics.Circle has no constructor Circle(Vector2), hence Character cannot create his PhysicalEntity Shape.");
+                throw new Exception("Class " + shapeType.FullName + " has no constructor " + shapeType.Name + "(Vector2 v), " +
+                                    "hence Character cannot create his PhysicalEntity Shape.");
             }
 
             Shape shape = (Shape)ctor.Invoke(new object[] {size});
