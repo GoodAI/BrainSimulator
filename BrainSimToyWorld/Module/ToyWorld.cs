@@ -65,6 +65,10 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = 3)]
         public int FoFSize { get; set; }
 
+        [MyBrowsable, Category("FoV view"), DisplayName("FoV size")]
+        [YAXSerializableField(DefaultValue = 21)]
+        public int FoVSize { get; set; }
+
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
         [YAXSerializableField(DefaultValue = 0)]
         public float CenterX { get; set; }
@@ -143,7 +147,7 @@ namespace GoodAI.ToyWorld
             int myAvatarId = avatarIds[0];
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
 
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId);
+            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId, (IRenderRequestBase rr) => { rr.Size = new SizeF(FoVSize, FoVSize); });
             m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); });
             m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
