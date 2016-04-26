@@ -20,36 +20,11 @@ vec2 GetTexCoods()
 	// Tile positions
     ivec2 off = ivec2(v_texOffset % texSizeCount.z, v_texOffset / texSizeCount.z);
 	// Texture positions (top-left)
-	ivec2 uv = off * (tileSizeMargin.xy + tileSizeMargin.zw);
+	vec2 uv = off * (tileSizeMargin.xy + tileSizeMargin.zw);
 
 	// Offset the vertex according to its position in the quad
 	int vertID = gl_VertexID % 4;
 
-	const int uvOffset = 1;
-
-	switch (vertID)
-	{
-		case 0:
-		case 1:
-		uv.x += uvOffset;
-		break;
-
-		case 2:
-		case 3:
-		uv.x -= uvOffset;
-	}
-	switch (vertID)
-	{
-		case 0:
-		case 3:
-		uv.y -= uvOffset;
-		break;
-
-		case 1:
-		case 2:
-		uv.y += uvOffset;
-		break;
-	}
 	switch (vertID)
 	{
 		case 0:
