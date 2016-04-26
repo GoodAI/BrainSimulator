@@ -379,7 +379,6 @@ namespace Render.RenderRequests
 
         private void DrawEffects(RendererBase renderer)
         {
-            DrawNoise = true;
             if (DrawNoise)
             {
                 m_simTime = (m_simTime + 0.01f * NoiseTransformationSpeedCoefficient) % 3e15;
