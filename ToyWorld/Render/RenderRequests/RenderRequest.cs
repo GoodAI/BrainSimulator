@@ -100,10 +100,8 @@ namespace Render.RenderRequests
             get { return new System.Drawing.SizeF(SizeV.X, SizeV.Y); }
             set
             {
-                if (value.Width <= 0 || value.Height <= 0)
-                    throw new ArgumentOutOfRangeException("value", "Cannot use non-positive view size for a render request. Value: " + value);
-
-                SizeV = new Vector2(value.Width, value.Height);
+                const float minSize = 0.01f;
+                SizeV = new Vector2(Math.Max(minSize, value.Width), Math.Max(minSize, value.Height));
             }
         }
 
