@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
+using Render.RenderObjects.Textures;
 using Utils.VRageRIP.Lib.Collections;
-
 using TexInitType = System.String;
 
-namespace Render.RenderObjects.Textures
+namespace Render.RenderObjects.Buffers
 {
-    internal class TextureManager
+    internal class RenderTargetManager
     {
         private readonly TypeSwitchParam<TextureBase, TexInitType[]> m_textures = new TypeSwitchParam<TextureBase, TexInitType[]>();
 
         private readonly Dictionary<int, TextureBase> m_currentTextures = new Dictionary<int, TextureBase>();
 
 
-        public TextureManager()
+        public RenderTargetManager()
         {
             CaseInternal<TilesetTexture>();
             //m_textures

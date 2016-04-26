@@ -1,30 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
-using Render.RenderObjects.Textures;
 using Utils.VRageRIP.Lib.Collections;
+using VRageMath;
 using TexInitType = System.String;
 
-namespace Render.RenderObjects.Targets
+namespace Render.RenderObjects.Textures
 {
-    internal class RenderTargetManager
+    internal class TextureManager
     {
         private readonly TypeSwitchParam<TextureBase, TexInitType[]> m_textures = new TypeSwitchParam<TextureBase, TexInitType[]>();
+        private readonly TypeSwitchParam<TextureBase, Vector2I> m_sizedTextures = new TypeSwitchParam<TextureBase, Vector2I>();
 
         private readonly Dictionary<int, TextureBase> m_currentTextures = new Dictionary<int, TextureBase>();
 
 
-        public RenderTargetManager()
+        public TextureManager()
         {
             CaseInternal<TilesetTexture>();
-            //m_textures
-            //    .Case<TilesetTexture>(
-            //        () =>
-            //        {
-            //            var str = Assembly.GetExecutingAssembly().GetManifestResourceStream("Render.Tests.Textures." + "roguelike_selection_summer.png");
-            //            Debug.Assert(str != null);
-            //            return new TilesetTexture(str);
-            //        });
+
+            CaseSizedInternal<RenderTargetColorTexture>();
+            CaseSizedInternal<RenderTargetDepthTexture>();
         }
 
         private void CaseInternal<T>()
@@ -33,11 +29,26 @@ namespace Render.RenderObjects.Targets
             m_textures.Case<T>(i => (T)Activator.CreateInstance(typeof(T), i));
         }
 
+        private void CaseSizedInternal<T>()
+            where T : TextureBase
+        {
+            m_sizedTextures.Case<T>(i => (T)Activator.CreateInstance(typeof(T), i));
+        }
+
+        ////////////////////
+        /// TODO: Texture caching -- je neco, co nechceme cachovat??
+        ////////////////////
 
         public T Get<T>(TexInitType[] images)
             where T : TextureBase
         {
             return m_textures.Switch<T>(images);
+        }
+
+        public T GetSized<T>(Vector2I size)
+            where T : TextureBase
+        {
+            return m_sizedTextures.Switch<T>(size);
         }
 
         public void Bind(TextureBase tex, TextureUnit texUnit = TextureUnit.Texture0)
