@@ -22,6 +22,7 @@ namespace Render.RenderRequests
             None,
             Size,
             Resolution = 1 << 1,
+            Image = 1 << 2,
         }
 
 
@@ -137,12 +138,23 @@ namespace Render.RenderRequests
                     throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be smaller than " + maxResolution + " pixels.");
 
                 m_resolution = value;
-                m_dirtyParams |= DirtyParams.Resolution;
+                m_dirtyParams |= DirtyParams.Resolution | DirtyParams.Image;
             }
         }
 
 
-        public bool GatherImage { get; set; }
+        private bool m_gatherImage;
+
+        public bool GatherImage
+        {
+            get { return m_gatherImage; }
+            set
+            {
+                m_gatherImage = value;
+                m_dirtyParams |= DirtyParams.Image;
+            }
+        }
+
         public uint[] Image { get; private set; }
 
         #endregion
@@ -198,6 +210,13 @@ namespace Render.RenderRequests
                 if (m_fbo != null)
                     m_fbo.Dispose();
                 m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
+            }
+            if (m_dirtyParams.HasFlag(DirtyParams.Image))
+            {
+                if (!GatherImage)
+                    Image = new uint[0];
+                else if (Image.Length < Resolution.Width * Resolution.Height)
+                    Image = new uint[Resolution.Width * Resolution.Height];
             }
 
             m_dirtyParams = DirtyParams.None;
@@ -306,7 +325,7 @@ namespace Render.RenderRequests
             m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.BlitFramebuffer(
-                0, 0, m_fbo.Size.X, m_fbo.Size.Y,
+                0, 0, Resolution.Width, Resolution.Height,
                 0, 0, renderer.Width, renderer.Height,
                 ClearBufferMask.ColorBufferBit,
                 BlitFramebufferFilter.Linear);
@@ -314,12 +333,7 @@ namespace Render.RenderRequests
 
             // Gather data to host mem
             if (GatherImage)
-            {
-                if (Image.Length < Resolution.Width * Resolution.Height)
-                    Image = new uint[Resolution.Width * Resolution.Height];
-
                 GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
-            }
         }
 
         #endregion
