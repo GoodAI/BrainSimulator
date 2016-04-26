@@ -29,6 +29,8 @@ namespace World.ToyWorldCore
         {
             if (tileTable == null)
                 throw new ArgumentNullException("tileTable");
+            if (tmxDeserializedMap == null)
+                throw new ArgumentNullException("tmxDeserializedMap");
             Contract.EndContractBlock();
 
             Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
@@ -41,7 +43,7 @@ namespace World.ToyWorldCore
                 IAutoupdateable updateable = actor as IAutoupdateable;
                 if (updateable != null)
                 {
-                    updateable.Update(this);
+                    updateable.Update(Atlas);
                     if (updateable.NextUpdateAfter > 0)
                         AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
                 }
@@ -94,7 +96,7 @@ namespace World.ToyWorldCore
         public void UpdateScheduled()
         {
             foreach (IAutoupdateable actor in AutoupdateRegister.CurrentUpdateRequests)
-                actor.Update(this);
+                actor.Update(Atlas);
             AutoupdateRegister.CurrentUpdateRequests.Clear();
             AutoupdateRegister.Tick();
         }
@@ -105,7 +107,7 @@ namespace World.ToyWorldCore
             UpdateTiles();
             UpdateAvatars();
             UpdateCharacters();
-            AutoupdateRegister.UpdateItems(this);
+            AutoupdateRegister.UpdateItems(Atlas);
             UpdatePhysics();
             Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Step performed");
         }

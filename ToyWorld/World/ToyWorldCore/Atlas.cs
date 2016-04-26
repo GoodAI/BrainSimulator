@@ -10,7 +10,7 @@ using World.GameActors.Tiles;
 namespace World.ToyWorldCore
 {
 
-    interface IAtlas
+    public interface IAtlas
     {
         /// <summary>
         /// Adds avatar to Atlas or returns false.
@@ -62,6 +62,7 @@ namespace World.ToyWorldCore
         bool ContainsCollidingTile(Vector2I coordinates);
 
         IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type);
+        void ReplaceWith(GameActor original, GameActor replacement);
     }
 
     public class Atlas : IAtlas
@@ -146,6 +147,10 @@ namespace World.ToyWorldCore
         public IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type = LayerType.All)
         {
             return Layers.Where(t => (t.LayerType & type) > 0).Select(layer => layer.GetActorAt(x, y));
+        }
+        public void ReplaceWith(GameActor original, GameActor replacement)
+        {
+            throw new NotImplementedException();
         }
     }
 }

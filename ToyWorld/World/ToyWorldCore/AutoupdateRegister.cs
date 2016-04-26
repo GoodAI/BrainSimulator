@@ -48,11 +48,11 @@ namespace World.ToyWorldCore
             m_register.MoveNext();
         }
 
-        public void UpdateItems(IWorld world)
+        public void UpdateItems(IAtlas atlas)
         {
             foreach (IAutoupdateable actor in CurrentUpdateRequests)
             {
-                actor.Update(world);
+                actor.Update(atlas);
                 if (actor.NextUpdateAfter > 0)
                     Register(actor, actor.NextUpdateAfter);
             }
