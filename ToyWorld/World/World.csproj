@@ -208,24 +208,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\Worlds\roguelike_selection_winter.png">
+    <EmbeddedResource Include="res\Worlds\roguelike_selection_winter.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <None Include="ClassDiagramToyWorld.cd" />
-    <Content Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
+    <EmbeddedResource Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\Worlds\mock_small_stream_world.tmx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mock_small_stream_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="res\Worlds\mockup999_pantry_world.tmx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mockup999_pantry_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\Worlds\roguelike_selection_summer.png">
+    <EmbeddedResource Include="res\Worlds\roguelike_selection_summer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

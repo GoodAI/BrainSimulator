@@ -175,29 +175,29 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
-    <None Include="TestFiles\mockup999_pantry_world.tmx">
+    <EmbeddedResource Include="TestFiles\mockup999_pantry_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestFiles\mock_small_stream_world.tmx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFiles\mock_small_stream_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestFiles\TilesetTable.csv">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFiles\TilesetTable.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestFiles\roguelike_selection_summer.png">
+    <EmbeddedResource Include="TestFiles\roguelike_selection_summer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestFiles\roguelike_selection_winter.png">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFiles\roguelike_selection_winter.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestFiles\sheep.png">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFiles\sheep.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestFiles\wumpus.png">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFiles\wumpus.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
