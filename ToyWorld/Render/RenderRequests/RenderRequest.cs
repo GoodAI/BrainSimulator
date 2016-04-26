@@ -215,9 +215,6 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            // Set flag to set up render targets
-            m_dirtyParams |= DirtyParams.Resolution;
-
             // Set up tileset textures
             m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
 
@@ -239,14 +236,13 @@ namespace Render.RenderRequests
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
-            // Set flag to renew projection matrix and renew grid geometry
-            m_dirtyParams |= DirtyParams.Size;
-
             CheckDirtyParams(renderer); // Do the hard work in Init
         }
 
         private void CheckDirtyParams(RendererBase renderer)
         {
+            // Only setup these things when their dependency has changed (property setters enable these)
+
             if (m_dirtyParams.HasFlag(DirtyParams.Size))
             {
                 m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
