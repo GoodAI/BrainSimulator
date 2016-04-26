@@ -2,6 +2,7 @@
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
+using Render.RenderObjects.Buffers;
 using Render.RenderObjects.Effects;
 using Render.RenderObjects.Geometries;
 using Render.RenderObjects.Textures;
@@ -15,6 +16,18 @@ namespace Render.RenderRequests
 {
     public abstract class RenderRequest : IRenderRequestBase, IDisposable
     {
+        [Flags]
+        private enum DirtyParams
+        {
+            None,
+            Size,
+            Resolution = 1 << 1,
+        }
+
+
+        #region Fields
+
+        private BasicFbo m_fbo;
         private NoEffectOffset m_effect;
         private TilesetTexture m_tex;
         private FullScreenGrid m_grid;
@@ -24,8 +37,30 @@ namespace Render.RenderRequests
         private Matrix m_viewProjectionMatrix;
         private int m_mvpPos;
 
-        private bool m_dirtyParams;
+        private DirtyParams m_dirtyParams;
 
+        #endregion
+
+        #region Genesis
+
+        protected RenderRequest()
+        {
+            PositionCenterV = new Vector3(0, 0, 20);
+            SizeV = new Vector2(3, 3);
+            Resolution = new System.Drawing.Size(1024, 1024);
+            Image = new uint[0];
+        }
+
+        public virtual void Dispose()
+        {
+            m_fbo.Dispose();
+            m_effect.Dispose();
+            m_tex.Dispose();
+            m_grid.Dispose();
+            m_quad.Dispose();
+        }
+
+        #endregion
 
         #region View control properties
 
@@ -44,8 +79,9 @@ namespace Render.RenderRequests
             get { return m_sizeV; }
             set
             {
-                m_sizeV = value;
-                m_dirtyParams = true; // TODO: Any other way than this dirty dirty flag?
+                const float minSize = 0.01f;
+                m_sizeV = new Vector2(Math.Max(minSize, value.X), Math.Max(minSize, value.Y));
+                m_dirtyParams |= DirtyParams.Size;
             }
         }
 
@@ -67,26 +103,6 @@ namespace Render.RenderRequests
 
         #endregion
 
-        #region Genesis
-
-        public RenderRequest()
-        {
-            PositionCenterV = new Vector3(0, 0, 20);
-            SizeV = new Vector2(3, 3);
-            Resolution = new System.Drawing.Size(1024, 1024);
-            Image = new uint[0];
-        }
-
-        public virtual void Dispose()
-        {
-            m_effect.Dispose();
-            m_tex.Dispose();
-            m_grid.Dispose();
-            m_quad.Dispose();
-        }
-
-        #endregion
-
         #region IRenderRequestBase overrides
 
         public System.Drawing.PointF PositionCenter
@@ -98,18 +114,16 @@ namespace Render.RenderRequests
         public virtual System.Drawing.SizeF Size
         {
             get { return new System.Drawing.SizeF(SizeV.X, SizeV.Y); }
-            set
-            {
-                const float minSize = 0.01f;
-                SizeV = new Vector2(Math.Max(minSize, value.Width), Math.Max(minSize, value.Height));
-            }
+            set { SizeV = (Vector2)value; }
         }
 
-        public System.Drawing.RectangleF View { get { return new System.Drawing.RectangleF(PositionCenter, Size); } }
+        public System.Drawing.RectangleF View
+        {
+            get { return new System.Drawing.RectangleF(PositionCenter, Size); }
+        }
 
 
         private System.Drawing.Size m_resolution;
-
         public System.Drawing.Size Resolution
         {
             get { return m_resolution; }
@@ -123,6 +137,7 @@ namespace Render.RenderRequests
                     throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be smaller than " + maxResolution + " pixels.");
 
                 m_resolution = value;
+                m_dirtyParams |= DirtyParams.Resolution;
             }
         }
 
@@ -132,6 +147,88 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region Init
+
+        public virtual void Init(RendererBase renderer, ToyWorld world)
+        {
+            // Setup color and blending
+            const int baseIntensity = 50;
+            GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
+            GL.Enable(EnableCap.Blend);
+            GL.BlendEquation(BlendEquationMode.FuncAdd);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+            // Set flag to set up render targets
+            m_dirtyParams |= DirtyParams.Resolution;
+
+            // Set up tileset textures
+            m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
+
+            // Set up tile grid shaders
+            m_effect = renderer.EffectManager.Get<NoEffectOffset>();
+            renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
+            m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
+
+            // Set up static uniforms
+            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins;
+            Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
+            m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
+            m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+            m_mvpPos = m_effect.GetUniformLocation("mvp");
+
+            // Set up geometry
+            m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
+
+            // Set flag to renew projection matrix and renew grid geometry
+            m_dirtyParams |= DirtyParams.Size;
+
+            CheckDirtyParams(renderer); // Do the hard work in Init
+        }
+
+        private void CheckDirtyParams(RendererBase renderer)
+        {
+            if (m_dirtyParams.HasFlag(DirtyParams.Size))
+            {
+                m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
+                m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
+            }
+            if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
+            {
+                if (m_fbo != null)
+                    m_fbo.Dispose();
+                m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
+            }
+
+            m_dirtyParams = DirtyParams.None;
+        }
+
+        #endregion
+
+        #region Draw
+
+        public virtual void Draw(RendererBase renderer, ToyWorld world)
+        {
+            CheckDirtyParams(renderer);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            // Bind stuff to GL
+            m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
+            renderer.EffectManager.Use(m_effect);
+            renderer.TextureManager.Bind(m_tex);
+
+            // View and proj transforms
+            m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, PositionCenterV);
+            m_viewProjectionMatrix *= m_projMatrix;
+
+            // Draw the scene
+            DrawTileLayers(world);
+            DrawObjectLayers(world);
+
+            // Copy the rendered scene
+            GatherAndDistributeData(renderer);
+        }
 
         protected Matrix GetViewMatrix(Vector3 rotation, Vector3 cameraPos, Vector3 cameraDirection = default(Vector3))
         {
@@ -153,64 +250,14 @@ namespace Render.RenderRequests
             return viewMatrix;
         }
 
-
-        public virtual void Init(RendererBase renderer, ToyWorld world)
+        private void DrawTileLayers(ToyWorld world)
         {
-            const int baseIntensity = 50;
-            GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
-            GL.Enable(EnableCap.Blend);
-            GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-
-            // Set up tileset textures
-            m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
-
-            // Set up tile grid shaders
-            m_effect = renderer.EffectManager.Get<NoEffectOffset>();
-            renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
-            m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
-
-            // Set up static uniforms
-            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins;
-            Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
-            m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
-            m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_mvpPos = m_effect.GetUniformLocation("mvp");
-
-            // Set up tile grid geometry
-            m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
-            m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
-
-            // View matrix is computed each frame
-            m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
-            //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
-        }
-
-        public virtual void Draw(RendererBase renderer, ToyWorld world)
-        {
-            if (m_dirtyParams)
-            {
-                m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
-                m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
-                m_dirtyParams = false;
-            }
-
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            // Bind stuff to GL
-            renderer.EffectManager.Use(m_effect);
-            renderer.TextureManager.Bind(m_tex);
-
-
             // Set up transformation to screen space for tiles
             Matrix transform = Matrix.Identity;
             // Model transform -- scale from (-1,1) to viewSize/2, center on origin
             transform *= Matrix.CreateScale((Vector2)GridView.Size / 2);
             // World transform -- move center to view center
             transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
-            // View and proj transforms
-            m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, PositionCenterV);
-            m_viewProjectionMatrix *= m_projMatrix;
             m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
 
 
@@ -223,16 +270,19 @@ namespace Render.RenderRequests
                 m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
                 m_grid.Draw();
             }
+        }
 
-
+        private void DrawObjectLayers(ToyWorld world)
+        {
             // Draw objects
             foreach (var objectLayer in world.Atlas.ObjectLayers)
             {
                 // TODO: Setup for this object layer
+
                 foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(GridView)))
                 {
                     // Set up transformation to screen space for the gameObject
-                    transform = Matrix.Identity;
+                    Matrix transform = Matrix.Identity;
                     // Model transform
                     IDirectable dir = gameObject as IDirectable;
                     if (dir != null)
@@ -248,6 +298,18 @@ namespace Render.RenderRequests
                     m_quad.Draw();
                 }
             }
+        }
+
+        private void GatherAndDistributeData(RendererBase renderer)
+        {
+            // TEMP: copy to default framebuffer (our window)
+            m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            GL.BlitFramebuffer(
+                0, 0, m_fbo.Size.X, m_fbo.Size.Y,
+                0, 0, renderer.Width, renderer.Height,
+                ClearBufferMask.ColorBufferBit,
+                BlitFramebufferFilter.Linear);
 
 
             // Gather data to host mem
@@ -259,5 +321,7 @@ namespace Render.RenderRequests
                 GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
             }
         }
+
+        #endregion
     }
 }
