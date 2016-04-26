@@ -25,18 +25,28 @@ vec2 GetTexCoods()
 	// Offset the vertex according to its position in the quad
 	int vertID = gl_VertexID % 4;
 
+	const float offset = 0.02f;
+	vec2 uvOffset = vec2(offset, -offset);
+
 	switch (vertID)
 	{
 		case 0:
 		uv += ivec2(0, tileSizeMargin.y);
+		uv += uvOffset.xy;
 		break;
 				
+		case 1:
+		uv += uvOffset.xx;
+		break;
+
 		case 2:
 		uv += ivec2(tileSizeMargin.x, 0);
+		uv += uvOffset.yx;
 		break;
 				
 		case 3:
 		uv += tileSizeMargin.xy;
+		uv += uvOffset.yy;
 		break;
 	}
 
