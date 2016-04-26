@@ -238,13 +238,46 @@ namespace GoodAI.ToyWorld
         {
             public override void Init(int nGPU) { }
 
+            private void PrintLogMessage(MyLog logger, TWLogMessage message)
+            {
+                logger.WriteLine("TWLog: " + message);
+            }
+
+            private void PrintLogMessages()
+            {
+                foreach (TWLogMessage message in TWLog.GetAllLogMessages())
+                {
+                    switch (message.Severity)
+                    {
+                        case TWSeverity.Error:
+                            {
+                                PrintLogMessage(MyLog.ERROR, message);
+                                break;
+                            }
+                        case TWSeverity.Warn:
+                            {
+                                PrintLogMessage(MyLog.WARNING, message);
+                                break;
+                            }
+                        case TWSeverity.Info:
+                            {
+                                PrintLogMessage(MyLog.INFO, message);
+                                break;
+                            }
+                        case TWSeverity.Verbose:
+                        case TWSeverity.Debug:
+                        default:
+                            {
+                                PrintLogMessage(MyLog.DEBUG, message);
+                                break;
+                            }
+                    }
+                }
+            }
+
             public override void Execute()
             {
-                List<TWLogMessage> allLogMessages = TWLog.GetAllLogMessages();
-
-                Console.WriteLine("Start of TWLog");
-                allLogMessages.ForEach(Console.WriteLine);
-                Console.WriteLine("End of TWLog");
+                PrintLogMessages();
 
                 Owner.m_gameCtrl.MakeStep();
 
