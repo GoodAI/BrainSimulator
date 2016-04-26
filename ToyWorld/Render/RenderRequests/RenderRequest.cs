@@ -233,7 +233,7 @@ namespace Render.RenderRequests
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // Bind stuff to GL
-            m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
+            m_fbo.Bind();
             renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
 
