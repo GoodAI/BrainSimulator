@@ -7,8 +7,8 @@
     <ProjectGuid>{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GoodAI.Logging</RootNamespace>
-    <AssemblyName>LoggerIface</AssemblyName>
+    <RootNamespace>Logger</RootNamespace>
+    <AssemblyName>Logger</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
