@@ -2,7 +2,9 @@
 
 
 uniform vec4 noiseColor = vec4(1, 1, 1, 1);
-uniform float time = 1;
+// Time -- third dimension for perlin noise
+// Mean -- noise results are in interval (0,2), values are scaled from (0,1) to (0,mean) and from (1,2) to (mean,1)
+uniform vec4 timeMean = vec4(0, 0.8f, 0, 0);
 
 
 smooth in vec2 f_worldPos;
@@ -14,8 +16,8 @@ float cnoise(vec3 P);
 
 void main()
 {
-	float noise = 1 + cnoise(vec3(f_worldPos, time)); // Should be between (-1,1), offset to (0,2)
-	const float mean = 0.8f;
+	float noise = 1 + cnoise(vec3(f_worldPos, timeMean.x)); // Should be between (-1,1), offset to (0,2)
+	float mean = timeMean.y;
 
 	if (noise < 1f)
 		// scale (0,1) to (0,mean)

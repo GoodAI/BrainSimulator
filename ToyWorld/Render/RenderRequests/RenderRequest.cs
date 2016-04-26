@@ -23,6 +23,7 @@ namespace Render.RenderRequests
             Size,
             Resolution = 1 << 1,
             Image = 1 << 2,
+            Noise = 1 << 3,
         }
 
 
@@ -155,10 +156,52 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
+
         public uint[] Image { get; private set; }
 
 
-        public bool DrawNoise { get; set; }
+        private bool m_drawNoise;
+        private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
+        private float m_noiseTransformationSpeedCoefficient = 1f;
+        private float m_noiseMeanOffset = 0.8f;
+
+        public bool DrawNoise
+        {
+            get { return m_drawNoise; }
+            set
+            {
+                m_drawNoise = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public System.Drawing.Color NoiseColor
+        {
+            get { return m_noiseColor; }
+            set
+            {
+                m_noiseColor = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public float NoiseTransformationSpeedCoefficient
+        {
+            get { return m_noiseTransformationSpeedCoefficient; }
+            set
+            {
+                m_noiseTransformationSpeedCoefficient = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public float NoiseMeanOffset
+        {
+            get { return m_noiseMeanOffset; }
+            set
+            {
+                m_noiseMeanOffset = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+
         #endregion
 
         #region Init
@@ -180,8 +223,6 @@ namespace Render.RenderRequests
 
             // Set up the noise shader
             m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
-            renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-            m_noiseEffect.SetUniform4(m_noiseEffect.GetUniformLocation("noiseColor"), new Vector4(1) * 0.95f);
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -224,6 +265,13 @@ namespace Render.RenderRequests
                     Image = new uint[0];
                 else if (Image.Length < Resolution.Width * Resolution.Height)
                     Image = new uint[Resolution.Width * Resolution.Height];
+            }
+            if (m_dirtyParams.HasFlag(DirtyParams.Noise))
+            {
+                renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
+                m_noiseEffect.SetUniform4(
+                    m_noiseEffect.GetUniformLocation("noiseColor"),
+                    new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
             }
 
             m_dirtyParams = DirtyParams.None;
@@ -334,7 +382,7 @@ namespace Render.RenderRequests
             DrawNoise = true;
             if (DrawNoise)
             {
-                m_simTime = (m_simTime + 0.01f) % 3e15;
+                m_simTime = (m_simTime + 0.01f * NoiseTransformationSpeedCoefficient) % 3e15;
 
                 renderer.EffectManager.Use(m_noiseEffect);
 
@@ -347,7 +395,7 @@ namespace Render.RenderRequests
                 m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mw"), transform);
                 m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
 
-                m_noiseEffect.SetUniform1(m_noiseEffect.GetUniformLocation("time"), (float)m_simTime);
+                m_noiseEffect.SetUniform4(m_noiseEffect.GetUniformLocation("timeMean"), new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
 
                 m_quad.Draw();
             }
