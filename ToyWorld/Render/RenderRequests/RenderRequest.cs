@@ -377,7 +377,7 @@ namespace Render.RenderRequests
         {
             if (DrawNoise)
             {
-                m_simTime = (m_simTime + 0.01f * NoiseTransformationSpeedCoefficient) % 3e15;
+                m_simTime = (m_simTime + 0.005f * NoiseTransformationSpeedCoefficient) % 3e15;
 
                 renderer.EffectManager.Use(m_noiseEffect);
 
@@ -400,19 +400,20 @@ namespace Render.RenderRequests
 
         private void GatherAndDistributeData(RendererBase renderer)
         {
-            // TEMP: copy to default framebuffer (our window)
-            m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            GL.BlitFramebuffer(
-                0, 0, Resolution.Width, Resolution.Height,
-                0, 0, renderer.Width, renderer.Height,
-                ClearBufferMask.ColorBufferBit,
-                BlitFramebufferFilter.Linear);
-
-
             // Gather data to host mem
             if (GatherImage)
+            {
                 GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
+
+                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+                m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                GL.BlitFramebuffer(
+                    0, 0, Resolution.Width, Resolution.Height,
+                    0, 0, renderer.Width, renderer.Height,
+                    ClearBufferMask.ColorBufferBit,
+                    BlitFramebufferFilter.Linear);
+            }
         }
 
         #endregion
