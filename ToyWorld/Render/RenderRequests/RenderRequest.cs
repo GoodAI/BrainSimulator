@@ -163,7 +163,7 @@ namespace Render.RenderRequests
         private bool m_drawNoise;
         private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
         private float m_noiseTransformationSpeedCoefficient = 1f;
-        private float m_noiseMeanOffset = 0.8f;
+        private float m_noiseMeanOffset = 0.6f;
 
         public bool DrawNoise
         {

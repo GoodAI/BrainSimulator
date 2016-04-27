@@ -26,5 +26,6 @@ void main()
 		// offset (1,2) to (0,1), scale to (1-mean), offset to (mean,1)
 		noise = (noise - 1f) * (1 - mean) + mean;
 
-	out_color = noiseColor * noise;
+	out_color = noiseColor;
+	out_color.w *= noise;
 }
