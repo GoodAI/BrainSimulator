@@ -123,10 +123,7 @@
     <None Include="APIDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{772B1188-A00D-45FC-B352-834227ADAE96}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

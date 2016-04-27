@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using VRageMath;
 
 namespace World.Physics
@@ -17,8 +17,7 @@ namespace World.Physics
         private const int BINARY_SEARCH_ITERATIONS = 16;
         private const float X_DIRECTION = (float) Math.PI / 2;
         private const float Y_DIRECTION = 0;
-
-        private Random random = new Random(79);
+        private const float NEGLIGIBLE_DISTANCE = 0.001f;
 
         public CollisionResolver(ICollisionChecker collisionChecker, IMovementPhysics movementPhysics)
         {
@@ -47,13 +46,67 @@ namespace World.Physics
             // get back to last free position in direction counter to original direction
             TileFreePositionBinarySearch(physicalEntity, physicalEntity.ForwardSpeed, physicalEntity.Direction);
 
+            float residueSpeed = speed - Vector2.Distance(previousPosition, physicalEntity.Position);
+
+            switch (physicalEntity.TileCollision)
+            {
+                case TileCollision.Bounce:
+                    Bounce(physicalEntity, residueSpeed, 10);
+                    break;
+                case TileCollision.Slide:
+                    Slide(physicalEntity, residueSpeed);
+                    break;
+            }
+        }
+
+        private void Bounce(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed, int maxDepth)
+        {
+            Vector2 originalPosition = physicalEntity.Position;
+            float originalDirection = physicalEntity.Direction;
+
+            float maxDistance = 0;
+            Vector2 bestPosition = originalPosition;
+            float bestDirection = originalDirection;
+
+            // candidate directions to move
+            var candidateDirections = new List<float>();
+            candidateDirections.Add(MathHelper.WrapAngle(2f * MathHelper.Pi - physicalEntity.Direction));
+            candidateDirections.Add(MathHelper.WrapAngle(3f * MathHelper.Pi - physicalEntity.Direction));
+
+            // search for direction of longest move
+            foreach (float newDirection in candidateDirections)
+            {
+                TileFreePositionBinarySearch(physicalEntity, residueSpeed, newDirection);
+
+                float distance = Vector2.Distance(originalPosition, physicalEntity.Position);
+                if (maxDistance < distance)
+                {
+                    maxDistance = distance;
+                    bestPosition = physicalEntity.Position;
+                    bestDirection = newDirection;
+                }
+
+                physicalEntity.Position = originalPosition;
+            }
+
+            physicalEntity.Position = bestPosition;
+            physicalEntity.Direction = bestDirection;
+
+            if (maxDistance < residueSpeed - NEGLIGIBLE_DISTANCE && maxDepth > 0)
+            {
+                Bounce(physicalEntity, residueSpeed - maxDistance, maxDepth - 1);
+            }
+        }
+
+        private void Slide(IForwardMovablePhysicalEntity physicalEntity, float residueSpeed)
+        {
             Vector2 freePosition = physicalEntity.Position;
             float directionRads = physicalEntity.Direction;
-            float residueSpeed = speed - Vector2.Distance(previousPosition, freePosition);
+
             float xSpeed = (float)Math.Sin(directionRads) * residueSpeed;
             float ySpeed = (float)Math.Cos(directionRads) * residueSpeed;
             // position before move
-            
+
             // try to move orthogonally left/right and up/down
             TileFreePositionBinarySearch(physicalEntity, xSpeed, X_DIRECTION);
             TileFreePositionBinarySearch(physicalEntity, ySpeed, Y_DIRECTION);
@@ -82,7 +135,6 @@ namespace World.Physics
         /// <param name="physicalEntity"></param>
         /// <param name="initialSpeed"></param>
         /// <param name="direction"></param>
-        /// <param name="goForward">If true make step forward. Otherwise start with half step back.</param>
         private void TileFreePositionBinarySearch(IForwardMovablePhysicalEntity physicalEntity, float initialSpeed, float direction)
         {
             float speed = initialSpeed;

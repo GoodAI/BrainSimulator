@@ -66,10 +66,11 @@ namespace World.GameActors.GameObjects
 
         public string TilesetName { get; set; }
 
-        public GameObject(string tilesetName, int tilesetID)
+        public GameObject(string tilesetName, int tilesetID, string name)
         {
             TilesetId = tilesetID;
             TilesetName = tilesetName;
+            Name = name;
         }
     }
 }

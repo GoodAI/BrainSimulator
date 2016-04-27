@@ -1,8 +1,9 @@
-﻿using GoodAI.ToyWorld.Control;
-using World.GameActors.GameObjects;
+﻿using System;
+using System.Reflection;
+using VRageMath;
 using World.Physics;
 
-namespace World.Physics
+namespace World.GameActors.GameObjects
 {
     public interface ICharacter : IGameObject, IForwardMovable
     {
@@ -39,11 +40,11 @@ namespace World.Physics
         {
             get
             {
-                return this.PhysicalEntity.ForwardSpeed;
+                return PhysicalEntity.ForwardSpeed;
             }
             set
             {
-                this.PhysicalEntity.ForwardSpeed = value;
+                PhysicalEntity.ForwardSpeed = value;
             }
         }
 
@@ -51,17 +52,37 @@ namespace World.Physics
         {
             get
             {
-                return this.PhysicalEntity.RotationSpeed;
+                return PhysicalEntity.RotationSpeed;
             }
             set
             {
-                this.PhysicalEntity.RotationSpeed = value;
+                PhysicalEntity.RotationSpeed = value;
             }
         }
 
-        public Character(string tilesetName, int tileID)
-            : base(tilesetName, tileID)
+        public Character(
+            string tilesetName,
+            int tileId,
+            string name,
+            Vector2 position,
+            Vector2 size,
+            float direction,
+            TileCollision tileCollision = TileCollision.Slide,
+            Type shapeType = null
+            )
+            : base(tilesetName, tileId, name)
         {
+            shapeType = shapeType ?? typeof(Circle);
+            ConstructorInfo ctor = shapeType.GetConstructor(new[] { typeof(Vector2) });
+
+            if (ctor == null)
+            {
+                throw new Exception("Class " + shapeType.FullName + " has no constructor " + shapeType.Name + "(Vector2 v), " +
+                                    "hence Character cannot create his PhysicalEntity Shape.");
+            }
+
+            Shape shape = (Shape)ctor.Invoke(new object[] {size});
+            PhysicalEntity = new ForwardMovablePhysicalEntity(position, shape, direction: direction, tileCollision: tileCollision);
         }
     }
 }

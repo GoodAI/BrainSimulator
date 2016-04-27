@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using VRageMath;
@@ -20,6 +21,15 @@ namespace Render.RenderRequests
 
         #region IFofAvatarRR overrides
 
+        public override SizeF Size
+        {
+            get { return base.Size; }
+            set
+            {
+                base.Size = new SizeF(Math.Min(value.Width, FovAvatarRenderRequest.Size.Width), Math.Min(value.Height, FovAvatarRenderRequest.Size.Height));
+            }
+        }
+
         public IFovAvatarRR FovAvatarRenderRequest
         {
             get { return m_fovAvatarRenderRequest; }
@@ -29,6 +39,8 @@ namespace Render.RenderRequests
                     throw new ArgumentNullException("value", "The supplied IFovAvatarRR cannot be null.");
                 if (value.AvatarID != AvatarID)
                     throw new ArgumentException("The supplied IFovAvatarRR is tied to a different avatarID. Fof/Fov ID: " + AvatarID + '/' + value.AvatarID);
+                if (value.Size.Width < Size.Width || value.Size.Height < Size.Height)
+                    throw new ArgumentException("The supplied IFovAvatarRR's view size cannot be smaller than this view size. Fof/Fov sizes: " + Size + '/' + value.Size);
 
                 m_fovAvatarRenderRequest = value;
             }
@@ -62,6 +74,5 @@ namespace Render.RenderRequests
         }
 
         #endregion
-
     }
 }

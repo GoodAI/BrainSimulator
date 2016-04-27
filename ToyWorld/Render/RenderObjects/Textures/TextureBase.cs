@@ -44,9 +44,10 @@ namespace Render.RenderObjects.Textures
                 dataFormat, PixelType.UnsignedByte,
                 data);
 
+            GL.GenerateMipmap((GenerateMipmapTarget)textureTarget);
             GL.BindTexture(textureTarget, 0);
         }
-        
+
         public virtual void Dispose()
         {
             GL.DeleteTexture(m_handle);

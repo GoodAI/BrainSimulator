@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using OpenTK.Graphics.OpenGL;
 
 namespace Render.RenderObjects.Textures
 {
@@ -30,16 +31,21 @@ namespace Render.RenderObjects.Textures
                 using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
-                    if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
+                    if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
                         throw new ArgumentException("The image on the specified path is not in the required RGBA format.", "texPath");
 
                     BitmapData data = bmp.LockBits(
                         new Rectangle(0, 0, bmp.Width, bmp.Height),
-                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                        ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                     try
                     {
-                        m_textures.Add(new TextureBase(data.Scan0.ArgbToRgbaArray(data.Width * data.Height), bmp.Width, bmp.Height));
+                        m_textures.Add(
+                            new TextureBase(
+                                data.Scan0.ArgbToRgbaArray(data.Width * data.Height),
+                                bmp.Width, bmp.Height,
+                                minFilter: TextureMinFilter.NearestMipmapLinear,
+                                magFilter: TextureMagFilter.Nearest));
                     }
                     finally
                     {

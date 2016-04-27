@@ -38,7 +38,7 @@ namespace World.ToyWorldCore
         /// <returns></returns>
         ILayer<GameActor> GetLayer(LayerType layerType);
 
-        List<Character> Characters { get; }
+        List<ICharacter> Characters { get; }
 
         /// <summary>
         /// Container for all ObjectLayers
@@ -71,14 +71,14 @@ namespace World.ToyWorldCore
 
         public Dictionary<int, IAvatar> Avatars { get; private set; }
 
-        public List<Character> Characters { get; private set; }
+        public List<ICharacter> Characters { get; private set; }
 
         public Dictionary<int, StaticTile> StaticTilesContainer { get; private set; }
 
         public Atlas()
         {
             Avatars = new Dictionary<int, IAvatar>();
-            Characters = new List<Character>();
+            Characters = new List<ICharacter>();
             TileLayers = new List<ITileLayer>();
             ObjectLayers = new List<IObjectLayer>();
             StaticTilesContainer = new Dictionary<int, StaticTile>();

@@ -24,6 +24,8 @@ namespace Render.RenderRequests
         private Matrix m_viewProjectionMatrix;
         private int m_mvpPos;
 
+        private bool m_dirtyParams;
+
 
         #region View control properties
 
@@ -35,14 +37,26 @@ namespace Render.RenderRequests
         /// The position of the center of view. Equivalent to PositionCenterV (except for the z value).
         /// </summary>
         protected Vector2 PositionCenterV2 { get { return new Vector2(PositionCenterV); } set { PositionCenterV = new Vector3(value, PositionCenterV.Z); } }
-        protected Vector2 SizeV { get; set; }
+
+        private Vector2 m_sizeV;
+        protected Vector2 SizeV
+        {
+            get { return m_sizeV; }
+            set
+            {
+                m_sizeV = value;
+                m_dirtyParams = true; // TODO: Any other way than this dirty dirty flag?
+            }
+        }
+
         protected RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
         private Rectangle GridView
         {
             get
             {
-                var rect = new RectangleF(Vector2.Zero, ViewV.Size + 2) { Center = ViewV.Center };
+                var positionOffset = new Vector2(ViewV.Width % 2, View.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
+                var rect = new RectangleF(Vector2.Zero, ViewV.Size + 2 + positionOffset) { Center = ViewV.Center - positionOffset };
                 return new Rectangle(
                     new Vector2I(
                         (int)Math.Ceiling(rect.Position.X),
@@ -81,15 +95,13 @@ namespace Render.RenderRequests
             protected set { PositionCenterV2 = new Vector2(value.X, value.Y); }
         }
 
-        public System.Drawing.SizeF Size
+        public virtual System.Drawing.SizeF Size
         {
             get { return new System.Drawing.SizeF(SizeV.X, SizeV.Y); }
             set
             {
-                if (value.Width <= 0 || value.Height <= 0)
-                    throw new ArgumentOutOfRangeException("value", "Cannot use non-positive view size for a render request. Value: " + value);
-
-                SizeV = new Vector2(value.Width, value.Height);
+                const float minSize = 0.01f;
+                SizeV = new Vector2(Math.Max(minSize, value.Width), Math.Max(minSize, value.Height));
             }
         }
 
@@ -97,6 +109,7 @@ namespace Render.RenderRequests
 
 
         private System.Drawing.Size m_resolution;
+
         public System.Drawing.Size Resolution
         {
             get { return m_resolution; }
@@ -175,9 +188,12 @@ namespace Render.RenderRequests
 
         public virtual void Draw(RendererBase renderer, ToyWorld world)
         {
-            if (GridView.Size != m_grid.Dimensions)
+            if (m_dirtyParams)
+            {
                 m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
-
+                m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                m_dirtyParams = false;
+            }
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -191,7 +207,7 @@ namespace Render.RenderRequests
             // Model transform -- scale from (-1,1) to viewSize/2, center on origin
             transform *= Matrix.CreateScale((Vector2)GridView.Size / 2);
             // World transform -- move center to view center
-            transform *= Matrix.CreateTranslation(new Vector3(GridView.Center));
+            transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
             // View and proj transforms
             m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, PositionCenterV);
             m_viewProjectionMatrix *= m_projMatrix;

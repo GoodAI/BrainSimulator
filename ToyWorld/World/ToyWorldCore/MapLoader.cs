@@ -37,15 +37,37 @@ namespace World.ToyWorldCore
                 {
                     ObjectGroup objectLayer = map.ObjectGroups.First(x => x.Name == layerName);
                     atlas.ObjectLayers.Add(
-                        FillObjectLayer(atlas, objectLayer, layerType, initializer, map.Tilesets, map.Tilewidth, map.Tileheight, map.Height));
+                        FillObjectLayer(
+                        atlas,
+                        objectLayer,
+                        layerType,
+                        initializer,
+                        map.Tilesets,
+                        map.Tilewidth,
+                        map.Tileheight,
+                        map.Height
+                        ));
                 }
                 else
                 {
-                    Layer tileLayer = map.Layers.First(x => x.Name == layerName);
-                    if (tileLayer == null)
-                        throw new Exception("Layer " + layerName + " not found in given .tmx file!");
+                    Layer tileLayer;
+                    try
+                    {
+                        tileLayer = map.Layers.First(x => x.Name == layerName);
+                    }
+                    catch (InvalidOperationException)
+                    {
+
+                        throw new ArgumentException("Layer " + layerName + " not found in given .tmx file!");
+                    }
+
                     atlas.TileLayers.Add(
-                        FillTileLayer(tileLayer, layerType, atlas.StaticTilesContainer, tilesetTable, initializer)
+                        FillTileLayer(
+                        tileLayer,
+                        layerType,
+                        atlas.StaticTilesContainer,
+                        tilesetTable,
+                        initializer)
                         );
                 }
             }
@@ -64,7 +86,8 @@ namespace World.ToyWorldCore
             int worldHeight
             )
         {
-            NormalizeObjectPositions(objectLayer.TmxMapObjects, tileWidth, tileHeight, worldHeight);
+            objectLayer.TmxMapObjects.ForEach(x => NormalizeObjectPosition(x, tileWidth, tileHeight, worldHeight));
+            objectLayer.TmxMapObjects.ForEach(TransformObjectPosition);
 
             //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
@@ -72,51 +95,115 @@ namespace World.ToyWorldCore
             // avatars list
             IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
 
-            foreach (TmxObject avatar in avatars)
+            List<TmxObject> tmxObjects = avatars.ToList();
+            foreach (TmxObject avatar in tmxObjects)
             {
-                var initialPosition = new Vector2(avatar.X, avatar.Y);
-                var size = new Vector2(avatar.Width, avatar.Height);
-                float rotation = avatar.Rotation;
-
-                int originalGid = avatar.Gid;
-                Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
-                string tilesetName = nameNewGid.Item1;
-                int newGid = nameNewGid.Item2;
-
-                var gameAvatar = new Avatar(tilesetName, newGid, avatar.Name, avatar.Id, initialPosition, size, rotation);
-
-                // this is magic
-                if (avatar.Properties != null)
-                {
-                    SetGameObjectProperties(avatar.Properties.PropertiesList, gameAvatar);
-                }
-
+                Avatar gameAvatar = LoadAgent(avatar, tilesets);
                 initializer.Invoke(gameAvatar);
                 simpleObjectLayer.AddGameObject(gameAvatar);
                 atlas.AddAvatar(gameAvatar);
             }
 
+            IEnumerable<TmxObject> others = objectLayer.TmxMapObjects.Except(tmxObjects);
+
+            foreach (TmxObject tmxObject in others)
+            {
+                Character character = LoadCharacter(tmxObject, tilesets);
+                initializer.Invoke(character);
+                simpleObjectLayer.AddGameObject(character);
+                atlas.Characters.Add(character);
+            }
+
             return simpleObjectLayer;
+        }
+
+        private static Avatar LoadAgent(TmxObject avatar, List<Tileset> tilesets)
+        {
+            var initialPosition = new Vector2(avatar.X, avatar.Y);
+            var size = new Vector2(avatar.Width, avatar.Height);
+            float rotation = avatar.Rotation;
+
+            int originalGid = avatar.Gid;
+            Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
+            string tilesetName = nameNewGid.Item1;
+            int newGid = nameNewGid.Item2;
+
+            var gameAvatar = new Avatar(tilesetName, newGid, avatar.Name, avatar.Id, initialPosition, size, rotation);
+
+            // this is magic
+            if (avatar.Properties != null)
+            {
+                SetGameObjectProperties(avatar.Properties.PropertiesList, gameAvatar);
+            }
+
+            return gameAvatar;
+        }
+
+        private static Character LoadCharacter(TmxObject tmxObject, List<Tileset> tilesets)
+        {
+            var initialPosition = new Vector2(tmxObject.X, tmxObject.Y);
+            var size = new Vector2(tmxObject.Width, tmxObject.Height);
+            float rotation = tmxObject.Rotation;
+
+            int originalGid = tmxObject.Gid;
+            Tuple<string, int> nameNewGid = TilesetNameFromGid(tilesets, originalGid);
+            string tilesetName = nameNewGid.Item1;
+            int newGid = nameNewGid.Item2;
+
+            Type objectType = Type.GetType("World.GameActors.GameObjects." +tmxObject.Type);
+
+            if (objectType == null)
+            {
+                throw new ArgumentException("MapLoader cannot find \"" + tmxObject.Type + "\" class.");
+            }
+
+            var gameObject = (Character)Activator.CreateInstance(
+                objectType,
+                tilesetName,
+                newGid,
+                tmxObject.Name,
+                initialPosition,
+                size,
+                rotation
+                );
+
+            // this is magic
+            if (tmxObject.Properties != null)
+            {
+                SetGameObjectProperties(tmxObject.Properties.PropertiesList, gameObject);
+            }
+
+            return gameObject;
+        }
+
+        /// <summary>
+        /// Transforms from rotation around left lower corner to rotation around center
+        /// </summary>
+        /// <param name="tmxObject"></param>
+        private static void TransformObjectPosition(TmxObject tmxObject)
+        {
+            Vector2 rotationCenter = new Vector2(tmxObject.X, tmxObject.Y);
+            Vector2 size = new Vector2(tmxObject.Width / 2, tmxObject.Height / 2);
+            Vector2 newPosition = RotateAroundCenter(rotationCenter + size, rotationCenter, tmxObject.Rotation);
+            tmxObject.X = newPosition.X;
+            tmxObject.Y = newPosition.Y;
         }
 
         /// <summary>
         /// From absolute position in pixels to side of tile = 1
         /// </summary>
-        /// <param name="tmxObjects"></param>
+        /// <param name="tmxObject"></param>
         /// <param name="tileWidth"></param>
         /// <param name="tileHeight"></param>
         /// <param name="worldHeight"></param>
-        private static void NormalizeObjectPositions(List<TmxObject> tmxObjects, int tileWidth, int tileHeight, int worldHeight)
+        private static void NormalizeObjectPosition(TmxObject tmxObject, int tileWidth, int tileHeight, int worldHeight)
         {
-            foreach (TmxObject tmxObject in tmxObjects)
-            {
-                tmxObject.X /= tileWidth;
-                tmxObject.Y /= tileHeight;
-                tmxObject.Y = worldHeight - tmxObject.Y;
-                tmxObject.Width /= tileWidth;
-                tmxObject.Height /= tileHeight;
-                tmxObject.Rotation = MathHelper.ToRadians(tmxObject.Rotation);
-            }
+            tmxObject.X /= tileWidth;
+            tmxObject.Y /= tileHeight;
+            tmxObject.Y = worldHeight - tmxObject.Y;
+            tmxObject.Width /= tileWidth;
+            tmxObject.Height /= tileHeight;
+            tmxObject.Rotation =  - MathHelper.ToRadians(tmxObject.Rotation);
         }
 
         private static ITileLayer FillTileLayer(
@@ -252,6 +339,13 @@ namespace World.ToyWorldCore
                         "Available properties are: \n" + joined);
                 }
             }
+        }
+
+        private static Vector2 RotateAroundCenter(Vector2 target, Vector2 center, float angle)
+        {
+            Vector2 diff = target - center;
+            diff.Rotate(angle);
+            return diff + center;
         }
     }
 }

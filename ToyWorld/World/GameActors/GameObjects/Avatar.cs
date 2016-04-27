@@ -32,13 +32,9 @@ namespace World.GameActors.GameObjects
             Vector2 size,
             float direction = 0
             )
-            : base(tilesetName, tileId)
+            : base(tilesetName, tileId, name, initialPosition, size, direction, TileCollision.Slide, typeof(Circle))
         {
-            Name = name;
             Id = id;
-
-            float circleRadius = (size.X + size.Y) / 4f;
-            PhysicalEntity = new ForwardMovablePhysicalEntity(initialPosition, new Circle(circleRadius), direction: direction);
         }
 
         public void ResetControls()

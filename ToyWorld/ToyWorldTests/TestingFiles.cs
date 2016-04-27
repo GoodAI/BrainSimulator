@@ -8,19 +8,22 @@ namespace ToyWorldTests
     {
         public static Stream SmallTmx()
         {
-            var s = new FileStream(Globals.TestFileLocation + @"mock_small_stream_world.tmx", FileMode.Open, FileAccess.Read, FileShare.Read);
+            // file copied from World project build output:
+            var s = new FileStream(@".\res\Worlds\mock_small_stream_world.tmx", FileMode.Open, FileAccess.Read, FileShare.Read);
             return s;
         }
 
         public static Stream TilesetTableStream()
         {
-            var s = new FileStream(Globals.TestFileLocation + @"TilesetTable.csv", FileMode.Open, FileAccess.Read, FileShare.Read);
+            // file copied from World project build output:
+            var s = new FileStream(@".\res\GameActors\Tiles\Tilesets\TilesetTable.csv", FileMode.Open, FileAccess.Read, FileShare.Read);
             return s;
         }
 
         public static Stream FullTmxStream()
         {
-            var path = Globals.TestFileLocation + @"mockup999_pantry_world.tmx";
+            // file copied from World project build output:
+            var path = @".\res\Worlds\mockup999_pantry_world.tmx";
             return new FileStream(path, FileMode.Open);
         }
     }
