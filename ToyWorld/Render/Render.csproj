@@ -69,33 +69,38 @@
   <ItemGroup>
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
-    <Compile Include="RenderObjects\Buffers\StaticVboFactory.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\StaticVboFactory.cs" />
+    <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
+    <Compile Include="RenderObjects\Effects\Fullscreen\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
-    <Compile Include="RenderObjects\Textures\TextureManager.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Fbo.cs" />
+    <Compile Include="RenderObjects\Textures\Base\TextureManager.cs" />
+    <Compile Include="RenderObjects\Textures\RenderTargetTextures.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
-    <Compile Include="RenderObjects\Effects\NoEffectOffset.cs" />
-    <Compile Include="RenderObjects\Effects\NoEffectTex.cs" />
-    <Compile Include="RenderObjects\Effects\NoEffect.cs" />
-    <Compile Include="RenderObjects\Effects\EffectManager.cs" />
+    <Compile Include="RenderObjects\Effects\Other\NoEffectOffset.cs" />
+    <Compile Include="RenderObjects\Effects\Other\NoEffectTex.cs" />
+    <Compile Include="RenderObjects\Effects\Other\NoEffect.cs" />
+    <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FofAvatarRR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRRBase.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadTex.cs" />
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
-    <Compile Include="RenderObjects\Buffers\Vao.cs" />
-    <Compile Include="RenderObjects\Buffers\Vbo.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Vao.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Vbo.cs" />
     <Compile Include="RenderObjects\Geometries\FullscreenQuadColor.cs" />
-    <Compile Include="RenderObjects\Geometries\GeometryBase.cs" />
-    <Compile Include="RenderObjects\Geometries\GeometryManager.cs" />
+    <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
+    <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderRequests\RenderRequest.cs" />
     <Compile Include="RenderRequests\RenderRequestFactory.cs" />
-    <Compile Include="RenderObjects\Effects\EffectBase.cs" />
-    <Compile Include="RenderObjects\Textures\TextureBase.cs" />
+    <Compile Include="RenderObjects\Effects\Base\EffectBase.cs" />
+    <Compile Include="RenderObjects\Textures\Base\TextureBase.cs" />
     <Compile Include="RenderObjects\Textures\TilesetTexture.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +124,12 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.vert" />

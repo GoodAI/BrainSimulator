@@ -45,67 +45,118 @@ namespace ToyWorldTests.Render
             GameController.Renderer.MakeContextNotCurrent();
         }
 
-        private void TestStepsImage(IRenderRequestBase renderRequest)
+        [Fact]
+        public void GatherImageTest()
         {
-            Assert.True(renderRequest.Image == null || renderRequest.Image.Length == 0);
+            var RRTest = GameController.RegisterRenderRequest<IFullMapRR>();
+
+            Assert.True(RRTest.Image == null || RRTest.Image.Length == 0);
 
             GameController.MakeStep();
             Assert.True(
-                renderRequest.Image == null
-                || renderRequest.Image.Length == 0
-                || renderRequest.Image.All(u => (u & 0xFFFFFFFF) == 0));
+                RRTest.Image == null
+                || RRTest.Image.Length == 0
+                || RRTest.Image.All(u => u == 0));
 
-            renderRequest.GatherImage = true;
-            Assert.Equal(renderRequest.GatherImage, true);
+            RRTest.GatherImage = true;
             GameController.MakeStep();
-            Assert.Equal(renderRequest.GatherImage, true);
-            Assert.True(renderRequest.Image.Length >= renderRequest.Resolution.Width * renderRequest.Resolution.Height); // Allocation needn't be immediate
-            Assert.Contains(renderRequest.Image, u => (u & 0xFFFFFF00) != 0);
+            Assert.True(RRTest.Image.Length >= RRTest.Resolution.Width * RRTest.Resolution.Height); // Allocation needn't be immediate
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+
+            RRTest.GatherImage = false;
+            GameController.MakeStep();
+            Assert.True(
+                RRTest.Image == null
+                || RRTest.Image.Length == 0
+                || RRTest.Image.All(u => u == 0));
         }
 
+        [Fact]
+        public void ChangeResolutionTest()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFullMapRR>();
+            RRTest.GatherImage = true;
+
+            GameController.MakeStep();
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+
+            RRTest.Resolution = new Size(32, 32);
+            GameController.MakeStep();
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+
+            RRTest.Resolution = new Size(2048, 1280);
+            GameController.MakeStep();
+            Assert.Contains(RRTest.Image, u => (u & 0xFFFFFF00) != 0);
+        }
+
+        [Fact]
+        public void RenderRequestThrows()
+        {
+            var RRTest = GameController.RegisterRenderRequest<IFullMapRR>();
+
+            Assert.ThrowsAny<ArgumentOutOfRangeException>(() => RRTest.Resolution = Size.Empty);
+            Assert.ThrowsAny<ArgumentOutOfRangeException>(() => RRTest.Resolution = new Size(65536, 65536));
+        }
+
+
         #region RRs
+
+        private void TestStep<T>()
+            where T : class, IRenderRequest
+        {
+            var RRTest = GameController.RegisterRenderRequest<T>();
+            GameController.MakeStep();
+        }
 
         [Fact]
         public void FullMapRR()
         {
-            var RRTest = GameController.RegisterRenderRequest<IFullMapRR>();
-            TestStepsImage(RRTest);
+            TestStep<IFullMapRR>();
         }
 
         [Fact]
         public void FreeMapRR()
         {
-            var RRTest = GameController.RegisterRenderRequest<IFreeMapRR>();
-            TestStepsImage(RRTest);
+            TestStep<IFreeMapRR>();
         }
 
         #endregion
 
         #region AvatarRRs
 
-        [Fact]
-        public void FoVAvatarRR()
+        private const int AvatarID = 1;
+
+        private void TestStepAvatar<T>(Action<T> rrSetupAction = null)
+            where T : class, IAvatarRenderRequest
         {
-            var RRTest = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
-            TestStepsImage(RRTest);
+            var RRTest = GameController.RegisterRenderRequest<T>(AvatarID);
+
+            if (rrSetupAction != null)
+                rrSetupAction(RRTest);
+
+            GameController.MakeStep();
         }
 
         [Fact]
-        public void FoFAvatarRR()
+        public void FovAvatarRR()
         {
-            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
-            var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
-            RRTest.FovAvatarRenderRequest = RR;
-            TestStepsImage(RRTest);
+            TestStepAvatar<IFovAvatarRR>();
         }
+
+        [Fact]
+        public void FofAvatarRR()
+        {
+            TestStepAvatar<IFofAvatarRR>(rr => rr.FovAvatarRenderRequest = GameController.RegisterRenderRequest<IFovAvatarRR>(AvatarID));
+        }
+
         [Fact]
         public void FoFAvatarRRThrows()
         {
-            var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(1);
+            var RRTest = GameController.RegisterRenderRequest<IFofAvatarRR>(AvatarID);
             Assert.ThrowsAny<MissingFieldException>((Action)GameController.MakeStep);
             Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = null);
 
-            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(1);
+            var RR = GameController.RegisterRenderRequest<IFovAvatarRR>(AvatarID);
             RR.Size = new SizeF(1, 1);
             Assert.ThrowsAny<ArgumentException>(() => RRTest.FovAvatarRenderRequest = RR);
 

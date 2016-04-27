@@ -17,6 +17,8 @@ namespace ToyWorldTests.Game
     [Collection("Renderer")]
     public class GameControllerTestBase : IDisposable
     {
+        private bool m_disposed;
+
         protected GameControllerBase GameController;
 
 
@@ -34,12 +36,22 @@ namespace ToyWorldTests.Game
             GameController.Init();
         }
 
+        ~GameControllerTestBase()
+        {
+            Dispose();
+        }
+
         public void Dispose()
         {
+            if (m_disposed)
+                return;
+
             GameController.Dispose();
             // Test repeated Dispose()
             GameController.Dispose();
             GameController = null;
+
+            m_disposed = true;
         }
 
         protected virtual GameControllerBase GetController(GameSetup gameSetup)

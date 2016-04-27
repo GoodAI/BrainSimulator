@@ -11,19 +11,23 @@ namespace Render.RenderObjects.Textures
         private readonly int m_handle;
         private readonly TextureTarget m_target;
 
+        public int Handle { get { return m_handle; } }
+        public TextureTarget Target { get { return m_target; } }
         public Vector2I Size { get; protected set; }
 
 
-        public TextureBase()
+        protected TextureBase()
         { }
 
         public TextureBase(
             int[] data, int width, int height,
             PixelFormat dataFormat = PixelFormat.Bgra,
+            PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba,
             TextureMinFilter minFilter = TextureMinFilter.Linear,
             TextureMagFilter magFilter = TextureMagFilter.Linear,
             TextureWrapMode wrapMode = TextureWrapMode.MirroredRepeat,
-            TextureTarget textureTarget = TextureTarget.Texture2D)
+            TextureTarget textureTarget = TextureTarget.Texture2D,
+            bool generateMipmap = false)
         {
             Size = new Vector2I(width, height);
 
@@ -39,12 +43,14 @@ namespace Render.RenderObjects.Textures
             GL.TexImage2D(
                 textureTarget,
                 0,
-                PixelInternalFormat.Rgba,
+                internalDataFormat,
                 width, height, 0,
                 dataFormat, PixelType.UnsignedByte,
                 data);
 
-            GL.GenerateMipmap((GenerateMipmapTarget)textureTarget);
+            if (generateMipmap)
+                GL.GenerateMipmap((GenerateMipmapTarget)textureTarget);
+
             GL.BindTexture(textureTarget, 0);
         }
 
