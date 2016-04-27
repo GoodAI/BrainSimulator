@@ -9,6 +9,7 @@ namespace World.ToyWorldCore
     public class SimpleTileLayer : ITileLayer
     {
         private int[] m_tileTypes;
+        private readonly int BACKGROUND_TILE_NUMBER = 6;
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -43,8 +44,10 @@ namespace World.ToyWorldCore
             int bot = Math.Max(rectangle.Top, Math.Min(0, rectangle.Top + rectangle.Height));
             int top = Math.Min(rectangle.Bottom, Math.Max(Tiles[0].Length, rectangle.Bottom - rectangle.Height));
 
+
+            // TODO : Move to properties
             int idx = 0;
-            int defaultTileOffset = LayerType == LayerType.Background ? 259 : 0;
+            int defaultTileOffset = LayerType == LayerType.Background ? BACKGROUND_TILE_NUMBER : 0;
 
             // Rows before start of map
             for (int j = rectangle.Top; j < bot; j++)

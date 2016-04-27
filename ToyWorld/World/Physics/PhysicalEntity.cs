@@ -30,14 +30,17 @@ namespace World.Physics
 
     public abstract class PhysicalEntity : IPhysicalEntity
     {
-        public Vector2 Position { get; set; }
+        public Vector2 Position {
+            get { return Shape.Position; }
+            set { Shape.Position = value; }
+        }
 
         public IShape Shape { get; set; }
 
         public PhysicalEntity(Vector2 position, Shape shape)
         {
-            Position = position;
             Shape = shape;
+            Position = position;
         }
 
         public VRageMath.RectangleF CoverRectangle()
@@ -47,7 +50,7 @@ namespace World.Physics
 
         public List<Vector2I> CoverTiles()
         {
-            return Shape.CoverTiles(Position);
+            return Shape.CoverTiles();
         }
     }
 }

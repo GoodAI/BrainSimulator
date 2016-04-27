@@ -59,6 +59,10 @@
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ToyWorld\LoggerIface\LoggerIface.csproj">
+      <Project>{97bd8cc4-ec76-44ef-b774-48062454f4fc}</Project>
+      <Name>LoggerIface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ToyWorld\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
       <Name>ToyWorldAPI</Name>

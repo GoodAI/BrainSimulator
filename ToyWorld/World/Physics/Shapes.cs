@@ -6,12 +6,7 @@ namespace World.Physics
 {
     public interface IShape
     {
-        /// <summary>
-        /// Given upper left corner, method returns center of shape.
-        /// </summary>
-        /// <param name="upperLefCorner"></param>
-        /// <returns>Vector2 of center</returns>
-        VRageMath.Vector2 Center(VRageMath.Vector2 upperLefCorner);
+        Vector2 Position { get; set; }
 
         /// <summary>
         /// Returns size of rectangle which can wrap this shape.
@@ -29,24 +24,24 @@ namespace World.Physics
         /// Returns list of squares covered by this shape on given position.
         /// </summary>
         /// <returns></returns>
-        List<Vector2I> CoverTiles(Vector2 position);
+        List<Vector2I> CoverTiles();
     }
 
     public abstract class Shape : IShape
     {
+        public Vector2 Position { get; set; }
+
+        public Vector2 Size { get; protected set; }
+
         abstract public float PossibleCollisionDistance();
-
-        abstract public Vector2 Center(Vector2 upperLefCorner);
-
+        
         abstract public Vector2 CoverRectangleSize();
 
-        abstract public List<Vector2I> CoverTiles(Vector2 position);
+        abstract public List<Vector2I> CoverTiles();
     }
 
     public class Rectangle : Shape
     {
-        public Vector2 Size { get; private set; }
-
         public Rectangle(Vector2 size)
         {
             Size = size;
@@ -57,26 +52,21 @@ namespace World.Physics
             return Size.Length() / 2;
         }
 
-        public override Vector2 Center(Vector2 upperLefCorner)
-        {
-            return upperLefCorner + Size / 2;
-        }
-
         public override Vector2 CoverRectangleSize()
         {
             return Size;
         }
 
-        public override List<Vector2I> CoverTiles(Vector2 position)
+        public override List<Vector2I> CoverTiles()
         {
-            Vector2 cornerUL = position;
-            Vector2 cornerLR = position + Size;
+            Vector2 cornerUl = Position - Size/2;
+            Vector2 cornerLr = cornerUl + Size;
 
             var list = new List<Vector2I>();
 
-            for (int i = (int)Math.Floor(cornerUL.X); i < (int)Math.Ceiling(cornerLR.X); i++)
+            for (int i = (int)Math.Floor(cornerUl.X); i < (int)Math.Ceiling(cornerLr.X); i++)
             {
-                for (int j = (int)Math.Floor(cornerUL.Y); j < (int)Math.Ceiling(cornerLR.Y); j++)
+                for (int j = (int)Math.Floor(cornerUl.Y); j < (int)Math.Ceiling(cornerLr.Y); j++)
                 {
                     list.Add(new Vector2I(i, j));
                 }
@@ -95,14 +85,14 @@ namespace World.Physics
             Radius = radius;
         }
 
+        public Circle(Vector2 size)
+        {
+            Radius = (size.X + size.Y) / 4;
+        }
+
         public override float PossibleCollisionDistance()
         {
             return Radius;
-        }
-
-        public override Vector2 Center(Vector2 upperLefCorner)
-        {
-            return upperLefCorner + Radius;
         }
 
         public override Vector2 CoverRectangleSize()
@@ -111,14 +101,12 @@ namespace World.Physics
             return new Vector2(side, side);
         }
 
-        public override List<Vector2I> CoverTiles(Vector2 position)
+        public override List<Vector2I> CoverTiles()
         {
-            Vector2 center = Center(position);
-
             Vector2 coverRectangleSize = CoverRectangleSize();
 
-            Vector2 cornerUL = position;
-            Vector2 cornerLR = position + coverRectangleSize;
+            Vector2 cornerUL = Position - coverRectangleSize / 2;
+            Vector2 cornerLR = cornerUL + coverRectangleSize;
 
             List<Vector2I> list = new List<Vector2I>();
 
@@ -130,7 +118,7 @@ namespace World.Physics
                 }
             }
 
-            list.RemoveAll(x => !CircleRectangleIntersects(center, new RectangleF(new Vector2(x.X, x.Y), Vector2.One)));
+            list.RemoveAll(x => !CircleRectangleIntersects(Position, new RectangleF(new Vector2(x.X, x.Y), Vector2.One)));
 
             return list;
         }
@@ -162,15 +150,8 @@ namespace World.Physics
     /// </summary>
     public class Ellipse : Shape
     {
-        public float A { get; set; }
-        public float B { get; set; }
 
         public override float PossibleCollisionDistance()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Vector2 Center(Vector2 upperLefCorner)
         {
             throw new NotImplementedException();
         }
@@ -180,7 +161,7 @@ namespace World.Physics
             throw new NotImplementedException();
         }
 
-        public override List<Vector2I> CoverTiles(Vector2 position)
+        public override List<Vector2I> CoverTiles()
         {
             throw new NotImplementedException();
         }

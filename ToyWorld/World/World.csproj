@@ -146,6 +146,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameActors\GameObjects\Ball.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\Fruit.cs" />
     <Compile Include="GameActors\Tiles\Tree.cs" />
@@ -190,6 +191,10 @@
     <Compile Include="WorldInterfaces\IWorld.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
       <Project>{7a4d6fa1-e44b-40e2-9de8-3606dbc657d9}</Project>
       <Name>TmxMapSerializer</Name>
@@ -204,24 +209,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\Worlds\roguelike_selection_winter.png">
+    <EmbeddedResource Include="res\Worlds\roguelike_selection_winter.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <None Include="ClassDiagramToyWorld.cd" />
-    <Content Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
+    <EmbeddedResource Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\Worlds\mock_small_stream_world.tmx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mock_small_stream_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="res\Worlds\mockup999_pantry_world.tmx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mockup999_pantry_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\Worlds\roguelike_selection_summer.png">
+    <EmbeddedResource Include="res\Worlds\roguelike_selection_summer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

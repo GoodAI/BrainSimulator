@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
+using Logger;
 using ToyWorldFactory;
 using YAXLib;
 
@@ -48,6 +49,10 @@ namespace GoodAI.ToyWorld
             get { return GetInput(0); }
         }
 
+        [MyBrowsable, Category("Runtime"), DisplayName("Run every Nth")]
+        [YAXSerializableField(DefaultValue = 1)]
+        public int RunEvery { get; set; }
+
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string TilesetTable { get; set; }
@@ -55,6 +60,14 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string SaveFile { get; set; }
+
+        [MyBrowsable, Category("FoF view"), DisplayName("FoF size")]
+        [YAXSerializableField(DefaultValue = 3)]
+        public int FoFSize { get; set; }
+
+        [MyBrowsable, Category("FoV view"), DisplayName("FoV size")]
+        [YAXSerializableField(DefaultValue = 21)]
+        public int FoVSize { get; set; }
 
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
         [YAXSerializableField(DefaultValue = 0)]
@@ -105,13 +118,19 @@ namespace GoodAI.ToyWorld
             validator.AssertError(File.Exists(SaveFile), this, "Please specify a correct SaveFile path in world properties.");
             validator.AssertError(File.Exists(TilesetTable), this, "Please specify a correct TilesetTable path in world properties.");
 
+            validator.AssertError(FoFSize > 0, this, "FoF size has to be positive.");
+            validator.AssertError(Width > 0, this, "Free view width has to be positive.");
+            validator.AssertError(Height > 0, this, "Free view height has to be positive.");
+            validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
+            validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
+
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == 8, this, "Controls size has to be of size 8 or 84+. Use device input node for controls, or provide correct number of inputs");
         }
 
         public override void UpdateMemoryBlocks()
         {
-            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable))
+            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0)
                 return;
 
             GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
@@ -128,8 +147,8 @@ namespace GoodAI.ToyWorld
             int myAvatarId = avatarIds[0];
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
 
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId);
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; });
+            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId, (IRenderRequestBase rr) => { rr.Size = new SizeF(FoVSize, FoVSize); });
+            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); });
             m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
         }
@@ -203,6 +222,9 @@ namespace GoodAI.ToyWorld
 
             public override void Execute()
             {
+                if (SimulationStep != 0 && SimulationStep % Owner.RunEvery != 0)
+                    return;
+
                 Owner.Controls.SafeCopyToHost();
                 float leftSignal = Owner.Controls.Host[controlIndexes["left"]];
                 float rightSignal = Owner.Controls.Host[controlIndexes["right"]];
@@ -237,8 +259,50 @@ namespace GoodAI.ToyWorld
         {
             public override void Init(int nGPU) { }
 
+            private void PrintLogMessage(MyLog logger, TWLogMessage message)
+            {
+                logger.WriteLine("TWLog: " + message);
+            }
+
+            private void PrintLogMessages()
+            {
+                foreach (TWLogMessage message in TWLog.GetAllLogMessages())
+                {
+                    switch (message.Severity)
+                    {
+                        case TWSeverity.Error:
+                            {
+                                PrintLogMessage(MyLog.ERROR, message);
+                                break;
+                            }
+                        case TWSeverity.Warn:
+                            {
+                                PrintLogMessage(MyLog.WARNING, message);
+                                break;
+                            }
+                        case TWSeverity.Info:
+                            {
+                                PrintLogMessage(MyLog.INFO, message);
+                                break;
+                            }
+                        case TWSeverity.Verbose:
+                        case TWSeverity.Debug:
+                        default:
+                            {
+                                PrintLogMessage(MyLog.DEBUG, message);
+                                break;
+                            }
+                    }
+                }
+            }
+
             public override void Execute()
             {
+                if (SimulationStep != 0 && SimulationStep % Owner.RunEvery != 0)
+                    return;
+
+                PrintLogMessages();
+
                 Owner.m_gameCtrl.MakeStep();
 
                 TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);

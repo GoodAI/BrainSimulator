@@ -48,9 +48,10 @@ namespace ToyWorldTests.Render
             Renderer.MakeContextCurrent();
 
             int aID = m_gameController.GetAvatarIds().First();
-            var rr = m_gameController.RegisterRenderRequest<IFovAvatarRR>(aID);
-            //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
-            //rr.FovAvatarRenderRequest = rr1;
+            var rr1 = m_gameController.RegisterRenderRequest<IFovAvatarRR>(aID);
+            var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
+            rr1.Size = new SizeF(50, 50);
+            rr.FovAvatarRenderRequest = rr1;
 
             var ac = m_gameController.GetAvatarController(aID);
             var controls = new AvatarControls(5) { DesiredSpeed = .3f };
@@ -60,7 +61,11 @@ namespace ToyWorldTests.Render
                 {
                     //rr.PositionCenter = new PointF(rr.PositionCenter.X - delta.X, rr.PositionCenter.Y + delta.Y);
                     controls.DesiredRotation = MathHelper.WrapAngle(delta.X * 0.1f);
-                    controls.Fof = new PointF(0, controls.Fof.Value.Y + -delta.Y * 0.1f);
+                    //controls.Fof = new PointF(0, controls.Fof.Value.Y + -delta.Y * 0.1f);
+                },
+                delta =>
+                {
+                    rr.Size = new SizeF(rr.Size.Width - delta, rr.Size.Height - delta);
                 });
 
 
@@ -84,7 +89,7 @@ namespace ToyWorldTests.Render
             Assert.True(token.IsCancellationRequested);
         }
 
-        private CancellationToken SetupWindow(Action<Vector3> onDrag)
+        private CancellationToken SetupWindow(Action<Vector3> onDrag, Action<float> onScroll)
         {
             CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
 
@@ -103,11 +108,17 @@ namespace ToyWorldTests.Render
                     onDrag(Vector3.Zero);
             };
 
+            Renderer.Window.MouseWheel += (sender, args) =>
+            {
+                if (onScroll != null)
+                    onScroll(args.Delta);
+            };
+
             Renderer.Window.MouseMove += (sender, args) =>
             {
                 const float factor = 1 / 5f;
 
-                if (args.Mouse.IsButtonDown(MouseButton.Left))
+                if (args.Mouse.IsButtonDown(MouseButton.Left) && onDrag != null)
                     onDrag(new Vector3(args.XDelta, args.YDelta, 0) * factor);
             };
 
