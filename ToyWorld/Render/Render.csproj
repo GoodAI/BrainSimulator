@@ -71,7 +71,7 @@
     <Compile Include="Renderer\RendererBase.cs" />
     <Compile Include="RenderObjects\Buffers\Base\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
-    <Compile Include="RenderObjects\Effects\Fullscreen\NoiseEffect.cs" />
+    <Compile Include="RenderObjects\Effects\Common\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
@@ -81,9 +81,8 @@
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
-    <Compile Include="RenderObjects\Effects\Other\NoEffectOffset.cs" />
-    <Compile Include="RenderObjects\Effects\Other\NoEffectTex.cs" />
-    <Compile Include="RenderObjects\Effects\Other\NoEffect.cs" />
+    <Compile Include="RenderObjects\Effects\Common\NoEffectOffset.cs" />
+    <Compile Include="RenderObjects\Effects\Common\NoEffectTex.cs" />
     <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FofAvatarRR.cs" />
@@ -93,7 +92,6 @@
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Vao.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Vbo.cs" />
-    <Compile Include="RenderObjects\Geometries\FullscreenQuadColor.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,7 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
@@ -130,9 +127,6 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.vert" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -232,14 +232,14 @@ namespace Render.RenderRequests
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
             renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
-            m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
+            m_effect.TextureUniform(0);
 
             // Set up static uniforms
             Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
                 world.TilesetTable.TileBorder * 2; // twice the border, on each side once
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
-            m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
-            m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+            m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
+            m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_effect.SetUniform2(m_effect.GetUniformLocation("tileBorder"), world.TilesetTable.TileBorder);
 
             // Set up geometry
@@ -275,9 +275,7 @@ namespace Render.RenderRequests
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
             {
                 renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-                m_noiseEffect.SetUniform4(
-                    m_noiseEffect.GetUniformLocation("noiseColor"),
-                    new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
+                m_noiseEffect.NoiseColorUniform(new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
             }
 
             m_dirtyParams = DirtyParams.None;
@@ -333,15 +331,14 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)GridView.Size / 2);
             // World transform -- move center to view center
             transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
-            m_effect.SetUniformMatrix4(m_effect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+            // View and projection transforms
+            transform *= m_viewProjectionMatrix;
+            m_effect.ModelViewProjectionUniform(ref transform);
 
 
             // Draw tile layers
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
-                //transform *= Matrix.CreateTranslation(0, 0, -0.1f);
-                //m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
-
                 m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
                 m_grid.Draw();
             }
@@ -365,7 +362,9 @@ namespace Render.RenderRequests
                     transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));
-                    m_effect.SetUniformMatrix4(m_effect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+                    // View and projection transforms
+                    transform *= m_viewProjectionMatrix;
+                    m_effect.ModelViewProjectionUniform(ref transform);
 
                     // Setup dynamic data
                     m_quadOffset.SetTextureOffsets(gameObject.TilesetId);
@@ -390,10 +389,12 @@ namespace Render.RenderRequests
                 transform *= Matrix.CreateScale(ViewV.Size / 2);
                 // World transform -- move center to view center
                 transform *= Matrix.CreateTranslation(new Vector3(ViewV.Center, 1f));
-                m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mw"), transform);
-                m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+                m_noiseEffect.ModelWorldUniform(ref transform);
+                // View and projection transforms
+                transform *= m_viewProjectionMatrix;
+                m_noiseEffect.ModelViewProjectionUniform(ref transform);
 
-                m_noiseEffect.SetUniform4(m_noiseEffect.GetUniformLocation("timeMean"), new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
+                m_noiseEffect.TimeMeanUniform(new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
 
                 m_quad.Draw();
             }

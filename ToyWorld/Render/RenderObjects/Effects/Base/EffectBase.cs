@@ -48,7 +48,7 @@ namespace Render.RenderObjects.Effects
 
             foreach (var value in Enum.GetValues(uniformNamesEnumType))
             {
-                m_uniformLocations[Convert.ToInt32(value)] = GetUniformLocation(value.ToString());
+                m_uniformLocations[Convert.ToInt32(value)] = GL.GetUniformLocation(m_prog, value.ToString());
             }
         }
 
@@ -100,33 +100,23 @@ namespace Render.RenderObjects.Effects
             get { return m_uniformLocations[Convert.ToInt32(val)]; }
         }
 
-        public int GetUniformLocation(string name)
-        {
-            return GL.GetUniformLocation(m_prog, name);
-        }
 
-
-        public void SetUniform1(int pos, int val)
+        protected void SetUniform1(int pos, int val)
         {
             GL.Uniform1(pos, val);
         }
 
-        public void SetUniform2(int pos, Vector2I val)
-        {
-            GL.Uniform2(pos, val.X, val.Y);
-        }
-
-        public void SetUniform3(int pos, Vector3I val)
+        protected void SetUniform3(int pos, Vector3I val)
         {
             GL.Uniform3(pos, val.X, val.Y, val.Z);
         }
 
-        public void SetUniform4(int pos, Vector4I val)
+        protected void SetUniform4(int pos, Vector4I val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }
 
-        public void SetUniform4(int pos, Vector4 val)
+        protected void SetUniform4(int pos, Vector4 val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }
@@ -135,7 +125,7 @@ namespace Render.RenderObjects.Effects
         /// <summary>
         ///Passed matrices are applied from left to right (as in vert*(a*b*c) -- a will be first).
         /// </summary>
-        public void SetUniformMatrix4(int pos, Matrix val)
+        protected void SetUniformMatrix4(int pos, Matrix val)
         {
             unsafe
             {
