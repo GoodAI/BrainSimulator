@@ -17,6 +17,9 @@
     <Node type="GoodAI.Modules.Transforms.MyResize2D" CanBeAdded="true" BigIcon="imagescale_big.png" SmallIcon="imagescale.png">
       <Label>Transformations</Label>
     </Node>
+    <Node type="GoodAI.Modules.Transforms.MyRawImageTransform" CanBeAdded="true">
+      <Label>Transformations</Label>
+    </Node>
     <Node type="GoodAI.Modules.Transforms.MyAccumulator" CanBeAdded="true" BigIcon="delayedcopy_big.png" SmallIcon="delayedcopy.png">
       <Label>Transformations</Label>
     </Node>

@@ -308,6 +308,7 @@
     <Compile Include="Transforms\MyAnalyze2D.cs" />
     <Compile Include="Transforms\MyFilter2D.cs" />
     <Compile Include="Transforms\MyHash.cs" />
+    <Compile Include="Transforms\MyRawImageTransform.cs" />
     <Compile Include="Transforms\MyResize2D.cs" />
     <Compile Include="Vision\MaskCreationNode.cs" />
     <Compile Include="Transforms\VectorOps.cs" />

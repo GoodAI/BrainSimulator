@@ -8,6 +8,7 @@ Inspired by the implementation of CustomPong.cu + GridWorld.cu
 */
 extern "C"
 {
+	__device__ void GetComponents(float *source, int pixelId, unsigned char components[3]);
 
 	/*
 	Draws a background color into a 3-component image.
@@ -476,14 +477,97 @@ extern "C"
 			return;
 
 		unsigned int* uTarget = (unsigned int*)target;
+		unsigned int pixel = uTarget[pixelId];
 
 		for (int i = 2; i >= 0; i--)
 		{
-			unsigned int component = uTarget[pixelId];
+			unsigned int component = pixel;
 			component = component >> (8 * (2-i)); // 2-i == RGB -> BGR
 			component = component & 0xFF;
 			target[imagePixels * i + pixelId] = ((float)component)/255.0f;
 			__syncthreads();
+		}
+	}
+
+	/*
+	Convert Raw to RGB
+	ST = source, target
+	*/
+	__global__ void RawToRgbKernel(float *source, float *target, int pixelCount)
+	{
+		int pixelId = blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (pixelId >= pixelCount)
+			return;
+
+		unsigned char components[3];
+
+		GetComponents(source, pixelId, components);
+
+		for (int i = 2; i >= 0; i--)
+		{
+			target[pixelCount * i + pixelId] = ((float)components[i]) / 255.0f; // to re-scale from 0 to 1
+		}
+	}
+
+	/*
+	Convert Raw to Raw grayscale
+	ST = source, target
+	http://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+	*/
+	__global__ void RawToRawGrayscaleKernel(float *source, float *target, int pixelCount)
+	{
+		int pixelId = blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (pixelId >= pixelCount)
+			return;
+
+		unsigned char components[3];
+
+		GetComponents(source, pixelId, components);
+
+		unsigned char luminance = (unsigned char)
+			(.2126 * components[0] + .7152 * components[1] + .0722 * components[2]);
+
+		*((unsigned int*)&target[pixelId]) = luminance | (luminance << 8) | (luminance << 16);
+	}
+
+	/*
+	Convert Raw to Grayscale
+	ST = source, target
+	http://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+	*/
+	__global__ void RawToGrayscaleKernel(float *source, float *target, int pixelCount)
+	{
+		int pixelId = blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (pixelId >= pixelCount)
+			return;
+
+		unsigned char components[3];
+
+		GetComponents(source, pixelId, components);
+
+		unsigned char luminance = (unsigned char)
+			(.2126 * components[0] + .7152 * components[1] + .0722 * components[2]);
+
+		target[pixelId] = ((float)luminance) / 255.0; // to re-scale from 0 to 1
+	}
+
+	__device__ void GetComponents(float *source, int pixelId, unsigned char components[3])
+	{
+		unsigned int* uSource = (unsigned int*)source;
+		unsigned int pixel = uSource[pixelId];
+
+		for (int i = 2; i >= 0; i--)
+		{
+			unsigned int component = pixel;
+			component = component >> (8 * (2 - i)); // 2-i == RGB -> BGR
+			component = component & 0xFF;
+			components[i] = (unsigned char)component;
 		}
 	}
 
