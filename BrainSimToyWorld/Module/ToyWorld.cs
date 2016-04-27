@@ -13,6 +13,7 @@ using System.Windows.Forms.Design;
 using Logger;
 using ToyWorldFactory;
 using YAXLib;
+using System.Diagnostics;
 
 namespace GoodAI.ToyWorld
 {
@@ -52,6 +53,10 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Runtime"), DisplayName("Run every Nth")]
         [YAXSerializableField(DefaultValue = 1)]
         public int RunEvery { get; set; }
+
+        [MyBrowsable, Category("Runtime"), DisplayName("Use 60 FPS cap")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool UseFpsCap { get; set; }
 
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
@@ -257,7 +262,12 @@ namespace GoodAI.ToyWorld
 
         public class TWUpdateTask : MyTask<ToyWorld>
         {
-            public override void Init(int nGPU) { }
+            private Stopwatch m_fpsStopwatch;
+
+            public override void Init(int nGPU) 
+            {
+                m_fpsStopwatch = Stopwatch.StartNew();
+            }
 
             private void PrintLogMessage(MyLog logger, TWLogMessage message)
             {
@@ -302,6 +312,19 @@ namespace GoodAI.ToyWorld
                     return;
 
                 PrintLogMessages();
+
+                if (Owner.UseFpsCap)
+                {
+                    // do a step at most every 16.6 ms, which leads to a 60FPS cap
+                    while (m_fpsStopwatch.Elapsed.Ticks < 166666) // a tick is 100 nanoseconds, 10000 ticks is 1 millisecond
+                    {
+                        ; // busy waiting for the next frame
+                        // cannot use Sleep because it is too coarse (16ms)
+                        // we need millisecond precision
+                    }
+
+                    m_fpsStopwatch.Restart();
+                }
 
                 Owner.m_gameCtrl.MakeStep();
 
