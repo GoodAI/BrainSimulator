@@ -8,7 +8,7 @@ namespace World.GameActors.Tiles
     /// </summary>
     public interface IAutoupdateable
     {
-        Tile Update(IAtlas atlas);
+        void Update(IAtlas atlas);
 
         int NextUpdateAfter { get; }
     }
@@ -20,6 +20,13 @@ namespace World.GameActors.Tiles
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable = null);
+        void ApplyGameAction(IAtlas atlas, GameActor sender, GameAction gameAction, TilesetTable tilesetTable = null);
+    }
+
+    public interface IPickable : IInteractable { }
+
+    public interface ICanPick
+    {
+        void AddToInventory(IPickable item);
     }
 }

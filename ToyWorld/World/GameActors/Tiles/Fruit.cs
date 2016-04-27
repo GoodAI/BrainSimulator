@@ -1,10 +1,18 @@
-﻿namespace World.GameActors.Tiles
+﻿using World.GameActions;
+using World.ToyWorldCore;
+
+namespace World.GameActors.Tiles
 {
-    public class Fruit : StaticTile
+    public class Fruit : StaticTile, IPickable
     {
         protected Fruit(ITilesetTable tilesetTable) : base(tilesetTable) { }
 
         protected Fruit(int tileType) : base(tileType) { }
+
+        public void ApplyGameAction(IAtlas atlas, GameActor sender, GameAction gameAction, TilesetTable tilesetTable = null)
+        {
+            gameAction.Resolve(this);
+        }
     }
 
     public class Apple : Fruit
