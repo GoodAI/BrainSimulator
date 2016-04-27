@@ -17,11 +17,34 @@ namespace GoodAI.Modules.Transforms
     [YAXSerializeAs("RawImageTransform")]
     public class MyRawImageTransform : MyTransform
     {
+        /// <summary>
+        /// Conversion options
+        /// </summary>
         public enum TransformTarget
         {
+            /// <summary>
+            /// Raw -> Raw, with color channels reduced to luminance (L, grayscale). 
+            /// The original pixel layout is 32bits = 8bit A, 8bit R, 8bit G, 8bit B. 
+            /// The result pixel layout is 32 bits again, 8bit A, 8 bit L, 8 bit L, 8 bit L
+            /// The correct rendering method to view the results is Raw
+            /// </summary>
             RawBW,
+
+            /// <summary>
+            /// Raw -> RGB, where color channels are extracted from the pixels and laid out sequentially:
+            /// First Red, then Green, then Blue. A single color value is encoded by one float in range <0,1>.
+            /// The result is 3x times as big as the original because of use of floats (and no alpha)
+            /// The correct rendering method to view the results is RGB
+            /// </summary>
             RGB,
+
+            /// <summary>
+            /// Raw -> Grayscale, similar to RawBW, but with alpha discarded and luminance converted to a float.
+            /// The result pixel layout is 32 bits per pixel again, encoding a single float luminance in range <0,1>
+            /// The correct rendering method to view the results is GrayScale or RedGreenScale
+            /// </summary>
             Grayscale,
+
             // RGBPacked // same size as raw, but channels are grouped as in RGB 
             // RGBPacked currently not used because there will be a problem with channel border alignment in pictures 
             // which are of size not divisible by 3
