@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -35,10 +36,21 @@ namespace GoodAI.ToyWorld.Control
         bool GatherImage { get; set; }
 
         /// <summary>
-        /// 
+        /// Called before the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
+        /// The argument is an OpenGL handle to the underlying buffer object.
+        /// Use this callback to release any mapping related to the buffer object.
+        /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
         /// </summary>
-        uint[] Image { get; }
+        EventHandler<int> OnPreRendering { get; }
 
+        /// <summary>
+        /// Called after the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
+        /// The argument is an OpenGL handle to the underlying buffer object.
+        /// Because an internal OpenGL context is now active, you can use this callback to do any copying
+        /// from the buffer object or to map a CUDA pointer using CUDA-GL interop.
+        /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
+        /// </summary>
+        EventHandler<int> OnAfterRendering { get; }
 
         /// <summary>
         /// 

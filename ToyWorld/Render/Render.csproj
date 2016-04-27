@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
+    <Compile Include="RenderObjects\Buffers\Pbo.cs" />
     <Compile Include="RenderObjects\Buffers\Base\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
     <Compile Include="RenderObjects\Effects\Common\NoiseEffect.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Tests\RRs\INotImplementedRRs.cs" />
     <Compile Include="RenderRequests\RenderRequests\RenderRequestBase.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Vao.cs" />
-    <Compile Include="RenderObjects\Buffers\Base\Vbo.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Vbos.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

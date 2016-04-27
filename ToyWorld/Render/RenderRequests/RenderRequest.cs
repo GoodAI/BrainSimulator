@@ -36,6 +36,7 @@ namespace Render.RenderRequests
         private FullScreenGrid m_grid;
         private FullScreenQuadOffset m_quadOffset;
         private FullScreenQuad m_quad;
+        private Pbo m_pbo;
 
         private Matrix m_projMatrix;
         private Matrix m_viewProjectionMatrix;
@@ -157,7 +158,8 @@ namespace Render.RenderRequests
             }
         }
 
-        public uint[] Image { get; private set; }
+        public EventHandler<int> OnPreRendering { get; private set; }
+        public EventHandler<int> OnAfterRendering { get; private set; }
 
 
         private bool m_drawNoise;
