@@ -20,46 +20,49 @@ namespace Render.RenderObjects.Effects
         // TODO: genericity
         protected EffectBase(string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
         {
-            int vert = LoadShader(vertPath, ShaderType.VertexShader, vertAddendum);
-            int frag = LoadShader(fragPath, ShaderType.FragmentShader, fragAddendum);
-
             m_prog = GL.CreateProgram();
-            GL.AttachShader(m_prog, vert);
-            GL.AttachShader(m_prog, frag);
+
+            // Vertex shader
+            LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vertPath));
+            if (vertAddendum != null)
+                LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vertAddendum));
+
+            // Fragment shader
+            LoadAndAttachShader(ShaderType.FragmentShader, GetShaderSource(fragPath));
+            if (fragAddendum != null)
+                LoadAndAttachShader(ShaderType.FragmentShader, GetShaderSource(fragAddendum));
+
             GL.LinkProgram(m_prog);
 
-            GL.DeleteShader(vert);
-            GL.DeleteShader(frag);
-
             var res = GL.GetProgramInfoLog(m_prog);
-
             Debug.Assert(string.IsNullOrEmpty(res), res);
         }
 
-        private int LoadShader(string name, ShaderType type, Stream addendum = null)
+        private string GetShaderSource(string name)
+        {
+            Stream sourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
+            Debug.Assert(sourceStream != null);
+            return GetShaderSource(sourceStream);
+        }
+
+        private string GetShaderSource(Stream sourceStream)
+        {
+            using (StreamReader reader = new StreamReader(sourceStream))
+                return reader.ReadToEnd();
+        }
+
+        private void LoadAndAttachShader(ShaderType type, string source)
         {
             var handle = GL.CreateShader(type);
 
-            Stream vertSrc = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
-            Debug.Assert(vertSrc != null);
-
-            string res;
-
-            using (StreamReader str = new StreamReader(vertSrc))
-                res = str.ReadToEnd();
-
-            if (addendum != null)
-                using (StreamReader str = new StreamReader(addendum))
-                    res += str.ReadToEnd();
-
-            GL.ShaderSource(handle, res);
+            GL.ShaderSource(handle, source);
             GL.CompileShader(handle);
 
-            res = GL.GetShaderInfoLog(handle);
+            string err = GL.GetShaderInfoLog(handle);
+            Debug.Assert(string.IsNullOrEmpty(err), err);
 
-            Debug.Assert(string.IsNullOrEmpty(res), res);
-
-            return handle;
+            GL.AttachShader(m_prog, handle);
+            GL.DeleteShader(handle);
         }
 
         public virtual void Dispose()
@@ -89,12 +92,22 @@ namespace Render.RenderObjects.Effects
             GL.Uniform1(pos, val);
         }
 
+        //public void SetUniform2(int pos, Vector2 val)
+        //{
+        //    GL.Uniform2(pos, val.X, val.Y);
+        //}
+
         public void SetUniform3(int pos, Vector3I val)
         {
             GL.Uniform3(pos, val.X, val.Y, val.Z);
         }
 
         public void SetUniform4(int pos, Vector4I val)
+        {
+            GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
+        }
+
+        public void SetUniform4(int pos, Vector4 val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }

@@ -126,10 +126,10 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.vert" />
-    <None Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
-    <None Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
-    <None Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
-    <None Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicColor.vert" />

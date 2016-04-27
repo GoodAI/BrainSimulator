@@ -23,6 +23,7 @@ namespace Render.RenderRequests
             Size,
             Resolution = 1 << 1,
             Image = 1 << 2,
+            Noise = 1 << 3,
         }
 
 
@@ -30,15 +31,17 @@ namespace Render.RenderRequests
 
         private BasicFbo m_fbo;
         private NoEffectOffset m_effect;
+        private NoiseEffect m_noiseEffect;
         private TilesetTexture m_tex;
         private FullScreenGrid m_grid;
-        private FullScreenQuadOffset m_quad;
+        private FullScreenQuadOffset m_quadOffset;
+        private FullScreenQuad m_quad;
 
         private Matrix m_projMatrix;
         private Matrix m_viewProjectionMatrix;
-        private int m_mvpPos;
 
         private DirtyParams m_dirtyParams;
+        private double m_simTime;
 
         #endregion
 
@@ -58,7 +61,7 @@ namespace Render.RenderRequests
             m_effect.Dispose();
             m_tex.Dispose();
             m_grid.Dispose();
-            m_quad.Dispose();
+            m_quadOffset.Dispose();
         }
 
         #endregion
@@ -144,7 +147,6 @@ namespace Render.RenderRequests
 
 
         private bool m_gatherImage;
-
         public bool GatherImage
         {
             get { return m_gatherImage; }
@@ -156,6 +158,49 @@ namespace Render.RenderRequests
         }
 
         public uint[] Image { get; private set; }
+
+
+        private bool m_drawNoise;
+        private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
+        private float m_noiseTransformationSpeedCoefficient = 1f;
+        private float m_noiseMeanOffset = 0.8f;
+
+        public bool DrawNoise
+        {
+            get { return m_drawNoise; }
+            set
+            {
+                m_drawNoise = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public System.Drawing.Color NoiseColor
+        {
+            get { return m_noiseColor; }
+            set
+            {
+                m_noiseColor = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public float NoiseTransformationSpeedCoefficient
+        {
+            get { return m_noiseTransformationSpeedCoefficient; }
+            set
+            {
+                m_noiseTransformationSpeedCoefficient = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public float NoiseMeanOffset
+        {
+            get { return m_noiseMeanOffset; }
+            set
+            {
+                m_noiseMeanOffset = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
 
         #endregion
 
@@ -170,11 +215,11 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            // Set flag to set up render targets
-            m_dirtyParams |= DirtyParams.Resolution;
-
             // Set up tileset textures
             m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
+
+            // Set up the noise shader
+            m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -186,19 +231,18 @@ namespace Render.RenderRequests
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_mvpPos = m_effect.GetUniformLocation("mvp");
 
             // Set up geometry
-            m_quad = renderer.GeometryManager.Get<FullScreenQuadOffset>();
-
-            // Set flag to renew projection matrix and renew grid geometry
-            m_dirtyParams |= DirtyParams.Size;
+            m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
+            m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             CheckDirtyParams(renderer); // Do the hard work in Init
         }
 
         private void CheckDirtyParams(RendererBase renderer)
         {
+            // Only setup these things when their dependency has changed (property setters enable these)
+
             if (m_dirtyParams.HasFlag(DirtyParams.Size))
             {
                 m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
@@ -218,6 +262,13 @@ namespace Render.RenderRequests
                 else if (Image.Length < Resolution.Width * Resolution.Height)
                     Image = new uint[Resolution.Width * Resolution.Height];
             }
+            if (m_dirtyParams.HasFlag(DirtyParams.Noise))
+            {
+                renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
+                m_noiseEffect.SetUniform4(
+                    m_noiseEffect.GetUniformLocation("noiseColor"),
+                    new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
+            }
 
             m_dirtyParams = DirtyParams.None;
         }
@@ -232,18 +283,21 @@ namespace Render.RenderRequests
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // Bind stuff to GL
-            m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
-            renderer.EffectManager.Use(m_effect);
-            renderer.TextureManager.Bind(m_tex);
-
             // View and proj transforms
             m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, PositionCenterV);
             m_viewProjectionMatrix *= m_projMatrix;
 
+            // Bind stuff to GL
+            m_fbo.Bind();
+            renderer.EffectManager.Use(m_effect);
+            renderer.TextureManager.Bind(m_tex);
+
             // Draw the scene
             DrawTileLayers(world);
             DrawObjectLayers(world);
+
+            // Draw effects
+            DrawEffects(renderer);
 
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
@@ -277,7 +331,7 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)GridView.Size / 2);
             // World transform -- move center to view center
             transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
-            m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
+            m_effect.SetUniformMatrix4(m_effect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
 
 
             // Draw tile layers
@@ -309,31 +363,57 @@ namespace Render.RenderRequests
                     transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));
-                    m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
+                    m_effect.SetUniformMatrix4(m_effect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
 
                     // Setup dynamic data
-                    m_quad.SetTextureOffsets(gameObject.TilesetId);
+                    m_quadOffset.SetTextureOffsets(gameObject.TilesetId);
 
-                    m_quad.Draw();
+                    m_quadOffset.Draw();
                 }
             }
         }
 
+        private void DrawEffects(RendererBase renderer)
+        {
+            if (DrawNoise)
+            {
+                m_simTime = (m_simTime + 0.005f * NoiseTransformationSpeedCoefficient) % 3e15;
+
+                renderer.EffectManager.Use(m_noiseEffect);
+
+                // Set up transformation to world and screen space for noise effect
+                Matrix transform = Matrix.Identity;
+                // Model transform -- scale from (-1,1) to viewSize/2, center on origin
+                transform *= Matrix.CreateScale(ViewV.Size / 2);
+                // World transform -- move center to view center
+                transform *= Matrix.CreateTranslation(new Vector3(ViewV.Center, 1f));
+                m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mw"), transform);
+                m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+
+                m_noiseEffect.SetUniform4(m_noiseEffect.GetUniformLocation("timeMean"), new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
+
+                m_quad.Draw();
+            }
+
+            // more stufffs
+        }
+
         private void GatherAndDistributeData(RendererBase renderer)
         {
-            // TEMP: copy to default framebuffer (our window)
-            m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            GL.BlitFramebuffer(
-                0, 0, Resolution.Width, Resolution.Height,
-                0, 0, renderer.Width, renderer.Height,
-                ClearBufferMask.ColorBufferBit,
-                BlitFramebufferFilter.Linear);
-
-
             // Gather data to host mem
             if (GatherImage)
+            {
                 GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
+
+                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+                m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                GL.BlitFramebuffer(
+                    0, 0, Resolution.Width, Resolution.Height,
+                    0, 0, renderer.Width, renderer.Height,
+                    ClearBufferMask.ColorBufferBit,
+                    BlitFramebufferFilter.Linear);
+            }
         }
 
         #endregion

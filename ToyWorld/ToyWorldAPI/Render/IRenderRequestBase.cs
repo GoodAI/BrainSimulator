@@ -38,5 +38,26 @@ namespace GoodAI.ToyWorld.Control
         /// 
         /// </summary>
         uint[] Image { get; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool DrawNoise { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Color NoiseColor { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float NoiseTransformationSpeedCoefficient { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float NoiseMeanOffset { get; set; }
     }
 }

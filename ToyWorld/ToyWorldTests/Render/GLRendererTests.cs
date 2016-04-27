@@ -52,6 +52,7 @@ namespace ToyWorldTests.Render
             //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
+            rr.GatherImage = true;
 
             var ac = m_gameController.GetAvatarController(aID);
             var controls = new AvatarControls(5) { DesiredSpeed = .3f };
@@ -66,6 +67,11 @@ namespace ToyWorldTests.Render
                 delta =>
                 {
                     rr.Size = new SizeF(rr.Size.Width - delta, rr.Size.Height - delta);
+                },
+                key =>
+                {
+                    if (key == Key.Number1)
+                        rr.DrawNoise = !rr.DrawNoise;
                 });
 
 
@@ -73,7 +79,7 @@ namespace ToyWorldTests.Render
             {
                 try
                 {
-                    Task.Delay(20, token).Wait(token);
+                    //Task.Delay(20, token).Wait(token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -89,23 +95,38 @@ namespace ToyWorldTests.Render
             Assert.True(token.IsCancellationRequested);
         }
 
-        private CancellationToken SetupWindow(Action<Vector3> onDrag, Action<float> onScroll)
+        private CancellationToken SetupWindow(Action<Vector3> onDrag, Action<float> onScroll, Action<Key> onToggle)
         {
             CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
 
             Renderer.Window.KeyDown += (sender, args) =>
             {
-                if (args.Key == Key.A)
-                    tokenSource.Cancel();
+                switch (args.Key)
+                {
+                    case Key.A:
+                        tokenSource.Cancel();
+                        break;
+
+                    case Key.Number1:
+                    case Key.Number2:
+                    case Key.Number3:
+                    case Key.Number4:
+                        onToggle(args.Key);
+                        break;
+                }
             };
 
             Renderer.Window.MouseDown += (sender, args) =>
             {
-                if (args.Button == MouseButton.Right)
-                    tokenSource.Cancel();
-
-                if (args.Button == MouseButton.Left)
-                    onDrag(Vector3.Zero);
+                switch (args.Button)
+                {
+                    case MouseButton.Right:
+                        tokenSource.Cancel();
+                        break;
+                    case MouseButton.Left:
+                        onDrag(Vector3.Zero);
+                        break;
+                }
             };
 
             Renderer.Window.MouseWheel += (sender, args) =>
