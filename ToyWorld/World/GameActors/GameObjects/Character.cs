@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Reflection;
 using VRageMath;
 using World.Physics;
@@ -16,7 +16,7 @@ namespace World.GameActors.GameObjects
 
         public new IForwardMovablePhysicalEntity PhysicalEntity
         {
-            get { return (IForwardMovablePhysicalEntity) base.PhysicalEntity; }
+            get { return (IForwardMovablePhysicalEntity)base.PhysicalEntity; }
             set { base.PhysicalEntity = value; }
         }
 
@@ -68,7 +68,7 @@ namespace World.GameActors.GameObjects
             : base(tilesetName, tileId, name)
         {
             shapeType = shapeType ?? typeof(CircleShape);
-            ConstructorInfo ctor = shapeType.GetConstructor(new[] {typeof(Vector2)});
+            ConstructorInfo ctor = shapeType.GetConstructor(new[] { typeof(Vector2) });
 
             if (ctor == null)
             {
@@ -79,7 +79,7 @@ namespace World.GameActors.GameObjects
 
             Rotation = direction;
 
-            Shape shape = (Shape) ctor.Invoke(new object[] {size});
+            Shape shape = (Shape)ctor.Invoke(new object[] { size });
             PhysicalEntity = new ForwardMovablePhysicalEntity(position, shape, direction: direction);
         }
     }

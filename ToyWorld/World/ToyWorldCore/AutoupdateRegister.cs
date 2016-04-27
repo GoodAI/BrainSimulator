@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using VRage.Collections;
 using World.GameActors.Tiles;
-using World.WorldInterfaces;
 
 namespace World.ToyWorldCore
 {

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using World.GameActions;
 using World.GameActors.Tiles;
 using Xunit;
@@ -29,27 +30,28 @@ namespace ToyWorldTests.World
         [InlineData(3.0f)]
         public void PickaxeMakesDamageWall0(float damage)
         {
-            ToUsePickaxe pickaxe = new ToUsePickaxe() { Damage = damage };
-            var atlasMock = new Mock<Atlas>();
+            throw new NotImplementedException();
+            //ToUsePickaxe pickaxe = new ToUsePickaxe() { Damage = damage };
+            //var atlasMock = new Mock<Atlas>();
 
-            // Act
-            var pickaxedWall = m_wall.ApplyGameAction(atlasMock.Object, pickaxe, m_tilesetTable);
+            //// Act
+            //var pickaxedWall = m_wall.ApplyGameAction(atlasMock.Object, pickaxe, m_tilesetTable);
 
-            if (damage >= 1)
-            {
-                Assert.IsType(typeof(DestroyedWall), pickaxedWall);
-            }
-            else if (damage > 0)
-            {
-                Assert.IsType(typeof(DamagedWall), pickaxedWall);
-                DamagedWall damagedWall = (DamagedWall)pickaxedWall;
-                Assert.True(damagedWall.Health >= 1.0f - damage);
-            }
-            else
-            {
-                Assert.IsType(typeof(Wall), pickaxedWall);
-            }
-            
+            //if (damage >= 1)
+            //{
+            //    Assert.IsType(typeof(DestroyedWall), pickaxedWall);
+            //}
+            //else if (damage > 0)
+            //{
+            //    Assert.IsType(typeof(DamagedWall), pickaxedWall);
+            //    DamagedWall damagedWall = (DamagedWall)pickaxedWall;
+            //    Assert.True(damagedWall.Health >= 1.0f - damage);
+            //}
+            //else
+            //{
+            //    Assert.IsType(typeof(Wall), pickaxedWall);
+            //}
+
         }
 
         [Theory]
@@ -59,25 +61,26 @@ namespace ToyWorldTests.World
         [InlineData(1.0f)]
         public void PickaxeMakesDestroyedWallFromDamagedWall(float damage)
         {
-            var atlasMock = new Mock<Atlas>();
+            throw new NotImplementedException();
+            //var atlasMock = new Mock<Atlas>();
 
-            float initialDamage = 0.5f;
+            //float initialDamage = 0.5f;
 
-            // Assert
-            ToUsePickaxe pickaxe = new ToUsePickaxe() { Damage = damage };
+            //// Assert
+            //ToUsePickaxe pickaxe = new ToUsePickaxe() { Damage = damage };
 
-            DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
-            Tile pickaxedWall = damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, m_tilesetTable);
+            //DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
+            //Tile pickaxedWall = damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, m_tilesetTable);
 
 
-            if (damage + initialDamage >= 1)
-            {
-                Assert.IsType(typeof (DestroyedWall), pickaxedWall);
-            }
-            else
-            {
-                Assert.IsType(typeof(DamagedWall), pickaxedWall);
-            }
+            //if (damage + initialDamage >= 1)
+            //{
+            //    Assert.IsType(typeof(DestroyedWall), pickaxedWall);
+            //}
+            //else
+            //{
+            //    Assert.IsType(typeof(DamagedWall), pickaxedWall);
+            //}
         }
     }
 }

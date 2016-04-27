@@ -21,7 +21,7 @@ namespace World.ToyWorldCore
 
         public GameObject GetActorAt(int x, int y)
         {
-            return GetGameObjects(new RectangleF(x, y, 1, 1)).First();
+            return GetGameObjects(new RectangleF(x, y, 1, 1)).FirstOrDefault();
         }
 
         public List<GameObject> GetGameObjects(RectangleF rectangle)

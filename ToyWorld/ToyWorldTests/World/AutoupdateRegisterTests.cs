@@ -134,15 +134,15 @@ namespace ToyWorldTests.World
             register.Register(mock1.Object, 1);
             register.Register(mock2.Object, 2);
             register.Tick();
-            register.UpdateItems(world);
+            register.UpdateItems(world.Atlas);
 
-            mock1.Verify(x => x.Update(It.IsAny<ToyWorld>()));
-            mock2.Verify(x => x.Update(It.IsAny<ToyWorld>()), Times.Never());
+            mock1.Verify(x => x.Update(It.IsAny<Atlas>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>()), Times.Never());
 
             register.Tick();
-            register.UpdateItems(world);
+            register.UpdateItems(world.Atlas);
 
-            mock2.Verify(x => x.Update(It.IsAny<ToyWorld>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>()));
         }
     }
 }

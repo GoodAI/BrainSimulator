@@ -24,7 +24,7 @@ namespace World.GameActors.Tiles
             if (!(gameAction is ToUsePickaxe))
                 return;
 
-            var toUsePickaxe = (ToUsePickaxe)gameAction;
+            ToUsePickaxe toUsePickaxe = (ToUsePickaxe)gameAction;
             if (Math.Abs(toUsePickaxe.Damage) < 0.00001f)
                 return;
 
@@ -67,9 +67,10 @@ namespace World.GameActors.Tiles
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable)
         {
-            if (gameAction is ToUsePickaxe)
+            ToUsePickaxe action = gameAction as ToUsePickaxe;
+            if (action != null)
             {
-                var usePickaxe = (ToUsePickaxe)gameAction;
+                ToUsePickaxe usePickaxe = action;
                 Health -= usePickaxe.Damage;
             }
 
