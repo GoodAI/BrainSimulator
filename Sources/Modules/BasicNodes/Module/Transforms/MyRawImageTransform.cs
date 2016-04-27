@@ -44,7 +44,7 @@ namespace GoodAI.Modules.Transforms
             /// The correct rendering method to view the results is GrayScale or RedGreenScale
             /// </summary>
             Grayscale,
-
+            
             // RGBPacked // same size as raw, but channels are grouped as in RGB 
             // RGBPacked currently not used because there will be a problem with channel border alignment in pictures 
             // which are of size not divisible by 3

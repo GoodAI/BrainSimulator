@@ -8,7 +8,15 @@ Inspired by the implementation of CustomPong.cu + GridWorld.cu
 */
 extern "C"
 {
-	__device__ void GetComponents(float *source, int pixelId, unsigned char components[4]);
+	__device__ __inline__ unsigned int AsUint(float *sourceImage, int pixelId)
+	{
+		return *(((unsigned int*)sourceImage) + pixelId);
+	}
+
+	__device__ __inline__ unsigned int GetComponent(unsigned int pixel, int comp)
+	{
+		return (pixel >> (comp * 8)) & 0xFF;
+	}
 
 	/*
 	Draws a background color into a 3-component image.
@@ -501,13 +509,11 @@ extern "C"
 		if (pixelId >= pixelCount)
 			return;
 
-		unsigned char components[4];
-
-		GetComponents(source, pixelId, components);
+		unsigned int pixel = AsUint(source, pixelId);
 
 		for (int i = 0; i < 3; i++) // 3: don't care about alpha
 		{
-			target[pixelCount * i + pixelId] = ((float)components[2-i]) / 255.0f; // /255.0f to re-scale from 0 to 1, 
+			target[pixelCount * i + pixelId] = GetComponent(pixel,2-i) / 255.0f; // /255.0f to re-scale from 0 to 1, 
 			// 2-i to convert between RGB and BGR
 		}
 	}
@@ -525,14 +531,12 @@ extern "C"
 		if (pixelId >= pixelCount)
 			return;
 
-		unsigned char components[4];
-
-		GetComponents(source, pixelId, components);
+		unsigned int pixel = AsUint(source, pixelId);
 
 		unsigned int luminance = (unsigned int)
-			(.2126 * components[2] + .7152 * components[1] + .0722 * components[0]);
+			(.2126 * GetComponent(pixel, 2) + .7152 * GetComponent(pixel, 1) + .0722 * GetComponent(pixel, 0));
 
-		unsigned char alpha = components[3];
+		unsigned int alpha = GetComponent(pixel, 3);
 
 		*((unsigned int*)&target[pixelId]) = luminance | (luminance << 8) | (luminance << 16) | (alpha << 24);
 	}
@@ -550,29 +554,12 @@ extern "C"
 		if (pixelId >= pixelCount)
 			return;
 
-		unsigned char components[4];
-
-		GetComponents(source, pixelId, components);
+		unsigned int pixel = AsUint(source, pixelId);
 
 		unsigned int luminance = (unsigned int)
-			(.2126 * components[2] + .7152 * components[1] + .0722 * components[0]);
+			(.2126 * GetComponent(pixel, 2) + .7152 * GetComponent(pixel, 1) + .0722 * GetComponent(pixel, 0));
 
 		target[pixelId] = ((float)luminance) / 255.0; // to re-scale from 0 to 1
-	}
-
-	// ARGB
-	__device__ void GetComponents(float *source, int pixelId, unsigned char components[3])
-	{
-		unsigned int* uSource = (unsigned int*)source;
-		unsigned int pixel = uSource[pixelId];
-
-		for (int i = 0; i < 4; i++)
-		{
-			unsigned int component = pixel;
-			component = component >> (8 * i);
-			component = component & 0xFF;
-			components[i] = (unsigned char)component;
-		}
 	}
 
 }
