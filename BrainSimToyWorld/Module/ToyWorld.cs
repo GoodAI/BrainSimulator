@@ -164,7 +164,7 @@ namespace GoodAI.ToyWorld
             if (initializer != null)
                 initializer.Invoke(rr);
 
-            targetMemBlock.Count = rr.Resolution.Width * rr.Resolution.Height;
+            targetMemBlock.Dims = new TensorDimensions(rr.Resolution.Width, rr.Resolution.Height);
             return rr as T;
         }
 
