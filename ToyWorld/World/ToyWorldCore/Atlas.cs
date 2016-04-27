@@ -61,8 +61,12 @@ namespace World.ToyWorldCore
         /// <returns></returns>
         bool ContainsCollidingTile(Vector2I coordinates);
 
-        IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type);
+        IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type = LayerType.All);
+
+        IEnumerable<GameActor> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject;
+
         void ReplaceWith(GameActor original, GameActor replacement);
+
     }
 
     public class Atlas : IAtlas
@@ -148,6 +152,16 @@ namespace World.ToyWorldCore
         {
             return Layers.Where(t => (t.LayerType & type) > 0).Select(layer => layer.GetActorAt(x, y));
         }
+
+        public IEnumerable<GameActor> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject
+        {
+            float angle = MathHelper.ToDegrees(sender.Direction);
+            Vector2 direction = Vector2.UnitY;
+            direction.Rotate(angle);
+            Vector2 target = sender.Position + direction;
+            return ActorsAt((int)target.X, (int)target.Y, type);
+        }
+
         public void ReplaceWith(GameActor original, GameActor replacement)
         {
             throw new NotImplementedException();
