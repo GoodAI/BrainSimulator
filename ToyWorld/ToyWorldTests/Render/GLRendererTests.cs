@@ -79,7 +79,7 @@ namespace ToyWorldTests.Render
             {
                 try
                 {
-                    //Task.Delay(20, token).Wait(token);
+                    Task.Delay(15, token).Wait(token);
                 }
                 catch (OperationCanceledException)
                 {

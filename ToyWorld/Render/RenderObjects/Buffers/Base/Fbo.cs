@@ -10,9 +10,11 @@ namespace Render.RenderObjects.Buffers
 {
     internal class Fbo : IDisposable
     {
-        private uint Handle { get; set; }
+        private readonly uint m_handle;
 
-        private readonly Dictionary<FramebufferAttachment, TextureBase> m_attachedTextures = new Dictionary<FramebufferAttachment, TextureBase>();
+        private readonly Dictionary<FramebufferAttachment, TextureBase> m_attachedTextures =
+            new Dictionary<FramebufferAttachment, TextureBase>();
+
 
 
         public Vector2I Size { get; private set; }
@@ -22,12 +24,12 @@ namespace Render.RenderObjects.Buffers
 
         public Fbo()
         {
-            Handle = (uint)GL.GenFramebuffer();
+            m_handle = (uint) GL.GenFramebuffer();
         }
 
         public void Dispose()
         {
-            GL.DeleteFramebuffer(Handle);
+            GL.DeleteFramebuffer(m_handle);
 
             m_attachedTextures.Clear();
         }
@@ -44,7 +46,7 @@ namespace Render.RenderObjects.Buffers
 
         private void AttachTexture(FramebufferAttachment attachmentTarget, TextureBase texture)
         {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_handle);
 
             if (texture == null)
             {
@@ -54,7 +56,9 @@ namespace Render.RenderObjects.Buffers
                 return;
             }
 
-            Debug.Assert(m_attachedTextures.All(pair => pair.Value.Size == texture.Size), "All render target sizes for a framebuffer object must be equal.");
+            Debug.Assert(
+                m_attachedTextures.All(pair => pair.Value.Size == texture.Size), 
+                "All render target sizes for a framebuffer object must be equal.");
             Size = texture.Size;
 
             texture.Bind();
@@ -70,7 +74,7 @@ namespace Render.RenderObjects.Buffers
 
         public void Bind(FramebufferTarget target = FramebufferTarget.Framebuffer)
         {
-            GL.BindFramebuffer(target, Handle);
+            GL.BindFramebuffer(target, m_handle);
         }
     }
 }

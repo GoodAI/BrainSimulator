@@ -18,6 +18,7 @@ namespace Render.RenderObjects.Effects
         #region Genesis
 
         // TODO: genericity
+        // Addenda serve as switchable extensions to base shaders -- can be used as a different implementation of functions defined in base shaders.
         protected EffectBase(string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
         {
             m_prog = GL.CreateProgram();
@@ -91,11 +92,6 @@ namespace Render.RenderObjects.Effects
         {
             GL.Uniform1(pos, val);
         }
-
-        //public void SetUniform2(int pos, Vector2 val)
-        //{
-        //    GL.Uniform2(pos, val.X, val.Y);
-        //}
 
         public void SetUniform3(int pos, Vector3I val)
         {
