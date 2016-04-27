@@ -284,7 +284,7 @@ namespace Render.RenderRequests
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // View and proj transforms
-            m_viewProjectionMatrix = GetViewMatrix(Vector3.Zero, PositionCenterV);
+            m_viewProjectionMatrix = GetViewMatrix(PositionCenterV);
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
