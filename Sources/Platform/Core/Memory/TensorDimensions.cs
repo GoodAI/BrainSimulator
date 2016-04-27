@@ -68,15 +68,28 @@ namespace GoodAI.Core.Memory
             if (Rank < 2)
                 throw new InvalidOperationException(string.Format("Invalid Rank value {0}", Rank));
 
-            var transposed = new int[Rank];
+            int[] transposed = new int[Rank];
 
             transposed[0] = m_dims[1];
             transposed[1] = m_dims[0];
 
-            for (var i = 2; i < Rank; i++)
+            for (int i = 2; i < Rank; i++)
                 transposed[i] = m_dims[i];
 
             return new TensorDimensions(transposed);
+        }
+
+        public TensorDimensions AddDimensions(params int[] dimensions)
+        {
+            int[] grown = new int[Rank+dimensions.Length];
+
+            for (int i = 0; i < m_dims.Count; i++) // m_dims.Count can be less than Rank, especially at BrSim startup
+                grown[i] = m_dims[i];
+
+            for (int i = Rank; i < Rank + dimensions.Length; i++)
+                grown[i] = dimensions[i-Rank];
+
+            return new TensorDimensions(grown);
         }
 
         public static TensorDimensions GetBackwardCompatibleDims(int count, int columnHint)

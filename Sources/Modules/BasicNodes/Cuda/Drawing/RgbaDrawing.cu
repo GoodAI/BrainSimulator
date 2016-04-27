@@ -8,6 +8,15 @@ Inspired by the implementation of CustomPong.cu + GridWorld.cu
 */
 extern "C"
 {
+	__device__ __inline__ unsigned int AsUint(float *sourceImage, int pixelId)
+	{
+		return *(((unsigned int*)sourceImage) + pixelId);
+	}
+
+	__device__ __inline__ unsigned int GetComponent(unsigned int pixel, int comp)
+	{
+		return (pixel >> (comp * 8)) & 0xFF;
+	}
 
 	/*
 	Draws a background color into a 3-component image.
@@ -476,15 +485,81 @@ extern "C"
 			return;
 
 		unsigned int* uTarget = (unsigned int*)target;
+		unsigned int pixel = uTarget[pixelId];
 
 		for (int i = 2; i >= 0; i--)
 		{
-			unsigned int component = uTarget[pixelId];
+			unsigned int component = pixel;
 			component = component >> (8 * (2-i)); // 2-i == RGB -> BGR
 			component = component & 0xFF;
 			target[imagePixels * i + pixelId] = ((float)component)/255.0f;
 			__syncthreads();
 		}
+	}
+
+	/*
+	Convert Raw to RGB
+	ST = source, target
+	*/
+	__global__ void RawToRgbKernel(float *source, float *target, int pixelCount)
+	{
+		int pixelId = blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (pixelId >= pixelCount)
+			return;
+
+		unsigned int pixel = AsUint(source, pixelId);
+
+		for (int i = 0; i < 3; i++) // 3: don't care about alpha
+		{
+			target[pixelCount * i + pixelId] = GetComponent(pixel,2-i) / 255.0f; // /255.0f to re-scale from 0 to 1, 
+			// 2-i to convert between RGB and BGR
+		}
+	}
+
+	/*
+	Convert Raw to Raw grayscale
+	ST = source, target
+	http://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+	*/
+	__global__ void RawToRawGrayscaleKernel(float *source, float *target, int pixelCount)
+	{
+		int pixelId = blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (pixelId >= pixelCount)
+			return;
+
+		unsigned int pixel = AsUint(source, pixelId);
+
+		unsigned int luminance = (unsigned int)
+			(.2126 * GetComponent(pixel, 2) + .7152 * GetComponent(pixel, 1) + .0722 * GetComponent(pixel, 0));
+
+		unsigned int alpha = GetComponent(pixel, 3);
+
+		*((unsigned int*)&target[pixelId]) = luminance | (luminance << 8) | (luminance << 16) | (alpha << 24);
+	}
+
+	/*
+	Convert Raw to Grayscale
+	ST = source, target
+	http://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+	*/
+	__global__ void RawToGrayscaleKernel(float *source, float *target, int pixelCount)
+	{
+		int pixelId = blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (pixelId >= pixelCount)
+			return;
+
+		unsigned int pixel = AsUint(source, pixelId);
+
+		unsigned int luminance = (unsigned int)
+			(.2126 * GetComponent(pixel, 2) + .7152 * GetComponent(pixel, 1) + .0722 * GetComponent(pixel, 0));
+
+		target[pixelId] = ((float)luminance) / 255.0; // to re-scale from 0 to 1
 	}
 
 }
