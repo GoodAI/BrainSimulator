@@ -19,8 +19,8 @@ namespace Render.RenderRequests
         [Flags]
         private enum DirtyParams
         {
-            None,
-            Size,
+            None = 0,
+            Size = 1,
             Resolution = 1 << 1,
             Image = 1 << 2,
             Noise = 1 << 3,
@@ -303,22 +303,12 @@ namespace Render.RenderRequests
             GatherAndDistributeData(renderer);
         }
 
-        protected Matrix GetViewMatrix(Vector3 rotation, Vector3 cameraPos, Vector3 cameraDirection = default(Vector3))
+        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = default(Vector3?))
         {
-            var viewMatrix = Matrix.Identity;
-
-            if (rotation.X > 0)
-                viewMatrix = Matrix.CreateRotationZ(rotation.X);
-
-            if (rotation.Y > 0)
-                viewMatrix *= Matrix.CreateRotationX(rotation.Y);
-
-            if (rotation.Z > 0)
-                viewMatrix *= Matrix.CreateRotationY(rotation.Z);
-
-            if (cameraDirection == default(Vector3))
+            if (!cameraDirection.HasValue)
                 cameraDirection = Vector3.Forward;
-            viewMatrix *= Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection, Vector3.Up);
+
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, Vector3.Up);
 
             return viewMatrix;
         }
@@ -377,6 +367,7 @@ namespace Render.RenderRequests
         {
             if (DrawNoise)
             {
+                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
                 m_simTime = (m_simTime + 0.005f * NoiseTransformationSpeedCoefficient) % 3e15;
 
                 renderer.EffectManager.Use(m_noiseEffect);
