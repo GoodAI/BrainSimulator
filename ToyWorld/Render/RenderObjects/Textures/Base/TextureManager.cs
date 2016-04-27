@@ -53,7 +53,7 @@ namespace Render.RenderObjects.Textures
         }
 
         ////////////////////
-        /// TODO: Texture caching -- je neco, co nechceme cachovat??
+        /// TODO: Texture caching -- nechceme cachovat render target textury
         ////////////////////
 
         public T Get<T>(TilesetImage[] images)

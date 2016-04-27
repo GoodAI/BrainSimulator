@@ -2,8 +2,12 @@
 {
     internal class NoEffectTex : EffectBase
     {
+        enum MyEnum
+        {
+
+        }
         public NoEffectTex()
-            : base("BasicTex.vert", "BasicTex.frag")
+            : base(typeof(MyEnum), "BasicTex.vert", "BasicTex.frag")
         { }
     }
 }

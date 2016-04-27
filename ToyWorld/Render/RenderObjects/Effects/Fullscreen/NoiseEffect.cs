@@ -5,8 +5,12 @@ namespace Render.RenderObjects.Effects
 {
     internal class NoiseEffect : EffectBase
     {
+        enum MyEnum
+        {
+
+        }
         public NoiseEffect()
-            : base("Noise.vert", "Noise.frag", fragAddendum: GetNoiseSrcStream("Noise.perlinNoise3D.glsl"))
+            : base(typeof(MyEnum), "Noise.vert", "Noise.frag", fragAddendum: GetNoiseSrcStream("Noise.perlinNoise3D.glsl"))
         { }
 
 

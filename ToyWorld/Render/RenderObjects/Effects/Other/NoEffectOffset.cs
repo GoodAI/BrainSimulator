@@ -1,9 +1,27 @@
-﻿namespace Render.RenderObjects.Effects
+﻿using System;
+
+namespace Render.RenderObjects.Effects
 {
     internal class NoEffectOffset : EffectBase
     {
+        private enum Uniforms
+        {
+            tex,
+            texSizeCount,
+            tileSizeMargin,
+            mvp,
+        }
+
+
         public NoEffectOffset()
-            : base("BasicOffset.vert", "BasicOffset.frag")
-        { }
+            : base(typeof(Uniforms), "BasicOffset.vert", "BasicOffset.frag")
+        {
+        }
+
+
+        public void TexUniform(float val)
+        {
+
+        }
     }
 }

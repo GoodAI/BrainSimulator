@@ -2,8 +2,12 @@
 {
     internal class NoEffect : EffectBase
     {
+        enum MyEnum
+        {
+
+        }
         public NoEffect()
-            : base("BasicColor.vert", "BasicColor.frag")
+            : base(typeof(MyEnum), "BasicColor.vert", "BasicColor.frag")
         { }
     }
 }

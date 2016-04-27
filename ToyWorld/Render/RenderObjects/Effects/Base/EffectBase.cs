@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -14,13 +15,16 @@ namespace Render.RenderObjects.Effects
 
         private readonly int m_prog;
 
+        private Dictionary<int, int> m_uniformLocations = new Dictionary<int, int>();
+
 
         #region Genesis
 
         // TODO: genericity
         // Addenda serve as switchable extensions to base shaders -- can be used as a different implementation of functions defined in base shaders.
-        protected EffectBase(string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
+        protected EffectBase(Type uniformNamesEnumType, string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
         {
+            // Load shaders
             m_prog = GL.CreateProgram();
 
             // Vertex shader
@@ -37,6 +41,15 @@ namespace Render.RenderObjects.Effects
 
             var res = GL.GetProgramInfoLog(m_prog);
             Debug.Assert(string.IsNullOrEmpty(res), res);
+
+
+            // Setup uniform locations
+            Debug.Assert(uniformNamesEnumType.IsEnum, "The passed type must be an enum type.");
+
+            foreach (var value in Enum.GetValues(uniformNamesEnumType))
+            {
+                m_uniformLocations[Convert.ToInt32(value)] = GetUniformLocation(value.ToString());
+            }
         }
 
         private string GetShaderSource(string name)
@@ -80,7 +93,12 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        #region Uniforms
+        #region Uniforms and indexing
+
+        protected int this[Enum val]
+        {
+            get { return m_uniformLocations[Convert.ToInt32(val)]; }
+        }
 
         public int GetUniformLocation(string name)
         {
