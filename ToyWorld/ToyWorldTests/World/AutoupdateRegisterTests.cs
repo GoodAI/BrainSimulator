@@ -58,6 +58,7 @@ namespace ToyWorldTests.World
             Assert.Throws<ArgumentOutOfRangeException>(() => register.Register(mock.Object, 0));
         }
 
+        [Fact]
         public void TestGetReturnsList()
         {
             AutoupdateRegister register = new AutoupdateRegister();

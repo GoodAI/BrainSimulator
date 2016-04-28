@@ -9,7 +9,7 @@ namespace World.GameActors.Tiles
 
         protected Fruit(int tileType) : base(tileType) { }
 
-        public void ApplyGameAction(IAtlas atlas, GameActor sender, GameAction gameAction, TilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable = null)
         {
             gameAction.Resolve(this);
         }

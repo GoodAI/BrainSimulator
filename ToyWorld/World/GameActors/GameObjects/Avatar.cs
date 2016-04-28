@@ -74,7 +74,7 @@ namespace World.GameActors.GameObjects
                     return;
 
                 GameAction pickUpAction = new PickUp(this);
-                interactableTarget.ApplyGameAction(atlas, this, pickUpAction);
+                interactableTarget.ApplyGameAction(atlas, pickUpAction);
             }
         }
     }

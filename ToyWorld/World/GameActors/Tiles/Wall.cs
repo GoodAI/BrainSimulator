@@ -19,7 +19,7 @@ namespace World.GameActors.Tiles
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameActor sender, GameAction gameAction, TilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable)
         {
             if (!(gameAction is ToUsePickaxe))
                 return;
@@ -64,7 +64,7 @@ namespace World.GameActors.Tiles
 
 
 
-        public void ApplyGameAction(IAtlas atlas, GameActor sender, GameAction gameAction, TilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable)
         {
             ToUsePickaxe action = gameAction as ToUsePickaxe;
             if (action != null)

@@ -34,7 +34,7 @@ namespace ToyWorldTests.World
 
             register.Tick();
 
-            Assert.Equal(mock1.Object, register.CurrentUpdateRequests[0]);
+            Assert.Contains(mock1.Object, register.CurrentUpdateRequests);
         }
 
         [Fact]
