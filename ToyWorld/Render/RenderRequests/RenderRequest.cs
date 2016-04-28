@@ -281,6 +281,8 @@ namespace Render.RenderRequests
         {
             CheckDirtyParams(renderer);
 
+            GL.Viewport(new System.Drawing.Rectangle(0,0,Resolution.Width,Resolution.Height));
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // View and proj transforms
