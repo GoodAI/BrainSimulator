@@ -1,5 +1,6 @@
 ﻿using World.GameActors;
 ﻿using World.GameActors.Tiles;
+using World.ToyWorldCore;
 
 namespace World.GameActions
 {
@@ -12,7 +13,7 @@ namespace World.GameActions
             m_sender = sender;
         }
 
-        public virtual void Resolve(GameActor target) { }
+        public virtual void Resolve(GameActor target, IAtlas atlas) { }
     }
 
     public class ToUsePickaxe : GameAction
@@ -26,13 +27,15 @@ namespace World.GameActions
     {
         public PickUp(GameActor sender) : base(sender) { }
 
-        public override void Resolve(GameActor target)
+        public override void Resolve(GameActor target, IAtlas atlas)
         {
             ICanPick picker = m_sender as ICanPick;
             IPickable pickItem = target as IPickable;
 
             if (picker != null && pickItem != null)
                 picker.AddToInventory(pickItem);
+
+            atlas.Remove(target);
         }
     }
 }

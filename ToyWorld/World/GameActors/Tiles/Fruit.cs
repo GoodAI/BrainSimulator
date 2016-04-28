@@ -11,7 +11,7 @@ namespace World.GameActors.Tiles
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable = null)
         {
-            gameAction.Resolve(this);
+            gameAction.Resolve(this, atlas);
         }
     }
 

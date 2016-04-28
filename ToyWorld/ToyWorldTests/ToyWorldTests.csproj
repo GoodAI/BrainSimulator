@@ -128,10 +128,15 @@
     <Compile Include="Utils\LogTest.cs" />
     <Compile Include="World\AtlasTests.cs" />
     <Compile Include="World\AutoupdateRegisterTests.cs" />
+    <Compile Include="World\AvatarTests.cs" />
+    <Compile Include="World\FruitTests.cs" />
+    <Compile Include="World\GameActionsTests.cs" />
     <Compile Include="World\MapLoaderTest.cs" />
     <Compile Include="World\SimpleTileLayerTest.cs" />
     <Compile Include="TestingFiles.cs" />
+    <Compile Include="World\TileLayerTests.cs" />
     <Compile Include="World\TilesetTableTest.cs" />
+    <Compile Include="World\TileTests.cs" />
     <Compile Include="World\ToyWorldTests.cs" />
     <Compile Include="World\WallsTests.cs" />
   </ItemGroup>

@@ -26,7 +26,7 @@ namespace World.ToyWorldCore
 
         public List<GameObject> GetGameObjects(RectangleF rectangle)
         {
-            var list = new List<GameObject>();
+            List<GameObject> list = new List<GameObject>();
 
             foreach (GameObject gameObject in GameObjects)
             {
@@ -77,7 +77,6 @@ namespace World.ToyWorldCore
 
             return GameObjects;
         }
-
 
         public List<IPhysicalEntity> GetPhysicalEntities(VRageMath.Circle circle)
         {

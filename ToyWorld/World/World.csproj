@@ -218,6 +218,9 @@
     <EmbeddedResource Include="res\Worlds\mockup999_pantry_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mock_small_pickup_world.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\Worlds\roguelike_selection_summer.png">

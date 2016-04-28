@@ -15,7 +15,7 @@ namespace ToyWorldTests.World
         private readonly TilesetTable m_tilesetTable;
         public WallsTests()
         {
-            var mockTilesetTable = new Mock<TilesetTable>();
+            Mock<TilesetTable> mockTilesetTable = new Mock<TilesetTable>();
             mockTilesetTable.Setup(x => x.TileNumber(It.IsAny<string>())).Returns(0);
             mockTilesetTable.Setup(x => x.TileName(It.IsAny<int>())).Returns("");
             m_tilesetTable = mockTilesetTable.Object;
@@ -52,7 +52,7 @@ namespace ToyWorldTests.World
                 Assert.True(damagedWall.Health >= 1.0f - damage);
             }
             else
-                Assert.True(pickaxedWall == null);
+                Assert.Equal(null, pickaxedWall);
 
         }
 
@@ -81,7 +81,22 @@ namespace ToyWorldTests.World
             if (damage + initialDamage >= 1)
                 Assert.IsType(typeof(DestroyedWall), pickaxedWall);
             else
-                Assert.True(pickaxedWall == null);
+                Assert.Equal(null, pickaxedWall);
+        }
+
+        [Fact]
+        public void NonPickaxeActionDoesNothing()
+        {
+            Mock<GameActor> sender = new Mock<GameActor>();
+            Mock<GameAction> action = new Mock<GameAction>(sender.Object);
+            Mock<IAtlas> atlas = new Mock<IAtlas>();
+            atlas.Setup(x => x.ReplaceWith(It.IsAny<GameActor>(), It.IsAny<GameActor>()));
+
+            // Act
+            m_wall.ApplyGameAction(atlas.Object, action.Object, null);
+
+            // Assert
+            atlas.Verify(x => x.ReplaceWith(It.IsAny<GameActor>(), It.IsAny<GameActor>()), Times.Never());
         }
     }
 }
