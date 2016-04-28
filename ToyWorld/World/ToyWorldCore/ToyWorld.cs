@@ -93,11 +93,9 @@ namespace World.ToyWorldCore
             Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
-        public void UpdateScheduled()
+        private void UpdateScheduled()
         {
-            foreach (IAutoupdateable actor in AutoupdateRegister.CurrentUpdateRequests)
-                actor.Update(Atlas);
-            AutoupdateRegister.CurrentUpdateRequests.Clear();
+            AutoupdateRegister.UpdateItems(Atlas);
             AutoupdateRegister.Tick();
         }
 

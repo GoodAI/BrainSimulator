@@ -12,7 +12,7 @@ namespace World.ToyWorldCore
 
         public int Size { get { return m_register.Size; } }
 
-        public List<IAutoupdateable> CurrentUpdateRequests
+        protected List<IAutoupdateable> CurrentUpdateRequests
         {
             get
             {
