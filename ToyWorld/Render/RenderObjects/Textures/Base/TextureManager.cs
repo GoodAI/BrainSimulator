@@ -7,9 +7,23 @@ using TexInitType = System.String;
 
 namespace Render.RenderObjects.Textures
 {
+    class TilesetImage
+    {
+        public TilesetImage (string imagePath, Vector2I tileSize, Vector2I tileMargin)
+        {
+            ImagePath = imagePath;
+            TileSize = tileSize;
+            TileMargin = tileMargin;
+        }
+
+        public string ImagePath;
+        public Vector2I TileSize;
+        public Vector2I TileMargin;
+    }
+
     internal class TextureManager
     {
-        private readonly TypeSwitchParam<TextureBase, TexInitType[]> m_textures = new TypeSwitchParam<TextureBase, TexInitType[]>();
+        private readonly TypeSwitchParam<TextureBase, TilesetImage[]> m_textures = new TypeSwitchParam<TextureBase, TilesetImage[]>();
         private readonly TypeSwitchParam<TextureBase, Vector2I> m_sizedTextures = new TypeSwitchParam<TextureBase, Vector2I>();
 
         private readonly Dictionary<int, TextureBase> m_currentTextures = new Dictionary<int, TextureBase>();
@@ -39,7 +53,7 @@ namespace Render.RenderObjects.Textures
         /// TODO: Texture caching -- je neco, co nechceme cachovat??
         ////////////////////
 
-        public T Get<T>(TexInitType[] images)
+        public T Get<T>(TilesetImage[] images)
             where T : TextureBase
         {
             return m_textures.Switch<T>(images);

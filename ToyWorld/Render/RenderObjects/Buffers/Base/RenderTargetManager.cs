@@ -9,7 +9,7 @@ namespace Render.RenderObjects.Buffers
 {
     internal class RenderTargetManager
     {
-        private readonly TypeSwitchParam<TextureBase, TexInitType[]> m_textures = new TypeSwitchParam<TextureBase, TexInitType[]>();
+        private readonly TypeSwitchParam<TextureBase, TilesetImage[]> m_textures = new TypeSwitchParam<TextureBase, TilesetImage[]>();
 
         private readonly Dictionary<int, TextureBase> m_currentTextures = new Dictionary<int, TextureBase>();
 
@@ -34,10 +34,10 @@ namespace Render.RenderObjects.Buffers
         }
 
 
-        public T Get<T>(TexInitType[] images)
+        public T Get<T>(TilesetImage[] tilesetImages)
             where T : TextureBase
         {
-            return m_textures.Switch<T>(images);
+            return m_textures.Switch<T>(tilesetImages);
         }
 
         public void Bind(TextureBase tex, TextureUnit texUnit = TextureUnit.Texture0)
