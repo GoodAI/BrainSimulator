@@ -1066,6 +1066,10 @@ namespace VRageMath
             return new Vector2((float)Math.Ceiling(position.X), (float)Math.Ceiling(position.Y));
         }
 
+        /// <summary>
+        /// Rotates vector by given angle
+        /// </summary>
+        /// <param name="angle">Angle in radians</param>
         public void Rotate(double angle)
         {
             float tmpX = X;
