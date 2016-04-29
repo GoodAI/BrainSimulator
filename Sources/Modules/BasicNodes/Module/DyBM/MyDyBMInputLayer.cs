@@ -23,12 +23,22 @@ namespace GoodAI.Modules.DyBM
 
         public float Head()
         {
-            return this.Peek();
+            return this.ToArray()[0];
         }
 
         public float Tail()
         {
             return this.ToArray()[this.Count - 1];
+        }
+
+        public int HeadIndex()
+        {
+            return 0;
+        }
+
+        public int TailIndex()
+        {
+            return this.Count - 1;
         }
     }
 
@@ -186,6 +196,22 @@ namespace GoodAI.Modules.DyBM
         /// Long-Term Depresion eligibility trace, considering spikes after Conduction delay
         /// </summary>
         public MyMemoryBlock<float> Trace_γ { get; protected set; }
+        /// <summary>
+        /// FIFO traces for each synapse
+        /// </summary>
+        public MyMemoryBlock<float> FIFO_trace { get; protected set; }
+        /// <summary>
+        /// Previous value of input x for next time step computation
+        /// </summary>
+        public MyMemoryBlock<float> Previous_x { get; protected set; }
+        /// <summary>
+        /// Previous value of expected input X for next time step computation
+        /// </summary>
+        public MyMemoryBlock<float> Expected_x { get; protected set; }
+        /// <summary>
+        /// Log-likelihood
+        /// </summary>
+        public MyMemoryBlock<float> LogLikelihood { get; protected set; }
         
         // Public parameters
         /// <summary>
@@ -211,12 +237,9 @@ namespace GoodAI.Modules.DyBM
         private Random rand = new Random();
 
         // Tasks
+        //public MyDyBMReconstructTask ReconstructTask { get; protected set; }
         public MyDyBMLearningTask LearningTask { get; protected set; }
-
-        /// <summary>
-        /// Computes a Factorial of int number
-        /// </summary>
-        public static Func<int, int> Factorial = x => x < 0 ? -1 : x == 1 || x == 0 ? 1 : x * Factorial(x - 1);
+        
 
         /// <summary>
         /// Constructor of DyBMInputLayer class
@@ -241,14 +264,18 @@ namespace GoodAI.Modules.DyBM
                 Traces_L = slope_μ.Count;
 
                 // Init Memory blocks
+                Previous_x.Count = Neurons;
+                Expected_x.Count = Neurons;
                 Bias_b.Count = Neurons;
                 Energy_E.Count = Neurons;
                 Delay_d.Count = Synapses;
                 Weight_u.Count = Synapses * Traces_K;
                 Weight_v.Count = Synapses * Traces_L;
                 Trace_α.Count = Synapses * Traces_K;
-                Trace_β.Count = Synapses * Traces_K;
+                Trace_β.Count = Synapses * Traces_L;
                 Trace_γ.Count = Neurons * Traces_L;
+                FIFO_trace.Count = Synapses * DelayInterval;
+                LogLikelihood.Count = 1;
 
                 // Create N FIFO queues and initialize their conduction delays
                 Fifo_x = new MyQueue[Synapses];
@@ -257,7 +284,6 @@ namespace GoodAI.Modules.DyBM
                     int capacity = rand.Next(1, DelayInterval);
                     Fifo_x[n] = new MyQueue(capacity);
                 }
-                
             }
         }
     }
