@@ -35,11 +35,10 @@ namespace Render.RenderObjects.Textures
 
                     int tilesPerRow = bmp.Width / (tilesetImage.TileSize.X + tilesetImage.TileMargin.X);
                     int tilesPerColumn = bmp.Height / (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y);
-                    int marginSizeIncrease = 4;
 
                     Bitmap bmpTextureWithBorders = new Bitmap(
-                        tilesPerRow * (tilesetImage.TileSize.X + tilesetImage.TileMargin.X + marginSizeIncrease),
-                        tilesPerColumn * (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y + marginSizeIncrease), 
+                        tilesPerRow * (tilesetImage.TileSize.X + tilesetImage.TileMargin.X + tilesetImage.TileBorder.X * 2),
+                        tilesPerColumn * (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y + tilesetImage.TileBorder.Y * 2), 
                         System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                     BitmapData dataOrig = bmp.LockBits(
@@ -50,106 +49,8 @@ namespace Render.RenderObjects.Textures
                         new Rectangle(0, 0, bmpTextureWithBorders.Width, bmpTextureWithBorders.Height),
                         ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-                    // Get the address of the first line.
-                    IntPtr dataOrigPtr = dataOrig.Scan0;
-                    IntPtr dataNewPtr = dataNew.Scan0;
-
-                    // Declare an array to hold the bytes of the bitmap.
-                    int bytesOrig = Math.Abs(dataOrig.Stride) * bmp.Height;
-                    int bytesNew = Math.Abs(dataNew.Stride) * bmpTextureWithBorders.Height;
-                    byte[] dataBytesOrig = new byte[bytesOrig];
-                    byte[] dataBytesNew = new byte[bytesNew];
-
-                    // Copy the RGB values into the array.
-                    System.Runtime.InteropServices.Marshal.Copy(dataOrigPtr, dataBytesOrig, 0, bytesOrig);
-
-                    // increase the texture margins by 1...
-                    for (int i = 0; i < dataOrig.Height; i++)
-                    {
-                        Buffer.BlockCopy(dataBytesOrig, i * dataOrig.Stride, dataBytesNew, i * dataNew.Stride, dataOrig.Stride);
-                    }
-
-                    int iRowOrig = 0;
-                    int iRowNew = 0;
-
-                    for (int i = 0; i < tilesPerColumn; i++)
-                    {
-
-                        // space between tiles
-                        if(i != 0)
-                        {
-                            iRowOrig++;
-                            iRowNew++;
-                        }
-
-                        // tiles
-                        for (int iTileY = 0; iTileY < tilesetImage.TileSize.Y; iTileY++)
-                        {
-                            int iColumnOrig = 0;
-                            int iColumnNew = 0;
-
-                            // copy the tile row
-                            for (int j = 0; j < tilesPerRow; j++)
-                            {
-                                if (j != 0)
-                                {
-                                    iColumnOrig++;
-                                    iColumnNew++;
-                                }
-
-                                for (int iMargin = 0; iMargin < marginSizeIncrease / 2; iMargin++)
-                                {
-
-                                    Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
-                                                     dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
-                                                     4);
-
-                                    //if (j != 0)
-                                    {
-                                        iColumnNew++;
-                                    }
-                                }
-
-                                // 4 * because its 32bpp
-                                Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
-                                                 dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
-                                                 4 * tilesetImage.TileSize.X);
-
-                                iColumnOrig += tilesetImage.TileSize.X;
-                                iColumnNew += tilesetImage.TileSize.X;
-
-                                for (int iMargin = 0; iMargin < marginSizeIncrease / 2; iMargin++)
-                                {
-                                    Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * (iColumnOrig - 1),  // -1 == last column
-                                                     dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
-                                                     4);
-
-                                    iColumnNew++;
-                                }
-                            }
-
-                            // if first or last tile row was copied, duplicate it
-                            if(iTileY == 0 || iTileY == tilesetImage.TileSize.Y - 1)
-                            {
-                                for (int iMargin = 0; iMargin < marginSizeIncrease / 2; iMargin++)
-                                {
-                                    // copy the current row in dataNew to next row
-                                    Buffer.BlockCopy(dataBytesNew, iRowNew * dataNew.Stride, dataBytesNew,
-                                        (iRowNew + 1) * dataNew.Stride, dataNew.Stride);
-                                    //if (!(iTileY == 0 && i == 0))
-                                    {
-                                        iRowNew++;
-                                    }
-                                }
-                            }
-
-                            iRowNew++;
-                            iRowOrig++;
-                        }
-                        
-                    }
-
-                    System.Runtime.InteropServices.Marshal.Copy(dataBytesNew, 0, dataNewPtr, bytesNew);
+                    IncreaseTileBorders(dataOrig, dataNew, tilesPerRow, tilesPerColumn, 
+                        tilesetImage.TileSize, tilesetImage.TileBorder);
 
                     try
                     {
@@ -172,6 +73,105 @@ namespace Render.RenderObjects.Textures
 
             Size = m_textures[0].Size;
             Debug.Assert(m_textures.TrueForAll(a => a.Size == Size), "Tilesets have to be of the same dimensionality.");
+        }
+
+        // simulates OpenGL's GL_CLAMP_TO_EDGE on the tileset
+        protected void IncreaseTileBorders(BitmapData dataOrig, BitmapData dataNew, int tilesPerRow, int tilesPerColumn,
+            VRageMath.Vector2I tileSize, VRageMath.Vector2I tileBorder)
+        {
+            // Get the address of the first line.
+            IntPtr dataOrigPtr = dataOrig.Scan0;
+            IntPtr dataNewPtr = dataNew.Scan0;
+
+            // Declare an array to hold the bytes of the bitmap.
+            int bytesOrig = Math.Abs(dataOrig.Stride) * dataOrig.Height;
+            int bytesNew = Math.Abs(dataNew.Stride) * dataNew.Height;
+            byte[] dataBytesOrig = new byte[bytesOrig];
+            byte[] dataBytesNew = new byte[bytesNew];
+
+            // Copy the RGB values into the array.
+            System.Runtime.InteropServices.Marshal.Copy(dataOrigPtr, dataBytesOrig, 0, bytesOrig);
+
+            int iRowOrig = 0;
+            int iRowNew = 0;
+
+            for (int i = 0; i < tilesPerColumn; i++)
+            {
+
+                // space between tiles
+                if (i != 0)
+                {
+                    iRowOrig++;
+                    iRowNew++;
+                }
+
+                // tiles
+                for (int iTileY = 0; iTileY < tileSize.Y; iTileY++)
+                {
+                    int iColumnOrig = 0;
+                    int iColumnNew = 0;
+
+                    // the copy operations multiply bytes by 4, because the pixel is 32 bits
+
+                    // copy the tile row
+                    for (int j = 0; j < tilesPerRow; j++)
+                    {
+                        if (j != 0)
+                        {
+                            iColumnOrig++;
+                            iColumnNew++;
+                        }
+
+                        // copy the leading pixel (tileBorder.X times)
+                        for (int iMargin = 0; iMargin < tileBorder.X; iMargin++)
+                        {
+
+                            Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
+                                             dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
+                                             4);
+
+                            iColumnNew++;
+                        }
+
+                        // copy the tile pixels
+                        Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
+                                         dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
+                                         4 * tileSize.X);
+
+                        iColumnOrig += tileSize.X;
+                        iColumnNew += tileSize.X;
+
+                        // copy the trailing pixel (tileBorder.X times)
+                        for (int iMargin = 0; iMargin < tileBorder.X; iMargin++)
+                        {
+                            Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * (iColumnOrig - 1),  // -1 == last column
+                                             dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
+                                             4);
+
+                            iColumnNew++;
+                        }
+                    }
+
+                    // if first or last tile row was copied, duplicate it (tileBorder.Y times)
+                    if (iTileY == 0 || iTileY == tileSize.Y - 1)
+                    {
+                        for (int iMargin = 0; iMargin < tileBorder.Y; iMargin++)
+                        {
+                            // copy the current row in dataNew to next row
+                            Buffer.BlockCopy(dataBytesNew, iRowNew * dataNew.Stride, dataBytesNew,
+                                (iRowNew + 1) * dataNew.Stride, dataNew.Stride);
+
+                            iRowNew++;
+                        }
+                    }
+
+                    iRowNew++;
+                    iRowOrig++;
+                }
+
+            }
+
+            System.Runtime.InteropServices.Marshal.Copy(dataBytesNew, 0, dataNewPtr, bytesNew);
         }
 
         public override void Dispose()

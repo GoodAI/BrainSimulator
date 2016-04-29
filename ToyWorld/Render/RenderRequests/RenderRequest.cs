@@ -219,7 +219,8 @@ namespace Render.RenderRequests
             TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
             for (int i = 0; i < tilesetImages.Length; i++)
             {
-                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i],world.TilesetTable.TileSize, world.TilesetTable.TileMargins);
+                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i],world.TilesetTable.TileSize, 
+                                                    world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
             }
 
             // Set up tileset textures
@@ -234,11 +235,12 @@ namespace Render.RenderRequests
             m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
 
             // Set up static uniforms
-            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins + new Vector2I(4,4);
+            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
+                world.TilesetTable.TileBorder + world.TilesetTable.TileBorder; // twice the border, on each side once
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_effect.SetUniform2(m_effect.GetUniformLocation("tileBorder"), new Vector2I(2, 2));
+            m_effect.SetUniform2(m_effect.GetUniformLocation("tileBorder"), world.TilesetTable.TileBorder);
 
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
