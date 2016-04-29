@@ -1,5 +1,6 @@
-﻿using World.GameActors;
+﻿﻿using World.GameActors;
 ﻿using World.GameActors.Tiles;
+﻿using VRageMath;
 using World.ToyWorldCore;
 
 namespace World.GameActions
@@ -7,13 +8,14 @@ namespace World.GameActions
     public abstract class GameAction
     {
         protected GameActor m_sender { get; set; }
+        protected Vector2 m_targetPosition { get; set; }
 
         protected GameAction(GameActor sender)
         {
             m_sender = sender;
         }
 
-        public virtual void Resolve(GameActor target, IAtlas atlas) { }
+        public virtual void Resolve(GameActorPosition target, IAtlas atlas) { }
     }
 
     public class ToUsePickaxe : GameAction
@@ -27,10 +29,10 @@ namespace World.GameActions
     {
         public PickUp(GameActor sender) : base(sender) { }
 
-        public override void Resolve(GameActor target, IAtlas atlas)
+        public override void Resolve(GameActorPosition target, IAtlas atlas)
         {
             ICanPick picker = m_sender as ICanPick;
-            IPickable pickItem = target as IPickable;
+            IPickable pickItem = target.Actor as IPickable;
 
             if (picker != null && pickItem != null)
                 picker.AddToInventory(pickItem);

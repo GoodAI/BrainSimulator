@@ -4,6 +4,7 @@ using World.GameActions;
 using World.GameActors.Tiles;
 using Xunit;
 using Moq;
+using VRageMath;
 using World.ToyWorldCore;
 using World.GameActors;
 
@@ -36,11 +37,11 @@ namespace ToyWorldTests.World
             ToUsePickaxe pickaxe = new ToUsePickaxe(actorMock.Object) { Damage = damage };
             Mock<IAtlas> atlasMock = new Mock<IAtlas>();
             GameActor pickaxedWall = null;
-            atlasMock.Setup(x => x.ReplaceWith(It.IsAny<GameActor>(), It.IsAny<GameActor>())).
-                Callback((GameActor original, GameActor replacement) => pickaxedWall = replacement);
+            atlasMock.Setup(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>())).
+                Callback((GameActorPosition original, GameActor replacement) => pickaxedWall = replacement);
 
             // Act
-            m_wall.ApplyGameAction(atlasMock.Object, pickaxe, m_tilesetTable);
+            m_wall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2I(), m_tilesetTable);
 
             // Assert
             if (damage >= 1)
@@ -67,15 +68,15 @@ namespace ToyWorldTests.World
             Mock<GameActor> actorMock = new Mock<GameActor>();
             Mock<IAtlas> atlasMock = new Mock<IAtlas>();
             GameActor pickaxedWall = null;
-            atlasMock.Setup(x => x.ReplaceWith(It.IsAny<GameActor>(), It.IsAny<GameActor>())).
-                Callback((GameActor original, GameActor replacement) => pickaxedWall = replacement);
+            atlasMock.Setup(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>())).
+                Callback((GameActorPosition original, GameActor replacement) => pickaxedWall = replacement);
 
             ToUsePickaxe pickaxe = new ToUsePickaxe(actorMock.Object) { Damage = damage };
             float initialDamage = 0.5f;
             DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
 
             // Act
-            damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, m_tilesetTable);
+            damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2I(), m_tilesetTable);
 
             // Assert
             if (damage + initialDamage >= 1)
@@ -90,13 +91,13 @@ namespace ToyWorldTests.World
             Mock<GameActor> sender = new Mock<GameActor>();
             Mock<GameAction> action = new Mock<GameAction>(sender.Object);
             Mock<IAtlas> atlas = new Mock<IAtlas>();
-            atlas.Setup(x => x.ReplaceWith(It.IsAny<GameActor>(), It.IsAny<GameActor>()));
+            atlas.Setup(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>()));
 
             // Act
-            m_wall.ApplyGameAction(atlas.Object, action.Object, null);
+            m_wall.ApplyGameAction(atlas.Object, action.Object, new Vector2I(), null);
 
             // Assert
-            atlas.Verify(x => x.ReplaceWith(It.IsAny<GameActor>(), It.IsAny<GameActor>()), Times.Never());
+            atlas.Verify(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>()), Times.Never());
         }
     }
 }

@@ -1,17 +1,20 @@
-﻿using World.GameActions;
+﻿using VRageMath;
+using World.GameActions;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
 {
-    public class Fruit : StaticTile, IPickable
+    public class Fruit : DynamicTile, IPickable
     {
+        public Vector2I Position { get; set; }
+
         protected Fruit(ITilesetTable tilesetTable) : base(tilesetTable) { }
 
         protected Fruit(int tileType) : base(tileType) { }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null)
         {
-            gameAction.Resolve(this, atlas);
+            gameAction.Resolve(new GameActorPosition(this, position), atlas);
         }
     }
 

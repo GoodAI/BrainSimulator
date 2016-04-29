@@ -1,4 +1,5 @@
 ﻿using Moq;
+using VRageMath;
 using World.GameActions;
 using World.GameActors;
 using World.GameActors.Tiles;
@@ -16,15 +17,15 @@ namespace ToyWorldTests.World
             Mock<IAtlas> atlas = new Mock<IAtlas>();
             Mock<GameActor> sender = new Mock<GameActor>();
             Mock<PickUp> pickUp = new Mock<PickUp>(sender.Object);
-            pickUp.Setup(x => x.Resolve(It.IsAny<GameActor>(), It.IsAny<IAtlas>()));
+            pickUp.Setup(x => x.Resolve(It.IsAny<GameActorPosition>(), It.IsAny<IAtlas>()));
 
             Mock<Fruit> fruit = new Mock<Fruit>(mockTilesetTable.Object);
 
             // Act
-            fruit.Object.ApplyGameAction(atlas.Object, pickUp.Object, null);
+            fruit.Object.ApplyGameAction(atlas.Object, pickUp.Object, new Vector2I());
 
             // Assert
-            pickUp.Verify(x => x.Resolve(fruit.Object, atlas.Object));
+            pickUp.Verify(x => x.Resolve(It.IsAny<GameActorPosition>(), atlas.Object));
         }
     }
 }

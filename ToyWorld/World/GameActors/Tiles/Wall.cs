@@ -1,4 +1,5 @@
 ﻿using System;
+using VRageMath;
 using World.GameActions;
 using World.ToyWorldCore;
 
@@ -19,7 +20,7 @@ namespace World.GameActors.Tiles
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null)
         {
             if (!(gameAction is ToUsePickaxe))
                 return;
@@ -30,10 +31,10 @@ namespace World.GameActors.Tiles
 
             if (toUsePickaxe.Damage >= 1.0f)
             {
-                atlas.ReplaceWith(this, new DestroyedWall(tilesetTable));
+                atlas.ReplaceWith(new GameActorPosition(this, position), new DestroyedWall(tilesetTable));
                 return;
             }
-            atlas.ReplaceWith(this, new DamagedWall(((ToUsePickaxe)gameAction), tilesetTable));
+            atlas.ReplaceWith(new GameActorPosition(this, position), new DamagedWall(((ToUsePickaxe)gameAction), tilesetTable));
         }
     }
 
@@ -62,9 +63,7 @@ namespace World.GameActors.Tiles
         {
         }
 
-
-
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null)
         {
             ToUsePickaxe action = gameAction as ToUsePickaxe;
             if (action != null)
@@ -74,7 +73,7 @@ namespace World.GameActors.Tiles
             }
 
             if (Health <= 0f)
-                atlas.ReplaceWith(this, new DestroyedWall(tilesetTable));
+                atlas.ReplaceWith(new GameActorPosition(this, position), new DestroyedWall(tilesetTable));
         }
     }
 

@@ -62,13 +62,13 @@ namespace World.ToyWorldCore
         /// <returns></returns>
         bool ContainsCollidingTile(Vector2I coordinates);
 
-        IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type = LayerType.All);
+        IEnumerable<GameActorPosition> ActorsAt(int x, int y, LayerType type = LayerType.All);
 
-        IEnumerable<GameActor> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject;
+        IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject;
 
-        void Remove(GameActor target);
+        void Remove(GameActorPosition target);
 
-        void ReplaceWith(GameActor original, GameActor replacement);
+        void ReplaceWith(GameActorPosition original, GameActor replacement);
 
     }
 
@@ -151,25 +151,19 @@ namespace World.ToyWorldCore
             return false;
         }
 
-        public IEnumerable<GameActor> ActorsAt(int x, int y, LayerType type = LayerType.All)
+        public IEnumerable<GameActorPosition> ActorsAt(int x, int y, LayerType type = LayerType.All)
         {
-            //            foreach (ILayer<GameActor> layer in Layers)
-            //            {
-            //                LayerType typ = layer.LayerType;
-            //                LayerType union = typ & type;
-            //                bool result = union > 0;
-            //                if (result)
-            //                {
-            //                    GameActor titem = layer.GetActorAt(x, y);
-            //                }
-            //            }
-
-            return Layers.Where(t => (t.LayerType & type) > 0)
-                    .Select(layer => layer.GetActorAt(x, y))
-                    .Where(item => item != null);
+            foreach (ILayer<GameActor> layer in Layers.Where(t => (t.LayerType & type) > 0))
+            {
+                GameActor actor = layer.GetActorAt(x, y);
+                if (actor == null)
+                    continue;
+                GameActorPosition actorPosition = new GameActorPosition(actor, new Vector2I(x, y));
+                yield return actorPosition;
+            }
         }
 
-        public IEnumerable<GameActor> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject
+        public IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject
         {
             Vector2 direction = Vector2.UnitY;
             direction.Rotate(sender.Direction);
@@ -177,12 +171,12 @@ namespace World.ToyWorldCore
             return ActorsAt((int)Math.Floor(target.X), (int)Math.Floor(target.Y), type);
         }
 
-        public void Remove(GameActor target)
+        public void Remove(GameActorPosition target)
         {
             ReplaceWith(target, null);
         }
 
-        public void ReplaceWith(GameActor original, GameActor replacement)
+        public void ReplaceWith(GameActorPosition original, GameActor replacement)
         {
             throw new NotImplementedException();
         }

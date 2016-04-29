@@ -68,13 +68,13 @@ namespace World.GameActors.GameObjects
         {
             if (PickUp)
             {
-                GameActor target = atlas.ActorsInFrontOf(this, LayerType.Interactable).First();
-                IInteractable interactableTarget = target as IInteractable;
+                GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).First();
+                IInteractable interactableTarget = target.Actor as IInteractable;
                 if (interactableTarget == null)
                     return;
 
                 GameAction pickUpAction = new PickUp(this);
-                interactableTarget.ApplyGameAction(atlas, pickUpAction);
+                interactableTarget.ApplyGameAction(atlas, pickUpAction, new Vector2I(0, 0));
             }
         }
     }

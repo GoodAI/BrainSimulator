@@ -1,5 +1,6 @@
 ﻿using System;
 using Moq;
+using VRageMath;
 using World.GameActions;
 using World.GameActors;
 using World.GameActors.Tiles;
@@ -24,7 +25,7 @@ namespace ToyWorldTests.World
             PickUp pickUp = new PickUp(actor.Object);
 
             // Act
-            pickUp.Resolve(targetActor.Object, atlas.Object);
+            pickUp.Resolve(new GameActorPosition(targetActor.Object, new Vector2I()), atlas.Object);
 
             // Assert
             picker.Verify(x => x.AddToInventory(It.IsAny<IPickable>()));

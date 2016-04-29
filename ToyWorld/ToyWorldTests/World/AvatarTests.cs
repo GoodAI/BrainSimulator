@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Moq;
+using TmxMapSerializer.Elements;
+using TmxMapSerializer.Serializer;
 using VRageMath;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
+using World.ToyWorldCore;
 using Xunit;
 
 namespace ToyWorldTests.World
@@ -48,6 +52,28 @@ namespace ToyWorldTests.World
 
             // Assert
             Assert.Equal(item1.Object, m_avatar.Tool);
+        }
+
+        [Fact]
+        public void AvatarCanPickUp()
+        {
+            Stream tmxStream = FileStreams.SmallPickupTmx();
+            StreamReader tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
+
+            TmxSerializer serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStream);
+            ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
+
+            IAvatar avatar = world.GetAvatar(world.GetAvatarsIds()[0]);
+            avatar.PickUp = true;
+
+            Assert.Equal(null, avatar.Tool);
+
+            // Act
+            avatar.Update(world.Atlas);
+
+            // Assert
+            Assert.IsType<Apple>(avatar.Tool);
         }
     }
 }

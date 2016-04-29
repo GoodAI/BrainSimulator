@@ -1,6 +1,6 @@
-﻿using World.GameActions;
+﻿using VRageMath;
+using World.GameActions;
 using World.ToyWorldCore;
-using World.WorldInterfaces;
 
 namespace World.GameActors.Tiles
 {
@@ -20,7 +20,7 @@ namespace World.GameActors.Tiles
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, TilesetTable tilesetTable = null);
+        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null);
     }
 
     public interface IPickable : IInteractable { }

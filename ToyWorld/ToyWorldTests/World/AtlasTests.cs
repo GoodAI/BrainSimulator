@@ -37,18 +37,18 @@ namespace ToyWorldTests.World
         [Fact]
         public void TestActorsAt()
         {
-            List<GameActor> results = m_atlas.ActorsAt(2, 2).ToList();
+            List<GameActorPosition> results = m_atlas.ActorsAt(2, 2).ToList();
 
-            Assert.IsType<Background>(results[0]);
-            Assert.IsType<Avatar>(results[1]);
+            Assert.IsType<Background>(results[0].Actor);
+            Assert.IsType<Avatar>(results[1].Actor);
         }
 
         [Fact]
         public void TestInteractableActorsAt()
         {
-            List<GameActor> results = m_atlas.ActorsAt(2, 0, LayerType.Interactable).ToList();
+            List<GameActorPosition> results = m_atlas.ActorsAt(2, 0, LayerType.Interactable).ToList();
 
-            Assert.IsType<Apple>(results[0]);
+            Assert.IsType<Apple>(results[0].Actor);
         }
 
         [Fact]
@@ -56,10 +56,10 @@ namespace ToyWorldTests.World
         {
             IAvatar avatar = m_atlas.GetAvatars()[0];
 
-            List<GameActor> results = m_atlas.ActorsInFrontOf(avatar).ToList();
+            List<GameActorPosition> results = m_atlas.ActorsInFrontOf(avatar).ToList();
 
-            Assert.IsType<Background>(results[0]);
-            Assert.IsType<Apple>(results[1]);
+            Assert.IsType<Background>(results[0].Actor);
+            Assert.IsType<Apple>(results[1].Actor);
         }
     }
 }
