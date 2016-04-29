@@ -55,26 +55,28 @@ namespace World.GameActors.GameObjects
             Fof = default(PointF);
         }
 
-        public void AddToInventory(IPickable item)
+        public bool AddToInventory(IPickable item)
         {
             if (Tool != null)
-                return;
+                return false;
 
             Tool = item;
             Console.WriteLine("I picked up something.");
+            return true;
         }
 
         public void Update(IAtlas atlas)
         {
             if (PickUp)
             {
-                GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).First();
+                GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
+                if (target == null) return;
                 IInteractable interactableTarget = target.Actor as IInteractable;
-                if (interactableTarget == null)
-                    return;
+                if (interactableTarget == null) return;
 
                 GameAction pickUpAction = new PickUp(this);
-                interactableTarget.ApplyGameAction(atlas, pickUpAction, new Vector2I(0, 0));
+                interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
+                PickUp = false;
             }
         }
     }

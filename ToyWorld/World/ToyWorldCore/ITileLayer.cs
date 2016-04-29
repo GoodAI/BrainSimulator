@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -46,6 +47,11 @@ namespace World.ToyWorldCore
             Contract.EndContractBlock();
 
             return default(Tile);
+        }
+
+        public bool ReplaceWith<TR>(GameActorPosition original, TR replacement)
+        {
+            return default(bool);
         }
 
         public int[] GetRectangle(Rectangle rectangle)

@@ -7,5 +7,7 @@ namespace World.ToyWorldCore
         LayerType LayerType { get; set; }
 
         T GetActorAt(int x, int y);
+
+        bool ReplaceWith<TR>(GameActorPosition original, TR replacement);
     }
 }

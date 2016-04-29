@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -119,6 +120,18 @@ namespace World.ToyWorldCore
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
             return GetRectangle(rectangle);
+        }
+
+        public bool ReplaceWith<T>(GameActorPosition original, T replacement)
+        {
+            Tile item = GetActorAt(original.Position.X, original.Position.Y);
+            if (item != original.Actor) return false;
+
+            Tiles[original.Position.X][original.Position.Y] = null;
+            if (!(replacement is Tile)) return true;
+            Tiles[original.Position.X][original.Position.Y] = replacement as Tile;
+
+            return true;
         }
     }
 }

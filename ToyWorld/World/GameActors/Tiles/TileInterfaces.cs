@@ -27,6 +27,6 @@ namespace World.GameActors.Tiles
 
     public interface ICanPick
     {
-        void AddToInventory(IPickable item);
+        bool AddToInventory(IPickable item);
     }
 }

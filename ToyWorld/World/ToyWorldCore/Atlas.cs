@@ -178,7 +178,11 @@ namespace World.ToyWorldCore
 
         public void ReplaceWith(GameActorPosition original, GameActor replacement)
         {
-            throw new NotImplementedException();
+            foreach (ILayer<GameActor> layer in Layers)
+            {
+                bool result = layer.ReplaceWith(original, replacement);
+                if (result) return;
+            }
         }
     }
 }

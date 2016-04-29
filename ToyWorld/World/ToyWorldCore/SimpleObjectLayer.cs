@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.Physics;
 
@@ -91,6 +92,18 @@ namespace World.ToyWorldCore
         public List<IPhysicalEntity> GetPhysicalEntities(RectangleF rectangle)
         {
             return GetGameObjects(rectangle).Select(x => x.PhysicalEntity).ToList();
+        }
+
+        public bool ReplaceWith<T>(GameActorPosition original, T replacement)
+        {
+            GameObject item = GetActorAt(original.Position.X, original.Position.Y);
+            if (item != original.Actor) return false;
+
+            GameObjects.Remove(item);
+
+            if (!(replacement is GameObject)) return true;
+            GameObjects.Add(replacement as GameObject);
+            return true;
         }
     }
 }

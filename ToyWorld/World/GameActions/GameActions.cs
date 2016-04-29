@@ -34,10 +34,10 @@ namespace World.GameActions
             ICanPick picker = m_sender as ICanPick;
             IPickable pickItem = target.Actor as IPickable;
 
-            if (picker != null && pickItem != null)
-                picker.AddToInventory(pickItem);
+            if (picker == null || pickItem == null) return;
 
-            atlas.Remove(target);
+            if (picker.AddToInventory(pickItem))
+                atlas.Remove(target);
         }
     }
 }
