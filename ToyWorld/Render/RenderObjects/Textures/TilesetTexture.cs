@@ -38,7 +38,7 @@ namespace Render.RenderObjects.Textures
 
                     Bitmap bmpTextureWithBorders = new Bitmap(
                         tilesPerRow * (tilesetImage.TileSize.X + tilesetImage.TileMargin.X + tilesetImage.TileBorder.X * 2),
-                        tilesPerColumn * (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y + tilesetImage.TileBorder.Y * 2), 
+                        tilesPerColumn * (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y + tilesetImage.TileBorder.Y * 2),
                         System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                     BitmapData dataOrig = bmp.LockBits(
@@ -49,8 +49,8 @@ namespace Render.RenderObjects.Textures
                         new Rectangle(0, 0, bmpTextureWithBorders.Width, bmpTextureWithBorders.Height),
                         ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-                    IncreaseTileBorders(dataOrig, dataNew, tilesPerRow, tilesPerColumn, 
-                        tilesetImage.TileSize, tilesetImage.TileBorder);
+                    IncreaseTileBorders(dataOrig, dataNew, tilesPerRow, tilesPerColumn,
+                        tilesetImage);
 
                     try
                     {
@@ -75,10 +75,17 @@ namespace Render.RenderObjects.Textures
             Debug.Assert(m_textures.TrueForAll(a => a.Size == Size), "Tilesets have to be of the same dimensionality.");
         }
 
+
+
         // simulates OpenGL's GL_CLAMP_TO_EDGE on the tileset
-        protected void IncreaseTileBorders(BitmapData dataOrig, BitmapData dataNew, int tilesPerRow, int tilesPerColumn,
-            VRageMath.Vector2I tileSize, VRageMath.Vector2I tileBorder)
+        protected static void IncreaseTileBorders(BitmapData dataOrig, BitmapData dataNew, int tilesPerRow, int tilesPerColumn,
+            TilesetImage tilesetImage)
         {
+            VRageMath.Vector2I tileSize = tilesetImage.TileSize;
+            VRageMath.Vector2I tileBorder = tilesetImage.TileBorder;
+            VRageMath.Vector2I tileMargin = tilesetImage.TileMargin;
+
+
             // Get the address of the first line.
             IntPtr dataOrigPtr = dataOrig.Scan0;
             IntPtr dataNewPtr = dataNew.Scan0;
@@ -101,8 +108,8 @@ namespace Render.RenderObjects.Textures
                 // space between tiles
                 if (i != 0)
                 {
-                    iRowOrig++;
-                    iRowNew++;
+                    iRowOrig += tileMargin.Y;
+                    iRowNew += tileMargin.Y;
                 }
 
                 // tiles
@@ -118,20 +125,12 @@ namespace Render.RenderObjects.Textures
                     {
                         if (j != 0)
                         {
-                            iColumnOrig++;
-                            iColumnNew++;
+                            iColumnOrig += tileMargin.X;
+                            iColumnNew += tileMargin.X;
                         }
 
                         // copy the leading pixel (tileBorder.X times)
-                        for (int iMargin = 0; iMargin < tileBorder.X; iMargin++)
-                        {
-
-                            Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
-                                             dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
-                                             4);
-
-                            iColumnNew++;
-                        }
+                        iColumnNew = ClonePixel(dataOrig, dataNew, tileBorder, dataBytesOrig, iRowOrig, iColumnOrig, dataBytesNew, iRowNew, iColumnNew);
 
                         // copy the tile pixels
                         Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
@@ -141,15 +140,9 @@ namespace Render.RenderObjects.Textures
                         iColumnOrig += tileSize.X;
                         iColumnNew += tileSize.X;
 
-                        // copy the trailing pixel (tileBorder.X times)
-                        for (int iMargin = 0; iMargin < tileBorder.X; iMargin++)
-                        {
-                            Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * (iColumnOrig - 1),  // -1 == last column
-                                             dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
-                                             4);
 
-                            iColumnNew++;
-                        }
+                        // copy the trailing pixel (tileBorder.X times)
+                        iColumnNew = ClonePixel(dataOrig, dataNew, tileBorder, dataBytesOrig, iRowOrig, iColumnOrig - 1, dataBytesNew, iRowNew, iColumnNew);
                     }
 
                     // if first or last tile row was copied, duplicate it (tileBorder.Y times)
@@ -172,6 +165,20 @@ namespace Render.RenderObjects.Textures
             }
 
             System.Runtime.InteropServices.Marshal.Copy(dataBytesNew, 0, dataNewPtr, bytesNew);
+        }
+
+        private static int ClonePixel(BitmapData dataOrig, BitmapData dataNew, VRageMath.Vector2I tileBorder, byte[] dataBytesOrig,
+            int iRowOrig, int iColumnOrig, byte[] dataBytesNew, int iRowNew, int iColumnNew)
+        {
+            for (int iMargin = 0; iMargin < tileBorder.X; iMargin++)
+            {
+                Buffer.BlockCopy(dataBytesOrig, iRowOrig * dataOrig.Stride + 4 * iColumnOrig,
+                    dataBytesNew, iRowNew * dataNew.Stride + 4 * iColumnNew,
+                    4);
+
+                iColumnNew++;
+            }
+            return iColumnNew;
         }
 
         public override void Dispose()

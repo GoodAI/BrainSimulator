@@ -219,7 +219,7 @@ namespace Render.RenderRequests
             TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
             for (int i = 0; i < tilesetImages.Length; i++)
             {
-                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i],world.TilesetTable.TileSize, 
+                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
                                                     world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
             }
 
@@ -236,7 +236,7 @@ namespace Render.RenderRequests
 
             // Set up static uniforms
             Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
-                world.TilesetTable.TileBorder + world.TilesetTable.TileBorder; // twice the border, on each side once
+                world.TilesetTable.TileBorder * 2; // twice the border, on each side once
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
@@ -291,7 +291,7 @@ namespace Render.RenderRequests
         {
             CheckDirtyParams(renderer);
 
-            GL.Viewport(new System.Drawing.Rectangle(0,0,Resolution.Width,Resolution.Height));
+            GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
