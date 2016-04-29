@@ -7,9 +7,26 @@ using TexInitType = System.String;
 
 namespace Render.RenderObjects.Textures
 {
+    class TilesetImage
+    {
+        public TilesetImage (string imagePath, Vector2I tileSize, Vector2I tileMargin, Vector2I tileBorder)
+        {
+            ImagePath = imagePath;
+            TileSize = tileSize;
+            TileMargin = tileMargin;
+            TileBorder = tileBorder;
+        }
+
+        public string ImagePath; // path to the tileset image (.png)
+        public Vector2I TileSize; // width and height of a tile
+        public Vector2I TileMargin; // number of pixels that separate one tile from another
+        public Vector2I TileBorder; // pixels that should be copied and added on each side of the tile 
+                                    // because of correct texture scaling (linear upscaling and downscaling)
+    }
+
     internal class TextureManager
     {
-        private readonly TypeSwitchParam<TextureBase, TexInitType[]> m_textures = new TypeSwitchParam<TextureBase, TexInitType[]>();
+        private readonly TypeSwitchParam<TextureBase, TilesetImage[]> m_textures = new TypeSwitchParam<TextureBase, TilesetImage[]>();
         private readonly TypeSwitchParam<TextureBase, Vector2I> m_sizedTextures = new TypeSwitchParam<TextureBase, Vector2I>();
 
         private readonly Dictionary<int, TextureBase> m_currentTextures = new Dictionary<int, TextureBase>();
@@ -39,7 +56,7 @@ namespace Render.RenderObjects.Textures
         /// TODO: Texture caching -- je neco, co nechceme cachovat??
         ////////////////////
 
-        public T Get<T>(TexInitType[] images)
+        public T Get<T>(TilesetImage[] images)
             where T : TextureBase
         {
             return m_textures.Switch<T>(images);

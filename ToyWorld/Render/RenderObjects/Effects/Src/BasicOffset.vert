@@ -5,6 +5,8 @@
 uniform ivec3	texSizeCount	= ivec3(256,256, 16);
 // Tile size, tile margin in px
 uniform ivec4	tileSizeMargin	= ivec4(16,16, 0,0);
+// Tile border size increase after tileset preprocessing
+uniform ivec2   tileBorder = ivec2(2,2);
 
 uniform mat4 mvp = mat4(1);
 
@@ -20,7 +22,8 @@ vec2 GetTexCoods()
 	// Tile positions
     ivec2 off = ivec2(v_texOffset % texSizeCount.z, v_texOffset / texSizeCount.z);
 	// Texture positions (top-left)
-	vec2 uv = off * (tileSizeMargin.xy + tileSizeMargin.zw);
+	vec2 uv = off * (tileSizeMargin.xy + tileSizeMargin.zw + tileBorder*2) + tileBorder;
+	// + tileBorder because even the first tile's border size was increased
 
 	// Offset the vertex according to its position in the quad
 	int vertID = gl_VertexID % 4;

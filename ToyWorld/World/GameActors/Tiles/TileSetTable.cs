@@ -24,6 +24,8 @@ namespace World.GameActors.Tiles
 
         public Vector2I TileSize { get; protected set; }
         public Vector2I TileMargins { get; protected set; }
+        public Vector2I TileBorder { get; protected set; } // how much the size of the tile is increased because of 
+                                                           // correct texture filtering
 
 
         public TilesetTable(Map tmxMap, StreamReader tilesetFile)
@@ -34,6 +36,8 @@ namespace World.GameActors.Tiles
                 TileSize = new Vector2I(tmxMap.Tilewidth, tmxMap.Tileheight);
                 TileMargins = Vector2I.One;
             }
+
+            TileBorder = new Vector2I(TileSize.X, TileSize.Y); // this much border is needed for small resolutions
 
             var dataTable = new DataTable();
             string readLine = tilesetFile.ReadLine();

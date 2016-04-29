@@ -10,6 +10,7 @@ namespace World.ToyWorldCore
     {
         private int[] m_tileTypes;
         private readonly int BACKGROUND_TILE_NUMBER = 6;
+        private readonly int OBSTACLE_TILE_NUMBER = 7;
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -47,7 +48,15 @@ namespace World.ToyWorldCore
 
             // TODO : Move to properties
             int idx = 0;
-            int defaultTileOffset = LayerType == LayerType.Background ? BACKGROUND_TILE_NUMBER : 0;
+            int defaultTileOffset = 0;
+            if (LayerType == LayerType.Background)
+            {
+                defaultTileOffset = BACKGROUND_TILE_NUMBER;
+            }
+            else if(LayerType == LayerType.Obstacle)
+            {
+                defaultTileOffset = OBSTACLE_TILE_NUMBER;
+            }
 
             // Rows before start of map
             for (int j = rectangle.Top; j < bot; j++)
@@ -70,7 +79,7 @@ namespace World.ToyWorldCore
                     if (tile != null)
                         m_tileTypes[idx++] = tile.TileType;
                     else
-                        m_tileTypes[idx++] = defaultTileOffset;
+                        m_tileTypes[idx++] = 0; // inside map: must be always 0
                 }
 
                 // Tiles after end of map

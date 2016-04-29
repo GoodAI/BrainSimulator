@@ -215,8 +215,16 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
+            string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
+            TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
+            for (int i = 0; i < tilesetImages.Length; i++)
+            {
+                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
+                                                    world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
+            }
+
             // Set up tileset textures
-            m_tex = renderer.TextureManager.Get<TilesetTexture>(world.TilesetTable.GetTilesetImages());
+            m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
             // Set up the noise shader
             m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
@@ -227,10 +235,12 @@ namespace Render.RenderRequests
             m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
 
             // Set up static uniforms
-            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins;
+            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
+                world.TilesetTable.TileBorder * 2; // twice the border, on each side once
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
             m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+            m_effect.SetUniform2(m_effect.GetUniformLocation("tileBorder"), world.TilesetTable.TileBorder);
 
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
@@ -281,7 +291,7 @@ namespace Render.RenderRequests
         {
             CheckDirtyParams(renderer);
 
-            GL.Viewport(new System.Drawing.Rectangle(0,0,Resolution.Width,Resolution.Height));
+            GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
