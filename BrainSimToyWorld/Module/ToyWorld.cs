@@ -70,9 +70,25 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = 3)]
         public int FoFSize { get; set; }
 
+        [MyBrowsable, Category("FoF view"), DisplayName("FoF resolution width")]
+        [YAXSerializableField(DefaultValue = 1024)]
+        public int FoFResWidth { get; set; }
+
+        [MyBrowsable, Category("FoF view"), DisplayName("FoF resolution height")]
+        [YAXSerializableField(DefaultValue = 1024)]
+        public int FoFResHeight { get; set; }
+
         [MyBrowsable, Category("FoV view"), DisplayName("FoV size")]
         [YAXSerializableField(DefaultValue = 21)]
         public int FoVSize { get; set; }
+
+        [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution width")]
+        [YAXSerializableField(DefaultValue = 1024)]
+        public int FoVResWidth { get; set; }
+
+        [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution height")]
+        [YAXSerializableField(DefaultValue = 1024)]
+        public int FoVResHeight { get; set; }
 
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
         [YAXSerializableField(DefaultValue = 0)]
@@ -124,6 +140,11 @@ namespace GoodAI.ToyWorld
             validator.AssertError(File.Exists(TilesetTable), this, "Please specify a correct TilesetTable path in world properties.");
 
             validator.AssertError(FoFSize > 0, this, "FoF size has to be positive.");
+            validator.AssertError(FoFResWidth > 0, this, "FoF resolution width has to be positive.");
+            validator.AssertError(FoFResHeight > 0, this, "FoF resolution height has to be positive.");
+            validator.AssertError(FoVSize > 0, this, "FoV size has to be positive.");
+            validator.AssertError(FoVResWidth > 0, this, "FoV resolution width has to be positive.");
+            validator.AssertError(FoVResHeight > 0, this, "FoV resolution height has to be positive.");
             validator.AssertError(Width > 0, this, "Free view width has to be positive.");
             validator.AssertError(Height > 0, this, "Free view height has to be positive.");
             validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
@@ -135,7 +156,7 @@ namespace GoodAI.ToyWorld
 
         public override void UpdateMemoryBlocks()
         {
-            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0)
+            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || FoVSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0 || FoFResHeight <= 0 || FoFResWidth <= 0 || FoVResHeight <= 0 || FoVResWidth <= 0)
                 return;
 
             GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
@@ -152,8 +173,8 @@ namespace GoodAI.ToyWorld
             int myAvatarId = avatarIds[0];
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
 
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId, (IRenderRequestBase rr) => { rr.Size = new SizeF(FoVSize, FoVSize); });
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); });
+            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId, (IRenderRequestBase rr) => { rr.Size = new SizeF(FoVSize, FoVSize); rr.Resolution = new Size(FoVResWidth, FoVResHeight); });
+            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); rr.Resolution = new Size(FoFResWidth, FoFResHeight); });
             m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
         }
@@ -264,7 +285,7 @@ namespace GoodAI.ToyWorld
         {
             private Stopwatch m_fpsStopwatch;
 
-            public override void Init(int nGPU) 
+            public override void Init(int nGPU)
             {
                 m_fpsStopwatch = Stopwatch.StartNew();
             }
