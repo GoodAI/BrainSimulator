@@ -19,6 +19,8 @@ namespace GoodAI.ToyWorld
 {
     public class ToyWorld : MyWorld
     {
+        private readonly int m_controlsCount = 11;
+
         public TWUpdateTask UpdateTask { get; private set; }
 
         public TWGetInputTask GetInputTask { get; private set; }
@@ -151,7 +153,7 @@ namespace GoodAI.ToyWorld
             validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
 
             if (Controls != null)
-                validator.AssertError(Controls.Count >= 84 || Controls.Count == 8, this, "Controls size has to be of size 8 or 84+. Use device input node for controls, or provide correct number of inputs");
+                validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size "+m_controlsCount+" or 84+. Use device input node for controls, or provide correct number of inputs");
         }
 
         public override void UpdateMemoryBlocks()
@@ -212,7 +214,7 @@ namespace GoodAI.ToyWorld
 
             public override void Init(int nGPU)
             {
-                if (Owner.Controls.Count == 8)
+                if (Owner.Controls.Count == Owner.m_controlsCount)
                 {
                     MyLog.INFO.WriteLine("ToyWorld: Controls set to WSAD mode.");
                     controlIndexes["forward"] = 0;
