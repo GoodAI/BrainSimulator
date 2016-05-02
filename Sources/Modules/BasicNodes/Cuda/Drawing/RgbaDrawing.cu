@@ -499,7 +499,6 @@ extern "C"
 
 	/*
 	Convert Raw to RGB
-	ST = source, target
 	*/
 	__global__ void RawToRgbKernel(float *source, float *target, int pixelCount)
 	{
@@ -520,7 +519,6 @@ extern "C"
 
 	/*
 	Convert Raw to Raw grayscale
-	ST = source, target
 	http://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
 	*/
 	__global__ void RawToRawGrayscaleKernel(float *source, float *target, int pixelCount)
@@ -534,7 +532,7 @@ extern "C"
 		unsigned int pixel = AsUint(source, pixelId);
 
 		unsigned int luminance = (unsigned int)
-			(.2126 * GetComponent(pixel, 2) + .7152 * GetComponent(pixel, 1) + .0722 * GetComponent(pixel, 0));
+			(.2126f * GetComponent(pixel, 2) + .7152f * GetComponent(pixel, 1) + .0722f * GetComponent(pixel, 0));
 
 		unsigned int alpha = GetComponent(pixel, 3);
 
@@ -543,7 +541,6 @@ extern "C"
 
 	/*
 	Convert Raw to Grayscale
-	ST = source, target
 	http://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
 	*/
 	__global__ void RawToGrayscaleKernel(float *source, float *target, int pixelCount)
@@ -556,10 +553,10 @@ extern "C"
 
 		unsigned int pixel = AsUint(source, pixelId);
 
-		unsigned int luminance = (unsigned int)
-			(.2126 * GetComponent(pixel, 2) + .7152 * GetComponent(pixel, 1) + .0722 * GetComponent(pixel, 0));
+		float luminance =
+			(.2126f * GetComponent(pixel, 2) + .7152f * GetComponent(pixel, 1) + .0722f * GetComponent(pixel, 0));
 
-		target[pixelId] = ((float)luminance) / 255.0; // to re-scale from 0 to 1
+		target[pixelId] = luminance / 255.0f; // to re-scale from 0 to 1
 	}
 
 }

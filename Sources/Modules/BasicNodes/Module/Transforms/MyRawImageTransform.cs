@@ -103,16 +103,16 @@ namespace GoodAI.Modules.Transforms
         [Description("Raw Image Transform"), MyTaskInfo(OneShot = false)]
         public class MyRawImageTransformTask : MyTask<MyRawImageTransform>
         {
-            private MyCudaKernel m_kernel { get; set; }
+            private MyCudaKernel m_kernel;
 
-            private int pixelCount;
+            private int m_pixelCount;
 
             public override void Init(Int32 nGPU)
             {
                 if (Owner.OutputSize <= 0)
                     return;
 
-                pixelCount = Owner.InputSize;
+                m_pixelCount = Owner.InputSize;
 
                 switch(Owner.Target)
                 {
@@ -127,7 +127,7 @@ namespace GoodAI.Modules.Transforms
                         break;
                 }
 
-                m_kernel.SetupExecution(pixelCount);
+                m_kernel.SetupExecution(m_pixelCount);
             }
 
             public override void Execute()
@@ -135,7 +135,7 @@ namespace GoodAI.Modules.Transforms
                 if (Owner.OutputSize <= 0)
                     return;
 
-                m_kernel.Run(Owner.Input, Owner.Output, pixelCount);
+                m_kernel.Run(Owner.Input, Owner.Output, m_pixelCount);
             }
 
         }
