@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Forms;
@@ -15,6 +16,8 @@ namespace ToyWorldConversation
     public partial class ToyWorldConversation : DockContent
     {
         private readonly MainForm m_mainForm;
+        private Font m_boldFont;
+        private Font m_normalFont;
 
         private IAvatarController m_avatarCtrl
         {
@@ -47,6 +50,9 @@ namespace ToyWorldConversation
 
             m_mainForm = mainForm;
             m_mainForm.WorldChanged += m_mainForm_WorldChanged;
+
+            m_boldFont = new Font(richTextBox_messages.Font, FontStyle.Bold);
+            m_normalFont = richTextBox_messages.Font;
         }
 
         private void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
@@ -68,7 +74,10 @@ namespace ToyWorldConversation
             if (m_showWorldMessages)
                 Invoke((MethodInvoker)(() =>
                 {
-                    richTextBox_messages.AppendText(e.Message);
+                    richTextBox_messages.SelectionFont = m_boldFont;
+                    richTextBox_messages.AppendText("World\n");
+                    richTextBox_messages.SelectionFont = m_normalFont;
+                    richTextBox_messages.AppendText(e.Message + "\n");
                 }));
         }
 
@@ -77,7 +86,10 @@ namespace ToyWorldConversation
             if (m_showAvatarMessages)
                 Invoke((MethodInvoker)(() =>
                 {
-                    richTextBox_messages.AppendText(e.Message);
+                    richTextBox_messages.SelectionFont = m_boldFont;
+                    richTextBox_messages.AppendText("Avatar\n");
+                    richTextBox_messages.SelectionFont = m_normalFont;
+                    richTextBox_messages.AppendText(e.Message + "\n");
                 }));
         }
 
