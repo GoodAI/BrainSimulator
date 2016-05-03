@@ -2,6 +2,7 @@
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using YAXLib;
 
 namespace GoodAI.Modules.DyBM.Tasks
 {
@@ -11,6 +12,10 @@ namespace GoodAI.Modules.DyBM.Tasks
     [Description("DyBM Learning"), MyTaskInfo(OneShot = false)]
     public class MyDyBMLearningTask : MyTask<MyDyBMInputLayer>
     {
+        [MyBrowsable, Category("Structure")]
+        [YAXSerializableField(DefaultValue = true), YAXElementFor("Structure")]
+        public bool UpdateWeights { get; set; }
+
         /// <summary>
         /// Initialize all parameters to 0 -> meaning that previous sequences were all 0
         /// </summary>
@@ -24,6 +29,7 @@ namespace GoodAI.Modules.DyBM.Tasks
                 Owner.Bias_b.SafeCopyToHost();
                 Owner.Weight_u.SafeCopyToHost();
                 Owner.Weight_v.SafeCopyToHost();
+                Owner.LearningRate_η.SafeCopyToHost();
 
                 // Generated interval
                 float min = 0.01f;
@@ -44,10 +50,17 @@ namespace GoodAI.Modules.DyBM.Tasks
                     Owner.Weight_v.Host[s] = (float)rand.NextDouble() * (max - min) + min;
                 }
 
+                for (int i = 0; i < 4; i++)
+                {
+                    // Init learning rate
+                    Owner.LearningRate_η.Host[i] = 1;
+                }
+
                 Owner.Delay_d.SafeCopyToDevice();
                 Owner.Bias_b.SafeCopyToDevice();
                 Owner.Weight_u.SafeCopyToDevice();
                 Owner.Weight_v.SafeCopyToDevice();
+                Owner.LearningRate_η.SafeCopyToDevice();
             }
         }
 
@@ -57,17 +70,14 @@ namespace GoodAI.Modules.DyBM.Tasks
         public override void Execute()
         {
             int L, K, M, m;
-            float head, tail;
-            float sum_α, sum_β, sum_γ, sum_αP, sum_βP, sum_γP, logPθ;
-            float[] αij, βij, γj, uij, vij, μ, λ, Eθ, Pθ;
+            float head, tail, Δb, Δu, Δv1, Δv2, ηb, ηu, ηv1, ηv2;
+            float sum_α1, sum_β1, sum_γ1, sum_α, sum_β, sum_γ, logPθ;
+            float[] αij, βij, γi, γj, uij, vij, vji, μ, λ, Eθ, Pθ;
 
             int Neurons = Owner.Neurons;
             float τ = Owner.Temperature_τ;
-            float η = Owner.LearningRate_η;
-            float Δ = Owner.Derivative_Δ;
             Pθ = new float[Neurons];
 
-            m = 0;
             K = Owner.Traces_K;
             L = Owner.Traces_L;
             M = Owner.LearningRateCorection_M;
@@ -75,7 +85,6 @@ namespace GoodAI.Modules.DyBM.Tasks
             μ = Owner.slope_μ.ToArray();
             λ = Owner.slope_λ.ToArray();
 
-            Owner.Previous_x.SafeCopyToHost();
             Owner.Output.SafeCopyToHost();
             Owner.Bias_b.SafeCopyToHost();
             Owner.Energy_E.SafeCopyToHost();
@@ -86,86 +95,84 @@ namespace GoodAI.Modules.DyBM.Tasks
             Owner.Trace_γ.SafeCopyToHost();
             Owner.FIFO_trace.SafeCopyToHost();
             Owner.LogLikelihood.SafeCopyToHost();
+            Owner.LearningRate_η.SafeCopyToHost();
+            Owner.Derivative_Δ.SafeCopyToHost();
 
             Owner.LogLikelihood.Host[0] = 0;
 
             #region Take the input of the Layer
             Owner.Input.SafeCopyToHost();
             // Input of the at time t-1
-            float[] x = Owner.Previous_x.Host; 
+            float[] x = Owner.Input.Host;//Owner.Previous_x.Host; 
             // Expected input at time t
             float[] X = new float[Neurons];
             #endregion
 
             #region Feed-Forward pass for all neurons
             logPθ = 0;
+            double expE, expP;
             for (int j = 0; j < Neurons; j++)
             {
                 #region Compute sums of weighted eligidible traces
+                sum_α1 = 0;
+                sum_β1 = 0;
+                sum_γ1 = 0;
+
                 sum_α = 0;
                 sum_β = 0;
                 sum_γ = 0;
 
-                sum_αP = 0;
-                sum_βP = 0;
-                sum_γP = 0;
-
                 // Process all synapses of the neuron
                 for (int i = 0; i < Neurons; i++)
                 {
-                    // Index of the synapse
-                    int id = (j * Neurons) + i;
-                    int id_K = (j * Neurons) + (i * K);
-                    int id_L = (j * Neurons) + (i * L);
-
-                    // Define head and tail of each FIFO queue
-                    tail = Owner.Fifo_x[id].Tail();
-                    head = Owner.Fifo_x[id].Head();
-
                     // Acquire Pointers to subarrays relevant for this synapse at time t-1
                     αij = new float[K];
-                    Array.Copy(Owner.Trace_α.Host, id_K, αij, 0, K);
+                    Array.Copy(Owner.Trace_α.Host, (j * Neurons) + (i * K), αij, 0, K);
                     βij = new float[K];
-                    Array.Copy(Owner.Trace_β.Host, id_L, βij, 0, L);
-                    γj = new float[L];
-                    Array.Copy(Owner.Trace_γ.Host, i, γj, 0, L);
+                    Array.Copy(Owner.Trace_β.Host, (j * Neurons) + (i * L), βij, 0, L);
+                    γi = new float[L];
+                    Array.Copy(Owner.Trace_γ.Host, i, γi, 0, L);
                     uij = new float[K];
-                    Array.Copy(Owner.Weight_u.Host, id_K, uij, 0, K);
+                    Array.Copy(Owner.Weight_u.Host, (j * Neurons) + (i * K), uij, 0, K);
                     vij = new float[L];
-                    Array.Copy(Owner.Weight_v.Host, id_L, vij, 0, L);
+                    Array.Copy(Owner.Weight_v.Host, (j * Neurons) + (i * L), vij, 0, L);
+                    vji = new float[L];
+                    Array.Copy(Owner.Weight_v.Host, (i * Neurons) + (j * L), vji, 0, L);
 
                     for (int k = 0; k < K; k++)
                     {
                         // Weight sum for Energy computation
-                        sum_α += uij[k] * αij[k] * 1;
-                        sum_αP += uij[k] * αij[k] * Owner.Input.Host[j];
+                        sum_α1 += uij[k] * αij[k] * 1;
+                        sum_α += uij[k] * αij[k] * x[j];
                     }
 
                     for (int l = 0; l < L; l++)
                     {
                         // Weight sum γj at time t-1 for Energy computation
-                        sum_β += vij[l] * βij[l] * 1;
-                        sum_γ += vij[l] * γj[l]  * 1;
-
-                        sum_βP += vij[l] * βij[l] * Owner.Input.Host[j];
-                        sum_γP += vij[l] * γj[l] * Owner.Input.Host[j];
+                        sum_β1 += vij[l] * βij[l] * 1;
+                        sum_β += vij[l] * βij[l] * x[j];
+                        
+                        sum_γ1 += vji[l] * γi[l]  * 1;
+                        sum_γ += vji[l] * γi[l] * x[j];
                     }
                 }
                 #endregion
 
                 #region Compute Energy, Log-likelihood and next Expected input
                 // Compute Energy of each neuron
-                Eθ[j] = (-Owner.Bias_b.Host[j] * 1) - sum_α + sum_β + sum_γ;
+                Eθ[j] = (-Owner.Bias_b.Host[j] * 1) - sum_α1 + sum_β1 + sum_γ1;
                 Owner.Energy_E.Host[j] = Eθ[j];
+                // Compute probability of neuron has observed energy given its history
+                Pθ[j] = (-Owner.Bias_b.Host[j] * x[j]) - sum_α + sum_β + sum_γ;
 
                 // Compute next input estimate at time t denoted as Pθ
-                float exp = (float)Math.Exp(Math.Pow(-τ, -1) * Eθ[j]);
-                X[j] = exp / (1.0f + exp);
+                expE = (float)Math.Exp(Math.Pow(-τ, -1) * Eθ[j]);
+                X[j] = (float)expE / (1.0f + (float)expE);
+                
+                expP = Math.Exp(Math.Pow(-τ, -1) * Pθ[j]);
+                Pθ[j] = (float)expP / (1.0f + (float)expE);
 
                 // Compute a log likelihood
-                Pθ[j] = (-Owner.Bias_b.Host[j] * Owner.Input.Host[j]) - sum_αP + sum_βP + sum_γP;
-
-                Pθ[j] = (float)(Math.Pow(-0.0001f, -1) * Pθ[j]) / (1.0f + (float)(Math.Pow(-0.0001f, -1) * Eθ[j]));
                 logPθ = (float)Math.Log10(Pθ[j] == 0 ? 1 : Pθ[j]);
                 Owner.LogLikelihood.Host[0] += logPθ;
                 #endregion
@@ -173,29 +180,29 @@ namespace GoodAI.Modules.DyBM.Tasks
             #endregion
 
             #region Update Weights, Bias and Eligidible traces
-            float[] xt = Owner.Input.Host;
-
+            m = 0;
             for (int j = 0; j < Neurons; j++)
             {
-                // Update bias value
-                Owner.Bias_b.Host[j] += η * (xt[j] - X[j]);
-                
                 // Acquire γj at time t-1
                 γj = new float[L];
-                int idx = (j * L);
-                Array.Copy(Owner.Trace_γ.Host, idx, γj, 0, L);
+                Array.Copy(Owner.Trace_γ.Host, (j * L), γj, 0, L);
+
+                ηb = Owner.LearningRate_η.Host[0];
+                ηu = Owner.LearningRate_η.Host[1];
+                ηv1 = Owner.LearningRate_η.Host[2];
+                ηv2 = Owner.LearningRate_η.Host[3];
+
+                Δb = Owner.Derivative_Δ.Host[0];
+                Δu = Owner.Derivative_Δ.Host[1];
+                Δv1 = Owner.Derivative_Δ.Host[2];
+                Δv2 = Owner.Derivative_Δ.Host[3];
 
                 // For all synapses of each neuron
                 for (int i = 0; i < Neurons; i++)
                 {
                     // Index of the synapse
-                    int id = (j * Neurons) + i;
                     int id_K = (j * Neurons) + (i * K);
                     int id_L = (j * Neurons) + (i * L);
-
-                    // Define head and tail of each FIFO queue
-                    tail = Owner.Fifo_x[id].Tail();
-                    head = Owner.Fifo_x[id].Head();
 
                     // Acquire Pointers to subarrays relevant for this synapse at time t-1
                     αij = new float[K];
@@ -207,37 +214,36 @@ namespace GoodAI.Modules.DyBM.Tasks
                     vij = new float[L];
                     Array.Copy(Owner.Weight_v.Host, id_L, vij, 0, L);
 
-                    #region Update Weights
-                    // Update LTP weight
-                    for (int k = 0; k < K; k++)
+                    if (UpdateWeights)
                     {
-                        Owner.Weight_u.Host[id_K] += η * (xt[j] - X[j]) * αij[k];
+                        #region Update Bias and Weights
+                        
+                        // Update bias value
+                        Δb += (float)Math.Pow( (x[j] - X[j]), 2);
+                        Owner.Bias_b.Host[j] += ηb * (x[j] - X[j]);
+
+                        // Update LTP weight
+                        for (int k = 0; k < K; k++)
+                        {
+                            Δu += (float)Math.Pow( (x[j] - X[j]) * αij[k], 2);
+                            Owner.Weight_u.Host[id_K] += ηu * (x[j] - X[j]) * αij[k];
+                        }
+
+                        // Update both parts of LTD weight
+                        for (int l = 0; l < L; l++)
+                        {
+                            Δv1 += (float)Math.Pow( (X[j] - x[j]) * βij[l], 2);
+                            Δv2 += (float)Math.Pow( (X[i] - x[i]) * γj[l], 2);
+
+                            Owner.Weight_v.Host[id_L] += ηv1 * (X[j] - x[j]) * βij[l];
+                            Owner.Weight_v.Host[id_L] += ηv2 * (X[i] - x[i]) * γj[l];
+                        }
+                        #endregion
                     }
 
-                    // Update first part of LTD weight
-                    for (int l = 0; l < L; l++)
-                    {
-                        Owner.Weight_v.Host[id_L] += η * (X[j] - xt[j]) * βij[l];
-                    }
-
-                    // Update second part of LTD weight
-                    for (int l = 0; l < L; l++)
-                    {
-                        Owner.Weight_v.Host[id_L] += η * (X[j] - xt[j]) * γj[l];
-                    }
-
-                    /* Update learning rate
-                    if (m++ < M)
-                    {
-                        Δ += logPθ * logPθ;
-                    }
-                    else
-                    {
-                        Owner.LearningRate_η = η / ((float)Math.Sqrt(Δ > 0 ? Δ : 1));
-                        Δ = 0;
-                        m = 0;
-                    }*/
-                    #endregion
+                    // Define head and tail of each FIFO queue
+                    tail = Owner.Fifo_x[i].Tail();
+                    head = Owner.Fifo_x[i].Head();
 
                     #region α - Feed forward connections
                     // Update α eligibility trace
@@ -250,8 +256,8 @@ namespace GoodAI.Modules.DyBM.Tasks
 
                     #region β - Only remembered recurrent connections
                     // FIFO indexes
-                    int _head = Owner.Fifo_x[id].HeadIndex();
-                    int _tail = Owner.Fifo_x[id].TailIndex();
+                    int _head = Owner.Fifo_x[i].HeadIndex();
+                    int _tail = Owner.Fifo_x[i].TailIndex();
 
                     // Update β eligibility trace - reset every iteration
                     for (int l = 0; l < L; l++)
@@ -260,7 +266,7 @@ namespace GoodAI.Modules.DyBM.Tasks
                         βij[l] = 0;
                         for (int s = (_head + 1); s <= _tail; s++)
                         {
-                            float x_fifo = Owner.Fifo_x[id].ToArray()[s];
+                            float x_fifo = Owner.Fifo_x[i].ToArray()[s];
                             βij[l] += (float)Math.Pow(μ[l], s) * x_fifo;
                         }
                         Owner.Trace_β.Host[id_L + l] = βij[l];
@@ -272,11 +278,47 @@ namespace GoodAI.Modules.DyBM.Tasks
                 // Update γj for time t
                 for (int l = 0; l < L; l++)
                 {
-                    γj[l] = μ[l] * (γj[l] + xt[j]);
-                    Owner.Trace_γ.Host[idx + l] = γj[l];
+                    γj[l] = μ[l] * (γj[l] + x[j]);
+                    Owner.Trace_γ.Host[(j * L) + l] = γj[l];
                 }
                 #endregion
 
+                #region Update learning rate usind AdaGrad
+                if (m++ >= M)
+                {
+                    Δb = Δb == 0 ? 1 : Δb;
+                    Δu = Δu == 0 ? 1 : Δu;
+                    Δv1 = Δv1 == 0 ? 1 : Δv1;
+                    Δv2 = Δv2 == 0 ? 1 : Δv2;
+                    ηb = 1 / ((float)Math.Sqrt(Δb));
+                    ηu = 1 / ((float)Math.Sqrt(Δu));
+                    ηv1 = 1 / ((float)Math.Sqrt(Δv1));
+                    ηv2 = 1 / ((float)Math.Sqrt(Δv2));
+
+                    float max = Owner.MaximumLearningRate;
+
+                    ηb = ηb > max ? max : ηb;
+                    ηu = ηu > max ? max : ηu;
+                    ηv1 = ηv1 > max ? max : ηv1;
+                    ηv2 = ηv2 > max ? max : ηv2;
+
+                    Δb = 0;
+                    Δu = 0;
+                    Δv1 = 0;
+                    Δv2 = 0;
+                    m = 0;
+                }
+
+                Owner.LearningRate_η.Host[0] = ηb;
+                Owner.LearningRate_η.Host[1] = ηu;
+                Owner.LearningRate_η.Host[2] = ηv1;
+                Owner.LearningRate_η.Host[3] = ηv2;
+
+                Owner.Derivative_Δ.Host[0] = Δb;
+                Owner.Derivative_Δ.Host[1] = Δu;
+                Owner.Derivative_Δ.Host[2] = Δv1;
+                Owner.Derivative_Δ.Host[3] = Δv2;
+                #endregion
             }
             #endregion
 
@@ -299,10 +341,7 @@ namespace GoodAI.Modules.DyBM.Tasks
 
             // Copy Expected input to the output of the Layer
             X.CopyTo(Owner.Output.Host, 0);
-            // Copy current input to be the previous input in next step
-            Owner.Input.Host.CopyTo(Owner.Previous_x.Host, 0);
 
-            Owner.Previous_x.SafeCopyToDevice();
             Owner.Output.SafeCopyToDevice();
             Owner.Trace_α.SafeCopyToDevice();
             Owner.Trace_β.SafeCopyToDevice();
@@ -313,6 +352,8 @@ namespace GoodAI.Modules.DyBM.Tasks
             Owner.Weight_v.SafeCopyToDevice();
             Owner.FIFO_trace.SafeCopyToDevice();
             Owner.LogLikelihood.SafeCopyToDevice();
+            Owner.LearningRate_η.SafeCopyToDevice();
+            Owner.Derivative_Δ.SafeCopyToDevice();
         }
     }
 

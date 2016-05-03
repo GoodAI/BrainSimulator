@@ -142,8 +142,8 @@ namespace GoodAI.Modules.DyBM
         /// Initial Learning rate η0 of the Layer
         /// </summary>
         [MyBrowsable, Category("Properties")]
-        [YAXSerializableField(DefaultValue = 1.0f), YAXElementFor("Properties")]
-        public float LearningRate_η { get; set; }
+        [YAXSerializableField(DefaultValue = 3.0f), YAXElementFor("Properties")]
+        public float MaximumLearningRate { get; set; }
 
         /// <summary>
         /// Temperature of the Layer
@@ -201,17 +201,17 @@ namespace GoodAI.Modules.DyBM
         /// </summary>
         public MyMemoryBlock<float> FIFO_trace { get; protected set; }
         /// <summary>
-        /// Previous value of input x for next time step computation
+        /// Adjustable learning rate for each parameter θ using AdaGrad.
         /// </summary>
-        public MyMemoryBlock<float> Previous_x { get; protected set; }
-        /// <summary>
-        /// Previous value of expected input X for next time step computation
-        /// </summary>
-        public MyMemoryBlock<float> Expected_x { get; protected set; }
+        public MyMemoryBlock<float> LearningRate_η { get; protected set; }
         /// <summary>
         /// Log-likelihood
         /// </summary>
         public MyMemoryBlock<float> LogLikelihood { get; protected set; }
+        /// <summary>
+        /// Log-likelihood derivate for Learning rate update
+        /// </summary>
+        public MyMemoryBlock<float> Derivative_Δ { get; protected set; }
         
         // Public parameters
         /// <summary>
@@ -230,10 +230,6 @@ namespace GoodAI.Modules.DyBM
         /// Number of eligibility traces for each neuron based on parameters
         /// </summary>
         public int Traces_L { get; protected set; }
-        /// <summary>
-        /// Log-likelihood derivate for Learning rate update
-        /// </summary>
-        public float Derivative_Δ { get; protected set; }
         private Random rand = new Random();
 
         // Tasks
@@ -264,8 +260,6 @@ namespace GoodAI.Modules.DyBM
                 Traces_L = slope_μ.Count;
 
                 // Init Memory blocks
-                Previous_x.Count = Neurons;
-                Expected_x.Count = Neurons;
                 Bias_b.Count = Neurons;
                 Energy_E.Count = Neurons;
                 Delay_d.Count = Synapses;
@@ -276,6 +270,8 @@ namespace GoodAI.Modules.DyBM
                 Trace_γ.Count = Neurons * Traces_L;
                 FIFO_trace.Count = Synapses * DelayInterval;
                 LogLikelihood.Count = 1;
+                LearningRate_η.Count = 4; // θ + 1
+                Derivative_Δ.Count = 4;   // θ + 1
 
                 // Create N FIFO queues and initialize their conduction delays
                 Fifo_x = new MyQueue[Synapses];
