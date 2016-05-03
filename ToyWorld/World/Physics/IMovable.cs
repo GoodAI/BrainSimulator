@@ -30,7 +30,7 @@
     }
 
     /// <summary>
-    /// For GameObjects with direction
+    /// For GameObjects with direction. Game Object Moves towards direction, but must not be rotated in the way.
     /// </summary>
     public interface IDirectable
     {
@@ -38,5 +38,13 @@
         /// Direction in radians. 0 means up, -Pi/2 right.
         /// </summary>
         float Direction { get; set; }
+    }
+
+    public interface IRotatable
+    {
+        /// <summary>
+        /// Direction in radians. 0 means up, -Pi/2 right.
+        /// </summary>
+        float Rotation { get; set; }
     }
 }

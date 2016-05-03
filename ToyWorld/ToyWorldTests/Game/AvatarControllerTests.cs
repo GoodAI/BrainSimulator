@@ -25,12 +25,25 @@ namespace ToyWorldTests.Game
         }
 
         [Fact]
-        public void CanSetProperties()
+        public void CanSetPropertiesFrwd()
         {
-            IAvatarControls avatarControls = new AvatarControls(0, 0.5f, -0.4f, true, true, true);
+            IAvatarControls avatarControls = new AvatarControls(0, 0.5f, 0.0f, -0.4f, true, true, true);
             m_avatarController.SetActions(avatarControls);
-            Assert.True(m_avatar.DesiredSpeed == 0.5f);
-            Assert.True(m_avatar.DesiredRotation == -0.4f);
+            Assert.Equal(m_avatar.DesiredSpeed, 0.5f);
+            Assert.Equal(m_avatar.DesiredRotation, -0.4f);
+            Assert.True(m_avatar.Interact);
+            Assert.True(m_avatar.PickUp);
+            Assert.True(m_avatar.Use);
+        }
+
+        [Fact]
+        public void CanSetProperties45()
+        {
+            IAvatarControls avatarControls = new AvatarControls(0, 1f, 1f, -0.4f, true, true, true);
+            m_avatarController.SetActions(avatarControls);
+            Assert.Equal(m_avatar.DesiredSpeed, 1f);
+            Assert.Equal(m_avatar.Direction, MathHelper.Pi / 4, 2);
+            Assert.Equal(m_avatar.DesiredRotation, -0.4f);
             Assert.True(m_avatar.Interact);
             Assert.True(m_avatar.PickUp);
             Assert.True(m_avatar.Use);
@@ -39,16 +52,16 @@ namespace ToyWorldTests.Game
         [Fact]
         public void CanResetControls()
         {
-            IAvatarControls avatarControls = new AvatarControls(0, 0.5f, -0.4f, true, true, true);
+            IAvatarControls avatarControls = new AvatarControls(0, 0.5f, 0.0f, -0.4f, true, true, true);
             m_avatarController.SetActions(avatarControls);
-            Assert.True(m_avatar.DesiredSpeed == 0.5f);
-            Assert.True(m_avatar.DesiredRotation == -0.4f);
+            Assert.Equal(m_avatar.DesiredSpeed, 0.5f, 2);
+            Assert.Equal(m_avatar.DesiredRotation, -0.4f);
             Assert.True(m_avatar.Interact);
             Assert.True(m_avatar.PickUp);
             Assert.True(m_avatar.Use);
             m_avatarController.ResetControls();
-            Assert.True(m_avatar.DesiredSpeed == 0.0f);
-            Assert.True(m_avatar.DesiredRotation == 0.0f);
+            Assert.Equal(m_avatar.DesiredSpeed, 0.0f);
+            Assert.Equal(m_avatar.DesiredRotation, 0.0f);
             Assert.True(!m_avatar.Interact);
             Assert.True(!m_avatar.PickUp);
             Assert.True(!m_avatar.Use);

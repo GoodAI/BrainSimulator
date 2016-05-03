@@ -245,7 +245,10 @@ namespace GoodAI.ToyWorld
                 bool use = Owner.Controls.Host[controlIndexes["use"]] > 0.5 ? true : false;
                 bool pickup = Owner.Controls.Host[controlIndexes["pickup"]] > 0.5 ? true : false;
 
-                IAvatarControls ctrl = new AvatarControls(100, speed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
+                // TODO : add rightSpeed [-1,1]
+                float rightSpeed = 0f;
+
+                IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
                 Owner.m_avatarCtrl.SetActions(ctrl);
             }
 

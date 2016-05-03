@@ -16,7 +16,7 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
-        private readonly CollisionResolver m_collisionResolver;
+        private readonly ICollisionResolver m_collisionResolver;
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
@@ -54,7 +54,13 @@ namespace World.ToyWorldCore
 
             IMovementPhysics movementPhysics = new MovementPhysics();
             ICollisionChecker collisionChecker = new CollisionChecker(Atlas);
-            m_collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
+
+            // TODO MICHAL: setter for physics implementation
+            /*
+            m_collisionResolver = new NaiveCollisionResolver(collisionChecker, movementPhysics);
+            /*/
+            m_collisionResolver = new MomentumCollisionResolver(collisionChecker, movementPhysics);
+            //*/
 
             Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Loading Successful");
         }
@@ -67,15 +73,7 @@ namespace World.ToyWorldCore
 
         private void UpdatePhysics()
         {
-            // temporal code to test basic physics
-            foreach (IAvatar avatar in Atlas.GetAvatars())
-            {
-                m_collisionResolver.ResolveCollision(avatar.PhysicalEntity);
-            }
-            foreach (ICharacter character in Atlas.Characters)
-            {
-                m_collisionResolver.ResolveCollision(character.PhysicalEntity);
-            }
+            m_collisionResolver.ResolveCollisions();
         }
 
         private void UpdateCharacters()

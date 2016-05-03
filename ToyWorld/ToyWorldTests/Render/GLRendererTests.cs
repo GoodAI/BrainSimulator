@@ -54,7 +54,7 @@ namespace ToyWorldTests.Render
             rr.FovAvatarRenderRequest = rr1;
 
             var ac = m_gameController.GetAvatarController(aID);
-            var controls = new AvatarControls(5) { DesiredSpeed = .3f };
+            var controls = new AvatarControls(5) { DesiredForwardSpeed = .3f };
 
             CancellationToken token = SetupWindow(
                 delta =>

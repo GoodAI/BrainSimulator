@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
+using VRageMath;
 using World.GameActors.GameObjects;
 
 namespace Game
@@ -40,7 +41,23 @@ namespace Game
 
         private void SetAvatarActionsControllable()
         {
-            m_avatar.DesiredSpeed = m_avatarControls.DesiredSpeed;
+            float fSpeed = m_avatarControls.DesiredForwardSpeed;
+            float rSpeed = m_avatarControls.DesiredForwardSpeed;
+
+            // WolframAlpha.com: Plot[Sqrt((a^2+b^2)/(a+b)), {a,0,1}, {b,0,1}]
+            //float jointSpeed = (float) Math.Sqrt((fSpeed*fSpeed + rSpeed*rSpeed)/(Math.Sqrt(fSpeed) + Math.Sqrt(rSpeed)));
+
+            // WolframAlpha.com: Plot[Max(a,b), {a,0,1}, {b,0,1}]
+            float jointSpeed = (float) Math.Max(Math.Abs(fSpeed), Math.Abs(rSpeed));
+
+            m_avatar.DesiredSpeed = jointSpeed;
+            m_avatar.Direction =
+                MathHelper.WrapAngle(
+                    m_avatar.Rotation +
+                    (float) Math.Atan2(
+                        m_avatarControls.DesiredRightSpeed,
+                        m_avatarControls.DesiredForwardSpeed));
+            m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
             m_avatar.Interact = m_avatarControls.Interact;
             m_avatar.PickUp = m_avatarControls.PickUp;
             m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;

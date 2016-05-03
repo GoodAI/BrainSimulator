@@ -1,53 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VRageMath;
 using World.Physics;
 using Xunit;
-using Rectangle = World.Physics.Rectangle;
 
 namespace ToyWorldTests.Physics
 {
     public class CollisionResolverTest
     {
         [Fact]
-        public void ResolveCollissionOrthogonal()
+        public void ResolveSlideCollissionOrthogonal()
         {
-            var initPosition = new VRageMath.Vector2(0.5f,0f);
-            var shape = new Rectangle(new VRageMath.Vector2(1,1));
+            var initPosition = new Vector2(0.5f,0f);
+            var shape = new RectangleShape(new Vector2(1,1));
             IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, MathHelper.Pi / 2);
+            pe.SlideOnCollision = true;
 
-            //var collisionCheckerMock = new Mock<ICollisionChecker>();
-            //collisionCheckerMock.Setup(x => x.CollidesWithTile(pe)).Returns(pe.Position.X < 0);
-
-            ICollisionChecker collisionChecker = new CollisionCheckerMock();
+            ICollisionChecker collisionChecker = new CollisionCheckerMock(new List<IPhysicalEntity>() {pe});
             var movementPhysics = new MovementPhysics();
-            ICollisionResolver collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
+            ICollisionResolver collisionResolver = new NaiveCollisionResolver(collisionChecker, movementPhysics);
 
             movementPhysics.Move(pe);
 
-            collisionResolver.ResolveCollision(pe);
+            collisionResolver.ResolveCollisions();
 
             Assert.Equal(pe.Position.X, 0, 2);
             Assert.Equal(pe.Position.Y, 0, 2);
         }
 
         [Fact]
-        public void ResolveCollission45()
+        public void ResolveSlideCollission45()
         {
-            var initPosition = new VRageMath.Vector2(0.5f, 0f);
-            var shape = new Rectangle(new VRageMath.Vector2(1, 1));
-            IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, MathHelper.Pi / 4 * 3);
+            var initPosition = new Vector2(0.5f, 0f);
+            var shape = new RectangleShape(new Vector2(1, 1));
 
-            //var collisionCheckerMock = new Mock<ICollisionChecker>();
-            //collisionCheckerMock.Setup(x => x.CollidesWithTile(pe)).Returns(pe.Position.X < 0);
+            float angle = 135f;
 
-            ICollisionChecker collisionChecker = new CollisionCheckerMock();
+            var angleRads = MathHelper.ToRadians(angle);
+            IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, angleRads);
+            pe.SlideOnCollision = true;
+
+            ICollisionChecker collisionChecker = new CollisionCheckerMock(new List<IPhysicalEntity>() {pe});
             var movementPhysics = new MovementPhysics();
-            ICollisionResolver collisionResolver = new CollisionResolver(collisionChecker, movementPhysics);
+            ICollisionResolver collisionResolver = new NaiveCollisionResolver(collisionChecker, movementPhysics);
 
             movementPhysics.Move(pe);
 
-            collisionResolver.ResolveCollision(pe);
+            collisionResolver.ResolveCollisions();
 
             Assert.Equal(pe.Position.X, 0f, 2);
             Assert.Equal(pe.Position.Y, -0.71f, 2);
@@ -56,12 +56,14 @@ namespace ToyWorldTests.Physics
 
     internal class CollisionCheckerMock : ICollisionChecker
     {
-        List<PhysicalEntity> ICollisionChecker.CollidesWithAnotherEntity(IPhysicalEntity physicalEntity)
+        private readonly List<IPhysicalEntity> m_physicalEntities;
+
+        public CollisionCheckerMock(List<IPhysicalEntity> physicalEntities)
         {
-            throw new NotImplementedException();
+            m_physicalEntities = physicalEntities;
         }
 
-        bool ICollisionChecker.CollidesWithTile(IPhysicalEntity physicalEntity)
+        public bool CollidesWithTile(IPhysicalEntity physicalEntity)
         {
             return physicalEntity.Position.X < 0;
         }
@@ -69,6 +71,49 @@ namespace ToyWorldTests.Physics
         float ICollisionChecker.MaximumGameObjectRadius
         {
             get { throw new NotImplementedException(); }
+        }
+
+        public List<List<IPhysicalEntity>> CollisionGroups()
+        {
+            List<List<IPhysicalEntity>> list = new List<List<IPhysicalEntity>>();
+            list.Add(m_physicalEntities);
+            return list;
+        }
+
+        public float MaximumGameObjectSpeed
+        {
+            get { return 1; }
+        }
+
+        public bool Collides(List<IPhysicalEntity> physicalEntities)
+        {
+            return physicalEntities.Any(CollidesWithTile);
+        }
+
+        public bool Collides(IPhysicalEntity physicalEntity)
+        {
+            return Collides(new List<IPhysicalEntity>() {physicalEntity});
+        }
+
+        public bool CollidesWithPhysicalEntity(IPhysicalEntity physicalEntity)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool CollidesWithTile(IPhysicalEntity physicalEntity, float eps)
+        {
+            return physicalEntity.Position.X - eps < 0;
+        }
+
+        public bool CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<IPhysicalEntity> CollisionThreat(IPhysicalEntity targetEntity, List<IPhysicalEntity> physicalEntities, float eps = 0)
+        {
+            return new List<IPhysicalEntity>();
         }
     }
 }

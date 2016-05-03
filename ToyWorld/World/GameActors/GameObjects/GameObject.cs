@@ -61,7 +61,8 @@ namespace World.GameActors.GameObjects
             }
         }
 
-
+        public float Weight { get { return PhysicalEntity.Weight; } set { PhysicalEntity.Weight = value; } }
+        
         public int TilesetId { get; set; }
 
         public string TilesetName { get; set; }

@@ -8,6 +8,8 @@ namespace World.Physics
     {
         Vector2 Position { get; set; }
 
+        Vector2 Size { get; set; }
+
         /// <summary>
         /// Returns size of rectangle which can wrap this shape.
         /// </summary>
@@ -25,24 +27,38 @@ namespace World.Physics
         /// </summary>
         /// <returns></returns>
         List<Vector2I> CoverTiles();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <param name="eps">Border width.</param>
+        /// <returns></returns>
+        bool CollidesWith(IShape shape);
+
+        void Resize(float add);
     }
 
     public abstract class Shape : IShape
     {
         public Vector2 Position { get; set; }
 
-        public Vector2 Size { get; protected set; }
+        public Vector2 Size { get; set; }
 
-        abstract public float PossibleCollisionDistance();
+        public abstract float PossibleCollisionDistance();
         
-        abstract public Vector2 CoverRectangleSize();
+        public abstract Vector2 CoverRectangleSize();
 
-        abstract public List<Vector2I> CoverTiles();
+        public abstract List<Vector2I> CoverTiles();
+
+        public abstract bool CollidesWith(IShape shape);
+
+        public abstract void Resize(float add);
     }
 
-    public class Rectangle : Shape
+    public class RectangleShape : Shape
     {
-        public Rectangle(Vector2 size)
+        public RectangleShape(Vector2 size)
         {
             Size = size;
         }
@@ -74,18 +90,51 @@ namespace World.Physics
 
             return list;
         }
+
+        public override bool CollidesWith(IShape shape)
+        {
+            RectangleShape rectangle = shape as RectangleShape;
+            if (rectangle != null)
+            {
+                RectangleF result;
+                RectangleF thisRectangleF = VRectangle;
+                RectangleF thatRectangleF = rectangle.VRectangle;
+                RectangleF.Intersect(ref thisRectangleF, ref thatRectangleF, out result);
+                return result.Size.X > 0 || result.Y > 0;
+            }
+
+            CircleShape circle = shape as CircleShape;
+            if (circle != null)
+            {
+                return circle.CollidesWith(this);
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public override void Resize(float add)
+        {
+            Size += add;
+        }
+
+        public RectangleF VRectangle
+        {
+            get { return new RectangleF(Position, Size); }
+        }
     }
 
-    public class Circle : Shape
+    public class CircleShape : Shape
     {
+        public VRageMath.Circle VCircle { get; private set; }
+
         public float Radius { get; private set; }
 
-        public Circle(float radius)
+        public CircleShape(float radius)
         {
             Radius = radius;
         }
 
-        public Circle(Vector2 size)
+        public CircleShape(Vector2 size)
         {
             Radius = (size.X + size.Y) / 4;
         }
@@ -118,17 +167,38 @@ namespace World.Physics
                 }
             }
 
-            list.RemoveAll(x => !CircleRectangleIntersects(Position, new RectangleF(new Vector2(x.X, x.Y), Vector2.One)));
+            list.RemoveAll(x => !CircleRectangleIntersects(new RectangleF(new Vector2(x.X, x.Y), Vector2.One)));
 
             return list;
         }
 
-        private bool CircleRectangleIntersects(Vector2 center, RectangleF rectangle)
+        public override bool CollidesWith(IShape shape)
+        {
+            CircleShape circle = shape as CircleShape;
+            if (circle != null)
+            {
+                return Vector2.Distance(circle.Position, Position) < Radius + circle.Radius;
+            }
+
+            RectangleShape rectangle = shape as RectangleShape;
+            if (rectangle != null)
+            {
+                return CircleRectangleIntersects(rectangle.VRectangle);
+            }
+            throw new NotImplementedException();
+        }
+
+        public override void Resize(float add)
+        {
+            Radius += add;
+        }
+
+        private bool CircleRectangleIntersects(RectangleF rectangle)
         {
             float rectangleCX = rectangle.X + rectangle.Width / 2;
             float rectangleCY = rectangle.Y + rectangle.Height / 2;
-            float circleDistanceX = Math.Abs(center.X - rectangleCX);
-            float circleDistanceY = Math.Abs(center.Y - rectangleCY);
+            float circleDistanceX = Math.Abs(Position.X - rectangleCX);
+            float circleDistanceY = Math.Abs(Position.Y - rectangleCY);
 
             if (circleDistanceX > (rectangle.Width / 2 + Radius)) { return false; }
             if (circleDistanceY > (rectangle.Height / 2 + Radius)) { return false; }
@@ -148,7 +218,7 @@ namespace World.Physics
     /// <summary>
     /// Given by x^2/a^2 + y^2/b^2 = 1
     /// </summary>
-    public class Ellipse : Shape
+    public class EllipseShape : Shape
     {
 
         public override float PossibleCollisionDistance()
@@ -162,6 +232,16 @@ namespace World.Physics
         }
 
         public override List<Vector2I> CoverTiles()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CollidesWith(IShape shape)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Resize(float add)
         {
             throw new NotImplementedException();
         }

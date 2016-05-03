@@ -18,8 +18,7 @@ namespace World.GameActors.GameObjects
             position,
             size,
             direction,
-            TileCollision.Bounce,
-            typeof(Circle))
+            typeof(CircleShape))
         {
         }
     }

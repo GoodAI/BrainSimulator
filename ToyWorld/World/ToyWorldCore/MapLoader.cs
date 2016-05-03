@@ -287,6 +287,7 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="properties"></param>
         /// <param name="gameObject"></param>
+        [DebuggerNonUserCode]
         private static void SetGameObjectProperties(List<Property> properties, GameObject gameObject)
         {
             Type type = gameObject.GetType();
@@ -308,6 +309,22 @@ namespace World.ToyWorldCore
                         {
                             value = float.Parse(property.Value, CultureInfo.InvariantCulture);
                         }
+                        else if (propertyType == typeof(bool))
+                        {
+                            if (property.Value == "1")
+                            {
+                                value = true;
+                            }
+                            else if (property.Value == "0")
+                            {
+                                value = false;
+                            }
+                            else
+                            {
+                                value = bool.Parse(property.Value);
+                            }
+                            
+                        }
                         else if (propertyType == typeof(string))
                         {
                             value = property.Value;
@@ -328,10 +345,10 @@ namespace World.ToyWorldCore
                             "Property type should be " + propertyType.Name);
                     }
                 }
-                catch (AmbiguousMatchException)
+                catch (NullReferenceException)
                 {
                     IEnumerable<string> propertiesNames = type.GetProperties().Select(x => x.Name);
-                    string joined = String.Join(",\n", propertiesNames);
+                    string joined = String.Join(", ", propertiesNames); //String.Join(",\n", propertiesNames);
                     throw new NotSupportedException(
                         ".tmx file contains unknown property " + property.Name +
                         " at object " + gameObject.Name +

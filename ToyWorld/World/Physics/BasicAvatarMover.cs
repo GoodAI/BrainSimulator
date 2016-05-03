@@ -24,6 +24,7 @@ namespace World.Physics
             Debug.Assert(physicalEntity != null, "physicalEntity != null");
             physicalEntity.ForwardSpeed = avatar.DesiredSpeed * MaximumSpeed;
             physicalEntity.RotationSpeed = avatar.DesiredRotation * MathHelper.ToRadians(MaximumRotationSpeed);
+            avatar.Rotation += physicalEntity.RotationSpeed;
         }
     }
 }

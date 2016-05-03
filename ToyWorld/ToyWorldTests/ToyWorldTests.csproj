@@ -116,6 +116,7 @@
     <Compile Include="Physics\CollisionResolverTest.cs" />
     <Compile Include="Physics\MovementPhysicsTest.cs" />
     <Compile Include="Physics\ShapesTests.cs" />
+    <Compile Include="Physics\UtilsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\GLRendererTests.cs" />
     <Compile Include="Render\RenderRequestTests.cs" />

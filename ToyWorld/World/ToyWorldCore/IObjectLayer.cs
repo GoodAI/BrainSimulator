@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using World.GameActors.GameObjects;
+using World.Physics;
+using Circle = VRageMath.Circle;
 
 namespace World.ToyWorldCore
 {
@@ -10,7 +12,25 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="rectangle"></param>
         /// <returns></returns>
-        List<GameObject> GetGameObjects(VRageMath.RectangleF rectangle);
+        List<IGameObject> GetGameObjects(VRageMath.RectangleF rectangle);
+
+        /// <summary>
+        /// Gets all game objects.
+        /// </summary>
+        /// <returns></returns>
+        List<IGameObject> GetGameObjects();
+
+        /// <summary>
+        /// Get all game objects in given circle.
+        /// </summary>
+        /// <returns></returns>
+        List<IGameObject> GetGameObjects(Circle circle);
+
+        List<IPhysicalEntity> GetPhysicalEntities(Circle circle);
+
+        List<IPhysicalEntity> GetPhysicalEntities();
+
+        List<IPhysicalEntity> GetPhysicalEntities(VRageMath.RectangleF rectangle);
 
         /// <summary>
         /// Adds game object to the layer. If object cannot be added, return false.

@@ -150,7 +150,9 @@
     <Compile Include="GameActors\Tiles\Tree.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
-    <Compile Include="Physics\CollisionResolver.cs" />
+    <Compile Include="Physics\ICollisionResolver.cs" />
+    <Compile Include="Physics\MomentumCollisionResolver.cs" />
+    <Compile Include="Physics\NaiveCollisionResolver.cs" />
     <Compile Include="Physics\ForwardMovablePhysicalEntity.cs" />
     <Compile Include="Physics\IAvatarMover.cs" />
     <Compile Include="Physics\IMovable.cs" />
