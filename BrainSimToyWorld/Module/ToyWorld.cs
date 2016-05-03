@@ -29,6 +29,8 @@ namespace GoodAI.ToyWorld
 
         public TWGetInputTask GetInputTask { get; private set; }
 
+        public event EventHandler WorldInitialized = delegate { };
+
         [MyOutputBlock(0), MyUnmanaged]
         public MyMemoryBlock<float> VisualFov
         {
@@ -124,8 +126,8 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = 1024)]
         public int ResolutionHeight { get; set; }
 
-        private IGameController m_gameCtrl { get; set; }
-        private IAvatarController m_avatarCtrl { get; set; }
+        public IGameController GameCtrl { get; set; }
+        public IAvatarController AvatarCtrl { get; set; }
 
         private IFovAvatarRR m_fovRR { get; set; }
         private IFofAvatarRR m_fofRR { get; set; }
@@ -167,17 +169,17 @@ namespace GoodAI.ToyWorld
                 return;
 
             GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
-            m_gameCtrl = GameFactory.GetThreadSafeGameController(setup);
-            m_gameCtrl.Init();
+            GameCtrl = GameFactory.GetThreadSafeGameController(setup);
+            GameCtrl.Init();
 
-            int[] avatarIds = m_gameCtrl.GetAvatarIds();
+            int[] avatarIds = GameCtrl.GetAvatarIds();
             if (avatarIds.Length == 0)
             {
                 MyLog.ERROR.WriteLine("No avatar found in map!");
                 return;
             }
 
-            foreach (MyMemoryBlock<float> memBlock in new MyMemoryBlock<float>[3] {VisualFov, VisualFof, VisualFree})
+            foreach (MyMemoryBlock<float> memBlock in new MyMemoryBlock<float>[3] { VisualFov, VisualFof, VisualFree })
             {
                 memBlock.Unmanaged = !CopyDataThroughCPU;
                 memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
@@ -185,7 +187,7 @@ namespace GoodAI.ToyWorld
 
             // Setup controllers
             int myAvatarId = avatarIds[0];
-            m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
+            AvatarCtrl = GameCtrl.GetAvatarController(myAvatarId);
 
             // Setup render requests
             m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId,
@@ -210,6 +212,8 @@ namespace GoodAI.ToyWorld
                     rr.Resolution = new Size(ResolutionWidth, ResolutionHeight);
                 });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
+
+            WorldInitialized(this, EventArgs.Empty);
         }
 
         private static string GetDllDirectory()
@@ -227,10 +231,10 @@ namespace GoodAI.ToyWorld
 
             rr.CopyImageThroughCpu = CopyDataThroughCPU;
 
-            foreach (string memBlockName in new string[3] {"VisualFov", "VisualFof", "VisualFree"})
+            foreach (string memBlockName in new string[3] { "VisualFov", "VisualFof", "VisualFree" })
             {
                 PropertyDescriptor desc = TypeDescriptor.GetProperties(this.GetType())[memBlockName];
-                MyUnmanagedAttribute attr = (MyUnmanagedAttribute) desc.Attributes[typeof(MyUnmanagedAttribute)];
+                MyUnmanagedAttribute attr = (MyUnmanagedAttribute)desc.Attributes[typeof(MyUnmanagedAttribute)];
                 PropertyInfo unmanaged = attr.GetType().GetProperty("Unmanaged");
                 unmanaged.SetValue(attr, !CopyDataThroughCPU);
             }
@@ -273,7 +277,7 @@ namespace GoodAI.ToyWorld
 
                 // Initialize the target memory block
                 targetMemBlock.ExternalPointer = 1;
-                    // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+                // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
             }
             targetMemBlock.Dims = new TensorDimensions(rr.Resolution.Width, rr.Resolution.Height);
             return rr;
@@ -281,13 +285,13 @@ namespace GoodAI.ToyWorld
 
         private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, int avatarId, Action<T> initializer = null) where T : class, IAvatarRenderRequest
         {
-            T rr = m_gameCtrl.RegisterRenderRequest<T>(avatarId);
+            T rr = GameCtrl.RegisterRenderRequest<T>(avatarId);
             return InitRR(rr, targetMemBlock, initializer);
         }
 
         private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequest
         {
-            T rr = m_gameCtrl.RegisterRenderRequest<T>();
+            T rr = GameCtrl.RegisterRenderRequest<T>();
             return InitRR(rr, targetMemBlock, initializer);
         }
 
@@ -367,7 +371,7 @@ namespace GoodAI.ToyWorld
                 bool pickup = Owner.Controls.Host[m_controlIndexes["pickup"]] > 0.5;
 
                 IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
-                Owner.m_avatarCtrl.SetActions(ctrl);
+                Owner.AvatarCtrl.SetActions(ctrl);
             }
 
             private float ConvertBiControlToUniControl(float a, float b)
@@ -442,7 +446,7 @@ namespace GoodAI.ToyWorld
                     m_fpsStopwatch.Restart();
                 }
 
-                Owner.m_gameCtrl.MakeStep();
+                Owner.GameCtrl.MakeStep();
 
                 if (Owner.CopyDataThroughCPU)
                 {

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Utils;
@@ -14,22 +15,20 @@ namespace ToyWorldConversation
     public partial class ToyWorldConversation : DockContent
     {
         private readonly MainForm m_mainForm;
-        private IAvatarController m_avatarCtrl;
-        private IGameController m_gameCtrl;
+
+        private IAvatarController m_avatarCtrl
+        {
+            get { return m_toyWorld.AvatarCtrl; }
+        }
+
+        private IGameController m_gameCtrl
+        {
+            get { return m_toyWorld.GameCtrl; }
+        }
 
         private ToyWorld m_toyWorld
         {
             get { return m_mainForm.Project.World as ToyWorld; }
-        }
-
-        private string m_saveFile
-        {
-            get { return m_toyWorld.SaveFile; }
-        }
-
-        private string m_tilesetTable
-        {
-            get { return m_toyWorld.TilesetTable; }
         }
 
         private bool m_showAvatarMessages
@@ -53,37 +52,33 @@ namespace ToyWorldConversation
         private void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
         {
             if (m_toyWorld == null) return;
-            ConnectToToyWorld();
+            m_toyWorld.WorldInitialized += ConnectToToyWorld;
         }
 
-        private void ConnectToToyWorld()
+        private void ConnectToToyWorld(object sender, EventArgs e)
         {
-            GameSetup setup = new GameSetup(new FileStream(m_saveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(m_tilesetTable));
-
-            m_gameCtrl = GameFactory.GetThreadSafeGameController(setup);
-            m_gameCtrl.Init();
+            //m_gameCtrl.Init();
             m_gameCtrl.NewMessage += WorldNewMessage;
 
-            int[] avatarIds = m_gameCtrl.GetAvatarIds();
-            if (avatarIds.Length == 0)
-            {
-                MyLog.ERROR.WriteLine("No avatar found in map!");
-                return;
-            }
-
-            int myAvatarId = avatarIds[0];
-            m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
             m_avatarCtrl.NewMessage += AvatarNewMessage;
         }
 
         private void WorldNewMessage(object sender, MessageEventArgs e)
         {
-            if (m_showWorldMessages) richTextBox_messages.AppendText(e.Message);
+            if (m_showWorldMessages)
+                Invoke((MethodInvoker)(() =>
+                {
+                    richTextBox_messages.AppendText(e.Message);
+                }));
         }
 
         private void AvatarNewMessage(object sender, MessageEventArgs e)
         {
-            if (m_showAvatarMessages) richTextBox_messages.AppendText(e.Message);
+            if (m_showAvatarMessages)
+                Invoke((MethodInvoker)(() =>
+                {
+                    richTextBox_messages.AppendText(e.Message);
+                }));
         }
 
         private void textBox_send_KeyDown(object sender, KeyEventArgs e)

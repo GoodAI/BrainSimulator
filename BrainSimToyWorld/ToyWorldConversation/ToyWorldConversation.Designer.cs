@@ -33,21 +33,28 @@
             this.checkBox_show_agent = new System.Windows.Forms.CheckBox();
             this.checkBox_show_world = new System.Windows.Forms.CheckBox();
             this.richTextBox_messages = new System.Windows.Forms.RichTextBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox_send
             // 
+            this.textBox_send.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_send.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox_send.Location = new System.Drawing.Point(15, 202);
+            this.textBox_send.Location = new System.Drawing.Point(3, 26);
             this.textBox_send.Name = "textBox_send";
-            this.textBox_send.Size = new System.Drawing.Size(260, 20);
+            this.textBox_send.Size = new System.Drawing.Size(230, 20);
             this.textBox_send.TabIndex = 0;
             this.textBox_send.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_send_KeyDown);
             // 
             // label_show
             // 
             this.label_show.AutoSize = true;
-            this.label_show.Location = new System.Drawing.Point(12, 186);
+            this.label_show.Location = new System.Drawing.Point(3, 6);
             this.label_show.Name = "label_show";
             this.label_show.Size = new System.Drawing.Size(34, 13);
             this.label_show.TabIndex = 1;
@@ -58,7 +65,7 @@
             this.checkBox_show_agent.AutoSize = true;
             this.checkBox_show_agent.Checked = true;
             this.checkBox_show_agent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_show_agent.Location = new System.Drawing.Point(73, 185);
+            this.checkBox_show_agent.Location = new System.Drawing.Point(43, 6);
             this.checkBox_show_agent.Name = "checkBox_show_agent";
             this.checkBox_show_agent.Size = new System.Drawing.Size(54, 17);
             this.checkBox_show_agent.TabIndex = 2;
@@ -70,7 +77,7 @@
             this.checkBox_show_world.AutoSize = true;
             this.checkBox_show_world.Checked = true;
             this.checkBox_show_world.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_show_world.Location = new System.Drawing.Point(133, 185);
+            this.checkBox_show_world.Location = new System.Drawing.Point(103, 6);
             this.checkBox_show_world.Name = "checkBox_show_world";
             this.checkBox_show_world.Size = new System.Drawing.Size(54, 17);
             this.checkBox_show_world.TabIndex = 3;
@@ -79,30 +86,57 @@
             // 
             // richTextBox_messages
             // 
+            this.richTextBox_messages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox_messages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBox_messages.Location = new System.Drawing.Point(12, 13);
+            this.richTextBox_messages.Location = new System.Drawing.Point(3, 3);
             this.richTextBox_messages.Name = "richTextBox_messages";
             this.richTextBox_messages.ReadOnly = true;
-            this.richTextBox_messages.Size = new System.Drawing.Size(260, 166);
+            this.richTextBox_messages.Size = new System.Drawing.Size(230, 245);
             this.richTextBox_messages.TabIndex = 4;
             this.richTextBox_messages.Text = "";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(11, 12);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.richTextBox_messages);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.checkBox_show_world);
+            this.splitContainer1.Panel2.Controls.Add(this.label_show);
+            this.splitContainer1.Panel2.Controls.Add(this.checkBox_show_agent);
+            this.splitContainer1.Panel2.Controls.Add(this.textBox_send);
+            this.splitContainer1.Size = new System.Drawing.Size(236, 304);
+            this.splitContainer1.SplitterDistance = 251;
+            this.splitContainer1.TabIndex = 6;
             // 
             // ToyWorldConversation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 232);
-            this.Controls.Add(this.richTextBox_messages);
-            this.Controls.Add(this.checkBox_show_world);
-            this.Controls.Add(this.checkBox_show_agent);
-            this.Controls.Add(this.label_show);
-            this.Controls.Add(this.textBox_send);
+            this.ClientSize = new System.Drawing.Size(262, 327);
+            this.Controls.Add(this.splitContainer1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
             this.Name = "ToyWorldConversation";
             this.Text = "ToyWorld - Conversation";
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -113,6 +147,7 @@
         private System.Windows.Forms.CheckBox checkBox_show_agent;
         private System.Windows.Forms.CheckBox checkBox_show_world;
         private System.Windows.Forms.RichTextBox richTextBox_messages;
+        private System.Windows.Forms.SplitContainer splitContainer1;
 
     }
 }

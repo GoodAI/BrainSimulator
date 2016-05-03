@@ -28,7 +28,7 @@ namespace Game
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
-        public event MessageEventHandler NewMessage;
+        public event MessageEventHandler NewMessage = delegate { };
 
         protected GameControllerBase(RendererBase renderer, GameSetup setup)
         {
