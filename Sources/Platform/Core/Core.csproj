@@ -157,6 +157,7 @@
     <Compile Include="Dashboard\TaskGroupConverter.cs" />
     <Compile Include="Observers\MatrixObserver.cs" />
     <Compile Include="Observers\MyObserverHelpers.cs" />
+    <Compile Include="Observers\MyTensorObserver.cs" />
     <Compile Include="Observers\TimePlotObserver.cs" />
     <Compile Include="Observers\MyMemoryBlockEditor.cs" />
     <Compile Include="Observers\MyHistogramObserver.cs" />

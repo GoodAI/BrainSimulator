@@ -33,6 +33,19 @@ extern "C"
 		}
 	}
 
+	__global__ void ColorScaleObserverTiledDouble(double* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int tw, int th, int tilesInRow)
+	{
+		int id = blockDim.x*blockIdx.y*gridDim.x
+			+ blockDim.x*blockIdx.x
+			+ threadIdx.x;
+
+		if (id < numOfPixels)
+		{
+			// TODO custom indexing goes here!
+			//pixels[id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
+		}
+	}
+
 	__global__ void DrawVectorsKernel(float* values, int elements, float maxValue, unsigned int* pixels, int numOfPixels) 
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	

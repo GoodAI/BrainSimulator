@@ -120,7 +120,7 @@ namespace GoodAI.Core.Observers
                 TriggerReset();
             }
         }
-        private CustomDimensionsHint m_customDimensions = CustomDimensionsHint.Empty;
+        protected CustomDimensionsHint m_customDimensions = CustomDimensionsHint.Empty;
 
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Temporal")]
@@ -156,7 +156,7 @@ namespace GoodAI.Core.Observers
             TargetChanged += MyMemoryBlockObserver_TargetChanged;
         }
 
-        void MyMemoryBlockObserver_TargetChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void MyMemoryBlockObserver_TargetChanged(object sender, PropertyChangedEventArgs e)
         {
             Type type = Target.GetType().GenericTypeArguments[0];
             m_kernel = MyKernelFactory.Instance.Kernel(@"Observers\ColorScaleObserver" + type.Name);
@@ -217,8 +217,8 @@ namespace GoodAI.Core.Observers
             
             SetTextureDimensions();
         }
-
-        private void SetTextureDimensions()
+        
+        protected virtual void SetTextureDimensions()
         {
             string warning;
             Size textureSize = ComputeCustomTextureSize(Target.Dims, m_customDimensions, Method, Elements, out warning);
