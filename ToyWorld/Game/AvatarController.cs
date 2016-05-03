@@ -1,5 +1,6 @@
 ﻿using System;
 using GoodAI.ToyWorld.Control;
+using GoodAI.ToyWorldAPI;
 using VRageMath;
 using World.GameActors.GameObjects;
 
@@ -10,10 +11,19 @@ namespace Game
         private readonly IAvatar m_avatar;
         private AvatarControls m_avatarControls;
 
+        public event MessageEventHandler NewMessage = delegate { };
+
         public AvatarController(IAvatar avatar)
         {
             m_avatar = avatar;
             m_avatarControls = new AvatarControls(int.MaxValue);
+
+            avatar.NewMessage += avatar_NewMessage;
+        }
+
+        private void avatar_NewMessage(object sender, MessageEventArgs e)
+        {
+            NewMessage(this, e);
         }
 
         public void SetActions(IAvatarControls actions)
@@ -36,6 +46,11 @@ namespace Game
         {
             m_avatarControls = new AvatarControls(int.MaxValue);
             m_avatar.ResetControls();
+        }
+
+        public void SendMessage(string message)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetAvatarActionsControllable()

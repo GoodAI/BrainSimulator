@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using GoodAI.ToyWorld.Control;
+using GoodAI.ToyWorldAPI;
 using Render.Renderer;
 using Render.RenderRequests;
 using TmxMapSerializer.Elements;
@@ -27,6 +28,7 @@ namespace Game
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
+        public event MessageEventHandler NewMessage;
 
         protected GameControllerBase(RendererBase renderer, GameSetup setup)
         {

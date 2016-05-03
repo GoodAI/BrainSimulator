@@ -42,6 +42,7 @@
             this.textBox_send.Name = "textBox_send";
             this.textBox_send.Size = new System.Drawing.Size(260, 20);
             this.textBox_send.TabIndex = 0;
+            this.textBox_send.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_send_KeyDown);
             // 
             // label_show
             // 
@@ -97,6 +98,7 @@
             this.Controls.Add(this.label_show);
             this.Controls.Add(this.textBox_send);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HideOnClose = true;
             this.Name = "ToyWorldConversation";
             this.Text = "ToyWorld - Conversation";
             this.ResumeLayout(false);
