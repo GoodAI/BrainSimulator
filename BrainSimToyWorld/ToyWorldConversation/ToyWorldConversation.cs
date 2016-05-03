@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Forms;
-using GoodAI.Core.Utils;
+using GoodAI.Core.Execution;
 using GoodAI.ToyWorld;
 using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
-using ToyWorldFactory;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ToyWorldConversation
@@ -50,9 +48,16 @@ namespace ToyWorldConversation
 
             m_mainForm = mainForm;
             m_mainForm.WorldChanged += m_mainForm_WorldChanged;
+            m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
 
             m_boldFont = new Font(richTextBox_messages.Font, FontStyle.Bold);
             m_normalFont = richTextBox_messages.Font;
+        }
+
+        private void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
+        {
+            if (e.OldState == MySimulationHandler.SimulationState.STOPPED)
+                richTextBox_messages.Clear();
         }
 
         private void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
