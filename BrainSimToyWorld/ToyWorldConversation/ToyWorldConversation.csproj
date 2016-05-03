@@ -63,6 +63,18 @@
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ToyWorld\ToyWorldAPI\ToyWorldAPI.csproj">
+      <Project>{527728E6-91BE-4678-912F-45A507D0BC67}</Project>
+      <Name>ToyWorldAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ToyWorld\ToyWorldFactory\ToyWorldFactory.csproj">
+      <Project>{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}</Project>
+      <Name>ToyWorldFactory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Module\BrainSimToyWorld.csproj">
+      <Project>{8C381B5A-3FD7-4311-9C42-F8115587E5FD}</Project>
+      <Name>BrainSimToyWorld</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="post_build.cmd" />
