@@ -59,11 +59,14 @@ namespace GoodAI.Modules.Testing
         public override void UpdateMemoryBlocks()
         {
             Output.Count = OutputSize;
-            Output.ColumnHint = ColumnHint;
+            //Output.ColumnHint = ColumnHint;
+            Output.Dims = TensorDimensions.GetBackwardCompatibleDims(Output.Count, ColumnHint);
             RandomPool.Count = PatternCount * OutputSize;
-            RandomPool.ColumnHint = ColumnHint;
+            //RandomPool.ColumnHint = ColumnHint;
+            RandomPool.Dims = TensorDimensions.GetBackwardCompatibleDims(RandomPool.Count, ColumnHint);
             Label.Count = PatternCount / PatternGroups;
-            Label.ColumnHint = Label.Count;
+            //Label.ColumnHint = Label.Count;
+            Label.Dims = TensorDimensions.GetBackwardCompatibleDims(Label.Count, Label.Count);
         }
 
         /// <summary>

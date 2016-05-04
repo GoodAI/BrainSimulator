@@ -79,8 +79,9 @@ namespace GoodAI.Core.Nodes
                     m_userInput = new float[OutputSize];
                 }
             }
-
-            Output.ColumnHint = ColumnHint;
+            //Output.ColumnHint = ColumnHint;
+            Output.Dims = TensorDimensions.GetBackwardCompatibleDims(Output.Count, ColumnHint);
+            
         }
 
         public override void Validate(MyValidator validator) 

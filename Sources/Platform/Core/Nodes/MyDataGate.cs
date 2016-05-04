@@ -42,7 +42,11 @@ namespace GoodAI.Core.Nodes
         public override void UpdateMemoryBlocks()
         {
             Output.Count = GetInputSize(0);
-            Output.ColumnHint = GetInput(0) != null ? GetInput(0).ColumnHint : 1;
+            //Output.ColumnHint = GetInput(0) != null ? GetInput(0).ColumnHint : 1;
+            if (GetInput(0) != null)
+            {
+                Output.Dims = GetInput(0).Dims;
+            }
         }
 
         public override void Validate(MyValidator validator)

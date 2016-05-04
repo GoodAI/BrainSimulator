@@ -192,30 +192,31 @@ namespace MNIST
                 m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
                 return im;
             }
-            else if (enumerator.MoveNext() && m_imagesServed < images.Count)
-            {
-                MyMNISTImage im = (MyMNISTImage)enumerator.Current;
-                m_imagesServed++;
-
-                if (m_definedOrder)
-                {
-                    if (im.Label != validNumbers[m_sequenceIterator])
-                    {
-                        return GetNextImage(validNumbers, setType);
-                    }
-                    m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
-                }
-                else
-                {
-                    if (!validNumbers.Contains(im.Label))
-                    {
-                        return GetNextImage(validNumbers, setType);
-                    }
-                }
-                return im;
-            }
             else
             {
+                MyMNISTImage im = null;
+                while (enumerator.MoveNext() && m_imagesServed < images.Count)
+                {
+                    im = (MyMNISTImage)enumerator.Current;
+                    m_imagesServed++;
+
+                    if (m_definedOrder)
+                    {
+                        if (im.Label == validNumbers[m_sequenceIterator])
+                        {
+                            m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
+                            return im;
+                        }
+                    }
+                    else
+                    {
+                        if (validNumbers.Contains(im.Label))
+                        {
+                            return im;
+                        }
+                    }
+                }
+
                 switch (m_afterLastImage)
                 {
                     case MNISTLastImageMethod.ResetToStart:

@@ -44,7 +44,8 @@ namespace GoodAI.Modules.Transforms
 
             if (Input != null)
             {
-                Output.ColumnHint = Input.ColumnHint;
+                //Output.ColumnHint = Input.ColumnHint;
+                Output.Dims = Input.Dims;
             }
         }
     }
