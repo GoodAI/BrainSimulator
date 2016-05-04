@@ -144,7 +144,7 @@ namespace GoodAI.Core.Observers
 
         #region TensorObserverParameters
 
-        private bool m_ot;
+        private bool m_observeTensors;
         [YAXSerializableField(DefaultValue = false)]
         [MyBrowsable, Category("Tensor Observer"),
         Description("If enabled, memory block is displayed in tiles " +
@@ -154,32 +154,32 @@ namespace GoodAI.Core.Observers
         {
             get
             {
-                return m_ot;
+                return m_observeTensors;
             }
             set
             {
-                m_ot = value;
+                m_observeTensors = value;
                 TriggerReset();
             }
         }
 
-        private bool m_ucd;
+        private bool m_useCustomDimensions;
         [YAXSerializableField(DefaultValue = false)]
         [MyBrowsable, Category("Tensor Observer"), Description("If enabled, the 'TileWidth, TileHeight,*' will be parsed from the CustomDimensions. From the MemoryBlock otherwise.")]
         public bool UseCustomDimensions
         {
             get
             {
-                return m_ucd;
+                return m_useCustomDimensions;
             }
             set
             {
-                m_ucd = value;
+                m_useCustomDimensions = value;
                 TriggerReset();
             }
         }
 
-        private int m_tw, m_th, m_tin;
+        private int m_tilesInRow;
         [YAXSerializableField(DefaultValue = 1)]
         [MyBrowsable, Category("Tensor Observer")]
         [Description("Number of tiles displayed in one row")]
@@ -187,13 +187,13 @@ namespace GoodAI.Core.Observers
         {
             get
             {
-                return m_tin;
+                return m_tilesInRow;
             }
             set
             {
                 if (value > 0)
                 {
-                    m_tin = value;
+                    m_tilesInRow = value;
                     TriggerReset();
                 }
             }
