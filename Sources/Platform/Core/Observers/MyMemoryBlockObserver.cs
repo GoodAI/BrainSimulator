@@ -144,9 +144,20 @@ namespace GoodAI.Core.Observers
 
         #region TensorObserverParameters
 
+        private bool m_ot;
         [YAXSerializableField(DefaultValue = false)]
         [MyBrowsable, Category("Tensor Observer"), Description("Enables/disables (computation expensive) tensor observing (if disabled, this is normal MemoryBlockObserver)")]
-        public bool ObserveTensors { get; set; }
+        public bool ObserveTensors {
+            get
+            { 
+                return m_ot;
+            } 
+            set 
+            {
+                m_ot = value;
+                TriggerReset();
+            }
+        }
 
         private int m_tw, m_th, m_tin;
         [YAXSerializableField(DefaultValue = 20)]
@@ -163,6 +174,7 @@ namespace GoodAI.Core.Observers
                 if (value > 0)
                 {
                     m_tw = value;
+                    TriggerReset();
                 }
             }
         }
@@ -181,6 +193,7 @@ namespace GoodAI.Core.Observers
                 if (value > 0)
                 {
                     m_th = value;
+                    TriggerReset();
                 }
             }
         }
@@ -199,6 +212,7 @@ namespace GoodAI.Core.Observers
                 if (value > 0)
                 {
                     m_tin = value;
+                    TriggerReset();
                 }
             }
         }
@@ -311,7 +325,7 @@ namespace GoodAI.Core.Observers
             if (ObserveTensors)
             {
                 // try to compute custom texture size
-                textureSize = ComputeTiledTextureSize(Method, Elements, out warning, TileWidth, TileHeight, TilesInRow);
+                textureSize = ComputeTiledTextureSize(Target.Dims, Method, Target, TileWidth, TileHeight, TilesInRow);
             }
             if (textureSize == Size.Empty)
             {
@@ -324,20 +338,20 @@ namespace GoodAI.Core.Observers
             TextureHeight = textureSize.Height;
         }
 
-        internal static Size ComputeTiledTextureSize(RenderingMethod method, int vectorElements, out string warning,
+        internal static Size ComputeTiledTextureSize(TensorDimensions dims, RenderingMethod method, MyAbstractMemoryBlock target,
             int TileWidth, int TileHeight, int TilesInRow)
         {
-            warning = "";
-            if (vectorElements / (TileWidth * TileHeight) != 0)
+            if (dims.ElementCount % (TileWidth * TileHeight) != 0)
             {
-                warning = "Dims.Count not divisible by TileWidth and TileHeight, ignoring";
+                MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", target.Owner.Name, target.Name, 
+                "Dims.Count not divisible by TileWidth and TileHeight, ignoring");
                 return Size.Empty;
             }
-            if (TileWidth * TileHeight * TilesInRow > vectorElements)
+            if (TileWidth * TileHeight * TilesInRow > dims.ElementCount)
             {
-                TilesInRow = vectorElements / (TileWidth * TileHeight);
+                TilesInRow = dims.ElementCount / (TileWidth * TileHeight);
             }
-            return new Size(TileWidth * TilesInRow, vectorElements / (TileWidth * TilesInRow));
+            return new Size(TileWidth * TilesInRow, dims.ElementCount / (TileWidth * TilesInRow));
         }
 
         // TODO(Premek): Report warnings using a logger interface.
