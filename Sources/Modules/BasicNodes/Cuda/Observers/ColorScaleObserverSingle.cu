@@ -28,7 +28,8 @@ extern "C"
 	}
 
 
-   /*
+   /*   Plot memorty block tiles separately next to each other.
+    * 
     *   Schematic depicitation of variable's meaning:
     * 
     *           Values:                            Pixels:
@@ -45,10 +46,6 @@ extern "C"
     *            18 19 20
     *            21 22 23
     *            24 25 26
-    *            .   .
-    *            .   .
-    *            .
-    *         
     */
 	__global__ void ColorScaleObserverTiledSingle(float* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int tw, int th, int tilesInRow)
 	{
@@ -56,19 +53,20 @@ extern "C"
 			+ blockDim.x*blockIdx.x
 			+ threadIdx.x;
 
-        int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col;
-		if (id < numOfPixels) //id of the thread is valid
+        int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col, pixles_id;
+		if (id < numOfPixels)
 		{
-            ta           = tw*th;                 // tile area
-            values_row   = (id % ta) / tw;        // tile specific row id, in the value smemory block
-            values_col   = id % tw;               // tile-specific colum id, in the value smemory block
-            id_tile      = id / ta;               // which tile it is
-            tile_row     = id_tile % tilesInRow;
-            tile_col     = id_tile / tilesInRow;
-            pixels_row   = 1;
-            pixels_col   = 1;
+            ta           = tw*th;                                   // tile area
+            values_row   = (id % ta) / tw;                          // tile specific row id, in the value smemory block
+            values_col   = id % tw;                                 // tile-specific colum id, in the value smemory block
+            id_tile      = id / ta;                                 // which tile it is
+            tile_row     = id_tile / tilesInRow;                    // in which tile-row it is
+            tile_col     = id_tile % tilesInRow;                    // in which tile-column it is
+            pixels_row   = values_row + tile_row*tw;                // row-id in the final pixels mem. block (observer)
+            pixels_col   = values_col + tile_col*th;                // column-id in the final pixels mem. block (observer)
+            pixles_id    = pixels_row*tilesInRow*tw + pixels_col;   // id in the final pixels memory block (observer)
             
-			pixels[id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
+			pixels[pixles_id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
 		}
 	}
 	
