@@ -146,59 +146,41 @@ namespace GoodAI.Core.Observers
 
         private bool m_ot;
         [YAXSerializableField(DefaultValue = false)]
-        [MyBrowsable, Category("Tensor Observer"), Description("Enables/disables (computation expensive) tensor observing (if disabled, this is normal MemoryBlockObserver)")]
-        public bool ObserveTensors {
+        [MyBrowsable, Category("Tensor Observer"),
+        Description("If enabled, memory block is displayed in tiles " +
+            "(width and height of tile read from two first dimensions of MemoryBlock or CustomDimensions) " +
+            "onto grid of width = TilesInRow.")]
+        public bool ObserveTensors
+        {
             get
-            { 
+            {
                 return m_ot;
-            } 
-            set 
+            }
+            set
             {
                 m_ot = value;
                 TriggerReset();
             }
         }
 
+        private bool m_ucd;
+        [YAXSerializableField(DefaultValue = false)]
+        [MyBrowsable, Category("Tensor Observer"), Description("If enabled, the 'TileWidth, TileHeight,*' will be parsed from the CustomDimensions. From the MemoryBlock otherwise.")]
+        public bool UseCustomDimensions
+        {
+            get
+            {
+                return m_ucd;
+            }
+            set
+            {
+                m_ucd = value;
+                TriggerReset();
+            }
+        }
+
         private int m_tw, m_th, m_tin;
-        [YAXSerializableField(DefaultValue = 20)]
-        [MyBrowsable, Category("Tensor Observer")]
-        [Description("Width of one tile")]
-        public int TileWidth
-        {
-            get
-            {
-                return m_tw;
-            }
-            set
-            {
-                if (value > 0)
-                {
-                    m_tw = value;
-                    TriggerReset();
-                }
-            }
-        }
-
-        [YAXSerializableField(DefaultValue = 20)]
-        [MyBrowsable, Category("Tensor Observer")]
-        [Description("Height of one tile")]
-        public int TileHeight
-        {
-            get
-            {
-                return m_th;
-            }
-            set
-            {
-                if (value > 0)
-                {
-                    m_th = value;
-                    TriggerReset();
-                }
-            }
-        }
-
-        [YAXSerializableField(DefaultValue = 20)]
+        [YAXSerializableField(DefaultValue = 1)]
         [MyBrowsable, Category("Tensor Observer")]
         [Description("Number of tiles displayed in one row")]
         public int TilesInRow
@@ -216,6 +198,15 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
+
+        // not browasble, but used
+        [ReadOnly(true), Category("Tensor Observer")]
+        [Description("Width of one tile")]
+        public int TileWidth { set; get; }
+
+        [ReadOnly(true), Category("Tensor Observer")]
+        [Description("Height of one tile")]
+        public int TileHeight { set; get; }
 
         #endregion
 
@@ -245,14 +236,13 @@ namespace GoodAI.Core.Observers
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");
             m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");
 
-            if (ObserveTensors)
-            {
-                MyLog.INFO.WriteLine("ho");
-            }
-
             if (ObserveTensors && type.Name != "Single")
             {
-                MyLog.WARNING.WriteLine("Observing anything other than Signles not supported in the Tiled version");
+                MyLog.WARNING.WriteLine("Observing tensors, with anything other than Signles not supported, will use Single");
+            }
+            if (Method == RenderingMethod.Vector || Method == RenderingMethod.RGB)
+            {
+                MyLog.WARNING.WriteLine("Observing tensors in RGB or Vector mode not supported");
             }
             m_tiledKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
 
@@ -318,14 +308,34 @@ namespace GoodAI.Core.Observers
             SetTextureDimensions();
         }
 
+        private TensorDimensions GetTileDimensions()
+        {
+            if (UseCustomDimensions)
+            {
+                TensorDimensions d;
+                bool didApplyCustomDims = m_customDimensions.TryToApply(Target.Dims, out d);
+                if (!didApplyCustomDims)
+                {
+                    MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
+                        "Could not apply custom dimensions, will use default ones");
+                    return Target.Dims;
+                }
+                return d;
+            }
+            return Target.Dims;
+        }
+
         private void SetTextureDimensions()
         {
             string warning = "";
             Size textureSize = Size.Empty;
+
             if (ObserveTensors)
             {
-                // try to compute custom texture size
-                textureSize = ComputeTiledTextureSize(Target.Dims, Method, Target, TileWidth, TileHeight, TilesInRow);
+                TensorDimensions d = GetTileDimensions();
+                TileWidth = d[0];
+                TileHeight = d[1];
+                textureSize = ComputeTiledTextureSize(d, Method, Target);
             }
             if (textureSize == Size.Empty)
             {
@@ -338,20 +348,19 @@ namespace GoodAI.Core.Observers
             TextureHeight = textureSize.Height;
         }
 
-        internal static Size ComputeTiledTextureSize(TensorDimensions dims, RenderingMethod method, MyAbstractMemoryBlock target,
-            int TileWidth, int TileHeight, int TilesInRow)
+        private Size ComputeTiledTextureSize(TensorDimensions dims, RenderingMethod method, MyAbstractMemoryBlock target)
         {
-            if (dims.ElementCount % (TileWidth * TileHeight) != 0)
-            {
-                MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", target.Owner.Name, target.Name, 
-                "Dims.Count not divisible by TileWidth and TileHeight, ignoring");
-                return Size.Empty;
-            }
             if (TileWidth * TileHeight * TilesInRow > dims.ElementCount)
             {
                 TilesInRow = dims.ElementCount / (TileWidth * TileHeight);
+                MyLog.WARNING.WriteLine("TilesInRow too big, adjusting to the maximum value of " + TilesInRow);
             }
-            return new Size(TileWidth * TilesInRow, dims.ElementCount / (TileWidth * TilesInRow));
+
+            int noBlocks = dims.ElementCount / (TileWidth * TileHeight);
+
+            // in case the noBlocks is not divisible by TilesInRow, allocate enough space
+            int height = (int)Math.Ceiling((decimal)noBlocks / TilesInRow);
+            return new Size(TileWidth * TilesInRow, height * TileHeight);
         }
 
         // TODO(Premek): Report warnings using a logger interface.
