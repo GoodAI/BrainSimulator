@@ -27,14 +27,47 @@ extern "C"
 		}
 	}
 
+
+   /*
+    *   Schematic depicitation of variable's meaning:
+    * 
+    *           Values:                            Pixels:
+    *                                                  <--  tiles in row = 2  -->                                         
+    *         <-- tw=3 -->      +                         0  1  2  | 9  10 11
+    *            0  1  2        |                         3  4  5  | 12 13 14      tile_row = 0
+    *  idtile    3  4  5        | th=3 (tile height)      6  7  8  | 15 16 17
+    *    0       6  7  8        |                        -   -   -   -   -   -
+    *           -   -   -       +                         18 19 20 | 27 28...
+    *            9  10 11                                 21 22 23 |               tile_row = 1
+    *  idtile    12 13 14                                 24 25 26 |   ... 35
+    *     1      15 16 17 
+    *           -   -   -   
+    *            18 19 20
+    *            21 22 23
+    *            24 25 26
+    *            .   .
+    *            .   .
+    *            .
+    *         
+    */
 	__global__ void ColorScaleObserverTiledSingle(float* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int tw, int th, int tilesInRow)
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x
 			+ blockDim.x*blockIdx.x
 			+ threadIdx.x;
 
+        int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col;
 		if (id < numOfPixels) //id of the thread is valid
 		{
+            ta           = tw*th;                 // tile area
+            values_row   = (id % ta) / tw;        // tile specific row id, in the value smemory block
+            values_col   = id % tw;               // tile-specific colum id, in the value smemory block
+            id_tile      = id / ta;               // which tile it is
+            tile_row     = id_tile % tilesInRow;
+            tile_col     = id_tile / tilesInRow;
+            pixels_row   = 1;
+            pixels_col   = 1;
+            
 			pixels[id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
 		}
 	}
