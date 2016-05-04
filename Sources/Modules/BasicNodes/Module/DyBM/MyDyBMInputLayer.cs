@@ -270,8 +270,8 @@ namespace GoodAI.Modules.DyBM
                 Trace_γ.Count = Neurons * Traces_L;
                 FIFO_trace.Count = Synapses * DelayInterval;
                 LogLikelihood.Count = 1;
-                LearningRate_η.Count = 4; // θ + 1
-                Derivative_Δ.Count = 4;   // θ + 1
+                LearningRate_η.Count = 2 + Synapses; // θ -> b,u and all vij
+                Derivative_Δ.Count = 2 + Synapses;   // θ -> b,u and all vij
 
                 // Create N FIFO queues and initialize their conduction delays
                 Fifo_x = new MyQueue[Synapses];

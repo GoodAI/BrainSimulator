@@ -70,9 +70,9 @@ namespace GoodAI.Modules.DyBM.Tasks
         public override void Execute()
         {
             int L, K, M, m;
-            float head, tail, Δb, Δu, Δv1, Δv2, ηb, ηu, ηv1, ηv2;
+            float head, tail;
             float sum_α1, sum_β1, sum_γ1, sum_α, sum_β, sum_γ, logPθ;
-            float[] αij, βij, γi, γj, uij, vij, vji, μ, λ, Eθ, Pθ;
+            float[] αij, βij, γi, γj, uij, vij, vji, η, Δ, μ, λ, Eθ, Pθ;
 
             int Neurons = Owner.Neurons;
             float τ = Owner.Temperature_τ;
@@ -180,27 +180,28 @@ namespace GoodAI.Modules.DyBM.Tasks
             #endregion
 
             #region Update Weights, Bias and Eligidible traces
+            // Load learning rates
             m = 0;
+
+            η = new float[Owner.LearningRate_η.Count];
+            Δ = new float[Owner.LearningRate_η.Count];
+            for (int i = 0; i < (Neurons * Neurons) + 2; i++)
+            {
+                η[i] = Owner.LearningRate_η.Host[i];
+                Δ[i] = Owner.Derivative_Δ.Host[i];
+            }
+
             for (int j = 0; j < Neurons; j++)
             {
                 // Acquire γj at time t-1
                 γj = new float[L];
                 Array.Copy(Owner.Trace_γ.Host, (j * L), γj, 0, L);
 
-                ηb = Owner.LearningRate_η.Host[0];
-                ηu = Owner.LearningRate_η.Host[1];
-                ηv1 = Owner.LearningRate_η.Host[2];
-                ηv2 = Owner.LearningRate_η.Host[3];
-
-                Δb = Owner.Derivative_Δ.Host[0];
-                Δu = Owner.Derivative_Δ.Host[1];
-                Δv1 = Owner.Derivative_Δ.Host[2];
-                Δv2 = Owner.Derivative_Δ.Host[3];
-
                 // For all synapses of each neuron
                 for (int i = 0; i < Neurons; i++)
                 {
                     // Index of the synapse
+                    int id = ((j * Neurons) + i) / 2 + 2;
                     int id_K = (j * Neurons) + (i * K);
                     int id_L = (j * Neurons) + (i * L);
 
@@ -219,24 +220,24 @@ namespace GoodAI.Modules.DyBM.Tasks
                         #region Update Bias and Weights
                         
                         // Update bias value
-                        Δb += (float)Math.Pow( (x[j] - X[j]), 2);
-                        Owner.Bias_b.Host[j] += ηb * (x[j] - X[j]);
+                        Δ[0] += (float)Math.Pow( (x[j] - X[j]), 2);
+                        Owner.Bias_b.Host[j] += η[0] * (x[j] - X[j]);
 
                         // Update LTP weight
                         for (int k = 0; k < K; k++)
                         {
-                            Δu += (float)Math.Pow( (x[j] - X[j]) * αij[k], 2);
-                            Owner.Weight_u.Host[id_K] += ηu * (x[j] - X[j]) * αij[k];
+                            Δ[1] += (float)Math.Pow( (x[j] - X[j]) * αij[k], 2);
+                            Owner.Weight_u.Host[id_K] += η[1] * (x[j] - X[j]) * αij[k];
                         }
 
                         // Update both parts of LTD weight
                         for (int l = 0; l < L; l++)
                         {
-                            Δv1 += (float)Math.Pow( (X[j] - x[j]) * βij[l], 2);
-                            Δv2 += (float)Math.Pow( (X[i] - x[i]) * γj[l], 2);
+                            Δ[id + 0] += (float)Math.Pow( (X[j] - x[j]) * βij[l], 2);
+                            Δ[id + 1] += (float)Math.Pow( (X[i] - x[i]) * γj[l], 2);
 
-                            Owner.Weight_v.Host[id_L] += ηv1 * (X[j] - x[j]) * βij[l];
-                            Owner.Weight_v.Host[id_L] += ηv2 * (X[i] - x[i]) * γj[l];
+                            Owner.Weight_v.Host[id_L] += η[id + 0] * (X[j] - x[j]) * βij[l];
+                            Owner.Weight_v.Host[id_L] += η[id + 1] * (X[i] - x[i]) * γj[l];
                         }
                         #endregion
                     }
@@ -286,38 +287,25 @@ namespace GoodAI.Modules.DyBM.Tasks
                 #region Update learning rate usind AdaGrad
                 if (m++ >= M)
                 {
-                    Δb = Δb == 0 ? 1 : Δb;
-                    Δu = Δu == 0 ? 1 : Δu;
-                    Δv1 = Δv1 == 0 ? 1 : Δv1;
-                    Δv2 = Δv2 == 0 ? 1 : Δv2;
-                    ηb = 1 / ((float)Math.Sqrt(Δb));
-                    ηu = 1 / ((float)Math.Sqrt(Δu));
-                    ηv1 = 1 / ((float)Math.Sqrt(Δv1));
-                    ηv2 = 1 / ((float)Math.Sqrt(Δv2));
-
                     float max = Owner.MaximumLearningRate;
 
-                    ηb = ηb > max ? max : ηb;
-                    ηu = ηu > max ? max : ηu;
-                    ηv1 = ηv1 > max ? max : ηv1;
-                    ηv2 = ηv2 > max ? max : ηv2;
+                    for (int i = 0; i < (Neurons * Neurons) + 2; i++)
+                    {
+                        Δ[i] = Δ[i] == 0 ? 1 : Δ[i];
+                        η[i] = 1 / ((float)Math.Sqrt(Δ[i]));
+                        η[i] = η[i] > max ? max : η[i];
 
-                    Δb = 0;
-                    Δu = 0;
-                    Δv1 = 0;
-                    Δv2 = 0;
+                        Δ[i] = 0;
+                    }
+                    
                     m = 0;
                 }
 
-                Owner.LearningRate_η.Host[0] = ηb;
-                Owner.LearningRate_η.Host[1] = ηu;
-                Owner.LearningRate_η.Host[2] = ηv1;
-                Owner.LearningRate_η.Host[3] = ηv2;
-
-                Owner.Derivative_Δ.Host[0] = Δb;
-                Owner.Derivative_Δ.Host[1] = Δu;
-                Owner.Derivative_Δ.Host[2] = Δv1;
-                Owner.Derivative_Δ.Host[3] = Δv2;
+                for (int i = 0; i < (Neurons * Neurons) + 2; i++)
+                {
+                    Owner.LearningRate_η.Host[i] = η[i];
+                    Owner.Derivative_Δ.Host[i] = Δ[i];
+                }
                 #endregion
             }
             #endregion
