@@ -10,7 +10,9 @@ namespace GoodAI.Core.Observers
 {
     [YAXSerializeAs("MemoryBlockObserver")]
     public class MyMemoryBlockObserver : MyAbstractMemoryBlockObserver
-    {        
+    {
+        #region Parameters
+
         public enum MyBoundPolicy
         {
             IHNERITED,
@@ -25,14 +27,14 @@ namespace GoodAI.Core.Observers
 
         [YAXSerializableField]
         [MyBrowsable, Category("Texture"), DisplayName("Coloring Method")]
-        public RenderingMethod Method 
-        { 
+        public RenderingMethod Method
+        {
             get { return m_method; }
-            set 
-            { 
+            set
+            {
                 m_method = value;
                 m_methodSelected = true;
-                TriggerReset(); 
+                TriggerReset();
             }
         }
         private RenderingMethod m_method;
@@ -52,7 +54,7 @@ namespace GoodAI.Core.Observers
             get { return m_boundPolicy; }
 
             set
-            {                
+            {
                 m_boundPolicy = value;
                 if (m_boundPolicy == MyBoundPolicy.IHNERITED)
                 {
@@ -65,13 +67,13 @@ namespace GoodAI.Core.Observers
         private float m_minValue;
 
         [MyBrowsable, Category("Scale + Bounds"), DisplayName("M\tinValue")]
-        public float MinValue 
+        public float MinValue
         {
             get { return m_minValue; }
-            set 
-            { 
+            set
+            {
                 m_minValue = value;
-                BoundPolicy = MyBoundPolicy.MANUAL; 
+                BoundPolicy = MyBoundPolicy.MANUAL;
             }
         }
 
@@ -120,7 +122,7 @@ namespace GoodAI.Core.Observers
                 TriggerReset();
             }
         }
-        protected CustomDimensionsHint m_customDimensions = CustomDimensionsHint.Empty;
+        private CustomDimensionsHint m_customDimensions = CustomDimensionsHint.Empty;
 
         [YAXSerializableField(DefaultValue = 0)]
         [MyBrowsable, Category("Temporal")]
@@ -138,6 +140,71 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        #endregion
+
+        #region TensorObserverParameters
+
+        [YAXSerializableField(DefaultValue = false)]
+        [MyBrowsable, Category("Tensor Observer"), Description("Enables/disables (computation expensive) tensor observing (if disabled, this is normal MemoryBlockObserver)")]
+        public bool ObserveTensors { get; set; }
+
+        private int m_tw, m_th, m_tin;
+        [YAXSerializableField(DefaultValue = 20)]
+        [MyBrowsable, Category("Tensor Observer")]
+        [Description("Width of one tile")]
+        public int TileWidth
+        {
+            get
+            {
+                return m_tw;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    m_tw = value;
+                }
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 20)]
+        [MyBrowsable, Category("Tensor Observer")]
+        [Description("Height of one tile")]
+        public int TileHeight
+        {
+            get
+            {
+                return m_th;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    m_th = value;
+                }
+            }
+        }
+
+        [YAXSerializableField(DefaultValue = 20)]
+        [MyBrowsable, Category("Tensor Observer")]
+        [Description("Number of tiles displayed in one row")]
+        public int TilesInRow
+        {
+            get
+            {
+                return m_tin;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    m_tin = value;
+                }
+            }
+        }
+
+        #endregion
+
         private bool m_showCoordinatesSelected;
         private bool m_showCoordinates;
 
@@ -145,6 +212,7 @@ namespace GoodAI.Core.Observers
 
         protected MyCudaKernel m_vectorKernel;
         protected MyCudaKernel m_rgbKernel;
+        protected MyCudaKernel m_tiledKernel;
 
         public MyMemoryBlockObserver()
         {
@@ -156,12 +224,23 @@ namespace GoodAI.Core.Observers
             TargetChanged += MyMemoryBlockObserver_TargetChanged;
         }
 
-        protected virtual void MyMemoryBlockObserver_TargetChanged(object sender, PropertyChangedEventArgs e)
+        void MyMemoryBlockObserver_TargetChanged(object sender, PropertyChangedEventArgs e)
         {
             Type type = Target.GetType().GenericTypeArguments[0];
             m_kernel = MyKernelFactory.Instance.Kernel(@"Observers\ColorScaleObserver" + type.Name);
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");
             m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");
+
+            if (ObserveTensors)
+            {
+                MyLog.INFO.WriteLine("ho");
+            }
+
+            if (ObserveTensors && type.Name != "Single")
+            {
+                MyLog.WARNING.WriteLine("Observing anything other than Signles not supported in the Tiled version");
+            }
+            m_tiledKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
 
             if (!m_methodSelected)
             {
@@ -178,6 +257,13 @@ namespace GoodAI.Core.Observers
 
         protected override void Execute()
         {
+            if (ObserveTensors)
+            {
+                m_tiledKernel.SetupExecution(TextureSize);
+                m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, TileWidth, TileHeight, TilesInRow);
+
+                return;
+            }
             if (Method == RenderingMethod.Vector)
             {
                 m_vectorKernel.SetupExecution(TextureSize);
@@ -190,7 +276,7 @@ namespace GoodAI.Core.Observers
             }
             else
             {
-                m_kernel.SetupExecution(TextureSize);                
+                m_kernel.SetupExecution(TextureSize);
                 m_kernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
             }
         }
@@ -214,20 +300,44 @@ namespace GoodAI.Core.Observers
         {
             base.Reset();
             ResetBounds();
-            
+
             SetTextureDimensions();
         }
-        
-        protected virtual void SetTextureDimensions()
-        {
-            string warning;
-            Size textureSize = ComputeCustomTextureSize(Target.Dims, m_customDimensions, Method, Elements, out warning);
 
+        private void SetTextureDimensions()
+        {
+            string warning = "";
+            Size textureSize = Size.Empty;
+            if (ObserveTensors)
+            {
+                // try to compute custom texture size
+                textureSize = ComputeTiledTextureSize(Method, Elements, out warning, TileWidth, TileHeight, TilesInRow);
+            }
+            if (textureSize == Size.Empty)
+            {
+                textureSize = ComputeCustomTextureSize(Target.Dims, m_customDimensions, Method, Elements, out warning);
+            }
             if (!string.IsNullOrEmpty(warning))
                 MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name, warning);
 
             TextureWidth = textureSize.Width;
             TextureHeight = textureSize.Height;
+        }
+
+        internal static Size ComputeTiledTextureSize(RenderingMethod method, int vectorElements, out string warning,
+            int TileWidth, int TileHeight, int TilesInRow)
+        {
+            warning = "";
+            if (vectorElements / (TileWidth * TileHeight) != 0)
+            {
+                warning = "Dims.Count not divisible by TileWidth and TileHeight, ignoring";
+                return Size.Empty;
+            }
+            if (TileWidth * TileHeight * TilesInRow > vectorElements)
+            {
+                TilesInRow = vectorElements / (TileWidth * TileHeight);
+            }
+            return new Size(TileWidth * TilesInRow, vectorElements / (TileWidth * TilesInRow));
         }
 
         // TODO(Premek): Report warnings using a logger interface.
@@ -242,9 +352,9 @@ namespace GoodAI.Core.Observers
             bool isDivisible;
             string divisorName = (method == RenderingMethod.RGB) ? "3 (RGB channel count)" : "vector element count";
 
-            bool isRowVector    = (dims.Rank == 1) || (dims.Rank == 2 && dims[1] == 1);
+            bool isRowVector = (dims.Rank == 1) || (dims.Rank == 2 && dims[1] == 1);
             bool isColumnVector = !isRowVector && (dims.Rank == 2) && (dims[0] == 1);
-            
+
             TensorDimensions adjustedDims;
             bool didApplyCustomDims = customDims.TryToApply(dims, out adjustedDims);
             if (!customDims.IsEmpty && !didApplyCustomDims)
@@ -304,13 +414,13 @@ namespace GoodAI.Core.Observers
             {
                 if (vectorElements < 1)
                     throw new ArgumentException("Vector element count must be greater then zero.", "vectorElements");
- 
+
                 divisor = vectorElements;
             }
 
-            int result = size/divisor;
+            int result = size / divisor;
 
-            isDivisible = (result*divisor == size);
+            isDivisible = (result * divisor == size);
 
             return result;
         }
