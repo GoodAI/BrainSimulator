@@ -1,4 +1,5 @@
-﻿using GoodAI.Core.Task;
+﻿using GoodAI.BasicNodes.DyBM;
+using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
@@ -24,7 +25,7 @@ namespace GoodAI.Modules.DyBM.Tasks
         {
             if (Owner.Delay_d != null)
             {
-                Random rand = new Random();
+                MyRandom rand = new MyRandom();
                 Owner.Delay_d.SafeCopyToHost();
                 Owner.Bias_b.SafeCopyToHost();
                 Owner.Weight_u.SafeCopyToHost();
@@ -32,13 +33,10 @@ namespace GoodAI.Modules.DyBM.Tasks
                 Owner.LearningRate_η.SafeCopyToHost();
 
                 // Generated interval
-                float min = 0.01f;
-                float max = 0.1f;
-
                 for (int s = 0; s < Owner.Neurons; s++)
                 {
                     // Randomize bias
-                    Owner.Bias_b.Host[s] = (float)rand.NextDouble() * (max - min) + min;
+                    Owner.Bias_b.Host[s] = (float)rand.NextDouble(0, 0.1f);
                 }
 
                 for (int s = 0; s < Owner.Synapses; s++)
@@ -46,8 +44,8 @@ namespace GoodAI.Modules.DyBM.Tasks
                     // Init conduction delays
                     Owner.Delay_d.Host[s] = Owner.Fifo_x[s].Count;
                     // Randomize weights
-                    Owner.Weight_u.Host[s] = (float)rand.NextDouble() * (max - min) + min;
-                    Owner.Weight_v.Host[s] = (float)rand.NextDouble() * (max - min) + min;
+                    Owner.Weight_u.Host[s] = (float)rand.NextDouble(0, 0.1f);
+                    Owner.Weight_v.Host[s] = (float)rand.NextDouble(0, 0.1f);
                 }
 
                 for (int i = 0; i < 4; i++)
@@ -103,7 +101,7 @@ namespace GoodAI.Modules.DyBM.Tasks
             #region Take the input of the Layer
             Owner.Input.SafeCopyToHost();
             // Input of the at time t-1
-            float[] x = Owner.Input.Host;//Owner.Previous_x.Host; 
+            float[] x = Owner.Input.Host;
             // Expected input at time t
             float[] X = new float[Neurons];
             #endregion
