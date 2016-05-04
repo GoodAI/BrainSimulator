@@ -16,9 +16,9 @@ namespace World.Physics
         /// </summary>
         IShape Shape { get; set; }
 
-        bool SlideOnCollision { get; set; }
+        bool InelasticCollision { get; set; }
 
-        bool BounceOnCollision { get; set; }
+        bool ElasticCollision { get; set; }
 
         bool StopOnCollision { get; set; }
 
@@ -57,8 +57,8 @@ namespace World.Physics
 
     public abstract class PhysicalEntity : IPhysicalEntity
     {
-        private bool m_slideOnCollision;
-        private bool m_bounceOnCollision;
+        private bool m_inelasticCollision;
+        private bool m_elasticCollision;
         private bool m_stopOnCollision;
         private float m_weight = 1.0f;
 
@@ -75,31 +75,31 @@ namespace World.Physics
 
         public IShape Shape { get; set; }
 
-        public bool SlideOnCollision
+        public bool InelasticCollision
         {
-            get { return m_slideOnCollision; }
+            get { return m_inelasticCollision; }
             set
             {
-                if (value && (BounceOnCollision || StopOnCollision))
+                if (value && (ElasticCollision || StopOnCollision))
                 {
                     throw new ArgumentException(
-                        "SlideOnCollision property cannot be true if BounceOnCollision or StopOnCollision is true.");
+                        "InelasticCollision property cannot be true if ElasticCollision or StopOnCollision is true.");
                 }
-                m_slideOnCollision = value;
+                m_inelasticCollision = value;
             }
         }
 
-        public bool BounceOnCollision
+        public bool ElasticCollision
         {
-            get { return m_bounceOnCollision; }
+            get { return m_elasticCollision; }
             set
             {
-                if (value && (SlideOnCollision || StopOnCollision))
+                if (value && (InelasticCollision || StopOnCollision))
                 {
                     throw new ArgumentException(
-                        "BounceOnCollision property cannot be true if SlideOnCollision or StopOnCollision is true.");
+                        "ElasticCollision property cannot be true if InelasticCollision or StopOnCollision is true.");
                 }
-                m_bounceOnCollision = value;
+                m_elasticCollision = value;
             }
         }
 
@@ -108,10 +108,10 @@ namespace World.Physics
             get { return m_stopOnCollision; }
             set
             {
-                if (value && (BounceOnCollision || SlideOnCollision))
+                if (value && (ElasticCollision || InelasticCollision))
                 {
                     throw new ArgumentException(
-                        "StopOnCollision property cannot be true if SlideOnCollision or BounceOnCollision is true.");
+                        "StopOnCollision property cannot be true if InelasticCollision or ElasticCollision is true.");
                 }
                 m_stopOnCollision = value;
             }

@@ -114,7 +114,7 @@ namespace World.Physics
 
         private void CollidesWithLine(IForwardMovablePhysicalEntity target, float normAngle)
         {
-            if (target.BounceOnCollision)
+            if (target.ElasticCollision)
             {
                 if (Math.Abs(MathHelper.WrapAngle(normAngle - target.Direction)) <= MathHelper.Pi / 2)
                 {
@@ -125,7 +125,7 @@ namespace World.Physics
                     target.Direction = MathHelper.WrapAngle(2 * normAngle - target.Direction);
                 }
             }
-            else if (target.SlideOnCollision)
+            else if (target.InelasticCollision)
             {
                 float cosWrtDirection0 = (float)Math.Sin(normAngle - target.Direction);
                 target.ForwardSpeed *= cosWrtDirection0;
@@ -139,11 +139,11 @@ namespace World.Physics
 
         private void FindTileFreeDirection(IForwardMovablePhysicalEntity physicalEntity, float timeLeft)
         {
-            if (physicalEntity.BounceOnCollision)
+            if (physicalEntity.ElasticCollision)
             {
                 BounceFromTile(physicalEntity, timeLeft);
             }
-            else if (physicalEntity.SlideOnCollision)
+            else if (physicalEntity.InelasticCollision)
             {
                 SlideAroundTile(physicalEntity, timeLeft);
             }
@@ -295,7 +295,7 @@ namespace World.Physics
                     MoveCollisionGroup(collisionGroup, (float)-time);
                     timeLeft += time;
                 }
-                bool colliding = m_collisionChecker.Collides(collisionGroup.Cast<IPhysicalEntity>().ToList());
+                bool colliding = m_collisionChecker.Collides(collisionGroup.Cast<IPhysicalEntity>().ToList()) > 0;
                 if (!colliding)
                 {
                     lastNotCollidingPositions = GetPositions(collisionGroup);

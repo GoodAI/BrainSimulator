@@ -44,8 +44,8 @@ namespace World.Physics
         /// Check whether this physical entities collide with each other or tile.
         /// </summary>
         /// <param name="physicalEntities"></param>
-        /// <returns></returns>
-        bool Collides(List<IPhysicalEntity> physicalEntities);
+        /// <returns>Number of couples of colliding objects.</returns>
+        int Collides(List<IPhysicalEntity> physicalEntities);
 
         /// <summary>
         /// Check whether this physical entity collides with another PE or tile.
@@ -66,7 +66,7 @@ namespace World.Physics
         /// </summary>
         /// <param name="physicalEntities"></param>
         /// <returns></returns>
-        bool CollidesWithEachOther(List<IPhysicalEntity> physicalEntities);
+        int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities);
 
         /// <summary>
         /// 
@@ -145,9 +145,9 @@ namespace World.Physics
             return l;
         }
 
-        public bool Collides(List<IPhysicalEntity> collisionGroup)
+        public int Collides(List<IPhysicalEntity> collisionGroup)
         {
-            return collisionGroup.Any(CollidesWithTile) || CollidesWithEachOther(collisionGroup);
+            return collisionGroup.Count(CollidesWithTile) + CollidesWithEachOther(collisionGroup);
         }
         
         public bool Collides(IPhysicalEntity physicalEntity)
@@ -178,19 +178,20 @@ namespace World.Physics
         }
 
 
-        public bool CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
+        public int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
         {
+            int counter = 0;
             for (int i = 0; i < physicalEntities.Count - 1; i++)
             {
                 for (int j = i + 1; j < physicalEntities.Count; j++)
                 {
                     if (physicalEntities[i].CollidesWith(physicalEntities[j]))
                     {
-                        return true;
+                        counter++;
                     }
                 }
             }
-            return false;
+            return counter;
         }
 
         public List<IPhysicalEntity> CollisionThreat(IPhysicalEntity targetEntity, List<IPhysicalEntity> physicalEntities, float eps = 0)

@@ -15,7 +15,7 @@ namespace ToyWorldTests.Physics
             var initPosition = new Vector2(0.5f,0f);
             var shape = new RectangleShape(new Vector2(1,1));
             IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, MathHelper.Pi / 2);
-            pe.SlideOnCollision = true;
+            pe.InelasticCollision = true;
 
             ICollisionChecker collisionChecker = new CollisionCheckerMock(new List<IPhysicalEntity>() {pe});
             var movementPhysics = new MovementPhysics();
@@ -39,7 +39,7 @@ namespace ToyWorldTests.Physics
 
             var angleRads = MathHelper.ToRadians(angle);
             IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, angleRads);
-            pe.SlideOnCollision = true;
+            pe.InelasticCollision = true;
 
             ICollisionChecker collisionChecker = new CollisionCheckerMock(new List<IPhysicalEntity>() {pe});
             var movementPhysics = new MovementPhysics();
@@ -85,14 +85,14 @@ namespace ToyWorldTests.Physics
             get { return 1; }
         }
 
-        public bool Collides(List<IPhysicalEntity> physicalEntities)
+        public int Collides(List<IPhysicalEntity> physicalEntities)
         {
-            return physicalEntities.Any(CollidesWithTile);
+            return physicalEntities.Count(CollidesWithTile);
         }
 
         public bool Collides(IPhysicalEntity physicalEntity)
         {
-            return Collides(new List<IPhysicalEntity>() {physicalEntity});
+            return Collides(new List<IPhysicalEntity>() {physicalEntity}) > 0;
         }
 
         public bool CollidesWithPhysicalEntity(IPhysicalEntity physicalEntity)
@@ -106,7 +106,7 @@ namespace ToyWorldTests.Physics
             return physicalEntity.Position.X - eps < 0;
         }
 
-        public bool CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
+        public int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
         {
             throw new NotImplementedException();
         }

@@ -38,16 +38,16 @@ namespace World.GameActors.GameObjects
             set { PhysicalEntity.RotationSpeed = value; }
         }
 
-        public bool BounceOnCollision
+        public bool ElasticCollision
         {
-            get { return PhysicalEntity.BounceOnCollision; }
-            set { PhysicalEntity.BounceOnCollision = value; }
+            get { return PhysicalEntity.ElasticCollision; }
+            set { PhysicalEntity.ElasticCollision = value; }
         }
 
-        public bool SlideOnCollision
+        public bool InelasticCollision
         {
-            get { return PhysicalEntity.SlideOnCollision; }
-            set { PhysicalEntity.SlideOnCollision = value; }
+            get { return PhysicalEntity.InelasticCollision; }
+            set { PhysicalEntity.InelasticCollision = value; }
         }
 
         public bool StopOnCollision
