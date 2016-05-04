@@ -199,14 +199,7 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        // not browasble, but used
-        [ReadOnly(true), Category("Tensor Observer")]
-        [Description("Width of one tile")]
-        public int TileWidth { set; get; }
-
-        [ReadOnly(true), Category("Tensor Observer")]
-        [Description("Height of one tile")]
-        public int TileHeight { set; get; }
+        private int m_tileWidth, m_tileHeight;
 
         #endregion
 
@@ -264,7 +257,7 @@ namespace GoodAI.Core.Observers
             if (ObserveTensors)
             {
                 m_tiledKernel.SetupExecution(TextureSize);
-                m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, TileWidth, TileHeight, TilesInRow);
+                m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, m_tileWidth, m_tileHeight, TilesInRow);
 
                 return;
             }
@@ -333,11 +326,11 @@ namespace GoodAI.Core.Observers
             if (ObserveTensors)
             {
                 TensorDimensions d = GetTileDimensions();
-                TileWidth = d[0];
-                TileHeight = d[1];
-                textureSize = ComputeTiledTextureSize(d, Method, Target);
+                m_tileWidth = d[0];
+                m_tileHeight = d[1];
+                textureSize = ComputeTiledTextureSize(d, Target);
             }
-            if (textureSize == Size.Empty)
+            else
             {
                 textureSize = ComputeCustomTextureSize(Target.Dims, m_customDimensions, Method, Elements, out warning);
             }
@@ -348,19 +341,20 @@ namespace GoodAI.Core.Observers
             TextureHeight = textureSize.Height;
         }
 
-        private Size ComputeTiledTextureSize(TensorDimensions dims, RenderingMethod method, MyAbstractMemoryBlock target)
+        private Size ComputeTiledTextureSize(TensorDimensions dims, MyAbstractMemoryBlock target)
         {
-            if (TileWidth * TileHeight * TilesInRow > dims.ElementCount)
+            if (m_tileWidth * m_tileHeight * TilesInRow > dims.ElementCount)
             {
-                TilesInRow = dims.ElementCount / (TileWidth * TileHeight);
-                MyLog.WARNING.WriteLine("TilesInRow too big, adjusting to the maximum value of " + TilesInRow);
+                TilesInRow = dims.ElementCount / (m_tileWidth * m_tileHeight);
+                MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
+                    "TilesInRow too big, adjusting to the maximum value of " + TilesInRow);
             }
 
-            int noBlocks = dims.ElementCount / (TileWidth * TileHeight);
+            int noBlocks = dims.ElementCount / (m_tileWidth * m_tileHeight);
 
             // in case the noBlocks is not divisible by TilesInRow, allocate enough space
             int height = (int)Math.Ceiling((decimal)noBlocks / TilesInRow);
-            return new Size(TileWidth * TilesInRow, height * TileHeight);
+            return new Size(m_tileWidth * TilesInRow, height * m_tileHeight);
         }
 
         // TODO(Premek): Report warnings using a logger interface.
