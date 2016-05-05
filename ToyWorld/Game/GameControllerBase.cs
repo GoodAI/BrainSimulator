@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
 using Render.RenderRequests;
@@ -18,7 +19,9 @@ namespace Game
         private bool m_initialized;
         private readonly GameSetup m_gameSetup;
 
-        public RendererBase Renderer { get; private set; }
+        private RendererBase m_renderer;
+        public RendererBase Renderer { get { return m_renderer; } private set { m_renderer = value; } }
+
         public ToyWorld World { get; private set; }
 
         private Dictionary<int, IAvatar> m_avatars;
@@ -33,9 +36,10 @@ namespace Game
 
         public virtual void Dispose()
         {
-            if (Renderer != null)
-                Renderer.Dispose();
-            Renderer = null;
+            var renderer = Interlocked.Exchange(ref m_renderer, null);
+
+            if (renderer != null)
+                renderer.Dispose();
         }
 
 

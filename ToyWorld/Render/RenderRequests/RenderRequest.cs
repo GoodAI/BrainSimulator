@@ -61,11 +61,21 @@ namespace Render.RenderRequests
 
         public virtual void Dispose()
         {
-            m_fbo.Dispose();
+            if (m_fbo != null)
+                m_fbo.Dispose();
+
             m_effect.Dispose();
+            m_noiseEffect.Dispose();
+
             m_tex.Dispose();
-            m_grid.Dispose();
+
+            if (m_grid != null) // It is initialized during Draw
+                m_grid.Dispose();
             m_quadOffset.Dispose();
+            m_quad.Dispose();
+
+            if (m_pbo != null)
+                m_pbo.Dispose();
         }
 
         #endregion
@@ -260,10 +270,7 @@ namespace Render.RenderRequests
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
-            // Set up pixel buffer object for data transfer to RR issuer
-            m_pbo = new Pbo();
-
-            CheckDirtyParams(renderer); // Do the hard work in Init
+            // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
         private void CheckDirtyParams(RendererBase renderer)
@@ -285,13 +292,16 @@ namespace Render.RenderRequests
             {
                 if (m_fbo != null)
                     m_fbo.Dispose();
+
                 m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
 
                 GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
-
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
+                // Set up pixel buffer object for data transfer to RR issuer
+                if (m_pbo == null)
+                    m_pbo = new Pbo();
                 m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
