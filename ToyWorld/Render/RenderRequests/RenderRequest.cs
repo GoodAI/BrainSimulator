@@ -30,12 +30,16 @@ namespace Render.RenderRequests
         #region Fields
 
         private BasicFbo m_fbo;
+
         private NoEffectOffset m_effect;
         private NoiseEffect m_noiseEffect;
+
         private TilesetTexture m_tex;
+
         private FullScreenGrid m_grid;
         private FullScreenQuadOffset m_quadOffset;
         private FullScreenQuad m_quad;
+
         private Pbo m_pbo;
 
         private Matrix m_projMatrix;
@@ -53,7 +57,6 @@ namespace Render.RenderRequests
             PositionCenterV = new Vector3(0, 0, 20);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
-            Image = new uint[0];
         }
 
         public virtual void Dispose()
@@ -242,11 +245,14 @@ namespace Render.RenderRequests
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
             m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_effect.SetUniform2(m_effect.GetUniformLocation("tileBorder"), world.TilesetTable.TileBorder);
+            m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
+
+            // Set up pixel buffer object for data transfer to RR issuer
+            m_pbo = new Pbo();
 
             CheckDirtyParams(renderer); // Do the hard work in Init
         }
@@ -269,10 +275,7 @@ namespace Render.RenderRequests
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
-                if (!GatherImage)
-                    Image = new uint[0];
-                else if (Image.Length < Resolution.Width * Resolution.Height)
-                    Image = new uint[Resolution.Width * Resolution.Height];
+                m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
             {
@@ -315,7 +318,7 @@ namespace Render.RenderRequests
             GatherAndDistributeData(renderer);
         }
 
-        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = default(Vector3?))
+        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null)
         {
             if (!cameraDirection.HasValue)
                 cameraDirection = Vector3.Forward;
@@ -409,7 +412,8 @@ namespace Render.RenderRequests
             // Gather data to host mem
             if (GatherImage)
             {
-                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
+                m_pbo.Bind();
+                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
 
                 // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
                 m_fbo.Bind(FramebufferTarget.ReadFramebuffer);

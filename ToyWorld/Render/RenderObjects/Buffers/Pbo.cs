@@ -1,12 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using Render.RenderObjects.Buffers;
 
-namespace Render.RenderObjects.Geometries
+namespace Render.RenderObjects.Buffers
 {
     internal class Pbo : Vbo<uint>
     {
-        public Pbo(int tCount)
-            : base(tCount, target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamDraw)
+        public Pbo()
+            : base(target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamDraw)
         { }
     }
 }

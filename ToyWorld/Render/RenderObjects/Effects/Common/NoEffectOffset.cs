@@ -10,6 +10,7 @@ namespace Render.RenderObjects.Effects
             // Names must correspond to names as defined in the shaders
             texSizeCount,
             tileSizeMargin,
+            tileBorder,
             mvp,
 
             tex,
@@ -29,6 +30,11 @@ namespace Render.RenderObjects.Effects
         public void TileSizeMarginUniform(Vector4I val)
         {
             SetUniform4(base[Uniforms.tileSizeMargin], val);
+        }
+
+        public void TileBorderUniform(Vector2I val)
+        {
+            SetUniform2(base[Uniforms.tileBorder], val);
         }
 
         public void ModelViewProjectionUniform(ref Matrix val)
