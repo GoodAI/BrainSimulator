@@ -22,14 +22,6 @@ namespace World.Physics
         bool CollidesWithTile(IPhysicalEntity physicalEntity);
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="physicalEntity"></param>
-        /// <param name="eps"></param>
-        /// <returns></returns>
-        bool CollidesWithTile(IPhysicalEntity physicalEntity, float eps);
-
-        /// <summary>
         /// Maximum size of an object. It is used in collisions check between PhysicalEntities.
         /// </summary>
         float MaximumGameObjectRadius { get; }
