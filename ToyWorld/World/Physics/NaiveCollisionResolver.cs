@@ -69,19 +69,19 @@ namespace World.Physics
             // resolve collisions with tiles first
             foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
             {
-                var collidesWithTile = m_collisionChecker.CollidesWithTile(physicalEntity,
+                /*var collidesWithTile = m_collisionChecker.CollidesWithTile(physicalEntity,
                     physicalEntity.ForwardSpeed / BINARY_SEARCH_ITERATIONS + NEGLIGIBLE_DISTANCE);
 
                 if (collidesWithTile)
                 {
                     FindTileFreeDirection(physicalEntity, timeLeft);
-                }
+                }*/
             }
 
             // then set new directions WRT other objects
             for (int index = 0; index < collisionGroup.Count - 1; index++)
             {
-                IForwardMovablePhysicalEntity physicalEntity = collisionGroup[index];
+                /*IForwardMovablePhysicalEntity physicalEntity = collisionGroup[index];
                 List<IForwardMovablePhysicalEntity> threatenedObjects = m_collisionChecker.CollisionThreat(
                     physicalEntity,
                     collisionGroup.Skip(index).Cast<IPhysicalEntity>().ToList(),
@@ -92,7 +92,7 @@ namespace World.Physics
                 if (threatenedObjects.Count > 0)
                 {
                     threatenedObjects.ForEach(x => ResolveCollisionOfTwo(physicalEntity, x));
-                }
+                }*/
             }
         }
 
