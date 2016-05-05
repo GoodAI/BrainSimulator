@@ -172,12 +172,32 @@ namespace GoodAI.ToyWorld
                 return;
             }
 
+            // Setup controllers
             int myAvatarId = avatarIds[0];
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
 
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId, rr => { rr.Size = new SizeF(FoVSize, FoVSize); rr.Resolution = new Size(FoVResWidth, FoVResHeight); });
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, rr => { rr.FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); rr.Resolution = new Size(FoFResWidth, FoFResHeight); });
-            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, rr => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
+            // Setup render requests
+            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId,
+                rr =>
+                {
+                    rr.Size = new SizeF(FoVSize, FoVSize);
+                    rr.Resolution = new Size(FoVResWidth, FoVResHeight);
+                });
+
+            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId,
+                rr =>
+                {
+                    rr.FovAvatarRenderRequest = m_fovRR;
+                    rr.Size = new SizeF(FoFSize, FoFSize);
+                    rr.Resolution = new Size(FoFResWidth, FoFResHeight);
+                });
+
+            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree,
+                rr =>
+                {
+                    rr.Size = new SizeF(Width, Height);
+                    rr.Resolution = new Size(ResolutionWidth, ResolutionHeight);
+                });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
         }
 
@@ -188,9 +208,13 @@ namespace GoodAI.ToyWorld
 
         private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequestBase
         {
+            // Setup the render request properties
             rr.GatherImage = true;
+            rr.FlipYAxis = true;
+
             if (initializer != null)
                 initializer.Invoke(rr);
+
 
             // Setup data copying to our unmanaged memblocks
             uint renderTextureHandle = 0;
@@ -221,6 +245,8 @@ namespace GoodAI.ToyWorld
                 targetMemBlock.AllocateDevice();
             };
 
+
+            // Initialize the target memory block
             targetMemBlock.ExternalPointer = 1; // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
             targetMemBlock.Dims = new TensorDimensions(rr.Resolution.Width, rr.Resolution.Height);
             return rr;

@@ -23,6 +23,11 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         RectangleF View { get; }
 
+        /// <summary>
+        /// If true, renders the image upside down (flipped by the Y axis). The origin thus moves to the upper-left corner.
+        /// </summary>
+        bool FlipYAxis { get; set; }
+
 
         /// <summary>
         /// 

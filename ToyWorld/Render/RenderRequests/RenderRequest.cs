@@ -130,6 +130,17 @@ namespace Render.RenderRequests
             get { return new System.Drawing.RectangleF(PositionCenter, Size); }
         }
 
+        private bool m_flipYAxis;
+        public bool FlipYAxis
+        {
+            get { return m_flipYAxis; }
+            set
+            {
+                m_flipYAxis = value;
+                m_dirtyParams |= DirtyParams.Size;
+            }
+        }
+
 
         private System.Drawing.Size m_resolution;
         public System.Drawing.Size Resolution
@@ -160,7 +171,6 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
-        public event Action<IRenderRequestBase, uint> OnPostInitEvent;
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
@@ -264,6 +274,11 @@ namespace Render.RenderRequests
             {
                 m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
                 m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                // Flip the image to have its origin in the top-left corner
+
+                if (FlipYAxis)
+                    m_projMatrix *= Matrix.CreateScale(1, -1, 1);
+
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
