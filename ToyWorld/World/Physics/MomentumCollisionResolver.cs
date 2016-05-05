@@ -12,7 +12,7 @@ namespace World.Physics
         private readonly IMovementPhysics m_movementPhysics;
 
         private const int BINARY_SEARCH_ITERATIONS = 14;
-        private const float X_DIRECTION = (float) Math.PI / 2;
+        private const float X_DIRECTION = (float) Math.PI/2;
         private const float Y_DIRECTION = 0;
         private const float NEGLIGIBLE_TIME = 0.01f;
         private const float NEGLIGIBLE_DISTANCE = 0.0001f;
@@ -27,6 +27,7 @@ namespace World.Physics
         public void ResolveCollisions()
         {
             List<List<IPhysicalEntity>> collisionGroups = m_collisionChecker.CollisionGroups();
+
             foreach (List<IPhysicalEntity> collisionGroup in collisionGroups)
             {
                 // TODO : resolve this unsafe cast before extending physical model
@@ -36,15 +37,11 @@ namespace World.Physics
 
         private void ResolveCollision(List<IForwardMovablePhysicalEntity> collisionGroup)
         {
+            // move back to safe position
             MoveCollisionGroup(collisionGroup, -1);
 
-            float lastNotCollidingTime = 0.0f;
-            float firstCollidingTime = float.PositiveInfinity;
             float remainingTime = 1.0f;
-
             int counter = 0;
-            int smallmoveCounter = 0;
-            float prevLastNotCollidingTime = 1;
             do
             {
                 // if starting position is not permissible, make random walk
@@ -57,8 +54,8 @@ namespace World.Physics
                 }
 
                 Tuple<float, float> res = CollisionFreePositionBinarySearch(collisionGroup, remainingTime);
-                lastNotCollidingTime = res.Item1;
-                firstCollidingTime = res.Item2;
+                var lastNotCollidingTime = res.Item1;
+                var firstCollidingTime = res.Item2;
 
                 if (float.IsPositiveInfinity(firstCollidingTime))
                 {
@@ -66,19 +63,10 @@ namespace World.Physics
                 }
                 else
                 {
-                    SetNewSpeedsAndDirectionsAndMoveBeforeCollision(collisionGroup, lastNotCollidingTime, firstCollidingTime);
+                    SetNewSpeedsAndDirectionsAndMoveBeforeCollision(collisionGroup, lastNotCollidingTime,
+                        firstCollidingTime);
                 }
 
-                /*if (Math.Abs(prevLastNotCollidingTime - lastNotCollidingTime) < NEGLIGIBLE_TIME)
-                {
-                    if (smallmoveCounter >= 5)
-                    {
-                        ResetCollidingElement(collisionGroup, firstCollidingTime);
-                    }
-                    smallmoveCounter++;
-                }*/
-
-                prevLastNotCollidingTime = lastNotCollidingTime;
                 counter++;
                 remainingTime = remainingTime - lastNotCollidingTime;
             } while (remainingTime - NEGLIGIBLE_TIME > 0.0f && counter < MAXIMUM_RESOLVE_TRIES);
@@ -86,38 +74,26 @@ namespace World.Physics
             if (counter >= MAXIMUM_RESOLVE_TRIES)
             {
                 // moves the system into a collision state
-                // will force calling SetSomePositionAround(physicalEntity);
-                Tuple<float, float> res = CollisionFreePositionBinarySearch(collisionGroup, remainingTime);
-                firstCollidingTime = res.Item2;
-                MoveCollisionGroup(collisionGroup, (float)remainingTime);
-            }
-            //Debug.Assert(counter < MAXIMUM_RESOLVE_TRIES);
-        }
-
-        private void ResetCollidingElement(List<IForwardMovablePhysicalEntity> collisionGroup, float firstCollidingTime)
-        {
-            MoveCollisionGroup(collisionGroup, firstCollidingTime);
-            foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
-            {
-                if (m_collisionChecker.Collides(physicalEntity))
-                {
-                    SetSomePositionAround(physicalEntity);
-                }
+                // will force calling SetSomePositionAround(physicalEntity); in next step
+                CollisionFreePositionBinarySearch(collisionGroup, remainingTime);
+                MoveCollisionGroup(collisionGroup, remainingTime);
             }
         }
 
-        private void SetNewSpeedsAndDirectionsAndMoveBeforeCollision(List<IForwardMovablePhysicalEntity> collisionGroup, float lastNotCollidingTime, float firstCollidingTime)
+        private void SetNewSpeedsAndDirectionsAndMoveBeforeCollision(List<IForwardMovablePhysicalEntity> collisionGroup,
+            float lastNotCollidingTime, float firstCollidingTime)
         {
             // make a minimal step forward. There is a collision in the next minimal time step - resolve that collision
             List<Vector2> positions = GetPositions(collisionGroup);
-            List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>> collisionPairs = 
+            List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>> collisionPairs =
                 new List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>>();
 
             MoveCollisionGroup(collisionGroup, firstCollidingTime);
 
             List<Vector2> collisionPositions = GetPositions(collisionGroup);
 
-            List<IForwardMovablePhysicalEntity> threatenedObjectsA = collisionGroup.Where(m_collisionChecker.Collides).ToList();
+            List<IForwardMovablePhysicalEntity> threatenedObjectsA =
+                collisionGroup.Where(m_collisionChecker.Collides).ToList();
 
             while (threatenedObjectsA.Count > 1)
             {
@@ -126,7 +102,9 @@ namespace World.Physics
                 {
                     if (physicalEntity.CollidesWith((threatenedObjectsA[i])))
                     {
-                        collisionPairs.Add(new Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>(physicalEntity, threatenedObjectsA[i]));
+                        collisionPairs.Add(
+                            new Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>(physicalEntity,
+                                threatenedObjectsA[i]));
                         break;
                     }
                 }
@@ -137,30 +115,12 @@ namespace World.Physics
 
             MoveCollisionGroup(collisionGroup, lastNotCollidingTime);
 
-            List<IForwardMovablePhysicalEntity> threatenedObjectsB = collisionGroup.Where(m_collisionChecker.Collides).ToList();
+            List<IForwardMovablePhysicalEntity> threatenedObjectsB =
+                collisionGroup.Where(m_collisionChecker.Collides).ToList();
 
             Debug.Assert(threatenedObjectsB.Count == 0);
 
             collisionPairs.ForEach(x => ResolveCollisionOfTwo(x.Item1, x.Item2));
-
-            // set new directions WRT other objects
-
-            /*for (int index = 0; index < collisionGroup.Count - 1; index++)
-            {
-                IForwardMovablePhysicalEntity physicalEntity = collisionGroup[index];
-                
-                float minStep = physicalEntity.ForwardSpeed / BINARY_SEARCH_ITERATIONS + NEGLIGIBLE_DISTANCE;
-                m_movementPhysics.Shift(physicalEntity, minStep);
-                List<IForwardMovablePhysicalEntity> threatenedObjects = collisionGroup.Where(m_collisionChecker.Collides).ToList();
-                m_movementPhysics.Shift(physicalEntity, -minStep);
-
-                if (threatenedObjects.Count > 0)
-                {
-                    threatenedObjects.ForEach(x => ResolveCollisionOfTwo(physicalEntity, x));
-                }
-
-                Debug.Assert(threatenedObjects.All(x => x.ForwardSpeed <= m_collisionChecker.MaximumGameObjectSpeed));
-            }*/
 
             // resolve collisions with tiles
             for (int i = 0; i < collisionGroup.Count; i++)
@@ -187,7 +147,7 @@ namespace World.Physics
             Vector2 diff = (pe0.Position - pe1.Position);
             Vector2 orthogonal = new Vector2(-diff.Y, diff.X);
             Vector2 normalOrthogonal = Vector2.Normalize(orthogonal);
-            float normAngle = (float)Math.Atan2(normalOrthogonal.Y, normalOrthogonal.X);
+            float normAngle = (float) Math.Atan2(normalOrthogonal.Y, normalOrthogonal.X);
 
             if (pe0.ElasticCollision || pe1.ElasticCollision)
             {
@@ -250,12 +210,13 @@ namespace World.Physics
             float m1 = target.Weight;
             float m2 = source.Weight;
 
-            float originalEnergy = target.ForwardSpeed*target.ForwardSpeed*m1 + source.ForwardSpeed*source.ForwardSpeed*m2;
+            float originalEnergy = target.ForwardSpeed*target.ForwardSpeed*m1 +
+                                   source.ForwardSpeed*source.ForwardSpeed*m2;
 
-            double P = m1*v1 + m2*v2; // P = momentum
-            double D = 4.0*m1*m1*m2*m2*(v1 - v2)*(v1 - v2); // D = determinant
-            float v2A = (float) ((2*P*m2 + Math.Sqrt(D))/(2*(m1*m2 + m2*m2)));
-            float v2B = (float) ((2*P*m2 - Math.Sqrt(D))/(2*(m1*m2 + m2*m2)));
+            double p = m1*v1 + m2*v2; // P = momentum
+            double d = 4.0*m1*m1*m2*m2*(v1 - v2)*(v1 - v2); // D = determinant
+            float v2A = (float) ((2*p*m2 + Math.Sqrt(d))/(2*(m1*m2 + m2*m2)));
+            float v2B = (float) ((2*p*m2 - Math.Sqrt(d))/(2*(m1*m2 + m2*m2)));
 
             float newSourceSpeed = v2A;
             if (Math.Abs(v2A - v2) < Math.Abs(v2B - v2)) // one of the results is identity
@@ -315,7 +276,8 @@ namespace World.Physics
             float originalDirection = physicalEntity.Direction;
 
             float maxDistance = 0;
-            float bestDirection = MathHelper.WrapAngle(originalDirection + (float)Math.PI); // emergency reverse direction if either bounce fails
+            float bestDirection = MathHelper.WrapAngle(originalDirection + (float) Math.PI);
+                // emergency reverse direction if either bounce fails
 
             // candidate directions to move
             var candidateDirections = new List<float>
@@ -348,8 +310,8 @@ namespace World.Physics
 
             float speed = time*physicalEntity.ForwardSpeed;
 
-            float xSpeed = (float)Math.Sin(directionRads) * speed;
-            float ySpeed = (float)Math.Cos(directionRads) * speed;
+            float xSpeed = (float) Math.Sin(directionRads)*speed;
+            float ySpeed = (float) Math.Cos(directionRads)*speed;
             // position before move
 
             // try to move orthogonally left/right and up/down
@@ -375,17 +337,15 @@ namespace World.Physics
             if (distanceX > distanceY)
             {
                 Vector2 diff = xPosition - freePosition;
-                physicalEntity.Direction = - (float)Math.Atan2(diff.X, diff.Y);
-                physicalEntity.ForwardSpeed = Math.Abs(xSpeed) / time;
+                physicalEntity.Direction = -(float) Math.Atan2(diff.X, diff.Y);
+                physicalEntity.ForwardSpeed = Math.Abs(xSpeed)/time;
             }
             else
             {
                 Vector2 diff = yPosition - freePosition;
-                physicalEntity.Direction = (float)Math.Atan2(diff.X, diff.Y);
-                physicalEntity.ForwardSpeed = Math.Abs(ySpeed) / time;
+                physicalEntity.Direction = (float) Math.Atan2(diff.X, diff.Y);
+                physicalEntity.ForwardSpeed = Math.Abs(ySpeed)/time;
             }
-
-            
         }
 
         /// <summary>
@@ -394,10 +354,11 @@ namespace World.Physics
         /// <param name="physicalEntity"></param>
         /// <param name="initialSpeed"></param>
         /// <param name="direction"></param>
-        private void TileFreePositionBinarySearch(IForwardMovablePhysicalEntity physicalEntity, float initialSpeed, float direction)
+        private void TileFreePositionBinarySearch(IForwardMovablePhysicalEntity physicalEntity, float initialSpeed,
+            float direction)
         {
             float speed = initialSpeed;
-            
+
             Vector2 lastNotColliding = physicalEntity.Position;
 
             bool goForward = true;
@@ -417,7 +378,7 @@ namespace World.Physics
                 {
                     lastNotColliding = physicalEntity.Position;
                 }
-                speed = speed / 2;
+                speed = speed/2;
                 goForward = !colliding;
             }
 
@@ -425,18 +386,19 @@ namespace World.Physics
         }
 
         /// <summary>
-        /// Search for position close to obstacle in given direction. Must be on stable position when starting search.
+        /// Search for position of all objects before and after first collision. Must be on safe position when starting search.
         /// </summary>
         /// <param name="collisionGroup"></param>
         /// <param name="initialTime"></param>
         /// <param name="maxCollidingCouples"></param>
         /// <returns>lastNotCollidingTime, firstCollidingTime (can be positive infinity)</returns>
-        private Tuple<float, float> CollisionFreePositionBinarySearch(List<IForwardMovablePhysicalEntity> collisionGroup, float initialTime, int maxCollidingCouples = 0)
+        private Tuple<float, float> CollisionFreePositionBinarySearch(
+            List<IForwardMovablePhysicalEntity> collisionGroup, float initialTime, int maxCollidingCouples = 0)
         {
             double timeStep = initialTime;
             double time = 0;
             double lastNotCollidingTime = 0.0f;
-            double firstCollidingTime = Double.PositiveInfinity;
+            double firstCollidingTime = double.PositiveInfinity;
 
             List<Vector2> initialPositions = GetPositions(collisionGroup);
 
@@ -456,7 +418,7 @@ namespace World.Physics
                 {
                     time -= timeStep;
                 }
-                MoveCollisionGroup(collisionGroup, (float)time);
+                MoveCollisionGroup(collisionGroup, (float) time);
 
                 int couplesInCollision = m_collisionChecker.Collides(collisionGroup.Cast<IPhysicalEntity>().ToList());
                 bool colliding = couplesInCollision > maxCollidingCouples;
@@ -478,7 +440,7 @@ namespace World.Physics
 
             SetPositions(collisionGroup, initialPositions);
 
-            return new Tuple<float, float>((float)lastNotCollidingTime, (float)firstCollidingTime);
+            return new Tuple<float, float>((float) lastNotCollidingTime, (float) firstCollidingTime);
         }
 
         private void SetSomePositionAround(IPhysicalEntity physicalEntity)
@@ -496,7 +458,7 @@ namespace World.Physics
             } while (m_collisionChecker.Collides(physicalEntity));
         }
 
-        private static List<Vector2> GetPositions(List<IForwardMovablePhysicalEntity> collisionGroup)
+        private static List<Vector2> GetPositions(IEnumerable<IForwardMovablePhysicalEntity> collisionGroup)
         {
             return collisionGroup.Select(x => x.Position).ToList();
         }
@@ -509,12 +471,17 @@ namespace World.Physics
             }
         }
 
+        /// <summary>
+        /// Move whole collision group in time according to objects speeds and directions.
+        /// </summary>
+        /// <param name="collisionGroup"></param>
+        /// <param name="time"></param>
         private void MoveCollisionGroup(IEnumerable<IForwardMovablePhysicalEntity> collisionGroup, float time)
         {
             Debug.Assert(!float.IsNaN(time) && !float.IsInfinity(time));
             foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
             {
-                m_movementPhysics.Shift(physicalEntity, time * physicalEntity.ForwardSpeed);
+                m_movementPhysics.Shift(physicalEntity, time*physicalEntity.ForwardSpeed);
             }
         }
     }
