@@ -270,6 +270,9 @@ namespace Render.RenderRequests
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
+            // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
+            m_pbo = new Pbo();
+
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
@@ -299,10 +302,8 @@ namespace Render.RenderRequests
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
-                // Set up pixel buffer object for data transfer to RR issuer
-                if (m_pbo == null)
-                    m_pbo = new Pbo();
-                m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
+                if (m_pbo.ByteCount != Resolution.Width * Resolution.Height * sizeof(uint))
+                    m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
             {

@@ -222,6 +222,13 @@ namespace GoodAI.ToyWorld
 
             rr.OnPreRenderingEvent += (sender, vbo) =>
             {
+                if (renderResource != null && renderResource.IsMapped)
+                    renderResource.UnMap();
+            };
+
+            rr.OnPostRenderingEvent += (sender, vbo) =>
+            {
+                // Vbo can be allocated during drawing, create the resource after that
                 MyKernelFactory.Instance.GetContextByGPU(GPU).SetCurrent();
 
                 if (renderResource == null || vbo != renderTextureHandle)
@@ -233,12 +240,6 @@ namespace GoodAI.ToyWorld
                     renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle, CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
                 }
 
-                if (renderResource.IsMapped)
-                    renderResource.UnMap();
-            };
-
-            rr.OnPostRenderingEvent += (sender, vbo) =>
-            {
                 renderResource.Map();
                 targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
                 targetMemBlock.FreeDevice();
