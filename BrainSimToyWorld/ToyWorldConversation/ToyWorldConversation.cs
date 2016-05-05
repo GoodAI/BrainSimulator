@@ -102,8 +102,8 @@ namespace ToyWorldConversation
         {
             if (e.KeyCode != Keys.Enter || m_avatarCtrl == null) return;
 
-            e.SuppressKeyPress = true;
-            m_avatarCtrl.SendMessage(textBox_send.Text);
+            e.SuppressKeyPress = true;  // for disabling the "ding" sound
+            m_avatarCtrl.MessageIn = textBox_send.Text;
             Invoke((MethodInvoker)(() =>
             {
                 PrintMessageFrom(textBox_send.Text, "You");

@@ -65,6 +65,12 @@ namespace GoodAI.ToyWorld
             get { return GetInput(0); }
         }
 
+        [MyInputBlock(1)]
+        public MyMemoryBlock<float> TextIn
+        {
+            get { return GetInput(1); }
+        }
+
         [MyBrowsable, Category("Runtime"), DisplayName("Run every Nth")]
         [YAXSerializableField(DefaultValue = 1)]
         public int RunEvery { get; set; }
@@ -466,7 +472,7 @@ namespace GoodAI.ToyWorld
                     TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
                 }
 
-                string message = Owner.AvatarCtrl.Message;
+                string message = Owner.AvatarCtrl.MessageIn;
                 if (message == null)
                 {
                     Owner.Text.Fill(0);
@@ -476,7 +482,9 @@ namespace GoodAI.ToyWorld
                     Owner.Text.Host[i] = message[i];
 
                 Owner.Text.SafeCopyToDevice();
-                Owner.AvatarCtrl.ClearMessage();
+                Owner.AvatarCtrl.MessageOut = null;
+
+                Owner.TextIn.SafeCopyToHost();
             }
 
             private static void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
