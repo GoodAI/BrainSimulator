@@ -6,12 +6,6 @@ namespace World.Physics
     {
     }
 
-    public enum TileCollision
-    {
-        Slide = 0,
-        Bounce = 1,
-    }
-
     public class ForwardMovablePhysicalEntity : PhysicalEntity, IForwardMovablePhysicalEntity
     {
         public float Direction { get; set; }
