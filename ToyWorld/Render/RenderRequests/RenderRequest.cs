@@ -434,7 +434,9 @@ namespace Render.RenderRequests
             if (GatherImage)
             {
                 m_pbo.Bind();
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
                 GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
+
 
                 // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
                 m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
