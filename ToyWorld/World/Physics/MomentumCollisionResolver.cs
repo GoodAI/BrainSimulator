@@ -83,46 +83,25 @@ namespace World.Physics
         private void SetNewSpeedsAndDirectionsAndMoveBeforeCollision(List<IForwardMovablePhysicalEntity> collisionGroup,
             float lastNotCollidingTime, float firstCollidingTime)
         {
-            // make a minimal step forward. There is a collision in the next minimal time step - resolve that collision
-            List<Vector2> positions = GetPositions(collisionGroup);
-            List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>> collisionPairs =
-                new List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>>();
-
-            MoveCollisionGroup(collisionGroup, firstCollidingTime);
-
-            List<Vector2> collisionPositions = GetPositions(collisionGroup);
-
-            List<IForwardMovablePhysicalEntity> threatenedObjectsA =
-                collisionGroup.Where(m_collisionChecker.Collides).ToList();
-
-            while (threatenedObjectsA.Count > 1)
-            {
-                IForwardMovablePhysicalEntity physicalEntity = threatenedObjectsA[0];
-                for (int i = 1; i < threatenedObjectsA.Count; i++)
-                {
-                    if (physicalEntity.CollidesWith((threatenedObjectsA[i])))
-                    {
-                        collisionPairs.Add(
-                            new Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>(physicalEntity,
-                                threatenedObjectsA[i]));
-                        break;
-                    }
-                }
-                threatenedObjectsA.RemoveAt(0);
-            }
-
-            SetPositions(collisionGroup, positions);
+            // positions in first collision time.
+            List<Vector2> collisionPositions;
+            var collisionPairs = ComputeCollisionPairs(out collisionPositions, collisionGroup, firstCollidingTime);
 
             MoveCollisionGroup(collisionGroup, lastNotCollidingTime);
 
-            List<IForwardMovablePhysicalEntity> threatenedObjectsB =
-                collisionGroup.Where(m_collisionChecker.Collides).ToList();
-
-            Debug.Assert(threatenedObjectsB.Count == 0);
-
-            collisionPairs.ForEach(x => ResolveCollisionOfTwo(x.Item1, x.Item2));
+            ResolveCollisionPairs(collisionPairs);
 
             // resolve collisions with tiles
+            ResolveCollisionsWithTiles(collisionGroup, collisionPositions);
+        }
+
+        private void ResolveCollisionPairs(List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>> collisionPairs)
+        {
+            collisionPairs.ForEach(x => ResolveCollisionOfTwo(x.Item1, x.Item2));
+        }
+
+        private void ResolveCollisionsWithTiles(List<IForwardMovablePhysicalEntity> collisionGroup, List<Vector2> collisionPositions)
+        {
             for (int i = 0; i < collisionGroup.Count; i++)
             {
                 IForwardMovablePhysicalEntity physicalEntity = collisionGroup[i];
@@ -136,6 +115,44 @@ namespace World.Physics
                     FindTileFreeDirection(physicalEntity);
                 }
             }
+        }
+
+        private List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>> ComputeCollisionPairs(
+            out List<Vector2> collisionPositions, List<IForwardMovablePhysicalEntity> collisionGroup,
+            float firstCollidingTime)
+        {
+            // make a minimal step forward. There is a collision in the next minimal time step - resolve that collision
+            List<Vector2> positions = GetPositions(collisionGroup);
+
+            MoveCollisionGroup(collisionGroup, firstCollidingTime);
+
+            collisionPositions = GetPositions(collisionGroup);
+
+            List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>> collisionPairs =
+                new List<Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>>();
+
+
+            List<IForwardMovablePhysicalEntity> objectsInCollision =
+                collisionGroup.Where(m_collisionChecker.Collides).ToList();
+
+            while (objectsInCollision.Count > 1)
+            {
+                IForwardMovablePhysicalEntity physicalEntity = objectsInCollision[0];
+                for (int i = 1; i < objectsInCollision.Count; i++)
+                {
+                    if (physicalEntity.CollidesWith((objectsInCollision[i])))
+                    {
+                        collisionPairs.Add(
+                            new Tuple<IForwardMovablePhysicalEntity, IForwardMovablePhysicalEntity>(physicalEntity,
+                                objectsInCollision[i]));
+                        break;
+                    }
+                }
+                objectsInCollision.RemoveAt(0);
+            }
+
+            SetPositions(collisionGroup, positions);
+            return collisionPairs;
         }
 
         private void ResolveCollisionOfTwo(IForwardMovablePhysicalEntity pe0, IForwardMovablePhysicalEntity pe1)

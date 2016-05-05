@@ -201,7 +201,7 @@ namespace World.Physics
             return counter;
         }
 
-        public List<IPhysicalEntity> CollisionThreat(IPhysicalEntity targetEntity, List<IPhysicalEntity> physicalEntities, float eps = 0)
+        public List<IPhysicalEntity> CollisionThreat(IPhysicalEntity targetEntity, List<IPhysicalEntity> physicalEntities)
         {
             var list = new HashSet<IPhysicalEntity>();
 
@@ -211,7 +211,7 @@ namespace World.Physics
                 {
                     continue;
                 }
-                if (targetEntity.CollidesWith(physicalEntity, eps))
+                if (targetEntity.CollidesWith(physicalEntity))
                 {
                     list.Add(physicalEntity);
                 }

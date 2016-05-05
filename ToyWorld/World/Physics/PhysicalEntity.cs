@@ -43,14 +43,6 @@ namespace World.Physics
         /// Check for collision between two objects.
         /// </summary>
         /// <param name="physicalEntity"></param>
-        /// <param name="eps">Border width of this object.</param>
-        /// <returns></returns>
-        bool CollidesWith(IPhysicalEntity physicalEntity, float eps);
-
-        /// <summary>
-        /// Check for collision between two objects.
-        /// </summary>
-        /// <param name="physicalEntity"></param>
         /// <returns></returns>
         bool CollidesWith(IPhysicalEntity physicalEntity);
     }
@@ -132,15 +124,6 @@ namespace World.Physics
         {
             return Shape.CoverTiles();
         }
-
-        public bool CollidesWith(IPhysicalEntity physicalEntity, float eps)
-        {
-            Shape.Resize(eps);
-            var collidesWith = Shape.CollidesWith(physicalEntity.Shape);
-            Shape.Resize(-eps);
-            return collidesWith;
-        }
-
 
         public bool CollidesWith(IPhysicalEntity physicalEntity)
         {
