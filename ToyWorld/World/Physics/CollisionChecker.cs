@@ -58,16 +58,6 @@ namespace World.Physics
         /// <param name="physicalEntities"></param>
         /// <returns></returns>
         int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="targetEntity"></param>
-        /// <param name="physicalEntities"></param>
-        /// <param name="eps"></param>
-        /// <returns></returns>
-        List<IPhysicalEntity> CollisionThreat(IPhysicalEntity targetEntity, List<IPhysicalEntity> physicalEntities,
-            float eps = 0);
     }
 
     class CollisionChecker : ICollisionChecker
@@ -158,15 +148,6 @@ namespace World.Physics
             List<Vector2I> coverTilesCoordinates = physicalEntity.CoverTiles();
             bool colliding = !coverTilesCoordinates.TrueForAll(x => !m_atlas.ContainsCollidingTile(x));
             return colliding;
-        }
-
-
-        public bool CollidesWithTile(IPhysicalEntity physicalEntity, float eps)
-        {
-            physicalEntity.Shape.Resize(eps);
-            bool collides = CollidesWithTile(physicalEntity);
-            physicalEntity.Shape.Resize(-eps);
-            return collides;
         }
 
         public bool CollidesWithPhysicalEntity(IPhysicalEntity physicalEntity)
