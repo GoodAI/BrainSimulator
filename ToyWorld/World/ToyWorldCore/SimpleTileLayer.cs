@@ -39,8 +39,11 @@ namespace World.ToyWorldCore
             if (m_tileTypes.Length < rectangle.Size.Size())
                 m_tileTypes = new int[rectangle.Size.Size()];
 
+            // Use cached getter value
+            int viewRight = rectangle.Right;
+            
             int left = Math.Max(rectangle.Left, Math.Min(0, rectangle.Left + rectangle.Width));
-            int right = Math.Min(rectangle.Right, Math.Max(Tiles.Length, rectangle.Right - rectangle.Width));
+            int right = Math.Min(viewRight, Math.Max(Tiles.Length, viewRight - rectangle.Width));
             // Rectangle origin is in top-left; it's top is thus our bottom
             int bot = Math.Max(rectangle.Top, Math.Min(0, rectangle.Top + rectangle.Height));
             int top = Math.Min(rectangle.Bottom, Math.Max(Tiles[0].Length, rectangle.Bottom - rectangle.Height));
@@ -61,7 +64,7 @@ namespace World.ToyWorldCore
             // Rows before start of map
             for (int j = rectangle.Top; j < bot; j++)
             {
-                for (int i = rectangle.Left; i < rectangle.Right; i++)
+                for (int i = rectangle.Left; i < viewRight; i++)
                     m_tileTypes[idx++] = defaultTileOffset;
             }
 
@@ -83,14 +86,14 @@ namespace World.ToyWorldCore
                 }
 
                 // Tiles after end of map
-                for (int i = right; i < rectangle.Right; i++)
+                for (int i = right; i < viewRight; i++)
                     m_tileTypes[idx++] = defaultTileOffset;
             }
 
             // Rows after end of map
             for (int j = top; j < rectangle.Bottom; j++)
             {
-                for (int i = rectangle.Left; i < rectangle.Right; i++)
+                for (int i = rectangle.Left; i < viewRight; i++)
                     m_tileTypes[idx++] = defaultTileOffset;
             }
 
