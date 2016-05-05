@@ -136,6 +136,7 @@ namespace World.Physics
                     {
                         firstList.UnionWith(secondList);
                         listOfSets.RemoveAt(j);
+                        j--;
                     }
                 }
             }
