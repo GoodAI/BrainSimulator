@@ -69,6 +69,44 @@ extern "C"
 			pixels[pixles_id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
 		}
 	}
+	__global__ void DrawRGBTiledKernel(float* values, unsigned int* pixels, int numOfPixels, int tw, int th, int tilesInRow) 
+	{
+		int id = blockDim.x*blockIdx.y*gridDim.x	
+				+ blockDim.x*blockIdx.x				
+				+ threadIdx.x;
+
+        int ta, pw, ph, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col, id_R_values;
+		if(id < numOfPixels) //id of the thread is valid
+		{
+            ta           = tw*th;                                       // tile area
+            pw           = tw*tilesInRow;                               // width of the pixles (where to write)
+            ph           = numOfPixels/pw;                              // height of the pixles (where to write)
+            pixels_row   = id / pw;                                     // row-id in the final pixels mem. block (observer)
+            pixels_col   = id % pw;                                     // column-id in the final pixels mem. block (observer)
+            tile_row     = pixels_row / th;                             // in which tile-row it is
+            tile_col     = pixels_col / tw;                             // in which tile-column it is
+            id_tile      = tile_col + tile_row*tilesInRow;              // which tile it is
+            values_row   = pixels_row % th;
+            values_col   = pixels_col % tw;
+            id_R_values  = id_tile*ta*3 + values_col + values_row*tw;   // final oid in the values for red Color:)
+            
+			float fred   = values[id_R_values];
+			float fgreen = values[1 * ta + id_R_values];
+			float fblue  = values[2 * ta + id_R_values];
+
+			fred   = fminf(fmaxf((fred+1)/2,   0), 1) * 255;    // normalize colors to be -1 and 1
+			fgreen = fminf(fmaxf((fgreen+1)/2, 0), 1) * 255;
+			fblue  = fminf(fmaxf((fblue+1)/2,  0), 1) * 255;
+
+			unsigned char red   = (unsigned char) __float2uint_rn(fred);
+			unsigned char green = (unsigned char) __float2uint_rn(fgreen);
+			unsigned char blue  = (unsigned char) __float2uint_rn(fblue);		
+
+			pixels[id] = (0xFF << 24) | (red << 16) | (green << 8) | blue;		
+		}
+	}
+
+
 	
 	__global__ void DrawVectorsKernel(float* values, int elements, float maxValue, unsigned int* pixels, int numOfPixels) 
 	{

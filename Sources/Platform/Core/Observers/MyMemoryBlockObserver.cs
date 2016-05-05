@@ -210,7 +210,7 @@ namespace GoodAI.Core.Observers
 
         protected MyCudaKernel m_vectorKernel;
         protected MyCudaKernel m_rgbKernel;
-        protected MyCudaKernel m_tiledKernel;
+        protected MyCudaKernel m_tiledKernel, m_tiledRGBKernel;
 
         public MyMemoryBlockObserver()
         {
@@ -237,7 +237,8 @@ namespace GoodAI.Core.Observers
             {
                 MyLog.WARNING.WriteLine("Observing tensors in RGB or Vector mode not supported");
             }
-            m_tiledKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
+            m_tiledKernel    = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
+            m_tiledRGBKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBTiledKernel");
 
             if (!m_methodSelected)
             {
@@ -256,9 +257,16 @@ namespace GoodAI.Core.Observers
         {
             if (ObserveTensors)
             {
-                m_tiledKernel.SetupExecution(TextureSize);
-                m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, m_tileWidth, m_tileHeight, TilesInRow);
-
+                if (Method == RenderingMethod.RGB)
+                {
+                    m_tiledRGBKernel.SetupExecution(TextureSize);
+                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureSize, m_tileWidth, m_tileHeight, TilesInRow);
+                }
+                else
+                {
+                    m_tiledKernel.SetupExecution(TextureSize);
+                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, m_tileWidth, m_tileHeight, TilesInRow);
+                }
                 return;
             }
             if (Method == RenderingMethod.Vector)
@@ -329,6 +337,8 @@ namespace GoodAI.Core.Observers
                 m_tileWidth = d[0];
                 m_tileHeight = d[1];
                 textureSize = ComputeTiledTextureSize(d, Target);
+                if (Method == RenderingMethod.RGB)
+                    textureSize.Height /= 3;
             }
             else
             {
