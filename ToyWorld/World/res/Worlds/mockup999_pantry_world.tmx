@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="105">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="86">
  <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
   <image source="roguelike_selection_summer.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
@@ -331,85 +331,103 @@
 </data>
  </layer>
  <objectgroup name="Object">
-  <object id="16" name="Pingu" type="Avatar" gid="496" x="232.25" y="208.166" width="12" height="12" rotation="160">
+  <object id="16" name="Pingu" type="Avatar" gid="496" x="216.917" y="148.833" width="12" height="12" rotation="160">
    <properties>
     <property name="ForwardSpeed" value="0.5"/>
     <property name="InelasticCollision" value="true"/>
    </properties>
   </object>
-  <object id="90" name="Fast Ball" type="Ball" gid="497" x="269.091" y="658.545" width="12" height="12" rotation="88">
+  <object id="55" name="Fast Ball" type="Ball" gid="497" x="183.167" y="64.6667" width="12" height="12" rotation="88">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="93" name="Fast Ball" type="Ball" gid="497" x="280.667" y="140.667" width="12" height="12" rotation="88">
+  <object id="60" name="Fast Ball" type="Ball" gid="497" x="202.917" y="78.5833" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="94" name="Fast Ball" type="Ball" gid="497" x="212" y="107.333" width="12" height="12" rotation="88">
+  <object id="62" name="Small Ball" type="Ball" gid="497" x="149.25" y="73" width="8" height="8" rotation="20">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="95" name="Fast Ball" type="Ball" gid="497" x="149.333" y="73.3333" width="12" height="12" rotation="88">
+  <object id="67" name="Fast Ball" type="Ball" gid="497" x="8" y="658.25" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="96" name="Fast Ball" type="Ball" gid="497" x="224.667" y="43.3333" width="12" height="12" rotation="88">
+  <object id="68" name="Fast Ball" type="Ball" gid="497" x="191.25" y="109" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="97" name="Fast Ball" type="Ball" gid="497" x="282.667" y="60.6667" width="12" height="12" rotation="88">
+  <object id="69" name="Fast Ball" type="Ball" gid="497" x="163.75" y="97.75" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="98" name="Fast Ball" type="Ball" gid="497" x="210" y="61.3333" width="12" height="12" rotation="88">
+  <object id="70" name="Fast Ball" type="Ball" gid="497" x="233.5" y="113.25" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="99" name="Fast Ball" type="Ball" gid="497" x="159.333" y="108" width="12" height="12" rotation="88">
+  <object id="71" name="Fast Ball" type="Ball" gid="497" x="272.5" y="62.75" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="100" name="Fast Ball" type="Ball" gid="497" x="132.667" y="28.6667" width="12" height="12" rotation="88">
+  <object id="72" name="Fast Ball" type="Ball" gid="497" x="258.75" y="39.5" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="101" name="Fast Ball" type="Ball" gid="497" x="257.333" y="89.3333" width="12" height="12" rotation="88">
+  <object id="73" name="Fast Ball" type="Ball" gid="497" x="216.25" y="44.5" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="102" name="Fast Ball" type="Ball" gid="497" x="222" y="151.333" width="12" height="12" rotation="88">
+  <object id="74" name="Small Ball" type="Ball" gid="497" x="235.5" y="87.75" width="8" height="8" rotation="20">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="103" name="Fast Ball" type="Ball" gid="497" x="293.333" y="101.333" width="12" height="12" rotation="88">
+  <object id="75" name="Small Ball" type="Ball" gid="497" x="275" y="101.75" width="8" height="8" rotation="20">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
    </properties>
   </object>
-  <object id="104" name="Fast Ball" type="Ball" gid="497" x="250.667" y="120.667" width="12" height="12" rotation="88">
+  <object id="76" name="Small Ball" type="Ball" gid="497" x="290" y="126.25" width="8" height="8" rotation="20">
+   <properties>
+    <property name="ElasticCollision" value="true"/>
+    <property name="ForwardSpeed" value="0.2"/>
+   </properties>
+  </object>
+  <object id="77" name="Small Ball" type="Ball" gid="497" x="286.25" y="157.5" width="8" height="8" rotation="20">
+   <properties>
+    <property name="ElasticCollision" value="true"/>
+    <property name="ForwardSpeed" value="0.2"/>
+   </properties>
+  </object>
+  <object id="78" name="Small Ball" type="Ball" gid="497" x="235.25" y="160" width="8" height="8" rotation="20">
+   <properties>
+    <property name="ElasticCollision" value="true"/>
+    <property name="ForwardSpeed" value="0.2"/>
+   </properties>
+  </object>
+  <object id="85" name="Fast Ball" type="Ball" gid="497" x="23.25" y="669.75" width="12" height="12" rotation="2">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>

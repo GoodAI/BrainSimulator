@@ -60,13 +60,20 @@ namespace World.Physics
                 lastNotCollidingTime = res.Item1;
                 firstCollidingTime = res.Item2;
 
-                SetNewSpeedsAndDirectionsAndMoveBeforeCollision(collisionGroup, lastNotCollidingTime, firstCollidingTime); // TODO: SetPositions
+                if (float.IsInfinity(firstCollidingTime))
+                {
+                    MoveCollisionGroup(collisionGroup, remainingTime);
+                }
+                else
+                {
+                    SetNewSpeedsAndDirectionsAndMoveBeforeCollision(collisionGroup, lastNotCollidingTime, firstCollidingTime);
+                }
 
                 if (Math.Abs(prevLastNotCollidingTime - lastNotCollidingTime) < NEGLIGIBLE_TIME)
                 {
-                    if (smallmoveCounter > 5)
+                    if (smallmoveCounter >= 5)
                     {
-                        //ResetSpeedToSlowestElement(collisionGroup, lastNotCollidingTime); // TODO: was timeLeft
+                        ResetCollidingElement(collisionGroup, firstCollidingTime);
                     }
                     smallmoveCounter++;
                 }
@@ -78,22 +85,17 @@ namespace World.Physics
             //Debug.Assert(counter < MAXIMUM_RESOLVE_TRIES);
         }
 
-        /*private void ResetSpeedToSlowestElement(List<IForwardMovablePhysicalEntity> collisionGroup, float lastNotCollidingTime)
+        private void ResetCollidingElement(List<IForwardMovablePhysicalEntity> collisionGroup, float firstCollidingTime)
         {
-            List<Vector2> positions = GetPositions(collisionGroup);
-            float newTimeLeft = CollisionFreePositionBinarySearch(collisionGroup, timeLeft, 1);
-            for (int index = 0; index < collisionGroup.Count; index++)
+            MoveCollisionGroup(collisionGroup, firstCollidingTime);
+            foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
             {
-                IForwardMovablePhysicalEntity physicalEntity = collisionGroup[index];
-                if (m_collisionChecker.Collides(physicalEntity) && physicalEntity.InelasticCollision)
+                if (m_collisionChecker.Collides(physicalEntity))
                 {
-                    m_movementPhysics.Shift(physicalEntity, timeLeft - newTimeLeft);
-                    physicalEntity.ForwardSpeed = 0;
+                    SetSomePositionAround(physicalEntity);
                 }
             }
-
-            SetPositions(collisionGroup, positions);
-        }*/
+        }
 
         private void SetNewSpeedsAndDirectionsAndMoveBeforeCollision(List<IForwardMovablePhysicalEntity> collisionGroup, float lastNotCollidingTime, float firstCollidingTime)
         {
@@ -500,6 +502,7 @@ namespace World.Physics
 
         private void MoveCollisionGroup(IEnumerable<IForwardMovablePhysicalEntity> collisionGroup, float time)
         {
+            Debug.Assert(!float.IsNaN(time) && !float.IsInfinity(time));
             foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
             {
                 m_movementPhysics.Shift(physicalEntity, time * physicalEntity.ForwardSpeed);
