@@ -22,7 +22,7 @@ vec2 GetTexCoods()
 	// Tile positions
 	ivec2 off = ivec2(v_texOffset % texSizeCount.z, v_texOffset / texSizeCount.z);
 	// Texture positions (top-left)
-	int tileSize = tileSizeMargin.xy + tileSizeMargin.zw + tileBorder * 2;
+	vec2 tileSize = tileSizeMargin.xy + tileSizeMargin.zw + tileBorder * 2;
 	vec2 uv = off * tileSize + tileBorder;
 	// + tileBorder because even the first tile's border size was increased
 

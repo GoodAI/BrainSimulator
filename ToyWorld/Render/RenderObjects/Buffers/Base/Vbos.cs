@@ -7,7 +7,7 @@ namespace Render.RenderObjects.Buffers
 {
     internal abstract class VboBase : IDisposable
     {
-        public int Handle { get; private set; }
+        public uint Handle { get; private set; }
 
         public int ByteCount { get; protected set; }
 
@@ -19,7 +19,7 @@ namespace Render.RenderObjects.Buffers
 
         protected VboBase(int elementSize = 4, BufferTarget target = BufferTarget.ArrayBuffer)
         {
-            Handle = GL.GenBuffer();
+            Handle = (uint)GL.GenBuffer();
 
             Target = target;
             ElementSize = elementSize;
