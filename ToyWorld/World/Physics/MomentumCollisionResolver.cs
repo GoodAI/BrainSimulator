@@ -16,7 +16,7 @@ namespace World.Physics
         private const float Y_DIRECTION = 0;
         private const float NEGLIGIBLE_TIME = 0.01f;
         private const float NEGLIGIBLE_DISTANCE = 0.0001f;
-        private const int MAXIMUM_RESOLVE_TRIES = 100;
+        private const int MAXIMUM_RESOLVE_TRIES = 25;
 
         public MomentumCollisionResolver(ICollisionChecker collisionChecker, IMovementPhysics movementPhysics)
         {
@@ -38,15 +38,6 @@ namespace World.Physics
         {
             MoveCollisionGroup(collisionGroup, -1);
 
-            // if starting position is not permissible, make random walk
-            foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
-            {
-                if (m_collisionChecker.Collides(physicalEntity))
-                {
-                    SetSomePositionAround(physicalEntity);
-                }
-            }
-
             float lastNotCollidingTime = 0.0f;
             float firstCollidingTime = float.PositiveInfinity;
             float remainingTime = 1.0f;
@@ -56,11 +47,20 @@ namespace World.Physics
             float prevLastNotCollidingTime = 1;
             do
             {
+                // if starting position is not permissible, make random walk
+                foreach (IForwardMovablePhysicalEntity physicalEntity in collisionGroup)
+                {
+                    if (m_collisionChecker.Collides(physicalEntity))
+                    {
+                        SetSomePositionAround(physicalEntity);
+                    }
+                }
+
                 Tuple<float, float> res = CollisionFreePositionBinarySearch(collisionGroup, remainingTime);
                 lastNotCollidingTime = res.Item1;
                 firstCollidingTime = res.Item2;
 
-                if (float.IsInfinity(firstCollidingTime))
+                if (float.IsPositiveInfinity(firstCollidingTime))
                 {
                     MoveCollisionGroup(collisionGroup, remainingTime);
                 }
@@ -69,19 +69,28 @@ namespace World.Physics
                     SetNewSpeedsAndDirectionsAndMoveBeforeCollision(collisionGroup, lastNotCollidingTime, firstCollidingTime);
                 }
 
-                if (Math.Abs(prevLastNotCollidingTime - lastNotCollidingTime) < NEGLIGIBLE_TIME)
+                /*if (Math.Abs(prevLastNotCollidingTime - lastNotCollidingTime) < NEGLIGIBLE_TIME)
                 {
                     if (smallmoveCounter >= 5)
                     {
                         ResetCollidingElement(collisionGroup, firstCollidingTime);
                     }
                     smallmoveCounter++;
-                }
+                }*/
 
                 prevLastNotCollidingTime = lastNotCollidingTime;
                 counter++;
                 remainingTime = remainingTime - lastNotCollidingTime;
             } while (remainingTime - NEGLIGIBLE_TIME > 0.0f && counter < MAXIMUM_RESOLVE_TRIES);
+
+            if (counter >= MAXIMUM_RESOLVE_TRIES)
+            {
+                // moves the system into a collision state
+                // will force calling SetSomePositionAround(physicalEntity);
+                Tuple<float, float> res = CollisionFreePositionBinarySearch(collisionGroup, remainingTime);
+                firstCollidingTime = res.Item2;
+                MoveCollisionGroup(collisionGroup, (float)remainingTime);
+            }
             //Debug.Assert(counter < MAXIMUM_RESOLVE_TRIES);
         }
 
