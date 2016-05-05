@@ -472,6 +472,9 @@ namespace GoodAI.ToyWorld
                     TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
                 }
 
+                Owner.TextIn.SafeCopyToHost();
+                Owner.AvatarCtrl.MessageIn = string.Join("", Owner.TextIn.Host);
+
                 string message = Owner.AvatarCtrl.MessageIn;
                 if (message == null)
                 {
@@ -483,8 +486,6 @@ namespace GoodAI.ToyWorld
 
                 Owner.Text.SafeCopyToDevice();
                 Owner.AvatarCtrl.MessageOut = null;
-
-                Owner.TextIn.SafeCopyToHost();
             }
 
             private static void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
