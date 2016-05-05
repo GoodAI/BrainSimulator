@@ -7,6 +7,8 @@ namespace GoodAI.ToyWorld.Control
     /// </summary>
     public interface IAvatarController : IMessageSender
     {
+        string Message { get; }
+
         /// <summary>
         ///
         /// </summary>
@@ -34,5 +36,10 @@ namespace GoodAI.ToyWorld.Control
         /// Sends text message to Avatar
         /// </summary>
         void SendMessage(string message);
+
+        /// <summary>
+        /// Sets the agent message to null
+        /// </summary>
+        void ClearMessage();
     }
 }

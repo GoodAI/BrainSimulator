@@ -14,8 +14,8 @@ namespace ToyWorldConversation
     public partial class ToyWorldConversation : DockContent
     {
         private readonly MainForm m_mainForm;
-        private Font m_boldFont;
-        private Font m_normalFont;
+        private readonly Font m_boldFont;
+        private readonly Font m_normalFont;
 
         private IAvatarController m_avatarCtrl
         {
@@ -68,10 +68,16 @@ namespace ToyWorldConversation
 
         private void ConnectToToyWorld(object sender, EventArgs e)
         {
-            //m_gameCtrl.Init();
             m_gameCtrl.NewMessage += WorldNewMessage;
-
             m_avatarCtrl.NewMessage += AvatarNewMessage;
+        }
+
+        private void PrintMessageFrom(string message, string sender)
+        {
+            richTextBox_messages.SelectionFont = m_boldFont;
+            richTextBox_messages.AppendText(sender + "\n");
+            richTextBox_messages.SelectionFont = m_normalFont;
+            richTextBox_messages.AppendText(message + "\n");
         }
 
         private void WorldNewMessage(object sender, MessageEventArgs e)
@@ -79,10 +85,7 @@ namespace ToyWorldConversation
             if (m_showWorldMessages)
                 Invoke((MethodInvoker)(() =>
                 {
-                    richTextBox_messages.SelectionFont = m_boldFont;
-                    richTextBox_messages.AppendText("World\n");
-                    richTextBox_messages.SelectionFont = m_normalFont;
-                    richTextBox_messages.AppendText(e.Message + "\n");
+                    PrintMessageFrom(e.Message, "World");
                 }));
         }
 
@@ -91,18 +94,22 @@ namespace ToyWorldConversation
             if (m_showAvatarMessages)
                 Invoke((MethodInvoker)(() =>
                 {
-                    richTextBox_messages.SelectionFont = m_boldFont;
-                    richTextBox_messages.AppendText("Avatar\n");
-                    richTextBox_messages.SelectionFont = m_normalFont;
-                    richTextBox_messages.AppendText(e.Message + "\n");
+                    PrintMessageFrom(e.Message, "Avatar");
                 }));
         }
 
         private void textBox_send_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter) return;
+            if (e.KeyCode != Keys.Enter || m_avatarCtrl == null) return;
 
+            e.SuppressKeyPress = true;
             m_avatarCtrl.SendMessage(textBox_send.Text);
+            Invoke((MethodInvoker)(() =>
+            {
+                PrintMessageFrom(textBox_send.Text, "You");
+            }));
+
+            textBox_send.Text = null;
         }
     }
 }

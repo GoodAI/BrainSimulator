@@ -13,6 +13,8 @@ namespace Game
 
         public event MessageEventHandler NewMessage = delegate { };
 
+        public string Message { get; private set; }
+
         public AvatarController(IAvatar avatar)
         {
             m_avatar = avatar;
@@ -50,7 +52,12 @@ namespace Game
 
         public void SendMessage(string message)
         {
-            throw new NotImplementedException();
+            Message = message;
+        }
+
+        public void ClearMessage()
+        {
+            Message = null;
         }
 
         private void SetAvatarActionsControllable()

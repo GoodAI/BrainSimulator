@@ -52,6 +52,13 @@ namespace GoodAI.ToyWorld
             set { SetOutput(2, value); }
         }
 
+        [MyOutputBlock(3)]
+        public MyMemoryBlock<float> Text
+        {
+            get { return GetOutput(3); }
+            set { SetOutput(3, value); }
+        }
+
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Controls
         {
@@ -125,6 +132,10 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Free view"), DisplayName("Resolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int ResolutionHeight { get; set; }
+
+        [MyBrowsable, DisplayName("Maximum message length")]
+        [YAXSerializableField(DefaultValue = 128)]
+        public int MaxMessageLength { get; set; }
 
         public IGameController GameCtrl { get; set; }
         public IAvatarController AvatarCtrl { get; set; }
@@ -214,6 +225,8 @@ namespace GoodAI.ToyWorld
             m_freeRR.SetPositionCenter(CenterX, CenterY);
 
             WorldInitialized(this, EventArgs.Empty);
+
+            Text.Count = MaxMessageLength;
         }
 
         private static string GetDllDirectory()
@@ -374,7 +387,7 @@ namespace GoodAI.ToyWorld
                 Owner.AvatarCtrl.SetActions(ctrl);
             }
 
-            private float ConvertBiControlToUniControl(float a, float b)
+            private static float ConvertBiControlToUniControl(float a, float b)
             {
                 return a >= b ? a : -b;
             }
@@ -389,12 +402,12 @@ namespace GoodAI.ToyWorld
                 m_fpsStopwatch = Stopwatch.StartNew();
             }
 
-            private void PrintLogMessage(MyLog logger, TWLogMessage message)
+            private static void PrintLogMessage(MyLog logger, TWLogMessage message)
             {
                 logger.WriteLine("TWLog: " + message);
             }
 
-            private void PrintLogMessages()
+            private static void PrintLogMessages()
             {
                 foreach (TWLogMessage message in TWLog.GetAllLogMessages())
                 {
@@ -415,8 +428,6 @@ namespace GoodAI.ToyWorld
                                 PrintLogMessage(MyLog.INFO, message);
                                 break;
                             }
-                        case TWSeverity.Verbose:
-                        case TWSeverity.Debug:
                         default:
                             {
                                 PrintLogMessage(MyLog.DEBUG, message);
@@ -454,9 +465,21 @@ namespace GoodAI.ToyWorld
                     TransferFromRRToMemBlock(Owner.m_fofRR, Owner.VisualFof);
                     TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
                 }
+
+                string message = Owner.AvatarCtrl.Message;
+                if (message == null)
+                {
+                    Owner.Text.Fill(0);
+                    return;
+                }
+                for (int i = 0; i < message.Length; ++i)
+                    Owner.Text.Host[i] = message[i];
+
+                Owner.Text.SafeCopyToDevice();
+                Owner.AvatarCtrl.ClearMessage();
             }
 
-            private void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
+            private static void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
             {
                 uint[] data = rr.Image;
                 int width = rr.Resolution.Width;
