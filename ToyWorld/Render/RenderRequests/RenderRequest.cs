@@ -160,10 +160,9 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
-
-        public EventHandler<int> OnPreRendering { get; private set; }
-        public EventHandler<int> OnAfterRendering { get; private set; }
-
+        public event Action<IRenderRequestBase, uint> OnPostInitEvent;
+        public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
+        public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
         private bool m_drawNoise;
         private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
@@ -272,6 +271,9 @@ namespace Render.RenderRequests
                 if (m_fbo != null)
                     m_fbo.Dispose();
                 m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
+
+                GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
+
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
@@ -290,11 +292,30 @@ namespace Render.RenderRequests
 
         #region Draw
 
+        #region Callbacks
+
+        public virtual void OnPreDraw()
+        {
+            var preCopyCallback = OnPreRenderingEvent;
+
+            if (preCopyCallback != null)
+                preCopyCallback(this, m_pbo.Handle);
+        }
+
+        public virtual void OnPostDraw()
+        {
+            var postCopyCallback = OnPostRenderingEvent;
+
+            if (postCopyCallback != null)
+                postCopyCallback(this, m_pbo.Handle);
+        }
+
+        #endregion
+
+
         public virtual void Draw(RendererBase renderer, ToyWorld world)
         {
             CheckDirtyParams(renderer);
-
-            GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 

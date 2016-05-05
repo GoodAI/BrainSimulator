@@ -63,10 +63,16 @@ namespace Render.Renderer
             MakeContextCurrent();
 
             foreach (var renderRequest in m_renderRequestQueue)
+                renderRequest.OnPreDraw();
+
+            foreach (var renderRequest in m_renderRequestQueue)
             {
                 Process(renderRequest, world);
                 CheckError();
             }
+
+            foreach (var renderRequest in m_renderRequestQueue)
+                renderRequest.OnPostDraw();
         }
 
         protected virtual void Process(RenderRequest request, ToyWorld world)

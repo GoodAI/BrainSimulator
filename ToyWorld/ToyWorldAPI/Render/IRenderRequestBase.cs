@@ -41,7 +41,7 @@ namespace GoodAI.ToyWorld.Control
         /// Use this callback to release any mapping related to the buffer object.
         /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
         /// </summary>
-        EventHandler<int> OnPreRendering { get; }
+        event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
 
         /// <summary>
         /// Called after the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
@@ -50,7 +50,8 @@ namespace GoodAI.ToyWorld.Control
         /// from the buffer object or to map a CUDA pointer using CUDA-GL interop.
         /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
         /// </summary>
-        EventHandler<int> OnAfterRendering { get; }
+        event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
+
 
         /// <summary>
         /// 
