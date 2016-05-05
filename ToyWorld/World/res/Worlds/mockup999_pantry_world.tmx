@@ -358,7 +358,7 @@
   <object id="67" name="Fast Ball" type="Ball" gid="497" x="8" y="658.25" width="12" height="12" rotation="89">
    <properties>
     <property name="ElasticCollision" value="true"/>
-    <property name="ForwardSpeed" value="0.2"/>
+    <property name="ForwardSpeed" value="0"/>
    </properties>
   </object>
   <object id="68" name="Fast Ball" type="Ball" gid="497" x="191.25" y="109" width="12" height="12" rotation="89">
@@ -430,7 +430,7 @@
   <object id="85" name="Fast Ball" type="Ball" gid="497" x="23.25" y="669.75" width="12" height="12" rotation="2">
    <properties>
     <property name="ElasticCollision" value="true"/>
-    <property name="ForwardSpeed" value="0.2"/>
+    <property name="ForwardSpeed" value="0"/>
    </properties>
   </object>
  </objectgroup>

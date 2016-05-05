@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using VRageMath;
-using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 
 namespace World.Physics
@@ -12,7 +11,6 @@ namespace World.Physics
         /// <summary>
         /// Checks whether given PhysicalEntity collides with any other PhysicalEntity.
         /// </summary>
-        /// <param name="physicalEntity"></param>
         /// <returns>List of PhysicalEntities given entity collides with.</returns>
         List<List<IPhysicalEntity>> CollisionGroups();
 
@@ -27,6 +25,7 @@ namespace World.Physics
         /// 
         /// </summary>
         /// <param name="physicalEntity"></param>
+        /// <param name="eps"></param>
         /// <returns></returns>
         bool CollidesWithTile(IPhysicalEntity physicalEntity, float eps);
 
@@ -89,7 +88,7 @@ namespace World.Physics
         public float MaximumGameObjectRadius { get { return MAXIMUM_GAMEOBJECT_RADIUS; } }
 
         private const float MAXIMUM_OBJECT_SPEED = 1f;
-        public float MaximumGameObjectSpeed { get { return MAXIMUM_OBJECT_SPEED; }}
+        public float MaximumGameObjectSpeed { get { return MAXIMUM_OBJECT_SPEED; } }
 
 
         public CollisionChecker(IAtlas atlas)
@@ -113,34 +112,40 @@ namespace World.Physics
         /// <returns>List of </returns>
         public List<List<IPhysicalEntity>> CollisionGroups()
         {
-
-            // TODO : groups (optimization)
-/*            List<HashSet<IPhysicalEntity>> listOfSets = new List<HashSet<IPhysicalEntity>>();
+            List<HashSet<IPhysicalEntity>> listOfSets = new List<HashSet<IPhysicalEntity>>();
 
             foreach (IPhysicalEntity physicalEntity in m_physicalEntities)
             {
                 if (Collides(physicalEntity))
                 {
-                    if (Collides(physicalEntity))
-                    {
-                        var circle = new VRageMath.Circle(physicalEntity.Position, 2 * MaximumGameObjectRadius + MaximumGameObjectSpeed);
-                        var physicalEntities = new HashSet<IPhysicalEntity>(m_objectLayer.GetPhysicalEntities(circle));
-                        listOfSets.Add(physicalEntities);
-                    }
+                    var circle = new Circle(physicalEntity.Position,
+                        2 * MaximumGameObjectRadius + MaximumGameObjectSpeed);
+                    var physicalEntities = new HashSet<IPhysicalEntity>(m_objectLayer.GetPhysicalEntities(circle));
+                    listOfSets.Add(physicalEntities);
                 }
             }
 
             // consolidation
             for (int i = 0; i < listOfSets.Count - 1; i++)
             {
+                HashSet<IPhysicalEntity> firstList = listOfSets[i];
                 for (int j = i + 1; j < listOfSets.Count; j++)
                 {
-                    
+                    HashSet<IPhysicalEntity> secondList = listOfSets[j];
+                    if (firstList.Overlaps(secondList))
+                    {
+                        firstList.UnionWith(secondList);
+                        listOfSets.RemoveAt(j);
+                    }
                 }
-            }*/
+            }
 
+            // To List
             List<List<IPhysicalEntity>> l = new List<List<IPhysicalEntity>>();
-            l.Add(m_physicalEntities);
+            foreach (HashSet<IPhysicalEntity> set in listOfSets)
+            {
+                l.Add(set.ToList());
+            }
 
             return l;
         }
@@ -149,19 +154,20 @@ namespace World.Physics
         {
             return collisionGroup.Count(CollidesWithTile) + CollidesWithEachOther(collisionGroup);
         }
-        
+
         public bool Collides(IPhysicalEntity physicalEntity)
         {
             return CollidesWithTile(physicalEntity) || CollidesWithPhysicalEntity(physicalEntity);
         }
 
-        public bool CollidesWithTile(IPhysicalEntity physicalEntity){
+        public bool CollidesWithTile(IPhysicalEntity physicalEntity)
+        {
             List<Vector2I> coverTilesCoordinates = physicalEntity.CoverTiles();
             bool colliding = !coverTilesCoordinates.TrueForAll(x => !m_atlas.ContainsCollidingTile(x));
             return colliding;
         }
 
-        
+
         public bool CollidesWithTile(IPhysicalEntity physicalEntity, float eps)
         {
             physicalEntity.Shape.Resize(eps);
@@ -172,7 +178,7 @@ namespace World.Physics
 
         public bool CollidesWithPhysicalEntity(IPhysicalEntity physicalEntity)
         {
-            var circle = new VRageMath.Circle(physicalEntity.Position, 2 * MaximumGameObjectRadius);
+            var circle = new Circle(physicalEntity.Position, 2 * MaximumGameObjectRadius);
             List<IPhysicalEntity> physicalEntities = m_objectLayer.GetPhysicalEntities(circle);
             return physicalEntities.Any(physicalEntity.CollidesWith);
         }
