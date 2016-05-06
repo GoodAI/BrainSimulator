@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ToyWorldTests.Physics
 {
-    public class CollisionResolverTest
+    public class MomentumCollisionResolverTest
     {
         [Fact]
         public void ResolveSlideCollissionOrthogonal()
@@ -19,7 +19,7 @@ namespace ToyWorldTests.Physics
 
             ICollisionChecker collisionChecker = new CollisionCheckerMock(new List<IPhysicalEntity>() {pe});
             var movementPhysics = new MovementPhysics();
-            ICollisionResolver collisionResolver = new NaiveCollisionResolver(collisionChecker, movementPhysics);
+            ICollisionResolver collisionResolver = new MomentumCollisionResolver(collisionChecker, movementPhysics);
 
             movementPhysics.Move(pe);
 
@@ -38,12 +38,12 @@ namespace ToyWorldTests.Physics
             float angle = 135f;
 
             var angleRads = MathHelper.ToRadians(angle);
-            IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, angleRads);
-            pe.InelasticCollision = true;
+            IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, angleRads)
+                {InelasticCollision = true};
 
             ICollisionChecker collisionChecker = new CollisionCheckerMock(new List<IPhysicalEntity>() {pe});
             var movementPhysics = new MovementPhysics();
-            ICollisionResolver collisionResolver = new NaiveCollisionResolver(collisionChecker, movementPhysics);
+            ICollisionResolver collisionResolver = new MomentumCollisionResolver(collisionChecker, movementPhysics);
 
             movementPhysics.Move(pe);
 
@@ -106,7 +106,7 @@ namespace ToyWorldTests.Physics
             return physicalEntity.Position.X - eps < 0;
         }
 
-        public int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
+        public int NumberOfCollidingCouples(List<IPhysicalEntity> physicalEntities)
         {
             throw new NotImplementedException();
         }

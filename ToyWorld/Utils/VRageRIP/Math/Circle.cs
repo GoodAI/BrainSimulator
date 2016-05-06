@@ -1,6 +1,4 @@
-﻿using VRageMath;
-
-namespace VRageMath
+﻿namespace VRageMath
 {
     public struct Circle
     {

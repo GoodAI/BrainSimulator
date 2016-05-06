@@ -234,9 +234,9 @@ namespace Render.RenderRequests
                     // Set up transformation to screen space for the gameObject
                     transform = Matrix.Identity;
                     // Model transform
-                    IRotatable dir = gameObject as IRotatable;
-                    if (dir != null)
-                        transform *= Matrix.CreateRotationZ(dir.Rotation);
+                    IRotatable rotatableObject = gameObject as IRotatable;
+                    if (rotatableObject != null)
+                        transform *= Matrix.CreateRotationZ(rotatableObject.Rotation);
                     transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));

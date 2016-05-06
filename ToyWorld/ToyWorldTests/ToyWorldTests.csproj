@@ -113,7 +113,7 @@
     <Compile Include="Game\AvatarControllerTests.cs" />
     <Compile Include="Game\GameControllerTests.cs" />
     <Compile Include="Physics\BasicAvatarMoverTest.cs" />
-    <Compile Include="Physics\CollisionResolverTest.cs" />
+    <Compile Include="Physics\MomentumCollisionResolverTest.cs" />
     <Compile Include="Physics\MovementPhysicsTest.cs" />
     <Compile Include="Physics\ShapesTests.cs" />
     <Compile Include="Physics\UtilsTest.cs" />

@@ -8,12 +8,12 @@ namespace GoodAI.ToyWorld.Control
     public interface IAvatarControls
     {
         /// <summary>
-        /// Value is clamped to (-1,1). Negative values means move backwards, positive are for forward movement.
+        /// Value is clamped to (-1,1). Negative values mean move backwards, positive are for forward movement.
         /// </summary>
         AvatarAction<float> DesiredForwardSpeed { get; }
 
         /// <summary>
-        /// Value is clamped to (-1,1). Negative values means move left, positive are for right movement.
+        /// Value is clamped to (-1,1). Negative values mean move left, positive are for right movement.
         /// </summary>
         AvatarAction<float> DesiredRightSpeed { get; }
 

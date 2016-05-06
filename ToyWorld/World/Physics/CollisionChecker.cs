@@ -57,7 +57,7 @@ namespace World.Physics
         /// </summary>
         /// <param name="physicalEntities"></param>
         /// <returns></returns>
-        int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities);
+        int NumberOfCollidingCouples(List<IPhysicalEntity> physicalEntities);
     }
 
     class CollisionChecker : ICollisionChecker
@@ -89,9 +89,11 @@ namespace World.Physics
 
 
         /// <summary>
-        /// Search for all the objects that are or can be in collision with each other.
+        /// Search for all objects that are or can be in collision with each other.
+        /// Must be called when step was already performed, so collisions are already there.
+        /// If there is no collision, returns empty list.
         /// </summary>
-        /// <returns>List of </returns>
+        /// <returns>List of list of all potentially colliding objects.</returns>
         public List<List<IPhysicalEntity>> CollisionGroups()
         {
             List<HashSet<IPhysicalEntity>> listOfSets = new List<HashSet<IPhysicalEntity>>();
@@ -124,18 +126,18 @@ namespace World.Physics
             }
 
             // To List
-            List<List<IPhysicalEntity>> l = new List<List<IPhysicalEntity>>();
-            foreach (HashSet<IPhysicalEntity> set in listOfSets)
+            List<List<IPhysicalEntity>> collisionGroups = new List<List<IPhysicalEntity>>();
+            foreach (HashSet<IPhysicalEntity> hashSet in listOfSets)
             {
-                l.Add(set.ToList());
+                collisionGroups.Add(hashSet.ToList());
             }
 
-            return l;
+            return collisionGroups;
         }
 
         public int Collides(List<IPhysicalEntity> collisionGroup)
         {
-            return collisionGroup.Count(CollidesWithTile) + CollidesWithEachOther(collisionGroup);
+            return collisionGroup.Count(CollidesWithTile) + NumberOfCollidingCouples(collisionGroup);
         }
 
         public bool Collides(IPhysicalEntity physicalEntity)
@@ -157,8 +159,7 @@ namespace World.Physics
             return physicalEntities.Any(physicalEntity.CollidesWith);
         }
 
-
-        public int CollidesWithEachOther(List<IPhysicalEntity> physicalEntities)
+        public int NumberOfCollidingCouples(List<IPhysicalEntity> physicalEntities)
         {
             int counter = 0;
             for (int i = 0; i < physicalEntities.Count - 1; i++)
@@ -174,23 +175,23 @@ namespace World.Physics
             return counter;
         }
 
-        public List<IPhysicalEntity> CollisionThreat(IPhysicalEntity targetEntity, List<IPhysicalEntity> physicalEntities)
+        public static List<Tuple<IPhysicalEntity, IPhysicalEntity>> CollidingCouples(List<IPhysicalEntity> physicalEntities)
         {
-            var list = new HashSet<IPhysicalEntity>();
+            List<Tuple<IPhysicalEntity, IPhysicalEntity>> collidingCouples = new List<Tuple<IPhysicalEntity, IPhysicalEntity>>();
 
-            foreach (IPhysicalEntity physicalEntity in physicalEntities)
+            for (int i = 0; i < physicalEntities.Count - 1; i++)
             {
-                if (targetEntity == physicalEntity)
+                IPhysicalEntity firstEntity = physicalEntities[i];
+                for (int j = i + 1; j < physicalEntities.Count; j++)
                 {
-                    continue;
-                }
-                if (targetEntity.CollidesWith(physicalEntity))
-                {
-                    list.Add(physicalEntity);
+                    IPhysicalEntity secondEntity = physicalEntities[j];
+                    if (firstEntity.CollidesWith(secondEntity))
+                    {
+                        collidingCouples.Add(new Tuple<IPhysicalEntity, IPhysicalEntity>(firstEntity, secondEntity));
+                    }
                 }
             }
-
-            return list.ToList();
+            return collidingCouples;
         }
     }
 }

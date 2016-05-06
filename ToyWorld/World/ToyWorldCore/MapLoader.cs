@@ -287,7 +287,8 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="properties"></param>
         /// <param name="gameObject"></param>
-        [DebuggerNonUserCode]
+        [DebuggerNonUserCode] // We want to let exceptions to be caught in this method.
+                              // You will receive more informative exception on call.
         private static void SetGameObjectProperties(List<Property> properties, GameObject gameObject)
         {
             Type type = gameObject.GetType();
@@ -298,9 +299,9 @@ namespace World.ToyWorldCore
                 {
                     PropertyInfo gameObjectProperty = type.GetProperty(property.Name);
                     Type propertyType = gameObjectProperty.PropertyType;
-                    object value;
                     try
                     {
+                        object value;
                         if (propertyType == typeof(int))
                         {
                             value = int.Parse(property.Value);

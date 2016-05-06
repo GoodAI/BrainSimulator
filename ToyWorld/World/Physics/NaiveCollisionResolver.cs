@@ -6,6 +6,9 @@ using VRageMath;
 
 namespace World.Physics
 {
+    /// <summary>
+    /// Not ready to use now. Must be reworked if demanded.
+    /// </summary>
     public class NaiveCollisionResolver : ICollisionResolver
     {
         private readonly ICollisionChecker m_collisionChecker;

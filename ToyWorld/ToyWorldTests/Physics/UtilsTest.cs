@@ -1,6 +1,5 @@
 ﻿using System;
 using VRageMath;
-using World.WorldInterfaces;
 using Xunit;
 
 
@@ -8,6 +7,8 @@ namespace ToyWorldTests.Physics
 {
     public class UtilsTest
     {
+        private const float HALF_SQRT2_F = MathHelper.Sqrt2 / 2;
+
         [Theory]
         [InlineData(0, 1)]
         [InlineData(45, 1)]
@@ -26,10 +27,10 @@ namespace ToyWorldTests.Physics
                     break;
                 case 45:
                     Assert.Equal(decomposeSpeed.X, -MathHelper.Sqrt2/2, 2);
-                    Assert.Equal(decomposeSpeed.Y, MathHelper.Sqrt2/2, 2);
+                    Assert.Equal(decomposeSpeed.Y, HALF_SQRT2_F, 2);
                     break;
                 case -135:
-                    Assert.Equal(decomposeSpeed.X, MathHelper.Sqrt2/2, 2);
+                    Assert.Equal(decomposeSpeed.X, HALF_SQRT2_F, 2);
                     Assert.Equal(decomposeSpeed.Y, -MathHelper.Sqrt2/2, 2);
                     break;
                 case 90:
@@ -40,35 +41,18 @@ namespace ToyWorldTests.Physics
         }
 
         [Theory]
-        [InlineData(0, 1)]
-        [InlineData(45, 1)]
-        [InlineData(-135, 2)]
-        [InlineData(90, 1)]
-        public void TestDecomposeSpeedWithRefDir(float direction, float speed)
+        [InlineData(0, 1, HALF_SQRT2_F, HALF_SQRT2_F)]
+        [InlineData(45, 1, 0, 1)]
+        [InlineData(-135, 2, 0, -2)]
+        [InlineData(90, 1, -HALF_SQRT2_F, HALF_SQRT2_F)]
+        public void TestDecomposeSpeedWithRefDir(float direction, float speed, float expectedX, float expectedY)
         {
             float referenceDirection = MathHelper.ToRadians(45);
             float directionRads = MathHelper.ToRadians(direction);
             Vector2 decomposeSpeed = global::World.Physics.Utils.DecomposeSpeed(speed, directionRads, referenceDirection);
 
-            switch ((int) direction)
-            {
-                case 0:
-                    Assert.Equal(decomposeSpeed.X, MathHelper.Sqrt2/2, 2);
-                    Assert.Equal(decomposeSpeed.Y, MathHelper.Sqrt2/2, 2);
-                    break;
-                case 45:
-                    Assert.Equal(decomposeSpeed.X, 0, 2);
-                    Assert.Equal(decomposeSpeed.Y, 1, 2);
-                    break;
-                case -135:
-                    Assert.Equal(decomposeSpeed.X, 0, 2);
-                    Assert.Equal(decomposeSpeed.Y, -2, 2);
-                    break;
-                case 90:
-                    Assert.Equal(decomposeSpeed.X, -MathHelper.Sqrt2/2, 2);
-                    Assert.Equal(decomposeSpeed.Y, MathHelper.Sqrt2/2, 2);
-                    break;
-            }
+            Assert.Equal(decomposeSpeed.X, expectedX, 2);
+            Assert.Equal(decomposeSpeed.Y, expectedY, 2);
         }
 
         [Theory]
