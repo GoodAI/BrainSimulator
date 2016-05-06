@@ -42,7 +42,7 @@ namespace Game
         private void SetAvatarActionsControllable()
         {
             float fSpeed = m_avatarControls.DesiredForwardSpeed;
-            float rSpeed = m_avatarControls.DesiredForwardSpeed;
+            float rSpeed = m_avatarControls.DesiredRightSpeed;
 
             // WolframAlpha.com: Plot[Sqrt((a^2+b^2)/(a+b)), {a,0,1}, {b,0,1}]
             //float jointSpeed = (float) Math.Sqrt((fSpeed*fSpeed + rSpeed*rSpeed)/(Math.Sqrt(fSpeed) + Math.Sqrt(rSpeed)));
