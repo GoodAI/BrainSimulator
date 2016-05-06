@@ -101,11 +101,11 @@ namespace GoodAI.ToyWorld
         public int FoVResHeight { get; set; }
 
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
-        [YAXSerializableField(DefaultValue = 0)]
+        [YAXSerializableField(DefaultValue = 25)]
         public float CenterX { get; set; }
 
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - Y")]
-        [YAXSerializableField(DefaultValue = 0)]
+        [YAXSerializableField(DefaultValue = 25)]
         public float CenterY { get; set; }
 
         [MyBrowsable, Category("Free view"), DisplayName("\tWidth")]
@@ -180,6 +180,7 @@ namespace GoodAI.ToyWorld
             foreach (MyMemoryBlock<float> memBlock in new MyMemoryBlock<float>[3] {VisualFov, VisualFof, VisualFree})
             {
                 memBlock.Unmanaged = !CopyDataThroughCPU;
+                memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
             }
 
             // Setup controllers
