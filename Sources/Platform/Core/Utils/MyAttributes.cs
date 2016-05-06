@@ -83,7 +83,15 @@ namespace GoodAI.Core.Utils
     public class MyPersistableAttribute : Attribute { }    
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class MyUnmanagedAttribute : Attribute { }    
+    public class MyUnmanagedAttribute : Attribute 
+    { 
+        public bool Unmanaged { get; set; }
+
+        public MyUnmanagedAttribute(bool unmanaged = true)
+        {
+            Unmanaged = unmanaged;
+        }
+    }    
 
     [AttributeUsage(AttributeTargets.Property)]
     public class MyBrowsableAttribute : Attribute 
