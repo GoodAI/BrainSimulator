@@ -6,11 +6,12 @@ using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
+using World.Physics;
 
 namespace World.ToyWorldCore
 {
 
-    interface IAtlas
+    public interface IAtlas
     {
         /// <summary>
         /// Adds avatar to Atlas or returns false.
@@ -60,6 +61,15 @@ namespace World.ToyWorldCore
         /// <param name="coordinates"></param>
         /// <returns></returns>
         bool ContainsCollidingTile(Vector2I coordinates);
+
+        IEnumerable<GameActorPosition> ActorsAt(int x, int y, LayerType type = LayerType.All);
+
+        IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject;
+
+        void Remove(GameActorPosition target);
+
+        void ReplaceWith(GameActorPosition original, GameActor replacement);
+
     }
 
     public class Atlas : IAtlas
@@ -67,6 +77,17 @@ namespace World.ToyWorldCore
         public List<ITileLayer> TileLayers { get; private set; }
 
         public List<IObjectLayer> ObjectLayers { get; private set; }
+
+        private IEnumerable<ILayer<GameActor>> Layers
+        {
+            get
+            {
+                foreach (ITileLayer layer in TileLayers)
+                    yield return layer;
+                foreach (IObjectLayer layer in ObjectLayers)
+                    yield return layer;
+            }
+        }
 
         public Dictionary<int, IAvatar> Avatars { get; private set; }
 
@@ -119,15 +140,49 @@ namespace World.ToyWorldCore
 
         public bool ContainsCollidingTile(Vector2I coordinates)
         {
-            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetTile(coordinates) != null)
+            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
-            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetTile(coordinates) != null)
+            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
             return false;
+        }
+
+        public IEnumerable<GameActorPosition> ActorsAt(int x, int y, LayerType type = LayerType.All)
+        {
+            foreach (ILayer<GameActor> layer in Layers.Where(t => (t.LayerType & type) > 0))
+            {
+                GameActor actor = layer.GetActorAt(x, y);
+                if (actor == null)
+                    continue;
+                GameActorPosition actorPosition = new GameActorPosition(actor, new Vector2I(x, y));
+                yield return actorPosition;
+            }
+        }
+
+        public IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All) where T : class, IDirectable, IGameObject
+        {
+            Vector2 direction = Vector2.UnitY;
+            direction.Rotate(sender.Direction);
+            Vector2 target = sender.Position + direction;
+            return ActorsAt((int)Math.Floor(target.X), (int)Math.Floor(target.Y), type);
+        }
+
+        public void Remove(GameActorPosition target)
+        {
+            ReplaceWith(target, null);
+        }
+
+        public void ReplaceWith(GameActorPosition original, GameActor replacement)
+        {
+            foreach (ILayer<GameActor> layer in Layers)
+            {
+                bool result = layer.ReplaceWith(original, replacement);
+                if (result) return;
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using VRage.Collections;
 using World.GameActors.Tiles;
-using World.WorldInterfaces;
 
 namespace World.ToyWorldCore
 {
@@ -13,7 +12,7 @@ namespace World.ToyWorldCore
 
         public int Size { get { return m_register.Size; } }
 
-        public List<IAutoupdateable> CurrentUpdateRequests
+        protected List<IAutoupdateable> CurrentUpdateRequests
         {
             get
             {
@@ -48,11 +47,11 @@ namespace World.ToyWorldCore
             m_register.MoveNext();
         }
 
-        public void UpdateItems(IWorld world)
+        public void UpdateItems(IAtlas atlas)
         {
             foreach (IAutoupdateable actor in CurrentUpdateRequests)
             {
-                actor.Update(world);
+                actor.Update(atlas);
                 if (actor.NextUpdateAfter > 0)
                     Register(actor, actor.NextUpdateAfter);
             }

@@ -1,6 +1,6 @@
-﻿using World.GameActions;
+﻿using VRageMath;
+using World.GameActions;
 using World.ToyWorldCore;
-using World.WorldInterfaces;
 
 namespace World.GameActors.Tiles
 {
@@ -8,7 +8,7 @@ namespace World.GameActors.Tiles
     /// </summary>
     public interface IAutoupdateable
     {
-        Tile Update(IWorld world);
+        void Update(IAtlas atlas);
 
         int NextUpdateAfter { get; }
     }
@@ -20,6 +20,13 @@ namespace World.GameActors.Tiles
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        Tile ApplyGameAction(Atlas atlas, GameAction gameAction, TilesetTable tilesetTable);
+        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null);
+    }
+
+    public interface IPickable : IInteractable { }
+
+    public interface ICanPick
+    {
+        bool AddToInventory(IPickable item);
     }
 }

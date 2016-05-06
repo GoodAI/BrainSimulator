@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -33,6 +34,20 @@ namespace World.ToyWorldCore
         public Tile[][] Tiles { get; set; }
 
         public LayerType LayerType { get; set; }
+
+        public Tile GetActorAt(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+            {
+                return new Obstacle(0);
+            }
+            return Tiles[x][y];
+        }
+
+        public Tile GetActorAt(Vector2I coordinates)
+        {
+            return GetActorAt(coordinates.X, coordinates.Y);
+        }
 
         public int[] GetRectangle(Rectangle rectangle)
         {
@@ -107,13 +122,16 @@ namespace World.ToyWorldCore
             return GetRectangle(rectangle);
         }
 
-        public Tile GetTile(Vector2I coordinates)
+        public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
-            if (coordinates.X < 0 || coordinates.Y < 0 || coordinates.X >= Width || coordinates.Y >= Height)
-            {
-                return new Obstacle(0);
-            }
-            return Tiles[coordinates.X][coordinates.Y];
+            Tile item = GetActorAt(original.Position.X, original.Position.Y);
+            if (item != original.Actor) return false;
+
+            Tiles[original.Position.X][original.Position.Y] = null;
+            if (!(replacement is Tile)) return true;
+            Tiles[original.Position.X][original.Position.Y] = replacement as Tile;
+
+            return true;
         }
     }
 }

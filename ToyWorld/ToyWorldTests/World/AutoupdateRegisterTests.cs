@@ -58,16 +58,17 @@ namespace ToyWorldTests.World
             Assert.Throws<ArgumentOutOfRangeException>(() => register.Register(mock.Object, 0));
         }
 
+        [Fact]
         public void TestGetReturnsList()
         {
-            AutoupdateRegister register = new AutoupdateRegister();
+            TestingAutoupdateRegister register = new TestingAutoupdateRegister();
 
-            Assert.IsType<List<IAutoupdateable>>(register.CurrentUpdateRequests);
+            Assert.IsType<List<IAutoupdateable>>(register.PublicCurrentUpdateRequests);
         }
 
-        private AutoupdateRegister CreateSmallRegisterWithOneObject()
+        private TestingAutoupdateRegister CreateSmallRegisterWithOneObject()
         {
-            AutoupdateRegister register = new AutoupdateRegister(2);
+            TestingAutoupdateRegister register = new TestingAutoupdateRegister(2);
             Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
             register.Register(mock.Object, 1);
             return register;
@@ -76,73 +77,85 @@ namespace ToyWorldTests.World
         [Fact]
         public void TestRegisterAndGet()
         {
-            AutoupdateRegister register = new AutoupdateRegister(2);
+            TestingAutoupdateRegister register = new TestingAutoupdateRegister(2);
             Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
             register.Register(mock.Object, 1);
             register.Tick();
 
-            Assert.Equal(mock.Object, register.CurrentUpdateRequests[0]);
+            Assert.Equal(mock.Object, register.PublicCurrentUpdateRequests[0]);
         }
 
         [Fact]
         public void TestTick()
         {
-            AutoupdateRegister register = CreateSmallRegisterWithOneObject();
-            List<IAutoupdateable> list = register.CurrentUpdateRequests;
+            TestingAutoupdateRegister register = CreateSmallRegisterWithOneObject();
+            List<IAutoupdateable> list = register.PublicCurrentUpdateRequests;
             register.Tick();
 
-            Assert.NotEqual(list, register.CurrentUpdateRequests);
+            Assert.NotEqual(list, register.PublicCurrentUpdateRequests);
         }
 
         [Fact]
         public void TestTickAfterEnd()
         {
-            AutoupdateRegister register = CreateSmallRegisterWithOneObject();
+            TestingAutoupdateRegister register = CreateSmallRegisterWithOneObject();
             register.Tick();
-            List<IAutoupdateable> list = register.CurrentUpdateRequests;
+            List<IAutoupdateable> list = register.PublicCurrentUpdateRequests;
             register.Tick();
             register.Tick();
 
-            Assert.Equal(list, register.CurrentUpdateRequests);
+            Assert.Equal(list, register.PublicCurrentUpdateRequests);
         }
 
         [Fact]
         public void TestSchedulAfterEnd()
         {
-            AutoupdateRegister register = new AutoupdateRegister(2);
+            TestingAutoupdateRegister register = new TestingAutoupdateRegister(2);
             Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
             register.Register(mock.Object, 2);
             register.Tick();
             register.Tick();
 
-            Assert.Equal(mock.Object, register.CurrentUpdateRequests[0]);
+            Assert.Equal(mock.Object, register.PublicCurrentUpdateRequests[0]);
         }
 
         [Fact]
         public void TestUpdateItems()
         {
-            var tmxStream = FileStreams.SmallTmx();
-            var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
-
-            TmxSerializer serializer = new TmxSerializer();
-            Map map = serializer.Deserialize(tmxStream);
-            ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
+            Mock<IAtlas> mockAtlas = new Mock<IAtlas>();
 
             AutoupdateRegister register = new AutoupdateRegister();
             Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
+            mock1.Setup(x => x.Update(It.IsAny<IAtlas>()));
             Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
+            mock2.Setup(x => x.Update(It.IsAny<IAtlas>()));
             register.Register(mock1.Object, 1);
             register.Register(mock2.Object, 2);
+
+            // Act
             register.Tick();
-            register.UpdateItems(world);
+            register.UpdateItems(mockAtlas.Object);
 
-            mock1.Verify(x => x.Update(It.IsAny<ToyWorld>()));
-            mock2.Verify(x => x.Update(It.IsAny<ToyWorld>()), Times.Never());
+            // Assert
+            mock1.Verify(x => x.Update(It.IsAny<IAtlas>()));
+            mock2.Verify(x => x.Update(It.IsAny<IAtlas>()), Times.Never());
 
+            // Act
             register.Tick();
-            register.UpdateItems(world);
+            register.UpdateItems(mockAtlas.Object);
 
-            mock2.Verify(x => x.Update(It.IsAny<ToyWorld>()));
+            // Assert
+            mock2.Verify(x => x.Update(It.IsAny<IAtlas>()));
+        }
+
+        private class TestingAutoupdateRegister : AutoupdateRegister
+        {
+            public List<IAutoupdateable> PublicCurrentUpdateRequests
+            {
+                get { return CurrentUpdateRequests; }
+            }
+
+            public TestingAutoupdateRegister(int registerSize = 100) : base(registerSize) { }
         }
     }
 }

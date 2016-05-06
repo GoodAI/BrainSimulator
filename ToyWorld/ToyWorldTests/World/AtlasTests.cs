@@ -1,21 +1,65 @@
-﻿using World.ToyWorldCore;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using TmxMapSerializer.Elements;
+using TmxMapSerializer.Serializer;
+using World.GameActors;
+using World.GameActors.GameObjects;
+using World.GameActors.Tiles;
+using World.ToyWorldCore;
 using Xunit;
 
 namespace ToyWorldTests.World
 {
-    class AtlasTests
+    public class AtlasTests
     {
-        private Atlas m_atlas;
+        private readonly Atlas m_atlas;
+
         public AtlasTests()
         {
-            m_atlas = new Atlas();
+            Stream tmxStream = FileStreams.SmallPickupTmx();
+            StreamReader tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
+
+            TmxSerializer serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStream);
+            ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
+
+            m_atlas = world.Atlas;
         }
 
         [Fact]
-        public void TestGetLayer()
+        public void NullAvatarThrows()
         {
+            Assert.Throws<ArgumentNullException>(() => m_atlas.AddAvatar(null));
+        }
 
-            m_atlas.GetLayer(LayerType.Background);
+        [Fact]
+        public void TestActorsAt()
+        {
+            List<GameActorPosition> results = m_atlas.ActorsAt(2, 2).ToList();
+
+            Assert.IsType<Background>(results[0].Actor);
+            Assert.IsType<Avatar>(results[1].Actor);
+        }
+
+        [Fact]
+        public void TestInteractableActorsAt()
+        {
+            List<GameActorPosition> results = m_atlas.ActorsAt(2, 0, LayerType.Interactable).ToList();
+
+            Assert.IsType<Apple>(results[0].Actor);
+        }
+
+        [Fact]
+        public void TestActorsInFrontOf()
+        {
+            IAvatar avatar = m_atlas.GetAvatars()[0];
+
+            List<GameActorPosition> results = m_atlas.ActorsInFrontOf(avatar).ToList();
+
+            Assert.IsType<Background>(results[0].Actor);
+            Assert.IsType<Apple>(results[1].Actor);
         }
     }
 }

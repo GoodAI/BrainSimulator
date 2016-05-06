@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
@@ -8,8 +9,6 @@ namespace World.ToyWorldCore
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
-        Tile GetTile(Vector2I coordinates);
-
         /// <summary>
         /// Returns Tiles in given region, where extremes are included.
         /// </summary>
@@ -37,6 +36,22 @@ namespace World.ToyWorldCore
             Contract.EndContractBlock();
 
             return default(Tile[,]);
+        }
+
+        public Tile GetActorAt(int x, int y)
+        {
+            if (x < 0)
+                throw new ArgumentOutOfRangeException("x", "x has to be positive");
+            if (y < 0)
+                throw new ArgumentOutOfRangeException("y", "y has to be positive");
+            Contract.EndContractBlock();
+
+            return default(Tile);
+        }
+
+        public bool ReplaceWith<TR>(GameActorPosition original, TR replacement)
+        {
+            return default(bool);
         }
 
         public int[] GetRectangle(Rectangle rectangle)

@@ -1,19 +1,26 @@
-﻿using System.Drawing;
+﻿﻿using System.Drawing;
+﻿using System;
+using System.Linq;
 using VRageMath;
+using World.GameActions;
+using World.GameActors.Tiles;
 using World.Physics;
+using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControllable, ICharacter
+    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPick
     {
         int Id { get; }
-        IUsable Tool { get; set; }
+        IPickable Tool { get; set; }
     }
 
     public class Avatar : Character, IAvatar
     {
         public int Id { get; private set; }
-        public IUsable Tool { get; set; }
+        public IPickable Tool { get; set; }
+
+        public int NextUpdateAfter { get; private set; }
 
         public float DesiredSpeed { get; set; }
         public float DesiredRotation { get; set; }
@@ -35,6 +42,7 @@ namespace World.GameActors.GameObjects
                 )
         {
             Id = id;
+            NextUpdateAfter = 1;
         }
 
         public void ResetControls()
@@ -45,6 +53,30 @@ namespace World.GameActors.GameObjects
             Use = false;
             PickUp = false;
             Fof = default(PointF);
+        }
+
+        public bool AddToInventory(IPickable item)
+        {
+            if (Tool != null)
+                return false;
+
+            Tool = item;
+            return true;
+        }
+
+        public void Update(IAtlas atlas)
+        {
+            if (PickUp)
+            {
+                GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
+                if (target == null) return;
+                IInteractable interactableTarget = target.Actor as IInteractable;
+                if (interactableTarget == null) return;
+
+                GameAction pickUpAction = new PickUp(this);
+                interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
+                PickUp = false;
+            }
         }
     }
 }

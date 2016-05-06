@@ -1,12 +1,14 @@
 ﻿namespace World.GameActors.Tiles
 {
-    class Background : StaticTile
+    public class Background : StaticTile
     {
-        public Background(ITilesetTable tileset) : base(tileset)
+        public Background(ITilesetTable tileset)
+            : base(tileset)
         {
         }
 
-        public Background(int tileType) : base(tileType)
+        public Background(int tileType)
+            : base(tileType)
         {
         }
     }

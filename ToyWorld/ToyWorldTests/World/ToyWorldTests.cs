@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System;
+using Moq;
 using System.Collections.Generic;
 using System.IO;
 using TmxMapSerializer.Elements;
@@ -15,8 +16,8 @@ namespace ToyWorldTests.World
 
         public ToyWorldTests()
         {
-            var tmxStream = FileStreams.SmallTmx();
-            var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
+            Stream tmxStream = FileStreams.SmallTmx();
+            StreamReader tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
 
             TmxSerializer serializer = new TmxSerializer();
             Map map = serializer.Deserialize(tmxStream);
@@ -24,23 +25,66 @@ namespace ToyWorldTests.World
         }
 
         [Fact]
-        public void TestRegisterTicks()
+        public void WorldWithNullMapThrows()
         {
-            AutoupdateRegister register = m_world.AutoupdateRegister;
+            Assert.Throws<ArgumentNullException>(() => new ToyWorld(null, new StreamReader(FileStreams.TilesetTableStream())));
+        }
+
+        [Fact]
+        public void WorldWithNullTilesetThrows()
+        {
+            Stream tmxStream = FileStreams.SmallTmx();
+
+            TmxSerializer serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStream);
+
+            Assert.Throws<ArgumentNullException>(() => new ToyWorld(map, null));
+        }
+
+        [Fact]
+        public void WorldUpdatesAutoupdateables()
+        {
+            var tmxStream = FileStreams.SmallTmx();
+            var tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
+
+            TmxSerializer serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStream);
+            TestingToyWorld toyWorld = new TestingToyWorld(map, tilesetTableStreamReader);
+            toyWorld.SetRegister(new AutoupdateRegister());
+
             Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
-            register.Register(mock1.Object, 1);
+            Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
+            toyWorld.AutoupdateRegister.Register(mock1.Object, 1);
+            toyWorld.AutoupdateRegister.Register(mock2.Object, 2);
 
-            Assert.Equal(new List<IAutoupdateable>(), register.CurrentUpdateRequests);
+            // Act
+            toyWorld.Update();
 
-            register.Tick();
+            // Assert
+            mock1.Verify(x => x.Update(It.IsAny<Atlas>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>()), Times.Never());
 
-            Assert.Equal(mock1.Object, register.CurrentUpdateRequests[0]);
+            // Act
+            toyWorld.Update();
+
+            // Assert
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>()));
         }
 
         [Fact]
         public void TestAvatarNames()
         {
             Assert.Contains<string>("Pingu", m_world.GetAvatarsNames());
+        }
+
+        private class TestingToyWorld : ToyWorld
+        {
+            public TestingToyWorld(Map tmxDeserializedMap, StreamReader tileTable) : base(tmxDeserializedMap, tileTable) { }
+
+            public void SetRegister(AutoupdateRegister register)
+            {
+                AutoupdateRegister = register;
+            }
         }
     }
 }

@@ -267,45 +267,43 @@ namespace GoodAI.ToyWorld
 
         public class TWGetInputTask : MyTask<ToyWorld>
         {
-            private Dictionary<string, int> controlIndexes = new Dictionary<string, int>();
+            private readonly Dictionary<string, int> m_controlIndexes = new Dictionary<string, int>();
 
             public override void Init(int nGPU)
             {
                 if (Owner.Controls.Count == Owner.m_controlsCount)
                 {
                     MyLog.INFO.WriteLine("ToyWorld: Controls set to WSAD mode.");
-                    controlIndexes["forward"] = 0;
-                    controlIndexes["backward"] = 1;
-                    controlIndexes["left"] = 2;
-                    controlIndexes["right"] = 3;
-                    controlIndexes["rot_left"] = 4;
-                    controlIndexes["rot_right"] = 5;
-                    controlIndexes["fof_right"] = 6;
-                    controlIndexes["fof_left"] = 7;
-                    controlIndexes["fof_up"] = 8;
-                    controlIndexes["fof_down"] = 9;
-                    controlIndexes["interact"] = 10;
-                    controlIndexes["use"] = 11;
-                    controlIndexes["pickup"] = 12;
+
+                    m_controlIndexes["forward"] = 0;
+                    m_controlIndexes["backward"] = 1;
+                    m_controlIndexes["left"] = 2;
+                    m_controlIndexes["right"] = 3;
+                    m_controlIndexes["fof_right"] = 4;
+                    m_controlIndexes["fof_left"] = 5;
+                    m_controlIndexes["fof_up"] = 6;
+                    m_controlIndexes["fof_down"] = 7;
+                    m_controlIndexes["interact"] = 8;
+                    m_controlIndexes["use"] = 9;
+                    m_controlIndexes["pickup"] = 10;
                 }
                 else if (Owner.Controls.Count >= 84)
                 {
                     MyLog.INFO.WriteLine("ToyWorld: Controls set to keyboard mode.");
-                    controlIndexes["forward"] = 87;     // W
-                    controlIndexes["backward"] = 83;    // S
-                    controlIndexes["rot_left"] = 65;        // A
-                    controlIndexes["rot_right"] = 68;       // D
-                    controlIndexes["left"] = 81;    // Q
-                    controlIndexes["right"] = 69;   // E
 
-                    controlIndexes["fof_up"] = 73;      // I
-                    controlIndexes["fof_left"] = 76;    // J
-                    controlIndexes["fof_down"] = 75;    // K
-                    controlIndexes["fof_right"] = 74;   // L
+                    m_controlIndexes["forward"] = 87;     // W
+                    m_controlIndexes["backward"] = 83;    // S
+                    m_controlIndexes["left"] = 65;        // A
+                    m_controlIndexes["right"] = 68;       // D
 
-                    controlIndexes["interact"] = 66;    // B
-                    controlIndexes["use"] = 78;         // N
-                    controlIndexes["pickup"] = 77;      // M
+                    m_controlIndexes["fof_up"] = 73;      // I
+                    m_controlIndexes["fof_left"] = 76;    // J
+                    m_controlIndexes["fof_down"] = 75;    // K
+                    m_controlIndexes["fof_right"] = 74;   // L
+
+                    m_controlIndexes["interact"] = 66;    // B
+                    m_controlIndexes["use"] = 78;         // N
+                    m_controlIndexes["pickup"] = 77;      // M
                 }
             }
 
@@ -315,33 +313,34 @@ namespace GoodAI.ToyWorld
                     return;
 
                 Owner.Controls.SafeCopyToHost();
-                float leftSignal = Owner.Controls.Host[controlIndexes["left"]];
-                float rightSignal = Owner.Controls.Host[controlIndexes["right"]];
-                float fwSignal = Owner.Controls.Host[controlIndexes["forward"]];
-                float bwSignal = Owner.Controls.Host[controlIndexes["backward"]];
-                float rotLeftSignal = Owner.Controls.Host[controlIndexes["rot_left"]];
-                float rotRightSignal = Owner.Controls.Host[controlIndexes["rot_right"]];
 
-                float fof_left = Owner.Controls.Host[controlIndexes["fof_left"]];
-                float fof_right = Owner.Controls.Host[controlIndexes["fof_right"]];
-                float fof_up = Owner.Controls.Host[controlIndexes["fof_up"]];
-                float fof_down = Owner.Controls.Host[controlIndexes["fof_down"]];
+                float leftSignal = Owner.Controls.Host[m_controlIndexes["left"]];
+                float rightSignal = Owner.Controls.Host[m_controlIndexes["right"]];
+                float fwSignal = Owner.Controls.Host[m_controlIndexes["forward"]];
+                float bwSignal = Owner.Controls.Host[m_controlIndexes["backward"]];
+                float rotLeftSignal = Owner.Controls.Host[m_controlIndexes["rot_left"]];
+                float rotRightSignal = Owner.Controls.Host[m_controlIndexes["rot_right"]];
 
-                float rotation = convertBiControlToUniControl(rotLeftSignal, rotRightSignal);
-                float speed = convertBiControlToUniControl(fwSignal, bwSignal);
-                float rightSpeed = convertBiControlToUniControl(leftSignal, rightSignal);
-                float fof_x = convertBiControlToUniControl(fof_left, fof_right);
-                float fof_y = convertBiControlToUniControl(fof_up, fof_down);
+                float fof_left = Owner.Controls.Host[m_controlIndexes["fof_left"]];
+                float fof_right = Owner.Controls.Host[m_controlIndexes["fof_right"]];
+                float fof_up = Owner.Controls.Host[m_controlIndexes["fof_up"]];
+                float fof_down = Owner.Controls.Host[m_controlIndexes["fof_down"]];
 
-                bool interact = Owner.Controls.Host[controlIndexes["interact"]] > 0.5 ? true : false;
-                bool use = Owner.Controls.Host[controlIndexes["use"]] > 0.5 ? true : false;
-                bool pickup = Owner.Controls.Host[controlIndexes["pickup"]] > 0.5 ? true : false;
+                float rotation = ConvertBiControlToUniControl(leftSignal, rightSignal);
+                float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
+                float rightSpeed = ConvertBiControlToUniControl(leftSignal, rightSignal);
+                float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
+                float fof_y = ConvertBiControlToUniControl(fof_up, fof_down);
+
+                bool interact = Owner.Controls.Host[m_controlIndexes["interact"]] > 0.5;
+                bool use = Owner.Controls.Host[m_controlIndexes["use"]] > 0.5;
+                bool pickup = Owner.Controls.Host[m_controlIndexes["pickup"]] > 0.5;
 
                 IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
                 Owner.m_avatarCtrl.SetActions(ctrl);
             }
 
-            private float convertBiControlToUniControl(float a, float b)
+            private float ConvertBiControlToUniControl(float a, float b)
             {
                 return a >= b ? a : -b;
             }

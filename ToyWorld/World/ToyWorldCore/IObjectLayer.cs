@@ -12,19 +12,19 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="rectangle"></param>
         /// <returns></returns>
-        List<IGameObject> GetGameObjects(VRageMath.RectangleF rectangle);
+        List<GameObject> GetGameObjects(VRageMath.RectangleF rectangle);
 
         /// <summary>
         /// Gets all game objects.
         /// </summary>
         /// <returns></returns>
-        List<IGameObject> GetGameObjects();
+        List<GameObject> GetGameObjects();
 
         /// <summary>
         /// Get all game objects in given circle.
         /// </summary>
         /// <returns></returns>
-        List<IGameObject> GetGameObjects(Circle circle);
+        List<GameObject> GetGameObjects(Circle circle);
 
         List<IPhysicalEntity> GetPhysicalEntities(Circle circle);
 
