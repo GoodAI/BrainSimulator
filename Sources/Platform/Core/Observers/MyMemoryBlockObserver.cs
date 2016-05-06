@@ -335,8 +335,18 @@ namespace GoodAI.Core.Observers
             if (ObserveTensors)
             {
                 TensorDimensions d = GetTileDimensions();
-                m_tileWidth = d[0];
-                m_tileHeight = d[1];
+                int i = 0;
+                do // first non-one value is width
+                {
+                    m_tileWidth = d[i];
+                    i++;
+                } while (i<d.Rank && m_tileWidth <= 1);
+                do // second non-one value is width
+                {
+                    m_tileHeight = d[i];
+                    i++;
+                } while (i < d.Rank && m_tileHeight <= 1);
+
                 textureSize = ComputeTiledTextureSize(d, Target);
                 if (Method == RenderingMethod.RGB)
                 {
