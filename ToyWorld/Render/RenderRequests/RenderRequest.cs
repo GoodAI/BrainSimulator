@@ -297,8 +297,6 @@ namespace Render.RenderRequests
                     m_fbo.Dispose();
 
                 m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
-
-                GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
@@ -342,6 +340,8 @@ namespace Render.RenderRequests
         public virtual void Draw(RendererBase renderer, ToyWorld world)
         {
             CheckDirtyParams(renderer);
+
+            GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 

@@ -62,16 +62,16 @@ namespace Render.Renderer
         {
             MakeContextCurrent();
 
-            foreach (var renderRequest in m_renderRequestQueue)
+            foreach (RenderRequest renderRequest in m_renderRequestQueue)
                 renderRequest.OnPreDraw();
 
-            foreach (var renderRequest in m_renderRequestQueue)
+            foreach (RenderRequest renderRequest in m_renderRequestQueue)
             {
                 Process(renderRequest, world);
                 CheckError();
             }
 
-            foreach (var renderRequest in m_renderRequestQueue)
+            foreach (RenderRequest renderRequest in m_renderRequestQueue)
                 renderRequest.OnPostDraw();
         }
 

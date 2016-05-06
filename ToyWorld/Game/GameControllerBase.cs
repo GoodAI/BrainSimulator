@@ -36,7 +36,7 @@ namespace Game
 
         public virtual void Dispose()
         {
-            var renderer = Interlocked.Exchange(ref m_renderer, null);
+            RendererBase renderer = Interlocked.Exchange(ref m_renderer, null);
 
             if (renderer != null)
                 renderer.Dispose();
@@ -96,7 +96,7 @@ namespace Game
             where T : class, IRenderRequest
         {
             Renderer.MakeContextCurrent();
-            var rr = RenderRequestFactory.CreateRenderRequest<T>();
+            T rr = RenderRequestFactory.CreateRenderRequest<T>();
             InitRR(rr);
             Renderer.EnqueueRequest(rr);
             Renderer.MakeContextNotCurrent();
