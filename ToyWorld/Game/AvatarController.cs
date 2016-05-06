@@ -10,11 +10,21 @@ namespace Game
     {
         private readonly IAvatar m_avatar;
         private AvatarControls m_avatarControls;
+        private string m_messageOut;
 
         public event MessageEventHandler NewMessage = delegate { };
 
+        public string MessageOut
+        {
+            get { return m_messageOut; }
+            set
+            {
+                m_messageOut = value;
+                NewMessage(this, new MessageEventArgs(m_messageOut));
+            }
+        }
+
         public string MessageIn { get; set; }
-        public string MessageOut { get; set; }
 
         public AvatarController(IAvatar avatar)
         {
