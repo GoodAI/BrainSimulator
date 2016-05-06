@@ -57,6 +57,8 @@ namespace Render.RenderRequests
             PositionCenterV = new Vector3(0, 0, 20);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
+            Image = new uint[0];
+            CopyImageThroughCpu = false;
         }
 
         public virtual void Dispose()
@@ -181,6 +183,8 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
+        public bool CopyImageThroughCpu { get; set; }
+        public uint[] Image { get; private set; }
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
@@ -271,7 +275,10 @@ namespace Render.RenderRequests
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
-            m_pbo = new Pbo();
+            if (!CopyImageThroughCpu)
+            {
+                m_pbo = new Pbo();
+            }
 
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
@@ -300,8 +307,18 @@ namespace Render.RenderRequests
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
-                if (m_pbo.ByteCount != Resolution.Width * Resolution.Height * sizeof(uint))
-                    m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
+                if (CopyImageThroughCpu)
+                {
+                    if (!GatherImage)
+                        Image = new uint[0];
+                    else if (Image.Length < Resolution.Width*Resolution.Height)
+                        Image = new uint[Resolution.Width*Resolution.Height];
+                }
+                else
+                {
+                    if (m_pbo.ByteCount != Resolution.Width * Resolution.Height * sizeof(uint))
+                        m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);    
+                }
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
             {
@@ -322,7 +339,7 @@ namespace Render.RenderRequests
         {
             var preCopyCallback = OnPreRenderingEvent;
 
-            if (preCopyCallback != null)
+            if (preCopyCallback != null && m_pbo != null)
                 preCopyCallback(this, m_pbo.Handle);
         }
 
@@ -330,7 +347,7 @@ namespace Render.RenderRequests
         {
             var postCopyCallback = OnPostRenderingEvent;
 
-            if (postCopyCallback != null)
+            if (postCopyCallback != null && m_pbo != null)
                 postCopyCallback(this, m_pbo.Handle);
         }
 
@@ -459,10 +476,17 @@ namespace Render.RenderRequests
             // Gather data to host mem
             if (GatherImage)
             {
-                m_pbo.Bind();
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
-
+                if (CopyImageThroughCpu)
+                {
+                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte,
+                        Image);
+                }
+                else
+                {
+                    m_pbo.Bind();
+                    GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));   
+                }
 
                 // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
                 m_fbo.Bind(FramebufferTarget.ReadFramebuffer);

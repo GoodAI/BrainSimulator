@@ -14,6 +14,7 @@ using Logger;
 using ToyWorldFactory;
 using YAXLib;
 using System.Diagnostics;
+using System.Reflection;
 using GoodAI.Core;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
@@ -62,6 +63,10 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Runtime"), DisplayName("Use 60 FPS cap")]
         [YAXSerializableField(DefaultValue = false)]
         public bool UseFpsCap { get; set; }
+
+        [MyBrowsable, Category("Runtime"), DisplayName("Copy data through CPU")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool CopyDataThroughCPU { get; set; }
 
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
@@ -172,6 +177,11 @@ namespace GoodAI.ToyWorld
                 return;
             }
 
+            foreach (MyMemoryBlock<float> memBlock in new MyMemoryBlock<float>[3] {VisualFov, VisualFof, VisualFree})
+            {
+                memBlock.Unmanaged = !CopyDataThroughCPU;
+            }
+
             // Setup controllers
             int myAvatarId = avatarIds[0];
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
@@ -210,45 +220,60 @@ namespace GoodAI.ToyWorld
         {
             // Setup the render request properties
             rr.GatherImage = true;
-            rr.FlipYAxis = true;
 
             if (initializer != null)
                 initializer.Invoke(rr);
 
+            rr.CopyImageThroughCpu = CopyDataThroughCPU;
 
-            // Setup data copying to our unmanaged memblocks
-            uint renderTextureHandle = 0;
-            CudaOpenGLBufferInteropResource renderResource = null;
-
-            rr.OnPreRenderingEvent += (sender, vbo) =>
+            foreach (string memBlockName in new string[3] {"VisualFov", "VisualFof", "VisualFree"})
             {
-                if (renderResource != null && renderResource.IsMapped)
-                    renderResource.UnMap();
-            };
+                PropertyDescriptor desc = TypeDescriptor.GetProperties(this.GetType())[memBlockName];
+                MyUnmanagedAttribute attr = (MyUnmanagedAttribute) desc.Attributes[typeof(MyUnmanagedAttribute)];
+                PropertyInfo unmanaged = attr.GetType().GetProperty("Unmanaged");
+                unmanaged.SetValue(attr, !CopyDataThroughCPU);
+            }
 
-            rr.OnPostRenderingEvent += (sender, vbo) =>
+            if (!CopyDataThroughCPU)
             {
-                // Vbo can be allocated during drawing, create the resource after that
-                MyKernelFactory.Instance.GetContextByGPU(GPU).SetCurrent();
+                rr.FlipYAxis = true;
 
-                if (renderResource == null || vbo != renderTextureHandle)
+                // Setup data copying to our unmanaged memblocks
+                uint renderTextureHandle = 0;
+                CudaOpenGLBufferInteropResource renderResource = null;
+
+                rr.OnPreRenderingEvent += (sender, vbo) =>
                 {
-                    if (renderResource != null)
-                        renderResource.Dispose();
+                    if (renderResource != null && renderResource.IsMapped)
+                        renderResource.UnMap();
+                };
 
-                    renderTextureHandle = vbo;
-                    renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle, CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
-                }
+                rr.OnPostRenderingEvent += (sender, vbo) =>
+                {
+                    // Vbo can be allocated during drawing, create the resource after that
+                    MyKernelFactory.Instance.GetContextByGPU(GPU).SetCurrent();
 
-                renderResource.Map();
-                targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
-                targetMemBlock.FreeDevice();
-                targetMemBlock.AllocateDevice();
-            };
+                    if (renderResource == null || vbo != renderTextureHandle)
+                    {
+                        if (renderResource != null)
+                            renderResource.Dispose();
+
+                        renderTextureHandle = vbo;
+                        renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle,
+                            CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                    }
+
+                    renderResource.Map();
+                    targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                    targetMemBlock.FreeDevice();
+                    targetMemBlock.AllocateDevice();
+                };
 
 
-            // Initialize the target memory block
-            targetMemBlock.ExternalPointer = 1; // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+                // Initialize the target memory block
+                targetMemBlock.ExternalPointer = 1;
+                    // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+            }
             targetMemBlock.Dims = new TensorDimensions(rr.Resolution.Width, rr.Resolution.Height);
             return rr;
         }
@@ -279,13 +304,15 @@ namespace GoodAI.ToyWorld
                     m_controlIndexes["backward"] = 1;
                     m_controlIndexes["left"] = 2;
                     m_controlIndexes["right"] = 3;
-                    m_controlIndexes["fof_right"] = 4;
-                    m_controlIndexes["fof_left"] = 5;
-                    m_controlIndexes["fof_up"] = 6;
-                    m_controlIndexes["fof_down"] = 7;
-                    m_controlIndexes["interact"] = 8;
-                    m_controlIndexes["use"] = 9;
-                    m_controlIndexes["pickup"] = 10;
+                    m_controlIndexes["rot_left"] = 4;
+                    m_controlIndexes["rot_right"] = 5;
+                    m_controlIndexes["fof_right"] = 6;
+                    m_controlIndexes["fof_left"] = 7;
+                    m_controlIndexes["fof_up"] = 8;
+                    m_controlIndexes["fof_down"] = 9;
+                    m_controlIndexes["interact"] = 10;
+                    m_controlIndexes["use"] = 11;
+                    m_controlIndexes["pickup"] = 12;
                 }
                 else if (Owner.Controls.Count >= 84)
                 {
@@ -293,8 +320,10 @@ namespace GoodAI.ToyWorld
 
                     m_controlIndexes["forward"] = 87;     // W
                     m_controlIndexes["backward"] = 83;    // S
-                    m_controlIndexes["left"] = 65;        // A
-                    m_controlIndexes["right"] = 68;       // D
+                    m_controlIndexes["rot_left"] = 65;        // A
+                    m_controlIndexes["rot_right"] = 68;       // D
+                    m_controlIndexes["left"] = 81;        // Q
+                    m_controlIndexes["right"] = 69;       // E
 
                     m_controlIndexes["fof_up"] = 73;      // I
                     m_controlIndexes["fof_left"] = 76;    // J
@@ -326,7 +355,7 @@ namespace GoodAI.ToyWorld
                 float fof_up = Owner.Controls.Host[m_controlIndexes["fof_up"]];
                 float fof_down = Owner.Controls.Host[m_controlIndexes["fof_down"]];
 
-                float rotation = ConvertBiControlToUniControl(leftSignal, rightSignal);
+                float rotation = ConvertBiControlToUniControl(rotLeftSignal, rotRightSignal);
                 float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
                 float rightSpeed = ConvertBiControlToUniControl(leftSignal, rightSignal);
                 float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
@@ -413,6 +442,26 @@ namespace GoodAI.ToyWorld
                 }
 
                 Owner.m_gameCtrl.MakeStep();
+
+                if (Owner.CopyDataThroughCPU)
+                {
+                    TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);
+                    TransferFromRRToMemBlock(Owner.m_fofRR, Owner.VisualFof);
+                    TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
+                }
+            }
+
+            private void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
+            {
+                uint[] data = rr.Image;
+                int width = rr.Resolution.Width;
+                int stride = width * sizeof(uint);
+                int lines = data.Length / width;
+
+                for (int i = 0; i < lines; ++i)
+                    Buffer.BlockCopy(data, i * stride, mb.Host, (mb.Count - (i + 1) * width) * sizeof(uint), stride);
+
+                mb.SafeCopyToDevice();
             }
         }
     }
