@@ -6,8 +6,6 @@ namespace World.GameActors.Tiles
 {
     public class Fruit : DynamicTile, IPickable
     {
-        public Vector2I Position { get; set; }
-
         protected Fruit(ITilesetTable tilesetTable) : base(tilesetTable) { }
 
         protected Fruit(int tileType) : base(tileType) { }

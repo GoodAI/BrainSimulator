@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
 using World.GameActors;
@@ -36,8 +37,11 @@ namespace World.ToyWorldCore
                 if (layerName.Contains("Object"))
                 {
                     ObjectGroup objectLayer = map.ObjectGroups.FirstOrDefault(x => x.Name == layerName);
-                    if (objectLayer == null)  // TMX does not contain such layer
+                    if (objectLayer == null)    // TMX does not contain such layer
+                    {
+                        Log.Instance.Info("Layer " + layerName + " not found in given .tmx file!");
                         continue;
+                    }
                     atlas.ObjectLayers.Add(
                         FillObjectLayer(
                         atlas,
@@ -54,7 +58,10 @@ namespace World.ToyWorldCore
                 {
                     Layer tileLayer = map.Layers.FirstOrDefault(x => x.Name == layerName);
                     if (tileLayer == null)  // TMX does not contain such layer
+                    {
+                        Log.Instance.Info("Layer " + layerName + " not found in given .tmx file!");
                         continue;
+                    }
                     atlas.TileLayers.Add(
                         FillTileLayer(
                         tileLayer,

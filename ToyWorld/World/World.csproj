@@ -191,6 +191,10 @@
     <Compile Include="WorldInterfaces\IWorld.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LoggerIface\LoggerIface.csproj">
+      <Project>{97BD8CC4-EC76-44EF-B774-48062454F4FC}</Project>
+      <Name>LoggerIface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
       <Name>Logger</Name>

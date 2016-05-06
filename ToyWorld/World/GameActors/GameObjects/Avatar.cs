@@ -61,7 +61,6 @@ namespace World.GameActors.GameObjects
                 return false;
 
             Tool = item;
-            Console.WriteLine("I picked up something.");
             return true;
         }
 
