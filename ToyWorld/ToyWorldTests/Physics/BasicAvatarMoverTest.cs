@@ -7,8 +7,8 @@ namespace ToyWorldTests.Physics
 {
     public class BasicAvatarMoverTest
     {
-        private Avatar m_avatar;
-        private BasicAvatarMover m_basicAvatarMover;
+        private readonly Avatar m_avatar;
+        private readonly BasicAvatarMover m_basicAvatarMover;
 
         public BasicAvatarMoverTest()
         {

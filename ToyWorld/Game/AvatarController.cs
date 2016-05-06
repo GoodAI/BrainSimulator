@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using GoodAI.ToyWorld.Control;
+using VRageMath;
 using World.GameActors.GameObjects;
 
 namespace Game
@@ -40,12 +40,44 @@ namespace Game
 
         private void SetAvatarActionsControllable()
         {
-            m_avatar.DesiredSpeed = m_avatarControls.DesiredSpeed;
+            float fSpeed = m_avatarControls.DesiredForwardSpeed;
+            float rSpeed = m_avatarControls.DesiredRightSpeed;
+
+            // diagonal strafing speed should not be greater than 1
+            // speed must be between [0,1]
+
+            var jointSpeed = JointSpeed(fSpeed, rSpeed);
+
+            m_avatar.DesiredSpeed = jointSpeed;
+            float jointDirection =
+                MathHelper.WrapAngle(m_avatar.Rotation +
+                                     (float)
+                                         Math.Atan2(m_avatarControls.DesiredRightSpeed,
+                                             m_avatarControls.DesiredForwardSpeed));
+            m_avatar.Direction = jointDirection;
+            m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
             m_avatar.Interact = m_avatarControls.Interact;
             m_avatar.PickUp = m_avatarControls.PickUp;
             m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
             m_avatar.Use = m_avatarControls.Use;
             m_avatar.Fof = m_avatarControls.Fof;
+        }
+
+        /// <summary>
+        /// Diagonal strafing speed should not be greater than 1.
+        /// Speed must be between [0,1].
+        /// </summary>
+        /// <param name="fSpeed">[-1,1]</param>
+        /// <param name="rSpeed">[-1,1]</param>
+        /// <returns></returns>
+        private static float JointSpeed(float fSpeed, float rSpeed)
+        {
+            // WolframAlpha.com: Plot[Sqrt((a^2+b^2)/(a+b)), {a,0,1}, {b,0,1}]
+            //float jointSpeed = (float) Math.Sqrt((fSpeed*fSpeed + rSpeed*rSpeed)/(Math.Sqrt(fSpeed) + Math.Sqrt(rSpeed)));
+
+            // WolframAlpha.com: Plot[Max(a,b), {a,0,1}, {b,0,1}]
+            float jointSpeed = Math.Max(Math.Abs(fSpeed), Math.Abs(rSpeed));
+            return jointSpeed;
         }
     }
 }

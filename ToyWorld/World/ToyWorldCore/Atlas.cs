@@ -6,7 +6,6 @@ using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
-using World.Physics;
 
 namespace World.ToyWorldCore
 {
@@ -18,7 +17,7 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="avatar"></param>
         /// <returns></returns>
-        bool AddAvatar(World.GameActors.GameObjects.IAvatar avatar);
+        bool AddAvatar(IAvatar avatar);
 
         /// <summary>
         /// Dictionary of all registered avatars, where key is ID of Avatar and Value is IAvatar.
@@ -89,9 +88,9 @@ namespace World.ToyWorldCore
             if (layerType == LayerType.Object
                 || layerType == LayerType.ForegroundObject)
             {
-                return (ILayer<GameActor>)ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
+                return ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
             }
-            return (ILayer<GameActor>)TileLayers.First(x => x.LayerType == layerType);
+            return TileLayers.First(x => x.LayerType == layerType);
         }
 
         public bool AddAvatar(IAvatar avatar)

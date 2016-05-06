@@ -19,7 +19,7 @@ namespace GoodAI.ToyWorld
 {
     public class ToyWorld : MyWorld
     {
-        private readonly int m_controlsCount = 11;
+        private readonly int m_controlsCount = 13;
 
         public TWUpdateTask UpdateTask { get; private set; }
 
@@ -221,21 +221,25 @@ namespace GoodAI.ToyWorld
                     controlIndexes["backward"] = 1;
                     controlIndexes["left"] = 2;
                     controlIndexes["right"] = 3;
-                    controlIndexes["fof_right"] = 4;
-                    controlIndexes["fof_left"] = 5;
-                    controlIndexes["fof_up"] = 6;
-                    controlIndexes["fof_down"] = 7;
-                    controlIndexes["interact"] = 8;
-                    controlIndexes["use"] = 9;
-                    controlIndexes["pickup"] = 10;
+                    controlIndexes["rot_left"] = 4;
+                    controlIndexes["rot_right"] = 5;
+                    controlIndexes["fof_right"] = 6;
+                    controlIndexes["fof_left"] = 7;
+                    controlIndexes["fof_up"] = 8;
+                    controlIndexes["fof_down"] = 9;
+                    controlIndexes["interact"] = 10;
+                    controlIndexes["use"] = 11;
+                    controlIndexes["pickup"] = 12;
                 }
                 else if (Owner.Controls.Count >= 84)
                 {
                     MyLog.INFO.WriteLine("ToyWorld: Controls set to keyboard mode.");
                     controlIndexes["forward"] = 87;     // W
                     controlIndexes["backward"] = 83;    // S
-                    controlIndexes["left"] = 65;        // A
-                    controlIndexes["right"] = 68;       // D
+                    controlIndexes["rot_left"] = 65;        // A
+                    controlIndexes["rot_right"] = 68;       // D
+                    controlIndexes["left"] = 81;    // Q
+                    controlIndexes["right"] = 69;   // E
 
                     controlIndexes["fof_up"] = 73;      // I
                     controlIndexes["fof_left"] = 76;    // J
@@ -258,14 +262,17 @@ namespace GoodAI.ToyWorld
                 float rightSignal = Owner.Controls.Host[controlIndexes["right"]];
                 float fwSignal = Owner.Controls.Host[controlIndexes["forward"]];
                 float bwSignal = Owner.Controls.Host[controlIndexes["backward"]];
+                float rotLeftSignal = Owner.Controls.Host[controlIndexes["rot_left"]];
+                float rotRightSignal = Owner.Controls.Host[controlIndexes["rot_right"]];
 
                 float fof_left = Owner.Controls.Host[controlIndexes["fof_left"]];
                 float fof_right = Owner.Controls.Host[controlIndexes["fof_right"]];
                 float fof_up = Owner.Controls.Host[controlIndexes["fof_up"]];
                 float fof_down = Owner.Controls.Host[controlIndexes["fof_down"]];
 
-                float rotation = convertBiControlToUniControl(leftSignal, rightSignal);
+                float rotation = convertBiControlToUniControl(rotLeftSignal, rotRightSignal);
                 float speed = convertBiControlToUniControl(fwSignal, bwSignal);
+                float rightSpeed = convertBiControlToUniControl(leftSignal, rightSignal);
                 float fof_x = convertBiControlToUniControl(fof_left, fof_right);
                 float fof_y = convertBiControlToUniControl(fof_up, fof_down);
 
@@ -273,7 +280,7 @@ namespace GoodAI.ToyWorld
                 bool use = Owner.Controls.Host[controlIndexes["use"]] > 0.5 ? true : false;
                 bool pickup = Owner.Controls.Host[controlIndexes["pickup"]] > 0.5 ? true : false;
 
-                IAvatarControls ctrl = new AvatarControls(100, speed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
+                IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup, fof: new PointF(fof_x, fof_y));
                 Owner.m_avatarCtrl.SetActions(ctrl);
             }
 

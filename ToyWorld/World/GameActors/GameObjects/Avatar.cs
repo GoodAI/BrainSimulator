@@ -1,5 +1,4 @@
-﻿using GoodAI.ToyWorld.Control;
-using System.Drawing;
+﻿using System.Drawing;
 using VRageMath;
 using World.Physics;
 
@@ -32,7 +31,8 @@ namespace World.GameActors.GameObjects
             Vector2 size,
             float direction = 0
             )
-            : base(tilesetName, tileId, name, initialPosition, size, direction, TileCollision.Slide, typeof(Circle))
+            : base(tilesetName, tileId, name, initialPosition, size, direction, typeof(CircleShape)
+                )
         {
             Id = id;
         }

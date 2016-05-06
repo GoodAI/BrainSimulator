@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using VRageMath;
 using World.GameActors.GameObjects;
 using World.Physics;
@@ -8,21 +9,21 @@ namespace World.ToyWorldCore
 {
     public class SimpleObjectLayer : IObjectLayer
     {
-        private List<GameObject> GameObjects { get; set; }
+        private List<IGameObject> GameObjects { get; set; }
 
         public LayerType LayerType { get; set; }
 
         public SimpleObjectLayer(LayerType layerType)
         {
             LayerType = layerType;
-            GameObjects = new List<GameObject>();
+            GameObjects = new List<IGameObject>();
         }
 
-        public List<GameObject> GetGameObjects(RectangleF rectangle)
+        public List<IGameObject> GetGameObjects(RectangleF rectangle)
         {
-            var list = new List<GameObject>();
+            var list = new List<IGameObject>();
 
-            foreach (GameObject gameObject in GameObjects)
+            foreach (IGameObject gameObject in GameObjects)
             {
                 IPhysicalEntity physicalEntity = gameObject.PhysicalEntity;
                 RectangleF r = new RectangleF();
@@ -37,17 +38,55 @@ namespace World.ToyWorldCore
             return list;
         }
 
+        public List<IGameObject> GetGameObjects()
+        {
+            var newList = new List<IGameObject>();
+            newList.AddRange(GameObjects);
+            return newList;
+        }
+
+        public List<IGameObject> GetGameObjects(VRageMath.Circle circle)
+        {
+            var list = new List<IGameObject>();
+
+            foreach (IGameObject gameObject in GameObjects)
+            {
+                if (circle.Include(gameObject.Position))
+                {
+                    list.Add(gameObject);
+                }
+            }
+
+            return list;
+        }
+
         public bool AddGameObject(GameObject gameObject)
         {
             GameObjects.Add(gameObject);
             return true;
         }
 
-        public List<GameObject> GetAllObjects()
+        public List<IGameObject> GetAllObjects()
         {
             Contract.Ensures(Contract.Result<List<GameObject>>() != null);
 
             return GameObjects;
+        }
+
+
+        public List<IPhysicalEntity> GetPhysicalEntities(VRageMath.Circle circle)
+        {
+            return GetGameObjects(circle).Select(x => x.PhysicalEntity).ToList();
+        }
+
+        public List<IPhysicalEntity> GetPhysicalEntities()
+        {
+            return GetGameObjects().Select(x => x.PhysicalEntity).ToList();
+        }
+
+        public List<IPhysicalEntity> GetPhysicalEntities(RectangleF rectangle)
+        {
+            return GetGameObjects(rectangle).Select(x => x.PhysicalEntity).ToList();
         }
     }
 }

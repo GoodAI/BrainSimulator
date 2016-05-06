@@ -1,5 +1,4 @@
-﻿using System;
-using VRageMath;
+﻿using VRageMath;
 
 namespace World.Physics
 {
@@ -17,6 +16,17 @@ namespace World.Physics
         {
             Rotate(movable);
             Shift(movable);
+        }
+
+        public void RevertMove(IForwardMovablePhysicalEntity movable)
+        {
+            Shift(movable, -movable.ForwardSpeed);
+            Rotate(movable, -movable.RotationSpeed);
+        }
+
+        public void RevertMoveKeepRotation(IForwardMovablePhysicalEntity movable)
+        {
+            Shift(movable, -movable.ForwardSpeed);
         }
 
         public void Shift(IForwardMovablePhysicalEntity movable)
@@ -37,6 +47,11 @@ namespace World.Physics
         private static void Rotate(IForwardMovablePhysicalEntity movable)
         {
             movable.Direction = MathHelper.WrapAngle(movable.Direction + movable.RotationSpeed);
+        }
+
+        private static void Rotate(IForwardMovablePhysicalEntity movable, float rotationSpeed)
+        {
+            movable.Direction = MathHelper.WrapAngle(movable.Direction + rotationSpeed);
         }
     }
 }

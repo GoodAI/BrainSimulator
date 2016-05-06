@@ -13,7 +13,7 @@ namespace ToyWorldTests.Physics
         [InlineData(0.1, 0.1, 1.5)]
         public void RectangleCoverTiles(float x, float y, float size)
         {
-            var rectangle = new Rectangle(new VRageMath.Vector2(size, size))
+            var rectangle = new RectangleShape(new VRageMath.Vector2(size, size))
             {
                 Position = new VRageMath.Vector2(x + size/2, y + size/2)
             };
@@ -67,7 +67,7 @@ namespace ToyWorldTests.Physics
         [InlineData(1.5, 2, 1.05)]
         public void CircleCoverTiles(float x, float y, float radius)
         {
-            var rectangle = new Circle(radius) {Position = new VRageMath.Vector2(x, y)};
+            var rectangle = new CircleShape(radius) {Position = new VRageMath.Vector2(x, y)};
             List<VRageMath.Vector2I> coverTiles = rectangle.CoverTiles();
 
             if (TestUtils.FloatEq(x, 0.7f) && TestUtils.FloatEq(y, 0.7f) && TestUtils.FloatEq(radius, 0.1f))

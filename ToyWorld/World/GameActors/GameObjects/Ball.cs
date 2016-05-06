@@ -1,5 +1,4 @@
-﻿using System;
-using VRageMath;
+﻿using VRageMath;
 using World.Physics;
 
 namespace World.GameActors.GameObjects
@@ -19,8 +18,7 @@ namespace World.GameActors.GameObjects
             position,
             size,
             direction,
-            TileCollision.Bounce,
-            typeof(Circle))
+            typeof(CircleShape))
         {
         }
     }

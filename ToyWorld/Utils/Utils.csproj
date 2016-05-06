@@ -239,6 +239,7 @@
     <Compile Include="VRageRIP\Math\BoxCornerEnumerator.cs" />
     <Compile Include="VRageRIP\Math\Capsule.cs" />
     <Compile Include="VRageRIP\Math\CapsuleD.cs" />
+    <Compile Include="VRageRIP\Math\Circle.cs" />
     <Compile Include="VRageRIP\Math\Color.cs" />
     <Compile Include="VRageRIP\Math\ColorExtensions.cs" />
     <Compile Include="VRageRIP\Math\CompressedPositionOrientation.cs" />

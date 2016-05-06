@@ -287,6 +287,8 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="properties"></param>
         /// <param name="gameObject"></param>
+        [DebuggerNonUserCode] // We want to let exceptions to be caught in this method.
+                              // You will receive more informative exception on call.
         private static void SetGameObjectProperties(List<Property> properties, GameObject gameObject)
         {
             Type type = gameObject.GetType();
@@ -297,9 +299,9 @@ namespace World.ToyWorldCore
                 {
                     PropertyInfo gameObjectProperty = type.GetProperty(property.Name);
                     Type propertyType = gameObjectProperty.PropertyType;
-                    object value;
                     try
                     {
+                        object value;
                         if (propertyType == typeof(int))
                         {
                             value = int.Parse(property.Value);
@@ -307,6 +309,22 @@ namespace World.ToyWorldCore
                         else if (propertyType == typeof(float))
                         {
                             value = float.Parse(property.Value, CultureInfo.InvariantCulture);
+                        }
+                        else if (propertyType == typeof(bool))
+                        {
+                            if (property.Value == "1")
+                            {
+                                value = true;
+                            }
+                            else if (property.Value == "0")
+                            {
+                                value = false;
+                            }
+                            else
+                            {
+                                value = bool.Parse(property.Value);
+                            }
+                            
                         }
                         else if (propertyType == typeof(string))
                         {
@@ -328,10 +346,10 @@ namespace World.ToyWorldCore
                             "Property type should be " + propertyType.Name);
                     }
                 }
-                catch (AmbiguousMatchException)
+                catch (NullReferenceException)
                 {
                     IEnumerable<string> propertiesNames = type.GetProperties().Select(x => x.Name);
-                    string joined = String.Join(",\n", propertiesNames);
+                    string joined = String.Join(", ", propertiesNames); //String.Join(",\n", propertiesNames);
                     throw new NotSupportedException(
                         ".tmx file contains unknown property " + property.Name +
                         " at object " + gameObject.Name +

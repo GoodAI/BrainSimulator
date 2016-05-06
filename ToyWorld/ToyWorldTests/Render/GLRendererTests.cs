@@ -55,7 +55,7 @@ namespace ToyWorldTests.Render
             rr.GatherImage = true;
 
             var ac = m_gameController.GetAvatarController(aID);
-            var controls = new AvatarControls(5) { DesiredSpeed = .3f };
+            var controls = new AvatarControls(5) { DesiredForwardSpeed = .3f };
 
             CancellationToken token = SetupWindow(
                 delta =>
