@@ -237,7 +237,7 @@ namespace GoodAI.Core.Observers
             {
                 MyLog.WARNING.WriteLine("Observing tensors in RGB or Vector mode not supported");
             }
-            m_tiledKernel    = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
+            m_tiledKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
             m_tiledRGBKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBTiledKernel");
 
             if (!m_methodSelected)
@@ -336,16 +336,17 @@ namespace GoodAI.Core.Observers
             {
                 TensorDimensions d = GetTileDimensions();
                 int i = 0;
-                do // first non-one value is width
+                m_tileWidth = m_tileHeight = 1;
+                while (i < d.Rank && m_tileWidth <= 1) // first non-one value is width
                 {
                     m_tileWidth = d[i];
                     i++;
-                } while (i<d.Rank && m_tileWidth <= 1);
-                do // second non-one value is width
+                }
+                while (i < d.Rank && m_tileHeight <= 1) // second non-one value is width
                 {
                     m_tileHeight = d[i];
                     i++;
-                } while (i < d.Rank && m_tileHeight <= 1);
+                }
 
                 textureSize = ComputeTiledTextureSize(d, Target);
                 if (Method == RenderingMethod.RGB)
@@ -353,12 +354,12 @@ namespace GoodAI.Core.Observers
                     textureSize.Height /= 3;
                 }
                 else // add boundaries between tiles
-                { 
+                {
                     int TilesInColumn = textureSize.Height * textureSize.Width / m_tileWidth / m_tileHeight / TilesInRow;
-                    textureSize.Height += TilesInColumn-1;
-                    textureSize.Width  += TilesInRow-1;
+                    textureSize.Height += TilesInColumn - 1;
+                    textureSize.Width += TilesInRow - 1;
                 }
-                
+
             }
             else
             {
