@@ -30,12 +30,17 @@ namespace Render.RenderRequests
         #region Fields
 
         private BasicFbo m_fbo;
+
         private NoEffectOffset m_effect;
         private NoiseEffect m_noiseEffect;
+
         private TilesetTexture m_tex;
+
         private FullScreenGrid m_grid;
         private FullScreenQuadOffset m_quadOffset;
         private FullScreenQuad m_quad;
+
+        private Pbo m_pbo;
 
         private Matrix m_projMatrix;
         private Matrix m_viewProjectionMatrix;
@@ -52,16 +57,25 @@ namespace Render.RenderRequests
             PositionCenterV = new Vector3(0, 0, 20);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
-            Image = new uint[0];
         }
 
         public virtual void Dispose()
         {
-            m_fbo.Dispose();
+            if (m_fbo != null)
+                m_fbo.Dispose();
+
             m_effect.Dispose();
+            m_noiseEffect.Dispose();
+
             m_tex.Dispose();
-            m_grid.Dispose();
+
+            if (m_grid != null) // It is initialized during Draw
+                m_grid.Dispose();
             m_quadOffset.Dispose();
+            m_quad.Dispose();
+
+            if (m_pbo != null)
+                m_pbo.Dispose();
         }
 
         #endregion
@@ -126,6 +140,17 @@ namespace Render.RenderRequests
             get { return new System.Drawing.RectangleF(PositionCenter, Size); }
         }
 
+        private bool m_flipYAxis;
+        public bool FlipYAxis
+        {
+            get { return m_flipYAxis; }
+            set
+            {
+                m_flipYAxis = value;
+                m_dirtyParams |= DirtyParams.Size;
+            }
+        }
+
 
         private System.Drawing.Size m_resolution;
         public System.Drawing.Size Resolution
@@ -156,9 +181,8 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
-
-        public uint[] Image { get; private set; }
-
+        public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
+        public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
         private bool m_drawNoise;
         private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
@@ -232,21 +256,24 @@ namespace Render.RenderRequests
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
             renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
-            m_effect.SetUniform1(m_effect.GetUniformLocation("tex"), 0);
+            m_effect.TextureUniform(0);
 
             // Set up static uniforms
             Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
                 world.TilesetTable.TileBorder * 2; // twice the border, on each side once
             Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
-            m_effect.SetUniform3(m_effect.GetUniformLocation("texSizeCount"), new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
-            m_effect.SetUniform4(m_effect.GetUniformLocation("tileSizeMargin"), new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_effect.SetUniform2(m_effect.GetUniformLocation("tileBorder"), world.TilesetTable.TileBorder);
+            m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
+            m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+            m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
-            CheckDirtyParams(renderer); // Do the hard work in Init
+            // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
+            m_pbo = new Pbo();
+
+            // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
         private void CheckDirtyParams(RendererBase renderer)
@@ -257,27 +284,29 @@ namespace Render.RenderRequests
             {
                 m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
                 m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                // Flip the image to have its origin in the top-left corner
+
+                if (FlipYAxis)
+                    m_projMatrix *= Matrix.CreateScale(1, -1, 1);
+
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
             {
                 if (m_fbo != null)
                     m_fbo.Dispose();
+
                 m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
-                if (!GatherImage)
-                    Image = new uint[0];
-                else if (Image.Length < Resolution.Width * Resolution.Height)
-                    Image = new uint[Resolution.Width * Resolution.Height];
+                if (m_pbo.ByteCount != Resolution.Width * Resolution.Height * sizeof(uint))
+                    m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
             {
                 renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-                m_noiseEffect.SetUniform4(
-                    m_noiseEffect.GetUniformLocation("noiseColor"),
-                    new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
+                m_noiseEffect.NoiseColorUniform(new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
             }
 
             m_dirtyParams = DirtyParams.None;
@@ -286,6 +315,27 @@ namespace Render.RenderRequests
         #endregion
 
         #region Draw
+
+        #region Callbacks
+
+        public virtual void OnPreDraw()
+        {
+            var preCopyCallback = OnPreRenderingEvent;
+
+            if (preCopyCallback != null)
+                preCopyCallback(this, m_pbo.Handle);
+        }
+
+        public virtual void OnPostDraw()
+        {
+            var postCopyCallback = OnPostRenderingEvent;
+
+            if (postCopyCallback != null)
+                postCopyCallback(this, m_pbo.Handle);
+        }
+
+        #endregion
+
 
         public virtual void Draw(RendererBase renderer, ToyWorld world)
         {
@@ -315,7 +365,7 @@ namespace Render.RenderRequests
             GatherAndDistributeData(renderer);
         }
 
-        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = default(Vector3?))
+        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null)
         {
             if (!cameraDirection.HasValue)
                 cameraDirection = Vector3.Forward;
@@ -333,15 +383,14 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)GridView.Size / 2);
             // World transform -- move center to view center
             transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
-            m_effect.SetUniformMatrix4(m_effect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+            // View and projection transforms
+            transform *= m_viewProjectionMatrix;
+            m_effect.ModelViewProjectionUniform(ref transform);
 
 
             // Draw tile layers
             foreach (var tileLayer in world.Atlas.TileLayers)
             {
-                //transform *= Matrix.CreateTranslation(0, 0, -0.1f);
-                //m_effect.SetUniformMatrix4(m_mvpPos, transform * m_viewProjectionMatrix);
-
                 m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
                 m_grid.Draw();
             }
@@ -365,7 +414,9 @@ namespace Render.RenderRequests
                     transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));
-                    m_effect.SetUniformMatrix4(m_effect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+                    // View and projection transforms
+                    transform *= m_viewProjectionMatrix;
+                    m_effect.ModelViewProjectionUniform(ref transform);
 
                     // Setup dynamic data
                     m_quadOffset.SetTextureOffsets(gameObject.TilesetId);
@@ -390,10 +441,12 @@ namespace Render.RenderRequests
                 transform *= Matrix.CreateScale(ViewV.Size / 2);
                 // World transform -- move center to view center
                 transform *= Matrix.CreateTranslation(new Vector3(ViewV.Center, 1f));
-                m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mw"), transform);
-                m_noiseEffect.SetUniformMatrix4(m_noiseEffect.GetUniformLocation("mvp"), transform * m_viewProjectionMatrix);
+                m_noiseEffect.ModelWorldUniform(ref transform);
+                // View and projection transforms
+                transform *= m_viewProjectionMatrix;
+                m_noiseEffect.ModelViewProjectionUniform(ref transform);
 
-                m_noiseEffect.SetUniform4(m_noiseEffect.GetUniformLocation("timeMean"), new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
+                m_noiseEffect.TimeMeanUniform(new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
 
                 m_quad.Draw();
             }
@@ -406,7 +459,10 @@ namespace Render.RenderRequests
             // Gather data to host mem
             if (GatherImage)
             {
-                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
+                m_pbo.Bind();
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
+
 
                 // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
                 m_fbo.Bind(FramebufferTarget.ReadFramebuffer);

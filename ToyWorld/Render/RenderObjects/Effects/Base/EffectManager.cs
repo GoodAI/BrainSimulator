@@ -13,7 +13,6 @@ namespace Render.RenderObjects.Effects
 
         public EffectManager()
         {
-            CaseInternal<NoEffect>();
             CaseInternal<NoEffectTex>();
             CaseInternal<NoEffectOffset>();
             CaseInternal<NoiseEffect>();

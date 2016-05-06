@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -14,13 +15,16 @@ namespace Render.RenderObjects.Effects
 
         private readonly int m_prog;
 
+        private Dictionary<int, int> m_uniformLocations = new Dictionary<int, int>();
+
 
         #region Genesis
 
         // TODO: genericity
         // Addenda serve as switchable extensions to base shaders -- can be used as a different implementation of functions defined in base shaders.
-        protected EffectBase(string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
+        protected EffectBase(Type uniformNamesEnumType, string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
         {
+            // Load shaders
             m_prog = GL.CreateProgram();
 
             // Vertex shader
@@ -37,6 +41,15 @@ namespace Render.RenderObjects.Effects
 
             var res = GL.GetProgramInfoLog(m_prog);
             Debug.Assert(string.IsNullOrEmpty(res), res);
+
+
+            // Setup uniform locations
+            Debug.Assert(uniformNamesEnumType.IsEnum, "The passed type must be an enum type.");
+
+            foreach (var value in Enum.GetValues(uniformNamesEnumType))
+            {
+                m_uniformLocations[Convert.ToInt32(value)] = GL.GetUniformLocation(m_prog, value.ToString());
+            }
         }
 
         private string GetShaderSource(string name)
@@ -80,35 +93,35 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        #region Uniforms
+        #region Uniforms and indexing
 
-        public int GetUniformLocation(string name)
+        protected int this[Enum val]
         {
-            return GL.GetUniformLocation(m_prog, name);
+            get { return m_uniformLocations[Convert.ToInt32(val)]; }
         }
 
 
-        public void SetUniform1(int pos, int val)
+        protected void SetUniform1(int pos, int val)
         {
             GL.Uniform1(pos, val);
         }
 
-        public void SetUniform2(int pos, Vector2I val)
+        protected void SetUniform2(int pos, Vector2I val)
         {
             GL.Uniform2(pos, val.X, val.Y);
         }
 
-        public void SetUniform3(int pos, Vector3I val)
+        protected void SetUniform3(int pos, Vector3I val)
         {
             GL.Uniform3(pos, val.X, val.Y, val.Z);
         }
 
-        public void SetUniform4(int pos, Vector4I val)
+        protected void SetUniform4(int pos, Vector4I val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }
 
-        public void SetUniform4(int pos, Vector4 val)
+        protected void SetUniform4(int pos, Vector4 val)
         {
             GL.Uniform4(pos, val.X, val.Y, val.Z, val.W);
         }
@@ -117,7 +130,7 @@ namespace Render.RenderObjects.Effects
         /// <summary>
         ///Passed matrices are applied from left to right (as in vert*(a*b*c) -- a will be first).
         /// </summary>
-        public void SetUniformMatrix4(int pos, Matrix val)
+        protected void SetUniformMatrix4(int pos, Matrix val)
         {
             unsafe
             {

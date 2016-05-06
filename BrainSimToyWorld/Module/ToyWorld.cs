@@ -14,6 +14,9 @@ using Logger;
 using ToyWorldFactory;
 using YAXLib;
 using System.Diagnostics;
+using GoodAI.Core;
+using ManagedCuda;
+using ManagedCuda.BasicTypes;
 
 namespace GoodAI.ToyWorld
 {
@@ -25,21 +28,21 @@ namespace GoodAI.ToyWorld
 
         public TWGetInputTask GetInputTask { get; private set; }
 
-        [MyOutputBlock(0)]
+        [MyOutputBlock(0), MyUnmanaged]
         public MyMemoryBlock<float> VisualFov
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1)]
+        [MyOutputBlock(1), MyUnmanaged]
         public MyMemoryBlock<float> VisualFof
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
-        [MyOutputBlock(2)]
+        [MyOutputBlock(2), MyUnmanaged]
         public MyMemoryBlock<float> VisualFree
         {
             get { return GetOutput(2); }
@@ -117,13 +120,10 @@ namespace GoodAI.ToyWorld
         public int ResolutionHeight { get; set; }
 
         private IGameController m_gameCtrl { get; set; }
-
         private IAvatarController m_avatarCtrl { get; set; }
 
         private IFovAvatarRR m_fovRR { get; set; }
-
         private IFofAvatarRR m_fofRR { get; set; }
-
         private IFreeMapRR m_freeRR { get; set; }
 
         public ToyWorld()
@@ -153,7 +153,7 @@ namespace GoodAI.ToyWorld
             validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
 
             if (Controls != null)
-                validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size "+m_controlsCount+" or 84+. Use device input node for controls, or provide correct number of inputs");
+                validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");
         }
 
         public override void UpdateMemoryBlocks()
@@ -172,12 +172,32 @@ namespace GoodAI.ToyWorld
                 return;
             }
 
+            // Setup controllers
             int myAvatarId = avatarIds[0];
             m_avatarCtrl = m_gameCtrl.GetAvatarController(myAvatarId);
 
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId, (IRenderRequestBase rr) => { rr.Size = new SizeF(FoVSize, FoVSize); rr.Resolution = new Size(FoVResWidth, FoVResHeight); });
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId, (IRenderRequestBase rr) => { (rr as IFofAvatarRR).FovAvatarRenderRequest = m_fovRR; rr.Size = new SizeF(FoFSize, FoFSize); rr.Resolution = new Size(FoFResWidth, FoFResHeight); });
-            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree, (IRenderRequestBase rr) => { rr.Size = new SizeF(Width, Height); rr.Resolution = new Size(ResolutionWidth, ResolutionHeight); });
+            // Setup render requests
+            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId,
+                rr =>
+                {
+                    rr.Size = new SizeF(FoVSize, FoVSize);
+                    rr.Resolution = new Size(FoVResWidth, FoVResHeight);
+                });
+
+            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId,
+                rr =>
+                {
+                    rr.FovAvatarRenderRequest = m_fovRR;
+                    rr.Size = new SizeF(FoFSize, FoFSize);
+                    rr.Resolution = new Size(FoFResWidth, FoFResHeight);
+                });
+
+            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree,
+                rr =>
+                {
+                    rr.Size = new SizeF(Width, Height);
+                    rr.Resolution = new Size(ResolutionWidth, ResolutionHeight);
+                });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
         }
 
@@ -186,26 +206,63 @@ namespace GoodAI.ToyWorld
             return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
-        private T InitRR<T>(IRenderRequestBase rr, MyMemoryBlock<float> targetMemBlock, Action<IRenderRequestBase> initializer = null) where T : class, IRenderRequestBase
+        private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequestBase
         {
+            // Setup the render request properties
             rr.GatherImage = true;
+            rr.FlipYAxis = true;
+
             if (initializer != null)
                 initializer.Invoke(rr);
 
+
+            // Setup data copying to our unmanaged memblocks
+            uint renderTextureHandle = 0;
+            CudaOpenGLBufferInteropResource renderResource = null;
+
+            rr.OnPreRenderingEvent += (sender, vbo) =>
+            {
+                if (renderResource != null && renderResource.IsMapped)
+                    renderResource.UnMap();
+            };
+
+            rr.OnPostRenderingEvent += (sender, vbo) =>
+            {
+                // Vbo can be allocated during drawing, create the resource after that
+                MyKernelFactory.Instance.GetContextByGPU(GPU).SetCurrent();
+
+                if (renderResource == null || vbo != renderTextureHandle)
+                {
+                    if (renderResource != null)
+                        renderResource.Dispose();
+
+                    renderTextureHandle = vbo;
+                    renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle, CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                }
+
+                renderResource.Map();
+                targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                targetMemBlock.FreeDevice();
+                targetMemBlock.AllocateDevice();
+            };
+
+
+            // Initialize the target memory block
+            targetMemBlock.ExternalPointer = 1; // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
             targetMemBlock.Dims = new TensorDimensions(rr.Resolution.Width, rr.Resolution.Height);
-            return rr as T;
+            return rr;
         }
 
-        private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, int avatarId, Action<IRenderRequestBase> initializer = null) where T : class, IAvatarRenderRequest
+        private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, int avatarId, Action<T> initializer = null) where T : class, IAvatarRenderRequest
         {
-            IRenderRequestBase rr = m_gameCtrl.RegisterRenderRequest<T>(avatarId);
-            return InitRR<T>(rr, targetMemBlock, initializer);
+            T rr = m_gameCtrl.RegisterRenderRequest<T>(avatarId);
+            return InitRR(rr, targetMemBlock, initializer);
         }
 
-        private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, Action<IRenderRequestBase> initializer = null) where T : class, IRenderRequest
+        private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequest
         {
-            IRenderRequestBase rr = m_gameCtrl.RegisterRenderRequest<T>();
-            return InitRR<T>(rr, targetMemBlock, initializer);
+            T rr = m_gameCtrl.RegisterRenderRequest<T>();
+            return InitRR(rr, targetMemBlock, initializer);
         }
 
         public class TWGetInputTask : MyTask<ToyWorld>
@@ -357,23 +414,6 @@ namespace GoodAI.ToyWorld
                 }
 
                 Owner.m_gameCtrl.MakeStep();
-
-                TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);
-                TransferFromRRToMemBlock(Owner.m_fofRR, Owner.VisualFof);
-                TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
-            }
-
-            private void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
-            {
-                uint[] data = rr.Image;
-                int width = rr.Resolution.Width;
-                int stride = width * sizeof(uint);
-                int lines = data.Length / width;
-
-                for (int i = 0; i < lines; ++i)
-                    Buffer.BlockCopy(data, i * stride, mb.Host, (mb.Count - (i + 1) * width) * sizeof(uint), stride);
-
-                mb.SafeCopyToDevice();
             }
         }
     }

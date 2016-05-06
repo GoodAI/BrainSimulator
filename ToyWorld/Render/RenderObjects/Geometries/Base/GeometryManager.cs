@@ -15,7 +15,6 @@ namespace Render.RenderObjects.Geometries
             // TODO: gather and distribute types to TypeSwitches based on available constructor through reflection (add attributes?)
             // Plain geometries
             CaseInternal<FullScreenQuad>();
-            CaseInternal<FullscreenQuadColor>();
             CaseInternal<FullScreenQuadTex>();
             CaseInternal<FullScreenQuadOffset>();
 

@@ -9,7 +9,8 @@ namespace Render.RenderObjects.Geometries
         protected void Update<T>(VboPosition id, T[] data, int count = -1, int offset = 0)
             where T : struct
         {
-            this[id].Update(data, count, offset);
+            // No cast checking, should be covered by tests and usage
+            ((Vbo<T>)base[id]).Update(data, count, offset);
         }
     }
 }
