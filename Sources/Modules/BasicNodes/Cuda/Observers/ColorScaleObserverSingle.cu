@@ -69,7 +69,7 @@ extern "C"
 			pixels[pixles_id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
 		}
 	}
-	__global__ void DrawRGBTiledKernel(float* values, unsigned int* pixels, int pw, int ph, int numOfPixels, int tw, int th, int tilesInRow, int tilesInCol) 
+	__global__ void DrawRGBTiledKernel(float* values, unsigned int* pixels, int pw, int ph, int numOfPixels, int tw, int th, int tilesInRow, int tilesInCol, float maxValue) 
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	
 				+ blockDim.x*blockIdx.x				
@@ -98,9 +98,9 @@ extern "C"
                 values_col   = pixels_col % (tw+1);
                 id_R_values  = id_tile*ta*3 + values_col + values_row*tw;   // final oid in the values for red Color:)
             
-			    fred   = values[id_R_values];
-			    fgreen = values[1 * ta + id_R_values];
-			    fblue  = values[2 * ta + id_R_values];
+			    fred   = values[id_R_values]/maxValue;
+			    fgreen = values[1 * ta + id_R_values]/maxValue;
+			    fblue  = values[2 * ta + id_R_values]/maxValue;
             }
 
 	        fred   = fminf(fmaxf((fred+1)/2,   0), 1) * 255;    // normalize colors to be -1 and 1
