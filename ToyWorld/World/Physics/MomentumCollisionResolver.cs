@@ -252,7 +252,7 @@ namespace World.Physics
 
         private void ResolveTileCollision(IForwardMovablePhysicalEntity physicalEntity)
         {
-            float timeStep = 1.0f;
+            float timeStep = 0.01f; // can and should be small, because collision occurs in the next smallest time step
 
             if (physicalEntity.ElasticCollision)
             {
