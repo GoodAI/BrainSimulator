@@ -364,7 +364,34 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     int px = (int)pixelPos.x;
                     int py = (int)pixelPos.y;
-                    int index = py * Observer.TextureWidth + px;
+                    int index = py * Observer.TextureWidth + px; // Normal value if not tensor observ is used (tiles + borders between tiles)
+                    if (mbObserver.ObserveTensors == true)
+                    {
+                        if (mbObserver.Method == RenderingMethod.RedGreenScale)
+                        {
+                            int tw = mbObserver.TileWidth;
+                            int th = mbObserver.TileHeight;
+                            int ta = tw*th;
+                            int tilesInRow = mbObserver.TilesInRow;
+                            if (((px + 1) % (tw + 1) == 0) || ((py + 1) % (th + 1) == 0)) // it is point between tiles
+                            {
+                                peekLabel.Text = "N/A";
+                                return;
+                            }
+                            int tile_row = py / (th+1);                             // in which tile-row it is
+                            int tile_col = px / (tw+1);                             // in which tile-column it is
+                            int id_tile = tile_col + tile_row * tilesInRow;              // which tile it is
+                            int values_row = py % (th+1);                        // id int he tile
+                            int values_col = px % (tw+1);                        // id in the tile
+                            index = id_tile * ta + values_col + values_row * tw;
+                            System.Console.WriteLine("  :px=" + px + ", py=" + py + ", tile_row=" + tile_row + ", tile_col=" + tile_col + ",values_row = " + values_row + ",values_row = " + values_col);
+                        }
+                        else // RGB here
+                        {
+
+                        }
+                    }
+                    
 
                     if (index >= mbObserver.Target.Count)
                         return;

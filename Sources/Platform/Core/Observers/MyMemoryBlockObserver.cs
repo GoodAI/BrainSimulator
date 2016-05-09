@@ -199,7 +199,26 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        private int m_tileWidth, m_tileHeight;
+        public int TilesInColumn
+        {
+            get
+            {
+                Size textureSize = ComputeTiledTextureSize(GetTileDimensions(), Target);
+                return TilesInColumn = textureSize.Height * textureSize.Width / m_tileWidth / m_tileHeight / TilesInRow;
+            }
+            set { }
+        }
+
+        private int m_tileWidth=1, m_tileHeight=1;
+        public int TileWidth{
+            get {  return m_tileWidth;  }
+            set { }
+        }
+        public int TileHeight
+        {
+            get { return m_tileHeight; }
+            set { }
+        }
 
         #endregion
 
@@ -355,7 +374,6 @@ namespace GoodAI.Core.Observers
                 }
                 else // add boundaries between tiles
                 {
-                    int TilesInColumn = textureSize.Height * textureSize.Width / m_tileWidth / m_tileHeight / TilesInRow;
                     textureSize.Height += TilesInColumn - 1;
                     textureSize.Width += TilesInRow - 1;
                 }
