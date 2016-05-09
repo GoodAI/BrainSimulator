@@ -80,6 +80,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{DAC98A0F-E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrainSimCore", "BrainSimCore", "{615C5A8C-1D58-4505-8340-C21617AF6DDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldConversation", "ToyWorldConversation\ToyWorldConversation.csproj", "{99EEE01B-4697-415C-969B-3767139473D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -250,6 +252,14 @@ Global
 		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Release|0 Default (x64 CUDA).ActiveCfg = Release|x64
 		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Release|0 Default (x64 CUDA).Build.0 = Release|x64
 		{D4CA3546-CFD1-410C-BB38-58CD56FDEBC4}.Release|1 Skip CUDA.ActiveCfg = Release|x64
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -280,5 +290,6 @@ Global
 		{F7CDFEB7-DAAA-4BCF-9697-ADB0A04134D1} = {E6928D98-DB52-4D72-ACAC-197CCFF87D85}
 		{DAC98A0F-E4EA-47B1-9D41-396426370819} = {E6928D98-DB52-4D72-ACAC-197CCFF87D85}
 		{615C5A8C-1D58-4505-8340-C21617AF6DDF} = {91964B8F-7E88-402F-A6A2-B3DBA05AF1E9}
+		{99EEE01B-4697-415C-969B-3767139473D3} = {91964B8F-7E88-402F-A6A2-B3DBA05AF1E9}
 	EndGlobalSection
 EndGlobal

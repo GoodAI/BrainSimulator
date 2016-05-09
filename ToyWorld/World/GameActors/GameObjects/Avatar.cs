@@ -1,6 +1,6 @@
 ﻿﻿using System.Drawing;
-﻿using System;
 using System.Linq;
+using GoodAI.ToyWorldAPI;
 using VRageMath;
 using World.GameActions;
 using World.GameActors.Tiles;
@@ -9,7 +9,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPick
+    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPick, IMessageSender
     {
         int Id { get; }
         IPickable Tool { get; set; }
@@ -17,6 +17,8 @@ namespace World.GameActors.GameObjects
 
     public class Avatar : Character, IAvatar
     {
+        public event MessageEventHandler NewMessage = delegate { };
+
         public int Id { get; private set; }
         public IPickable Tool { get; set; }
 

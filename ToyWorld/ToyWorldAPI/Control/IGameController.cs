@@ -1,11 +1,12 @@
 ﻿using System;
+using GoodAI.ToyWorldAPI;
 
 namespace GoodAI.ToyWorld.Control
 {
     /// <summary>
     ///
     /// </summary>
-    public interface IGameController : IDisposable
+    public interface IGameController : IDisposable, IMessageSender
     {
         /// <summary>
         ///
