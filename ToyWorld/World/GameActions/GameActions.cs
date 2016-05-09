@@ -15,6 +15,11 @@ namespace World.GameActions
             m_sender = sender;
         }
 
+        /// <summary>
+        /// Resolve implements default action implementation (where applicable)
+        /// </summary>
+        /// <param name="target">Target of the action</param>
+        /// <param name="atlas"></param>
         public virtual void Resolve(GameActorPosition target, IAtlas atlas) { }
     }
 
