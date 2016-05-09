@@ -279,7 +279,7 @@ namespace GoodAI.Core.Observers
                 if (Method == RenderingMethod.RGB)
                 {
                     m_tiledRGBKernel.SetupExecution(TextureSize);
-                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureSize, m_tileWidth, m_tileHeight, TilesInRow);
+                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureWidth, TextureHeight,TextureSize, m_tileWidth, m_tileHeight, TilesInRow, TilesInColumn);
                 }
                 else
                 {
@@ -372,11 +372,9 @@ namespace GoodAI.Core.Observers
                 {
                     textureSize.Height /= 3;
                 }
-                else // add boundaries between tiles
-                {
-                    textureSize.Height += TilesInColumn - 1;
-                    textureSize.Width += TilesInRow - 1;
-                }
+                // add boundaries between tiles
+                textureSize.Height += TilesInColumn - 1;
+                textureSize.Width += TilesInRow - 1;
 
             }
             else
