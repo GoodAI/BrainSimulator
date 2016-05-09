@@ -17,7 +17,7 @@ namespace World.Physics
         private const float Y_DIRECTION = 0;
         private const float NEGLIGIBLE_TIME = 0.01f;
         private const float NEGLIGIBLE_DISTANCE = 0.0001f;
-        private const int MAXIMUM_RESOLVE_TRIES = 25;
+        private const int MAXIMUM_RESOLVE_TRIES = 100;
 
         public MomentumCollisionResolver(ICollisionChecker collisionChecker, IMovementPhysics movementPhysics)
         {
@@ -447,7 +447,7 @@ namespace World.Physics
         {
             Vector2 originalPosition = physicalEntity.Position;
             // search in spirals
-            const float a = 0.01f;
+            const float a = 0.001f;
             const float tDiff = MathHelper.Pi / 180; // one degree step
             float t = 0;
             do
