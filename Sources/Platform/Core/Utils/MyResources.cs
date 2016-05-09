@@ -74,22 +74,26 @@ namespace GoodAI.Core.Utils
         {
             try
             {
-                using (
-                    Stream stream =
-                        assembly.GetManifestResourceStream(assembly.GetName().Name + "." + resourceDir + "." +
-                                                           resourceName))
-                using (StreamReader reader = new StreamReader(stream))
+                string path = assembly.GetName().Name + "." + resourceDir + "." + resourceName;
+                using (Stream stream = assembly.GetManifestResourceStream(path))
                 {
-                    content = reader.ReadToEnd();
+                    if (stream != null)
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            content = reader.ReadToEnd();
+                            return true;
+                        }
+                    }
                 }
             }
             catch
             {
-                content = string.Empty;
-                return false;
+
             }
 
-            return true;
+            content = string.Empty;
+            return false;
         }
 
         public static string GetTextFromAssembly(Assembly assembly, string resourceName, string resourceDir = "conf")
