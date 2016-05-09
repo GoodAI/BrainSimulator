@@ -14,6 +14,7 @@ using Logger;
 using ToyWorldFactory;
 using YAXLib;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using GoodAI.Core;
 using ManagedCuda;
