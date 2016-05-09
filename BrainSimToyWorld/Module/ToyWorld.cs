@@ -160,7 +160,7 @@ namespace GoodAI.ToyWorld
 
         public override void Validate(MyValidator validator)
         {
-            base.Validate(validator);
+            validator.AssertError(Controls != null, this, "No controls available");
 
             validator.AssertError(File.Exists(SaveFile), this, "Please specify a correct SaveFile path in world properties.");
             validator.AssertError(File.Exists(TilesetTable), this, "Please specify a correct TilesetTable path in world properties.");
@@ -492,6 +492,8 @@ namespace GoodAI.ToyWorld
 
             private void ObtainMessageFromBrain()
             {
+                if (Owner.TextIn == null)
+                    return;
                 Owner.TextIn.SafeCopyToHost();
                 Owner.AvatarCtrl.MessageOut = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
             }
