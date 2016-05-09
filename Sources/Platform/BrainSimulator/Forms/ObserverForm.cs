@@ -388,7 +388,8 @@ namespace GoodAI.BrainSimulator.Forms
                         }
                         else // RGB here
                         {
-
+                            peekLabel.Text = "N/A";
+                            return;
                         }
                     }
                     
