@@ -13,7 +13,7 @@ namespace ToyWorldTests.Physics
         public void ResolveSlideCollissionOrthogonal()
         {
             var initPosition = new Vector2(0.5f,0f);
-            var shape = new RectangleShape(new Vector2(1,1));
+            var shape = new RectangleShape(initPosition, new Vector2(1,1));
             IForwardMovablePhysicalEntity pe = new ForwardMovablePhysicalEntity(initPosition, shape, 1, MathHelper.Pi / 2);
             pe.InelasticCollision = true;
 
@@ -33,7 +33,7 @@ namespace ToyWorldTests.Physics
         public void ResolveSlideCollission45()
         {
             var initPosition = new Vector2(0.5f, 0f);
-            var shape = new RectangleShape(new Vector2(1, 1));
+            var shape = new RectangleShape(initPosition, new Vector2(1, 1));
 
             float angle = 135f;
 

@@ -20,7 +20,7 @@ namespace World.GameActors.Tiles
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null);
+        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null);
     }
 
     public interface IPickable : IInteractable { }
@@ -28,5 +28,7 @@ namespace World.GameActors.Tiles
     public interface ICanPick
     {
         bool AddToInventory(IPickable item);
+
+        IPickable RemoveFromInventory();
     }
 }

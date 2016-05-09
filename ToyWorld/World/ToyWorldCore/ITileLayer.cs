@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.Tiles;
+using World.Physics;
 
 namespace World.ToyWorldCore
 {
@@ -49,7 +50,22 @@ namespace World.ToyWorldCore
             return default(Tile);
         }
 
+        public Tile GetActorAt(Shape shape)
+        {
+            return default(Tile);
+        }
+
+        public Tile GetActorAt(Vector2I position)
+        {
+            return GetActorAt(position.X, position.Y);
+        }
+
         public bool ReplaceWith<TR>(GameActorPosition original, TR replacement)
+        {
+            return default(bool);
+        }
+
+        public bool Add(GameActorPosition gameActorPosition)
         {
             return default(bool);
         }

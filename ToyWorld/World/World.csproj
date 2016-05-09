@@ -165,6 +165,7 @@
     <Compile Include="Physics\MovementPhysics.cs" />
     <Compile Include="Physics\PhysicalEntity.cs" />
     <Compile Include="Physics\Shapes.cs" />
+    <Compile Include="Physics\StaticPhysicalEntity.cs" />
     <Compile Include="Physics\Utils.cs" />
     <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />
     <Compile Include="GameActors\GameObjects\Avatar.cs" />

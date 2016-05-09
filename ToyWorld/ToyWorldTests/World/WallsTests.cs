@@ -41,7 +41,7 @@ namespace ToyWorldTests.World
                 Callback((GameActorPosition original, GameActor replacement) => pickaxedWall = replacement);
 
             // Act
-            m_wall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2I(), m_tilesetTable);
+            m_wall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2(), m_tilesetTable);
 
             // Assert
             if (damage >= 1)
@@ -76,7 +76,7 @@ namespace ToyWorldTests.World
             DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
 
             // Act
-            damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2I(), m_tilesetTable);
+            damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2(), m_tilesetTable);
 
             // Assert
             if (damage + initialDamage >= 1)
@@ -94,7 +94,7 @@ namespace ToyWorldTests.World
             atlas.Setup(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>()));
 
             // Act
-            m_wall.ApplyGameAction(atlas.Object, action.Object, new Vector2I(), null);
+            m_wall.ApplyGameAction(atlas.Object, action.Object, new Vector2(), null);
 
             // Assert
             atlas.Verify(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>()), Times.Never());

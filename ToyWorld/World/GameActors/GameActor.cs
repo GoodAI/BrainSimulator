@@ -1,4 +1,5 @@
 ﻿using VRageMath;
+using World.ToyWorldCore;
 
 namespace World.GameActors
 {
@@ -12,12 +13,14 @@ namespace World.GameActors
     public class GameActorPosition
     {
         public GameActor Actor { get; private set; }
-        public Vector2I Position { get; private set; }
+        public Vector2 Position { get; private set; }
+        public LayerType Layer { get; private set; }
 
-        public GameActorPosition(GameActor actor, Vector2I position)
+        public GameActorPosition(GameActor actor, Vector2 position, LayerType layer = LayerType.ObstacleInteractable)
         {
             Actor = actor;
             Position = position;
+            Layer = layer;
         }
     }
 }

@@ -12,19 +12,21 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="rectangle"></param>
         /// <returns></returns>
-        List<GameObject> GetGameObjects(VRageMath.RectangleF rectangle);
+        List<IGameObject> GetGameObjects(VRageMath.RectangleF rectangle);
 
         /// <summary>
         /// Gets all game objects.
         /// </summary>
         /// <returns></returns>
-        List<GameObject> GetGameObjects();
+        List<IGameObject> GetGameObjects();
 
-        /// <summary>
+        GameObject GetActorAt(Shape shape);
+
+            /// <summary>
         /// Get all game objects in given circle.
         /// </summary>
         /// <returns></returns>
-        List<GameObject> GetGameObjects(Circle circle);
+        List<IGameObject> GetGameObjects(Circle circle);
 
         List<IPhysicalEntity> GetPhysicalEntities(Circle circle);
 
@@ -37,6 +39,6 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="gameObject">GameObject to add</param>
         /// <returns>True if object was successfully added.</returns>
-        bool AddGameObject(GameObject gameObject);
+        bool AddGameObject(IGameObject gameObject);
     }
 }

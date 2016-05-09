@@ -10,7 +10,7 @@ namespace World.GameActors.Tiles
 
         protected Fruit(int tileType) : base(tileType) { }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2I position, TilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
         {
             gameAction.Resolve(new GameActorPosition(this, position), atlas);
         }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.Linq;
 using VRageMath;
 using World.GameActors;
@@ -10,29 +10,47 @@ namespace World.ToyWorldCore
 {
     public class SimpleObjectLayer : IObjectLayer
     {
-        private List<GameObject> GameObjects { get; set; }
+        private List<IGameObject> GameObjects { get; set; }
 
         public LayerType LayerType { get; set; }
 
         public SimpleObjectLayer(LayerType layerType)
         {
             LayerType = layerType;
-            GameObjects = new List<GameObject>();
+            GameObjects = new List<IGameObject>();
         }
 
         public GameObject GetActorAt(int x, int y)
         {
-            return GetGameObjects(new RectangleF(x, y, 1, 1)).FirstOrDefault();
+            return GetGameObjects(new RectangleF(x, y, 1, 1)).FirstOrDefault() as GameObject;
         }
 
-        public List<GameObject> GetGameObjects(RectangleF rectangle)
+        public GameObject GetActorAt(Shape shape)
         {
-            List<GameObject> list = new List<GameObject>();
-
-            foreach (GameObject gameObject in GameObjects)
+            foreach (IGameObject gameObject in GameObjects)
             {
+                if (gameObject.PhysicalEntity.Shape.CollidesWith(shape))
+                {
+                    return gameObject as GameObject;
+                }
+            }
+            return null;
+        }
+
+        public GameObject GetActorAt(Vector2I position)
+        {
+            return GetActorAt(position.X, position.Y);
+        }
+
+        public List<IGameObject> GetGameObjects(RectangleF rectangle)
+        {
+            List<IGameObject> list = new List<IGameObject>();
+
+            foreach (IGameObject o in GameObjects)
+            {
+                var gameObject = (GameObject) o;
                 IPhysicalEntity physicalEntity = gameObject.PhysicalEntity;
-                RectangleF r = new RectangleF();
+                RectangleF r;
                 RectangleF cover = physicalEntity.CoverRectangle();
                 RectangleF.Intersect(ref cover, ref rectangle, out r);
                 if (r.Size.Length() > 0f)
@@ -44,19 +62,20 @@ namespace World.ToyWorldCore
             return list;
         }
 
-        public List<GameObject> GetGameObjects()
+        public List<IGameObject> GetGameObjects()
         {
-            var newList = new List<GameObject>();
+            var newList = new List<IGameObject>();
             newList.AddRange(GameObjects);
             return newList;
         }
 
-        public List<GameObject> GetGameObjects(VRageMath.Circle circle)
+        public List<IGameObject> GetGameObjects(Circle circle)
         {
-            var list = new List<GameObject>();
+            var list = new List<IGameObject>();
 
-            foreach (GameObject gameObject in GameObjects)
+            foreach (IGameObject o in GameObjects)
             {
+                var gameObject = (GameObject) o;
                 if (circle.Include(gameObject.Position))
                 {
                     list.Add(gameObject);
@@ -66,20 +85,13 @@ namespace World.ToyWorldCore
             return list;
         }
 
-        public bool AddGameObject(GameObject gameObject)
+        public bool AddGameObject(IGameObject gameObject)
         {
             GameObjects.Add(gameObject);
             return true;
         }
 
-        public List<GameObject> GetAllObjects()
-        {
-            Contract.Ensures(Contract.Result<List<GameObject>>() != null);
-
-            return GameObjects;
-        }
-
-        public List<IPhysicalEntity> GetPhysicalEntities(VRageMath.Circle circle)
+        public List<IPhysicalEntity> GetPhysicalEntities(Circle circle)
         {
             return GetGameObjects(circle).Select(x => x.PhysicalEntity).ToList();
         }
@@ -96,13 +108,25 @@ namespace World.ToyWorldCore
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
-            GameObject item = GetActorAt(original.Position.X, original.Position.Y);
+            GameObject item = (GameObject) original.Actor;
             if (item != original.Actor) return false;
 
             GameObjects.Remove(item);
 
             if (!(replacement is GameObject)) return true;
             GameObjects.Add(replacement as GameObject);
+            return true;
+        }
+
+        public bool Add(GameActorPosition gameActorPosition)
+        {
+            IGameObject gameObject = gameActorPosition.Actor as IGameObject;
+            Debug.Assert(gameObject != null, "gameObject != null");
+
+            Vector2 position = gameActorPosition.Position;
+            gameObject.Position = position;
+
+            GameObjects.Add(gameObject);
             return true;
         }
     }

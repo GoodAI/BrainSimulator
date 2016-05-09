@@ -1,4 +1,5 @@
-﻿using World.GameActors;
+﻿using VRageMath;
+using World.GameActors;
 
 namespace World.ToyWorldCore
 {
@@ -8,6 +9,10 @@ namespace World.ToyWorldCore
 
         T GetActorAt(int x, int y);
 
+        T GetActorAt(Vector2I position);
+
         bool ReplaceWith<TR>(GameActorPosition original, TR replacement);
+
+        bool Add(GameActorPosition gameActorPosition);
     }
 }

@@ -1,6 +1,9 @@
 ﻿﻿using System.Drawing;
 using System.Linq;
 using GoodAI.ToyWorldAPI;
+﻿﻿using System.Collections.Generic;
+﻿using System.Drawing;
+﻿using System.Linq;
 using VRageMath;
 using World.GameActions;
 using World.GameActors.Tiles;
@@ -66,18 +69,49 @@ namespace World.GameActors.GameObjects
             return true;
         }
 
+        public IPickable RemoveFromInventory()
+        {
+            IPickable tool = Tool; 
+            Tool = null;
+            return tool;
+        }
+
         public void Update(IAtlas atlas)
         {
             if (PickUp)
             {
-                GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
-                if (target == null) return;
-                IInteractable interactableTarget = target.Actor as IInteractable;
-                if (interactableTarget == null) return;
+                if (Tool == null)
+                {
+                    GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
+                    if (target == null)
+                    {
+                        // check circle in front of avatar 
+                        float radius = ((CircleShape) PhysicalEntity.Shape).Radius;
+                        IEnumerable<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object, radius, radius);
+                        target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
+                        
+                    }
+                    if (target == null) return;
+                    IInteractable interactableTarget = target.Actor as IInteractable;
+                    if (interactableTarget == null) return;
 
-                GameAction pickUpAction = new PickUp(this);
-                interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
-                PickUp = false;
+                    GameAction pickUpAction = new PickUp(this);
+                    interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
+
+                    if (target.Actor is IForwardMovable)
+                    {
+                        (target.Actor as IForwardMovable).ForwardSpeed = 0;
+                    }
+
+                    PickUp = false;
+                }
+                else
+                {
+                    var positionInFrontOf = atlas.PositionInFrontOf(this, 1);
+                    GameAction layDownAction = new LayDown(this);
+                    Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf);
+                    PickUp = false;
+                }
             }
         }
     }

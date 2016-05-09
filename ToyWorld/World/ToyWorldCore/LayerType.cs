@@ -20,6 +20,7 @@ namespace World.ToyWorldCore
         Foreground = 128,
         ForegroundObject = 256,
 
+        Obstacles = Obstacle | ObstacleInteractable,
         Interactable = OnGroundInteractable | ObstacleInteractable,
         All = Background | OnBackground | Path | OnGroundInteractable | ObstacleInteractable | Obstacle | Object | Foreground | ForegroundObject
     }

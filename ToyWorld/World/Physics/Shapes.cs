@@ -14,7 +14,7 @@ namespace World.Physics
         /// Returns size of rectangle which can wrap this shape.
         /// </summary>
         /// <returns></returns>
-        VRageMath.Vector2 CoverRectangleSize();
+        Vector2 CoverRectangleSize();
 
         /// <summary>
         /// Returns maximum distance from center to the furthermost point of this shape.
@@ -43,7 +43,7 @@ namespace World.Physics
     {
         public Vector2 Position { get; set; }
 
-        public Vector2 Size { get; set; }
+        public virtual Vector2 Size { get; set; }
 
         public abstract float PossibleCollisionDistance();
         
@@ -58,8 +58,9 @@ namespace World.Physics
 
     public class RectangleShape : Shape
     {
-        public RectangleShape(Vector2 size)
+        public RectangleShape(Vector2 position, Vector2 size)
         {
+            Position = position;
             Size = size;
         }
 
@@ -125,18 +126,24 @@ namespace World.Physics
 
     public class CircleShape : Shape
     {
-        public VRageMath.Circle VCircle { get; private set; }
+        public override Vector2 Size { get; set; }
+
+        public Circle VCircle { get; private set; }
 
         public float Radius { get; private set; }
 
-        public CircleShape(float radius)
+        public CircleShape(Vector2 position, float radius)
         {
+            Position = position;
             Radius = radius;
+            VCircle = new Circle(position, radius);
         }
 
-        public CircleShape(Vector2 size)
+        public CircleShape(Vector2 position, Vector2 size)
         {
+            Position = position;
             Radius = (size.X + size.Y) / 4;
+            VCircle = new Circle(position, Radius);
         }
 
         public override float PossibleCollisionDistance()

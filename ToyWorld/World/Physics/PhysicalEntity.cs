@@ -20,8 +20,6 @@ namespace World.Physics
 
         bool ElasticCollision { get; set; }
 
-        bool StopOnCollision { get; set; }
-
         /// <summary>
         /// Weight of an object.
         /// </summary>
@@ -51,7 +49,6 @@ namespace World.Physics
     {
         private bool m_inelasticCollision;
         private bool m_elasticCollision;
-        private bool m_stopOnCollision;
         private float m_weight = 1.0f;
 
         public float Weight
@@ -72,10 +69,10 @@ namespace World.Physics
             get { return m_inelasticCollision; }
             set
             {
-                if (value && (ElasticCollision || StopOnCollision))
+                if (value && (ElasticCollision))
                 {
                     throw new ArgumentException(
-                        "InelasticCollision property cannot be true if ElasticCollision or StopOnCollision is true.");
+                        "InelasticCollision property cannot be true if ElasticCollision or is true.");
                 }
                 m_inelasticCollision = value;
             }
@@ -86,26 +83,12 @@ namespace World.Physics
             get { return m_elasticCollision; }
             set
             {
-                if (value && (InelasticCollision || StopOnCollision))
+                if (value && (InelasticCollision))
                 {
                     throw new ArgumentException(
-                        "ElasticCollision property cannot be true if InelasticCollision or StopOnCollision is true.");
+                        "ElasticCollision property cannot be true if InelasticCollision is true.");
                 }
                 m_elasticCollision = value;
-            }
-        }
-
-        public bool StopOnCollision
-        {
-            get { return m_stopOnCollision; }
-            set
-            {
-                if (value && (ElasticCollision || InelasticCollision))
-                {
-                    throw new ArgumentException(
-                        "StopOnCollision property cannot be true if InelasticCollision or ElasticCollision is true.");
-                }
-                m_stopOnCollision = value;
             }
         }
 

@@ -4,6 +4,7 @@ using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.Tiles;
+using World.Physics;
 
 namespace World.ToyWorldCore
 {
@@ -42,6 +43,12 @@ namespace World.ToyWorldCore
                 return new Obstacle(0);
             }
             return Tiles[x][y];
+        }
+
+        public Tile GetActorAt(Shape shape)
+        {
+            Vector2I position = new Vector2I(Vector2.Floor(shape.Position));
+            return Tiles[position.X][position.Y];
         }
 
         public Tile GetActorAt(Vector2I coordinates)
@@ -124,13 +131,27 @@ namespace World.ToyWorldCore
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
-            Tile item = GetActorAt(original.Position.X, original.Position.Y);
+            int x = (int)Math.Floor(original.Position.X);
+            int y = (int)Math.Floor(original.Position.Y);
+            Tile item = GetActorAt(x, y);
             if (item != original.Actor) return false;
 
-            Tiles[original.Position.X][original.Position.Y] = null;
+            Tiles[x][y] = null;
             if (!(replacement is Tile)) return true;
-            Tiles[original.Position.X][original.Position.Y] = replacement as Tile;
+            Tiles[x][y] = replacement as Tile;
 
+            return true;
+        }
+
+        public bool Add(GameActorPosition gameActorPosition)
+        {
+            int x = (int) gameActorPosition.Position.X;
+            int y = (int) gameActorPosition.Position.Y;
+            if (Tiles[x][y] != null)
+            {
+                return false;
+            }
+            Tiles[x][y] = gameActorPosition.Actor as Tile;
             return true;
         }
     }

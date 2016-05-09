@@ -1,9 +1,12 @@
 ﻿using VRageMath;
+using World.GameActions;
+using World.GameActors.Tiles;
 using World.Physics;
+using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
-    class Ball : Character
+    class Ball : Character, IPickable
     {
         public Ball(
             string tilesetName,
@@ -20,6 +23,14 @@ namespace World.GameActors.GameObjects
             direction,
             typeof(CircleShape))
         {
+        }
+
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
+        {
+            if (gameAction is PickUp || gameAction is LayDown)
+            {
+                gameAction.Resolve(new GameActorPosition(this, position, LayerType.Object), atlas);
+            }
         }
     }
 }
