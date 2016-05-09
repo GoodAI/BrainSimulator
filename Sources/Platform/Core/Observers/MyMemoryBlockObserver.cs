@@ -179,7 +179,7 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        private int m_tilesInRow;
+        private int m_tilesInRow = 1;
         [YAXSerializableField(DefaultValue = 1)]
         [MyBrowsable, Category("Tensor Observer")]
         [Description("Number of tiles displayed in one row")]
