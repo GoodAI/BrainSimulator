@@ -249,20 +249,13 @@ namespace GoodAI.ToyWorld
             if (initializer != null)
                 initializer.Invoke(rr);
 
-            rr.CopyImageThroughCpu = CopyDataThroughCPU;
+            rr.FlipYAxis = true;
 
-            foreach (string memBlockName in new string[3] { "VisualFov", "VisualFof", "VisualFree" })
-            {
-                PropertyDescriptor desc = TypeDescriptor.GetProperties(this.GetType())[memBlockName];
-                MyUnmanagedAttribute attr = (MyUnmanagedAttribute)desc.Attributes[typeof(MyUnmanagedAttribute)];
-                PropertyInfo unmanaged = attr.GetType().GetProperty("Unmanaged");
-                unmanaged.SetValue(attr, !CopyDataThroughCPU);
-            }
+            rr.CopyImageThroughCpu = CopyDataThroughCPU;
+            targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer
 
             if (!CopyDataThroughCPU)
             {
-                rr.FlipYAxis = true;
-
                 // Setup data copying to our unmanaged memblocks
                 uint renderTextureHandle = 0;
                 CudaOpenGLBufferInteropResource renderResource = null;
@@ -507,7 +500,7 @@ namespace GoodAI.ToyWorld
                 int lines = data.Length / width;
 
                 for (int i = 0; i < lines; ++i)
-                    Buffer.BlockCopy(data, i * stride, mb.Host, (mb.Count - (i + 1) * width) * sizeof(uint), stride);
+                    Buffer.BlockCopy(data, i * stride, mb.Host, i * width * sizeof(uint), stride);
 
                 mb.SafeCopyToDevice();
             }
