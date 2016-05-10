@@ -12,7 +12,19 @@ namespace World.GameActors.GameObjects
 {
     public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPick, IMessageSender
     {
+        /// <summary>
+        /// Avatar unique Id for connecting from outside. Specified in .tmx file.
+        /// </summary>
         int Id { get; }
+
+        /// <summary>
+        /// Energy of Avatar. In [0,1].
+        /// </summary>
+        float Energy { get; set; }
+
+        /// <summary>
+        /// Tool in hand. Can be picked up and laid down.
+        /// </summary>
         IPickable Tool { get; set; }
     }
 
@@ -21,6 +33,7 @@ namespace World.GameActors.GameObjects
         public event MessageEventHandler NewMessage = delegate { };
 
         public int Id { get; private set; }
+        public float Energy { get; set; }
         public IPickable Tool { get; set; }
 
         public int NextUpdateAfter { get; private set; }
@@ -118,7 +131,7 @@ namespace World.GameActors.GameObjects
             // if no tile, check objects
             if (target == null)
             {
-                target = GetObjectsInFrontOf(atlas, target);
+                target = GetObjectsInFrontOf(atlas);
             }
             if (target == null) return false;
 
@@ -141,13 +154,13 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        private GameActorPosition GetObjectsInFrontOf(IAtlas atlas, GameActorPosition target)
+        private GameActorPosition GetObjectsInFrontOf(IAtlas atlas)
         {
             // check circle in front of avatar 
             float radius = ((CircleShape) PhysicalEntity.Shape).Radius;
             IEnumerable<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object,
                 0.2f + radius, radius);
-            target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
+            GameActorPosition target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
             return target;
         }
 
