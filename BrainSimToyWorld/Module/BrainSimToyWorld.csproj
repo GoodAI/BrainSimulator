@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ToyWorld.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ToyWorldTasks.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>
   <ItemGroup>
