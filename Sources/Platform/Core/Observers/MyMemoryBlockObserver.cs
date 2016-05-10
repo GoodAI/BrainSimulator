@@ -209,9 +209,10 @@ namespace GoodAI.Core.Observers
             set { }
         }
 
-        private int m_tileWidth=1, m_tileHeight=1;
-        public int TileWidth{
-            get {  return m_tileWidth;  }
+        private int m_tileWidth = 1, m_tileHeight = 1;
+        public int TileWidth
+        {
+            get { return m_tileWidth; }
             set { }
         }
         public int TileHeight
@@ -288,22 +289,24 @@ namespace GoodAI.Core.Observers
                     m_tiledKernel.SetupExecution(pixelsInOrigImage);
                     m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, pixelsInOrigImage, m_tileWidth, m_tileHeight, TilesInRow);
                 }
-                return;
-            }
-            if (Method == RenderingMethod.Vector)
-            {
-                m_vectorKernel.SetupExecution(TextureSize);
-                m_vectorKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), Elements, MaxValue, VBODevicePointer, TextureSize);
-            }
-            else if (Method == RenderingMethod.RGB)
-            {
-                m_rgbKernel.SetupExecution(TextureSize);
-                m_rgbKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureSize);
             }
             else
             {
-                m_kernel.SetupExecution(TextureSize);
-                m_kernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
+                if (Method == RenderingMethod.Vector)
+                {
+                    m_vectorKernel.SetupExecution(TextureSize);
+                    m_vectorKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), Elements, MaxValue, VBODevicePointer, TextureSize);
+                }
+                else if (Method == RenderingMethod.RGB)
+                {
+                    m_rgbKernel.SetupExecution(TextureSize);
+                    m_rgbKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureSize);
+                }
+                else
+                {
+                    m_kernel.SetupExecution(TextureSize);
+                    m_kernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
+                }
             }
         }
 
