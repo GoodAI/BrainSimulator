@@ -4,7 +4,7 @@ namespace Render.RenderObjects.Textures
 {
     internal class BasicTexture : TextureBase
     {
-        public BasicTexture(int width, int height, TextureTarget textureTarget = TextureTarget.ProxyTexture2D)
+        public BasicTexture(int width, int height, TextureTarget textureTarget = TextureTarget.Texture2D)
             : base(width, height, textureTarget)
         { }
 

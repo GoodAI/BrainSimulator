@@ -26,17 +26,17 @@ namespace Render.RenderObjects.Textures
         }
     }
 
-    internal class RenderTargetColorTextureMultisample : RenderTargetTexture
+    internal class RenderTargetColorTextureMultisample : RenderTargetTextureMultisample
     {
-        public RenderTargetColorTextureMultisample(Vector2I size)
-            : base(size)
+        public RenderTargetColorTextureMultisample(Vector2I size, int sampleCount)
+            : base(size, sampleCount)
         { }
     }
 
-    internal class RenderTargetDepthTextureMultisample : RenderTargetTexture
+    internal class RenderTargetDepthTextureMultisample : RenderTargetTextureMultisample
     {
-        public RenderTargetDepthTextureMultisample(Vector2I size)
-            : base(size, PixelFormat.DepthComponent, PixelInternalFormat.DepthComponent)
+        public RenderTargetDepthTextureMultisample(Vector2I size, int sampleCount)
+            : base(size, sampleCount, PixelInternalFormat.DepthComponent)
         { }
     }
 

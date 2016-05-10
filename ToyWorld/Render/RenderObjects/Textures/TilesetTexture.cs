@@ -27,6 +27,7 @@ namespace Render.RenderObjects.Textures
                     m_textures.Add(null);
                     continue;
                 }
+
                 using (FileStream stream = new FileStream(tilesetImage.ImagePath, FileMode.Open, FileAccess.Read))
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
@@ -52,10 +53,8 @@ namespace Render.RenderObjects.Textures
                             System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                         IncreaseTileBorders(
-                            dataOrig,
-                            dataNew,
-                            tilesPerRow,
-                            tilesPerColumn,
+                            dataOrig, dataNew,
+                            tilesPerRow, tilesPerColumn,
                             tilesetImage);
 
                         try
