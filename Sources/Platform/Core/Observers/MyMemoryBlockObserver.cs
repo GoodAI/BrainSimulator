@@ -248,14 +248,6 @@ namespace GoodAI.Core.Observers
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");
             m_rgbKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBKernel");
 
-            if (ObserveTensors && type.Name != "Single")
-            {
-                MyLog.WARNING.WriteLine("Observing tensors, with anything other than Signles not supported, will use Single");
-            }
-            if (Method == RenderingMethod.Vector)
-            {
-                MyLog.WARNING.WriteLine("Observing tensors in Vector mode not supported");
-            }
             m_tiledKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
             m_tiledRGBKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBTiledKernel");
 
@@ -269,6 +261,15 @@ namespace GoodAI.Core.Observers
             {
                 ShowCoordinates = Target.Metadata.GetOrDefault(MemoryBlockMetadataKeys.ShowCoordinates,
                     defaultValue: false);
+            }
+
+            if (ObserveTensors && type.Name != "Single")
+            {
+                MyLog.WARNING.WriteLine("Observing tensors, with anything other than Signles not supported, will use Single");
+            }
+            if (Method == RenderingMethod.Vector)
+            {
+                MyLog.WARNING.WriteLine("Observing tensors in Vector mode not supported");
             }
         }
 
