@@ -5,7 +5,7 @@ namespace Render.RenderObjects.Buffers
     internal class Pbo : Vbo<uint>
     {
         public Pbo()
-            : base(target: BufferTarget.PixelPackBuffer, hint: BufferUsageHint.StreamDraw)
+            : base(target: BufferTarget.PixelPackBuffer)
         { }
     }
 }

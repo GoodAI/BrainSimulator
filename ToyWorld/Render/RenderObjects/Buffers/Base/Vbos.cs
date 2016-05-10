@@ -32,6 +32,7 @@ namespace Render.RenderObjects.Buffers
 
         #endregion
 
+
         public void Bind()
         {
             GL.BindBuffer(Target, Handle);
@@ -46,7 +47,7 @@ namespace Render.RenderObjects.Buffers
     internal abstract class VboBase<T> : VboBase
         where T : struct
     {
-        protected VboBase(int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
+        protected VboBase(int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer)
             : base(elementSize < 0 ? 4 : elementSize, target)
         { }
 
@@ -66,7 +67,6 @@ namespace Render.RenderObjects.Buffers
 
             Bind();
             GL.BufferData(Target, ByteCount, data, hint);
-            //Unbind();
         }
 
         protected void Update(T[] data, int tCount = -1, int offset = 0)
@@ -78,15 +78,14 @@ namespace Render.RenderObjects.Buffers
 
             Bind();
             GL.BufferSubData(Target, new IntPtr(offset * tSize), tCount, data);
-            //Unbind();
         }
     }
 
     internal class Vbo<T> : VboBase<T>
         where T : struct
     {
-        protected Vbo(int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)
-            : base(elementSize, target, hint)
+        protected Vbo(int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer)
+            : base(elementSize, target)
         { }
 
         public Vbo(int tCount, T[] initData = null, int elementSize = -1, BufferTarget target = BufferTarget.ArrayBuffer, BufferUsageHint hint = BufferUsageHint.DynamicDraw)

@@ -35,9 +35,10 @@ namespace GoodAI.ToyWorld.Control
         Size Resolution { get; set; }
 
         /// <summary>
-        /// Number of samples to pick for each pixel. Must be between 0 (no AA) and 16.
+        /// The level of multisampling to use (each pixel uses 2^MultisampleLevel samples). Must be between 0 (no AA) and 5 (32x MSAA).
         /// </summary>
-        int MultisampleCount { get; set; }
+        int MultisampleLevel { get; set; }
+
 
         /// <summary>
         /// 

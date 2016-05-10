@@ -22,7 +22,7 @@ namespace Render.RenderObjects.Buffers
 
         protected Fbo()
         {
-            m_handle = (uint) GL.GenFramebuffer();
+            m_handle = (uint)GL.GenFramebuffer();
         }
 
         public void Dispose()
@@ -38,7 +38,7 @@ namespace Render.RenderObjects.Buffers
 
         protected void AttachTexture(FramebufferAttachment attachmentTarget, TextureBase texture)
         {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_handle);
+            Bind(FramebufferTarget.Framebuffer);
 
             if (texture == null)
             {
@@ -49,7 +49,7 @@ namespace Render.RenderObjects.Buffers
             }
 
             Debug.Assert(
-                m_attachedTextures.All(pair => pair.Value.Size == texture.Size), 
+                m_attachedTextures.All(pair => pair.Value.Size == texture.Size),
                 "All render target sizes for a framebuffer object must be equal.");
             Size = texture.Size;
 
@@ -57,8 +57,6 @@ namespace Render.RenderObjects.Buffers
 
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentTarget, texture.Target, texture.Handle, 0);
             m_attachedTextures[attachmentTarget] = texture;
-
-            //GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
         #endregion

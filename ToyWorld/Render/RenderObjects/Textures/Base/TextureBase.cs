@@ -50,14 +50,11 @@ namespace Render.RenderObjects.Textures
 
             if (generateMipmap)
                 GL.GenerateMipmap((GenerateMipmapTarget)m_target);
-
-            //GL.BindTexture(textureTarget, 0);
         }
 
         protected void InitMultisample(
             int multiSampleCount = 4,
-            PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba,
-            bool generateMipmap = false)
+            PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba)
         {
             Bind();
 
@@ -67,9 +64,6 @@ namespace Render.RenderObjects.Textures
                 internalDataFormat,
                 Size.X, Size.Y,
                 true);
-
-            if (generateMipmap)
-                GL.GenerateMipmap((GenerateMipmapTarget)m_target);
         }
 
         protected void SetParameters(

@@ -6,23 +6,15 @@ namespace Render.RenderObjects.Textures
     internal abstract class RenderTargetTextureMultisample : TextureBase
     {
         protected RenderTargetTextureMultisample(Vector2I size, int sampleCount)
-            : base(size.X, size.Y) // Use default pixel format)
+            : base(size.X, size.Y, TextureTarget.Texture2DMultisample) // Use default pixel format)
         {
             InitMultisample(sampleCount);
-            SetParameters(
-                   TextureMinFilter.Nearest,
-                   TextureMagFilter.Nearest,
-                   TextureWrapMode.ClampToEdge);
         }
 
         protected RenderTargetTextureMultisample(Vector2I size, int samepleCount, PixelInternalFormat internalFormat)
-            : base(size.X, size.Y)
+            : base(size.X, size.Y, TextureTarget.Texture2DMultisample)
         {
             InitMultisample(samepleCount, internalFormat);
-            SetParameters(
-                   TextureMinFilter.Nearest,
-                   TextureMagFilter.Nearest,
-                   TextureWrapMode.ClampToEdge);
         }
     }
 
@@ -40,7 +32,7 @@ namespace Render.RenderObjects.Textures
         { }
     }
 
-    //internal class RenderTargetStencilTextureMultisample : RenderTargetTexture
+    //internal class RenderTargetStencilTextureMultisample : RenderTargetTextureMultisample
     //{
     //    public RenderTargetStencilTextureMultisample(Vector2I size)
     //        : base(size, PixelFormat.StencilIndex)
