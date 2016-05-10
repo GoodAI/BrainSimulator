@@ -252,9 +252,9 @@ namespace GoodAI.Core.Observers
             {
                 MyLog.WARNING.WriteLine("Observing tensors, with anything other than Signles not supported, will use Single");
             }
-            if (Method == RenderingMethod.Vector || Method == RenderingMethod.RGB)
+            if (Method == RenderingMethod.Vector)
             {
-                MyLog.WARNING.WriteLine("Observing tensors in RGB or Vector mode not supported");
+                MyLog.WARNING.WriteLine("Observing tensors in Vector mode not supported");
             }
             m_tiledKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "ColorScaleObserverTiledSingle");
             m_tiledRGBKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawRGBTiledKernel");
