@@ -144,6 +144,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameActions\Interact.cs" />
     <Compile Include="GameActions\PickUp.cs" />
     <Compile Include="GameActions\UsePickaxe.cs" />
     <Compile Include="GameActors\GameObjects\Ball.cs" />

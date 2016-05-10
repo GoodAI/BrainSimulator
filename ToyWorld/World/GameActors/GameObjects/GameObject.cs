@@ -29,6 +29,11 @@ namespace World.GameActors.GameObjects
         Vector2 Position { get; set; }
 
         /// <summary>
+        /// Weight of this object.
+        /// </summary>
+        float Weight { get; set; }
+
+        /// <summary>
         /// Serial number of texture in tileset.
         /// </summary>
         int TilesetId { get; set; }

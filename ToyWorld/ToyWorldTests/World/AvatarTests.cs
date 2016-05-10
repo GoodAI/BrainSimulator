@@ -16,6 +16,7 @@ namespace ToyWorldTests.World
         private Avatar m_avatar;
         private IAvatar m_avatarPickuper;
         private ToyWorld m_worldPickupWorld;
+        private IAvatar m_eater;
 
         public AvatarTests()
         {
@@ -90,6 +91,44 @@ namespace ToyWorldTests.World
             ILayer<GameActor> obstacleInteractableLayer = m_worldPickupWorld.Atlas.GetLayer(LayerType.ObstacleInteractable);
             Assert.IsType<Apple>(obstacleInteractableLayer.GetActorAt(2, 0));
             Assert.False(m_avatarPickuper.PickUp);
+        }
+
+        [Fact]
+        public void AvatarLoosingEnergy()
+        {
+            Stream tmxStream = FileStreams.SmallPickupTmx();
+            StreamReader tilesetTableStreamReader = new StreamReader(FileStreams.TilesetTableStream());
+
+            TmxSerializer serializer = new TmxSerializer();
+            Map map = serializer.Deserialize(tmxStream);
+            m_worldPickupWorld = new ToyWorld(map, tilesetTableStreamReader);
+
+            m_eater = m_worldPickupWorld.GetAvatar(m_worldPickupWorld.GetAvatarsIds()[0]);
+
+            // Act
+            for (int i = 0; i < 100; i++)
+            {
+                m_eater.Update(m_worldPickupWorld.Atlas);
+            }
+
+            // Assert
+            Assert.True(m_eater.Energy < 1);
+        }
+
+        [Fact]
+        public void AvatarCanEat()
+        {
+            AvatarLoosingEnergy();
+
+            m_eater.Interact = true;
+
+            // Act
+            m_eater.Update(m_worldPickupWorld.Atlas);
+
+            // Assert
+            Assert.Equal(m_eater.Energy, 1);
+            ILayer<GameActor> obstacleInteractableLayer = m_worldPickupWorld.Atlas.GetLayer(LayerType.ObstacleInteractable);
+            Assert.Null(obstacleInteractableLayer.GetActorAt(2, 0));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace World.GameActors.GameObjects
         /// <summary>
         /// To use tool in hand / punch.
         /// </summary>
-        bool Use { get; set; }
+        bool UseTool { get; set; }
 
         /// <summary>
         /// Pick up or put down tool in hand.

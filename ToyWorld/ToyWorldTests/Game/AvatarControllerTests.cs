@@ -33,7 +33,7 @@ namespace ToyWorldTests.Game
             Assert.Equal(m_avatar.DesiredRotation, -0.4f);
             Assert.True(m_avatar.Interact);
             Assert.True(m_avatar.PickUp);
-            Assert.True(m_avatar.Use);
+            Assert.True(m_avatar.UseTool);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace ToyWorldTests.Game
             Assert.Equal(m_avatar.DesiredRotation, -0.4f);
             Assert.True(m_avatar.Interact);
             Assert.True(m_avatar.PickUp);
-            Assert.True(m_avatar.Use);
+            Assert.True(m_avatar.UseTool);
         }
 
         [Fact]
@@ -58,13 +58,13 @@ namespace ToyWorldTests.Game
             Assert.Equal(m_avatar.DesiredRotation, -0.4f);
             Assert.True(m_avatar.Interact);
             Assert.True(m_avatar.PickUp);
-            Assert.True(m_avatar.Use);
+            Assert.True(m_avatar.UseTool);
             m_avatarController.ResetControls();
             Assert.Equal(m_avatar.DesiredSpeed, 0.0f);
             Assert.Equal(m_avatar.DesiredRotation, 0.0f);
             Assert.True(!m_avatar.Interact);
             Assert.True(!m_avatar.PickUp);
-            Assert.True(!m_avatar.Use);
+            Assert.True(!m_avatar.UseTool);
         }
     }
 }
