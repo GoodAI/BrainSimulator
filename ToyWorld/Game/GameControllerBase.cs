@@ -38,10 +38,8 @@ namespace Game
 
         public virtual void Dispose()
         {
-            RendererBase renderer = Interlocked.Exchange(ref m_renderer, null);
-
-            if (renderer != null)
-                renderer.Dispose();
+            if (m_renderer != null)
+                m_renderer.Dispose();
         }
 
 

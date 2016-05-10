@@ -414,6 +414,11 @@ namespace Render.RenderRequests
 
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
+            if (MultisampleLevel > 0)
+                m_fboMs.Bind();
+            else
+                m_fbo.Bind();
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // View and proj transforms
@@ -421,11 +426,6 @@ namespace Render.RenderRequests
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
-            if (MultisampleLevel > 0)
-                m_fboMs.Bind();
-            else
-                m_fbo.Bind();
-
             renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
 

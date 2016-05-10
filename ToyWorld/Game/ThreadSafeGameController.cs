@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
 using Render.Renderer;
-using Render.RenderRequests;
 using VRage.Library.Collections;
 
 using TupleType = System.Tuple<System.Func<object>, System.Threading.Tasks.TaskCompletionSource<object>>;
@@ -18,7 +17,7 @@ namespace Game
     {
         private readonly AsyncBuffer<TupleType> m_buffer = new AsyncBuffer<TupleType>();
         private readonly CancellationTokenSource m_cancellationToken = new CancellationTokenSource();
-        private readonly Task m_requestCollectionTask;
+        private Task m_requestCollectionTask;
 
 
         public ThreadSafeGameController(RendererBase renderer, GameSetup gameSetup)
@@ -29,11 +28,21 @@ namespace Game
 
         public override void Dispose()
         {
-            if (!m_cancellationToken.IsCancellationRequested)
+            // Signal disposal of this object, prevents repeated disposal
+            var task = Interlocked.Exchange(ref m_requestCollectionTask, null);
+
+            if (task == null)
+                return;
+
+            // Call the internal one to skip m_requestCollectionTask checking
+            DelegateStuffInternal(() =>
             {
+                base.Dispose();
+                return null;
+            });
+
+            if (!m_cancellationToken.IsCancellationRequested)
                 m_cancellationToken.Cancel(true);
-                m_buffer.Dispose();
-            }
         }
 
 
@@ -57,7 +66,7 @@ namespace Game
                 }
                 catch (Exception)
                 {
-                    // Should not ever happen    
+                    // Should not ever happen
                     m_buffer.Clear();
                     continue;
                 }
@@ -99,6 +108,10 @@ namespace Game
 
         private void DelegateStuff(Action action)
         {
+            // Must be here (not in DelegateInternal) to enable delegating disposal
+            if (m_requestCollectionTask == null)
+                throw new ObjectDisposedException("ThreadSafeController");
+
             Func<object> dummy = () =>
             {
                 action();
@@ -111,6 +124,10 @@ namespace Game
         private T DelegateStuff<T>(Func<T> func)
             where T : class
         {
+            // Must be here (not in DelegateInternal) to enable delegating disposal
+            if (m_requestCollectionTask == null)
+                throw new ObjectDisposedException("ThreadSafeController");
+
             return DelegateStuffInternal(func) as T;
         }
 
