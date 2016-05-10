@@ -31,42 +31,50 @@ namespace Render.RenderObjects.Textures
                 using (Bitmap bmp = new Bitmap(Image.FromStream(stream, true)))
                 {
                     if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-                        throw new ArgumentException("The image on the specified path is not in the required RGBA format.", "texPath");
+                        throw new ArgumentException("The image on the specified path is not in the required RGBA format.", "tilesetImages");
 
                     int tilesPerRow = bmp.Width / (tilesetImage.TileSize.X + tilesetImage.TileMargin.X);
                     int tilesPerColumn = bmp.Height / (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y);
 
-                    Bitmap bmpTextureWithBorders = new Bitmap(
+                    using (Bitmap bmpTextureWithBorders = new Bitmap(
                         tilesPerRow * (tilesetImage.TileSize.X + tilesetImage.TileMargin.X + tilesetImage.TileBorder.X * 2),
                         tilesPerColumn * (tilesetImage.TileSize.Y + tilesetImage.TileMargin.Y + tilesetImage.TileBorder.Y * 2),
-                        System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-                    BitmapData dataOrig = bmp.LockBits(
-                        new Rectangle(0, 0, bmp.Width, bmp.Height),
-                        ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-                    BitmapData dataNew = bmpTextureWithBorders.LockBits(
-                        new Rectangle(0, 0, bmpTextureWithBorders.Width, bmpTextureWithBorders.Height),
-                        ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-                    IncreaseTileBorders(dataOrig, dataNew, tilesPerRow, tilesPerColumn,
-                        tilesetImage);
-
-                    try
+                        System.Drawing.Imaging.PixelFormat.Format32bppArgb))
                     {
-                        m_textures.Add(
-                            new TextureBase(
+                        BitmapData dataOrig = bmp.LockBits(
+                            new Rectangle(0, 0, bmp.Width, bmp.Height),
+                            ImageLockMode.ReadOnly,
+                            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                        BitmapData dataNew = bmpTextureWithBorders.LockBits(
+                            new Rectangle(0, 0, bmpTextureWithBorders.Width, bmpTextureWithBorders.Height),
+                            ImageLockMode.ReadWrite,
+                            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                        IncreaseTileBorders(
+                            dataOrig,
+                            dataNew,
+                            tilesPerRow,
+                            tilesPerColumn,
+                            tilesetImage);
+
+                        try
+                        {
+                            BasicTexture texture = new BasicTexture(bmpTextureWithBorders.Width, bmpTextureWithBorders.Height);
+
+                            texture.Init(
                                 dataNew.Scan0.ArgbToRgbaArray(dataNew.Width * dataNew.Height),
-                                bmpTextureWithBorders.Width, bmpTextureWithBorders.Height,
-                                minFilter: TextureMinFilter.LinearMipmapLinear,
-                                magFilter: TextureMagFilter.Linear,
-                                generateMipmap: true));
-                    }
-                    finally
-                    {
-                        bmp.UnlockBits(dataOrig);
-                        bmpTextureWithBorders.UnlockBits(dataNew);
-                        bmpTextureWithBorders.Dispose();
+                                generateMipmap: true);
+
+                            texture.SetParameters(TextureMinFilter.LinearMipmapLinear);
+
+                            m_textures.Add(texture);
+                        }
+                        finally
+                        {
+                            bmp.UnlockBits(dataOrig);
+                            bmpTextureWithBorders.UnlockBits(dataNew);
+                        }
                     }
                 }
             }
