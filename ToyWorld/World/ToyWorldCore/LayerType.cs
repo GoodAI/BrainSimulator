@@ -22,6 +22,8 @@ namespace World.ToyWorldCore
 
         Obstacles = Obstacle | ObstacleInteractable,
         Interactable = OnGroundInteractable | ObstacleInteractable,
-        All = Background | OnBackground | Path | OnGroundInteractable | ObstacleInteractable | Obstacle | Object | Foreground | ForegroundObject
+        All = Background | OnBackground | Path | OnGroundInteractable | ObstacleInteractable | Obstacle | Object | Foreground | ForegroundObject,
+        ObjectLayers = Object | ForegroundObject,
+        TileLayers = Background | OnBackground | Path | OnGroundInteractable | ObstacleInteractable | Obstacle | Foreground,
     }
 }

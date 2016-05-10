@@ -34,7 +34,7 @@ namespace ToyWorldTests.World
         {
             // Arrange
             Mock<GameActor> actorMock = new Mock<GameActor>();
-            ToUsePickaxe pickaxe = new ToUsePickaxe(actorMock.Object) { Damage = damage };
+            UsePickaxe pickaxe = new UsePickaxe(actorMock.Object) { Damage = damage };
             Mock<IAtlas> atlasMock = new Mock<IAtlas>();
             GameActor pickaxedWall = null;
             atlasMock.Setup(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>())).
@@ -71,7 +71,7 @@ namespace ToyWorldTests.World
             atlasMock.Setup(x => x.ReplaceWith(It.IsAny<GameActorPosition>(), It.IsAny<GameActor>())).
                 Callback((GameActorPosition original, GameActor replacement) => pickaxedWall = replacement);
 
-            ToUsePickaxe pickaxe = new ToUsePickaxe(actorMock.Object) { Damage = damage };
+            UsePickaxe pickaxe = new UsePickaxe(actorMock.Object) { Damage = damage };
             float initialDamage = 0.5f;
             DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
 

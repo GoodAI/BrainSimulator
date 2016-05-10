@@ -22,19 +22,19 @@ namespace World.GameActors.Tiles
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
         {
-            if (!(gameAction is ToUsePickaxe))
+            if (!(gameAction is UsePickaxe))
                 return;
 
-            ToUsePickaxe toUsePickaxe = (ToUsePickaxe)gameAction;
-            if (Math.Abs(toUsePickaxe.Damage) < 0.00001f)
+            UsePickaxe usePickaxe = (UsePickaxe)gameAction;
+            if (Math.Abs(usePickaxe.Damage) < 0.00001f)
                 return;
 
-            if (toUsePickaxe.Damage >= 1.0f)
+            if (usePickaxe.Damage >= 1.0f)
             {
                 atlas.ReplaceWith(new GameActorPosition(this, position), new DestroyedWall(tilesetTable));
                 return;
             }
-            atlas.ReplaceWith(new GameActorPosition(this, position), new DamagedWall(((ToUsePickaxe)gameAction), tilesetTable));
+            atlas.ReplaceWith(new GameActorPosition(this, position), new DamagedWall(((UsePickaxe)gameAction), tilesetTable));
         }
     }
 
@@ -58,17 +58,17 @@ namespace World.GameActors.Tiles
             Health -= damage;
         }
 
-        public DamagedWall(ToUsePickaxe toUsePickaxe, TilesetTable tilesetTable)
-            : this(toUsePickaxe.Damage, tilesetTable)
+        public DamagedWall(UsePickaxe usePickaxe, TilesetTable tilesetTable)
+            : this(usePickaxe.Damage, tilesetTable)
         {
         }
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
         {
-            ToUsePickaxe action = gameAction as ToUsePickaxe;
+            UsePickaxe action = gameAction as UsePickaxe;
             if (action != null)
             {
-                ToUsePickaxe usePickaxe = action;
+                UsePickaxe usePickaxe = action;
                 Health -= usePickaxe.Damage;
             }
 

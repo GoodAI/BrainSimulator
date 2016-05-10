@@ -11,7 +11,6 @@ using World.Physics;
 
 namespace World.ToyWorldCore
 {
-
     public interface IAtlas
     {
         /// <summary>
@@ -65,16 +64,38 @@ namespace World.ToyWorldCore
 
         IEnumerable<GameActorPosition> ActorsAt(float x, float y, LayerType type = LayerType.All, float width = 1);
 
-        IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All, float distance = 1, float width = 1) where T : class, IDirectable, IGameObject;
+        IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All, float distance = 1,
+            float width = 1) where T : class, IDirectable, IGameObject;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sender"></param>
+        /// <param name="distance">Distance from center of given object.</param>
+        /// <returns>Coordinates of position in front of given sender.</returns>
         Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IDirectable, IGameObject;
 
+        /// <summary>
+        /// Removes given GameActor from Layer specified in GameActorPosition.
+        /// </summary>
+        /// <param name="target"></param>
         void Remove(GameActorPosition target);
 
+        /// <summary>
+        /// Adds given GameActor to certain position. If position is not free, returns false.
+        /// </summary>
+        /// <param name="gameActorPosition"></param>
+        /// <returns>True if operation were successful.</returns>
         bool Add(GameActorPosition gameActorPosition);
 
+        /// <summary>
+        /// Replace GameActor with replacement. When Tile and GameObject is given, ArgumentException is thrown.
+        /// Layer is specified in GameActorPosition original.
+        /// </summary>
+        /// <param name="original"></param>
+        /// <param name="replacement"></param>
         void ReplaceWith(GameActorPosition original, GameActor replacement);
-
     }
 
     public class Atlas : IAtlas
@@ -158,44 +179,70 @@ namespace World.ToyWorldCore
 
         public bool ContainsCollidingTile(Vector2I coordinates)
         {
-            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
+            if (((ITileLayer) GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
-            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
+            if (((ITileLayer) GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
             return false;
         }
 
-        public IEnumerable<GameActorPosition> ActorsAt(float x, float y, LayerType type = LayerType.All, float width = 0.5f)
+        public IEnumerable<GameActorPosition> ActorsAt(float x, float y, LayerType type = LayerType.All,
+            float width = 0.5f)
         {
             Vector2 position = new Vector2(x, y);
-            // for all layers except object layer
-            foreach (ILayer<GameActor> layer in Layers.Where(t => (t.LayerType & type) > 0 && (type & LayerType.Object) != LayerType.Object))
-            {
-                GameActor actor = layer.GetActorAt((int)Math.Floor(x), (int)Math.Floor(y));
 
-                if (actor == null)
-                    continue;
-                GameActorPosition actorPosition = new GameActorPosition(actor, position, layer.LayerType);
-                yield return actorPosition;
+            var SelectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
+            // for all layers except object layer
+            IEnumerable<ILayer<GameActor>> selectedTileLayers = SelectedLayers.Where(t => LayerType.TileLayers.HasFlag(t.LayerType));
+            foreach (
+                ILayer<GameActor> layer in
+                    selectedTileLayers)
+            {
+                var actorPosition = TileAt(layer, position);
+                if (actorPosition != null)
+                {
+                    yield return actorPosition;
+                }
             }
 
-            if ((type & LayerType.Object) <= 0) yield break;
+            var circle = new CircleShape(position, width);
+            IEnumerable<ILayer<GameActor>> selectedObjectLayers = SelectedLayers.Where(t => LayerType.ObjectLayers.HasFlag(t.LayerType));
+            foreach (ILayer<GameActor> layer in selectedObjectLayers)
             {
-                foreach (IGameObject gameObject in ((IObjectLayer) GetLayer(LayerType.Object)).GetGameObjects())
+                foreach (IGameObject gameObject in ((IObjectLayer) layer).GetGameObjects())
                 {
-                    if (!gameObject.PhysicalEntity.Shape.CollidesWith(new CircleShape(position, width))) continue;
-                    GameActor actor = (GameActor) gameObject;
-                    GameActorPosition actorPosition = new GameActorPosition(actor, position, LayerType.Object);
-                    yield return actorPosition;
+                    var actorPosition = GameObjectAt(gameObject, circle, position, layer);
+                    if (actorPosition != null)
+                    {
+                        yield return actorPosition;
+                    }
                 }
             }
         }
 
-        public IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All, float distance = 1, float width = 0.5f) where T : class, IDirectable, IGameObject
+        private static GameActorPosition GameObjectAt(IGameObject gameObject, IShape circle, Vector2 position, ILayer<GameActor> layer)
+        {
+            IShape shape = gameObject.PhysicalEntity.Shape;
+            if (!shape.CollidesWith(circle)) return null;
+            GameActor actor = (GameActor) gameObject;
+            GameActorPosition actorPosition = new GameActorPosition(actor, position, layer.LayerType);
+            return actorPosition;
+        }
+
+        private static GameActorPosition TileAt(ILayer<GameActor> layer, Vector2 position)
+        {
+            GameActor actor = layer.GetActorAt((int) Math.Floor(position.X), (int) Math.Floor(position.Y));
+            if (actor == null) return null;
+            GameActorPosition actorPosition = new GameActorPosition(actor, position, layer.LayerType);
+            return actorPosition;
+        }
+
+        public IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All,
+            float distance = 1, float width = 0.5f) where T : class, IDirectable, IGameObject
         {
             var target = PositionInFrontOf(sender, distance);
             var actorsInFrontOf = ActorsAt(target.X, target.Y, type, width);
@@ -204,7 +251,7 @@ namespace World.ToyWorldCore
 
         public Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IDirectable, IGameObject
         {
-            Vector2 direction = Vector2.UnitY * distance;
+            Vector2 direction = Vector2.UnitY*distance;
             direction.Rotate(sender.Direction);
             Vector2 target = sender.Position + direction;
             return target;
@@ -218,9 +265,8 @@ namespace World.ToyWorldCore
         public bool Add(GameActorPosition gameActorPosition)
         {
             ILayer<GameActor> layer = GetLayer(gameActorPosition.Layer);
-            
 
-            
+
             IObjectLayer gameObjectLayer = GetLayer(LayerType.Object) as IObjectLayer;
             Debug.Assert(gameObjectLayer != null, "gameObjectLayer != null");
             Vector2 position = gameActorPosition.Position;
@@ -245,17 +291,23 @@ namespace World.ToyWorldCore
             {
                 return false;
             }
-            bool anyObstacleOnPosition = GetObstaceLayers().Any(x => x.GetActorAt(new Vector2I(gameActorPosition.Position)) != null);
+            bool anyObstacleOnPosition =
+                GetObstaceLayers().Any(x => x.GetActorAt(new Vector2I(gameActorPosition.Position)) != null);
             if (anyObstacleOnPosition)
             {
                 return false;
             }
-            
+
             return layer.Add(gameActorPosition);
         }
 
         public void ReplaceWith(GameActorPosition original, GameActor replacement)
         {
+            if ((original.Actor is Tile && replacement is GameObject)
+                || (original.Actor is GameObject && replacement is Tile))
+            {
+                throw new ArgumentException("atlas.ReplaceWith tries replace Tile with GameObject or GameObject with Tile");
+            }
             foreach (ILayer<GameActor> layer in Layers)
             {
                 bool result = layer.ReplaceWith(original, replacement);

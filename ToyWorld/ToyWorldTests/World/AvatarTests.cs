@@ -3,6 +3,7 @@ using Moq;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
+using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
@@ -13,6 +14,8 @@ namespace ToyWorldTests.World
     public class AvatarTests
     {
         private Avatar m_avatar;
+        private IAvatar m_avatarPickuper;
+        private ToyWorld m_worldPickupWorld;
 
         public AvatarTests()
         {
@@ -57,18 +60,36 @@ namespace ToyWorldTests.World
 
             TmxSerializer serializer = new TmxSerializer();
             Map map = serializer.Deserialize(tmxStream);
-            ToyWorld world = new ToyWorld(map, tilesetTableStreamReader);
+            m_worldPickupWorld = new ToyWorld(map, tilesetTableStreamReader);
 
-            IAvatar avatar = world.GetAvatar(world.GetAvatarsIds()[0]);
-            avatar.PickUp = true;
+            m_avatarPickuper = m_worldPickupWorld.GetAvatar(m_worldPickupWorld.GetAvatarsIds()[0]);
+            m_avatarPickuper.PickUp = true;
 
-            Assert.Equal(null, avatar.Tool);
+            Assert.Equal(null, m_avatarPickuper.Tool);
 
             // Act
-            avatar.Update(world.Atlas);
+            m_avatarPickuper.Update(m_worldPickupWorld.Atlas);
 
             // Assert
-            Assert.IsType<Apple>(avatar.Tool);
+            Assert.IsType<Apple>(m_avatarPickuper.Tool);
+            Assert.False(m_avatarPickuper.PickUp);
+        }
+
+        [Fact]
+        public void AvatarCanLayDown()
+        {
+            AvatarCanPickUp();
+
+            m_avatarPickuper.PickUp = true;
+
+            // Act
+            m_avatarPickuper.Update(m_worldPickupWorld.Atlas);
+
+            // Assert
+            Assert.Null(m_avatarPickuper.Tool);
+            ILayer<GameActor> obstacleInteractableLayer = m_worldPickupWorld.Atlas.GetLayer(LayerType.ObstacleInteractable);
+            Assert.IsType<Apple>(obstacleInteractableLayer.GetActorAt(2, 0));
+            Assert.False(m_avatarPickuper.PickUp);
         }
     }
 }

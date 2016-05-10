@@ -2,8 +2,6 @@
 using System.Linq;
 using GoodAI.ToyWorldAPI;
 ﻿﻿using System.Collections.Generic;
-﻿using System.Drawing;
-﻿using System.Linq;
 using VRageMath;
 using World.GameActions;
 using World.GameActors.Tiles;
@@ -71,48 +69,92 @@ namespace World.GameActors.GameObjects
 
         public IPickable RemoveFromInventory()
         {
-            IPickable tool = Tool; 
+            IPickable tool = Tool;
             Tool = null;
             return tool;
         }
 
         public void Update(IAtlas atlas)
         {
+            if (Interact)
+            {
+
+                Interact = false;
+                return;
+            }
+
             if (PickUp)
             {
                 if (Tool == null)
                 {
-                    GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
-                    if (target == null)
-                    {
-                        // check circle in front of avatar 
-                        float radius = ((CircleShape) PhysicalEntity.Shape).Radius;
-                        IEnumerable<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object, radius, radius);
-                        target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
-                        
-                    }
-                    if (target == null) return;
-                    IInteractable interactableTarget = target.Actor as IInteractable;
-                    if (interactableTarget == null) return;
-
-                    GameAction pickUpAction = new PickUp(this);
-                    interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
-
-                    if (target.Actor is IForwardMovable)
-                    {
-                        (target.Actor as IForwardMovable).ForwardSpeed = 0;
-                    }
-
-                    PickUp = false;
+                    PerformPickup(atlas);
                 }
                 else
                 {
-                    var positionInFrontOf = atlas.PositionInFrontOf(this, 1);
-                    GameAction layDownAction = new LayDown(this);
-                    Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf);
-                    PickUp = false;
+                    PerformLayDown(atlas);
                 }
+                PickUp = false;
+                return;
             }
+
+            if (Use)
+            {
+                
+            }
+        }
+
+        private bool PerformLayDown(IAtlas atlas)
+        {
+            var positionInFrontOf = atlas.PositionInFrontOf(this, 1);
+            GameAction layDownAction = new LayDown(this);
+            Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf);
+            return true;
+        }
+
+        private bool PerformPickup(IAtlas atlas)
+        {
+            // check tile in front of
+            var target = GetTilesInFrontOf(atlas);
+            // if no tile, check objects
+            if (target == null)
+            {
+                target = GetObjectsInFrontOf(atlas, target);
+            }
+            if (target == null) return false;
+
+            IInteractable interactableTarget = target.Actor as IInteractable;
+            if (interactableTarget == null) return false;
+
+            GameAction pickUpAction = new PickUp(this);
+            interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
+
+            ResetSpeed(target);
+            return true;
+        }
+
+        private static void ResetSpeed(GameActorPosition target)
+        {
+            var actor = target.Actor as IForwardMovable;
+            if (actor != null)
+            {
+                actor.ForwardSpeed = 0;
+            }
+        }
+
+        private GameActorPosition GetObjectsInFrontOf(IAtlas atlas, GameActorPosition target)
+        {
+            // check circle in front of avatar 
+            float radius = ((CircleShape) PhysicalEntity.Shape).Radius;
+            IEnumerable<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object,
+                0.2f + radius, radius);
+            target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
+            return target;
+        }
+
+        private GameActorPosition GetTilesInFrontOf(IAtlas atlas)
+        {
+            GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
+            return target;
         }
     }
 }

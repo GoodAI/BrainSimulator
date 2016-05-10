@@ -12,7 +12,7 @@ namespace World.Physics
         Vector2 Position { get; set; }
 
         /// <summary>
-        /// Shape of this entity.
+        /// Shape of this entity. Also contains position in space accessible through IPhysicalEntity.Position.
         /// </summary>
         IShape Shape { get; set; }
 
@@ -92,7 +92,7 @@ namespace World.Physics
             }
         }
 
-        public PhysicalEntity(Vector2 position, Shape shape)
+        public PhysicalEntity(Vector2 position, IShape shape)
         {
             Shape = shape;
             Position = position;
