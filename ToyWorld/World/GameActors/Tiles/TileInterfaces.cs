@@ -25,7 +25,7 @@ namespace World.GameActors.Tiles
 
     /// <summary>
     /// </summary>
-    public interface IInteractable
+    public interface IInteractable : IGameActor
     {
         /// <summary>
         /// Method is called when something apply GameAction on this object.
