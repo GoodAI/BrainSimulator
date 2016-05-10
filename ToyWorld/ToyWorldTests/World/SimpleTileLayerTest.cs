@@ -53,9 +53,9 @@ namespace ToyWorldTests.World
         [Fact]
         public void GetRectangleWholeArray()
         {
-            int[] rectangle = m_simpleTileLayer.GetRectangle(new Rectangle(0,0,3,3));
+            int[] rectangle = m_simpleTileLayer.GetRectangle(new Rectangle(0, 0, 3, 3));
 
-            var isEqual = rectangle.SequenceEqual(m_tileSequenceArray.Select(x => x.TileType));
+            var isEqual = rectangle.SequenceEqual(m_tileSequenceArray.Select(x => x.TilesetId));
 
             Assert.True(isEqual);
         }

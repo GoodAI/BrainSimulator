@@ -22,12 +22,12 @@ namespace World.GameActors.Tiles
             Contract.EndContractBlock();
 
             string typeName = GetType().Name;
-            TileType = tilesetTable.TileNumber(typeName);
+            TilesetId = tilesetTable.TileNumber(typeName);
         }
 
-        protected Tile(int tileType)
+        protected Tile(int tilesetId)
         {
-            TileType = tileType;
+            TilesetId = tilesetId;
         }
 
         public static explicit operator int(Tile t)
@@ -36,7 +36,7 @@ namespace World.GameActors.Tiles
                 throw new ArgumentNullException("t");
             Contract.EndContractBlock();
 
-            return t.TileType;
+            return t.TilesetId;
         }
 
         public virtual IPhysicalEntity GetPhysicalEntity(Vector2I position)

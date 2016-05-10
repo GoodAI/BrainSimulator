@@ -8,6 +8,10 @@ namespace World.GameActors
     /// </summary>
     public abstract class GameActor
     {
+        /// <summary>
+        /// Serial number of texture in tileset.
+        /// </summary>
+        public int TilesetId { get; set; }
     }
 
     public class GameActorPosition

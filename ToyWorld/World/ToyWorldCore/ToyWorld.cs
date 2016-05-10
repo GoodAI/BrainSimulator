@@ -16,7 +16,7 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
-        private readonly ICollisionResolver m_collisionResolver;
+        private ICollisionResolver m_collisionResolver;
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
@@ -24,7 +24,7 @@ namespace World.ToyWorldCore
         public Atlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
-
+        public List<Func<IAtlas, float>> SignalDispatchers { get; protected set; }
 
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
@@ -35,10 +35,22 @@ namespace World.ToyWorldCore
             Contract.EndContractBlock();
 
             Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
-
             AutoupdateRegister = new AutoupdateRegister();
-
             TilesetTable = new TilesetTable(tmxDeserializedMap, tileTable);
+
+            InitAtlas(tmxDeserializedMap);
+            InitPhysics();
+            TileDetectorRegister = new TileDetectorRegister(Atlas, TilesetTable);
+            RegisterSignals();
+        }
+
+        private void RegisterSignals()
+        {
+            //Func<IAtlas, float> inventoryItem = (x=>x.GetAvatars().First().Tool.)
+        }
+
+        private void InitAtlas(Map tmxDeserializedMap)
+        {
             Action<GameActor> initializer = delegate(GameActor actor)
             {
                 IAutoupdateable updateable = actor as IAutoupdateable;
@@ -46,10 +58,10 @@ namespace World.ToyWorldCore
                     AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
+        }
 
-            TileDetectorRegister = new TileDetectorRegister(Atlas, TilesetTable);
-
-            // physics
+        private void InitPhysics()
+        {
             Physics = new Physics.Physics();
 
             IMovementPhysics movementPhysics = new MovementPhysics();
