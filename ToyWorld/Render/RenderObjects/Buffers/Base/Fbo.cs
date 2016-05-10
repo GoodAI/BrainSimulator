@@ -8,21 +8,19 @@ using VRageMath;
 
 namespace Render.RenderObjects.Buffers
 {
-    internal class Fbo : IDisposable
+    internal abstract class Fbo : IDisposable
     {
         private readonly uint m_handle;
 
         private readonly Dictionary<FramebufferAttachment, TextureBase> m_attachedTextures =
             new Dictionary<FramebufferAttachment, TextureBase>();
 
-
-
         public Vector2I Size { get; private set; }
 
 
         #region Genesis
 
-        public Fbo()
+        protected Fbo()
         {
             m_handle = (uint) GL.GenFramebuffer();
         }
@@ -38,13 +36,7 @@ namespace Render.RenderObjects.Buffers
 
         #region Indexing
 
-        protected TextureBase this[FramebufferAttachment attachmentTarget]
-        {
-            get { return m_attachedTextures[attachmentTarget]; }
-            set { AttachTexture(attachmentTarget, value); }
-        }
-
-        private void AttachTexture(FramebufferAttachment attachmentTarget, TextureBase texture)
+        protected void AttachTexture(FramebufferAttachment attachmentTarget, TextureBase texture)
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, m_handle);
 
