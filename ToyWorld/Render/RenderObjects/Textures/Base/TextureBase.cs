@@ -1,12 +1,10 @@
 ﻿using System;
-using System.IO;
 using OpenTK.Graphics.OpenGL;
 using VRageMath;
-using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Render.RenderObjects.Textures
 {
-    internal class TextureBase : IDisposable
+    internal abstract class TextureBase : IDisposable
     {
         private readonly int m_handle;
         private readonly TextureTarget m_target;
@@ -19,44 +17,72 @@ namespace Render.RenderObjects.Textures
         protected TextureBase()
         { }
 
-        public TextureBase(
-            int[] data, int width, int height,
-            PixelFormat dataFormat = PixelFormat.Bgra,
-            PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba,
-            TextureMinFilter minFilter = TextureMinFilter.Linear,
-            TextureMagFilter magFilter = TextureMagFilter.Linear,
-            TextureWrapMode wrapMode = TextureWrapMode.MirroredRepeat,
-            TextureTarget textureTarget = TextureTarget.Texture2D,
-            bool generateMipmap = false)
+        protected TextureBase(int width, int height, TextureTarget target = TextureTarget.Texture2D)
         {
-            Size = new Vector2I(width, height);
-
-            m_target = textureTarget;
             m_handle = GL.GenTexture();
-            GL.BindTexture(textureTarget, m_handle);
-
-            GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int)minFilter);
-            GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int)magFilter);
-            GL.TexParameter(textureTarget, TextureParameterName.TextureWrapS, (int)wrapMode);
-            GL.TexParameter(textureTarget, TextureParameterName.TextureWrapT, (int)wrapMode);
-
-            GL.TexImage2D(
-                textureTarget,
-                0,
-                internalDataFormat,
-                width, height, 0,
-                dataFormat, PixelType.UnsignedByte,
-                data);
-
-            if (generateMipmap)
-                GL.GenerateMipmap((GenerateMipmapTarget)textureTarget);
-
-            GL.BindTexture(textureTarget, 0);
+            Size = new Vector2I(width, height);
+            m_target = target;
         }
 
         public virtual void Dispose()
         {
             GL.DeleteTexture(m_handle);
+        }
+
+
+        protected void Init(
+            int[] data,
+            PixelFormat dataFormat = PixelFormat.Bgra,
+            PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba,
+            bool generateMipmap = false)
+        {
+            GL.BindTexture(m_target, m_handle);
+
+            GL.TexImage2D(
+                m_target,
+                0,
+                internalDataFormat,
+                Size.X, Size.Y,
+                0,
+                dataFormat,
+                PixelType.UnsignedByte,
+                data);
+
+            if (generateMipmap)
+                GL.GenerateMipmap((GenerateMipmapTarget)m_target);
+
+            //GL.BindTexture(textureTarget, 0);
+        }
+
+        protected void InitMultisample(
+            int multiSampleCount = 4,
+            PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba,
+            bool generateMipmap = false)
+        {
+            Bind();
+
+            GL.TexImage2DMultisample(
+                TextureTargetMultisample.Texture2DMultisample,
+                multiSampleCount,
+                internalDataFormat,
+                Size.X, Size.Y,
+                true);
+
+            if (generateMipmap)
+                GL.GenerateMipmap((GenerateMipmapTarget)m_target);
+        }
+
+        protected void SetParameters(
+            TextureMinFilter minFilter = TextureMinFilter.Linear,
+            TextureMagFilter magFilter = TextureMagFilter.Linear,
+            TextureWrapMode wrapMode = TextureWrapMode.MirroredRepeat)
+        {
+            Bind();
+
+            GL.TexParameter(m_target, TextureParameterName.TextureMinFilter, (int)minFilter);
+            GL.TexParameter(m_target, TextureParameterName.TextureMagFilter, (int)magFilter);
+            GL.TexParameter(m_target, TextureParameterName.TextureWrapS, (int)wrapMode);
+            GL.TexParameter(m_target, TextureParameterName.TextureWrapT, (int)wrapMode);
         }
 
 
