@@ -9,10 +9,10 @@ namespace Render.RenderObjects.Buffers
     {
         #region Genesis
 
-        public BasicFbo(TextureManager textureManager, Vector2I size)
+        public BasicFbo(RenderTargetManager textureManager, Vector2I size)
         {
-            AttachTexture(FramebufferAttachment.DepthAttachment, textureManager.GetRenderTarget<RenderTargetDepthTexture>(size)); // Must be first due to error checking
-            AttachTexture(FramebufferAttachment.ColorAttachment0, textureManager.GetRenderTarget<RenderTargetColorTexture>(size));
+            AttachTexture(FramebufferAttachment.DepthAttachment, textureManager.Get<RenderTargetDepthTexture>(size)); // Must be first due to error checking
+            AttachTexture(FramebufferAttachment.ColorAttachment0, textureManager.Get<RenderTargetColorTexture>(size));
 
             FramebufferErrorCode err = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
             Debug.Assert(err == FramebufferErrorCode.FramebufferComplete, "Framebuffer error: " + err);

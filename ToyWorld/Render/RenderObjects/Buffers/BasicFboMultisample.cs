@@ -9,10 +9,10 @@ namespace Render.RenderObjects.Buffers
     {
         #region Genesis
 
-        public BasicFboMultisample(TextureManager textureManager, Vector2I size, int multisampleCount)
+        public BasicFboMultisample(RenderTargetManager renderTargetManager, Vector2I size, int multisampleCount)
         {
-            AttachTexture(FramebufferAttachment.DepthAttachment, textureManager.GetRenderTarget<RenderTargetDepthTextureMultisample>(size, multisampleCount)); // Must be first due to error checking
-            AttachTexture(FramebufferAttachment.ColorAttachment0, textureManager.GetRenderTarget<RenderTargetColorTextureMultisample>(size, multisampleCount));
+            AttachTexture(FramebufferAttachment.DepthAttachment, renderTargetManager.Get<RenderTargetDepthTextureMultisample>(size, multisampleCount)); // Must be first due to error checking
+            AttachTexture(FramebufferAttachment.ColorAttachment0, renderTargetManager.Get<RenderTargetColorTextureMultisample>(size, multisampleCount));
 
             FramebufferErrorCode err = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
             Debug.Assert(err == FramebufferErrorCode.FramebufferComplete, "Framebuffer error: " + err);
